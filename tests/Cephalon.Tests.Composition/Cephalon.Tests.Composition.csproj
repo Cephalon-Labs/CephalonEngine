@@ -34,6 +34,7 @@
     <ProjectReference Include="..\..\src\Cephalon.Data.Postgres\Cephalon.Data.Postgres.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.MultiTenancy.Governance.HttpDelivery\Cephalon.MultiTenancy.Governance.HttpDelivery.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.MultiTenancy.Governance.MailgunDelivery\Cephalon.MultiTenancy.Governance.MailgunDelivery.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity\Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery\Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.MultiTenancy.Governance.SendGridDelivery\Cephalon.MultiTenancy.Governance.SendGridDelivery.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.MultiTenancy.Governance.SmtpDelivery\Cephalon.MultiTenancy.Governance.SmtpDelivery.csproj" />

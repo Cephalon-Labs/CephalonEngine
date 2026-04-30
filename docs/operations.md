@@ -1691,7 +1691,6 @@ Configuration:
           "ApiVersion": "v1.0",
           "SenderUserId": "invites@example.com",
           "AccessToken": "${MICROSOFT_GRAPH_ACCESS_TOKEN}",
-          "FromDisplayName": "Example SaaS",
           "RecipientEmailMetadataKey": "email",
           "SupportedChannels": ["email"],
           "SubjectTemplate": "Invitation for {tenantId}",
@@ -1714,6 +1713,7 @@ Registration:
 
 ```csharp
 builder.Services.AddCephalonMicrosoftGraphInvitationDelivery(builder.Configuration);
+builder.Services.AddCephalonMicrosoftGraphInvitationDeliveryAzureIdentity(builder.Configuration);
 
 builder.AddCephalon(engine =>
 {
@@ -1724,12 +1724,55 @@ builder.AddCephalon(engine =>
 Operational notes:
 
 - recipient email resolution checks dispatch metadata first, invitation metadata second, and finally `InviteeId` when `InviteeKind` is `email`
-- `IMicrosoftGraphInvitationDeliveryAccessTokenProvider` is replaceable; real hosts should usually register an OAuth, managed identity, or workload identity implementation instead of storing a static access token in configuration
+- `IMicrosoftGraphInvitationDeliveryAccessTokenProvider` is replaceable; real hosts should usually install `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity` for `DefaultAzureCredential`, managed identity, or workload identity token acquisition instead of storing a static access token in configuration
 - `IMicrosoftGraphInvitationDeliveryClient` is replaceable, so test hosts, gateway wrappers, or custom HTTP policies can reuse the same Cephalon sender contract without changing the governance dispatcher
 - the sender posts to `/v1.0/users/{SenderUserId}/sendMail` when `SenderUserId` is configured and `/v1.0/me/sendMail` otherwise; Microsoft Graph accepts successful `sendMail` requests with `202 Accepted`, so Cephalon records accepted handoff truth rather than a delivered-email claim
 - the sender carries deterministic Cephalon message ids through safe custom `x-*` internet message headers and request metadata; Graph does not return a mail message id from `sendMail`, so the default provider message id remains empty unless a custom client supplies a truthful id
 - sender metadata records endpoint host, Graph status code, sender id, sender-user posture, save-to-sent-items posture, recipient email, recipient metadata key, category count, safe header count, Graph request ids, and safe client metadata, but it does not record bearer tokens, authorization headers, raw request bodies, or message bodies
-- this package owns Microsoft Graph `sendMail` handoff only; OAuth app registration, token issuance and refresh, Graph change notifications, delivery completion after accepted handoff, provider polling, durable callback inboxes, SES or other provider-specific email API senders, SMS/chat/CRM/identity-provider onboarding, distributed retry queues, and tenant-admin UI remain future provider-pack or application-owned work
+- this package owns Microsoft Graph `sendMail` handoff only; Azure Identity token acquisition lives in `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity`, while Microsoft Entra app registration, permission consent, mailbox provisioning/access policy, Graph change notifications, delivery completion after accepted handoff, provider polling, durable callback inboxes, SES or other provider-specific email API senders, SMS/chat/CRM/identity-provider onboarding, distributed retry queues, and tenant-admin UI remain future provider-pack or application-owned work
+
+### Microsoft Graph Azure Identity token provider
+
+Install `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity` when the Microsoft Graph invitation sender should acquire bearer tokens through Azure.Identity instead of a static configured access token.
+
+Configuration:
+
+```json
+{
+  "Engine": {
+    "MultiTenancy": {
+      "Governance": {
+        "MicrosoftGraphInvitationDelivery": {
+          "AzureIdentity": {
+            "Enabled": true,
+            "Scopes": ["https://graph.microsoft.com/.default"],
+            "TenantId": "00000000-0000-0000-0000-000000000000",
+            "ManagedIdentityClientId": "11111111-1111-1111-1111-111111111111",
+            "AuthorityHost": "AzurePublicCloud",
+            "ExcludeInteractiveBrowserCredential": true,
+            "ExcludeManagedIdentityCredential": false
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Registration:
+
+```csharp
+builder.Services.AddCephalonMicrosoftGraphInvitationDelivery(builder.Configuration);
+builder.Services.AddCephalonMicrosoftGraphInvitationDeliveryAzureIdentity(builder.Configuration);
+```
+
+Operational notes:
+
+- the default scope is `https://graph.microsoft.com/.default`, which is the normal application-permission shape for service-style Graph access
+- supported authority aliases are `AzurePublicCloud`, `AzureGovernment`, and `AzureChina`; an absolute HTTPS authority URI is also accepted for deliberate sovereign/private-cloud setups
+- explicit `TokenCredential` injection is available for tests, shared host credential factories, or hosts that prefer a concrete credential such as `ManagedIdentityCredential`
+- token acquisition diagnostics use `4574-4575` and record credential type, scope count, expiry, and failure reason without logging bearer tokens
+- the package owns token acquisition only; Microsoft Entra app registration, `Mail.Send` consent, Exchange mailbox/application access policy, Graph `sendMail` acceptance, downstream delivery completion, provider polling, callbacks, and identity-provider synchronization remain outside this package
 
 ### SendGrid invitation delivery status callbacks
 

@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-30T01:43:54.5163319+00:00",
+  "GeneratedAtUtc": "2026-04-30T02:17:48.1235354+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -376,6 +376,14 @@
       "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery.md",
       "NamespaceCount": 3,
       "TypeCount": 6
+    },
+    {
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity",
+      "Category": "Phase 13 Companion Packs",
+      "Description": "Azure.Identity token-provider companion package for Microsoft Graph tenant-invitation delivery.",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity.md",
+      "NamespaceCount": 2,
+      "TypeCount": 2
     },
     {
       "AssemblyName": "Cephalon.MultiTenancy.Governance.SendGridDelivery",
@@ -1496,6 +1504,20 @@
       "FileName": "cephalon-multitenancy-governance-mailgundelivery.md",
       "AnchorId": "namespace-cephalon-multitenancy-governance-mailgundelivery-services",
       "TypeCount": 3
+    },
+    {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity-configuration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity-hosting",
+      "TypeCount": 1
     },
     {
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration",
@@ -13374,6 +13396,36 @@
       }
     },
     {
+      "DisplayName": "MicrosoftGraphInvitationDeliveryAzureIdentityOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity-configuration-microsoftgraphinvitationdeliveryazureidentityoptions",
+      "Declaration": "public sealed class MicrosoftGraphInvitationDeliveryAzureIdentityOptions",
+      "Summary": "Configures Azure Identity token acquisition for Microsoft Graph tenant-invitation delivery.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "MicrosoftGraphInvitationDeliveryAzureIdentityServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity-hosting-microsoftgraphinvitationdeliveryazureidentityservicecollectionextensions",
+      "Declaration": "public static class MicrosoftGraphInvitationDeliveryAzureIdentityServiceCollectionExtensions",
+      "Summary": "Adds Azure Identity token acquisition for Microsoft Graph invitation delivery.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 3
+      }
+    },
+    {
       "DisplayName": "MicrosoftGraphInvitationDeliveryClientResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
@@ -21801,6 +21853,39 @@
       "Summary": "Adds Microsoft Graph invitation delivery using configuration as the primary source of \u0060sendMail\u0060 settings."
     },
     {
+      "DisplayName": "AddCephalonMicrosoftGraphInvitationDeliveryAzureIdentity",
+      "Category": "Methods",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryAzureIdentityServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity-hosting-microsoftgraphinvitationdeliveryazureidentityservicecollectionextensions-addcephalonmicrosoftgraphinvitationdeliveryazureidentity-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity-configuration-microsoftgraphinvitationdeliveryazureidentityoptions",
+      "Signature": "IServiceCollection AddCephalonMicrosoftGraphInvitationDeliveryAzureIdentity(this IServiceCollection services, Action\u003CMicrosoftGraphInvitationDeliveryAzureIdentityOptions\u003E configure)",
+      "Summary": "Adds the Azure Identity token provider using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonMicrosoftGraphInvitationDeliveryAzureIdentity",
+      "Category": "Methods",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryAzureIdentityServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity-hosting-microsoftgraphinvitationdeliveryazureidentityservicecollectionextensions-addcephalonmicrosoftgraphinvitationdeliveryazureidentity-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity-configuration-microsoftgraphinvitationdeliveryazureidentityoptions",
+      "Signature": "IServiceCollection AddCephalonMicrosoftGraphInvitationDeliveryAzureIdentity(this IServiceCollection services, IConfiguration configuration, Action\u003CMicrosoftGraphInvitationDeliveryAzureIdentityOptions\u003E configure)",
+      "Summary": "Adds the Azure Identity token provider using configuration as the primary source of token-acquisition settings."
+    },
+    {
+      "DisplayName": "AddCephalonMicrosoftGraphInvitationDeliveryAzureIdentity",
+      "Category": "Methods",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryAzureIdentityServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity-hosting-microsoftgraphinvitationdeliveryazureidentityservicecollectionextensions-addcephalonmicrosoftgraphinvitationdeliveryazureidentity-microsoft-extensions-dependencyinjection-iservicecollection-azure-core-tokencredential-system-action-cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity-configuration-microsoftgraphinvitationdeliveryazureidentityoptions",
+      "Signature": "IServiceCollection AddCephalonMicrosoftGraphInvitationDeliveryAzureIdentity(this IServiceCollection services, TokenCredential credential, Action\u003CMicrosoftGraphInvitationDeliveryAzureIdentityOptions\u003E configure)",
+      "Summary": "Adds the Azure Identity token provider with an explicit credential instance."
+    },
+    {
       "DisplayName": "AddCephalonMongoDbDependencyHealth",
       "Category": "Methods",
       "DeclaringTypeName": "MongoDbDependencyHealthServiceCollectionExtensions",
@@ -26375,6 +26460,17 @@
       "AnchorId": "member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-authoringstylesummaries",
       "Signature": "IReadOnlyList\u003CRestEndpointPublicationGroupAuthoringStyleDescriptor\u003E AuthoringStyleSummaries { get; }",
       "Summary": "Gets the grouped publication outcome summarized by authoring style for this behavior."
+    },
+    {
+      "DisplayName": "AuthorityHost",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryAzureIdentityOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity-configuration-microsoftgraphinvitationdeliveryazureidentityoptions-authorityhost",
+      "Signature": "string AuthorityHost { get; set; }",
+      "Summary": "Gets or sets the Microsoft Entra authority host used for token acquisition."
     },
     {
       "DisplayName": "AuthorizationContext",
@@ -48552,6 +48648,17 @@
     {
       "DisplayName": "Enabled",
       "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryAzureIdentityOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity-configuration-microsoftgraphinvitationdeliveryazureidentityoptions-enabled",
+      "Signature": "bool Enabled { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the Azure Identity token provider should be registered."
+    },
+    {
+      "DisplayName": "Enabled",
+      "Category": "Properties",
       "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryOptions",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
@@ -51254,6 +51361,28 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-configuration-multitenancygovernanceaspnetcoreoptions-excludefromdescription",
       "Signature": "bool ExcludeFromDescription { get; set; }",
       "Summary": "Gets or sets a value indicating whether the proof endpoint should be excluded from OpenAPI descriptions."
+    },
+    {
+      "DisplayName": "ExcludeInteractiveBrowserCredential",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryAzureIdentityOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity-configuration-microsoftgraphinvitationdeliveryazureidentityoptions-excludeinteractivebrowsercredential",
+      "Signature": "bool ExcludeInteractiveBrowserCredential { get; set; }",
+      "Summary": "Gets or sets a value indicating whether interactive browser authentication should be excluded."
+    },
+    {
+      "DisplayName": "ExcludeManagedIdentityCredential",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryAzureIdentityOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity-configuration-microsoftgraphinvitationdeliveryazureidentityoptions-excludemanagedidentitycredential",
+      "Signature": "bool ExcludeManagedIdentityCredential { get; set; }",
+      "Summary": "Gets or sets a value indicating whether managed identity authentication should be excluded."
     },
     {
       "DisplayName": "ExcludeStatusCallbackEndpointFromDescription",
@@ -55445,6 +55574,17 @@
       "AnchorId": "member-m-cephalon-engine-configuration-messagingsettings-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
       "Signature": "MessagingSettings FromConfiguration(IConfiguration configuration, string sectionPath)",
       "Summary": "Reads messaging settings from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryAzureIdentityOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity-configuration-microsoftgraphinvitationdeliveryazureidentityoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "MicrosoftGraphInvitationDeliveryAzureIdentityOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds Azure Identity token-provider options from configuration."
     },
     {
       "DisplayName": "FromConfiguration",
@@ -76831,6 +76971,17 @@
       "Summary": "Gets or sets the Alibaba Cloud Managed Service for OpenTelemetry OTLP/HTTP traces endpoint used for direct managed ingestion."
     },
     {
+      "DisplayName": "ManagedIdentityClientId",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryAzureIdentityOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity-configuration-microsoftgraphinvitationdeliveryazureidentityoptions-managedidentityclientid",
+      "Signature": "string ManagedIdentityClientId { get; set; }",
+      "Summary": "Gets or sets the client id for a user-assigned managed identity."
+    },
+    {
       "DisplayName": "ManagementMode",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationStatus",
@@ -81680,6 +81831,17 @@
       "AnchorId": "member-p-cephalon-engine-patterns-builtinpatterns-microservicetopology",
       "Signature": "PatternDescriptor MicroserviceTopology { get; }",
       "Summary": "Gets the microservice deployment topology pattern."
+    },
+    {
+      "DisplayName": "MicrosoftGraphInvitationDeliveryAzureIdentityOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryAzureIdentityOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity-configuration-microsoftgraphinvitationdeliveryazureidentityoptions-ctor",
+      "Signature": "MicrosoftGraphInvitationDeliveryAzureIdentityOptions()",
+      "Summary": "Initializes a new instance of the \u0060MicrosoftGraphInvitationDeliveryAzureIdentityOptions\u0060 class."
     },
     {
       "DisplayName": "MicrosoftGraphInvitationDeliveryClientResult",
@@ -107988,6 +108150,17 @@
       "Summary": "Gets the stable scope identifier."
     },
     {
+      "DisplayName": "Scopes",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryAzureIdentityOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity-configuration-microsoftgraphinvitationdeliveryazureidentityoptions-scopes",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Scopes { get; set; }",
+      "Summary": "Gets or sets the Microsoft Graph scopes requested from the configured Azure credential."
+    },
+    {
       "DisplayName": "Score",
       "Category": "Properties",
       "DeclaringTypeName": "KnowledgeQueryMatch",
@@ -117421,6 +117594,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-mailgundelivery-aspnetcore-hosting-mailguninvitationdeliverystatuscallbackeventresult-tenantid",
       "Signature": "string TenantId { get; }",
       "Summary": "Gets the Cephalon tenant identifier when supplied."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
+      "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryAzureIdentityOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity",
+      "FileName": "cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity-configuration-microsoftgraphinvitationdeliveryazureidentityoptions-tenantid",
+      "Signature": "string TenantId { get; set; }",
+      "Summary": "Gets or sets the Microsoft Entra tenant id used by \u0060DefaultAzureCredential\u0060."
     },
     {
       "DisplayName": "TenantId",

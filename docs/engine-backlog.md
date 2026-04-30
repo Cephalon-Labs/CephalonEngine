@@ -11,7 +11,7 @@ The repo now contains a healthy but mixed set of surfaces:
 - managed execution and provisioning runtimes
 - adoption-ready tooling
 
-The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, eventing subscription execution binding catalog proof, eventing subscription execution readiness catalog proof, eventing subscription readiness operator-surface proof, eventing in-process subscription execution proof, eventing publication operator-action proof, eventing bounded in-process retry proof, eventing bounded in-process idempotency proof, eventing publication runtime-state proof, Wolverine bounded subscription retry proof, Wolverine bounded dispatch terminal-failure proof, Wolverine dispatch publish-exception proof, first-class event-dispatch terminal-failure operator posture, first agentics managed-execution proof, agentics tool-run operator-surface proof, agentics tool execution operator-action proof, agentics bounded process-local retry proof, agentics process-local duplicate-completed idempotency proof, agentics approval-required and terminal-failure operator posture, first retrieval managed index/query proof, retrieval knowledge-index operator-surface proof, retrieval reindex operator-action proof, retrieval query operator-action proof, retrieval background reindex scheduler proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, governance domain-ownership proof-evaluation proof, governance domain-ownership proof-challenge issuance proof, governance domain-ownership proof-publication planning proof, governance domain-ownership HTTP file proof-collection proof, governance domain-ownership proof-verification runner proof, governance domain-ownership DNS TXT proof-collection proof, bounded governance domain-ownership proof-polling runner proof, opt-in governance domain-ownership automatic background proof-polling proof, governance domain-ownership HTTP file proof-publication proof, host-driven governance tenant-administration workflow proof, ASP.NET Core tenant-administration command endpoint proof, host-agnostic governance invitation delivery dispatch proof, ASP.NET Core invitation delivery dispatch endpoint proof, governance invitation delivery retry queue proof, host-agnostic governance invitation delivery status reconciliation proof, ASP.NET Core normalized invitation delivery status callback endpoint proof, ASP.NET Core normalized callback signature verification proof, ASP.NET Core normalized signed-callback replay protection proof, governance invitation delivery status observation-store proof, ASP.NET Core delivery status observation read endpoint proof, SMTP invitation delivery sender proof, SendGrid invitation delivery sender proof, SendGrid Event Webhook callback translation proof, SendGrid signed Event Webhook verification proof, SendGrid signed Event Webhook process-local replay protection proof, SendGrid Event Webhook event-id idempotency proof, Mailgun invitation delivery sender proof, Mailgun webhook callback translation proof, Mailgun signed webhook verification proof, Mailgun signed webhook replay-token protection proof, Mailgun webhook event-id idempotency proof, Microsoft Graph invitation delivery sender proof, and behavior REST profile runtime ownership metadata proof landed.
+The current backlog slice is now about keeping the April 2026 maturity reset truthful after the audit baseline, first eventing execution proof, eventing subscription execution binding catalog proof, eventing subscription execution readiness catalog proof, eventing subscription readiness operator-surface proof, eventing in-process subscription execution proof, eventing publication operator-action proof, eventing bounded in-process retry proof, eventing bounded in-process idempotency proof, eventing publication runtime-state proof, Wolverine bounded subscription retry proof, Wolverine bounded dispatch terminal-failure proof, Wolverine dispatch publish-exception proof, first-class event-dispatch terminal-failure operator posture, first agentics managed-execution proof, agentics tool-run operator-surface proof, agentics tool execution operator-action proof, agentics bounded process-local retry proof, agentics process-local duplicate-completed idempotency proof, agentics approval-required and terminal-failure operator posture, first retrieval managed index/query proof, retrieval knowledge-index operator-surface proof, retrieval reindex operator-action proof, retrieval query operator-action proof, retrieval background reindex scheduler proof, multi-tenancy governance-boundary split, first governance membership evaluation proof, invitation validation proof, declared domain-ownership validation proof, approval/remediation action decision proof, in-process governance-action workflow proof, opt-in durable governance-action store proof, opt-in durable governance-membership store proof, opt-in durable governance-invitation store proof, opt-in durable governance-domain ownership store proof, in-process governance domain-ownership verification workflow proof, governance domain-ownership proof-evaluation proof, governance domain-ownership proof-challenge issuance proof, governance domain-ownership proof-publication planning proof, governance domain-ownership HTTP file proof-collection proof, governance domain-ownership proof-verification runner proof, governance domain-ownership DNS TXT proof-collection proof, bounded governance domain-ownership proof-polling runner proof, opt-in governance domain-ownership automatic background proof-polling proof, governance domain-ownership HTTP file proof-publication proof, host-driven governance tenant-administration workflow proof, ASP.NET Core tenant-administration command endpoint proof, host-agnostic governance invitation delivery dispatch proof, ASP.NET Core invitation delivery dispatch endpoint proof, governance invitation delivery retry queue proof, host-agnostic governance invitation delivery status reconciliation proof, ASP.NET Core normalized invitation delivery status callback endpoint proof, ASP.NET Core normalized callback signature verification proof, ASP.NET Core normalized signed-callback replay protection proof, governance invitation delivery status observation-store proof, ASP.NET Core delivery status observation read endpoint proof, SMTP invitation delivery sender proof, SendGrid invitation delivery sender proof, SendGrid Event Webhook callback translation proof, SendGrid signed Event Webhook verification proof, SendGrid signed Event Webhook process-local replay protection proof, SendGrid Event Webhook event-id idempotency proof, Mailgun invitation delivery sender proof, Mailgun webhook callback translation proof, Mailgun signed webhook verification proof, Mailgun signed webhook replay-token protection proof, Mailgun webhook event-id idempotency proof, Microsoft Graph invitation delivery sender proof, Microsoft Graph Azure Identity token-provider proof, and behavior REST profile runtime ownership metadata proof landed.
 
 Current focus:
 
@@ -20,7 +20,7 @@ Current focus:
 - treat the `Cephalon.Behaviors.Http` profile/generated REST lane as a mixed `M2` proof: profile metadata stays application-authored and non-publishing, while explicit module-owned activation flows through Cephalon-managed materialization, governance, runtime catalogs, and ownership metadata
 - treat the `Cephalon.Agentics` dispatcher/run-state lane plus bounded process-local retry, duplicate-completed idempotency posture, approval-required filtering, terminal-failure filtering, and the abstraction-level `/engine/agent-tool-runs`, `/engine/agent-tool-runs/retry-pending`, `/engine/agent-tool-runs/idempotency-duplicates`, `/engine/agent-tool-runs/approval-required`, `/engine/agent-tool-runs/terminal-failures`, `POST /engine/agent-tools/{toolId}/runs`, and `snapshot.AgentToolRuns` seams as the first agentics-family managed/operator proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane plus the abstraction-level `/engine/knowledge-indexes`, `POST /engine/knowledge-indexes/{collectionId}/queries`, `POST /engine/knowledge-indexes/{collectionId}/reindex`, `snapshot.KnowledgeIndexes`, and opt-in background reindex scheduler seams as the first retrieval-family managed/operator proof instead of widening catalog breadth there again
-- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, local durable stores, invitation delivery dispatch/retry/status reconciliation, delivery-status observation storage, tenant administration, declared domain ownership, proof collection/polling, and governance-action proofs; `Cephalon.MultiTenancy.Governance.AspNetCore` owns optional fail-closed governance endpoints plus provider-neutral callback signature/replay protection; HTTP, SMTP, SendGrid, Mailgun, and Microsoft Graph sender companions own outbound delivery handoff; SendGrid ASP.NET Core owns callback translation/signature/replay/event-id hardening; and Mailgun ASP.NET Core owns callback translation/signature/replay-token/event-id hardening. Distributed or provider-backed membership/invitation/domain/action-store backends, SES or other additional provider-specific email API senders, SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, cross-node retry leases, provider-specific or distributed callback inboxes, cross-node callback replay protection, distributed event-id ledgers, other non-SendGrid/non-Mailgun provider-specific delivery-status callback payload translation, provider-specific callback signature verification beyond shipped SendGrid/Mailgun hardening, provider polling, remediation execution beyond state transitions, actual DNS proof publication, provider-backed proof publication or mutation, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows remain later package-owned work
+- keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, local durable stores, invitation delivery dispatch/retry/status reconciliation, delivery-status observation storage, tenant administration, declared domain ownership, proof collection/polling, and governance-action proofs; `Cephalon.MultiTenancy.Governance.AspNetCore` owns optional fail-closed governance endpoints plus provider-neutral callback signature/replay protection; HTTP, SMTP, SendGrid, Mailgun, and Microsoft Graph sender companions own outbound delivery handoff; `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity` owns the optional Azure Identity access-token provider for the Graph sender; SendGrid ASP.NET Core owns callback translation/signature/replay/event-id hardening; and Mailgun ASP.NET Core owns callback translation/signature/replay-token/event-id hardening. Distributed or provider-backed membership/invitation/domain/action-store backends, SES or other additional provider-specific email API senders, SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, cross-node retry leases, provider-specific or distributed callback inboxes, cross-node callback replay protection, distributed event-id ledgers, other non-SendGrid/non-Mailgun provider-specific delivery-status callback payload translation, provider-specific callback signature verification beyond shipped SendGrid/Mailgun hardening, provider polling, remediation execution beyond state transitions, actual DNS proof publication, provider-backed proof publication or mutation, identity-provider synchronization, Microsoft Entra app registration/permission consent/mailbox access policy, public onboarding, and tenant-admin UI/backoffice flows remain later package-owned work
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed replay ledgers, or exactly-once delivery claims
 
 ### ENG-230 Engine surface maturity model and audit baseline
@@ -2044,7 +2044,8 @@ Follow-up later:
 - Mailgun webhook callback translation is covered by `ENG-300`; Mailgun HMAC signed-webhook
   verification is covered by `ENG-301`; replay-token rejection is covered by `ENG-302`;
   observation-store-backed event-id idempotency is covered by `ENG-303`; Microsoft Graph `sendMail`
-  handoff is covered by `ENG-304`; SES or other additional provider-specific email API
+  handoff is covered by `ENG-304`; Microsoft Graph Azure Identity token acquisition is covered by
+  `ENG-305`; SES or other additional provider-specific email API
   senders, SMS/chat/CRM/identity-provider senders, provider polling, durable/distributed callback
   inboxes, distributed replay/event-id ledgers, public onboarding, tenant-admin UI/backoffice,
   identity-provider synchronization, distributed retry queues, cross-node retry leases, and
@@ -2216,9 +2217,9 @@ Why:
   Mailgun senders, but Microsoft 365 tenants still needed a first-party Graph `sendMail` handoff
   without writing host glue around the governance dispatcher
 - the narrow owned proof is accepted-handoff email sending through Microsoft Graph with safe
-  metadata, replaceable HTTP client and access-token provider seams, and explicit OAuth/provider
-  boundaries; it is not token issuance, Graph notification processing, provider polling, delivery
-  completion, or a durable callback inbox
+  metadata, replaceable HTTP client and access-token provider seams, and explicit Microsoft Graph provider
+  boundaries; it is not token-provider implementation before `ENG-305`, Graph notification processing,
+  provider polling, delivery completion, or a durable callback inbox
 
 Delivered:
 
@@ -2239,8 +2240,49 @@ Delivered:
 
 Follow-up later:
 
-- OAuth app registration, token issuance and refresh policy, Graph change notifications, delivery
-  completion after accepted `sendMail` handoff, provider polling, durable callback inboxes,
+- Microsoft Entra app registration, permission consent, mailbox access policy, Graph change notifications,
+  delivery completion after accepted `sendMail` handoff, provider polling, durable callback inboxes,
+  distributed replay/event-id ledgers, SES or other provider-specific email API senders,
+  SMS/chat/CRM/identity-provider senders, public onboarding, tenant-admin UI,
+  identity-provider synchronization, distributed retry queues, cross-node retry leases, and
+  distributed/provider-backed governance stores remain future governance slices until a package
+  truly owns those paths
+
+### ENG-305 Multi-tenancy invitation delivery Microsoft Graph Azure Identity token provider baseline
+
+Status: done
+Estimate: 5
+Issue: #820
+
+Why:
+
+- after `ENG-304`, the Microsoft Graph sender had a truthful access-token provider seam, but production
+  hosts still needed to write boilerplate token-provider glue before using managed identity or workload identity
+- the narrow owned proof is Azure Identity token acquisition for Graph scopes through an additive companion
+  package; it is not Microsoft Entra application registration, permission consent, mailbox access policy,
+  delivery completion after Graph accepts `sendMail`, Graph notification processing, provider polling,
+  or a durable callback inbox
+
+Delivered:
+
+- add `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity` with
+  `AddCephalonMicrosoftGraphInvitationDeliveryAzureIdentity(...)` and
+  `MicrosoftGraphInvitationDeliveryAzureIdentityOptions`
+- register a replaceable `IMicrosoftGraphInvitationDeliveryAccessTokenProvider` backed by Azure Identity,
+  with configuration/code-first `DefaultAzureCredential` setup, explicit `TokenCredential` injection,
+  Graph scope selection, tenant id, managed-identity client id, authority-host selection, and safe
+  interactive-browser/managed-identity credential toggles
+- keep Graph `sendMail` ownership in `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery`, while
+  the Azure Identity companion only supplies bearer tokens and emits diagnostics `4574-4575` without
+  recording token values, authorization headers, raw payloads, or message bodies
+- update component docs, operations guidance, compatibility, maturity-audit ownership, planning truth,
+  generated reference docs, package-surface coverage, and focused composition/tooling coverage
+
+Follow-up later:
+
+- Microsoft Entra app registration, Graph `Mail.Send` permission consent, mailbox access policy,
+  credential lifecycle policy beyond the host's selected Azure credential, Graph change notifications,
+  delivery completion after accepted `sendMail` handoff, provider polling, durable callback inboxes,
   distributed replay/event-id ledgers, SES or other provider-specific email API senders,
   SMS/chat/CRM/identity-provider senders, public onboarding, tenant-admin UI,
   identity-provider synchronization, distributed retry queues, cross-node retry leases, and
@@ -10258,9 +10300,13 @@ Upcoming sequence from the April 2026 maturity reset:
 
 - ENG-304 Multi-tenancy invitation delivery Microsoft Graph sender baseline (shipped, issue #819)
 
+### Sprint 110
+
+- ENG-305 Multi-tenancy invitation delivery Microsoft Graph Azure Identity token provider baseline (shipped, issue #820)
+
 ### Later / not scheduled yet
 
-- actual DNS proof publication, provider-backed proof publication or mutation, remediation execution beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, SES or other additional provider-specific email API senders, SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, provider-specific or distributed callback inboxes, cross-node callback replay protection, distributed event-id ledgers, other non-SendGrid/non-Mailgun provider-specific callback translation and signature verification, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows when `Cephalon.MultiTenancy.Governance` or provider packs truly own those paths
+- actual DNS proof publication, provider-backed proof publication or mutation, remediation execution beyond status transitions, distributed or provider-backed membership/invitation/domain/action-store backends, SES or other additional provider-specific email API senders, SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, provider-specific or distributed callback inboxes, cross-node callback replay protection, distributed event-id ledgers, other non-SendGrid/non-Mailgun provider-specific callback translation and signature verification, Microsoft Entra app registration/permission consent/mailbox access policy, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows when `Cephalon.MultiTenancy.Governance` or provider packs truly own those paths
 
 ### Foundation Sprint 1
 

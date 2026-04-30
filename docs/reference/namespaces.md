@@ -460,6 +460,14 @@ Browse the published API surface by namespace.
 
 - [Cephalon.MultiTenancy.Governance.MailgunDelivery](cephalon-multitenancy-governance-mailgundelivery.md#namespace-cephalon-multitenancy-governance-mailgundelivery-services): 3 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services)
 
+## `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Configuration`
+
+- [Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity](cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity.md#namespace-cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity&namespace=Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Configuration)
+
+## `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Hosting`
+
+- [Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity](cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity.md#namespace-cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity&namespace=Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Hosting)
+
 ## `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration`
 
 - [Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery](cephalon-multitenancy-governance-microsoftgraphdelivery.md#namespace-cephalon-multitenancy-governance-microsoftgraphdelivery-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery&namespace=Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration)

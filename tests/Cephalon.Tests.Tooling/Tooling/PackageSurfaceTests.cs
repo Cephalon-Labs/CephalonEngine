@@ -1389,6 +1389,15 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void MultiTenancyGovernanceMicrosoftGraphDeliveryAzureIdentityAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Hosting.MicrosoftGraphInvitationDeliveryAzureIdentityServiceCollectionExtensions).Assembly,
+            typeof(global::Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Configuration.MicrosoftGraphInvitationDeliveryAzureIdentityOptions),
+            typeof(global::Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Hosting.MicrosoftGraphInvitationDeliveryAzureIdentityServiceCollectionExtensions));
+    }
+
+    [Fact]
     public void MultiTenancyGovernanceMailgunDeliveryAspNetCoreAssemblyExposesOnlyTheDocumentedHostContracts()
     {
         AssertExportedTypes(

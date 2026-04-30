@@ -9,6 +9,7 @@
 - code-first setup through `AddCephalonMicrosoftGraphInvitationDelivery(...)`
 - a replaceable `IMicrosoftGraphInvitationDeliveryClient` seam so hosts can test, wrap, or replace the default HTTP client
 - a replaceable `IMicrosoftGraphInvitationDeliveryAccessTokenProvider` seam so hosts can plug in Azure.Identity, managed identity, workload identity, token caches, or gateway-issued tokens
+- first-party Azure.Identity token-provider integration through the optional `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity` companion
 - recipient email resolution from dispatch metadata, invitation metadata, or `InviteeKind = email`
 - plain-text and optional HTML message templates with bounded Cephalon placeholders
 - Microsoft Graph JSON `sendMail` payload construction for subject, body, recipients, optional categories, optional custom `x-*` internet message headers, and `saveToSentItems`
@@ -81,11 +82,19 @@ Configuration example:
 
 Production hosts should usually register `IMicrosoftGraphInvitationDeliveryAccessTokenProvider` instead of storing a short-lived bearer token in configuration. The default `AccessToken` option exists for tests, local proofs, and controlled host-owned token handoff scenarios.
 
+For Azure-hosted or Microsoft Entra-integrated apps, install `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity` and call:
+
+```csharp
+builder.Services.AddCephalonMicrosoftGraphInvitationDeliveryAzureIdentity(builder.Configuration);
+```
+
+That companion replaces the default static-token provider with an `Azure.Identity` provider that requests `https://graph.microsoft.com/.default` by default and can use managed identity, workload identity, environment credentials, Azure CLI, Azure PowerShell, or other `DefaultAzureCredential` chain entries according to Azure SDK behavior.
+
 The sender posts JSON to `/v1.0/users/{SenderUserId}/sendMail` when `SenderUserId` is configured, or `/v1.0/me/sendMail` otherwise. It treats `202 Accepted` as dispatch handoff only: Microsoft Graph accepted the request, but downstream Exchange Online processing and recipient delivery remain provider-managed. The package records Graph request ids as safe metadata rather than pretending Graph returned a durable message id.
 
 Unsupported channels are reported as `suppressed`; invalid recipient resolution, missing tokens, HTTP errors, non-accepted status codes, and timeouts are reported as `sender-failed`. The governance dispatcher persists those outcomes through the invitation store, queues retryable sender failures when the retry queue is enabled, and keeps `externalDeliveryOwnership = provider-managed` when this sender handled the attempt.
 
-This package intentionally owns Microsoft Graph `sendMail` handoff only. OAuth application registration, token acquisition, mailbox provisioning, Graph throttling policy beyond the bounded request timeout, delivery completion, provider polling, Graph change notifications, callback inboxes, public onboarding, tenant-admin UI/backoffice, identity-provider sync, and distributed/provider-backed governance stores remain host-owned or future companion work until a package owns those paths explicitly. SendGrid Mail Send handoff lives in `Cephalon.MultiTenancy.Governance.SendGridDelivery`; Mailgun Messages API handoff lives in `Cephalon.MultiTenancy.Governance.MailgunDelivery`; SMTP relay handoff lives in `Cephalon.MultiTenancy.Governance.SmtpDelivery`.
+This package intentionally owns Microsoft Graph `sendMail` handoff only. Microsoft Entra app registration, permission consent, mailbox provisioning/access policy, Graph throttling policy beyond the bounded request timeout, delivery completion, provider polling, Graph change notifications, callback inboxes, public onboarding, tenant-admin UI/backoffice, identity-provider sync, and distributed/provider-backed governance stores remain host-owned or future companion work until a package owns those paths explicitly. Token acquisition through Azure.Identity lives in `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity`. SendGrid Mail Send handoff lives in `Cephalon.MultiTenancy.Governance.SendGridDelivery`; Mailgun Messages API handoff lives in `Cephalon.MultiTenancy.Governance.MailgunDelivery`; SMTP relay handoff lives in `Cephalon.MultiTenancy.Governance.SmtpDelivery`.
 
 ## Related docs
 
@@ -95,6 +104,7 @@ This package intentionally owns Microsoft Graph `sendMail` handoff only. OAuth a
 - [Cephalon.MultiTenancy.Governance.HttpDelivery](multi-tenancy-governance-httpdelivery.md)
 - [Cephalon.MultiTenancy.Governance.MailgunDelivery](multi-tenancy-governance-mailgundelivery.md)
 - [Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore](multi-tenancy-governance-mailgundelivery-aspnetcore.md)
+- [Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity](multi-tenancy-governance-microsoftgraphdelivery-azureidentity.md)
 - [Cephalon.MultiTenancy.Governance.SendGridDelivery](multi-tenancy-governance-sendgriddelivery.md)
 - [Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore](multi-tenancy-governance-sendgriddelivery-aspnetcore.md)
 - [Cephalon.MultiTenancy.Governance.SmtpDelivery](multi-tenancy-governance-smtpdelivery.md)

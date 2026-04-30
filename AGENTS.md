@@ -48,6 +48,10 @@ When working in this repository:
 - `Cephalon.Agentics`, `Cephalon.Eventing`, `Cephalon.Retrieval`, `Cephalon.MultiTenancy`, and `Cephalon.Edge` are the baseline technology companion packages
 - `Cephalon.MultiTenancy.Governance` is the multi-tenancy governance companion package for membership, invitation, invitation delivery dispatch, invitation delivery status reconciliation, tenant administration, domain ownership, and approval/remediation runtime proofs
 - `Cephalon.MultiTenancy.Governance.HttpDelivery` is the optional HTTP webhook invitation-delivery sender companion package for the multi-tenancy governance dispatcher, including provider-neutral idempotency headers, optional signed webhook request headers, and bounded in-process retry/backoff
+- `Cephalon.MultiTenancy.Governance.MailgunDelivery` is the optional Mailgun Messages API invitation-delivery sender companion package for the multi-tenancy governance dispatcher
+- `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore` is the optional ASP.NET Core Mailgun webhook callback translation companion package for the multi-tenancy governance delivery-status reconciler
+- `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery` is the optional Microsoft Graph `sendMail` invitation-delivery sender companion package for the multi-tenancy governance dispatcher
+- `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity` is the optional Azure.Identity access-token provider companion package for the Microsoft Graph invitation-delivery sender
 - `Cephalon.MultiTenancy.Governance.SendGridDelivery` is the optional SendGrid Mail Send API invitation-delivery sender companion package for the multi-tenancy governance dispatcher
 - `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore` is the optional ASP.NET Core SendGrid Event Webhook callback translation companion package for the multi-tenancy governance delivery-status reconciler
 - `Cephalon.Scaffolding` is the generation companion package for turning blueprint scaffold plans into concrete files
@@ -297,6 +301,18 @@ Current source layout:
 - `src/Cephalon.MultiTenancy.Governance.HttpDelivery/Configuration` -> `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration`
 - `src/Cephalon.MultiTenancy.Governance.HttpDelivery/Hosting` -> `Cephalon.MultiTenancy.Governance.HttpDelivery.Hosting`
 - `src/Cephalon.MultiTenancy.Governance.HttpDelivery/Services` -> `Cephalon.MultiTenancy.Governance.HttpDelivery.Services`
+- `src/Cephalon.MultiTenancy.Governance.MailgunDelivery/Configuration` -> `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration`
+- `src/Cephalon.MultiTenancy.Governance.MailgunDelivery/Hosting` -> `Cephalon.MultiTenancy.Governance.MailgunDelivery.Hosting`
+- `src/Cephalon.MultiTenancy.Governance.MailgunDelivery/Services` -> `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services`
+- `src/Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore/Configuration` -> `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Configuration`
+- `src/Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore/Hosting` -> `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Hosting`
+- `src/Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore/Services` -> `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Services`
+- `src/Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery/Configuration` -> `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration`
+- `src/Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery/Hosting` -> `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Hosting`
+- `src/Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery/Services` -> `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services`
+- `src/Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity/Configuration` -> `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Configuration`
+- `src/Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity/Hosting` -> `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Hosting`
+- `src/Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity/Services` -> `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Services`
 - `src/Cephalon.MultiTenancy.Governance.SendGridDelivery/Configuration` -> `Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration`
 - `src/Cephalon.MultiTenancy.Governance.SendGridDelivery/Hosting` -> `Cephalon.MultiTenancy.Governance.SendGridDelivery.Hosting`
 - `src/Cephalon.MultiTenancy.Governance.SendGridDelivery/Services` -> `Cephalon.MultiTenancy.Governance.SendGridDelivery.Services`

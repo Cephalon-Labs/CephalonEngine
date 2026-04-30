@@ -38,6 +38,8 @@ public sealed class DocumentationCoverageTests
                 "multi-tenancy-governance-mailgundelivery-aspnetcore.md",
             ["Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery"] =
                 "multi-tenancy-governance-microsoftgraphdelivery.md",
+            ["Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity"] =
+                "multi-tenancy-governance-microsoftgraphdelivery-azureidentity.md",
             ["Cephalon.MultiTenancy.Governance.SendGridDelivery"] = "multi-tenancy-governance-sendgriddelivery.md",
             ["Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore"] =
                 "multi-tenancy-governance-sendgriddelivery-aspnetcore.md",

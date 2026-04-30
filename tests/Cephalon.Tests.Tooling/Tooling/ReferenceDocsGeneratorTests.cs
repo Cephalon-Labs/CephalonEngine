@@ -654,6 +654,7 @@ public sealed class ReferenceDocsGeneratorTests
                 "Cephalon.MultiTenancy.Governance.HttpDelivery",
                 "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
                 "Cephalon.MultiTenancy.Governance.MailgunDelivery",
+                "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity",
                 "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
                 "Cephalon.MultiTenancy.Governance.SendGridDelivery",
                 "Cephalon.MultiTenancy.Governance",
@@ -740,6 +741,7 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance-httpdelivery.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance-mailgundelivery-aspnetcore.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance-mailgundelivery.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance-microsoftgraphdelivery.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance-sendgriddelivery.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance-smtpdelivery.md");
@@ -802,6 +804,9 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.MultiTenancy.Governance.MailgunDelivery", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity", StringComparison.Ordinal));
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery", StringComparison.Ordinal));
