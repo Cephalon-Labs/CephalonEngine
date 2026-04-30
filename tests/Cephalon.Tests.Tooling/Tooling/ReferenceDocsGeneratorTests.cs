@@ -651,6 +651,7 @@ public sealed class ReferenceDocsGeneratorTests
                 "Cephalon.Ids.Sfid",
                 "Cephalon.MultiTenancy",
                 "Cephalon.MultiTenancy.Governance.AspNetCore",
+                "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
                 "Cephalon.MultiTenancy.Governance.HttpDelivery",
                 "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
                 "Cephalon.MultiTenancy.Governance.MailgunDelivery",
@@ -738,6 +739,7 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-identity-aspnetcore.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance-aspnetcore.md");
+        Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance-amazonsesdelivery.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance-httpdelivery.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance-mailgundelivery-aspnetcore.md");
         Assert.Contains(rendered.Files, static file => file.Path == "cephalon-multitenancy-governance-mailgundelivery.md");
@@ -795,6 +797,9 @@ public sealed class ReferenceDocsGeneratorTests
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.MultiTenancy.Governance.AspNetCore", StringComparison.Ordinal));
+        Assert.Contains(
+            assemblies,
+            static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.MultiTenancy.Governance.AmazonSesDelivery", StringComparison.Ordinal));
         Assert.Contains(
             assemblies,
             static assembly => string.Equals(assembly.GetProperty("AssemblyName").GetString(), "Cephalon.MultiTenancy.Governance.HttpDelivery", StringComparison.Ordinal));

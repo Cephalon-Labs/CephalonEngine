@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-30T02:17:48.1235354+00:00",
+  "GeneratedAtUtc": "2026-04-30T03:12:31.9012037+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -336,6 +336,14 @@
       "FileName": "cephalon-multitenancy-governance.md",
       "NamespaceCount": 3,
       "TypeCount": 132
+    },
+    {
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "Category": "Phase 13 Companion Packs",
+      "Description": "Amazon SES v2 invitation delivery sender companion package for Cephalon multi-tenancy governance workloads.",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "NamespaceCount": 3,
+      "TypeCount": 5
     },
     {
       "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
@@ -1429,6 +1437,27 @@
       "TypeCount": 1
     },
     {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-amazonsesdelivery-configuration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-amazonsesdelivery-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-amazonsesdelivery-services",
+      "TypeCount": 3
+    },
+    {
       "NamespaceName": "Cephalon.MultiTenancy.Governance.AspNetCore.Configuration",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.AspNetCore",
       "FileName": "cephalon-multitenancy-governance-aspnetcore.md",
@@ -2338,6 +2367,66 @@
         "Fields": 0,
         "Properties": 7,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "AmazonSesInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliveryclientresult",
+      "Declaration": "public sealed class AmazonSesInvitationDeliveryClientResult",
+      "Summary": "Describes the result returned by an Amazon SES invitation delivery client.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "AmazonSesInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage",
+      "Declaration": "public sealed class AmazonSesInvitationDeliveryMessage",
+      "Summary": "Describes a prepared Amazon SES invitation delivery message.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 10,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "AmazonSesInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions",
+      "Declaration": "public sealed class AmazonSesInvitationDeliveryOptions",
+      "Summary": "Configures Amazon SES v2 delivery for tenant invitations dispatched by the governance companion pack.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 16,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "AmazonSesInvitationDeliveryServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-amazonsesdelivery-hosting-amazonsesinvitationdeliveryservicecollectionextensions",
+      "Declaration": "public static class AmazonSesInvitationDeliveryServiceCollectionExtensions",
+      "Summary": "Adds Amazon SES v2 invitation delivery services to a Cephalon host.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
       }
     },
     {
@@ -9083,6 +9172,21 @@
       "AnchorId": "type-cephalon-abstractions-eventsourcing-iaggregate-tstate",
       "Declaration": "public interface IAggregate\u003CTState\u003E",
       "Summary": "Applies domain events to an aggregate state projection.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IAmazonSesInvitationDeliveryClient",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-amazonsesdelivery-services-iamazonsesinvitationdeliveryclient",
+      "Declaration": "public interface IAmazonSesInvitationDeliveryClient",
+      "Summary": "Sends Amazon SES invitation delivery messages for the Amazon SES companion pack.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -18675,6 +18779,17 @@
     },
     {
       "DisplayName": "Accepted",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliveryclientresult-accepted",
+      "Signature": "bool Accepted { get; }",
+      "Summary": "Gets a value indicating whether Amazon SES accepted the request."
+    },
+    {
+      "DisplayName": "Accepted",
       "Category": "Methods",
       "DeclaringTypeName": "BehaviorResult",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
@@ -18870,6 +18985,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryexecutioncoordinationsnapshot-acceptedcount",
       "Signature": "long AcceptedCount { get; }",
       "Summary": "Gets the number of coordinator attempts accepted for execution."
+    },
+    {
+      "DisplayName": "AcceptedStatusCodes",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-acceptedstatuscodes",
+      "Signature": "IReadOnlyList\u003Cint\u003E AcceptedStatusCodes { get; set; }",
+      "Summary": "Gets or sets response status codes that indicate Amazon SES accepted the request."
     },
     {
       "DisplayName": "AcceptedStatusCodes",
@@ -21490,6 +21616,28 @@
       "Summary": "Adds Alibaba Cloud-aware OpenTelemetry registration for the Cephalon engine diagnostics surface."
     },
     {
+      "DisplayName": "AddCephalonAmazonSesInvitationDelivery",
+      "Category": "Methods",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-amazonsesdelivery-hosting-amazonsesinvitationdeliveryservicecollectionextensions-addcephalonamazonsesinvitationdelivery-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions",
+      "Signature": "IServiceCollection AddCephalonAmazonSesInvitationDelivery(this IServiceCollection services, Action\u003CAmazonSesInvitationDeliveryOptions\u003E configure)",
+      "Summary": "Adds Amazon SES invitation delivery using code-first configuration."
+    },
+    {
+      "DisplayName": "AddCephalonAmazonSesInvitationDelivery",
+      "Category": "Methods",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-amazonsesdelivery-hosting-amazonsesinvitationdeliveryservicecollectionextensions-addcephalonamazonsesinvitationdelivery-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions",
+      "Signature": "IServiceCollection AddCephalonAmazonSesInvitationDelivery(this IServiceCollection services, IConfiguration configuration, Action\u003CAmazonSesInvitationDeliveryOptions\u003E configure)",
+      "Summary": "Adds Amazon SES invitation delivery using configuration as the primary source of SES settings."
+    },
+    {
       "DisplayName": "AddCephalonAws",
       "Category": "Methods",
       "DeclaringTypeName": "AwsHostApplicationBuilderExtensions",
@@ -23600,6 +23748,39 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-alreadyverified",
       "Signature": "const string AlreadyVerified",
       "Summary": "The domain ownership declaration was already verified and no new proof run was needed."
+    },
+    {
+      "DisplayName": "AmazonSesInvitationDeliveryClientResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliveryclientresult-ctor-system-boolean-system-nullable-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "AmazonSesInvitationDeliveryClientResult(bool accepted, int? statusCode, string providerMessageId, string reason, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates an Amazon SES invitation delivery client result."
+    },
+    {
+      "DisplayName": "AmazonSesInvitationDeliveryMessage",
+      "Category": "Constructors",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string",
+      "Signature": "AmazonSesInvitationDeliveryMessage(string messageId, string from, string toEmail, string subject, string textBody, string htmlBody, IReadOnlyList\u003Cstring\u003E replyToAddresses, IReadOnlyDictionary\u003Cstring, string\u003E tags, string configurationSetName)",
+      "Summary": "Creates a prepared Amazon SES invitation delivery message."
+    },
+    {
+      "DisplayName": "AmazonSesInvitationDeliveryOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-ctor",
+      "Signature": "AmazonSesInvitationDeliveryOptions()",
+      "Summary": "Initializes a new instance of the \u0060AmazonSesInvitationDeliveryOptions\u0060 class."
     },
     {
       "DisplayName": "AntiCorruptionLayer",
@@ -35832,6 +36013,28 @@
       "AnchorId": "member-p-cephalon-referencedocs-generation-referencedocsrequest-configuration",
       "Signature": "string Configuration { get; }",
       "Summary": "Gets the build configuration to read from."
+    },
+    {
+      "DisplayName": "ConfigurationSetName",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-configurationsetname",
+      "Signature": "string ConfigurationSetName { get; }",
+      "Summary": "Gets the optional SES configuration set name attached to the request."
+    },
+    {
+      "DisplayName": "ConfigurationSetName",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-configurationsetname",
+      "Signature": "string ConfigurationSetName { get; set; }",
+      "Summary": "Gets or sets the optional SES configuration set name attached to the request."
     },
     {
       "DisplayName": "ConfigureBehaviors",
@@ -48439,6 +48642,17 @@
     {
       "DisplayName": "Enabled",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-enabled",
+      "Signature": "bool Enabled { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the Amazon SES invitation sender should be registered."
+    },
+    {
+      "DisplayName": "Enabled",
+      "Category": "Properties",
       "DeclaringTypeName": "AuditHistoryExportSelection",
       "NamespaceName": "Cephalon.Abstractions.AppModel",
       "AssemblyName": "Cephalon.Abstractions",
@@ -55160,6 +55374,17 @@
     {
       "DisplayName": "From",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-from",
+      "Signature": "string From { get; }",
+      "Summary": "Gets the formatted sender address."
+    },
+    {
+      "DisplayName": "From",
+      "Category": "Properties",
       "DeclaringTypeName": "MailgunInvitationDeliveryMessage",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
@@ -55200,6 +55425,17 @@
       "AnchorId": "member-m-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
       "Signature": "AlibabaCloudTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
       "Summary": "Binds Alibaba Cloud telemetry export options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "AmazonSesInvitationDeliveryOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Binds Amazon SES invitation delivery options from configuration."
     },
     {
       "DisplayName": "FromConfiguration",
@@ -55963,6 +56199,17 @@
     {
       "DisplayName": "FromEmail",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-fromemail",
+      "Signature": "string FromEmail { get; set; }",
+      "Summary": "Gets or sets the sender email address used in the SES message."
+    },
+    {
+      "DisplayName": "FromEmail",
+      "Category": "Properties",
       "DeclaringTypeName": "MailgunInvitationDeliveryOptions",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
@@ -56003,6 +56250,17 @@
       "AnchorId": "member-m-cephalon-engine-configuration-modulepackagereference-frommanifest-system-string-system-string",
       "Signature": "ModulePackageReference FromManifest(string manifestPath, string id)",
       "Summary": "Creates a manifest-backed package reference."
+    },
+    {
+      "DisplayName": "FromName",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-fromname",
+      "Signature": "string FromName { get; set; }",
+      "Summary": "Gets or sets the optional sender display name used in the SES message."
     },
     {
       "DisplayName": "FromName",
@@ -61353,6 +61611,17 @@
     {
       "DisplayName": "HasHtmlBody",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-hashtmlbody",
+      "Signature": "bool HasHtmlBody { get; }",
+      "Summary": "Gets a value indicating whether the message has an HTML body."
+    },
+    {
+      "DisplayName": "HasHtmlBody",
+      "Category": "Properties",
       "DeclaringTypeName": "MicrosoftGraphInvitationDeliveryMessage",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery",
@@ -64499,6 +64768,17 @@
     {
       "DisplayName": "HtmlBody",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-htmlbody",
+      "Signature": "string HtmlBody { get; }",
+      "Summary": "Gets the optional HTML message body."
+    },
+    {
+      "DisplayName": "HtmlBody",
+      "Category": "Properties",
       "DeclaringTypeName": "MailgunInvitationDeliveryMessage",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
@@ -64539,6 +64819,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-htmlbody",
       "Signature": "string HtmlBody { get; }",
       "Summary": "Gets the optional HTML message body."
+    },
+    {
+      "DisplayName": "HtmlBodyTemplate",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-htmlbodytemplate",
+      "Signature": "string HtmlBodyTemplate { get; set; }",
+      "Summary": "Gets or sets the optional HTML Amazon SES message body template."
     },
     {
       "DisplayName": "HtmlBodyTemplate",
@@ -66442,6 +66733,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-includecontextheaders",
       "Signature": "bool IncludeContextHeaders { get; set; }",
       "Summary": "Gets or sets a value indicating whether safe Cephalon context headers should be added to the SMTP message."
+    },
+    {
+      "DisplayName": "IncludeContextTags",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-includecontexttags",
+      "Signature": "bool IncludeContextTags { get; set; }",
+      "Summary": "Gets or sets a value indicating whether safe Cephalon context tags should be added to the SES request."
     },
     {
       "DisplayName": "IncludeContextVariables",
@@ -79371,6 +79673,17 @@
     {
       "DisplayName": "MessageId",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-messageid",
+      "Signature": "string MessageId { get; }",
+      "Summary": "Gets the deterministic Cephalon message identifier carried in Amazon SES message tags."
+    },
+    {
+      "DisplayName": "MessageId",
+      "Category": "Properties",
       "DeclaringTypeName": "EventDispatchExecutionReport",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -79730,6 +80043,17 @@
       "AnchorId": "member-p-cephalon-abstractions-agentics-agenttoolrunstate-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; set; }",
       "Summary": "The operator-facing metadata captured by the latest report."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliveryclientresult-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional safe client metadata."
     },
     {
       "DisplayName": "Metadata",
@@ -94655,6 +94979,17 @@
     {
       "DisplayName": "ProviderMessageId",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliveryclientresult-providermessageid",
+      "Signature": "string ProviderMessageId { get; }",
+      "Summary": "Gets the Amazon SES message identifier when one is known."
+    },
+    {
+      "DisplayName": "ProviderMessageId",
+      "Category": "Properties",
       "DeclaringTypeName": "MailgunInvitationDeliveryClientResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
@@ -97306,6 +97641,17 @@
     {
       "DisplayName": "Reason",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliveryclientresult-reason",
+      "Signature": "string Reason { get; }",
+      "Summary": "Gets the provider-facing outcome reason."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
       "DeclaringTypeName": "AuthorizationDecision",
       "NamespaceName": "Cephalon.Abstractions.Authorization",
       "AssemblyName": "Cephalon.Abstractions",
@@ -97785,6 +98131,17 @@
       "FileName": "cephalon-multitenancy-governance-smtpdelivery.md",
       "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-recipientaddressmetadatakey",
       "Signature": "string RecipientAddressMetadataKey { get; set; }",
+      "Summary": "Gets or sets the metadata key used to resolve the recipient email address when the invitee id is not an email address."
+    },
+    {
+      "DisplayName": "RecipientEmailMetadataKey",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-recipientemailmetadatakey",
+      "Signature": "string RecipientEmailMetadataKey { get; set; }",
       "Summary": "Gets or sets the metadata key used to resolve the recipient email address when the invitee id is not an email address."
     },
     {
@@ -99240,6 +99597,17 @@
       "Summary": "Gets or sets the Oracle Cloud region to stamp onto exported resources when one should be explicit."
     },
     {
+      "DisplayName": "RegionSystemName",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-regionsystemname",
+      "Signature": "string RegionSystemName { get; set; }",
+      "Summary": "Gets or sets the optional AWS region system name used when Cephalon creates the default SES v2 client."
+    },
+    {
       "DisplayName": "Register",
       "Category": "Methods",
       "DeclaringTypeName": "EventStreamRegistry",
@@ -100492,6 +100860,28 @@
       "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviorcontext-replyasync-system-object-system-threading-cancellationtoken",
       "Signature": "Task ReplyAsync(object reply, CancellationToken cancellationToken)",
       "Summary": "Sends a reply message back to the caller through the active transport."
+    },
+    {
+      "DisplayName": "ReplyToAddresses",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-replytoaddresses",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ReplyToAddresses { get; }",
+      "Summary": "Gets reply-to addresses attached to the message."
+    },
+    {
+      "DisplayName": "ReplyToAddresses",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-replytoaddresses",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ReplyToAddresses { get; set; }",
+      "Summary": "Gets or sets reply-to addresses attached to the SES message."
     },
     {
       "DisplayName": "ReportAsync",
@@ -108680,6 +109070,17 @@
     {
       "DisplayName": "SendAsync",
       "Category": "Methods",
+      "DeclaringTypeName": "IAmazonSesInvitationDeliveryClient",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-amazonsesdelivery-services-iamazonsesinvitationdeliveryclient-sendasync-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CAmazonSesInvitationDeliveryClientResult\u003E SendAsync(AmazonSesInvitationDeliveryMessage message, CancellationToken cancellationToken)",
+      "Summary": "Sends one Amazon SES invitation delivery message."
+    },
+    {
+      "DisplayName": "SendAsync",
+      "Category": "Methods",
       "DeclaringTypeName": "IMailgunInvitationDeliveryClient",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
@@ -108742,6 +109143,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes-senderfailed",
       "Signature": "const string SenderFailed",
       "Summary": "The sender failed or returned a failed outcome."
+    },
+    {
+      "DisplayName": "SenderId",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-senderid",
+      "Signature": "string SenderId { get; set; }",
+      "Summary": "Gets or sets the sender identifier used by \u0060TenantInvitationDeliveryRequest.SenderId\u0060."
     },
     {
       "DisplayName": "SenderId",
@@ -113693,6 +114105,17 @@
     {
       "DisplayName": "StatusCode",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryClientResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliveryclientresult-statuscode",
+      "Signature": "int? StatusCode { get; }",
+      "Summary": "Gets the HTTP status code reported by the AWS SDK when one is known."
+    },
+    {
+      "DisplayName": "StatusCode",
+      "Category": "Properties",
       "DeclaringTypeName": "MailgunInvitationDeliveryClientResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
@@ -114397,6 +114820,17 @@
     {
       "DisplayName": "Subject",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-subject",
+      "Signature": "string Subject { get; }",
+      "Summary": "Gets the message subject."
+    },
+    {
+      "DisplayName": "Subject",
+      "Category": "Properties",
       "DeclaringTypeName": "MailgunInvitationDeliveryMessage",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
@@ -114646,6 +115080,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowoutcomes-subjectmismatch",
       "Signature": "const string SubjectMismatch",
       "Summary": "The matching tenant-governance action has a different subject boundary."
+    },
+    {
+      "DisplayName": "SubjectTemplate",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-subjecttemplate",
+      "Signature": "string SubjectTemplate { get; set; }",
+      "Summary": "Gets or sets the Amazon SES message subject template."
     },
     {
       "DisplayName": "SubjectTemplate",
@@ -115321,6 +115766,17 @@
     {
       "DisplayName": "SupportedChannels",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-supportedchannels",
+      "Signature": "IReadOnlyList\u003Cstring\u003E SupportedChannels { get; set; }",
+      "Summary": "Gets or sets delivery channels accepted by this sender."
+    },
+    {
+      "DisplayName": "SupportedChannels",
+      "Category": "Properties",
       "DeclaringTypeName": "HttpInvitationDeliveryOptions",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.HttpDelivery",
@@ -115922,6 +116378,28 @@
       "AnchorId": "member-p-cephalon-agentics-services-agenttooldescriptor-tags",
       "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
       "Summary": "Gets the normalized tag set associated with the tool."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-tags",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Tags { get; }",
+      "Summary": "Gets Amazon SES message tags attached to the message."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-tags",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Tags { get; set; }",
+      "Summary": "Gets or sets Amazon SES message tags attached to the request."
     },
     {
       "DisplayName": "Tags",
@@ -118830,6 +119308,17 @@
     {
       "DisplayName": "TextBody",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-textbody",
+      "Signature": "string TextBody { get; }",
+      "Summary": "Gets the plain-text message body."
+    },
+    {
+      "DisplayName": "TextBody",
+      "Category": "Properties",
       "DeclaringTypeName": "MailgunInvitationDeliveryMessage",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery",
@@ -118870,6 +119359,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-textbody",
       "Signature": "string TextBody { get; }",
       "Summary": "Gets the plain-text message body."
+    },
+    {
+      "DisplayName": "TextBodyTemplate",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-textbodytemplate",
+      "Signature": "string TextBodyTemplate { get; set; }",
+      "Summary": "Gets or sets the plain-text Amazon SES message body template."
     },
     {
       "DisplayName": "TextBodyTemplate",
@@ -119024,6 +119524,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-timeout",
       "Signature": "TimeSpan? Timeout { get; }",
       "Summary": "Gets the optional per-request HTTP collection timeout."
+    },
+    {
+      "DisplayName": "TimeoutSeconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-timeoutseconds",
+      "Signature": "int TimeoutSeconds { get; set; }",
+      "Summary": "Gets or sets the maximum time allowed for the Amazon SES SDK request."
     },
     {
       "DisplayName": "TimeoutSeconds",
@@ -119244,6 +119755,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-todisplayname",
       "Signature": "string ToDisplayName { get; }",
       "Summary": "Gets the optional recipient display name."
+    },
+    {
+      "DisplayName": "ToEmail",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryMessage",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-toemail",
+      "Signature": "string ToEmail { get; }",
+      "Summary": "Gets the recipient email address."
     },
     {
       "DisplayName": "ToEmail",

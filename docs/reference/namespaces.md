@@ -416,6 +416,18 @@ Browse the published API surface by namespace.
 
 - [Cephalon.MultiTenancy](cephalon-multitenancy.md#namespace-cephalon-multitenancy-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy&namespace=Cephalon.MultiTenancy.Configuration)
 
+## `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration`
+
+- [Cephalon.MultiTenancy.Governance.AmazonSesDelivery](cephalon-multitenancy-governance-amazonsesdelivery.md#namespace-cephalon-multitenancy-governance-amazonsesdelivery-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration)
+
+## `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Hosting`
+
+- [Cephalon.MultiTenancy.Governance.AmazonSesDelivery](cephalon-multitenancy-governance-amazonsesdelivery.md#namespace-cephalon-multitenancy-governance-amazonsesdelivery-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Hosting)
+
+## `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services`
+
+- [Cephalon.MultiTenancy.Governance.AmazonSesDelivery](cephalon-multitenancy-governance-amazonsesdelivery.md#namespace-cephalon-multitenancy-governance-amazonsesdelivery-services): 3 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services)
+
 ## `Cephalon.MultiTenancy.Governance.AspNetCore.Configuration`
 
 - [Cephalon.MultiTenancy.Governance.AspNetCore](cephalon-multitenancy-governance-aspnetcore.md#namespace-cephalon-multitenancy-governance-aspnetcore-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Configuration)

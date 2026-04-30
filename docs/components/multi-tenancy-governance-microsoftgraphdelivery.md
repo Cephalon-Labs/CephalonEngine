@@ -94,12 +94,13 @@ The sender posts JSON to `/v1.0/users/{SenderUserId}/sendMail` when `SenderUserI
 
 Unsupported channels are reported as `suppressed`; invalid recipient resolution, missing tokens, HTTP errors, non-accepted status codes, and timeouts are reported as `sender-failed`. The governance dispatcher persists those outcomes through the invitation store, queues retryable sender failures when the retry queue is enabled, and keeps `externalDeliveryOwnership = provider-managed` when this sender handled the attempt.
 
-This package intentionally owns Microsoft Graph `sendMail` handoff only. Microsoft Entra app registration, permission consent, mailbox provisioning/access policy, Graph throttling policy beyond the bounded request timeout, delivery completion, provider polling, Graph change notifications, callback inboxes, public onboarding, tenant-admin UI/backoffice, identity-provider sync, and distributed/provider-backed governance stores remain host-owned or future companion work until a package owns those paths explicitly. Token acquisition through Azure.Identity lives in `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity`. SendGrid Mail Send handoff lives in `Cephalon.MultiTenancy.Governance.SendGridDelivery`; Mailgun Messages API handoff lives in `Cephalon.MultiTenancy.Governance.MailgunDelivery`; SMTP relay handoff lives in `Cephalon.MultiTenancy.Governance.SmtpDelivery`.
+This package intentionally owns Microsoft Graph `sendMail` handoff only. Microsoft Entra app registration, permission consent, mailbox provisioning/access policy, Graph throttling policy beyond the bounded request timeout, delivery completion, provider polling, Graph change notifications, callback inboxes, public onboarding, tenant-admin UI/backoffice, identity-provider sync, and distributed/provider-backed governance stores remain host-owned or future companion work until a package owns those paths explicitly. Token acquisition through Azure.Identity lives in `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity`. Amazon SES v2 handoff lives in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery`; SendGrid Mail Send handoff lives in `Cephalon.MultiTenancy.Governance.SendGridDelivery`; Mailgun Messages API handoff lives in `Cephalon.MultiTenancy.Governance.MailgunDelivery`; SMTP relay handoff lives in `Cephalon.MultiTenancy.Governance.SmtpDelivery`.
 
 ## Related docs
 
 - [Cephalon.MultiTenancy](multi-tenancy.md)
 - [Cephalon.MultiTenancy.Governance](multi-tenancy-governance.md)
+- [Cephalon.MultiTenancy.Governance.AmazonSesDelivery](multi-tenancy-governance-amazonsesdelivery.md)
 - [Cephalon.MultiTenancy.Governance.AspNetCore](multi-tenancy-governance-aspnetcore.md)
 - [Cephalon.MultiTenancy.Governance.HttpDelivery](multi-tenancy-governance-httpdelivery.md)
 - [Cephalon.MultiTenancy.Governance.MailgunDelivery](multi-tenancy-governance-mailgundelivery.md)

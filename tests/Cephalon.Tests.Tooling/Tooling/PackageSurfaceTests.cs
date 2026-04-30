@@ -1364,6 +1364,18 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void MultiTenancyGovernanceAmazonSesDeliveryAssemblyExposesOnlyTheDocumentedPackContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Hosting.AmazonSesInvitationDeliveryServiceCollectionExtensions).Assembly,
+            typeof(global::Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions),
+            typeof(global::Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Hosting.AmazonSesInvitationDeliveryServiceCollectionExtensions),
+            typeof(global::Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.IAmazonSesInvitationDeliveryClient),
+            typeof(global::Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.AmazonSesInvitationDeliveryClientResult),
+            typeof(global::Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.AmazonSesInvitationDeliveryMessage));
+    }
+
+    [Fact]
     public void MultiTenancyGovernanceSendGridDeliveryAssemblyExposesOnlyTheDocumentedPackContracts()
     {
         AssertExportedTypes(

@@ -47,6 +47,7 @@ When working in this repository:
 - `Cephalon.ReferenceDocs` is the optional repo-local reference-doc publishing tool for XML-comment-driven API output
 - `Cephalon.Agentics`, `Cephalon.Eventing`, `Cephalon.Retrieval`, `Cephalon.MultiTenancy`, and `Cephalon.Edge` are the baseline technology companion packages
 - `Cephalon.MultiTenancy.Governance` is the multi-tenancy governance companion package for membership, invitation, invitation delivery dispatch, invitation delivery status reconciliation, tenant administration, domain ownership, and approval/remediation runtime proofs
+- `Cephalon.MultiTenancy.Governance.AmazonSesDelivery` is the optional Amazon SES v2 invitation-delivery sender companion package for the multi-tenancy governance dispatcher
 - `Cephalon.MultiTenancy.Governance.HttpDelivery` is the optional HTTP webhook invitation-delivery sender companion package for the multi-tenancy governance dispatcher, including provider-neutral idempotency headers, optional signed webhook request headers, and bounded in-process retry/backoff
 - `Cephalon.MultiTenancy.Governance.MailgunDelivery` is the optional Mailgun Messages API invitation-delivery sender companion package for the multi-tenancy governance dispatcher
 - `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore` is the optional ASP.NET Core Mailgun webhook callback translation companion package for the multi-tenancy governance delivery-status reconciler
@@ -298,6 +299,9 @@ Current source layout:
 - `src/Cephalon.Retrieval/Modules` -> `Cephalon.Retrieval.Modules`
 - `src/Cephalon.Retrieval/Registration` -> `Cephalon.Retrieval.Registration`
 - `src/Cephalon.Retrieval/Services` -> `Cephalon.Retrieval.Services`
+- `src/Cephalon.MultiTenancy.Governance.AmazonSesDelivery/Configuration` -> `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration`
+- `src/Cephalon.MultiTenancy.Governance.AmazonSesDelivery/Hosting` -> `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Hosting`
+- `src/Cephalon.MultiTenancy.Governance.AmazonSesDelivery/Services` -> `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services`
 - `src/Cephalon.MultiTenancy.Governance.HttpDelivery/Configuration` -> `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration`
 - `src/Cephalon.MultiTenancy.Governance.HttpDelivery/Hosting` -> `Cephalon.MultiTenancy.Governance.HttpDelivery.Hosting`
 - `src/Cephalon.MultiTenancy.Governance.HttpDelivery/Services` -> `Cephalon.MultiTenancy.Governance.HttpDelivery.Services`

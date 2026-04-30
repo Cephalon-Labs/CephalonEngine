@@ -9,6 +9,9 @@ Browse the published API surface by public member.
 - [Abac](cephalon-abstractions.md#member-f-cephalon-abstractions-authorization-authorizationmode-abac): `Fields` on `AuthorizationMode` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Abac&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Indicates an attribute-based access-control evaluation.
   - `const AuthorizationMode Abac`
+- [Accepted](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliveryclientresult-accepted): `Properties` on `AmazonSesInvitationDeliveryClientResult` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=Accepted&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services&scope=members)
+  - Gets a value indicating whether Amazon SES accepted the request.
+  - `bool Accepted { get; }`
 - [Accepted](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorresult-accepted-1-0-system-string-system-string): `Methods` on `BehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Accepted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates an accepted result with an optional payload value.
   - `BehaviorResult<T> Accepted<T>(T value, string message, string code)`
@@ -63,6 +66,9 @@ Browse the published API surface by public member.
 - [AcceptedCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryexecutioncoordinationsnapshot-acceptedcount): `Properties` on `TenantInvitationDeliveryRetryExecutionCoordinationSnapshot` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=AcceptedCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the number of coordinator attempts accepted for execution.
   - `long AcceptedCount { get; }`
+- [AcceptedStatusCodes](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-acceptedstatuscodes): `Properties` on `AmazonSesInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=AcceptedStatusCodes&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration&scope=members)
+  - Gets or sets response status codes that indicate Amazon SES accepted the request.
+  - `IReadOnlyList<int> AcceptedStatusCodes { get; set; }`
 - [AcceptedStatusCodes](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-acceptedstatuscodes): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=AcceptedStatusCodes&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
   - Gets or sets response status codes that indicate the Mailgun API accepted the request.
   - `IReadOnlyList<int> AcceptedStatusCodes { get; set; }`
@@ -777,6 +783,12 @@ Browse the published API surface by public member.
 - [AddCephalonAlibabaCloud](cephalon-observability-alibabacloud.md#member-m-cephalon-observability-alibabacloud-hosting-alibabacloudhostapplicationbuilderextensions-addcephalonalibabacloud-1-0-system-action-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions): `Methods` on `AlibabaCloudHostApplicationBuilderExtensions` in `Cephalon.Observability.AlibabaCloud.Hosting` (`Cephalon.Observability.AlibabaCloud`) [Browse](browse.html?q=AddCephalonAlibabaCloud&assembly=Cephalon.Observability.AlibabaCloud&namespace=Cephalon.Observability.AlibabaCloud.Hosting&scope=members)
   - Adds Alibaba Cloud-aware OpenTelemetry registration for the Cephalon engine diagnostics surface.
   - `TBuilder AddCephalonAlibabaCloud<TBuilder>(this TBuilder builder, Action<AlibabaCloudTelemetryExportOptions> configure)`
+- [AddCephalonAmazonSesInvitationDelivery](cephalon-multitenancy-governance-amazonsesdelivery.md#member-m-cephalon-multitenancy-governance-amazonsesdelivery-hosting-amazonsesinvitationdeliveryservicecollectionextensions-addcephalonamazonsesinvitationdelivery-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions): `Methods` on `AmazonSesInvitationDeliveryServiceCollectionExtensions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Hosting` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=AddCephalonAmazonSesInvitationDelivery&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Hosting&scope=members)
+  - Adds Amazon SES invitation delivery using code-first configuration.
+  - `IServiceCollection AddCephalonAmazonSesInvitationDelivery(this IServiceCollection services, Action<AmazonSesInvitationDeliveryOptions> configure)`
+- [AddCephalonAmazonSesInvitationDelivery](cephalon-multitenancy-governance-amazonsesdelivery.md#member-m-cephalon-multitenancy-governance-amazonsesdelivery-hosting-amazonsesinvitationdeliveryservicecollectionextensions-addcephalonamazonsesinvitationdelivery-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions): `Methods` on `AmazonSesInvitationDeliveryServiceCollectionExtensions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Hosting` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=AddCephalonAmazonSesInvitationDelivery&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Hosting&scope=members)
+  - Adds Amazon SES invitation delivery using configuration as the primary source of SES settings.
+  - `IServiceCollection AddCephalonAmazonSesInvitationDelivery(this IServiceCollection services, IConfiguration configuration, Action<AmazonSesInvitationDeliveryOptions> configure)`
 - [AddCephalonAws](cephalon-observability-aws.md#member-m-cephalon-observability-aws-hosting-awshostapplicationbuilderextensions-addcephalonaws-1-0-system-action-cephalon-observability-aws-configuration-awstelemetryexportoptions): `Methods` on `AwsHostApplicationBuilderExtensions` in `Cephalon.Observability.Aws.Hosting` (`Cephalon.Observability.Aws`) [Browse](browse.html?q=AddCephalonAws&assembly=Cephalon.Observability.Aws&namespace=Cephalon.Observability.Aws.Hosting&scope=members)
   - Adds AWS-aware OpenTelemetry registration for the Cephalon engine diagnostics surface.
   - `TBuilder AddCephalonAws<TBuilder>(this TBuilder builder, Action<AwsTelemetryExportOptions> configure)`
@@ -1353,6 +1365,15 @@ Browse the published API surface by public member.
 - [AlreadyVerified](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-alreadyverified): `Fields` on `TenantDomainOwnershipProofVerificationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=AlreadyVerified&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The domain ownership declaration was already verified and no new proof run was needed.
   - `const string AlreadyVerified`
+- [AmazonSesInvitationDeliveryClientResult](cephalon-multitenancy-governance-amazonsesdelivery.md#member-m-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliveryclientresult-ctor-system-boolean-system-nullable-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AmazonSesInvitationDeliveryClientResult` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=AmazonSesInvitationDeliveryClientResult&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services&scope=members)
+  - Creates an Amazon SES invitation delivery client result.
+  - `AmazonSesInvitationDeliveryClientResult(bool accepted, int? statusCode, string providerMessageId, string reason, IReadOnlyDictionary<string, string> metadata)`
+- [AmazonSesInvitationDeliveryMessage](cephalon-multitenancy-governance-amazonsesdelivery.md#member-m-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string): `Constructors` on `AmazonSesInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=AmazonSesInvitationDeliveryMessage&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services&scope=members)
+  - Creates a prepared Amazon SES invitation delivery message.
+  - `AmazonSesInvitationDeliveryMessage(string messageId, string from, string toEmail, string subject, string textBody, string htmlBody, IReadOnlyList<string> replyToAddresses, IReadOnlyDictionary<string, string> tags, string configurationSetName)`
+- [AmazonSesInvitationDeliveryOptions](cephalon-multitenancy-governance-amazonsesdelivery.md#member-m-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-ctor): `Constructors` on `AmazonSesInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=AmazonSesInvitationDeliveryOptions&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration&scope=members)
+  - Initializes a new instance of the `AmazonSesInvitationDeliveryOptions` class.
+  - `AmazonSesInvitationDeliveryOptions()`
 - [AntiCorruptionLayer](cephalon-engine.md#member-p-cephalon-engine-patterns-builtinpatterns-anticorruptionlayer): `Properties` on `BuiltInPatterns` in `Cephalon.Engine.Patterns` (`Cephalon.Engine`) [Browse](browse.html?q=AntiCorruptionLayer&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Patterns&scope=members)
   - Gets the anti-corruption-layer pattern.
   - `PatternDescriptor AntiCorruptionLayer { get; }`
@@ -4695,6 +4716,12 @@ Browse the published API surface by public member.
 - [Configuration](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-referencedocsrequest-configuration): `Properties` on `ReferenceDocsRequest` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=Configuration&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the build configuration to read from.
   - `string Configuration { get; }`
+- [ConfigurationSetName](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-configurationsetname): `Properties` on `AmazonSesInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=ConfigurationSetName&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services&scope=members)
+  - Gets the optional SES configuration set name attached to the request.
+  - `string ConfigurationSetName { get; }`
+- [ConfigurationSetName](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-configurationsetname): `Properties` on `AmazonSesInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=ConfigurationSetName&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration&scope=members)
+  - Gets or sets the optional SES configuration set name attached to the request.
+  - `string ConfigurationSetName { get; set; }`
 - [ConfigureBehaviors](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviorownermodule-configurebehaviors-cephalon-abstractions-behaviors-ibehaviormodulebuilder): `Methods` on `IBehaviorOwnerModule` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=ConfigureBehaviors&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Registers the behaviors owned by the current module.
   - `void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)`
@@ -8136,6 +8163,9 @@ Browse the published API surface by public member.
 - [EnableCleanupSweep](cephalon-edge-traefik.md#member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-enablecleanupsweep): `Properties` on `TraefikTrafficObservationOptions` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=EnableCleanupSweep&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
   - Gets or sets a value indicating whether apply-and-reconcile mode should also sweep previously owned stale IngressRoute resources.
   - `bool EnableCleanupSweep { get; set; }`
+- [Enabled](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-enabled): `Properties` on `AmazonSesInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=Enabled&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration&scope=members)
+  - Gets or sets a value indicating whether the Amazon SES invitation sender should be registered.
+  - `bool Enabled { get; set; }`
 - [Enabled](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryexportselection-enabled): `Properties` on `AuditHistoryExportSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Enabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets a value indicating whether audit-history export was explicitly enabled.
   - `bool? Enabled { get; }`
@@ -9972,6 +10002,9 @@ Browse the published API surface by public member.
 - [FreshUntilUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroleprobedescriptor-freshuntilutc): `Properties` on `DatabaseRoleProbeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=FreshUntilUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the UTC timestamp until which the current answer remains fresh, when known.
   - `DateTimeOffset? FreshUntilUtc { get; }`
+- [From](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-from): `Properties` on `AmazonSesInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=From&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services&scope=members)
+  - Gets the formatted sender address.
+  - `string From { get; }`
 - [From](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-from): `Properties` on `MailgunInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=From&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
   - Gets the formatted sender address.
   - `string From { get; }`
@@ -9984,6 +10017,9 @@ Browse the published API surface by public member.
 - [FromConfiguration](cephalon-observability-alibabacloud.md#member-m-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `AlibabaCloudTelemetryExportOptions` in `Cephalon.Observability.AlibabaCloud.Configuration` (`Cephalon.Observability.AlibabaCloud`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.Observability.AlibabaCloud&namespace=Cephalon.Observability.AlibabaCloud.Configuration&scope=members)
   - Binds Alibaba Cloud telemetry export options from configuration.
   - `AlibabaCloudTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
+- [FromConfiguration](cephalon-multitenancy-governance-amazonsesdelivery.md#member-m-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `AmazonSesInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration&scope=members)
+  - Binds Amazon SES invitation delivery options from configuration.
+  - `AmazonSesInvitationDeliveryOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
 - [FromConfiguration](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-apiroutesoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string): `Methods` on `ApiRoutesOptions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=FromConfiguration&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Binds and normalizes API route settings from configuration.
   - `ApiRoutesOptions FromConfiguration(IConfiguration configuration, string sectionPath)`
@@ -10191,6 +10227,9 @@ Browse the published API surface by public member.
 - [FromDisplayName](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-fromdisplayname): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=FromDisplayName&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
   - Gets or sets the optional sender display name used in the SMTP message.
   - `string FromDisplayName { get; set; }`
+- [FromEmail](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-fromemail): `Properties` on `AmazonSesInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=FromEmail&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration&scope=members)
+  - Gets or sets the sender email address used in the SES message.
+  - `string FromEmail { get; set; }`
 - [FromEmail](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-fromemail): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=FromEmail&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
   - Gets or sets the sender email address used in the Mailgun message.
   - `string FromEmail { get; set; }`
@@ -10203,6 +10242,9 @@ Browse the published API surface by public member.
 - [FromManifest](cephalon-engine.md#member-m-cephalon-engine-configuration-modulepackagereference-frommanifest-system-string-system-string): `Methods` on `ModulePackageReference` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=FromManifest&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Creates a manifest-backed package reference.
   - `ModulePackageReference FromManifest(string manifestPath, string id)`
+- [FromName](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-fromname): `Properties` on `AmazonSesInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=FromName&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration&scope=members)
+  - Gets or sets the optional sender display name used in the SES message.
+  - `string FromName { get; set; }`
 - [FromName](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-fromname): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=FromName&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
   - Gets or sets the optional sender display name used in the Mailgun message.
   - `string FromName { get; set; }`
@@ -11667,6 +11709,9 @@ Browse the published API surface by public member.
 - [HasFullCoverage](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportingcoveragestatus-hasfullcoverage): `Properties` on `CdcCaptureExecutionRuntimeReportingCoverageStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasFullCoverage&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the execution runtime has reported every declared CDC capture.
   - `bool HasFullCoverage { get; }`
+- [HasHtmlBody](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-hashtmlbody): `Properties` on `AmazonSesInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=HasHtmlBody&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services&scope=members)
+  - Gets a value indicating whether the message has an HTML body.
+  - `bool HasHtmlBody { get; }`
 - [HasHtmlBody](cephalon-multitenancy-governance-microsoftgraphdelivery.md#member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-services-microsoftgraphinvitationdeliverymessage-hashtmlbody): `Properties` on `MicrosoftGraphInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services` (`Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery`) [Browse](browse.html?q=HasHtmlBody&assembly=Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery&namespace=Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services&scope=members)
   - Gets a value indicating whether the message uses HTML content.
   - `bool HasHtmlBody { get; }`
@@ -12525,6 +12570,9 @@ Browse the published API surface by public member.
 - [Hostnames](cephalon-edge-kubernetesgateway.md#member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficrouteoptions-hostnames): `Properties` on `KubernetesGatewayTrafficRouteOptions` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=Hostnames&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
   - Gets the optional hostnames published by the projected HTTPRoute.
   - `IList<string> Hostnames { get; }`
+- [HtmlBody](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-htmlbody): `Properties` on `AmazonSesInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=HtmlBody&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services&scope=members)
+  - Gets the optional HTML message body.
+  - `string HtmlBody { get; }`
 - [HtmlBody](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-htmlbody): `Properties` on `MailgunInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=HtmlBody&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
   - Gets the optional HTML message body.
   - `string HtmlBody { get; }`
@@ -12537,6 +12585,9 @@ Browse the published API surface by public member.
 - [HtmlBody](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-htmlbody): `Properties` on `SmtpInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=HtmlBody&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
   - Gets the optional HTML message body.
   - `string HtmlBody { get; }`
+- [HtmlBodyTemplate](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-htmlbodytemplate): `Properties` on `AmazonSesInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=HtmlBodyTemplate&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration&scope=members)
+  - Gets or sets the optional HTML Amazon SES message body template.
+  - `string HtmlBodyTemplate { get; set; }`
 - [HtmlBodyTemplate](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-htmlbodytemplate): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=HtmlBodyTemplate&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
   - Gets or sets the optional HTML Mailgun message body template.
   - `string HtmlBodyTemplate { get; set; }`
@@ -13059,6 +13110,9 @@ Browse the published API surface by public member.
 - [IncludeContextHeaders](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-includecontextheaders): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=IncludeContextHeaders&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
   - Gets or sets a value indicating whether safe Cephalon context headers should be added to the SMTP message.
   - `bool IncludeContextHeaders { get; set; }`
+- [IncludeContextTags](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-includecontexttags): `Properties` on `AmazonSesInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=IncludeContextTags&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration&scope=members)
+  - Gets or sets a value indicating whether safe Cephalon context tags should be added to the SES request.
+  - `bool IncludeContextTags { get; set; }`
 - [IncludeContextVariables](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-includecontextvariables): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=IncludeContextVariables&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
   - Gets or sets a value indicating whether safe Cephalon user variables should be added to the Mailgun request.
   - `bool IncludeContextVariables { get; set; }`
@@ -16596,6 +16650,9 @@ Browse the published API surface by public member.
 - [MessageFieldNumber](cephalon-aspnetcore-grpc.md#member-f-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-messagefieldnumber): `Fields` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=MessageFieldNumber&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Field number for the "message" field.
   - `const int MessageFieldNumber`
+- [MessageId](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-messageid): `Properties` on `AmazonSesInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=MessageId&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services&scope=members)
+  - Gets the deterministic Cephalon message identifier carried in Amazon SES message tags.
+  - `string MessageId { get; }`
 - [MessageId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchexecutionreport-messageid): `Properties` on `EventDispatchExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=MessageId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable outbound message identifier when one was reported.
   - `string MessageId { get; }`
@@ -16695,6 +16752,9 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolrunstate-metadata): `Properties` on `AgentToolRunState` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - The operator-facing metadata captured by the latest report.
   - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
+- [Metadata](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliveryclientresult-metadata): `Properties` on `AmazonSesInvitationDeliveryClientResult` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=Metadata&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services&scope=members)
+  - Gets optional safe client metadata.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appblueprint-metadata): `Properties` on `AppBlueprint` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets additional blueprint metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -20769,6 +20829,9 @@ Browse the published API surface by public member.
 - [ProviderMaterializerId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationruntimedescriptor-providermaterializerid): `Properties` on `CellTrafficAutomationRuntimeDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderMaterializerId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the optional selected provider materializer identifier.
   - `string ProviderMaterializerId { get; }`
+- [ProviderMessageId](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliveryclientresult-providermessageid): `Properties` on `AmazonSesInvitationDeliveryClientResult` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=ProviderMessageId&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services&scope=members)
+  - Gets the Amazon SES message identifier when one is known.
+  - `string ProviderMessageId { get; }`
 - [ProviderMessageId](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliveryclientresult-providermessageid): `Properties` on `MailgunInvitationDeliveryClientResult` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=ProviderMessageId&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
   - Gets the Mailgun message identifier when one is known.
   - `string ProviderMessageId { get; }`
@@ -21498,6 +21561,9 @@ Browse the published API surface by public member.
 - [Reason](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutiondecision-reason): `Properties` on `AgentToolExecutionDecision` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Reason&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the operator-facing reason associated with the decision.
   - `string Reason { get; }`
+- [Reason](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliveryclientresult-reason): `Properties` on `AmazonSesInvitationDeliveryClientResult` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=Reason&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services&scope=members)
+  - Gets the provider-facing outcome reason.
+  - `string Reason { get; }`
 - [Reason](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-authorizationdecision-reason): `Properties` on `AuthorizationDecision` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Reason&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets the human-readable reason associated with the decision.
   - `string Reason { get; }`
@@ -21630,6 +21696,9 @@ Browse the published API surface by public member.
 - [RecipientAddressMetadataKey](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-configuration-smtpinvitationdeliveryoptions-recipientaddressmetadatakey): `Properties` on `SmtpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=RecipientAddressMetadataKey&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration&scope=members)
   - Gets or sets the metadata key used to resolve the recipient email address when the invitee id is not an email address.
   - `string RecipientAddressMetadataKey { get; set; }`
+- [RecipientEmailMetadataKey](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-recipientemailmetadatakey): `Properties` on `AmazonSesInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=RecipientEmailMetadataKey&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration&scope=members)
+  - Gets or sets the metadata key used to resolve the recipient email address when the invitee id is not an email address.
+  - `string RecipientEmailMetadataKey { get; set; }`
 - [RecipientEmailMetadataKey](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-recipientemailmetadatakey): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=RecipientEmailMetadataKey&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
   - Gets or sets the metadata key used to resolve the recipient email address when the invitee id is not an email address.
   - `string RecipientEmailMetadataKey { get; set; }`
@@ -22026,6 +22095,9 @@ Browse the published API surface by public member.
 - [Region](cephalon-observability-oraclecloud.md#member-p-cephalon-observability-oraclecloud-configuration-oraclecloudtelemetryexportoptions-region): `Properties` on `OracleCloudTelemetryExportOptions` in `Cephalon.Observability.OracleCloud.Configuration` (`Cephalon.Observability.OracleCloud`) [Browse](browse.html?q=Region&assembly=Cephalon.Observability.OracleCloud&namespace=Cephalon.Observability.OracleCloud.Configuration&scope=members)
   - Gets or sets the Oracle Cloud region to stamp onto exported resources when one should be explicit.
   - `string Region { get; set; }`
+- [RegionSystemName](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-regionsystemname): `Properties` on `AmazonSesInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=RegionSystemName&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration&scope=members)
+  - Gets or sets the optional AWS region system name used when Cephalon creates the default SES v2 client.
+  - `string RegionSystemName { get; set; }`
 - [Register](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventstreamregistry-register-cephalon-abstractions-eventsourcing-eventstreamdescriptor): `Methods` on `EventStreamRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Register&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Registers one event-stream descriptor with the registry.
   - `void Register(EventStreamDescriptor descriptor)`
@@ -22368,6 +22440,12 @@ Browse the published API surface by public member.
 - [ReplyAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviorcontext-replyasync-system-object-system-threading-cancellationtoken): `Methods` on `IBehaviorContext` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReplyAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Sends a reply message back to the caller through the active transport.
   - `Task ReplyAsync(object reply, CancellationToken cancellationToken)`
+- [ReplyToAddresses](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-replytoaddresses): `Properties` on `AmazonSesInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=ReplyToAddresses&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services&scope=members)
+  - Gets reply-to addresses attached to the message.
+  - `IReadOnlyList<string> ReplyToAddresses { get; }`
+- [ReplyToAddresses](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-replytoaddresses): `Properties` on `AmazonSesInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=ReplyToAddresses&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration&scope=members)
+  - Gets or sets reply-to addresses attached to the SES message.
+  - `IReadOnlyList<string> ReplyToAddresses { get; set; }`
 - [ReportAsync](cephalon-agentics.md#member-m-cephalon-agentics-services-iagenttoolrunreporter-reportasync-cephalon-agentics-services-agenttoolexecutionreport-system-threading-cancellationtoken): `Methods` on `IAgentToolRunReporter` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ReportAsync&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Records one runtime observation for an agent-tool run.
   - `ValueTask ReportAsync(AgentToolExecutionReport report, CancellationToken cancellationToken)`
@@ -24603,6 +24681,9 @@ Browse the published API surface by public member.
 - [SelectionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-stranglerfigmigrationruntimedescriptor-selectionmode): `Properties` on `StranglerFigMigrationRuntimeDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=SelectionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the runtime selection result, such as `requested-target` or `fallback-target`.
   - `string SelectionMode { get; }`
+- [SendAsync](cephalon-multitenancy-governance-amazonsesdelivery.md#member-m-cephalon-multitenancy-governance-amazonsesdelivery-services-iamazonsesinvitationdeliveryclient-sendasync-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-system-threading-cancellationtoken): `Methods` on `IAmazonSesInvitationDeliveryClient` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=SendAsync&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services&scope=members)
+  - Sends one Amazon SES invitation delivery message.
+  - `ValueTask<AmazonSesInvitationDeliveryClientResult> SendAsync(AmazonSesInvitationDeliveryMessage message, CancellationToken cancellationToken)`
 - [SendAsync](cephalon-multitenancy-governance-mailgundelivery.md#member-m-cephalon-multitenancy-governance-mailgundelivery-services-imailguninvitationdeliveryclient-sendasync-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-system-threading-cancellationtoken): `Methods` on `IMailgunInvitationDeliveryClient` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=SendAsync&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
   - Sends one Mailgun invitation delivery message.
   - `ValueTask<MailgunInvitationDeliveryClientResult> SendAsync(MailgunInvitationDeliveryMessage message, CancellationToken cancellationToken)`
@@ -24621,6 +24702,9 @@ Browse the published API surface by public member.
 - [SenderFailed](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes-senderfailed): `Fields` on `TenantInvitationDeliveryOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=SenderFailed&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The sender failed or returned a failed outcome.
   - `const string SenderFailed`
+- [SenderId](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-senderid): `Properties` on `AmazonSesInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=SenderId&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration&scope=members)
+  - Gets or sets the sender identifier used by `TenantInvitationDeliveryRequest.SenderId`.
+  - `string SenderId { get; set; }`
 - [SenderId](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-senderid): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=SenderId&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
   - Gets or sets the sender identifier used by `TenantInvitationDeliveryRequest.SenderId`.
   - `string SenderId { get; set; }`
@@ -25968,6 +26052,9 @@ Browse the published API surface by public member.
 - [StatusCallbackRoutePattern](cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-statuscallbackroutepattern): `Properties` on `SendGridInvitationDeliveryAspNetCoreOptions` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration` (`Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`) [Browse](browse.html?q=StatusCallbackRoutePattern&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Configuration&scope=members)
   - Gets or sets the ASP.NET Core route pattern used for SendGrid Event Webhook callbacks.
   - `string StatusCallbackRoutePattern { get; set; }`
+- [StatusCode](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliveryclientresult-statuscode): `Properties` on `AmazonSesInvitationDeliveryClientResult` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=StatusCode&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services&scope=members)
+  - Gets the HTTP status code reported by the AWS SDK when one is known.
+  - `int? StatusCode { get; }`
 - [StatusCode](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliveryclientresult-statuscode): `Properties` on `MailgunInvitationDeliveryClientResult` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=StatusCode&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
   - Gets the HTTP status code returned by Mailgun when one is known.
   - `int? StatusCode { get; }`
@@ -26160,6 +26247,9 @@ Browse the published API surface by public member.
 - [StreamVersion](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-idomainevent-streamversion): `Properties` on `IDomainEvent` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=StreamVersion&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the optimistic stream version assigned to the event.
   - `long StreamVersion { get; }`
+- [Subject](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-subject): `Properties` on `AmazonSesInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=Subject&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services&scope=members)
+  - Gets the message subject.
+  - `string Subject { get; }`
 - [Subject](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-subject): `Properties` on `MailgunInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=Subject&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
   - Gets the message subject.
   - `string Subject { get; }`
@@ -26229,6 +26319,9 @@ Browse the published API surface by public member.
 - [SubjectMismatch](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionworkflowoutcomes-subjectmismatch): `Fields` on `TenantGovernanceActionWorkflowOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=SubjectMismatch&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The matching tenant-governance action has a different subject boundary.
   - `const string SubjectMismatch`
+- [SubjectTemplate](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-subjecttemplate): `Properties` on `AmazonSesInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=SubjectTemplate&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration&scope=members)
+  - Gets or sets the Amazon SES message subject template.
+  - `string SubjectTemplate { get; set; }`
 - [SubjectTemplate](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-subjecttemplate): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=SubjectTemplate&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
   - Gets or sets the Mailgun message subject template.
   - `string SubjectTemplate { get; set; }`
@@ -26412,6 +26505,9 @@ Browse the published API surface by public member.
 - [SummaryPath](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-summarypath): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=SummaryPath&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
   - The aggregate health endpoint path.
   - `string SummaryPath { get; set; }`
+- [SupportedChannels](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-supportedchannels): `Properties` on `AmazonSesInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=SupportedChannels&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration&scope=members)
+  - Gets or sets delivery channels accepted by this sender.
+  - `IReadOnlyList<string> SupportedChannels { get; set; }`
 - [SupportedChannels](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-supportedchannels): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=SupportedChannels&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
   - Gets or sets delivery channels accepted by this sender.
   - `IReadOnlyList<string> SupportedChannels { get; set; }`
@@ -26580,6 +26676,12 @@ Browse the published API surface by public member.
 - [Tags](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttooldescriptor-tags): `Properties` on `AgentToolDescriptor` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Tags&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the normalized tag set associated with the tool.
   - `IReadOnlyList<string> Tags { get; }`
+- [Tags](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-tags): `Properties` on `AmazonSesInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=Tags&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services&scope=members)
+  - Gets Amazon SES message tags attached to the message.
+  - `IReadOnlyDictionary<string, string> Tags { get; }`
+- [Tags](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-tags): `Properties` on `AmazonSesInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=Tags&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration&scope=members)
+  - Gets or sets Amazon SES message tags attached to the request.
+  - `IReadOnlyDictionary<string, string> Tags { get; set; }`
 - [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditentry-tags): `Properties` on `AuditEntry` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets descriptive tags associated with the entry.
   - `IReadOnlyList<string> Tags { get; }`
@@ -27372,6 +27474,9 @@ Browse the published API surface by public member.
 - [Tests](cephalon-abstractions.md#member-f-cephalon-abstractions-appmodel-scaffolding-projectroles-tests): `Fields` on `ProjectRoles` in `Cephalon.Abstractions.AppModel.Scaffolding` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tests&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel.Scaffolding&scope=members)
   - Identifies a test project.
   - `const string Tests`
+- [TextBody](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-textbody): `Properties` on `AmazonSesInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=TextBody&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services&scope=members)
+  - Gets the plain-text message body.
+  - `string TextBody { get; }`
 - [TextBody](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-textbody): `Properties` on `MailgunInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=TextBody&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
   - Gets the plain-text message body.
   - `string TextBody { get; }`
@@ -27384,6 +27489,9 @@ Browse the published API surface by public member.
 - [TextBody](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-textbody): `Properties` on `SmtpInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=TextBody&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
   - Gets the plain-text message body.
   - `string TextBody { get; }`
+- [TextBodyTemplate](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-textbodytemplate): `Properties` on `AmazonSesInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=TextBodyTemplate&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration&scope=members)
+  - Gets or sets the plain-text Amazon SES message body template.
+  - `string TextBodyTemplate { get; set; }`
 - [TextBodyTemplate](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-configuration-mailguninvitationdeliveryoptions-textbodytemplate): `Properties` on `MailgunInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=TextBodyTemplate&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration&scope=members)
   - Gets or sets the plain-text Mailgun message body template.
   - `string TextBodyTemplate { get; set; }`
@@ -27426,6 +27534,9 @@ Browse the published API surface by public member.
 - [Timeout](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-timeout): `Properties` on `TenantDomainOwnershipProofVerificationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Timeout&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional per-request HTTP collection timeout.
   - `TimeSpan? Timeout { get; }`
+- [TimeoutSeconds](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-timeoutseconds): `Properties` on `AmazonSesInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration&scope=members)
+  - Gets or sets the maximum time allowed for the Amazon SES SDK request.
+  - `int TimeoutSeconds { get; set; }`
 - [TimeoutSeconds](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-timeoutseconds): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=TimeoutSeconds&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
   - Gets or sets the maximum time allowed for the HTTP delivery request.
   - `int TimeoutSeconds { get; set; }`
@@ -27486,6 +27597,9 @@ Browse the published API surface by public member.
 - [ToDisplayName](cephalon-multitenancy-governance-smtpdelivery.md#member-p-cephalon-multitenancy-governance-smtpdelivery-services-smtpinvitationdeliverymessage-todisplayname): `Properties` on `SmtpInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.SmtpDelivery.Services` (`Cephalon.MultiTenancy.Governance.SmtpDelivery`) [Browse](browse.html?q=ToDisplayName&assembly=Cephalon.MultiTenancy.Governance.SmtpDelivery&namespace=Cephalon.MultiTenancy.Governance.SmtpDelivery.Services&scope=members)
   - Gets the optional recipient display name.
   - `string ToDisplayName { get; }`
+- [ToEmail](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-toemail): `Properties` on `AmazonSesInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=ToEmail&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services&scope=members)
+  - Gets the recipient email address.
+  - `string ToEmail { get; }`
 - [ToEmail](cephalon-multitenancy-governance-mailgundelivery.md#member-p-cephalon-multitenancy-governance-mailgundelivery-services-mailguninvitationdeliverymessage-toemail): `Properties` on `MailgunInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.MailgunDelivery.Services` (`Cephalon.MultiTenancy.Governance.MailgunDelivery`) [Browse](browse.html?q=ToEmail&assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery&namespace=Cephalon.MultiTenancy.Governance.MailgunDelivery.Services&scope=members)
   - Gets the recipient email address.
   - `string ToEmail { get; }`
