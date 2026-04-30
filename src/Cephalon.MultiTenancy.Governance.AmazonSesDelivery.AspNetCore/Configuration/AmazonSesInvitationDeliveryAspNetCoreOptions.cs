@@ -9,7 +9,8 @@ namespace Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configur
 /// <remarks>
 /// This adapter translates SNS-wrapped Amazon SES event publishing payloads into Cephalon delivery-status
 /// reconciliation requests. It does not own AWS account setup, SES identity verification, SNS topic/subscription
-/// creation, SNS signature verification, durable callback inboxes, distributed replay protection, or provider polling.
+/// creation, durable callback inboxes, distributed replay protection, or provider polling. When configured, it can
+/// verify the Amazon SNS message signature before translation.
 /// </remarks>
 public sealed class AmazonSesInvitationDeliveryAspNetCoreOptions
 {
@@ -114,6 +115,59 @@ public sealed class AmazonSesInvitationDeliveryAspNetCoreOptions
     public bool AcceptRawSesEventPayloads { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether SNS message signatures must verify before translation.
+    /// </summary>
+    /// <remarks>
+    /// When enabled, the endpoint rejects raw SES replay payloads, validates the SNS envelope, verifies the
+    /// Base64-encoded RSA signature over the canonical SNS string-to-sign, and records safe verification metadata.
+    /// </remarks>
+    public bool RequireSnsSignatureVerification { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether verified SNS messages must use <c>SignatureVersion</c> 2.
+    /// </summary>
+    /// <remarks>
+    /// Amazon SNS topics default to signature version 1, but version 2 uses SHA-256 and is the recommended setting for
+    /// new deployments. Disable this only when a host deliberately accepts legacy SHA-1 SNS signatures.
+    /// </remarks>
+    public bool RequireSnsSignatureVersion2 { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether <c>TopicArn</c> must match <see cref="AllowedSnsTopicArns" /> when
+    /// signature verification is required.
+    /// </summary>
+    /// <remarks>
+    /// Keeping this enabled follows the SNS spoofing-prevention guidance that receivers reject messages from
+    /// unexpected topics. Disable only for controlled multi-topic gateways that apply their own allow-list.
+    /// </remarks>
+    public bool RequireAllowedSnsTopicArn { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the SNS topic ARNs accepted by this callback endpoint when topic allow-listing is required.
+    /// </summary>
+    public string[] AllowedSnsTopicArns { get; set; } = [];
+
+    /// <summary>
+    /// Gets or sets a pinned X.509 certificate PEM used to verify SNS signatures instead of downloading the certificate
+    /// from <c>SigningCertURL</c>.
+    /// </summary>
+    /// <remarks>
+    /// This is primarily useful for tests, controlled replay, or hosts that deliberately pin the SNS signing
+    /// certificate. Production hosts usually leave this unset so the endpoint retrieves the AWS SNS signing
+    /// certificate from the validated HTTPS URL in the SNS envelope.
+    /// </remarks>
+    public string? PinnedSnsSigningCertificatePem { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the SNS signing certificate chain and validity window should be checked.
+    /// </summary>
+    /// <remarks>
+    /// The default is <see langword="true" /> for production safety. Tests using self-signed pinned certificates can
+    /// disable this without weakening the canonical message-signature proof.
+    /// </remarks>
+    public bool ValidateSnsSigningCertificateChain { get; set; } = true;
+
+    /// <summary>
     /// Reads Amazon SES ASP.NET Core callback options from configuration.
     /// </summary>
     /// <param name="configuration">The root configuration that contains the engine section.</param>
@@ -149,6 +203,12 @@ public sealed class AmazonSesInvitationDeliveryAspNetCoreOptions
         options.MaxEventsPerRequest = ParseInt32(section["MaxEventsPerRequest"], options.MaxEventsPerRequest);
         options.MapEngagementEventsAsDelivered = ParseBoolean(section["MapEngagementEventsAsDelivered"], options.MapEngagementEventsAsDelivered);
         options.AcceptRawSesEventPayloads = ParseBoolean(section["AcceptRawSesEventPayloads"], options.AcceptRawSesEventPayloads);
+        options.RequireSnsSignatureVerification = ParseBoolean(section["RequireSnsSignatureVerification"], options.RequireSnsSignatureVerification);
+        options.RequireSnsSignatureVersion2 = ParseBoolean(section["RequireSnsSignatureVersion2"], options.RequireSnsSignatureVersion2);
+        options.RequireAllowedSnsTopicArn = ParseBoolean(section["RequireAllowedSnsTopicArn"], options.RequireAllowedSnsTopicArn);
+        options.AllowedSnsTopicArns = ReadStringList(section.GetSection("AllowedSnsTopicArns")).ToArray();
+        options.PinnedSnsSigningCertificatePem = Normalize(section["PinnedSnsSigningCertificatePem"])?.Replace("\\n", "\n", StringComparison.Ordinal);
+        options.ValidateSnsSigningCertificateChain = ParseBoolean(section["ValidateSnsSigningCertificateChain"], options.ValidateSnsSigningCertificateChain);
         return options;
     }
 
@@ -161,6 +221,16 @@ public sealed class AmazonSesInvitationDeliveryAspNetCoreOptions
     internal string GetSource() => Normalize(Source) ?? "amazon-ses-sns";
 
     internal string GetActor() => Normalize(Actor) ?? "amazon-ses";
+
+    internal string? GetPinnedSnsSigningCertificatePem() =>
+        Normalize(PinnedSnsSigningCertificatePem)?.Replace("\\n", "\n", StringComparison.Ordinal);
+
+    internal IReadOnlySet<string> GetAllowedSnsTopicArns() =>
+        (AllowedSnsTopicArns ?? [])
+            .Select(Normalize)
+            .Where(static value => value is not null)
+            .Select(static value => value!)
+            .ToHashSet(StringComparer.Ordinal);
 
     private static int ParseInt32(string? value, int defaultValue)
     {
@@ -176,6 +246,18 @@ public sealed class AmazonSesInvitationDeliveryAspNetCoreOptions
         return normalizedValue is not null && bool.TryParse(normalizedValue, out var parsed)
             ? parsed
             : defaultValue;
+    }
+
+    private static IEnumerable<string> ReadStringList(IConfigurationSection section)
+    {
+        foreach (var child in section.GetChildren())
+        {
+            var value = Normalize(child.Value);
+            if (value is not null)
+            {
+                yield return value;
+            }
+        }
     }
 
     private static string? Normalize(string? value)

@@ -18,7 +18,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 
 Configures ASP.NET Core Amazon SES over SNS callback translation for tenant-invitation delivery status updates.
 
-Remarks: This adapter translates SNS-wrapped Amazon SES event publishing payloads into Cephalon delivery-status reconciliation requests. It does not own AWS account setup, SES identity verification, SNS topic/subscription creation, SNS signature verification, durable callback inboxes, distributed replay protection, or provider polling.
+Remarks: This adapter translates SNS-wrapped Amazon SES event publishing payloads into Cephalon delivery-status reconciliation requests. It does not own AWS account setup, SES identity verification, SNS topic/subscription creation, durable callback inboxes, distributed replay protection, or provider polling. When configured, it can verify the Amazon SNS message signature before translation.
 
 #### Declaration
 ```csharp
@@ -60,6 +60,16 @@ string Actor { get; set; }
 ```
 
 Gets or sets the actor value recorded on translated Amazon SES delivery status observations.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-allowedsnstopicarns"></a>
+
+##### `AllowedSnsTopicArns`
+
+```csharp
+string[] AllowedSnsTopicArns { get; set; }
+```
+
+Gets or sets the SNS topic ARNs accepted by this callback endpoint when topic allow-listing is required.
 
 <a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-enablestatuscallbackendpoint"></a>
 
@@ -115,6 +125,18 @@ int MaxRequestBodyBytes { get; set; }
 
 Gets or sets the maximum request body size accepted by the Amazon SES callback endpoint, in bytes.
 
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-pinnedsnssigningcertificatepem"></a>
+
+##### `PinnedSnsSigningCertificatePem`
+
+```csharp
+string PinnedSnsSigningCertificatePem { get; set; }
+```
+
+Gets or sets a pinned X.509 certificate PEM used to verify SNS signatures instead of downloading the certificate from `SigningCertURL`.
+
+Remarks: This is primarily useful for tests, controlled replay, or hosts that deliberately pin the SNS signing certificate. Production hosts usually leave this unset so the endpoint retrieves the AWS SNS signing certificate from the validated HTTPS URL in the SNS envelope.
+
 <a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-recordstatus"></a>
 
 ##### `RecordStatus`
@@ -124,6 +146,18 @@ bool RecordStatus { get; set; }
 ```
 
 Gets or sets a value indicating whether translated delivery status should be recorded on the invitation.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-requireallowedsnstopicarn"></a>
+
+##### `RequireAllowedSnsTopicArn`
+
+```csharp
+bool RequireAllowedSnsTopicArn { get; set; }
+```
+
+Gets or sets a value indicating whether `TopicArn` must match `AllowedSnsTopicArns` when signature verification is required.
+
+Remarks: Keeping this enabled follows the SNS spoofing-prevention guidance that receivers reject messages from unexpected topics. Disable only for controlled multi-topic gateways that apply their own allow-list.
 
 <a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-requireprovidermessagematch"></a>
 
@@ -136,6 +170,30 @@ bool RequireProviderMessageMatch { get; set; }
 Gets or sets a value indicating whether translated Amazon SES events must match an existing provider message id.
 
 Remarks: Amazon SES event payloads expose the SES-assigned message id through `mail.messageId`. Keeping this guard enabled makes the callback translator reconcile only the invitation dispatch previously accepted by SES.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-requiresnssignatureverification"></a>
+
+##### `RequireSnsSignatureVerification`
+
+```csharp
+bool RequireSnsSignatureVerification { get; set; }
+```
+
+Gets or sets a value indicating whether SNS message signatures must verify before translation.
+
+Remarks: When enabled, the endpoint rejects raw SES replay payloads, validates the SNS envelope, verifies the Base64-encoded RSA signature over the canonical SNS string-to-sign, and records safe verification metadata.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-requiresnssignatureversion2"></a>
+
+##### `RequireSnsSignatureVersion2`
+
+```csharp
+bool RequireSnsSignatureVersion2 { get; set; }
+```
+
+Gets or sets a value indicating whether verified SNS messages must use `SignatureVersion` 2.
+
+Remarks: Amazon SNS topics default to signature version 1, but version 2 uses SHA-256 and is the recommended setting for new deployments. Disable this only when a host deliberately accepts legacy SHA-1 SNS signatures.
 
 <a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-requirestatuscallbackauthorization"></a>
 
@@ -180,6 +238,18 @@ string StatusCallbackRoutePattern { get; set; }
 Gets or sets the ASP.NET Core route pattern used for SNS-wrapped Amazon SES callbacks.
 
 Remarks: The default route stays under `/engine` because this endpoint is a provider-adapter ingress surface, not an application-owned onboarding API.
+
+<a id="member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-validatesnssigningcertificatechain"></a>
+
+##### `ValidateSnsSigningCertificateChain`
+
+```csharp
+bool ValidateSnsSigningCertificateChain { get; set; }
+```
+
+Gets or sets a value indicating whether the SNS signing certificate chain and validity window should be checked.
+
+Remarks: The default is `true` for production safety. Tests using self-signed pinned certificates can disable this without weakening the canonical message-signature proof.
 
 #### Methods
 
@@ -552,7 +622,7 @@ IEndpointRouteBuilder MapCephalonAmazonSesInvitationDeliveryStatusCallbacks(this
 
 Maps the optional Amazon SES over SNS tenant-invitation delivery status callback endpoint.
 
-Remarks: The endpoint translates SNS HTTP notifications containing Amazon SES event publishing payloads into the host-agnostic `ITenantInvitationDeliveryStatusReconciler`. SNS subscription confirmation, SNS signature verification, durable inboxing, distributed replay protection, and provider polling remain host-managed or future provider-pack responsibilities.
+Remarks: The endpoint translates SNS HTTP notifications containing Amazon SES event publishing payloads into the host-agnostic `ITenantInvitationDeliveryStatusReconciler`. SNS subscription confirmation, durable inboxing, distributed replay protection, and provider polling remain host-managed or future provider-pack responsibilities. When configured, the endpoint verifies the SNS message signature before translation.
 
 Returns: The same endpoint route builder for fluent routing composition.
 

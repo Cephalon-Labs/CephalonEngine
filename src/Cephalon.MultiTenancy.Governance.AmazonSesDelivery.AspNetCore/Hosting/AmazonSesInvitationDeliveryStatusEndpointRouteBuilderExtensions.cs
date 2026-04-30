@@ -27,8 +27,8 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
     /// <remarks>
     /// The endpoint translates SNS HTTP notifications containing Amazon SES event publishing payloads into the
     /// host-agnostic <see cref="ITenantInvitationDeliveryStatusReconciler" />. SNS subscription confirmation,
-    /// SNS signature verification, durable inboxing, distributed replay protection, and provider polling remain
-    /// host-managed or future provider-pack responsibilities.
+    /// durable inboxing, distributed replay protection, and provider polling remain host-managed or future provider-pack
+    /// responsibilities. When configured, the endpoint verifies the SNS message signature before translation.
     /// </remarks>
     public static IEndpointRouteBuilder MapCephalonAmazonSesInvitationDeliveryStatusCallbacks(this IEndpointRouteBuilder endpoints)
     {
@@ -48,10 +48,11 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
                 (
                     HttpContext context,
                     AmazonSesSnsDeliveryStatusMapper mapper,
+                    AmazonSesSnsSignatureVerifier signatureVerifier,
                     ITenantInvitationDeliveryStatusReconciler reconciler,
                     ILoggerFactory loggerFactory,
                     CancellationToken cancellationToken) =>
-                    TranslateCallbackAsync(context, mapper, reconciler, loggerFactory, options, routePattern, cancellationToken))
+                    TranslateCallbackAsync(context, mapper, signatureVerifier, reconciler, loggerFactory, options, routePattern, cancellationToken))
             .WithName("CephalonAmazonSesInvitationDeliveryStatusCallback")
             .Accepts<JsonElement>("application/json")
             .Produces<AmazonSesInvitationDeliveryStatusCallbackResult>(StatusCodes.Status200OK)
@@ -80,7 +81,13 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
                 options.GetMaxRequestBodyBytes(),
                 options.GetMaxEventsPerRequest(),
                 options.MapEngagementEventsAsDelivered,
-                options.AcceptRawSesEventPayloads);
+                options.AcceptRawSesEventPayloads,
+                options.RequireSnsSignatureVerification,
+                options.RequireSnsSignatureVersion2,
+                options.RequireAllowedSnsTopicArn,
+                options.GetAllowedSnsTopicArns().Count,
+                options.GetPinnedSnsSigningCertificatePem() is not null,
+                options.ValidateSnsSigningCertificateChain);
 
         return endpoints;
     }
@@ -88,6 +95,7 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
     private static async Task<IResult> TranslateCallbackAsync(
         HttpContext context,
         AmazonSesSnsDeliveryStatusMapper mapper,
+        AmazonSesSnsSignatureVerifier signatureVerifier,
         ITenantInvitationDeliveryStatusReconciler reconciler,
         ILoggerFactory loggerFactory,
         AmazonSesInvitationDeliveryAspNetCoreOptions options,
@@ -121,6 +129,19 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
 
         using (document)
         {
+            var logger = loggerFactory.CreateLogger("Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore");
+            var signatureVerification = await signatureVerifier
+                .VerifyAsync(document.RootElement, cancellationToken)
+                .ConfigureAwait(false);
+            if (signatureVerification.FailureStatusCode is not null)
+            {
+                AmazonSesInvitationDeliveryAspNetCoreLogs.CallbackSignatureRejected(logger, signatureVerification.Outcome);
+                return Results.Problem(
+                    title: "Amazon SES SNS signature verification failed.",
+                    detail: signatureVerification.Detail,
+                    statusCode: signatureVerification.FailureStatusCode.Value);
+            }
+
             var eventMappings = mapper.MapPayload(document.RootElement);
             if (eventMappings is null)
             {
@@ -157,8 +178,9 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
                 }
 
                 translatedEvents++;
+                var reconciliationRequest = ApplySnsSignatureVerificationMetadata(mapping.Request!, signatureVerification);
                 var reconciliation = await reconciler
-                    .ReconcileAsync(mapping.Request!, cancellationToken)
+                    .ReconcileAsync(reconciliationRequest, cancellationToken)
                     .ConfigureAwait(false);
 
                 if (reconciliation.Reconciled)
@@ -173,7 +195,6 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
                 eventResults.Add(mapping.ToReconciledEventResult(reconciliation));
             }
 
-            var logger = loggerFactory.CreateLogger("Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore");
             AmazonSesInvitationDeliveryAspNetCoreLogs.CallbackAccepted(
                 logger,
                 eventCount,
@@ -188,9 +209,9 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
                 reconciledEvents,
                 skippedEvents,
                 deniedEvents,
-                snsSignatureVerificationRequired: false,
-                snsSignatureVerified: false,
-                snsSignatureVerificationOutcome: "not-configured",
+                snsSignatureVerificationRequired: signatureVerification.Configured,
+                snsSignatureVerified: signatureVerification.Verified,
+                snsSignatureVerificationOutcome: signatureVerification.Outcome,
                 eventResults);
 
             return Results.Json(result, SerializerOptions);
@@ -235,6 +256,69 @@ public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensi
         }
 
         return CallbackRequestBodyReadResult.Success(buffer.ToArray());
+    }
+
+    private static TenantInvitationDeliveryStatusReconciliationRequest ApplySnsSignatureVerificationMetadata(
+        TenantInvitationDeliveryStatusReconciliationRequest request,
+        AmazonSesSnsSignatureVerificationResult signatureVerification)
+    {
+        if (!signatureVerification.Configured)
+        {
+            return request;
+        }
+
+        var metadata = CopyMetadata(request.Metadata);
+        metadata["amazonSesSnsSignatureVerification"] = signatureVerification.Outcome;
+        metadata["amazonSesSnsSignatureVerificationOwnership"] = "cephalon-managed";
+        metadata["amazonSesSnsSignaturePayload"] = "sns-canonical-string";
+        AddIfPresent(metadata, "amazonSesSnsSignatureVersion", signatureVerification.SignatureVersion);
+        AddIfPresent(metadata, "amazonSesSnsSignatureAlgorithm", signatureVerification.Algorithm);
+        AddIfPresent(metadata, "amazonSesSnsSignatureTopicArn", signatureVerification.TopicArn);
+        AddIfPresent(metadata, "amazonSesSnsSignatureMessageType", signatureVerification.MessageType);
+        AddIfPresent(metadata, "amazonSesSnsSignatureMessageId", signatureVerification.MessageId);
+        AddIfPresent(metadata, "amazonSesSnsSignatureTimestamp", signatureVerification.Timestamp);
+        AddIfPresent(metadata, "amazonSesSnsSigningCertificateUrlHost", signatureVerification.SigningCertificateUrlHost);
+        AddIfPresent(metadata, "amazonSesSnsSignatureFingerprint", signatureVerification.SignatureFingerprint);
+        AddIfPresent(metadata, "amazonSesSnsSigningCertificateThumbprint", signatureVerification.CertificateThumbprint);
+
+        return new TenantInvitationDeliveryStatusReconciliationRequest(
+            tenantId: request.TenantId,
+            invitationId: request.InvitationId,
+            status: request.Status,
+            providerMessageId: request.ProviderMessageId,
+            senderId: request.SenderId,
+            channel: request.Channel,
+            reason: request.Reason,
+            observedAtUtc: request.ObservedAtUtc,
+            source: request.Source,
+            actor: request.Actor,
+            correlationId: request.CorrelationId,
+            recordStatus: request.RecordStatus,
+            requireProviderMessageMatch: request.RequireProviderMessageMatch,
+            metadata: metadata);
+    }
+
+    private static Dictionary<string, string> CopyMetadata(IReadOnlyDictionary<string, string>? metadata)
+    {
+        if (metadata is null)
+        {
+            return new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        }
+
+        return metadata
+            .Where(static pair => !string.IsNullOrWhiteSpace(pair.Key))
+            .ToDictionary(
+                static pair => pair.Key.Trim(),
+                static pair => pair.Value,
+                StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static void AddIfPresent(Dictionary<string, string> metadata, string key, string? value)
+    {
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            metadata[key] = value.Trim();
+        }
     }
 
     private static async ValueTask<IResult?> AuthorizeAsync(

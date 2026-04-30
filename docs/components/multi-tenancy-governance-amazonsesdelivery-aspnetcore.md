@@ -1,6 +1,6 @@
 # Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore
 
-`Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore` is the optional ASP.NET Core Amazon SES over SNS callback translator for tenant-invitation delivery status reconciliation.
+`Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore` is the optional ASP.NET Core Amazon SES over SNS callback translator and SNS signature verifier for tenant-invitation delivery status reconciliation.
 
 ## What it owns
 
@@ -9,14 +9,19 @@
 - Amazon SNS HTTP notification JSON parsing with bounded request size
 - SNS `Notification` payload unwrapping where `Message` contains an Amazon SES event publishing record
 - raw SES event object or array parsing for controlled replay and test harness scenarios when `AcceptRawSesEventPayloads` remains enabled
+- opt-in SNS signature verification before translation through `RequireSnsSignatureVerification`
+- SNS canonical string-to-sign construction for `Notification`, `SubscriptionConfirmation`, and `UnsubscribeConfirmation` envelopes
+- SNS `SignatureVersion` 2 enforcement by default, with explicit legacy opt-out for version 1
+- SNS `TopicArn` allow-list enforcement by default through `AllowedSnsTopicArns`
+- SNS signing-certificate URL validation for HTTPS Amazon SNS PEM URLs, optional pinned PEM certificate loading for controlled tests, and certificate validity/chain validation by default
 - translation from Amazon SES `eventType` or legacy `notificationType` values into `TenantInvitationDeliveryStatusReconciliationRequest`
 - Cephalon context extraction from SES `mail.tags`, including `cephalon-tenant-id`, `cephalon-invitation-id`, `cephalon-delivery-channel`, `cephalon-sender-id`, and `cephalon-correlation-id`
 - provider message-id correlation from `mail.messageId`, matching the SES `MessageId` captured by `Cephalon.MultiTenancy.Governance.AmazonSesDelivery`
-- safe status metadata such as SNS message id/type/topic, SES message id, event type, bounce type/subtype, complaint feedback type, delivery SMTP response, reject reason, rendering failure message, delivery delay type, tag count, and observed timestamp
+- safe status metadata such as SNS message id/type/topic, signature verification outcome, signature algorithm/version/fingerprint, signing certificate host/thumbprint, SES message id, event type, bounce type/subtype, complaint feedback type, delivery SMTP response, reject reason, rendering failure message, delivery delay type, tag count, and observed timestamp
 - observation-id seeding from SNS message ids through the normalized delivery-status observation path
 - optional engagement-event mapping when a host deliberately sets `MapEngagementEventsAsDelivered`
 - runtime truth through the `tenant-invitation-delivery-amazon-ses-status-callbacks` technology surface
-- stable diagnostics for accepted Amazon SES over SNS callback payloads
+- stable diagnostics for accepted Amazon SES over SNS callback payloads and signature rejections
 
 ## Main Surfaces
 
@@ -25,6 +30,7 @@
 - `Hosting/AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensions.cs`
 - `Hosting/AmazonSesInvitationDeliveryStatusCallbackResult.cs`
 - `Hosting/AmazonSesInvitationDeliveryStatusCallbackEventResult.cs`
+- `Services/AmazonSesSnsSignatureVerifier.cs`
 
 ## Source Structure
 
@@ -34,7 +40,7 @@
 
 ## How It Fits
 
-`Cephalon.MultiTenancy.Governance.AmazonSesDelivery` owns outbound SES v2 `SendEmail` handoff. It sends safe Cephalon context through SES message tags and captures the SES `MessageId` as the dispatch provider message id. Amazon SES can later publish sending events to SNS. This package bridges those SNS-wrapped SES event payloads back into Cephalon's existing `ITenantInvitationDeliveryStatusReconciler` without putting AWS-specific HTTP routes into the host-agnostic governance core.
+`Cephalon.MultiTenancy.Governance.AmazonSesDelivery` owns outbound SES v2 `SendEmail` handoff. It sends safe Cephalon context through SES message tags and captures the SES `MessageId` as the dispatch provider message id. Amazon SES can later publish sending events to SNS. This package bridges those SNS-wrapped SES event payloads back into Cephalon's existing `ITenantInvitationDeliveryStatusReconciler` without putting AWS-specific HTTP routes into the host-agnostic governance core. When signature verification is required, the endpoint rejects unverified SNS envelopes before payload mapping or reconciliation.
 
 Register the package beside governance and map the endpoint explicitly:
 
@@ -72,7 +78,14 @@ Configuration example:
             "MaxRequestBodyBytes": 262144,
             "MaxEventsPerRequest": 1000,
             "MapEngagementEventsAsDelivered": false,
-            "AcceptRawSesEventPayloads": true
+            "AcceptRawSesEventPayloads": true,
+            "RequireSnsSignatureVerification": true,
+            "RequireSnsSignatureVersion2": true,
+            "RequireAllowedSnsTopicArn": true,
+            "AllowedSnsTopicArns": [
+              "arn:aws:sns:us-east-1:123456789012:cephalon-governance"
+            ],
+            "ValidateSnsSigningCertificateChain": true
           }
         }
       }
@@ -85,14 +98,18 @@ Mapped statuses are intentionally narrow. `Send` becomes `accepted`, `Delivery` 
 
 The endpoint returns `AmazonSesInvitationDeliveryStatusCallbackResult` with aggregate counts and per-event translation results. Events without Cephalon tenant and invitation tags are skipped without leaking recipient email addresses or raw payloads in the response. Translated events still go through the host-agnostic reconciler, so invitation existence, provider-message matching, status recording, and observation storage keep using the same governance rules as normalized callbacks.
 
-SNS `SubscriptionConfirmation` and `UnsubscribeConfirmation` messages are reported as skipped and are not auto-confirmed. Hosts or infrastructure-as-code should own SNS subscription confirmation and topic policy posture deliberately. This baseline also reports SNS signature verification as `not-configured`; future slices can add SNS signature verification, process-local replay protection, or observation-store-backed SNS message id duplicate skipping without turning this translation baseline into a durable callback inbox.
+Set `RequireSnsSignatureVerification` to require SNS envelope verification before translation. The verifier rejects raw SES replay payloads, enforces an allowed `TopicArn` list by default, requires `SignatureVersion` 2 by default, validates HTTPS Amazon SNS signing-certificate URLs, downloads and validates the signing certificate unless `PinnedSnsSigningCertificatePem` is configured, and verifies the RSA signature over the SNS canonical string-to-sign. `PinnedSnsSigningCertificatePem` is useful for controlled tests, certificate-pinning experiments, or replay harnesses; production hosts usually leave it unset so the endpoint retrieves the AWS SNS signing certificate from the validated `SigningCertURL`.
 
-ASP.NET Core authorization is still enabled by default and can be combined with gateway policy, SNS topic policy, AWS WAF, private networking, or other host-owned controls. This package owns provider payload translation only; SNS topic/subscription creation, SES configuration-set event destination setup, SNS signature verification, durable callback inboxes, distributed replay ledgers, distributed event-id ledgers, provider polling, and exactly-once delivery remain future provider-pack or application-owned work.
+SNS `SubscriptionConfirmation` and `UnsubscribeConfirmation` messages are reported as skipped and are not auto-confirmed. When signature verification is required, confirmation messages must still pass signature verification before they are skipped. Hosts or infrastructure-as-code should own SNS subscription confirmation and topic policy posture deliberately. Process-local SNS replay protection, observation-store-backed SNS message-id duplicate skipping, and durable callback inboxing remain later follow-through slices.
+
+ASP.NET Core authorization is still enabled by default and can be combined with gateway policy, SNS topic policy, AWS WAF, private networking, or other host-owned controls. This package owns provider payload translation plus opt-in SNS signature verification only; SNS topic/subscription creation, SES configuration-set event destination setup, subscription confirmation automation, durable callback inboxes, distributed replay ledgers, distributed event-id ledgers, provider polling, and exactly-once delivery remain future provider-pack or application-owned work.
 
 ## Provider References
 
 - [Amazon SES event publishing SNS contents](https://docs.aws.amazon.com/ses/latest/dg/event-publishing-retrieving-sns-contents.html)
 - [Amazon SNS HTTP notification JSON format](https://docs.aws.amazon.com/sns/latest/dg/http-notification-json.html)
+- [Amazon SNS message signature verification](https://docs.aws.amazon.com/sns/latest/dg/sns-verify-signature-of-message.html)
+- [Amazon SNS HTTP subscription confirmation JSON format](https://docs.aws.amazon.com/sns/latest/dg/http-subscription-confirmation-json.html)
 
 ## Related Docs
 

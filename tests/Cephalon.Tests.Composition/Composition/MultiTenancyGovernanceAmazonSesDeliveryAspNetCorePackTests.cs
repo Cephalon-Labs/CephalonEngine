@@ -10,6 +10,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json;
 
@@ -17,6 +19,8 @@ namespace Cephalon.Tests.Composition;
 
 public sealed class MultiTenancyGovernanceAmazonSesDeliveryAspNetCorePackTests
 {
+    private const string SnsTopicArn = "arn:aws:sns:us-east-1:123456789012:cephalon-governance";
+
     [Fact]
     public async Task AmazonSesSnsStatusCallbackReconcilesDeliveryEventAndRecordsSafeMetadata()
     {
@@ -96,7 +100,7 @@ public sealed class MultiTenancyGovernanceAmazonSesDeliveryAspNetCorePackTests
         {
             ["Type"] = "SubscriptionConfirmation",
             ["MessageId"] = "sns-subscribe-307",
-            ["TopicArn"] = "arn:aws:sns:us-east-1:123456789012:cephalon-governance",
+            ["TopicArn"] = SnsTopicArn,
             ["SubscribeURL"] = "https://sns.us-east-1.amazonaws.com/?Action=ConfirmSubscription",
             ["Timestamp"] = "2026-04-30T04:05:00.000Z"
         });
@@ -149,6 +153,146 @@ public sealed class MultiTenancyGovernanceAmazonSesDeliveryAspNetCorePackTests
         Assert.Equal(TenantInvitationDeliveryStatuses.Deferred, invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus]);
         Assert.Equal("Transient", invitation.Metadata["amazonSesBounceType"]);
         Assert.Equal("General", invitation.Metadata["amazonSesBounceSubType"]);
+    }
+
+    [Fact]
+    public async Task AmazonSesSnsStatusCallbackVerifiesSnsSignatureBeforeReconciling()
+    {
+        using var rsa = RSA.Create(2048);
+        using var certificate = CreateSigningCertificate(rsa);
+        await using var app = await CreateAppAsync(
+            configureEndpoint: options =>
+            {
+                options.RequireStatusCallbackAuthorization = false;
+                options.RequireSnsSignatureVerification = true;
+                options.AllowedSnsTopicArns = [SnsTopicArn];
+                options.PinnedSnsSigningCertificatePem = certificate.ExportCertificatePem();
+                options.ValidateSnsSigningCertificateChain = false;
+            });
+        var client = app.GetTestClient();
+
+        using var response = await client.PostAsync(
+            "/engine/tenant-invitations/delivery-status/amazon-ses",
+            CreateJsonContent(CreateSignedSnsNotificationPayload(
+                rsa,
+                snsMessageId: "sns-message-308",
+                sesMessageId: "ses-message-307",
+                eventType: "Delivery",
+                eventBody:
+                """
+                "delivery": {
+                  "timestamp": "2026-04-30T04:15:00.000Z",
+                  "smtpResponse": "250 2.6.0 Message received"
+                }
+                """)));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        using var resultDocument = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        Assert.True(resultDocument.RootElement.GetProperty("snsSignatureVerificationRequired").GetBoolean());
+        Assert.True(resultDocument.RootElement.GetProperty("snsSignatureVerified").GetBoolean());
+        Assert.Equal("verified", resultDocument.RootElement.GetProperty("snsSignatureVerificationOutcome").GetString());
+
+        var invitation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationCatalog>().Invitations);
+        Assert.Equal(TenantInvitationDeliveryStatuses.Delivered, invitation.Metadata[TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus]);
+        Assert.Equal("verified", invitation.Metadata["amazonSesSnsSignatureVerification"]);
+        Assert.Equal("cephalon-managed", invitation.Metadata["amazonSesSnsSignatureVerificationOwnership"]);
+        Assert.Equal("2", invitation.Metadata["amazonSesSnsSignatureVersion"]);
+        Assert.Equal("rsa-sha256", invitation.Metadata["amazonSesSnsSignatureAlgorithm"]);
+        Assert.Equal(SnsTopicArn, invitation.Metadata["amazonSesSnsSignatureTopicArn"]);
+        Assert.Equal("sns-message-308", invitation.Metadata["amazonSesSnsSignatureMessageId"]);
+        Assert.StartsWith("sha256:", invitation.Metadata["amazonSesSnsSignatureFingerprint"], StringComparison.Ordinal);
+
+        var technologyCatalog = app.Services.GetRequiredService<ITechnologyRuntimeCatalog>();
+        var surface = Assert.Single(
+            technologyCatalog.Surfaces,
+            surface => surface.SurfaceId == "tenant-invitation-delivery-amazon-ses-status-callbacks");
+        var entry = Assert.Single(surface.Entries);
+        Assert.Equal("cephalon-managed", entry.Metadata["amazonSesSnsSignatureVerificationOwnership"]);
+        Assert.Equal("true", entry.Metadata["amazonSesSnsSignatureVerificationRequired"]);
+        Assert.Equal("true", entry.Metadata["amazonSesSnsSignatureVersion2Required"]);
+        Assert.Equal("1", entry.Metadata["amazonSesSnsAllowedTopicArnCount"]);
+    }
+
+    [Fact]
+    public async Task AmazonSesSnsStatusCallbackRejectsInvalidSnsSignature()
+    {
+        using var rsa = RSA.Create(2048);
+        using var certificate = CreateSigningCertificate(rsa);
+        await using var app = await CreateAppAsync(
+            configureEndpoint: options =>
+            {
+                options.RequireStatusCallbackAuthorization = false;
+                options.RequireSnsSignatureVerification = true;
+                options.AllowedSnsTopicArns = [SnsTopicArn];
+                options.PinnedSnsSigningCertificatePem = certificate.ExportCertificatePem();
+                options.ValidateSnsSigningCertificateChain = false;
+            });
+        var client = app.GetTestClient();
+
+        using var response = await client.PostAsync(
+            "/engine/tenant-invitations/delivery-status/amazon-ses",
+            CreateJsonContent(CreateSignedSnsNotificationPayload(
+                rsa,
+                snsMessageId: "sns-message-308-invalid",
+                sesMessageId: "ses-message-307",
+                eventType: "Delivery",
+                eventBody:
+                """
+                "delivery": {
+                  "timestamp": "2026-04-30T04:16:00.000Z",
+                  "smtpResponse": "250 2.6.0 Message received"
+                }
+                """,
+                signatureOverride: Convert.ToBase64String(new byte[256]))));
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        using var resultDocument = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        Assert.Equal("Amazon SES SNS signature verification failed.", resultDocument.RootElement.GetProperty("title").GetString());
+
+        var invitation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationCatalog>().Invitations);
+        Assert.False(invitation.Metadata.ContainsKey(TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus));
+        Assert.Empty(app.Services.GetRequiredService<ITenantInvitationDeliveryStatusObservationStore>().Observations);
+    }
+
+    [Fact]
+    public async Task AmazonSesSnsStatusCallbackRejectsUntrustedSigningCertificateUrl()
+    {
+        using var rsa = RSA.Create(2048);
+        using var certificate = CreateSigningCertificate(rsa);
+        await using var app = await CreateAppAsync(
+            configureEndpoint: options =>
+            {
+                options.RequireStatusCallbackAuthorization = false;
+                options.RequireSnsSignatureVerification = true;
+                options.AllowedSnsTopicArns = [SnsTopicArn];
+                options.PinnedSnsSigningCertificatePem = certificate.ExportCertificatePem();
+                options.ValidateSnsSigningCertificateChain = false;
+            });
+        var client = app.GetTestClient();
+
+        using var response = await client.PostAsync(
+            "/engine/tenant-invitations/delivery-status/amazon-ses",
+            CreateJsonContent(CreateSignedSnsNotificationPayload(
+                rsa,
+                snsMessageId: "sns-message-308-untrusted-cert",
+                sesMessageId: "ses-message-307",
+                eventType: "Delivery",
+                eventBody:
+                """
+                "delivery": {
+                  "timestamp": "2026-04-30T04:17:00.000Z",
+                  "smtpResponse": "250 2.6.0 Message received"
+                }
+                """,
+                signingCertUrl: "https://sns.evil.amazonaws.com/SimpleNotificationService-test.pem")));
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        using var resultDocument = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        Assert.Equal("Amazon SES SNS signature verification failed.", resultDocument.RootElement.GetProperty("title").GetString());
+
+        var invitation = Assert.Single(app.Services.GetRequiredService<ITenantInvitationCatalog>().Invitations);
+        Assert.False(invitation.Metadata.ContainsKey(TenantInvitationDeliveryMetadataKeys.LastDeliveryStatus));
+        Assert.Empty(app.Services.GetRequiredService<ITenantInvitationDeliveryStatusObservationStore>().Observations);
     }
 
     private static async Task<WebApplication> CreateAppAsync(
@@ -220,7 +364,7 @@ public sealed class MultiTenancyGovernanceAmazonSesDeliveryAspNetCorePackTests
         {
             ["Type"] = "Notification",
             ["MessageId"] = snsMessageId,
-            ["TopicArn"] = "arn:aws:sns:us-east-1:123456789012:cephalon-governance",
+            ["TopicArn"] = SnsTopicArn,
             ["Subject"] = "Amazon SES Email Event",
             ["Message"] = sesEvent,
             ["Timestamp"] = "2026-04-30T04:00:01.000Z",
@@ -229,4 +373,76 @@ public sealed class MultiTenancyGovernanceAmazonSesDeliveryAspNetCorePackTests
             ["SigningCertURL"] = "https://sns.us-east-1.amazonaws.com/SimpleNotificationService.pem"
         });
     }
+
+    private static X509Certificate2 CreateSigningCertificate(RSA rsa)
+    {
+        var request = new CertificateRequest(
+            "CN=SimpleNotificationService-Test",
+            rsa,
+            HashAlgorithmName.SHA256,
+            RSASignaturePadding.Pkcs1);
+        return request.CreateSelfSigned(
+            DateTimeOffset.UtcNow.AddMinutes(-5),
+            DateTimeOffset.UtcNow.AddDays(1));
+    }
+
+    private static string CreateSignedSnsNotificationPayload(
+        RSA rsa,
+        string snsMessageId,
+        string sesMessageId,
+        string eventType,
+        string eventBody,
+        string? signatureOverride = null,
+        string signingCertUrl = "https://sns.us-east-1.amazonaws.com/SimpleNotificationService-test.pem")
+    {
+        var sesEvent = $$"""
+        {
+          "eventType": "{{eventType}}",
+          "mail": {
+            "timestamp": "2026-04-30T03:59:00.000Z",
+            "messageId": "{{sesMessageId}}",
+            "tags": {
+              "cephalon-tenant-id": ["tenant-ses"],
+              "cephalon-invitation-id": ["invite-ses-callback"],
+              "cephalon-delivery-channel": ["email"],
+              "cephalon-sender-id": ["amazon-ses-email"],
+              "cephalon-correlation-id": ["corr-ses-callback-307"]
+            }
+          },
+          {{eventBody}}
+        }
+        """;
+        var values = new Dictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["Type"] = "Notification",
+            ["MessageId"] = snsMessageId,
+            ["TopicArn"] = SnsTopicArn,
+            ["Subject"] = "Amazon SES Email Event",
+            ["Message"] = sesEvent,
+            ["Timestamp"] = "2026-04-30T04:00:01.000Z",
+            ["SignatureVersion"] = "2",
+            ["SigningCertURL"] = signingCertUrl
+        };
+        values["Signature"] = signatureOverride ?? Convert.ToBase64String(rsa.SignData(
+            Encoding.UTF8.GetBytes(CreateSnsNotificationStringToSign(values)),
+            HashAlgorithmName.SHA256,
+            RSASignaturePadding.Pkcs1));
+        return JsonSerializer.Serialize(values);
+    }
+
+    private static string CreateSnsNotificationStringToSign(Dictionary<string, string> values) =>
+        string.Join(
+            "\n",
+            "Message",
+            values["Message"],
+            "MessageId",
+            values["MessageId"],
+            "Subject",
+            values["Subject"],
+            "Timestamp",
+            values["Timestamp"],
+            "TopicArn",
+            values["TopicArn"],
+            "Type",
+            values["Type"]);
 }

@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-30T04:00:41.5693661+00:00",
+  "GeneratedAtUtc": "2026-04-30T05:00:00.6339735+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -2402,7 +2402,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 13,
+        "Properties": 19,
         "Methods": 1
       }
     },
@@ -23757,6 +23757,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-trustpolicy-allowedpackagechecksums",
       "Signature": "IReadOnlyDictionary\u003Cstring, IReadOnlyList\u003Cstring\u003E\u003E AllowedPackageChecksums { get; }",
       "Summary": "Gets the package checksum allow-lists keyed by package identifier."
+    },
+    {
+      "DisplayName": "AllowedSnsTopicArns",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-allowedsnstopicarns",
+      "Signature": "string[] AllowedSnsTopicArns { get; set; }",
+      "Summary": "Gets or sets the SNS topic ARNs accepted by this callback endpoint when topic allow-listing is required."
     },
     {
       "DisplayName": "AllowIdentityNameAsSubjectIdFallback",
@@ -91468,6 +91479,17 @@
       "Summary": "Gets the stable physical-target identifier used to group logical roles that share one physical database target."
     },
     {
+      "DisplayName": "PinnedSnsSigningCertificatePem",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-pinnedsnssigningcertificatepem",
+      "Signature": "string PinnedSnsSigningCertificatePem { get; set; }",
+      "Summary": "Gets or sets a pinned X.509 certificate PEM used to verify SNS signatures instead of downloading the certificate from \u0060SigningCertURL\u0060."
+    },
+    {
       "DisplayName": "PipelinePattern",
       "Category": "Properties",
       "DeclaringTypeName": "BuiltInPatterns",
@@ -102532,6 +102554,17 @@
       "Summary": "Indicates request-response interactions are supported."
     },
     {
+      "DisplayName": "RequireAllowedSnsTopicArn",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-requireallowedsnstopicarn",
+      "Signature": "bool RequireAllowedSnsTopicArn { get; set; }",
+      "Summary": "Gets or sets a value indicating whether \u0060TopicArn\u0060 must match \u0060AllowedSnsTopicArns\u0060 when signature verification is required."
+    },
+    {
       "DisplayName": "RequireApproval",
       "Category": "Methods",
       "DeclaringTypeName": "AgentToolExecutionDecision",
@@ -103498,6 +103531,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-requiresmanualapproval",
       "Signature": "bool RequiresManualApproval { get; }",
       "Summary": "Gets a value indicating whether the retry-execution policy still needs a manual approval gate."
+    },
+    {
+      "DisplayName": "RequireSnsSignatureVerification",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-requiresnssignatureverification",
+      "Signature": "bool RequireSnsSignatureVerification { get; set; }",
+      "Summary": "Gets or sets a value indicating whether SNS message signatures must verify before translation."
+    },
+    {
+      "DisplayName": "RequireSnsSignatureVersion2",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-requiresnssignatureversion2",
+      "Signature": "bool RequireSnsSignatureVersion2 { get; set; }",
+      "Summary": "Gets or sets a value indicating whether verified SNS messages must use \u0060SignatureVersion\u0060 2."
     },
     {
       "DisplayName": "RequiresPatterns",
@@ -123768,6 +123823,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-validatedatutc",
       "Signature": "DateTimeOffset ValidatedAtUtc { get; }",
       "Summary": "Gets the UTC timestamp when validation executed."
+    },
+    {
+      "DisplayName": "ValidateSnsSigningCertificateChain",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-validatesnssigningcertificatechain",
+      "Signature": "bool ValidateSnsSigningCertificateChain { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the SNS signing certificate chain and validity window should be checked."
     },
     {
       "DisplayName": "Value",
