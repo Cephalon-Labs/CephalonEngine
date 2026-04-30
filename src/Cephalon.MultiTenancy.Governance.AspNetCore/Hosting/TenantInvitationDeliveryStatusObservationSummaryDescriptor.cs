@@ -44,8 +44,8 @@ public sealed class TenantInvitationDeliveryStatusObservationSummaryDescriptor
     }
 
     /// <summary>
-    /// Gets the summarized observation dimension, such as <c>status</c>, <c>attention</c>, <c>outcome</c>,
-    /// <c>source</c>, <c>channel</c>, <c>sender</c>, or <c>tenant</c>.
+    /// Gets the summarized observation dimension, such as <c>status</c>, <c>attention</c>, <c>remediation</c>,
+    /// <c>outcome</c>, <c>source</c>, <c>channel</c>, <c>sender</c>, or <c>tenant</c>.
     /// </summary>
     public string Dimension { get; }
 

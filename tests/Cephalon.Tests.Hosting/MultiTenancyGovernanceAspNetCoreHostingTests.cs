@@ -483,7 +483,7 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         Assert.NotNull(allResult);
         Assert.Equal(2, allResult.MatchedCount);
         Assert.Equal(1, allResult.ReturnedCount);
-        Assert.Equal(8, allResult.SummaryCount);
+        Assert.Equal(9, allResult.SummaryCount);
         Assert.Equal(1, allResult.RemediationHintCount);
         var statusSummaries = allResult.Summaries.Where(static summary => summary.Dimension == "status").ToArray();
         Assert.Contains(statusSummaries, summary => summary.Value == TenantInvitationDeliveryStatuses.Delivered && summary.Count == 1);
@@ -496,6 +496,14 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         Assert.Equal(1, attentionSummary.ReconciledCount);
         Assert.Equal(1, attentionSummary.RecordedCount);
         Assert.Equal(deliveredAtUtc.AddMinutes(1), attentionSummary.LatestObservedAtUtc);
+        var remediationSummary = Assert.Single(
+            allResult.Summaries,
+            summary => summary.Dimension == "remediation" &&
+                summary.Value == TenantInvitationDeliveryStatusObservationRemediationActions.ReviewRecipientOrSender);
+        Assert.Equal(1, remediationSummary.Count);
+        Assert.Equal(1, remediationSummary.ReconciledCount);
+        Assert.Equal(1, remediationSummary.RecordedCount);
+        Assert.Equal(deliveredAtUtc.AddMinutes(1), remediationSummary.LatestObservedAtUtc);
         var sourceSummary = Assert.Single(
             allResult.Summaries,
             summary => summary.Dimension == "source" && summary.Value == "aspnetcore-delivery-status-callback");
@@ -528,6 +536,26 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
             TenantInvitationDeliveryStatusObservationRemediationActions.ReviewRecipientOrSender,
             Assert.Single(attentionResult.RemediationHints).Action);
 
+        var remediationResponse = await client.GetAsync(
+            "/engine/tenant-invitations/delivery-status/observations?tenantId=tenant-observation&remediation=review-recipient-or-sender&limit=25");
+        var remediationResult =
+            await remediationResponse.Content.ReadFromJsonAsync<TenantInvitationDeliveryStatusObservationQueryResult>();
+        Assert.Equal(HttpStatusCode.OK, remediationResponse.StatusCode);
+        Assert.NotNull(remediationResult);
+        Assert.Equal(1, remediationResult.MatchedCount);
+        Assert.Equal(1, remediationResult.ReturnedCount);
+        Assert.Equal(1, remediationResult.RemediationHintCount);
+        Assert.Equal(
+            TenantInvitationDeliveryStatusObservationRemediationActions.ReviewRecipientOrSender,
+            remediationResult.Filters["remediation"]);
+        var remediationObservation = Assert.Single(remediationResult.Observations);
+        Assert.Equal("invite-observation-bounced", remediationObservation.InvitationId);
+        Assert.Equal(TenantInvitationDeliveryStatuses.Bounced, remediationObservation.Status);
+
+        var invalidRemediationResponse = await client.GetAsync(
+            "/engine/tenant-invitations/delivery-status/observations?remediation=retry-now");
+        Assert.Equal(HttpStatusCode.BadRequest, invalidRemediationResponse.StatusCode);
+
         Assert.Equal("mapped", endpointEntry.Metadata["observationEndpointRuntimeState"]);
         Assert.Equal("true", endpointEntry.Metadata["observationEndpointMapped"]);
         Assert.Equal("false", endpointEntry.Metadata["observationRequireAuthorization"]);
@@ -537,12 +565,16 @@ public sealed class MultiTenancyGovernanceAspNetCoreHostingTests
         Assert.Equal("cephalon-managed", endpointEntry.Metadata["tenantInvitationDeliveryStatusObservationEndpointOwnership"]);
         Assert.Equal("cephalon-managed", endpointEntry.Metadata["observationSummaryOwnership"]);
         Assert.Equal("filtered-normalized-observations", endpointEntry.Metadata["observationSummaryScope"]);
-        Assert.Equal("status,attention,outcome,source,channel,sender,tenant", endpointEntry.Metadata["observationSummaryDimensions"]);
+        Assert.Equal("status,attention,remediation,outcome,source,channel,sender,tenant", endpointEntry.Metadata["observationSummaryDimensions"]);
         Assert.Equal("cephalon-managed", endpointEntry.Metadata["observationAttentionSummaryOwnership"]);
         Assert.Equal("matched-normalized-observation-attention", endpointEntry.Metadata["observationAttentionSummaryScope"]);
         Assert.Equal(
             "delivery-failed, delivery-deferred, delivery-suppressed, delivery-unknown, reconciliation-gap, recording-gap",
             endpointEntry.Metadata["observationAttentionCategories"]);
+        Assert.Equal("cephalon-managed", endpointEntry.Metadata["observationRemediationFilterOwnership"]);
+        Assert.Equal(
+            "matched-normalized-observation-remediation",
+            endpointEntry.Metadata["observationRemediationFilterScope"]);
         Assert.Equal("cephalon-managed", endpointEntry.Metadata["observationRemediationHintOwnership"]);
         Assert.Equal("matched-normalized-observation-attention", endpointEntry.Metadata["observationRemediationHintScope"]);
         Assert.Equal(

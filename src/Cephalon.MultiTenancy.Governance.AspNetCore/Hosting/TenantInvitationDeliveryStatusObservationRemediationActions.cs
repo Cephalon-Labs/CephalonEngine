@@ -9,6 +9,16 @@ namespace Cephalon.MultiTenancy.Governance.AspNetCore.Hosting;
 /// </remarks>
 public static class TenantInvitationDeliveryStatusObservationRemediationActions
 {
+    private static readonly string[] Values =
+    [
+        ReviewRecipientOrSender,
+        MonitorDeferredDelivery,
+        ReviewSuppressionPolicy,
+        ReviewStatusTranslation,
+        ReviewReconciliationInput,
+        ReviewObservationRecording
+    ];
+
     /// <summary>
     /// Review the recipient, sender configuration, or provider status before retrying or replacing the invitation.
     /// </summary>
@@ -42,12 +52,17 @@ public static class TenantInvitationDeliveryStatusObservationRemediationActions
     internal static string KnownValues =>
         string.Join(
             ", ",
-            [
-                ReviewRecipientOrSender,
-                MonitorDeferredDelivery,
-                ReviewSuppressionPolicy,
-                ReviewStatusTranslation,
-                ReviewReconciliationInput,
-                ReviewObservationRecording
-            ]);
+            Values);
+
+    internal static string? Normalize(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+
+        var normalized = value.Trim();
+        return Values.FirstOrDefault(known =>
+            string.Equals(known, normalized, StringComparison.OrdinalIgnoreCase));
+    }
 }

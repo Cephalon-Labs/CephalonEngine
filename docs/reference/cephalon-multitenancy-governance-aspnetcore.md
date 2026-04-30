@@ -1305,7 +1305,7 @@ Gets the number of observations in the bucket.
 string Dimension { get; }
 ```
 
-Gets the summarized observation dimension, such as `status`, `attention`, `outcome`, `source`, `channel`, `sender`, or `tenant`.
+Gets the summarized observation dimension, such as `status`, `attention`, `remediation`, `outcome`, `source`, `channel`, `sender`, or `tenant`.
 
 <a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationsummarydescriptor-latestobservedatutc"></a>
 

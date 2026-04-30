@@ -129,6 +129,7 @@ public static class TenantInvitationDeliveryStatusObservationEndpointRouteBuilde
         [
             .. BuildSummaryDimension(observations, "status", static observation => observation.Status),
             .. BuildAttentionSummaries(observations),
+            .. BuildRemediationSummaries(observations),
             .. BuildSummaryDimension(observations, "outcome", static observation => observation.Outcome),
             .. BuildSummaryDimension(observations, "source", static observation => observation.Source),
             .. BuildSummaryDimension(observations, "channel", static observation => observation.Channel),
@@ -147,6 +148,27 @@ public static class TenantInvitationDeliveryStatusObservationEndpointRouteBuilde
             .GroupBy(static item => item.Category, StringComparer.OrdinalIgnoreCase)
             .Select(group => new TenantInvitationDeliveryStatusObservationSummaryDescriptor(
                 "attention",
+                group.Key,
+                group.Count(),
+                group.Count(static item => item.Observation.Reconciled),
+                group.Count(static item => item.Observation.Recorded),
+                group.Max(static item => item.Observation.ObservedAtUtc),
+                group.Max(static item => item.Observation.RecordedAtUtc)))
+            .OrderByDescending(static summary => summary.Count)
+            .ThenBy(static summary => summary.Value, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+    }
+
+    private static TenantInvitationDeliveryStatusObservationSummaryDescriptor[] BuildRemediationSummaries(
+        IReadOnlyList<TenantInvitationDeliveryStatusObservationDescriptor> observations)
+    {
+        return observations
+            .SelectMany(
+                static observation => GetRemediationActions(observation)
+                    .Select(action => new RemediationObservation(action, observation)))
+            .GroupBy(static item => item.Action, StringComparer.OrdinalIgnoreCase)
+            .Select(group => new TenantInvitationDeliveryStatusObservationSummaryDescriptor(
+                "remediation",
                 group.Key,
                 group.Count(),
                 group.Count(static item => item.Observation.Reconciled),
@@ -258,6 +280,12 @@ public static class TenantInvitationDeliveryStatusObservationEndpointRouteBuilde
             return ObservationReadQuery.Fail(attention.Failure);
         }
 
+        var remediation = ReadRemediationFilter(context, filters);
+        if (remediation.Failure is not null)
+        {
+            return ObservationReadQuery.Fail(remediation.Failure);
+        }
+
         var reconciled = ReadBooleanFilter(context, "reconciled", filters);
         if (reconciled.Failure is not null)
         {
@@ -287,6 +315,7 @@ public static class TenantInvitationDeliveryStatusObservationEndpointRouteBuilde
                 Matches(observation.Source, source) &&
                 Matches(observation.CorrelationId, correlationId) &&
                 MatchesAttention(observation, attention.Value) &&
+                MatchesRemediation(observation, remediation.Value) &&
                 Matches(observation.Reconciled, reconciled.Value) &&
                 Matches(observation.Recorded, recorded.Value),
             null);
@@ -313,6 +342,30 @@ public static class TenantInvitationDeliveryStatusObservationEndpointRouteBuilde
         }
 
         filters["attention"] = normalized;
+        return new TextFilterReadResult(normalized, null);
+    }
+
+    private static TextFilterReadResult ReadRemediationFilter(
+        HttpContext context,
+        Dictionary<string, string> filters)
+    {
+        if (!TryReadSingleQueryValue(context, "remediation", out var value))
+        {
+            return new TextFilterReadResult(null, null);
+        }
+
+        var normalized = TenantInvitationDeliveryStatusObservationRemediationActions.Normalize(value);
+        if (normalized is null)
+        {
+            return new TextFilterReadResult(
+                null,
+                Results.Problem(
+                    title: "Tenant invitation delivery status observation remediation filter is invalid.",
+                    detail: $"Set 'remediation' to one of: {TenantInvitationDeliveryStatusObservationRemediationActions.KnownValues}.",
+                    statusCode: StatusCodes.Status400BadRequest));
+        }
+
+        filters["remediation"] = normalized;
         return new TextFilterReadResult(normalized, null);
     }
 
@@ -422,6 +475,23 @@ public static class TenantInvitationDeliveryStatusObservationEndpointRouteBuilde
         return expected is null ||
             GetAttentionCategories(observation)
                 .Any(category => string.Equals(category, expected, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static bool MatchesRemediation(
+        TenantInvitationDeliveryStatusObservationDescriptor observation,
+        string? expected)
+    {
+        return expected is null ||
+            GetRemediationActions(observation)
+                .Any(action => string.Equals(action, expected, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static IEnumerable<string> GetRemediationActions(
+        TenantInvitationDeliveryStatusObservationDescriptor observation)
+    {
+        return GetAttentionCategories(observation)
+            .Select(static category => GetRemediationHintDefinition(category).Action)
+            .Distinct(StringComparer.OrdinalIgnoreCase);
     }
 
     private static IEnumerable<string> GetAttentionCategories(
@@ -560,6 +630,10 @@ public static class TenantInvitationDeliveryStatusObservationEndpointRouteBuilde
 
     private sealed record AttentionObservation(
         string Category,
+        TenantInvitationDeliveryStatusObservationDescriptor Observation);
+
+    private sealed record RemediationObservation(
+        string Action,
         TenantInvitationDeliveryStatusObservationDescriptor Observation);
 
     private sealed record RemediationHintDefinition(
