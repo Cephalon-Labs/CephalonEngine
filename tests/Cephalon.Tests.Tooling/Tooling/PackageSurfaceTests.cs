@@ -1410,6 +1410,18 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void MultiTenancyGovernanceAmazonSesDeliveryAspNetCoreAssemblyExposesOnlyTheDocumentedHostContracts()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting.AmazonSesInvitationDeliveryAspNetCoreServiceCollectionExtensions).Assembly,
+            typeof(global::Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration.AmazonSesInvitationDeliveryAspNetCoreOptions),
+            typeof(global::Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting.AmazonSesInvitationDeliveryAspNetCoreServiceCollectionExtensions),
+            typeof(global::Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting.AmazonSesInvitationDeliveryStatusCallbackEventResult),
+            typeof(global::Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting.AmazonSesInvitationDeliveryStatusCallbackResult),
+            typeof(global::Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting.AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensions));
+    }
+
+    [Fact]
     public void MultiTenancyGovernanceMailgunDeliveryAspNetCoreAssemblyExposesOnlyTheDocumentedHostContracts()
     {
         AssertExportedTypes(

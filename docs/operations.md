@@ -1110,6 +1110,7 @@ Current shipped event-id ranges include:
 - `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore`: `4568-4571`
 - `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery`: `4572-4573`
 - `Cephalon.MultiTenancy.Governance.AmazonSesDelivery`: `4576-4577`
+- `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore`: `4578`
 - `Cephalon.MultiTenancy.Governance.SendGridDelivery`: `4560-4561`
 - `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`: `4562-4565`
 - `Cephalon.MultiTenancy.Governance.SmtpDelivery`: `4558-4559`
@@ -1279,11 +1280,12 @@ Current note:
 - hosts can install `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery` and call `AddCephalonMicrosoftGraphInvitationDelivery(...)` when invitation dispatch should POST a templated Microsoft Graph `sendMail` payload through a replaceable client and access-token provider seam while still recording outcome truth through the governance dispatcher
 - ASP.NET Core hosts can install `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore` and call `MapCephalonSendGridInvitationDeliveryStatusCallbacks()` when SendGrid Event Webhook arrays should be translated into the existing delivery-status reconciler without custom host glue; when `RequireSignedEventWebhook` is enabled, the same endpoint can reject duplicate verified signed callbacks inside a bounded process-local replay window
 - ASP.NET Core hosts can install `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore` and call `MapCephalonMailgunInvitationDeliveryStatusCallbacks()` when Mailgun webhook objects should be translated, HMAC-verified, protected against duplicate signed tokens inside a bounded process-local replay window, and de-duplicated by observed Mailgun event id without custom host glue; durable inboxing, distributed replay, and distributed event-id ledgers remain separate follow-through
+- ASP.NET Core hosts can install `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore` and call `MapCephalonAmazonSesInvitationDeliveryStatusCallbacks()` when Amazon SNS `Notification` envelopes carrying Amazon SES event publishing payloads should be translated into the existing delivery-status reconciler without custom host glue; SNS signature verification, subscription confirmation automation, durable inboxing, distributed replay, and distributed event-id ledgers remain separate follow-through
 - hosts can enable `EnableInvitationDeliveryRetryQueue` when `sender-failed` dispatch outcomes should be retained for an explicit `ITenantInvitationDeliveryRetryRunner.RetryPendingAsync(...)` pass; configure `InvitationDeliveryRetryQueueFilePath` only when the local retry queue should survive process restarts
 - the tenant-administration command endpoint is fail-closed by default; keep `RequireTenantAdministrationAuthorization = true` for real hosts, set `TenantAdministrationAuthorizationPolicy` when a named ASP.NET Core policy should guard the command surface, and disable authorization only for deliberate internal/test hosts
 - the delivery status callback and observation read endpoints are fail-closed by default; keep `RequireTenantInvitationDeliveryStatusCallbackAuthorization = true` and `RequireTenantInvitationDeliveryStatusObservationAuthorization = true` for real hosts, set the related authorization policy when a named ASP.NET Core policy should guard callback ingress or observation reads, keep `RequireTenantInvitationDeliveryStatusCallbackProviderMessageMatch = true` unless the host deliberately owns another correlation boundary, and keep provider-neutral signed callback replay protection enabled when `TenantInvitationDeliveryStatusCallbackSigningSecret` is configured
 - the SendGrid callback endpoint is also fail-closed by default; keep `RequireStatusCallbackAuthorization = true` for real hosts, enable `RequireSignedEventWebhook` with a SendGrid public key when callbacks should be verified before parsing, and keep `EnableSignedEventWebhookReplayProtection = true` unless the host has a stronger replay boundary outside Cephalon
-- actual DNS proof publication, provider-backed proof publication or mutation, remediation execution beyond state transitions, distributed or provider-backed membership/invitation/domain/action-store backends, additional provider-specific email API senders beyond the shipped SMTP/SendGrid/Mailgun/Amazon SES/Microsoft Graph set, SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, provider-specific or distributed callback inboxes, cross-node callback replay protection, other non-SendGrid/non-Mailgun provider-specific delivery-status callback payload translation and callback signature verification, provider polling, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows remain future companion work until a package owns those paths explicitly
+- actual DNS proof publication, provider-backed proof publication or mutation, remediation execution beyond state transitions, distributed or provider-backed membership/invitation/domain/action-store backends, additional provider-specific email API senders beyond the shipped SMTP/SendGrid/Mailgun/Amazon SES/Microsoft Graph set, SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, provider-specific or distributed callback inboxes, cross-node callback replay protection, provider-specific delivery-status callback payload translation beyond shipped SendGrid/Mailgun/Amazon SES translators, provider-specific callback signature verification beyond shipped SendGrid/Mailgun hardening and future SNS verification, provider polling, identity-provider synchronization, public onboarding, and tenant-admin UI/backoffice flows remain future companion work until a package owns those paths explicitly
 
 Tenant-administration command endpoint configuration:
 
@@ -1534,7 +1536,61 @@ Operational notes:
 - the default client uses the AWS SDK for .NET SES v2 `SendEmail` API and accepts a successful `200 OK` response with a SES `MessageId` as dispatched handoff truth
 - AWS credentials, IAM policy, verified identities, DKIM/SPF/DMARC, sandbox exit, account-level suppression policy, and SES configuration-set event destinations stay with the host/AWS account rather than `Cephalon.Engine`
 - sender metadata records region, configuration set, SES status code, SES message id, Cephalon message id, sender id, recipient email, recipient metadata key, reply-to count, tag count, and safe client metadata, but it does not record AWS credentials, raw SDK request bodies, or message bodies
-- this package owns Amazon SES v2 accepted handoff only; bounce/complaint callback ingestion, provider polling, durable callback inboxes, distributed replay/event-id ledgers, deliverability analytics, SMS, chat, CRM, identity-provider onboarding, distributed retry queues, and tenant-admin UI remain future provider-pack or application-owned work
+- this package owns Amazon SES v2 accepted handoff only; Amazon SES over SNS callback translation lives in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore`, while SNS signature verification, SNS subscription confirmation automation, provider polling, durable callback inboxes, distributed replay/event-id ledgers, deliverability analytics, SMS, chat, CRM, identity-provider onboarding, distributed retry queues, and tenant-admin UI remain future provider-pack or application-owned work
+
+### Amazon SES invitation delivery status callbacks
+
+Install `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore` when Amazon SES event publishing sends SNS HTTP notifications and the host wants those events translated into the existing invitation delivery-status reconciler.
+
+Configuration:
+
+```json
+{
+  "Engine": {
+    "MultiTenancy": {
+      "Governance": {
+        "AmazonSesInvitationDelivery": {
+          "AspNetCore": {
+            "EnableStatusCallbackEndpoint": true,
+            "StatusCallbackRoutePattern": "/engine/tenant-invitations/delivery-status/amazon-ses",
+            "RequireStatusCallbackAuthorization": true,
+            "StatusCallbackAuthorizationPolicy": "amazon-ses-sns",
+            "RequireProviderMessageMatch": true,
+            "RecordStatus": true,
+            "Source": "amazon-ses-sns",
+            "Actor": "amazon-ses",
+            "MaxRequestBodyBytes": 262144,
+            "MaxEventsPerRequest": 1000,
+            "MapEngagementEventsAsDelivered": false
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+Registration:
+
+```csharp
+builder.Services.AddCephalonAmazonSesInvitationDeliveryAspNetCore(builder.Configuration);
+
+builder.AddCephalon(engine =>
+{
+    engine.AddMultiTenancyGovernance();
+});
+
+var app = builder.Build();
+app.MapCephalonAmazonSesInvitationDeliveryStatusCallbacks();
+```
+
+Operational notes:
+
+- the endpoint parses bounded SNS `Notification` JSON, unwraps the SES event JSON in `Message`, and can accept raw SES event objects or arrays for controlled replay/test harness scenarios when `AcceptRawSesEventPayloads` stays enabled
+- the translator extracts Cephalon context from SES `mail.tags`, including tenant id, invitation id, channel, sender id, and correlation id, and uses `mail.messageId` as the provider message id captured by the SES sender
+- `Send` maps to `accepted`, `Delivery` maps to `delivered`, transient `Bounce` maps to `deferred`, other `Bounce` maps to `bounced`, `Complaint` and `Reject` map to `suppressed`, `Rendering Failure` maps to `failed`, and `DeliveryDelay` maps to `deferred`; `Open`, `Click`, and `Subscription` are skipped by default
+- `SubscriptionConfirmation` and `UnsubscribeConfirmation` are skipped and are not auto-confirmed; SNS topic/subscription setup, topic policies, and subscription confirmation belong to host infrastructure
+- the runtime surface reports SNS signature verification as `not-configured`; keep endpoint authorization, gateway policy, SNS topic policy, private networking, or AWS WAF controls in place until a future SNS signature verification slice owns that path
 
 ### Mailgun invitation delivery sender
 

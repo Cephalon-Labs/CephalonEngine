@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-30T03:12:31.9012037+00:00",
+  "GeneratedAtUtc": "2026-04-30T04:00:41.5693661+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -343,6 +343,14 @@
       "Description": "Amazon SES v2 invitation delivery sender companion package for Cephalon multi-tenancy governance workloads.",
       "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
       "NamespaceCount": 3,
+      "TypeCount": 5
+    },
+    {
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "Category": "Phase 13 Companion Packs",
+      "Description": "ASP.NET Core Amazon SES over SNS callback translation companion package for Cephalon multi-tenancy governance workloads.",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "NamespaceCount": 2,
       "TypeCount": 5
     },
     {
@@ -1437,6 +1445,20 @@
       "TypeCount": 1
     },
     {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "namespace-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting",
+      "TypeCount": 4
+    },
+    {
       "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
       "FileName": "cephalon-multitenancy-governance-amazonsesdelivery.md",
@@ -2370,6 +2392,36 @@
       }
     },
     {
+      "DisplayName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions",
+      "Declaration": "public sealed class AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "Summary": "Configures ASP.NET Core Amazon SES over SNS callback translation for tenant-invitation delivery status updates.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 13,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "AmazonSesInvitationDeliveryAspNetCoreServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliveryaspnetcoreservicecollectionextensions",
+      "Declaration": "public static class AmazonSesInvitationDeliveryAspNetCoreServiceCollectionExtensions",
+      "Summary": "Registers ASP.NET Core Amazon SES over SNS callback translation services for tenant-invitation delivery status callbacks.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "AmazonSesInvitationDeliveryClientResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
@@ -2427,6 +2479,51 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "AmazonSesInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult",
+      "Declaration": "public sealed class AmazonSesInvitationDeliveryStatusCallbackEventResult",
+      "Summary": "Describes how one SNS-wrapped Amazon SES event was translated and reconciled.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 12,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "AmazonSesInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult",
+      "Declaration": "public sealed class AmazonSesInvitationDeliveryStatusCallbackResult",
+      "Summary": "Describes an Amazon SES over SNS callback translation response.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 10,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatusendpointroutebuilderextensions",
+      "Declaration": "public static class AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensions",
+      "Summary": "Maps ASP.NET Core endpoints for SNS-wrapped Amazon SES tenant-invitation delivery status callbacks.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
       }
     },
     {
@@ -19053,6 +19150,17 @@
       "Summary": "Gets or sets a value indicating whether Mailgun \u0060parent-signature\u0060 should be accepted for subaccount webhook events."
     },
     {
+      "DisplayName": "AcceptRawSesEventPayloads",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-acceptrawseseventpayloads",
+      "Signature": "bool AcceptRawSesEventPayloads { get; set; }",
+      "Summary": "Gets or sets a value indicating whether raw Amazon SES event payloads should be accepted for controlled replay."
+    },
+    {
       "DisplayName": "Access",
       "Category": "Properties",
       "DeclaringTypeName": "CapabilityPolicyDecision",
@@ -20408,6 +20516,17 @@
     {
       "DisplayName": "Actor",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-actor",
+      "Signature": "string Actor { get; set; }",
+      "Summary": "Gets or sets the actor value recorded on translated Amazon SES delivery status observations."
+    },
+    {
+      "DisplayName": "Actor",
+      "Category": "Properties",
       "DeclaringTypeName": "AuditEntry",
       "NamespaceName": "Cephalon.Abstractions.Audit",
       "AssemblyName": "Cephalon.Abstractions",
@@ -21636,6 +21755,17 @@
       "AnchorId": "member-m-cephalon-multitenancy-governance-amazonsesdelivery-hosting-amazonsesinvitationdeliveryservicecollectionextensions-addcephalonamazonsesinvitationdelivery-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions",
       "Signature": "IServiceCollection AddCephalonAmazonSesInvitationDelivery(this IServiceCollection services, IConfiguration configuration, Action\u003CAmazonSesInvitationDeliveryOptions\u003E configure)",
       "Summary": "Adds Amazon SES invitation delivery using configuration as the primary source of SES settings."
+    },
+    {
+      "DisplayName": "AddCephalonAmazonSesInvitationDeliveryAspNetCore",
+      "Category": "Methods",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliveryaspnetcoreservicecollectionextensions-addcephalonamazonsesinvitationdeliveryaspnetcore-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions",
+      "Signature": "IServiceCollection AddCephalonAmazonSesInvitationDeliveryAspNetCore(this IServiceCollection services, IConfiguration configuration, Action\u003CAmazonSesInvitationDeliveryAspNetCoreOptions\u003E configure)",
+      "Summary": "Adds Amazon SES over SNS callback translation services using configuration as the primary setup source."
     },
     {
       "DisplayName": "AddCephalonAws",
@@ -23750,6 +23880,28 @@
       "Summary": "The domain ownership declaration was already verified and no new proof run was needed."
     },
     {
+      "DisplayName": "AmazonSesEventType",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-amazonseseventtype",
+      "Signature": "string AmazonSesEventType { get; }",
+      "Summary": "Gets the Amazon SES event type when supplied."
+    },
+    {
+      "DisplayName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "Category": "Constructors",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-ctor",
+      "Signature": "AmazonSesInvitationDeliveryAspNetCoreOptions()",
+      "Summary": "Initializes a new instance of the \u0060AmazonSesInvitationDeliveryAspNetCoreOptions\u0060 class."
+    },
+    {
       "DisplayName": "AmazonSesInvitationDeliveryClientResult",
       "Category": "Constructors",
       "DeclaringTypeName": "AmazonSesInvitationDeliveryClientResult",
@@ -23781,6 +23933,39 @@
       "AnchorId": "member-m-cephalon-multitenancy-governance-amazonsesdelivery-configuration-amazonsesinvitationdeliveryoptions-ctor",
       "Signature": "AmazonSesInvitationDeliveryOptions()",
       "Summary": "Initializes a new instance of the \u0060AmazonSesInvitationDeliveryOptions\u0060 class."
+    },
+    {
+      "DisplayName": "AmazonSesInvitationDeliveryStatusCallbackEventResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-ctor-system-int32-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-string",
+      "Signature": "AmazonSesInvitationDeliveryStatusCallbackEventResult(int index, string snsMessageId, string snsMessageType, string amazonSesMessageId, string amazonSesEventType, string tenantId, string invitationId, string status, string outcome, bool translated, bool reconciled, string reason)",
+      "Summary": "Creates an Amazon SES callback event result."
+    },
+    {
+      "DisplayName": "AmazonSesInvitationDeliveryStatusCallbackResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-ctor-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-boolean-system-boolean-system-string-system-collections-generic-ireadonlylist-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult",
+      "Signature": "AmazonSesInvitationDeliveryStatusCallbackResult(string routePattern, int totalEvents, int translatedEvents, int reconciledEvents, int skippedEvents, int deniedEvents, bool snsSignatureVerificationRequired, bool snsSignatureVerified, string snsSignatureVerificationOutcome, IReadOnlyList\u003CAmazonSesInvitationDeliveryStatusCallbackEventResult\u003E events)",
+      "Summary": "Creates an Amazon SES callback translation response."
+    },
+    {
+      "DisplayName": "AmazonSesMessageId",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-amazonsesmessageid",
+      "Signature": "string AmazonSesMessageId { get; }",
+      "Summary": "Gets the Amazon SES message identifier when supplied."
     },
     {
       "DisplayName": "AntiCorruptionLayer",
@@ -42053,6 +42238,17 @@
     {
       "DisplayName": "DeniedEvents",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-deniedevents",
+      "Signature": "int DeniedEvents { get; }",
+      "Summary": "Gets the number of translated events denied by the reconciler."
+    },
+    {
+      "DisplayName": "DeniedEvents",
+      "Category": "Properties",
       "DeclaringTypeName": "MailgunInvitationDeliveryStatusCallbackResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
@@ -49665,6 +49861,17 @@
     {
       "DisplayName": "EnableStatusCallbackEndpoint",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-enablestatuscallbackendpoint",
+      "Signature": "bool EnableStatusCallbackEndpoint { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the Amazon SES callback endpoint should be mapped."
+    },
+    {
+      "DisplayName": "EnableStatusCallbackEndpoint",
+      "Category": "Properties",
       "DeclaringTypeName": "MailgunInvitationDeliveryAspNetCoreOptions",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Configuration",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
@@ -50941,6 +51148,17 @@
     {
       "DisplayName": "Events",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-events",
+      "Signature": "IReadOnlyList\u003CAmazonSesInvitationDeliveryStatusCallbackEventResult\u003E Events { get; }",
+      "Summary": "Gets per-event translation and reconciliation results."
+    },
+    {
+      "DisplayName": "Events",
+      "Category": "Properties",
       "DeclaringTypeName": "DiagnosticsConvention",
       "NamespaceName": "Cephalon.Engine.Diagnostics",
       "AssemblyName": "Cephalon.Engine",
@@ -51597,6 +51815,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-azureidentity-configuration-microsoftgraphinvitationdeliveryazureidentityoptions-excludemanagedidentitycredential",
       "Signature": "bool ExcludeManagedIdentityCredential { get; set; }",
       "Summary": "Gets or sets a value indicating whether managed identity authentication should be excluded."
+    },
+    {
+      "DisplayName": "ExcludeStatusCallbackEndpointFromDescription",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-excludestatuscallbackendpointfromdescription",
+      "Signature": "bool ExcludeStatusCallbackEndpointFromDescription { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the Amazon SES callback endpoint should be excluded from OpenAPI descriptions."
     },
     {
       "DisplayName": "ExcludeStatusCallbackEndpointFromDescription",
@@ -55425,6 +55654,17 @@
       "AnchorId": "member-m-cephalon-observability-alibabacloud-configuration-alibabacloudtelemetryexportoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
       "Signature": "AlibabaCloudTelemetryExportOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
       "Summary": "Binds Alibaba Cloud telemetry export options from configuration."
+    },
+    {
+      "DisplayName": "FromConfiguration",
+      "Category": "Methods",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-fromconfiguration-microsoft-extensions-configuration-iconfiguration-system-string",
+      "Signature": "AmazonSesInvitationDeliveryAspNetCoreOptions FromConfiguration(IConfiguration configuration, string sectionPath)",
+      "Summary": "Reads Amazon SES ASP.NET Core callback options from configuration."
     },
     {
       "DisplayName": "FromConfiguration",
@@ -67232,6 +67472,17 @@
     {
       "DisplayName": "Index",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-index",
+      "Signature": "int Index { get; }",
+      "Summary": "Gets the zero-based event index inside the request payload."
+    },
+    {
+      "DisplayName": "Index",
+      "Category": "Properties",
       "DeclaringTypeName": "MailgunInvitationDeliveryStatusCallbackEventResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
@@ -68119,6 +68370,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes-invitationexpired",
       "Signature": "const string InvitationExpired",
       "Summary": "The requested invitation expired before dispatch."
+    },
+    {
+      "DisplayName": "InvitationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-invitationid",
+      "Signature": "string InvitationId { get; }",
+      "Summary": "Gets the Cephalon invitation identifier when supplied."
     },
     {
       "DisplayName": "InvitationId",
@@ -77889,6 +78151,17 @@
       "Summary": "Maps Cephalon runtime, diagnostics, transport, and documentation endpoints onto the application."
     },
     {
+      "DisplayName": "MapCephalonAmazonSesInvitationDeliveryStatusCallbacks",
+      "Category": "Methods",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusEndpointRouteBuilderExtensions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatusendpointroutebuilderextensions-mapcephalonamazonsesinvitationdeliverystatuscallbacks-microsoft-aspnetcore-routing-iendpointroutebuilder",
+      "Signature": "IEndpointRouteBuilder MapCephalonAmazonSesInvitationDeliveryStatusCallbacks(this IEndpointRouteBuilder endpoints)",
+      "Summary": "Maps the optional Amazon SES over SNS tenant-invitation delivery status callback endpoint."
+    },
+    {
       "DisplayName": "MapCephalonMailgunInvitationDeliveryStatusCallbacks",
       "Category": "Methods",
       "DeclaringTypeName": "MailgunInvitationDeliveryStatusEndpointRouteBuilderExtensions",
@@ -77975,6 +78248,17 @@
       "AnchorId": "member-m-cephalon-aspnetcore-modules-iendpointmodule-mapendpoints-microsoft-aspnetcore-routing-iendpointroutebuilder",
       "Signature": "void MapEndpoints(IEndpointRouteBuilder endpoints)",
       "Summary": "Maps the module\u0027s REST endpoints onto the supplied endpoint route builder."
+    },
+    {
+      "DisplayName": "MapEngagementEventsAsDelivered",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-mapengagementeventsasdelivered",
+      "Signature": "bool MapEngagementEventsAsDelivered { get; set; }",
+      "Summary": "Gets or sets a value indicating whether Amazon SES engagement events such as open and click should be recorded as delivered."
     },
     {
       "DisplayName": "MapEngagementEventsAsDelivered",
@@ -79112,6 +79396,17 @@
     {
       "DisplayName": "MaxEventsPerRequest",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-maxeventsperrequest",
+      "Signature": "int MaxEventsPerRequest { get; set; }",
+      "Summary": "Gets or sets the maximum number of Amazon SES events accepted in one callback request."
+    },
+    {
+      "DisplayName": "MaxEventsPerRequest",
+      "Category": "Properties",
       "DeclaringTypeName": "MailgunInvitationDeliveryAspNetCoreOptions",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Configuration",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
@@ -79262,6 +79557,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-bulkheadsettings-maxqueuedactions",
       "Signature": "int? MaxQueuedActions { get; }",
       "Summary": "Gets the maximum queued actions allowed before rejection."
+    },
+    {
+      "DisplayName": "MaxRequestBodyBytes",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-maxrequestbodybytes",
+      "Signature": "int MaxRequestBodyBytes { get; set; }",
+      "Summary": "Gets or sets the maximum request body size accepted by the Amazon SES callback endpoint, in bytes."
     },
     {
       "DisplayName": "MaxRequestBodyBytes",
@@ -88491,6 +88797,17 @@
     {
       "DisplayName": "Outcome",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-outcome",
+      "Signature": "string Outcome { get; }",
+      "Summary": "Gets the translation or reconciliation outcome."
+    },
+    {
+      "DisplayName": "Outcome",
+      "Category": "Properties",
       "DeclaringTypeName": "AuditEntry",
       "NamespaceName": "Cephalon.Abstractions.Audit",
       "AssemblyName": "Cephalon.Abstractions",
@@ -97652,6 +97969,17 @@
     {
       "DisplayName": "Reason",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-reason",
+      "Signature": "string Reason { get; }",
+      "Summary": "Gets the operator-facing reason for the event outcome."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
       "DeclaringTypeName": "AuthorizationDecision",
       "NamespaceName": "Cephalon.Abstractions.Authorization",
       "AssemblyName": "Cephalon.Abstractions",
@@ -98411,6 +98739,17 @@
     {
       "DisplayName": "Reconciled",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-reconciled",
+      "Signature": "bool Reconciled { get; }",
+      "Summary": "Gets a value indicating whether the event reconciled a tenant invitation."
+    },
+    {
+      "DisplayName": "Reconciled",
+      "Category": "Properties",
       "DeclaringTypeName": "MailgunInvitationDeliveryStatusCallbackEventResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
@@ -98462,6 +98801,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationresult-reconciled",
       "Signature": "bool Reconciled { get; }",
       "Summary": "Gets a value indicating whether the status observation was accepted for the invitation."
+    },
+    {
+      "DisplayName": "ReconciledEvents",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-reconciledevents",
+      "Signature": "int ReconciledEvents { get; }",
+      "Summary": "Gets the number of events reconciled by Cephalon governance."
     },
     {
       "DisplayName": "ReconciledEvents",
@@ -99023,6 +99373,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-recordpublicationplan",
       "Signature": "bool RecordPublicationPlan { get; }",
       "Summary": "Gets a value indicating whether publication planning metadata should be recorded."
+    },
+    {
+      "DisplayName": "RecordStatus",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-recordstatus",
+      "Signature": "bool RecordStatus { get; set; }",
+      "Summary": "Gets or sets a value indicating whether translated delivery status should be recorded on the invitation."
     },
     {
       "DisplayName": "RecordStatus",
@@ -102602,6 +102963,17 @@
     {
       "DisplayName": "RequireProviderMessageMatch",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-requireprovidermessagematch",
+      "Signature": "bool RequireProviderMessageMatch { get; set; }",
+      "Summary": "Gets or sets a value indicating whether translated Amazon SES events must match an existing provider message id."
+    },
+    {
+      "DisplayName": "RequireProviderMessageMatch",
+      "Category": "Properties",
       "DeclaringTypeName": "MailgunInvitationDeliveryAspNetCoreOptions",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Configuration",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
@@ -103192,6 +103564,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-requirestakeover",
       "Signature": "bool RequiresTakeover { get; }",
       "Summary": "Gets a value indicating whether the coordination answer is currently waiting for a replacement reporter to take over."
+    },
+    {
+      "DisplayName": "RequireStatusCallbackAuthorization",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-requirestatuscallbackauthorization",
+      "Signature": "bool RequireStatusCallbackAuthorization { get; set; }",
+      "Summary": "Gets or sets a value indicating whether the Amazon SES callback endpoint should require authorization."
     },
     {
       "DisplayName": "RequireStatusCallbackAuthorization",
@@ -106525,6 +106908,17 @@
       "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefiktrafficmaterializeroptions-routenamespace",
       "Signature": "string RouteNamespace { get; set; }",
       "Summary": "Gets or sets the default Kubernetes namespace that contains projected IngressRoute resources."
+    },
+    {
+      "DisplayName": "RoutePattern",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-routepattern",
+      "Signature": "string RoutePattern { get; }",
+      "Summary": "Gets the endpoint route pattern that accepted the callback."
     },
     {
       "DisplayName": "RoutePattern",
@@ -110467,6 +110861,17 @@
     {
       "DisplayName": "SkippedEvents",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-skippedevents",
+      "Signature": "int SkippedEvents { get; }",
+      "Summary": "Gets the number of events skipped before reconciliation."
+    },
+    {
+      "DisplayName": "SkippedEvents",
+      "Category": "Properties",
       "DeclaringTypeName": "MailgunInvitationDeliveryStatusCallbackResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
@@ -110783,6 +111188,61 @@
       "Summary": "Gets or sets the Debezium snapshot mode when the pack should publish it as operator-facing metadata."
     },
     {
+      "DisplayName": "SnsMessageId",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-snsmessageid",
+      "Signature": "string SnsMessageId { get; }",
+      "Summary": "Gets the SNS message identifier when supplied."
+    },
+    {
+      "DisplayName": "SnsMessageType",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-snsmessagetype",
+      "Signature": "string SnsMessageType { get; }",
+      "Summary": "Gets the SNS message type when supplied."
+    },
+    {
+      "DisplayName": "SnsSignatureVerificationOutcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-snssignatureverificationoutcome",
+      "Signature": "string SnsSignatureVerificationOutcome { get; }",
+      "Summary": "Gets the SNS signature verification outcome."
+    },
+    {
+      "DisplayName": "SnsSignatureVerificationRequired",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-snssignatureverificationrequired",
+      "Signature": "bool SnsSignatureVerificationRequired { get; }",
+      "Summary": "Gets a value indicating whether SNS signature verification was required."
+    },
+    {
+      "DisplayName": "SnsSignatureVerified",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-snssignatureverified",
+      "Signature": "bool SnsSignatureVerified { get; }",
+      "Summary": "Gets a value indicating whether the SNS signature verified."
+    },
+    {
       "DisplayName": "Solution",
       "Category": "Fields",
       "DeclaringTypeName": "ScaffoldScopes",
@@ -110792,6 +111252,17 @@
       "AnchorId": "member-f-cephalon-abstractions-appmodel-scaffolding-scaffoldscopes-solution",
       "Signature": "const string Solution",
       "Summary": "Identifies a solution-level scaffold scope."
+    },
+    {
+      "DisplayName": "Source",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-source",
+      "Signature": "string Source { get; set; }",
+      "Summary": "Gets or sets the source value recorded on translated Amazon SES delivery status observations."
     },
     {
       "DisplayName": "Source",
@@ -113786,6 +114257,17 @@
     {
       "DisplayName": "Status",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-status",
+      "Signature": "string Status { get; }",
+      "Summary": "Gets the normalized Cephalon delivery status when translated."
+    },
+    {
+      "DisplayName": "Status",
+      "Category": "Properties",
       "DeclaringTypeName": "BehaviorResultDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
@@ -114061,6 +114543,17 @@
     {
       "DisplayName": "StatusCallbackAuthorizationPolicy",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-statuscallbackauthorizationpolicy",
+      "Signature": "string StatusCallbackAuthorizationPolicy { get; set; }",
+      "Summary": "Gets or sets the optional ASP.NET Core authorization policy required by the Amazon SES callback endpoint."
+    },
+    {
+      "DisplayName": "StatusCallbackAuthorizationPolicy",
+      "Category": "Properties",
       "DeclaringTypeName": "MailgunInvitationDeliveryAspNetCoreOptions",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Configuration",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
@@ -114079,6 +114572,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-configuration-sendgridinvitationdeliveryaspnetcoreoptions-statuscallbackauthorizationpolicy",
       "Signature": "string StatusCallbackAuthorizationPolicy { get; set; }",
       "Summary": "Gets or sets the optional ASP.NET Core authorization policy required by the SendGrid callback endpoint."
+    },
+    {
+      "DisplayName": "StatusCallbackRoutePattern",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-statuscallbackroutepattern",
+      "Signature": "string StatusCallbackRoutePattern { get; set; }",
+      "Summary": "Gets or sets the ASP.NET Core route pattern used for SNS-wrapped Amazon SES callbacks."
     },
     {
       "DisplayName": "StatusCallbackRoutePattern",
@@ -117867,6 +118371,17 @@
     {
       "DisplayName": "TenantId",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-tenantid",
+      "Signature": "string TenantId { get; }",
+      "Summary": "Gets the Cephalon tenant identifier when supplied."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
       "DeclaringTypeName": "AuditEntry",
       "NamespaceName": "Cephalon.Abstractions.Audit",
       "AssemblyName": "Cephalon.Abstractions",
@@ -120056,6 +120571,17 @@
     {
       "DisplayName": "TotalEvents",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-totalevents",
+      "Signature": "int TotalEvents { get; }",
+      "Summary": "Gets the number of events supplied in the callback payload."
+    },
+    {
+      "DisplayName": "TotalEvents",
+      "Category": "Properties",
       "DeclaringTypeName": "MailgunInvitationDeliveryStatusCallbackResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
@@ -120408,6 +120934,17 @@
     {
       "DisplayName": "Translated",
       "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackEventResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackeventresult-translated",
+      "Signature": "bool Translated { get; }",
+      "Summary": "Gets a value indicating whether the event was translated into a reconciliation request."
+    },
+    {
+      "DisplayName": "Translated",
+      "Category": "Properties",
       "DeclaringTypeName": "MailgunInvitationDeliveryStatusCallbackEventResult",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore.Hosting",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore",
@@ -120426,6 +120963,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-translated",
       "Signature": "bool Translated { get; }",
       "Summary": "Gets a value indicating whether the event was translated into a reconciliation request."
+    },
+    {
+      "DisplayName": "TranslatedEvents",
+      "Category": "Properties",
+      "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackResult",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore",
+      "FileName": "cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-translatedevents",
+      "Signature": "int TranslatedEvents { get; }",
+      "Summary": "Gets the number of events translated into Cephalon delivery-status events."
     },
     {
       "DisplayName": "TranslatedEvents",

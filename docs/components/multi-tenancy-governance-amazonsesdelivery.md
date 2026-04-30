@@ -14,6 +14,7 @@
 - Amazon SES simple message payload construction for sender, recipient, subject, text body, optional HTML body, reply-to addresses, configuration set, and message tags
 - deterministic Cephalon message ids carried through safe Amazon SES message tags
 - safe sender metadata such as region, configuration set, SES status code, SES message id, request id, Cephalon message id, sender id, recipient email, body content type, reply-to count, tag count, and client outcome reason
+- safe Cephalon context tags that `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore` can later translate from SNS-wrapped SES event publishing payloads
 - stable diagnostics for accepted and failed Amazon SES invitation dispatch attempts
 
 ## Main surfaces
@@ -83,13 +84,14 @@ When `RegionSystemName` is omitted, the AWS SDK default region resolution chain 
 
 The sender returns `dispatched` only when the AWS SDK reports that SES accepted the `SendEmail` request and returned a real SES message id. Unsupported channels are reported as `suppressed`; invalid recipient resolution, AWS service errors, non-accepted status codes, and timeouts are reported as `sender-failed`. The governance dispatcher persists those outcomes through the invitation store, queues retryable sender failures when the retry queue is enabled, and keeps `externalDeliveryOwnership = provider-managed` when this sender handled the attempt.
 
-This package intentionally owns Amazon SES v2 `SendEmail` handoff only. AWS account setup, identity/domain verification, IAM policy, DKIM/SPF/DMARC posture, SES sandbox movement, configuration-set event publishing, bounce/complaint callbacks, provider polling, durable callback inboxes, public onboarding, tenant-admin UI/backoffice, identity-provider sync, SMS, chat, and CRM delivery remain host-owned or future companion work until a package owns those paths explicitly. SendGrid Mail Send handoff lives in `Cephalon.MultiTenancy.Governance.SendGridDelivery`; Mailgun Messages API handoff lives in `Cephalon.MultiTenancy.Governance.MailgunDelivery`; Microsoft Graph `sendMail` handoff lives in `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery`; SMTP relay handoff lives in `Cephalon.MultiTenancy.Governance.SmtpDelivery`.
+This package intentionally owns Amazon SES v2 `SendEmail` handoff only. SNS-wrapped SES delivery-status callback translation lives in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore`. AWS account setup, identity/domain verification, IAM policy, DKIM/SPF/DMARC posture, SES sandbox movement, SES configuration-set event destination setup, SNS topic/subscription creation, SNS signature verification, provider polling, durable callback inboxes, public onboarding, tenant-admin UI/backoffice, identity-provider sync, SMS, chat, and CRM delivery remain host-owned or future companion work until a package owns those paths explicitly. SendGrid Mail Send handoff lives in `Cephalon.MultiTenancy.Governance.SendGridDelivery`; Mailgun Messages API handoff lives in `Cephalon.MultiTenancy.Governance.MailgunDelivery`; Microsoft Graph `sendMail` handoff lives in `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery`; SMTP relay handoff lives in `Cephalon.MultiTenancy.Governance.SmtpDelivery`.
 
 ## Related docs
 
 - [Cephalon.MultiTenancy](multi-tenancy.md)
 - [Cephalon.MultiTenancy.Governance](multi-tenancy-governance.md)
 - [Cephalon.MultiTenancy.Governance.AspNetCore](multi-tenancy-governance-aspnetcore.md)
+- [Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore](multi-tenancy-governance-amazonsesdelivery-aspnetcore.md)
 - [Cephalon.MultiTenancy.Governance.HttpDelivery](multi-tenancy-governance-httpdelivery.md)
 - [Cephalon.MultiTenancy.Governance.MailgunDelivery](multi-tenancy-governance-mailgundelivery.md)
 - [Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery](multi-tenancy-governance-microsoftgraphdelivery.md)

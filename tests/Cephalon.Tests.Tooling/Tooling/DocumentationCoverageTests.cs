@@ -32,6 +32,8 @@ public sealed class DocumentationCoverageTests
             ["Cephalon.MultiTenancy"] = "multi-tenancy.md",
             ["Cephalon.MultiTenancy.Governance"] = "multi-tenancy-governance.md",
             ["Cephalon.MultiTenancy.Governance.AspNetCore"] = "multi-tenancy-governance-aspnetcore.md",
+            ["Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore"] =
+                "multi-tenancy-governance-amazonsesdelivery-aspnetcore.md",
             ["Cephalon.MultiTenancy.Governance.AmazonSesDelivery"] = "multi-tenancy-governance-amazonsesdelivery.md",
             ["Cephalon.MultiTenancy.Governance.HttpDelivery"] = "multi-tenancy-governance-httpdelivery.md",
             ["Cephalon.MultiTenancy.Governance.MailgunDelivery"] = "multi-tenancy-governance-mailgundelivery.md",
