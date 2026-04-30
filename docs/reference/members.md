@@ -6273,9 +6273,15 @@ Browse the published API surface by public member.
 - [Delivered](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatuses-delivered): `Fields` on `TenantInvitationDeliveryStatuses` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Delivered&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The invitation was delivered to the provider-recognized recipient endpoint.
   - `const string Delivered`
+- [DeliveryDeferred](cephalon-multitenancy-governance-aspnetcore.md#member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationattentioncategories-deliverydeferred): `Fields` on `TenantInvitationDeliveryStatusObservationAttentionCategories` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=DeliveryDeferred&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
+  - The observation reports a deferred delivery status.
+  - `const string DeliveryDeferred`
 - [DeliveryDispatchOwnership](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliverydispatchownership): `Fields` on `TenantInvitationDeliveryMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DeliveryDispatchOwnership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Metadata key describing Cephalon ownership of the host-agnostic dispatch pipeline.
   - `const string DeliveryDispatchOwnership`
+- [DeliveryFailed](cephalon-multitenancy-governance-aspnetcore.md#member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationattentioncategories-deliveryfailed): `Fields` on `TenantInvitationDeliveryStatusObservationAttentionCategories` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=DeliveryFailed&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
+  - The observation reports a failed or bounced delivery status.
+  - `const string DeliveryFailed`
 - [DeliveryMode](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptiondescriptor-deliverymode): `Properties` on `EventSubscriptionDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DeliveryMode&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the declared delivery mode for the subscription.
   - `string DeliveryMode { get; }`
@@ -6393,6 +6399,12 @@ Browse the published API surface by public member.
 - [DeliveryStatusReconciliationOwnership](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliverystatusreconciliationownership): `Fields` on `TenantInvitationDeliveryMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DeliveryStatusReconciliationOwnership&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Metadata key describing Cephalon ownership of host-agnostic status reconciliation.
   - `const string DeliveryStatusReconciliationOwnership`
+- [DeliverySuppressed](cephalon-multitenancy-governance-aspnetcore.md#member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationattentioncategories-deliverysuppressed): `Fields` on `TenantInvitationDeliveryStatusObservationAttentionCategories` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=DeliverySuppressed&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
+  - The observation reports a suppressed delivery status.
+  - `const string DeliverySuppressed`
+- [DeliveryUnknown](cephalon-multitenancy-governance-aspnetcore.md#member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationattentioncategories-deliveryunknown): `Fields` on `TenantInvitationDeliveryStatusObservationAttentionCategories` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=DeliveryUnknown&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
+  - The observation reports an unknown delivery status.
+  - `const string DeliveryUnknown`
 - [Denied](cephalon-abstractions.md#member-f-cephalon-abstractions-agentics-agenttoolexecutionoutcomes-denied): `Fields` on `AgentToolExecutionOutcomes` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=Denied&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Gets the outcome identifier used when a policy denies a tool run.
   - `const string Denied`
@@ -7000,7 +7012,7 @@ Browse the published API surface by public member.
   - Gets the stable materialization dimension that produced the condition.
   - `string Dimension { get; }`
 - [Dimension](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationsummarydescriptor-dimension): `Properties` on `TenantInvitationDeliveryStatusObservationSummaryDescriptor` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=Dimension&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
-  - Gets the summarized observation dimension, such as `status`, `outcome`, `source`, `channel`, `sender`, or `tenant`.
+  - Gets the summarized observation dimension, such as `status`, `attention`, `outcome`, `source`, `channel`, `sender`, or `tenant`.
   - `string Dimension { get; }`
 - [DirectConnection](cephalon-observability-mongodbdependencies.md#member-p-cephalon-observability-mongodbdependencies-configuration-mongodbdependencydefinition-directconnection): `Properties` on `MongoDbDependencyDefinition` in `Cephalon.Observability.MongoDbDependencies.Configuration` (`Cephalon.Observability.MongoDbDependencies`) [Browse](browse.html?q=DirectConnection&assembly=Cephalon.Observability.MongoDbDependencies&namespace=Cephalon.Observability.MongoDbDependencies.Configuration&scope=members)
   - Gets or sets the optional value that controls whether the client should connect directly to the target server.
@@ -21969,6 +21981,9 @@ Browse the published API surface by public member.
 - [ReconciliationDegraded](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareprovisioningandmutationhardeningcategories-reconciliationdegraded): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReconciliationDegraded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The runtime currently reports a degraded reconciliation posture.
   - `const string ReconciliationDegraded`
+- [ReconciliationGap](cephalon-multitenancy-governance-aspnetcore.md#member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationattentioncategories-reconciliationgap): `Fields` on `TenantInvitationDeliveryStatusObservationAttentionCategories` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=ReconciliationGap&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
+  - The observation did not reconcile into invitation state.
+  - `const string ReconciliationGap`
 - [ReconciliationReason](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordriftstatus-reconciliationreason): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorDriftStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReconciliationReason&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest reported reconciliation summary when one is known.
   - `string ReconciliationReason { get; set; }`
@@ -22056,6 +22071,9 @@ Browse the published API surface by public member.
 - [RecordedCount](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationsummarydescriptor-recordedcount): `Properties` on `TenantInvitationDeliveryStatusObservationSummaryDescriptor` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=RecordedCount&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Gets the number of observations that recorded invitation delivery metadata in the bucket.
   - `int RecordedCount { get; }`
+- [RecordingGap](cephalon-multitenancy-governance-aspnetcore.md#member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationattentioncategories-recordinggap): `Fields` on `TenantInvitationDeliveryStatusObservationAttentionCategories` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=RecordingGap&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
+  - The observation did not record invitation delivery status metadata.
+  - `const string RecordingGap`
 - [RecordPlan](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipproofpublicationplanrequest-recordplan): `Properties` on `TenantDomainOwnershipProofPublicationPlanRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=RecordPlan&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets a value indicating whether the plan should be recorded in domain ownership metadata.
   - `bool RecordPlan { get; }`

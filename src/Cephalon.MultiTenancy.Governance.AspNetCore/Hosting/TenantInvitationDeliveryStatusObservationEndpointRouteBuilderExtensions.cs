@@ -125,12 +125,34 @@ public static class TenantInvitationDeliveryStatusObservationEndpointRouteBuilde
         return
         [
             .. BuildSummaryDimension(observations, "status", static observation => observation.Status),
+            .. BuildAttentionSummaries(observations),
             .. BuildSummaryDimension(observations, "outcome", static observation => observation.Outcome),
             .. BuildSummaryDimension(observations, "source", static observation => observation.Source),
             .. BuildSummaryDimension(observations, "channel", static observation => observation.Channel),
             .. BuildSummaryDimension(observations, "sender", static observation => observation.SenderId),
             .. BuildSummaryDimension(observations, "tenant", static observation => observation.TenantId)
         ];
+    }
+
+    private static TenantInvitationDeliveryStatusObservationSummaryDescriptor[] BuildAttentionSummaries(
+        IReadOnlyList<TenantInvitationDeliveryStatusObservationDescriptor> observations)
+    {
+        return observations
+            .SelectMany(
+                static observation => GetAttentionCategories(observation)
+                    .Select(category => new AttentionObservation(category, observation)))
+            .GroupBy(static item => item.Category, StringComparer.OrdinalIgnoreCase)
+            .Select(group => new TenantInvitationDeliveryStatusObservationSummaryDescriptor(
+                "attention",
+                group.Key,
+                group.Count(),
+                group.Count(static item => item.Observation.Reconciled),
+                group.Count(static item => item.Observation.Recorded),
+                group.Max(static item => item.Observation.ObservedAtUtc),
+                group.Max(static item => item.Observation.RecordedAtUtc)))
+            .OrderByDescending(static summary => summary.Count)
+            .ThenBy(static summary => summary.Value, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
     }
 
     private static TenantInvitationDeliveryStatusObservationSummaryDescriptor[] BuildSummaryDimension(
@@ -166,6 +188,11 @@ public static class TenantInvitationDeliveryStatusObservationEndpointRouteBuilde
         var outcome = ReadFilter(context, "outcome", filters);
         var source = ReadFilter(context, "source", filters);
         var correlationId = ReadFilter(context, "correlationId", filters);
+        var attention = ReadAttentionFilter(context, filters);
+        if (attention.Failure is not null)
+        {
+            return ObservationReadQuery.Fail(attention.Failure);
+        }
 
         var reconciled = ReadBooleanFilter(context, "reconciled", filters);
         if (reconciled.Failure is not null)
@@ -195,9 +222,34 @@ public static class TenantInvitationDeliveryStatusObservationEndpointRouteBuilde
                 Matches(observation.Outcome, outcome) &&
                 Matches(observation.Source, source) &&
                 Matches(observation.CorrelationId, correlationId) &&
+                MatchesAttention(observation, attention.Value) &&
                 Matches(observation.Reconciled, reconciled.Value) &&
                 Matches(observation.Recorded, recorded.Value),
             null);
+    }
+
+    private static TextFilterReadResult ReadAttentionFilter(
+        HttpContext context,
+        Dictionary<string, string> filters)
+    {
+        if (!TryReadSingleQueryValue(context, "attention", out var value))
+        {
+            return new TextFilterReadResult(null, null);
+        }
+
+        var normalized = TenantInvitationDeliveryStatusObservationAttentionCategories.Normalize(value);
+        if (normalized is null)
+        {
+            return new TextFilterReadResult(
+                null,
+                Results.Problem(
+                    title: "Tenant invitation delivery status observation attention filter is invalid.",
+                    detail: $"Set 'attention' to one of: {TenantInvitationDeliveryStatusObservationAttentionCategories.KnownValues}.",
+                    statusCode: StatusCodes.Status400BadRequest));
+        }
+
+        filters["attention"] = normalized;
+        return new TextFilterReadResult(normalized, null);
     }
 
     private static string? ReadFilter(
@@ -299,6 +351,50 @@ public static class TenantInvitationDeliveryStatusObservationEndpointRouteBuilde
         return expected is null || actual == expected.Value;
     }
 
+    private static bool MatchesAttention(
+        TenantInvitationDeliveryStatusObservationDescriptor observation,
+        string? expected)
+    {
+        return expected is null ||
+            GetAttentionCategories(observation)
+                .Any(category => string.Equals(category, expected, StringComparison.OrdinalIgnoreCase));
+    }
+
+    private static IEnumerable<string> GetAttentionCategories(
+        TenantInvitationDeliveryStatusObservationDescriptor observation)
+    {
+        switch (observation.Status)
+        {
+            case TenantInvitationDeliveryStatuses.Failed:
+            case TenantInvitationDeliveryStatuses.Bounced:
+                yield return TenantInvitationDeliveryStatusObservationAttentionCategories.DeliveryFailed;
+                break;
+            case TenantInvitationDeliveryStatuses.Deferred:
+                yield return TenantInvitationDeliveryStatusObservationAttentionCategories.DeliveryDeferred;
+                break;
+            case TenantInvitationDeliveryStatuses.Suppressed:
+                yield return TenantInvitationDeliveryStatusObservationAttentionCategories.DeliverySuppressed;
+                break;
+            case TenantInvitationDeliveryStatuses.Unknown:
+                yield return TenantInvitationDeliveryStatusObservationAttentionCategories.DeliveryUnknown;
+                break;
+        }
+
+        if (!observation.Reconciled ||
+            !string.Equals(
+                observation.Outcome,
+                TenantInvitationDeliveryStatusReconciliationOutcomes.Reconciled,
+                StringComparison.OrdinalIgnoreCase))
+        {
+            yield return TenantInvitationDeliveryStatusObservationAttentionCategories.ReconciliationGap;
+        }
+
+        if (!observation.Recorded)
+        {
+            yield return TenantInvitationDeliveryStatusObservationAttentionCategories.RecordingGap;
+        }
+    }
+
     private static async ValueTask<IResult?> AuthorizeAsync(
         HttpContext context,
         MultiTenancyGovernanceAspNetCoreOptions options)
@@ -394,5 +490,11 @@ public static class TenantInvitationDeliveryStatusObservationEndpointRouteBuilde
 
     private sealed record BooleanFilterReadResult(bool? Value, IResult? Failure);
 
+    private sealed record TextFilterReadResult(string? Value, IResult? Failure);
+
     private sealed record LimitReadResult(int Value, IResult? Failure);
+
+    private sealed record AttentionObservation(
+        string Category,
+        TenantInvitationDeliveryStatusObservationDescriptor Observation);
 }

@@ -797,6 +797,81 @@ string TenantId { get; set; }
 
 Gets or sets the tenant identifier that owns the invitation.
 
+<a id="type-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationattentioncategories"></a>
+
+### `TenantInvitationDeliveryStatusObservationAttentionCategories`
+
+Defines stable attention categories for tenant-invitation delivery status observation reads.
+
+Remarks: Attention categories are derived from normalized observations already stored by the governance core. They are operator drill-down labels only; they do not represent provider polling, callback inbox ownership, distributed replay, or exactly-once delivery semantics.
+
+#### Declaration
+```csharp
+public static class TenantInvitationDeliveryStatusObservationAttentionCategories
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationattentioncategories-deliverydeferred"></a>
+
+##### `DeliveryDeferred`
+
+```csharp
+const string DeliveryDeferred
+```
+
+The observation reports a deferred delivery status.
+
+<a id="member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationattentioncategories-deliveryfailed"></a>
+
+##### `DeliveryFailed`
+
+```csharp
+const string DeliveryFailed
+```
+
+The observation reports a failed or bounced delivery status.
+
+<a id="member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationattentioncategories-deliverysuppressed"></a>
+
+##### `DeliverySuppressed`
+
+```csharp
+const string DeliverySuppressed
+```
+
+The observation reports a suppressed delivery status.
+
+<a id="member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationattentioncategories-deliveryunknown"></a>
+
+##### `DeliveryUnknown`
+
+```csharp
+const string DeliveryUnknown
+```
+
+The observation reports an unknown delivery status.
+
+<a id="member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationattentioncategories-reconciliationgap"></a>
+
+##### `ReconciliationGap`
+
+```csharp
+const string ReconciliationGap
+```
+
+The observation did not reconcile into invitation state.
+
+<a id="member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationattentioncategories-recordinggap"></a>
+
+##### `RecordingGap`
+
+```csharp
+const string RecordingGap
+```
+
+The observation did not record invitation delivery status metadata.
+
 <a id="type-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationendpointroutebuilderextensions"></a>
 
 ### `TenantInvitationDeliveryStatusObservationEndpointRouteBuilderExtensions`
@@ -1018,7 +1093,7 @@ Gets the number of observations in the bucket.
 string Dimension { get; }
 ```
 
-Gets the summarized observation dimension, such as `status`, `outcome`, `source`, `channel`, `sender`, or `tenant`.
+Gets the summarized observation dimension, such as `status`, `attention`, `outcome`, `source`, `channel`, `sender`, or `tenant`.
 
 <a id="member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationsummarydescriptor-latestobservedatutc"></a>
 
