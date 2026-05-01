@@ -52,6 +52,45 @@ For trim, Native AOT, or single-file support to become real Cephalon support sta
 - `docs/engine-roadmap.md`
 - `docs/engine-backlog.md`
 
+## Validation harness (initial slice shipped, follow-through pending)
+
+Today the support claim is `not-claimed` across trim, Native AOT, and single-file. To move any of those to a real `claimed` state honestly, Cephalon needs a machine-checkable validation harness that proves the claim against actual `dotnet publish` results, not only against analyzer signals. The first slice of that harness now ships as `scripts/validate-deployment-mode-claims.ps1` with comprehensive Pester coverage at `tests/Cephalon.Tests.Scripts/validate-deployment-mode-claims.Tests.ps1`. The follow-through work (CI integration via `scripts/validate-release.ps1`, the manifest schema extension below, and an actual representative-publish-target list) is still planned.
+
+The shipped harness already runs alongside the existing `scripts/validate-dotnet-readiness.ps1` when invoked directly, with framework readiness and deployment-mode claim truth staying separate but reportable in the same release-validation flow once the wire-up lands.
+
+Planned manifest schema additions in `scripts/deployment-mode-support.json`:
+
+- `validationStrategy`: `analyzer-only`, `publish-required`, or `full-flow`
+- per-package `deploymentModeEligibility`: `packageName`, `nugetId`, `supportedModes` per claim, `requiredProjectProperties` per claim, `minimumAnalyzerPackVersion`, and `knownHazards: []` (reflection, native interop, dynamic dispatch, third-party transitive risk)
+- `representativePublishTargets: []`: the small set of packages the harness actually publishes during validation so the claim is anchored in real binary output
+- `expectedPublishOutputShape`: shape constraints (single-file binary signature, allowed warning categories, allowed size bounds)
+
+Planned harness phases:
+
+1. **project-property audit** scans every `src/Cephalon.*/*.csproj` and reports which projects set the claimed deployment-mode properties and which do not
+2. **analyzer phase** verifies the matching analyzer pack is enabled and at or above `minimumAnalyzerPackVersion` for projects that claim AOT or trim
+3. **publish phase** runs `dotnet publish -c Release` with the requested mode against each `representativePublishTargets` entry and captures exit code, warnings, errors, and binary artefacts
+4. **report phase** writes `artifacts/deployment-mode-release/{mode}-claim-validation-report.json` plus a human-readable `README.md`
+
+Aggregate verdicts the report emits:
+
+- `claim-truthful` — manifest claims the mode, all targets publish cleanly, analyzers pass
+- `claim-overstated` — manifest claims the mode, but publish or analyzer results show warnings or errors that contradict the claim
+- `not-claimed` — manifest says `not-claimed` and the audit confirms no project sets the matching properties
+- `mixed` — partial pass across multiple packages
+
+Known risks the harness must report on rather than hide:
+
+- transitive dependencies that emit `IL2026` / `IL3050` / NETSDK trim or AOT warnings even when the Cephalon package itself looks clean
+- native interop in cloud-provider SDKs (`AWSSDK.*`, `Azure.*`, `Google.*`) that may break Native AOT in non-obvious ways
+- reflection in source-generated boundaries and consumer code that invokes generated stubs reflectively
+- benchmark and test utilities (`BenchmarkDotNet`, broad reflection) that should not poison the framework claim
+- analyzer-pack version drift where a project claims AOT but uses an older analyzer that misses violations
+
+When the harness ships, this section is rewritten in place to describe the actual validation flow, the report path, and the workflow integration; cross-references in [`compatibility.md`](compatibility.md), [`engineering-standards.md`](engineering-standards.md), [`dotnet11-readiness.md`](dotnet11-readiness.md), and [`project-memory.md`](project-memory.md) are updated together in the same slice.
+
+Until the harness ships, the support contract above stays at `not-claimed` for trim, Native AOT, and single-file; analyzer-only or local-experiment signals do not widen the contract.
+
 ## What this guide does not mean
 
 - it does not move Cephalon's shipping floor from `net10.0`

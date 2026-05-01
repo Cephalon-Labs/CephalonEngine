@@ -186,6 +186,7 @@ Security is a framework concern, not an application concern. Cephalon's standard
 - transport security defaults assume TLS; HTTP-only modes are explicit opt-in for development scenarios
 - vulnerability scans run on every release validation pass; transitive vulnerabilities are part of the report
 - analyzer-only signals are readiness, not support; trim/AOT/single-file claims still need the manifest, project settings, validation coverage, workflow automation, and docs to all agree (see [`dotnet11-readiness.md`](dotnet11-readiness.md))
+- when the planned `scripts/validate-deployment-mode-claims.ps1` validation harness ships, its `claim-truthful` verdict is the authoritative gate for promoting trim, Native AOT, or single-file support from `not-claimed` to `claimed`; analyzer-only signals or local publish experiments do not widen the contract by themselves (see [`deployment-mode-support.md`](deployment-mode-support.md))
 - governance, tenancy, multi-tenancy, identity, and policy decisions stay declarative and inspectable through the engine's runtime catalogs so audits do not require log archaeology
 
 Authoritative external sources:

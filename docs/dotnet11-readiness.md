@@ -132,4 +132,5 @@ After this readiness baseline, the next framework-focused work should be deliber
 - analyzer drift review as new `.NET 11` previews and RCs arrive
 - package-surface review for Microsoft and ecosystem package compatibility under `.NET 11`
 - truthful deployment-mode validation before any trim / AOT / single-file claims are added on top of the shipped support-contract manifest
+- the planned `scripts/validate-deployment-mode-claims.ps1` harness will be the machine-checkable proof gate for trim/AOT/single-file support claims; until it ships and reports `claim-truthful`, the support contract stays `not-claimed`. See [Deployment-mode support](deployment-mode-support.md) for the harness scope.
 - an eventual baseline-migration lane once `.NET 11` is stable enough for Cephalon's package, tooling, and template defaults
