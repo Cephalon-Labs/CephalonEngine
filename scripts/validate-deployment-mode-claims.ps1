@@ -231,6 +231,76 @@ function Get-ManifestModeStatus {
     return [string]$entry.status
 }
 
+function Get-DeploymentModeConfigFromManifest {
+    <#
+    .SYNOPSIS
+        Builds a deployment-mode config from the manifest's schema 1.1.0 per-mode fields,
+        falling back to the hardcoded $Script:DeploymentModeConfigs entry when manifest fields
+        are missing or incomplete (so older manifest revisions still work).
+    .DESCRIPTION
+        The manifest fields consumed are:
+          deploymentModes.<mode>.requiredProjectProperties[0]   -> ProjectProperty
+          deploymentModes.<mode>.requiredAnalyzerProperties[0]  -> AnalyzerProperty
+          deploymentModes.<mode>.warningPatterns[]              -> WarningRegex (joined as alternation)
+        DisplayName, PublishArg, and Mode are always taken from the hardcoded fallback so the
+        publish-arg shape stays stable across manifest edits.
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)] $Manifest,
+        [Parameter(Mandatory)] [string]$Mode
+    )
+
+    $fallback = Get-DeploymentModeConfig -Mode $Mode
+
+    if ($null -eq $Manifest -or -not $Manifest.PSObject.Properties.Match('deploymentModes').Count) {
+        return $fallback
+    }
+    $modes = $Manifest.deploymentModes
+    if (-not $modes.PSObject.Properties.Match($Mode).Count) {
+        return $fallback
+    }
+    $entry = $modes.$Mode
+    if ($null -eq $entry) {
+        return $fallback
+    }
+
+    $projectProp = $fallback.ProjectProperty
+    if ($entry.PSObject.Properties.Match('requiredProjectProperties').Count) {
+        $arr = @($entry.requiredProjectProperties)
+        if ($arr.Count -gt 0 -and -not [string]::IsNullOrWhiteSpace($arr[0])) {
+            $projectProp = [string]$arr[0]
+        }
+    }
+
+    $analyzerProp = $fallback.AnalyzerProperty
+    if ($entry.PSObject.Properties.Match('requiredAnalyzerProperties').Count) {
+        $arr = @($entry.requiredAnalyzerProperties)
+        if ($arr.Count -gt 0 -and -not [string]::IsNullOrWhiteSpace($arr[0])) {
+            $analyzerProp = [string]$arr[0]
+        }
+    }
+
+    $warningRegex = $fallback.WarningRegex
+    if ($entry.PSObject.Properties.Match('warningPatterns').Count) {
+        $patterns = @($entry.warningPatterns | Where-Object { $_ -and -not [string]::IsNullOrWhiteSpace($_) })
+        if ($patterns.Count -gt 0) {
+            # join as alternation; each pattern is a regex fragment, escaped only for known control chars
+            $warningRegex = '(?i)' + (($patterns | ForEach-Object { [regex]::Escape($_) }) -join '|')
+        }
+    }
+
+    return [pscustomobject]@{
+        Mode             = $fallback.Mode
+        DisplayName      = $fallback.DisplayName
+        ProjectProperty  = $projectProp
+        AnalyzerProperty = $analyzerProp
+        PublishArg       = $fallback.PublishArg
+        WarningRegex     = $warningRegex
+        Source           = 'manifest'
+    }
+}
+
 function Test-CsprojProperty {
     [CmdletBinding()]
     param(
@@ -614,7 +684,7 @@ function Invoke-DeploymentModeClaimValidation {
     $modeReports = @()
     foreach ($mode in $modesToCheck) {
         Invoke-Step -Title "Validating mode" -Detail $mode
-        $cfg = Get-DeploymentModeConfig -Mode $mode
+        $cfg = Get-DeploymentModeConfigFromManifest -Manifest $manifest -Mode $mode
         $manifestStatus = Get-ManifestModeStatus -Manifest $manifest -Mode $mode
 
         $propAudit = $null
