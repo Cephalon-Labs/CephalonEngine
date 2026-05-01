@@ -5,6 +5,8 @@
 > when to use it, modern C# implementation concepts, real-world .NET ecosystem examples,
 > and how it applies specifically to framework/engine development.
 
+See also: each pattern in this reference is consumed by Cephalon under the engine commitments in [Engineering standards](../engineering-standards.md) (library design, code quality, testing, packaging) and the multi-decade frame in [Long-range engine direction](../long-range-direction.md). When applying a pattern inside Cephalon, prefer the engine-managed composition path (descriptors, registries, runtime catalogs, host-agnostic contracts) over a hand-rolled local implementation so the chosen pattern stays introspectable through `/engine/*` and `snapshot.*` rather than disappearing into hidden collaborator graphs.
+
 ---
 
 ## Table of Contents

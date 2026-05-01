@@ -10,16 +10,26 @@ This guide records the current Cephalon truth for future-framework assessment wi
 - `.NET 11` is currently a readiness lane, not a default-target migration
 - trim, Native AOT, and single-file support remain explicit `not-claimed` support statements tracked through [Deployment-mode support](deployment-mode-support.md) and `scripts/deployment-mode-support.json`, and external adopters can see the same contract through `cephalon doctor` plus `cephalon doctor --app-root <path>`
 
-As of `April 18, 2026`, Microsoft has:
+As of `May 2, 2026`, Microsoft has:
 
+- shipped `.NET 11 Preview 1` on `February 10, 2026`
+- shipped `.NET 11 Preview 2` on `March 10, 2026`
 - shipped `.NET 11 Preview 3` on `April 14, 2026`
 - published `11.0.100-preview.3` as the current SDK on the `.NET 11` download page
+- not yet announced `Preview 4`; Microsoft's monthly preview cadence implies the next preview is most likely to land on or near the second Tuesday of `May 2026` (May 12, 2026), but Cephalon should keep that as an expectation, not a commitment, until the official `devblogs.microsoft.com/dotnet` post and the `dotnet/core/release-notes/11.0/preview/` folder both publish that build
 - kept `.NET 10` in active LTS support through `November 14, 2028`
+- kept the official `.NET 11` final-release target on `November 2026`
+
+When the next preview lands, refresh this anchor again rather than letting the dated section drift into multi-month staleness; the readiness lane is most useful when the dated truth is recent.
 
 Official sources:
 
+- [.NET 11 Preview 1 announcement](https://devblogs.microsoft.com/dotnet/dotnet-11-preview-1/)
+- [.NET 11 Preview 2 announcement](https://devblogs.microsoft.com/dotnet/dotnet-11-preview-2/)
 - [.NET 11 Preview 3 announcement](https://devblogs.microsoft.com/dotnet/dotnet-11-preview-3/)
+- [What's new in .NET 11 (Microsoft Learn)](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-11/overview)
 - [.NET 11 download page](https://dotnet.microsoft.com/en-us/download/dotnet/11.0)
+- [.NET 11 release-notes folder (`dotnet/core`)](https://github.com/dotnet/core/tree/main/release-notes/11.0/preview/)
 - [.NET support policy](https://dotnet.microsoft.com/en-us/platform/support/policy)
 - [`actions/setup-dotnet` version-channel guidance](https://github.com/actions/setup-dotnet)
 

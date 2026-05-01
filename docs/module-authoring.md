@@ -2,6 +2,8 @@
 
 Cephalon now ships a first-class module authoring path alongside app scaffolding.
 
+See also: [Engineering standards](engineering-standards.md) for the engine quality baseline that module authors must respect (compatibility, packaging, code-quality gates, naming, XML doc, testing), and [Long-range engine direction](long-range-direction.md) for the multi-decade horizon framing that explains *why* module authoring stays host-agnostic and additive instead of being collapsed into one fixed app shell.
+
 ## Starting points
 
 Choose the starter that matches the package you want to author:

@@ -4,7 +4,7 @@ Project memory in this document reflects the repository state observed on `April
 
 This page is a repo-oriented orientation snapshot. It is meant to help contributors recover context quickly before they change code, docs, planning, or package surfaces.
 
-Cross-references: `README.md`, `docs/README.md`, `docs/architecture.md`, `docs/architecture-inventory.md`, `docs/architecture-recommendations.md`, `docs/engine-roadmap.md`, `docs/engine-backlog.md`, `docs/compatibility.md`
+Cross-references: `README.md`, `docs/README.md`, `docs/architecture.md`, `docs/architecture-inventory.md`, `docs/architecture-recommendations.md`, `docs/engine-roadmap.md`, `docs/engine-backlog.md`, `docs/compatibility.md`, `docs/long-range-direction.md`, `docs/engineering-standards.md`, `docs/dotnet11-readiness.md`
 
 ## Identity
 
@@ -327,6 +327,8 @@ Current standing examples from this collaboration:
 - roadmap, backlog, sprint placement, plan details, and GitHub Project cards must stay synchronized; if scope, estimate, validation, milestone, or relationships change, update both the docs and the card instead of leaving one side stale
 - repository-facing written artifacts should be in English, including hand-authored documentation, commit messages, and planning or tracking content that becomes part of the project record
 - use sub-agents proactively for review, consultation, and parallel investigation when a task benefits from multiple perspectives instead of treating delegation as a last resort
+- default to the OpenAI Codex CLI (current pinned version `5.5`) as the primary code-management seat for actively shaping, editing, refactoring, and committing repository source while keeping the same `docs + source + planning` truth aligned through the existing `docs/components/*`, `docs/project-memory.md`, `docs/architecture.md`, `docs/compatibility.md`, `docs/engine-roadmap.md`, and `docs/engine-backlog.md` graph; other agents and tools may still research, review, validate, benchmark, or plan in parallel, but treat Codex CLI as the authoritative editing surface for landed code changes by default
+- when committing or pushing repository changes from any seat (Codex CLI, this assistant, or another tool), use the `Cephalon-Neza` Git/GitHub account as the default author and pusher so commit history, GitHub Project card comments, and remote push attribution stay aligned with the intended project identity instead of leaking ad-hoc local user identity into the durable record
 - keep future-facing engine quality in view during POC work, including architecture strength, design-pattern fit, performance, security, support for broad project shapes, and overall developer experience
 - when a host exposes both module-owned REST helpers and generic behavior HTTP routes, treat the module-owned REST groups as the public REST/OpenAPI/Scalar surface and keep the generic behavior routes focused on non-REST adapter transports
 - `OpenApi:EnabledVersions` and legacy `OpenApi:Documents` govern only the published OpenAPI + Scalar document set; generic behavior HTTP adapter routes resolve their version/document segment from `ApiRoutes:DefaultBehaviorDocumentName` or, when unset, the raw configured `OpenApi:DefaultVersion`

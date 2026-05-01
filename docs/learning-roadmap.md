@@ -13,7 +13,7 @@ It is intended for contributors who want to learn:
 This roadmap assumes a start date of `April 13, 2026` and runs through `July 11, 2026`.
 
 Starter artifacts that pair with this roadmap live under [Learning starters](learning/README.md).
-The current repo-grounded architecture baseline that should be read beside this roadmap lives in [Architecture review (April 2026)](architecture-review-2026-04.md).
+The current repo-grounded architecture baselines that should be read beside this roadmap live in [Architecture review (April 2026)](architecture-review-2026-04.md) and [Architecture review (May 2026)](architecture-review-2026-05.md). The long-range planning frame and consolidated quality baseline live in [Long-range engine direction](long-range-direction.md) and [Engineering standards](engineering-standards.md); contributors should skim both before committing to the 30-60-90 day plan so the work plan stays aligned with the engine's long-term posture and quality gates.
 
 ## Why this guide exists
 

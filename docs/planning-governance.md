@@ -94,6 +94,28 @@ They still need to be labeled explicitly.
 
 Do not use execution-oriented language for a surface unless the package actually owns an execution or provisioning path.
 
+## Architecture review cadence
+
+Cephalon publishes a dated architecture-review snapshot once per month.
+
+The cadence is intentional: monthly snapshots are short enough to capture meaningful slice progress without becoming a quarterly report, and they are long enough that the reviewer can synthesize multiple `ENG-*` slices into one coherent picture.
+
+Anchor points so far:
+
+- [Architecture review (April 2026)](architecture-review-2026-04.md), dated `April 13, 2026`
+- [Architecture review (May 2026)](architecture-review-2026-05.md), dated `May 2, 2026`
+
+Cadence rules:
+
+- one new dated review per month, named `architecture-review-YYYY-MM.md`
+- the new review extends, rather than replaces, the previous month's review; older reviews stay in `docs/` as the durable monthly history
+- each review explicitly cross-references [`long-range-direction.md`](long-range-direction.md) horizon framing and [`engineering-standards.md`](engineering-standards.md) quality dimensions so the planning frame stays load-bearing across reviews
+- if a month genuinely had no meaningful architectural change, the review for that month should still ship as a short `nothing material changed; previous review still stands` snapshot rather than be skipped, so the dated history stays unbroken
+- the review month is the *publication month*, not necessarily the analysis window; a review dated May 2026 may report on slices from April–May, but it is filed under May
+- both [`docs/README.md`](README.md) Start here and Research references sections must list every dated review so the docs hub stays the canonical index
+
+When the review month rolls over, the new review's recommendations supersede the previous month's recommendations only where they are explicitly addressed; otherwise, treat the previous recommendations as still open follow-through.
+
 ## Planning identifier rule
 
 Once an `ENG-*` id is assigned in repo docs or GitHub Project tracking, treat it as immutable.

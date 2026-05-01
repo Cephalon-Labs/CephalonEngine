@@ -24,6 +24,7 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 - [Linux systemd deployment](linux-systemd-deployment.md)
 - [Architecture](architecture.md)
 - [Architecture review (April 2026)](architecture-review-2026-04.md)
+- [Architecture review (May 2026)](architecture-review-2026-05.md)
 - [REST endpoint authoring strategy](architecture/rest-endpoint-authoring-strategy.md)
 - [Database topology](database-topology.md)
 - [Component catalog](components/README.md)
@@ -31,6 +32,8 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 - [Compatibility](compatibility.md)
 - [Deployment-mode support](deployment-mode-support.md)
 - [.NET 11 readiness](dotnet11-readiness.md)
+- [Long-range engine direction](long-range-direction.md)
+- [Engineering standards](engineering-standards.md)
 - [App models](app-models.md)
 - [Module authoring](module-authoring.md)
 - [Observability provider authoring](observability-provider-authoring.md)
@@ -58,10 +61,13 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 ## Research references
 
 - [Architecture review (April 2026)](architecture-review-2026-04.md)
+- [Architecture review (May 2026)](architecture-review-2026-05.md)
 - [Architecture patterns research](architecture-patterns-research.md)
 - [REST endpoint authoring strategy](architecture/rest-endpoint-authoring-strategy.md)
 - [Design patterns reference](architecture/design-patterns-reference.md)
 - [.NET ecosystem reference](dotnet-ecosystem-reference.md)
+- [Long-range engine direction](long-range-direction.md)
+- [Engineering standards](engineering-standards.md)
 
 The component catalog now includes the observability baseline package plus the optional Cassandra dependency-health, ClickHouse dependency-health, Consul dependency-health, Elasticsearch dependency-health, HTTP dependency-health, Kafka dependency-health, Memcached dependency-health, MongoDB dependency-health, MQTT dependency-health, MySQL dependency-health, NATS dependency-health, Neo4j dependency-health, OpenSearch dependency-health, Oracle dependency-health, Postgres dependency-health, RabbitMQ dependency-health, Redis dependency-health, SQL Server dependency-health, OpenTelemetry exporter, Alibaba Cloud, AWS, DigitalOcean, GCP, Huawei Cloud, Oracle Cloud, Kubernetes, OpenShift, Tanzu, Azure Monitor, and Serilog provider companions so operator-facing docs stay aligned with the shipped host integration paths, diagnostics conventions, runtime-story surface, and release-validation guidance.
 

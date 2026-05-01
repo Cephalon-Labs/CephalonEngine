@@ -2,6 +2,8 @@
 
 This guide describes the compatibility contract that must stay aligned across Cephalon packages, package manifests, scaffolding, templates, and CLI workflows.
 
+See also: [Engineering standards](engineering-standards.md) is the broader quality baseline this compatibility contract is part of; [Long-range engine direction](long-range-direction.md) explains why compatibility discipline matters across multi-decade horizons and why additive opt-in changes plus deliberate obsoletion are preferred over silent contract churn even during the POC phase.
+
 ## Compatibility contract at a glance
 
 | Concern | Source of truth | Must stay aligned |
