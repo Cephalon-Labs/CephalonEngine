@@ -6,6 +6,17 @@ These pages explain what each shipped package owns and how it fits into Cephalon
 
 See also: [Docs hub](../README.md)
 
+## Maturity at a glance
+
+Each shipped package carries a maturity label (`M0` through `M4`) and an ownership mode (`taxonomy-only` / `application-managed` / `cephalon-managed` / `provider-managed`). Read the labels before assuming a package is runtime-ready.
+
+- per-package truth: [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+- consolidated cross-reference: [`conformance-matrix.md`](../conformance-matrix.md)
+- runtime contract surfaces (per-package routes, snapshot keys, catalog interfaces): [`runtime-contract-index.md`](../runtime-contract-index.md)
+
+When a component-page maturity label and the maturity audit disagree, the audit is the authoritative truth. When in doubt, follow the cross-reference into the conformance matrix.
+
+
 ## Core runtime
 
 - [Cephalon.Abstractions](abstractions.md)

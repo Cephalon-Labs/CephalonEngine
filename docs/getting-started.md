@@ -11,6 +11,25 @@ The recommended flow is:
 5. run the generated host
 6. inspect the engine and health endpoints
 
+## Understanding maturity and ownership labels
+
+Cephalon ships under explicit maturity labels (`M0` through `M4`) and ownership modes (`taxonomy-only` / `application-managed` / `cephalon-managed` / `provider-managed`). Before assuming a feature is runtime-ready, check the relevant package's labels:
+
+- per-package truth: [Engine surface maturity audit](engine-surface-maturity-audit.md)
+- consolidated cross-reference across every shipped package: [Conformance matrix](conformance-matrix.md)
+- the `/engine/*` routes, `snapshot.*` keys, and runtime catalog interfaces each package contributes: [Runtime contract index](runtime-contract-index.md)
+
+Maturity recap (full definitions in the audit):
+
+- `M0` taxonomy-only — name and shape exist, no behavior claim
+- `M1` catalog-only — descriptors and runtime catalogs in place, no managed execution
+- `M2` narrow execution — single vertical proof
+- `M3` broad execution — multiple paths working together
+- `M4` adoption-ready — consumers can rely on it across project shapes
+
+Treat any package below `M4` as something that may evolve without a stability commitment. Adoption-quality changes can land additively as packages graduate.
+
+
 ## Prerequisites
 
 - a .NET 10 SDK on the machine
