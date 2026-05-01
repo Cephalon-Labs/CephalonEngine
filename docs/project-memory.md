@@ -1,10 +1,10 @@
 # Cephalon Project Memory
 
-Project memory in this document reflects the repository state observed on `April 29, 2026`.
+Project memory in this document reflects the repository state observed on `May 2, 2026`.
 
 This page is a repo-oriented orientation snapshot. It is meant to help contributors recover context quickly before they change code, docs, planning, or package surfaces.
 
-Cross-references: `README.md`, `docs/README.md`, `docs/architecture.md`, `docs/architecture-inventory.md`, `docs/architecture-recommendations.md`, `docs/engine-roadmap.md`, `docs/engine-backlog.md`, `docs/compatibility.md`, `docs/long-range-direction.md`, `docs/engineering-standards.md`, `docs/dotnet11-readiness.md`, `docs/runtime-contract-index.md`, `docs/conformance-matrix.md`
+Cross-references: `README.md`, `docs/README.md`, `docs/architecture.md`, `docs/architecture-inventory.md`, `docs/architecture-recommendations.md`, `docs/engine-roadmap.md`, `docs/engine-backlog.md`, `docs/compatibility.md`, `docs/long-range-direction.md`, `docs/engineering-standards.md`, `docs/dotnet11-readiness.md`, `docs/runtime-contract-index.md`, `docs/conformance-matrix.md`, `docs/architecture-review-2026-04.md`, `docs/architecture-review-2026-05.md`, `docs/planning-governance.md`, `docs/deployment-mode-support.md`
 
 ## Identity
 
@@ -80,6 +80,10 @@ The repo is well past an early prototype. The following surfaces are already pre
 - `Cephalon.Behaviors` plus HTTP, messaging, pattern, and source-generator companion packages
 - `Cephalon.Data` and `Cephalon.EventSourcing` plus relational and non-relational provider families
 - samples that model intended blueprint shapes and reference modules that model intended package authoring
+- the first deployment-mode validation harness ships through `scripts/validate-deployment-mode-claims.ps1` (3 audit phases: project-property, analyzer, optional dotnet publish probe; 5 verdict types: claim-truthful / claim-overstated / not-claimed / not-claimed-with-property-drift / mixed) plus a Pester suite at `tests/Cephalon.Tests.Scripts/validate-deployment-mode-claims.Tests.ps1` (12 Describe groups, 57 It cases) and a manifest schema at `scripts/deployment-mode-support.json` schema `1.1.0` with per-mode `requiredProjectProperties`, `requiredAnalyzerProperties`, `warningPatterns`, plus `representativePublishTargets`, `expectedPublishOutputShape`, `deploymentModeEligibility`, and `knownTransitiveHazards` fields
+- `scripts/validate-release.ps1` now invokes the deployment-mode validation harness as an opt-out step (`-SkipDeploymentModeClaims`); release validation reports both `.NET 11` SDK readiness and deployment-mode claim truth in the same flow, with the harness running in audit-only mode until `representativePublishTargets.projects` is populated
+- `docs/conformance-matrix.md` ships as the consolidated per-package adoption-truth read across maturity, ownership, engine routes, snapshot keys, and catalog interfaces; `docs/runtime-contract-index.md` ships as the consolidated `/engine/*` route, `snapshot.*` key, and runtime catalog interface map; both are linked from `docs/README.md` Research references and from `docs/project-memory.md` cross-references
+- `docs/architecture-review-2026-05.md` ships as the May 2026 dated architecture review snapshot synthesizing ENG-238 through ENG-256 plus phase-13 cell baseline and the new long-range / standards / runtime-contract / conformance-matrix anchors; the monthly cadence is now an explicit standing rule in `docs/planning-governance.md`
 
 ## Runtime and architecture anchors
 
