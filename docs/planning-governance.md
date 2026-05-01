@@ -116,6 +116,26 @@ Cadence rules:
 
 When the review month rolls over, the new review's recommendations supersede the previous month's recommendations only where they are explicitly addressed; otherwise, treat the previous recommendations as still open follow-through.
 
+## Conformance matrix maintenance
+
+[`docs/conformance-matrix.md`](conformance-matrix.md) is the consolidated per-package adoption-truth read across maturity, ownership, runtime routes, snapshot keys, and catalog interfaces. It is a navigation page, not a new source of truth: it consolidates [`engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md), [`runtime-contract-index.md`](runtime-contract-index.md), and the per-package component docs.
+
+Update the conformance matrix when:
+
+- a new shipped `Cephalon.*` package enters the repository — add a new row in the matching family table, with maturity, ownership, engine routes, snapshot keys, and catalog interfaces filled in from the package's component doc
+- a package changes maturity (`M0`-`M4`) or ownership mode (`taxonomy-only` / `application-managed` / `cephalon-managed` / `provider-managed`) — update the matching row in the same slice as the maturity audit edit
+- a package is intentionally retired — remove the row in the same slice as the retirement record in [`compatibility.md`](compatibility.md)
+- a new `/engine/*` route, `snapshot.*` key, or `I*Catalog` interface ships — update both the runtime contract index and the conformance matrix in the same slice
+
+Do NOT update the conformance matrix when:
+
+- the underlying maturity audit or runtime contract index has not changed (the matrix is a read of those, not a primary source)
+- a Notes-field detail grows past one line (move that detail into the matching component doc and link to it from the matrix instead)
+
+If a row's `Notes` field reaches more than one line of detail, move that detail into the matching `docs/components/*.md` page and link to it from the matrix. The matrix should stay scannable as a table.
+
+When the conformance matrix surfaces a new inconsistency between sources, record it in the matrix's "Inconsistencies observed" tail section as a candidate `ENG-*` card so the planning record stays aligned. Resolving an inconsistency removes the row from that tail section in the same slice as the source edit.
+
 ## Planning identifier rule
 
 Once an `ENG-*` id is assigned in repo docs or GitHub Project tracking, treat it as immutable.
