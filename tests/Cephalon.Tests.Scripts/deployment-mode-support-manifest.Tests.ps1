@@ -1,0 +1,201 @@
+#requires -Version 7.0
+#requires -Modules @{ ModuleName = 'Pester'; ModuleVersion = '5.0.0' }
+
+<#
+.SYNOPSIS
+    Pester test suite for scripts/deployment-mode-support.json schema 1.1.0.
+
+.DESCRIPTION
+    Asserts the deployment-mode support manifest parses successfully and carries
+    the expected schema 1.1.0 fields. Protects the manifest from accidental
+    breakage when contributors edit it directly. Does not validate the values of
+    individual fields beyond shape; that is intentionally not a test concern
+    because the manifest's content is meant to evolve.
+
+.NOTES
+    Run from the repo root:
+
+        Invoke-Pester -Path tests/Cephalon.Tests.Scripts/deployment-mode-support-manifest.Tests.ps1 -Output Detailed
+
+    or as part of the full Cephalon.Tests.Scripts directory.
+#>
+
+BeforeAll {
+    $script:repoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
+    $script:manifestPath = Join-Path $script:repoRoot "scripts\deployment-mode-support.json"
+
+    if (-not (Test-Path -LiteralPath $script:manifestPath)) {
+        throw "Could not find manifest at $script:manifestPath"
+    }
+
+    $script:manifestRaw = Get-Content -LiteralPath $script:manifestPath -Raw -Encoding UTF8
+    $script:manifest = $script:manifestRaw | ConvertFrom-Json -Depth 16
+}
+
+Describe "deployment-mode-support.json — top-level schema" {
+    It "parses as JSON without errors" {
+        $script:manifest | Should -Not -BeNullOrEmpty
+    }
+
+    It "declares schema version 1.1.0 (or higher)" {
+        $script:manifest.PSObject.Properties.Name | Should -Contain '$schemaVersion'
+        $script:manifest.'$schemaVersion' | Should -Not -BeNullOrEmpty
+        # accept any version that starts with 1. — schema 1.x is the manifest family
+        $script:manifest.'$schemaVersion' | Should -Match '^1\.\d+\.\d+$'
+    }
+
+    It "declares analyzerOnlySignalsDoNotCount = true" {
+        $script:manifest.analyzerOnlySignalsDoNotCount | Should -BeTrue
+    }
+
+    It "declares a validationStrategy" {
+        $script:manifest.PSObject.Properties.Name | Should -Contain 'validationStrategy'
+        $script:manifest.validationStrategy | Should -BeIn @('analyzer-only', 'publish-required', 'full-flow')
+    }
+
+    It "carries the expected top-level fields" {
+        $expected = @(
+            'shippingBaseline',
+            'documentation',
+            'analyzerOnlySignalsDoNotCount',
+            'validationStrategy',
+            'supportChangeRequirements',
+            'deploymentModes',
+            'representativePublishTargets',
+            'expectedPublishOutputShape',
+            'deploymentModeEligibility',
+            'knownTransitiveHazards'
+        )
+        foreach ($field in $expected) {
+            $script:manifest.PSObject.Properties.Name | Should -Contain $field
+        }
+    }
+}
+
+Describe "shippingBaseline" {
+    It "names a stable target framework and a readiness lane TFM" {
+        $script:manifest.shippingBaseline.stableTargetFramework | Should -Not -BeNullOrEmpty
+        $script:manifest.shippingBaseline.readinessLaneTargetFramework | Should -Not -BeNullOrEmpty
+    }
+
+    It "records the readiness lane status" {
+        $script:manifest.shippingBaseline.readinessLaneStatus | Should -BeIn @('assessment-only', 'active', 'deprecated')
+    }
+}
+
+Describe "documentation block" {
+    It "points at the support guide and readiness guide" {
+        $script:manifest.documentation.guidePath | Should -Be 'docs/deployment-mode-support.md'
+        $script:manifest.documentation.readinessGuidePath | Should -Be 'docs/dotnet11-readiness.md'
+    }
+
+    It "points at the validation harness script and its tests" {
+        $script:manifest.documentation.PSObject.Properties.Name | Should -Contain 'validationHarnessPath'
+        $script:manifest.documentation.PSObject.Properties.Name | Should -Contain 'validationHarnessTestsPath'
+        $script:manifest.documentation.validationHarnessPath | Should -Be 'scripts/validate-deployment-mode-claims.ps1'
+    }
+}
+
+Describe "supportChangeRequirements" {
+    It "is a non-empty list" {
+        $script:manifest.supportChangeRequirements | Should -Not -BeNullOrEmpty
+        $script:manifest.supportChangeRequirements.Count | Should -BeGreaterThan 0
+    }
+
+    It "names the harness verdict gate" {
+        ($script:manifest.supportChangeRequirements -join "|") | Should -Match 'validate-deployment-mode-claims\.ps1'
+        ($script:manifest.supportChangeRequirements -join "|") | Should -Match 'claim-truthful'
+    }
+}
+
+Describe "deploymentModes" {
+    It "covers trim, nativeAot, and singleFile" {
+        $script:manifest.deploymentModes.PSObject.Properties.Name | Should -Contain 'trim'
+        $script:manifest.deploymentModes.PSObject.Properties.Name | Should -Contain 'nativeAot'
+        $script:manifest.deploymentModes.PSObject.Properties.Name | Should -Contain 'singleFile'
+    }
+
+    It "every mode declares status, summary, requiredProjectProperties, requiredAnalyzerProperties, and warningPatterns" {
+        foreach ($mode in @('trim', 'nativeAot', 'singleFile')) {
+            $entry = $script:manifest.deploymentModes.$mode
+            $entry.PSObject.Properties.Name | Should -Contain 'status'
+            $entry.PSObject.Properties.Name | Should -Contain 'summary'
+            $entry.PSObject.Properties.Name | Should -Contain 'requiredProjectProperties'
+            $entry.PSObject.Properties.Name | Should -Contain 'requiredAnalyzerProperties'
+            $entry.PSObject.Properties.Name | Should -Contain 'warningPatterns'
+        }
+    }
+
+    It "every mode's status is one of the supported values" {
+        foreach ($mode in @('trim', 'nativeAot', 'singleFile')) {
+            $script:manifest.deploymentModes.$mode.status | Should -BeIn @('not-claimed', 'claimed')
+        }
+    }
+
+    It "trim uses PublishTrimmed and EnableTrimAnalyzer" {
+        $script:manifest.deploymentModes.trim.requiredProjectProperties | Should -Contain 'PublishTrimmed'
+        $script:manifest.deploymentModes.trim.requiredAnalyzerProperties | Should -Contain 'EnableTrimAnalyzer'
+    }
+
+    It "nativeAot uses PublishAot and IsAotCompatible" {
+        $script:manifest.deploymentModes.nativeAot.requiredProjectProperties | Should -Contain 'PublishAot'
+        $script:manifest.deploymentModes.nativeAot.requiredAnalyzerProperties | Should -Contain 'IsAotCompatible'
+    }
+
+    It "singleFile uses PublishSingleFile and EnableSingleFileAnalyzer" {
+        $script:manifest.deploymentModes.singleFile.requiredProjectProperties | Should -Contain 'PublishSingleFile'
+        $script:manifest.deploymentModes.singleFile.requiredAnalyzerProperties | Should -Contain 'EnableSingleFileAnalyzer'
+    }
+
+    It "trim warningPatterns include canonical IL2026" {
+        $script:manifest.deploymentModes.trim.warningPatterns | Should -Contain 'IL2026'
+    }
+
+    It "nativeAot warningPatterns include canonical IL3050" {
+        $script:manifest.deploymentModes.nativeAot.warningPatterns | Should -Contain 'IL3050'
+    }
+}
+
+Describe "representativePublishTargets" {
+    It "exists with a comment and a projects array" {
+        $script:manifest.representativePublishTargets.PSObject.Properties.Name | Should -Contain 'comment'
+        $script:manifest.representativePublishTargets.PSObject.Properties.Name | Should -Contain 'projects'
+    }
+
+    It "projects is an array (may be empty until a deliberate audit is staged)" {
+        $script:manifest.representativePublishTargets.projects | Should -BeOfType [System.Array] -Because "may be empty array but must still be an array"
+    }
+}
+
+Describe "expectedPublishOutputShape" {
+    It "covers all three deployment modes" {
+        $script:manifest.expectedPublishOutputShape.PSObject.Properties.Name | Should -Contain 'trim'
+        $script:manifest.expectedPublishOutputShape.PSObject.Properties.Name | Should -Contain 'nativeAot'
+        $script:manifest.expectedPublishOutputShape.PSObject.Properties.Name | Should -Contain 'singleFile'
+    }
+
+    It "every mode entry declares expectFile, maxAllowedSizeBytes, and allowedWarningCategories" {
+        foreach ($mode in @('trim', 'nativeAot', 'singleFile')) {
+            $shape = $script:manifest.expectedPublishOutputShape.$mode
+            $shape.PSObject.Properties.Name | Should -Contain 'expectFile'
+            $shape.PSObject.Properties.Name | Should -Contain 'maxAllowedSizeBytes'
+            $shape.PSObject.Properties.Name | Should -Contain 'allowedWarningCategories'
+        }
+    }
+}
+
+Describe "deploymentModeEligibility" {
+    It "exists with a comment and packages array" {
+        $script:manifest.deploymentModeEligibility.PSObject.Properties.Name | Should -Contain 'comment'
+        $script:manifest.deploymentModeEligibility.PSObject.Properties.Name | Should -Contain 'packages'
+    }
+}
+
+Describe "knownTransitiveHazards" {
+    It "exists with a comment and per-mode lists" {
+        $script:manifest.knownTransitiveHazards.PSObject.Properties.Name | Should -Contain 'comment'
+        $script:manifest.knownTransitiveHazards.PSObject.Properties.Name | Should -Contain 'trim'
+        $script:manifest.knownTransitiveHazards.PSObject.Properties.Name | Should -Contain 'nativeAot'
+        $script:manifest.knownTransitiveHazards.PSObject.Properties.Name | Should -Contain 'singleFile'
+    }
+}

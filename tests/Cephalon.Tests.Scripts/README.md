@@ -71,6 +71,7 @@ Each test file should:
 | Script | Test file | Cases |
 | --- | --- | --- |
 | `scripts/validate-deployment-mode-claims.ps1` | `validate-deployment-mode-claims.Tests.ps1` | 57 cases across 12 describe groups |
+| `scripts/deployment-mode-support.json` | `deployment-mode-support-manifest.Tests.ps1` | manifest schema 1.1.0 shape + per-mode field assertions |
 
 Add new test files to this table when they ship.
 
