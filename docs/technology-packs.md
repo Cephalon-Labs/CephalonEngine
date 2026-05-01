@@ -9,6 +9,19 @@ They sit between pure metadata and full application blueprints:
 - `Technologies` define workload posture
 - `Technology packs` provide reusable runtime primitives for those technologies
 
+## Maturity, ownership, and long-range alignment
+
+Each shipped technology pack carries explicit maturity (`M0` through `M4`) and an ownership mode (`taxonomy-only` / `application-managed` / `cephalon-managed` / `provider-managed`). Read those labels before assuming a pack is runtime-ready:
+
+- per-package truth: [`engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md)
+- consolidated cross-reference covering technology packs and every other shipped family: [`conformance-matrix.md`](conformance-matrix.md)
+- per-pack runtime surfaces (`/engine/*` routes, `snapshot.*` keys, catalog interfaces): [`runtime-contract-index.md`](runtime-contract-index.md)
+
+Technology pack selection is also a long-range planning decision; not every workload that sounds plausible today belongs in the engine. Use [`long-range-direction.md`](long-range-direction.md) to check that a candidate pack's substrate, provider boundary, and lifetime expectation match the engine's multi-horizon stance before introducing a new pack family. Packs that feel right for one transient era should ship as additive companion packs, not as engine-core sprawl.
+
+Authoring guardrails for a new technology pack are unchanged below; the table here is the *adopter-facing* maturity reminder so consumers do not assume `M0` taxonomy-only packs already own runtime execution.
+
+
 ## Why this exists
 
 Technology profiles should not stop at documentation or scaffold hints. When a workload becomes important enough to need reusable services, capabilities, or conventions, it should move into a companion package instead of forcing changes into the engine core.
