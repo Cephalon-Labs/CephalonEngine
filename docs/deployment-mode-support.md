@@ -16,7 +16,7 @@ This guide records the current Cephalon support contract for trimming, Native AO
 
 Cephalon now keeps this contract explicit in two layers:
 
-- machine-readable manifest: `scripts/deployment-mode-support.json`
+- machine-readable manifest: `scripts/deployment-mode-support.json` (schema `1.1.0`; per-mode `requiredProjectProperties`, `requiredAnalyzerProperties`, `warningPatterns`, plus `representativePublishTargets`, `expectedPublishOutputShape`, `deploymentModeEligibility`, and `knownTransitiveHazards`)
 - repo-native validation and reporting: `scripts/validate-dotnet-readiness.ps1`
 
 The broader framework-readiness story stays aligned through:

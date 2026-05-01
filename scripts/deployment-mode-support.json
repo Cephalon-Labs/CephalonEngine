@@ -1,4 +1,5 @@
 {
+  "$schemaVersion": "1.1.0",
   "shippingBaseline": {
     "stableTargetFramework": "net10.0",
     "readinessLaneTargetFramework": "net11.0",
@@ -8,12 +9,16 @@
     "guidePath": "docs/deployment-mode-support.md",
     "readinessGuidePath": "docs/dotnet11-readiness.md",
     "compatibilityGuidePath": "docs/compatibility.md",
-    "packagePublishingGuidePath": "docs/package-publishing.md"
+    "packagePublishingGuidePath": "docs/package-publishing.md",
+    "validationHarnessPath": "scripts/validate-deployment-mode-claims.ps1",
+    "validationHarnessTestsPath": "tests/Cephalon.Tests.Scripts/validate-deployment-mode-claims.Tests.ps1"
   },
   "analyzerOnlySignalsDoNotCount": true,
+  "validationStrategy": "publish-required",
   "supportChangeRequirements": [
     "project properties that intentionally enable or declare the deployment mode",
     "scripts/validate-dotnet-readiness.ps1",
+    "scripts/validate-deployment-mode-claims.ps1 must report claim-truthful",
     "release-validation workflow coverage",
     "docs/deployment-mode-support.md",
     "docs/compatibility.md",
@@ -25,15 +30,72 @@
   "deploymentModes": {
     "trim": {
       "status": "not-claimed",
-      "summary": "Trimming is not part of the current Cephalon support contract."
+      "summary": "Trimming is not part of the current Cephalon support contract.",
+      "requiredProjectProperties": ["PublishTrimmed"],
+      "requiredAnalyzerProperties": ["EnableTrimAnalyzer"],
+      "warningPatterns": ["IL2026", "IL2067", "IL2070", "IL2075", "IL2080", "IL2090", "IL2104", "trim warning", "TrimAnalysis"]
     },
     "nativeAot": {
       "status": "not-claimed",
-      "summary": "Native AOT is not part of the current Cephalon support contract."
+      "summary": "Native AOT is not part of the current Cephalon support contract.",
+      "requiredProjectProperties": ["PublishAot"],
+      "requiredAnalyzerProperties": ["IsAotCompatible"],
+      "warningPatterns": ["IL3050", "IL3051", "IL3052", "IL3053", "IL3054", "IL2026", "AOT warning", "AOT analysis"]
     },
     "singleFile": {
       "status": "not-claimed",
-      "summary": "Single-file publishing is not part of the current Cephalon support contract."
+      "summary": "Single-file publishing is not part of the current Cephalon support contract.",
+      "requiredProjectProperties": ["PublishSingleFile"],
+      "requiredAnalyzerProperties": ["EnableSingleFileAnalyzer"],
+      "warningPatterns": ["IL3000", "IL3001", "IL3002", "single-file warning"]
     }
+  },
+  "representativePublishTargets": {
+    "comment": "List the smallest set of csproj paths the harness should publish to honestly prove a claim. Empty until a deliberate claim audit is staged; the harness skips the publish phase when this list is empty even with -SkipPublish:$false.",
+    "projects": []
+  },
+  "expectedPublishOutputShape": {
+    "trim": {
+      "expectFile": "{output}/{assembly}.dll",
+      "maxAllowedSizeBytes": null,
+      "allowedWarningCategories": []
+    },
+    "nativeAot": {
+      "expectFile": "{output}/{assembly}.exe",
+      "maxAllowedSizeBytes": null,
+      "allowedWarningCategories": []
+    },
+    "singleFile": {
+      "expectFile": "{output}/{assembly}.exe",
+      "maxAllowedSizeBytes": null,
+      "allowedWarningCategories": []
+    }
+  },
+  "deploymentModeEligibility": {
+    "comment": "Per-package eligibility table. Empty until a per-package claim audit is staged. The harness's project-property and analyzer audit phases scan src/Cephalon.*.csproj automatically; this table only matters once a package wants to advertise per-package supportedModes outside the global manifest claim. Populate gradually as packages are intentionally moved toward claimed status.",
+    "packages": []
+  },
+  "knownTransitiveHazards": {
+    "comment": "Known third-party packages that emit trim or AOT warnings even when the consuming Cephalon.* project itself looks clean. Listed for reference; the harness does not currently fail on these but reports them in the per-target warnings list so the operator can see the source.",
+    "trim": [
+      "Newtonsoft.Json",
+      "BenchmarkDotNet",
+      "AutoMapper",
+      "Microsoft.EntityFrameworkCore (reflection-heavy LINQ tracking)"
+    ],
+    "nativeAot": [
+      "Newtonsoft.Json",
+      "BenchmarkDotNet",
+      "AutoMapper",
+      "Microsoft.EntityFrameworkCore (model-builder dynamic code)",
+      "Grpc.AspNetCore (reflection emit)",
+      "AWSSDK.Core (native interop)",
+      "Azure.Identity (native interop)",
+      "Google.Cloud.* (native interop)"
+    ],
+    "singleFile": [
+      "BenchmarkDotNet",
+      "Plugins or providers that load assemblies dynamically at runtime"
+    ]
   }
 }
