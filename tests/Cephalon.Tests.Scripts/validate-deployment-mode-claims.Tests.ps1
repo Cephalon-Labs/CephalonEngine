@@ -213,6 +213,117 @@ Describe "Get-ManifestModeStatus" {
     }
 }
 
+Describe "Get-DeploymentModeConfigFromManifest" {
+    BeforeAll {
+        # build a synthesized manifest with full schema 1.1.0 fields for trim
+        $script:manifestFull = [pscustomobject]@{
+            deploymentModes = [pscustomobject]@{
+                trim       = [pscustomobject]@{
+                    status                     = "claimed"
+                    requiredProjectProperties  = @("PublishTrimmed", "ExtraProp")
+                    requiredAnalyzerProperties = @("EnableTrimAnalyzer", "ExtraAnalyzer")
+                    warningPatterns            = @("IL2026", "IL2099", "trim warning")
+                }
+                nativeAot  = [pscustomobject]@{ status = "not-claimed" }
+                singleFile = [pscustomobject]@{ status = "not-claimed" }
+            }
+        }
+
+        # manifest with mode entry but no schema 1.1.0 fields (legacy / pre-1.1.0)
+        $script:manifestLegacy = [pscustomobject]@{
+            deploymentModes = [pscustomobject]@{
+                trim       = [pscustomobject]@{ status = "not-claimed" }
+                nativeAot  = [pscustomobject]@{ status = "not-claimed" }
+                singleFile = [pscustomobject]@{ status = "not-claimed" }
+            }
+        }
+
+        # manifest with empty schema 1.1.0 arrays
+        $script:manifestEmpty = [pscustomobject]@{
+            deploymentModes = [pscustomobject]@{
+                trim = [pscustomobject]@{
+                    status                     = "claimed"
+                    requiredProjectProperties  = @()
+                    requiredAnalyzerProperties = @()
+                    warningPatterns            = @()
+                }
+            }
+        }
+    }
+
+    It "uses the manifest-driven ProjectProperty for trim when schema 1.1.0 fields are present" {
+        $cfg = Get-DeploymentModeConfigFromManifest -Manifest $script:manifestFull -Mode "trim"
+        $cfg.ProjectProperty | Should -Be "PublishTrimmed"
+        $cfg.Source | Should -Be "manifest"
+    }
+
+    It "uses the manifest-driven AnalyzerProperty when schema 1.1.0 fields are present" {
+        $cfg = Get-DeploymentModeConfigFromManifest -Manifest $script:manifestFull -Mode "trim"
+        $cfg.AnalyzerProperty | Should -Be "EnableTrimAnalyzer"
+    }
+
+    It "joins manifest warningPatterns into a regex alternation" {
+        $cfg = Get-DeploymentModeConfigFromManifest -Manifest $script:manifestFull -Mode "trim"
+        $cfg.WarningRegex | Should -Match "IL2026"
+        $cfg.WarningRegex | Should -Match "IL2099"
+        $cfg.WarningRegex | Should -Match "trim warning"
+        $cfg.WarningRegex | Should -BeLike "(?i)*"
+    }
+
+    It "always preserves the hardcoded DisplayName, PublishArg, and Mode" {
+        $cfg = Get-DeploymentModeConfigFromManifest -Manifest $script:manifestFull -Mode "trim"
+        $cfg.Mode | Should -Be "trim"
+        $cfg.DisplayName | Should -Be "Trim"
+        $cfg.PublishArg | Should -Match "PublishTrimmed=true"
+    }
+
+    It "falls back to hardcoded values when the manifest mode entry has no schema 1.1.0 fields" {
+        $cfg = Get-DeploymentModeConfigFromManifest -Manifest $script:manifestLegacy -Mode "trim"
+        $cfg.ProjectProperty | Should -Be "PublishTrimmed"
+        $cfg.AnalyzerProperty | Should -Be "EnableTrimAnalyzer"
+        $cfg.WarningRegex | Should -Match "IL2"
+    }
+
+    It "falls back to hardcoded values when manifest schema 1.1.0 arrays are empty" {
+        $cfg = Get-DeploymentModeConfigFromManifest -Manifest $script:manifestEmpty -Mode "trim"
+        $cfg.ProjectProperty | Should -Be "PublishTrimmed"
+        $cfg.AnalyzerProperty | Should -Be "EnableTrimAnalyzer"
+        $cfg.WarningRegex | Should -Match "IL2"
+    }
+
+    It "returns the hardcoded fallback when the manifest is null" {
+        $cfg = Get-DeploymentModeConfigFromManifest -Manifest $null -Mode "trim"
+        $cfg.ProjectProperty | Should -Be "PublishTrimmed"
+        $cfg.AnalyzerProperty | Should -Be "EnableTrimAnalyzer"
+    }
+
+    It "returns hardcoded fallback when the manifest does not declare the mode" {
+        $partial = [pscustomobject]@{ deploymentModes = [pscustomobject]@{} }
+        $cfg = Get-DeploymentModeConfigFromManifest -Manifest $partial -Mode "nativeAot"
+        $cfg.ProjectProperty | Should -Be "PublishAot"
+        $cfg.AnalyzerProperty | Should -Be "IsAotCompatible"
+    }
+
+    It "throws on an unknown mode (delegates to the hardcoded Get-DeploymentModeConfig)" {
+        { Get-DeploymentModeConfigFromManifest -Manifest $script:manifestFull -Mode "imaginary" } | Should -Throw "*Unknown deployment mode*"
+    }
+
+    It "regex-escapes manifest warning patterns so manifest edits cannot inject malformed regex" {
+        $manifestWeird = [pscustomobject]@{
+            deploymentModes = [pscustomobject]@{
+                trim = [pscustomobject]@{
+                    status                     = "claimed"
+                    requiredProjectProperties  = @("PublishTrimmed")
+                    requiredAnalyzerProperties = @("EnableTrimAnalyzer")
+                    warningPatterns            = @("IL2026", "weird.literal[chars]")
+                }
+            }
+        }
+        $cfg = Get-DeploymentModeConfigFromManifest -Manifest $manifestWeird -Mode "trim"
+        $cfg.WarningRegex | Should -Match "weird\\.literal\\[chars\\]"
+    }
+}
+
 Describe "Test-CsprojProperty" {
     It "finds a true-valued property" {
         $path = New-TempCsproj -Properties @{ PublishTrimmed = "true" }
