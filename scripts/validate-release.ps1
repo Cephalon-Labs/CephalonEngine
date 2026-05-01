@@ -2,6 +2,7 @@ param(
     [switch]$SkipBuild,
     [switch]$SkipTests,
     [switch]$SkipDotNetReadiness,
+    [switch]$SkipDeploymentModeClaims,
     [switch]$SkipOperationalConventions,
     [switch]$SkipPhase8Conventions,
     [switch]$SkipBenchmarks,
@@ -34,11 +35,13 @@ $testProjectPaths = @(
 )
 $benchmarkProjectPath = [System.IO.Path]::Combine($repoRoot, "benchmarks", "Cephalon.Benchmarks", "Cephalon.Benchmarks.csproj")
 $dotNetReadinessScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-dotnet-readiness.ps1")
+$deploymentModeClaimsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-deployment-mode-claims.ps1")
 $referenceDocsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "publish-reference-docs.ps1")
 $packageArtifactsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "publish-package-artifacts.ps1")
 $operationalConventionsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-operational-conventions.ps1")
 $phase8ConventionsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-phase8-conventions.ps1")
 $dotNetReadinessOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "dotnet-readiness-release")
+$deploymentModeClaimsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "deployment-mode-claims-release")
 $referenceDocsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "reference-docs-release")
 $packageArtifactsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "packages-release")
 
@@ -138,6 +141,17 @@ try {
                 "-SkipTests",
                 "-SkipReferenceDocs",
                 "-SkipPackages"
+            )
+        }
+    }
+
+    if (-not $SkipDeploymentModeClaims) {
+        Invoke-Step "Validate deployment-mode claim truthfulness (audit-only)" {
+            Invoke-PowerShellScript -Path $deploymentModeClaimsScriptPath -Arguments @(
+                "-DeploymentMode", "all",
+                "-Configuration", "Release",
+                "-OutputPath", $deploymentModeClaimsOutputPath,
+                "-SkipPublish"
             )
         }
     }
