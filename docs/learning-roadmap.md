@@ -13,7 +13,7 @@ It is intended for contributors who want to learn:
 This roadmap assumes a start date of `April 13, 2026` and runs through `July 11, 2026`.
 
 Starter artifacts that pair with this roadmap live under [Learning starters](learning/README.md).
-The current repo-grounded architecture baselines that should be read beside this roadmap live in [Architecture review (April 2026)](architecture-review-2026-04.md) and [Architecture review (May 2026)](architecture-review-2026-05.md). The long-range planning frame and consolidated quality baseline live in [Long-range engine direction](long-range-direction.md) and [Engineering standards](engineering-standards.md); contributors should skim both before committing to the 30-60-90 day plan so the work plan stays aligned with the engine's long-term posture and quality gates.
+The current repo-grounded architecture baselines that should be read beside this roadmap live in [Architecture review (April 2026)](architecture-review-2026-04.md) and [Architecture review (May 2026)](architecture-review-2026-05.md). The long-range planning frame and consolidated quality baseline live in [Long-range engine direction](long-range-direction.md) and [Engineering standards](engineering-standards.md); contributors should skim both before committing to the 30-60-90 day plan so the work plan stays aligned with the engine's long-term posture and quality gates. The consolidated per-package adoption truth lives in [Conformance matrix](conformance-matrix.md), and the consolidated map of `/engine/*` routes, `snapshot.*` keys, and runtime catalog interfaces lives in [Runtime contract index](runtime-contract-index.md); use both as quick reference while learning specific surfaces during the plan.
 
 ## Why this guide exists
 
@@ -595,6 +595,12 @@ If one claim about Cephalon cannot be traced to at least one of those, treat tha
 - [Project memory](project-memory.md)
 - [Learning starters](learning/README.md)
 - [Architecture review (April 2026)](architecture-review-2026-04.md)
+- [Architecture review (May 2026)](architecture-review-2026-05.md)
+- [Long-range engine direction](long-range-direction.md)
+- [Engineering standards](engineering-standards.md)
+- [Runtime contract index](runtime-contract-index.md)
+- [Conformance matrix](conformance-matrix.md)
+- [Engine surface maturity audit](engine-surface-maturity-audit.md)
 - [Architecture](architecture.md)
 - [App models](app-models.md)
 - [Database topology](database-topology.md)
