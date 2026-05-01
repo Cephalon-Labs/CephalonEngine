@@ -4,7 +4,7 @@ Project memory in this document reflects the repository state observed on `April
 
 This page is a repo-oriented orientation snapshot. It is meant to help contributors recover context quickly before they change code, docs, planning, or package surfaces.
 
-Cross-references: `README.md`, `docs/README.md`, `docs/architecture.md`, `docs/architecture-inventory.md`, `docs/architecture-recommendations.md`, `docs/engine-roadmap.md`, `docs/engine-backlog.md`, `docs/compatibility.md`, `docs/long-range-direction.md`, `docs/engineering-standards.md`, `docs/dotnet11-readiness.md`, `docs/runtime-contract-index.md`
+Cross-references: `README.md`, `docs/README.md`, `docs/architecture.md`, `docs/architecture-inventory.md`, `docs/architecture-recommendations.md`, `docs/engine-roadmap.md`, `docs/engine-backlog.md`, `docs/compatibility.md`, `docs/long-range-direction.md`, `docs/engineering-standards.md`, `docs/dotnet11-readiness.md`, `docs/runtime-contract-index.md`, `docs/conformance-matrix.md`
 
 ## Identity
 

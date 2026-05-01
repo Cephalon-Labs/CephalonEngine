@@ -69,6 +69,7 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 - [Long-range engine direction](long-range-direction.md)
 - [Engineering standards](engineering-standards.md)
 - [Runtime contract index](runtime-contract-index.md)
+- [Conformance matrix](conformance-matrix.md)
 
 The component catalog now includes the observability baseline package plus the optional Cassandra dependency-health, ClickHouse dependency-health, Consul dependency-health, Elasticsearch dependency-health, HTTP dependency-health, Kafka dependency-health, Memcached dependency-health, MongoDB dependency-health, MQTT dependency-health, MySQL dependency-health, NATS dependency-health, Neo4j dependency-health, OpenSearch dependency-health, Oracle dependency-health, Postgres dependency-health, RabbitMQ dependency-health, Redis dependency-health, SQL Server dependency-health, OpenTelemetry exporter, Alibaba Cloud, AWS, DigitalOcean, GCP, Huawei Cloud, Oracle Cloud, Kubernetes, OpenShift, Tanzu, Azure Monitor, and Serilog provider companions so operator-facing docs stay aligned with the shipped host integration paths, diagnostics conventions, runtime-story surface, and release-validation guidance.
 
