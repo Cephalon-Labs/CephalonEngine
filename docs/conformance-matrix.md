@@ -236,7 +236,7 @@ When a row in this matrix becomes inaccurate, update both this page and the [`en
 
 ## Maintenance posture
 
-This document is the consolidated read across maturity audit + component catalog + runtime contract index. It is meant to evolve continuously rather than freeze.
+This document is the consolidated read across maturity audit + component catalog + runtime contract index. It is meant to evolve continuously rather than freeze. The standing rules for when to update this matrix vs. when to leave it alone live in [`planning-governance.md`](planning-governance.md) under the ["Conformance matrix maintenance"](planning-governance.md) section; this paragraph is the local reminder, not the durable rule.
 
 - update this matrix in the same slice as the source of truth: when a package changes maturity or ownership, update both `engine-surface-maturity-audit.md` and the matching row here
 - add a new row when a new shipped `Cephalon.*` package enters the repository
