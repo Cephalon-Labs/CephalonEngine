@@ -4,7 +4,7 @@ This document is the consolidated map of Cephalon's runtime contract surface: ev
 
 It exists because the engine's runtime truth is already machine-readable through `/engine/*` and `snapshot.*`, but a human or an autonomous agent should be able to discover the full surface from one page rather than scraping each route or grep-ing the source tree.
 
-Cross-references: [`project-memory.md`](project-memory.md), [`architecture.md`](architecture.md), [`architecture-review-2026-05.md`](architecture-review-2026-05.md), [`engineering-standards.md`](engineering-standards.md), [`long-range-direction.md`](long-range-direction.md), [`engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md), [`compatibility.md`](compatibility.md), [`docs/components/README.md`](components/README.md).
+Cross-references: [`project-memory.md`](project-memory.md), [`architecture.md`](architecture.md), [`architecture-review-2026-05.md`](architecture-review-2026-05.md), [`engineering-standards.md`](engineering-standards.md), [`long-range-direction.md`](long-range-direction.md), [`engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md), [`conformance-matrix.md`](conformance-matrix.md), [`compatibility.md`](compatibility.md), [`docs/components/README.md`](components/README.md).
 
 ## Why this document exists
 
