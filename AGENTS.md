@@ -387,9 +387,32 @@ When work is added, cut, or re-scoped during implementation:
 - correct historical planning claims when repository state shows a capability was not actually shipped yet
 - keep issue, project, and commit references aligned with the revised plan
 
+## Standing operating rules (May 2026 onward)
+
+The following rules are recorded in `docs/project-memory.md` and should be treated as the authoritative working agreements when shaping or shipping repository changes:
+
+- **Dual code-management seats.** Both the OpenAI Codex CLI (`gpt-5.5`) and Anthropic Claude Code (`opus-4.7`) are valid primary seats for actively shaping, editing, refactoring, and committing repository source. Either seat may drive any given slice while keeping the same docs + source + planning truth aligned through the existing docs graph. Other agents and tools may still research, review, validate, benchmark, or plan in parallel.
+- **Cephalon-Neza commit identity.** Commits and pushes from any seat use the `Cephalon-Neza` Git/GitHub account as the default author and pusher so commit history, GitHub Project card comments, and remote push attribution stay aligned with the intended project identity.
+- **Maturity and ownership truth is part of every change.** Every meaningful package, runtime surface, or planning slice declares maturity (`M0`-`M4`) and ownership mode (`taxonomy-only` / `application-managed` / `cephalon-managed` / `provider-managed`) per `docs/engine-surface-maturity-audit.md`. Use `docs/conformance-matrix.md` as the consolidated cross-reference and `docs/runtime-contract-index.md` for the live `/engine/*` route, `snapshot.*` key, and runtime catalog interface inventory.
+- **Deployment-mode claim verdict gate.** When promoting trim, Native AOT, or single-file from `not-claimed` to `claimed`, the `scripts/validate-deployment-mode-claims.ps1` harness must report a `claim-truthful` verdict. Analyzer-only signals or local publish experiments do not widen the support contract by themselves. See `docs/deployment-mode-support.md`.
+- **Architecture review cadence.** Cephalon publishes a dated monthly architecture-review snapshot named `docs/architecture-review-YYYY-MM.md`. Each new review explicitly cross-references `docs/long-range-direction.md` horizon framing and `docs/engineering-standards.md` quality dimensions. See `docs/planning-governance.md` "Architecture review cadence" for the full cadence rules.
+- **Long-range engine direction.** Use `docs/long-range-direction.md` to check that any new engine primitive, package boundary, runtime contract, or migration lane fits the multi-decade horizon stance before it ships. Packs that feel right for one transient era should ship as additive companion packs, not as engine-core sprawl.
+
 ## Key references
 
 - `docs/architecture.md`
 - `docs/app-models.md`
+- `docs/architecture-review-2026-04.md`
+- `docs/architecture-review-2026-05.md`
+- `docs/long-range-direction.md`
+- `docs/engineering-standards.md`
+- `docs/engine-surface-maturity-audit.md`
+- `docs/conformance-matrix.md`
+- `docs/runtime-contract-index.md`
+- `docs/compatibility.md`
+- `docs/dotnet11-readiness.md`
+- `docs/deployment-mode-support.md`
+- `docs/planning-governance.md`
+- `docs/project-memory.md`
 - `docs/engine-roadmap.md`
 - `docs/engine-backlog.md`
