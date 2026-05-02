@@ -272,7 +272,10 @@
         }
       },
       "cephalon.diagnostics": {
-        "type": "Project"
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.5, )"
+        }
       },
       "Microsoft.Extensions.Configuration.Binder": {
         "type": "CentralTransitive",
