@@ -262,11 +262,16 @@ Describe "Get-DeploymentModeConfigFromManifest" {
         $cfg.AnalyzerProperty | Should -Be "EnableTrimAnalyzer"
     }
 
-    It "joins manifest warningPatterns into a regex alternation" {
+    It "joins manifest warningPatterns into a regex alternation (regex-escaped)" {
         $cfg = Get-DeploymentModeConfigFromManifest -Manifest $script:manifestFull -Mode "trim"
+        # Each manifest pattern is regex-escaped before being joined into the alternation, so a
+        # literal space in the manifest pattern becomes "\ " inside the joined regex. The test
+        # asserts both the bare alphanumeric pattern (which has no escape effect) and the escaped
+        # form of the multi-word pattern, so accidentally removing the escape pass would fail
+        # this test as well as the dedicated regex-escape security test below.
         $cfg.WarningRegex | Should -Match "IL2026"
         $cfg.WarningRegex | Should -Match "IL2099"
-        $cfg.WarningRegex | Should -Match "trim warning"
+        $cfg.WarningRegex | Should -Match "trim\\ warning"
         $cfg.WarningRegex | Should -BeLike "(?i)*"
     }
 
@@ -320,7 +325,21 @@ Describe "Get-DeploymentModeConfigFromManifest" {
             }
         }
         $cfg = Get-DeploymentModeConfigFromManifest -Manifest $manifestWeird -Mode "trim"
-        $cfg.WarningRegex | Should -Match "weird\\.literal\\[chars\\]"
+
+        # Compare against the .NET regex escape that the harness applies to each manifest pattern
+        # before joining the alternation. Use String.Contains so PowerShell wildcard / regex
+        # metacharacters in the expected substring (e.g. `[`) do not get interpreted by Pester's
+        # -BeLike or -Match operators. The security property under test is that a manifest pattern
+        # with regex metacharacters is treated as a literal substring rather than as injectable
+        # regex syntax.
+        $expectedEscaped = [regex]::Escape("weird.literal[chars]")
+        $cfg.WarningRegex.Contains($expectedEscaped) | Should -BeTrue -Because "manifest warning patterns must be regex-escaped before joining the alternation"
+
+        # Also assert the regex compiles and treats the literal pattern as a literal match (not as
+        # the `[chars]` character class it would have been if the escape had been skipped).
+        $compiled = [regex]::new($cfg.WarningRegex)
+        $compiled.IsMatch("weird.literal[chars]") | Should -BeTrue
+        $compiled.IsMatch("weirdXliteralc") | Should -BeFalse
     }
 }
 

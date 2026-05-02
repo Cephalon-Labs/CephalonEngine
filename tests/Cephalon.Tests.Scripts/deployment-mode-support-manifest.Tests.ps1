@@ -163,7 +163,19 @@ Describe "representativePublishTargets" {
     }
 
     It "projects is an array (may be empty until a deliberate audit is staged)" {
-        $script:manifest.representativePublishTargets.projects | Should -BeOfType [System.Array] -Because "may be empty array but must still be an array"
+        # Wrap in @() so PowerShell's pipe semantics do not unwrap single-element arrays into the
+        # element type; we want to assert the manifest's projects field is array-shaped regardless
+        # of whether it currently has 0 or N entries.
+        $projects = @($script:manifest.representativePublishTargets.projects)
+        $projects.GetType().IsArray | Should -BeTrue -Because "may be empty array but must still be an array"
+    }
+
+    It "every projects entry is a relative csproj path string" {
+        foreach ($entry in @($script:manifest.representativePublishTargets.projects)) {
+            $entry | Should -BeOfType [string] -Because "publish targets are relative csproj paths"
+            $entry | Should -Match '\.csproj$' -Because "publish targets must point at a project file"
+            [System.IO.Path]::IsPathRooted($entry) | Should -BeFalse -Because "publish targets stay relative to repo root"
+        }
     }
 }
 

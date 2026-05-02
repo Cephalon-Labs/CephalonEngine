@@ -2943,6 +2943,35 @@ Follow-up later:
 - when `Cephalon.Worker` adopts the `Cephalon.Analyzers` meta-package (a future slice), evaluate whether to suppress the Meziantou / Roslynator style rules surfaced in `ENG-328` or refactor away from those patterns
 - with `Cephalon.AspNetCore` and `Cephalon.Worker` both contract-locked, the next sprint can target the transport / behavior / data / event-sourcing / observability / multi-tenancy / agentics / retrieval / edge package families
 
+### ENG-331 Deployment-mode publish probe activation (representativePublishTargets manifest defaults + Pester baseline cleanup)
+
+Status: done
+Estimate: 5
+
+Why:
+
+- `ENG-319` declared `engine.deployment-mode-claims.truthful-fraction` as an SLI with the framing "audit-only" until `representativePublishTargets.projects` is populated; the Learning Knowledge Pack delta in `docs/project-memory.md` named populating the harness publish-target list as the prerequisite for flipping this SLI from `audit-only` to numeric (Recommendation #8 prerequisite)
+- the `representativePublishTargets.projects` field has existed in `scripts/deployment-mode-support.json` since the harness landed but was never wired into the harness's publish probe; `scripts/validate-deployment-mode-claims.ps1` only ran the publish probe when `-PublishTargets` was explicitly passed, so manifest-declared targets had no effect on default invocations
+- the matching Pester suite at `tests/Cephalon.Tests.Scripts/validate-deployment-mode-claims.Tests.ps1` carried three pre-existing test failures (manifest warningPatterns regex assertion, null-manifest fallback parameter binding, regex-escape security assertion) that obscured ENG-331's verification signal; this slice fixes them so the suite is green and future ENG-* work has a clean baseline
+
+Delivered:
+
+- update `scripts/validate-deployment-mode-claims.ps1` `Invoke-DeploymentModeClaimValidation` to default-read `manifest.representativePublishTargets.projects` into the local `$PublishTargets` parameter when the caller did not pass an explicit `-PublishTargets` and did not pass `-SkipPublish`; an explicit empty `-PublishTargets @()` plus `-SkipPublish` continues to skip the probe as before
+- add `[AllowNull()]` to `Get-DeploymentModeConfigFromManifest`'s `-Manifest` parameter so the documented "returns hardcoded fallback when manifest is null" behavior is reachable from callers (matches what the function body already handles at `if ($null -eq $Manifest -or ...)`)
+- populate `scripts/deployment-mode-support.json` `representativePublishTargets.projects` with one representative target — `samples/Cephalon.Sample.ModularMonolith/Cephalon.Sample.ModularMonolith.csproj` — and update the field's inline comment to reflect the new auto-default behavior; one target is enough to flip the harness lane out of skipped-by-default state, and additional samples can be added incrementally
+- update three Pester tests to track shipped behavior:
+  - `representativePublishTargets.projects` schema test now wraps with `@(...)` so single-element arrays are not unwrapped by PowerShell pipe semantics; new "every projects entry is a relative csproj path string" assertion validates entries shape so accidental absolute paths or non-csproj paths fail at test time
+  - the warningPatterns alternation test now asserts the regex-escaped form (`trim\\ warning`) that the harness's `[regex]::Escape` call produces, which matches the security property the regex-escape pass is designed to enforce
+  - the regex-escape security test now uses `String.Contains` with the `[regex]::Escape` output rather than a `Should -Match` / `-BeLike` pattern that gets corrupted by PowerShell wildcard or regex metacharacter parsing; also adds positive / negative `[regex]::IsMatch` assertions so the literal-vs-character-class semantics are explicitly tested
+- verified end-to-end with `pwsh ./scripts/validate-deployment-mode-claims.ps1 -SkipPublish` (audit-only mode still works, aggregate verdict `not-claimed`), `pwsh ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode trim` without `-SkipPublish` (auto-default reads the 1-target list from manifest, runs the publish probe, captures `NETSDK1124` errors from `Cephalon.Behaviors.SourceGen` and `Cephalon.Analyzers` netstandard2.0 transitive deps which are correctly reported but do not flip the verdict because `trim` is `not-claimed`), and `Invoke-Pester` against the script Pester suite (`Tests Passed: 93, Failed: 0`)
+
+Follow-up later:
+
+- the publish probe surfaces a real engine concern: `Cephalon.Behaviors.SourceGen` (Roslyn analyzer / source-gen project, `netstandard2.0`) and `Cephalon.Analyzers` (analyzer meta-package, `netstandard2.0`) emit `NETSDK1124` ("Trimming assemblies requires .NET Core 3.0 or higher") when the consuming sample is published with `-PublishTrimmed`. A future slice should mark those projects with `<IsTrimmable>false</IsTrimmable>` (or equivalent opt-out) so the trim probe can pass cleanly when the engine eventually claims trim support
+- `scripts/validate-release.ps1` still passes `-SkipPublish` when invoking the harness in CI; once the netstandard2.0 transitive issue above is addressed, that flag can be removed so CI exercises the full publish probe lane and the deployment-mode SLI can flip from `audit-only` to numeric
+- additional representative samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite/services/CatalogService`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) can be added to `representativePublishTargets.projects` incrementally as each is verified to publish cleanly under at least one deployment mode
+- `docs/sre-posture.md` `engine.deployment-mode-claims.truthful-fraction` SLI can be promoted from the `audit-only` framing to a numeric reading once `validate-release.ps1` runs the publish probe and at least one mode flips to `claim-truthful`
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -11010,6 +11039,10 @@ Upcoming sequence from the April 2026 maturity reset:
 
 - ENG-329 Public-API contract lock-in rollout to Cephalon.AspNetCore (shipped)
 - ENG-330 Public-API contract lock-in rollout to Cephalon.Worker (shipped)
+
+### Sprint 123
+
+- ENG-331 Deployment-mode publish probe activation (representativePublishTargets manifest defaults + Pester baseline cleanup) (shipped)
 
 ### Later / not scheduled yet
 
