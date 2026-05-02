@@ -2972,6 +2972,33 @@ Follow-up later:
 - additional representative samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite/services/CatalogService`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) can be added to `representativePublishTargets.projects` incrementally as each is verified to publish cleanly under at least one deployment mode
 - `docs/sre-posture.md` `engine.deployment-mode-claims.truthful-fraction` SLI can be promoted from the `audit-only` framing to a numeric reading once `validate-release.ps1` runs the publish probe and at least one mode flips to `claim-truthful`
 
+### ENG-332 Mark netstandard2.0 analyzer / source-gen projects as not-trimmable / not-AOT-compatible
+
+Status: done
+Estimate: 3
+
+Why:
+
+- `ENG-331` activated the deployment-mode publish probe and surfaced that `Cephalon.Behaviors.SourceGen` (Roslyn source-gen project, `netstandard2.0`) and `Cephalon.Analyzers` (analyzer meta-package, `netstandard2.0`) emit `NETSDK1124` ("Trimming assemblies requires .NET Core 3.0 or higher") when the consuming sample is published with `-PublishTrimmed`
+- the netstandard2.0 target is intrinsic to Roslyn analyzer hosting (Roslyn loads analyzers in a netstandard2.0 context), so multi-targeting these projects to net10.0 is not a viable fix; the projects fundamentally cannot participate in trim / AOT / single-file
+- the smallest honest follow-up is to declare the not-trimmable / not-AOT / not-single-file shape on the projects themselves so analyzer-aware tooling and future build-system improvements can read those declarations as intent, even though .NET 10's MSBuild does not currently scope global `PublishTrimmed` / `PublishAot` / `PublishSingleFile` properties per-project
+
+Delivered:
+
+- update `src/Cephalon.Behaviors.SourceGen/Cephalon.Behaviors.SourceGen.csproj`:
+    - `<IsTrimmable>false</IsTrimmable>` and `<IsAotCompatible>false</IsAotCompatible>` so analyzer-aware tooling reads the right value
+    - `<PublishTrimmed>false</PublishTrimmed>`, `<PublishAot>false</PublishAot>`, `<PublishSingleFile>false</PublishSingleFile>` to declare intent against future MSBuild improvements that scope these globals per-project
+    - inline comment explaining the netstandard2.0 + Roslyn-host constraint and the known .NET 10 NETSDK1124 cascade limitation
+- mirror the same changes in `src/Cephalon.Analyzers/Cephalon.Analyzers.csproj`
+- update `src/Cephalon.Abstractions/Cephalon.Abstractions.csproj` `Cephalon.Analyzers` `ProjectReference` to add `OutputItemType="Analyzer"` and `ReferenceOutputAssembly="false"` so the meta-package is consumed as analyzer assets, matching the established pattern that `Cephalon.Behaviors`'s reference to `Cephalon.Behaviors.SourceGen` already follows
+- verified end-to-end with `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors), `dotnet restore --locked-mode CephalonEngine.slnx` (passes, no lock-file drift), and `pwsh ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode trim` (publish probe still surfaces the NETSDK1124 because `PublishTrimmed=true` in .NET 10 is a global property that flows into all referenced projects regardless of their TFM; the harness correctly reports the failure and the verdict stays `not-claimed` because the manifest still declares trim status as `not-claimed`)
+
+Follow-up later:
+
+- the NETSDK1124 cascade is a known .NET 10 / MSBuild limitation: a global property passed to `dotnet publish` flows into all referenced projects regardless of their per-project property declarations. A future-proofing workaround that fully eliminates the cascade requires either (a) a multi-targeted analyzer project (`netstandard2.0;net10.0`) where the trim path picks net10.0 and the analyzer hosting picks netstandard2.0, but Roslyn analyzer hosting requires netstandard2.0 binaries so this would only suppress the error without producing a working trim build, or (b) the harness's `Invoke-PublishProbe` switching from global property `-p:PublishTrimmed=true` to a per-project property override mechanism (e.g. editing the sample's csproj before publish, or using MSBuild restore-time property scoping); both paths are larger architectural work that should land as separate `ENG-*` slices when trim adoption is genuinely on the critical path
+- when the cascade limitation is fixed, the trim / AOT / single-file probe should publish cleanly against `Cephalon.Sample.ModularMonolith`; that is the slice that flips the deployment-mode SLI in `docs/sre-posture.md` from `audit-only` to numeric
+- mirror these declarations onto any future analyzer-only `netstandard2.0` projects the engine adds (e.g. transport-specific source generators) so the not-trimmable / not-AOT intent stays consistent across the engine's analyzer family
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -11043,6 +11070,7 @@ Upcoming sequence from the April 2026 maturity reset:
 ### Sprint 123
 
 - ENG-331 Deployment-mode publish probe activation (representativePublishTargets manifest defaults + Pester baseline cleanup) (shipped)
+- ENG-332 Mark netstandard2.0 analyzer / source-gen projects as not-trimmable / not-AOT-compatible (shipped)
 
 ### Later / not scheduled yet
 

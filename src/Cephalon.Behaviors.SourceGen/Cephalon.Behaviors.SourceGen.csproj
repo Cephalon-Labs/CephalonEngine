@@ -9,6 +9,19 @@
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <IsRoslynComponent>true</IsRoslynComponent>
     <Description>Roslyn source generator and analyzer for Cephalon behavior classes annotated with [AppBehavior].</Description>
+    <!--
+      This project is a Roslyn source generator that runs at compile time only and never ships
+      runtime code into a published app. Override PublishTrimmed / PublishAot / PublishSingleFile
+      to false so a consuming sample published with those flags does not cascade them onto this
+      netstandard2.0 project (which would emit NETSDK1124 because trimming requires .NET Core
+      3.0 or higher). Also mark IsTrimmable / IsAotCompatible explicitly false so any analyzer
+      that reads those declarations sees the right value.
+    -->
+    <IsTrimmable>false</IsTrimmable>
+    <IsAotCompatible>false</IsAotCompatible>
+    <PublishTrimmed>false</PublishTrimmed>
+    <PublishAot>false</PublishAot>
+    <PublishSingleFile>false</PublishSingleFile>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
