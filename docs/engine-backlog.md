@@ -3609,8 +3609,33 @@ Delivered:
 
 Follow-up later:
 
-- when the engine `M1`-promotes the redaction surface, register `RedactionPipeline` in DI as the single filter the emission site calls; `services.AddRedactionPipeline()` extension on `IServiceCollection` or equivalent on the Cephalon options-binding surface is the natural shape and lands as a separate slice
+- when the engine `M1`-promotes the redaction surface, register `RedactionPipeline` in DI as the single filter the emission site calls; `services.AddRedactionPipeline()` extension on `IServiceCollection` or equivalent on the Cephalon options-binding surface is the natural shape and lands as a separate slice — **delivered in `ENG-364`**
 - once the pipeline is wired through DI, document the canonical "compose KeyMatch + Regex + custom filter" recipe in the Diagnostics component doc as the discoverable reference pattern; today consumer apps can already compose using `new RedactionPipeline([...])` directly
+
+### ENG-364 Add AddRedactionPipeline IServiceCollection extension in Cephalon.Diagnostics
+
+Status: done
+Estimate: 2
+
+Why:
+
+- `ENG-363` shipped `RedactionPipeline` as the canonical orchestration helper but did not wire it into the DI container; consumer apps composing multiple `IRedactionFilter` implementations through DI still had to write the `services.AddSingleton<RedactionPipeline>(p => new RedactionPipeline(p.GetServices<IRedactionFilter>()))` factory by hand
+- the M1 promotion of the redaction surface (engine emission sites resolve filters from DI) needs a single canonical registration helper; without one, every emission-site slice would re-author the same factory and risk divergent semantics (e.g. one emission site uses `GetServices<IRedactionFilter>()`, another uses `GetRequiredService<RedactionPipeline>()`)
+- the slice closes the redaction-surface adoption arc: contract → starters → orchestration helper → DI registration; once shipped, consumer apps reach for the redaction surface through one fluent call
+
+Delivered:
+
+- new `src/Cephalon.Diagnostics/Redaction/Extensions/RedactionServiceCollectionExtensions.cs` — `public static class` with one extension method `AddRedactionPipeline(this IServiceCollection services) -> IServiceCollection` that registers a singleton `RedactionPipeline` composed of every registered `IRedactionFilter`; uses `TryAddSingleton` so the registration is idempotent across multiple calls; null-arg guard on `services`
+- update `src/Cephalon.Diagnostics/Cephalon.Diagnostics.csproj` to add `PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions"` (the universal DI abstractions pack — version pinned through `Directory.Packages.props` to 10.0.5 alongside the rest of the M.E.* family)
+- 2 new public-API entries in `src/Cephalon.Diagnostics/PublicAPI.Unshipped.txt`: extension class + the static method
+- new `tests/Cephalon.Tests.Composition/Diagnostics/Redaction/RedactionServiceCollectionExtensionsTests.cs` (7 tests): pipeline composition from registered filters, DI registration order, no-filters empty-passthrough, singleton lifetime, idempotent registration, fluent return-same-collection, ctor null-arg guard
+- 90 packages.lock.json files refreshed via `dotnet restore --force-evaluate` to absorb the new transitive M.E.DI.Abstractions edge from `Cephalon.Diagnostics` (every package transitively depending on Diagnostics gets the new entry; the Diagnostics package itself only adds one direct `PackageReference`)
+- verified end-to-end with `dotnet build` (0 warnings, 0 errors), `dotnet test --filter "FullyQualifiedName~Cephalon.Tests.Diagnostics.Redaction"` (33/33 pass across all 4 redaction test files), and `dotnet restore --locked-mode CephalonEngine.slnx` (clean across the full sln, no remaining drift)
+
+Follow-up later:
+
+- when an engine emission site resolves the pipeline, the obvious natural shape is `var pipeline = scope.ServiceProvider.GetService<RedactionPipeline>(); var redacted = pipeline?.Filter(context, value) ?? value;` — short-circuits to passthrough when consumers haven't called `AddRedactionPipeline()`; document the recipe in the Diagnostics component doc once at least one site adopts it
+- if consumer apps need named pipelines (e.g. one per emission site with different filter sets), the natural extension is `AddRedactionPipeline<TKey>` keyed singletons aligned with .NET 10's keyed services; defer until at least one consumer has the need
 
 ## Completed foundation work
 
@@ -11713,6 +11738,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-361 Add starter KeyMatchRedactionFilter + RegexRedactionFilter implementations under Cephalon.Diagnostics.Redaction.Defaults (shipped)
 - ENG-362 Add unit tests for starter redaction filters (shipped)
 - ENG-363 Add RedactionPipeline orchestration helper in Cephalon.Diagnostics (shipped)
+- ENG-364 Add AddRedactionPipeline IServiceCollection extension in Cephalon.Diagnostics (shipped)
 
 ### Later / not scheduled yet
 

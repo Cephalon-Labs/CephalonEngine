@@ -303,7 +303,10 @@
         }
       },
       "cephalon.diagnostics": {
-        "type": "Project"
+        "type": "Project",
+        "dependencies": {
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.5, )"
+        }
       },
       "cephalon.engine": {
         "type": "Project",

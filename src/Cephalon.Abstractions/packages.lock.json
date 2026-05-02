@@ -7,46 +7,6 @@
         "requested": "[10.0.5, )",
         "resolved": "10.0.5",
         "contentHash": "iVMtq9eRvzyhx8949EGT0OCYJfXi737SbRVzWXE5GrOgGj5AaZ9eUuxA/BSUfmOMALKn/g8KfFaNQw0eiB3lyA=="
-      },
-      "cephalon.analyzers": {
-        "type": "Project",
-        "dependencies": {
-          "Meziantou.Analyzer": "[2.0.219, )",
-          "Microsoft.CodeAnalysis.BannedApiAnalyzers": "[4.14.0, )",
-          "Microsoft.CodeAnalysis.PublicApiAnalyzers": "[4.14.0, )",
-          "Microsoft.VisualStudio.Threading.Analyzers": "[17.14.15, )",
-          "Roslynator.Analyzers": "[4.13.1, )"
-        }
-      },
-      "Meziantou.Analyzer": {
-        "type": "CentralTransitive",
-        "requested": "[2.0.219, )",
-        "resolved": "2.0.219",
-        "contentHash": "vknqxTO59DkRmsuyA3GoQ8zLODHTVrt2enVozcRLY22D3LRJm3qRNYIkpFl1lfejOsahrMwObtYzKLmWf7/XTQ=="
-      },
-      "Microsoft.CodeAnalysis.BannedApiAnalyzers": {
-        "type": "CentralTransitive",
-        "requested": "[4.14.0, )",
-        "resolved": "4.14.0",
-        "contentHash": "gSWJlDWwmDhtbrEJGiHqvEjz9KthIiFD0qYB8zZ6a7z+xpMSPEtM9yTYELSa58iFWYlzSRqP9FXO6KoT3+ZMtg=="
-      },
-      "Microsoft.CodeAnalysis.PublicApiAnalyzers": {
-        "type": "CentralTransitive",
-        "requested": "[4.14.0, )",
-        "resolved": "4.14.0",
-        "contentHash": "5zBDSa8D1pfn5VyDzRekcYdVx/DGAzwegblVJhzdN0kvPt97TPr12haA6ZG0wS2WgBb1W42GeZJRiRtlNaoY1w=="
-      },
-      "Microsoft.VisualStudio.Threading.Analyzers": {
-        "type": "CentralTransitive",
-        "requested": "[17.14.15, )",
-        "resolved": "17.14.15",
-        "contentHash": "mXQPJsbuUD2ydq4/ffd8h8tSOFCXec+2xJOVNCvXjuMOq/+5EKHq3D2m2MC2+nUaXeFMSt66VS/J4HdKBixgcw=="
-      },
-      "Roslynator.Analyzers": {
-        "type": "CentralTransitive",
-        "requested": "[4.13.1, )",
-        "resolved": "4.13.1",
-        "contentHash": "KZpLy6ZlCebMk+d/3I5KU2R7AOb4LNJ6tPJqPtvFXmO8bEBHQvCIAvJOnY2tu4C9/aVOROTDYUFADxFqw1gh/g=="
       }
     }
   }
