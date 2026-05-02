@@ -3104,6 +3104,35 @@ Follow-up later:
 - clean up the RS0026 / RS0027 optional-overload patterns inside each transport adapter so the per-project suppressions can be removed
 - monitor `Grpc.Tools` releases for nullable-annotated output; remove the `RS0041` suppression in `Cephalon.AspNetCore.Grpc` once the tooling emits annotated code
 
+### ENG-336 Public-API contract lock-in rollout to behaviors family (Cephalon.Behaviors + .Http + .Messaging + .Patterns)
+
+Status: done
+Estimate: 5
+
+Why:
+
+- continues the public-API contract lock-in rollout from `ENG-322` (Abstractions), `ENG-326` (Engine), `ENG-329`/`ENG-330` (host adapters), and `ENG-335` (transport adapters); the behaviors family is the next-largest contract surface
+- four shipped behaviors packages (`Cephalon.Behaviors`, `Cephalon.Behaviors.Http`, `Cephalon.Behaviors.Messaging`, `Cephalon.Behaviors.Patterns`) all benefit from the diff-gate because they sit between the engine runtime and consumer modules; an accidental rename or removal would propagate into every consumer module bound through `[AppBehavior]` or the behavior-topology surface
+
+Delivered:
+
+- add `Microsoft.CodeAnalysis.PublicApiAnalyzers` as a `PrivateAssets=all` `PackageReference` to all four behaviors-family csproj files; declare `PublicAPI.Shipped.txt` and `PublicAPI.Unshipped.txt` as `AdditionalFiles`
+- generate baselines:
+    - `src/Cephalon.Behaviors/PublicAPI.Shipped.txt` — 124 entries covering the behavior dispatch core, attribute markers, runtime catalogs, resilience execution middleware, idempotency surface, and engine-builder extensions
+    - `src/Cephalon.Behaviors.Http/PublicAPI.Shipped.txt` — 232 entries (largest of the family) covering REST profile metadata, generated REST behavior module base, REST module helpers, transport profile descriptors, and the OpenAPI-aware activation surface
+    - `src/Cephalon.Behaviors.Messaging/PublicAPI.Shipped.txt` — 76 entries covering RabbitMQ + Kafka transport contracts, message envelope shapes, and consumer/producer factories
+    - `src/Cephalon.Behaviors.Patterns/PublicAPI.Shipped.txt` — 142 entries covering durable-execution helpers, saga choreography publishers, process-checkpoint stores, and pattern-behavior extensions
+- commit empty `PublicAPI.Unshipped.txt` for each
+- suppress `RS0026` and `RS0027` inside each project with an inline comment; cleanup is follow-up
+- refresh `packages.lock.json` for each behaviors-family project; locked-mode restore passes against the refreshed graph
+- verified end-to-end with per-project `dotnet build -c Release --no-restore` (0 warnings, 0 errors for each), full-solution `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors), and `dotnet restore --locked-mode CephalonEngine.slnx` (passes)
+
+Follow-up later:
+
+- continue the rollout to remaining package families: data (`Cephalon.Data` + provider packs), event sourcing, observability, multi-tenancy + governance, agentics, retrieval, edge; each family is its own `ENG-*` slice
+- clean up the RS0026 / RS0027 optional-overload patterns inside each behaviors-family project so the per-project suppressions can be removed
+- when the engine contract lock-in reaches the data / event-sourcing / observability families, consider authoring a release-validation harness step that diffs `PublicAPI.Shipped.txt` against the previous shipped GA so the contract-stability story shows up in CI output
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -11183,6 +11212,7 @@ Upcoming sequence from the April 2026 maturity reset:
 
 - ENG-334 Cephalon.Diagnostics M1 to M2 promotion (host adapters consume canonical names) (shipped)
 - ENG-335 Public-API contract lock-in rollout to transport adapters (Cephalon.AspNetCore.GraphQL + Grpc + JsonRpc) (shipped)
+- ENG-336 Public-API contract lock-in rollout to behaviors family (Cephalon.Behaviors + .Http + .Messaging + .Patterns) (shipped)
 
 ### Later / not scheduled yet
 

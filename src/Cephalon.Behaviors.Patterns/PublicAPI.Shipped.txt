@@ -1,0 +1,143 @@
+#nullable enable
+Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionContext
+Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionContext.BehaviorContext.get -> Cephalon.Abstractions.Behaviors.IBehaviorContext!
+Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionContext.BehaviorContext.init -> void
+Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionContext.BehaviorExecutionContext() -> void
+Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionContext.BehaviorInstance.get -> object!
+Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionContext.BehaviorInstance.init -> void
+Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionContext.Descriptor.get -> Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor!
+Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionContext.Descriptor.init -> void
+Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionContext.Input.get -> object!
+Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionContext.Input.init -> void
+Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionContext.Slot.get -> Cephalon.Behaviors.Services.BehaviorExecutionSlot!
+Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionContext.Slot.init -> void
+Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionResult
+Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionResult.BehaviorExecutionResult() -> void
+Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionResult.HttpStatusCode.get -> int
+Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionResult.HttpStatusCode.init -> void
+Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionResult.IsFireAndForget.get -> bool
+Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionResult.IsFireAndForget.init -> void
+Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionResult.Output.get -> object?
+Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionResult.Output.init -> void
+Cephalon.Behaviors.Patterns.Abstractions.DurableExecutionState<TState>
+Cephalon.Behaviors.Patterns.Abstractions.DurableExecutionState<TState>.DurableExecutionState(string! streamId, TState state, long version) -> void
+Cephalon.Behaviors.Patterns.Abstractions.DurableExecutionState<TState>.Exists.get -> bool
+Cephalon.Behaviors.Patterns.Abstractions.DurableExecutionState<TState>.State.get -> TState
+Cephalon.Behaviors.Patterns.Abstractions.DurableExecutionState<TState>.StreamId.get -> string!
+Cephalon.Behaviors.Patterns.Abstractions.DurableExecutionState<TState>.Version.get -> long
+Cephalon.Behaviors.Patterns.Abstractions.DurableExecutionStepResult<TOutput>
+Cephalon.Behaviors.Patterns.Abstractions.DurableExecutionStepResult<TOutput>.CompensationActions.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Execution.DurableExecutionCompensationAction!>!
+Cephalon.Behaviors.Patterns.Abstractions.DurableExecutionStepResult<TOutput>.DurableExecutionStepResult(TOutput? output = default(TOutput?), System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.EventSourcing.IDomainEvent!>? events = null, bool isCompleted = false, System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Execution.DurableExecutionPendingTimer!>? pendingTimers = null, System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Execution.DurableExecutionPendingSignal!>? pendingSignals = null, System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Execution.DurableExecutionCompensationAction!>? compensationActions = null) -> void
+Cephalon.Behaviors.Patterns.Abstractions.DurableExecutionStepResult<TOutput>.Events.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.EventSourcing.IDomainEvent!>!
+Cephalon.Behaviors.Patterns.Abstractions.DurableExecutionStepResult<TOutput>.IsCompleted.get -> bool
+Cephalon.Behaviors.Patterns.Abstractions.DurableExecutionStepResult<TOutput>.Output.get -> TOutput?
+Cephalon.Behaviors.Patterns.Abstractions.DurableExecutionStepResult<TOutput>.PendingSignals.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Execution.DurableExecutionPendingSignal!>!
+Cephalon.Behaviors.Patterns.Abstractions.DurableExecutionStepResult<TOutput>.PendingTimers.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Execution.DurableExecutionPendingTimer!>!
+Cephalon.Behaviors.Patterns.Abstractions.IBehaviorExecutionStrategy
+Cephalon.Behaviors.Patterns.Abstractions.IBehaviorExecutionStrategy.ExecuteAsync(Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionContext! context, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionResult!>!
+Cephalon.Behaviors.Patterns.Abstractions.IBehaviorExecutionStrategy.Pattern.get -> string!
+Cephalon.Behaviors.Patterns.Abstractions.IDurableExecution<TInput, TState, TOutput>
+Cephalon.Behaviors.Patterns.Abstractions.IDurableExecution<TInput, TState, TOutput>.ExecuteDurablyAsync(TInput input, Cephalon.Behaviors.Patterns.Abstractions.DurableExecutionState<TState>! execution, Cephalon.Abstractions.Behaviors.IBehaviorContext! context, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Cephalon.Behaviors.Patterns.Abstractions.DurableExecutionStepResult<TOutput>!>!
+Cephalon.Behaviors.Patterns.Abstractions.IDurableExecution<TState>
+Cephalon.Behaviors.Patterns.Abstractions.IDurableExecution<TState>.CreateInitialState() -> TState
+Cephalon.Behaviors.Patterns.Abstractions.IDurableExecution<TState>.ResolveStreamId(string! behaviorId, Cephalon.Abstractions.Behaviors.IBehaviorContext! context) -> string!
+Cephalon.Behaviors.Patterns.Abstractions.IProcessCheckpointStore
+Cephalon.Behaviors.Patterns.Abstractions.IProcessCheckpointStore.DeleteAsync(string! processId, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Patterns.Abstractions.IProcessCheckpointStore.GetAsync(string! processId, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Cephalon.Behaviors.Patterns.Abstractions.ProcessCheckpoint?>!
+Cephalon.Behaviors.Patterns.Abstractions.IProcessCheckpointStore.SaveAsync(string! processId, Cephalon.Behaviors.Patterns.Abstractions.ProcessCheckpoint! checkpoint, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Patterns.Abstractions.ISagaChoreographyPublisher
+Cephalon.Behaviors.Patterns.Abstractions.ISagaChoreographyPublisher.PublishAsync(Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication! publication, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
+Cephalon.Behaviors.Patterns.Abstractions.ISagaChoreographyStepResult
+Cephalon.Behaviors.Patterns.Abstractions.ISagaChoreographyStepResult.Output.get -> object?
+Cephalon.Behaviors.Patterns.Abstractions.ISagaChoreographyStepResult.Publications.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication!>!
+Cephalon.Behaviors.Patterns.Abstractions.ISagaEventReactor<TEvent, TOutput>
+Cephalon.Behaviors.Patterns.Abstractions.ISagaEventReactor<TEvent, TOutput>.ReactAsync(TEvent input, Cephalon.Abstractions.Behaviors.IBehaviorContext! context, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyStepResult<TOutput>!>!
+Cephalon.Behaviors.Patterns.Abstractions.ISagaEventReactor<TEvent>
+Cephalon.Behaviors.Patterns.Abstractions.ISagaEventReactor<TEvent>.ReactAsync(TEvent input, Cephalon.Abstractions.Behaviors.IBehaviorContext! context, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyStepResult!>!
+Cephalon.Behaviors.Patterns.Abstractions.ISagaStateStore
+Cephalon.Behaviors.Patterns.Abstractions.ISagaStateStore.DeleteAsync(string! sagaId, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Patterns.Abstractions.ISagaStateStore.GetAsync<T>(string! sagaId, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T?>!
+Cephalon.Behaviors.Patterns.Abstractions.ISagaStateStore.SaveAsync<T>(string! sagaId, T state, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Patterns.Abstractions.ProcessCheckpoint
+Cephalon.Behaviors.Patterns.Abstractions.ProcessCheckpoint.CompletedAt.get -> System.DateTimeOffset?
+Cephalon.Behaviors.Patterns.Abstractions.ProcessCheckpoint.CompletedAt.init -> void
+Cephalon.Behaviors.Patterns.Abstractions.ProcessCheckpoint.CreatedAt.get -> System.DateTimeOffset
+Cephalon.Behaviors.Patterns.Abstractions.ProcessCheckpoint.CreatedAt.init -> void
+Cephalon.Behaviors.Patterns.Abstractions.ProcessCheckpoint.CurrentStep.get -> string!
+Cephalon.Behaviors.Patterns.Abstractions.ProcessCheckpoint.CurrentStep.init -> void
+Cephalon.Behaviors.Patterns.Abstractions.ProcessCheckpoint.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Behaviors.Patterns.Abstractions.ProcessCheckpoint.Metadata.init -> void
+Cephalon.Behaviors.Patterns.Abstractions.ProcessCheckpoint.ProcessCheckpoint() -> void
+Cephalon.Behaviors.Patterns.Abstractions.ProcessCheckpoint.ProcessId.get -> string!
+Cephalon.Behaviors.Patterns.Abstractions.ProcessCheckpoint.ProcessId.init -> void
+Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication
+Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication.ChannelId.get -> string!
+Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication.ContentType.get -> string?
+Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication.CorrelationId.get -> string?
+Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication.EventType.get -> string!
+Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication.Headers.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication.Id.get -> string!
+Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication.IsCompensation.get -> bool
+Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication.OccurredAtUtc.get -> System.DateTimeOffset
+Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication.Payload.get -> string!
+Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication.SagaChoreographyPublication(string! id, string! channelId, string! eventType, string! payload, System.DateTimeOffset occurredAtUtc, string? contentType = null, string? correlationId = null, string? tenantId = null, bool isCompensation = false, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? headers = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication.TenantId.get -> string?
+Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyStepResult
+Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyStepResult.Output.get -> object?
+Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyStepResult.Publications.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication!>!
+Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyStepResult.SagaChoreographyStepResult(object? output = null, System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication!>? publications = null) -> void
+Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyStepResult<TOutput>
+Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyStepResult<TOutput>.Output.get -> TOutput
+Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyStepResult<TOutput>.Publications.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication!>!
+Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyStepResult<TOutput>.SagaChoreographyStepResult(TOutput output, System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication!>? publications = null) -> void
+Cephalon.Behaviors.Patterns.Hosting.PatternBehaviorExtensions
+Cephalon.Behaviors.Patterns.Publishers.InMemorySagaChoreographyPublisher
+Cephalon.Behaviors.Patterns.Publishers.InMemorySagaChoreographyPublisher.InMemorySagaChoreographyPublisher() -> void
+Cephalon.Behaviors.Patterns.Publishers.InMemorySagaChoreographyPublisher.PublishAsync(Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication! publication, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
+Cephalon.Behaviors.Patterns.Publishers.InMemorySagaChoreographyPublisher.PublishedPublications.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication!>!
+Cephalon.Behaviors.Patterns.Registry.ExecutionStrategyRegistry
+Cephalon.Behaviors.Patterns.Registry.ExecutionStrategyRegistry.All.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Patterns.Abstractions.IBehaviorExecutionStrategy!>!
+Cephalon.Behaviors.Patterns.Registry.ExecutionStrategyRegistry.ExecutionStrategyRegistry(System.Collections.Generic.IEnumerable<Cephalon.Behaviors.Patterns.Abstractions.IBehaviorExecutionStrategy!>! strategies) -> void
+Cephalon.Behaviors.Patterns.Registry.ExecutionStrategyRegistry.GetStrategy(string! pattern) -> Cephalon.Behaviors.Patterns.Abstractions.IBehaviorExecutionStrategy?
+Cephalon.Behaviors.Patterns.Stores.InMemoryProcessCheckpointStore
+Cephalon.Behaviors.Patterns.Stores.InMemoryProcessCheckpointStore.DeleteAsync(string! processId, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Patterns.Stores.InMemoryProcessCheckpointStore.GetAsync(string! processId, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Cephalon.Behaviors.Patterns.Abstractions.ProcessCheckpoint?>!
+Cephalon.Behaviors.Patterns.Stores.InMemoryProcessCheckpointStore.InMemoryProcessCheckpointStore() -> void
+Cephalon.Behaviors.Patterns.Stores.InMemoryProcessCheckpointStore.SaveAsync(string! processId, Cephalon.Behaviors.Patterns.Abstractions.ProcessCheckpoint! checkpoint, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Patterns.Stores.InMemorySagaStateStore
+Cephalon.Behaviors.Patterns.Stores.InMemorySagaStateStore.DeleteAsync(string! sagaId, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Patterns.Stores.InMemorySagaStateStore.GetAsync<T>(string! sagaId, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<T?>!
+Cephalon.Behaviors.Patterns.Stores.InMemorySagaStateStore.InMemorySagaStateStore() -> void
+Cephalon.Behaviors.Patterns.Stores.InMemorySagaStateStore.SaveAsync<T>(string! sagaId, T state, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Patterns.Strategies.ChoreographySagaExecutionStrategy
+Cephalon.Behaviors.Patterns.Strategies.ChoreographySagaExecutionStrategy.ChoreographySagaExecutionStrategy(Cephalon.Behaviors.Patterns.Abstractions.ISagaChoreographyPublisher! publisher, Microsoft.Extensions.Logging.ILogger<Cephalon.Behaviors.Patterns.Strategies.ChoreographySagaExecutionStrategy!>! logger, Cephalon.Abstractions.Execution.ISagaChoreographyPublicationRuntimeStateCatalog? runtimeStateCatalog = null) -> void
+Cephalon.Behaviors.Patterns.Strategies.ChoreographySagaExecutionStrategy.ExecuteAsync(Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionContext! context, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionResult!>!
+Cephalon.Behaviors.Patterns.Strategies.ChoreographySagaExecutionStrategy.Pattern.get -> string!
+Cephalon.Behaviors.Patterns.Strategies.CqrsExecutionStrategy
+Cephalon.Behaviors.Patterns.Strategies.CqrsExecutionStrategy.CqrsExecutionStrategy() -> void
+Cephalon.Behaviors.Patterns.Strategies.CqrsExecutionStrategy.ExecuteAsync(Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionContext! context, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionResult!>!
+Cephalon.Behaviors.Patterns.Strategies.CqrsExecutionStrategy.Pattern.get -> string!
+Cephalon.Behaviors.Patterns.Strategies.DirectExecutionStrategy
+Cephalon.Behaviors.Patterns.Strategies.DirectExecutionStrategy.DirectExecutionStrategy() -> void
+Cephalon.Behaviors.Patterns.Strategies.DirectExecutionStrategy.ExecuteAsync(Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionContext! context, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionResult!>!
+Cephalon.Behaviors.Patterns.Strategies.DirectExecutionStrategy.Pattern.get -> string!
+Cephalon.Behaviors.Patterns.Strategies.DurableExecutionStrategy
+Cephalon.Behaviors.Patterns.Strategies.DurableExecutionStrategy.DurableExecutionStrategy(Cephalon.Abstractions.Execution.IDurableExecutionRuntimeStateCatalog? runtimeStateCatalog = null) -> void
+Cephalon.Behaviors.Patterns.Strategies.DurableExecutionStrategy.ExecuteAsync(Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionContext! context, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionResult!>!
+Cephalon.Behaviors.Patterns.Strategies.DurableExecutionStrategy.Pattern.get -> string!
+Cephalon.Behaviors.Patterns.Strategies.EventDrivenExecutionStrategy
+Cephalon.Behaviors.Patterns.Strategies.EventDrivenExecutionStrategy.EventDrivenExecutionStrategy(Microsoft.Extensions.Logging.ILogger<Cephalon.Behaviors.Patterns.Strategies.EventDrivenExecutionStrategy!>! logger) -> void
+Cephalon.Behaviors.Patterns.Strategies.EventDrivenExecutionStrategy.ExecuteAsync(Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionContext! context, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionResult!>!
+Cephalon.Behaviors.Patterns.Strategies.EventDrivenExecutionStrategy.Pattern.get -> string!
+Cephalon.Behaviors.Patterns.Strategies.ProcessManagerExecutionStrategy
+Cephalon.Behaviors.Patterns.Strategies.ProcessManagerExecutionStrategy.ExecuteAsync(Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionContext! context, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionResult!>!
+Cephalon.Behaviors.Patterns.Strategies.ProcessManagerExecutionStrategy.Pattern.get -> string!
+Cephalon.Behaviors.Patterns.Strategies.ProcessManagerExecutionStrategy.ProcessManagerExecutionStrategy(Cephalon.Behaviors.Patterns.Abstractions.IProcessCheckpointStore! store, Microsoft.Extensions.Logging.ILogger<Cephalon.Behaviors.Patterns.Strategies.ProcessManagerExecutionStrategy!>! logger) -> void
+Cephalon.Behaviors.Patterns.Strategies.SagaExecutionStrategy
+Cephalon.Behaviors.Patterns.Strategies.SagaExecutionStrategy.ExecuteAsync(Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionContext! context, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<Cephalon.Behaviors.Patterns.Abstractions.BehaviorExecutionResult!>!
+Cephalon.Behaviors.Patterns.Strategies.SagaExecutionStrategy.Pattern.get -> string!
+Cephalon.Behaviors.Patterns.Strategies.SagaExecutionStrategy.SagaExecutionStrategy(Cephalon.Behaviors.Patterns.Abstractions.ISagaStateStore! store, Microsoft.Extensions.Logging.ILogger<Cephalon.Behaviors.Patterns.Strategies.SagaExecutionStrategy!>! logger) -> void
+static Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication.CreateCompensationJson<TPayload>(string! id, string! channelId, string! eventType, TPayload payload, System.DateTimeOffset occurredAtUtc, string? correlationId = null, string? tenantId = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? headers = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null, System.Text.Json.JsonSerializerOptions? serializerOptions = null) -> Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication!
+static Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication.CreateJson<TPayload>(string! id, string! channelId, string! eventType, TPayload payload, System.DateTimeOffset occurredAtUtc, string? correlationId = null, string? tenantId = null, bool isCompensation = false, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? headers = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null, System.Text.Json.JsonSerializerOptions? serializerOptions = null) -> Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication!
+static Cephalon.Behaviors.Patterns.Hosting.PatternBehaviorExtensions.AddBehaviorPatterns(this Cephalon.Behaviors.Services.IBehaviorCollectionBuilder! builder) -> Cephalon.Behaviors.Services.IBehaviorCollectionBuilder!

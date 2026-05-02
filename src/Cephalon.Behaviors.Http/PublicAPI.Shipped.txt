@@ -1,0 +1,233 @@
+#nullable enable
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingAttribute
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingAttribute.BehaviorRestBindingAttribute(string! propertyName, Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource source) -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingAttribute.Name.get -> string?
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingAttribute.Name.set -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingAttribute.PropertyName.get -> string!
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingAttribute.Source.get -> Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor.<Clone>$() -> Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor!
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor.BehaviorRestBindingDescriptor(string! PropertyName, Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource Source, string? Name = null) -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor.Deconstruct(out string! PropertyName, out Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource Source, out string? Name) -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor.Equals(Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor? other) -> bool
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor.Name.get -> string?
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor.Name.init -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor.PropertyName.get -> string!
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor.PropertyName.init -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor.Source.get -> Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor.Source.init -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource.Body = 4 -> Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource.Header = 3 -> Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource.Query = 2 -> Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource.Route = 1 -> Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource.Unspecified = 0 -> Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSourceExtensions
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod.Delete = 5 -> Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod.Get = 1 -> Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod.Patch = 4 -> Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod.Post = 2 -> Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod.Put = 3 -> Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod.Unspecified = 0 -> Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethodExtensions
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileAttribute
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileAttribute.ApiVersionMajor.get -> int
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileAttribute.ApiVersionMajor.set -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileAttribute.BehaviorRestProfileAttribute(Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod method, string! relativePattern) -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileAttribute.Method.get -> Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileAttribute.PreserveImplicitQueryFallback.get -> bool
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileAttribute.PreserveImplicitQueryFallback.set -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileAttribute.RelativePattern.get -> string!
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor.<Clone>$() -> Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor!
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor.ApiVersionMajor.get -> int?
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor.ApiVersionMajor.init -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor.BehaviorId.get -> string!
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor.BehaviorId.init -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor.BehaviorRestProfileDescriptor(string! BehaviorId, Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod Method, string! RelativePattern, int? ApiVersionMajor, System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor!>? Bindings = null, bool PreserveImplicitQueryFallback = false) -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor.Bindings.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor!>?
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor.Bindings.init -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor.Deconstruct(out string! BehaviorId, out Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod Method, out string! RelativePattern, out int? ApiVersionMajor, out System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor!>? Bindings, out bool PreserveImplicitQueryFallback) -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor.Equals(Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor? other) -> bool
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor.Method.get -> Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor.Method.init -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor.PreserveImplicitQueryFallback.get -> bool
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor.PreserveImplicitQueryFallback.init -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor.RelativePattern.get -> string!
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor.RelativePattern.init -> void
+Cephalon.Behaviors.Http.Abstractions.IHttpBehaviorBinding
+Cephalon.Behaviors.Http.Abstractions.IHttpBehaviorBinding.MapAsync(Microsoft.AspNetCore.Builder.WebApplication! app, Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor! descriptor, Cephalon.Behaviors.Services.BehaviorDispatcher! dispatcher) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Http.Abstractions.IHttpBehaviorBinding.TransportId.get -> string!
+Cephalon.Behaviors.Http.Abstractions.IHttpBehaviorBindingRegistry
+Cephalon.Behaviors.Http.Abstractions.IHttpBehaviorBindingRegistry.All.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Http.Abstractions.IHttpBehaviorBinding!>!
+Cephalon.Behaviors.Http.Abstractions.IHttpBehaviorBindingRegistry.GetBinding(string! transportId) -> Cephalon.Behaviors.Http.Abstractions.IHttpBehaviorBinding?
+Cephalon.Behaviors.Http.Bindings.GraphqlHttpBehaviorBinding
+Cephalon.Behaviors.Http.Bindings.GraphqlHttpBehaviorBinding.GraphqlHttpBehaviorBinding(Microsoft.Extensions.Configuration.IConfiguration? configuration = null) -> void
+Cephalon.Behaviors.Http.Bindings.GraphqlHttpBehaviorBinding.MapAsync(Microsoft.AspNetCore.Builder.WebApplication! app, Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor! descriptor, Cephalon.Behaviors.Services.BehaviorDispatcher! dispatcher) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Http.Bindings.GraphqlHttpBehaviorBinding.TransportId.get -> string!
+Cephalon.Behaviors.Http.Bindings.GraphqlRequest
+Cephalon.Behaviors.Http.Bindings.GraphqlRequest.<Clone>$() -> Cephalon.Behaviors.Http.Bindings.GraphqlRequest!
+Cephalon.Behaviors.Http.Bindings.GraphqlRequest.Deconstruct(out string! Query, out System.Text.Json.JsonElement Variables) -> void
+Cephalon.Behaviors.Http.Bindings.GraphqlRequest.Equals(Cephalon.Behaviors.Http.Bindings.GraphqlRequest? other) -> bool
+Cephalon.Behaviors.Http.Bindings.GraphqlRequest.GraphqlRequest(string! Query, System.Text.Json.JsonElement Variables) -> void
+Cephalon.Behaviors.Http.Bindings.GraphqlRequest.Query.get -> string!
+Cephalon.Behaviors.Http.Bindings.GraphqlRequest.Query.init -> void
+Cephalon.Behaviors.Http.Bindings.GraphqlRequest.Variables.get -> System.Text.Json.JsonElement
+Cephalon.Behaviors.Http.Bindings.GraphqlRequest.Variables.init -> void
+Cephalon.Behaviors.Http.Bindings.GraphqlSseBehaviorBinding
+Cephalon.Behaviors.Http.Bindings.GraphqlSseBehaviorBinding.GraphqlSseBehaviorBinding(Microsoft.Extensions.Configuration.IConfiguration? configuration = null) -> void
+Cephalon.Behaviors.Http.Bindings.GraphqlSseBehaviorBinding.MapAsync(Microsoft.AspNetCore.Builder.WebApplication! app, Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor! descriptor, Cephalon.Behaviors.Services.BehaviorDispatcher! dispatcher) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Http.Bindings.GraphqlSseBehaviorBinding.TransportId.get -> string!
+Cephalon.Behaviors.Http.Bindings.GraphqlWsBehaviorBinding
+Cephalon.Behaviors.Http.Bindings.GraphqlWsBehaviorBinding.GraphqlWsBehaviorBinding(Microsoft.Extensions.Configuration.IConfiguration? configuration = null) -> void
+Cephalon.Behaviors.Http.Bindings.GraphqlWsBehaviorBinding.MapAsync(Microsoft.AspNetCore.Builder.WebApplication! app, Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor! descriptor, Cephalon.Behaviors.Services.BehaviorDispatcher! dispatcher) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Http.Bindings.GraphqlWsBehaviorBinding.TransportId.get -> string!
+Cephalon.Behaviors.Http.Bindings.JsonRpcError
+Cephalon.Behaviors.Http.Bindings.JsonRpcError.Code.get -> int
+Cephalon.Behaviors.Http.Bindings.JsonRpcError.Code.set -> void
+Cephalon.Behaviors.Http.Bindings.JsonRpcError.Data.get -> string?
+Cephalon.Behaviors.Http.Bindings.JsonRpcError.Data.set -> void
+Cephalon.Behaviors.Http.Bindings.JsonRpcError.JsonRpcError() -> void
+Cephalon.Behaviors.Http.Bindings.JsonRpcError.Message.get -> string!
+Cephalon.Behaviors.Http.Bindings.JsonRpcError.Message.set -> void
+Cephalon.Behaviors.Http.Bindings.JsonRpcErrorResponse
+Cephalon.Behaviors.Http.Bindings.JsonRpcErrorResponse.Error.get -> Cephalon.Behaviors.Http.Bindings.JsonRpcError!
+Cephalon.Behaviors.Http.Bindings.JsonRpcErrorResponse.Error.set -> void
+Cephalon.Behaviors.Http.Bindings.JsonRpcErrorResponse.Id.get -> System.Text.Json.JsonElement?
+Cephalon.Behaviors.Http.Bindings.JsonRpcErrorResponse.Id.set -> void
+Cephalon.Behaviors.Http.Bindings.JsonRpcErrorResponse.JsonRpcErrorResponse() -> void
+Cephalon.Behaviors.Http.Bindings.JsonRpcErrorResponse.Jsonrpc.get -> string!
+Cephalon.Behaviors.Http.Bindings.JsonRpcErrorResponse.Jsonrpc.set -> void
+Cephalon.Behaviors.Http.Bindings.JsonRpcHttpBehaviorBinding
+Cephalon.Behaviors.Http.Bindings.JsonRpcHttpBehaviorBinding.JsonRpcHttpBehaviorBinding(Microsoft.Extensions.Configuration.IConfiguration? configuration = null) -> void
+Cephalon.Behaviors.Http.Bindings.JsonRpcHttpBehaviorBinding.MapAsync(Microsoft.AspNetCore.Builder.WebApplication! app, Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor! descriptor, Cephalon.Behaviors.Services.BehaviorDispatcher! dispatcher) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Http.Bindings.JsonRpcHttpBehaviorBinding.TransportId.get -> string!
+Cephalon.Behaviors.Http.Bindings.JsonRpcRequest
+Cephalon.Behaviors.Http.Bindings.JsonRpcRequest.Id.get -> System.Text.Json.JsonElement?
+Cephalon.Behaviors.Http.Bindings.JsonRpcRequest.Id.set -> void
+Cephalon.Behaviors.Http.Bindings.JsonRpcRequest.JsonRpcRequest() -> void
+Cephalon.Behaviors.Http.Bindings.JsonRpcRequest.Jsonrpc.get -> string?
+Cephalon.Behaviors.Http.Bindings.JsonRpcRequest.Jsonrpc.set -> void
+Cephalon.Behaviors.Http.Bindings.JsonRpcRequest.Method.get -> string?
+Cephalon.Behaviors.Http.Bindings.JsonRpcRequest.Method.set -> void
+Cephalon.Behaviors.Http.Bindings.JsonRpcRequest.Params.get -> System.Text.Json.JsonElement?
+Cephalon.Behaviors.Http.Bindings.JsonRpcRequest.Params.set -> void
+Cephalon.Behaviors.Http.Bindings.JsonRpcSuccessResponse
+Cephalon.Behaviors.Http.Bindings.JsonRpcSuccessResponse.Id.get -> System.Text.Json.JsonElement?
+Cephalon.Behaviors.Http.Bindings.JsonRpcSuccessResponse.Id.set -> void
+Cephalon.Behaviors.Http.Bindings.JsonRpcSuccessResponse.JsonRpcSuccessResponse() -> void
+Cephalon.Behaviors.Http.Bindings.JsonRpcSuccessResponse.Jsonrpc.get -> string!
+Cephalon.Behaviors.Http.Bindings.JsonRpcSuccessResponse.Jsonrpc.set -> void
+Cephalon.Behaviors.Http.Bindings.JsonRpcSuccessResponse.Result.get -> object?
+Cephalon.Behaviors.Http.Bindings.JsonRpcSuccessResponse.Result.set -> void
+Cephalon.Behaviors.Http.Bindings.SseBehaviorBinding
+Cephalon.Behaviors.Http.Bindings.SseBehaviorBinding.MapAsync(Microsoft.AspNetCore.Builder.WebApplication! app, Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor! descriptor, Cephalon.Behaviors.Services.BehaviorDispatcher! dispatcher) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Http.Bindings.SseBehaviorBinding.SseBehaviorBinding(Microsoft.Extensions.Configuration.IConfiguration? configuration = null) -> void
+Cephalon.Behaviors.Http.Bindings.SseBehaviorBinding.TransportId.get -> string!
+Cephalon.Behaviors.Http.Bindings.WebSocketBehaviorBinding
+Cephalon.Behaviors.Http.Bindings.WebSocketBehaviorBinding.MapAsync(Microsoft.AspNetCore.Builder.WebApplication! app, Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor! descriptor, Cephalon.Behaviors.Services.BehaviorDispatcher! dispatcher) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Http.Bindings.WebSocketBehaviorBinding.TransportId.get -> string!
+Cephalon.Behaviors.Http.Bindings.WebSocketBehaviorBinding.WebSocketBehaviorBinding(Microsoft.Extensions.Configuration.IConfiguration? configuration = null) -> void
+Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup
+Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup.Add(System.Action<Microsoft.AspNetCore.Builder.EndpointBuilder!>! convention) -> void
+Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup.ApiVersion(int major) -> Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup!
+Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup.ApiVersionMajor.get -> int?
+Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup.MapBehaviorDelete<TBehavior>(string! pattern, System.Action<Microsoft.AspNetCore.Builder.RouteHandlerBuilder!>? configure = null) -> Microsoft.AspNetCore.Builder.RouteHandlerBuilder!
+Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup.MapBehaviorGet<TBehavior>(string! pattern, System.Action<Microsoft.AspNetCore.Builder.RouteHandlerBuilder!>? configure = null) -> Microsoft.AspNetCore.Builder.RouteHandlerBuilder!
+Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup.MapBehaviorPatch<TBehavior>(string! pattern, System.Action<Microsoft.AspNetCore.Builder.RouteHandlerBuilder!>? configure = null) -> Microsoft.AspNetCore.Builder.RouteHandlerBuilder!
+Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup.MapBehaviorPost<TBehavior>(string! pattern, System.Action<Microsoft.AspNetCore.Builder.RouteHandlerBuilder!>? configure = null) -> Microsoft.AspNetCore.Builder.RouteHandlerBuilder!
+Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup.MapBehaviorPut<TBehavior>(string! pattern, System.Action<Microsoft.AspNetCore.Builder.RouteHandlerBuilder!>? configure = null) -> Microsoft.AspNetCore.Builder.RouteHandlerBuilder!
+Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup.Module.get -> Cephalon.Abstractions.Modules.IModule!
+Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup.ModuleDescriptor.get -> Cephalon.Abstractions.Modules.ModuleDescriptor!
+Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup.ModuleVersionMajor.get -> int?
+Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup.OpenApiDocumentName.get -> string!
+Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup.Routes.get -> Microsoft.AspNetCore.Routing.RouteGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup.TagDescription.get -> string?
+Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup.TagName.get -> string!
+Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup.WithOpenApiDocumentName(string! openApiDocumentName) -> Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup!
+Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup.WithTagDescription(string? description) -> Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup!
+Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup.WithTagName(string! tagName) -> Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup!
+Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointRouteBuilderExtensions
+Cephalon.Behaviors.Http.Hosting.HttpBehaviorBindingExtensions
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder.AllowHostGovernance() -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder.ApiVersion(int major) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder.Configure(System.Action<Microsoft.AspNetCore.Routing.RouteGroupBuilder!>! configure) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder.MapDelete<TBehavior>(string! pattern, System.Action<Cephalon.Abstractions.Behaviors.IBehaviorTopologyBuilder!>! configureTopology, System.Action<Microsoft.AspNetCore.Builder.RouteHandlerBuilder!>? configureEndpoint = null) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder.MapDelete<TBehavior>(string! pattern, System.Action<Microsoft.AspNetCore.Builder.RouteHandlerBuilder!>? configureEndpoint = null) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder.MapGeneratedProfiles() -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder.MapGeneratedProfiles(string! behaviorIdPrefix) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder.MapGet<TBehavior>(string! pattern, System.Action<Cephalon.Abstractions.Behaviors.IBehaviorTopologyBuilder!>! configureTopology, System.Action<Microsoft.AspNetCore.Builder.RouteHandlerBuilder!>? configureEndpoint = null) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder.MapGet<TBehavior>(string! pattern, System.Action<Microsoft.AspNetCore.Builder.RouteHandlerBuilder!>? configureEndpoint = null) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder.MapPatch<TBehavior>(string! pattern, System.Action<Cephalon.Abstractions.Behaviors.IBehaviorTopologyBuilder!>! configureTopology, System.Action<Microsoft.AspNetCore.Builder.RouteHandlerBuilder!>? configureEndpoint = null) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder.MapPatch<TBehavior>(string! pattern, System.Action<Microsoft.AspNetCore.Builder.RouteHandlerBuilder!>? configureEndpoint = null) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder.MapPost<TBehavior>(string! pattern, System.Action<Cephalon.Abstractions.Behaviors.IBehaviorTopologyBuilder!>! configureTopology, System.Action<Microsoft.AspNetCore.Builder.RouteHandlerBuilder!>? configureEndpoint = null) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder.MapPost<TBehavior>(string! pattern, System.Action<Microsoft.AspNetCore.Builder.RouteHandlerBuilder!>? configureEndpoint = null) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder.MapProfile<TBehavior>(System.Action<Cephalon.Abstractions.Behaviors.IBehaviorTopologyBuilder!>! configureTopology, System.Action<Microsoft.AspNetCore.Builder.RouteHandlerBuilder!>? configureEndpoint = null) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder.MapProfile<TBehavior>(System.Action<Microsoft.AspNetCore.Builder.RouteHandlerBuilder!>? configureEndpoint = null) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder.MapPut<TBehavior>(string! pattern, System.Action<Cephalon.Abstractions.Behaviors.IBehaviorTopologyBuilder!>! configureTopology, System.Action<Microsoft.AspNetCore.Builder.RouteHandlerBuilder!>? configureEndpoint = null) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder.MapPut<TBehavior>(string! pattern, System.Action<Microsoft.AspNetCore.Builder.RouteHandlerBuilder!>? configureEndpoint = null) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder.WithHostGovernanceScope(string! hostGovernanceScope) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder.WithOpenApiDocumentName(string! openApiDocumentName) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder.WithTagDescription(string? description) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder.WithTagName(string! tagName) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder.Group(string! prefix) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder.GroupFromBehaviorIdPrefix(string! behaviorIdPrefix) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder.Internal<TBehavior>() -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder.Internal<TBehavior>(System.Action<Cephalon.Abstractions.Behaviors.IBehaviorTopologyBuilder!>! configureTopology) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder.MapGeneratedProfileGroups(string! behaviorIdPrefix) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder.MapGeneratedProfileGroups(string! behaviorIdPrefix, System.Action<Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!>! configureGroup) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder!
+Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder.MapGeneratedProfileGroups(string! behaviorIdPrefix, System.Action<string!, Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!>! configureGroup) -> Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder!
+Cephalon.Behaviors.Http.Hosting.RestBehaviorEngineBuilderExtensions
+Cephalon.Behaviors.Http.Hosting.RestBehaviorModuleBase
+Cephalon.Behaviors.Http.Hosting.RestBehaviorModuleBase.RestBehaviorModuleBase() -> void
+Cephalon.Behaviors.Http.LazyTransportBinding
+Cephalon.Behaviors.Http.LazyTransportBinding.Dispose() -> void
+Cephalon.Behaviors.Http.LazyTransportBinding.EnsureMappedAsync(Microsoft.AspNetCore.Builder.WebApplication! app, Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor! descriptor, Cephalon.Behaviors.Services.BehaviorDispatcher! dispatcher, Cephalon.Behaviors.Http.Abstractions.IHttpBehaviorBinding! binding, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Http.LazyTransportBinding.LazyTransportBinding() -> void
+Cephalon.Behaviors.Http.Registry.HttpBehaviorBindingRegistry
+Cephalon.Behaviors.Http.Registry.HttpBehaviorBindingRegistry.All.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Http.Abstractions.IHttpBehaviorBinding!>!
+Cephalon.Behaviors.Http.Registry.HttpBehaviorBindingRegistry.GetBinding(string! transportId) -> Cephalon.Behaviors.Http.Abstractions.IHttpBehaviorBinding?
+Cephalon.Behaviors.Http.Registry.HttpBehaviorBindingRegistry.HttpBehaviorBindingRegistry(System.Collections.Generic.IEnumerable<Cephalon.Behaviors.Http.Abstractions.IHttpBehaviorBinding!>! bindings) -> void
+abstract Cephalon.Behaviors.Http.Hosting.RestBehaviorModuleBase.ConfigureRestBehaviors(Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder! behaviors) -> void
+override Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor.Equals(object? obj) -> bool
+override Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor.GetHashCode() -> int
+override Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor.ToString() -> string!
+override Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor.Equals(object? obj) -> bool
+override Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor.GetHashCode() -> int
+override Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor.ToString() -> string!
+override Cephalon.Behaviors.Http.Bindings.GraphqlRequest.Equals(object? obj) -> bool
+override Cephalon.Behaviors.Http.Bindings.GraphqlRequest.GetHashCode() -> int
+override Cephalon.Behaviors.Http.Bindings.GraphqlRequest.ToString() -> string!
+override Cephalon.Behaviors.Http.Hosting.RestBehaviorModuleBase.ConfigureServices(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> void
+override sealed Cephalon.Behaviors.Http.Hosting.RestBehaviorModuleBase.ConfigureBehaviors(Cephalon.Abstractions.Behaviors.IBehaviorModuleBuilder! behaviors) -> void
+static Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor.operator !=(Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor? left, Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor? right) -> bool
+static Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor.operator ==(Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor? left, Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor? right) -> bool
+static Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSourceExtensions.GetWireName(this Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource source) -> string!
+static Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSourceExtensions.TryParseWireName(string? value, out Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource source) -> bool
+static Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethodExtensions.GetWireName(this Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod method) -> string!
+static Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethodExtensions.TryParseWireName(string? value, out Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod method) -> bool
+static Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor.operator !=(Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor? left, Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor? right) -> bool
+static Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor.operator ==(Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor? left, Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor? right) -> bool
+static Cephalon.Behaviors.Http.Bindings.GraphqlRequest.operator !=(Cephalon.Behaviors.Http.Bindings.GraphqlRequest? left, Cephalon.Behaviors.Http.Bindings.GraphqlRequest? right) -> bool
+static Cephalon.Behaviors.Http.Bindings.GraphqlRequest.operator ==(Cephalon.Behaviors.Http.Bindings.GraphqlRequest? left, Cephalon.Behaviors.Http.Bindings.GraphqlRequest? right) -> bool
+static Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointRouteBuilderExtensions.MapBehaviorRestGroup(this Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints, Cephalon.Abstractions.Modules.IModule! module, string! prefix) -> Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup!
+static Cephalon.Behaviors.Http.Hosting.HttpBehaviorBindingExtensions.AddHttpBehaviorBindings(this Cephalon.Behaviors.Services.IBehaviorCollectionBuilder! builder) -> Cephalon.Behaviors.Services.IBehaviorCollectionBuilder!
+static Cephalon.Behaviors.Http.Hosting.RestBehaviorEngineBuilderExtensions.AddGeneratedRestBehaviorModule<TMarker>(this Cephalon.Engine.Composition.EngineBuilder! engine, Cephalon.Abstractions.Modules.ModuleDescriptor! descriptor, System.Action<Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!>? configureGroup = null) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Behaviors.Http.Hosting.RestBehaviorEngineBuilderExtensions.AddGeneratedRestBehaviorModule<TMarker>(this Cephalon.Engine.Composition.EngineBuilder! engine, Cephalon.Abstractions.Modules.ModuleDescriptor! descriptor, string! behaviorIdPrefix, System.Action<Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!>? configureGroup = null) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Behaviors.Http.Hosting.RestBehaviorEngineBuilderExtensions.AddGeneratedRestBehaviorModule<TMarker>(this Cephalon.Engine.Composition.EngineBuilder! engine, string! moduleId, string! displayName, string! description, System.Action<Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!>? configureGroup = null, string? version = null) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Behaviors.Http.Hosting.RestBehaviorEngineBuilderExtensions.AddGeneratedRestBehaviorModule<TMarker>(this Cephalon.Engine.Composition.EngineBuilder! engine, string! moduleId, string! displayName, string! description, string! behaviorIdPrefix, System.Action<Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!>? configureGroup = null, string? version = null) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Behaviors.Http.Hosting.RestBehaviorEngineBuilderExtensions.AddGeneratedRestBehaviorModuleGroups<TMarker>(this Cephalon.Engine.Composition.EngineBuilder! engine, Cephalon.Abstractions.Modules.ModuleDescriptor! descriptor, System.Action<Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!>? configureGroup = null) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Behaviors.Http.Hosting.RestBehaviorEngineBuilderExtensions.AddGeneratedRestBehaviorModuleGroups<TMarker>(this Cephalon.Engine.Composition.EngineBuilder! engine, Cephalon.Abstractions.Modules.ModuleDescriptor! descriptor, System.Action<string!, Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!>! configureGroup) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Behaviors.Http.Hosting.RestBehaviorEngineBuilderExtensions.AddGeneratedRestBehaviorModuleGroups<TMarker>(this Cephalon.Engine.Composition.EngineBuilder! engine, Cephalon.Abstractions.Modules.ModuleDescriptor! descriptor, string! behaviorIdPrefix, System.Action<Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!>? configureGroup = null) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Behaviors.Http.Hosting.RestBehaviorEngineBuilderExtensions.AddGeneratedRestBehaviorModuleGroups<TMarker>(this Cephalon.Engine.Composition.EngineBuilder! engine, Cephalon.Abstractions.Modules.ModuleDescriptor! descriptor, string! behaviorIdPrefix, System.Action<string!, Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!>! configureGroup) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Behaviors.Http.Hosting.RestBehaviorEngineBuilderExtensions.AddGeneratedRestBehaviorModuleGroups<TMarker>(this Cephalon.Engine.Composition.EngineBuilder! engine, string! moduleId, string! displayName, string! description, System.Action<Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!>? configureGroup = null, string? version = null) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Behaviors.Http.Hosting.RestBehaviorEngineBuilderExtensions.AddGeneratedRestBehaviorModuleGroups<TMarker>(this Cephalon.Engine.Composition.EngineBuilder! engine, string! moduleId, string! displayName, string! description, System.Action<string!, Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!>! configureGroup, string? version = null) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Behaviors.Http.Hosting.RestBehaviorEngineBuilderExtensions.AddGeneratedRestBehaviorModuleGroups<TMarker>(this Cephalon.Engine.Composition.EngineBuilder! engine, string! moduleId, string! displayName, string! description, string! behaviorIdPrefix, System.Action<Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!>? configureGroup = null, string? version = null) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Behaviors.Http.Hosting.RestBehaviorEngineBuilderExtensions.AddGeneratedRestBehaviorModuleGroups<TMarker>(this Cephalon.Engine.Composition.EngineBuilder! engine, string! moduleId, string! displayName, string! description, string! behaviorIdPrefix, System.Action<string!, Cephalon.Behaviors.Http.Hosting.IRestBehaviorEndpointGroupBuilder!>! configureGroup, string? version = null) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Behaviors.Http.Hosting.RestBehaviorEngineBuilderExtensions.AddRestBehaviorModule<TMarker>(this Cephalon.Engine.Composition.EngineBuilder! engine, Cephalon.Abstractions.Modules.ModuleDescriptor! descriptor, System.Action<Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder!>! configureRestBehaviors) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Behaviors.Http.Hosting.RestBehaviorEngineBuilderExtensions.AddRestBehaviorModule<TMarker>(this Cephalon.Engine.Composition.EngineBuilder! engine, string! moduleId, string! displayName, string! description, System.Action<Cephalon.Behaviors.Http.Hosting.IRestBehaviorModuleBuilder!>! configureRestBehaviors, string? version = null) -> Cephalon.Engine.Composition.EngineBuilder!
+virtual Cephalon.Behaviors.Http.Hosting.RestBehaviorModuleBase.GetRestBehaviorProfileSourceType() -> System.Type!
+virtual Cephalon.Behaviors.Http.Hosting.RestBehaviorModuleBase.MapAdditionalEndpoints(Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints) -> void
