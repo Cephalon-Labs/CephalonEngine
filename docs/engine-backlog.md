@@ -3588,6 +3588,30 @@ Follow-up later:
 - when emission sites in `Cephalon.Engine` / `Cephalon.AspNetCore` route values through registered `IRedactionFilter` implementations, add integration tests that wire one starter filter through DI and assert exporter output never contains the raw value (the `M1` promotion of the redaction surface)
 - if additional starter filter shapes ship (e.g. `UriRedactionFilter`, `JsonPathRedactionFilter`), the test layout under `tests/Cephalon.Tests.Composition/Diagnostics/Redaction/` is the destination
 
+### ENG-363 Add RedactionPipeline orchestration helper in Cephalon.Diagnostics
+
+Status: done
+Estimate: 2
+
+Why:
+
+- `IRedactionFilter`'s XML doc remarks declare the orchestration discipline ("filter ordering follows DI registration order; the first filter that returns a value different from its input wins, and subsequent filters see the redacted value") but do not ship a canonical helper that implements that discipline; without one, every emission site (engine-side or consumer-side) re-implements the same pipe-through loop and risks divergent semantics
+- the future `M1` promotion of the redaction surface needs a single place to assert "the engine routes through registered filters in this exact order" — without a `RedactionPipeline` that future slice would have to invent the orchestration shape inline at every emission site
+- consumer apps composing multiple filters (e.g. one `KeyMatchRedactionFilter` for authorization headers + one `RegexRedactionFilter` for credit-card patterns + one custom filter for a tenant-specific identifier) need a discoverable composition surface; without one they would compose by hand or worse, register only one filter and skip the rest
+
+Delivered:
+
+- new `src/Cephalon.Diagnostics/Redaction/RedactionPipeline.cs` — `public sealed class RedactionPipeline : IRedactionFilter` constructed from an `IEnumerable<IRedactionFilter>`; materialises filters at construction so later mutations to the source collection don't affect the pipeline; `Filter` threads the value through every filter in registration order and returns the final value; null-filter-inside detection throws `ArgumentException` with the index for diagnosability; exposes `Count` for introspection and pipeline composition (a pipeline is itself a filter and can be nested inside another pipeline)
+- 4 new public-API entries in `src/Cephalon.Diagnostics/PublicAPI.Unshipped.txt`: class + `Count` getter + `Filter` method + ctor
+- new `tests/Cephalon.Tests.Composition/Diagnostics/Redaction/RedactionPipelineTests.cs` (8 tests): empty pipeline passthrough, registration-order application, later filters see prior redacted value, null-value flow-through, materialisation-at-construction, ctor null-collection guard, ctor null-filter-inside guard, pipeline-as-filter (nested composition)
+- update `docs/components/diagnostics.md` *What it owns* section to name `RedactionPipeline` as the canonical orchestration helper; *Main surfaces* lists the new file
+- verified end-to-end with `dotnet build` (0 warnings, 0 errors), `dotnet test --filter "FullyQualifiedName~Cephalon.Tests.Diagnostics.Redaction"` (26/26 pass), and `dotnet restore --locked-mode` (no drift)
+
+Follow-up later:
+
+- when the engine `M1`-promotes the redaction surface, register `RedactionPipeline` in DI as the single filter the emission site calls; `services.AddRedactionPipeline()` extension on `IServiceCollection` or equivalent on the Cephalon options-binding surface is the natural shape and lands as a separate slice
+- once the pipeline is wired through DI, document the canonical "compose KeyMatch + Regex + custom filter" recipe in the Diagnostics component doc as the discoverable reference pattern; today consumer apps can already compose using `new RedactionPipeline([...])` directly
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -11688,6 +11712,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-357 Add IRedactionFilter + RedactionContext primitives in Cephalon.Diagnostics (shipped)
 - ENG-361 Add starter KeyMatchRedactionFilter + RegexRedactionFilter implementations under Cephalon.Diagnostics.Redaction.Defaults (shipped)
 - ENG-362 Add unit tests for starter redaction filters (shipped)
+- ENG-363 Add RedactionPipeline orchestration helper in Cephalon.Diagnostics (shipped)
 
 ### Later / not scheduled yet
 

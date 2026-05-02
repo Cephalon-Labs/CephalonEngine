@@ -45,3 +45,7 @@ Cephalon.Diagnostics.Redaction.Defaults.RegexRedactionFilter.Filter(Cephalon.Dia
 Cephalon.Diagnostics.Redaction.Defaults.RegexRedactionFilter.RegexRedactionFilter(System.Text.RegularExpressions.Regex! pattern, string? replacement = null) -> void
 const Cephalon.Diagnostics.Redaction.Defaults.KeyMatchRedactionFilter.DefaultReplacement = "[REDACTED]" -> string!
 const Cephalon.Diagnostics.Redaction.Defaults.RegexRedactionFilter.DefaultReplacement = "[REDACTED]" -> string!
+Cephalon.Diagnostics.Redaction.RedactionPipeline
+Cephalon.Diagnostics.Redaction.RedactionPipeline.Count.get -> int
+Cephalon.Diagnostics.Redaction.RedactionPipeline.Filter(Cephalon.Diagnostics.Redaction.RedactionContext context, object? value) -> object?
+Cephalon.Diagnostics.Redaction.RedactionPipeline.RedactionPipeline(System.Collections.Generic.IEnumerable<Cephalon.Diagnostics.Redaction.IRedactionFilter!>! filters) -> void
