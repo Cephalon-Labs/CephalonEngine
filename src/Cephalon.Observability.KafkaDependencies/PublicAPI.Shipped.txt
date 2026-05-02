@@ -1,0 +1,23 @@
+#nullable enable
+Cephalon.Observability.KafkaDependencies.Configuration.KafkaDependencyDefinition
+Cephalon.Observability.KafkaDependencies.Configuration.KafkaDependencyDefinition.BootstrapServers.get -> string!
+Cephalon.Observability.KafkaDependencies.Configuration.KafkaDependencyDefinition.BootstrapServers.set -> void
+Cephalon.Observability.KafkaDependencies.Configuration.KafkaDependencyDefinition.ClientId.get -> string?
+Cephalon.Observability.KafkaDependencies.Configuration.KafkaDependencyDefinition.ClientId.set -> void
+Cephalon.Observability.KafkaDependencies.Configuration.KafkaDependencyDefinition.KafkaDependencyDefinition() -> void
+Cephalon.Observability.KafkaDependencies.Configuration.KafkaDependencyDefinition.Password.get -> string?
+Cephalon.Observability.KafkaDependencies.Configuration.KafkaDependencyDefinition.Password.set -> void
+Cephalon.Observability.KafkaDependencies.Configuration.KafkaDependencyDefinition.SaslMechanism.get -> string?
+Cephalon.Observability.KafkaDependencies.Configuration.KafkaDependencyDefinition.SaslMechanism.set -> void
+Cephalon.Observability.KafkaDependencies.Configuration.KafkaDependencyDefinition.SecurityProtocol.get -> string?
+Cephalon.Observability.KafkaDependencies.Configuration.KafkaDependencyDefinition.SecurityProtocol.set -> void
+Cephalon.Observability.KafkaDependencies.Configuration.KafkaDependencyDefinition.Topic.get -> string?
+Cephalon.Observability.KafkaDependencies.Configuration.KafkaDependencyDefinition.Topic.set -> void
+Cephalon.Observability.KafkaDependencies.Configuration.KafkaDependencyDefinition.Username.get -> string?
+Cephalon.Observability.KafkaDependencies.Configuration.KafkaDependencyDefinition.Username.set -> void
+Cephalon.Observability.KafkaDependencies.Configuration.KafkaDependencyHealthOptions
+Cephalon.Observability.KafkaDependencies.Configuration.KafkaDependencyHealthOptions.KafkaDependencyHealthOptions() -> void
+Cephalon.Observability.KafkaDependencies.Hosting.KafkaDependencyHealthServiceCollectionExtensions
+static Cephalon.Observability.KafkaDependencies.Configuration.KafkaDependencyHealthOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.KafkaDependencies.Configuration.KafkaDependencyHealthOptions!
+static Cephalon.Observability.KafkaDependencies.Hosting.KafkaDependencyHealthServiceCollectionExtensions.AddCephalonKafkaDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.Observability.KafkaDependencies.Configuration.KafkaDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Observability.KafkaDependencies.Hosting.KafkaDependencyHealthServiceCollectionExtensions.AddCephalonKafkaDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.Observability.KafkaDependencies.Configuration.KafkaDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

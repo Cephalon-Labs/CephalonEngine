@@ -1,0 +1,25 @@
+#nullable enable
+Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyDefinition
+Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyDefinition.ClickHouseDependencyDefinition() -> void
+Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyDefinition.ConnectionString.get -> string?
+Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyDefinition.ConnectionString.set -> void
+Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyDefinition.Database.get -> string?
+Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyDefinition.Database.set -> void
+Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyDefinition.HealthQuery.get -> string!
+Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyDefinition.HealthQuery.set -> void
+Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyDefinition.Host.get -> string!
+Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyDefinition.Host.set -> void
+Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyDefinition.Password.get -> string?
+Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyDefinition.Password.set -> void
+Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyDefinition.Port.get -> int
+Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyDefinition.Port.set -> void
+Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyDefinition.Protocol.get -> string!
+Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyDefinition.Protocol.set -> void
+Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyDefinition.Username.get -> string?
+Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyDefinition.Username.set -> void
+Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyHealthOptions
+Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyHealthOptions.ClickHouseDependencyHealthOptions() -> void
+Cephalon.Observability.ClickHouseDependencies.Hosting.ClickHouseDependencyHealthServiceCollectionExtensions
+static Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyHealthOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyHealthOptions!
+static Cephalon.Observability.ClickHouseDependencies.Hosting.ClickHouseDependencyHealthServiceCollectionExtensions.AddCephalonClickHouseDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Observability.ClickHouseDependencies.Hosting.ClickHouseDependencyHealthServiceCollectionExtensions.AddCephalonClickHouseDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.Observability.ClickHouseDependencies.Configuration.ClickHouseDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

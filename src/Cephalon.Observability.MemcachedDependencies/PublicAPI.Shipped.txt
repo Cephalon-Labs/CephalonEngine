@@ -1,0 +1,13 @@
+#nullable enable
+Cephalon.Observability.MemcachedDependencies.Configuration.MemcachedDependencyDefinition
+Cephalon.Observability.MemcachedDependencies.Configuration.MemcachedDependencyDefinition.Host.get -> string!
+Cephalon.Observability.MemcachedDependencies.Configuration.MemcachedDependencyDefinition.Host.set -> void
+Cephalon.Observability.MemcachedDependencies.Configuration.MemcachedDependencyDefinition.MemcachedDependencyDefinition() -> void
+Cephalon.Observability.MemcachedDependencies.Configuration.MemcachedDependencyDefinition.Port.get -> int
+Cephalon.Observability.MemcachedDependencies.Configuration.MemcachedDependencyDefinition.Port.set -> void
+Cephalon.Observability.MemcachedDependencies.Configuration.MemcachedDependencyHealthOptions
+Cephalon.Observability.MemcachedDependencies.Configuration.MemcachedDependencyHealthOptions.MemcachedDependencyHealthOptions() -> void
+Cephalon.Observability.MemcachedDependencies.Hosting.MemcachedDependencyHealthServiceCollectionExtensions
+static Cephalon.Observability.MemcachedDependencies.Configuration.MemcachedDependencyHealthOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.MemcachedDependencies.Configuration.MemcachedDependencyHealthOptions!
+static Cephalon.Observability.MemcachedDependencies.Hosting.MemcachedDependencyHealthServiceCollectionExtensions.AddCephalonMemcachedDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.Observability.MemcachedDependencies.Configuration.MemcachedDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Observability.MemcachedDependencies.Hosting.MemcachedDependencyHealthServiceCollectionExtensions.AddCephalonMemcachedDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.Observability.MemcachedDependencies.Configuration.MemcachedDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

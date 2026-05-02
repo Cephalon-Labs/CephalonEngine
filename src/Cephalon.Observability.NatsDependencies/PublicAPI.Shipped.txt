@@ -1,0 +1,25 @@
+#nullable enable
+Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyDefinition
+Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyDefinition.ClientName.get -> string?
+Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyDefinition.ClientName.set -> void
+Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyDefinition.Host.get -> string!
+Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyDefinition.Host.set -> void
+Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyDefinition.NatsDependencyDefinition() -> void
+Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyDefinition.Password.get -> string?
+Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyDefinition.Password.set -> void
+Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyDefinition.Port.get -> int
+Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyDefinition.Port.set -> void
+Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyDefinition.TlsServerName.get -> string?
+Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyDefinition.TlsServerName.set -> void
+Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyDefinition.Token.get -> string?
+Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyDefinition.Token.set -> void
+Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyDefinition.UseTls.get -> bool
+Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyDefinition.UseTls.set -> void
+Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyDefinition.Username.get -> string?
+Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyDefinition.Username.set -> void
+Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyHealthOptions
+Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyHealthOptions.NatsDependencyHealthOptions() -> void
+Cephalon.Observability.NatsDependencies.Hosting.NatsDependencyHealthServiceCollectionExtensions
+static Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyHealthOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyHealthOptions!
+static Cephalon.Observability.NatsDependencies.Hosting.NatsDependencyHealthServiceCollectionExtensions.AddCephalonNatsDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Observability.NatsDependencies.Hosting.NatsDependencyHealthServiceCollectionExtensions.AddCephalonNatsDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.Observability.NatsDependencies.Configuration.NatsDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

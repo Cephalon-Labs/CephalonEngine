@@ -1,0 +1,16 @@
+#nullable enable
+Cephalon.Observability.HuaweiCloud.Configuration.HuaweiCloudTelemetryExportOptions
+Cephalon.Observability.HuaweiCloud.Configuration.HuaweiCloudTelemetryExportOptions.ApmEndpoint.get -> string?
+Cephalon.Observability.HuaweiCloud.Configuration.HuaweiCloudTelemetryExportOptions.ApmEndpoint.set -> void
+Cephalon.Observability.HuaweiCloud.Configuration.HuaweiCloudTelemetryExportOptions.AuthenticationToken.get -> string?
+Cephalon.Observability.HuaweiCloud.Configuration.HuaweiCloudTelemetryExportOptions.AuthenticationToken.set -> void
+Cephalon.Observability.HuaweiCloud.Configuration.HuaweiCloudTelemetryExportOptions.HostedPlatform.get -> string?
+Cephalon.Observability.HuaweiCloud.Configuration.HuaweiCloudTelemetryExportOptions.HostedPlatform.set -> void
+Cephalon.Observability.HuaweiCloud.Configuration.HuaweiCloudTelemetryExportOptions.HuaweiCloudTelemetryExportOptions() -> void
+Cephalon.Observability.HuaweiCloud.Configuration.HuaweiCloudTelemetryExportOptions.Region.get -> string?
+Cephalon.Observability.HuaweiCloud.Configuration.HuaweiCloudTelemetryExportOptions.Region.set -> void
+Cephalon.Observability.HuaweiCloud.Configuration.HuaweiCloudTelemetryExportOptions.UseApmManagedTraceIngestion.get -> bool
+Cephalon.Observability.HuaweiCloud.Configuration.HuaweiCloudTelemetryExportOptions.UseApmManagedTraceIngestion.set -> void
+Cephalon.Observability.HuaweiCloud.Hosting.HuaweiCloudHostApplicationBuilderExtensions
+static Cephalon.Observability.HuaweiCloud.Configuration.HuaweiCloudTelemetryExportOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.HuaweiCloud.Configuration.HuaweiCloudTelemetryExportOptions!
+static Cephalon.Observability.HuaweiCloud.Hosting.HuaweiCloudHostApplicationBuilderExtensions.AddCephalonHuaweiCloud<TBuilder>(this TBuilder builder, System.Action<Cephalon.Observability.HuaweiCloud.Configuration.HuaweiCloudTelemetryExportOptions!>? configure = null) -> TBuilder

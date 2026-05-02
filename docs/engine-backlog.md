@@ -3271,6 +3271,37 @@ Follow-up later:
 - when the engine hits a major release (`1.0.0`), enable `<EnablePackageValidation>true</EnablePackageValidation>` with a `<PackageValidationBaselineVersion>` per stable package so binary-breaking changes fail packaging time, complementing the diff gate that the `PublicAPI.Shipped.txt` artefacts already provide
 - consider standing up an analyzer-aware diff helper that emits a release-notes-friendly summary of `PublicAPI.Unshipped.txt` entries pending promotion, so PR reviewers can read the API delta in human form
 
+### ENG-345 Public-API contract lock-in batch rollout to observability family (final 34 packages)
+
+Status: done
+Estimate: 8
+
+Why:
+
+- closes the rollout for the observability family — `Cephalon.Observability` core, OpenTelemetry exporter, Serilog provider, dependency-health core + 17 per-dependency probe packs (Cassandra, ClickHouse, Consul, Elasticsearch, HTTP, Kafka, Memcached, MongoDB, MQTT, MySQL, NATS, Neo4j, OpenSearch, Oracle, Postgres, RabbitMQ, Redis, SQL Server), plus 12 cloud / platform integration packs (Alibaba, AWS, Azure Monitor, DigitalOcean, GCP, Grafana Cloud, Huawei, Kubernetes, NewRelic, OpenShift, Oracle Cloud, Tanzu)
+- after this slice, **every shipped Cephalon.* package now has the public-API diff gate**; the contract lock-in arc is complete
+
+Delivered:
+
+- batch-inject the analyzer + `PublicAPI.*.txt` + RS0026/RS0027 NoWarn into 34 csproj files via the `scripts/_inject-public-api-analyzers.ps1` one-shot helper (deleted at commit time after the final family ships)
+- generate baselines per project (~700 entries total across the 34 packs):
+    - `Cephalon.Observability` (30), `OpenTelemetry` (2), `Serilog` (2)
+    - `DependencyHealth.Core` (19) plus 17 per-dependency probe packs averaging ~20-30 entries each
+    - 12 cloud / platform integrations averaging 15-40 entries each
+- empty `PublicAPI.Unshipped.txt` for each
+- three of the dependency-health probe packs (`CassandraDependencies`, `ClickHouseDependencies`, `ConsulDependencies`) initially extracted polluted baselines because they include types transitively visible from `Cephalon.Observability.DependencyHealth.Core` (which has its own analyzer); each was reset and re-extracted with a clean baseline first to produce the project-owned API only — this is the same pattern that surfaced in `ENG-344` for `Cephalon.Cli` against `Cephalon.Scaffolding`
+- packages.lock.json refresh; locked-mode restore passes
+- verified end-to-end with per-project `dotnet build -c Release --no-restore` (0 errors for each of the 34 projects), full-solution `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors), and `dotnet restore --locked-mode CephalonEngine.slnx` (passes)
+
+The `scripts/_inject-public-api-analyzers.ps1` helper is removed. The contract lock-in arc that started with `ENG-322` (`Cephalon.Abstractions`) and ran through `ENG-326`, `ENG-329`, `ENG-330`, `ENG-335`, `ENG-336`, `ENG-340`, `ENG-341`, `ENG-342`, `ENG-343`, `ENG-344`, and `ENG-345` is now complete: **101 shipped `Cephalon.*` packages all carry `PublicAPI.Shipped.txt` artefacts**, totalling roughly 16,100 reviewable public-API entries across the engine. Every accidental rename or removal of public surface in any package now fails PR review with `RS0016` / `RS0017` rather than silently shipping a binary break.
+
+Follow-up later:
+
+- clean up the RS0026 / RS0027 optional-overload patterns inside each project family across subsequent slices so the per-project NoWarn lists shrink over time
+- enable `<EnablePackageValidation>true</EnablePackageValidation>` with a `<PackageValidationBaselineVersion>` once the engine ships its first stable GA cut (post-`0.1.0-preview`); that adds binary-break detection at packaging time on top of the analyzer-time diff gate already in place
+- author an analyzer-aware diff helper that emits a release-notes-friendly summary of `PublicAPI.Unshipped.txt` entries pending promotion, so PR reviewers can read the API delta in human form across the 101-package contract surface
+- consider promoting the `_inject-public-api-analyzers.ps1` helper to a permanent `scripts/inject-public-api-analyzers.ps1` once the next package addition needs the same automation
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -11356,6 +11387,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-342 Public-API contract lock-in batch rollout to event-sourcing family (Cephalon.EventSourcing + 10 provider packs) (shipped)
 - ENG-343 Public-API contract lock-in batch rollout (Edge + Eventing + small remaining packs) (shipped)
 - ENG-344 Public-API contract lock-in batch rollout (multi-tenancy governance + senders + Cli + Scaffolding) (shipped)
+- ENG-345 Public-API contract lock-in batch rollout to observability family (final 34 packages) (shipped) — **rollout arc complete: every shipped Cephalon.* package now contract-locked**
 
 ### Later / not scheduled yet
 

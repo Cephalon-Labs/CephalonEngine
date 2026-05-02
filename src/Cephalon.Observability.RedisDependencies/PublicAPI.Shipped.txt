@@ -1,0 +1,19 @@
+#nullable enable
+Cephalon.Observability.RedisDependencies.Configuration.RedisDependencyDefinition
+Cephalon.Observability.RedisDependencies.Configuration.RedisDependencyDefinition.Database.get -> int?
+Cephalon.Observability.RedisDependencies.Configuration.RedisDependencyDefinition.Database.set -> void
+Cephalon.Observability.RedisDependencies.Configuration.RedisDependencyDefinition.Host.get -> string!
+Cephalon.Observability.RedisDependencies.Configuration.RedisDependencyDefinition.Host.set -> void
+Cephalon.Observability.RedisDependencies.Configuration.RedisDependencyDefinition.Password.get -> string?
+Cephalon.Observability.RedisDependencies.Configuration.RedisDependencyDefinition.Password.set -> void
+Cephalon.Observability.RedisDependencies.Configuration.RedisDependencyDefinition.Port.get -> int
+Cephalon.Observability.RedisDependencies.Configuration.RedisDependencyDefinition.Port.set -> void
+Cephalon.Observability.RedisDependencies.Configuration.RedisDependencyDefinition.RedisDependencyDefinition() -> void
+Cephalon.Observability.RedisDependencies.Configuration.RedisDependencyDefinition.Username.get -> string?
+Cephalon.Observability.RedisDependencies.Configuration.RedisDependencyDefinition.Username.set -> void
+Cephalon.Observability.RedisDependencies.Configuration.RedisDependencyHealthOptions
+Cephalon.Observability.RedisDependencies.Configuration.RedisDependencyHealthOptions.RedisDependencyHealthOptions() -> void
+Cephalon.Observability.RedisDependencies.Hosting.RedisDependencyHealthServiceCollectionExtensions
+static Cephalon.Observability.RedisDependencies.Configuration.RedisDependencyHealthOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.RedisDependencies.Configuration.RedisDependencyHealthOptions!
+static Cephalon.Observability.RedisDependencies.Hosting.RedisDependencyHealthServiceCollectionExtensions.AddCephalonRedisDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.Observability.RedisDependencies.Configuration.RedisDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Observability.RedisDependencies.Hosting.RedisDependencyHealthServiceCollectionExtensions.AddCephalonRedisDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.Observability.RedisDependencies.Configuration.RedisDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

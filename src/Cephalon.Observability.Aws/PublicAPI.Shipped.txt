@@ -1,0 +1,16 @@
+#nullable enable
+Cephalon.Observability.Aws.Configuration.AwsTelemetryExportOptions
+Cephalon.Observability.Aws.Configuration.AwsTelemetryExportOptions.AwsTelemetryExportOptions() -> void
+Cephalon.Observability.Aws.Configuration.AwsTelemetryExportOptions.EnableAwsSdkInstrumentation.get -> bool
+Cephalon.Observability.Aws.Configuration.AwsTelemetryExportOptions.EnableAwsSdkInstrumentation.set -> void
+Cephalon.Observability.Aws.Configuration.AwsTelemetryExportOptions.EnableLambdaContextExtraction.get -> bool
+Cephalon.Observability.Aws.Configuration.AwsTelemetryExportOptions.EnableLambdaContextExtraction.set -> void
+Cephalon.Observability.Aws.Configuration.AwsTelemetryExportOptions.HostedPlatform.get -> string?
+Cephalon.Observability.Aws.Configuration.AwsTelemetryExportOptions.HostedPlatform.set -> void
+Cephalon.Observability.Aws.Configuration.AwsTelemetryExportOptions.UseXRayPropagator.get -> bool
+Cephalon.Observability.Aws.Configuration.AwsTelemetryExportOptions.UseXRayPropagator.set -> void
+Cephalon.Observability.Aws.Configuration.AwsTelemetryExportOptions.UseXRayTraceIds.get -> bool
+Cephalon.Observability.Aws.Configuration.AwsTelemetryExportOptions.UseXRayTraceIds.set -> void
+Cephalon.Observability.Aws.Hosting.AwsHostApplicationBuilderExtensions
+static Cephalon.Observability.Aws.Configuration.AwsTelemetryExportOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.Aws.Configuration.AwsTelemetryExportOptions!
+static Cephalon.Observability.Aws.Hosting.AwsHostApplicationBuilderExtensions.AddCephalonAws<TBuilder>(this TBuilder builder, System.Action<Cephalon.Observability.Aws.Configuration.AwsTelemetryExportOptions!>? configure = null) -> TBuilder

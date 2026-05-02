@@ -1,0 +1,15 @@
+#nullable enable
+Cephalon.Observability.HttpDependencies.Configuration.HttpDependencyDefinition
+Cephalon.Observability.HttpDependencies.Configuration.HttpDependencyDefinition.Endpoint.get -> string!
+Cephalon.Observability.HttpDependencies.Configuration.HttpDependencyDefinition.Endpoint.set -> void
+Cephalon.Observability.HttpDependencies.Configuration.HttpDependencyDefinition.ExpectedStatusCodes.get -> System.Collections.Generic.IReadOnlyList<int>!
+Cephalon.Observability.HttpDependencies.Configuration.HttpDependencyDefinition.ExpectedStatusCodes.set -> void
+Cephalon.Observability.HttpDependencies.Configuration.HttpDependencyDefinition.HttpDependencyDefinition() -> void
+Cephalon.Observability.HttpDependencies.Configuration.HttpDependencyDefinition.Method.get -> string!
+Cephalon.Observability.HttpDependencies.Configuration.HttpDependencyDefinition.Method.set -> void
+Cephalon.Observability.HttpDependencies.Configuration.HttpDependencyHealthOptions
+Cephalon.Observability.HttpDependencies.Configuration.HttpDependencyHealthOptions.HttpDependencyHealthOptions() -> void
+Cephalon.Observability.HttpDependencies.Hosting.HttpDependencyHealthServiceCollectionExtensions
+static Cephalon.Observability.HttpDependencies.Configuration.HttpDependencyHealthOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.HttpDependencies.Configuration.HttpDependencyHealthOptions!
+static Cephalon.Observability.HttpDependencies.Hosting.HttpDependencyHealthServiceCollectionExtensions.AddCephalonHttpDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.Observability.HttpDependencies.Configuration.HttpDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Observability.HttpDependencies.Hosting.HttpDependencyHealthServiceCollectionExtensions.AddCephalonHttpDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.Observability.HttpDependencies.Configuration.HttpDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

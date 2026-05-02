@@ -1,0 +1,12 @@
+#nullable enable
+Cephalon.Observability.AzureMonitor.Configuration.AzureMonitorExportOptions
+Cephalon.Observability.AzureMonitor.Configuration.AzureMonitorExportOptions.AzureMonitorExportOptions() -> void
+Cephalon.Observability.AzureMonitor.Configuration.AzureMonitorExportOptions.ConnectionString.get -> string?
+Cephalon.Observability.AzureMonitor.Configuration.AzureMonitorExportOptions.ConnectionString.set -> void
+Cephalon.Observability.AzureMonitor.Configuration.AzureMonitorExportOptions.HostedPlatform.get -> string?
+Cephalon.Observability.AzureMonitor.Configuration.AzureMonitorExportOptions.HostedPlatform.set -> void
+Cephalon.Observability.AzureMonitor.Configuration.AzureMonitorExportOptions.UseDefaultAzureCredential.get -> bool
+Cephalon.Observability.AzureMonitor.Configuration.AzureMonitorExportOptions.UseDefaultAzureCredential.set -> void
+Cephalon.Observability.AzureMonitor.Hosting.AzureMonitorHostApplicationBuilderExtensions
+static Cephalon.Observability.AzureMonitor.Configuration.AzureMonitorExportOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.AzureMonitor.Configuration.AzureMonitorExportOptions!
+static Cephalon.Observability.AzureMonitor.Hosting.AzureMonitorHostApplicationBuilderExtensions.AddCephalonAzureMonitor<TBuilder>(this TBuilder builder, System.Action<Cephalon.Observability.AzureMonitor.Configuration.AzureMonitorExportOptions!>? configure = null) -> TBuilder

@@ -1,0 +1,26 @@
+#nullable enable
+Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions
+Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions.ClusterName.get -> string?
+Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions.ClusterName.set -> void
+Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions.CollectorNamespace.get -> string?
+Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions.CollectorNamespace.set -> void
+Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions.CollectorPort.get -> int?
+Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions.CollectorPort.set -> void
+Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions.CollectorScheme.get -> string?
+Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions.CollectorScheme.set -> void
+Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions.CollectorServiceName.get -> string?
+Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions.CollectorServiceName.set -> void
+Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions.Headers.get -> string?
+Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions.Headers.set -> void
+Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions.HostedPlatform.get -> string?
+Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions.HostedPlatform.set -> void
+Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions.Namespace.get -> string?
+Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions.Namespace.set -> void
+Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions.OpenShiftTelemetryExportOptions() -> void
+Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions.TrustedCaCertificatePath.get -> string?
+Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions.TrustedCaCertificatePath.set -> void
+Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions.UseInClusterCollectorService.get -> bool
+Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions.UseInClusterCollectorService.set -> void
+Cephalon.Observability.OpenShift.Hosting.OpenShiftHostApplicationBuilderExtensions
+static Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions!
+static Cephalon.Observability.OpenShift.Hosting.OpenShiftHostApplicationBuilderExtensions.AddCephalonOpenShift<TBuilder>(this TBuilder builder, System.Action<Cephalon.Observability.OpenShift.Configuration.OpenShiftTelemetryExportOptions!>? configure = null) -> TBuilder

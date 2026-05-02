@@ -1,0 +1,25 @@
+#nullable enable
+Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyDefinition
+Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyDefinition.Database.get -> string?
+Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyDefinition.Database.set -> void
+Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyDefinition.HealthQuery.get -> string!
+Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyDefinition.HealthQuery.set -> void
+Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyDefinition.Host.get -> string!
+Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyDefinition.Host.set -> void
+Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyDefinition.Neo4jDependencyDefinition() -> void
+Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyDefinition.Password.get -> string?
+Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyDefinition.Password.set -> void
+Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyDefinition.Port.get -> int
+Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyDefinition.Port.set -> void
+Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyDefinition.Scheme.get -> string!
+Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyDefinition.Scheme.set -> void
+Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyDefinition.Uri.get -> string?
+Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyDefinition.Uri.set -> void
+Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyDefinition.Username.get -> string?
+Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyDefinition.Username.set -> void
+Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyHealthOptions
+Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyHealthOptions.Neo4jDependencyHealthOptions() -> void
+Cephalon.Observability.Neo4jDependencies.Hosting.Neo4jDependencyHealthServiceCollectionExtensions
+static Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyHealthOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyHealthOptions!
+static Cephalon.Observability.Neo4jDependencies.Hosting.Neo4jDependencyHealthServiceCollectionExtensions.AddCephalonNeo4jDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Observability.Neo4jDependencies.Hosting.Neo4jDependencyHealthServiceCollectionExtensions.AddCephalonNeo4jDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.Observability.Neo4jDependencies.Configuration.Neo4jDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

@@ -1,0 +1,31 @@
+#nullable enable
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition.AllowInsecureTls.get -> bool?
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition.AllowInsecureTls.set -> void
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition.AuthSource.get -> string?
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition.AuthSource.set -> void
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition.ConnectionString.get -> string?
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition.ConnectionString.set -> void
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition.Database.get -> string!
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition.Database.set -> void
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition.DirectConnection.get -> bool?
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition.DirectConnection.set -> void
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition.HealthCommand.get -> string!
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition.HealthCommand.set -> void
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition.Host.get -> string!
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition.Host.set -> void
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition.MongoDbDependencyDefinition() -> void
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition.Password.get -> string?
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition.Password.set -> void
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition.Port.get -> int
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition.Port.set -> void
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition.UseTls.get -> bool?
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition.UseTls.set -> void
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition.Username.get -> string?
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyDefinition.Username.set -> void
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyHealthOptions
+Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyHealthOptions.MongoDbDependencyHealthOptions() -> void
+Cephalon.Observability.MongoDbDependencies.Hosting.MongoDbDependencyHealthServiceCollectionExtensions
+static Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyHealthOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyHealthOptions!
+static Cephalon.Observability.MongoDbDependencies.Hosting.MongoDbDependencyHealthServiceCollectionExtensions.AddCephalonMongoDbDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Observability.MongoDbDependencies.Hosting.MongoDbDependencyHealthServiceCollectionExtensions.AddCephalonMongoDbDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.Observability.MongoDbDependencies.Configuration.MongoDbDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

@@ -1,0 +1,25 @@
+#nullable enable
+Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyDefinition
+Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyDefinition.ClientId.get -> string?
+Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyDefinition.ClientId.set -> void
+Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyDefinition.Host.get -> string!
+Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyDefinition.Host.set -> void
+Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyDefinition.KeepAliveSeconds.get -> int
+Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyDefinition.KeepAliveSeconds.set -> void
+Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyDefinition.MqttDependencyDefinition() -> void
+Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyDefinition.Password.get -> string?
+Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyDefinition.Password.set -> void
+Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyDefinition.Port.get -> int
+Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyDefinition.Port.set -> void
+Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyDefinition.TlsServerName.get -> string?
+Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyDefinition.TlsServerName.set -> void
+Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyDefinition.UseTls.get -> bool
+Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyDefinition.UseTls.set -> void
+Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyDefinition.Username.get -> string?
+Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyDefinition.Username.set -> void
+Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyHealthOptions
+Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyHealthOptions.MqttDependencyHealthOptions() -> void
+Cephalon.Observability.MqttDependencies.Hosting.MqttDependencyHealthServiceCollectionExtensions
+static Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyHealthOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyHealthOptions!
+static Cephalon.Observability.MqttDependencies.Hosting.MqttDependencyHealthServiceCollectionExtensions.AddCephalonMqttDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Observability.MqttDependencies.Hosting.MqttDependencyHealthServiceCollectionExtensions.AddCephalonMqttDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.Observability.MqttDependencies.Configuration.MqttDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

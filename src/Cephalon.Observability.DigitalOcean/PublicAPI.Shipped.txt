@@ -1,0 +1,40 @@
+#nullable enable
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.AppId.get -> string?
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.AppId.set -> void
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.AppUrl.get -> string?
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.AppUrl.set -> void
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.ClusterName.get -> string?
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.ClusterName.set -> void
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.CollectorNamespace.get -> string?
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.CollectorNamespace.set -> void
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.CollectorPort.get -> int?
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.CollectorPort.set -> void
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.CollectorScheme.get -> string?
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.CollectorScheme.set -> void
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.CollectorServiceName.get -> string?
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.CollectorServiceName.set -> void
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.DigitalOceanTelemetryExportOptions() -> void
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.DropletId.get -> string?
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.DropletId.set -> void
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.DropletMetadataEndpoint.get -> string?
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.DropletMetadataEndpoint.set -> void
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.Headers.get -> string?
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.Headers.set -> void
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.HostedPlatform.get -> string?
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.HostedPlatform.set -> void
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.MetadataTimeoutMilliseconds.get -> int?
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.MetadataTimeoutMilliseconds.set -> void
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.Namespace.get -> string?
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.Namespace.set -> void
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.Region.get -> string?
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.Region.set -> void
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.TrustedCaCertificatePath.get -> string?
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.TrustedCaCertificatePath.set -> void
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.UseDropletMetadataDefaults.get -> bool
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.UseDropletMetadataDefaults.set -> void
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.UseInClusterCollectorService.get -> bool
+Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.UseInClusterCollectorService.set -> void
+Cephalon.Observability.DigitalOcean.Hosting.DigitalOceanHostApplicationBuilderExtensions
+static Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions!
+static Cephalon.Observability.DigitalOcean.Hosting.DigitalOceanHostApplicationBuilderExtensions.AddCephalonDigitalOcean<TBuilder>(this TBuilder builder, System.Action<Cephalon.Observability.DigitalOcean.Configuration.DigitalOceanTelemetryExportOptions!>? configure = null) -> TBuilder

@@ -1,0 +1,23 @@
+#nullable enable
+Cephalon.Observability.RabbitMqDependencies.Configuration.RabbitMqDependencyDefinition
+Cephalon.Observability.RabbitMqDependencies.Configuration.RabbitMqDependencyDefinition.ConnectionString.get -> string?
+Cephalon.Observability.RabbitMqDependencies.Configuration.RabbitMqDependencyDefinition.ConnectionString.set -> void
+Cephalon.Observability.RabbitMqDependencies.Configuration.RabbitMqDependencyDefinition.Host.get -> string!
+Cephalon.Observability.RabbitMqDependencies.Configuration.RabbitMqDependencyDefinition.Host.set -> void
+Cephalon.Observability.RabbitMqDependencies.Configuration.RabbitMqDependencyDefinition.Password.get -> string?
+Cephalon.Observability.RabbitMqDependencies.Configuration.RabbitMqDependencyDefinition.Password.set -> void
+Cephalon.Observability.RabbitMqDependencies.Configuration.RabbitMqDependencyDefinition.Port.get -> int
+Cephalon.Observability.RabbitMqDependencies.Configuration.RabbitMqDependencyDefinition.Port.set -> void
+Cephalon.Observability.RabbitMqDependencies.Configuration.RabbitMqDependencyDefinition.RabbitMqDependencyDefinition() -> void
+Cephalon.Observability.RabbitMqDependencies.Configuration.RabbitMqDependencyDefinition.UseTls.get -> bool
+Cephalon.Observability.RabbitMqDependencies.Configuration.RabbitMqDependencyDefinition.UseTls.set -> void
+Cephalon.Observability.RabbitMqDependencies.Configuration.RabbitMqDependencyDefinition.Username.get -> string?
+Cephalon.Observability.RabbitMqDependencies.Configuration.RabbitMqDependencyDefinition.Username.set -> void
+Cephalon.Observability.RabbitMqDependencies.Configuration.RabbitMqDependencyDefinition.VirtualHost.get -> string!
+Cephalon.Observability.RabbitMqDependencies.Configuration.RabbitMqDependencyDefinition.VirtualHost.set -> void
+Cephalon.Observability.RabbitMqDependencies.Configuration.RabbitMqDependencyHealthOptions
+Cephalon.Observability.RabbitMqDependencies.Configuration.RabbitMqDependencyHealthOptions.RabbitMqDependencyHealthOptions() -> void
+Cephalon.Observability.RabbitMqDependencies.Hosting.RabbitMqDependencyHealthServiceCollectionExtensions
+static Cephalon.Observability.RabbitMqDependencies.Configuration.RabbitMqDependencyHealthOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.RabbitMqDependencies.Configuration.RabbitMqDependencyHealthOptions!
+static Cephalon.Observability.RabbitMqDependencies.Hosting.RabbitMqDependencyHealthServiceCollectionExtensions.AddCephalonRabbitMqDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.Observability.RabbitMqDependencies.Configuration.RabbitMqDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Observability.RabbitMqDependencies.Hosting.RabbitMqDependencyHealthServiceCollectionExtensions.AddCephalonRabbitMqDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.Observability.RabbitMqDependencies.Configuration.RabbitMqDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

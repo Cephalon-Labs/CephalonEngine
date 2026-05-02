@@ -2,6 +2,8 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Description>OpenTelemetry exporter integration for Cephalon hosts.</Description>
+    <!-- RS0026/RS0027: optional-overload patterns; suppressed for ENG-345. -->
+    <NoWarn>$(NoWarn);RS0026;RS0027</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,5 +15,16 @@
   <ItemGroup>
     <ProjectReference Include="..\Cephalon.Engine\Cephalon.Engine.csproj" />
     <ProjectReference Include="..\Cephalon.Observability\Cephalon.Observability.csproj" />
+  </ItemGroup>
+<ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI.Unshipped.txt" />
   </ItemGroup>
 </Project>

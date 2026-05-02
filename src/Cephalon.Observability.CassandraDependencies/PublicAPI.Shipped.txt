@@ -1,0 +1,21 @@
+#nullable enable
+Cephalon.Observability.CassandraDependencies.Configuration.CassandraDependencyDefinition
+Cephalon.Observability.CassandraDependencies.Configuration.CassandraDependencyDefinition.CassandraDependencyDefinition() -> void
+Cephalon.Observability.CassandraDependencies.Configuration.CassandraDependencyDefinition.ContactPoints.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Observability.CassandraDependencies.Configuration.CassandraDependencyDefinition.ContactPoints.set -> void
+Cephalon.Observability.CassandraDependencies.Configuration.CassandraDependencyDefinition.HealthQuery.get -> string!
+Cephalon.Observability.CassandraDependencies.Configuration.CassandraDependencyDefinition.HealthQuery.set -> void
+Cephalon.Observability.CassandraDependencies.Configuration.CassandraDependencyDefinition.Keyspace.get -> string?
+Cephalon.Observability.CassandraDependencies.Configuration.CassandraDependencyDefinition.Keyspace.set -> void
+Cephalon.Observability.CassandraDependencies.Configuration.CassandraDependencyDefinition.Password.get -> string?
+Cephalon.Observability.CassandraDependencies.Configuration.CassandraDependencyDefinition.Password.set -> void
+Cephalon.Observability.CassandraDependencies.Configuration.CassandraDependencyDefinition.Port.get -> int
+Cephalon.Observability.CassandraDependencies.Configuration.CassandraDependencyDefinition.Port.set -> void
+Cephalon.Observability.CassandraDependencies.Configuration.CassandraDependencyDefinition.Username.get -> string?
+Cephalon.Observability.CassandraDependencies.Configuration.CassandraDependencyDefinition.Username.set -> void
+Cephalon.Observability.CassandraDependencies.Configuration.CassandraDependencyHealthOptions
+Cephalon.Observability.CassandraDependencies.Configuration.CassandraDependencyHealthOptions.CassandraDependencyHealthOptions() -> void
+Cephalon.Observability.CassandraDependencies.Hosting.CassandraDependencyHealthServiceCollectionExtensions
+static Cephalon.Observability.CassandraDependencies.Configuration.CassandraDependencyHealthOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.CassandraDependencies.Configuration.CassandraDependencyHealthOptions!
+static Cephalon.Observability.CassandraDependencies.Hosting.CassandraDependencyHealthServiceCollectionExtensions.AddCephalonCassandraDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.Observability.CassandraDependencies.Configuration.CassandraDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Observability.CassandraDependencies.Hosting.CassandraDependencyHealthServiceCollectionExtensions.AddCephalonCassandraDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.Observability.CassandraDependencies.Configuration.CassandraDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

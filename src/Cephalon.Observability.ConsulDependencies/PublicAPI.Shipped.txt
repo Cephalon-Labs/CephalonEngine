@@ -1,0 +1,15 @@
+#nullable enable
+Cephalon.Observability.ConsulDependencies.Configuration.ConsulDependencyDefinition
+Cephalon.Observability.ConsulDependencies.Configuration.ConsulDependencyDefinition.AclToken.get -> string?
+Cephalon.Observability.ConsulDependencies.Configuration.ConsulDependencyDefinition.AclToken.set -> void
+Cephalon.Observability.ConsulDependencies.Configuration.ConsulDependencyDefinition.ConsulDependencyDefinition() -> void
+Cephalon.Observability.ConsulDependencies.Configuration.ConsulDependencyDefinition.Datacenter.get -> string?
+Cephalon.Observability.ConsulDependencies.Configuration.ConsulDependencyDefinition.Datacenter.set -> void
+Cephalon.Observability.ConsulDependencies.Configuration.ConsulDependencyDefinition.Endpoint.get -> string!
+Cephalon.Observability.ConsulDependencies.Configuration.ConsulDependencyDefinition.Endpoint.set -> void
+Cephalon.Observability.ConsulDependencies.Configuration.ConsulDependencyHealthOptions
+Cephalon.Observability.ConsulDependencies.Configuration.ConsulDependencyHealthOptions.ConsulDependencyHealthOptions() -> void
+Cephalon.Observability.ConsulDependencies.Hosting.ConsulDependencyHealthServiceCollectionExtensions
+static Cephalon.Observability.ConsulDependencies.Configuration.ConsulDependencyHealthOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.ConsulDependencies.Configuration.ConsulDependencyHealthOptions!
+static Cephalon.Observability.ConsulDependencies.Hosting.ConsulDependencyHealthServiceCollectionExtensions.AddCephalonConsulDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.Observability.ConsulDependencies.Configuration.ConsulDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Observability.ConsulDependencies.Hosting.ConsulDependencyHealthServiceCollectionExtensions.AddCephalonConsulDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.Observability.ConsulDependencies.Configuration.ConsulDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
