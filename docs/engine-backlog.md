@@ -3690,8 +3690,34 @@ Delivered:
 
 Follow-up later:
 
-- once a sample app (e.g. `samples/Cephalon.Sample.ModularMonolith`) adopts the recipe, link the sample from the *Redaction quick start* as the running-code companion; today the recipe is text-only and consumer-built apps will adopt it through their own composition-root code
+- once a sample app (e.g. `samples/Cephalon.Sample.ModularMonolith`) adopts the recipe, link the sample from the *Redaction quick start* as the running-code companion; today the recipe is text-only and consumer-built apps will adopt it through their own composition-root code — **delivered in `ENG-368`**
 - if the engine ships pre-built `KeyMatchRedactionFilter.WellKnownHttpHeaders()` / `RegexRedactionFilter.CreditCardNumbers()` factory presets, the recipe shrinks further; defer until at least one consumer asks (presets bake in opinion that may not match every consumer's threat model)
+
+### ENG-368 Adopt redaction recipe in Cephalon.Sample.ModularMonolith composition root
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `ENG-367` shipped the redaction adoption recipe in `docs/components/diagnostics.md` as text-only guidance; without a runnable companion, a consumer reading the recipe still has to translate it to their own composition root and verify the wiring works
+- `Cephalon.Sample.ModularMonolith` is the canonical sample for the modular-monolith blueprint and already exercises the engine boundary across `AddCephalon` + observability; it's the natural sample to adopt the recipe so the recipe doc has a verified code companion
+- closing the recipe-doc to working-sample loop matters more for adoption than additional starter filter shapes — consumer apps copy from samples first and read component docs second
+
+Delivered:
+
+- update `samples/Cephalon.Sample.ModularMonolith/ModularMonolithSampleApp.cs` composition root to register the three canonical filters from the quick-start recipe immediately after `builder.AddCephalon(...)`:
+    - `KeyMatchRedactionFilter` for `http.request.header.authorization` / `.cookie` / `.proxy-authorization` / `http.response.header.set-cookie` / `cephalon.tenant.secret`
+    - `RegexRedactionFilter` for credit-card-shaped substrings (13-19 digit pattern with optional space/hyphen separators, compiled regex)
+    - `RegexRedactionFilter` for `Bearer xxx` tokens (compiled regex), with a prefix-preserving replacement (`"Bearer [REDACTED]"`) so log readers still see the auth scheme
+- update `docs/components/diagnostics.md` *Redaction quick start* to link the sample as the running-code companion
+- `docs/engine-backlog.md` ENG-368 backlog card; ENG-367 follow-up note marked delivered; Sprint 125 placement updated
+- verified with `dotnet build samples/Cephalon.Sample.ModularMonolith -c Release` (0 warnings, 0 errors)
+
+Follow-up later:
+
+- wire a smoke test that boots the sample, fires an HTTP request with an `Authorization: Bearer abc123` header, asserts the captured activity does not contain the raw token; today the unit-level integration tests for both M1 emission sites cover the wiring, so a sample-level smoke test is duplicate coverage with marginal value
+- adopt the same recipe in the other samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) as a separate slice when the redaction surface needs broader sample reach
 
 ### ENG-366 Extend M1 redaction to Cephalon.Engine runtime module-phase emission sites
 
@@ -11826,6 +11852,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-365 Promote Cephalon.Diagnostics redaction surface to M1 (HttpRequestResponseLoggingMiddleware routes through RedactionPipeline) (shipped)
 - ENG-366 Extend M1 redaction to Cephalon.Engine runtime module-phase emission sites (shipped)
 - ENG-367 Redaction adoption recipe in docs/components/diagnostics.md (shipped)
+- ENG-368 Adopt redaction recipe in Cephalon.Sample.ModularMonolith composition root (shipped)
 
 ### Later / not scheduled yet
 
