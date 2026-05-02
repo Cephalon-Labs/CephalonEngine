@@ -87,6 +87,7 @@ Where an OpenTelemetry semantic convention already exists for a concept (HTTP se
 ## Cross-references
 
 - [Engineering standards](../engineering-standards.md) — code-quality gates, library / API design, packaging
+- [Diagnostic ID registry](../diagnostic-id-registry.md) — authoritative allocation table for per-package `EventId` ranges; complements the `ActivitySource` / `Meter` name set this pack publishes
 - [Compatibility](../compatibility.md) — public-API contract artefacts (`PublicAPI.Shipped.txt` / `PublicAPI.Unshipped.txt`)
 - [Engine surface maturity audit](../engine-surface-maturity-audit.md) — `M0`–`M4` plus `taxonomy-only` / `application-managed` / `cephalon-managed` / `provider-managed` truth
 - [Supply-chain uplift plan](../supply-chain-uplift-plan.md) — multi-sprint plan that includes this pack as `ENG-323`

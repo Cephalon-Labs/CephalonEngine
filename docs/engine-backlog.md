@@ -3719,6 +3719,35 @@ Follow-up later:
 - wire a smoke test that boots the sample, fires an HTTP request with an `Authorization: Bearer abc123` header, asserts the captured activity does not contain the raw token; today the unit-level integration tests for both M1 emission sites cover the wiring, so a sample-level smoke test is duplicate coverage with marginal value
 - adopt the same recipe in the other samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) as a separate slice when the redaction surface needs broader sample reach — **delivered in `ENG-369`**
 
+### ENG-370 Author centralized EventId range registry
+
+Status: done
+Estimate: 1
+
+Why:
+
+- the engine has multi-package `EventId` allocation discipline declared in `engineering-standards.md` line 127-128 ("engine-emitted diagnostics use stable diagnostic ids; ids are assigned once and never reused"), but no central registry document existed; an exhaustive scan of the repo found 16 distinct numeric ranges allocated across 14 packages with **no collision-prevention table** anywhere
+- without a registry, two packages can pick the same range (the scan found IDs `0`, `1`, `2` already reused across `Cephalon.Behaviors.Patterns` saga / event-driven / process-manager / choreography strategies, `Cephalon.Eventing.Behaviors`, and `Cephalon.Observability.DependencyHealth.Core` — collision tolerated only because EventId.Name disambiguates within consumers, but new allocations have no guard rail)
+- a registry doc is the smallest move that turns the scattered allocation reality into a discoverable contract: future ENG-358 (LoggerMessage source-gen factories) and any new pack adding diagnostics has one canonical place to claim a range and update the table in the same slice
+
+Delivered:
+
+- new `docs/diagnostic-id-registry.md` containing:
+    - allocation discipline (one range per package, contiguous ascending allocation, default 10-event range, gaps as reservations, EventId.Name = `nameof(field)`, no-new-allocations-below-2000 collision guard)
+    - 17-row *Allocated ranges* table sorted by range start: `0`-`2` legacy collisions, `2000`-`2005` engine runtime, `4200`-`4210` eventing, `4306` Wolverine, `4600`-`4611` audit family, `5100`-`5109` behaviors, `6200`-`6207` + `6240`-`6243` CDC core, `6920`-`6922` MongoDB, `6940`-`6942` + `6960` SqlServer, `6980`-`6982` + `6990` Postgres, `7000`-`7002` MySql, `7300` + `7400`-`7402` Oracle, `21001`-`21013` cell-traffic, `21400`-`21403` Kubernetes gateway, `21500`-`21503` Traefik
+    - reserved-gaps section explaining which gaps belong to which package family (so adjacent allocations don't squat on a different family's reservation)
+    - per-event purpose and defining file path for every allocated id
+    - convention block telling the next maintainer how to claim a new range and update the registry atomically
+- update `docs/engineering-standards.md` Diagnostics-standards section to link the registry as the authoritative allocation table
+- update `docs/components/diagnostics.md` Cross-references section to surface the registry as a sibling of the `ActivitySource` / `Meter` name set
+- `docs/engine-backlog.md` ENG-370 backlog card; Sprint 125 placement updated
+
+Follow-up later:
+
+- when ENG-358 lands `[LoggerMessage]` source-generated factories for a pilot package, the registry receives a row update in the same slice; the registry's *Convention* block names this as the explicit expectation
+- when the engine introduces a new pack (e.g. `Cephalon.Resilience` is a known follow-up from the Learning Knowledge Pack recommendations), the new pack claims its range from the next-available slot above `21503` and updates the registry; today no `Cephalon.Resilience.*` events exist
+- consider promoting the IDs `0`-`2` legacy collisions to fresh per-package ranges (each strategy / publisher gets its own range) once the cost of a coordinated rename is acceptable; the collision guard rail in the new convention prevents *new* sub-2000 allocations, but existing low-id events are tolerated until a coordinated migration happens
+
 ### ENG-369 Adopt redaction recipe across remaining samples
 
 Status: done
@@ -11880,6 +11909,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-367 Redaction adoption recipe in docs/components/diagnostics.md (shipped)
 - ENG-368 Adopt redaction recipe in Cephalon.Sample.ModularMonolith composition root (shipped)
 - ENG-369 Adopt redaction recipe across remaining samples (shipped)
+- ENG-370 Author centralized EventId range registry (shipped)
 
 ### Later / not scheduled yet
 

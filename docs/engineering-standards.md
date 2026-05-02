@@ -126,6 +126,7 @@ Diagnostics standards:
 
 - engine-emitted diagnostics use stable diagnostic ids (`Cephalon.*` numbered ids); ids are assigned once and never reused
 - `Cephalon.Behaviors`, `Cephalon.Engine`, governance, tenancy, CDC, eventing, and resilience surfaces all share the same numbered-diagnostic discipline
+- the authoritative allocation table lives in [`diagnostic-id-registry.md`](diagnostic-id-registry.md); every new `EventId` range claim updates the registry in the same slice that introduces the events
 
 ## Compatibility discipline
 
