@@ -8,14 +8,17 @@ namespace Cephalon.Diagnostics.Redaction;
 /// </summary>
 /// <remarks>
 /// <para>
-/// At M1 maturity the engine routes two emission sites through registered filters:
+/// At M1 maturity the engine routes three emission sites through registered filters:
 /// <c>Cephalon.AspNetCore</c>'s HTTP request/response logging middleware (HTTP request/response
-/// span tags and activity events) and <c>Cephalon.Engine</c>'s module-phase runtime activity
-/// tags (<c>runtime.{phase}</c> and <c>module.{phase}</c> spans emitted during initialize/start/stop).
-/// Both sites pipe values through the registered <see cref="RedactionPipeline"/> resolved from DI
-/// before the value reaches an exporter. Additional emission sites (worker lifecycle spans,
-/// eventing emission) will adopt the same pattern as the surface continues to promote. The
-/// contract guarantees the runtime honors are:
+/// span tags and activity events), <c>Cephalon.Engine</c>'s module-phase runtime activity tags
+/// (<c>runtime.{phase}</c> and <c>module.{phase}</c> spans during initialize/start/stop), and
+/// <c>Cephalon.Eventing.Wolverine</c>'s dispatch-time activity tags (the <c>wolverine.dispatch</c>
+/// span emitted per outbox-driven publication, including <c>cephalon.tenant_id</c> /
+/// <c>cephalon.correlation_id</c> / <c>cephalon.message_id</c>). All three sites pipe values
+/// through the registered <see cref="RedactionPipeline"/> resolved from DI before the value reaches
+/// an exporter. Additional emission sites (worker lifecycle spans, future eventing publishers) will
+/// adopt the same pattern as the surface continues to promote. The contract guarantees the runtime
+/// honors are:
 /// </para>
 /// <list type="bullet">
 ///   <item>filters run synchronously at the engine boundary, before exporter dispatch</item>
