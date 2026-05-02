@@ -2,6 +2,8 @@
 
 `Cephalon.AspNetCore` is the HTTP-first host core for Cephalon.
 
+See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), [Conformance matrix](../conformance-matrix.md), and [Runtime contract index](../runtime-contract-index.md) for the full `/engine/*` route catalog this host adapter projects, plus the per-package maturity and ownership truth. [Engineering standards](../engineering-standards.md) records the library-design baseline the host adapter ships against; [Long-range engine direction](../long-range-direction.md) frames why the host adapter stays a thin projection seam over the engine's host-agnostic catalogs.
+
 ## What it owns
 
 - ASP.NET Core service registration for the engine
@@ -539,6 +541,13 @@ types.
 ## Related docs
 
 - [Architecture](../architecture.md)
+- [Engine surface maturity audit](../engine-surface-maturity-audit.md)
+- [Conformance matrix](../conformance-matrix.md)
+- [Runtime contract index](../runtime-contract-index.md)
+- [Long-range engine direction](../long-range-direction.md)
+- [Engineering standards](../engineering-standards.md)
+- [Architecture review (May 2026)](../architecture-review-2026-05.md)
+- [Deployment-mode support](../deployment-mode-support.md)
 - [Operations](../operations.md)
 - [Reference docs publishing](../reference-docs.md)
 
