@@ -174,6 +174,7 @@ Public-API contract artefacts:
 - transitively visible types from referenced projects can pollute the initial extraction (e.g. `Cephalon.Cli` referencing `Cephalon.Scaffolding`, dependency-health probe packs referencing `Cephalon.Observability.DependencyHealth.Core`); when the rebuild reports `RS0017` after a baseline seed, reset the `.Shipped.txt` to header-only and re-extract
 - `RS0026` ("multiple overloads with optional parameters") and `RS0027` ("public API with optional parameter(s) should have the most parameters amongst its public overloads") are suppressed per project with an inline ENG-card comment because the engine has not yet refactored the pre-existing optional-overload patterns; cleaning these up is a follow-up arc opposite to the rollout arc
 - removals and renames are recorded in `PublicAPI.Unshipped.txt` with the `*REMOVED*` prefix so PR diffs surface the break before it merges; both `.txt` files follow the same review discipline as XML doc comments
+- [`scripts/summarise-public-api-deltas.ps1`](../scripts/summarise-public-api-deltas.ps1) walks every `Cephalon.*/PublicAPI.Unshipped.txt` file, parses each as additions vs `*REMOVED*` lines, and emits a release-notes-friendly markdown report grouped by package; run it before cutting a release tag to read the full contract delta in one place rather than diff-walking 101 Unshipped.txt files; pass `-OutputPath artifacts/public-api-delta.md` to write the report to a file or `-IncludeHeaderless` to list packages with no pending changes too
 
 Splitting policy:
 

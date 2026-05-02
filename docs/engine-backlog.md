@@ -3353,6 +3353,31 @@ Follow-up later:
 - the new public types in `PublicAPI.Unshipped.txt` for `Cephalon.AspNetCore` will graduate to `PublicAPI.Shipped.txt` on the next release per the standard contract-lock-in promotion cycle; today they appear correctly in the diff gate for PR review
 - redaction filter primitive at the engine boundary and `LoggerMessage` source-generated factories aligned with the per-package diagnostic-id range discipline remain follow-up
 
+### ENG-347 Public-API delta summary helper
+
+Status: done
+Estimate: 2
+
+Why:
+
+- after the contract lock-in arc completed (101 packages × ~16,100 reviewable entries), every release cycle now needs to surface the public-API delta across all those Unshipped.txt files; without a helper, a release manager would have to read 101 files by hand to understand what changed
+- the helper was named as a follow-up in `ENG-345`'s closing paragraph: "consider standing up an analyzer-aware diff helper that emits a release-notes-friendly summary of `PublicAPI.Unshipped.txt` entries pending promotion, so PR reviewers can read the API delta in human form"
+
+Delivered:
+
+- new [`scripts/summarise-public-api-deltas.ps1`](../scripts/summarise-public-api-deltas.ps1) with comment-based help (`SYNOPSIS`, `DESCRIPTION`, `PARAMETER RepoRoot`, `PARAMETER OutputPath`, `PARAMETER IncludeHeaderless`, three `EXAMPLE` blocks)
+- walks every `src/Cephalon.*/PublicAPI.Unshipped.txt` file, parses each line as either additive (a fully-qualified symbol signature) or removal (lines starting with `*REMOVED*` strip the marker and report the previously-shipped signature); skips `#nullable enable` headers and blank lines
+- emits markdown with an aggregate header (packages with pending changes count, packages with header-only count, total additions, total removals) followed by per-package detail blocks grouped by package and split into Additions / Removals; the per-package blocks use fenced code blocks so the API signatures stay readable and copy-pasteable
+- supports `-OutputPath` to write the report to a file (auto-creates the parent directory) or stdout when omitted; supports `-IncludeHeaderless` to also list packages with no pending changes for a complete inventory
+- update [`docs/engineering-standards.md`](engineering-standards.md) Public-API contract artefacts subsection to point at the helper so release managers and PR reviewers find it without spelunking
+- smoke-tested against the current repo state: correctly reports 2 packages with pending API changes (`Cephalon.AspNetCore` 16 entries from `ENG-351`'s `DiagnosticsConventionsSurface`, `Cephalon.Diagnostics` 14 entries from `ENG-323`'s original baseline that has not yet graduated to Shipped); 100 packages reported as header-only
+
+Follow-up later:
+
+- consider wiring the helper into `scripts/validate-release.ps1` so a release pass writes the markdown delta as an artefact alongside the existing reference-doc / SBOM / signature artefacts; today the helper is manual on purpose because the engine has not yet cut its first stable release tag (`v0.1.0-preview` etc. would be the obvious first target)
+- the report could optionally accept `--since-ref` to diff `PublicAPI.Shipped.txt` between two git revisions and emit a cross-release contract delta; today the report is point-in-time only against the current Unshipped.txt files
+- when the engine adds the `dotnet format analyzers` integration that materializes Unshipped entries automatically (named in `ENG-322`'s follow-up), this helper should consume the same Unshipped state without any modification
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -11444,6 +11469,7 @@ Upcoming sequence from the April 2026 maturity reset:
 ### Sprint 125
 
 - ENG-351 Cephalon.Diagnostics M2 to M3 promotion (operator surface for canonical name set) (shipped)
+- ENG-347 Public-API delta summary helper (shipped)
 
 ### Later / not scheduled yet
 
