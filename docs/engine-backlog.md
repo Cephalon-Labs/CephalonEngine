@@ -2635,6 +2635,30 @@ Follow-up later:
 - collapse the Learning Knowledge Pack recommendation #9 inside `docs/project-memory.md` into a back-pointer to `docs/sre-posture.md` once the durable doc is referenced from architecture reviews
 - when companion packs cross from `M2` into multi-region or distributed-execution `M3`, those packs declare their own SLI/SLO additively in their component doc and cross-reference back here; do not absorb companion-pack SLI obligations into this engine-level posture
 
+### ENG-320 Supply-chain uplift consolidated plan baseline
+
+Status: done
+Estimate: 2
+
+Why:
+
+- the May 2026 Learning Knowledge Pack delta in `docs/project-memory.md` named four overlapping supply-chain recommendations (#1 PublicApiAnalyzers + PackageValidation, #3 NuGet lock files + RestoreLockedMode + package source mapping, #4 SLSA L3 + Sigstore + SBOM + NuGet trusted publishing, #10 `Cephalon.Analyzers` meta-package); without a consolidated plan, concurrent agents and contributors would land them in inconsistent order or duplicate the prerequisite work
+- the EU Cyber Resilience Act reporting obligation kicks in `September 11, 2026` and main provisions bind `December 11, 2027`; CRA conformity evidence requires the supply-chain posture to be in place well before that date arrives, so the plan needs a sprint-by-sprint sequence and not just a research note
+- the smallest honest follow-through is one durable plan doc that sequences the next five slices, reserves their `ENG-*` ids, and declares cross-slice dependencies; not parallel research notes inside `docs/project-memory.md`, not a new framework registry, and not pre-emptive code in any of the dependent slices
+
+Delivered:
+
+- new `docs/supply-chain-uplift-plan.md` consolidating the four Learning Knowledge Pack supply-chain recommendations into a five-slice plan across Sprints 116-120: `ENG-321` (NuGet lock files + `RestoreLockedMode` + package source mapping), `ENG-322` (PublicApiAnalyzers proof on `Cephalon.Abstractions`), `ENG-323` (`Cephalon.Diagnostics` OTel semconv adapter package skeleton), `ENG-324` (release pipeline supply-chain hardening - SLSA L3 + Sigstore + SBOM + NuGet trusted publishing), `ENG-325` (`Cephalon.Analyzers` curated meta-package)
+- declared cross-slice dependencies (`ENG-321` and `ENG-322` are the only hard prerequisites for `ENG-324`; `ENG-323` and `ENG-325` are independent and can ship in any order), per-slice quality dimensions, per-slice "Delivered (target)" paragraphs framed for future shipping, and explicit out-of-scope items so concurrent slices do not collide
+- cross-link from `docs/README.md` Planning section, from `docs/project-memory.md` Learning Knowledge Pack cross-references, and from `docs/engineering-standards.md` packaging / supply-chain sections
+- collapse Learning Knowledge Pack recommendations #1, #3, #4, #10 inside `docs/project-memory.md` into back-pointers to the new consolidated plan rather than maintaining parallel research-note text
+
+Follow-up later:
+
+- when each `ENG-321` through `ENG-325` slice lands, collapse its matching section in `docs/supply-chain-uplift-plan.md` into a back-pointer to the shipped card and remove the `(target)` marker from the *Delivered* paragraph
+- if the EU regulatory timeline shifts (CRA enforcement date, AI Act high-risk wave dates, GPAI compliance date), refresh the plan's *Why* paragraphs and the cross-slice dependency diagram in place; do not append a dated change log
+- post-quantum hybrid signing (NIST ML-KEM / ML-DSA) once the .NET cryptography stack ships hybrid signing primitives in the `.NET 12` LTS lane remains future work outside the five-slice plan
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -10670,6 +10694,10 @@ Upcoming sequence from the April 2026 maturity reset:
 
 - ENG-318 Engineering-standards quality framework mapping baseline (shipped)
 - ENG-319 Engine SRE SLO and error-budget posture baseline (shipped)
+
+### Sprint 116
+
+- ENG-320 Supply-chain uplift consolidated plan baseline (shipped)
 
 ### Later / not scheduled yet
 
