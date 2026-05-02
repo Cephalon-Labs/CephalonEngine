@@ -3047,6 +3047,34 @@ Follow-up later:
 - when `Cephalon.Diagnostics` reaches `M2` (host adapter routes telemetry through the canonical name set, expected via the next slice), update the matrix row maturity from `M1` to `M2` and move the package from the `Catalog-only (M1)` family line to whichever family the M2 promotion lands under
 - when `Cephalon.Analyzers` reaches `M2` (template-pack defaults reference it), the same dual update applies
 
+### ENG-334 Cephalon.Diagnostics M1 to M2 promotion (host adapters consume canonical names)
+
+Status: done
+Estimate: 3
+
+Why:
+
+- `ENG-323` shipped `Cephalon.Diagnostics` at `M0` taxonomy-only and `ENG-327` promoted it to `M1` once `Cephalon.Engine` consumed the canonical `ActivitySource` / `Meter` names; the documented `M2` promotion criterion was that at least one host adapter (`Cephalon.AspNetCore`, `Cephalon.Worker`) routes its telemetry through `CephalonActivitySources.AspNetCore` / `.Worker`
+- before this slice `Cephalon.AspNetCore` declared `AspNetCoreDiagnosticsConventions.Convention` with the literal string `"Cephalon.AspNetCore"` (matching the canonical name by coincidence rather than reference) and `Cephalon.Worker` emitted no telemetry at all; promoting M1 → M2 honestly required wiring both adapters through the canonical constants
+
+Delivered:
+
+- update `src/Cephalon.AspNetCore/Hosting/AspNetCoreDiagnosticsConventionContributor.cs` to import `Cephalon.Diagnostics` and source its `DiagnosticsConvention.Source` and `LoggerCategoryPrefix` values from `CephalonActivitySources.AspNetCore` rather than the literal `"Cephalon.AspNetCore"` string; the compiled value is unchanged so observability companion packs subscribed to that source name continue to work, and any future rename of the canonical constant will propagate automatically
+- add a `<ProjectReference Include="..\Cephalon.Diagnostics\Cephalon.Diagnostics.csproj" />` to `src/Cephalon.AspNetCore/Cephalon.AspNetCore.csproj` so the canonical constants are reachable
+- add `src/Cephalon.Worker/Hosting/WorkerDiagnostics.cs` declaring `WorkerDiagnostics.ActivitySourceName` and `WorkerDiagnostics.MeterName` sourced from `CephalonActivitySources.Worker` and `CephalonMeters.Worker`, plus `WorkerDiagnostics.LifecycleStartActivityName` (`worker.lifecycle.start`) and `WorkerDiagnostics.LifecycleStopActivityName` (`worker.lifecycle.stop`); the `ActivitySource` and `Meter` instances are `internal static readonly` so they ship as a single canonical source per worker host
+- update `src/Cephalon.Worker/Hosting/RuntimeHostedService.cs` to wrap `StartAsync` and `StopAsync` in `using var activity = WorkerDiagnostics.ActivitySource.StartActivity(...)` blocks with `ActivityKind.Internal`, set the activity status to `ActivityStatusCode.Error` on exception, and `await ... .ConfigureAwait(false)` per the engine's `CA2007` posture
+- add a `<ProjectReference Include="..\Cephalon.Diagnostics\Cephalon.Diagnostics.csproj" />` to `src/Cephalon.Worker/Cephalon.Worker.csproj`
+- update `docs/components/diagnostics.md` maturity section from `M1` to `M2` with the host-adapter-rollout proof; declare `M3` promotion criteria (explicit operator surface for the diagnostics name set itself, e.g. `/engine/diagnostics-conventions`) and the residual follow-ups (redaction filter, `LoggerMessage` source-generated factories)
+- update `docs/engine-surface-maturity-audit.md` `Cephalon.Diagnostics` row maturity from `M1` to `M2` with the host-adapter-rollout summary
+- update `docs/conformance-matrix.md` `Cephalon.Diagnostics` row maturity from `M1` to `M2`, move the package from the `Catalog-only (M1)` family-summary line to the `Narrow managed execution (M2)` line
+- verified end-to-end with `dotnet build src/Cephalon.AspNetCore/Cephalon.AspNetCore.csproj -c Release` (0 warnings, 0 errors), `dotnet build src/Cephalon.Worker/Cephalon.Worker.csproj -c Release` (0 warnings, 0 errors), full-solution `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors), and `dotnet restore --locked-mode CephalonEngine.slnx` (passes; no public-API surface change because the new `WorkerDiagnostics` class is `internal`)
+
+Follow-up later:
+
+- promote to `M3` when an explicit operator surface lands for the diagnostics name set itself (`/engine/diagnostics-conventions` or similar) so operators and AI tooling can introspect what the engine actually emits without reading source
+- add a redaction filter primitive at the engine boundary so secrets / PII / authentication tokens never reach exporters; add `LoggerMessage`-source-generated factories aligned with the per-package diagnostic-id range discipline
+- continue rolling `CephalonDiagnosticsAttributeKeys` constant adoption across remaining string-literal call sites in `Cephalon.AspNetCore` (e.g. `HttpRequestResponseLoggingMiddleware`'s `cephalon.http.request.started` event names) and elsewhere; each rollout is symbolic only and can ride along with adjacent slices
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -11121,6 +11149,10 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-332 Mark netstandard2.0 analyzer / source-gen projects as not-trimmable / not-AOT-compatible (shipped)
 - ENG-333 Maturity audit consolidation for Cephalon.Diagnostics + Cephalon.Analyzers + engine resilience runtime (shipped)
 - ENG-339 Conformance matrix consolidation for Cephalon.Diagnostics + Cephalon.Analyzers (shipped)
+
+### Sprint 124
+
+- ENG-334 Cephalon.Diagnostics M1 to M2 promotion (host adapters consume canonical names) (shipped)
 
 ### Later / not scheduled yet
 

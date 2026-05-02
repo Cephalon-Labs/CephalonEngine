@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Cephalon.Engine.Runtime;
 using Microsoft.Extensions.Hosting;
 
@@ -14,13 +15,37 @@ internal sealed class RuntimeHostedService : IHostedService
         this.services = services ?? throw new ArgumentNullException(nameof(services));
     }
 
-    public Task StartAsync(CancellationToken cancellationToken)
+    public async Task StartAsync(CancellationToken cancellationToken)
     {
-        return runtime.StartAsync(services, cancellationToken);
+        using var activity = WorkerDiagnostics.ActivitySource.StartActivity(
+            WorkerDiagnostics.LifecycleStartActivityName,
+            ActivityKind.Internal);
+
+        try
+        {
+            await runtime.StartAsync(services, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            activity?.SetStatus(ActivityStatusCode.Error, exception.Message);
+            throw;
+        }
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
+    public async Task StopAsync(CancellationToken cancellationToken)
     {
-        return runtime.StopAsync(cancellationToken);
+        using var activity = WorkerDiagnostics.ActivitySource.StartActivity(
+            WorkerDiagnostics.LifecycleStopActivityName,
+            ActivityKind.Internal);
+
+        try
+        {
+            await runtime.StopAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            activity?.SetStatus(ActivityStatusCode.Error, exception.Message);
+            throw;
+        }
     }
 }

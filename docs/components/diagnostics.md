@@ -23,9 +23,12 @@ Where an OpenTelemetry semantic convention already exists for a concept (HTTP se
 
 ## Maturity and ownership
 
-- maturity today: `M1` — `cephalon-managed`; `Cephalon.Engine` consumes the canonical names from this package: `EngineDiagnostics.ActivitySourceName` is now `CephalonActivitySources.Engine` and `EngineDiagnostics.MeterName` is now `CephalonMeters.Engine`, so every span and metric emitted by the engine runtime (including the `engine.build` span at composition time and the per-module lifecycle spans `module.{phase}`) flows through this package's name set; module-lifecycle spans also emit `cephalon.module.id` via `CephalonDiagnosticsAttributeKeys.ModuleId`
-- promote to `M2` when at least one host adapter (`Cephalon.AspNetCore`, `Cephalon.Worker`) routes its telemetry through this package's name set
-- ownership: `cephalon-managed` (since `Cephalon.Engine` now owns the emission path through this package's constants)
+- maturity today: `M2` — `cephalon-managed`; both host adapters route telemetry through this package's name set:
+    - `Cephalon.Engine` consumes `CephalonActivitySources.Engine` and `CephalonMeters.Engine` so engine-runtime spans (`engine.build`, `module.{phase}`, `runtime.*`) and metrics flow through the canonical name set; module-lifecycle spans emit `cephalon.module.id` via `CephalonDiagnosticsAttributeKeys.ModuleId`
+    - `Cephalon.AspNetCore` declares its diagnostics convention against `CephalonActivitySources.AspNetCore` so structured HTTP request / response / body-capture / trace-correlation diagnostics share the canonical source name with observability companion packs
+    - `Cephalon.Worker` declares an internal `WorkerDiagnostics` activity source against `CephalonActivitySources.Worker` and emits `worker.lifecycle.start` / `worker.lifecycle.stop` spans around the hosted-service lifecycle
+- promote to `M3` when an explicit operator surface (catalog routes, snapshot keys) lands for the diagnostics name set itself, e.g. `/engine/diagnostics-conventions` projecting the active source / meter / attribute-key set so operators and AI tooling can introspect what the engine actually emits
+- ownership: `cephalon-managed` (engine + both host adapters consume this package's constants)
 
 ## Cross-references
 

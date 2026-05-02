@@ -1,3 +1,4 @@
+using Cephalon.Diagnostics;
 using Cephalon.Engine.Diagnostics;
 
 namespace Cephalon.AspNetCore.Hosting;
@@ -63,8 +64,8 @@ internal static class AspNetCoreDiagnosticsConventions
         Description: "Emitted when the ASP.NET Core pipeline throws before the request completes successfully.");
 
     public static readonly DiagnosticsConvention Convention = new(
-        Source: "Cephalon.AspNetCore",
-        LoggerCategoryPrefix: "Cephalon.AspNetCore",
+        Source: CephalonActivitySources.AspNetCore,
+        LoggerCategoryPrefix: CephalonActivitySources.AspNetCore,
         Description: "Structured HTTP request, response, body-capture, and trace-correlation diagnostics for ASP.NET Core hosts.",
         Events:
         [
