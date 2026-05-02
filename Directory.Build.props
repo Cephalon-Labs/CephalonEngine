@@ -5,6 +5,7 @@
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <!-- CS1591: Missing XML comment for publicly visible type or member. GenerateDocumentationFile=true emits CS1591 by default; suppress so internal package members (records, factories) don't require XML docs on every public surface. PublicApiAnalyzers (RS0016/RS0017) still tracks the public-API contract surface, which is the rule that actually matters. -->
     <NoWarn>$(NoWarn);CS1591</NoWarn>
   </PropertyGroup>
 

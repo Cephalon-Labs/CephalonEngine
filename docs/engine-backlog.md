@@ -3719,6 +3719,30 @@ Follow-up later:
 - wire a smoke test that boots the sample, fires an HTTP request with an `Authorization: Bearer abc123` header, asserts the captured activity does not contain the raw token; today the unit-level integration tests for both M1 emission sites cover the wiring, so a sample-level smoke test is duplicate coverage with marginal value
 - adopt the same recipe in the other samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) as a separate slice when the redaction surface needs broader sample reach — **delivered in `ENG-369`**
 
+### ENG-373 Document genuine NoWarn suppressions with inline rationale
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `ENG-372`'s discipline declared that any surviving suppression should land with an inline comment naming the specific call site or upstream code that triggered it; auditing the engine after `ENG-371`/`ENG-372` surfaces five surviving suppressions without inline rationale (one in `Directory.Build.props`, four in test-project csprojs)
+- the surviving suppressions are all genuine and load-bearing (`CS1591` everywhere is intentional because `GenerateDocumentationFile=true` shouldn't force XML docs on every public symbol when `PublicApiAnalyzers` already gates the contract surface; `CA1707` in test projects is intentional because xUnit test method names use underscores by convention)
+- but a future maintainer reading the bare `<NoWarn>` line has no way to tell intentional from stale; this slice closes that gap without changing any rule severity, just by adding the *why* inline
+
+Delivered:
+
+- `Directory.Build.props`: inline comment on the `CS1591` suppression naming `GenerateDocumentationFile=true` as the trigger and `PublicApiAnalyzers (RS0016/RS0017)` as the rule that actually gates the contract surface
+- `tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj`: inline comment on the `CA1707` suppression naming xUnit test naming conventions (`MethodName_WhenCondition_ShouldResult`) as the trigger
+- `tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj`: same inline comment
+- `tests/Cephalon.Tests.Support/Cephalon.Tests.Support.csproj`: same inline comment
+- `tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj`: same inline comment
+- verified with `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors)
+
+Follow-up later:
+
+- if a future package adds a new project-level suppression, the `ENG-372` discipline applies: inline comment naming the trigger lands in the same slice; the registry of *why each surviving suppression exists* is maintained by reading those inline comments rather than a separate doc
+
 ### ENG-372 Audit and cleanup remaining package-level NoWarn suppressions
 
 Status: done
@@ -11962,6 +11986,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-370 Author centralized EventId range registry (shipped)
 - ENG-371 Remove stale RS0026/RS0027 NoWarn suppressions across all packages (shipped)
 - ENG-372 Audit and cleanup remaining package-level NoWarn suppressions (shipped)
+- ENG-373 Document genuine NoWarn suppressions with inline rationale (shipped)
 
 ### Later / not scheduled yet
 
