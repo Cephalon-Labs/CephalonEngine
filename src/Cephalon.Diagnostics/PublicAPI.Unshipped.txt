@@ -37,3 +37,11 @@ static Cephalon.Diagnostics.Redaction.RedactionContext.operator !=(Cephalon.Diag
 static Cephalon.Diagnostics.Redaction.RedactionContext.operator ==(Cephalon.Diagnostics.Redaction.RedactionContext left, Cephalon.Diagnostics.Redaction.RedactionContext right) -> bool
 ~override Cephalon.Diagnostics.Redaction.RedactionContext.Equals(object obj) -> bool
 ~override Cephalon.Diagnostics.Redaction.RedactionContext.ToString() -> string
+Cephalon.Diagnostics.Redaction.Defaults.KeyMatchRedactionFilter
+Cephalon.Diagnostics.Redaction.Defaults.KeyMatchRedactionFilter.Filter(Cephalon.Diagnostics.Redaction.RedactionContext context, object? value) -> object?
+Cephalon.Diagnostics.Redaction.Defaults.KeyMatchRedactionFilter.KeyMatchRedactionFilter(System.Collections.Generic.IEnumerable<string!>! bannedAttributeKeys, object? replacement = null) -> void
+Cephalon.Diagnostics.Redaction.Defaults.RegexRedactionFilter
+Cephalon.Diagnostics.Redaction.Defaults.RegexRedactionFilter.Filter(Cephalon.Diagnostics.Redaction.RedactionContext context, object? value) -> object?
+Cephalon.Diagnostics.Redaction.Defaults.RegexRedactionFilter.RegexRedactionFilter(System.Text.RegularExpressions.Regex! pattern, string? replacement = null) -> void
+const Cephalon.Diagnostics.Redaction.Defaults.KeyMatchRedactionFilter.DefaultReplacement = "[REDACTED]" -> string!
+const Cephalon.Diagnostics.Redaction.Defaults.RegexRedactionFilter.DefaultReplacement = "[REDACTED]" -> string!

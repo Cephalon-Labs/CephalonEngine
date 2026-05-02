@@ -8,6 +8,7 @@
 - the stable engine-level `Meter` name set published through `CephalonMeters` with the same five names
 - a small set of stable Cephalon-prefix attribute keys (`cephalon.module.id`, `cephalon.behavior.id`, `cephalon.cell.id`, `cephalon.app.blueprint`, `cephalon.tenant.id`) for engine concepts that have no OpenTelemetry semantic-convention name
 - the redaction filter contract through `IRedactionFilter` and `RedactionContext` so consumer apps and observability companion packs can register synchronous filters that redact secrets, PII, authentication tokens, and other sensitive values before they leave the engine boundary; the contract is taxonomy-only at this maturity (engine emission does not yet route through registered filters)
+- starter redaction filter implementations under `Cephalon.Diagnostics.Redaction.Defaults` — `KeyMatchRedactionFilter` (redacts values whose `RedactionContext.AttributeKey` matches a banned set, ordinal-case-insensitive) and `RegexRedactionFilter` (replaces regex-matched substrings inside string values) — so consumer apps don't have to author their own for the obvious cases (authorization headers, cookies, credit-card-number-shaped substrings); both default the replacement to the literal `"[REDACTED]"` and publish it through a `DefaultReplacement` const
 - public API contract lock-in from day one through `Microsoft.CodeAnalysis.PublicApiAnalyzers`, `PublicAPI.Shipped.txt`, and `PublicAPI.Unshipped.txt`
 
 ## Main surfaces
@@ -17,6 +18,8 @@
 - `CephalonDiagnosticsAttributeKeys.cs`
 - `Redaction/IRedactionFilter.cs`
 - `Redaction/RedactionContext.cs`
+- `Redaction/Defaults/KeyMatchRedactionFilter.cs`
+- `Redaction/Defaults/RegexRedactionFilter.cs`
 
 ## How it fits
 
