@@ -1,0 +1,269 @@
+#nullable enable
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.<Clone>$() -> Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface!
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.ActivitySourceName.get -> string!
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.ActivitySourceName.init -> void
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.Conventions.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Diagnostics.DiagnosticsConvention!>!
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.Conventions.init -> void
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.Counters.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.Counters.init -> void
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.Deconstruct(out string! MeterName, out string! ActivitySourceName, out System.Collections.Generic.IReadOnlyList<string!>! Counters, out System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Diagnostics.DiagnosticsConvention!>! Conventions, out Cephalon.Engine.Runtime.RuntimeHealthReport! Liveness, out Cephalon.Engine.Runtime.RuntimeHealthReport! Readiness, out string! SummaryPath, out string! LivenessPath, out string! ReadinessPath) -> void
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.DiagnosticsSurface(string! MeterName, string! ActivitySourceName, System.Collections.Generic.IReadOnlyList<string!>! Counters, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Diagnostics.DiagnosticsConvention!>! Conventions, Cephalon.Engine.Runtime.RuntimeHealthReport! Liveness, Cephalon.Engine.Runtime.RuntimeHealthReport! Readiness, string! SummaryPath, string! LivenessPath, string! ReadinessPath) -> void
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.Equals(Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface? other) -> bool
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.Liveness.get -> Cephalon.Engine.Runtime.RuntimeHealthReport!
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.Liveness.init -> void
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.LivenessPath.get -> string!
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.LivenessPath.init -> void
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.MeterName.get -> string!
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.MeterName.init -> void
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.Readiness.get -> Cephalon.Engine.Runtime.RuntimeHealthReport!
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.Readiness.init -> void
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.ReadinessPath.get -> string!
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.ReadinessPath.init -> void
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.SummaryPath.get -> string!
+Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.SummaryPath.init -> void
+Cephalon.AspNetCore.Documentation.OpenApiEndpointOptions
+Cephalon.AspNetCore.Documentation.OpenApiEndpointOptions.BehaviorRestDocumentedStatusCodes.get -> System.Collections.Generic.IReadOnlyList<int>!
+Cephalon.AspNetCore.Documentation.OpenApiEndpointOptions.BehaviorRestDocumentedStatusCodes.set -> void
+Cephalon.AspNetCore.Documentation.OpenApiEndpointOptions.OpenApiEndpointOptions() -> void
+Cephalon.AspNetCore.Documentation.OpenApiEndpointOptions.RoutePattern.get -> string!
+Cephalon.AspNetCore.Documentation.OpenApiEndpointOptions.RoutePattern.set -> void
+Cephalon.AspNetCore.Documentation.OpenApiEndpointOptions.ScalarRoutePrefix.get -> string!
+Cephalon.AspNetCore.Documentation.OpenApiEndpointOptions.ScalarRoutePrefix.set -> void
+Cephalon.AspNetCore.Documentation.OpenApiTagMetadata
+Cephalon.AspNetCore.Documentation.OpenApiTagMetadata.<Clone>$() -> Cephalon.AspNetCore.Documentation.OpenApiTagMetadata!
+Cephalon.AspNetCore.Documentation.OpenApiTagMetadata.Deconstruct(out string! Name, out string? Description) -> void
+Cephalon.AspNetCore.Documentation.OpenApiTagMetadata.Description.get -> string?
+Cephalon.AspNetCore.Documentation.OpenApiTagMetadata.Description.init -> void
+Cephalon.AspNetCore.Documentation.OpenApiTagMetadata.Equals(Cephalon.AspNetCore.Documentation.OpenApiTagMetadata? other) -> bool
+Cephalon.AspNetCore.Documentation.OpenApiTagMetadata.Name.get -> string!
+Cephalon.AspNetCore.Documentation.OpenApiTagMetadata.Name.init -> void
+Cephalon.AspNetCore.Documentation.OpenApiTagMetadata.OpenApiTagMetadata(string! Name, string? Description) -> void
+Cephalon.AspNetCore.Documentation.ReferenceDocsHostingOptions
+Cephalon.AspNetCore.Documentation.ReferenceDocsHostingOptions.DefaultDocument.get -> string!
+Cephalon.AspNetCore.Documentation.ReferenceDocsHostingOptions.DefaultDocument.set -> void
+Cephalon.AspNetCore.Documentation.ReferenceDocsHostingOptions.DirectoryPath.get -> string?
+Cephalon.AspNetCore.Documentation.ReferenceDocsHostingOptions.DirectoryPath.set -> void
+Cephalon.AspNetCore.Documentation.ReferenceDocsHostingOptions.Enabled.get -> bool
+Cephalon.AspNetCore.Documentation.ReferenceDocsHostingOptions.Enabled.set -> void
+Cephalon.AspNetCore.Documentation.ReferenceDocsHostingOptions.ReferenceDocsHostingOptions() -> void
+Cephalon.AspNetCore.Documentation.ReferenceDocsHostingOptions.RoutePrefix.get -> string!
+Cephalon.AspNetCore.Documentation.ReferenceDocsHostingOptions.RoutePrefix.set -> void
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.<Clone>$() -> Cephalon.AspNetCore.Documentation.ReferenceDocsSurface!
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.Available.get -> bool
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.Available.init -> void
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.BrowserPath.get -> string!
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.BrowserPath.init -> void
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.Deconstruct(out bool Enabled, out bool Available, out string! RoutePrefix, out string! DefaultDocument, out string! DefaultDocumentPath, out string! ReadmePath, out string! BrowserPath, out string! NamespaceIndexPath, out string! TypeIndexPath, out string! MemberIndexPath, out string! ManifestPath) -> void
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.DefaultDocument.get -> string!
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.DefaultDocument.init -> void
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.DefaultDocumentPath.get -> string!
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.DefaultDocumentPath.init -> void
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.Enabled.get -> bool
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.Enabled.init -> void
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.Equals(Cephalon.AspNetCore.Documentation.ReferenceDocsSurface? other) -> bool
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.ManifestPath.get -> string!
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.ManifestPath.init -> void
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.MemberIndexPath.get -> string!
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.MemberIndexPath.init -> void
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.NamespaceIndexPath.get -> string!
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.NamespaceIndexPath.init -> void
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.ReadmePath.get -> string!
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.ReadmePath.init -> void
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.ReferenceDocsSurface(bool Enabled, bool Available, string! RoutePrefix, string! DefaultDocument, string! DefaultDocumentPath, string! ReadmePath, string! BrowserPath, string! NamespaceIndexPath, string! TypeIndexPath, string! MemberIndexPath, string! ManifestPath) -> void
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.RoutePrefix.get -> string!
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.RoutePrefix.init -> void
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.TypeIndexPath.get -> string!
+Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.TypeIndexPath.init -> void
+Cephalon.AspNetCore.Hosting.ApiRoutesOptions
+Cephalon.AspNetCore.Hosting.ApiRoutesOptions.ApiRoutesOptions() -> void
+Cephalon.AspNetCore.Hosting.ApiRoutesOptions.DefaultBehaviorDocumentName.get -> string!
+Cephalon.AspNetCore.Hosting.ApiRoutesOptions.DefaultBehaviorDocumentName.set -> void
+Cephalon.AspNetCore.Hosting.ApiRoutesOptions.GraphQLPrefix.get -> string!
+Cephalon.AspNetCore.Hosting.ApiRoutesOptions.GraphQLPrefix.set -> void
+Cephalon.AspNetCore.Hosting.ApiRoutesOptions.GraphQLSsePrefix.get -> string!
+Cephalon.AspNetCore.Hosting.ApiRoutesOptions.GraphQLSsePrefix.set -> void
+Cephalon.AspNetCore.Hosting.ApiRoutesOptions.GraphQLWsPrefix.get -> string!
+Cephalon.AspNetCore.Hosting.ApiRoutesOptions.GraphQLWsPrefix.set -> void
+Cephalon.AspNetCore.Hosting.ApiRoutesOptions.GrpcPrefix.get -> string!
+Cephalon.AspNetCore.Hosting.ApiRoutesOptions.GrpcPrefix.set -> void
+Cephalon.AspNetCore.Hosting.ApiRoutesOptions.JsonRpcPrefix.get -> string!
+Cephalon.AspNetCore.Hosting.ApiRoutesOptions.JsonRpcPrefix.set -> void
+Cephalon.AspNetCore.Hosting.ApiRoutesOptions.RestPrefix.get -> string!
+Cephalon.AspNetCore.Hosting.ApiRoutesOptions.RestPrefix.set -> void
+Cephalon.AspNetCore.Hosting.ApiRoutesOptions.SsePrefix.get -> string!
+Cephalon.AspNetCore.Hosting.ApiRoutesOptions.SsePrefix.set -> void
+Cephalon.AspNetCore.Hosting.ApiRoutesOptions.UseResultModelEnvelope.get -> bool
+Cephalon.AspNetCore.Hosting.ApiRoutesOptions.UseResultModelEnvelope.set -> void
+Cephalon.AspNetCore.Hosting.ApiRoutesOptions.WsPrefix.get -> string!
+Cephalon.AspNetCore.Hosting.ApiRoutesOptions.WsPrefix.set -> void
+Cephalon.AspNetCore.Hosting.AuditHistoryExportHttpResponseExtensions
+Cephalon.AspNetCore.Hosting.CephalonRateLimitingEndpointConventionBuilderExtensions
+Cephalon.AspNetCore.Hosting.EngineWebApplicationBuilderExtensions
+Cephalon.AspNetCore.Hosting.EngineWebApplicationExtensions
+Cephalon.AspNetCore.Hosting.HttpRequestResponseLoggingOptions
+Cephalon.AspNetCore.Hosting.HttpRequestResponseLoggingOptions.Enabled.get -> bool
+Cephalon.AspNetCore.Hosting.HttpRequestResponseLoggingOptions.Enabled.set -> void
+Cephalon.AspNetCore.Hosting.HttpRequestResponseLoggingOptions.HttpRequestResponseLoggingOptions() -> void
+Cephalon.AspNetCore.Hosting.HttpRequestResponseLoggingOptions.LogRequestBody.get -> bool
+Cephalon.AspNetCore.Hosting.HttpRequestResponseLoggingOptions.LogRequestBody.set -> void
+Cephalon.AspNetCore.Hosting.HttpRequestResponseLoggingOptions.LogResponseBody.get -> bool
+Cephalon.AspNetCore.Hosting.HttpRequestResponseLoggingOptions.LogResponseBody.set -> void
+Cephalon.AspNetCore.Hosting.HttpRequestResponseLoggingOptions.RedactSensitiveValues.get -> bool
+Cephalon.AspNetCore.Hosting.HttpRequestResponseLoggingOptions.RedactSensitiveValues.set -> void
+Cephalon.AspNetCore.Hosting.HttpRequestResponseLoggingOptions.RedactedFieldNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.HttpRequestResponseLoggingOptions.RedactedFieldNames.set -> void
+Cephalon.AspNetCore.Hosting.HttpRequestResponseLoggingOptions.RedactionValue.get -> string!
+Cephalon.AspNetCore.Hosting.HttpRequestResponseLoggingOptions.RedactionValue.set -> void
+Cephalon.AspNetCore.Hosting.HttpRequestResponseLoggingOptions.RequestBodyLimit.get -> int
+Cephalon.AspNetCore.Hosting.HttpRequestResponseLoggingOptions.RequestBodyLimit.set -> void
+Cephalon.AspNetCore.Hosting.HttpRequestResponseLoggingOptions.ResponseBodyLimit.get -> int
+Cephalon.AspNetCore.Hosting.HttpRequestResponseLoggingOptions.ResponseBodyLimit.set -> void
+Cephalon.AspNetCore.Hosting.ITransportRouteMapper
+Cephalon.AspNetCore.Hosting.ITransportRouteMapper.MapRoutes(Microsoft.AspNetCore.Builder.WebApplication! app, Cephalon.Engine.Runtime.IRuntime! runtime) -> void
+Cephalon.AspNetCore.Hosting.ITransportRouteMapper.TransportId.get -> string!
+Cephalon.AspNetCore.Hosting.RestApiGovernanceOptions
+Cephalon.AspNetCore.Hosting.RestApiGovernanceOptions.AuthoringPolicies.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringPolicyDescriptor!>!
+Cephalon.AspNetCore.Hosting.RestApiGovernanceOptions.HasValues.get -> bool
+Cephalon.AspNetCore.Hosting.RestApiGovernanceOptions.Overrides.get -> System.Collections.Generic.IReadOnlyList<Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions!>!
+Cephalon.AspNetCore.Hosting.RestApiGovernanceOptions.RestApiGovernanceOptions(System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.RestEndpointPublicationGroupAuthoringPolicyDescriptor!>? authoringPolicies = null, System.Collections.Generic.IReadOnlyList<Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions!>? suppressions = null, System.Collections.Generic.IReadOnlyList<Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions!>? overrides = null) -> void
+Cephalon.AspNetCore.Hosting.RestApiGovernanceOptions.Suppressions.get -> System.Collections.Generic.IReadOnlyList<Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions!>!
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.ActionKinds.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.RestEndpointOverrideActionKind>!
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.ApiVersionMajor.get -> int?
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.ApiVersionMajors.get -> System.Collections.Generic.IReadOnlyList<int>!
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.AuthoringStyles.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.BehaviorIdPrefixes.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.BehaviorIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.BindingFallbackModes.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.RestEndpointBindingFallbackMode>!
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.BindingMode.get -> Cephalon.Abstractions.Transports.RestEndpointOverrideBindingMode
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.Bindings.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.RestEndpointBindingDescriptor!>!
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.CandidateIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.ClearBindings.get -> bool
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.ClearDescription.get -> bool
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.ClearEndpointName.get -> bool
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.ClearRequiredCapability.get -> bool
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.ClearRequiredFeatureFlags.get -> bool
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.ClearSummary.get -> bool
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.Description.get -> string?
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.EndpointName.get -> string?
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.EndpointNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.HasValues.get -> bool
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.HostGovernanceScopes.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.Id.get -> string!
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.Method.get -> string?
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.Methods.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.OpenApiDocumentName.get -> string?
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.OpenApiDocumentNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.Pattern.get -> string?
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.PreserveImplicitQueryFallback.get -> bool
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.RelativePatterns.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.RemovedBindingProperties.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.RequiredCapabilityKey.get -> string?
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.RequiredFeatureFlagIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.RestEndpointOverrideOptions(string! id, System.Collections.Generic.IReadOnlyList<string!>? candidateIds = null, System.Collections.Generic.IReadOnlyList<string!>? behaviorIds = null, System.Collections.Generic.IReadOnlyList<string!>? sourceModuleIds = null, System.Collections.Generic.IReadOnlyList<string!>? authoringStyles = null, System.Collections.Generic.IReadOnlyList<int>? apiVersionMajors = null, System.Collections.Generic.IReadOnlyList<string!>? methods = null, System.Collections.Generic.IReadOnlyList<string!>? relativePatterns = null, System.Collections.Generic.IReadOnlyList<string!>? routeGroupPrefixes = null, int? apiVersionMajor = null, string? method = null, string? pattern = null, string? routeGroupPrefix = null, string? openApiDocumentName = null, string? tagName = null, string? endpointName = null, string? summary = null, string? description = null, string? requiredCapabilityKey = null, bool clearRequiredCapability = false, System.Collections.Generic.IReadOnlyList<string!>? requiredFeatureFlagIds = null, bool clearRequiredFeatureFlags = false, System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.RestEndpointBindingDescriptor!>? bindings = null, System.Collections.Generic.IReadOnlyList<string!>? removedBindingProperties = null, bool clearBindings = false, Cephalon.Abstractions.Transports.RestEndpointOverrideBindingMode bindingMode = Cephalon.Abstractions.Transports.RestEndpointOverrideBindingMode.Unspecified, bool clearEndpointName = false, bool clearSummary = false, bool clearDescription = false, System.Collections.Generic.IReadOnlyList<string!>? openApiDocumentNames = null, System.Collections.Generic.IReadOnlyList<string!>? tagNames = null, System.Collections.Generic.IReadOnlyList<string!>? endpointNames = null, System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.RestEndpointBindingFallbackMode>? bindingFallbackModes = null, System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.RestEndpointBindingDescriptor!>? targetBindings = null, System.Collections.Generic.IReadOnlyList<string!>? hostGovernanceScopes = null, System.Collections.Generic.IReadOnlyList<string!>? behaviorIdPrefixes = null, bool preserveImplicitQueryFallback = false) -> void
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.RouteGroupPrefix.get -> string?
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.RouteGroupPrefixes.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.SourceModuleIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.Summary.get -> string?
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.TagName.get -> string?
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.TagNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointOverrideOptions.TargetBindings.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.RestEndpointBindingDescriptor!>!
+Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions
+Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions.ApiVersionMajors.get -> System.Collections.Generic.IReadOnlyList<int>!
+Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions.AuthoringStyles.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions.BehaviorIdPrefixes.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions.BehaviorIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions.BindingFallbackModes.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.RestEndpointBindingFallbackMode>!
+Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions.CandidateIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions.EndpointNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions.HasValues.get -> bool
+Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions.HostGovernanceScopes.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions.Id.get -> string!
+Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions.Methods.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions.OpenApiDocumentNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions.RelativePatterns.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions.RestEndpointSuppressionOptions(string! id, System.Collections.Generic.IReadOnlyList<string!>? candidateIds = null, System.Collections.Generic.IReadOnlyList<string!>? behaviorIds = null, System.Collections.Generic.IReadOnlyList<string!>? sourceModuleIds = null, System.Collections.Generic.IReadOnlyList<string!>? authoringStyles = null, System.Collections.Generic.IReadOnlyList<int>? apiVersionMajors = null, System.Collections.Generic.IReadOnlyList<string!>? methods = null, System.Collections.Generic.IReadOnlyList<string!>? relativePatterns = null, System.Collections.Generic.IReadOnlyList<string!>? routeGroupPrefixes = null, System.Collections.Generic.IReadOnlyList<string!>? openApiDocumentNames = null, System.Collections.Generic.IReadOnlyList<string!>? tagNames = null, System.Collections.Generic.IReadOnlyList<string!>? endpointNames = null, System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.RestEndpointBindingFallbackMode>? bindingFallbackModes = null, System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.RestEndpointBindingDescriptor!>? targetBindings = null, System.Collections.Generic.IReadOnlyList<string!>? hostGovernanceScopes = null, System.Collections.Generic.IReadOnlyList<string!>? behaviorIdPrefixes = null) -> void
+Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions.RouteGroupPrefixes.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions.SourceModuleIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions.TagNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Hosting.RestEndpointSuppressionOptions.TargetBindings.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.RestEndpointBindingDescriptor!>!
+Cephalon.AspNetCore.Modules.IEndpointModule
+Cephalon.AspNetCore.Modules.IEndpointModule.MapEndpoints(Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints) -> void
+Cephalon.AspNetCore.Transformers.XmlCommentsDocumentTransformer
+Cephalon.AspNetCore.Transformers.XmlCommentsDocumentTransformer.TransformAsync(Microsoft.OpenApi.OpenApiDocument! document, Microsoft.AspNetCore.OpenApi.OpenApiDocumentTransformerContext! context, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+Cephalon.AspNetCore.Transformers.XmlCommentsDocumentTransformer.XmlCommentsDocumentTransformer(string![]? xmlFiles = null) -> void
+Cephalon.AspNetCore.Transports.Rest.IRestModule
+Cephalon.AspNetCore.Transports.Rest.IRestModule.MapRestEndpoints(Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints) -> void
+Cephalon.AspNetCore.Transports.Rest.RestEndpointConventionBuilderExtensions
+Cephalon.AspNetCore.Transports.Rest.ResultModel<TModel>
+Cephalon.AspNetCore.Transports.Rest.ResultModel<TModel>.Data.get -> TModel?
+Cephalon.AspNetCore.Transports.Rest.ResultModel<TModel>.Data.set -> void
+Cephalon.AspNetCore.Transports.Rest.ResultModel<TModel>.Errors.get -> System.Collections.Generic.List<Cephalon.AspNetCore.Transports.Rest.ResultModelErrorDetail!>?
+Cephalon.AspNetCore.Transports.Rest.ResultModel<TModel>.Errors.set -> void
+Cephalon.AspNetCore.Transports.Rest.ResultModel<TModel>.Message.get -> string!
+Cephalon.AspNetCore.Transports.Rest.ResultModel<TModel>.Message.set -> void
+Cephalon.AspNetCore.Transports.Rest.ResultModel<TModel>.ResultModel() -> void
+Cephalon.AspNetCore.Transports.Rest.ResultModel<TModel>.StatusCode.get -> int
+Cephalon.AspNetCore.Transports.Rest.ResultModel<TModel>.StatusCode.set -> void
+Cephalon.AspNetCore.Transports.Rest.ResultModel<TModel>.Success.get -> bool
+Cephalon.AspNetCore.Transports.Rest.ResultModel<TModel>.Success.set -> void
+Cephalon.AspNetCore.Transports.Rest.ResultModel<TModel>.Title.get -> string!
+Cephalon.AspNetCore.Transports.Rest.ResultModel<TModel>.Title.set -> void
+Cephalon.AspNetCore.Transports.Rest.ResultModel<TModel>.Type.get -> string?
+Cephalon.AspNetCore.Transports.Rest.ResultModel<TModel>.Type.set -> void
+Cephalon.AspNetCore.Transports.Rest.ResultModelError
+Cephalon.AspNetCore.Transports.Rest.ResultModelError.ResultModelError() -> void
+Cephalon.AspNetCore.Transports.Rest.ResultModelErrorDetail
+Cephalon.AspNetCore.Transports.Rest.ResultModelErrorDetail.Details.get -> string?
+Cephalon.AspNetCore.Transports.Rest.ResultModelErrorDetail.Details.set -> void
+Cephalon.AspNetCore.Transports.Rest.ResultModelErrorDetail.Key.get -> string!
+Cephalon.AspNetCore.Transports.Rest.ResultModelErrorDetail.Key.set -> void
+Cephalon.AspNetCore.Transports.Rest.ResultModelErrorDetail.Message.get -> string!
+Cephalon.AspNetCore.Transports.Rest.ResultModelErrorDetail.Message.set -> void
+Cephalon.AspNetCore.Transports.Rest.ResultModelErrorDetail.ResultModelErrorDetail() -> void
+Cephalon.AspNetCore.Transports.Rest.ResultModelErrorDetail.Severity.get -> Cephalon.Abstractions.Behaviors.BehaviorFaultSeverity
+Cephalon.AspNetCore.Transports.Rest.ResultModelErrorDetail.Severity.set -> void
+Cephalon.AspNetCore.Transports.ServerSentEvents.IServerSentEventsModule
+Cephalon.AspNetCore.Transports.ServerSentEvents.IServerSentEventsModule.MapServerSentEvents(Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints) -> void
+Cephalon.AspNetCore.Transports.WebSockets.IWebSocketModule
+Cephalon.AspNetCore.Transports.WebSockets.IWebSocketModule.MapWebSocketEndpoints(Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints) -> void
+const Cephalon.AspNetCore.Documentation.OpenApiEndpointOptions.SectionName = "OpenApi" -> string!
+const Cephalon.AspNetCore.Documentation.ReferenceDocsHostingOptions.SectionName = "ReferenceDocs" -> string!
+const Cephalon.AspNetCore.Hosting.ApiRoutesOptions.SectionName = "ApiRoutes" -> string!
+const Cephalon.AspNetCore.Hosting.RestApiGovernanceOptions.SectionName = "RestApi" -> string!
+override Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.Equals(object? obj) -> bool
+override Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.GetHashCode() -> int
+override Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.ToString() -> string!
+override Cephalon.AspNetCore.Documentation.OpenApiTagMetadata.Equals(object? obj) -> bool
+override Cephalon.AspNetCore.Documentation.OpenApiTagMetadata.GetHashCode() -> int
+override Cephalon.AspNetCore.Documentation.OpenApiTagMetadata.ToString() -> string!
+override Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.Equals(object? obj) -> bool
+override Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.GetHashCode() -> int
+override Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.ToString() -> string!
+static Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.operator !=(Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface? left, Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface? right) -> bool
+static Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface.operator ==(Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface? left, Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface? right) -> bool
+static Cephalon.AspNetCore.Documentation.OpenApiEndpointOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "OpenApi") -> Cephalon.AspNetCore.Documentation.OpenApiEndpointOptions!
+static Cephalon.AspNetCore.Documentation.OpenApiTagMetadata.operator !=(Cephalon.AspNetCore.Documentation.OpenApiTagMetadata? left, Cephalon.AspNetCore.Documentation.OpenApiTagMetadata? right) -> bool
+static Cephalon.AspNetCore.Documentation.OpenApiTagMetadata.operator ==(Cephalon.AspNetCore.Documentation.OpenApiTagMetadata? left, Cephalon.AspNetCore.Documentation.OpenApiTagMetadata? right) -> bool
+static Cephalon.AspNetCore.Documentation.ReferenceDocsHostingOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "ReferenceDocs", string? contentRootPath = null) -> Cephalon.AspNetCore.Documentation.ReferenceDocsHostingOptions!
+static Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.operator !=(Cephalon.AspNetCore.Documentation.ReferenceDocsSurface? left, Cephalon.AspNetCore.Documentation.ReferenceDocsSurface? right) -> bool
+static Cephalon.AspNetCore.Documentation.ReferenceDocsSurface.operator ==(Cephalon.AspNetCore.Documentation.ReferenceDocsSurface? left, Cephalon.AspNetCore.Documentation.ReferenceDocsSurface? right) -> bool
+static Cephalon.AspNetCore.Hosting.ApiRoutesOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "ApiRoutes") -> Cephalon.AspNetCore.Hosting.ApiRoutesOptions!
+static Cephalon.AspNetCore.Hosting.AuditHistoryExportHttpResponseExtensions.WriteAuditHistoryNdjsonAsync(this Microsoft.AspNetCore.Http.HttpResponse! response, Cephalon.Abstractions.Audit.IAuditHistoryExporter! exporter, Cephalon.Abstractions.Audit.AuditHistoryExportRequest! request, string? fileName = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+static Cephalon.AspNetCore.Hosting.CephalonRateLimitingEndpointConventionBuilderExtensions.ApplyCephalonRateLimiting<TBuilder>(this TBuilder builder, System.IServiceProvider! services, string! transportId, string? behaviorId = null) -> TBuilder
+static Cephalon.AspNetCore.Hosting.CephalonRateLimitingEndpointConventionBuilderExtensions.HasCephalonRateLimiting(this System.IServiceProvider! services, string! transportId, string? behaviorId = null) -> bool
+static Cephalon.AspNetCore.Hosting.EngineWebApplicationBuilderExtensions.AddCephalon(this Microsoft.AspNetCore.Builder.WebApplicationBuilder! builder) -> Microsoft.AspNetCore.Builder.WebApplicationBuilder!
+static Cephalon.AspNetCore.Hosting.EngineWebApplicationBuilderExtensions.AddCephalon(this Microsoft.AspNetCore.Builder.WebApplicationBuilder! builder, System.Action<Cephalon.Engine.Composition.EngineBuilder!>! configure) -> Microsoft.AspNetCore.Builder.WebApplicationBuilder!
+static Cephalon.AspNetCore.Hosting.EngineWebApplicationBuilderExtensions.AddCephalonHttpLogging(this Microsoft.AspNetCore.Builder.WebApplicationBuilder! builder, System.Action<Cephalon.AspNetCore.Hosting.HttpRequestResponseLoggingOptions!>? configure = null) -> Microsoft.AspNetCore.Builder.WebApplicationBuilder!
+static Cephalon.AspNetCore.Hosting.EngineWebApplicationBuilderExtensions.AddCephalonProjectConfigurations(this Microsoft.AspNetCore.Builder.WebApplicationBuilder! builder) -> Microsoft.AspNetCore.Builder.WebApplicationBuilder!
+static Cephalon.AspNetCore.Hosting.EngineWebApplicationBuilderExtensions.AddReferenceDocsHosting(this Microsoft.AspNetCore.Builder.WebApplicationBuilder! builder, System.Action<Cephalon.AspNetCore.Documentation.ReferenceDocsHostingOptions!>? configure = null) -> Microsoft.AspNetCore.Builder.WebApplicationBuilder!
+static Cephalon.AspNetCore.Hosting.EngineWebApplicationExtensions.MapCephalon(this Microsoft.AspNetCore.Builder.WebApplication! app) -> Microsoft.AspNetCore.Builder.WebApplication!
+static Cephalon.AspNetCore.Hosting.HttpRequestResponseLoggingOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.AspNetCore.Hosting.HttpRequestResponseLoggingOptions!
+static Cephalon.AspNetCore.Hosting.RestApiGovernanceOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "RestApi") -> Cephalon.AspNetCore.Hosting.RestApiGovernanceOptions!
+static Cephalon.AspNetCore.Transports.Rest.RestEndpointConventionBuilderExtensions.ClearRequiredCapability(this Microsoft.AspNetCore.Builder.RouteHandlerBuilder! builder) -> Microsoft.AspNetCore.Builder.RouteHandlerBuilder!
+static Cephalon.AspNetCore.Transports.Rest.RestEndpointConventionBuilderExtensions.ClearRequiredFeatureFlags(this Microsoft.AspNetCore.Builder.RouteHandlerBuilder! builder) -> Microsoft.AspNetCore.Builder.RouteHandlerBuilder!
+static Cephalon.AspNetCore.Transports.Rest.RestEndpointConventionBuilderExtensions.RequireCapability(this Microsoft.AspNetCore.Builder.RouteHandlerBuilder! builder, string! capabilityKey) -> Microsoft.AspNetCore.Builder.RouteHandlerBuilder!
+static Cephalon.AspNetCore.Transports.Rest.RestEndpointConventionBuilderExtensions.RequireFeatureFlag(this Microsoft.AspNetCore.Builder.RouteHandlerBuilder! builder, string! featureFlagId) -> Microsoft.AspNetCore.Builder.RouteHandlerBuilder!
+static Cephalon.AspNetCore.Transports.Rest.RestEndpointConventionBuilderExtensions.RequireFeatureFlags(this Microsoft.AspNetCore.Builder.RouteHandlerBuilder! builder, params string![]! featureFlagIds) -> Microsoft.AspNetCore.Builder.RouteHandlerBuilder!

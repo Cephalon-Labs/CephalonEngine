@@ -1,0 +1,8 @@
+#nullable enable
+Cephalon.Worker.Hosting.WorkerHostApplicationBuilderExtensions
+Cephalon.Worker.Hosting.WorkerServiceCollectionExtensions
+static Cephalon.Worker.Hosting.WorkerHostApplicationBuilderExtensions.AddCephalon(this Microsoft.Extensions.Hosting.HostApplicationBuilder! builder) -> Microsoft.Extensions.Hosting.HostApplicationBuilder!
+static Cephalon.Worker.Hosting.WorkerHostApplicationBuilderExtensions.AddCephalon(this Microsoft.Extensions.Hosting.HostApplicationBuilder! builder, System.Action<Cephalon.Engine.Composition.EngineBuilder!>! configure) -> Microsoft.Extensions.Hosting.HostApplicationBuilder!
+static Cephalon.Worker.Hosting.WorkerHostApplicationBuilderExtensions.AddCephalonProjectConfigurations(this Microsoft.Extensions.Hosting.HostApplicationBuilder! builder) -> Microsoft.Extensions.Hosting.HostApplicationBuilder!
+static Cephalon.Worker.Hosting.WorkerServiceCollectionExtensions.AddCephalonWorker(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.Engine.Composition.EngineBuilder!>? configure = null, string! sectionPath = "Engine") -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Worker.Hosting.WorkerServiceCollectionExtensions.AddCephalonWorker(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.Engine.Composition.EngineBuilder!>! configure) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
