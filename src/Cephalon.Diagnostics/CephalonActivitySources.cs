@@ -35,4 +35,17 @@ public static class CephalonActivitySources
     /// hosted-service and lifecycle spans.
     /// </summary>
     public const string Worker = "Cephalon.Worker";
+
+    /// <summary>
+    /// Stable name of the eventing companion-pack activity source, used by
+    /// <c>Cephalon.Eventing</c> publication, subscription, and dispatch spans.
+    /// </summary>
+    public const string Eventing = "Cephalon.Eventing";
+
+    /// <summary>
+    /// Stable name of the multi-tenancy governance companion-pack activity source, used by
+    /// <c>Cephalon.MultiTenancy.Governance</c> membership, invitation, delivery dispatch,
+    /// delivery-status reconciliation, tenant-administration, and domain-ownership spans.
+    /// </summary>
+    public const string MultiTenancyGovernance = "Cephalon.MultiTenancy.Governance";
 }

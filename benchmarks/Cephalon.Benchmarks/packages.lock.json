@@ -413,6 +413,7 @@
       "cephalon.eventing": {
         "type": "Project",
         "dependencies": {
+          "Cephalon.Diagnostics": "[0.1.0-preview, )",
           "Cephalon.Engine": "[0.1.0-preview, )"
         }
       },

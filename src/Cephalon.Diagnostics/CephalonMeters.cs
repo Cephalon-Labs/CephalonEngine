@@ -33,4 +33,17 @@ public static class CephalonMeters
     /// hosted-service and lifecycle metrics.
     /// </summary>
     public const string Worker = "Cephalon.Worker";
+
+    /// <summary>
+    /// Stable name of the eventing companion-pack meter, used by <c>Cephalon.Eventing</c>
+    /// publication, subscription, and dispatch metrics.
+    /// </summary>
+    public const string Eventing = "Cephalon.Eventing";
+
+    /// <summary>
+    /// Stable name of the multi-tenancy governance companion-pack meter, used by
+    /// <c>Cephalon.MultiTenancy.Governance</c> membership, invitation, delivery dispatch,
+    /// delivery-status, tenant-administration, and domain-ownership metrics.
+    /// </summary>
+    public const string MultiTenancyGovernance = "Cephalon.MultiTenancy.Governance";
 }

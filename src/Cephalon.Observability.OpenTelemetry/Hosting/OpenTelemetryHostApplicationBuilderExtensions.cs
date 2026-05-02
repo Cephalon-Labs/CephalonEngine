@@ -94,6 +94,8 @@ public static class OpenTelemetryHostApplicationBuilderExtensions
                 tracing.AddSource(CephalonActivitySources.Engine);
                 tracing.AddSource(CephalonActivitySources.AspNetCore);
                 tracing.AddSource(CephalonActivitySources.Worker);
+                tracing.AddSource(CephalonActivitySources.Eventing);
+                tracing.AddSource(CephalonActivitySources.MultiTenancyGovernance);
                 tracing.AddOtlpExporter(exporter =>
                     ConfigureExporter(exporter, telemetry, exporterProtocol, TelemetrySignal.Traces));
             });
@@ -106,6 +108,8 @@ public static class OpenTelemetryHostApplicationBuilderExtensions
                 metrics.AddMeter(CephalonMeters.Engine);
                 metrics.AddMeter(CephalonMeters.AspNetCore);
                 metrics.AddMeter(CephalonMeters.Worker);
+                metrics.AddMeter(CephalonMeters.Eventing);
+                metrics.AddMeter(CephalonMeters.MultiTenancyGovernance);
                 metrics.AddOtlpExporter(exporter =>
                     ConfigureExporter(exporter, telemetry, exporterProtocol, TelemetrySignal.Metrics));
             });

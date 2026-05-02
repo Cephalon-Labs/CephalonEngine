@@ -3488,6 +3488,33 @@ Follow-up later:
 - consider promoting `docs/releases/` as a permanent archive folder for filled-in per-release checklists once the engine cuts its first stable GA tag; today the convention is informal because no release has been cut yet
 - if the rule book grows new sections (e.g. when EU CRA reporting kicks in or post-quantum signing lands), update both `release-checklist.md` and this template in the same slice so they stay in lockstep
 
+### ENG-355 Per-companion-pack canonical-name extension (Eventing + MultiTenancy.Governance)
+
+Status: done
+Estimate: 3
+
+Why:
+
+- `ENG-354` promoted `Cephalon.Diagnostics` to `M4` once `Cephalon.Observability.OpenTelemetry` consumed all three engine-level canonical names (`Engine` / `AspNetCore` / `Worker`); the natural next step is extending the canonical name set additively across companion-pack families that already emit telemetry, so the OTel pack can subscribe to those too without consumer apps wiring sources by hand
+- a sub-agent survey of the five candidate companion-pack families (Eventing, Agentics, Retrieval, Data + Data.Debezium, MultiTenancy.Governance) found that only two of them have existing `IDiagnosticsConventionContributor` declarations using literal source names: `Cephalon.Eventing` (`"Cephalon.Eventing"` literal) and `Cephalon.MultiTenancy.Governance` (`"Cephalon.MultiTenancy.Governance"` literal); Agentics, Retrieval, Data core, and Data.Debezium have no diagnostics infrastructure and are out of scope until a future slice introduces emission sites in those packs
+- aligning the two existing literal sources with canonical constants prevents future engine-internal renames from accidentally drifting; the OTel pack's subscription set then expands additively instead of accumulating string-literal duplication
+
+Delivered:
+
+- update `src/Cephalon.Diagnostics/CephalonActivitySources.cs` and `CephalonMeters.cs` to add `Eventing = "Cephalon.Eventing"` and `MultiTenancyGovernance = "Cephalon.MultiTenancy.Governance"` const fields with full XML doc comments naming the consuming companion pack family
+- update `src/Cephalon.Diagnostics/PublicAPI.Unshipped.txt` with the four new public const entries (two activity sources, two meters)
+- update `src/Cephalon.Eventing/Cephalon.Eventing.csproj` + `src/Cephalon.MultiTenancy.Governance/Cephalon.MultiTenancy.Governance.csproj` to add a `ProjectReference` to `Cephalon.Diagnostics`
+- update `src/Cephalon.Eventing/Services/EventingDiagnosticsConventionContributor.cs` to import `Cephalon.Diagnostics` and source `DiagnosticsConvention.Source` and `LoggerCategoryPrefix` from `CephalonActivitySources.Eventing` (compiled value unchanged)
+- update `src/Cephalon.MultiTenancy.Governance/Services/MultiTenancyGovernanceDiagnosticsConventionContributor.cs` similarly to source from `CephalonActivitySources.MultiTenancyGovernance`
+- update `src/Cephalon.Observability.OpenTelemetry/Hosting/OpenTelemetryHostApplicationBuilderExtensions.cs` to add `tracing.AddSource(CephalonActivitySources.Eventing)` + `.MultiTenancyGovernance` and `metrics.AddMeter(CephalonMeters.Eventing)` + `.MultiTenancyGovernance` so the OTLP exporter pipes eventing and governance telemetry by default when consumer apps opt into the pack
+- packages.lock.json refresh; locked-mode restore passes against the refreshed graph
+- verified end-to-end with full-solution `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors) and `dotnet restore --locked-mode CephalonEngine.slnx` (passes)
+
+Follow-up later:
+
+- when `Cephalon.Agentics`, `Cephalon.Retrieval`, `Cephalon.Data` (CDC), and `Cephalon.Data.Debezium` introduce their first `ActivitySource` / `Meter` emissions, this slice's pattern repeats: add a canonical const to `Cephalon.Diagnostics`, source the literal from the const, add the OTel pack subscription
+- the per-pack canonical names declared here will graduate from `PublicAPI.Unshipped.txt` to `PublicAPI.Shipped.txt` on the next release per the standard contract-lock-in promotion cycle
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -11584,6 +11611,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-353 Author docs/release-checklist.md consolidating release-manager workflow (shipped)
 - ENG-354 Cephalon.Diagnostics M3 to M4 promotion (Cephalon.Observability.OpenTelemetry consumes all canonical names) (shipped)
 - ENG-356 Author release-checklist template (per-release working copy) (shipped)
+- ENG-355 Per-companion-pack canonical-name extension (Eventing + MultiTenancy.Governance) (shipped)
 
 ### Later / not scheduled yet
 
