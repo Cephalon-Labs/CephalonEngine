@@ -38,24 +38,7 @@ The slices sequence across **Sprint 116 through Sprint 120**, one slice per spri
 
 ### `ENG-325` — `Cephalon.Analyzers` curated meta-package (Sprint 120)
 
-Quality dimensions advanced: *Maintainability*, *Security*, *Compatibility*.
-
-Why:
-
-- the analyzer baseline (`Microsoft.CodeAnalysis.NetAnalyzers`, `Roslynator`, `Meziantou.Analyzer`, `BannedApiAnalyzers`, `PublicApiAnalyzers`) plus the existing `Cephalon.Behaviors.SourceGen` analyzers is currently composed package-by-package; consumers that adopt Cephalon do not inherit the engine's quality posture without hand-tuning every `.editorconfig`
-- a single meta-package gives consumers a `<PackageReference Include="Cephalon.Analyzers" />` that pulls in curated severities and a `BannedSymbols.txt` aligned with the engine's discipline (banning `DateTime.Now`, `Thread.Sleep`, `Task.Wait`, `Task.Run` in module bodies, etc.)
-
-Delivered (target):
-
-- new `src/Cephalon.Analyzers/` meta-package referencing the analyzer baseline as `PrivateAssets=all` so consumers do not re-export the analyzers transitively
-- ship a curated `.editorconfig` snippet that consumers can include via `<EditorConfigFile>` or copy into their own `.editorconfig`
-- ship a `BannedSymbols.txt` that bans the time / threading / synchronisation primitives the engine has already discouraged in module bodies
-- ship `M0` taxonomy-only at first; promote to `M1` when the engine itself routes one project through `Cephalon.Analyzers` instead of duplicate analyzer references
-- update [`engineering-standards.md`](engineering-standards.md) code-quality gates section to declare the meta-package as the canonical consumer adoption path
-
-Follow-up later:
-
-- per-Cephalon-package analyzer-rule severity tuning (e.g. eventing-specific banned symbols) remains future per-package work; this slice ships the curated baseline only
+*Shipped at `M0` taxonomy-only.* New [`src/Cephalon.Analyzers/`](../src/Cephalon.Analyzers/) dependency-only meta-package bundles `Microsoft.CodeAnalysis.BannedApiAnalyzers`, `Microsoft.CodeAnalysis.PublicApiAnalyzers`, `Roslynator.Analyzers`, `Meziantou.Analyzer`, and `Microsoft.VisualStudio.Threading.Analyzers` (the SDK's `Microsoft.CodeAnalysis.NetAnalyzers` are inherited from the .NET 10 SDK and do not need a `PackageReference`). Each bundled analyzer flows transitively to consumers through `IncludeAssets="analyzers; build; buildtransitive"`. The curated [`BannedSymbols.txt`](../src/Cephalon.Analyzers/BannedSymbols.txt) ships under `buildTransitive/` and is wired into the consumer's build automatically through [`Cephalon.Analyzers.props`](../src/Cephalon.Analyzers/buildTransitive/Cephalon.Analyzers.props); consumers opt out via `<CephalonAnalyzersUseBannedSymbols>false</CephalonAnalyzersUseBannedSymbols>`. The curated [`cephalon-analyzers.editorconfig`](../src/Cephalon.Analyzers/cephalon-analyzers.editorconfig) ships under `content/` for consumers to copy or include. See [`docs/components/analyzers.md`](components/analyzers.md) and `ENG-325` in [`engine-backlog.md`](engine-backlog.md). Promote to `M1` when at least one engine project (`Cephalon.Abstractions` is the natural starter) replaces its individual analyzer references with `<PackageReference Include="Cephalon.Analyzers" />`; promote to `M2` when the meta-package is the documented adoption path in `getting-started.md` and the template-pack starter projects reference it by default.
 
 ## Cross-slice dependencies
 

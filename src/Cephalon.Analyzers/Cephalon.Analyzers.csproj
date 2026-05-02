@@ -1,0 +1,51 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Description>Curated meta-package that gives Cephalon-engine consumers a single PackageReference for the engine's analyzer baseline (Microsoft NetAnalyzers + Roslynator + Meziantou + BannedApiAnalyzers + VS Threading + PublicApiAnalyzers) plus a curated BannedSymbols.txt and .editorconfig snippet aligned with Cephalon's quality posture.</Description>
+    <IsPackable>true</IsPackable>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>false</SuppressDependenciesWhenPacking>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- NU5128: dependency-only meta-package without lib assets; expected for an analyzer meta-package. -->
+    <!-- NU5100: not having a lib folder; expected for an analyzer meta-package. -->
+    <!-- NU5017: dependencyless package; not applicable here but kept for safety. -->
+    <NoWarn>$(NoWarn);NU5128;NU5100;NU5017</NoWarn>
+  </PropertyGroup>
+
+  <!--
+    Analyzers flow transitively to consumers. PrivateAssets is intentionally left at the default
+    so a `<PackageReference Include="Cephalon.Analyzers" />` in a consumer project pulls in all
+    of the bundled analyzer packages and runs them at consumer build time.
+  -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.BannedApiAnalyzers">
+      <IncludeAssets>analyzers; build; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers">
+      <IncludeAssets>analyzers; build; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Analyzers">
+      <IncludeAssets>analyzers; build; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Meziantou.Analyzer">
+      <IncludeAssets>analyzers; build; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Threading.Analyzers">
+      <IncludeAssets>analyzers; build; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!--
+    Curated BannedSymbols.txt and .editorconfig snippet ship inside the package so consumers can
+    opt into the engine's quality posture additively without copying these files by hand. The
+    files are included under buildTransitive/ so they flow through ProjectReference / NuGet
+    consumer chains and are loaded as MSBuild items by the consumer's build.
+  -->
+  <ItemGroup>
+    <None Include="buildTransitive/Cephalon.Analyzers.props" Pack="true" PackagePath="buildTransitive/Cephalon.Analyzers.props" />
+    <None Include="BannedSymbols.txt" Pack="true" PackagePath="buildTransitive/BannedSymbols.txt" />
+    <None Include="cephalon-analyzers.editorconfig" Pack="true" PackagePath="content/cephalon-analyzers.editorconfig" />
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+</Project>

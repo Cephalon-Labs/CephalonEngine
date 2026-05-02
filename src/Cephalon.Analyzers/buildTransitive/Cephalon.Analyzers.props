@@ -1,0 +1,22 @@
+<Project>
+  <!--
+    Cephalon.Analyzers buildTransitive props.
+    Loaded automatically into consumer projects when they reference Cephalon.Analyzers.
+
+    Wires up the curated BannedSymbols.txt as an AdditionalFile so the bundled
+    Microsoft.CodeAnalysis.BannedApiAnalyzers picks it up without consumers having to copy
+    the file or update their own MSBuild items.
+
+    Consumers can override the curated baseline by setting
+        <CephalonAnalyzersUseBannedSymbols>false</CephalonAnalyzersUseBannedSymbols>
+    in their own MSBuild file before this props file is loaded, or by including their own
+    BannedSymbols.txt as an AdditionalFile.
+  -->
+  <PropertyGroup>
+    <CephalonAnalyzersUseBannedSymbols Condition="'$(CephalonAnalyzersUseBannedSymbols)' == ''">true</CephalonAnalyzersUseBannedSymbols>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(CephalonAnalyzersUseBannedSymbols)' == 'true'">
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)BannedSymbols.txt" Visible="false" />
+  </ItemGroup>
+</Project>
