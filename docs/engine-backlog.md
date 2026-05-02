@@ -3537,8 +3537,33 @@ Delivered:
 Follow-up later:
 
 - promote to `M1` consumption when at least one engine emission site (e.g. `Cephalon.Engine`'s `module.{phase}` activity tags, `Cephalon.AspNetCore`'s HTTP request / response body capture) routes its values through registered `IRedactionFilter` implementations resolved from DI; the contract guarantees declared in the interface XML docs become runtime invariants at that point
-- consider a built-in `RegexRedactionFilter` and `KeyMatchRedactionFilter` as starter implementations under `Cephalon.Diagnostics.Redaction.Defaults` so consumer apps don't have to author their own for the obvious cases; today the contract is BYO-implementation
+- consider a built-in `RegexRedactionFilter` and `KeyMatchRedactionFilter` as starter implementations under `Cephalon.Diagnostics.Redaction.Defaults` so consumer apps don't have to author their own for the obvious cases; today the contract is BYO-implementation — **delivered in `ENG-361`**
 - `LoggerMessage` source-generated factories aligned with the per-package diagnostic-id range discipline remain a separate follow-up; redaction would compose with that factory pattern at the call-site level
+
+### ENG-361 Add starter KeyMatchRedactionFilter + RegexRedactionFilter implementations under Cephalon.Diagnostics.Redaction.Defaults
+
+Status: done
+Estimate: 2
+
+Why:
+
+- `ENG-357` shipped `IRedactionFilter` + `RedactionContext` as a contract-only surface and named "consider a built-in `RegexRedactionFilter` and `KeyMatchRedactionFilter` as starter implementations under `Cephalon.Diagnostics.Redaction.Defaults` so consumer apps don't have to author their own for the obvious cases" as the immediately-actionable follow-up
+- without starter implementations, every consumer app that wants to redact authorization headers, cookies, or credit-card-number-shaped substrings has to re-author the same two filter classes from scratch; that is a pure adoption-friction tax with no engine value-add
+- the two starter shapes cover the overwhelming majority of redaction needs: key-based ("redact every value emitted under attribute key X") and pattern-based ("redact every substring inside a string value that matches regex Y"); together they remove the obvious BYO-burden while keeping the contract surface unchanged
+
+Delivered:
+
+- new `src/Cephalon.Diagnostics/Redaction/Defaults/KeyMatchRedactionFilter.cs` — `public sealed class KeyMatchRedactionFilter : IRedactionFilter` constructed from an `IEnumerable<string>` of banned attribute keys plus an optional replacement value; comparison is ordinal-case-insensitive; `Filter` returns the replacement when `context.AttributeKey` matches the banned set, otherwise returns the value unchanged; replacement defaults to the literal `"[REDACTED]"` published as `KeyMatchRedactionFilter.DefaultReplacement`
+- new `src/Cephalon.Diagnostics/Redaction/Defaults/RegexRedactionFilter.cs` — `public sealed class RegexRedactionFilter : IRedactionFilter` constructed from a `Regex` pattern plus an optional replacement string; non-string values are returned unchanged; string values are scanned for a regex match and matched substrings are replaced with the replacement; replacement defaults to the literal `"[REDACTED]"` published as `RegexRedactionFilter.DefaultReplacement`
+- update `src/Cephalon.Diagnostics/PublicAPI.Unshipped.txt` with 8 new public-API entries (2 classes + 2 `Filter` methods + 2 constructors + 2 `DefaultReplacement` consts)
+- update `docs/components/diagnostics.md` *What it owns* section to name the starter filter implementations; *Main surfaces* section lists the two new files
+- verified end-to-end with `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors) and `dotnet restore --locked-mode CephalonEngine.slnx` (passes; no lock-file drift because the new types live entirely inside `Cephalon.Diagnostics`)
+
+Follow-up later:
+
+- promote to `M1` consumption when at least one engine emission site routes its values through registered `IRedactionFilter` implementations resolved from DI (still gated on the same emission-site readiness as `ENG-357`'s M1 promotion); the starter filters become the default registration consumer apps reach for first
+- consider additional starter filters for non-string complex types (e.g. `UriRedactionFilter` that scrubs query-string parameters by name, `JsonPathRedactionFilter` that scrubs JSON values at a JSONPath) only when consumer demand surfaces; today the two shipped starters cover the obvious cases and additional shapes would inflate the surface without proportional value
+- once engine emission sites consume the filters and consumer apps register starter filters routinely, document the canonical "redact authorization + cookie + credit-card" recipe in the Diagnostics component doc as the discoverable reference pattern
 
 ## Completed foundation work
 
@@ -11638,6 +11663,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-356 Author release-checklist template (per-release working copy) (shipped)
 - ENG-355 Per-companion-pack canonical-name extension (Eventing + MultiTenancy.Governance) (shipped)
 - ENG-357 Add IRedactionFilter + RedactionContext primitives in Cephalon.Diagnostics (shipped)
+- ENG-361 Add starter KeyMatchRedactionFilter + RegexRedactionFilter implementations under Cephalon.Diagnostics.Redaction.Defaults (shipped)
 
 ### Later / not scheduled yet
 
