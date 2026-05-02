@@ -3457,6 +3457,37 @@ Follow-up later:
 - per-companion-pack OTel adapter rollout: `Cephalon.Eventing`, `Cephalon.Agentics`, `Cephalon.Retrieval`, `Cephalon.Data` (CDC), `Cephalon.MultiTenancy.Governance` should each declare their own canonical activity source / meter named `Cephalon.{Family}` and emit through `Cephalon.Diagnostics` rather than each pack inventing its own diagnostics class
 - consider extending `CephalonActivitySources` and `CephalonMeters` with these per-family names additively so `Cephalon.Observability.OpenTelemetry` can subscribe to them through one constant lookup rather than hard-coding the list inside the host-application-builder extension
 
+### ENG-356 Author release-checklist template (per-release working copy)
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `ENG-353` shipped `docs/release-checklist.md` as the durable rule book; the rule book itself never gets a tickbox, but every release does — without a template, release managers either copy-paste sections from the rule book (lossy) or invent their own ad-hoc tracking artefact (inconsistent across releases)
+- a template that mirrors the rule book's structure but is designed to be filled in (tickboxes, metadata header, link slots for artefact URLs) gives release managers a one-shot copy that preserves the rule-book section ordering and intent
+
+Delivered:
+
+- new [`docs/release-checklist-template.md`](release-checklist-template.md) mirroring the 9-section structure of [`release-checklist.md`](release-checklist.md):
+    1. Pre-flight: working-tree truth
+    2. Public-API contract review
+    3. Validation pipeline
+    4. Conformance and maturity truth
+    5. Deployment-mode claim truthfulness
+    6. Signed release pipeline (tag-triggered)
+    7. Documentation and planning truth
+    8. Post-release follow-through
+    9. SRE follow-through
+- top-of-file release metadata table (release tag, type, manager, date, release-notes URL, previous shipped tag, architecture review month, SDK pin, target framework) so the per-release artefact stands on its own
+- inline link slots for filling in workflow run URLs, GitHub Release URLs, public-API delta artefact URLs, SLI status snapshots; sign-off section at the bottom for release-manager confirmation, announcement channel, and next-release window
+- declared usage convention: copy the template into a per-release tracking artefact (GitHub Release draft, Linear / Jira issue, or `docs/releases/<tag>-checklist.md`); the rule book remains untouched per release
+
+Follow-up later:
+
+- consider promoting `docs/releases/` as a permanent archive folder for filled-in per-release checklists once the engine cuts its first stable GA tag; today the convention is informal because no release has been cut yet
+- if the rule book grows new sections (e.g. when EU CRA reporting kicks in or post-quantum signing lands), update both `release-checklist.md` and this template in the same slice so they stay in lockstep
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -11552,6 +11583,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-352 Wire public-API delta summary into release validation + CI artefact upload (shipped)
 - ENG-353 Author docs/release-checklist.md consolidating release-manager workflow (shipped)
 - ENG-354 Cephalon.Diagnostics M3 to M4 promotion (Cephalon.Observability.OpenTelemetry consumes all canonical names) (shipped)
+- ENG-356 Author release-checklist template (per-release working copy) (shipped)
 
 ### Later / not scheduled yet
 
