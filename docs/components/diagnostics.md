@@ -64,6 +64,8 @@ app.Run();
 
 Filters apply in DI registration order. Each filter sees the previous filter's output as input, so consumer apps compose orthogonal concerns without coordination. Filters that don't recognise a value return it unchanged. The pipeline is empty by default — when no filters are registered, the engine emission sites short-circuit to passthrough at near-zero cost.
 
+A runnable companion lives in [`samples/Cephalon.Sample.ModularMonolith`](../../samples/Cephalon.Sample.ModularMonolith/ModularMonolithSampleApp.cs) — the recipe above is wired into the sample composition root, so the same three filters scrub real HTTP and engine-runtime emission when the sample is started.
+
 To author a custom filter, implement `IRedactionFilter.Filter(RedactionContext, object?)` and register it as a singleton against `IRedactionFilter`. The `RedactionContext` carries the activity source name, meter name, attribute key, and logger category at the call site so a single filter can scope its decision to one emission site or apply globally.
 
 ## How it fits
