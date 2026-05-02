@@ -1,0 +1,23 @@
+#nullable enable
+Cephalon.Edge.Configuration.EdgeRuntimeOptions
+Cephalon.Edge.Configuration.EdgeRuntimeOptions.EdgeRuntimeOptions() -> void
+Cephalon.Edge.Configuration.EdgeRuntimeOptions.EnableOfflineMode.get -> bool
+Cephalon.Edge.Configuration.EdgeRuntimeOptions.EnableOfflineMode.set -> void
+Cephalon.Edge.Configuration.EdgeRuntimeOptions.EnableSynchronization.get -> bool
+Cephalon.Edge.Configuration.EdgeRuntimeOptions.EnableSynchronization.set -> void
+Cephalon.Edge.Configuration.EdgeRuntimeOptions.Nodes.get -> System.Collections.Generic.IList<Cephalon.Edge.Services.EdgeNodeDescriptor!>!
+Cephalon.Edge.Registration.EdgeEngineBuilderExtensions
+Cephalon.Edge.Services.EdgeNodeDescriptor
+Cephalon.Edge.Services.EdgeNodeDescriptor.Description.get -> string!
+Cephalon.Edge.Services.EdgeNodeDescriptor.DisplayName.get -> string!
+Cephalon.Edge.Services.EdgeNodeDescriptor.EdgeNodeDescriptor(string! id, string! displayName, string! description, System.Collections.Generic.IReadOnlyList<string!>? tags = null) -> void
+Cephalon.Edge.Services.EdgeNodeDescriptor.Id.get -> string!
+Cephalon.Edge.Services.EdgeNodeDescriptor.Tags.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Edge.Services.IEdgeNodeCatalog
+Cephalon.Edge.Services.IEdgeNodeCatalog.Nodes.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Edge.Services.EdgeNodeDescriptor!>!
+Cephalon.Edge.Services.IEdgeNodeCatalog.TryGet(string! nodeId, out Cephalon.Edge.Services.EdgeNodeDescriptor! node) -> bool
+Cephalon.Edge.Services.IEdgeNodeContributor
+Cephalon.Edge.Services.IEdgeNodeContributor.RegisterNodes(Cephalon.Edge.Services.IEdgeNodeRegistry! nodes) -> void
+Cephalon.Edge.Services.IEdgeNodeRegistry
+Cephalon.Edge.Services.IEdgeNodeRegistry.Add(Cephalon.Edge.Services.EdgeNodeDescriptor! node) -> void
+static Cephalon.Edge.Registration.EdgeEngineBuilderExtensions.AddEdge(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Edge.Configuration.EdgeRuntimeOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!

@@ -1,0 +1,10 @@
+#nullable enable
+Cephalon.EventSourcing.Redis.Hosting.RedisEventSourcingServiceCollectionExtensions
+Cephalon.EventSourcing.Redis.RedisEventSourcingConfiguration
+Cephalon.EventSourcing.Redis.RedisEventStore
+Cephalon.EventSourcing.Redis.RedisEventStore.AppendAsync(string! streamId, System.Collections.Generic.IReadOnlyCollection<Cephalon.Abstractions.EventSourcing.IDomainEvent!>! events, long expectedVersion, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.EventSourcing.Redis.RedisEventStore.GetVersionAsync(string! streamId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<long>!
+Cephalon.EventSourcing.Redis.RedisEventStore.ReadStreamAsync(string! streamId, long fromVersion = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Collections.Generic.IAsyncEnumerable<Cephalon.Abstractions.EventSourcing.IDomainEvent!>!
+Cephalon.EventSourcing.Redis.RedisEventStore.RedisEventStore(StackExchange.Redis.IConnectionMultiplexer! multiplexer, string! keyPrefix = "cephalon:") -> void
+static Cephalon.EventSourcing.Redis.Hosting.RedisEventSourcingServiceCollectionExtensions.AddCephalonRedisEventSourcing(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! configuration, string! keyPrefix = "cephalon:") -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.EventSourcing.Redis.RedisEventSourcingConfiguration.StreamKey(string! keyPrefix, string! streamId) -> string!

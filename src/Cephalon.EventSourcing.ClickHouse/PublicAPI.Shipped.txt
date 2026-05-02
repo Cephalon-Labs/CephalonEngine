@@ -1,0 +1,25 @@
+#nullable enable
+Cephalon.EventSourcing.ClickHouse.ClickHouseEventEntry
+Cephalon.EventSourcing.ClickHouse.ClickHouseEventEntry.AppendedAtUtc.get -> System.DateTime
+Cephalon.EventSourcing.ClickHouse.ClickHouseEventEntry.AppendedAtUtc.set -> void
+Cephalon.EventSourcing.ClickHouse.ClickHouseEventEntry.ClickHouseEventEntry() -> void
+Cephalon.EventSourcing.ClickHouse.ClickHouseEventEntry.EventType.get -> string!
+Cephalon.EventSourcing.ClickHouse.ClickHouseEventEntry.EventType.set -> void
+Cephalon.EventSourcing.ClickHouse.ClickHouseEventEntry.OccurredAtUtc.get -> System.DateTime
+Cephalon.EventSourcing.ClickHouse.ClickHouseEventEntry.OccurredAtUtc.set -> void
+Cephalon.EventSourcing.ClickHouse.ClickHouseEventEntry.Payload.get -> string!
+Cephalon.EventSourcing.ClickHouse.ClickHouseEventEntry.Payload.set -> void
+Cephalon.EventSourcing.ClickHouse.ClickHouseEventEntry.StreamId.get -> string!
+Cephalon.EventSourcing.ClickHouse.ClickHouseEventEntry.StreamId.set -> void
+Cephalon.EventSourcing.ClickHouse.ClickHouseEventEntry.StreamVersion.get -> long
+Cephalon.EventSourcing.ClickHouse.ClickHouseEventEntry.StreamVersion.set -> void
+Cephalon.EventSourcing.ClickHouse.ClickHouseEventSourcingConfiguration
+Cephalon.EventSourcing.ClickHouse.ClickHouseEventStore
+Cephalon.EventSourcing.ClickHouse.ClickHouseEventStore.AppendAsync(string! streamId, System.Collections.Generic.IReadOnlyCollection<Cephalon.Abstractions.EventSourcing.IDomainEvent!>! events, long expectedVersion, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.EventSourcing.ClickHouse.ClickHouseEventStore.ClickHouseEventStore(string! connectionString, string! tableName) -> void
+Cephalon.EventSourcing.ClickHouse.ClickHouseEventStore.Dispose() -> void
+Cephalon.EventSourcing.ClickHouse.ClickHouseEventStore.GetVersionAsync(string! streamId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<long>!
+Cephalon.EventSourcing.ClickHouse.ClickHouseEventStore.ReadStreamAsync(string! streamId, long fromVersion = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Collections.Generic.IAsyncEnumerable<Cephalon.Abstractions.EventSourcing.IDomainEvent!>!
+Cephalon.EventSourcing.ClickHouse.Hosting.ClickHouseEventSourcingServiceCollectionExtensions
+const Cephalon.EventSourcing.ClickHouse.ClickHouseEventSourcingConfiguration.CreateTableSql = "\r\n        CREATE TABLE IF NOT EXISTS {0} (\r\n            stream_id String,\r\n            stream_version Int64,\r\n            event_type String,\r\n            payload String,\r\n            occurred_at_utc DateTime64(3, 'UTC'),\r\n            appended_at_utc DateTime64(3, 'UTC')\r\n        ) ENGINE = MergeTree()\r\n        ORDER BY (stream_id, stream_version)" -> string!
+static Cephalon.EventSourcing.ClickHouse.Hosting.ClickHouseEventSourcingServiceCollectionExtensions.AddCephalonClickHouseEventSourcing(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! host, string! database, string! tableName = "cephalon_event_streams", string! username = "default", string! password = "") -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

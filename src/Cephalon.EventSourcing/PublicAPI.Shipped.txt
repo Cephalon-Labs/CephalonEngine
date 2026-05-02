@@ -1,0 +1,24 @@
+#nullable enable
+Cephalon.EventSourcing.Configuration.EventSourcingOptions
+Cephalon.EventSourcing.Configuration.EventSourcingOptions.DefaultProvider.get -> string!
+Cephalon.EventSourcing.Configuration.EventSourcingOptions.DefaultProvider.set -> void
+Cephalon.EventSourcing.Configuration.EventSourcingOptions.EnableSnapshots.get -> bool
+Cephalon.EventSourcing.Configuration.EventSourcingOptions.EnableSnapshots.set -> void
+Cephalon.EventSourcing.Configuration.EventSourcingOptions.EventSourcingOptions() -> void
+Cephalon.EventSourcing.Hosting.EventSourcingServiceCollectionExtensions
+Cephalon.EventSourcing.Registration.EventSourcingEngineBuilderExtensions
+Cephalon.EventSourcing.Services.AggregateHydrator<TAggregate, TState>
+Cephalon.EventSourcing.Services.AggregateHydrator<TAggregate, TState>.AggregateHydrator() -> void
+Cephalon.EventSourcing.Services.AggregateHydrator<TAggregate, TState>.HydrateAsync(Cephalon.Abstractions.EventSourcing.IEventStore! eventStore, string! streamId, long fromVersion = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<(TState State, long Version)>!
+Cephalon.EventSourcing.Services.EventStreamCatalog
+Cephalon.EventSourcing.Services.EventStreamCatalog.All.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.EventSourcing.EventStreamDescriptor!>!
+Cephalon.EventSourcing.Services.EventStreamCatalog.EventStreamCatalog(System.Collections.Generic.IEnumerable<Cephalon.Abstractions.EventSourcing.IEventStoreContributor!>! contributors) -> void
+Cephalon.EventSourcing.Services.EventStreamCatalog.FindById(string! id) -> Cephalon.Abstractions.EventSourcing.EventStreamDescriptor?
+Cephalon.EventSourcing.Services.EventStreamCatalog.GetByProvider(string! provider) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.EventSourcing.EventStreamDescriptor!>!
+Cephalon.EventSourcing.Services.EventStreamRegistry
+Cephalon.EventSourcing.Services.EventStreamRegistry.Contribute() -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.EventSourcing.EventStreamDescriptor!>!
+Cephalon.EventSourcing.Services.EventStreamRegistry.EventStreamRegistry() -> void
+Cephalon.EventSourcing.Services.EventStreamRegistry.Register(Cephalon.Abstractions.EventSourcing.EventStreamDescriptor! descriptor) -> void
+const Cephalon.EventSourcing.Configuration.EventSourcingOptions.SectionName = "Engine:EventSourcing" -> string!
+static Cephalon.EventSourcing.Hosting.EventSourcingServiceCollectionExtensions.AddCephalonEventSourcing(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.EventSourcing.Configuration.EventSourcingOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.EventSourcing.Registration.EventSourcingEngineBuilderExtensions.AddEventSourcing(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.EventSourcing.Configuration.EventSourcingOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!

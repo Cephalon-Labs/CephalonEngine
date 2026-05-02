@@ -1,0 +1,26 @@
+#nullable enable
+Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventEntry
+Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventEntry.AppendedAtUtc.get -> System.DateTime
+Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventEntry.AppendedAtUtc.set -> void
+Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventEntry.CorrelationId.get -> string?
+Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventEntry.CorrelationId.set -> void
+Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventEntry.ElasticsearchEventEntry() -> void
+Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventEntry.EventType.get -> string!
+Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventEntry.EventType.set -> void
+Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventEntry.OccurredAtUtc.get -> System.DateTime
+Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventEntry.OccurredAtUtc.set -> void
+Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventEntry.Payload.get -> string!
+Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventEntry.Payload.set -> void
+Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventEntry.StreamId.get -> string!
+Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventEntry.StreamId.set -> void
+Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventEntry.StreamVersion.get -> long
+Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventEntry.StreamVersion.set -> void
+Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventEntry.TenantId.get -> string?
+Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventEntry.TenantId.set -> void
+Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventStore
+Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventStore.AppendAsync(string! streamId, System.Collections.Generic.IReadOnlyCollection<Cephalon.Abstractions.EventSourcing.IDomainEvent!>! events, long expectedVersion, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventStore.ElasticsearchEventStore(Elastic.Clients.Elasticsearch.ElasticsearchClient! client, string! indexName) -> void
+Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventStore.GetVersionAsync(string! streamId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<long>!
+Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventStore.ReadStreamAsync(string! streamId, long fromVersion = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Collections.Generic.IAsyncEnumerable<Cephalon.Abstractions.EventSourcing.IDomainEvent!>!
+Cephalon.EventSourcing.Elasticsearch.Hosting.ElasticsearchEventSourcingServiceCollectionExtensions
+static Cephalon.EventSourcing.Elasticsearch.Hosting.ElasticsearchEventSourcingServiceCollectionExtensions.AddCephalonElasticsearchEventSourcing(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! uri, string! indexName = "event-streams") -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

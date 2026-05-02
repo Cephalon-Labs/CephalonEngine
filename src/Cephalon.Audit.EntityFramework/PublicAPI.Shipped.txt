@@ -1,0 +1,52 @@
+#nullable enable
+Cephalon.Audit.EntityFramework.Configuration.EntityFrameworkAuditHistoryOptions
+Cephalon.Audit.EntityFramework.Configuration.EntityFrameworkAuditHistoryOptions.DbContextType.get -> System.Type!
+Cephalon.Audit.EntityFramework.Configuration.EntityFrameworkAuditHistoryOptions.EntityFrameworkAuditHistoryOptions(System.Type! dbContextType) -> void
+Cephalon.Audit.EntityFramework.Configuration.EntityFrameworkAuditHistoryOptions.UsesEngineDatabaseTopology.get -> bool
+Cephalon.Audit.EntityFramework.Configuration.EntityFrameworkAuditHistoryOptions.UsesEngineDatabaseTopology.set -> void
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.Action.get -> string!
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.Action.set -> void
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.ActorDisplayName.get -> string!
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.ActorDisplayName.set -> void
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.ActorId.get -> string!
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.ActorId.set -> void
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.ActorIsSystem.get -> bool
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.ActorIsSystem.set -> void
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.ActorType.get -> string!
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.ActorType.set -> void
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.Category.get -> string!
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.Category.set -> void
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.ChangesJson.get -> string!
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.ChangesJson.set -> void
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.CorrelationId.get -> string?
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.CorrelationId.set -> void
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.EntityFrameworkAuditHistoryEntry() -> void
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.Id.get -> string!
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.Id.set -> void
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.MetadataJson.get -> string!
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.MetadataJson.set -> void
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.OccurredAtUtc.get -> System.DateTimeOffset
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.OccurredAtUtc.set -> void
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.Outcome.get -> string!
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.Outcome.set -> void
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.PersistedAtUtc.get -> System.DateTimeOffset
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.PersistedAtUtc.set -> void
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.SubjectId.get -> string?
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.SubjectId.set -> void
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.SubjectType.get -> string!
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.SubjectType.set -> void
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.Summary.get -> string!
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.Summary.set -> void
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.TagsJson.get -> string!
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.TagsJson.set -> void
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.TenantId.get -> string?
+Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry.TenantId.set -> void
+Cephalon.Audit.EntityFramework.IEntityFrameworkAuditHistoryContext
+Cephalon.Audit.EntityFramework.IEntityFrameworkAuditHistoryContext.AuditEntries.get -> Microsoft.EntityFrameworkCore.DbSet<Cephalon.Audit.EntityFramework.EntityFrameworkAuditHistoryEntry!>!
+Cephalon.Audit.EntityFramework.Modeling.EntityFrameworkAuditHistoryModelBuilderExtensions
+Cephalon.Audit.EntityFramework.Registration.EntityFrameworkAuditHistoryEngineBuilderExtensions
+const Cephalon.Audit.EntityFramework.Configuration.EntityFrameworkAuditHistoryOptions.ProviderId = "entity-framework" -> string!
+static Cephalon.Audit.EntityFramework.Modeling.EntityFrameworkAuditHistoryModelBuilderExtensions.ConfigureCephalonAuditHistory(this Microsoft.EntityFrameworkCore.ModelBuilder! modelBuilder, string! tableName = "cephalon_audit_history", string? schema = null) -> Microsoft.EntityFrameworkCore.ModelBuilder!
+static Cephalon.Audit.EntityFramework.Registration.EntityFrameworkAuditHistoryEngineBuilderExtensions.AddEntityFrameworkAuditHistory<TDbContext>(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext!, Microsoft.EntityFrameworkCore.DbContextOptionsBuilder!>! configureDbContext, System.Action<Cephalon.Audit.EntityFramework.Configuration.EntityFrameworkAuditHistoryOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Audit.EntityFramework.Registration.EntityFrameworkAuditHistoryEngineBuilderExtensions.AddEntityFrameworkAuditHistory<TDbContext>(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Microsoft.EntityFrameworkCore.DbContextOptionsBuilder!>! configureDbContext, System.Action<Cephalon.Audit.EntityFramework.Configuration.EntityFrameworkAuditHistoryOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!

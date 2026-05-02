@@ -1,0 +1,76 @@
+#nullable enable
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions.ControllerName.get -> string?
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions.ControllerName.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions.GatewayClassName.get -> string?
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions.GatewayClassName.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions.GatewayName.get -> string?
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions.GatewayName.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions.GatewayNamespace.get -> string?
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions.GatewayNamespace.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions.KubernetesGatewayTrafficMaterializerOptions() -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions.ListenerName.get -> string?
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions.ListenerName.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions.MaterializerId.get -> string!
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions.MaterializerId.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions.Observation.get -> Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions!
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions.Priority.get -> int
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions.Priority.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions.ProviderId.get -> string!
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions.ProviderId.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions.RouteNamespace.get -> string?
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions.RouteNamespace.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions.Routes.get -> System.Collections.Generic.IList<Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions!>!
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationModes
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions.EnableCleanupSweep.get -> bool
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions.EnableCleanupSweep.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions.KubeConfigPath.get -> string?
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions.KubeConfigPath.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions.KubeContext.get -> string?
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions.KubeContext.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions.KubernetesGatewayTrafficObservationOptions() -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions.MasterUrl.get -> string?
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions.MasterUrl.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions.Mode.get -> string!
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions.Mode.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions.PollingIntervalSeconds.get -> int
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions.PollingIntervalSeconds.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions.StaleAfterSeconds.get -> int
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions.StaleAfterSeconds.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions.UseInClusterConfiguration.get -> bool
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationOptions.UseInClusterConfiguration.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.BackendNamespace.get -> string?
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.BackendNamespace.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.BackendPort.get -> int?
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.BackendPort.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.BackendServiceName.get -> string?
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.BackendServiceName.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.BackendWeight.get -> int?
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.BackendWeight.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.ControllerName.get -> string?
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.ControllerName.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.GatewayClassName.get -> string?
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.GatewayClassName.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.GatewayName.get -> string?
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.GatewayName.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.GatewayNamespace.get -> string?
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.GatewayNamespace.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.Hostnames.get -> System.Collections.Generic.IList<string!>!
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.HttpRouteName.get -> string?
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.HttpRouteName.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.KubernetesGatewayTrafficRouteOptions() -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.ListenerName.get -> string?
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.ListenerName.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.RouteId.get -> string?
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.RouteId.set -> void
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.RouteNamespace.get -> string?
+Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficRouteOptions.RouteNamespace.set -> void
+Cephalon.Edge.KubernetesGateway.Registration.KubernetesGatewayEngineBuilderExtensions
+const Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions.DefaultMaterializerId = "kubernetes-gateway-materializer" -> string!
+const Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions.DefaultProviderId = "kubernetes-gateway" -> string!
+const Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationModes.ApplyAndReconcile = "apply-and-reconcile" -> string!
+const Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationModes.ConfiguredIntent = "configured-intent" -> string!
+const Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficObservationModes.ObserveOnly = "observe-only" -> string!
+static Cephalon.Edge.KubernetesGateway.Registration.KubernetesGatewayEngineBuilderExtensions.AddKubernetesGatewayTrafficMaterializer(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Edge.KubernetesGateway.Configuration.KubernetesGatewayTrafficMaterializerOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!

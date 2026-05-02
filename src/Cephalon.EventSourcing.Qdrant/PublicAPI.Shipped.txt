@@ -1,0 +1,27 @@
+#nullable enable
+Cephalon.EventSourcing.Qdrant.Hosting.QdrantEventSourcingServiceCollectionExtensions
+Cephalon.EventSourcing.Qdrant.QdrantEventEntry
+Cephalon.EventSourcing.Qdrant.QdrantEventEntry.AppendedAtUtc.get -> System.DateTime
+Cephalon.EventSourcing.Qdrant.QdrantEventEntry.AppendedAtUtc.init -> void
+Cephalon.EventSourcing.Qdrant.QdrantEventEntry.CorrelationId.get -> string?
+Cephalon.EventSourcing.Qdrant.QdrantEventEntry.CorrelationId.init -> void
+Cephalon.EventSourcing.Qdrant.QdrantEventEntry.EventType.get -> string!
+Cephalon.EventSourcing.Qdrant.QdrantEventEntry.EventType.init -> void
+Cephalon.EventSourcing.Qdrant.QdrantEventEntry.OccurredAtUtc.get -> System.DateTime
+Cephalon.EventSourcing.Qdrant.QdrantEventEntry.OccurredAtUtc.init -> void
+Cephalon.EventSourcing.Qdrant.QdrantEventEntry.Payload.get -> string!
+Cephalon.EventSourcing.Qdrant.QdrantEventEntry.Payload.init -> void
+Cephalon.EventSourcing.Qdrant.QdrantEventEntry.QdrantEventEntry() -> void
+Cephalon.EventSourcing.Qdrant.QdrantEventEntry.StreamId.get -> string!
+Cephalon.EventSourcing.Qdrant.QdrantEventEntry.StreamId.init -> void
+Cephalon.EventSourcing.Qdrant.QdrantEventEntry.StreamVersion.get -> long
+Cephalon.EventSourcing.Qdrant.QdrantEventEntry.StreamVersion.init -> void
+Cephalon.EventSourcing.Qdrant.QdrantEventEntry.TenantId.get -> string?
+Cephalon.EventSourcing.Qdrant.QdrantEventEntry.TenantId.init -> void
+Cephalon.EventSourcing.Qdrant.QdrantEventStore
+Cephalon.EventSourcing.Qdrant.QdrantEventStore.AppendAsync(string! streamId, System.Collections.Generic.IReadOnlyCollection<Cephalon.Abstractions.EventSourcing.IDomainEvent!>! events, long expectedVersion, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.EventSourcing.Qdrant.QdrantEventStore.Dispose() -> void
+Cephalon.EventSourcing.Qdrant.QdrantEventStore.GetVersionAsync(string! streamId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<long>!
+Cephalon.EventSourcing.Qdrant.QdrantEventStore.QdrantEventStore(Qdrant.Client.QdrantClient! client, string! collectionName) -> void
+Cephalon.EventSourcing.Qdrant.QdrantEventStore.ReadStreamAsync(string! streamId, long fromVersion = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Collections.Generic.IAsyncEnumerable<Cephalon.Abstractions.EventSourcing.IDomainEvent!>!
+static Cephalon.EventSourcing.Qdrant.Hosting.QdrantEventSourcingServiceCollectionExtensions.AddCephalonQdrantEventSourcing(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! host, int port = 6334, string! collectionName = "event-streams") -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

@@ -1,0 +1,78 @@
+#nullable enable
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.BackendNamespace.get -> string?
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.BackendNamespace.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.BackendPort.get -> int?
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.BackendPort.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.BackendScheme.get -> string?
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.BackendScheme.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.BackendServiceName.get -> string?
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.BackendServiceName.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.BackendWeight.get -> int?
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.BackendWeight.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.EntryPoints.get -> System.Collections.Generic.IList<string!>!
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.IngressRouteName.get -> string?
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.IngressRouteName.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.MatchRule.get -> string?
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.MatchRule.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.Middlewares.get -> System.Collections.Generic.IList<Cephalon.Edge.Traefik.Configuration.TraefikMiddlewareReferenceOptions!>!
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.PassHostHeader.get -> bool?
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.PassHostHeader.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.Priority.get -> int?
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.Priority.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.RouteId.get -> string?
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.RouteId.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.RouteNamespace.get -> string?
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.RouteNamespace.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.TlsOptionsName.get -> string?
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.TlsOptionsName.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.TlsOptionsNamespace.get -> string?
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.TlsOptionsNamespace.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.TlsSecretName.get -> string?
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.TlsSecretName.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions.TraefikIngressRouteOptions() -> void
+Cephalon.Edge.Traefik.Configuration.TraefikMiddlewareReferenceOptions
+Cephalon.Edge.Traefik.Configuration.TraefikMiddlewareReferenceOptions.Name.get -> string?
+Cephalon.Edge.Traefik.Configuration.TraefikMiddlewareReferenceOptions.Name.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikMiddlewareReferenceOptions.Namespace.get -> string?
+Cephalon.Edge.Traefik.Configuration.TraefikMiddlewareReferenceOptions.Namespace.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikMiddlewareReferenceOptions.TraefikMiddlewareReferenceOptions() -> void
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficMaterializerOptions
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficMaterializerOptions.EntryPoints.get -> System.Collections.Generic.IList<string!>!
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficMaterializerOptions.MaterializerId.get -> string!
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficMaterializerOptions.MaterializerId.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficMaterializerOptions.Observation.get -> Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions!
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficMaterializerOptions.Priority.get -> int
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficMaterializerOptions.Priority.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficMaterializerOptions.ProviderId.get -> string!
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficMaterializerOptions.ProviderId.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficMaterializerOptions.RouteNamespace.get -> string?
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficMaterializerOptions.RouteNamespace.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficMaterializerOptions.Routes.get -> System.Collections.Generic.IList<Cephalon.Edge.Traefik.Configuration.TraefikIngressRouteOptions!>!
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficMaterializerOptions.TraefikTrafficMaterializerOptions() -> void
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationModes
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions.EnableCleanupSweep.get -> bool
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions.EnableCleanupSweep.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions.KubeConfigPath.get -> string?
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions.KubeConfigPath.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions.KubeContext.get -> string?
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions.KubeContext.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions.MasterUrl.get -> string?
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions.MasterUrl.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions.Mode.get -> string!
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions.Mode.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions.PollingIntervalSeconds.get -> int
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions.PollingIntervalSeconds.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions.StaleAfterSeconds.get -> int
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions.StaleAfterSeconds.set -> void
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions.TraefikTrafficObservationOptions() -> void
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions.UseInClusterConfiguration.get -> bool
+Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationOptions.UseInClusterConfiguration.set -> void
+Cephalon.Edge.Traefik.Registration.TraefikEngineBuilderExtensions
+const Cephalon.Edge.Traefik.Configuration.TraefikTrafficMaterializerOptions.DefaultMaterializerId = "traefik-materializer" -> string!
+const Cephalon.Edge.Traefik.Configuration.TraefikTrafficMaterializerOptions.DefaultProviderId = "traefik" -> string!
+const Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationModes.ApplyAndReconcile = "apply-and-reconcile" -> string!
+const Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationModes.ConfiguredIntent = "configured-intent" -> string!
+const Cephalon.Edge.Traefik.Configuration.TraefikTrafficObservationModes.ObserveOnly = "observe-only" -> string!
+static Cephalon.Edge.Traefik.Registration.TraefikEngineBuilderExtensions.AddTraefikTrafficMaterializer(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Edge.Traefik.Configuration.TraefikTrafficMaterializerOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!

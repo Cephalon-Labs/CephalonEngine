@@ -1,0 +1,25 @@
+#nullable enable
+Cephalon.EventSourcing.Neo4j.Hosting.Neo4jEventSourcingServiceCollectionExtensions
+Cephalon.EventSourcing.Neo4j.Neo4jEventEntry
+Cephalon.EventSourcing.Neo4j.Neo4jEventEntry.AppendedAtUtc.get -> string!
+Cephalon.EventSourcing.Neo4j.Neo4jEventEntry.AppendedAtUtc.set -> void
+Cephalon.EventSourcing.Neo4j.Neo4jEventEntry.EventType.get -> string!
+Cephalon.EventSourcing.Neo4j.Neo4jEventEntry.EventType.set -> void
+Cephalon.EventSourcing.Neo4j.Neo4jEventEntry.Neo4jEventEntry() -> void
+Cephalon.EventSourcing.Neo4j.Neo4jEventEntry.OccurredAtUtc.get -> string!
+Cephalon.EventSourcing.Neo4j.Neo4jEventEntry.OccurredAtUtc.set -> void
+Cephalon.EventSourcing.Neo4j.Neo4jEventEntry.Payload.get -> string!
+Cephalon.EventSourcing.Neo4j.Neo4jEventEntry.Payload.set -> void
+Cephalon.EventSourcing.Neo4j.Neo4jEventEntry.StreamId.get -> string!
+Cephalon.EventSourcing.Neo4j.Neo4jEventEntry.StreamId.set -> void
+Cephalon.EventSourcing.Neo4j.Neo4jEventEntry.StreamVersion.get -> long
+Cephalon.EventSourcing.Neo4j.Neo4jEventEntry.StreamVersion.set -> void
+Cephalon.EventSourcing.Neo4j.Neo4jEventSourcingConfiguration
+Cephalon.EventSourcing.Neo4j.Neo4jEventStore
+Cephalon.EventSourcing.Neo4j.Neo4jEventStore.AppendAsync(string! streamId, System.Collections.Generic.IReadOnlyCollection<Cephalon.Abstractions.EventSourcing.IDomainEvent!>! events, long expectedVersion, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.EventSourcing.Neo4j.Neo4jEventStore.GetVersionAsync(string! streamId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<long>!
+Cephalon.EventSourcing.Neo4j.Neo4jEventStore.Neo4jEventStore(Neo4j.Driver.IDriver! driver, string! eventLabel = "Event") -> void
+Cephalon.EventSourcing.Neo4j.Neo4jEventStore.ReadStreamAsync(string! streamId, long fromVersion = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Collections.Generic.IAsyncEnumerable<Cephalon.Abstractions.EventSourcing.IDomainEvent!>!
+const Cephalon.EventSourcing.Neo4j.Neo4jEventSourcingConfiguration.ConstraintName = "cephalon_event_stream_version" -> string!
+const Cephalon.EventSourcing.Neo4j.Neo4jEventSourcingConfiguration.CreateConstraintCypher = "CREATE CONSTRAINT cephalon_event_stream_version IF NOT EXISTS FOR (e:Event) REQUIRE (e.streamId, e.streamVersion) IS NODE KEY" -> string!
+static Cephalon.EventSourcing.Neo4j.Hosting.Neo4jEventSourcingServiceCollectionExtensions.AddCephalonNeo4jEventSourcing(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! uri, string! username, string! password, string! eventLabel = "Event") -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
