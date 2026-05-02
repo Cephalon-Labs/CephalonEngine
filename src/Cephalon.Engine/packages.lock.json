@@ -271,6 +271,9 @@
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.5, )"
         }
       },
+      "cephalon.diagnostics": {
+        "type": "Project"
+      },
       "Microsoft.Extensions.Configuration.Binder": {
         "type": "CentralTransitive",
         "requested": "[10.0.5, )",

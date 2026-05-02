@@ -20,6 +20,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <ProjectReference Include="..\Cephalon.Abstractions\Cephalon.Abstractions.csproj" />
+    <ProjectReference Include="..\Cephalon.Diagnostics\Cephalon.Diagnostics.csproj" />
   </ItemGroup>
 
   <ItemGroup>
