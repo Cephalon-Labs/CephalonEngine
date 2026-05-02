@@ -1,3 +1,4 @@
+using Cephalon.Diagnostics;
 using Cephalon.Engine.Diagnostics;
 
 namespace Cephalon.Eventing.Services;
@@ -87,8 +88,8 @@ internal static class EventingDiagnosticsConventions
         Description: "Emitted when application-managed publication dispatch intentionally skips one staged publication.");
 
     public static readonly DiagnosticsConvention Convention = new(
-        Source: "Cephalon.Eventing",
-        LoggerCategoryPrefix: "Cephalon.Eventing",
+        Source: CephalonActivitySources.Eventing,
+        LoggerCategoryPrefix: CephalonActivitySources.Eventing,
         Description: "Structured publication staging, publication dispatch, and declared-subscription execution diagnostics for the eventing runtime pack.",
         Events:
         [

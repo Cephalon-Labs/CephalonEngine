@@ -1,3 +1,4 @@
+using Cephalon.Diagnostics;
 using Cephalon.Engine.Diagnostics;
 using Microsoft.Extensions.Logging;
 
@@ -333,8 +334,8 @@ internal static class MultiTenancyGovernanceDiagnosticsConventions
         Description: "Emitted when the governance companion stops automatic background tenant invitation delivery retry scheduling.");
 
     public static readonly DiagnosticsConvention Convention = new(
-        Source: "Cephalon.MultiTenancy.Governance",
-        LoggerCategoryPrefix: "Cephalon.MultiTenancy.Governance",
+        Source: CephalonActivitySources.MultiTenancyGovernance,
+        LoggerCategoryPrefix: CephalonActivitySources.MultiTenancyGovernance,
         Description: "Structured diagnostics for tenant membership cataloging/evaluation, invitation cataloging/validation/delivery dispatch/delivery status reconciliation/invitation delivery retry scheduling, tenant-administration workflow commands, declared domain-ownership cataloging/validation, tenant-domain ownership verification workflow transitions, tenant-domain ownership proof evaluation, tenant-domain ownership proof challenge issuance, tenant-domain ownership proof publication planning, tenant-domain ownership HTTP proof publication, tenant-domain ownership HTTP and DNS TXT proof collection, tenant-domain ownership proof verification runner paths, tenant-domain ownership proof polling passes, automatic background proof polling, domain-ownership persistence, approval/remediation action decisions, in-process governance-action workflow transitions, and action-state persistence.",
         Events:
         [

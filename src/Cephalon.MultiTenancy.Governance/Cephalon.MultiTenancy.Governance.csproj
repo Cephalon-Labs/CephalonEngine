@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Cephalon.Abstractions\Cephalon.Abstractions.csproj" />
+    <ProjectReference Include="..\Cephalon.Diagnostics\Cephalon.Diagnostics.csproj" />
     <ProjectReference Include="..\Cephalon.Engine\Cephalon.Engine.csproj" />
   </ItemGroup>
 <ItemGroup>

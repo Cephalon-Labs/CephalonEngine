@@ -40,6 +40,7 @@
         "type": "Project",
         "dependencies": {
           "Cephalon.Abstractions": "[0.1.0-preview, )",
+          "Cephalon.Diagnostics": "[0.1.0-preview, )",
           "Cephalon.Engine": "[0.1.0-preview, )"
         }
       },
