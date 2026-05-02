@@ -1607,6 +1607,7 @@
         "type": "Project",
         "dependencies": {
           "Cephalon.Abstractions": "[0.1.0-preview, )",
+          "Cephalon.Diagnostics": "[0.1.0-preview, )",
           "Cephalon.Engine": "[0.1.0-preview, )",
           "Microsoft.AspNetCore.OpenApi": "[10.0.5, )",
           "Scalar.AspNetCore": "[2.13.18, )"
@@ -2726,6 +2727,7 @@
       "cephalon.worker": {
         "type": "Project",
         "dependencies": {
+          "Cephalon.Diagnostics": "[0.1.0-preview, )",
           "Cephalon.Engine": "[0.1.0-preview, )",
           "Microsoft.Extensions.Hosting": "[10.0.5, )"
         }
