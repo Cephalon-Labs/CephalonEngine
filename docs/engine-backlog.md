@@ -3024,6 +3024,29 @@ Follow-up later:
 - update `docs/conformance-matrix.md` to add per-package rows for `Cephalon.Diagnostics` and `Cephalon.Analyzers` once the matrix's next refresh slice runs (the matrix is a read of the maturity audit + runtime contract index, so this slice's audit rows are the prerequisite)
 - if a future slice extracts the resilience runtime into a dedicated `Cephalon.Resilience` package, the maturity-audit row should split into two: `Cephalon.Resilience` package row plus a back-pointer in the existing `Cephalon.Behaviors` row
 
+### ENG-339 Conformance matrix consolidation for Cephalon.Diagnostics + Cephalon.Analyzers
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `ENG-333` updated `docs/engine-surface-maturity-audit.md` with rows for `Cephalon.Diagnostics` and `Cephalon.Analyzers` but left `docs/conformance-matrix.md` (the consolidated read across the audit + runtime-contract index + components catalog) without per-package rows for either package; the matrix is a navigation page that consolidates the audit, so the new packages must appear there too
+- the matrix's *Family summary at a glance* section also needs the two new entries so adopters scanning the family-by-maturity overview see the canonical telemetry adapter and the curated analyzer meta-package without drilling into the maturity audit
+
+Delivered:
+
+- add a new *Diagnostics and analyzer baseline* family section to `docs/conformance-matrix.md` between *Scaffolding and tooling* and *Family summary at a glance* with one row per package:
+    - `Cephalon.Diagnostics` at `M1 cephalon-managed`, with the engine consumption proof from `ENG-327` summarised in the Notes column
+    - `Cephalon.Analyzers` at `M1 cephalon-managed`, with the `Cephalon.Abstractions` adoption proof from `ENG-328` summarised in the Notes column
+- add a short narrative paragraph below the new section explaining the M0 → M1 promotion arc and naming the M2 promotion criteria for each package (host-adapter rollout for `Cephalon.Diagnostics`, documented adoption path in `getting-started.md` plus template-pack defaults for `Cephalon.Analyzers`)
+- update *Family summary at a glance* `Catalog-only (M1)` line to include `Cephalon.Diagnostics` and `Cephalon.Analyzers` so the family-level read stays truthful
+
+Follow-up later:
+
+- when `Cephalon.Diagnostics` reaches `M2` (host adapter routes telemetry through the canonical name set, expected via the next slice), update the matrix row maturity from `M1` to `M2` and move the package from the `Catalog-only (M1)` family line to whichever family the M2 promotion lands under
+- when `Cephalon.Analyzers` reaches `M2` (template-pack defaults reference it), the same dual update applies
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -11097,6 +11120,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-331 Deployment-mode publish probe activation (representativePublishTargets manifest defaults + Pester baseline cleanup) (shipped)
 - ENG-332 Mark netstandard2.0 analyzer / source-gen projects as not-trimmable / not-AOT-compatible (shipped)
 - ENG-333 Maturity audit consolidation for Cephalon.Diagnostics + Cephalon.Analyzers + engine resilience runtime (shipped)
+- ENG-339 Conformance matrix consolidation for Cephalon.Diagnostics + Cephalon.Analyzers (shipped)
 
 ### Later / not scheduled yet
 
