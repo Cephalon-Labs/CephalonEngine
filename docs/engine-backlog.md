@@ -3666,7 +3666,32 @@ Follow-up later:
 
 - promote additional engine emission sites to route through `RedactionPipeline`: `Cephalon.Engine`'s module-phase activity tags (`engine.build`, `module.{phase}`), `Cephalon.Worker`'s lifecycle spans (`worker.lifecycle.start` / `.stop`), and any future `Cephalon.Eventing` / `Cephalon.MultiTenancy.Governance` emission sites; the helper pattern (`Redact(activity, key, value)` returning the pipeline-filtered value) is the canonical shape to copy — **`Cephalon.Engine` runtime module-phase tags delivered in `ENG-366`; `EngineBuilder` build-time tags + worker lifecycle + eventing remain**
 - when the AspNetCore middleware adds explicit header capture (HTTP request/response headers as span attributes today are not emitted; the pilot redacts the small set already emitted), the redaction call sites already in place mean header values automatically flow through the pipeline
-- document the canonical "register `KeyMatchRedactionFilter` for authorization+cookie + `RegexRedactionFilter` for credit-card patterns + call `AddRedactionPipeline()`" recipe in `docs/components/diagnostics.md` once consumer adoption lands; today the surface is complete but the discoverable recipe doc is deferred
+- document the canonical "register `KeyMatchRedactionFilter` for authorization+cookie + `RegexRedactionFilter` for credit-card patterns + call `AddRedactionPipeline()`" recipe in `docs/components/diagnostics.md` once consumer adoption lands; today the surface is complete but the discoverable recipe doc is deferred — **delivered in `ENG-367`**
+
+### ENG-367 Redaction adoption recipe in docs/components/diagnostics.md
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `ENG-365` and `ENG-366` shipped real M1 wiring at two emission sites (AspNetCore middleware + engine runtime module-phase tags) so consumer-registered filters now actually run on attribute values before exporter dispatch; until now the discoverable adoption recipe was deferred until consumer adoption could land
+- without a recipe in the component doc, a consumer reading `docs/components/diagnostics.md` saw all the surface types named (`IRedactionFilter`, `RegexRedactionFilter`, `RedactionPipeline`, `AddRedactionPipeline()`) but had to assemble the canonical composition from XML doc fragments; the friction-to-adopt was high enough that real consumer apps would defer wiring redaction at all
+- shipping the recipe is the small move that turns the M1-promoted surface into something a consumer reaches for in the first hour rather than the first audit; it also gives operators the canonical regex / key-set primitives so they don't reinvent ad-hoc implementations
+
+Delivered:
+
+- new "Redaction quick start" section in `docs/components/diagnostics.md` (between *Main surfaces* and *How it fits*) showing:
+    - the canonical 3-filter composition: `KeyMatchRedactionFilter` for well-known sensitive attribute keys (authorization / cookie / proxy-authorization / set-cookie / `cephalon.tenant.secret`), `RegexRedactionFilter` for credit-card-shaped substrings (13-19 digit pattern), `RegexRedactionFilter` for `Bearer xxx` tokens with a custom replacement that preserves the `Bearer ` prefix for log readability
+    - the `builder.AddCephalon()` -> `services.AddSingleton<IRedactionFilter>` -> implicit `AddRedactionPipeline()` flow (the AspNetCore engine setup calls it for every consumer; consumer-side calls are idempotent)
+    - the orchestration semantics declared by `IRedactionFilter`: filters run in DI registration order, each sees the previous filter's output, the pipeline is empty (passthrough) by default
+    - a one-paragraph guidance on authoring a custom filter and how `RedactionContext` lets a filter scope its decision to one emission site or apply globally
+- `docs/engine-backlog.md` ENG-367 backlog card; ENG-365 follow-up note marked delivered; Sprint 125 placement updated
+
+Follow-up later:
+
+- once a sample app (e.g. `samples/Cephalon.Sample.ModularMonolith`) adopts the recipe, link the sample from the *Redaction quick start* as the running-code companion; today the recipe is text-only and consumer-built apps will adopt it through their own composition-root code
+- if the engine ships pre-built `KeyMatchRedactionFilter.WellKnownHttpHeaders()` / `RegexRedactionFilter.CreditCardNumbers()` factory presets, the recipe shrinks further; defer until at least one consumer asks (presets bake in opinion that may not match every consumer's threat model)
 
 ### ENG-366 Extend M1 redaction to Cephalon.Engine runtime module-phase emission sites
 
@@ -11800,6 +11825,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-364 Add AddRedactionPipeline IServiceCollection extension in Cephalon.Diagnostics (shipped)
 - ENG-365 Promote Cephalon.Diagnostics redaction surface to M1 (HttpRequestResponseLoggingMiddleware routes through RedactionPipeline) (shipped)
 - ENG-366 Extend M1 redaction to Cephalon.Engine runtime module-phase emission sites (shipped)
+- ENG-367 Redaction adoption recipe in docs/components/diagnostics.md (shipped)
 
 ### Later / not scheduled yet
 
