@@ -2,16 +2,27 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Description>Host-agnostic audit recording companion package for Cephalon.</Description>
+    <!-- RS0026/RS0027: optional-overload patterns; suppressed for ENG-340 (cleanup follow-up). -->
+    <NoWarn>$(NoWarn);RS0026;RS0027</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Cephalon.Abstractions\Cephalon.Abstractions.csproj" />
     <ProjectReference Include="..\Cephalon.Engine\Cephalon.Engine.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI.Unshipped.txt" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,22 @@
+#nullable enable
+Cephalon.Identity.Configuration.IdentityRuntimeOptions
+Cephalon.Identity.Configuration.IdentityRuntimeOptions.EnableDefaultEvaluator.get -> bool
+Cephalon.Identity.Configuration.IdentityRuntimeOptions.EnableDefaultEvaluator.set -> void
+Cephalon.Identity.Configuration.IdentityRuntimeOptions.EnableRuntimeSurface.get -> bool
+Cephalon.Identity.Configuration.IdentityRuntimeOptions.EnableRuntimeSurface.set -> void
+Cephalon.Identity.Configuration.IdentityRuntimeOptions.IdentityRuntimeOptions(bool enableDefaultEvaluator = true, bool enableRuntimeSurface = true, bool requireExplicitPolicy = true) -> void
+Cephalon.Identity.Configuration.IdentityRuntimeOptions.RequireExplicitPolicy.get -> bool
+Cephalon.Identity.Configuration.IdentityRuntimeOptions.RequireExplicitPolicy.set -> void
+Cephalon.Identity.Policies.IdentityPolicyMetadataKeys
+Cephalon.Identity.Registration.IdentityEngineBuilderExtensions
+const Cephalon.Identity.Policies.IdentityPolicyMetadataKeys.ContextAttributePrefix = "context." -> string!
+const Cephalon.Identity.Policies.IdentityPolicyMetadataKeys.RequireOwner = "requireOwner" -> string!
+const Cephalon.Identity.Policies.IdentityPolicyMetadataKeys.RequireTenantMatch = "requireTenantMatch" -> string!
+const Cephalon.Identity.Policies.IdentityPolicyMetadataKeys.RequiredRoleMatch = "requiredRoleMatch" -> string!
+const Cephalon.Identity.Policies.IdentityPolicyMetadataKeys.RequiredRoleMatchAll = "all" -> string!
+const Cephalon.Identity.Policies.IdentityPolicyMetadataKeys.RequiredRoleMatchAny = "any" -> string!
+const Cephalon.Identity.Policies.IdentityPolicyMetadataKeys.RequiredRoles = "requiredRoles" -> string!
+const Cephalon.Identity.Policies.IdentityPolicyMetadataKeys.ResourceAttributePrefix = "resource." -> string!
+const Cephalon.Identity.Policies.IdentityPolicyMetadataKeys.SubjectAttributePrefix = "subject." -> string!
+static Cephalon.Identity.Configuration.IdentityRuntimeOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration? configuration, string! sectionPath = "Engine") -> Cephalon.Identity.Configuration.IdentityRuntimeOptions!
+static Cephalon.Identity.Registration.IdentityEngineBuilderExtensions.AddIdentityAccess(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Identity.Configuration.IdentityRuntimeOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!

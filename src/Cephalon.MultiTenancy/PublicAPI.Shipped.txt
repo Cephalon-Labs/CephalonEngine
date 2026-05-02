@@ -1,0 +1,11 @@
+#nullable enable
+Cephalon.MultiTenancy.Configuration.MultiTenancyRuntimeOptions
+Cephalon.MultiTenancy.Configuration.MultiTenancyRuntimeOptions.DefaultTenantId.get -> string?
+Cephalon.MultiTenancy.Configuration.MultiTenancyRuntimeOptions.DefaultTenantId.set -> void
+Cephalon.MultiTenancy.Configuration.MultiTenancyRuntimeOptions.EnableDefaultResolver.get -> bool
+Cephalon.MultiTenancy.Configuration.MultiTenancyRuntimeOptions.EnableDefaultResolver.set -> void
+Cephalon.MultiTenancy.Configuration.MultiTenancyRuntimeOptions.MultiTenancyRuntimeOptions() -> void
+Cephalon.MultiTenancy.Configuration.MultiTenancyRuntimeOptions.Tenants.get -> System.Collections.Generic.List<Cephalon.Abstractions.Tenancy.TenantContext!>!
+Cephalon.MultiTenancy.Registration.MultiTenancyEngineBuilderExtensions
+static Cephalon.MultiTenancy.Configuration.MultiTenancyRuntimeOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration? configuration, string! sectionPath = "Engine") -> Cephalon.MultiTenancy.Configuration.MultiTenancyRuntimeOptions!
+static Cephalon.MultiTenancy.Registration.MultiTenancyEngineBuilderExtensions.AddMultiTenancy(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.MultiTenancy.Configuration.MultiTenancyRuntimeOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!
