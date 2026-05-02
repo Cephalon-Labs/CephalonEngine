@@ -8,12 +8,14 @@ namespace Cephalon.Diagnostics.Redaction;
 /// </summary>
 /// <remarks>
 /// <para>
-/// At M1 maturity the engine routes a first emission site through registered filters:
-/// <c>Cephalon.AspNetCore</c>'s HTTP request/response logging middleware pipes every span tag and
-/// activity-event tag value through the registered <see cref="RedactionPipeline"/> before it
-/// reaches an exporter. Additional emission sites (engine module-phase activity tags, worker
-/// lifecycle spans, eventing emission) will adopt the same pattern as the surface continues to
-/// promote. The contract guarantees the runtime honors are:
+/// At M1 maturity the engine routes two emission sites through registered filters:
+/// <c>Cephalon.AspNetCore</c>'s HTTP request/response logging middleware (HTTP request/response
+/// span tags and activity events) and <c>Cephalon.Engine</c>'s module-phase runtime activity
+/// tags (<c>runtime.{phase}</c> and <c>module.{phase}</c> spans emitted during initialize/start/stop).
+/// Both sites pipe values through the registered <see cref="RedactionPipeline"/> resolved from DI
+/// before the value reaches an exporter. Additional emission sites (worker lifecycle spans,
+/// eventing emission) will adopt the same pattern as the surface continues to promote. The
+/// contract guarantees the runtime honors are:
 /// </para>
 /// <list type="bullet">
 ///   <item>filters run synchronously at the engine boundary, before exporter dispatch</item>
