@@ -1189,6 +1189,13 @@ public sealed class EngineBuilder
                 capabilities: effectiveCapabilities,
                 packages: packageManifests);
 
+            // Build-time activity tags emit before DI is wired so the redaction surface
+            // (Cephalon.Diagnostics.Redaction.RedactionPipeline) is not yet resolvable. The
+            // three values below are internally derived from the manifest (blueprint id +
+            // counts) and are non-sensitive by construction; consumer apps that need to
+            // redact tenant-aware blueprint naming should rename the blueprint instead.
+            // Runtime-emission sites (EngineRuntime, AspNetCore middleware, Wolverine
+            // dispatch) all route through the pipeline; see docs/components/diagnostics.md.
             buildActivity?.SetTag("cephalon.blueprint", appProfile.BlueprintId);
             buildActivity?.SetTag("cephalon.module.count", manifest.Modules.Count);
             buildActivity?.SetTag("cephalon.capability.count", manifest.Capabilities.Count);

@@ -3719,6 +3719,30 @@ Follow-up later:
 - wire a smoke test that boots the sample, fires an HTTP request with an `Authorization: Bearer abc123` header, asserts the captured activity does not contain the raw token; today the unit-level integration tests for both M1 emission sites cover the wiring, so a sample-level smoke test is duplicate coverage with marginal value
 - adopt the same recipe in the other samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) as a separate slice when the redaction surface needs broader sample reach — **delivered in `ENG-369`**
 
+### ENG-375 Declare EngineBuilder build-time activity tags as deliberate redaction scope boundary
+
+Status: done
+Estimate: 1
+
+Why:
+
+- after `ENG-365` (AspNetCore middleware), `ENG-366` (engine runtime), and `ENG-374` (Wolverine dispatch), the only remaining `SetTag` emission sites in the engine's source tree are in `EngineBuilder.cs` lines 1192-1194 — three tags emitted on the `engine.build` activity: `cephalon.blueprint`, `cephalon.module.count`, `cephalon.capability.count`
+- the obvious next move would be to wire the redaction pipeline through these too, but the builder runs *before* DI is fully wired (the engine is being constructed; the runtime hasn't been instantiated, so `IServiceProvider` doesn't yet exist for the redaction pipeline to resolve from); wiring would require either an early-bind on `EngineSettings`-level options or a deferred-emission queue flushed once the runtime takes over
+- on inspection, the three values are internally derived from the manifest (blueprint id + module/capability counts) and are **non-sensitive by construction** — consumer apps that need to redact tenant-aware blueprint naming should rename the blueprint instead of trying to filter the tag; the cost of wiring the deferred-emission queue exceeds the value because no real consumer threat model needs it
+- declaring the scope boundary explicitly (in the source comment + adoption recipe doc) is more honest than carrying an open follow-up that pretends future wiring is going to happen
+
+Delivered:
+
+- update `src/Cephalon.Engine/Composition/EngineBuilder.cs` lines 1192-1194 with an inline 6-line comment naming (a) the reason the redaction pipeline is not yet resolvable at build time, (b) the values are internally derived and non-sensitive by construction, (c) the suggested workaround if a consumer thinks they need redaction here, (d) cross-reference to the runtime emission sites that *do* route through the pipeline
+- update `docs/components/diagnostics.md` *Redaction quick start* with a new "What is *not* redacted" subsection naming the build-time activity as the canonical scope boundary; declares this as a deliberate decision, not an oversight, so a security reviewer reading the doc gets a clear answer instead of a TODO
+- close the `ENG-374` follow-up note about extending M1 to `EngineBuilder`; mark it as deliberately scope-bounded
+- `docs/engine-backlog.md` ENG-375 backlog card; Sprint 125 placement updated
+- verified with `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors); no code-path change, only added comments
+
+Follow-up later:
+
+- if a real consumer threat model ever surfaces (e.g. a multi-tenant SaaS where blueprint id IS tenant-derived), revisit with a deferred-emission queue or early-bind from `EngineSettings`; the doc names this case explicitly so it's discoverable
+
 ### ENG-374 Extend M1 redaction to Cephalon.Eventing.Wolverine dispatch emission
 
 Status: done
@@ -3898,7 +3922,7 @@ Delivered:
 
 Follow-up later:
 
-- promote `Cephalon.Engine`'s build-time `engine.build` activity tags (in `EngineBuilder.cs` lines 818, 1192-1194: `cephalon.blueprint`, `cephalon.module.count`, `cephalon.capability.count`) once the build flow has access to a `RedactionPipeline`; the builder runs before DI is fully wired, so wiring requires either an early-bind from `EngineSettings`-level options or a deferred-emission queue that gets flushed once the runtime takes over
+- promote `Cephalon.Engine`'s build-time `engine.build` activity tags (in `EngineBuilder.cs` lines 818, 1192-1194: `cephalon.blueprint`, `cephalon.module.count`, `cephalon.capability.count`) once the build flow has access to a `RedactionPipeline`; the builder runs before DI is fully wired, so wiring requires either an early-bind from `EngineSettings`-level options or a deferred-emission queue that gets flushed once the runtime takes over — **declared as deliberate scope boundary in `ENG-375`: build-time tags are internally derived from the manifest and non-sensitive by construction; this follow-up is closed unless a real consumer threat model surfaces a need**
 - promote `Cephalon.Worker`'s `worker.lifecycle.start` / `.stop` lifecycle spans, `Cephalon.Eventing` emission sites, and `Cephalon.MultiTenancy.Governance` emission sites using the same lazy-resolution pattern; each lands as its own slice when the emission code is touched
 
 ## Completed foundation work
@@ -12013,6 +12037,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-372 Audit and cleanup remaining package-level NoWarn suppressions (shipped)
 - ENG-373 Document genuine NoWarn suppressions with inline rationale (shipped)
 - ENG-374 Extend M1 redaction to Cephalon.Eventing.Wolverine dispatch emission (shipped)
+- ENG-375 Declare EngineBuilder build-time activity tags as deliberate redaction scope boundary (shipped)
 
 ### Later / not scheduled yet
 

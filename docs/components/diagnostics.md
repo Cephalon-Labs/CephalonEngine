@@ -64,7 +64,11 @@ app.Run();
 
 Filters apply in DI registration order. Each filter sees the previous filter's output as input, so consumer apps compose orthogonal concerns without coordination. Filters that don't recognise a value return it unchanged. The pipeline is empty by default — when no filters are registered, the engine emission sites short-circuit to passthrough at near-zero cost.
 
-A runnable companion lives in [`samples/Cephalon.Sample.ModularMonolith`](../../samples/Cephalon.Sample.ModularMonolith/ModularMonolithSampleApp.cs) — the recipe above is wired into the sample composition root, so the same three filters scrub real HTTP and engine-runtime emission when the sample is started.
+A runnable companion lives in [`samples/Cephalon.Sample.ModularMonolith`](../../samples/Cephalon.Sample.ModularMonolith/ModularMonolithSampleApp.cs) — the recipe above is wired into the sample composition root, so the same three filters scrub real HTTP, engine-runtime, and Wolverine dispatch emission when the sample is started.
+
+### What is *not* redacted
+
+The `EngineBuilder` build-time activity (`engine.build` span and the three tags `cephalon.blueprint` / `cephalon.module.count` / `cephalon.capability.count`) emits before the DI container is fully wired, so the `RedactionPipeline` is not yet resolvable. Those three values are internally derived from the manifest (blueprint id + module/capability counts) and are non-sensitive by construction — consumer apps that need to redact tenant-aware blueprint naming should rename the blueprint instead of trying to filter the tag. This is a deliberate scope boundary, not an oversight.
 
 To author a custom filter, implement `IRedactionFilter.Filter(RedactionContext, object?)` and register it as a singleton against `IRedactionFilter`. The `RedactionContext` carries the activity source name, meter name, attribute key, and logger category at the call site so a single filter can scope its decision to one emission site or apply globally.
 
