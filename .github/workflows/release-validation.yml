@@ -116,6 +116,14 @@ jobs:
           path: artifacts/packages-release
           if-no-files-found: warn
 
+      - name: Upload public-API delta summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: public-api-delta-${{ matrix.benchmark_artifact_suffix }}
+          path: artifacts/public-api-delta-release
+          if-no-files-found: warn
+
   dotnet11-readiness:
     name: .NET 11 Readiness
     runs-on: ubuntu-latest

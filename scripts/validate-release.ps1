@@ -8,6 +8,7 @@ param(
     [switch]$SkipPhase8Conventions,
     [switch]$SkipBenchmarks,
     [switch]$SkipPackages,
+    [switch]$SkipPublicApiDeltaSummary,
     [switch]$SkipReferenceDocs,
     [string[]]$BenchmarkFilters = @(
         "*EngineBuilderBenchmarks*",
@@ -45,6 +46,8 @@ $dotNetReadinessOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "
 $deploymentModeClaimsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "deployment-mode-claims-release")
 $referenceDocsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "reference-docs-release")
 $packageArtifactsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "packages-release")
+$publicApiDeltaScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "summarise-public-api-deltas.ps1")
+$publicApiDeltaOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "public-api-delta-release", "public-api-delta.md")
 
 function Invoke-Step {
     param(
@@ -238,6 +241,14 @@ try {
             }
 
             Invoke-PowerShellScript -Path $packageArtifactsScriptPath -Arguments $arguments
+        }
+    }
+
+    if (-not $SkipPublicApiDeltaSummary) {
+        Invoke-Step "Summarise public-API delta across PublicAPI.Unshipped.txt" {
+            Invoke-PowerShellScript -Path $publicApiDeltaScriptPath -Arguments @(
+                "-OutputPath", $publicApiDeltaOutputPath
+            )
         }
     }
 
