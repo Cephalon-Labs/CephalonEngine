@@ -3515,6 +3515,31 @@ Follow-up later:
 - when `Cephalon.Agentics`, `Cephalon.Retrieval`, `Cephalon.Data` (CDC), and `Cephalon.Data.Debezium` introduce their first `ActivitySource` / `Meter` emissions, this slice's pattern repeats: add a canonical const to `Cephalon.Diagnostics`, source the literal from the const, add the OTel pack subscription
 - the per-pack canonical names declared here will graduate from `PublicAPI.Unshipped.txt` to `PublicAPI.Shipped.txt` on the next release per the standard contract-lock-in promotion cycle
 
+### ENG-357 Add IRedactionFilter + RedactionContext primitives in Cephalon.Diagnostics
+
+Status: done
+Estimate: 2
+
+Why:
+
+- `ENG-354` named "redaction filter primitive at the engine boundary so secrets / PII / authentication tokens never reach exporters" as continuing follow-up after `Cephalon.Diagnostics` reached `M4`
+- the engine emits raw attribute values to span / metric / log sinks today; consumer modules may emit attributes that contain sensitive data (request bodies, customer identifiers, secrets in error messages); without a contract-typed redaction surface, consumer apps and observability companion packs have no canonical hook to redact at the engine boundary
+- the smallest honest follow-up is to ship the contract types now (`IRedactionFilter`, `RedactionContext`) so consumer apps can start declaring filters; engine-side wiring (routing emission through registered filters in DI order) is the M1 promotion of this surface and lands as a separate slice when emission sites are ready to consume it
+
+Delivered:
+
+- new `src/Cephalon.Diagnostics/Redaction/RedactionContext.cs` — `public readonly record struct RedactionContext(string? ActivitySourceName, string? MeterName, string AttributeKey, string? LoggerCategory)` describing the call site producing a value the engine is about to emit; XML doc comments name the canonical name set the context fields point at
+- new `src/Cephalon.Diagnostics/Redaction/IRedactionFilter.cs` — `public interface IRedactionFilter` with one method `object? Filter(RedactionContext context, object? value)`; XML doc remarks declare the contract guarantees the runtime will honor when wiring lands: synchronous, never-throws, short-circuit-on-difference, DI-order ordering
+- update `src/Cephalon.Diagnostics/PublicAPI.Unshipped.txt` with the 19 new public-API entries (interface + struct + 4 init-only properties + deconstructor + equality + 2 operators + 2 oblivious-overrides per record-struct synthesis)
+- update `docs/components/diagnostics.md` *What it owns* section to name the redaction filter contract; *Main surfaces* section lists the new `Redaction/IRedactionFilter.cs` and `Redaction/RedactionContext.cs` files
+- verified end-to-end with `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors) and `dotnet restore --locked-mode CephalonEngine.slnx` (passes; no lock-file drift because the contract types live entirely inside `Cephalon.Diagnostics` which already had its analyzer reference)
+
+Follow-up later:
+
+- promote to `M1` consumption when at least one engine emission site (e.g. `Cephalon.Engine`'s `module.{phase}` activity tags, `Cephalon.AspNetCore`'s HTTP request / response body capture) routes its values through registered `IRedactionFilter` implementations resolved from DI; the contract guarantees declared in the interface XML docs become runtime invariants at that point
+- consider a built-in `RegexRedactionFilter` and `KeyMatchRedactionFilter` as starter implementations under `Cephalon.Diagnostics.Redaction.Defaults` so consumer apps don't have to author their own for the obvious cases; today the contract is BYO-implementation
+- `LoggerMessage` source-generated factories aligned with the per-package diagnostic-id range discipline remain a separate follow-up; redaction would compose with that factory pattern at the call-site level
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -11612,6 +11637,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-354 Cephalon.Diagnostics M3 to M4 promotion (Cephalon.Observability.OpenTelemetry consumes all canonical names) (shipped)
 - ENG-356 Author release-checklist template (per-release working copy) (shipped)
 - ENG-355 Per-companion-pack canonical-name extension (Eventing + MultiTenancy.Governance) (shipped)
+- ENG-357 Add IRedactionFilter + RedactionContext primitives in Cephalon.Diagnostics (shipped)
 
 ### Later / not scheduled yet
 
