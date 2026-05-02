@@ -1,0 +1,27 @@
+#nullable enable
+Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyDefinition
+Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyDefinition.AllowPublicKeyRetrieval.get -> bool?
+Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyDefinition.AllowPublicKeyRetrieval.set -> void
+Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyDefinition.ConnectionString.get -> string?
+Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyDefinition.ConnectionString.set -> void
+Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyDefinition.Database.get -> string!
+Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyDefinition.Database.set -> void
+Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyDefinition.HealthQuery.get -> string!
+Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyDefinition.HealthQuery.set -> void
+Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyDefinition.Host.get -> string!
+Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyDefinition.Host.set -> void
+Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyDefinition.MySqlDependencyDefinition() -> void
+Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyDefinition.Password.get -> string?
+Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyDefinition.Password.set -> void
+Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyDefinition.Port.get -> int
+Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyDefinition.Port.set -> void
+Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyDefinition.SslMode.get -> string?
+Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyDefinition.SslMode.set -> void
+Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyDefinition.Username.get -> string?
+Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyDefinition.Username.set -> void
+Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyHealthOptions
+Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyHealthOptions.MySqlDependencyHealthOptions() -> void
+Cephalon.Observability.MySqlDependencies.Hosting.MySqlDependencyHealthServiceCollectionExtensions
+static Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyHealthOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyHealthOptions!
+static Cephalon.Observability.MySqlDependencies.Hosting.MySqlDependencyHealthServiceCollectionExtensions.AddCephalonMySqlDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Observability.MySqlDependencies.Hosting.MySqlDependencyHealthServiceCollectionExtensions.AddCephalonMySqlDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.Observability.MySqlDependencies.Configuration.MySqlDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

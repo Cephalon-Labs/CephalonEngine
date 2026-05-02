@@ -1,0 +1,18 @@
+#nullable enable
+Cephalon.Observability.NewRelic.Configuration.NewRelicTelemetryExportOptions
+Cephalon.Observability.NewRelic.Configuration.NewRelicTelemetryExportOptions.Endpoint.get -> string?
+Cephalon.Observability.NewRelic.Configuration.NewRelicTelemetryExportOptions.Endpoint.set -> void
+Cephalon.Observability.NewRelic.Configuration.NewRelicTelemetryExportOptions.Headers.get -> string?
+Cephalon.Observability.NewRelic.Configuration.NewRelicTelemetryExportOptions.Headers.set -> void
+Cephalon.Observability.NewRelic.Configuration.NewRelicTelemetryExportOptions.LicenseKey.get -> string?
+Cephalon.Observability.NewRelic.Configuration.NewRelicTelemetryExportOptions.LicenseKey.set -> void
+Cephalon.Observability.NewRelic.Configuration.NewRelicTelemetryExportOptions.NewRelicTelemetryExportOptions() -> void
+Cephalon.Observability.NewRelic.Configuration.NewRelicTelemetryExportOptions.Region.get -> string?
+Cephalon.Observability.NewRelic.Configuration.NewRelicTelemetryExportOptions.Region.set -> void
+Cephalon.Observability.NewRelic.Configuration.NewRelicTelemetryExportOptions.ServiceNamespace.get -> string?
+Cephalon.Observability.NewRelic.Configuration.NewRelicTelemetryExportOptions.ServiceNamespace.set -> void
+Cephalon.Observability.NewRelic.Configuration.NewRelicTelemetryExportOptions.UseNativeOtlpEndpoint.get -> bool
+Cephalon.Observability.NewRelic.Configuration.NewRelicTelemetryExportOptions.UseNativeOtlpEndpoint.set -> void
+Cephalon.Observability.NewRelic.Hosting.NewRelicHostApplicationBuilderExtensions
+static Cephalon.Observability.NewRelic.Configuration.NewRelicTelemetryExportOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.NewRelic.Configuration.NewRelicTelemetryExportOptions!
+static Cephalon.Observability.NewRelic.Hosting.NewRelicHostApplicationBuilderExtensions.AddCephalonNewRelic<TBuilder>(this TBuilder builder, System.Action<Cephalon.Observability.NewRelic.Configuration.NewRelicTelemetryExportOptions!>? configure = null) -> TBuilder

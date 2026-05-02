@@ -1,0 +1,25 @@
+#nullable enable
+Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyDefinition
+Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyDefinition.ConnectionString.get -> string?
+Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyDefinition.ConnectionString.set -> void
+Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyDefinition.Database.get -> string!
+Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyDefinition.Database.set -> void
+Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyDefinition.HealthQuery.get -> string!
+Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyDefinition.HealthQuery.set -> void
+Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyDefinition.Host.get -> string!
+Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyDefinition.Host.set -> void
+Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyDefinition.Password.get -> string?
+Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyDefinition.Password.set -> void
+Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyDefinition.Port.get -> int
+Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyDefinition.Port.set -> void
+Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyDefinition.PostgresDependencyDefinition() -> void
+Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyDefinition.SslMode.get -> string?
+Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyDefinition.SslMode.set -> void
+Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyDefinition.Username.get -> string?
+Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyDefinition.Username.set -> void
+Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyHealthOptions
+Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyHealthOptions.PostgresDependencyHealthOptions() -> void
+Cephalon.Observability.PostgresDependencies.Hosting.PostgresDependencyHealthServiceCollectionExtensions
+static Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyHealthOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyHealthOptions!
+static Cephalon.Observability.PostgresDependencies.Hosting.PostgresDependencyHealthServiceCollectionExtensions.AddCephalonPostgresDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Observability.PostgresDependencies.Hosting.PostgresDependencyHealthServiceCollectionExtensions.AddCephalonPostgresDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.Observability.PostgresDependencies.Configuration.PostgresDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

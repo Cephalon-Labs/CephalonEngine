@@ -1,0 +1,23 @@
+#nullable enable
+Cephalon.Observability.OracleDependencies.Configuration.OracleDependencyDefinition
+Cephalon.Observability.OracleDependencies.Configuration.OracleDependencyDefinition.ConnectionString.get -> string?
+Cephalon.Observability.OracleDependencies.Configuration.OracleDependencyDefinition.ConnectionString.set -> void
+Cephalon.Observability.OracleDependencies.Configuration.OracleDependencyDefinition.HealthQuery.get -> string!
+Cephalon.Observability.OracleDependencies.Configuration.OracleDependencyDefinition.HealthQuery.set -> void
+Cephalon.Observability.OracleDependencies.Configuration.OracleDependencyDefinition.Host.get -> string!
+Cephalon.Observability.OracleDependencies.Configuration.OracleDependencyDefinition.Host.set -> void
+Cephalon.Observability.OracleDependencies.Configuration.OracleDependencyDefinition.OracleDependencyDefinition() -> void
+Cephalon.Observability.OracleDependencies.Configuration.OracleDependencyDefinition.Password.get -> string?
+Cephalon.Observability.OracleDependencies.Configuration.OracleDependencyDefinition.Password.set -> void
+Cephalon.Observability.OracleDependencies.Configuration.OracleDependencyDefinition.Port.get -> int
+Cephalon.Observability.OracleDependencies.Configuration.OracleDependencyDefinition.Port.set -> void
+Cephalon.Observability.OracleDependencies.Configuration.OracleDependencyDefinition.ServiceName.get -> string!
+Cephalon.Observability.OracleDependencies.Configuration.OracleDependencyDefinition.ServiceName.set -> void
+Cephalon.Observability.OracleDependencies.Configuration.OracleDependencyDefinition.Username.get -> string?
+Cephalon.Observability.OracleDependencies.Configuration.OracleDependencyDefinition.Username.set -> void
+Cephalon.Observability.OracleDependencies.Configuration.OracleDependencyHealthOptions
+Cephalon.Observability.OracleDependencies.Configuration.OracleDependencyHealthOptions.OracleDependencyHealthOptions() -> void
+Cephalon.Observability.OracleDependencies.Hosting.OracleDependencyHealthServiceCollectionExtensions
+static Cephalon.Observability.OracleDependencies.Configuration.OracleDependencyHealthOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.OracleDependencies.Configuration.OracleDependencyHealthOptions!
+static Cephalon.Observability.OracleDependencies.Hosting.OracleDependencyHealthServiceCollectionExtensions.AddCephalonOracleDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.Observability.OracleDependencies.Configuration.OracleDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Observability.OracleDependencies.Hosting.OracleDependencyHealthServiceCollectionExtensions.AddCephalonOracleDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.Observability.OracleDependencies.Configuration.OracleDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

@@ -1,0 +1,31 @@
+#nullable enable
+Cephalon.Observability.Configuration.ObservabilityOptions
+Cephalon.Observability.Configuration.ObservabilityOptions.LogCapabilitySummary.get -> bool
+Cephalon.Observability.Configuration.ObservabilityOptions.LogCapabilitySummary.set -> void
+Cephalon.Observability.Configuration.ObservabilityOptions.LogManifestSummary.get -> bool
+Cephalon.Observability.Configuration.ObservabilityOptions.LogManifestSummary.set -> void
+Cephalon.Observability.Configuration.ObservabilityOptions.LogModuleSummary.get -> bool
+Cephalon.Observability.Configuration.ObservabilityOptions.LogModuleSummary.set -> void
+Cephalon.Observability.Configuration.ObservabilityOptions.ObservabilityOptions() -> void
+Cephalon.Observability.Configuration.ObservabilityOptions.Telemetry.get -> Cephalon.Observability.Configuration.TelemetryExportOptions!
+Cephalon.Observability.Configuration.ObservabilityOptions.Telemetry.set -> void
+Cephalon.Observability.Configuration.TelemetryExportOptions
+Cephalon.Observability.Configuration.TelemetryExportOptions.Endpoint.get -> string?
+Cephalon.Observability.Configuration.TelemetryExportOptions.Endpoint.set -> void
+Cephalon.Observability.Configuration.TelemetryExportOptions.ExportLogs.get -> bool
+Cephalon.Observability.Configuration.TelemetryExportOptions.ExportLogs.set -> void
+Cephalon.Observability.Configuration.TelemetryExportOptions.ExportMetrics.get -> bool
+Cephalon.Observability.Configuration.TelemetryExportOptions.ExportMetrics.set -> void
+Cephalon.Observability.Configuration.TelemetryExportOptions.ExportTraces.get -> bool
+Cephalon.Observability.Configuration.TelemetryExportOptions.ExportTraces.set -> void
+Cephalon.Observability.Configuration.TelemetryExportOptions.Protocol.get -> string!
+Cephalon.Observability.Configuration.TelemetryExportOptions.Protocol.set -> void
+Cephalon.Observability.Configuration.TelemetryExportOptions.Provider.get -> string!
+Cephalon.Observability.Configuration.TelemetryExportOptions.Provider.set -> void
+Cephalon.Observability.Configuration.TelemetryExportOptions.TelemetryExportOptions() -> void
+Cephalon.Observability.Configuration.TelemetryExportOptions.UseSelfHostedDefaults.get -> bool
+Cephalon.Observability.Configuration.TelemetryExportOptions.UseSelfHostedDefaults.set -> void
+Cephalon.Observability.Hosting.ObservabilityServiceCollectionExtensions
+static Cephalon.Observability.Configuration.ObservabilityOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.Configuration.ObservabilityOptions!
+static Cephalon.Observability.Hosting.ObservabilityServiceCollectionExtensions.AddCephalonObservability(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.Observability.Configuration.ObservabilityOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Observability.Hosting.ObservabilityServiceCollectionExtensions.AddCephalonObservability(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.Observability.Configuration.ObservabilityOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

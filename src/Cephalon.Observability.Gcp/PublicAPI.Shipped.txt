@@ -1,0 +1,16 @@
+#nullable enable
+Cephalon.Observability.Gcp.Configuration.GcpTelemetryExportOptions
+Cephalon.Observability.Gcp.Configuration.GcpTelemetryExportOptions.GcpTelemetryExportOptions() -> void
+Cephalon.Observability.Gcp.Configuration.GcpTelemetryExportOptions.HostedPlatform.get -> string?
+Cephalon.Observability.Gcp.Configuration.GcpTelemetryExportOptions.HostedPlatform.set -> void
+Cephalon.Observability.Gcp.Configuration.GcpTelemetryExportOptions.Location.get -> string?
+Cephalon.Observability.Gcp.Configuration.GcpTelemetryExportOptions.Location.set -> void
+Cephalon.Observability.Gcp.Configuration.GcpTelemetryExportOptions.QuotaProjectId.get -> string?
+Cephalon.Observability.Gcp.Configuration.GcpTelemetryExportOptions.QuotaProjectId.set -> void
+Cephalon.Observability.Gcp.Configuration.GcpTelemetryExportOptions.UseApplicationDefaultCredentials.get -> bool
+Cephalon.Observability.Gcp.Configuration.GcpTelemetryExportOptions.UseApplicationDefaultCredentials.set -> void
+Cephalon.Observability.Gcp.Configuration.GcpTelemetryExportOptions.UseGoogleManagedIngestion.get -> bool
+Cephalon.Observability.Gcp.Configuration.GcpTelemetryExportOptions.UseGoogleManagedIngestion.set -> void
+Cephalon.Observability.Gcp.Hosting.GcpHostApplicationBuilderExtensions
+static Cephalon.Observability.Gcp.Configuration.GcpTelemetryExportOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.Gcp.Configuration.GcpTelemetryExportOptions!
+static Cephalon.Observability.Gcp.Hosting.GcpHostApplicationBuilderExtensions.AddCephalonGcp<TBuilder>(this TBuilder builder, System.Action<Cephalon.Observability.Gcp.Configuration.GcpTelemetryExportOptions!>? configure = null) -> TBuilder

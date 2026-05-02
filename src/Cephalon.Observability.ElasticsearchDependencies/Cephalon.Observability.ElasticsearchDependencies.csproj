@@ -2,6 +2,8 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Description>Elasticsearch dependency health integration for Cephalon hosts.</Description>
+    <!-- RS0026/RS0027: optional-overload patterns; suppressed for ENG-345. -->
+    <NoWarn>$(NoWarn);RS0026;RS0027</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,5 +15,16 @@
     <ProjectReference Include="..\Cephalon.Abstractions\Cephalon.Abstractions.csproj" />
     <ProjectReference Include="..\Cephalon.Engine\Cephalon.Engine.csproj" />
     <ProjectReference Include="..\Cephalon.Observability.DependencyHealth.Core\Cephalon.Observability.DependencyHealth.Core.csproj" />
+  </ItemGroup>
+<ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI.Unshipped.txt" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,34 @@
+#nullable enable
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.ClusterName.get -> string?
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.ClusterName.set -> void
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.CollectorNamespace.get -> string?
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.CollectorNamespace.set -> void
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.CollectorPort.get -> int?
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.CollectorPort.set -> void
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.CollectorScheme.get -> string?
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.CollectorScheme.set -> void
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.CollectorServiceName.get -> string?
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.CollectorServiceName.set -> void
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.ContainerName.get -> string?
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.ContainerName.set -> void
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.Headers.get -> string?
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.Headers.set -> void
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.KubernetesTelemetryExportOptions() -> void
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.Namespace.get -> string?
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.Namespace.set -> void
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.NodeName.get -> string?
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.NodeName.set -> void
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.PodName.get -> string?
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.PodName.set -> void
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.PodUid.get -> string?
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.PodUid.set -> void
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.ServiceDnsSuffix.get -> string?
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.ServiceDnsSuffix.set -> void
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.TrustedCaCertificatePath.get -> string?
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.TrustedCaCertificatePath.set -> void
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.UseInClusterCollectorService.get -> bool
+Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.UseInClusterCollectorService.set -> void
+Cephalon.Observability.Kubernetes.Hosting.KubernetesHostApplicationBuilderExtensions
+static Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions!
+static Cephalon.Observability.Kubernetes.Hosting.KubernetesHostApplicationBuilderExtensions.AddCephalonKubernetes<TBuilder>(this TBuilder builder, System.Action<Cephalon.Observability.Kubernetes.Configuration.KubernetesTelemetryExportOptions!>? configure = null) -> TBuilder

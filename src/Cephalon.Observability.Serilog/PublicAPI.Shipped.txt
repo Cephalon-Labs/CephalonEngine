@@ -1,0 +1,3 @@
+#nullable enable
+Cephalon.Observability.Serilog.Hosting.SerilogHostApplicationBuilderExtensions
+static Cephalon.Observability.Serilog.Hosting.SerilogHostApplicationBuilderExtensions.AddCephalonSerilog<TBuilder>(this TBuilder builder, System.Action<System.IServiceProvider!, Serilog.LoggerConfiguration!>? configure = null) -> TBuilder

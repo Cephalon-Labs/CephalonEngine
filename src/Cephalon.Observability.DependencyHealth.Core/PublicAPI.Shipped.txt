@@ -1,0 +1,20 @@
+#nullable enable
+Cephalon.Observability.DependencyHealth.Core.Configuration.DependencyDefinitionBase
+Cephalon.Observability.DependencyHealth.Core.Configuration.DependencyDefinitionBase.DependencyDefinitionBase() -> void
+Cephalon.Observability.DependencyHealth.Core.Configuration.DependencyDefinitionBase.DisplayName.get -> string?
+Cephalon.Observability.DependencyHealth.Core.Configuration.DependencyDefinitionBase.DisplayName.set -> void
+Cephalon.Observability.DependencyHealth.Core.Configuration.DependencyDefinitionBase.Id.get -> string!
+Cephalon.Observability.DependencyHealth.Core.Configuration.DependencyDefinitionBase.Id.set -> void
+Cephalon.Observability.DependencyHealth.Core.Configuration.DependencyDefinitionBase.Required.get -> bool
+Cephalon.Observability.DependencyHealth.Core.Configuration.DependencyDefinitionBase.Required.set -> void
+Cephalon.Observability.DependencyHealth.Core.Configuration.DependencyDefinitionBase.TimeoutSeconds.get -> int
+Cephalon.Observability.DependencyHealth.Core.Configuration.DependencyDefinitionBase.TimeoutSeconds.set -> void
+Cephalon.Observability.DependencyHealth.Core.Configuration.DependencyHealthOptionsBase<TDefinition>
+Cephalon.Observability.DependencyHealth.Core.Configuration.DependencyHealthOptionsBase<TDefinition>.Dependencies.get -> System.Collections.Generic.IReadOnlyList<TDefinition!>!
+Cephalon.Observability.DependencyHealth.Core.Configuration.DependencyHealthOptionsBase<TDefinition>.Dependencies.set -> void
+Cephalon.Observability.DependencyHealth.Core.Configuration.DependencyHealthOptionsBase<TDefinition>.DependencyHealthOptionsBase() -> void
+Cephalon.Observability.DependencyHealth.Core.Configuration.DependencyHealthOptionsBase<TDefinition>.RefreshIntervalSeconds.get -> int
+Cephalon.Observability.DependencyHealth.Core.Configuration.DependencyHealthOptionsBase<TDefinition>.RefreshIntervalSeconds.set -> void
+static Cephalon.Observability.DependencyHealth.Core.Configuration.DependencyHealthOptionsBase<TDefinition>.GetBoolean(string? value, bool defaultValue) -> bool
+static Cephalon.Observability.DependencyHealth.Core.Configuration.DependencyHealthOptionsBase<TDefinition>.GetInt32(string? value, int defaultValue) -> int
+static Cephalon.Observability.DependencyHealth.Core.Configuration.DependencyHealthOptionsBase<TDefinition>.GetNullableBoolean(string? value) -> bool?

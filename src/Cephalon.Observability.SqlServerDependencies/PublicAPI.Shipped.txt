@@ -1,0 +1,27 @@
+#nullable enable
+Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyDefinition
+Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyDefinition.ConnectionString.get -> string?
+Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyDefinition.ConnectionString.set -> void
+Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyDefinition.Database.get -> string!
+Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyDefinition.Database.set -> void
+Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyDefinition.Encrypt.get -> string?
+Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyDefinition.Encrypt.set -> void
+Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyDefinition.HealthQuery.get -> string!
+Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyDefinition.HealthQuery.set -> void
+Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyDefinition.Host.get -> string!
+Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyDefinition.Host.set -> void
+Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyDefinition.Password.get -> string?
+Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyDefinition.Password.set -> void
+Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyDefinition.Port.get -> int
+Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyDefinition.Port.set -> void
+Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyDefinition.SqlServerDependencyDefinition() -> void
+Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyDefinition.TrustServerCertificate.get -> bool?
+Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyDefinition.TrustServerCertificate.set -> void
+Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyDefinition.Username.get -> string?
+Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyDefinition.Username.set -> void
+Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyHealthOptions
+Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyHealthOptions.SqlServerDependencyHealthOptions() -> void
+Cephalon.Observability.SqlServerDependencies.Hosting.SqlServerDependencyHealthServiceCollectionExtensions
+static Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyHealthOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyHealthOptions!
+static Cephalon.Observability.SqlServerDependencies.Hosting.SqlServerDependencyHealthServiceCollectionExtensions.AddCephalonSqlServerDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Observability.SqlServerDependencies.Hosting.SqlServerDependencyHealthServiceCollectionExtensions.AddCephalonSqlServerDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.Observability.SqlServerDependencies.Configuration.SqlServerDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

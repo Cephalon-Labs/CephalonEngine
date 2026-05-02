@@ -1,0 +1,3 @@
+#nullable enable
+Cephalon.Observability.OpenTelemetry.Hosting.OpenTelemetryHostApplicationBuilderExtensions
+static Cephalon.Observability.OpenTelemetry.Hosting.OpenTelemetryHostApplicationBuilderExtensions.AddCephalonOpenTelemetry<TBuilder>(this TBuilder builder, System.Action<Cephalon.Observability.Configuration.TelemetryExportOptions!>? configure = null) -> TBuilder

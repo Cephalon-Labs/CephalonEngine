@@ -1,0 +1,20 @@
+#nullable enable
+Cephalon.Observability.AlibabaCloud.Configuration.AlibabaCloudTelemetryExportOptions
+Cephalon.Observability.AlibabaCloud.Configuration.AlibabaCloudTelemetryExportOptions.AlibabaCloudTelemetryExportOptions() -> void
+Cephalon.Observability.AlibabaCloud.Configuration.AlibabaCloudTelemetryExportOptions.AuthenticationToken.get -> string?
+Cephalon.Observability.AlibabaCloud.Configuration.AlibabaCloudTelemetryExportOptions.AuthenticationToken.set -> void
+Cephalon.Observability.AlibabaCloud.Configuration.AlibabaCloudTelemetryExportOptions.HostedPlatform.get -> string?
+Cephalon.Observability.AlibabaCloud.Configuration.AlibabaCloudTelemetryExportOptions.HostedPlatform.set -> void
+Cephalon.Observability.AlibabaCloud.Configuration.AlibabaCloudTelemetryExportOptions.ManagedGrpcEndpoint.get -> string?
+Cephalon.Observability.AlibabaCloud.Configuration.AlibabaCloudTelemetryExportOptions.ManagedGrpcEndpoint.set -> void
+Cephalon.Observability.AlibabaCloud.Configuration.AlibabaCloudTelemetryExportOptions.ManagedHttpMetricsEndpoint.get -> string?
+Cephalon.Observability.AlibabaCloud.Configuration.AlibabaCloudTelemetryExportOptions.ManagedHttpMetricsEndpoint.set -> void
+Cephalon.Observability.AlibabaCloud.Configuration.AlibabaCloudTelemetryExportOptions.ManagedHttpTracesEndpoint.get -> string?
+Cephalon.Observability.AlibabaCloud.Configuration.AlibabaCloudTelemetryExportOptions.ManagedHttpTracesEndpoint.set -> void
+Cephalon.Observability.AlibabaCloud.Configuration.AlibabaCloudTelemetryExportOptions.Region.get -> string?
+Cephalon.Observability.AlibabaCloud.Configuration.AlibabaCloudTelemetryExportOptions.Region.set -> void
+Cephalon.Observability.AlibabaCloud.Configuration.AlibabaCloudTelemetryExportOptions.UseManagedOpenTelemetryIngestion.get -> bool
+Cephalon.Observability.AlibabaCloud.Configuration.AlibabaCloudTelemetryExportOptions.UseManagedOpenTelemetryIngestion.set -> void
+Cephalon.Observability.AlibabaCloud.Hosting.AlibabaCloudHostApplicationBuilderExtensions
+static Cephalon.Observability.AlibabaCloud.Configuration.AlibabaCloudTelemetryExportOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.AlibabaCloud.Configuration.AlibabaCloudTelemetryExportOptions!
+static Cephalon.Observability.AlibabaCloud.Hosting.AlibabaCloudHostApplicationBuilderExtensions.AddCephalonAlibabaCloud<TBuilder>(this TBuilder builder, System.Action<Cephalon.Observability.AlibabaCloud.Configuration.AlibabaCloudTelemetryExportOptions!>? configure = null) -> TBuilder

@@ -1,0 +1,18 @@
+#nullable enable
+Cephalon.Observability.GrafanaCloud.Configuration.GrafanaCloudTelemetryExportOptions
+Cephalon.Observability.GrafanaCloud.Configuration.GrafanaCloudTelemetryExportOptions.AccessPolicyToken.get -> string?
+Cephalon.Observability.GrafanaCloud.Configuration.GrafanaCloudTelemetryExportOptions.AccessPolicyToken.set -> void
+Cephalon.Observability.GrafanaCloud.Configuration.GrafanaCloudTelemetryExportOptions.Endpoint.get -> string?
+Cephalon.Observability.GrafanaCloud.Configuration.GrafanaCloudTelemetryExportOptions.Endpoint.set -> void
+Cephalon.Observability.GrafanaCloud.Configuration.GrafanaCloudTelemetryExportOptions.GrafanaCloudTelemetryExportOptions() -> void
+Cephalon.Observability.GrafanaCloud.Configuration.GrafanaCloudTelemetryExportOptions.Headers.get -> string?
+Cephalon.Observability.GrafanaCloud.Configuration.GrafanaCloudTelemetryExportOptions.Headers.set -> void
+Cephalon.Observability.GrafanaCloud.Configuration.GrafanaCloudTelemetryExportOptions.InstanceId.get -> string?
+Cephalon.Observability.GrafanaCloud.Configuration.GrafanaCloudTelemetryExportOptions.InstanceId.set -> void
+Cephalon.Observability.GrafanaCloud.Configuration.GrafanaCloudTelemetryExportOptions.ServiceNamespace.get -> string?
+Cephalon.Observability.GrafanaCloud.Configuration.GrafanaCloudTelemetryExportOptions.ServiceNamespace.set -> void
+Cephalon.Observability.GrafanaCloud.Configuration.GrafanaCloudTelemetryExportOptions.UseDirectGrafanaCloudEndpoint.get -> bool
+Cephalon.Observability.GrafanaCloud.Configuration.GrafanaCloudTelemetryExportOptions.UseDirectGrafanaCloudEndpoint.set -> void
+Cephalon.Observability.GrafanaCloud.Hosting.GrafanaCloudHostApplicationBuilderExtensions
+static Cephalon.Observability.GrafanaCloud.Configuration.GrafanaCloudTelemetryExportOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.GrafanaCloud.Configuration.GrafanaCloudTelemetryExportOptions!
+static Cephalon.Observability.GrafanaCloud.Hosting.GrafanaCloudHostApplicationBuilderExtensions.AddCephalonGrafanaCloud<TBuilder>(this TBuilder builder, System.Action<Cephalon.Observability.GrafanaCloud.Configuration.GrafanaCloudTelemetryExportOptions!>? configure = null) -> TBuilder

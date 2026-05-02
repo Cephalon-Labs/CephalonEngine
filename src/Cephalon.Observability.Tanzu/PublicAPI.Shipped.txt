@@ -1,0 +1,28 @@
+#nullable enable
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.ClusterName.get -> string?
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.ClusterName.set -> void
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.Headers.get -> string?
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.Headers.set -> void
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.HostedPlatform.get -> string?
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.HostedPlatform.set -> void
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.Namespace.get -> string?
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.Namespace.set -> void
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.ProxyNamespace.get -> string?
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.ProxyNamespace.set -> void
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.ProxyPath.get -> string?
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.ProxyPath.set -> void
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.ProxyPort.get -> int?
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.ProxyPort.set -> void
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.ProxyScheme.get -> string?
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.ProxyScheme.set -> void
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.ProxyServiceName.get -> string?
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.ProxyServiceName.set -> void
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.TanzuTelemetryExportOptions() -> void
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.TrustedCaCertificatePath.get -> string?
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.TrustedCaCertificatePath.set -> void
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.UseInClusterProxyService.get -> bool
+Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.UseInClusterProxyService.set -> void
+Cephalon.Observability.Tanzu.Hosting.TanzuHostApplicationBuilderExtensions
+static Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions!
+static Cephalon.Observability.Tanzu.Hosting.TanzuHostApplicationBuilderExtensions.AddCephalonTanzu<TBuilder>(this TBuilder builder, System.Action<Cephalon.Observability.Tanzu.Configuration.TanzuTelemetryExportOptions!>? configure = null) -> TBuilder

@@ -1,0 +1,20 @@
+#nullable enable
+Cephalon.Observability.OracleCloud.Configuration.OracleCloudTelemetryExportOptions
+Cephalon.Observability.OracleCloud.Configuration.OracleCloudTelemetryExportOptions.DataUploadEndpoint.get -> string?
+Cephalon.Observability.OracleCloud.Configuration.OracleCloudTelemetryExportOptions.DataUploadEndpoint.set -> void
+Cephalon.Observability.OracleCloud.Configuration.OracleCloudTelemetryExportOptions.HostedPlatform.get -> string?
+Cephalon.Observability.OracleCloud.Configuration.OracleCloudTelemetryExportOptions.HostedPlatform.set -> void
+Cephalon.Observability.OracleCloud.Configuration.OracleCloudTelemetryExportOptions.MetricsDataKey.get -> string?
+Cephalon.Observability.OracleCloud.Configuration.OracleCloudTelemetryExportOptions.MetricsDataKey.set -> void
+Cephalon.Observability.OracleCloud.Configuration.OracleCloudTelemetryExportOptions.OracleCloudTelemetryExportOptions() -> void
+Cephalon.Observability.OracleCloud.Configuration.OracleCloudTelemetryExportOptions.Region.get -> string?
+Cephalon.Observability.OracleCloud.Configuration.OracleCloudTelemetryExportOptions.Region.set -> void
+Cephalon.Observability.OracleCloud.Configuration.OracleCloudTelemetryExportOptions.TraceDataKey.get -> string?
+Cephalon.Observability.OracleCloud.Configuration.OracleCloudTelemetryExportOptions.TraceDataKey.set -> void
+Cephalon.Observability.OracleCloud.Configuration.OracleCloudTelemetryExportOptions.UseManagedOpenTelemetryIngestion.get -> bool
+Cephalon.Observability.OracleCloud.Configuration.OracleCloudTelemetryExportOptions.UseManagedOpenTelemetryIngestion.set -> void
+Cephalon.Observability.OracleCloud.Configuration.OracleCloudTelemetryExportOptions.UsePublicTraceDataKey.get -> bool
+Cephalon.Observability.OracleCloud.Configuration.OracleCloudTelemetryExportOptions.UsePublicTraceDataKey.set -> void
+Cephalon.Observability.OracleCloud.Hosting.OracleCloudHostApplicationBuilderExtensions
+static Cephalon.Observability.OracleCloud.Configuration.OracleCloudTelemetryExportOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.OracleCloud.Configuration.OracleCloudTelemetryExportOptions!
+static Cephalon.Observability.OracleCloud.Hosting.OracleCloudHostApplicationBuilderExtensions.AddCephalonOracleCloud<TBuilder>(this TBuilder builder, System.Action<Cephalon.Observability.OracleCloud.Configuration.OracleCloudTelemetryExportOptions!>? configure = null) -> TBuilder

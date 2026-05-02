@@ -1,0 +1,19 @@
+#nullable enable
+Cephalon.Observability.OpenSearchDependencies.Configuration.OpenSearchDependencyDefinition
+Cephalon.Observability.OpenSearchDependencies.Configuration.OpenSearchDependencyDefinition.BearerToken.get -> string?
+Cephalon.Observability.OpenSearchDependencies.Configuration.OpenSearchDependencyDefinition.BearerToken.set -> void
+Cephalon.Observability.OpenSearchDependencies.Configuration.OpenSearchDependencyDefinition.Endpoint.get -> string!
+Cephalon.Observability.OpenSearchDependencies.Configuration.OpenSearchDependencyDefinition.Endpoint.set -> void
+Cephalon.Observability.OpenSearchDependencies.Configuration.OpenSearchDependencyDefinition.Index.get -> string?
+Cephalon.Observability.OpenSearchDependencies.Configuration.OpenSearchDependencyDefinition.Index.set -> void
+Cephalon.Observability.OpenSearchDependencies.Configuration.OpenSearchDependencyDefinition.OpenSearchDependencyDefinition() -> void
+Cephalon.Observability.OpenSearchDependencies.Configuration.OpenSearchDependencyDefinition.Password.get -> string?
+Cephalon.Observability.OpenSearchDependencies.Configuration.OpenSearchDependencyDefinition.Password.set -> void
+Cephalon.Observability.OpenSearchDependencies.Configuration.OpenSearchDependencyDefinition.Username.get -> string?
+Cephalon.Observability.OpenSearchDependencies.Configuration.OpenSearchDependencyDefinition.Username.set -> void
+Cephalon.Observability.OpenSearchDependencies.Configuration.OpenSearchDependencyHealthOptions
+Cephalon.Observability.OpenSearchDependencies.Configuration.OpenSearchDependencyHealthOptions.OpenSearchDependencyHealthOptions() -> void
+Cephalon.Observability.OpenSearchDependencies.Hosting.OpenSearchDependencyHealthServiceCollectionExtensions
+static Cephalon.Observability.OpenSearchDependencies.Configuration.OpenSearchDependencyHealthOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Observability.OpenSearchDependencies.Configuration.OpenSearchDependencyHealthOptions!
+static Cephalon.Observability.OpenSearchDependencies.Hosting.OpenSearchDependencyHealthServiceCollectionExtensions.AddCephalonOpenSearchDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.Observability.OpenSearchDependencies.Configuration.OpenSearchDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Observability.OpenSearchDependencies.Hosting.OpenSearchDependencyHealthServiceCollectionExtensions.AddCephalonOpenSearchDependencyHealth(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.Observability.OpenSearchDependencies.Configuration.OpenSearchDependencyHealthOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
