@@ -3719,6 +3719,30 @@ Follow-up later:
 - wire a smoke test that boots the sample, fires an HTTP request with an `Authorization: Bearer abc123` header, asserts the captured activity does not contain the raw token; today the unit-level integration tests for both M1 emission sites cover the wiring, so a sample-level smoke test is duplicate coverage with marginal value
 - adopt the same recipe in the other samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) as a separate slice when the redaction surface needs broader sample reach — **delivered in `ENG-369`**
 
+### ENG-372 Audit and cleanup remaining package-level NoWarn suppressions
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `ENG-371`'s follow-up note flagged the surviving non-RS0026/RS0027 suppressions for staleness audit: `MA0011`/`MA0048`/`MA0051`/`MA0002`/`RCS1194` on `Cephalon.Abstractions`, and `RS0041` on `Cephalon.AspNetCore.Grpc`
+- the same pattern that turned `RS0026`/`RS0027` into dead code (rule cleanup completed, suppression never removed) likely applies here; an audit takes minutes and either confirms the suppressions are still load-bearing or removes another stale layer of static-analysis noise
+- documenting the surviving suppressions inline explains *why* each surviving rule is genuinely suppressed (vs. the previous bare `<NoWarn>` lines that gave no context)
+
+Delivered:
+
+- audit on `Cephalon.Abstractions`: lifting `<NoWarn>$(NoWarn);MA0011;MA0048;MA0051;MA0002;RCS1194</NoWarn>` produces 0 warnings, 0 errors on a clean rebuild — all 5 Meziantou + Roslynator rules are stale and the suppression is removed
+- audit on `Cephalon.AspNetCore.Grpc`: lifting `<NoWarn>$(NoWarn);RS0041</NoWarn>` produces **68 errors** from `Grpc.Tools`-generated `discovery.proto` code (`Discovery.cs` and `DiscoveryGrpc.cs`) where `MergeFrom` / `ExchangeGreetings` / `NewInstance` / `Traits.get` and 60+ other generated symbols use oblivious reference types — the suppression is genuinely load-bearing and is restored with an explicit inline comment naming `Grpc.Tools` as the reason
+- `Cephalon.Abstractions.csproj`: 1 line removed (the `<NoWarn>` line)
+- `Cephalon.AspNetCore.Grpc.csproj`: 1 line added (the inline comment explaining why `RS0041` is suppressed)
+- verified with `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors)
+
+Follow-up later:
+
+- if `Grpc.Tools` ever ships a version that emits non-oblivious nullable annotations, drop the `RS0041` suppression on `Cephalon.AspNetCore.Grpc`; track the upstream issue at <https://github.com/grpc/grpc-dotnet> if needed
+- per the `ENG-371` discipline, any future suppression should land with an inline comment naming the specific call site or upstream code that triggered it; the bulk-suppression-as-bridge pattern is retired
+
 ### ENG-371 Remove stale RS0026/RS0027 NoWarn suppressions across all packages
 
 Status: done
@@ -11937,6 +11961,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-369 Adopt redaction recipe across remaining samples (shipped)
 - ENG-370 Author centralized EventId range registry (shipped)
 - ENG-371 Remove stale RS0026/RS0027 NoWarn suppressions across all packages (shipped)
+- ENG-372 Audit and cleanup remaining package-level NoWarn suppressions (shipped)
 
 ### Later / not scheduled yet
 
