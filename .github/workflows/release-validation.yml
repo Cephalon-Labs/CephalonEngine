@@ -43,6 +43,27 @@ jobs:
           global-json-file: global.json
           cache: true
 
+      - name: Install Pester
+        shell: pwsh
+        run: |
+          Install-Module -Name Pester -MinimumVersion 5.0.0 -Scope CurrentUser -Force -SkipPublisherCheck
+
+      - name: Run PowerShell Pester suites
+        shell: pwsh
+        run: |
+          $config = New-PesterConfiguration
+          $config.Run.Path = 'tests/Cephalon.Tests.Scripts'
+          $config.Run.PassThru = $true
+          $config.Output.Verbosity = 'Detailed'
+          $config.TestResult.Enabled = $true
+          $config.TestResult.OutputFormat = 'NUnitXml'
+          $config.TestResult.OutputPath = 'artifacts/pester-results/cephalon-scripts-tests.xml'
+          New-Item -Path 'artifacts/pester-results' -ItemType Directory -Force | Out-Null
+          $result = Invoke-Pester -Configuration $config
+          if ($result.FailedCount -gt 0) {
+            throw "Pester reported $($result.FailedCount) failure(s); aborting validation."
+          }
+
       - name: Run release validation
         shell: pwsh
         run: ./scripts/validate-release.ps1 ${{ matrix.validate_args }}
@@ -69,6 +90,22 @@ jobs:
         with:
           name: dotnet-readiness-${{ matrix.benchmark_artifact_suffix }}
           path: artifacts/dotnet-readiness-release
+          if-no-files-found: warn
+
+      - name: Upload deployment-mode claim validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-mode-claims-${{ matrix.benchmark_artifact_suffix }}
+          path: artifacts/deployment-mode-claims-release
+          if-no-files-found: warn
+
+      - name: Upload Pester test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pester-results-${{ matrix.benchmark_artifact_suffix }}
+          path: artifacts/pester-results
           if-no-files-found: warn
 
       - name: Upload package artifacts
