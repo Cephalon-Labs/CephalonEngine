@@ -81,10 +81,14 @@
           "Cephalon.Behaviors": "[0.1.0-preview, )"
         }
       },
+      "cephalon.diagnostics": {
+        "type": "Project"
+      },
       "cephalon.engine": {
         "type": "Project",
         "dependencies": {
-          "Cephalon.Abstractions": "[0.1.0-preview, )"
+          "Cephalon.Abstractions": "[0.1.0-preview, )",
+          "Cephalon.Diagnostics": "[0.1.0-preview, )"
         }
       },
       "cephalon.ids.sfid": {

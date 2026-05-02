@@ -1,5 +1,6 @@
 using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Modules;
+using Cephalon.Diagnostics;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.Engine.Manifest;
@@ -718,13 +719,13 @@ public sealed class EngineRuntime : IRuntime, IDisposable
             $"module.{phase}",
             ActivityKind.Internal);
         moduleActivity?.SetTag("cephalon.phase", phase);
-        moduleActivity?.SetTag("cephalon.module.id", module.Descriptor.Id);
+        moduleActivity?.SetTag(CephalonDiagnosticsAttributeKeys.ModuleId, module.Descriptor.Id);
         moduleActivity?.SetTag("cephalon.module.version", moduleVersion);
 
         var tags = new TagList
         {
             { "cephalon.phase", phase },
-            { "cephalon.module.id", module.Descriptor.Id }
+            { CephalonDiagnosticsAttributeKeys.ModuleId, module.Descriptor.Id }
         };
 
         try

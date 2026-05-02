@@ -1,23 +1,30 @@
 using System.Diagnostics;
 using System.Diagnostics.Metrics;
 using System.Reflection;
+using Cephalon.Diagnostics;
 
 namespace Cephalon.Engine.Diagnostics;
 
 /// <summary>
 /// Defines the stable meter, activity source, and counter names emitted by the engine runtime.
 /// </summary>
+/// <remarks>
+/// The <see cref="MeterName"/> and <see cref="ActivitySourceName"/> values are sourced from
+/// <see cref="CephalonMeters.Engine"/> and <see cref="CephalonActivitySources.Engine"/>
+/// respectively, so the engine runtime and observability companion packs share one
+/// canonical name set rather than re-declaring the literal "Cephalon.Engine" string.
+/// </remarks>
 public static class EngineDiagnostics
 {
     /// <summary>
     /// Gets the meter name emitted by the engine.
     /// </summary>
-    public const string MeterName = "Cephalon.Engine";
+    public const string MeterName = CephalonMeters.Engine;
 
     /// <summary>
     /// Gets the activity-source name emitted by the engine.
     /// </summary>
-    public const string ActivitySourceName = "Cephalon.Engine";
+    public const string ActivitySourceName = CephalonActivitySources.Engine;
 
     /// <summary>
     /// Gets the activity name used while building the runtime.

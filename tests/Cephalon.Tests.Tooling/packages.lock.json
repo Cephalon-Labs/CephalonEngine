@@ -1869,6 +1869,9 @@
           "Microsoft.Data.SqlClient": "[7.0.0, )"
         }
       },
+      "cephalon.diagnostics": {
+        "type": "Project"
+      },
       "cephalon.edge": {
         "type": "Project",
         "dependencies": {
@@ -1896,6 +1899,7 @@
         "type": "Project",
         "dependencies": {
           "Cephalon.Abstractions": "[0.1.0-preview, )",
+          "Cephalon.Diagnostics": "[0.1.0-preview, )",
           "Microsoft.Extensions.Configuration.Abstractions": "[10.0.5, )",
           "Microsoft.Extensions.Configuration.Json": "[10.0.5, )",
           "Microsoft.Extensions.Hosting": "[10.0.5, )",

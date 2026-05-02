@@ -1608,6 +1608,9 @@
           "Microsoft.Data.SqlClient": "[7.0.0, )"
         }
       },
+      "cephalon.diagnostics": {
+        "type": "Project"
+      },
       "cephalon.edge": {
         "type": "Project",
         "dependencies": {
@@ -1631,7 +1634,8 @@
       "cephalon.engine": {
         "type": "Project",
         "dependencies": {
-          "Cephalon.Abstractions": "[0.1.0-preview, )"
+          "Cephalon.Abstractions": "[0.1.0-preview, )",
+          "Cephalon.Diagnostics": "[0.1.0-preview, )"
         }
       },
       "cephalon.eventing": {

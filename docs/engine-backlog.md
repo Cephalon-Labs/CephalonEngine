@@ -2840,6 +2840,33 @@ Follow-up later:
 - clean up the RS0026 / RS0027 optional-overload patterns inside `Cephalon.Engine` so the per-project suppressions can be removed without the build going red
 - author a generator / `dotnet format analyzers` integration into release validation so the public-API baseline regenerates predictably on intentional surface changes rather than relying on hand-extraction from build output
 
+### ENG-327 Cephalon.Diagnostics M0 to M1 promotion (engine consumes canonical names)
+
+Status: done
+Estimate: 3
+
+Why:
+
+- `ENG-323` shipped `Cephalon.Diagnostics` at `M0` taxonomy-only, declaring `CephalonActivitySources.Engine` (`Cephalon.Engine`), `CephalonMeters.Engine` (`Cephalon.Engine`), and the `cephalon.*` attribute key set, with the explicit promotion criterion that `M1` requires the engine itself to emit at least one span or metric through this package's name set
+- `Cephalon.Engine.Diagnostics.EngineDiagnostics` already declared the same string literals (`"Cephalon.Engine"`) for its `ActivitySourceName` and `MeterName`; the engine was emitting under the canonical names but with duplicate string literals on both sides of the contract instead of one canonical source
+- the smallest honest M1 promotion is wiring the engine's existing emission path through `Cephalon.Diagnostics`'s constants, not refactoring every call site or inventing new spans
+
+Delivered:
+
+- add a `ProjectReference` from `Cephalon.Engine` to `Cephalon.Diagnostics` so the engine can consume `CephalonActivitySources`, `CephalonMeters`, and `CephalonDiagnosticsAttributeKeys`
+- update `EngineDiagnostics.MeterName` to source its value from `CephalonMeters.Engine`, and `EngineDiagnostics.ActivitySourceName` to source its value from `CephalonActivitySources.Engine`; both remain `public const string` with the same compiled value `"Cephalon.Engine"`, so the public API of `Cephalon.Engine` is unchanged
+- add an XML doc remarks block on `EngineDiagnostics` declaring that the names are now sourced from `Cephalon.Diagnostics` so the engine runtime and observability companion packs share one canonical name set
+- update one representative call site in `EngineRuntime.cs` (the per-module-phase activity) to use `CephalonDiagnosticsAttributeKeys.ModuleId` instead of the literal `"cephalon.module.id"`; this is symbolic — the IL is identical because both consts have the same value — but documents the engine's intent that future attribute additions live in `Cephalon.Diagnostics`
+- update `docs/components/diagnostics.md` maturity section to declare `M1` / `cephalon-managed`, with the promotion narrative pointing at the `EngineDiagnostics` consumption + the per-module-phase tag emission as the proof
+- verified end-to-end with `dotnet build src/Cephalon.Engine/Cephalon.Engine.csproj -c Release` (0 warnings, 0 errors), full-solution `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors), and the existing `Cephalon.Engine` `PublicAPI.Shipped.txt` baseline (no public-surface changes; the const value stayed the same and no new public types are added on `Cephalon.Engine`'s side)
+
+Follow-up later:
+
+- promote `Cephalon.Diagnostics` from `M1` to `M2` when at least one host adapter (`Cephalon.AspNetCore`, `Cephalon.Worker`) routes its telemetry through `CephalonActivitySources.AspNetCore` / `CephalonActivitySources.Worker` and the matching meter and attribute keys
+- continue rolling out `CephalonDiagnosticsAttributeKeys` constants across remaining string-literal call sites in `EngineRuntime.cs`, `EngineBuilder.cs`, and the rest of `Cephalon.Engine`; each rollout is a small symbolic-only change so it can ride along with adjacent slices instead of needing its own `ENG-*` card
+- consider adding `cephalon.blueprint` and `cephalon.module.count` style aggregate-attribute keys to `Cephalon.Diagnostics` if the OpenTelemetry semantic-convention discipline holds up over more emission sites; today those names are engine-internal and not declared in `Cephalon.Diagnostics`
+- author the redaction filter primitive at the engine boundary so secrets / PII / authentication tokens never reach exporters when the next emission-site rollout lands
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -10900,6 +10927,7 @@ Upcoming sequence from the April 2026 maturity reset:
 ### Sprint 121
 
 - ENG-326 Public-API contract lock-in rollout to Cephalon.Engine (shipped)
+- ENG-327 Cephalon.Diagnostics M0 to M1 promotion (engine consumes canonical names) (shipped)
 
 ### Later / not scheduled yet
 

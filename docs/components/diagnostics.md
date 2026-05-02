@@ -23,10 +23,9 @@ Where an OpenTelemetry semantic convention already exists for a concept (HTTP se
 
 ## Maturity and ownership
 
-- maturity today: `M0` — taxonomy-only; the package publishes names and attribute keys, no execution ownership
-- promote to `M1` when the engine itself emits at least one span or metric through `CephalonActivitySources.Engine` or `CephalonMeters.Engine`
+- maturity today: `M1` — `cephalon-managed`; `Cephalon.Engine` consumes the canonical names from this package: `EngineDiagnostics.ActivitySourceName` is now `CephalonActivitySources.Engine` and `EngineDiagnostics.MeterName` is now `CephalonMeters.Engine`, so every span and metric emitted by the engine runtime (including the `engine.build` span at composition time and the per-module lifecycle spans `module.{phase}`) flows through this package's name set; module-lifecycle spans also emit `cephalon.module.id` via `CephalonDiagnosticsAttributeKeys.ModuleId`
 - promote to `M2` when at least one host adapter (`Cephalon.AspNetCore`, `Cephalon.Worker`) routes its telemetry through this package's name set
-- ownership: `taxonomy-only` for now; future emission-side ownership is tracked separately
+- ownership: `cephalon-managed` (since `Cephalon.Engine` now owns the emission path through this package's constants)
 
 ## Cross-references
 
