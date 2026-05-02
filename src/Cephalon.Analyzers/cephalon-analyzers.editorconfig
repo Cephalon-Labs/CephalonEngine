@@ -1,0 +1,57 @@
+# Cephalon-curated analyzer rule severities
+#
+# Drop this file into your repo as `.editorconfig` (or merge its contents into your existing
+# .editorconfig) to inherit Cephalon's analyzer severity baseline. The bundled analyzer
+# packages (NetAnalyzers via the SDK, Roslynator, Meziantou, BannedApiAnalyzers, VS Threading,
+# PublicApiAnalyzers) ship with their own defaults; this snippet tunes the rules that matter
+# for engine-grade quality without forcing consumers to escalate every style preference.
+
+root = false
+
+[*.{cs,csproj}]
+# --- Microsoft .NET analyzers ---
+# CA2007: ConfigureAwait(false) on awaited tasks. Engine + library code: error.
+dotnet_diagnostic.CA2007.severity = error
+
+# CA2016: forward CancellationToken parameters. Error so async-without-token regressions break the build.
+dotnet_diagnostic.CA2016.severity = error
+
+# CA2100: SQL via string concat. Error to prevent injection patterns at the source.
+dotnet_diagnostic.CA2100.severity = error
+
+# CA1848: use LoggerMessage source generator on hot logging paths.
+dotnet_diagnostic.CA1848.severity = warning
+
+# CA2254: log message templates should be compile-time constants.
+dotnet_diagnostic.CA2254.severity = warning
+
+# --- Threading analyzers (Microsoft.VisualStudio.Threading.Analyzers) ---
+# VSTHRD002: avoid problematic synchronous waits.
+dotnet_diagnostic.VSTHRD002.severity = error
+
+# VSTHRD100: avoid async void.
+dotnet_diagnostic.VSTHRD100.severity = error
+
+# VSTHRD110: observe Task return values.
+dotnet_diagnostic.VSTHRD110.severity = error
+
+# VSTHRD200: Async-suffix discipline.
+dotnet_diagnostic.VSTHRD200.severity = warning
+
+# --- Banned API analyzer (uses BannedSymbols.txt shipped with this package) ---
+# RS0030: a banned API was used.
+dotnet_diagnostic.RS0030.severity = error
+
+# --- Roslynator selected highlights ---
+# RCS1090: call ConfigureAwait(false). Aligned with CA2007 above.
+dotnet_diagnostic.RCS1090.severity = error
+
+# RCS1102: declare static type members.
+dotnet_diagnostic.RCS1102.severity = warning
+
+# --- Meziantou selected highlights ---
+# MA0004: use ConfigureAwait(false). Aligned with CA2007 above.
+dotnet_diagnostic.MA0004.severity = error
+
+# MA0040: forward CancellationToken parameters. Aligned with CA2016 above.
+dotnet_diagnostic.MA0040.severity = error

@@ -2779,6 +2779,40 @@ Follow-up later:
 - container base image signing propagation: `.NET 11` base images already ship signed (Preview 3); the published Cephalon container artefacts in [`container-image-publishing.md`](container-image-publishing.md) should propagate the signature chain end-to-end so consumers can verify both the engine container and the underlying base image
 - vulnerability-handling response timeline alignment with EU CRA Article 13 (mandatory reporting within 24 hours of becoming aware of an actively exploited vulnerability) is a separate slice owned by a future ops / security card, not by this release-pipeline slice
 
+### ENG-325 Cephalon.Analyzers curated meta-package
+
+Status: done
+Estimate: 5
+
+Why:
+
+- the analyzer baseline (`Microsoft.CodeAnalysis.NetAnalyzers`, `Roslynator`, `Meziantou.Analyzer`, `BannedApiAnalyzers`, `Microsoft.VisualStudio.Threading.Analyzers`, `PublicApiAnalyzers`) was previously composed package-by-package only inside the engine's own projects; consumers that adopt Cephalon to write modules, behavior implementations, host adapters, or applications do not inherit the engine's quality posture without enumerating every analyzer by hand and re-deriving the rule severities
+- a single meta-package gives consumers a `<PackageReference Include="Cephalon.Analyzers" />` that pulls in the curated analyzer set, a curated `BannedSymbols.txt` aligned with the engine's discipline, and a curated `.editorconfig` snippet aligned with the engine's severity baseline
+- this slice closes the supply-chain uplift plan; with `ENG-321` through `ENG-325` shipped, the engine has the complete supply-chain posture (lock files, public-API contract artefacts, OpenTelemetry semantic-convention adapter, signed release pipeline, consumer-facing analyzer meta-package) the May 2026 Learning Knowledge Pack delta named as foundation
+
+Delivered:
+
+- new `src/Cephalon.Analyzers/Cephalon.Analyzers.csproj` targeting `netstandard2.0` so the meta-package is restorable from the broadest possible SDK / consumer matrix; `LangVersion=latest`, `IsPackable=true`, `IncludeBuildOutput=false`, `GenerateDocumentationFile=false` because the package ships no source code or DLL of its own
+- bundle `Microsoft.CodeAnalysis.BannedApiAnalyzers`, `Microsoft.CodeAnalysis.PublicApiAnalyzers`, `Roslynator.Analyzers`, `Meziantou.Analyzer`, and `Microsoft.VisualStudio.Threading.Analyzers` as `<PackageReference>` entries with `<IncludeAssets>analyzers; build; buildtransitive</IncludeAssets>` so the analyzers flow transitively to consumers; `Microsoft.CodeAnalysis.NetAnalyzers` is intentionally not bundled because it ships in-box with the .NET 10 SDK
+- ship a curated `BannedSymbols.txt` under `buildTransitive/` banning wall-clock time without an injectable abstraction (`DateTime.Now`, `DateTime.UtcNow`, `DateTimeOffset.Now`), synchronous waits on async code (`Task.Wait`, `Task<T>.Result`), `Thread.Sleep` in async contexts, and `Environment.Exit` in hosted scenarios; `Task.Run` is intentionally noted as commented-out so consumers do not get a ban they did not opt into
+- ship a `buildTransitive/Cephalon.Analyzers.props` MSBuild props file that wires `BannedSymbols.txt` as an `AdditionalFiles` entry in the consumer's build automatically; consumers opt out by setting `<CephalonAnalyzersUseBannedSymbols>false</CephalonAnalyzersUseBannedSymbols>` before the props file loads
+- ship a curated `cephalon-analyzers.editorconfig` under `content/` declaring rule severities for `CA2007` / `RCS1090` / `MA0004` (`ConfigureAwait` discipline) at error, `CA2016` / `MA0040` (cancellation-token forwarding) at error, `CA2100` (raw SQL via string concat) at error, `VSTHRD002` / `VSTHRD100` / `VSTHRD110` (sync-over-async, async void, observed task return values) at error, `RS0030` (banned-API enforcement) at error, and `CA1848` / `CA2254` / `VSTHRD200` / `RCS1102` at warning; consumers can copy or include this file
+- ship an in-package `README.md` that explains the adoption path, the opt-out, and the cross-references back to the engine docs
+- add the project to `CephalonEngine.slnx`
+- generate `src/Cephalon.Analyzers/packages.lock.json` so `dotnet restore --locked-mode` (the CI gate from `ENG-321`) still passes
+- add `docs/components/analyzers.md` declaring what the package owns, the main surfaces, the maturity (`M0` taxonomy-only) and ownership (`taxonomy-only`) labels, the rule-severity selection rationale, the promotion criteria for `M1` and `M2`, and the cross-references back to engineering-standards.md, compatibility.md, engine-surface-maturity-audit.md, and supply-chain-uplift-plan.md
+- update `docs/components/README.md` to surface the new component page in the canonical list
+- collapse the matching `ENG-325` section in `docs/supply-chain-uplift-plan.md` into a one-paragraph "shipped" back-pointer per the plan's own refresh cadence
+- update `Directory.Packages.props` central package management to pin the four new analyzer packages: `Microsoft.CodeAnalysis.BannedApiAnalyzers` `4.14.0`, `Roslynator.Analyzers` `4.13.1`, `Meziantou.Analyzer` `2.0.219`, `Microsoft.VisualStudio.Threading.Analyzers` `17.14.15`
+- verified end-to-end with `dotnet build src/Cephalon.Analyzers/Cephalon.Analyzers.csproj -c Release` (0 warnings, 0 errors), `dotnet pack` (creates `Cephalon.Analyzers.0.1.0-preview.nupkg`), full-solution `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors), and `dotnet restore --locked-mode CephalonEngine.slnx` (passes against the refreshed lock graph)
+
+Follow-up later:
+
+- promote to `M1` when at least one engine project (`Cephalon.Abstractions` is the natural starter) replaces its individual analyzer references with `<PackageReference Include="Cephalon.Analyzers" />`; promote to `M2` when the meta-package is the documented adoption path in `getting-started.md` and the template-pack starter projects reference it by default
+- per-Cephalon-package analyzer-rule severity tuning (e.g. eventing-specific banned symbols) remains future per-package work; this slice ships the curated baseline only
+- consider escalating `Task.Run` to a banned symbol with a `;ConsumersMaySuppress` message once the pattern is more clearly documented; left as a comment in the curated `BannedSymbols.txt` for now
+- author a release-validation harness step that consumes `Cephalon.Analyzers` from a sample consumer project to verify the meta-package keeps working as the bundled analyzer versions evolve
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -10831,6 +10865,10 @@ Upcoming sequence from the April 2026 maturity reset:
 ### Sprint 119
 
 - ENG-324 Release pipeline supply-chain hardening (SLSA L3 + Sigstore + CycloneDX SBOM + NuGet trusted publishing) (shipped)
+
+### Sprint 120
+
+- ENG-325 Cephalon.Analyzers curated meta-package (shipped)
 
 ### Later / not scheduled yet
 

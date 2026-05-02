@@ -140,6 +140,7 @@ When a component-page maturity label and the maturity audit disagree, the audit 
 - [Cephalon.Observability.AzureMonitor](observability-azure-monitor.md)
 - [Cephalon.Observability.Serilog](observability-serilog.md)
 - [Cephalon.Diagnostics](diagnostics.md)
+- [Cephalon.Analyzers](analyzers.md)
 - [Cephalon.Scaffolding](scaffolding.md)
 - [Cephalon.Cli](cli.md)
 - [Cephalon.ReferenceDocs](reference-docs.md)
