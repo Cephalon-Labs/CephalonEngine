@@ -3075,6 +3075,35 @@ Follow-up later:
 - add a redaction filter primitive at the engine boundary so secrets / PII / authentication tokens never reach exporters; add `LoggerMessage`-source-generated factories aligned with the per-package diagnostic-id range discipline
 - continue rolling `CephalonDiagnosticsAttributeKeys` constant adoption across remaining string-literal call sites in `Cephalon.AspNetCore` (e.g. `HttpRequestResponseLoggingMiddleware`'s `cephalon.http.request.started` event names) and elsewhere; each rollout is symbolic only and can ride along with adjacent slices
 
+### ENG-335 Public-API contract lock-in rollout to transport adapters (Cephalon.AspNetCore.GraphQL + Grpc + JsonRpc)
+
+Status: done
+Estimate: 5
+
+Why:
+
+- `ENG-322`, `ENG-326`, and `ENG-329`/`ENG-330` proved the public-API contract lock-in pattern on `Cephalon.Abstractions`, `Cephalon.Engine`, `Cephalon.AspNetCore`, and `Cephalon.Worker`; the transport-adapter family (`Cephalon.AspNetCore.GraphQL`, `Cephalon.AspNetCore.Grpc`, `Cephalon.AspNetCore.JsonRpc`) is the natural next slice
+- the transport adapters are smaller surfaces than the host adapters (12 + 100 + 5 entries respectively) so all three fit cleanly into one slice instead of three; landing them together keeps the transport-family contract lock-in coherent
+
+Delivered:
+
+- add `Microsoft.CodeAnalysis.PublicApiAnalyzers` as a `PrivateAssets=all` `PackageReference` to all three transport-adapter csproj files; declare `PublicAPI.Shipped.txt` and `PublicAPI.Unshipped.txt` as `AdditionalFiles`
+- generate baselines:
+    - `src/Cephalon.AspNetCore.GraphQL/PublicAPI.Shipped.txt` — 12 entries covering the GraphQL transport adapter's public surface
+    - `src/Cephalon.AspNetCore.Grpc/PublicAPI.Shipped.txt` — 100 entries covering the gRPC transport adapter's public surface (largest because the discovery proto contract emits multiple types)
+    - `src/Cephalon.AspNetCore.JsonRpc/PublicAPI.Shipped.txt` — 5 entries covering the JSON-RPC transport adapter's public surface
+- commit empty `PublicAPI.Unshipped.txt` for each
+- suppress `RS0026` and `RS0027` inside each project with an inline comment; cleanup is follow-up
+- `Cephalon.AspNetCore.Grpc` additionally suppresses `RS0041` ("Symbol uses some oblivious reference types") because `Grpc.Tools` generates `obj/Release/net10.0/Protos/DiscoveryGrpc.cs` with oblivious nullable annotations from the `.proto` protocol; the generated code is not under our direct control, and the suppression is documented inline so it can be revisited when `Grpc.Tools` emits nullable-annotated output by default
+- refresh `packages.lock.json` for each transport adapter; locked-mode restore passes against the refreshed graph
+- verified end-to-end with per-project `dotnet build -c Release --no-restore` (0 warnings, 0 errors for each), full-solution `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors), and `dotnet restore --locked-mode CephalonEngine.slnx` (passes)
+
+Follow-up later:
+
+- continue the rollout to remaining package families: behaviors (`Cephalon.Behaviors`, `.Http`, `.Messaging`, `.Patterns`), data (`Cephalon.Data`, `.EntityFramework`, `.Postgres`, `.SqlServer`, …), event sourcing, observability, multi-tenancy + governance, agentics, retrieval, edge; each family is its own `ENG-*` slice because each baseline + NoWarn discipline is a separate review surface
+- clean up the RS0026 / RS0027 optional-overload patterns inside each transport adapter so the per-project suppressions can be removed
+- monitor `Grpc.Tools` releases for nullable-annotated output; remove the `RS0041` suppression in `Cephalon.AspNetCore.Grpc` once the tooling emits annotated code
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -11153,6 +11182,7 @@ Upcoming sequence from the April 2026 maturity reset:
 ### Sprint 124
 
 - ENG-334 Cephalon.Diagnostics M1 to M2 promotion (host adapters consume canonical names) (shipped)
+- ENG-335 Public-API contract lock-in rollout to transport adapters (Cephalon.AspNetCore.GraphQL + Grpc + JsonRpc) (shipped)
 
 ### Later / not scheduled yet
 

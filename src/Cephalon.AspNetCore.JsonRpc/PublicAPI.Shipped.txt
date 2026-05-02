@@ -1,0 +1,6 @@
+#nullable enable
+Cephalon.AspNetCore.JsonRpc.Hosting.JsonRpcTransportServiceCollectionExtensions
+Cephalon.AspNetCore.JsonRpc.Modules.IJsonRpcModule
+Cephalon.AspNetCore.JsonRpc.Modules.IJsonRpcModule.MapJsonRpcEndpoints(Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints) -> void
+static Cephalon.AspNetCore.JsonRpc.Hosting.JsonRpcTransportServiceCollectionExtensions.AddJsonRpcTransport(this Microsoft.AspNetCore.Builder.WebApplicationBuilder! builder) -> Microsoft.AspNetCore.Builder.WebApplicationBuilder!
+static Cephalon.AspNetCore.JsonRpc.Hosting.JsonRpcTransportServiceCollectionExtensions.AddJsonRpcTransport(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
