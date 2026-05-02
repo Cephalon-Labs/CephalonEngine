@@ -2792,6 +2792,28 @@ public static class EngineWebApplicationExtensions
                 LivenessPath: "/health/live",
                 ReadinessPath: "/health/ready")))
             .WithName("GetCephalonDiagnostics");
+        engineGroup.MapGet("/diagnostics-conventions", () => TypedResults.Ok(new DiagnosticsConventionsSurface(
+                ActivitySources:
+                [
+                    Cephalon.Diagnostics.CephalonActivitySources.Engine,
+                    Cephalon.Diagnostics.CephalonActivitySources.AspNetCore,
+                    Cephalon.Diagnostics.CephalonActivitySources.Worker
+                ],
+                Meters:
+                [
+                    Cephalon.Diagnostics.CephalonMeters.Engine,
+                    Cephalon.Diagnostics.CephalonMeters.AspNetCore,
+                    Cephalon.Diagnostics.CephalonMeters.Worker
+                ],
+                CephalonAttributeKeys:
+                [
+                    Cephalon.Diagnostics.CephalonDiagnosticsAttributeKeys.ModuleId,
+                    Cephalon.Diagnostics.CephalonDiagnosticsAttributeKeys.BehaviorId,
+                    Cephalon.Diagnostics.CephalonDiagnosticsAttributeKeys.CellId,
+                    Cephalon.Diagnostics.CephalonDiagnosticsAttributeKeys.AppBlueprint,
+                    Cephalon.Diagnostics.CephalonDiagnosticsAttributeKeys.TenantId
+                ])))
+            .WithName("GetCephalonDiagnosticsConventions");
         engineGroup.MapGet("/modules/{moduleId}", (string moduleId, RuntimeManifest manifest) =>
             {
                 var module = manifest.Modules.FirstOrDefault(item =>

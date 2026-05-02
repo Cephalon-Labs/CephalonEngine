@@ -3302,6 +3302,57 @@ Follow-up later:
 - author an analyzer-aware diff helper that emits a release-notes-friendly summary of `PublicAPI.Unshipped.txt` entries pending promotion, so PR reviewers can read the API delta in human form across the 101-package contract surface
 - consider promoting the `_inject-public-api-analyzers.ps1` helper to a permanent `scripts/inject-public-api-analyzers.ps1` once the next package addition needs the same automation
 
+### ENG-350 Promote PublicApiAnalyzers injection helper to permanent scripts/
+
+Status: done
+Estimate: 2
+
+Why:
+
+- the rollout arc (`ENG-322` through `ENG-345`) used a one-shot `scripts/_inject-public-api-analyzers.ps1` helper that was deleted after each batch slice; with the rollout now complete (101 packages locked), every NEW `Cephalon.*` package added going forward needs the same per-project edits, and the one-shot pattern has played out enough times to justify a permanent helper
+- without the helper, the next package author would either copy-paste the boilerplate (~25 lines per project) or reverse-engineer the rollout arc to figure out the right shape, both of which are error-prone — `Cephalon.Cli` and three observability dependency-health probe packs already hit the transitive-types extraction edge case during their respective slices
+
+Delivered:
+
+- promote the helper from a deleted one-shot to a documented, repo-tracked tool at [`scripts/inject-public-api-analyzers.ps1`](../scripts/inject-public-api-analyzers.ps1) with a comment-based help block (`SYNOPSIS`, `DESCRIPTION`, `PARAMETER Projects`, `PARAMETER EngId`, `EXAMPLE`)
+- add detection for both `Microsoft.CodeAnalysis.PublicApiAnalyzers` direct references AND `Cephalon.Analyzers.csproj` ProjectReferences (which transitively flow the analyzer through the meta-package shipped in `ENG-325`); skip both shapes with descriptive output rather than producing duplicate `<ItemGroup>` blocks
+- emit a "Next step" hint after the run so the operator knows to capture `error RS0016` symbols into `PublicAPI.Shipped.txt` and where to read the extraction pattern + known transitive-deps edge cases (`docs/engineering-standards.md`)
+- update [`docs/engineering-standards.md`](engineering-standards.md) with a new *Public-API contract artefacts* subsection in the packaging section: documents the rollout completion (101 packages), the helper, the transitive-deps edge case (Cli vs Scaffolding, dependency-health probes vs DependencyHealth.Core), the RS0026 / RS0027 suppression discipline, and the `*REMOVED*` rename / removal convention
+- smoke-test the helper end-to-end against `Cephalon.Abstractions` (correctly skipped because it adopts the meta-package), `Cephalon.Engine` (correctly skipped because it references the analyzer directly), and `Cephalon.Data` (correctly skipped because it references the analyzer directly via `ENG-341`); full-solution `dotnet build CephalonEngine.slnx -c Release` returns 0/0 after smoke-test
+
+Follow-up later:
+
+- consider extending the helper to optionally run `dotnet build` against the just-edited project, capture `error RS0016` symbols, and write `PublicAPI.Shipped.txt` automatically — this would close the manual extraction step that today is done with shell loops
+- when the engine adds a new analyzer-only or source-gen project (`netstandard2.0` like `Cephalon.Behaviors.SourceGen` and `Cephalon.Analyzers`), the helper should detect the analyzer-only shape and skip; today only the `Microsoft.CodeAnalysis.PublicApiAnalyzers` and `Cephalon.Analyzers.csproj` references trigger the skip path
+
+### ENG-351 Cephalon.Diagnostics M2 to M3 promotion (operator surface for canonical name set)
+
+Status: done
+Estimate: 5
+
+Why:
+
+- `ENG-334` promoted `Cephalon.Diagnostics` from `M1` to `M2` once both shipped host adapters (`Cephalon.AspNetCore`, `Cephalon.Worker`) routed their telemetry through the canonical name set; the documented `M3` promotion criterion was an explicit operator surface (catalog routes, snapshot keys) projecting the active source / meter / attribute-key set so operators and AI tooling can introspect what the engine actually emits without reading source
+- before this slice the canonical names were only discoverable by reading `Cephalon.Diagnostics`'s C# source; observability companion packs subscribing to engine spans had to hard-code the name set rather than pull it from a runtime-introspectable contract
+
+Delivered:
+
+- new `src/Cephalon.AspNetCore/Diagnostics/DiagnosticsConventionsSurface.cs` declaring a `public sealed record DiagnosticsConventionsSurface(IReadOnlyList<string> ActivitySources, IReadOnlyList<string> Meters, IReadOnlyList<string> CephalonAttributeKeys)` with full XML doc comments naming the source-of-truth constant classes in `Cephalon.Diagnostics`
+- new `GET /engine/diagnostics-conventions` route mapped through `EngineWebApplicationExtensions.MapCephalonEngine`; returns a `DiagnosticsConventionsSurface` populated from `CephalonActivitySources.Engine` / `.AspNetCore` / `.Worker`, `CephalonMeters.Engine` / `.AspNetCore` / `.Worker`, and the five canonical `cephalon.*` attribute keys; route name `GetCephalonDiagnosticsConventions`
+- update `src/Cephalon.AspNetCore/PublicAPI.Unshipped.txt` with the new public types per the established contract-lock-in pattern (16 entries: type, primary constructor, three init-only property pairs, deconstructor, equality members, two operators, override `Equals` / `GetHashCode` / `ToString`); the entries flow into `PublicAPI.Shipped.txt` on the next release as part of the standard promotion cycle
+- update `docs/components/diagnostics.md` maturity section from `M2` to `M3`; the new `M4` promotion criterion is at least one observability companion pack consuming `/engine/diagnostics-conventions` programmatically to drive its own subscription / alerting wiring
+- update `docs/engine-surface-maturity-audit.md` `Cephalon.Diagnostics` row maturity from `M2` to `M3` with the operator-surface summary
+- update `docs/conformance-matrix.md` `Cephalon.Diagnostics` row maturity from `M2` to `M3`; add the `/engine/diagnostics-conventions` route to the route column; move the package from the `Narrow managed execution (M2)` family-summary line to `Broad managed execution (M3)`
+- update `docs/runtime-contract-index.md` `/engine/*` route catalog with the new `GET /diagnostics-conventions` row owned by `Cephalon.AspNetCore`
+- verified end-to-end with `dotnet build src/Cephalon.AspNetCore/Cephalon.AspNetCore.csproj -c Release` (0 warnings, 0 errors) and full-solution `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors)
+
+Follow-up later:
+
+- promote to `M4` when at least one observability companion pack (e.g. `Cephalon.Observability.OpenTelemetry`) consumes `/engine/diagnostics-conventions` programmatically to wire its own activity-source subscription set rather than reading constants from `Cephalon.Diagnostics` directly
+- consider adding the same `DiagnosticsConventionsSurface` projection into `snapshot.*` so the introspection snapshot includes the canonical name set in one read alongside other engine state, complementing the dedicated route
+- the new public types in `PublicAPI.Unshipped.txt` for `Cephalon.AspNetCore` will graduate to `PublicAPI.Shipped.txt` on the next release per the standard contract-lock-in promotion cycle; today they appear correctly in the diff gate for PR review
+- redaction filter primitive at the engine boundary and `LoggerMessage` source-generated factories aligned with the per-package diagnostic-id range discipline remain follow-up
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -11388,6 +11439,11 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-343 Public-API contract lock-in batch rollout (Edge + Eventing + small remaining packs) (shipped)
 - ENG-344 Public-API contract lock-in batch rollout (multi-tenancy governance + senders + Cli + Scaffolding) (shipped)
 - ENG-345 Public-API contract lock-in batch rollout to observability family (final 34 packages) (shipped) — **rollout arc complete: every shipped Cephalon.* package now contract-locked**
+- ENG-350 Promote PublicApiAnalyzers injection helper to permanent scripts/ (shipped)
+
+### Sprint 125
+
+- ENG-351 Cephalon.Diagnostics M2 to M3 promotion (operator surface for canonical name set) (shipped)
 
 ### Later / not scheduled yet
 
