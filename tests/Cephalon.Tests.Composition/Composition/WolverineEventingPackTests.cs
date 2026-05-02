@@ -1,5 +1,7 @@
+using System.Diagnostics;
 using Cephalon.Abstractions.Data;
 using Cephalon.Data.EntityFramework.Registration;
+using Cephalon.Diagnostics.Redaction;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Eventing.Registration;
@@ -903,6 +905,156 @@ public sealed class WolverineEventingPackTests
             runtimeReporter.Reported,
             report => Assert.Equal(EventDispatchExecutionOutcomes.Started, report.Outcome),
             report => Assert.Equal(EventDispatchExecutionOutcomes.Failed, report.Outcome));
+    }
+
+    [Fact]
+    public async Task WolverineDispatch_RoutesEmittedAttributeValues_ThroughRedactionPipeline()
+    {
+        var observed = new List<(string AttributeKey, object? Value)>();
+        var trackingFilter = new TrackingRedactionFilter(observed);
+        var pipeline = new RedactionPipeline([trackingFilter]);
+
+        var dispatchItem = new EventDispatchItem(
+            outboxId: "entity-framework-outbox",
+            messageId: "evt-redaction-1",
+            channelId: "catalog-events",
+            eventType: "catalog.item.created",
+            payload: "{\"id\":\"item-redaction-1\"}",
+            occurredAtUtc: new DateTimeOffset(2026, 05, 03, 10, 0, 0, TimeSpan.Zero),
+            createdAtUtc: new DateTimeOffset(2026, 05, 03, 10, 0, 1, TimeSpan.Zero),
+            dispatchAttemptCount: 0,
+            contentType: "application/json",
+            correlationId: "corr-redaction-1",
+            tenantId: "tenant-redaction-1");
+        var options = new WolverineEventingOptions
+        {
+            EnableDispatchLoop = true,
+            DispatchBatchSize = 10,
+            DispatchPollingIntervalSeconds = 60,
+            RetryDelaySeconds = 30,
+            DispatchMaxAttempts = 3
+        };
+        var dispatchStore = new TestEventDispatchStore(dispatchItem);
+        var runtimeReporter = new TestEventDispatchRuntimeReporter();
+        var messageBus = new TestMessageBus(hasDestinations: true);
+
+        using var listener = new ActivityListener
+        {
+            ShouldListenTo = static source => source.Name.StartsWith("Cephalon", StringComparison.Ordinal),
+            Sample = static (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllData,
+            SampleUsingParentId = static (ref ActivityCreationOptions<string> _) => ActivitySamplingResult.AllData,
+        };
+        ActivitySource.AddActivityListener(listener);
+
+        var service = new WolverineEventDispatchHostedService(
+            options,
+            dispatchStore,
+            runtimeReporter,
+            messageBus,
+            pipeline,
+            NullLogger<WolverineEventDispatchHostedService>.Instance);
+
+        await service.DispatchOnceAsync();
+
+        var keys = observed.Select(o => o.AttributeKey).ToHashSet();
+        Assert.Contains("cephalon.message_id", keys);
+        Assert.Contains("cephalon.event_type", keys);
+        Assert.Contains("cephalon.channel_id", keys);
+        Assert.Contains("cephalon.dispatch_attempt", keys);
+        Assert.Contains("cephalon.correlation_id", keys);
+        Assert.Contains("cephalon.tenant_id", keys);
+        Assert.Contains("cephalon.dispatch_result", keys);
+
+        Assert.Equal("evt-redaction-1", observed.First(o => o.AttributeKey == "cephalon.message_id").Value);
+        Assert.Equal("tenant-redaction-1", observed.First(o => o.AttributeKey == "cephalon.tenant_id").Value);
+        Assert.Equal("succeeded", observed.First(o => o.AttributeKey == "cephalon.dispatch_result").Value);
+    }
+
+    [Fact]
+    public async Task WolverineDispatch_AppliesRedactionReplacement_BeforeTaggingActivity()
+    {
+        var pipeline = new RedactionPipeline([new ReplaceTenantIdFilter("[REDACTED-TENANT]")]);
+
+        var dispatchItem = new EventDispatchItem(
+            outboxId: "entity-framework-outbox",
+            messageId: "evt-redaction-2",
+            channelId: "catalog-events",
+            eventType: "catalog.item.created",
+            payload: "{\"id\":\"item-redaction-2\"}",
+            occurredAtUtc: new DateTimeOffset(2026, 05, 03, 10, 0, 0, TimeSpan.Zero),
+            createdAtUtc: new DateTimeOffset(2026, 05, 03, 10, 0, 1, TimeSpan.Zero),
+            dispatchAttemptCount: 0,
+            contentType: "application/json",
+            correlationId: "corr-redaction-2",
+            tenantId: "acme-corp-secret");
+        var options = new WolverineEventingOptions
+        {
+            EnableDispatchLoop = true,
+            DispatchBatchSize = 10,
+            DispatchPollingIntervalSeconds = 60,
+            RetryDelaySeconds = 30,
+            DispatchMaxAttempts = 3
+        };
+        var dispatchStore = new TestEventDispatchStore(dispatchItem);
+        var runtimeReporter = new TestEventDispatchRuntimeReporter();
+        var messageBus = new TestMessageBus(hasDestinations: true);
+
+        var capturedActivities = new List<Activity>();
+        using var listener = new ActivityListener
+        {
+            ShouldListenTo = static source => source.Name.StartsWith("Cephalon", StringComparison.Ordinal),
+            Sample = static (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllData,
+            SampleUsingParentId = static (ref ActivityCreationOptions<string> _) => ActivitySamplingResult.AllData,
+            ActivityStopped = activity =>
+            {
+                if (activity.OperationName == "wolverine.dispatch")
+                {
+                    capturedActivities.Add(activity);
+                }
+            },
+        };
+        ActivitySource.AddActivityListener(listener);
+
+        var service = new WolverineEventDispatchHostedService(
+            options,
+            dispatchStore,
+            runtimeReporter,
+            messageBus,
+            pipeline,
+            NullLogger<WolverineEventDispatchHostedService>.Instance);
+
+        await service.DispatchOnceAsync();
+
+        var dispatchActivity = Assert.Single(capturedActivities);
+        var tenantTag = dispatchActivity.Tags.FirstOrDefault(t => t.Key == "cephalon.tenant_id");
+        Assert.Equal("[REDACTED-TENANT]", tenantTag.Value);
+
+        // Other tags pass through unchanged
+        var messageIdTag = dispatchActivity.Tags.FirstOrDefault(t => t.Key == "cephalon.message_id");
+        Assert.Equal("evt-redaction-2", messageIdTag.Value);
+    }
+
+    private sealed class TrackingRedactionFilter : IRedactionFilter
+    {
+        private readonly List<(string, object?)> sink;
+
+        public TrackingRedactionFilter(List<(string, object?)> sink) => this.sink = sink;
+
+        public object? Filter(RedactionContext context, object? value)
+        {
+            sink.Add((context.AttributeKey, value));
+            return value;
+        }
+    }
+
+    private sealed class ReplaceTenantIdFilter : IRedactionFilter
+    {
+        private readonly string replacement;
+
+        public ReplaceTenantIdFilter(string replacement) => this.replacement = replacement;
+
+        public object? Filter(RedactionContext context, object? value)
+            => context.AttributeKey == "cephalon.tenant_id" ? replacement : value;
     }
 
     private sealed class TestEventDispatchStore(params EventDispatchItem[] items) : IEventDispatchStore
