@@ -27,6 +27,45 @@ Every shipped surface must consider the following qualities deliberately, not as
 
 These qualities are listed in the same order in [`project-memory.md`](project-memory.md). When a planning card claims to advance one of them, name the dimension explicitly in the card so reviewers can check the claim.
 
+## Quality framework mapping
+
+Each first-class engine quality maps onto one or more external frameworks. Planning cards that claim to advance a quality should name both the dimension and, when relevant, the external framework requirement they advance, so audits and reviewers have a single matrix to read.
+
+The matrix below is the durable mapping. Refresh it in place when ISO/IEC 25010, OWASP ASVS, NIST SSDF, SLSA, OpenTelemetry semantic conventions, or the EU regulatory framework publishes a new revision; do not append a dated change log here.
+
+| Engine quality | ISO/IEC 25010:2023 anchor | OWASP ASVS 5.0 anchor | NIST SSDF v1.2 anchor | SLSA v1.1 / supply-chain anchor | Other / regulatory anchor |
+| --- | --- | --- | --- | --- | --- |
+| Performance | *Performance Efficiency* (time behaviour, resource utilisation, capacity) | — | — | — | BenchmarkDotNet guardrails; `Microsoft.DotNet.PackageValidation` for binary-perf-affecting changes |
+| Security | *Security* | ASVS V1–V17 (architecture, authn, session, access control, validation, crypto, errors, data protection, comm, malicious code, business logic, files/resources, API/web, config, supply chain, web client, OAuth/OIDC) | PS, PW, PO, RV practice groups | SLSA L3 build target; Sigstore Cosign + Fulcio + Rekor; CycloneDX SBOM | OWASP AISVS for AI-touching surfaces |
+| Usability | *Interaction Capability* (renamed from Usability) | — | — | — | `cephalon doctor`, scaffolding, low-code shorthand |
+| Reliability | *Reliability* (maturity, availability, fault-tolerance, recoverability) | — | — | — | SRE SLI/SLO posture (see `docs/sre-posture.md`); resilience pipeline |
+| Maintainability | *Maintainability* (modularity, reusability, analysability, modifiability, testability) | — | PS.1, PS.2, PW.1 | — | `Microsoft.CodeAnalysis.PublicApiAnalyzers`; deterministic builds; central package management |
+| Scalability | *Performance Efficiency:Capacity* + *Flexibility:Scalability* | — | — | — | Cell-based architecture; behavior topology decoupling |
+| Flexibility | *Flexibility* (Adaptability, Scalability, Installability, Replaceability — absorbs former Portability) | — | — | — | Host-agnostic abstractions; transport-agnostic behaviors; swappable providers |
+| Compatibility | *Compatibility* (co-existence, interoperability) | — | — | — | SemVer 2.0 + .NET binary compatibility rules; `<PackageValidationBaselineVersion>`; `[Obsolete]` with `DiagnosticId` and `UrlFormat` |
+| Data integrity | *Reliability:Maturity* + *Security:Integrity* | ASVS V8 (Data protection), V13 (API), V14 (Config) | PW.4 (validation) | — | Outbox / inbox / idempotency contracts; CDC pump correctness; event-sourcing snapshot semantics |
+| Availability | *Reliability:Availability* | — | — | — | SRE SLO posture; `/health/live` / `/health/ready` semantics; cell health isolation; deployment-mode survivability claims |
+| Auditability | *Maintainability:Analysability* + *Security:Accountability* | ASVS V7 (Errors and logging), V15 (Supply chain) | RV (Respond to Vulnerabilities) practice group | SLSA provenance + Rekor transparency entries | EU CRA Article 13 vulnerability-handling logs; CRA Annex II conformity evidence; runtime introspection (`/engine/*`, `snapshot.*`) |
+| Compliance | *Functional Suitability:Functional Appropriateness* (cross-cutting) | ASVS V8 (Data protection), V11 (Business logic), V14 (Config) | PO (Prepare the Organization) practice group | SLSA L3 + Sigstore + SBOM as machine-readable conformity artefacts | EU CRA enforcement (`December 11, 2027`; reporting from `September 11, 2026`); EU AI Act high-risk waves (`August 2, 2026` and `August 2, 2027`); GPAI compliance (`August 2, 2027`); W3C DID v1.1 / EUDI Wallet (regulated EU sectors from `2027`); NIST CSF; GDPR/CCPA; HIPAA where applicable |
+
+Authoritative external sources for the mapping:
+
+- [ISO/IEC 25010:2023 — Systems and software Quality Requirements and Evaluation (SQuaRE)](https://www.iso.org/standard/78176.html)
+- [arc42 — ISO/IEC 25010:2023 update summary](https://quality.arc42.org/articles/iso-25010-update-2023)
+- [OWASP Application Security Verification Standard 5.0](https://owasp.org/www-project-application-security-verification-standard/)
+- [OWASP AI Security Verification Standard (AISVS)](https://owasp.org/www-project-artificial-intelligence-security-verification-standard/)
+- [NIST SSDF (SP 800-218 v1.2 draft, Dec 2025)](https://csrc.nist.gov/projects/ssdf)
+- [NIST SP 800-218A — SSDF Practices for Generative AI](https://csrc.nist.gov/publications/detail/sp/800-218a/final)
+- [SLSA framework v1.1](https://slsa.dev/spec/v1.1/)
+- [Sigstore (Cosign + Fulcio + Rekor)](https://www.sigstore.dev/)
+- [CycloneDX SBOM specification](https://cyclonedx.org/)
+- [OpenTelemetry semantic conventions](https://opentelemetry.io/docs/specs/semconv/)
+- [Google SRE — Implementing SLOs](https://sre.google/workbook/implementing-slos/)
+- [EU Cyber Resilience Act — official summary](https://digital-strategy.ec.europa.eu/en/policies/cra-summary)
+- [EU AI Act — implementation timeline](https://digital-strategy.ec.europa.eu/en/policies/regulatory-framework-ai)
+
+When a planning card lands a feature that closes a row in this matrix (e.g. `Cephalon.Diagnostics` filling the OpenTelemetry semantic-conventions adapter, or a release pipeline filling the SLSA L3 row), the card description should reference the row directly and the matrix should be updated in the same slice rather than after the fact.
+
 ## Library and API design
 
 Cephalon ships reusable libraries that other teams take dependencies on. That changes the design constraints from "what works for our app" to "what other teams can rely on for years." The dominant external reference is Microsoft's *Framework Design Guidelines*; Cephalon applies those guidelines consistently across the `Cephalon.*` family.

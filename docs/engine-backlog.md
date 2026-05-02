@@ -2582,6 +2582,59 @@ Follow-up later:
 
 - provider-specific callback inboxes, provider polling, distributed remediation execution, distributed replay/event-id ledgers, cross-node exactly-once delivery, public onboarding, tenant-admin UI, identity-provider synchronization, distributed retry queues, distributed/provider-backed governance stores, provider-specific callback payload translation beyond shipped SendGrid/Mailgun/Amazon SES translators, and provider-specific provider-message semantics beyond normalized observation fields remain future governance slices until a package truly owns those paths
 
+### ENG-318 Engineering-standards quality framework mapping baseline
+
+Status: done
+Estimate: 2
+
+Why:
+
+- `docs/engineering-standards.md` already names the 12 first-class engine qualities (Performance, Security, Usability, Reliability, Maintainability, Scalability, Flexibility, Compatibility, Data integrity, Availability, Auditability, Compliance) but does not map them to external frameworks, so planning cards have no shared matrix when claiming to advance a quality
+- the smallest honest follow-through is a single durable mapping table inside the standards doc, not a new doc, parallel framework registry, or runtime-emitted compliance report
+- the May 2026 Learning Knowledge Pack delta in `docs/project-memory.md` recommended this mapping as a foundational step before later supply-chain (`SLSA L3`, `Sigstore`, SBOM, NuGet trusted publishing) and observability (`Cephalon.Diagnostics` + OTel semconv) work lands
+
+Delivered:
+
+- add the *Quality framework mapping* section to `docs/engineering-standards.md` between the *First-class engine qualities* and *Library and API design* sections
+- map each of the 12 first-class engine qualities onto its ISO/IEC 25010:2023 anchor (including the renamed *Interaction Capability* sub-characteristic, the new top-level *Flexibility* characteristic, and the cross-cutting *Functional Suitability:Functional Appropriateness* anchor for Compliance), the matching OWASP ASVS 5.0 categories where applicable, NIST SSDF v1.2 practice groups (PS / PW / PO / RV) where applicable, the SLSA v1.1 / Sigstore / CycloneDX SBOM supply-chain anchor, and the relevant external regulatory anchor (EU CRA enforcement dates, EU AI Act high-risk and GPAI waves, W3C DID v1.1 / EUDI Wallet acceptance, NIST CSF, GDPR/CCPA, HIPAA)
+- record the authoritative external sources behind the mapping inline (ISO 25010, arc42 25010 update, OWASP ASVS, OWASP AISVS, NIST SSDF, NIST SP 800-218A, SLSA, Sigstore, CycloneDX, OpenTelemetry semantic conventions, Google SRE Workbook, EU CRA, EU AI Act)
+- declare the maintenance rule that the matrix refreshes in place when ISO/IEC 25010, OWASP ASVS, NIST SSDF, SLSA, OpenTelemetry semantic conventions, or the EU regulatory framework publishes a new revision, and that planning cards which close a row should reference the row directly and update the matrix in the same slice
+- align with the existing `docs/engineering-standards.md` cross-reference list and the Learning Knowledge Pack delta inside `docs/project-memory.md`; do not introduce a parallel quality registry doc
+
+Follow-up later:
+
+- map each `Cephalon.Audit`, `Cephalon.MultiTenancy.Governance`, and `Cephalon.Identity` claim to specific ASVS 5.0 requirement IDs once the surface-by-surface walkthrough lands; the matrix gives the framework anchor today, the per-surface anchor follows when a claim is promoted from descriptor to managed execution
+- collapse the Learning Knowledge Pack recommendation #6 inside `docs/project-memory.md` into a back-pointer to this section once the durable matrix is in place
+
+### ENG-319 Engine SRE SLO and error-budget posture baseline
+
+Status: done
+Estimate: 3
+
+Why:
+
+- the May 2026 Learning Knowledge Pack delta in `docs/project-memory.md` named SRE SLI/SLO and error-budget posture as a research-output recommendation (#9), but the repo had no doc declaring the engine's own reliability semantics; consumer projects therefore had no shared baseline for "how does the engine itself behave under load and across releases"
+- the smallest honest follow-through is one durable doc that declares the engine's SLI catalogue, initial SLO targets, error-budget policy, instrumentation alignment, and engineer-facing SLI surfaces, without prescribing SLOs for consumer applications and without claiming a runtime SLI emission surface that the engine has not yet built
+- aligning the SLI catalogue with the existing `BenchmarkInProcessShortRunConfig`, `scripts/validate-release.ps1`, `cephalon doctor`, `/engine/snapshot`, and `scripts/validate-deployment-mode-claims.ps1` surfaces keeps the posture additive over the existing introspection contract instead of inventing a parallel dashboard
+
+Delivered:
+
+- add `docs/sre-posture.md` declaring engine-level SLIs across hot-path latency (behavior dispatch p95/p99, ASP.NET Core minimal-API and Worker cold-start), allocation discipline (bytes-per-op for behavior dispatch and ASP.NET Core request path), build/release-validation wall time (`dotnet restore` lock-mode, `scripts/validate-release.ps1`, `Cephalon.ReferenceDocs` generation), the 7-day test flake rate, and the deployment-mode claim truthfulness fraction
+- declare initial SLO targets per SLI alongside an explicit "initial draft, refine after the next benchmark guardrail run" framing so the targets do not freeze before the baseline is stable
+- declare the error-budget policy: visible burn-rate signal in the monthly `architecture-review-YYYY-MM-followups.md` tracker, freeze threshold at 25% of monthly budget over a 7-day window for hot-path latency and allocation SLIs, exempt cold-start/restore/reference-docs SLIs from the freeze trigger but still investigate them, and a 7-day flake-rate quarantine queue with `[Skip]` within 24 hours and fix-or-delete within 7 days
+- align instrumentation with the existing `ActivitySource` / `Meter` / `ILogger` contract and the OpenTelemetry semantic-convention discipline so SLI emission stays exporter-agnostic
+- declare the engineer-facing SLI surfaces: `cephalon doctor`, `/engine/snapshot`, and `scripts/validate-release.ps1` summary output
+- declare the explicit out-of-scope items (consumer-application SLOs, companion-pack SLOs, distributed-system SLOs across multiple Cephalon instances, security incident response cadence) so the posture stays narrow
+- cross-link from `docs/engineering-standards.md` quality framework mapping (Reliability and Availability rows) and from the Learning Knowledge Pack delta in `docs/project-memory.md`
+- update `docs/README.md` to surface the new SRE posture doc in the Operations and Research-references sections so the docs hub stays the canonical index
+
+Follow-up later:
+
+- once the next benchmark guardrail run produces a clean baseline, replace the "initial SLO target" framing with verified targets and a per-SLI baseline number, and add a per-SLI baseline pass/fail signal to `scripts/validate-release.ps1` output
+- once `scripts/validate-deployment-mode-claims.ps1` flips out of audit-only mode by populating `representativePublishTargets.projects`, replace the `audit-only` value of `engine.deployment-mode-claims.truthful-fraction` with a numeric SLI
+- collapse the Learning Knowledge Pack recommendation #9 inside `docs/project-memory.md` into a back-pointer to `docs/sre-posture.md` once the durable doc is referenced from architecture reviews
+- when companion packs cross from `M2` into multi-region or distributed-execution `M3`, those packs declare their own SLI/SLO additively in their component doc and cross-reference back here; do not absorb companion-pack SLI obligations into this engine-level posture
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -10612,6 +10665,11 @@ Upcoming sequence from the April 2026 maturity reset:
 ### Sprint 114
 
 - ENG-309 Multi-tenancy invitation delivery Amazon SES SNS replay protection baseline (shipped, issue #824)
+
+### Sprint 115
+
+- ENG-318 Engineering-standards quality framework mapping baseline (shipped)
+- ENG-319 Engine SRE SLO and error-budget posture baseline (shipped)
 
 ### Later / not scheduled yet
 
