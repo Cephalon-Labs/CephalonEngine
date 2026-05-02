@@ -1,0 +1,101 @@
+#nullable enable
+Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryReflection
+Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService
+Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.DiscoveryServiceBase
+Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.DiscoveryServiceBase.DiscoveryServiceBase() -> void
+Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.DiscoveryServiceClient
+Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.DiscoveryServiceClient.DiscoveryServiceClient() -> void
+Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply
+Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply.CalculateSize() -> int
+Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply.HelloReply() -> void
+Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest
+Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest.CalculateSize() -> int
+Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest.HelloRequest() -> void
+Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply
+Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply.CalculateSize() -> int
+Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply.PrincipleReply() -> void
+Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrinciplesRequest
+Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrinciplesRequest.CalculateSize() -> int
+Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrinciplesRequest.PrinciplesRequest() -> void
+Cephalon.AspNetCore.Grpc.Hosting.GrpcTransportServiceCollectionExtensions
+Cephalon.AspNetCore.Grpc.Modules.IGrpcModule
+Cephalon.AspNetCore.Grpc.Modules.IGrpcModule.MapGrpcEndpoints(Microsoft.AspNetCore.Routing.IEndpointRouteBuilder! endpoints) -> void
+const Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply.GeneratedAtUtcFieldNumber = 2 -> int
+const Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply.MessageFieldNumber = 1 -> int
+const Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply.TraitsFieldNumber = 3 -> int
+const Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest.NameFieldNumber = 1 -> int
+const Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply.PrincipleFieldNumber = 1 -> int
+override Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply.GetHashCode() -> int
+override Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest.GetHashCode() -> int
+override Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply.GetHashCode() -> int
+override Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrinciplesRequest.GetHashCode() -> int
+static Cephalon.AspNetCore.Grpc.Hosting.GrpcTransportServiceCollectionExtensions.AddGrpcTransport(this Microsoft.AspNetCore.Builder.WebApplicationBuilder! builder) -> Microsoft.AspNetCore.Builder.WebApplicationBuilder!
+static Cephalon.AspNetCore.Grpc.Hosting.GrpcTransportServiceCollectionExtensions.AddGrpcTransport(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.DiscoveryServiceClient.DiscoveryServiceClient(Grpc.Core.CallInvoker callInvoker) -> void
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.DiscoveryServiceClient.DiscoveryServiceClient(Grpc.Core.ChannelBase channel) -> void
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.DiscoveryServiceClient.DiscoveryServiceClient(Grpc.Core.ClientBase.ClientBaseConfiguration configuration) -> void
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply.Clone() -> Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply.Equals(Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply other) -> bool
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply.GeneratedAtUtc.get -> string
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply.GeneratedAtUtc.set -> void
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply.HelloReply(Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply other) -> void
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply.MergeFrom(Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply other) -> void
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply.MergeFrom(Google.Protobuf.CodedInputStream input) -> void
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply.Message.get -> string
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply.Message.set -> void
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply.Traits.get -> Google.Protobuf.Collections.RepeatedField<string>
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply.WriteTo(Google.Protobuf.CodedOutputStream output) -> void
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest.Clone() -> Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest.Equals(Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest other) -> bool
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest.HelloRequest(Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest other) -> void
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest.MergeFrom(Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest other) -> void
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest.MergeFrom(Google.Protobuf.CodedInputStream input) -> void
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest.Name.get -> string
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest.Name.set -> void
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest.WriteTo(Google.Protobuf.CodedOutputStream output) -> void
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply.Clone() -> Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply.Equals(Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply other) -> bool
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply.MergeFrom(Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply other) -> void
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply.MergeFrom(Google.Protobuf.CodedInputStream input) -> void
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply.Principle.get -> string
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply.Principle.set -> void
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply.PrincipleReply(Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply other) -> void
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply.WriteTo(Google.Protobuf.CodedOutputStream output) -> void
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrinciplesRequest.Clone() -> Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrinciplesRequest
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrinciplesRequest.Equals(Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrinciplesRequest other) -> bool
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrinciplesRequest.MergeFrom(Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrinciplesRequest other) -> void
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrinciplesRequest.MergeFrom(Google.Protobuf.CodedInputStream input) -> void
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrinciplesRequest.PrinciplesRequest(Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrinciplesRequest other) -> void
+~Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrinciplesRequest.WriteTo(Google.Protobuf.CodedOutputStream output) -> void
+~override Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.DiscoveryServiceClient.NewInstance(Grpc.Core.ClientBase.ClientBaseConfiguration configuration) -> Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.DiscoveryServiceClient
+~override Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply.Equals(object other) -> bool
+~override Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply.ToString() -> string
+~override Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest.Equals(object other) -> bool
+~override Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest.ToString() -> string
+~override Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply.Equals(object other) -> bool
+~override Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply.ToString() -> string
+~override Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrinciplesRequest.Equals(object other) -> bool
+~override Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrinciplesRequest.ToString() -> string
+~static Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryReflection.Descriptor.get -> Google.Protobuf.Reflection.FileDescriptor
+~static Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.BindService(Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.DiscoveryServiceBase serviceImpl) -> Grpc.Core.ServerServiceDefinition
+~static Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.BindService(Grpc.Core.ServiceBinderBase serviceBinder, Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.DiscoveryServiceBase serviceImpl) -> void
+~static Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.Descriptor.get -> Google.Protobuf.Reflection.ServiceDescriptor
+~static Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply.Descriptor.get -> Google.Protobuf.Reflection.MessageDescriptor
+~static Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply.Parser.get -> Google.Protobuf.MessageParser<Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply>
+~static Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest.Descriptor.get -> Google.Protobuf.Reflection.MessageDescriptor
+~static Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest.Parser.get -> Google.Protobuf.MessageParser<Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest>
+~static Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply.Descriptor.get -> Google.Protobuf.Reflection.MessageDescriptor
+~static Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply.Parser.get -> Google.Protobuf.MessageParser<Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply>
+~static Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrinciplesRequest.Descriptor.get -> Google.Protobuf.Reflection.MessageDescriptor
+~static Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrinciplesRequest.Parser.get -> Google.Protobuf.MessageParser<Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrinciplesRequest>
+~virtual Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.DiscoveryServiceBase.ExchangeGreetings(Grpc.Core.IAsyncStreamReader<Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest> requestStream, Grpc.Core.IServerStreamWriter<Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply> responseStream, Grpc.Core.ServerCallContext context) -> System.Threading.Tasks.Task
+~virtual Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.DiscoveryServiceBase.SayHello(Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest request, Grpc.Core.ServerCallContext context) -> System.Threading.Tasks.Task<Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply>
+~virtual Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.DiscoveryServiceBase.StreamPrinciples(Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrinciplesRequest request, Grpc.Core.IServerStreamWriter<Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply> responseStream, Grpc.Core.ServerCallContext context) -> System.Threading.Tasks.Task
+~virtual Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.DiscoveryServiceClient.ExchangeGreetings(Grpc.Core.CallOptions options) -> Grpc.Core.AsyncDuplexStreamingCall<Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest, Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply>
+~virtual Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.DiscoveryServiceClient.ExchangeGreetings(Grpc.Core.Metadata headers = null, System.DateTime? deadline = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> Grpc.Core.AsyncDuplexStreamingCall<Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest, Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply>
+~virtual Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.DiscoveryServiceClient.SayHello(Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest request, Grpc.Core.CallOptions options) -> Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply
+~virtual Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.DiscoveryServiceClient.SayHello(Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest request, Grpc.Core.Metadata headers = null, System.DateTime? deadline = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply
+~virtual Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.DiscoveryServiceClient.SayHelloAsync(Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest request, Grpc.Core.CallOptions options) -> Grpc.Core.AsyncUnaryCall<Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply>
+~virtual Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.DiscoveryServiceClient.SayHelloAsync(Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloRequest request, Grpc.Core.Metadata headers = null, System.DateTime? deadline = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> Grpc.Core.AsyncUnaryCall<Cephalon.AspNetCore.Grpc.Contracts.Discovery.HelloReply>
+~virtual Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.DiscoveryServiceClient.StreamPrinciples(Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrinciplesRequest request, Grpc.Core.CallOptions options) -> Grpc.Core.AsyncServerStreamingCall<Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply>
+~virtual Cephalon.AspNetCore.Grpc.Contracts.Discovery.DiscoveryService.DiscoveryServiceClient.StreamPrinciples(Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrinciplesRequest request, Grpc.Core.Metadata headers = null, System.DateTime? deadline = null, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> Grpc.Core.AsyncServerStreamingCall<Cephalon.AspNetCore.Grpc.Contracts.Discovery.PrincipleReply>

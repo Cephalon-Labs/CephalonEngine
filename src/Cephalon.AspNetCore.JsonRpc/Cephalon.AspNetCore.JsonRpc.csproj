@@ -2,6 +2,12 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Description>JSON-RPC transport adapter for the Cephalon ASP.NET Core host.</Description>
+    <!--
+      RS0026 / RS0027: PublicApiAnalyzers style rules flagging pre-existing optional-overload
+      patterns. Suppressed so the public-API contract lock-in does not bundle a refactor;
+      cleanup tracked as follow-up to `ENG-335`.
+    -->
+    <NoWarn>$(NoWarn);RS0026;RS0027</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -9,6 +15,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <ProjectReference Include="..\Cephalon.AspNetCore\Cephalon.AspNetCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI.Unshipped.txt" />
   </ItemGroup>
 </Project>
