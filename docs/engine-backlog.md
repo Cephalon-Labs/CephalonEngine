@@ -2892,6 +2892,57 @@ Follow-up later:
 - clean up the suppressed Meziantou / Roslynator rules inside `Cephalon.Abstractions` so the per-project NoWarn list can shrink; this is incremental refactor work (split long descriptor methods, rename single-file mismatches, add `IFormatProvider` overloads, add `IEqualityComparer` parameters, refactor exception-constructor signatures) and should ride along with adjacent slices instead of needing one large slice
 - continue rolling out `Cephalon.Analyzers` adoption to `Cephalon.Engine`, then to host adapters, transport / behavior / data / event-sourcing / observability / multi-tenancy / agentics / retrieval / edge package families across subsequent sprints; each rollout is its own `ENG-*` slice because each project's NoWarn discipline is a separate review surface
 
+### ENG-329 Public-API contract lock-in rollout to Cephalon.AspNetCore
+
+Status: done
+Estimate: 5
+
+Why:
+
+- `ENG-322` and `ENG-326` proved the public-API contract lock-in pattern on `Cephalon.Abstractions` and `Cephalon.Engine`; `Cephalon.AspNetCore` is the next-largest contract surface (the primary host adapter, OpenAPI generation, request mapping, runtime introspection routes, diagnostics surface) and benefits the most from the same diff-gate discipline because changes there propagate across every consumer that hosts Cephalon on top of ASP.NET Core
+- the host adapter had no public-API diff gate beyond the analyzer baseline; an accidental rename or removal could ship through PR review without explicit binary-contract acknowledgement
+
+Delivered:
+
+- add `Microsoft.CodeAnalysis.PublicApiAnalyzers` as a `PrivateAssets=all` `PackageReference` to `src/Cephalon.AspNetCore/Cephalon.AspNetCore.csproj`
+- declare `PublicAPI.Shipped.txt` and `PublicAPI.Unshipped.txt` as `AdditionalFiles`
+- generate `src/Cephalon.AspNetCore/PublicAPI.Shipped.txt` from the current public surface (268 unique entries plus the `#nullable enable` header, covering the diagnostics surface, documentation surface, OpenAPI options, hosting extensions, runtime introspection routes, and Scalar integration)
+- commit an empty `src/Cephalon.AspNetCore/PublicAPI.Unshipped.txt`
+- suppress `RS0026` and `RS0027` inside `Cephalon.AspNetCore` only with an inline comment; cleanup is follow-up
+- refresh `src/Cephalon.AspNetCore/packages.lock.json`; locked-mode restore passes
+- verified end-to-end with `dotnet build src/Cephalon.AspNetCore/Cephalon.AspNetCore.csproj -c Release` (0 warnings, 0 errors) and full-solution `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors)
+
+Follow-up later:
+
+- continue the rollout to remaining transport / behavior / data / event-sourcing / observability / multi-tenancy / agentics / retrieval / edge package families across subsequent sprints
+- clean up the RS0026 / RS0027 optional-overload patterns inside `Cephalon.AspNetCore` so the per-project suppressions can be removed
+- when `Cephalon.AspNetCore` adopts the `Cephalon.Analyzers` meta-package (a future slice), evaluate whether to also suppress the Meziantou / Roslynator style rules surfaced in `ENG-328` or refactor away from those patterns
+
+### ENG-330 Public-API contract lock-in rollout to Cephalon.Worker
+
+Status: done
+Estimate: 2
+
+Why:
+
+- `Cephalon.Worker` is the second host adapter alongside `Cephalon.AspNetCore` and the natural companion slice for `ENG-329`; landing both rollouts in the same sprint keeps the host-adapter contract lock-in coherent
+- the worker adapter has a much smaller public surface (just the two hosting extension classes) but the same diff-gate discipline applies — a renamed `AddCephalon` overload or a removed `AddCephalonWorker` overload should fail PR review by default rather than silently ship a binary break
+
+Delivered:
+
+- add `Microsoft.CodeAnalysis.PublicApiAnalyzers` as a `PrivateAssets=all` `PackageReference` to `src/Cephalon.Worker/Cephalon.Worker.csproj`
+- declare `PublicAPI.Shipped.txt` and `PublicAPI.Unshipped.txt` as `AdditionalFiles`
+- generate `src/Cephalon.Worker/PublicAPI.Shipped.txt` from the current public surface (7 entries: `WorkerHostApplicationBuilderExtensions`, `WorkerServiceCollectionExtensions`, and their five static `AddCephalon` / `AddCephalonProjectConfigurations` / `AddCephalonWorker` extension methods)
+- commit an empty `src/Cephalon.Worker/PublicAPI.Unshipped.txt`
+- suppress `RS0026` and `RS0027` inside `Cephalon.Worker` only with an inline comment; cleanup is follow-up
+- refresh `src/Cephalon.Worker/packages.lock.json`; locked-mode restore passes
+- verified end-to-end with `dotnet build src/Cephalon.Worker/Cephalon.Worker.csproj -c Release` (0 warnings, 0 errors) and full-solution `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors)
+
+Follow-up later:
+
+- when `Cephalon.Worker` adopts the `Cephalon.Analyzers` meta-package (a future slice), evaluate whether to suppress the Meziantou / Roslynator style rules surfaced in `ENG-328` or refactor away from those patterns
+- with `Cephalon.AspNetCore` and `Cephalon.Worker` both contract-locked, the next sprint can target the transport / behavior / data / event-sourcing / observability / multi-tenancy / agentics / retrieval / edge package families
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -10954,6 +11005,11 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-326 Public-API contract lock-in rollout to Cephalon.Engine (shipped)
 - ENG-327 Cephalon.Diagnostics M0 to M1 promotion (engine consumes canonical names) (shipped)
 - ENG-328 Cephalon.Analyzers M0 to M1 promotion (Cephalon.Abstractions adopts the meta-package) (shipped)
+
+### Sprint 122
+
+- ENG-329 Public-API contract lock-in rollout to Cephalon.AspNetCore (shipped)
+- ENG-330 Public-API contract lock-in rollout to Cephalon.Worker (shipped)
 
 ### Later / not scheduled yet
 
