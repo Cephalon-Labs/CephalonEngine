@@ -11,6 +11,19 @@
     <!-- NU5100: not having a lib folder; expected for an analyzer meta-package. -->
     <!-- NU5017: dependencyless package; not applicable here but kept for safety. -->
     <NoWarn>$(NoWarn);NU5128;NU5100;NU5017</NoWarn>
+    <!--
+      This package is an analyzer meta-package that flows analyzer assets to consumers and ships
+      no runtime code of its own. Override PublishTrimmed / PublishAot / PublishSingleFile to
+      false so a consuming sample published with those flags does not cascade them onto this
+      netstandard2.0 project (which would emit NETSDK1124 because trimming requires .NET Core
+      3.0 or higher). Also mark IsTrimmable / IsAotCompatible explicitly false so any analyzer
+      that reads those declarations sees the right value.
+    -->
+    <IsTrimmable>false</IsTrimmable>
+    <IsAotCompatible>false</IsAotCompatible>
+    <PublishTrimmed>false</PublishTrimmed>
+    <PublishAot>false</PublishAot>
+    <PublishSingleFile>false</PublishSingleFile>
   </PropertyGroup>
 
   <!--
