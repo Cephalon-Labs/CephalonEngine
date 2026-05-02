@@ -1,0 +1,18 @@
+#nullable enable
+Cephalon.Data.Qdrant.Configuration.QdrantDataOptions
+Cephalon.Data.Qdrant.Configuration.QdrantDataOptions.ApiKey.get -> string?
+Cephalon.Data.Qdrant.Configuration.QdrantDataOptions.ApiKey.set -> void
+Cephalon.Data.Qdrant.Configuration.QdrantDataOptions.CollectionPrefix.get -> string!
+Cephalon.Data.Qdrant.Configuration.QdrantDataOptions.CollectionPrefix.set -> void
+Cephalon.Data.Qdrant.Configuration.QdrantDataOptions.Host.get -> string!
+Cephalon.Data.Qdrant.Configuration.QdrantDataOptions.Host.set -> void
+Cephalon.Data.Qdrant.Configuration.QdrantDataOptions.Port.get -> int
+Cephalon.Data.Qdrant.Configuration.QdrantDataOptions.Port.set -> void
+Cephalon.Data.Qdrant.Configuration.QdrantDataOptions.QdrantDataOptions() -> void
+Cephalon.Data.Qdrant.Configuration.QdrantDataOptions.RegisterInbox.get -> bool
+Cephalon.Data.Qdrant.Configuration.QdrantDataOptions.RegisterInbox.set -> void
+Cephalon.Data.Qdrant.Configuration.QdrantDataOptions.RegisterOutbox.get -> bool
+Cephalon.Data.Qdrant.Configuration.QdrantDataOptions.RegisterOutbox.set -> void
+Cephalon.Data.Qdrant.Registration.QdrantDataEngineBuilderExtensions
+const Cephalon.Data.Qdrant.Configuration.QdrantDataOptions.ProviderId = "qdrant" -> string!
+static Cephalon.Data.Qdrant.Registration.QdrantDataEngineBuilderExtensions.AddQdrantData(this Cephalon.Engine.Composition.EngineBuilder! builder, string! host, int port = 6334, System.Action<Cephalon.Data.Qdrant.Configuration.QdrantDataOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!

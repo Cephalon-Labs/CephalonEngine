@@ -1,0 +1,20 @@
+#nullable enable
+Cephalon.Data.Cassandra.Configuration.CassandraDataOptions
+Cephalon.Data.Cassandra.Configuration.CassandraDataOptions.CassandraDataOptions() -> void
+Cephalon.Data.Cassandra.Configuration.CassandraDataOptions.ContactPoints.get -> string!
+Cephalon.Data.Cassandra.Configuration.CassandraDataOptions.ContactPoints.set -> void
+Cephalon.Data.Cassandra.Configuration.CassandraDataOptions.Keyspace.get -> string!
+Cephalon.Data.Cassandra.Configuration.CassandraDataOptions.Keyspace.set -> void
+Cephalon.Data.Cassandra.Configuration.CassandraDataOptions.PendingDispatchShardCount.get -> int
+Cephalon.Data.Cassandra.Configuration.CassandraDataOptions.PendingDispatchShardCount.set -> void
+Cephalon.Data.Cassandra.Configuration.CassandraDataOptions.Port.get -> int
+Cephalon.Data.Cassandra.Configuration.CassandraDataOptions.Port.set -> void
+Cephalon.Data.Cassandra.Configuration.CassandraDataOptions.RegisterInbox.get -> bool
+Cephalon.Data.Cassandra.Configuration.CassandraDataOptions.RegisterInbox.set -> void
+Cephalon.Data.Cassandra.Configuration.CassandraDataOptions.RegisterOutbox.get -> bool
+Cephalon.Data.Cassandra.Configuration.CassandraDataOptions.RegisterOutbox.set -> void
+Cephalon.Data.Cassandra.Configuration.CassandraDataOptions.TablePrefix.get -> string!
+Cephalon.Data.Cassandra.Configuration.CassandraDataOptions.TablePrefix.set -> void
+Cephalon.Data.Cassandra.Registration.CassandraDataEngineBuilderExtensions
+const Cephalon.Data.Cassandra.Configuration.CassandraDataOptions.ProviderId = "cassandra" -> string!
+static Cephalon.Data.Cassandra.Registration.CassandraDataEngineBuilderExtensions.AddCassandraData(this Cephalon.Engine.Composition.EngineBuilder! builder, string! contactPoints, string! keyspace, System.Action<Cephalon.Data.Cassandra.Configuration.CassandraDataOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!

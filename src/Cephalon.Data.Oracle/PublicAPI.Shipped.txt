@@ -1,0 +1,58 @@
+#nullable enable
+Cephalon.Data.Oracle.Configuration.OracleDataOptions
+Cephalon.Data.Oracle.Configuration.OracleDataOptions.CdcCaptures.get -> System.Collections.Generic.IList<Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions!>!
+Cephalon.Data.Oracle.Configuration.OracleDataOptions.CheckpointTableName.get -> string!
+Cephalon.Data.Oracle.Configuration.OracleDataOptions.CheckpointTableName.set -> void
+Cephalon.Data.Oracle.Configuration.OracleDataOptions.ConnectionString.get -> string?
+Cephalon.Data.Oracle.Configuration.OracleDataOptions.ConnectionString.set -> void
+Cephalon.Data.Oracle.Configuration.OracleDataOptions.ConnectionStringName.get -> string?
+Cephalon.Data.Oracle.Configuration.OracleDataOptions.ConnectionStringName.set -> void
+Cephalon.Data.Oracle.Configuration.OracleDataOptions.DatabaseName.get -> string!
+Cephalon.Data.Oracle.Configuration.OracleDataOptions.DatabaseName.set -> void
+Cephalon.Data.Oracle.Configuration.OracleDataOptions.OracleDataOptions() -> void
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.ChannelId.get -> string!
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.ChannelId.set -> void
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.Description.get -> string!
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.Description.set -> void
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.DisplayName.get -> string!
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.DisplayName.set -> void
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.EventFormat.get -> string!
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.EventFormat.set -> void
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.ExpectedDatabaseId.get -> decimal?
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.ExpectedDatabaseId.set -> void
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.ExpectedDatabaseUniqueName.get -> string!
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.ExpectedDatabaseUniqueName.set -> void
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.Id.get -> string!
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.Id.set -> void
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.InitialPosition.get -> string!
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.InitialPosition.set -> void
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.MaxAwaitTimeSeconds.get -> int
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.MaxAwaitTimeSeconds.set -> void
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.MaxChangesPerRead.get -> int
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.MaxChangesPerRead.set -> void
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.MessageType.get -> string!
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.MessageType.set -> void
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.Metadata.get -> System.Collections.Generic.IDictionary<string!, string!>!
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.OracleLogMinerCaptureOptions() -> void
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.OutboxId.get -> string!
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.OutboxId.set -> void
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.PollingIntervalSeconds.get -> int
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.PollingIntervalSeconds.set -> void
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.ResourceIds.get -> System.Collections.Generic.IList<string!>!
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.ResumeFromEarliestAvailableScnIfCheckpointUnavailable.get -> bool
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.ResumeFromEarliestAvailableScnIfCheckpointUnavailable.set -> void
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.SourceId.get -> string!
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.SourceId.set -> void
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.SourceModuleId.get -> string!
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.SourceModuleId.set -> void
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.TableName.get -> string!
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.TableName.set -> void
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.TableSchema.get -> string!
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.TableSchema.set -> void
+Cephalon.Data.Oracle.Configuration.OracleLogMinerCaptureOptions.Tags.get -> System.Collections.Generic.IList<string!>!
+Cephalon.Data.Oracle.Registration.OracleDataEngineBuilderExtensions
+const Cephalon.Data.Oracle.Configuration.OracleDataOptions.ProviderId = "oracle" -> string!
+const Cephalon.Data.Oracle.Configuration.OracleDataOptions.SectionPath = "Engine:Data:Oracle" -> string!
+static Cephalon.Data.Oracle.Registration.OracleDataEngineBuilderExtensions.AddOracleData(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Data.Oracle.Configuration.OracleDataOptions!>! configure) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Data.Oracle.Registration.OracleDataEngineBuilderExtensions.AddOracleData(this Cephalon.Engine.Composition.EngineBuilder! builder, string! connectionString, string! databaseName, System.Action<Cephalon.Data.Oracle.Configuration.OracleDataOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!

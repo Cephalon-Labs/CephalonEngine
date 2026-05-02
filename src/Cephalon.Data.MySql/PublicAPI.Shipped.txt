@@ -1,0 +1,56 @@
+#nullable enable
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.ChannelId.get -> string!
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.ChannelId.set -> void
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.Description.get -> string!
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.Description.set -> void
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.DisplayName.get -> string!
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.DisplayName.set -> void
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.EventFormat.get -> string!
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.EventFormat.set -> void
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.ExpectedSourceServerUuid.get -> string!
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.ExpectedSourceServerUuid.set -> void
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.Id.get -> string!
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.Id.set -> void
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.InitialPosition.get -> string!
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.InitialPosition.set -> void
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.MaxAwaitTimeSeconds.get -> int
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.MaxAwaitTimeSeconds.set -> void
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.MaxChangesPerRead.get -> int
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.MaxChangesPerRead.set -> void
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.MessageType.get -> string!
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.MessageType.set -> void
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.Metadata.get -> System.Collections.Generic.IDictionary<string!, string!>!
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.MySqlBinlogCaptureOptions() -> void
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.OutboxId.get -> string!
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.OutboxId.set -> void
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.PollingIntervalSeconds.get -> int
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.PollingIntervalSeconds.set -> void
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.ResourceIds.get -> System.Collections.Generic.IList<string!>!
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.ServerId.get -> int
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.ServerId.set -> void
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.SourceId.get -> string!
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.SourceId.set -> void
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.SourceModuleId.get -> string!
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.SourceModuleId.set -> void
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.TableName.get -> string!
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.TableName.set -> void
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.TableSchema.get -> string!
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.TableSchema.set -> void
+Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions.Tags.get -> System.Collections.Generic.IList<string!>!
+Cephalon.Data.MySql.Configuration.MySqlDataOptions
+Cephalon.Data.MySql.Configuration.MySqlDataOptions.CdcCaptures.get -> System.Collections.Generic.IList<Cephalon.Data.MySql.Configuration.MySqlBinlogCaptureOptions!>!
+Cephalon.Data.MySql.Configuration.MySqlDataOptions.CheckpointTableName.get -> string!
+Cephalon.Data.MySql.Configuration.MySqlDataOptions.CheckpointTableName.set -> void
+Cephalon.Data.MySql.Configuration.MySqlDataOptions.ConnectionString.get -> string?
+Cephalon.Data.MySql.Configuration.MySqlDataOptions.ConnectionString.set -> void
+Cephalon.Data.MySql.Configuration.MySqlDataOptions.ConnectionStringName.get -> string?
+Cephalon.Data.MySql.Configuration.MySqlDataOptions.ConnectionStringName.set -> void
+Cephalon.Data.MySql.Configuration.MySqlDataOptions.DatabaseName.get -> string!
+Cephalon.Data.MySql.Configuration.MySqlDataOptions.DatabaseName.set -> void
+Cephalon.Data.MySql.Configuration.MySqlDataOptions.MySqlDataOptions() -> void
+Cephalon.Data.MySql.Registration.MySqlDataEngineBuilderExtensions
+const Cephalon.Data.MySql.Configuration.MySqlDataOptions.ProviderId = "mysql" -> string!
+const Cephalon.Data.MySql.Configuration.MySqlDataOptions.SectionPath = "Engine:Data:MySql" -> string!
+static Cephalon.Data.MySql.Registration.MySqlDataEngineBuilderExtensions.AddMySqlData(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Data.MySql.Configuration.MySqlDataOptions!>! configure) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Data.MySql.Registration.MySqlDataEngineBuilderExtensions.AddMySqlData(this Cephalon.Engine.Composition.EngineBuilder! builder, string! connectionString, string! databaseName, System.Action<Cephalon.Data.MySql.Configuration.MySqlDataOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!

@@ -1,0 +1,23 @@
+#nullable enable
+Cephalon.Data.Elasticsearch.Configuration.ElasticsearchDataOptions
+Cephalon.Data.Elasticsearch.Configuration.ElasticsearchDataOptions.ElasticsearchDataOptions() -> void
+Cephalon.Data.Elasticsearch.Configuration.ElasticsearchDataOptions.IndexPrefix.get -> string!
+Cephalon.Data.Elasticsearch.Configuration.ElasticsearchDataOptions.IndexPrefix.set -> void
+Cephalon.Data.Elasticsearch.Configuration.ElasticsearchDataOptions.Password.get -> string?
+Cephalon.Data.Elasticsearch.Configuration.ElasticsearchDataOptions.Password.set -> void
+Cephalon.Data.Elasticsearch.Configuration.ElasticsearchDataOptions.RegisterInbox.get -> bool
+Cephalon.Data.Elasticsearch.Configuration.ElasticsearchDataOptions.RegisterInbox.set -> void
+Cephalon.Data.Elasticsearch.Configuration.ElasticsearchDataOptions.RegisterOutbox.get -> bool
+Cephalon.Data.Elasticsearch.Configuration.ElasticsearchDataOptions.RegisterOutbox.set -> void
+Cephalon.Data.Elasticsearch.Configuration.ElasticsearchDataOptions.Uri.get -> string?
+Cephalon.Data.Elasticsearch.Configuration.ElasticsearchDataOptions.Uri.set -> void
+Cephalon.Data.Elasticsearch.Configuration.ElasticsearchDataOptions.UriName.get -> string?
+Cephalon.Data.Elasticsearch.Configuration.ElasticsearchDataOptions.UriName.set -> void
+Cephalon.Data.Elasticsearch.Configuration.ElasticsearchDataOptions.Username.get -> string?
+Cephalon.Data.Elasticsearch.Configuration.ElasticsearchDataOptions.Username.set -> void
+Cephalon.Data.Elasticsearch.Registration.ElasticsearchDataEngineBuilderExtensions
+const Cephalon.Data.Elasticsearch.Configuration.ElasticsearchDataOptions.DefaultUri = "http://localhost:9200" -> string!
+const Cephalon.Data.Elasticsearch.Configuration.ElasticsearchDataOptions.ProviderId = "elasticsearch" -> string!
+const Cephalon.Data.Elasticsearch.Configuration.ElasticsearchDataOptions.SectionPath = "Engine:Data:Elasticsearch" -> string!
+static Cephalon.Data.Elasticsearch.Registration.ElasticsearchDataEngineBuilderExtensions.AddElasticsearchData(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Data.Elasticsearch.Configuration.ElasticsearchDataOptions!>! configure) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Data.Elasticsearch.Registration.ElasticsearchDataEngineBuilderExtensions.AddElasticsearchData(this Cephalon.Engine.Composition.EngineBuilder! builder, string! uri, System.Action<Cephalon.Data.Elasticsearch.Configuration.ElasticsearchDataOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!

@@ -1,0 +1,23 @@
+#nullable enable
+Cephalon.Data.OpenSearch.Configuration.OpenSearchDataOptions
+Cephalon.Data.OpenSearch.Configuration.OpenSearchDataOptions.IndexPrefix.get -> string!
+Cephalon.Data.OpenSearch.Configuration.OpenSearchDataOptions.IndexPrefix.set -> void
+Cephalon.Data.OpenSearch.Configuration.OpenSearchDataOptions.OpenSearchDataOptions() -> void
+Cephalon.Data.OpenSearch.Configuration.OpenSearchDataOptions.Password.get -> string?
+Cephalon.Data.OpenSearch.Configuration.OpenSearchDataOptions.Password.set -> void
+Cephalon.Data.OpenSearch.Configuration.OpenSearchDataOptions.RegisterInbox.get -> bool
+Cephalon.Data.OpenSearch.Configuration.OpenSearchDataOptions.RegisterInbox.set -> void
+Cephalon.Data.OpenSearch.Configuration.OpenSearchDataOptions.RegisterOutbox.get -> bool
+Cephalon.Data.OpenSearch.Configuration.OpenSearchDataOptions.RegisterOutbox.set -> void
+Cephalon.Data.OpenSearch.Configuration.OpenSearchDataOptions.Uri.get -> string?
+Cephalon.Data.OpenSearch.Configuration.OpenSearchDataOptions.Uri.set -> void
+Cephalon.Data.OpenSearch.Configuration.OpenSearchDataOptions.UriName.get -> string?
+Cephalon.Data.OpenSearch.Configuration.OpenSearchDataOptions.UriName.set -> void
+Cephalon.Data.OpenSearch.Configuration.OpenSearchDataOptions.Username.get -> string?
+Cephalon.Data.OpenSearch.Configuration.OpenSearchDataOptions.Username.set -> void
+Cephalon.Data.OpenSearch.Registration.OpenSearchDataEngineBuilderExtensions
+const Cephalon.Data.OpenSearch.Configuration.OpenSearchDataOptions.DefaultUri = "http://localhost:9200" -> string!
+const Cephalon.Data.OpenSearch.Configuration.OpenSearchDataOptions.ProviderId = "opensearch" -> string!
+const Cephalon.Data.OpenSearch.Configuration.OpenSearchDataOptions.SectionPath = "Engine:Data:OpenSearch" -> string!
+static Cephalon.Data.OpenSearch.Registration.OpenSearchDataEngineBuilderExtensions.AddOpenSearchData(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Data.OpenSearch.Configuration.OpenSearchDataOptions!>! configure) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Data.OpenSearch.Registration.OpenSearchDataEngineBuilderExtensions.AddOpenSearchData(this Cephalon.Engine.Composition.EngineBuilder! builder, string! uri, System.Action<Cephalon.Data.OpenSearch.Configuration.OpenSearchDataOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!

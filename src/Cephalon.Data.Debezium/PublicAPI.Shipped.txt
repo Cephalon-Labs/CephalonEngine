@@ -1,0 +1,71 @@
+#nullable enable
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.DebeziumCaptureOptions() -> void
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.Description.get -> string!
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.Description.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.DisplayName.get -> string!
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.DisplayName.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.EventFormat.get -> string!
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.EventFormat.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.Id.get -> string!
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.Id.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.Metadata.get -> System.Collections.Generic.IDictionary<string!, string!>!
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.Mode.get -> string!
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.Mode.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.OutboxId.get -> string!
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.OutboxId.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.ResourceIds.get -> System.Collections.Generic.IList<string!>!
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.SnapshotMode.get -> string!
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.SnapshotMode.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.SourceId.get -> string!
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.SourceId.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.SourceModuleId.get -> string!
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.SourceModuleId.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.Tags.get -> System.Collections.Generic.IList<string!>!
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.TopicName.get -> string!
+Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions.TopicName.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.AcknowledgementMode.get -> string!
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.AcknowledgementMode.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.CdcCaptures.get -> System.Collections.Generic.IList<Cephalon.Data.Debezium.Configuration.DebeziumCaptureOptions!>!
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.ConnectClusterId.get -> string!
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.ConnectClusterId.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.ConnectorClass.get -> string!
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.ConnectorClass.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.DebeziumConnectorOptions() -> void
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.Description.get -> string!
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.Description.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.DisplayName.get -> string!
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.DisplayName.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.EdgeNodeIds.get -> System.Collections.Generic.IList<string!>!
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.ExecutionOwnership.get -> string!
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.ExecutionOwnership.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.ExecutionTopology.get -> string!
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.ExecutionTopology.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.ExpectedTaskCount.get -> int?
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.ExpectedTaskCount.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.Id.get -> string!
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.Id.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.ManagementMode.get -> string!
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.ManagementMode.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.Metadata.get -> System.Collections.Generic.IDictionary<string!, string!>!
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.ObservationStaleAfterSeconds.get -> int?
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.ObservationStaleAfterSeconds.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.RejectConflictingReporterIds.get -> bool
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.RejectConflictingReporterIds.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.RejectOutOfOrderReports.get -> bool
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.RejectOutOfOrderReports.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.ReporterLeaseSeconds.get -> int?
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.ReporterLeaseSeconds.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.SourceProviderId.get -> string!
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.SourceProviderId.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.TaskIds.get -> System.Collections.Generic.IList<string!>!
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.TopicPrefix.get -> string!
+Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions.TopicPrefix.set -> void
+Cephalon.Data.Debezium.Configuration.DebeziumDataOptions
+Cephalon.Data.Debezium.Configuration.DebeziumDataOptions.Connectors.get -> System.Collections.Generic.IList<Cephalon.Data.Debezium.Configuration.DebeziumConnectorOptions!>!
+Cephalon.Data.Debezium.Configuration.DebeziumDataOptions.DebeziumDataOptions() -> void
+Cephalon.Data.Debezium.Registration.DebeziumDataEngineBuilderExtensions
+const Cephalon.Data.Debezium.Configuration.DebeziumDataOptions.ProviderId = "debezium" -> string!
+const Cephalon.Data.Debezium.Configuration.DebeziumDataOptions.SectionPath = "Engine:Data:Debezium" -> string!
+static Cephalon.Data.Debezium.Registration.DebeziumDataEngineBuilderExtensions.AddDebeziumData(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Data.Debezium.Configuration.DebeziumDataOptions!>! configure) -> Cephalon.Engine.Composition.EngineBuilder!

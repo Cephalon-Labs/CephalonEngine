@@ -1,0 +1,23 @@
+#nullable enable
+Cephalon.Data.ClickHouse.Configuration.ClickHouseDataOptions
+Cephalon.Data.ClickHouse.Configuration.ClickHouseDataOptions.BuildConnectionString() -> string!
+Cephalon.Data.ClickHouse.Configuration.ClickHouseDataOptions.ClickHouseDataOptions() -> void
+Cephalon.Data.ClickHouse.Configuration.ClickHouseDataOptions.Database.get -> string!
+Cephalon.Data.ClickHouse.Configuration.ClickHouseDataOptions.Database.set -> void
+Cephalon.Data.ClickHouse.Configuration.ClickHouseDataOptions.Host.get -> string!
+Cephalon.Data.ClickHouse.Configuration.ClickHouseDataOptions.Host.set -> void
+Cephalon.Data.ClickHouse.Configuration.ClickHouseDataOptions.Password.get -> string!
+Cephalon.Data.ClickHouse.Configuration.ClickHouseDataOptions.Password.set -> void
+Cephalon.Data.ClickHouse.Configuration.ClickHouseDataOptions.Port.get -> int
+Cephalon.Data.ClickHouse.Configuration.ClickHouseDataOptions.Port.set -> void
+Cephalon.Data.ClickHouse.Configuration.ClickHouseDataOptions.RegisterInbox.get -> bool
+Cephalon.Data.ClickHouse.Configuration.ClickHouseDataOptions.RegisterInbox.set -> void
+Cephalon.Data.ClickHouse.Configuration.ClickHouseDataOptions.RegisterOutbox.get -> bool
+Cephalon.Data.ClickHouse.Configuration.ClickHouseDataOptions.RegisterOutbox.set -> void
+Cephalon.Data.ClickHouse.Configuration.ClickHouseDataOptions.TablePrefix.get -> string!
+Cephalon.Data.ClickHouse.Configuration.ClickHouseDataOptions.TablePrefix.set -> void
+Cephalon.Data.ClickHouse.Configuration.ClickHouseDataOptions.Username.get -> string!
+Cephalon.Data.ClickHouse.Configuration.ClickHouseDataOptions.Username.set -> void
+Cephalon.Data.ClickHouse.Registration.ClickHouseDataEngineBuilderExtensions
+const Cephalon.Data.ClickHouse.Configuration.ClickHouseDataOptions.ProviderId = "clickhouse" -> string!
+static Cephalon.Data.ClickHouse.Registration.ClickHouseDataEngineBuilderExtensions.AddClickHouseData(this Cephalon.Engine.Composition.EngineBuilder! builder, string! host, string! database, System.Action<Cephalon.Data.ClickHouse.Configuration.ClickHouseDataOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!

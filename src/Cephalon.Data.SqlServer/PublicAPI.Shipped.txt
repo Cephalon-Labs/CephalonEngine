@@ -1,0 +1,54 @@
+#nullable enable
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.CaptureInstance.get -> string!
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.CaptureInstance.set -> void
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.ChannelId.get -> string!
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.ChannelId.set -> void
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.Description.get -> string!
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.Description.set -> void
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.DisplayName.get -> string!
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.DisplayName.set -> void
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.EventFormat.get -> string!
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.EventFormat.set -> void
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.Id.get -> string!
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.Id.set -> void
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.InitialPosition.get -> string!
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.InitialPosition.set -> void
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.MaxChangesPerPoll.get -> int
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.MaxChangesPerPoll.set -> void
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.MessageType.get -> string!
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.MessageType.set -> void
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.Metadata.get -> System.Collections.Generic.IDictionary<string!, string!>!
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.OutboxId.get -> string!
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.OutboxId.set -> void
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.PollingIntervalSeconds.get -> int
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.PollingIntervalSeconds.set -> void
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.ResourceIds.get -> System.Collections.Generic.IList<string!>!
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.SourceId.get -> string!
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.SourceId.set -> void
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.SourceModuleId.get -> string!
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.SourceModuleId.set -> void
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.SqlServerCdcCaptureOptions() -> void
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.TableName.get -> string!
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.TableName.set -> void
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.TableSchema.get -> string!
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.TableSchema.set -> void
+Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions.Tags.get -> System.Collections.Generic.IList<string!>!
+Cephalon.Data.SqlServer.Configuration.SqlServerDataOptions
+Cephalon.Data.SqlServer.Configuration.SqlServerDataOptions.CdcCaptures.get -> System.Collections.Generic.IList<Cephalon.Data.SqlServer.Configuration.SqlServerCdcCaptureOptions!>!
+Cephalon.Data.SqlServer.Configuration.SqlServerDataOptions.CheckpointTableName.get -> string!
+Cephalon.Data.SqlServer.Configuration.SqlServerDataOptions.CheckpointTableName.set -> void
+Cephalon.Data.SqlServer.Configuration.SqlServerDataOptions.CheckpointTableSchema.get -> string!
+Cephalon.Data.SqlServer.Configuration.SqlServerDataOptions.CheckpointTableSchema.set -> void
+Cephalon.Data.SqlServer.Configuration.SqlServerDataOptions.ConnectionString.get -> string?
+Cephalon.Data.SqlServer.Configuration.SqlServerDataOptions.ConnectionString.set -> void
+Cephalon.Data.SqlServer.Configuration.SqlServerDataOptions.ConnectionStringName.get -> string?
+Cephalon.Data.SqlServer.Configuration.SqlServerDataOptions.ConnectionStringName.set -> void
+Cephalon.Data.SqlServer.Configuration.SqlServerDataOptions.DatabaseName.get -> string!
+Cephalon.Data.SqlServer.Configuration.SqlServerDataOptions.DatabaseName.set -> void
+Cephalon.Data.SqlServer.Configuration.SqlServerDataOptions.SqlServerDataOptions() -> void
+Cephalon.Data.SqlServer.Registration.SqlServerDataEngineBuilderExtensions
+const Cephalon.Data.SqlServer.Configuration.SqlServerDataOptions.ProviderId = "sqlserver" -> string!
+const Cephalon.Data.SqlServer.Configuration.SqlServerDataOptions.SectionPath = "Engine:Data:SqlServer" -> string!
+static Cephalon.Data.SqlServer.Registration.SqlServerDataEngineBuilderExtensions.AddSqlServerData(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Data.SqlServer.Configuration.SqlServerDataOptions!>! configure) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Data.SqlServer.Registration.SqlServerDataEngineBuilderExtensions.AddSqlServerData(this Cephalon.Engine.Composition.EngineBuilder! builder, string! connectionString, string! databaseName, System.Action<Cephalon.Data.SqlServer.Configuration.SqlServerDataOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!

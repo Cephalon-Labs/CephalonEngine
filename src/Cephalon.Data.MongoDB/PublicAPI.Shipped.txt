@@ -1,0 +1,55 @@
+#nullable enable
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.BatchSize.get -> int?
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.BatchSize.set -> void
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.ChannelId.get -> string!
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.ChannelId.set -> void
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.CollectionName.get -> string!
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.CollectionName.set -> void
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.DatabaseName.get -> string?
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.DatabaseName.set -> void
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.Description.get -> string!
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.Description.set -> void
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.DisplayName.get -> string!
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.DisplayName.set -> void
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.EventFormat.get -> string!
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.EventFormat.set -> void
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.FullDocumentMode.get -> string!
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.FullDocumentMode.set -> void
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.Id.get -> string!
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.Id.set -> void
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.MaxAwaitTimeSeconds.get -> int
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.MaxAwaitTimeSeconds.set -> void
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.MessageType.get -> string!
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.MessageType.set -> void
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.Metadata.get -> System.Collections.Generic.IDictionary<string!, string!>!
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.MongoDbChangeStreamCaptureOptions() -> void
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.OutboxId.get -> string!
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.OutboxId.set -> void
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.ResourceIds.get -> System.Collections.Generic.IList<string!>!
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.SourceId.get -> string!
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.SourceId.set -> void
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.SourceModuleId.get -> string!
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.SourceModuleId.set -> void
+Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions.Tags.get -> System.Collections.Generic.IList<string!>!
+Cephalon.Data.MongoDB.Configuration.MongoDbDataOptions
+Cephalon.Data.MongoDB.Configuration.MongoDbDataOptions.ChangeStreamCaptures.get -> System.Collections.Generic.IList<Cephalon.Data.MongoDB.Configuration.MongoDbChangeStreamCaptureOptions!>!
+Cephalon.Data.MongoDB.Configuration.MongoDbDataOptions.CollectionPrefix.get -> string!
+Cephalon.Data.MongoDB.Configuration.MongoDbDataOptions.CollectionPrefix.set -> void
+Cephalon.Data.MongoDB.Configuration.MongoDbDataOptions.ConnectionString.get -> string?
+Cephalon.Data.MongoDB.Configuration.MongoDbDataOptions.ConnectionString.set -> void
+Cephalon.Data.MongoDB.Configuration.MongoDbDataOptions.ConnectionStringName.get -> string?
+Cephalon.Data.MongoDB.Configuration.MongoDbDataOptions.ConnectionStringName.set -> void
+Cephalon.Data.MongoDB.Configuration.MongoDbDataOptions.DatabaseName.get -> string!
+Cephalon.Data.MongoDB.Configuration.MongoDbDataOptions.DatabaseName.set -> void
+Cephalon.Data.MongoDB.Configuration.MongoDbDataOptions.MongoDbDataOptions() -> void
+Cephalon.Data.MongoDB.Configuration.MongoDbDataOptions.RegisterInbox.get -> bool
+Cephalon.Data.MongoDB.Configuration.MongoDbDataOptions.RegisterInbox.set -> void
+Cephalon.Data.MongoDB.Configuration.MongoDbDataOptions.RegisterOutbox.get -> bool
+Cephalon.Data.MongoDB.Configuration.MongoDbDataOptions.RegisterOutbox.set -> void
+Cephalon.Data.MongoDB.Registration.MongoDbDataEngineBuilderExtensions
+const Cephalon.Data.MongoDB.Configuration.MongoDbDataOptions.DefaultConnectionString = "mongodb://localhost:27017" -> string!
+const Cephalon.Data.MongoDB.Configuration.MongoDbDataOptions.ProviderId = "mongodb" -> string!
+const Cephalon.Data.MongoDB.Configuration.MongoDbDataOptions.SectionPath = "Engine:Data:MongoDB" -> string!
+static Cephalon.Data.MongoDB.Registration.MongoDbDataEngineBuilderExtensions.AddMongoDbData(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Data.MongoDB.Configuration.MongoDbDataOptions!>! configure) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Data.MongoDB.Registration.MongoDbDataEngineBuilderExtensions.AddMongoDbData(this Cephalon.Engine.Composition.EngineBuilder! builder, string! connectionString, string! databaseName, System.Action<Cephalon.Data.MongoDB.Configuration.MongoDbDataOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!

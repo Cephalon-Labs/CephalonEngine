@@ -1,0 +1,19 @@
+#nullable enable
+Cephalon.Data.Redis.Configuration.RedisDataOptions
+Cephalon.Data.Redis.Configuration.RedisDataOptions.ConnectionString.get -> string?
+Cephalon.Data.Redis.Configuration.RedisDataOptions.ConnectionString.set -> void
+Cephalon.Data.Redis.Configuration.RedisDataOptions.ConnectionStringName.get -> string?
+Cephalon.Data.Redis.Configuration.RedisDataOptions.ConnectionStringName.set -> void
+Cephalon.Data.Redis.Configuration.RedisDataOptions.KeyPrefix.get -> string!
+Cephalon.Data.Redis.Configuration.RedisDataOptions.KeyPrefix.set -> void
+Cephalon.Data.Redis.Configuration.RedisDataOptions.RedisDataOptions() -> void
+Cephalon.Data.Redis.Configuration.RedisDataOptions.RegisterInbox.get -> bool
+Cephalon.Data.Redis.Configuration.RedisDataOptions.RegisterInbox.set -> void
+Cephalon.Data.Redis.Configuration.RedisDataOptions.RegisterOutbox.get -> bool
+Cephalon.Data.Redis.Configuration.RedisDataOptions.RegisterOutbox.set -> void
+Cephalon.Data.Redis.Registration.RedisDataEngineBuilderExtensions
+const Cephalon.Data.Redis.Configuration.RedisDataOptions.DefaultConnectionString = "localhost:6379" -> string!
+const Cephalon.Data.Redis.Configuration.RedisDataOptions.ProviderId = "redis" -> string!
+const Cephalon.Data.Redis.Configuration.RedisDataOptions.SectionPath = "Engine:Data:Redis" -> string!
+static Cephalon.Data.Redis.Registration.RedisDataEngineBuilderExtensions.AddRedisData(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Data.Redis.Configuration.RedisDataOptions!>! configure) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Data.Redis.Registration.RedisDataEngineBuilderExtensions.AddRedisData(this Cephalon.Engine.Composition.EngineBuilder! builder, string! connectionString, System.Action<Cephalon.Data.Redis.Configuration.RedisDataOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!

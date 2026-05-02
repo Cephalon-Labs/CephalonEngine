@@ -1,0 +1,19 @@
+#nullable enable
+Cephalon.Data.Nats.Configuration.NatsDataOptions
+Cephalon.Data.Nats.Configuration.NatsDataOptions.BucketPrefix.get -> string!
+Cephalon.Data.Nats.Configuration.NatsDataOptions.BucketPrefix.set -> void
+Cephalon.Data.Nats.Configuration.NatsDataOptions.NatsDataOptions() -> void
+Cephalon.Data.Nats.Configuration.NatsDataOptions.RegisterInbox.get -> bool
+Cephalon.Data.Nats.Configuration.NatsDataOptions.RegisterInbox.set -> void
+Cephalon.Data.Nats.Configuration.NatsDataOptions.RegisterOutbox.get -> bool
+Cephalon.Data.Nats.Configuration.NatsDataOptions.RegisterOutbox.set -> void
+Cephalon.Data.Nats.Configuration.NatsDataOptions.Uri.get -> string?
+Cephalon.Data.Nats.Configuration.NatsDataOptions.Uri.set -> void
+Cephalon.Data.Nats.Configuration.NatsDataOptions.UriName.get -> string?
+Cephalon.Data.Nats.Configuration.NatsDataOptions.UriName.set -> void
+Cephalon.Data.Nats.Registration.NatsDataEngineBuilderExtensions
+const Cephalon.Data.Nats.Configuration.NatsDataOptions.DefaultUri = "nats://localhost:4222" -> string!
+const Cephalon.Data.Nats.Configuration.NatsDataOptions.ProviderId = "nats" -> string!
+const Cephalon.Data.Nats.Configuration.NatsDataOptions.SectionPath = "Engine:Data:Nats" -> string!
+static Cephalon.Data.Nats.Registration.NatsDataEngineBuilderExtensions.AddNatsData(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Data.Nats.Configuration.NatsDataOptions!>! configure) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Data.Nats.Registration.NatsDataEngineBuilderExtensions.AddNatsData(this Cephalon.Engine.Composition.EngineBuilder! builder, string! uri, System.Action<Cephalon.Data.Nats.Configuration.NatsDataOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!

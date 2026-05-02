@@ -7,6 +7,8 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>latest</LangVersion>
     <Description>PostgreSQL provider-native logical-replication CDC companion package for the Cephalon engine.</Description>
+    <!-- RS0026/RS0027: optional-overload patterns; suppressed for ENG-341 (cleanup follow-up). -->
+    <NoWarn>$(NoWarn);RS0026;RS0027</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Npgsql" />
@@ -15,5 +17,16 @@
     <ProjectReference Include="..\Cephalon.Data\Cephalon.Data.csproj" />
     <ProjectReference Include="..\Cephalon.Engine\Cephalon.Engine.csproj" />
     <ProjectReference Include="..\Cephalon.Eventing\Cephalon.Eventing.csproj" />
+  </ItemGroup>
+<ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI.Unshipped.txt" />
   </ItemGroup>
 </Project>

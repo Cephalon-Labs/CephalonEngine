@@ -1,0 +1,82 @@
+#nullable enable
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.AcknowledgementMode.get -> string?
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.AcknowledgementMode.set -> void
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.CdcCaptureExecutionRuntimeOptions() -> void
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.CdcCaptureIds.get -> System.Collections.Generic.IList<string!>!
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.Description.get -> string!
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.Description.set -> void
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.DisplayName.get -> string!
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.DisplayName.set -> void
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.EdgeNodeIds.get -> System.Collections.Generic.IList<string!>!
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.ExecutionGraphId.get -> string?
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.ExecutionGraphId.set -> void
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.ExecutionOwnership.get -> string!
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.ExecutionOwnership.set -> void
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.ExecutionTopology.get -> string!
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.ExecutionTopology.set -> void
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.HostedExecutionId.get -> string?
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.HostedExecutionId.set -> void
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.Id.get -> string!
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.Id.set -> void
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.Metadata.get -> System.Collections.Generic.IDictionary<string!, string!>!
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.ObservationStaleAfterSeconds.get -> int?
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.ObservationStaleAfterSeconds.set -> void
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.RejectConflictingReporterIds.get -> bool
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.RejectConflictingReporterIds.set -> void
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.RejectOutOfOrderReports.get -> bool
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.RejectOutOfOrderReports.set -> void
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.ReporterLeaseSeconds.get -> int?
+Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions.ReporterLeaseSeconds.set -> void
+Cephalon.Data.Configuration.DataRuntimeOptions
+Cephalon.Data.Configuration.DataRuntimeOptions.CdcExecutionRuntimes.get -> System.Collections.Generic.IList<Cephalon.Data.Configuration.CdcCaptureExecutionRuntimeOptions!>!
+Cephalon.Data.Configuration.DataRuntimeOptions.CdcPollingIntervalSeconds.get -> int
+Cephalon.Data.Configuration.DataRuntimeOptions.CdcPollingIntervalSeconds.set -> void
+Cephalon.Data.Configuration.DataRuntimeOptions.DataRuntimeOptions() -> void
+Cephalon.Data.Configuration.DataRuntimeOptions.EnableCdcExecution.get -> bool
+Cephalon.Data.Configuration.DataRuntimeOptions.EnableCdcExecution.set -> void
+Cephalon.Data.Configuration.DataRuntimeOptions.EnableExternalCdcRuntimeReporting.get -> bool
+Cephalon.Data.Configuration.DataRuntimeOptions.EnableExternalCdcRuntimeReporting.set -> void
+Cephalon.Data.Configuration.DataRuntimeOptions.EnableManagedConnectorAutomaticRetryExecution.get -> bool
+Cephalon.Data.Configuration.DataRuntimeOptions.EnableManagedConnectorAutomaticRetryExecution.set -> void
+Cephalon.Data.Configuration.DataRuntimeOptions.ManagedConnectorAutomaticRetryCoordinationOwnerId.get -> string?
+Cephalon.Data.Configuration.DataRuntimeOptions.ManagedConnectorAutomaticRetryCoordinationOwnerId.set -> void
+Cephalon.Data.Configuration.DataRuntimeOptions.ManagedConnectorAutomaticRetryPollingIntervalSeconds.get -> int
+Cephalon.Data.Configuration.DataRuntimeOptions.ManagedConnectorAutomaticRetryPollingIntervalSeconds.set -> void
+Cephalon.Data.Configuration.DataRuntimeOptions.ManagedConnectorCommandJournalPersistencePath.get -> string?
+Cephalon.Data.Configuration.DataRuntimeOptions.ManagedConnectorCommandJournalPersistencePath.set -> void
+Cephalon.Data.Configuration.DataRuntimeOptions.RegisterReadStore.get -> bool
+Cephalon.Data.Configuration.DataRuntimeOptions.RegisterReadStore.set -> void
+Cephalon.Data.Configuration.DataRuntimeOptions.RegisterWriteStore.get -> bool
+Cephalon.Data.Configuration.DataRuntimeOptions.RegisterWriteStore.set -> void
+Cephalon.Data.Registration.DataEngineBuilderExtensions
+Cephalon.Data.Services.CdcCaptureExecutionReport
+Cephalon.Data.Services.CdcCaptureExecutionReport.CapturedChangeCount.get -> int
+Cephalon.Data.Services.CdcCaptureExecutionReport.CdcCaptureExecutionReport(string! cdcCaptureId, string! outcome, System.DateTimeOffset observedAtUtc, string? reportId = null, int capturedChangeCount = 0, int producedMessageCount = 0, string? changeId = null, string? checkpoint = null, string? error = null, Cephalon.Abstractions.Data.CdcCaptureFreshnessStatus? freshness = null, Cephalon.Abstractions.Data.CdcCaptureFreshnessStatus? observationFreshness = null, Cephalon.Abstractions.Data.CdcCaptureLagStatus? lag = null, Cephalon.Abstractions.Data.CdcCapturePublicationStatus? publication = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null, string? reporterId = null, string? edgeNodeId = null) -> void
+Cephalon.Data.Services.CdcCaptureExecutionReport.CdcCaptureId.get -> string!
+Cephalon.Data.Services.CdcCaptureExecutionReport.ChangeId.get -> string?
+Cephalon.Data.Services.CdcCaptureExecutionReport.Checkpoint.get -> string?
+Cephalon.Data.Services.CdcCaptureExecutionReport.EdgeNodeId.get -> string?
+Cephalon.Data.Services.CdcCaptureExecutionReport.Error.get -> string?
+Cephalon.Data.Services.CdcCaptureExecutionReport.Freshness.get -> Cephalon.Abstractions.Data.CdcCaptureFreshnessStatus?
+Cephalon.Data.Services.CdcCaptureExecutionReport.Lag.get -> Cephalon.Abstractions.Data.CdcCaptureLagStatus?
+Cephalon.Data.Services.CdcCaptureExecutionReport.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Data.Services.CdcCaptureExecutionReport.ObservationFreshness.get -> Cephalon.Abstractions.Data.CdcCaptureFreshnessStatus?
+Cephalon.Data.Services.CdcCaptureExecutionReport.ObservedAtUtc.get -> System.DateTimeOffset
+Cephalon.Data.Services.CdcCaptureExecutionReport.Outcome.get -> string!
+Cephalon.Data.Services.CdcCaptureExecutionReport.ProducedMessageCount.get -> int
+Cephalon.Data.Services.CdcCaptureExecutionReport.Publication.get -> Cephalon.Abstractions.Data.CdcCapturePublicationStatus?
+Cephalon.Data.Services.CdcCaptureExecutionReport.ReportId.get -> string?
+Cephalon.Data.Services.CdcCaptureExecutionReport.ReporterId.get -> string?
+Cephalon.Data.Services.CdcCaptureRuntimeOutcomes
+Cephalon.Data.Services.ICdcCaptureExecutionRuntimeContributor
+Cephalon.Data.Services.ICdcCaptureExecutionRuntimeContributor.RegisterExecutionRuntimes(Cephalon.Data.Services.ICdcCaptureExecutionRuntimeRegistry! executionRuntimes) -> void
+Cephalon.Data.Services.ICdcCaptureExecutionRuntimeRegistry
+Cephalon.Data.Services.ICdcCaptureExecutionRuntimeRegistry.Add(Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor! executionRuntime) -> void
+Cephalon.Data.Services.ICdcCaptureRuntimeReporter
+Cephalon.Data.Services.ICdcCaptureRuntimeReporter.ReportAsync(Cephalon.Data.Services.CdcCaptureExecutionReport! report, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
+const Cephalon.Data.Services.CdcCaptureRuntimeOutcomes.Captured = "captured" -> string!
+const Cephalon.Data.Services.CdcCaptureRuntimeOutcomes.Failed = "failed" -> string!
+const Cephalon.Data.Services.CdcCaptureRuntimeOutcomes.Idle = "idle" -> string!
+const Cephalon.Data.Services.CdcCaptureRuntimeOutcomes.Started = "started" -> string!
+static Cephalon.Data.Registration.DataEngineBuilderExtensions.AddData(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Data.Configuration.DataRuntimeOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!
