@@ -1,10 +1,14 @@
+using System.Text.RegularExpressions;
 using Cephalon.AspNetCore.Hosting;
+using Cephalon.Diagnostics.Redaction;
+using Cephalon.Diagnostics.Redaction.Defaults;
 using Cephalon.Observability.Hosting;
 using Cephalon.Sample.MicroserviceSuite.Foundation.Conventions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace Cephalon.Sample.MicroserviceSuite.CatalogService;
@@ -44,6 +48,22 @@ public static class CatalogServiceSampleApp
         builder.Configuration.AddJsonFile("catalog-service.settings.json", optional: false, reloadOnChange: false);
 
         builder.AddCephalon();
+
+        // Canonical redaction recipe — see docs/components/diagnostics.md "Redaction quick start".
+        builder.Services.AddSingleton<IRedactionFilter>(new KeyMatchRedactionFilter(
+        [
+            "http.request.header.authorization",
+            "http.request.header.cookie",
+            "http.request.header.proxy-authorization",
+            "http.response.header.set-cookie",
+            "cephalon.tenant.secret",
+        ]));
+        builder.Services.AddSingleton<IRedactionFilter>(new RegexRedactionFilter(
+            new Regex(@"\b(?:\d[ -]*?){13,19}\b", RegexOptions.Compiled)));
+        builder.Services.AddSingleton<IRedactionFilter>(new RegexRedactionFilter(
+            new Regex(@"Bearer\s+[A-Za-z0-9\-_\.]+", RegexOptions.Compiled),
+            replacement: "Bearer [REDACTED]"));
+
         builder.Services.AddCephalonObservability(builder.Configuration);
 
         var app = builder.Build();
