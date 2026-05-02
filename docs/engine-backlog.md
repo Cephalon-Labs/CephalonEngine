@@ -3430,6 +3430,33 @@ Follow-up later:
 - when the engine cuts its first stable GA tag, run the checklist end-to-end and capture any missing or outdated step against this document; update in place rather than appending a new section
 - consider authoring a companion `docs/release-checklist-template.md` that release managers copy per release as a tracking artefact (filled-in tickboxes, links to specific artefact URLs); the current document is the durable rule book, the template would be the per-release working copy
 
+### ENG-354 Cephalon.Diagnostics M3 to M4 promotion (Cephalon.Observability.OpenTelemetry consumes all canonical names)
+
+Status: done
+Estimate: 3
+
+Why:
+
+- `ENG-351` promoted `Cephalon.Diagnostics` from `M2` to `M3` once the canonical name set was reachable via the `/engine/diagnostics-conventions` operator surface; the documented `M4` promotion criterion was at least one observability companion pack consuming the canonical names programmatically as a real subscription contract, not just an operator-facing read
+- before this slice `Cephalon.Observability.OpenTelemetry` subscribed only to `EngineDiagnostics.ActivitySourceName` / `MeterName` (which sourced their values from `CephalonActivitySources.Engine` / `CephalonMeters.Engine` per `ENG-327`, but only the engine-level source/meter, not the host-adapter sources); ASP.NET Core and Worker host-adapter spans were not exported even when telemetry export was enabled
+
+Delivered:
+
+- update `src/Cephalon.Observability.OpenTelemetry/Cephalon.Observability.OpenTelemetry.csproj` to add a `ProjectReference` to `Cephalon.Diagnostics`
+- update `src/Cephalon.Observability.OpenTelemetry/Hosting/OpenTelemetryHostApplicationBuilderExtensions.cs` to import `Cephalon.Diagnostics` and subscribe to all three canonical activity sources (`CephalonActivitySources.Engine` / `.AspNetCore` / `.Worker`) via `tracing.AddSource(...)` and all three canonical meters (`CephalonMeters.Engine` / `.AspNetCore` / `.Worker`) via `metrics.AddMeter(...)`; the existing `EngineDiagnostics.ActivitySourceName` / `MeterName` references are subsumed because they were already pointing at the same canonical constants (per `ENG-327`); inline comment documents the subscription pattern and the no-op-duplicate property of `EngineDiagnostics.*`
+- refresh `packages.lock.json` for `Cephalon.Observability.OpenTelemetry` and 4 transitive consumers (`Cephalon.Sample.Showcase`, `Cephalon.Sample.ModularMonolith`, `Cephalon.Tests.Composition`, plus indirect lock-file dependents); locked-mode restore passes against the refreshed graph
+- update `docs/components/diagnostics.md` maturity section from `M3` to `M4` with the OpenTelemetry-pack subscription proof; remove the `M4` promotion criterion (now satisfied) and replace with adoption-quality framing that names redaction filter primitive, `LoggerMessage` source-generated factories, and per-companion-pack OTel adapter rollout (CDC / eventing / agentics / retrieval / multi-tenancy governance) as continuing follow-up
+- update `docs/engine-surface-maturity-audit.md` `Cephalon.Diagnostics` row maturity from `M3` to `M4` with the OpenTelemetry-pack subscription proof
+- update `docs/conformance-matrix.md` `Cephalon.Diagnostics` row maturity from `M3` to `M4`; move the package from the `Broad managed execution (M3)` family-summary line to `Adoption-ready (M4)`; update the row Notes column to call out the OpenTelemetry-pack subscription contract
+- verified end-to-end with `dotnet build src/Cephalon.Observability.OpenTelemetry/Cephalon.Observability.OpenTelemetry.csproj -c Release` (0 warnings, 0 errors), full-solution `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors), and `dotnet restore --locked-mode CephalonEngine.slnx` (passes after the lock-file refresh)
+
+Follow-up later:
+
+- redaction filter primitive at the engine boundary so secrets / PII / authentication tokens never reach exporters; today the OpenTelemetry pack exports raw attribute values, which is fine for engine-emitted spans but consumer modules may emit attributes that need filtering
+- `LoggerMessage` source-generated factories aligned with the per-package diagnostic-id range discipline; today engine logging is hot-path-allocated rather than source-generated
+- per-companion-pack OTel adapter rollout: `Cephalon.Eventing`, `Cephalon.Agentics`, `Cephalon.Retrieval`, `Cephalon.Data` (CDC), `Cephalon.MultiTenancy.Governance` should each declare their own canonical activity source / meter named `Cephalon.{Family}` and emit through `Cephalon.Diagnostics` rather than each pack inventing its own diagnostics class
+- consider extending `CephalonActivitySources` and `CephalonMeters` with these per-family names additively so `Cephalon.Observability.OpenTelemetry` can subscribe to them through one constant lookup rather than hard-coding the list inside the host-application-builder extension
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -11524,6 +11551,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-347 Public-API delta summary helper (shipped)
 - ENG-352 Wire public-API delta summary into release validation + CI artefact upload (shipped)
 - ENG-353 Author docs/release-checklist.md consolidating release-manager workflow (shipped)
+- ENG-354 Cephalon.Diagnostics M3 to M4 promotion (Cephalon.Observability.OpenTelemetry consumes all canonical names) (shipped)
 
 ### Later / not scheduled yet
 

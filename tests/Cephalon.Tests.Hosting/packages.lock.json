@@ -1999,6 +1999,7 @@
       "cephalon.observability.opentelemetry": {
         "type": "Project",
         "dependencies": {
+          "Cephalon.Diagnostics": "[0.1.0-preview, )",
           "Cephalon.Engine": "[0.1.0-preview, )",
           "Cephalon.Observability": "[0.1.0-preview, )",
           "OpenTelemetry.Exporter.OpenTelemetryProtocol": "[1.15.3, )",
