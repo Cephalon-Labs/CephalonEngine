@@ -55,6 +55,7 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 - [Linux systemd deployment](linux-systemd-deployment.md)
 - [Operational hardening gap inventory](operational-hardening-gap-inventory.md)
 - [Runtime failure policy](runtime-failure-policy.md)
+- [SRE posture](sre-posture.md)
 - [Benchmarking](benchmarking.md)
 - [Reference docs publishing](reference-docs.md)
 
@@ -68,6 +69,7 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 - [.NET ecosystem reference](dotnet-ecosystem-reference.md)
 - [Long-range engine direction](long-range-direction.md)
 - [Engineering standards](engineering-standards.md)
+- [SRE posture](sre-posture.md)
 - [Runtime contract index](runtime-contract-index.md)
 - [Conformance matrix](conformance-matrix.md)
 
@@ -90,6 +92,8 @@ Downstream provider and edge-runtime integrations that are not shipped as first-
 - [Engine surface maturity audit](engine-surface-maturity-audit.md)
 - [Engine roadmap](engine-roadmap.md)
 - [Engine backlog](engine-backlog.md)
+- [Architecture review 2026-05 follow-ups](architecture-review-2026-05-followups.md)
+- [Test coverage roadmap](test-coverage-roadmap.md)
 - framework-baseline and support-claim changes should stay aligned with [.NET 11 readiness](dotnet11-readiness.md), [Deployment-mode support](deployment-mode-support.md), [Compatibility](compatibility.md), and [Package publishing](package-publishing.md)
 - planning issues and phase milestones can be synchronized from those docs through `scripts/sync-planning-github.ps1` and `.github/workflows/planning-sync.yml`
 - set `CEPHALON_PROJECT_TOKEN` with `repo`, `project`, and `read:org` scopes when the workflow needs to update the organization-level GitHub Project as well as repository issues and milestones
