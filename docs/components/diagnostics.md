@@ -25,6 +25,47 @@
 - `Redaction/Defaults/RegexRedactionFilter.cs`
 - `Redaction/Extensions/RedactionServiceCollectionExtensions.cs`
 
+## Redaction quick start
+
+Consumer apps register one or more `IRedactionFilter` implementations and call `AddRedactionPipeline()` once. The engine's M1-promoted emission sites (AspNetCore HTTP middleware + engine runtime module-phase tags) automatically route attribute values through the registered pipeline before exporter dispatch.
+
+```csharp
+using System.Text.RegularExpressions;
+using Cephalon.Diagnostics.Redaction;
+using Cephalon.Diagnostics.Redaction.Defaults;
+using Cephalon.Diagnostics.Redaction.Extensions;
+
+var builder = WebApplication.CreateBuilder(args);
+builder.AddCephalon(); // wires AddRedactionPipeline() automatically
+
+// Block well-known sensitive attribute keys from leaving the engine.
+builder.Services.AddSingleton<IRedactionFilter>(new KeyMatchRedactionFilter(
+[
+    "http.request.header.authorization",
+    "http.request.header.cookie",
+    "http.request.header.proxy-authorization",
+    "http.response.header.set-cookie",
+    "cephalon.tenant.secret",
+]));
+
+// Strip credit-card-shaped substrings from any string value the engine emits.
+builder.Services.AddSingleton<IRedactionFilter>(new RegexRedactionFilter(
+    new Regex(@"\b(?:\d[ -]*?){13,19}\b", RegexOptions.Compiled)));
+
+// Strip Bearer tokens from string values (URLs, log fragments, headers reused as values).
+builder.Services.AddSingleton<IRedactionFilter>(new RegexRedactionFilter(
+    new Regex(@"Bearer\s+[A-Za-z0-9\-_\.]+", RegexOptions.Compiled),
+    replacement: "Bearer [REDACTED]"));
+
+var app = builder.Build();
+app.MapCephalon();
+app.Run();
+```
+
+Filters apply in DI registration order. Each filter sees the previous filter's output as input, so consumer apps compose orthogonal concerns without coordination. Filters that don't recognise a value return it unchanged. The pipeline is empty by default — when no filters are registered, the engine emission sites short-circuit to passthrough at near-zero cost.
+
+To author a custom filter, implement `IRedactionFilter.Filter(RedactionContext, object?)` and register it as a singleton against `IRedactionFilter`. The `RedactionContext` carries the activity source name, meter name, attribute key, and logger category at the call site so a single filter can scope its decision to one emission site or apply globally.
+
 ## How it fits
 
 This pack is intentionally narrow at `M0` taxonomy-only. It does not own emission, exporter configuration, redaction, or sampling. The point of the pack today is to publish the *names* the engine and its host adapters will use when they emit spans, metrics, and logs, so consumer observability companion packs (`Cephalon.Observability.OpenTelemetry`, `Cephalon.Observability.Serilog`, `Cephalon.Observability.AzureMonitor`, `Cephalon.Observability.Aws`, etc.) can subscribe to them through stable identifiers.
