@@ -2,9 +2,26 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Description>Contracts for Cephalon modules and capabilities.</Description>
+    <!--
+      RS0026 ("Do not add multiple overloads with optional parameters") and RS0027 ("Public API
+      with optional parameter(s) should have the most parameters amongst its public overloads")
+      are PublicApiAnalyzers style rules that flag pre-existing constructor / method patterns in
+      Cephalon.Abstractions. They are suppressed here so the public-API contract lock-in itself
+      does not bundle a breaking refactor. Cleanup follow-through is tracked separately.
+    -->
+    <NoWarn>$(NoWarn);RS0026;RS0027</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI.Unshipped.txt" />
   </ItemGroup>
 </Project>
