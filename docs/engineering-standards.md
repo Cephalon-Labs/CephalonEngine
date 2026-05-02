@@ -167,6 +167,14 @@ Required restore determinism:
 - CI runs `dotnet restore --locked-mode` so unintended dependency drift fails the build immediately rather than silently shifting the resolved graph
 - local developer restores stay unconstrained; lock files are regenerated when a contributor intentionally updates a `Directory.Packages.props` version, and the resulting diff goes through normal PR review
 
+Public-API contract artefacts:
+
+- every shipped `Cephalon.*` package declares `Microsoft.CodeAnalysis.PublicApiAnalyzers` plus per-project `PublicAPI.Shipped.txt` and `PublicAPI.Unshipped.txt` artefacts so the public surface is reviewable in PR diffs; the rollout was completed across all 101 packages in `ENG-322` through `ENG-345`
+- new `Cephalon.*` packages adopt the same pattern via [`scripts/inject-public-api-analyzers.ps1`](../scripts/inject-public-api-analyzers.ps1): the script injects the analyzer reference, declares `PublicAPI.Shipped.txt` / `PublicAPI.Unshipped.txt` as `AdditionalFiles`, suppresses RS0026 / RS0027 with an inline ENG-card-tagged comment, and seeds header-only placeholder files; after running, capture `error RS0016` symbols from a clean `dotnet build` into `PublicAPI.Shipped.txt` to seed the baseline
+- transitively visible types from referenced projects can pollute the initial extraction (e.g. `Cephalon.Cli` referencing `Cephalon.Scaffolding`, dependency-health probe packs referencing `Cephalon.Observability.DependencyHealth.Core`); when the rebuild reports `RS0017` after a baseline seed, reset the `.Shipped.txt` to header-only and re-extract
+- `RS0026` ("multiple overloads with optional parameters") and `RS0027` ("public API with optional parameter(s) should have the most parameters amongst its public overloads") are suppressed per project with an inline ENG-card comment because the engine has not yet refactored the pre-existing optional-overload patterns; cleaning these up is a follow-up arc opposite to the rollout arc
+- removals and renames are recorded in `PublicAPI.Unshipped.txt` with the `*REMOVED*` prefix so PR diffs surface the break before it merges; both `.txt` files follow the same review discipline as XML doc comments
+
 Splitting policy:
 
 - split a package only when its assembly is independently useful to consumers

@@ -37,6 +37,7 @@ The route prefix `/engine` is reserved for Cephalon engine introspection. App-ow
 | `GET /manifest` | `Cephalon.AspNetCore` | canonical manifest of runtime shape | base |
 | `GET /snapshot` | `Cephalon.Engine` | composed introspection snapshot across every active surface | base |
 | `GET /app-model` | `Cephalon.AspNetCore` | application model and profile configuration | base |
+| `GET /diagnostics-conventions` | `Cephalon.AspNetCore` | canonical OpenTelemetry name set the engine and host adapters emit telemetry under (activity sources, meters, `cephalon.*` attribute keys); names sourced from `Cephalon.Diagnostics` constants | base |
 | `GET /resilience` | `Cephalon.AspNetCore` | requested resilience patterns and settings | base |
 | `GET /behavior-resilience` | `Cephalon.AspNetCore` | effective behavior-execution resilience policies | optional |
 | `GET /behavior-resilience/{policyId}` | `Cephalon.AspNetCore` | single resilience policy | optional |

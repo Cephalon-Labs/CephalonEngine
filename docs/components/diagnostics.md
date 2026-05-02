@@ -23,12 +23,13 @@ Where an OpenTelemetry semantic convention already exists for a concept (HTTP se
 
 ## Maturity and ownership
 
-- maturity today: `M2` — `cephalon-managed`; both host adapters route telemetry through this package's name set:
+- maturity today: `M3` — `cephalon-managed`; the canonical name set is now reachable through an explicit operator surface so AI tooling and humans can introspect what the engine emits without reading source:
     - `Cephalon.Engine` consumes `CephalonActivitySources.Engine` and `CephalonMeters.Engine` so engine-runtime spans (`engine.build`, `module.{phase}`, `runtime.*`) and metrics flow through the canonical name set; module-lifecycle spans emit `cephalon.module.id` via `CephalonDiagnosticsAttributeKeys.ModuleId`
     - `Cephalon.AspNetCore` declares its diagnostics convention against `CephalonActivitySources.AspNetCore` so structured HTTP request / response / body-capture / trace-correlation diagnostics share the canonical source name with observability companion packs
     - `Cephalon.Worker` declares an internal `WorkerDiagnostics` activity source against `CephalonActivitySources.Worker` and emits `worker.lifecycle.start` / `worker.lifecycle.stop` spans around the hosted-service lifecycle
-- promote to `M3` when an explicit operator surface (catalog routes, snapshot keys) lands for the diagnostics name set itself, e.g. `/engine/diagnostics-conventions` projecting the active source / meter / attribute-key set so operators and AI tooling can introspect what the engine actually emits
-- ownership: `cephalon-managed` (engine + both host adapters consume this package's constants)
+    - **`/engine/diagnostics-conventions`** ships through `Cephalon.AspNetCore` and projects the canonical activity-source names, meter names, and `cephalon.*` attribute keys as a `DiagnosticsConventionsSurface` record; operators introspect the emission contract through one HTTP read, and AI tooling can subscribe to the surface as part of the engine's introspection contract
+- promote to `M4` when at least one observability companion pack consumes `/engine/diagnostics-conventions` programmatically to drive its own subscription / alerting wiring; today the surface is operator-facing and adoption-ready, M4 requires a real consumer of the contract
+- ownership: `cephalon-managed` (engine + both host adapters consume this package's constants; the `/engine/diagnostics-conventions` route is owned by `Cephalon.AspNetCore`)
 
 ## Cross-references
 

@@ -1,1 +1,17 @@
 #nullable enable
+Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface
+Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface.<Clone>$() -> Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface!
+Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface.ActivitySources.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface.ActivitySources.init -> void
+Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface.CephalonAttributeKeys.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface.CephalonAttributeKeys.init -> void
+Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface.Deconstruct(out System.Collections.Generic.IReadOnlyList<string!>! ActivitySources, out System.Collections.Generic.IReadOnlyList<string!>! Meters, out System.Collections.Generic.IReadOnlyList<string!>! CephalonAttributeKeys) -> void
+Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface.DiagnosticsConventionsSurface(System.Collections.Generic.IReadOnlyList<string!>! ActivitySources, System.Collections.Generic.IReadOnlyList<string!>! Meters, System.Collections.Generic.IReadOnlyList<string!>! CephalonAttributeKeys) -> void
+Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface.Equals(Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface? other) -> bool
+Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface.Meters.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface.Meters.init -> void
+override Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface.Equals(object? obj) -> bool
+override Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface.GetHashCode() -> int
+override Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface.ToString() -> string!
+static Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface.operator !=(Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface? left, Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface? right) -> bool
+static Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface.operator ==(Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface? left, Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface? right) -> bool
