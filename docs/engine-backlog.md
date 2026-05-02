@@ -2999,6 +2999,31 @@ Follow-up later:
 - when the cascade limitation is fixed, the trim / AOT / single-file probe should publish cleanly against `Cephalon.Sample.ModularMonolith`; that is the slice that flips the deployment-mode SLI in `docs/sre-posture.md` from `audit-only` to numeric
 - mirror these declarations onto any future analyzer-only `netstandard2.0` projects the engine adds (e.g. transport-specific source generators) so the not-trimmable / not-AOT intent stays consistent across the engine's analyzer family
 
+### ENG-333 Maturity audit consolidation for Cephalon.Diagnostics + Cephalon.Analyzers + engine resilience runtime
+
+Status: done
+Estimate: 2
+
+Why:
+
+- `ENG-323`, `ENG-325`, `ENG-327`, and `ENG-328` shipped `Cephalon.Diagnostics` and `Cephalon.Analyzers` plus their `M0 → M1` promotions, but `docs/engine-surface-maturity-audit.md` still listed neither package; auditors and contributors reading the audit would not know about them
+- Recommendation #7 in the May 2026 Learning Knowledge Pack delta (a dedicated `Cephalon.Resilience` primitive) was framed as "unplanned" in the durable baseline, but the engine already ships descriptor types in `Cephalon.Abstractions/Resilience/*` plus a behavior-coupled execution runtime in `Cephalon.Behaviors/Resilience/*` over `Microsoft.Extensions.Resilience` (Polly v8 in-box); the truthful framing is "partially-shipped, M2 mixed" with the dedicated-package extraction remaining as follow-up
+- the smallest honest follow-up is to consolidate the maturity audit and the Learning Knowledge Pack so future planning slices read truthful state from one place rather than re-discovering each package and recommendation from source
+
+Delivered:
+
+- add three new rows to `docs/engine-surface-maturity-audit.md` Current audit table:
+    - `Cephalon.Diagnostics` at `M1 cephalon-managed` with the `engine.build` / `module.{phase}` / `runtime.*` consumption proof from `ENG-327`; promotion criterion to `M2` is the host-adapter rollout
+    - `Cephalon.Analyzers` at `M1 cephalon-managed` with the `Cephalon.Abstractions` adoption proof from `ENG-328`; promotion criterion to `M2` is documented adoption path in `getting-started.md` and template-pack default
+    - engine-level resilience runtime at `M2 mixed application-managed descriptors plus cephalon-managed runtime` documenting the descriptor surface in `Cephalon.Abstractions/Resilience/*` plus `AppModel/*Selection.cs`, the runtime in `Cephalon.Behaviors/Resilience/*` backed by `Microsoft.Extensions.Resilience`, and the open follow-up of extracting the runtime into a dedicated `Cephalon.Resilience` package
+- update Learning Knowledge Pack recommendation #7 in `docs/project-memory.md` from "unplanned" to "partially shipped" with explicit cross-references to the existing descriptor and runtime files; the dedicated-package extraction is named as the remaining follow-up
+- verified end-to-end with `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors)
+
+Follow-up later:
+
+- update `docs/conformance-matrix.md` to add per-package rows for `Cephalon.Diagnostics` and `Cephalon.Analyzers` once the matrix's next refresh slice runs (the matrix is a read of the maturity audit + runtime contract index, so this slice's audit rows are the prerequisite)
+- if a future slice extracts the resilience runtime into a dedicated `Cephalon.Resilience` package, the maturity-audit row should split into two: `Cephalon.Resilience` package row plus a back-pointer in the existing `Cephalon.Behaviors` row
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -11071,6 +11096,7 @@ Upcoming sequence from the April 2026 maturity reset:
 
 - ENG-331 Deployment-mode publish probe activation (representativePublishTargets manifest defaults + Pester baseline cleanup) (shipped)
 - ENG-332 Mark netstandard2.0 analyzer / source-gen projects as not-trimmable / not-AOT-compatible (shipped)
+- ENG-333 Maturity audit consolidation for Cephalon.Diagnostics + Cephalon.Analyzers + engine resilience runtime (shipped)
 
 ### Later / not scheduled yet
 
