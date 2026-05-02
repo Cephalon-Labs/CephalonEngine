@@ -3565,6 +3565,29 @@ Follow-up later:
 - consider additional starter filters for non-string complex types (e.g. `UriRedactionFilter` that scrubs query-string parameters by name, `JsonPathRedactionFilter` that scrubs JSON values at a JSONPath) only when consumer demand surfaces; today the two shipped starters cover the obvious cases and additional shapes would inflate the surface without proportional value
 - once engine emission sites consume the filters and consumer apps register starter filters routinely, document the canonical "redact authorization + cookie + credit-card" recipe in the Diagnostics component doc as the discoverable reference pattern
 
+### ENG-362 Add unit tests for starter redaction filters
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `ENG-361` shipped `KeyMatchRedactionFilter` + `RegexRedactionFilter` as public surface under `Cephalon.Diagnostics.Redaction.Defaults` but did not lock behavior with tests; the contract guarantees the XML doc comments declare (ordinal-case-insensitive key comparison, replacement defaulting to `"[REDACTED]"`, non-string passthrough on `RegexRedactionFilter`, value passthrough on key-mismatch) are easy to regress unintentionally during refactors
+- the redaction surface is squarely in the path of secrets / PII / authentication-token leakage; without tests, a future mutation to either filter could silently emit raw values to exporters before any consumer noticed
+- starter implementations on a contract-typed surface have one obvious additional cost: every consumer app reaches for them first, so locked behavior is the minimum-viable safety net before broader emission-site consumption (the `M1` promotion of the redaction surface)
+
+Delivered:
+
+- new `tests/Cephalon.Tests.Composition/Diagnostics/Redaction/KeyMatchRedactionFilterTests.cs` (8 tests): match returns replacement, mismatch returns value unchanged, ordinal-case-insensitive comparison, custom replacement (including non-string replacement), short-circuit on attribute key without inspecting value (including `null` value), multi-key set, constructor null-arg guard, `DefaultReplacement` sentinel
+- new `tests/Cephalon.Tests.Composition/Diagnostics/Redaction/RegexRedactionFilterTests.cs` (10 tests): matched substring replacement, no-match passthrough, non-string passthrough, `null` passthrough, empty-string passthrough, custom replacement, replace-all not first-match, compiled regex reuse across calls, constructor null-arg guard, `DefaultReplacement` sentinel
+- update `tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj` to add a direct `ProjectReference` to `Cephalon.Diagnostics` (the host adapters already pull it transitively, but a direct reference makes the redaction namespaces unambiguously reachable from this test project)
+- verified end-to-end with `dotnet test --filter "FullyQualifiedName~Cephalon.Tests.Diagnostics.Redaction"` (18/18 pass) and `dotnet restore --locked-mode` (no lock-file drift)
+
+Follow-up later:
+
+- when emission sites in `Cephalon.Engine` / `Cephalon.AspNetCore` route values through registered `IRedactionFilter` implementations, add integration tests that wire one starter filter through DI and assert exporter output never contains the raw value (the `M1` promotion of the redaction surface)
+- if additional starter filter shapes ship (e.g. `UriRedactionFilter`, `JsonPathRedactionFilter`), the test layout under `tests/Cephalon.Tests.Composition/Diagnostics/Redaction/` is the destination
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -11664,6 +11687,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-355 Per-companion-pack canonical-name extension (Eventing + MultiTenancy.Governance) (shipped)
 - ENG-357 Add IRedactionFilter + RedactionContext primitives in Cephalon.Diagnostics (shipped)
 - ENG-361 Add starter KeyMatchRedactionFilter + RegexRedactionFilter implementations under Cephalon.Diagnostics.Redaction.Defaults (shipped)
+- ENG-362 Add unit tests for starter redaction filters (shipped)
 
 ### Later / not scheduled yet
 
