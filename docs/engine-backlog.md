@@ -2867,6 +2867,31 @@ Follow-up later:
 - consider adding `cephalon.blueprint` and `cephalon.module.count` style aggregate-attribute keys to `Cephalon.Diagnostics` if the OpenTelemetry semantic-convention discipline holds up over more emission sites; today those names are engine-internal and not declared in `Cephalon.Diagnostics`
 - author the redaction filter primitive at the engine boundary so secrets / PII / authentication tokens never reach exporters when the next emission-site rollout lands
 
+### ENG-328 Cephalon.Analyzers M0 to M1 promotion (Cephalon.Abstractions adopts the meta-package)
+
+Status: done
+Estimate: 3
+
+Why:
+
+- `ENG-325` shipped `Cephalon.Analyzers` at `M0` taxonomy-only with the explicit promotion criterion that `M1` requires at least one engine project (`Cephalon.Abstractions` was named as the natural starter) to replace its individual analyzer references with the meta-package
+- without an engine project consuming the meta-package, the analyzer set bundled in `Cephalon.Analyzers` was never validated in practice; the new analyzers (Roslynator, Meziantou, BannedApiAnalyzers, VS Threading) had not been exercised against any Cephalon code, and the curated `BannedSymbols.txt` had not been validated as buildable through the `buildTransitive/Cephalon.Analyzers.props` wire-up
+- `Cephalon.Abstractions` is the right scope because it is the host-agnostic contract layer; if the meta-package works there, the rollout pattern works for every other Cephalon package
+
+Delivered:
+
+- replace the individual `Microsoft.CodeAnalysis.PublicApiAnalyzers` `PackageReference` in `src/Cephalon.Abstractions/Cephalon.Abstractions.csproj` with a `ProjectReference` to `..\Cephalon.Analyzers\Cephalon.Analyzers.csproj` carrying `PrivateAssets=all` and `IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive"` so the meta-package's analyzers flow into `Cephalon.Abstractions`'s build but do not transitively flow to consumers of `Cephalon.Abstractions`
+- the `buildTransitive/Cephalon.Analyzers.props` wire-up registers the curated `BannedSymbols.txt` automatically, so `Cephalon.Abstractions` now enforces the engine's banned-symbol set without an additional MSBuild item edit
+- adopt the per-project NoWarn list to reflect the new analyzer reality: `MA0011` (missing `IFormatProvider`), `MA0048` (file name vs type name), `MA0051` (method-too-long, the dominant rule with 240 hits across descriptor types), `MA0002` (missing `IEqualityComparer`), and `RCS1194` (exception-constructor signatures) are suppressed inside `Cephalon.Abstractions` only with an inline comment explaining each rule and naming the cleanup as follow-up; `RS0026` and `RS0027` from `ENG-322` remain suppressed for the same reason
+- update `docs/components/analyzers.md` maturity section to declare `M1` / `cephalon-managed`, with the promotion narrative pointing at the `Cephalon.Abstractions` adoption as the proof
+- verified end-to-end with `dotnet build src/Cephalon.Abstractions/Cephalon.Abstractions.csproj -c Release` (0 warnings, 0 errors), full-solution `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors), and the existing `Cephalon.Abstractions` `PublicAPI.Shipped.txt` baseline (no public-surface changes; the meta-package is `PrivateAssets=all` so it does not widen the contract)
+
+Follow-up later:
+
+- promote `Cephalon.Analyzers` from `M1` to `M2` when the meta-package is the documented adoption path in `getting-started.md` and the template-pack starter projects reference it by default
+- clean up the suppressed Meziantou / Roslynator rules inside `Cephalon.Abstractions` so the per-project NoWarn list can shrink; this is incremental refactor work (split long descriptor methods, rename single-file mismatches, add `IFormatProvider` overloads, add `IEqualityComparer` parameters, refactor exception-constructor signatures) and should ride along with adjacent slices instead of needing one large slice
+- continue rolling out `Cephalon.Analyzers` adoption to `Cephalon.Engine`, then to host adapters, transport / behavior / data / event-sourcing / observability / multi-tenancy / agentics / retrieval / edge package families across subsequent sprints; each rollout is its own `ENG-*` slice because each project's NoWarn discipline is a separate review surface
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -10928,6 +10953,7 @@ Upcoming sequence from the April 2026 maturity reset:
 
 - ENG-326 Public-API contract lock-in rollout to Cephalon.Engine (shipped)
 - ENG-327 Cephalon.Diagnostics M0 to M1 promotion (engine consumes canonical names) (shipped)
+- ENG-328 Cephalon.Analyzers M0 to M1 promotion (Cephalon.Abstractions adopts the meta-package) (shipped)
 
 ### Later / not scheduled yet
 
