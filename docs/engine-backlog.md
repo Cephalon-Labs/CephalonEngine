@@ -3719,6 +3719,31 @@ Follow-up later:
 - wire a smoke test that boots the sample, fires an HTTP request with an `Authorization: Bearer abc123` header, asserts the captured activity does not contain the raw token; today the unit-level integration tests for both M1 emission sites cover the wiring, so a sample-level smoke test is duplicate coverage with marginal value
 - adopt the same recipe in the other samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) as a separate slice when the redaction surface needs broader sample reach — **delivered in `ENG-369`**
 
+### ENG-374 Extend M1 redaction to Cephalon.Eventing.Wolverine dispatch emission
+
+Status: done
+Estimate: 2
+
+Why:
+
+- `ENG-365` and `ENG-366` shipped M1 redaction at AspNetCore middleware and engine runtime module-phase tags; the third existing emission site -- `Cephalon.Eventing.Wolverine`'s `WolverineEventDispatchHostedService` -- was unwired even though it emits 9 attribute values per dispatched publication including `cephalon.tenant_id` and `cephalon.correlation_id`, both genuinely sensitive in multi-tenant deployments
+- in a multi-tenant Cephalon app, the tenant id is exactly the kind of value an operator wants to redact from third-party telemetry exporters (Honeycomb / Datadog / etc) but ship intact to internal SREs; without M1 redaction at the dispatch site, registered `IRedactionFilter` implementations had no effect on Wolverine span attributes
+- the package already references `Cephalon.Engine` (which transitively brings `Cephalon.Diagnostics.Redaction`), so the wiring requires no new package edges -- just the same lazy-resolution pattern used in `EngineRuntime` (`ENG-366`)
+
+Delivered:
+
+- update `src/Cephalon.Eventing.Wolverine/Services/WolverineEventDispatchHostedService.cs`:
+    - add private `RedactionPipeline? redactionPipeline` field; lazily resolve it inside `DispatchAvailableAsync` via `scope.ServiceProvider.GetService<RedactionPipeline>()` alongside the existing dispatch-store/runtime-reporter/message-bus resolution
+    - add private `Redact(Activity?, string attributeKey, object? value)` helper that builds a `RedactionContext` from `activity?.Source.Name + attributeKey` and pipes through the resolved pipeline; short-circuits to passthrough when the pipeline is null
+    - route 9 `SetTag` calls through `Redact(...)`: `cephalon.message_id`, `cephalon.event_type`, `cephalon.channel_id`, `cephalon.dispatch_attempt`, `cephalon.correlation_id`, `cephalon.tenant_id`, plus three `cephalon.dispatch_result` settings (`no-destinations` / `succeeded` / `failed`)
+- update `src/Cephalon.Diagnostics/Redaction/IRedactionFilter.cs` XML docs and `docs/components/diagnostics.md` *What it owns* paragraph to reflect three M1 emission sites
+- verified end-to-end with `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors)
+
+Follow-up later:
+
+- write a focused integration test that boots a Wolverine dispatch host with a tracking `IRedactionFilter`, calls `dispatchService.DispatchOnceAsync()`, and asserts the filter saw the 9 expected attribute keys (and that a sensitive value gets the redacted replacement); deferred from this slice because the existing AspNetCore + EngineRuntime integration tests already cover the lazy-resolution pattern correctness, and a Wolverine-shaped test requires the full Wolverine + outbox + dispatcher rig
+- promote `Cephalon.Worker`'s lifecycle spans through redaction once worker emission adds tag values (today `worker.lifecycle.start`/`.stop` start activities but emit no `SetTag` calls); the helper pattern is in place to copy
+
 ### ENG-373 Document genuine NoWarn suppressions with inline rationale
 
 Status: done
@@ -11987,6 +12012,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-371 Remove stale RS0026/RS0027 NoWarn suppressions across all packages (shipped)
 - ENG-372 Audit and cleanup remaining package-level NoWarn suppressions (shipped)
 - ENG-373 Document genuine NoWarn suppressions with inline rationale (shipped)
+- ENG-374 Extend M1 redaction to Cephalon.Eventing.Wolverine dispatch emission (shipped)
 
 ### Later / not scheduled yet
 
