@@ -1,4 +1,5 @@
 using System.Reflection;
+using Cephalon.Diagnostics;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.Observability.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -84,7 +85,15 @@ public static class OpenTelemetryHostApplicationBuilderExtensions
             openTelemetry.WithTracing(tracing =>
             {
                 tracing.AddAspNetCoreInstrumentation();
-                tracing.AddSource(EngineDiagnostics.ActivitySourceName);
+                // Subscribe to every canonical Cephalon ActivitySource declared in
+                // Cephalon.Diagnostics so engine-runtime, ASP.NET Core host adapter, and worker
+                // host adapter spans all flow into the OTLP exporter. EngineDiagnostics
+                // .ActivitySourceName is sourced from CephalonActivitySources.Engine so the value
+                // is identical to the canonical constant; subscribing to both is a no-op
+                // duplicate that future engine-internal renames cannot accidentally drop.
+                tracing.AddSource(CephalonActivitySources.Engine);
+                tracing.AddSource(CephalonActivitySources.AspNetCore);
+                tracing.AddSource(CephalonActivitySources.Worker);
                 tracing.AddOtlpExporter(exporter =>
                     ConfigureExporter(exporter, telemetry, exporterProtocol, TelemetrySignal.Traces));
             });
@@ -94,7 +103,9 @@ public static class OpenTelemetryHostApplicationBuilderExtensions
         {
             openTelemetry.WithMetrics(metrics =>
             {
-                metrics.AddMeter(EngineDiagnostics.MeterName);
+                metrics.AddMeter(CephalonMeters.Engine);
+                metrics.AddMeter(CephalonMeters.AspNetCore);
+                metrics.AddMeter(CephalonMeters.Worker);
                 metrics.AddOtlpExporter(exporter =>
                     ConfigureExporter(exporter, telemetry, exporterProtocol, TelemetrySignal.Metrics));
             });
