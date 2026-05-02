@@ -1,0 +1,58 @@
+#nullable enable
+Cephalon.Retrieval.Configuration.RetrievalOptions
+Cephalon.Retrieval.Configuration.RetrievalOptions.BackgroundReindexCollectionIds.get -> System.Collections.Generic.IList<string!>!
+Cephalon.Retrieval.Configuration.RetrievalOptions.BackgroundReindexInitialDelaySeconds.get -> int
+Cephalon.Retrieval.Configuration.RetrievalOptions.BackgroundReindexInitialDelaySeconds.set -> void
+Cephalon.Retrieval.Configuration.RetrievalOptions.BackgroundReindexIntervalSeconds.get -> int
+Cephalon.Retrieval.Configuration.RetrievalOptions.BackgroundReindexIntervalSeconds.set -> void
+Cephalon.Retrieval.Configuration.RetrievalOptions.Collections.get -> System.Collections.Generic.IList<Cephalon.Retrieval.Services.KnowledgeCollectionDescriptor!>!
+Cephalon.Retrieval.Configuration.RetrievalOptions.DefaultQueryLimit.get -> int
+Cephalon.Retrieval.Configuration.RetrievalOptions.DefaultQueryLimit.set -> void
+Cephalon.Retrieval.Configuration.RetrievalOptions.EnableBackgroundReindexing.get -> bool
+Cephalon.Retrieval.Configuration.RetrievalOptions.EnableBackgroundReindexing.set -> void
+Cephalon.Retrieval.Configuration.RetrievalOptions.EnableIngestion.get -> bool
+Cephalon.Retrieval.Configuration.RetrievalOptions.EnableIngestion.set -> void
+Cephalon.Retrieval.Configuration.RetrievalOptions.EnableQuerying.get -> bool
+Cephalon.Retrieval.Configuration.RetrievalOptions.EnableQuerying.set -> void
+Cephalon.Retrieval.Configuration.RetrievalOptions.FreshnessStaleAfterSeconds.get -> int
+Cephalon.Retrieval.Configuration.RetrievalOptions.FreshnessStaleAfterSeconds.set -> void
+Cephalon.Retrieval.Configuration.RetrievalOptions.MaximumQueryLimit.get -> int
+Cephalon.Retrieval.Configuration.RetrievalOptions.MaximumQueryLimit.set -> void
+Cephalon.Retrieval.Configuration.RetrievalOptions.RetrievalOptions() -> void
+Cephalon.Retrieval.Configuration.RetrievalOptions.RunBackgroundReindexOnStartup.get -> bool
+Cephalon.Retrieval.Configuration.RetrievalOptions.RunBackgroundReindexOnStartup.set -> void
+Cephalon.Retrieval.Registration.RetrievalEngineBuilderExtensions
+Cephalon.Retrieval.Services.IKnowledgeCatalog
+Cephalon.Retrieval.Services.IKnowledgeCatalog.Collections.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Retrieval.Services.KnowledgeCollectionDescriptor!>!
+Cephalon.Retrieval.Services.IKnowledgeCatalog.TryGet(string! collectionId, out Cephalon.Retrieval.Services.KnowledgeCollectionDescriptor! collection) -> bool
+Cephalon.Retrieval.Services.IKnowledgeCollectionContributor
+Cephalon.Retrieval.Services.IKnowledgeCollectionContributor.RegisterCollections(Cephalon.Retrieval.Services.IKnowledgeCollectionRegistry! collections) -> void
+Cephalon.Retrieval.Services.IKnowledgeCollectionRegistry
+Cephalon.Retrieval.Services.IKnowledgeCollectionRegistry.Add(Cephalon.Retrieval.Services.KnowledgeCollectionDescriptor! collection) -> void
+Cephalon.Retrieval.Services.IKnowledgeDocumentProvider
+Cephalon.Retrieval.Services.IKnowledgeDocumentProvider.CollectionId.get -> string!
+Cephalon.Retrieval.Services.IKnowledgeDocumentProvider.LoadDocumentsAsync(Cephalon.Retrieval.Services.KnowledgeDocumentProviderContext! context, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<Cephalon.Retrieval.Services.KnowledgeDocument!>!>
+Cephalon.Retrieval.Services.KnowledgeCollectionDescriptor
+Cephalon.Retrieval.Services.KnowledgeCollectionDescriptor.Description.get -> string!
+Cephalon.Retrieval.Services.KnowledgeCollectionDescriptor.DisplayName.get -> string!
+Cephalon.Retrieval.Services.KnowledgeCollectionDescriptor.Id.get -> string!
+Cephalon.Retrieval.Services.KnowledgeCollectionDescriptor.KnowledgeCollectionDescriptor(string! id, string! displayName, string! description, System.Collections.Generic.IReadOnlyList<string!>? tags = null) -> void
+Cephalon.Retrieval.Services.KnowledgeCollectionDescriptor.Tags.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Retrieval.Services.KnowledgeDocument
+Cephalon.Retrieval.Services.KnowledgeDocument.Content.get -> string!
+Cephalon.Retrieval.Services.KnowledgeDocument.Id.get -> string!
+Cephalon.Retrieval.Services.KnowledgeDocument.KnowledgeDocument(string! id, string! title, string! content, System.Uri? uri = null, System.Collections.Generic.IReadOnlyList<string!>? tags = null, System.DateTimeOffset? lastModifiedAtUtc = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Retrieval.Services.KnowledgeDocument.LastModifiedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Retrieval.Services.KnowledgeDocument.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Retrieval.Services.KnowledgeDocument.Tags.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Retrieval.Services.KnowledgeDocument.Title.get -> string!
+Cephalon.Retrieval.Services.KnowledgeDocument.Uri.get -> System.Uri?
+Cephalon.Retrieval.Services.KnowledgeDocumentProviderContext
+Cephalon.Retrieval.Services.KnowledgeDocumentProviderContext.ActorId.get -> string?
+Cephalon.Retrieval.Services.KnowledgeDocumentProviderContext.Collection.get -> Cephalon.Retrieval.Services.KnowledgeCollectionDescriptor!
+Cephalon.Retrieval.Services.KnowledgeDocumentProviderContext.CorrelationId.get -> string?
+Cephalon.Retrieval.Services.KnowledgeDocumentProviderContext.KnowledgeDocumentProviderContext(Cephalon.Retrieval.Services.KnowledgeCollectionDescriptor! collection, string! runId, System.DateTimeOffset requestedAtUtc, string? actorId = null, string? correlationId = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Retrieval.Services.KnowledgeDocumentProviderContext.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Retrieval.Services.KnowledgeDocumentProviderContext.RequestedAtUtc.get -> System.DateTimeOffset
+Cephalon.Retrieval.Services.KnowledgeDocumentProviderContext.RunId.get -> string!
+static Cephalon.Retrieval.Registration.RetrievalEngineBuilderExtensions.AddRetrieval(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Retrieval.Configuration.RetrievalOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!

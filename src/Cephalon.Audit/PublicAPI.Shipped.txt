@@ -1,0 +1,38 @@
+#nullable enable
+Cephalon.Audit.Configuration.AuditRuntimeOptions
+Cephalon.Audit.Configuration.AuditRuntimeOptions.AuditRuntimeOptions(int inMemoryBufferCapacity = 1024) -> void
+Cephalon.Audit.Configuration.AuditRuntimeOptions.EnableInMemoryWriter.get -> bool
+Cephalon.Audit.Configuration.AuditRuntimeOptions.EnableInMemoryWriter.set -> void
+Cephalon.Audit.Configuration.AuditRuntimeOptions.InMemoryBufferCapacity.get -> int
+Cephalon.Audit.Configuration.AuditRuntimeOptions.InMemoryBufferCapacity.set -> void
+Cephalon.Audit.Conventions.AuditMetadataKeys
+Cephalon.Audit.Registration.AuditEngineBuilderExtensions
+Cephalon.Audit.Services.AuditRecordRequest
+Cephalon.Audit.Services.AuditRecordRequest.Action.get -> string!
+Cephalon.Audit.Services.AuditRecordRequest.Actor.get -> Cephalon.Abstractions.Audit.AuditActor?
+Cephalon.Audit.Services.AuditRecordRequest.AuditRecordRequest(string! category, string! action, string! summary, string! subjectType, string? subjectId = null, string? entryId = null, System.DateTimeOffset? occurredAtUtc = null, Cephalon.Abstractions.Audit.AuditActor? actor = null, Cephalon.Abstractions.Audit.AuditOutcome outcome = Cephalon.Abstractions.Audit.AuditOutcome.Unknown, string? tenantId = null, string? correlationId = null, System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Audit.AuditChange!>? changes = null, System.Collections.Generic.IReadOnlyList<string!>? tags = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Audit.Services.AuditRecordRequest.Category.get -> string!
+Cephalon.Audit.Services.AuditRecordRequest.Changes.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Audit.AuditChange!>!
+Cephalon.Audit.Services.AuditRecordRequest.CorrelationId.get -> string?
+Cephalon.Audit.Services.AuditRecordRequest.EntryId.get -> string?
+Cephalon.Audit.Services.AuditRecordRequest.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Audit.Services.AuditRecordRequest.OccurredAtUtc.get -> System.DateTimeOffset?
+Cephalon.Audit.Services.AuditRecordRequest.Outcome.get -> Cephalon.Abstractions.Audit.AuditOutcome
+Cephalon.Audit.Services.AuditRecordRequest.SubjectId.get -> string?
+Cephalon.Audit.Services.AuditRecordRequest.SubjectType.get -> string!
+Cephalon.Audit.Services.AuditRecordRequest.Summary.get -> string!
+Cephalon.Audit.Services.AuditRecordRequest.Tags.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Audit.Services.AuditRecordRequest.TenantId.get -> string?
+Cephalon.Audit.Services.IAuditActorAccessor
+Cephalon.Audit.Services.IAuditActorAccessor.Current.get -> Cephalon.Abstractions.Audit.AuditActor?
+Cephalon.Audit.Services.IAuditRecorder
+Cephalon.Audit.Services.IAuditRecorder.RecordAsync(Cephalon.Audit.Services.AuditRecordRequest! request, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Cephalon.Abstractions.Audit.AuditEntry!>
+const Cephalon.Audit.Conventions.AuditMetadataKeys.Action = "audit.action" -> string!
+const Cephalon.Audit.Conventions.AuditMetadataKeys.ActorId = "audit.actorId" -> string!
+const Cephalon.Audit.Conventions.AuditMetadataKeys.Category = "audit.category" -> string!
+const Cephalon.Audit.Conventions.AuditMetadataKeys.CorrelationId = "audit.correlationId" -> string!
+const Cephalon.Audit.Conventions.AuditMetadataKeys.SubjectId = "audit.subjectId" -> string!
+const Cephalon.Audit.Conventions.AuditMetadataKeys.SubjectType = "audit.subjectType" -> string!
+const Cephalon.Audit.Conventions.AuditMetadataKeys.TenantId = "audit.tenantId" -> string!
+static Cephalon.Audit.Configuration.AuditRuntimeOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration? configuration, string! sectionPath = "Engine") -> Cephalon.Audit.Configuration.AuditRuntimeOptions!
+static Cephalon.Audit.Registration.AuditEngineBuilderExtensions.AddAudit(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Audit.Configuration.AuditRuntimeOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!

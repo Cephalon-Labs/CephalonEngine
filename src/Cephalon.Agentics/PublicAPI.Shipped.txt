@@ -1,0 +1,78 @@
+#nullable enable
+Cephalon.Agentics.Configuration.AgenticRuntimeOptions
+Cephalon.Agentics.Configuration.AgenticRuntimeOptions.AgenticRuntimeOptions() -> void
+Cephalon.Agentics.Configuration.AgenticRuntimeOptions.EnableExecution.get -> bool
+Cephalon.Agentics.Configuration.AgenticRuntimeOptions.EnableExecution.set -> void
+Cephalon.Agentics.Configuration.AgenticRuntimeOptions.EnableExecutionIdempotency.get -> bool
+Cephalon.Agentics.Configuration.AgenticRuntimeOptions.EnableExecutionIdempotency.set -> void
+Cephalon.Agentics.Configuration.AgenticRuntimeOptions.EnableMemory.get -> bool
+Cephalon.Agentics.Configuration.AgenticRuntimeOptions.EnableMemory.set -> void
+Cephalon.Agentics.Configuration.AgenticRuntimeOptions.ExecutionIdempotencyRetentionMinutes.get -> int
+Cephalon.Agentics.Configuration.AgenticRuntimeOptions.ExecutionIdempotencyRetentionMinutes.set -> void
+Cephalon.Agentics.Configuration.AgenticRuntimeOptions.ExecutionMaxAttempts.get -> int
+Cephalon.Agentics.Configuration.AgenticRuntimeOptions.ExecutionMaxAttempts.set -> void
+Cephalon.Agentics.Configuration.AgenticRuntimeOptions.ExecutionRetryDelayMilliseconds.get -> int
+Cephalon.Agentics.Configuration.AgenticRuntimeOptions.ExecutionRetryDelayMilliseconds.set -> void
+Cephalon.Agentics.Configuration.AgenticRuntimeOptions.Metadata.get -> System.Collections.Generic.IDictionary<string!, string!>!
+Cephalon.Agentics.Configuration.AgenticRuntimeOptions.Tools.get -> System.Collections.Generic.IList<Cephalon.Agentics.Services.AgentToolDescriptor!>!
+Cephalon.Agentics.Registration.AgenticEngineBuilderExtensions
+Cephalon.Agentics.Services.AgentToolDescriptor
+Cephalon.Agentics.Services.AgentToolDescriptor.AgentToolDescriptor(string! id, string! displayName, string! description, System.Collections.Generic.IReadOnlyList<string!>? tags = null, System.Collections.Generic.IReadOnlyList<string!>? capabilityKeys = null, string? executionGraphId = null, string? hostedExecutionId = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Agentics.Services.AgentToolDescriptor.CapabilityKeys.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Agentics.Services.AgentToolDescriptor.Description.get -> string!
+Cephalon.Agentics.Services.AgentToolDescriptor.DisplayName.get -> string!
+Cephalon.Agentics.Services.AgentToolDescriptor.ExecutionGraphId.get -> string?
+Cephalon.Agentics.Services.AgentToolDescriptor.HostedExecutionId.get -> string?
+Cephalon.Agentics.Services.AgentToolDescriptor.Id.get -> string!
+Cephalon.Agentics.Services.AgentToolDescriptor.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Agentics.Services.AgentToolDescriptor.Tags.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Agentics.Services.AgentToolExecutionContext
+Cephalon.Agentics.Services.AgentToolExecutionContext.ActorId.get -> string?
+Cephalon.Agentics.Services.AgentToolExecutionContext.AgentToolExecutionContext(Cephalon.Agentics.Services.AgentToolDescriptor! tool, string! runId, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? arguments = null, string? actorId = null, string? correlationId = null, int attempt = 1, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Agentics.Services.AgentToolExecutionContext.Arguments.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Agentics.Services.AgentToolExecutionContext.Attempt.get -> int
+Cephalon.Agentics.Services.AgentToolExecutionContext.CorrelationId.get -> string?
+Cephalon.Agentics.Services.AgentToolExecutionContext.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Agentics.Services.AgentToolExecutionContext.RunId.get -> string!
+Cephalon.Agentics.Services.AgentToolExecutionContext.Tool.get -> Cephalon.Agentics.Services.AgentToolDescriptor!
+Cephalon.Agentics.Services.AgentToolExecutionDecision
+Cephalon.Agentics.Services.AgentToolExecutionDecision.AgentToolExecutionDecision(string! kind, string? reason = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Agentics.Services.AgentToolExecutionDecision.Kind.get -> string!
+Cephalon.Agentics.Services.AgentToolExecutionDecision.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Agentics.Services.AgentToolExecutionDecision.Reason.get -> string?
+Cephalon.Agentics.Services.AgentToolExecutionDecisionKinds
+Cephalon.Agentics.Services.AgentToolExecutionReport
+Cephalon.Agentics.Services.AgentToolExecutionReport.ActorId.get -> string?
+Cephalon.Agentics.Services.AgentToolExecutionReport.AgentToolExecutionReport(string! toolId, string! runId, string! outcome, System.DateTimeOffset observedAtUtc, string? actorId = null, string? correlationId = null, int attempt = 1, string? outputSummary = null, string? error = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Agentics.Services.AgentToolExecutionReport.Attempt.get -> int
+Cephalon.Agentics.Services.AgentToolExecutionReport.CorrelationId.get -> string?
+Cephalon.Agentics.Services.AgentToolExecutionReport.Error.get -> string?
+Cephalon.Agentics.Services.AgentToolExecutionReport.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Agentics.Services.AgentToolExecutionReport.ObservedAtUtc.get -> System.DateTimeOffset
+Cephalon.Agentics.Services.AgentToolExecutionReport.Outcome.get -> string!
+Cephalon.Agentics.Services.AgentToolExecutionReport.OutputSummary.get -> string?
+Cephalon.Agentics.Services.AgentToolExecutionReport.RunId.get -> string!
+Cephalon.Agentics.Services.AgentToolExecutionReport.ToolId.get -> string!
+Cephalon.Agentics.Services.IAgentToolCatalog
+Cephalon.Agentics.Services.IAgentToolCatalog.Tools.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Agentics.Services.AgentToolDescriptor!>!
+Cephalon.Agentics.Services.IAgentToolCatalog.TryGet(string! toolId, out Cephalon.Agentics.Services.AgentToolDescriptor! tool) -> bool
+Cephalon.Agentics.Services.IAgentToolContributor
+Cephalon.Agentics.Services.IAgentToolContributor.RegisterTools(Cephalon.Agentics.Services.IAgentToolRegistry! tools) -> void
+Cephalon.Agentics.Services.IAgentToolExecutionObserver
+Cephalon.Agentics.Services.IAgentToolExecutionObserver.ObserveAsync(Cephalon.Agentics.Services.AgentToolExecutionReport! report, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
+Cephalon.Agentics.Services.IAgentToolExecutionPolicy
+Cephalon.Agentics.Services.IAgentToolExecutionPolicy.EvaluateAsync(Cephalon.Agentics.Services.AgentToolExecutionContext! context, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Cephalon.Agentics.Services.AgentToolExecutionDecision!>
+Cephalon.Agentics.Services.IAgentToolExecutor
+Cephalon.Agentics.Services.IAgentToolExecutor.ExecuteAsync(Cephalon.Agentics.Services.AgentToolExecutionContext! context, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Cephalon.Abstractions.Agentics.AgentToolExecutionResult!>
+Cephalon.Agentics.Services.IAgentToolExecutor.ToolId.get -> string!
+Cephalon.Agentics.Services.IAgentToolRegistry
+Cephalon.Agentics.Services.IAgentToolRegistry.Add(Cephalon.Agentics.Services.AgentToolDescriptor! tool) -> void
+Cephalon.Agentics.Services.IAgentToolRunReporter
+Cephalon.Agentics.Services.IAgentToolRunReporter.ReportAsync(Cephalon.Agentics.Services.AgentToolExecutionReport! report, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
+const Cephalon.Agentics.Services.AgentToolExecutionDecisionKinds.Allow = "allow" -> string!
+const Cephalon.Agentics.Services.AgentToolExecutionDecisionKinds.ApprovalRequired = "approval-required" -> string!
+const Cephalon.Agentics.Services.AgentToolExecutionDecisionKinds.Deny = "deny" -> string!
+static Cephalon.Agentics.Registration.AgenticEngineBuilderExtensions.AddAgentics(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Agentics.Configuration.AgenticRuntimeOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Agentics.Services.AgentToolExecutionDecision.Allow(string? reason = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> Cephalon.Agentics.Services.AgentToolExecutionDecision!
+static Cephalon.Agentics.Services.AgentToolExecutionDecision.Deny(string? reason = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> Cephalon.Agentics.Services.AgentToolExecutionDecision!
+static Cephalon.Agentics.Services.AgentToolExecutionDecision.RequireApproval(string? reason = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> Cephalon.Agentics.Services.AgentToolExecutionDecision!

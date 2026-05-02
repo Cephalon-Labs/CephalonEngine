@@ -3133,6 +3133,35 @@ Follow-up later:
 - clean up the RS0026 / RS0027 optional-overload patterns inside each behaviors-family project so the per-project suppressions can be removed
 - when the engine contract lock-in reaches the data / event-sourcing / observability families, consider authoring a release-validation harness step that diffs `PublicAPI.Shipped.txt` against the previous shipped GA so the contract-stability story shows up in CI output
 
+### ENG-340 Public-API contract lock-in batch rollout (Audit + Identity + Agentics + Retrieval + MultiTenancy core)
+
+Status: done
+Estimate: 5
+
+Why:
+
+- five smaller `Cephalon.*` companion packages (`Cephalon.Audit`, `Cephalon.Identity`, `Cephalon.Agentics`, `Cephalon.Retrieval`, `Cephalon.MultiTenancy`) all benefit from the public-API diff gate; their combined surface is small enough (~202 entries total) to ship as one batch slice rather than five separate slices
+- each package sits at `M1` or `M2` with a meaningful descriptor + runtime split, so contract lock-in protects the descriptor types from accidental rename / removal as the runtime continues to mature
+
+Delivered:
+
+- add `Microsoft.CodeAnalysis.PublicApiAnalyzers` as a `PrivateAssets=all` `PackageReference` to all five csproj files; declare `PublicAPI.Shipped.txt` and `PublicAPI.Unshipped.txt` as `AdditionalFiles`; suppress `RS0026` and `RS0027` with a one-line inline comment per project (cleanup is follow-up)
+- generate baselines:
+    - `Cephalon.Audit/PublicAPI.Shipped.txt` — 37 entries (audit recorder, actor accessor, audit-store catalog, history reader / exporter contracts, in-memory writer)
+    - `Cephalon.Identity/PublicAPI.Shipped.txt` — 21 entries (identity claims, authorization-policy catalog contracts, host-agnostic surface)
+    - `Cephalon.Agentics/PublicAPI.Shipped.txt` — 77 entries (tool dispatcher / executor / context / result, run-state catalog, execution policy / observer / report contracts)
+    - `Cephalon.Retrieval/PublicAPI.Shipped.txt` — 57 entries (knowledge document provider / indexer / query engine, index catalog, freshness state, background reindex scheduler)
+    - `Cephalon.MultiTenancy/PublicAPI.Shipped.txt` — 10 entries (tenant resolver, tenant-context accessor, governance-boundary metadata)
+- commit empty `PublicAPI.Unshipped.txt` for each
+- refresh `packages.lock.json` for each; locked-mode restore passes against the refreshed graph
+- verified end-to-end with per-project `dotnet build -c Release --no-restore` (0 errors for each), full-solution `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors), and `dotnet restore --locked-mode CephalonEngine.slnx` (passes)
+
+Follow-up later:
+
+- continue the rollout to remaining package families: data (`Cephalon.Data` + provider packs), event sourcing, observability, multi-tenancy governance + senders, edge; each family is its own `ENG-*` slice
+- clean up the RS0026 / RS0027 optional-overload patterns inside each of these five projects so the per-project suppressions can be removed
+- when companion packs cross from `M2` into multi-region or distributed-execution `M3`, those packs declare their own SLI/SLO additively in their component doc per `docs/sre-posture.md`
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -11213,6 +11242,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-334 Cephalon.Diagnostics M1 to M2 promotion (host adapters consume canonical names) (shipped)
 - ENG-335 Public-API contract lock-in rollout to transport adapters (Cephalon.AspNetCore.GraphQL + Grpc + JsonRpc) (shipped)
 - ENG-336 Public-API contract lock-in rollout to behaviors family (Cephalon.Behaviors + .Http + .Messaging + .Patterns) (shipped)
+- ENG-340 Public-API contract lock-in batch rollout (Audit + Identity + Agentics + Retrieval + MultiTenancy core) (shipped)
 
 ### Later / not scheduled yet
 
