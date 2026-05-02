@@ -19,6 +19,7 @@ The repository already ships a meaningful operational baseline:
 - reusable OTLP exporter wiring through `Cephalon.Observability.OpenTelemetry`
 - benchmark guardrail validation through `Cephalon.Benchmarks`, `performance-guardrails.json`, and `scripts/validate-release.ps1`
 - release-validation automation through `.github/workflows/release-validation.yml`
+- engine-boundary redaction surface through `Cephalon.Diagnostics.Redaction`'s `IRedactionFilter` + `RedactionContext` + `RedactionPipeline` + `KeyMatchRedactionFilter` + `RegexRedactionFilter` + `IServiceCollection.AddRedactionPipeline()`; three M1 emission sites (AspNetCore HTTP middleware, engine runtime module-phase tags, Wolverine dispatch tags) route attribute values through the pipeline before exporter dispatch; canonical recipe documented in `docs/components/diagnostics.md` and adopted across all five samples
 
 That means phase 2 is follow-through work, not greenfield operational work.
 
@@ -44,6 +45,16 @@ That means phase 2 is follow-through work, not greenfield operational work.
   - `benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json`
 - `scripts/validate-release.ps1`
 - `.github/workflows/release-validation.yml`
+- engine-boundary redaction baseline:
+  - `src/Cephalon.Diagnostics/Redaction/IRedactionFilter.cs`
+  - `src/Cephalon.Diagnostics/Redaction/RedactionContext.cs`
+  - `src/Cephalon.Diagnostics/Redaction/RedactionPipeline.cs`
+  - `src/Cephalon.Diagnostics/Redaction/Defaults/KeyMatchRedactionFilter.cs`
+  - `src/Cephalon.Diagnostics/Redaction/Defaults/RegexRedactionFilter.cs`
+  - `src/Cephalon.Diagnostics/Redaction/Extensions/RedactionServiceCollectionExtensions.cs`
+  - `src/Cephalon.AspNetCore/Hosting/HttpRequestResponseLoggingMiddleware.cs` (M1 site)
+  - `src/Cephalon.Engine/Runtime/EngineRuntime.cs` (M1 site)
+  - `src/Cephalon.Eventing.Wolverine/Services/WolverineEventDispatchHostedService.cs` (M1 site)
 - prepared composition and runtime hot paths are benchmarked separately from builder/provider setup so the guardrail catalog tracks `Build()` and lifecycle costs directly
 - the guardrail catalog now also covers strict trust-policy composition plus correlated, bounded-truncation, and concurrent ASP.NET Core request-logging paths with request/response body capture enabled
 
@@ -334,6 +345,7 @@ Current baseline:
 - `Cephalon.Engine` already emits structured runtime/module transition and failure logs with event ids in the `2000` range
 - `Cephalon.Observability` already emits startup-summary, diagnostics-catalog, and telemetry-guidance logs with event ids in the `3000` range
 - active engine and companion packages now publish their diagnostics conventions through `IRuntimeDiagnosticsCatalog`, `/engine/diagnostics`, and `/engine/snapshot`
+- per-package `EventId` ranges are now catalogued centrally in [`docs/diagnostic-id-registry.md`](diagnostic-id-registry.md), which lists every allocated range with its owning package and prevents future allocation collisions; the discipline (one range per package, contiguous ascending allocation, default 10-event range, EventId.Name = `nameof(field)`) is declared in `engineering-standards.md` and enforced by reading the registry before claiming a new range
 - currently shipped package coverage includes `Cephalon.Engine`, `Cephalon.Observability`, `Cephalon.Observability.CassandraDependencies`, `Cephalon.Observability.ClickHouseDependencies`, `Cephalon.Observability.ConsulDependencies`, `Cephalon.Observability.ElasticsearchDependencies`, `Cephalon.Observability.HttpDependencies`, `Cephalon.Observability.KafkaDependencies`, `Cephalon.Observability.MemcachedDependencies`, `Cephalon.Observability.MongoDbDependencies`, `Cephalon.Observability.MqttDependencies`, `Cephalon.Observability.MySqlDependencies`, `Cephalon.Observability.NatsDependencies`, `Cephalon.Observability.Neo4jDependencies`, `Cephalon.Observability.OpenSearchDependencies`, `Cephalon.Observability.OracleDependencies`, `Cephalon.Observability.PostgresDependencies`, `Cephalon.Observability.RabbitMqDependencies`, `Cephalon.Observability.RedisDependencies`, and `Cephalon.Observability.SqlServerDependencies`
 
 Gap:
