@@ -1,0 +1,284 @@
+name: Publish Release
+
+# Tag-triggered release pipeline that produces signed, attested, SBOM-bearing
+# Cephalon NuGet packages and pushes them to nuget.org via trusted publishing.
+#
+# Trigger surface:
+#   - tags matching v*.*.* (e.g. v0.1.0-preview, v1.0.0, v1.2.3-rc.1) push the
+#     full release pipeline
+#   - workflow_dispatch lets a maintainer dry-run the build + sign + attest
+#     stages without pushing to nuget.org
+#
+# Target supply-chain posture (per docs/supply-chain-uplift-plan.md ENG-324):
+#   - SLSA v1.1 L3 build provenance via actions/attest-build-provenance
+#   - Sigstore Cosign keyless signing of every .nupkg, with Rekor transparency
+#     log entry, tied to the OIDC identity that ran this workflow
+#   - CycloneDX 1.6 SBOM emitted per .nupkg
+#   - NuGet trusted publishing (nuget.org federation) replacing long-lived
+#     API keys; the workflow exchanges a GitHub OIDC token for a short-lived
+#     NuGet API key at push time
+#
+# Per-package nuget.org configuration is required before the first push:
+#   - configure trusted publishing on nuget.org for the Cephalon-Labs account
+#     (settings -> trusted publishing -> add policy) pointing at this
+#     repository, this workflow file, and the v*.*.* tag pattern
+#   - reserve the Cephalon.* prefix on nuget.org once a stable GA cut is
+#     coming so prefix protection lines up with the first 1.0.0 release
+#
+# This workflow is intentionally additive over release-validation.yml. It
+# does not replace the per-PR validation gate; it publishes only on a tag.
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Build + sign + attest only; do not push to nuget.org'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+concurrency:
+  group: publish-release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write       # required for Sigstore keyless signing + SLSA provenance + NuGet trusted publishing
+  attestations: write   # required for actions/attest-build-provenance
+  packages: read
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+jobs:
+  build-sign-attest:
+    name: Build, sign, attest, and (optionally) push
+    runs-on: ubuntu-latest
+    outputs:
+      package_count: ${{ steps.summary.outputs.package_count }}
+      sbom_count: ${{ steps.summary.outputs.sbom_count }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0    # full history so SLSA provenance can capture the source revision
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+          cache: true
+
+      - name: Install Pester
+        shell: pwsh
+        run: |
+          Install-Module -Name Pester -MinimumVersion 5.0.0 -Scope CurrentUser -Force -SkipPublisherCheck
+
+      - name: Run release validation (build + tests + benchmarks + reference docs + packages)
+        shell: pwsh
+        run: ./scripts/validate-release.ps1
+
+      - name: List built packages
+        id: list-packages
+        shell: pwsh
+        run: |
+          $packages = Get-ChildItem -Path artifacts/packages-release -Filter '*.nupkg' -File -Recurse
+          if ($packages.Count -eq 0) {
+            throw 'No .nupkg files were produced by validate-release.ps1.'
+          }
+          Write-Host ('Discovered {0} package(s):' -f $packages.Count)
+          $packages | ForEach-Object { Write-Host (' - {0}' -f $_.Name) }
+          'package_count=' + $packages.Count | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+
+      - name: Install CycloneDX dotnet tool
+        shell: pwsh
+        run: |
+          dotnet tool install --global CycloneDX
+
+      - name: Generate CycloneDX SBOM per package project
+        shell: pwsh
+        run: |
+          New-Item -Path artifacts/sboms-release -ItemType Directory -Force | Out-Null
+          $projects = Get-ChildItem -Path src -Filter 'Cephalon.*.csproj' -File -Recurse
+          foreach ($project in $projects) {
+            $packageId = [System.IO.Path]::GetFileNameWithoutExtension($project.Name)
+            $output = Join-Path 'artifacts/sboms-release' $packageId
+            New-Item -Path $output -ItemType Directory -Force | Out-Null
+            Write-Host ('==> SBOM for {0}' -f $packageId)
+            dotnet CycloneDX `
+              --json `
+              --output $output `
+              --filename "$packageId.cdx.json" `
+              --set-version $env:GITHUB_REF_NAME `
+              --set-name $packageId `
+              $project.FullName
+            if ($LASTEXITCODE -ne 0) {
+              throw ('CycloneDX failed for {0}' -f $packageId)
+            }
+          }
+
+      - name: Install Cosign
+        uses: sigstore/cosign-installer@v3
+        with:
+          cosign-release: 'v2.4.1'
+
+      - name: Sign each .nupkg with Cosign keyless (OIDC)
+        shell: pwsh
+        env:
+          COSIGN_EXPERIMENTAL: '1'
+          COSIGN_YES: 'true'
+        run: |
+          $packages = Get-ChildItem -Path artifacts/packages-release -Filter '*.nupkg' -File -Recurse
+          New-Item -Path artifacts/signatures-release -ItemType Directory -Force | Out-Null
+          foreach ($package in $packages) {
+            $sigPath = Join-Path 'artifacts/signatures-release' ($package.Name + '.sig')
+            $certPath = Join-Path 'artifacts/signatures-release' ($package.Name + '.pem')
+            Write-Host ('==> Sign {0}' -f $package.Name)
+            cosign sign-blob `
+              --yes `
+              --output-signature $sigPath `
+              --output-certificate $certPath `
+              $package.FullName
+            if ($LASTEXITCODE -ne 0) {
+              throw ('cosign sign-blob failed for {0}' -f $package.Name)
+            }
+          }
+
+      - name: Generate SLSA v1.1 build provenance per .nupkg
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: 'artifacts/packages-release/**/*.nupkg'
+
+      - name: Compute checksums for release artefact bundle
+        shell: pwsh
+        run: |
+          $bundleRoot = 'artifacts/release-bundle'
+          New-Item -Path $bundleRoot -ItemType Directory -Force | Out-Null
+          $entries = @()
+          $artifactRoots = @(
+            'artifacts/packages-release',
+            'artifacts/sboms-release',
+            'artifacts/signatures-release'
+          )
+          foreach ($root in $artifactRoots) {
+            if (-not (Test-Path -LiteralPath $root)) { continue }
+            Get-ChildItem -Path $root -File -Recurse | ForEach-Object {
+              $relative = [System.IO.Path]::GetRelativePath((Get-Location).Path, $_.FullName)
+              $hash = (Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+              $entries += [pscustomobject]@{ Path = $relative; Sha256 = $hash; Bytes = $_.Length }
+            }
+          }
+          $entries | ConvertTo-Json -Depth 4 | Out-File -FilePath (Join-Path $bundleRoot 'release-manifest.json') -Encoding utf8
+          Write-Host ('==> {0} artefact(s) recorded in release-manifest.json' -f $entries.Count)
+          'sbom_count=' + (Get-ChildItem -Path artifacts/sboms-release -Filter '*.cdx.json' -File -Recurse).Count | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+        id: summary
+
+      - name: Upload package artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: packages-release
+          path: artifacts/packages-release
+          if-no-files-found: error
+
+      - name: Upload SBOMs
+        uses: actions/upload-artifact@v4
+        with:
+          name: sboms-release
+          path: artifacts/sboms-release
+          if-no-files-found: error
+
+      - name: Upload Sigstore signatures and certificates
+        uses: actions/upload-artifact@v4
+        with:
+          name: signatures-release
+          path: artifacts/signatures-release
+          if-no-files-found: error
+
+      - name: Upload release manifest (checksums)
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-manifest
+          path: artifacts/release-bundle
+          if-no-files-found: error
+
+      - name: Determine push mode
+        id: push-mode
+        shell: pwsh
+        run: |
+          $isTag = $env:GITHUB_REF -like 'refs/tags/v*'
+          $dispatchDryRun = '${{ github.event.inputs.dry_run }}'
+          if ($isTag -and ($dispatchDryRun -ne 'true')) {
+            'push=true' | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+            Write-Host '==> Tag push detected; will push packages to nuget.org via trusted publishing.'
+          } else {
+            'push=false' | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+            Write-Host '==> Dry-run mode; skipping nuget.org push.'
+          }
+
+      - name: NuGet trusted publishing (login)
+        if: steps.push-mode.outputs.push == 'true'
+        uses: NuGet/login@v1
+        id: nuget-login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: Push packages to nuget.org
+        if: steps.push-mode.outputs.push == 'true'
+        shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+        run: |
+          $packages = Get-ChildItem -Path artifacts/packages-release -Filter '*.nupkg' -File -Recurse | Where-Object { $_.Name -notlike '*.symbols.nupkg' }
+          foreach ($package in $packages) {
+            Write-Host ('==> Push {0}' -f $package.Name)
+            dotnet nuget push $package.FullName `
+              --api-key $env:NUGET_API_KEY `
+              --source https://api.nuget.org/v3/index.json `
+              --skip-duplicate
+            if ($LASTEXITCODE -ne 0) {
+              throw ('dotnet nuget push failed for {0}' -f $package.Name)
+            }
+          }
+
+      - name: Push symbol packages to nuget.org
+        if: steps.push-mode.outputs.push == 'true'
+        shell: pwsh
+        env:
+          NUGET_API_KEY: ${{ steps.nuget-login.outputs.NUGET_API_KEY }}
+        run: |
+          $symbols = Get-ChildItem -Path artifacts/packages-release -Filter '*.snupkg' -File -Recurse
+          foreach ($symbol in $symbols) {
+            Write-Host ('==> Push {0}' -f $symbol.Name)
+            dotnet nuget push $symbol.FullName `
+              --api-key $env:NUGET_API_KEY `
+              --source https://api.nuget.org/v3/index.json `
+              --skip-duplicate
+            if ($LASTEXITCODE -ne 0) {
+              throw ('dotnet nuget push failed for {0}' -f $symbol.Name)
+            }
+          }
+
+  summary:
+    name: Release summary
+    runs-on: ubuntu-latest
+    needs: build-sign-attest
+    if: always()
+    steps:
+      - name: Print release summary
+        shell: pwsh
+        run: |
+          Write-Host '## Cephalon release summary'
+          Write-Host ('- Tag: {0}' -f $env:GITHUB_REF_NAME)
+          Write-Host ('- Packages: {0}' -f '${{ needs.build-sign-attest.outputs.package_count }}')
+          Write-Host ('- SBOMs: {0}' -f '${{ needs.build-sign-attest.outputs.sbom_count }}')
+          Write-Host '- Provenance: emitted via actions/attest-build-provenance (SLSA v1.1)'
+          Write-Host '- Signatures: emitted via Sigstore Cosign keyless (OIDC + Rekor transparency log)'
+          Write-Host 'See uploaded artifacts for the full release-manifest.json + per-package SBOM + signature bundle.'
