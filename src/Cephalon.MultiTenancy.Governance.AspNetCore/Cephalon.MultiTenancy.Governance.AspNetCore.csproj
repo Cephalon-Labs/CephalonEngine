@@ -2,8 +2,6 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Description>ASP.NET Core HTTP proof publication, tenant-administration command, invitation delivery dispatch, and delivery status adapter for Cephalon multi-tenancy governance.</Description>
-    <!-- RS0026/RS0027: optional-overload patterns; suppressed for ENG-344. -->
-    <NoWarn>$(NoWarn);RS0026;RS0027</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

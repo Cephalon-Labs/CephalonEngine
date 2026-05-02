@@ -3719,6 +3719,32 @@ Follow-up later:
 - wire a smoke test that boots the sample, fires an HTTP request with an `Authorization: Bearer abc123` header, asserts the captured activity does not contain the raw token; today the unit-level integration tests for both M1 emission sites cover the wiring, so a sample-level smoke test is duplicate coverage with marginal value
 - adopt the same recipe in the other samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) as a separate slice when the redaction surface needs broader sample reach — **delivered in `ENG-369`**
 
+### ENG-371 Remove stale RS0026/RS0027 NoWarn suppressions across all packages
+
+Status: done
+Estimate: 1
+
+Why:
+
+- 100 `Cephalon.*.csproj` files carried `<NoWarn>$(NoWarn);RS0026;RS0027</NoWarn>` with comments referencing follow-up to `ENG-326`, `ENG-340`, `ENG-343` etc; the suppressions were originally added to keep the public-API contract lock-in arc from bundling a breaking optional-overload refactor into the same slice
+- the optional-overload refactors were silently completed during `ENG-345` and adjacent slices (`Cephalon.Engine` and 99 others) but the per-project suppressions never got removed; verified empirically by lifting the suppression in `Cephalon.Engine` and observing 0 violations on a clean rebuild
+- carrying dead suppressions costs nothing at runtime but rots the static-analysis surface: a future refactor that re-introduces an optional-overload conflict would not get flagged because the suppression is still suppressing it; the longer the suppressions stay in place, the more invisible coverage the engine loses
+
+Delivered:
+
+- batch removal of `RS0026` and `RS0027` entries from `<NoWarn>` lines across 100 `Cephalon.*.csproj` files via a one-shot PowerShell helper that:
+    - parses each `<NoWarn>$(NoWarn);A;B;C</NoWarn>` line, drops `RS0026` and `RS0027` while preserving every other entry (the meta-package tokens like `MA0011` / `RCS1194` and the per-pack tokens like `RS0041` for `Cephalon.AspNetCore.Grpc`'s Grpc.Tools-generated nullable-oblivious code stay intact)
+    - drops the now-bare `<NoWarn>$(NoWarn)</NoWarn>` nodes left behind when the only entries were `RS0026`/`RS0027`
+    - strips the now-orphan `<!-- RS0026 / RS0027 ... -->` comment blocks that documented the suppression rationale
+    - normalises the cosmetic indentation that the strip leaves behind (`    </PropertyGroup>` -> `  </PropertyGroup>`)
+- 101 csproj files changed, 257 lines removed, 2 added net (`Cephalon.Engine.csproj` was the canary done first; the other 100 followed via the helper)
+- verified end-to-end with `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors) — every package is now compiling cleanly with `RS0026` and `RS0027` analyzers actively enforced; if a future refactor reintroduces an optional-overload conflict, PublicApiAnalyzers will surface it instead of silently masking it
+
+Follow-up later:
+
+- if any future package needs to genuinely suppress `RS0026`/`RS0027` (e.g. an inherited overload pattern from a base class outside the package), reintroduce the suppression for that package only with a comment naming the specific call site that triggered it; the bulk-suppression-as-bridge pattern is now retired because the contract-lock-in arc that justified it is complete
+- consider auditing other `NoWarn` entries (`MA0011`, `MA0048`, `MA0051`, `MA0002`, `RCS1194` on `Cephalon.Abstractions`; `RS0041` on `Cephalon.AspNetCore.Grpc`) for similar staleness; defer until at least one of them surfaces real cost (today they're fewer than this RS0026/RS0027 bulk and have specific in-source rationale)
+
 ### ENG-370 Author centralized EventId range registry
 
 Status: done
@@ -11910,6 +11936,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-368 Adopt redaction recipe in Cephalon.Sample.ModularMonolith composition root (shipped)
 - ENG-369 Adopt redaction recipe across remaining samples (shipped)
 - ENG-370 Author centralized EventId range registry (shipped)
+- ENG-371 Remove stale RS0026/RS0027 NoWarn suppressions across all packages (shipped)
 
 ### Later / not scheduled yet
 

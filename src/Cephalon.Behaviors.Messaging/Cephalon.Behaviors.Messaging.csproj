@@ -5,12 +5,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    <!--
-      RS0026 / RS0027: PublicApiAnalyzers style rules flagging pre-existing optional-overload
-      patterns. Suppressed so the public-API contract lock-in does not bundle a refactor;
-      cleanup tracked as follow-up to `ENG-336`.
-    -->
-    <NoWarn>$(NoWarn);RS0026;RS0027</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="RabbitMQ.Client" />

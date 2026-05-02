@@ -2,16 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Description>gRPC transport adapter for the Cephalon ASP.NET Core host.</Description>
-    <!--
-      RS0026 / RS0027: PublicApiAnalyzers style rules flagging pre-existing optional-overload
-      patterns. Suppressed so the public-API contract lock-in does not bundle a refactor;
-      cleanup tracked as follow-up to `ENG-335`.
-      RS0041: PublicApiAnalyzers oblivious-reference-types rule; fires on Grpc.Tools-generated
-      DiscoveryGrpc.cs in obj/ which carries oblivious nullable annotations from the .proto
-      protocol. Suppressed inside this project only because the generated code is not under our
-      direct control; revisit when Grpc.Tools emits nullable-annotated output by default.
-    -->
-    <NoWarn>$(NoWarn);RS0026;RS0027;RS0041</NoWarn>
+    <NoWarn>$(NoWarn);RS0041</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
