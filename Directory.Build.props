@@ -18,6 +18,7 @@
     <RepositoryType Condition="'$(RepositoryType)' == ''">git</RepositoryType>
     <PublishRepositoryUrl Condition="'$(PublishRepositoryUrl)' == ''">true</PublishRepositoryUrl>
     <PackageReadmeFile Condition="'$(IsPackable)' != 'false' and '$(PackageReadmeFile)' == ''">PACKAGE.md</PackageReadmeFile>
+    <RestorePackagesWithLockFile Condition="'$(RestorePackagesWithLockFile)' == ''">true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
   <ItemGroup Condition="$([System.String]::Copy('$(MSBuildProjectName)').StartsWith('Cephalon.')) and '$(IsPackable)' != 'false' and '$(PackageReadmeFile)' == 'PACKAGE.md' and '$(MSBuildProjectName)' != 'Cephalon.TemplatePack' and !Exists('$(MSBuildProjectDirectory)\PACKAGE.md')">
