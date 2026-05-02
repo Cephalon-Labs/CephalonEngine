@@ -247,7 +247,7 @@ function Get-DeploymentModeConfigFromManifest {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)] $Manifest,
+        [Parameter(Mandatory)] [AllowNull()] $Manifest,
         [Parameter(Mandatory)] [string]$Mode
     )
 
@@ -673,6 +673,20 @@ function Invoke-DeploymentModeClaimValidation {
 
     Invoke-Step -Title "Loading manifest" -Detail $ManifestPath
     $manifest = Read-DeploymentModeManifest -Path $ManifestPath
+
+    # When the caller did not pass explicit -PublishTargets and did not pass -SkipPublish, default to
+    # the manifest-declared representativePublishTargets.projects list so the publish probe runs
+    # against the deliberately-staged audit set without forcing every caller to repeat the list.
+    if ((-not $SkipPublish) -and ($null -eq $PublishTargets -or $PublishTargets.Count -eq 0)) {
+        $manifestTargets = $null
+        if ($manifest.PSObject.Properties.Match("representativePublishTargets").Count -gt 0) {
+            $manifestTargets = $manifest.representativePublishTargets.projects
+        }
+        if ($null -ne $manifestTargets -and $manifestTargets.Count -gt 0) {
+            $PublishTargets = @($manifestTargets)
+            Invoke-Step -Title "Default publish targets from manifest" -Detail ("count=" + $PublishTargets.Count)
+        }
+    }
 
     $modesToCheck = if ($DeploymentMode -eq "all") {
         @("trim", "nativeAot", "singleFile")

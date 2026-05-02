@@ -51,8 +51,10 @@
     }
   },
   "representativePublishTargets": {
-    "comment": "List the smallest set of csproj paths the harness should publish to honestly prove a claim. Empty until a deliberate claim audit is staged; the harness skips the publish phase when this list is empty even with -SkipPublish:$false.",
-    "projects": []
+    "comment": "List the smallest set of csproj paths the harness should publish to honestly prove a claim. The harness defaults to this list when -PublishTargets is not passed and -SkipPublish is not set; pass -SkipPublish to force audit-only mode. Each target is published once per deployment mode (trim / nativeAot / singleFile); the audit-only verdict reports warnings but does not fail the build because the manifest still declares all three modes as not-claimed.",
+    "projects": [
+      "samples/Cephalon.Sample.ModularMonolith/Cephalon.Sample.ModularMonolith.csproj"
+    ]
   },
   "expectedPublishOutputShape": {
     "trim": {
