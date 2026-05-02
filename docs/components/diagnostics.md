@@ -4,9 +4,10 @@
 
 ## What it owns
 
-- the stable engine-level `ActivitySource` name set published through `CephalonActivitySources`: `Cephalon.Engine`, `Cephalon.AspNetCore`, `Cephalon.Worker`
-- the stable engine-level `Meter` name set published through `CephalonMeters` with the same three names
+- the stable engine-level `ActivitySource` name set published through `CephalonActivitySources`: `Cephalon.Engine`, `Cephalon.AspNetCore`, `Cephalon.Worker`, `Cephalon.Eventing`, `Cephalon.MultiTenancy.Governance`
+- the stable engine-level `Meter` name set published through `CephalonMeters` with the same five names
 - a small set of stable Cephalon-prefix attribute keys (`cephalon.module.id`, `cephalon.behavior.id`, `cephalon.cell.id`, `cephalon.app.blueprint`, `cephalon.tenant.id`) for engine concepts that have no OpenTelemetry semantic-convention name
+- the redaction filter contract through `IRedactionFilter` and `RedactionContext` so consumer apps and observability companion packs can register synchronous filters that redact secrets, PII, authentication tokens, and other sensitive values before they leave the engine boundary; the contract is taxonomy-only at this maturity (engine emission does not yet route through registered filters)
 - public API contract lock-in from day one through `Microsoft.CodeAnalysis.PublicApiAnalyzers`, `PublicAPI.Shipped.txt`, and `PublicAPI.Unshipped.txt`
 
 ## Main surfaces
@@ -14,6 +15,8 @@
 - `CephalonActivitySources.cs`
 - `CephalonMeters.cs`
 - `CephalonDiagnosticsAttributeKeys.cs`
+- `Redaction/IRedactionFilter.cs`
+- `Redaction/RedactionContext.cs`
 
 ## How it fits
 

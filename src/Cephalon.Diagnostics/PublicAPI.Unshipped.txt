@@ -17,3 +17,23 @@ const Cephalon.Diagnostics.CephalonMeters.Worker = "Cephalon.Worker" -> string!
 Cephalon.Diagnostics.CephalonActivitySources
 Cephalon.Diagnostics.CephalonDiagnosticsAttributeKeys
 Cephalon.Diagnostics.CephalonMeters
+Cephalon.Diagnostics.Redaction.IRedactionFilter
+Cephalon.Diagnostics.Redaction.IRedactionFilter.Filter(Cephalon.Diagnostics.Redaction.RedactionContext context, object? value) -> object?
+Cephalon.Diagnostics.Redaction.RedactionContext
+Cephalon.Diagnostics.Redaction.RedactionContext.ActivitySourceName.get -> string?
+Cephalon.Diagnostics.Redaction.RedactionContext.ActivitySourceName.init -> void
+Cephalon.Diagnostics.Redaction.RedactionContext.AttributeKey.get -> string!
+Cephalon.Diagnostics.Redaction.RedactionContext.AttributeKey.init -> void
+Cephalon.Diagnostics.Redaction.RedactionContext.Deconstruct(out string? ActivitySourceName, out string? MeterName, out string! AttributeKey, out string? LoggerCategory) -> void
+Cephalon.Diagnostics.Redaction.RedactionContext.Equals(Cephalon.Diagnostics.Redaction.RedactionContext other) -> bool
+Cephalon.Diagnostics.Redaction.RedactionContext.LoggerCategory.get -> string?
+Cephalon.Diagnostics.Redaction.RedactionContext.LoggerCategory.init -> void
+Cephalon.Diagnostics.Redaction.RedactionContext.MeterName.get -> string?
+Cephalon.Diagnostics.Redaction.RedactionContext.MeterName.init -> void
+Cephalon.Diagnostics.Redaction.RedactionContext.RedactionContext() -> void
+Cephalon.Diagnostics.Redaction.RedactionContext.RedactionContext(string? ActivitySourceName, string? MeterName, string! AttributeKey, string? LoggerCategory) -> void
+override Cephalon.Diagnostics.Redaction.RedactionContext.GetHashCode() -> int
+static Cephalon.Diagnostics.Redaction.RedactionContext.operator !=(Cephalon.Diagnostics.Redaction.RedactionContext left, Cephalon.Diagnostics.Redaction.RedactionContext right) -> bool
+static Cephalon.Diagnostics.Redaction.RedactionContext.operator ==(Cephalon.Diagnostics.Redaction.RedactionContext left, Cephalon.Diagnostics.Redaction.RedactionContext right) -> bool
+~override Cephalon.Diagnostics.Redaction.RedactionContext.Equals(object obj) -> bool
+~override Cephalon.Diagnostics.Redaction.RedactionContext.ToString() -> string
