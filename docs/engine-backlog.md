@@ -3243,6 +3243,34 @@ Follow-up later:
 - clean up RS0026 / RS0027 patterns across the families rolled in `ENG-342` and `ENG-343` so the per-project suppressions can be removed
 - with the engine, host adapters, transport adapters, behaviors, data, event sourcing, edge, eventing, audit, identity, agentics, retrieval, multi-tenancy core, and small companion packs all contract-locked, the engine has hit a meaningful threshold: the **majority of `Cephalon.*` shipped public surface is now reviewable via `PublicAPI.Shipped.txt` artefacts**. The next durable upgrade is enabling `<EnablePackageValidation>true</EnablePackageValidation>` with a `<PackageValidationBaselineVersion>` once the engine ships its first stable GA cut (post-`0.1.0-preview`).
 
+### ENG-344 Public-API contract lock-in batch rollout (multi-tenancy governance + senders + Cli + Scaffolding)
+
+Status: done
+Estimate: 5
+
+Why:
+
+- closes the rollout for the multi-tenancy governance family (`Cephalon.MultiTenancy.Governance` plus 11 sender / ASP.NET Core companion packs) and the adoption tooling (`Cephalon.Cli`, `Cephalon.Scaffolding`); after this slice, only the observability family remains unrolled
+- the governance + senders family is large because it covers SMTP / SendGrid / Mailgun / Microsoft Graph / Amazon SES delivery senders plus their ASP.NET Core webhook companions plus the Microsoft Graph Azure Identity token provider; bundling all 12 governance packs plus the two adoption tools in one slice keeps the contract-lock-in arc tight rather than fragmenting into 14 small slices
+
+Delivered:
+
+- batch-inject the analyzer + `PublicAPI.*.txt` + RS0026/RS0027 NoWarn into 14 csproj files via the re-introduced `scripts/_inject-public-api-analyzers.ps1` one-shot helper (deleted at commit time)
+- generate baselines per project (~rounded to actual reported counts):
+    - Multi-tenancy governance core: `Cephalon.MultiTenancy.Governance` (1,374 — the largest single baseline in the engine, reflecting the full membership / invitation / domain-ownership / governance-action / delivery-status surface)
+    - Governance ASP.NET Core: `Cephalon.MultiTenancy.Governance.AspNetCore` (180)
+    - Delivery senders: `HttpDelivery` (87), `SmtpDelivery` (61), `SendGridDelivery` (70), `SendGridDelivery.AspNetCore` (79), `MailgunDelivery` (71), `MailgunDelivery.AspNetCore` (78), `MicrosoftGraphDelivery` (65), `MicrosoftGraphDelivery.AzureIdentity` (21), `AmazonSesDelivery` (59), `AmazonSesDelivery.AspNetCore` (113)
+    - Adoption tooling: `Cephalon.Cli` (2 entries — narrow public surface, just `CliApplication` + `RunAsync`; the initial polluted extraction included Scaffolding-namespaced types that were resolved by re-running with a clean baseline first), `Cephalon.Scaffolding` (42)
+- empty `PublicAPI.Unshipped.txt` for each
+- packages.lock.json refresh; locked-mode restore passes
+- verified end-to-end with per-project `dotnet build -c Release --no-restore` (0 errors for each), full-solution `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors), and `dotnet restore --locked-mode CephalonEngine.slnx` (passes)
+
+Follow-up later:
+
+- only the observability family (`Cephalon.Observability` + 30+ provider / dependency-health / cloud-platform packs) remains unrolled; that slice should be one final batch using the same one-shot helper
+- when the engine hits a major release (`1.0.0`), enable `<EnablePackageValidation>true</EnablePackageValidation>` with a `<PackageValidationBaselineVersion>` per stable package so binary-breaking changes fail packaging time, complementing the diff gate that the `PublicAPI.Shipped.txt` artefacts already provide
+- consider standing up an analyzer-aware diff helper that emits a release-notes-friendly summary of `PublicAPI.Unshipped.txt` entries pending promotion, so PR reviewers can read the API delta in human form
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -11327,6 +11355,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-341 Public-API contract lock-in batch rollout to data family (Cephalon.Data + 15 provider packs) (shipped)
 - ENG-342 Public-API contract lock-in batch rollout to event-sourcing family (Cephalon.EventSourcing + 10 provider packs) (shipped)
 - ENG-343 Public-API contract lock-in batch rollout (Edge + Eventing + small remaining packs) (shipped)
+- ENG-344 Public-API contract lock-in batch rollout (multi-tenancy governance + senders + Cli + Scaffolding) (shipped)
 
 ### Later / not scheduled yet
 
