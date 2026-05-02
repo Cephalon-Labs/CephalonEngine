@@ -2750,6 +2750,35 @@ Follow-up later:
 - update `docs/engine-surface-maturity-audit.md` with a `Cephalon.Diagnostics` row at `M0` / `taxonomy-only` in a follow-up audit refresh
 - vendor-specific exporter packs remain out of scope; this package ships exporter-agnostic surface only
 
+### ENG-324 Release pipeline supply-chain hardening (SLSA L3 + Sigstore + CycloneDX SBOM + NuGet trusted publishing)
+
+Status: done
+Estimate: 8
+
+Why:
+
+- the EU Cyber Resilience Act reporting obligation kicks in `September 11, 2026`; main provisions bind `December 11, 2027`; CRA conformity evidence requires SLSA-style provenance, CycloneDX SBOMs, and a deterministic build pipeline before that date arrives, and the engine had no automated path to nuget.org at all (manual `dotnet nuget push` from a contributor workstation)
+- NuGet API keys are long-lived (months); trusted publishing through GitHub OIDC federation issues short-lived tokens (~1 hour) and ties package provenance to the workflow run that produced the binary
+- this slice depends on `ENG-321` (committed lock files plus `RestoreLockedMode=true`) so the build is hermetic and reproducible, and on `ENG-322` (public-API diff gate on `Cephalon.Abstractions`) so a binary-breaking change cannot accidentally ship inside a signed release; both prerequisites landed earlier in the same sprint sequence so this slice can ship the workflow truthfully
+
+Delivered:
+
+- new tag-triggered `.github/workflows/publish-release.yml` running on `v*.*.*` tag push and `workflow_dispatch` (with a `dry_run` input that lets a maintainer rehearse the build / sign / attest stages without pushing to nuget.org)
+- the workflow performs, in order: checkout with full history, .NET SDK setup, Pester install, full release validation through `scripts/validate-release.ps1` (locked-mode restore, build, tests, readiness, deployment-mode audit, benchmarks, reference docs, package artefacts), CycloneDX SBOM generation per `Cephalon.*` project (`artifacts/sboms-release/<package-id>/<package-id>.cdx.json`), Sigstore Cosign keyless signing of every `.nupkg` (signature + certificate written under `artifacts/signatures-release/`, transparency log entry in Rekor, OIDC identity is the workflow run), SLSA v1.1 build provenance attestation through `actions/attest-build-provenance` against every `.nupkg` subject path, release manifest with SHA-256 + size for every package / SBOM / signature, NuGet trusted-publishing login (GitHub OIDC federation through `NuGet/login@v1`) followed by `dotnet nuget push` of `.nupkg` and `.snupkg` files (only on a real tag push, never on a `workflow_dispatch` dry-run)
+- explicit `permissions:` block declares `id-token: write` for OIDC, `attestations: write` for SLSA provenance, and read-only `contents` / `packages` so the workflow's blast radius is the published-artefact set, not the repo content
+- the workflow is intentionally additive over `release-validation.yml`: the per-PR validation gate stays unchanged, this workflow only runs on a tag and only pushes when run from a tag
+- `docs/package-publishing.md` carries a new *Signed release pipeline (tag-triggered)* section declaring the tag-trigger contract, the in-order steps, the artefact layout (`artifacts/sboms-release/`, `artifacts/signatures-release/`, `artifacts/release-bundle/release-manifest.json`), and the per-package nuget.org-side configuration that must be in place before the first push (trusted-publishing policy pointing at this repository / this workflow file / the `v*.*.*` tag pattern, `Cephalon.*` prefix reservation, `NUGET_USER` repository secret)
+- `docs/engineering-standards.md` security and supply-chain section carries a new *Signed release pipeline* subsection declaring the workflow as the authoritative publish path, the SLSA + Sigstore + CycloneDX contract, and the conformity-evidence bundle that EU CRA Article 13 reporting reads
+- collapse the matching `ENG-324` section in `docs/supply-chain-uplift-plan.md` into a one-paragraph "shipped" back-pointer per the plan's own refresh cadence
+
+Follow-up later:
+
+- nuget.org-side trusted-publishing configuration for the `Cephalon-Labs` account: add a trusted-publishing policy pointing at `Cephalon-Labs/CephalonEngine`, `.github/workflows/publish-release.yml`, and the `v*.*.*` tag pattern; reserve the `Cephalon.*` prefix on nuget.org once a stable GA cut is coming so prefix protection lines up with the first `1.0.0` release; set the `NUGET_USER` repository secret so the trusted-publishing login step can resolve the publishing account
+- integration test the full flow on the first `v*.*.*` tag (e.g. `v0.1.0-preview`) and capture the resulting Rekor entries, SBOM bundle, and provenance attestation as a release-conformity artefact set
+- post-quantum hybrid signing (NIST ML-KEM / ML-DSA) once the .NET cryptography stack ships hybrid signing primitives in the `.NET 12` LTS lane
+- container base image signing propagation: `.NET 11` base images already ship signed (Preview 3); the published Cephalon container artefacts in [`container-image-publishing.md`](container-image-publishing.md) should propagate the signature chain end-to-end so consumers can verify both the engine container and the underlying base image
+- vulnerability-handling response timeline alignment with EU CRA Article 13 (mandatory reporting within 24 hours of becoming aware of an actively exploited vulnerability) is a separate slice owned by a future ops / security card, not by this release-pipeline slice
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -10798,6 +10827,10 @@ Upcoming sequence from the April 2026 maturity reset:
 ### Sprint 118
 
 - ENG-323 Cephalon.Diagnostics OpenTelemetry semantic-convention adapter package skeleton (shipped)
+
+### Sprint 119
+
+- ENG-324 Release pipeline supply-chain hardening (SLSA L3 + Sigstore + CycloneDX SBOM + NuGet trusted publishing) (shipped)
 
 ### Later / not scheduled yet
 

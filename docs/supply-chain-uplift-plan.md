@@ -34,25 +34,7 @@ The slices sequence across **Sprint 116 through Sprint 120**, one slice per spri
 
 ### `ENG-324` — Release pipeline supply-chain hardening (SLSA L3 + Sigstore + CycloneDX SBOM + NuGet trusted publishing) (Sprint 119)
 
-Quality dimensions advanced: *Security*, *Compliance*, *Auditability*.
-
-Why:
-
-- the EU Cyber Resilience Act reporting obligation kicks in `September 11, 2026`; main provisions are binding `December 11, 2027`; CRA conformity evidence requires SLSA-style provenance, SBOMs, and a deterministic build pipeline before that date arrives
-- NuGet API keys are long-lived; trusted publishing through GitHub OIDC issues short-lived (~1 hour) tokens and ties package provenance to the GitHub identity that signed the release
-
-Delivered (target):
-
-- author a reusable GitHub Actions workflow for Cephalon releases producing: SLSA v1.1 L3 build provenance, Sigstore Cosign keyless signing tied to OIDC, Rekor transparency log entry, CycloneDX SBOM per package, NuGet trusted publishing instead of long-lived API keys
-- depend on `ENG-321` (committed lock files + `RestoreLockedMode=true`) so the build is hermetic and reproducible
-- depend on `ENG-322` (public-API diff gate on `Cephalon.Abstractions`) so a binary-breaking change cannot accidentally ship inside a signed release
-- update [`package-publishing.md`](package-publishing.md), [`engineering-standards.md`](engineering-standards.md) security/supply-chain section, and the release validation workflow to declare the new release contract
-- emit machine-readable conformity evidence (vulnerability-handling logs, SBOM artefacts, provenance attestations) in the release artefact bundle so CRA reporting can ingest it without log archaeology
-
-Follow-up later:
-
-- post-quantum hybrid signing (NIST ML-KEM / ML-DSA) once the .NET cryptography stack ships hybrid signing primitives in the `.NET 12` LTS lane
-- container base image signing propagation (signed `.NET 11` base images already; consumers should be able to verify the signature chain end-to-end)
+*Shipped (workflow-side).* New tag-triggered [`.github/workflows/publish-release.yml`](../.github/workflows/publish-release.yml) wraps the validated package set with: SLSA v1.1 build provenance via `actions/attest-build-provenance`, Sigstore Cosign keyless signature plus Rekor transparency log entry per `.nupkg`, CycloneDX 1.6 SBOM per `Cephalon.*` project, NuGet trusted-publishing login (GitHub OIDC federation) followed by `dotnet nuget push` of `.nupkg` and `.snupkg`. The workflow runs on `v*.*.*` tag push (and `workflow_dispatch` for dry-runs); the per-PR `release-validation.yml` gate is unchanged. [`docs/package-publishing.md`](package-publishing.md) carries the new *Signed release pipeline (tag-triggered)* section; [`docs/engineering-standards.md`](engineering-standards.md) security/supply-chain section carries the new *Signed release pipeline* subsection. See `ENG-324` in [`engine-backlog.md`](engine-backlog.md). Per-package nuget.org-side configuration (trusted-publishing policy pointing at this repo / this workflow / the tag pattern, plus `Cephalon.*` prefix reservation, plus `NUGET_USER` repository secret) must be in place before the first real tag push lands; the workflow itself ships ready to run. Follow-up: post-quantum hybrid signing (NIST ML-KEM / ML-DSA) once the .NET cryptography stack ships hybrid signing primitives in the `.NET 12` LTS lane; container base image signing propagation; integration testing the full flow once the first `v*.*.*` tag is cut.
 
 ### `ENG-325` — `Cephalon.Analyzers` curated meta-package (Sprint 120)
 

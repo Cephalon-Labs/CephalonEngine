@@ -133,6 +133,28 @@ The GitHub Actions release-validation workflow now proves this package-publishin
 
 The same workflow also carries a dedicated `.NET 11` readiness lane through `scripts/validate-dotnet-readiness.ps1`. That lane exists to assess future-SDK compatibility without changing the stable `net10.0` shipping floor. When package publication quality or support claims need to be assessed under a higher SDK explicitly, use the readiness script directly so the output report, `scripts/deployment-mode-support.json`, [deployment-mode support](deployment-mode-support.md), and the package-publishing docs stay truthful about what was actually validated.
 
+## Signed release pipeline (tag-triggered)
+
+`pwsh ./scripts/publish-package-artifacts.ps1` and the release-validation workflow produce the package set, but they do not publish to nuget.org. A separate tag-triggered GitHub Actions workflow at [`.github/workflows/publish-release.yml`](../.github/workflows/publish-release.yml) wraps the validated package set with the supply-chain hardening Cephalon commits to under [`docs/supply-chain-uplift-plan.md`](supply-chain-uplift-plan.md).
+
+The signed release pipeline runs on a `v*.*.*` tag push (and supports `workflow_dispatch` for dry-runs). It performs, in order:
+
+1. checkout, .NET SDK setup, Pester install
+2. full release validation through `scripts/validate-release.ps1` (locked-mode restore, build, tests, readiness, deployment-mode audit, benchmarks, reference docs, package artefacts)
+3. CycloneDX SBOM generation per `Cephalon.*` project, written to `artifacts/sboms-release/<package-id>/<package-id>.cdx.json`
+4. Sigstore Cosign keyless signing of every `.nupkg`, with the resulting `.sig` and `.pem` written under `artifacts/signatures-release/`; the OIDC identity is the GitHub Actions workflow run, the transparency log is Rekor
+5. SLSA v1.1 build provenance attestation through `actions/attest-build-provenance` against every `.nupkg` subject path
+6. release manifest (`artifacts/release-bundle/release-manifest.json`) with SHA-256 + size for every package, SBOM, and signature artefact
+7. NuGet trusted-publishing login (federated OIDC token exchange) followed by `dotnet nuget push` for `.nupkg` and `.snupkg` files; this stage runs only on a real tag push, never on `workflow_dispatch` dry-runs
+
+Per-package nuget.org configuration must be in place before the first push:
+
+- configure trusted publishing on nuget.org for the `Cephalon-Labs` account (settings → trusted publishing → add policy) pointing at the `Cephalon-Labs/CephalonEngine` repository, the `.github/workflows/publish-release.yml` workflow file, and the `v*.*.*` tag pattern
+- reserve the `Cephalon.*` prefix on nuget.org once a stable GA cut is coming so prefix protection lines up with the first `1.0.0` release
+- ensure the `NUGET_USER` repository secret is set so the trusted-publishing login step can resolve the publishing account
+
+The pipeline is intentionally additive over `release-validation.yml`. The per-PR validation gate stays unchanged; this workflow only runs on a tag and only pushes when run from a tag.
+
 ## Maintenance rules
 
 - keep the intended packable surface explicit; do not rely on solution-wide `dotnet pack` defaults

@@ -236,6 +236,13 @@ Security is a framework concern, not an application concern. Cephalon's standard
 - when the planned `scripts/validate-deployment-mode-claims.ps1` validation harness ships, its `claim-truthful` verdict is the authoritative gate for promoting trim, Native AOT, or single-file support from `not-claimed` to `claimed`; analyzer-only signals or local publish experiments do not widen the contract by themselves (see [`deployment-mode-support.md`](deployment-mode-support.md))
 - governance, tenancy, multi-tenancy, identity, and policy decisions stay declarative and inspectable through the engine's runtime catalogs so audits do not require log archaeology
 
+Signed release pipeline:
+
+- the tag-triggered [`.github/workflows/publish-release.yml`](../.github/workflows/publish-release.yml) is the authoritative path for publishing `Cephalon.*` packages to nuget.org; manual `dotnet nuget push` from a contributor's workstation is not the supported flow
+- every published `.nupkg` carries SLSA v1.1 build provenance through `actions/attest-build-provenance`, Sigstore Cosign keyless signature plus Rekor transparency log entry, and a CycloneDX 1.6 SBOM emitted per `Cephalon.*` project; the release manifest at `artifacts/release-bundle/release-manifest.json` records SHA-256 + size for every artefact
+- the publish step uses NuGet trusted publishing (GitHub OIDC federation) and never long-lived API keys; the matching nuget.org-side trusted-publishing policy must point at this repository, this workflow file, and the `v*.*.*` tag pattern
+- the conformity-evidence bundle (provenance + signatures + SBOMs + manifest) is what EU CRA Article 13 reporting and SLSA L3 verifier audits read; the bundle is uploaded as workflow artefacts on every tag run so it stays retrievable without re-running the pipeline
+
 Authoritative external sources:
 
 - [.NET secure coding guidelines](https://learn.microsoft.com/en-us/dotnet/standard/security/secure-coding-guidelines)
