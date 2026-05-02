@@ -92,6 +92,7 @@ Downstream provider and edge-runtime integrations that are not shipped as first-
 - [Engine surface maturity audit](engine-surface-maturity-audit.md)
 - [Engine roadmap](engine-roadmap.md)
 - [Engine backlog](engine-backlog.md)
+- [Supply-chain uplift plan](supply-chain-uplift-plan.md)
 - [Architecture review 2026-05 follow-ups](architecture-review-2026-05-followups.md)
 - [Test coverage roadmap](test-coverage-roadmap.md)
 - framework-baseline and support-claim changes should stay aligned with [.NET 11 readiness](dotnet11-readiness.md), [Deployment-mode support](deployment-mode-support.md), [Compatibility](compatibility.md), and [Package publishing](package-publishing.md)
