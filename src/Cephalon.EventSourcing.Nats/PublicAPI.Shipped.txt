@@ -1,0 +1,22 @@
+#nullable enable
+Cephalon.EventSourcing.Nats.Hosting.NatsEventSourcingServiceCollectionExtensions
+Cephalon.EventSourcing.Nats.NatsEventEntry
+Cephalon.EventSourcing.Nats.NatsEventEntry.AppendedAtUtc.get -> System.DateTime
+Cephalon.EventSourcing.Nats.NatsEventEntry.AppendedAtUtc.init -> void
+Cephalon.EventSourcing.Nats.NatsEventEntry.EventType.get -> string!
+Cephalon.EventSourcing.Nats.NatsEventEntry.EventType.init -> void
+Cephalon.EventSourcing.Nats.NatsEventEntry.NatsEventEntry() -> void
+Cephalon.EventSourcing.Nats.NatsEventEntry.OccurredAtUtc.get -> System.DateTime
+Cephalon.EventSourcing.Nats.NatsEventEntry.OccurredAtUtc.init -> void
+Cephalon.EventSourcing.Nats.NatsEventEntry.Payload.get -> string!
+Cephalon.EventSourcing.Nats.NatsEventEntry.Payload.init -> void
+Cephalon.EventSourcing.Nats.NatsEventEntry.StreamId.get -> string!
+Cephalon.EventSourcing.Nats.NatsEventEntry.StreamId.init -> void
+Cephalon.EventSourcing.Nats.NatsEventEntry.StreamVersion.get -> long
+Cephalon.EventSourcing.Nats.NatsEventEntry.StreamVersion.init -> void
+Cephalon.EventSourcing.Nats.NatsEventStore
+Cephalon.EventSourcing.Nats.NatsEventStore.AppendAsync(string! streamId, System.Collections.Generic.IReadOnlyCollection<Cephalon.Abstractions.EventSourcing.IDomainEvent!>! events, long expectedVersion, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.EventSourcing.Nats.NatsEventStore.GetVersionAsync(string! streamId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<long>!
+Cephalon.EventSourcing.Nats.NatsEventStore.NatsEventStore(NATS.Client.Core.INatsConnection! nats, string! bucketName) -> void
+Cephalon.EventSourcing.Nats.NatsEventStore.ReadStreamAsync(string! streamId, long fromVersion = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Collections.Generic.IAsyncEnumerable<Cephalon.Abstractions.EventSourcing.IDomainEvent!>!
+static Cephalon.EventSourcing.Nats.Hosting.NatsEventSourcingServiceCollectionExtensions.AddCephalonNatsEventSourcing(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! url, string! bucketName = "cephalon-events") -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

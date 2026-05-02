@@ -1,0 +1,30 @@
+#nullable enable
+Cephalon.EventSourcing.MongoDB.Hosting.MongoDbEventSourcingServiceCollectionExtensions
+Cephalon.EventSourcing.MongoDB.MongoDbEventEntry
+Cephalon.EventSourcing.MongoDB.MongoDbEventEntry.AppendedAtUtc.get -> System.DateTime
+Cephalon.EventSourcing.MongoDB.MongoDbEventEntry.AppendedAtUtc.set -> void
+Cephalon.EventSourcing.MongoDB.MongoDbEventEntry.CorrelationId.get -> string?
+Cephalon.EventSourcing.MongoDB.MongoDbEventEntry.CorrelationId.set -> void
+Cephalon.EventSourcing.MongoDB.MongoDbEventEntry.EventType.get -> string!
+Cephalon.EventSourcing.MongoDB.MongoDbEventEntry.EventType.set -> void
+Cephalon.EventSourcing.MongoDB.MongoDbEventEntry.Id.get -> MongoDB.Bson.ObjectId
+Cephalon.EventSourcing.MongoDB.MongoDbEventEntry.Id.set -> void
+Cephalon.EventSourcing.MongoDB.MongoDbEventEntry.MongoDbEventEntry() -> void
+Cephalon.EventSourcing.MongoDB.MongoDbEventEntry.OccurredAtUtc.get -> System.DateTime
+Cephalon.EventSourcing.MongoDB.MongoDbEventEntry.OccurredAtUtc.set -> void
+Cephalon.EventSourcing.MongoDB.MongoDbEventEntry.Payload.get -> string!
+Cephalon.EventSourcing.MongoDB.MongoDbEventEntry.Payload.set -> void
+Cephalon.EventSourcing.MongoDB.MongoDbEventEntry.StreamId.get -> string!
+Cephalon.EventSourcing.MongoDB.MongoDbEventEntry.StreamId.set -> void
+Cephalon.EventSourcing.MongoDB.MongoDbEventEntry.StreamVersion.get -> long
+Cephalon.EventSourcing.MongoDB.MongoDbEventEntry.StreamVersion.set -> void
+Cephalon.EventSourcing.MongoDB.MongoDbEventEntry.TenantId.get -> string?
+Cephalon.EventSourcing.MongoDB.MongoDbEventEntry.TenantId.set -> void
+Cephalon.EventSourcing.MongoDB.MongoDbEventSourcingConfiguration
+Cephalon.EventSourcing.MongoDB.MongoDbEventStore
+Cephalon.EventSourcing.MongoDB.MongoDbEventStore.AppendAsync(string! streamId, System.Collections.Generic.IReadOnlyCollection<Cephalon.Abstractions.EventSourcing.IDomainEvent!>! events, long expectedVersion, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.EventSourcing.MongoDB.MongoDbEventStore.GetVersionAsync(string! streamId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<long>!
+Cephalon.EventSourcing.MongoDB.MongoDbEventStore.MongoDbEventStore(MongoDB.Driver.IMongoCollection<Cephalon.EventSourcing.MongoDB.MongoDbEventEntry!>! collection) -> void
+Cephalon.EventSourcing.MongoDB.MongoDbEventStore.ReadStreamAsync(string! streamId, long fromVersion = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Collections.Generic.IAsyncEnumerable<Cephalon.Abstractions.EventSourcing.IDomainEvent!>!
+static Cephalon.EventSourcing.MongoDB.Hosting.MongoDbEventSourcingServiceCollectionExtensions.AddCephalonMongoDbEventSourcing(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! connectionString, string! databaseName, string! collectionName = "event_streams") -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.EventSourcing.MongoDB.MongoDbEventSourcingConfiguration.EnsureIndexesAsync(MongoDB.Driver.IMongoCollection<Cephalon.EventSourcing.MongoDB.MongoDbEventEntry!>! collection, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!

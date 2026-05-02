@@ -1,0 +1,29 @@
+#nullable enable
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry.AppendedAtUtc.get -> System.DateTime
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry.AppendedAtUtc.set -> void
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry.CorrelationId.get -> string?
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry.CorrelationId.set -> void
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry.EntityFrameworkEventEntry() -> void
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry.EventType.get -> string!
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry.EventType.set -> void
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry.Id.get -> long
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry.Id.set -> void
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry.OccurredAtUtc.get -> System.DateTime
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry.OccurredAtUtc.set -> void
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry.Payload.get -> string!
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry.Payload.set -> void
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry.StreamId.get -> string!
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry.StreamId.set -> void
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry.StreamVersion.get -> long
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry.StreamVersion.set -> void
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry.TenantId.get -> string?
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry.TenantId.set -> void
+Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventSourcingConfiguration
+Cephalon.EventSourcing.EntityFramework.Hosting.EntityFrameworkEventSourcingServiceCollectionExtensions
+Cephalon.EventSourcing.EntityFramework.IEntityFrameworkEventContext
+Cephalon.EventSourcing.EntityFramework.IEntityFrameworkEventContext.Events.get -> Microsoft.EntityFrameworkCore.DbSet<Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventEntry!>!
+Cephalon.EventSourcing.EntityFramework.Registration.EntityFrameworkEventSourcingEngineBuilderExtensions
+static Cephalon.EventSourcing.EntityFramework.EntityFrameworkEventSourcingConfiguration.ConfigureCephalonEvents(Microsoft.EntityFrameworkCore.ModelBuilder! modelBuilder) -> void
+static Cephalon.EventSourcing.EntityFramework.Hosting.EntityFrameworkEventSourcingServiceCollectionExtensions.AddCephalonEntityFrameworkEventSourcing<TContext>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.EventSourcing.EntityFramework.Registration.EntityFrameworkEventSourcingEngineBuilderExtensions.AddEntityFrameworkEventSourcing<TContext>(this Cephalon.Engine.Composition.EngineBuilder! builder) -> Cephalon.Engine.Composition.EngineBuilder!

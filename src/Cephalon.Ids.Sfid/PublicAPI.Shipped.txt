@@ -1,0 +1,17 @@
+#nullable enable
+Cephalon.Ids.Sfid.Configuration.SfidIdOptions
+Cephalon.Ids.Sfid.Configuration.SfidIdOptions.ClockRegressionToleranceMilliseconds.get -> int?
+Cephalon.Ids.Sfid.Configuration.SfidIdOptions.ClockRegressionToleranceMilliseconds.set -> void
+Cephalon.Ids.Sfid.Configuration.SfidIdOptions.DatacenterId.get -> int?
+Cephalon.Ids.Sfid.Configuration.SfidIdOptions.DatacenterId.set -> void
+Cephalon.Ids.Sfid.Configuration.SfidIdOptions.HasValues.get -> bool
+Cephalon.Ids.Sfid.Configuration.SfidIdOptions.SfidIdOptions(int? datacenterId = null, int? workerId = null, int? workerCapacity = null, int? clockRegressionToleranceMilliseconds = null) -> void
+Cephalon.Ids.Sfid.Configuration.SfidIdOptions.WorkerCapacity.get -> int?
+Cephalon.Ids.Sfid.Configuration.SfidIdOptions.WorkerCapacity.set -> void
+Cephalon.Ids.Sfid.Configuration.SfidIdOptions.WorkerId.get -> int?
+Cephalon.Ids.Sfid.Configuration.SfidIdOptions.WorkerId.set -> void
+Cephalon.Ids.Sfid.Registration.SfidEngineBuilderExtensions
+const Cephalon.Ids.Sfid.Configuration.SfidIdOptions.DefaultSectionPath = "Engine:Data:Ids:Sfid" -> string!
+static Cephalon.Ids.Sfid.Configuration.SfidIdOptions.Empty.get -> Cephalon.Ids.Sfid.Configuration.SfidIdOptions!
+static Cephalon.Ids.Sfid.Configuration.SfidIdOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration? configuration, string! sectionPath = "Engine:Data:Ids:Sfid") -> Cephalon.Ids.Sfid.Configuration.SfidIdOptions!
+static Cephalon.Ids.Sfid.Registration.SfidEngineBuilderExtensions.AddSfidIds(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Ids.Sfid.Configuration.SfidIdOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!

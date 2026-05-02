@@ -1,0 +1,26 @@
+#nullable enable
+Cephalon.EventSourcing.Cassandra.CassandraEventEntry
+Cephalon.EventSourcing.Cassandra.CassandraEventEntry.AppendedAtUtc.get -> System.DateTime
+Cephalon.EventSourcing.Cassandra.CassandraEventEntry.AppendedAtUtc.set -> void
+Cephalon.EventSourcing.Cassandra.CassandraEventEntry.CassandraEventEntry() -> void
+Cephalon.EventSourcing.Cassandra.CassandraEventEntry.EventType.get -> string!
+Cephalon.EventSourcing.Cassandra.CassandraEventEntry.EventType.set -> void
+Cephalon.EventSourcing.Cassandra.CassandraEventEntry.OccurredAtUtc.get -> System.DateTime
+Cephalon.EventSourcing.Cassandra.CassandraEventEntry.OccurredAtUtc.set -> void
+Cephalon.EventSourcing.Cassandra.CassandraEventEntry.Payload.get -> string!
+Cephalon.EventSourcing.Cassandra.CassandraEventEntry.Payload.set -> void
+Cephalon.EventSourcing.Cassandra.CassandraEventEntry.StreamId.get -> string!
+Cephalon.EventSourcing.Cassandra.CassandraEventEntry.StreamId.set -> void
+Cephalon.EventSourcing.Cassandra.CassandraEventEntry.StreamVersion.get -> long
+Cephalon.EventSourcing.Cassandra.CassandraEventEntry.StreamVersion.set -> void
+Cephalon.EventSourcing.Cassandra.CassandraEventSourcingConfiguration
+Cephalon.EventSourcing.Cassandra.CassandraEventStore
+Cephalon.EventSourcing.Cassandra.CassandraEventStore.AppendAsync(string! streamId, System.Collections.Generic.IReadOnlyCollection<Cephalon.Abstractions.EventSourcing.IDomainEvent!>! events, long expectedVersion, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.EventSourcing.Cassandra.CassandraEventStore.CassandraEventStore(Cassandra.ICluster! cluster, string! keyspace, string! tableName) -> void
+Cephalon.EventSourcing.Cassandra.CassandraEventStore.Dispose() -> void
+Cephalon.EventSourcing.Cassandra.CassandraEventStore.DisposeAsync() -> System.Threading.Tasks.ValueTask
+Cephalon.EventSourcing.Cassandra.CassandraEventStore.GetVersionAsync(string! streamId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<long>!
+Cephalon.EventSourcing.Cassandra.CassandraEventStore.ReadStreamAsync(string! streamId, long fromVersion = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Collections.Generic.IAsyncEnumerable<Cephalon.Abstractions.EventSourcing.IDomainEvent!>!
+Cephalon.EventSourcing.Cassandra.Hosting.CassandraEventSourcingServiceCollectionExtensions
+const Cephalon.EventSourcing.Cassandra.CassandraEventSourcingConfiguration.CreateTableCql = "\r\n        CREATE TABLE IF NOT EXISTS {0} (\r\n            stream_id text,\r\n            stream_version bigint,\r\n            event_type text,\r\n            payload text,\r\n            occurred_at_utc timestamp,\r\n            appended_at_utc timestamp,\r\n            PRIMARY KEY (stream_id, stream_version)\r\n        ) WITH CLUSTERING ORDER BY (stream_version ASC)" -> string!
+static Cephalon.EventSourcing.Cassandra.Hosting.CassandraEventSourcingServiceCollectionExtensions.AddCephalonCassandraEventSourcing(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! contactPoints, string! keyspace, string! tableName = "cephalon_event_streams") -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

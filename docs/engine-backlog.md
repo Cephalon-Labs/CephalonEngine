@@ -3193,6 +3193,56 @@ Follow-up later:
 - clean up the RS0026 / RS0027 optional-overload patterns inside the data family across subsequent slices
 - the `_inject-public-api-analyzers.ps1` helper is intentionally not kept in the repo; if the next family-batch slice wants the same automation, re-introduce it scoped to that slice and remove again on commit, or promote it to a proper repo-tracked helper under `scripts/` once the rollout discipline stabilises
 
+### ENG-342 Public-API contract lock-in batch rollout to event-sourcing family (Cephalon.EventSourcing + 10 provider packs)
+
+Status: done
+Estimate: 5
+
+Why:
+
+- `ENG-341` shipped the data family rollout; the event-sourcing family follows the same shape (one core package plus per-store provider packs) and benefits from the same diff-gate so accidental rename / removal of event-store contracts cannot ship through PR review
+
+Delivered:
+
+- batch-inject `Microsoft.CodeAnalysis.PublicApiAnalyzers` + `PublicAPI.Shipped.txt` / `PublicAPI.Unshipped.txt` + RS0026/RS0027 NoWarn into 11 csproj files via the re-introduced `scripts/_inject-public-api-analyzers.ps1` helper (deleted alongside ENG-343)
+- generate baselines per project (~259 entries total):
+    - Core: `Cephalon.EventSourcing` (23)
+    - EntityFramework: `Cephalon.EventSourcing.EntityFramework` (28)
+    - Document / KV / search: `MongoDB` (29), `Redis` (9), `Elasticsearch` (25), `OpenSearch` (25), `ClickHouse` (24), `Cassandra` (25), `Neo4j` (24), `Qdrant` (26)
+    - Streaming: `Nats` (21)
+- empty `PublicAPI.Unshipped.txt` for each
+- packages.lock.json refresh; locked-mode restore passes
+- verified end-to-end with per-project `dotnet build -c Release --no-restore` (0 errors for each of the 11 projects), full-solution `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors), and `dotnet restore --locked-mode CephalonEngine.slnx` (passes)
+
+Follow-up later: clean up RS0026 / RS0027 patterns; continue rollout to observability and multi-tenancy governance families.
+
+### ENG-343 Public-API contract lock-in batch rollout (Edge + Eventing + small remaining packs)
+
+Status: done
+Estimate: 5
+
+Why:
+
+- closes the rollout for the remaining shipped non-observability packages: edge runtime family (`Cephalon.Edge`, `.KubernetesGateway`, `.Traefik`), eventing core + behaviors bridge + Wolverine adapter, plus the small companion packs left from earlier slices (`Cephalon.Audit.EntityFramework`, `Cephalon.Identity.AspNetCore`, `Cephalon.Ids.Sfid`, `Cephalon.ReferenceDocs`)
+- bundling these 10 packages keeps the total contract-lock-in arc compact rather than fragmenting into 10 small per-package slices
+
+Delivered:
+
+- batch-inject the analyzer + `PublicAPI.*.txt` + RS0026/RS0027 NoWarn into 10 csproj files via the same one-shot `scripts/_inject-public-api-analyzers.ps1` helper (deleted at the end of this slice, since the only remaining unrolled family is observability and it can re-introduce the helper if needed)
+- generate baselines per project (~567 entries total):
+    - Edge: `Cephalon.Edge` (22), `.KubernetesGateway` (75), `.Traefik` (77)
+    - Eventing: `Cephalon.Eventing` (222), `.Behaviors` (2), `.Wolverine` (34)
+    - Small remaining: `Cephalon.Audit.EntityFramework` (51), `Cephalon.Identity.AspNetCore` (47), `Cephalon.Ids.Sfid` (16), `Cephalon.ReferenceDocs` (21)
+- empty `PublicAPI.Unshipped.txt` for each
+- packages.lock.json refresh; locked-mode restore passes
+- verified end-to-end (per-project build + full-solution build + locked-mode restore all clean)
+
+Follow-up later:
+
+- only the observability family (`Cephalon.Observability` + 30+ provider / dependency-health / cloud platform packs) remains unrolled; that slice should batch with the same one-shot helper because the per-package surface is small and the family is large
+- clean up RS0026 / RS0027 patterns across the families rolled in `ENG-342` and `ENG-343` so the per-project suppressions can be removed
+- with the engine, host adapters, transport adapters, behaviors, data, event sourcing, edge, eventing, audit, identity, agentics, retrieval, multi-tenancy core, and small companion packs all contract-locked, the engine has hit a meaningful threshold: the **majority of `Cephalon.*` shipped public surface is now reviewable via `PublicAPI.Shipped.txt` artefacts**. The next durable upgrade is enabling `<EnablePackageValidation>true</EnablePackageValidation>` with a `<PackageValidationBaselineVersion>` once the engine ships its first stable GA cut (post-`0.1.0-preview`).
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -11275,6 +11325,8 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-336 Public-API contract lock-in rollout to behaviors family (Cephalon.Behaviors + .Http + .Messaging + .Patterns) (shipped)
 - ENG-340 Public-API contract lock-in batch rollout (Audit + Identity + Agentics + Retrieval + MultiTenancy core) (shipped)
 - ENG-341 Public-API contract lock-in batch rollout to data family (Cephalon.Data + 15 provider packs) (shipped)
+- ENG-342 Public-API contract lock-in batch rollout to event-sourcing family (Cephalon.EventSourcing + 10 provider packs) (shipped)
+- ENG-343 Public-API contract lock-in batch rollout (Edge + Eventing + small remaining packs) (shipped)
 
 ### Later / not scheduled yet
 

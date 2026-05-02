@@ -1,0 +1,223 @@
+#nullable enable
+Cephalon.Eventing.Configuration.EventingOptions
+Cephalon.Eventing.Configuration.EventingOptions.Channels.get -> System.Collections.Generic.IList<Cephalon.Eventing.Services.EventChannelDescriptor!>!
+Cephalon.Eventing.Configuration.EventingOptions.ContinueInProcessSubscriptionExecutionAfterFailure.get -> bool
+Cephalon.Eventing.Configuration.EventingOptions.ContinueInProcessSubscriptionExecutionAfterFailure.set -> void
+Cephalon.Eventing.Configuration.EventingOptions.EnableInProcessSubscriptionExecution.get -> bool
+Cephalon.Eventing.Configuration.EventingOptions.EnableInProcessSubscriptionExecution.set -> void
+Cephalon.Eventing.Configuration.EventingOptions.EnableInProcessSubscriptionIdempotency.get -> bool
+Cephalon.Eventing.Configuration.EventingOptions.EnableInProcessSubscriptionIdempotency.set -> void
+Cephalon.Eventing.Configuration.EventingOptions.EnablePublishing.get -> bool
+Cephalon.Eventing.Configuration.EventingOptions.EnablePublishing.set -> void
+Cephalon.Eventing.Configuration.EventingOptions.EnableSubscriptions.get -> bool
+Cephalon.Eventing.Configuration.EventingOptions.EnableSubscriptions.set -> void
+Cephalon.Eventing.Configuration.EventingOptions.EventingOptions() -> void
+Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionIdempotencyRetentionMinutes.get -> int
+Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionIdempotencyRetentionMinutes.set -> void
+Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionMaxAttempts.get -> int
+Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionMaxAttempts.set -> void
+Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionRetryDelayMilliseconds.get -> int
+Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionRetryDelayMilliseconds.set -> void
+Cephalon.Eventing.Configuration.EventingOptions.Subscriptions.get -> System.Collections.Generic.IList<Cephalon.Eventing.Services.EventSubscriptionDescriptor!>!
+Cephalon.Eventing.Registration.EventingEngineBuilderExtensions
+Cephalon.Eventing.Services.EventChannelDescriptor
+Cephalon.Eventing.Services.EventChannelDescriptor.Description.get -> string!
+Cephalon.Eventing.Services.EventChannelDescriptor.DisplayName.get -> string!
+Cephalon.Eventing.Services.EventChannelDescriptor.EventChannelDescriptor(string! id, string! displayName, string! description, System.Collections.Generic.IReadOnlyList<string!>? tags = null) -> void
+Cephalon.Eventing.Services.EventChannelDescriptor.Id.get -> string!
+Cephalon.Eventing.Services.EventChannelDescriptor.Tags.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Eventing.Services.EventDispatchExecutionOutcomes
+Cephalon.Eventing.Services.EventDispatchExecutionReport
+Cephalon.Eventing.Services.EventDispatchExecutionReport.Attempt.get -> int
+Cephalon.Eventing.Services.EventDispatchExecutionReport.ChannelId.get -> string!
+Cephalon.Eventing.Services.EventDispatchExecutionReport.Error.get -> string?
+Cephalon.Eventing.Services.EventDispatchExecutionReport.EventDispatchExecutionReport(string! outboxId, string! channelId, string! outcome, System.DateTimeOffset observedAtUtc, string? messageId = null, int attempt = 1, string? error = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Eventing.Services.EventDispatchExecutionReport.MessageId.get -> string?
+Cephalon.Eventing.Services.EventDispatchExecutionReport.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Eventing.Services.EventDispatchExecutionReport.ObservedAtUtc.get -> System.DateTimeOffset
+Cephalon.Eventing.Services.EventDispatchExecutionReport.OutboxId.get -> string!
+Cephalon.Eventing.Services.EventDispatchExecutionReport.Outcome.get -> string!
+Cephalon.Eventing.Services.EventDispatchItem
+Cephalon.Eventing.Services.EventDispatchItem.ChannelId.get -> string!
+Cephalon.Eventing.Services.EventDispatchItem.ContentType.get -> string?
+Cephalon.Eventing.Services.EventDispatchItem.CorrelationId.get -> string?
+Cephalon.Eventing.Services.EventDispatchItem.CreatedAtUtc.get -> System.DateTimeOffset
+Cephalon.Eventing.Services.EventDispatchItem.DispatchAttemptCount.get -> int
+Cephalon.Eventing.Services.EventDispatchItem.EventDispatchItem(string! outboxId, string! messageId, string! channelId, string! eventType, string! payload, System.DateTimeOffset occurredAtUtc, System.DateTimeOffset createdAtUtc, int dispatchAttemptCount, string? contentType = null, string? correlationId = null, string? tenantId = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? headers = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Eventing.Services.EventDispatchItem.EventType.get -> string!
+Cephalon.Eventing.Services.EventDispatchItem.Headers.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Eventing.Services.EventDispatchItem.MessageId.get -> string!
+Cephalon.Eventing.Services.EventDispatchItem.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Eventing.Services.EventDispatchItem.OccurredAtUtc.get -> System.DateTimeOffset
+Cephalon.Eventing.Services.EventDispatchItem.OutboxId.get -> string!
+Cephalon.Eventing.Services.EventDispatchItem.Payload.get -> string!
+Cephalon.Eventing.Services.EventDispatchItem.TenantId.get -> string?
+Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys
+Cephalon.Eventing.Services.EventPublication
+Cephalon.Eventing.Services.EventPublication.ChannelId.get -> string!
+Cephalon.Eventing.Services.EventPublication.ContentType.get -> string?
+Cephalon.Eventing.Services.EventPublication.CorrelationId.get -> string?
+Cephalon.Eventing.Services.EventPublication.EventPublication(string! id, string! channelId, string! eventType, string! payload, System.DateTimeOffset occurredAtUtc, string? contentType = null, string? correlationId = null, string? tenantId = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? headers = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Eventing.Services.EventPublication.EventType.get -> string!
+Cephalon.Eventing.Services.EventPublication.Headers.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Eventing.Services.EventPublication.Id.get -> string!
+Cephalon.Eventing.Services.EventPublication.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Eventing.Services.EventPublication.OccurredAtUtc.get -> System.DateTimeOffset
+Cephalon.Eventing.Services.EventPublication.Payload.get -> string!
+Cephalon.Eventing.Services.EventPublication.TenantId.get -> string?
+Cephalon.Eventing.Services.EventSubscriptionDescriptor
+Cephalon.Eventing.Services.EventSubscriptionDescriptor.ChannelId.get -> string!
+Cephalon.Eventing.Services.EventSubscriptionDescriptor.DeliveryMode.get -> string!
+Cephalon.Eventing.Services.EventSubscriptionDescriptor.Description.get -> string!
+Cephalon.Eventing.Services.EventSubscriptionDescriptor.DisplayName.get -> string!
+Cephalon.Eventing.Services.EventSubscriptionDescriptor.EventSubscriptionDescriptor(string! id, string! displayName, string! description, string! channelId, string! handlerId, string! deliveryMode, System.Collections.Generic.IReadOnlyList<string!>? tags = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Eventing.Services.EventSubscriptionDescriptor.HandlerId.get -> string!
+Cephalon.Eventing.Services.EventSubscriptionDescriptor.Id.get -> string!
+Cephalon.Eventing.Services.EventSubscriptionDescriptor.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Eventing.Services.EventSubscriptionDescriptor.Tags.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Eventing.Services.EventSubscriptionExecutionBindingDescriptor
+Cephalon.Eventing.Services.EventSubscriptionExecutionBindingDescriptor.EventSubscriptionExecutionBindingDescriptor(string! subscriptionId, string! executionRuntimeId, string! executionOwnership = "runtime-managed", string! executionMode = "message-handler", System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Eventing.Services.EventSubscriptionExecutionBindingDescriptor.ExecutionMode.get -> string!
+Cephalon.Eventing.Services.EventSubscriptionExecutionBindingDescriptor.ExecutionOwnership.get -> string!
+Cephalon.Eventing.Services.EventSubscriptionExecutionBindingDescriptor.ExecutionRuntimeId.get -> string!
+Cephalon.Eventing.Services.EventSubscriptionExecutionBindingDescriptor.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Eventing.Services.EventSubscriptionExecutionBindingDescriptor.SubscriptionId.get -> string!
+Cephalon.Eventing.Services.EventSubscriptionExecutionContext
+Cephalon.Eventing.Services.EventSubscriptionExecutionContext.Attempt.get -> int
+Cephalon.Eventing.Services.EventSubscriptionExecutionContext.EventSubscriptionExecutionContext(Cephalon.Eventing.Services.EventSubscriptionDescriptor! subscription, Cephalon.Eventing.Services.EventPublication! publication, int attempt = 1, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Eventing.Services.EventSubscriptionExecutionContext.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Eventing.Services.EventSubscriptionExecutionContext.Publication.get -> Cephalon.Eventing.Services.EventPublication!
+Cephalon.Eventing.Services.EventSubscriptionExecutionContext.Subscription.get -> Cephalon.Eventing.Services.EventSubscriptionDescriptor!
+Cephalon.Eventing.Services.EventSubscriptionExecutionOutcomes
+Cephalon.Eventing.Services.EventSubscriptionExecutionReport
+Cephalon.Eventing.Services.EventSubscriptionExecutionReport.Attempt.get -> int
+Cephalon.Eventing.Services.EventSubscriptionExecutionReport.Error.get -> string?
+Cephalon.Eventing.Services.EventSubscriptionExecutionReport.EventSubscriptionExecutionReport(string! subscriptionId, string! outcome, System.DateTimeOffset observedAtUtc, string? messageId = null, int attempt = 1, string? error = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Eventing.Services.EventSubscriptionExecutionReport.MessageId.get -> string?
+Cephalon.Eventing.Services.EventSubscriptionExecutionReport.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Eventing.Services.EventSubscriptionExecutionReport.ObservedAtUtc.get -> System.DateTimeOffset
+Cephalon.Eventing.Services.EventSubscriptionExecutionReport.Outcome.get -> string!
+Cephalon.Eventing.Services.EventSubscriptionExecutionReport.SubscriptionId.get -> string!
+Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.<Clone>$() -> Cephalon.Eventing.Services.EventSubscriptionRuntimeState!
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.Deconstruct(out string! SubscriptionId, out string? LastOutcome, out System.DateTimeOffset? LastObservedAtUtc, out string? LastMessageId, out int LastAttempt, out int StartedCount, out int SucceededCount, out int FailedCount, out int RetryScheduledCount, out int SkippedCount, out string? LastError, out System.Collections.Generic.IReadOnlyDictionary<string!, string!>! Metadata) -> void
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.Equals(Cephalon.Eventing.Services.EventSubscriptionRuntimeState? other) -> bool
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.EventSubscriptionRuntimeState(string! SubscriptionId, string? LastOutcome, System.DateTimeOffset? LastObservedAtUtc, string? LastMessageId, int LastAttempt, int StartedCount, int SucceededCount, int FailedCount, int RetryScheduledCount, int SkippedCount, string? LastError, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! Metadata) -> void
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.FailedCount.get -> int
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.FailedCount.init -> void
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.LastAttempt.get -> int
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.LastAttempt.init -> void
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.LastError.get -> string?
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.LastError.init -> void
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.LastMessageId.get -> string?
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.LastMessageId.init -> void
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.LastObservedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.LastObservedAtUtc.init -> void
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.LastOutcome.get -> string?
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.LastOutcome.init -> void
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.Metadata.init -> void
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.RetryPending.get -> bool
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.RetryScheduledCount.get -> int
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.RetryScheduledCount.init -> void
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.SkippedCount.get -> int
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.SkippedCount.init -> void
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.StartedCount.get -> int
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.StartedCount.init -> void
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.SubscriptionId.get -> string!
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.SubscriptionId.init -> void
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.SucceededCount.get -> int
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.SucceededCount.init -> void
+Cephalon.Eventing.Services.EventSubscriptionRuntimeState.TotalReports.get -> int
+Cephalon.Eventing.Services.IEventChannelCatalog
+Cephalon.Eventing.Services.IEventChannelCatalog.Channels.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Eventing.Services.EventChannelDescriptor!>!
+Cephalon.Eventing.Services.IEventChannelCatalog.TryGet(string! channelId, out Cephalon.Eventing.Services.EventChannelDescriptor! channel) -> bool
+Cephalon.Eventing.Services.IEventChannelContributor
+Cephalon.Eventing.Services.IEventChannelContributor.RegisterChannels(Cephalon.Eventing.Services.IEventChannelRegistry! channels) -> void
+Cephalon.Eventing.Services.IEventChannelRegistry
+Cephalon.Eventing.Services.IEventChannelRegistry.Add(Cephalon.Eventing.Services.EventChannelDescriptor! channel) -> void
+Cephalon.Eventing.Services.IEventDispatchRuntimeContributor
+Cephalon.Eventing.Services.IEventDispatchRuntimeContributor.RegisterDispatchRuntimes(Cephalon.Eventing.Services.IEventDispatchRuntimeRegistry! dispatchRuntimes) -> void
+Cephalon.Eventing.Services.IEventDispatchRuntimeRegistry
+Cephalon.Eventing.Services.IEventDispatchRuntimeRegistry.Add(Cephalon.Abstractions.Data.EventDispatchRuntimeDescriptor! dispatchRuntime) -> void
+Cephalon.Eventing.Services.IEventDispatchRuntimeReporter
+Cephalon.Eventing.Services.IEventDispatchRuntimeReporter.ReportAsync(Cephalon.Eventing.Services.EventDispatchExecutionReport! report, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
+Cephalon.Eventing.Services.IEventDispatchStore
+Cephalon.Eventing.Services.IEventDispatchStore.ApplyReportAsync(Cephalon.Eventing.Services.EventDispatchExecutionReport! report, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
+Cephalon.Eventing.Services.IEventDispatchStore.OutboxIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Eventing.Services.IEventDispatchStore.ReadPendingAsync(int maximumCount, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<System.Collections.Generic.IReadOnlyList<Cephalon.Eventing.Services.EventDispatchItem!>!>
+Cephalon.Eventing.Services.IEventPublisher
+Cephalon.Eventing.Services.IEventPublisher.PublishAsync(Cephalon.Eventing.Services.EventPublication! publication, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
+Cephalon.Eventing.Services.IEventSubscriptionCatalog
+Cephalon.Eventing.Services.IEventSubscriptionCatalog.GetByChannelId(string! channelId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Eventing.Services.EventSubscriptionDescriptor!>!
+Cephalon.Eventing.Services.IEventSubscriptionCatalog.Subscriptions.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Eventing.Services.EventSubscriptionDescriptor!>!
+Cephalon.Eventing.Services.IEventSubscriptionCatalog.TryGet(string! subscriptionId, out Cephalon.Eventing.Services.EventSubscriptionDescriptor! subscription) -> bool
+Cephalon.Eventing.Services.IEventSubscriptionContributor
+Cephalon.Eventing.Services.IEventSubscriptionContributor.RegisterSubscriptions(Cephalon.Eventing.Services.IEventSubscriptionRegistry! subscriptions) -> void
+Cephalon.Eventing.Services.IEventSubscriptionExecutionBindingCatalog
+Cephalon.Eventing.Services.IEventSubscriptionExecutionBindingCatalog.Bindings.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Eventing.Services.EventSubscriptionExecutionBindingDescriptor!>!
+Cephalon.Eventing.Services.IEventSubscriptionExecutionBindingCatalog.GetBySubscriptionId(string! subscriptionId) -> Cephalon.Eventing.Services.EventSubscriptionExecutionBindingDescriptor?
+Cephalon.Eventing.Services.IEventSubscriptionExecutionBindingCatalog.TryGet(string! subscriptionId, out Cephalon.Eventing.Services.EventSubscriptionExecutionBindingDescriptor? binding) -> bool
+Cephalon.Eventing.Services.IEventSubscriptionExecutionBindingContributor
+Cephalon.Eventing.Services.IEventSubscriptionExecutionBindingContributor.GetExecutionBindings() -> System.Collections.Generic.IReadOnlyList<Cephalon.Eventing.Services.EventSubscriptionExecutionBindingDescriptor!>!
+Cephalon.Eventing.Services.IEventSubscriptionExecutor
+Cephalon.Eventing.Services.IEventSubscriptionExecutor.ExecuteAsync(Cephalon.Eventing.Services.EventSubscriptionExecutionContext! context, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
+Cephalon.Eventing.Services.IEventSubscriptionExecutor.SubscriptionId.get -> string!
+Cephalon.Eventing.Services.IEventSubscriptionRegistry
+Cephalon.Eventing.Services.IEventSubscriptionRegistry.Add(Cephalon.Eventing.Services.EventSubscriptionDescriptor! subscription) -> void
+Cephalon.Eventing.Services.IEventSubscriptionRuntimeCatalog
+Cephalon.Eventing.Services.IEventSubscriptionRuntimeCatalog.GetById(string! subscriptionId) -> Cephalon.Eventing.Services.EventSubscriptionRuntimeState?
+Cephalon.Eventing.Services.IEventSubscriptionRuntimeCatalog.States.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Eventing.Services.EventSubscriptionRuntimeState!>!
+Cephalon.Eventing.Services.IEventSubscriptionRuntimeCatalog.TryGet(string! subscriptionId, out Cephalon.Eventing.Services.EventSubscriptionRuntimeState? state) -> bool
+Cephalon.Eventing.Services.IEventSubscriptionRuntimeReporter
+Cephalon.Eventing.Services.IEventSubscriptionRuntimeReporter.ReportAsync(Cephalon.Eventing.Services.EventSubscriptionExecutionReport! report, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
+const Cephalon.Eventing.Services.EventDispatchExecutionOutcomes.Failed = "failed" -> string!
+const Cephalon.Eventing.Services.EventDispatchExecutionOutcomes.RetryScheduled = "retry-scheduled" -> string!
+const Cephalon.Eventing.Services.EventDispatchExecutionOutcomes.Skipped = "skipped" -> string!
+const Cephalon.Eventing.Services.EventDispatchExecutionOutcomes.Started = "started" -> string!
+const Cephalon.Eventing.Services.EventDispatchExecutionOutcomes.Succeeded = "succeeded" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.NextRetryAtUtc = "nextRetryAtUtc" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.RetryDelaySeconds = "retryDelaySeconds" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.RetryDurability = "retryDurability" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.RetryExhausted = "retryExhausted" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.RetryMaxAttempts = "retryMaxAttempts" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.RetryOutcome = "retryOutcome" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.RetryPolicy = "retryPolicy" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.RetryScope = "retryScope" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.TerminalFailure = "terminalFailure" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionExecutionOutcomes.Failed = "failed" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionExecutionOutcomes.RetryScheduled = "retry-scheduled" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionExecutionOutcomes.Skipped = "skipped" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionExecutionOutcomes.Started = "started" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionExecutionOutcomes.Succeeded = "succeeded" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.BindingMetadataKeys = "bindingMetadataKeys" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.BindingMetadataPrefix = "binding." -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ChannelId = "channelId" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.DeliveryMode = "deliveryMode" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.DispatchRuntime = "dispatchRuntime" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ExecutionGraphId = "executionGraphId" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ExecutionMode = "executionMode" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ExecutionOwnership = "executionOwnership" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ExecutionPath = "executionPath" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ExecutionReadiness = "executionReadiness" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ExecutionReadinessReasons = "executionReadinessReasons" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ExecutionRuntimeId = "executionRuntimeId" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.HandlerId = "handlerId" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.HostedExecutionId = "hostedExecutionId" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.HostedExecutionIds = "hostedExecutionIds" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.Inbox = "inbox" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.InboxIds = "inboxIds" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.InboxLink = "inboxLink" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.LastOutcome = "lastOutcome" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ReportedMetadataPrefix = "reported." -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.RetryPending = "retryPending" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.RuntimeState = "runtimeState" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.SubscriptionRuntime = "subscriptionRuntime" -> string!
+override Cephalon.Eventing.Services.EventSubscriptionRuntimeState.Equals(object? obj) -> bool
+override Cephalon.Eventing.Services.EventSubscriptionRuntimeState.GetHashCode() -> int
+override Cephalon.Eventing.Services.EventSubscriptionRuntimeState.ToString() -> string!
+static Cephalon.Eventing.Registration.EventingEngineBuilderExtensions.AddEventing(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Eventing.Configuration.EventingOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.IsTerminalFailure(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> bool
+static Cephalon.Eventing.Services.EventSubscriptionRuntimeState.operator !=(Cephalon.Eventing.Services.EventSubscriptionRuntimeState? left, Cephalon.Eventing.Services.EventSubscriptionRuntimeState? right) -> bool
+static Cephalon.Eventing.Services.EventSubscriptionRuntimeState.operator ==(Cephalon.Eventing.Services.EventSubscriptionRuntimeState? left, Cephalon.Eventing.Services.EventSubscriptionRuntimeState? right) -> bool

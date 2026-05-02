@@ -1,0 +1,3 @@
+#nullable enable
+Cephalon.Eventing.Behaviors.Registration.BehaviorEventingEngineBuilderExtensions
+static Cephalon.Eventing.Behaviors.Registration.BehaviorEventingEngineBuilderExtensions.AddBehaviorEventingBridge(this Cephalon.Engine.Composition.EngineBuilder! builder) -> Cephalon.Engine.Composition.EngineBuilder!

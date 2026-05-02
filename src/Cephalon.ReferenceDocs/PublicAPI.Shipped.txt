@@ -1,0 +1,22 @@
+#nullable enable
+Cephalon.ReferenceDocs.Generation.ReferenceDocFile
+Cephalon.ReferenceDocs.Generation.ReferenceDocFile.Contents.get -> string!
+Cephalon.ReferenceDocs.Generation.ReferenceDocFile.Path.get -> string!
+Cephalon.ReferenceDocs.Generation.ReferenceDocFile.ReferenceDocFile(string! path, string! contents) -> void
+Cephalon.ReferenceDocs.Generation.ReferenceDocsGenerator
+Cephalon.ReferenceDocs.Generation.ReferenceDocsRequest
+Cephalon.ReferenceDocs.Generation.ReferenceDocsRequest.Assemblies.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.ReferenceDocs.Generation.ReferenceDocsRequest.Configuration.get -> string!
+Cephalon.ReferenceDocs.Generation.ReferenceDocsRequest.OutputPath.get -> string!
+Cephalon.ReferenceDocs.Generation.ReferenceDocsRequest.ReferenceDocsRequest(string! rootPath, string! outputPath, string! configuration = "Debug", string! targetFramework = "net10.0", System.Collections.Generic.IReadOnlyList<string!>? assemblies = null) -> void
+Cephalon.ReferenceDocs.Generation.ReferenceDocsRequest.RootPath.get -> string!
+Cephalon.ReferenceDocs.Generation.ReferenceDocsRequest.TargetFramework.get -> string!
+Cephalon.ReferenceDocs.Generation.RenderedReferenceDocs
+Cephalon.ReferenceDocs.Generation.RenderedReferenceDocs.Files.get -> System.Collections.Generic.IReadOnlyList<Cephalon.ReferenceDocs.Generation.ReferenceDocFile!>!
+Cephalon.ReferenceDocs.Generation.RenderedReferenceDocs.RenderedReferenceDocs(Cephalon.ReferenceDocs.Generation.ReferenceDocsRequest! request, System.Collections.Generic.IReadOnlyList<Cephalon.ReferenceDocs.Generation.ReferenceDocFile!>! files) -> void
+Cephalon.ReferenceDocs.Generation.RenderedReferenceDocs.Request.get -> Cephalon.ReferenceDocs.Generation.ReferenceDocsRequest!
+Cephalon.ReferenceDocs.IO.ReferenceDocsWriter
+Cephalon.ReferenceDocs.ReferenceDocsApplication
+static Cephalon.ReferenceDocs.Generation.ReferenceDocsGenerator.Generate(Cephalon.ReferenceDocs.Generation.ReferenceDocsRequest! request) -> Cephalon.ReferenceDocs.Generation.RenderedReferenceDocs!
+static Cephalon.ReferenceDocs.IO.ReferenceDocsWriter.WriteAsync(Cephalon.ReferenceDocs.Generation.RenderedReferenceDocs! rendered, bool overwrite = true, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+static Cephalon.ReferenceDocs.ReferenceDocsApplication.RunAsync(string![]! args, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<int>!

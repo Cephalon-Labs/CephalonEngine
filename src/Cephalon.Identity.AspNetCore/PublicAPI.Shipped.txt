@@ -1,0 +1,48 @@
+#nullable enable
+Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions
+Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions.AllowIdentityNameAsSubjectIdFallback.get -> bool
+Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions.AllowIdentityNameAsSubjectIdFallback.set -> void
+Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions.AuthorizationDecisionItemKey.get -> string!
+Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions.AuthorizationDecisionItemKey.set -> void
+Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions.DisplayNameClaimTypes.get -> System.Collections.Generic.List<string!>!
+Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions.IdentityAspNetCoreOptions() -> void
+Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions.IncludeAllClaimsAsSubjectAttributes.get -> bool
+Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions.IncludeAllClaimsAsSubjectAttributes.set -> void
+Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions.IncludeHeadersAsContextAttributes.get -> bool
+Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions.IncludeHeadersAsContextAttributes.set -> void
+Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions.IncludeQueryStringAsContextAttributes.get -> bool
+Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions.IncludeQueryStringAsContextAttributes.set -> void
+Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions.IncludeRouteValuesAsResourceAttributes.get -> bool
+Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions.IncludeRouteValuesAsResourceAttributes.set -> void
+Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions.OwnerSubjectIdRouteKeys.get -> System.Collections.Generic.List<string!>!
+Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions.ResourceIdRouteKeys.get -> System.Collections.Generic.List<string!>!
+Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions.RoleClaimTypes.get -> System.Collections.Generic.List<string!>!
+Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions.SubjectIdClaimTypes.get -> System.Collections.Generic.List<string!>!
+Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions.TenantClaimTypes.get -> System.Collections.Generic.List<string!>!
+Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions.TenantHeaderNames.get -> System.Collections.Generic.List<string!>!
+Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions.TenantRouteKeys.get -> System.Collections.Generic.List<string!>!
+Cephalon.Identity.AspNetCore.Hosting.IdentityAspNetCoreServiceCollectionExtensions
+Cephalon.Identity.AspNetCore.Hosting.IdentityAspNetCoreWebApplicationBuilderExtensions
+Cephalon.Identity.AspNetCore.Transports.Rest.IdentityEndpointConventionBuilderExtensions
+Cephalon.Identity.AspNetCore.Transports.Rest.RequireCephalonAuthorizationAttribute
+Cephalon.Identity.AspNetCore.Transports.Rest.RequireCephalonAuthorizationAttribute.Action.get -> string?
+Cephalon.Identity.AspNetCore.Transports.Rest.RequireCephalonAuthorizationAttribute.Action.set -> void
+Cephalon.Identity.AspNetCore.Transports.Rest.RequireCephalonAuthorizationAttribute.CreateInstance(System.IServiceProvider! serviceProvider) -> Microsoft.AspNetCore.Mvc.Filters.IFilterMetadata!
+Cephalon.Identity.AspNetCore.Transports.Rest.RequireCephalonAuthorizationAttribute.IsReusable.get -> bool
+Cephalon.Identity.AspNetCore.Transports.Rest.RequireCephalonAuthorizationAttribute.Order.get -> int
+Cephalon.Identity.AspNetCore.Transports.Rest.RequireCephalonAuthorizationAttribute.OwnerSubjectIdRouteKey.get -> string?
+Cephalon.Identity.AspNetCore.Transports.Rest.RequireCephalonAuthorizationAttribute.OwnerSubjectIdRouteKey.set -> void
+Cephalon.Identity.AspNetCore.Transports.Rest.RequireCephalonAuthorizationAttribute.PolicyId.get -> string!
+Cephalon.Identity.AspNetCore.Transports.Rest.RequireCephalonAuthorizationAttribute.RequireCephalonAuthorizationAttribute(string! policyId) -> void
+Cephalon.Identity.AspNetCore.Transports.Rest.RequireCephalonAuthorizationAttribute.ResourceIdRouteKey.get -> string?
+Cephalon.Identity.AspNetCore.Transports.Rest.RequireCephalonAuthorizationAttribute.ResourceIdRouteKey.set -> void
+Cephalon.Identity.AspNetCore.Transports.Rest.RequireCephalonAuthorizationAttribute.ResourceType.get -> string?
+Cephalon.Identity.AspNetCore.Transports.Rest.RequireCephalonAuthorizationAttribute.ResourceType.set -> void
+Cephalon.Identity.AspNetCore.Transports.Rest.RequireCephalonAuthorizationAttribute.TenantRouteKey.get -> string?
+Cephalon.Identity.AspNetCore.Transports.Rest.RequireCephalonAuthorizationAttribute.TenantRouteKey.set -> void
+static Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration? configuration, string! sectionPath = "Engine") -> Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions!
+static Cephalon.Identity.AspNetCore.Hosting.IdentityAspNetCoreServiceCollectionExtensions.AddCephalonIdentityAspNetCore(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration? configuration = null, System.Action<Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Identity.AspNetCore.Hosting.IdentityAspNetCoreWebApplicationBuilderExtensions.AddCephalonIdentityAspNetCore(this Microsoft.AspNetCore.Builder.WebApplicationBuilder! builder, System.Action<Cephalon.Identity.AspNetCore.Configuration.IdentityAspNetCoreOptions!>? configure = null) -> Microsoft.AspNetCore.Builder.WebApplicationBuilder!
+static Cephalon.Identity.AspNetCore.Transports.Rest.IdentityEndpointConventionBuilderExtensions.RequireCephalonAuthorization(this Microsoft.AspNetCore.Builder.RouteHandlerBuilder! builder, string! policyId, string? action = null, string? resourceType = null, string? resourceIdRouteKey = null, string? tenantRouteKey = null, string? ownerSubjectIdRouteKey = null) -> Microsoft.AspNetCore.Builder.RouteHandlerBuilder!
+static Cephalon.Identity.AspNetCore.Transports.Rest.IdentityEndpointConventionBuilderExtensions.RequireCephalonAuthorization(this Microsoft.AspNetCore.Routing.RouteGroupBuilder! builder, string! policyId, string? action = null, string? resourceType = null, string? resourceIdRouteKey = null, string? tenantRouteKey = null, string? ownerSubjectIdRouteKey = null) -> Microsoft.AspNetCore.Routing.RouteGroupBuilder!
+static Cephalon.Identity.AspNetCore.Transports.Rest.IdentityEndpointConventionBuilderExtensions.WithCephalonAuthenticationSchemes<TBuilder>(this TBuilder builder, params string![]! authenticationSchemes) -> TBuilder

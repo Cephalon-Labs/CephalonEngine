@@ -1,0 +1,26 @@
+#nullable enable
+Cephalon.EventSourcing.OpenSearch.Hosting.OpenSearchEventSourcingServiceCollectionExtensions
+Cephalon.EventSourcing.OpenSearch.OpenSearchEventEntry
+Cephalon.EventSourcing.OpenSearch.OpenSearchEventEntry.AppendedAtUtc.get -> System.DateTime
+Cephalon.EventSourcing.OpenSearch.OpenSearchEventEntry.AppendedAtUtc.set -> void
+Cephalon.EventSourcing.OpenSearch.OpenSearchEventEntry.CorrelationId.get -> string?
+Cephalon.EventSourcing.OpenSearch.OpenSearchEventEntry.CorrelationId.set -> void
+Cephalon.EventSourcing.OpenSearch.OpenSearchEventEntry.EventType.get -> string!
+Cephalon.EventSourcing.OpenSearch.OpenSearchEventEntry.EventType.set -> void
+Cephalon.EventSourcing.OpenSearch.OpenSearchEventEntry.OccurredAtUtc.get -> System.DateTime
+Cephalon.EventSourcing.OpenSearch.OpenSearchEventEntry.OccurredAtUtc.set -> void
+Cephalon.EventSourcing.OpenSearch.OpenSearchEventEntry.OpenSearchEventEntry() -> void
+Cephalon.EventSourcing.OpenSearch.OpenSearchEventEntry.Payload.get -> string!
+Cephalon.EventSourcing.OpenSearch.OpenSearchEventEntry.Payload.set -> void
+Cephalon.EventSourcing.OpenSearch.OpenSearchEventEntry.StreamId.get -> string!
+Cephalon.EventSourcing.OpenSearch.OpenSearchEventEntry.StreamId.set -> void
+Cephalon.EventSourcing.OpenSearch.OpenSearchEventEntry.StreamVersion.get -> long
+Cephalon.EventSourcing.OpenSearch.OpenSearchEventEntry.StreamVersion.set -> void
+Cephalon.EventSourcing.OpenSearch.OpenSearchEventEntry.TenantId.get -> string?
+Cephalon.EventSourcing.OpenSearch.OpenSearchEventEntry.TenantId.set -> void
+Cephalon.EventSourcing.OpenSearch.OpenSearchEventStore
+Cephalon.EventSourcing.OpenSearch.OpenSearchEventStore.AppendAsync(string! streamId, System.Collections.Generic.IReadOnlyCollection<Cephalon.Abstractions.EventSourcing.IDomainEvent!>! events, long expectedVersion, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.EventSourcing.OpenSearch.OpenSearchEventStore.GetVersionAsync(string! streamId, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<long>!
+Cephalon.EventSourcing.OpenSearch.OpenSearchEventStore.OpenSearchEventStore(OpenSearch.Client.OpenSearchClient! client, string! indexName) -> void
+Cephalon.EventSourcing.OpenSearch.OpenSearchEventStore.ReadStreamAsync(string! streamId, long fromVersion = 0, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Collections.Generic.IAsyncEnumerable<Cephalon.Abstractions.EventSourcing.IDomainEvent!>!
+static Cephalon.EventSourcing.OpenSearch.Hosting.OpenSearchEventSourcingServiceCollectionExtensions.AddCephalonOpenSearchEventSourcing(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! uri, string! indexName = "event-streams") -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

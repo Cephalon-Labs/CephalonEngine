@@ -1,0 +1,35 @@
+#nullable enable
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions.ConfigureHost.get -> System.Action<Wolverine.WolverineOptions!>?
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions.ConfigureHost.set -> void
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions.DispatchBatchSize.get -> int
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions.DispatchBatchSize.set -> void
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions.DispatchMaxAttempts.get -> int
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions.DispatchMaxAttempts.set -> void
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions.DispatchPollingIntervalSeconds.get -> int
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions.DispatchPollingIntervalSeconds.set -> void
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions.EnableDispatchLoop.get -> bool
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions.EnableDispatchLoop.set -> void
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions.EnableHostWiring.get -> bool
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions.EnableHostWiring.set -> void
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions.EnableRuntimeSurface.get -> bool
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions.EnableRuntimeSurface.set -> void
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions.EnableSubscriptionExecution.get -> bool
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions.EnableSubscriptionExecution.set -> void
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions.RetryDelaySeconds.get -> int
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions.RetryDelaySeconds.set -> void
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions.SubscriptionMaxAttempts.get -> int
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions.SubscriptionMaxAttempts.set -> void
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions.SubscriptionRetryDelaySeconds.get -> int
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions.SubscriptionRetryDelaySeconds.set -> void
+Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions.WolverineEventingOptions() -> void
+Cephalon.Eventing.Wolverine.Registration.WolverineEventingEngineBuilderExtensions
+Cephalon.Eventing.Wolverine.Services.WolverineManagedEventSubscriptionExecutionHandler
+Cephalon.Eventing.Wolverine.Services.WolverineManagedEventSubscriptionExecutionHandler.WolverineManagedEventSubscriptionExecutionHandler() -> void
+Cephalon.Eventing.Wolverine.Services.WolverineManagedEventSubscriptionExecutionRequest
+Cephalon.Eventing.Wolverine.Services.WolverineManagedEventSubscriptionExecutionRequest.Attempt.get -> int
+Cephalon.Eventing.Wolverine.Services.WolverineManagedEventSubscriptionExecutionRequest.Publication.get -> Cephalon.Eventing.Services.EventPublication!
+Cephalon.Eventing.Wolverine.Services.WolverineManagedEventSubscriptionExecutionRequest.SubscriptionId.get -> string!
+Cephalon.Eventing.Wolverine.Services.WolverineManagedEventSubscriptionExecutionRequest.WolverineManagedEventSubscriptionExecutionRequest(string! subscriptionId, Cephalon.Eventing.Services.EventPublication! publication, int attempt = 1) -> void
+static Cephalon.Eventing.Wolverine.Registration.WolverineEventingEngineBuilderExtensions.AddWolverineEventing(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Eventing.Wolverine.Configuration.WolverineEventingOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Eventing.Wolverine.Services.WolverineManagedEventSubscriptionExecutionHandler.Handle(Cephalon.Eventing.Wolverine.Services.WolverineManagedEventSubscriptionExecutionRequest! request, Wolverine.Envelope! envelope, System.IServiceProvider! services, Wolverine.IMessageBus! messageBus, System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
