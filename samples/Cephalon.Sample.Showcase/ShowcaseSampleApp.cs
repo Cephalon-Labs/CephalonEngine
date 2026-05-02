@@ -11,6 +11,8 @@ using Cephalon.Behaviors.Hosting;
 using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Behaviors.Messaging.Hosting;
 using Cephalon.Behaviors.Patterns.Hosting;
+using Cephalon.Diagnostics.Redaction;
+using Cephalon.Diagnostics.Redaction.Defaults;
 using Cephalon.Data.EntityFramework.Configuration;
 using Cephalon.Data.EntityFramework.Registration;
 using Cephalon.Data.MongoDB.Configuration;
@@ -33,6 +35,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -209,6 +212,21 @@ public static class ShowcaseSampleApp
         builder.AddGraphQLTransport();
         builder.AddGrpcTransport();
         builder.AddJsonRpcTransport();
+
+        // --- Redaction (canonical recipe; see docs/components/diagnostics.md "Redaction quick start") ---
+        builder.Services.AddSingleton<IRedactionFilter>(new KeyMatchRedactionFilter(
+        [
+            "http.request.header.authorization",
+            "http.request.header.cookie",
+            "http.request.header.proxy-authorization",
+            "http.response.header.set-cookie",
+            "cephalon.tenant.secret",
+        ]));
+        builder.Services.AddSingleton<IRedactionFilter>(new RegexRedactionFilter(
+            new Regex(@"\b(?:\d[ -]*?){13,19}\b", RegexOptions.Compiled)));
+        builder.Services.AddSingleton<IRedactionFilter>(new RegexRedactionFilter(
+            new Regex(@"Bearer\s+[A-Za-z0-9\-_\.]+", RegexOptions.Compiled),
+            replacement: "Bearer [REDACTED]"));
 
         // --- Observability ---
         builder.Services.AddCephalonObservability(builder.Configuration);

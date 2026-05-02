@@ -3717,7 +3717,33 @@ Delivered:
 Follow-up later:
 
 - wire a smoke test that boots the sample, fires an HTTP request with an `Authorization: Bearer abc123` header, asserts the captured activity does not contain the raw token; today the unit-level integration tests for both M1 emission sites cover the wiring, so a sample-level smoke test is duplicate coverage with marginal value
-- adopt the same recipe in the other samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) as a separate slice when the redaction surface needs broader sample reach
+- adopt the same recipe in the other samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) as a separate slice when the redaction surface needs broader sample reach — **delivered in `ENG-369`**
+
+### ENG-369 Adopt redaction recipe across remaining samples
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `ENG-368` adopted the canonical recipe in `Cephalon.Sample.ModularMonolith` only; the remaining four samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.MicroserviceSuite` Catalog + Orders services, `Cephalon.Sample.Showcase`) still shipped without filter registration, so a consumer who copied from any non-monolith sample got no redaction protection
+- closing the recipe-doc to working-sample loop **across every sample** (not just one) means consumers reach for working code regardless of which sample fits their blueprint; the friction-to-adopt is the same in every reference, which matters for adoption uniformity
+- the cost is small (~16 lines per sample × 4 = 64 added lines of duplicated registration), and samples are intentionally standalone — duplication is the right pattern for reference code, not abstraction
+
+Delivered:
+
+- update `samples/Cephalon.Sample.Microservice/MicroserviceSampleApp.cs` to register the three canonical filters between `AddCephalon(...)` and `AddCephalonObservability(...)` with the same key-set + regex shapes used in `Cephalon.Sample.ModularMonolith`
+- update `samples/Cephalon.Sample.ModularVerticalSlice/ModularVerticalSliceSampleApp.cs` with the same recipe
+- update `samples/Cephalon.Sample.MicroserviceSuite/services/CatalogService/CatalogServiceSampleApp.cs` with the same recipe
+- update `samples/Cephalon.Sample.MicroserviceSuite/services/OrdersService/OrdersServiceSampleApp.cs` with the same recipe
+- update `samples/Cephalon.Sample.Showcase/ShowcaseSampleApp.cs` to add a dedicated *Redaction* registration block right before *Observability* (the showcase uses commented section dividers; the recipe lands as a sibling block)
+- verified end-to-end with `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors)
+- `docs/engine-backlog.md` ENG-369 backlog card; ENG-368 follow-up note marked delivered; Sprint 125 placement updated
+
+Follow-up later:
+
+- if many more samples land later, consider extracting the recipe into a shared `samples/Cephalon.Sample.Foundation/RedactionRecipe.cs` helper that exposes `RegisterCanonicalRedactionFilters(IServiceCollection)`; defer until the duplication actually causes drift between samples (today five copies of 16 lines is acceptable for reference-code duplication)
+- a sample-level smoke test that boots a sample, fires an HTTP request with sensitive headers, and asserts the captured activity does not contain the raw values would catch misregistration regressions; today the M1 emission-site integration tests cover the wiring, so a sample-level smoke test is duplicate coverage with marginal value
 
 ### ENG-366 Extend M1 redaction to Cephalon.Engine runtime module-phase emission sites
 
@@ -11853,6 +11879,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-366 Extend M1 redaction to Cephalon.Engine runtime module-phase emission sites (shipped)
 - ENG-367 Redaction adoption recipe in docs/components/diagnostics.md (shipped)
 - ENG-368 Adopt redaction recipe in Cephalon.Sample.ModularMonolith composition root (shipped)
+- ENG-369 Adopt redaction recipe across remaining samples (shipped)
 
 ### Later / not scheduled yet
 
