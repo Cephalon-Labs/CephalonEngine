@@ -43,7 +43,18 @@ internal sealed class WolverineEventDispatchHostedService(
         IEventDispatchRuntimeReporter runtimeReporter,
         IMessageBus messageBus,
         ILogger<WolverineEventDispatchHostedService> logger)
-        : this(new DirectScopeFactory(dispatchStore, runtimeReporter, messageBus), options, logger)
+        : this(new DirectScopeFactory(dispatchStore, runtimeReporter, messageBus, redactionPipeline: null), options, logger)
+    {
+    }
+
+    internal WolverineEventDispatchHostedService(
+        WolverineEventingOptions options,
+        IEventDispatchStore dispatchStore,
+        IEventDispatchRuntimeReporter runtimeReporter,
+        IMessageBus messageBus,
+        RedactionPipeline? redactionPipeline,
+        ILogger<WolverineEventDispatchHostedService> logger)
+        : this(new DirectScopeFactory(dispatchStore, runtimeReporter, messageBus, redactionPipeline), options, logger)
     {
     }
 
@@ -520,7 +531,8 @@ internal sealed class WolverineEventDispatchHostedService(
     private sealed class DirectScopeFactory(
         IEventDispatchStore dispatchStore,
         IEventDispatchRuntimeReporter runtimeReporter,
-        IMessageBus messageBus) : IServiceScopeFactory, IServiceScope, IServiceProvider
+        IMessageBus messageBus,
+        RedactionPipeline? redactionPipeline) : IServiceScopeFactory, IServiceScope, IServiceProvider
     {
         public IServiceScope CreateScope() => this;
 
@@ -541,6 +553,11 @@ internal sealed class WolverineEventDispatchHostedService(
             if (serviceType == typeof(IMessageBus))
             {
                 return messageBus;
+            }
+
+            if (serviceType == typeof(RedactionPipeline))
+            {
+                return redactionPipeline;
             }
 
             return null;

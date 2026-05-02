@@ -3719,6 +3719,32 @@ Follow-up later:
 - wire a smoke test that boots the sample, fires an HTTP request with an `Authorization: Bearer abc123` header, asserts the captured activity does not contain the raw token; today the unit-level integration tests for both M1 emission sites cover the wiring, so a sample-level smoke test is duplicate coverage with marginal value
 - adopt the same recipe in the other samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) as a separate slice when the redaction surface needs broader sample reach — **delivered in `ENG-369`**
 
+### ENG-376 Add integration tests for Wolverine M1 redaction wiring
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `ENG-374` wired `WolverineEventDispatchHostedService` through the redaction pipeline but explicitly deferred the integration test, citing the cost of constructing a Wolverine + outbox + dispatcher rig; the existing `WolverineEventingPackTests.cs` already builds that rig for other dispatch tests, so the marginal cost of adding two redaction tests in the same file is small
+- locking in the wiring with tests prevents future refactors from silently regressing tag-redaction behavior at the dispatch site, parallel to the test coverage already in place at `HttpRequestResponseLoggingMiddlewareRedactionTests` (AspNetCore) and `EngineRuntimeRedactionTests` (engine runtime)
+- the wiring also surfaced one small surface gap: `DirectScopeFactory` (the in-test scope factory) returned `null` for any service it didn't know about, so a lazily-resolved `RedactionPipeline` always got `null` even when the test wanted to register one; this slice extends the factory to accept an optional pipeline and adds a corresponding internal constructor on the host service
+
+Delivered:
+
+- update `src/Cephalon.Eventing.Wolverine/Services/WolverineEventDispatchHostedService.cs`:
+    - extend `DirectScopeFactory` constructor to accept a 4th parameter `RedactionPipeline? redactionPipeline` and return it from `GetService(typeof(RedactionPipeline))`
+    - add a 6-argument internal constructor on `WolverineEventDispatchHostedService` that takes the pipeline so tests can register one; the existing 5-argument constructor still works (passes `redactionPipeline: null` to the factory)
+- new test methods in `tests/Cephalon.Tests.Composition/Composition/WolverineEventingPackTests.cs`:
+    - `WolverineDispatch_RoutesEmittedAttributeValues_ThroughRedactionPipeline` — registers a tracking filter, fires one dispatch with full tenant + correlation ids, asserts the filter saw all 7 expected attribute keys (`cephalon.message_id`, `.event_type`, `.channel_id`, `.dispatch_attempt`, `.correlation_id`, `.tenant_id`, `.dispatch_result`) and three specific values (message id, tenant id, dispatch result of `succeeded`)
+    - `WolverineDispatch_AppliesRedactionReplacement_BeforeTaggingActivity` — registers a filter that replaces `cephalon.tenant_id` values with `"[REDACTED-TENANT]"`, fires a dispatch with a sensitive tenant id, captures the resulting `wolverine.dispatch` activity via `ActivityStopped`, and asserts the redacted value is what reaches the activity tags (i.e. what would actually flow to an exporter); also asserts that the unrelated `cephalon.message_id` tag is unchanged
+- 2 small private helper classes added inside the test file (TrackingRedactionFilter, ReplaceTenantIdFilter); same pattern used in the AspNetCore + EngineRuntime redaction tests
+- verified end-to-end with `dotnet test --filter "WolverineDispatch_Routes|WolverineDispatch_Applies"` (2/2 pass) and the full redaction suite (39/39 pass: 8 KeyMatch + 10 Regex + 8 Pipeline + 7 ServiceCollection + 2 AspNetCore middleware + 2 EngineRuntime + 2 Wolverine dispatch)
+
+Follow-up later:
+
+- if more emission sites land later (e.g. the worker lifecycle spans add tag values, the future `Cephalon.Eventing` emission baseline that PR #878 is shipping), each new site adopts the same `Redact(activity, key, value)` helper pattern and gets 2 parallel tests in its corresponding test file
+
 ### ENG-375 Declare EngineBuilder build-time activity tags as deliberate redaction scope boundary
 
 Status: done
@@ -12038,6 +12064,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-373 Document genuine NoWarn suppressions with inline rationale (shipped)
 - ENG-374 Extend M1 redaction to Cephalon.Eventing.Wolverine dispatch emission (shipped)
 - ENG-375 Declare EngineBuilder build-time activity tags as deliberate redaction scope boundary (shipped)
+- ENG-376 Add integration tests for Wolverine M1 redaction wiring (shipped)
 
 ### Later / not scheduled yet
 
