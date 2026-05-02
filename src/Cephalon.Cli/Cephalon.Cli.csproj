@@ -7,8 +7,6 @@
     <ToolCommandName>cephalon</ToolCommandName>
     <PackageReadmeFile>PACKAGE.md</PackageReadmeFile>
     <Description>Command-line tooling for generating Cephalon applications from blueprints.</Description>
-    <!-- RS0026/RS0027: optional-overload patterns; suppressed for ENG-344. -->
-    <NoWarn>$(NoWarn);RS0026;RS0027</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

@@ -2,8 +2,6 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Description>Runtime-neutral event-sourcing companion package for the Cephalon engine.</Description>
-    <!-- RS0026/RS0027: optional-overload patterns; suppressed for ENG-342 (cleanup follow-up). -->
-    <NoWarn>$(NoWarn);RS0026;RS0027</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

@@ -7,8 +7,6 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>latest</LangVersion>
     <Description>ClickHouse event-store provider for the Cephalon event-sourcing companion pack.</Description>
-    <!-- RS0026/RS0027: optional-overload patterns; suppressed for ENG-342 (cleanup follow-up). -->
-    <NoWarn>$(NoWarn);RS0026;RS0027</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="ClickHouse.Driver" />

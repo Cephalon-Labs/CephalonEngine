@@ -7,8 +7,6 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>latest</LangVersion>
     <Description>OpenSearch search-store data companion package for the Cephalon engine.</Description>
-    <!-- RS0026/RS0027: optional-overload patterns; suppressed for ENG-341 (cleanup follow-up). -->
-    <NoWarn>$(NoWarn);RS0026;RS0027</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="OpenSearch.Client" />
