@@ -1,4 +1,5 @@
 param(
+    [switch]$SkipRestore,
     [switch]$SkipBuild,
     [switch]$SkipTests,
     [switch]$SkipDotNetReadiness,
@@ -113,9 +114,20 @@ try {
         }
     }
 
+    if (-not $SkipRestore) {
+        Invoke-Step "Restore solution (locked mode)" {
+            Invoke-DotNet @("restore", $solutionPath, "--locked-mode")
+        }
+    }
+
     if (-not $SkipBuild) {
         Invoke-Step "Build solution (Release)" {
-            Invoke-DotNet @("build", $solutionPath, "-c", "Release")
+            $arguments = @("build", $solutionPath, "-c", "Release")
+            if (-not $SkipRestore) {
+                $arguments += "--no-restore"
+            }
+
+            Invoke-DotNet $arguments
         }
     }
 
@@ -125,6 +137,9 @@ try {
                 $arguments = @("test", $testProjectPath, "-c", "Release")
                 if (-not $SkipBuild) {
                     $arguments += @("--no-build", "--no-restore")
+                }
+                elseif (-not $SkipRestore) {
+                    $arguments += "--no-restore"
                 }
 
                 Invoke-DotNet $arguments

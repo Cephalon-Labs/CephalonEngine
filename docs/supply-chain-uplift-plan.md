@@ -22,26 +22,7 @@ The slices sequence across **Sprint 116 through Sprint 120**, one slice per spri
 
 ### `ENG-321` — NuGet lock files plus `RestoreLockedMode` in CI baseline (Sprint 116)
 
-Quality dimensions advanced: *Compatibility*, *Auditability*, *Security*.
-
-Why:
-
-- the engine restores against `nuget.org` only (see [`nuget.config`](../nuget.config)), but the dependency graph is not reproducible across builds because `packages.lock.json` files are not committed and `RestoreLockedMode` is not enforced in CI
-- without a committed lock graph, every release validation pass implicitly accepts the latest in-range dependency versions; that is incompatible with SLSA L3, with EU CRA conformity evidence, and with deterministic reference-doc generation
-
-Delivered (target):
-
-- enable `<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>` for `Cephalon.*` projects in `Directory.Build.props` so `dotnet restore` writes a `packages.lock.json` per project
-- run a one-time restore across the workspace and commit the generated lock files
-- update `nuget.config` with explicit package source mapping so each restored id can resolve only from its expected feed (the engine currently has one feed, `nuget.org`, but adding the mapping makes the contract explicit and pre-empts later supply-chain feed splits)
-- update `scripts/validate-release.ps1` to invoke `dotnet restore --locked-mode` so CI fails fast on unintended dependency drift while leaving local developer restores unconstrained
-- update [`engineering-standards.md`](engineering-standards.md) packaging section to declare lock-file commitment as a baseline
-- update [`package-publishing.md`](package-publishing.md) and [`external-package-lifecycle.md`](external-package-lifecycle.md) to reflect the new restore contract
-
-Follow-up later:
-
-- distributed package source mapping when the engine adds an internal feed (out of scope until that feed exists)
-- automated lock-file refresh PRs from a Renovate / dependabot equivalent (out of scope; this slice only enables determinism)
+*Shipped.* `<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>` is set in [`Directory.Build.props`](../Directory.Build.props), [`nuget.config`](../nuget.config) declares an explicit `packageSourceMapping` pinning every restored id to `nuget.org`, the per-project `packages.lock.json` files are committed, and [`scripts/validate-release.ps1`](../scripts/validate-release.ps1) runs `dotnet restore --locked-mode` as the first non-skippable step before build / test / readiness / deployment-mode / benchmarks / reference-docs / packages. See `ENG-321` in [`engine-backlog.md`](engine-backlog.md). Follow-up: distributed package source mapping when the engine adds an internal feed; automated lock-file refresh PRs from a Renovate / dependabot equivalent.
 
 ### `ENG-322` — Public-API contract lock-in proof on `Cephalon.Abstractions` (Sprint 117)
 

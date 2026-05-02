@@ -2659,6 +2659,32 @@ Follow-up later:
 - if the EU regulatory timeline shifts (CRA enforcement date, AI Act high-risk wave dates, GPAI compliance date), refresh the plan's *Why* paragraphs and the cross-slice dependency diagram in place; do not append a dated change log
 - post-quantum hybrid signing (NIST ML-KEM / ML-DSA) once the .NET cryptography stack ships hybrid signing primitives in the `.NET 12` LTS lane remains future work outside the five-slice plan
 
+### ENG-321 NuGet lock files plus RestoreLockedMode in CI baseline
+
+Status: done
+Estimate: 3
+
+Why:
+
+- the engine restores against `nuget.org` only (see `nuget.config`), but the dependency graph was not reproducible across builds because `packages.lock.json` files were not committed and `RestoreLockedMode` was not enforced in CI; every release validation pass implicitly accepted the latest in-range dependency versions
+- a non-deterministic restore is incompatible with SLSA v1.1 L3 hermetic-build expectations, with EU CRA Article 13 conformity evidence, and with deterministic reference-doc generation
+- this is the first prerequisite slice for `ENG-324` (release pipeline supply-chain hardening); without committed lock files the SLSA-style provenance attestation in `ENG-324` would describe a build that cannot be reproduced
+
+Delivered:
+
+- enable `<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>` inside the `Cephalon.*` `PropertyGroup` of `Directory.Build.props` so every `dotnet restore` writes a `packages.lock.json` per project
+- run a one-time restore across the workspace and commit the resulting `packages.lock.json` files (102 lock files across `src/`, `tests/`, `samples/`, `playground/`, `benchmarks/`)
+- update `nuget.config` with an explicit `packageSourceMapping` so each restored package id resolves only from `nuget.org` (the only feed currently); future feed splits land additively rather than silently widening the resolved-from set
+- update `scripts/validate-release.ps1` to add a non-skippable `Restore solution (locked mode)` step that runs `dotnet restore --locked-mode` before any build / test / readiness step; build and test steps now pass `--no-restore` so the locked restore is the single source of restore truth in the validation flow; add a `-SkipRestore` switch parameter consistent with the existing `-SkipBuild` / `-SkipTests` skip-flag pattern
+- update `docs/engineering-standards.md` packaging section to declare a new *Required restore determinism* subsection codifying the property, the `packageSourceMapping` contract, the locked-mode CI behaviour, and the local-developer restore exception
+- collapse the matching `ENG-321` section in `docs/supply-chain-uplift-plan.md` into a one-paragraph "shipped" back-pointer per the plan's own refresh cadence
+
+Follow-up later:
+
+- distributed package source mapping when the engine adds an internal preview feed, mirror feed, or GitHub Packages feed (out of scope until that feed exists)
+- automated lock-file refresh PRs from a Renovate / dependabot equivalent so contributor diffs stay reviewable when transitive minimums shift; out of scope in this slice
+- `package-publishing.md` and `external-package-lifecycle.md` cross-reference touch-up if a future readers-facing pass surfaces drift from the standards-doc subsection added here
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -10698,6 +10724,7 @@ Upcoming sequence from the April 2026 maturity reset:
 ### Sprint 116
 
 - ENG-320 Supply-chain uplift consolidated plan baseline (shipped)
+- ENG-321 NuGet lock files plus RestoreLockedMode in CI baseline (shipped)
 
 ### Later / not scheduled yet
 

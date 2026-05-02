@@ -159,6 +159,14 @@ Required publishing hygiene:
 - vulnerability scans (`dotnet list package --vulnerable --include-transitive`) run as part of release validation
 - prefer trusted publishing (NuGet trusted-publishing flow + GitHub OIDC) over long-lived API keys when the release flow is formalized
 
+Required restore determinism:
+
+- `<RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>` is set inside the `Cephalon.*` `PropertyGroup` of [`Directory.Build.props`](../Directory.Build.props), so every `dotnet restore` writes a `packages.lock.json` per project
+- the generated `packages.lock.json` files are committed to the repository so the dependency graph is part of the public, reviewable contract; they belong in git the same way `Directory.Packages.props` does
+- [`nuget.config`](../nuget.config) declares an explicit `packageSourceMapping` so each restored package id resolves only from its expected feed (`nuget.org` today; future feed splits land additively)
+- CI runs `dotnet restore --locked-mode` so unintended dependency drift fails the build immediately rather than silently shifting the resolved graph
+- local developer restores stay unconstrained; lock files are regenerated when a contributor intentionally updates a `Directory.Packages.props` version, and the resulting diff goes through normal PR review
+
 Splitting policy:
 
 - split a package only when its assembly is independently useful to consumers
