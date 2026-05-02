@@ -2813,6 +2813,33 @@ Follow-up later:
 - consider escalating `Task.Run` to a banned symbol with a `;ConsumersMaySuppress` message once the pattern is more clearly documented; left as a comment in the curated `BannedSymbols.txt` for now
 - author a release-validation harness step that consumes `Cephalon.Analyzers` from a sample consumer project to verify the meta-package keeps working as the bundled analyzer versions evolve
 
+### ENG-326 Public-API contract lock-in rollout to Cephalon.Engine
+
+Status: done
+Estimate: 5
+
+Why:
+
+- `ENG-322` proved the public-API contract lock-in pattern on `Cephalon.Abstractions`; `Cephalon.Engine` is the next-largest contract surface (composition, runtime, manifest, policy, package-loading, trust, app-model center) and benefits the most from the same diff-gate discipline because changes there propagate across host adapters, transport adapters, and every runtime consumer
+- the engine had no public-API diff gate beyond the analyzer baseline; an accidental rename or removal could ship through PR review without explicit binary-contract acknowledgement
+- this slice is part of the durable supply-chain rollout pattern: `ENG-322` onto `Cephalon.Abstractions`, `ENG-326` onto `Cephalon.Engine`, then sequence onto host adapters / transport / behavior / data / event-sourcing / observability / multi-tenancy / agentics / retrieval / edge package families across subsequent sprints
+
+Delivered:
+
+- add `Microsoft.CodeAnalysis.PublicApiAnalyzers` as a `PrivateAssets=all` `PackageReference` to `src/Cephalon.Engine/Cephalon.Engine.csproj`
+- declare `PublicAPI.Shipped.txt` and `PublicAPI.Unshipped.txt` as `AdditionalFiles` on the project
+- generate `src/Cephalon.Engine/PublicAPI.Shipped.txt` from the current public surface (`1,269` unique entries plus the `#nullable enable` header, covering every public type / method / property / field / constant in the composition runtime); commit an empty `src/Cephalon.Engine/PublicAPI.Unshipped.txt`
+- suppress `RS0026` ("Do not add multiple overloads with optional parameters") and `RS0027` ("Public API with optional parameter(s) should have the most parameters") inside `Cephalon.Engine` only with an inline comment explaining the existing patterns; clean-up of those overload shapes is a separate follow-up so this slice does not bundle a refactor
+- refresh `src/Cephalon.Engine/packages.lock.json` after the new `PackageReference` so `dotnet restore --locked-mode` (the CI gate from `ENG-321`) still passes
+- verified end-to-end with `dotnet build src/Cephalon.Engine/Cephalon.Engine.csproj -c Release` (0 warnings, 0 errors) and full-solution `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors)
+
+Follow-up later:
+
+- continue the rollout to host adapters next: `Cephalon.AspNetCore` and `Cephalon.Worker` are the natural next slices, with the same csproj edit + extract-from-build-output flow used here and in `ENG-322`
+- continue rolling out to the transport / behavior / data / event-sourcing / observability / multi-tenancy / agentics / retrieval / edge package families across subsequent sprints; each rollout is its own `ENG-*` slice because each public-API baseline is a separate review surface
+- clean up the RS0026 / RS0027 optional-overload patterns inside `Cephalon.Engine` so the per-project suppressions can be removed without the build going red
+- author a generator / `dotnet format analyzers` integration into release validation so the public-API baseline regenerates predictably on intentional surface changes rather than relying on hand-extraction from build output
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -10869,6 +10896,10 @@ Upcoming sequence from the April 2026 maturity reset:
 ### Sprint 120
 
 - ENG-325 Cephalon.Analyzers curated meta-package (shipped)
+
+### Sprint 121
+
+- ENG-326 Public-API contract lock-in rollout to Cephalon.Engine (shipped)
 
 ### Later / not scheduled yet
 

@@ -1,0 +1,1270 @@
+#nullable enable
+Cephalon.Engine.AppModel.AppProfileFactory
+Cephalon.Engine.AppModel.BuiltInBlueprints
+Cephalon.Engine.AppModel.BuiltInSuiteBlueprints
+Cephalon.Engine.AppModel.DatabaseTopologyRoleResolution
+Cephalon.Engine.AppModel.DatabaseTopologyRoleResolution.DatabaseTopologyRoleResolution(string! requestedRoleId, string! resolvedRoleId, Cephalon.Abstractions.AppModel.DatabaseTargetSelection! requestedTarget, Cephalon.Abstractions.AppModel.DatabaseTargetSelection! effectiveTarget, string? useRole = null) -> void
+Cephalon.Engine.AppModel.DatabaseTopologyRoleResolution.EffectiveTarget.get -> Cephalon.Abstractions.AppModel.DatabaseTargetSelection!
+Cephalon.Engine.AppModel.DatabaseTopologyRoleResolution.RequestedRoleId.get -> string!
+Cephalon.Engine.AppModel.DatabaseTopologyRoleResolution.RequestedTarget.get -> Cephalon.Abstractions.AppModel.DatabaseTargetSelection!
+Cephalon.Engine.AppModel.DatabaseTopologyRoleResolution.ResolutionMode.get -> string!
+Cephalon.Engine.AppModel.DatabaseTopologyRoleResolution.ResolvedRoleId.get -> string!
+Cephalon.Engine.AppModel.DatabaseTopologyRoleResolution.UseRole.get -> string?
+Cephalon.Engine.AppModel.DatabaseTopologyRoleResolution.UsesRoleReference.get -> bool
+Cephalon.Engine.AppModel.DatabaseTopologyRoleResolver
+Cephalon.Engine.AppModel.Scaffolding.BuiltInScaffolds
+Cephalon.Engine.AppModel.Scaffolding.BuiltInSuiteScaffolds
+Cephalon.Engine.Composition.EngineBuilder
+Cephalon.Engine.Composition.EngineBuilder.AddBackendForFrontendClientBinding(Cephalon.Abstractions.Patterns.BackendForFrontendClientBindingDescriptor! binding) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddBackendForFrontendClientBindings(System.Collections.Generic.IEnumerable<Cephalon.Abstractions.Patterns.BackendForFrontendClientBindingDescriptor!>! bindings) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddCdcCapture(Cephalon.Abstractions.Data.CdcCaptureDescriptor! cdcCapture) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddCdcCaptures(System.Collections.Generic.IEnumerable<Cephalon.Abstractions.Data.CdcCaptureDescriptor!>! cdcCaptures) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddCellBoundaries(System.Collections.Generic.IEnumerable<Cephalon.Abstractions.Technologies.CellBoundaryDescriptor!>! cellBoundaries) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddCellBoundary(Cephalon.Abstractions.Technologies.CellBoundaryDescriptor! cellBoundary) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddCellHealthIsolation(Cephalon.Abstractions.Technologies.CellHealthIsolationDescriptor! healthIsolation) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddCellHealthIsolations(System.Collections.Generic.IEnumerable<Cephalon.Abstractions.Technologies.CellHealthIsolationDescriptor!>! healthIsolations) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddCellRoute(Cephalon.Abstractions.Technologies.CellRouteDescriptor! cellRoute) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddCellRoutes(System.Collections.Generic.IEnumerable<Cephalon.Abstractions.Technologies.CellRouteDescriptor!>! cellRoutes) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddFeatureFlag(Cephalon.Abstractions.Features.FeatureFlagDescriptor! featureFlag) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddFeatureFlagProvider(Cephalon.Abstractions.Features.IFeatureFlagProvider! provider) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddFeatureFlagProvider<TProvider>() -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddFeatureFlagProviders(System.Collections.Generic.IEnumerable<Cephalon.Abstractions.Features.IFeatureFlagProvider!>! providers) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddFeatureFlags(System.Collections.Generic.IEnumerable<Cephalon.Abstractions.Features.FeatureFlagDescriptor!>! featureFlags) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddLanguageResources(string! culture, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! resources) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddModule(Cephalon.Abstractions.Modules.IModule! module) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddModule<TModule>() -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddModulesFromAssemblies(System.Collections.Generic.IEnumerable<System.Reflection.Assembly!>! assemblies, System.Func<System.Type!, bool>? filter = null) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddModulesFromAssembly(System.Reflection.Assembly! assembly, System.Func<System.Type!, bool>? filter = null) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddModulesFromAssemblyContaining<TMarker>(System.Func<System.Type!, bool>? filter = null) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddPackage(Cephalon.Engine.Configuration.ModulePackageReference! package) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddPackageAssembly(string! path, string? id = null) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddPackageDirectories(System.Collections.Generic.IEnumerable<Cephalon.Engine.Configuration.ModulePackageDirectory!>! directories) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddPackageDirectory(Cephalon.Engine.Configuration.ModulePackageDirectory! directory) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddPackageDirectory(string! path, string? manifestFileName = null, bool includeSubdirectories = true) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddPackageManifest(string! manifestPath, string? id = null) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddPackages(System.Collections.Generic.IEnumerable<Cephalon.Engine.Configuration.ModulePackageReference!>! packages) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddPattern(Cephalon.Abstractions.Patterns.PatternDescriptor! pattern) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddStranglerFigRoute(Cephalon.Abstractions.Patterns.StranglerFigRouteDescriptor! route) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddStranglerFigRoutes(System.Collections.Generic.IEnumerable<Cephalon.Abstractions.Patterns.StranglerFigRouteDescriptor!>! routes) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddTechnology(Cephalon.Abstractions.Technologies.TechnologyDescriptor! technology) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.AddTransport(Cephalon.Abstractions.Transports.TransportDescriptor! transport) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.Build() -> Cephalon.Engine.Runtime.EngineRuntime!
+Cephalon.Engine.Composition.EngineBuilder.EngineBuilder(Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> void
+Cephalon.Engine.Composition.EngineBuilder.RegisterTechnology(Cephalon.Abstractions.Technologies.TechnologyDescriptor! technology) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.Services.get -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+Cephalon.Engine.Composition.EngineBuilder.UseBackendForFrontendSettings(Cephalon.Engine.Configuration.BackendForFrontendSettings! settings) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.UseBlueprint(Cephalon.Abstractions.AppModel.AppBlueprint! blueprint) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.UseCellSettings(Cephalon.Engine.Configuration.CellSettings! settings) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.UseConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.UseFailurePolicy(Cephalon.Engine.Configuration.FailurePolicy! policy) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.UseFeatureSettings(Cephalon.Engine.Configuration.FeatureSettings! settings) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.UseLocalization(Cephalon.Engine.Configuration.LocalizationSettings! settings) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.UseMigrationSettings(Cephalon.Engine.Configuration.MigrationSettings! migration) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.UseOptions(Cephalon.Engine.Configuration.EngineOptions! options) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.UsePackagePolicy(Cephalon.Engine.Configuration.PackagePolicy! policy) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.UseSettings(Cephalon.Engine.Configuration.EngineSettings! settings) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineBuilder.UseTrustPolicy(Cephalon.Engine.Configuration.TrustPolicy! policy) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Engine.Composition.EngineServiceCollectionExtensions
+Cephalon.Engine.Configuration.AuditHistoryExportSettings
+Cephalon.Engine.Configuration.AuditHistoryExportSettings.AuditHistoryExportSettings(bool? enabled = null, int? maxEntries = null) -> void
+Cephalon.Engine.Configuration.AuditHistoryExportSettings.Enabled.get -> bool?
+Cephalon.Engine.Configuration.AuditHistoryExportSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.AuditHistoryExportSettings.MaxEntries.get -> int?
+Cephalon.Engine.Configuration.AuditHistoryRetentionSettings
+Cephalon.Engine.Configuration.AuditHistoryRetentionSettings.ApplyOnStartup.get -> bool?
+Cephalon.Engine.Configuration.AuditHistoryRetentionSettings.AuditHistoryRetentionSettings(bool? enabled = null, int? maxAgeDays = null, int? deleteBatchSize = null, bool? applyOnStartup = null, int? runIntervalMinutes = null) -> void
+Cephalon.Engine.Configuration.AuditHistoryRetentionSettings.DeleteBatchSize.get -> int?
+Cephalon.Engine.Configuration.AuditHistoryRetentionSettings.Enabled.get -> bool?
+Cephalon.Engine.Configuration.AuditHistoryRetentionSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.AuditHistoryRetentionSettings.MaxAgeDays.get -> int?
+Cephalon.Engine.Configuration.AuditHistoryRetentionSettings.RunIntervalMinutes.get -> int?
+Cephalon.Engine.Configuration.AuditHistorySettings
+Cephalon.Engine.Configuration.AuditHistorySettings.AuditHistorySettings(bool? enabled = null, string? provider = null, string? databaseRole = null, Cephalon.Engine.Configuration.AuditHistoryExportSettings? export = null, Cephalon.Engine.Configuration.AuditHistoryRetentionSettings? retention = null) -> void
+Cephalon.Engine.Configuration.AuditHistorySettings.DatabaseRole.get -> string?
+Cephalon.Engine.Configuration.AuditHistorySettings.Enabled.get -> bool?
+Cephalon.Engine.Configuration.AuditHistorySettings.Export.get -> Cephalon.Engine.Configuration.AuditHistoryExportSettings!
+Cephalon.Engine.Configuration.AuditHistorySettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.AuditHistorySettings.Provider.get -> string?
+Cephalon.Engine.Configuration.AuditHistorySettings.Retention.get -> Cephalon.Engine.Configuration.AuditHistoryRetentionSettings!
+Cephalon.Engine.Configuration.AuditSettings
+Cephalon.Engine.Configuration.AuditSettings.AuditSettings(bool? enabled = null, Cephalon.Engine.Configuration.AuditHistorySettings? history = null) -> void
+Cephalon.Engine.Configuration.AuditSettings.Enabled.get -> bool?
+Cephalon.Engine.Configuration.AuditSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.AuditSettings.History.get -> Cephalon.Engine.Configuration.AuditHistorySettings!
+Cephalon.Engine.Configuration.BackendForFrontendBehaviorFilterSettings
+Cephalon.Engine.Configuration.BackendForFrontendBehaviorFilterSettings.BackendForFrontendBehaviorFilterSettings(System.Collections.Generic.IReadOnlyList<string!>? includedBehaviorIds = null, System.Collections.Generic.IReadOnlyList<string!>? excludedBehaviorIds = null, System.Collections.Generic.IReadOnlyList<string!>? includedCapabilityKeys = null, System.Collections.Generic.IReadOnlyList<string!>? excludedCapabilityKeys = null, System.Collections.Generic.IReadOnlyList<string!>? includedTags = null, System.Collections.Generic.IReadOnlyList<string!>? excludedTags = null) -> void
+Cephalon.Engine.Configuration.BackendForFrontendBehaviorFilterSettings.ExcludedBehaviorIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.BackendForFrontendBehaviorFilterSettings.ExcludedCapabilityKeys.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.BackendForFrontendBehaviorFilterSettings.ExcludedTags.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.BackendForFrontendBehaviorFilterSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.BackendForFrontendBehaviorFilterSettings.IncludedBehaviorIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.BackendForFrontendBehaviorFilterSettings.IncludedCapabilityKeys.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.BackendForFrontendBehaviorFilterSettings.IncludedTags.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.BackendForFrontendClientBindingSettings
+Cephalon.Engine.Configuration.BackendForFrontendClientBindingSettings.BackendForFrontendClientBindingSettings(string! id, string! clientId, string! sourceModuleId, string! displayName, string! description, string! transportId, string? entryPoint = null, Cephalon.Engine.Configuration.BackendForFrontendBehaviorFilterSettings? behaviorFilter = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Engine.Configuration.BackendForFrontendClientBindingSettings.BehaviorFilter.get -> Cephalon.Engine.Configuration.BackendForFrontendBehaviorFilterSettings!
+Cephalon.Engine.Configuration.BackendForFrontendClientBindingSettings.ClientId.get -> string!
+Cephalon.Engine.Configuration.BackendForFrontendClientBindingSettings.Description.get -> string!
+Cephalon.Engine.Configuration.BackendForFrontendClientBindingSettings.DisplayName.get -> string!
+Cephalon.Engine.Configuration.BackendForFrontendClientBindingSettings.EntryPoint.get -> string?
+Cephalon.Engine.Configuration.BackendForFrontendClientBindingSettings.Id.get -> string!
+Cephalon.Engine.Configuration.BackendForFrontendClientBindingSettings.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Engine.Configuration.BackendForFrontendClientBindingSettings.SourceModuleId.get -> string!
+Cephalon.Engine.Configuration.BackendForFrontendClientBindingSettings.TransportId.get -> string!
+Cephalon.Engine.Configuration.BackendForFrontendSettings
+Cephalon.Engine.Configuration.BackendForFrontendSettings.BackendForFrontendSettings(System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Configuration.BackendForFrontendClientBindingSettings!>? bindings = null) -> void
+Cephalon.Engine.Configuration.BackendForFrontendSettings.Bindings.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Configuration.BackendForFrontendClientBindingSettings!>!
+Cephalon.Engine.Configuration.BackendForFrontendSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.BehaviorExecutionResilienceOverrideSettings
+Cephalon.Engine.Configuration.BehaviorExecutionResilienceOverrideSettings.BehaviorExecutionResilienceOverrideSettings(string! id, System.Collections.Generic.IReadOnlyList<string!>? behaviorIds = null, System.Collections.Generic.IReadOnlyList<string!>? transportIds = null, Cephalon.Engine.Configuration.RetrySettings? retry = null, Cephalon.Engine.Configuration.TimeoutSettings? timeout = null, Cephalon.Engine.Configuration.CircuitBreakerSettings? circuitBreaker = null, Cephalon.Engine.Configuration.BulkheadSettings? bulkhead = null, Cephalon.Engine.Configuration.RateLimitingSettings? rateLimiting = null) -> void
+Cephalon.Engine.Configuration.BehaviorExecutionResilienceOverrideSettings.BehaviorIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.BehaviorExecutionResilienceOverrideSettings.Bulkhead.get -> Cephalon.Engine.Configuration.BulkheadSettings!
+Cephalon.Engine.Configuration.BehaviorExecutionResilienceOverrideSettings.CircuitBreaker.get -> Cephalon.Engine.Configuration.CircuitBreakerSettings!
+Cephalon.Engine.Configuration.BehaviorExecutionResilienceOverrideSettings.HasStrategyValues.get -> bool
+Cephalon.Engine.Configuration.BehaviorExecutionResilienceOverrideSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.BehaviorExecutionResilienceOverrideSettings.Id.get -> string!
+Cephalon.Engine.Configuration.BehaviorExecutionResilienceOverrideSettings.RateLimiting.get -> Cephalon.Engine.Configuration.RateLimitingSettings!
+Cephalon.Engine.Configuration.BehaviorExecutionResilienceOverrideSettings.Retry.get -> Cephalon.Engine.Configuration.RetrySettings!
+Cephalon.Engine.Configuration.BehaviorExecutionResilienceOverrideSettings.Timeout.get -> Cephalon.Engine.Configuration.TimeoutSettings!
+Cephalon.Engine.Configuration.BehaviorExecutionResilienceOverrideSettings.TransportIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.BulkheadSettings
+Cephalon.Engine.Configuration.BulkheadSettings.BulkheadSettings(bool? enabled = null, int? maxConcurrentExecutions = null, int? maxQueuedActions = null) -> void
+Cephalon.Engine.Configuration.BulkheadSettings.Enabled.get -> bool?
+Cephalon.Engine.Configuration.BulkheadSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.BulkheadSettings.MaxConcurrentExecutions.get -> int?
+Cephalon.Engine.Configuration.BulkheadSettings.MaxQueuedActions.get -> int?
+Cephalon.Engine.Configuration.CellSettings
+Cephalon.Engine.Configuration.CellSettings.CellSettings(Cephalon.Engine.Configuration.CellTrafficAutomationSettings? trafficAutomation = null) -> void
+Cephalon.Engine.Configuration.CellSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.CellSettings.TrafficAutomation.get -> Cephalon.Engine.Configuration.CellTrafficAutomationSettings!
+Cephalon.Engine.Configuration.CellTrafficAutomationRouteSettings
+Cephalon.Engine.Configuration.CellTrafficAutomationRouteSettings.ActionMode.get -> string?
+Cephalon.Engine.Configuration.CellTrafficAutomationRouteSettings.AutomationMode.get -> string?
+Cephalon.Engine.Configuration.CellTrafficAutomationRouteSettings.CellTrafficAutomationRouteSettings(string! routeId, string? automationMode = null, string? triggerMode = null, string? actionMode = null, string? materializationMode = null, string? notes = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Engine.Configuration.CellTrafficAutomationRouteSettings.CellTrafficAutomationRouteSettings(string! routeId, string? automationMode, string? triggerMode, string? actionMode, string? materializationMode, string? notes, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata, string? providerId, System.Collections.Generic.IReadOnlyList<string!>? edgeNodeIds = null) -> void
+Cephalon.Engine.Configuration.CellTrafficAutomationRouteSettings.EdgeNodeIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.CellTrafficAutomationRouteSettings.MaterializationMode.get -> string?
+Cephalon.Engine.Configuration.CellTrafficAutomationRouteSettings.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Engine.Configuration.CellTrafficAutomationRouteSettings.Notes.get -> string?
+Cephalon.Engine.Configuration.CellTrafficAutomationRouteSettings.ProviderId.get -> string?
+Cephalon.Engine.Configuration.CellTrafficAutomationRouteSettings.RouteId.get -> string!
+Cephalon.Engine.Configuration.CellTrafficAutomationRouteSettings.TriggerMode.get -> string?
+Cephalon.Engine.Configuration.CellTrafficAutomationSettings
+Cephalon.Engine.Configuration.CellTrafficAutomationSettings.CellTrafficAutomationSettings(string? defaultAutomationMode = null, string? defaultTriggerMode = null, string? defaultActionMode = null, string? defaultMaterializationMode = null, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Configuration.CellTrafficAutomationRouteSettings!>? routes = null) -> void
+Cephalon.Engine.Configuration.CellTrafficAutomationSettings.CellTrafficAutomationSettings(string? defaultAutomationMode, string? defaultTriggerMode, string? defaultActionMode, string? defaultMaterializationMode, string? defaultProviderId, System.Collections.Generic.IReadOnlyList<string!>? defaultEdgeNodeIds = null, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Configuration.CellTrafficAutomationRouteSettings!>? routes = null) -> void
+Cephalon.Engine.Configuration.CellTrafficAutomationSettings.DefaultActionMode.get -> string?
+Cephalon.Engine.Configuration.CellTrafficAutomationSettings.DefaultAutomationMode.get -> string?
+Cephalon.Engine.Configuration.CellTrafficAutomationSettings.DefaultEdgeNodeIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.CellTrafficAutomationSettings.DefaultMaterializationMode.get -> string?
+Cephalon.Engine.Configuration.CellTrafficAutomationSettings.DefaultProviderId.get -> string?
+Cephalon.Engine.Configuration.CellTrafficAutomationSettings.DefaultTriggerMode.get -> string?
+Cephalon.Engine.Configuration.CellTrafficAutomationSettings.HasDefaultValues.get -> bool
+Cephalon.Engine.Configuration.CellTrafficAutomationSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.CellTrafficAutomationSettings.Routes.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Configuration.CellTrafficAutomationRouteSettings!>!
+Cephalon.Engine.Configuration.CircuitBreakerSettings
+Cephalon.Engine.Configuration.CircuitBreakerSettings.BreakDurationSeconds.get -> int?
+Cephalon.Engine.Configuration.CircuitBreakerSettings.CircuitBreakerSettings(bool? enabled = null, decimal? failureRatio = null, int? minimumThroughput = null, int? samplingDurationSeconds = null, int? breakDurationSeconds = null) -> void
+Cephalon.Engine.Configuration.CircuitBreakerSettings.Enabled.get -> bool?
+Cephalon.Engine.Configuration.CircuitBreakerSettings.FailureRatio.get -> decimal?
+Cephalon.Engine.Configuration.CircuitBreakerSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.CircuitBreakerSettings.MinimumThroughput.get -> int?
+Cephalon.Engine.Configuration.CircuitBreakerSettings.SamplingDurationSeconds.get -> int?
+Cephalon.Engine.Configuration.ConnectionStringResolution
+Cephalon.Engine.Configuration.DataSettings
+Cephalon.Engine.Configuration.DataSettings.DataSettings(string? provider = null, bool? readWriteSplit = null, bool? outboxEnabled = null, string? idGenerator = null) -> void
+Cephalon.Engine.Configuration.DataSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.DataSettings.IdGenerator.get -> string?
+Cephalon.Engine.Configuration.DataSettings.OutboxEnabled.get -> bool?
+Cephalon.Engine.Configuration.DataSettings.Provider.get -> string?
+Cephalon.Engine.Configuration.DataSettings.ReadWriteSplit.get -> bool?
+Cephalon.Engine.Configuration.DatabaseMigrationsSettings
+Cephalon.Engine.Configuration.DatabaseMigrationsSettings.ApplyOnStartup.get -> bool?
+Cephalon.Engine.Configuration.DatabaseMigrationsSettings.DatabaseMigrationsSettings(bool? applyOnStartup = null, bool? exitAfterApply = null, System.Collections.Generic.IReadOnlyList<string!>? targets = null) -> void
+Cephalon.Engine.Configuration.DatabaseMigrationsSettings.ExitAfterApply.get -> bool?
+Cephalon.Engine.Configuration.DatabaseMigrationsSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.DatabaseMigrationsSettings.Targets.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.DatabaseRuntimeSettings
+Cephalon.Engine.Configuration.DatabaseRuntimeSettings.CommandTimeoutSeconds.get -> int?
+Cephalon.Engine.Configuration.DatabaseRuntimeSettings.DatabaseRuntimeSettings(bool? enableDetailedErrors = null, bool? enableSensitiveDataLogging = null, bool? enableRetryOnFailure = null, int? maxRetryCount = null, int? maxRetryDelaySeconds = null, int? commandTimeoutSeconds = null, int? maxBatchSize = null, int? roleProbeFreshnessSeconds = null) -> void
+Cephalon.Engine.Configuration.DatabaseRuntimeSettings.EnableDetailedErrors.get -> bool?
+Cephalon.Engine.Configuration.DatabaseRuntimeSettings.EnableRetryOnFailure.get -> bool?
+Cephalon.Engine.Configuration.DatabaseRuntimeSettings.EnableSensitiveDataLogging.get -> bool?
+Cephalon.Engine.Configuration.DatabaseRuntimeSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.DatabaseRuntimeSettings.MaxBatchSize.get -> int?
+Cephalon.Engine.Configuration.DatabaseRuntimeSettings.MaxRetryCount.get -> int?
+Cephalon.Engine.Configuration.DatabaseRuntimeSettings.MaxRetryDelaySeconds.get -> int?
+Cephalon.Engine.Configuration.DatabaseRuntimeSettings.RoleProbeFreshnessSeconds.get -> int?
+Cephalon.Engine.Configuration.DatabaseTargetSettings
+Cephalon.Engine.Configuration.DatabaseTargetSettings.ConnectionString.get -> string?
+Cephalon.Engine.Configuration.DatabaseTargetSettings.ConnectionStringName.get -> string?
+Cephalon.Engine.Configuration.DatabaseTargetSettings.DatabaseTargetSettings(string? provider = null, string? connectionStringName = null, string? connectionString = null, string? useRole = null, string? schema = null, Cephalon.Engine.Configuration.DatabaseRuntimeSettings? runtime = null) -> void
+Cephalon.Engine.Configuration.DatabaseTargetSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.DatabaseTargetSettings.Provider.get -> string?
+Cephalon.Engine.Configuration.DatabaseTargetSettings.Runtime.get -> Cephalon.Engine.Configuration.DatabaseRuntimeSettings!
+Cephalon.Engine.Configuration.DatabaseTargetSettings.Schema.get -> string?
+Cephalon.Engine.Configuration.DatabaseTargetSettings.UseRole.get -> string?
+Cephalon.Engine.Configuration.DatabaseTopologySettings
+Cephalon.Engine.Configuration.DatabaseTopologySettings.DatabaseTopologySettings(Cephalon.Engine.Configuration.DatabaseRuntimeSettings? runtime = null, Cephalon.Engine.Configuration.DatabaseTargetSettings? write = null, Cephalon.Engine.Configuration.DatabaseTargetSettings? read = null, Cephalon.Engine.Configuration.DatabaseTargetSettings? outbox = null, Cephalon.Engine.Configuration.DatabaseTargetSettings? history = null, Cephalon.Engine.Configuration.DatabaseMigrationsSettings? migrations = null) -> void
+Cephalon.Engine.Configuration.DatabaseTopologySettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.DatabaseTopologySettings.History.get -> Cephalon.Engine.Configuration.DatabaseTargetSettings!
+Cephalon.Engine.Configuration.DatabaseTopologySettings.Migrations.get -> Cephalon.Engine.Configuration.DatabaseMigrationsSettings!
+Cephalon.Engine.Configuration.DatabaseTopologySettings.Outbox.get -> Cephalon.Engine.Configuration.DatabaseTargetSettings!
+Cephalon.Engine.Configuration.DatabaseTopologySettings.Read.get -> Cephalon.Engine.Configuration.DatabaseTargetSettings!
+Cephalon.Engine.Configuration.DatabaseTopologySettings.Runtime.get -> Cephalon.Engine.Configuration.DatabaseRuntimeSettings!
+Cephalon.Engine.Configuration.DatabaseTopologySettings.Write.get -> Cephalon.Engine.Configuration.DatabaseTargetSettings!
+Cephalon.Engine.Configuration.EngineOptions
+Cephalon.Engine.Configuration.EngineOptions.Capabilities.get -> System.Collections.Generic.IReadOnlyDictionary<string!, bool>!
+Cephalon.Engine.Configuration.EngineOptions.EngineOptions(System.Collections.Generic.IReadOnlyDictionary<string!, bool>? modules = null, System.Collections.Generic.IReadOnlyDictionary<string!, bool>? capabilities = null) -> void
+Cephalon.Engine.Configuration.EngineOptions.HasValues.get -> bool
+Cephalon.Engine.Configuration.EngineOptions.IsCapabilityEnabled(string! capabilityKey) -> bool
+Cephalon.Engine.Configuration.EngineOptions.IsModuleEnabled(string! moduleId) -> bool
+Cephalon.Engine.Configuration.EngineOptions.Merge(Cephalon.Engine.Configuration.EngineOptions? other) -> Cephalon.Engine.Configuration.EngineOptions!
+Cephalon.Engine.Configuration.EngineOptions.Modules.get -> System.Collections.Generic.IReadOnlyDictionary<string!, bool>!
+Cephalon.Engine.Configuration.EngineSettings
+Cephalon.Engine.Configuration.EngineSettings.Audit.get -> Cephalon.Engine.Configuration.AuditSettings!
+Cephalon.Engine.Configuration.EngineSettings.BackendForFrontend.get -> Cephalon.Engine.Configuration.BackendForFrontendSettings!
+Cephalon.Engine.Configuration.EngineSettings.Blueprint.get -> string?
+Cephalon.Engine.Configuration.EngineSettings.Cells.get -> Cephalon.Engine.Configuration.CellSettings!
+Cephalon.Engine.Configuration.EngineSettings.Data.get -> Cephalon.Engine.Configuration.DataSettings!
+Cephalon.Engine.Configuration.EngineSettings.Databases.get -> Cephalon.Engine.Configuration.DatabaseTopologySettings!
+Cephalon.Engine.Configuration.EngineSettings.Discovery.get -> Cephalon.Engine.Configuration.ModuleDiscoverySettings!
+Cephalon.Engine.Configuration.EngineSettings.EngineSettings(string? blueprint = null, System.Collections.Generic.IReadOnlyList<string!>? patterns = null, System.Collections.Generic.IReadOnlyList<string!>? transports = null, System.Collections.Generic.IReadOnlyList<string!>? technologies = null, Cephalon.Engine.Configuration.EngineOptions? options = null, Cephalon.Engine.Configuration.ModuleDiscoverySettings? discovery = null, Cephalon.Engine.Configuration.LocalizationSettings? localization = null, Cephalon.Engine.Configuration.FailurePolicy? failurePolicy = null, Cephalon.Engine.Configuration.TrustPolicy? trustPolicy = null, Cephalon.Engine.Configuration.PackagePolicy? packagePolicy = null, Cephalon.Engine.Configuration.DataSettings? data = null, Cephalon.Engine.Configuration.DatabaseTopologySettings? databases = null, Cephalon.Engine.Configuration.IdentitySettings? identity = null, Cephalon.Engine.Configuration.TenancySettings? tenancy = null, Cephalon.Engine.Configuration.AuditSettings? audit = null, Cephalon.Engine.Configuration.MessagingSettings? messaging = null, Cephalon.Engine.Configuration.ResilienceSettings? resilience = null, Cephalon.Engine.Configuration.MigrationSettings? migration = null, Cephalon.Engine.Configuration.BackendForFrontendSettings? backendForFrontend = null, Cephalon.Engine.Configuration.FeatureSettings? features = null, Cephalon.Engine.Configuration.CellSettings? cells = null) -> void
+Cephalon.Engine.Configuration.EngineSettings.FailurePolicy.get -> Cephalon.Engine.Configuration.FailurePolicy!
+Cephalon.Engine.Configuration.EngineSettings.Features.get -> Cephalon.Engine.Configuration.FeatureSettings!
+Cephalon.Engine.Configuration.EngineSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.EngineSettings.Identity.get -> Cephalon.Engine.Configuration.IdentitySettings!
+Cephalon.Engine.Configuration.EngineSettings.Localization.get -> Cephalon.Engine.Configuration.LocalizationSettings!
+Cephalon.Engine.Configuration.EngineSettings.Messaging.get -> Cephalon.Engine.Configuration.MessagingSettings!
+Cephalon.Engine.Configuration.EngineSettings.Migration.get -> Cephalon.Engine.Configuration.MigrationSettings!
+Cephalon.Engine.Configuration.EngineSettings.Options.get -> Cephalon.Engine.Configuration.EngineOptions!
+Cephalon.Engine.Configuration.EngineSettings.PackagePolicy.get -> Cephalon.Engine.Configuration.PackagePolicy!
+Cephalon.Engine.Configuration.EngineSettings.Patterns.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.EngineSettings.Resilience.get -> Cephalon.Engine.Configuration.ResilienceSettings!
+Cephalon.Engine.Configuration.EngineSettings.Technologies.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.EngineSettings.Tenancy.get -> Cephalon.Engine.Configuration.TenancySettings!
+Cephalon.Engine.Configuration.EngineSettings.Transports.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.EngineSettings.TrustPolicy.get -> Cephalon.Engine.Configuration.TrustPolicy!
+Cephalon.Engine.Configuration.FailurePolicy
+Cephalon.Engine.Configuration.FailurePolicy.AllowManualRestart.get -> bool
+Cephalon.Engine.Configuration.FailurePolicy.FailurePolicy(Cephalon.Engine.Configuration.StartupFailureBehavior startupFailureBehavior = Cephalon.Engine.Configuration.StartupFailureBehavior.FailFast, Cephalon.Engine.Configuration.StopFailureBehavior stopFailureBehavior = Cephalon.Engine.Configuration.StopFailureBehavior.BestEffortContinue, bool allowManualRestart = true, int maxRestartAttempts = 3, System.TimeSpan startupReadinessDelay = default(System.TimeSpan), System.TimeSpan shutdownLivenessGracePeriod = default(System.TimeSpan), System.TimeSpan manualRestartBackoff = default(System.TimeSpan)) -> void
+Cephalon.Engine.Configuration.FailurePolicy.HasValues.get -> bool
+Cephalon.Engine.Configuration.FailurePolicy.ManualRestartBackoff.get -> System.TimeSpan
+Cephalon.Engine.Configuration.FailurePolicy.MaxRestartAttempts.get -> int
+Cephalon.Engine.Configuration.FailurePolicy.ShutdownLivenessGracePeriod.get -> System.TimeSpan
+Cephalon.Engine.Configuration.FailurePolicy.StartupFailureBehavior.get -> Cephalon.Engine.Configuration.StartupFailureBehavior
+Cephalon.Engine.Configuration.FailurePolicy.StartupReadinessDelay.get -> System.TimeSpan
+Cephalon.Engine.Configuration.FailurePolicy.StopFailureBehavior.get -> Cephalon.Engine.Configuration.StopFailureBehavior
+Cephalon.Engine.Configuration.FeatureFlagProviderBindingSettings
+Cephalon.Engine.Configuration.FeatureFlagProviderBindingSettings.FeatureFlagProviderBindingSettings(string! providerId, string? providerFeatureId = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Engine.Configuration.FeatureFlagProviderBindingSettings.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Engine.Configuration.FeatureFlagProviderBindingSettings.ProviderFeatureId.get -> string?
+Cephalon.Engine.Configuration.FeatureFlagProviderBindingSettings.ProviderId.get -> string!
+Cephalon.Engine.Configuration.FeatureFlagSettings
+Cephalon.Engine.Configuration.FeatureFlagSettings.Description.get -> string!
+Cephalon.Engine.Configuration.FeatureFlagSettings.DisplayName.get -> string!
+Cephalon.Engine.Configuration.FeatureFlagSettings.Enabled.get -> bool
+Cephalon.Engine.Configuration.FeatureFlagSettings.FeatureFlagSettings(string! id, string! displayName, string! description, bool enabled = false, Cephalon.Abstractions.Features.FeatureFlagSourceKind sourceKind = Cephalon.Abstractions.Features.FeatureFlagSourceKind.Host, string? sourceModuleId = null, Cephalon.Engine.Configuration.FeatureFlagTargetingSettings? targeting = null, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Configuration.FeatureFlagProviderBindingSettings!>? providerBindings = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Engine.Configuration.FeatureFlagSettings.Id.get -> string!
+Cephalon.Engine.Configuration.FeatureFlagSettings.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Engine.Configuration.FeatureFlagSettings.ProviderBindings.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Configuration.FeatureFlagProviderBindingSettings!>!
+Cephalon.Engine.Configuration.FeatureFlagSettings.SourceKind.get -> Cephalon.Abstractions.Features.FeatureFlagSourceKind
+Cephalon.Engine.Configuration.FeatureFlagSettings.SourceModuleId.get -> string?
+Cephalon.Engine.Configuration.FeatureFlagSettings.Targeting.get -> Cephalon.Engine.Configuration.FeatureFlagTargetingSettings!
+Cephalon.Engine.Configuration.FeatureFlagTargetingSettings
+Cephalon.Engine.Configuration.FeatureFlagTargetingSettings.ExcludedBehaviorIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.FeatureFlagTargetingSettings.ExcludedCapabilityKeys.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.FeatureFlagTargetingSettings.ExcludedEnvironmentNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.FeatureFlagTargetingSettings.ExcludedModuleIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.FeatureFlagTargetingSettings.ExcludedSubjectIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.FeatureFlagTargetingSettings.ExcludedTags.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.FeatureFlagTargetingSettings.ExcludedTenantIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.FeatureFlagTargetingSettings.ExcludedTransportIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.FeatureFlagTargetingSettings.FeatureFlagTargetingSettings(System.Collections.Generic.IReadOnlyList<string!>? includedModuleIds = null, System.Collections.Generic.IReadOnlyList<string!>? excludedModuleIds = null, System.Collections.Generic.IReadOnlyList<string!>? includedBehaviorIds = null, System.Collections.Generic.IReadOnlyList<string!>? excludedBehaviorIds = null, System.Collections.Generic.IReadOnlyList<string!>? includedCapabilityKeys = null, System.Collections.Generic.IReadOnlyList<string!>? excludedCapabilityKeys = null, System.Collections.Generic.IReadOnlyList<string!>? includedTransportIds = null, System.Collections.Generic.IReadOnlyList<string!>? excludedTransportIds = null, System.Collections.Generic.IReadOnlyList<string!>? includedEnvironmentNames = null, System.Collections.Generic.IReadOnlyList<string!>? excludedEnvironmentNames = null, System.Collections.Generic.IReadOnlyList<string!>? includedTenantIds = null, System.Collections.Generic.IReadOnlyList<string!>? excludedTenantIds = null, System.Collections.Generic.IReadOnlyList<string!>? includedSubjectIds = null, System.Collections.Generic.IReadOnlyList<string!>? excludedSubjectIds = null, System.Collections.Generic.IReadOnlyList<string!>? includedTags = null, System.Collections.Generic.IReadOnlyList<string!>? excludedTags = null) -> void
+Cephalon.Engine.Configuration.FeatureFlagTargetingSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.FeatureFlagTargetingSettings.IncludedBehaviorIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.FeatureFlagTargetingSettings.IncludedCapabilityKeys.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.FeatureFlagTargetingSettings.IncludedEnvironmentNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.FeatureFlagTargetingSettings.IncludedModuleIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.FeatureFlagTargetingSettings.IncludedSubjectIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.FeatureFlagTargetingSettings.IncludedTags.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.FeatureFlagTargetingSettings.IncludedTenantIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.FeatureFlagTargetingSettings.IncludedTransportIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.FeatureSettings
+Cephalon.Engine.Configuration.FeatureSettings.FeatureSettings(System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Configuration.FeatureFlagSettings!>? flags = null) -> void
+Cephalon.Engine.Configuration.FeatureSettings.Flags.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Configuration.FeatureFlagSettings!>!
+Cephalon.Engine.Configuration.FeatureSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.IdentitySettings
+Cephalon.Engine.Configuration.IdentitySettings.AuthorizationModes.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.IdentitySettings.Enabled.get -> bool?
+Cephalon.Engine.Configuration.IdentitySettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.IdentitySettings.IdentitySettings(bool? enabled = null, System.Collections.Generic.IReadOnlyList<string!>? authorizationModes = null) -> void
+Cephalon.Engine.Configuration.LocalizationSettings
+Cephalon.Engine.Configuration.LocalizationSettings.DefaultCulture.get -> string?
+Cephalon.Engine.Configuration.LocalizationSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.LocalizationSettings.LocalizationSettings(string? defaultCulture = null, System.Collections.Generic.IReadOnlyList<string!>? supportedCultures = null, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyDictionary<string!, string!>!>? resources = null) -> void
+Cephalon.Engine.Configuration.LocalizationSettings.Merge(Cephalon.Engine.Configuration.LocalizationSettings? other) -> Cephalon.Engine.Configuration.LocalizationSettings!
+Cephalon.Engine.Configuration.LocalizationSettings.Resources.get -> System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyDictionary<string!, string!>!>!
+Cephalon.Engine.Configuration.LocalizationSettings.SupportedCultures.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.MessagingSettings
+Cephalon.Engine.Configuration.MessagingSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.MessagingSettings.MessagingSettings(string? provider = null) -> void
+Cephalon.Engine.Configuration.MessagingSettings.Provider.get -> string?
+Cephalon.Engine.Configuration.MigrationSettings
+Cephalon.Engine.Configuration.MigrationSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.MigrationSettings.MigrationSettings(Cephalon.Engine.Configuration.StranglerFigMigrationSettings? stranglerFig = null) -> void
+Cephalon.Engine.Configuration.MigrationSettings.StranglerFig.get -> Cephalon.Engine.Configuration.StranglerFigMigrationSettings!
+Cephalon.Engine.Configuration.ModuleDiscoverySettings
+Cephalon.Engine.Configuration.ModuleDiscoverySettings.Assemblies.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.ModuleDiscoverySettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.ModuleDiscoverySettings.ModuleDiscoverySettings(System.Collections.Generic.IReadOnlyList<string!>? assemblies = null, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Configuration.ModulePackageReference!>? packages = null, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Configuration.ModulePackageDirectory!>? packageDirectories = null) -> void
+Cephalon.Engine.Configuration.ModuleDiscoverySettings.PackageDirectories.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Configuration.ModulePackageDirectory!>!
+Cephalon.Engine.Configuration.ModuleDiscoverySettings.Packages.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Configuration.ModulePackageReference!>!
+Cephalon.Engine.Configuration.ModulePackageDirectory
+Cephalon.Engine.Configuration.ModulePackageDirectory.IncludeSubdirectories.get -> bool
+Cephalon.Engine.Configuration.ModulePackageDirectory.ManifestFileName.get -> string!
+Cephalon.Engine.Configuration.ModulePackageDirectory.ModulePackageDirectory(string! path, string? manifestFileName = null, bool includeSubdirectories = true) -> void
+Cephalon.Engine.Configuration.ModulePackageDirectory.Path.get -> string!
+Cephalon.Engine.Configuration.ModulePackageReference
+Cephalon.Engine.Configuration.ModulePackageReference.Id.get -> string?
+Cephalon.Engine.Configuration.ModulePackageReference.IsAssemblyPath.get -> bool
+Cephalon.Engine.Configuration.ModulePackageReference.IsManifestFile.get -> bool
+Cephalon.Engine.Configuration.ModulePackageReference.Kind.get -> string!
+Cephalon.Engine.Configuration.ModulePackageReference.ModulePackageReference(string! path, string? id = null, string? kind = null) -> void
+Cephalon.Engine.Configuration.ModulePackageReference.Path.get -> string!
+Cephalon.Engine.Configuration.PackagePolicy
+Cephalon.Engine.Configuration.PackagePolicy.AllowAssemblyPathPackages.get -> bool
+Cephalon.Engine.Configuration.PackagePolicy.HasValues.get -> bool
+Cephalon.Engine.Configuration.PackagePolicy.PackagePolicy(bool allowAssemblyPathPackages = true, bool requireVersion = false, bool requireMinimumEngineVersion = false, bool requireMaximumEngineVersion = false, bool requireSupportedTargetFrameworks = false, bool requirePublisherId = false, bool requireSignatureFingerprint = false, bool requireSignatureKeyId = false, bool requireSignatureValue = false, bool requireSignatureVerification = false, bool requireIntegritySha256 = false) -> void
+Cephalon.Engine.Configuration.PackagePolicy.RequireIntegritySha256.get -> bool
+Cephalon.Engine.Configuration.PackagePolicy.RequireMaximumEngineVersion.get -> bool
+Cephalon.Engine.Configuration.PackagePolicy.RequireMinimumEngineVersion.get -> bool
+Cephalon.Engine.Configuration.PackagePolicy.RequirePublisherId.get -> bool
+Cephalon.Engine.Configuration.PackagePolicy.RequireSignatureFingerprint.get -> bool
+Cephalon.Engine.Configuration.PackagePolicy.RequireSignatureKeyId.get -> bool
+Cephalon.Engine.Configuration.PackagePolicy.RequireSignatureValue.get -> bool
+Cephalon.Engine.Configuration.PackagePolicy.RequireSignatureVerification.get -> bool
+Cephalon.Engine.Configuration.PackagePolicy.RequireSupportedTargetFrameworks.get -> bool
+Cephalon.Engine.Configuration.PackagePolicy.RequireVersion.get -> bool
+Cephalon.Engine.Configuration.ProjectConfigurationBuilderExtensions
+Cephalon.Engine.Configuration.RateLimitingOverrideSettings
+Cephalon.Engine.Configuration.RateLimitingOverrideSettings.Algorithm.get -> string?
+Cephalon.Engine.Configuration.RateLimitingOverrideSettings.BehaviorIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.RateLimitingOverrideSettings.Enabled.get -> bool?
+Cephalon.Engine.Configuration.RateLimitingOverrideSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.RateLimitingOverrideSettings.Id.get -> string!
+Cephalon.Engine.Configuration.RateLimitingOverrideSettings.PermitLimit.get -> int?
+Cephalon.Engine.Configuration.RateLimitingOverrideSettings.QueueLimit.get -> int?
+Cephalon.Engine.Configuration.RateLimitingOverrideSettings.RateLimitingOverrideSettings(string! id, System.Collections.Generic.IReadOnlyList<string!>? behaviorIds = null, System.Collections.Generic.IReadOnlyList<string!>? transportIds = null, bool? enabled = null, string? algorithm = null, int? permitLimit = null, int? queueLimit = null, int? windowSeconds = null, int? segmentsPerWindow = null) -> void
+Cephalon.Engine.Configuration.RateLimitingOverrideSettings.SegmentsPerWindow.get -> int?
+Cephalon.Engine.Configuration.RateLimitingOverrideSettings.TransportIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.RateLimitingOverrideSettings.WindowSeconds.get -> int?
+Cephalon.Engine.Configuration.RateLimitingSettings
+Cephalon.Engine.Configuration.RateLimitingSettings.Algorithm.get -> string?
+Cephalon.Engine.Configuration.RateLimitingSettings.Enabled.get -> bool?
+Cephalon.Engine.Configuration.RateLimitingSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.RateLimitingSettings.Overrides.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Configuration.RateLimitingOverrideSettings!>!
+Cephalon.Engine.Configuration.RateLimitingSettings.PermitLimit.get -> int?
+Cephalon.Engine.Configuration.RateLimitingSettings.QueueLimit.get -> int?
+Cephalon.Engine.Configuration.RateLimitingSettings.RateLimitingSettings(bool? enabled = null, string? algorithm = null, int? permitLimit = null, int? queueLimit = null, int? windowSeconds = null, int? segmentsPerWindow = null, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Configuration.RateLimitingOverrideSettings!>? overrides = null) -> void
+Cephalon.Engine.Configuration.RateLimitingSettings.SegmentsPerWindow.get -> int?
+Cephalon.Engine.Configuration.RateLimitingSettings.WindowSeconds.get -> int?
+Cephalon.Engine.Configuration.ResilienceSettings
+Cephalon.Engine.Configuration.ResilienceSettings.BehaviorExecutionOverrides.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Configuration.BehaviorExecutionResilienceOverrideSettings!>!
+Cephalon.Engine.Configuration.ResilienceSettings.Bulkhead.get -> Cephalon.Engine.Configuration.BulkheadSettings!
+Cephalon.Engine.Configuration.ResilienceSettings.CircuitBreaker.get -> Cephalon.Engine.Configuration.CircuitBreakerSettings!
+Cephalon.Engine.Configuration.ResilienceSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.ResilienceSettings.RateLimiting.get -> Cephalon.Engine.Configuration.RateLimitingSettings!
+Cephalon.Engine.Configuration.ResilienceSettings.ResilienceSettings(Cephalon.Engine.Configuration.RetrySettings? retry = null, Cephalon.Engine.Configuration.TimeoutSettings? timeout = null, Cephalon.Engine.Configuration.CircuitBreakerSettings? circuitBreaker = null, Cephalon.Engine.Configuration.BulkheadSettings? bulkhead = null, Cephalon.Engine.Configuration.RateLimitingSettings? rateLimiting = null, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Configuration.BehaviorExecutionResilienceOverrideSettings!>? behaviorExecutionOverrides = null) -> void
+Cephalon.Engine.Configuration.ResilienceSettings.Retry.get -> Cephalon.Engine.Configuration.RetrySettings!
+Cephalon.Engine.Configuration.ResilienceSettings.Timeout.get -> Cephalon.Engine.Configuration.TimeoutSettings!
+Cephalon.Engine.Configuration.RetrySettings
+Cephalon.Engine.Configuration.RetrySettings.Backoff.get -> string?
+Cephalon.Engine.Configuration.RetrySettings.BaseDelayMilliseconds.get -> int?
+Cephalon.Engine.Configuration.RetrySettings.Enabled.get -> bool?
+Cephalon.Engine.Configuration.RetrySettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.RetrySettings.MaxAttempts.get -> int?
+Cephalon.Engine.Configuration.RetrySettings.MaxDelayMilliseconds.get -> int?
+Cephalon.Engine.Configuration.RetrySettings.RetrySettings(bool? enabled = null, int? maxAttempts = null, string? backoff = null, int? baseDelayMilliseconds = null, int? maxDelayMilliseconds = null, bool? useJitter = null) -> void
+Cephalon.Engine.Configuration.RetrySettings.UseJitter.get -> bool?
+Cephalon.Engine.Configuration.StartupFailureBehavior
+Cephalon.Engine.Configuration.StartupFailureBehavior.CaptureOnly = 1 -> Cephalon.Engine.Configuration.StartupFailureBehavior
+Cephalon.Engine.Configuration.StartupFailureBehavior.FailFast = 0 -> Cephalon.Engine.Configuration.StartupFailureBehavior
+Cephalon.Engine.Configuration.StopFailureBehavior
+Cephalon.Engine.Configuration.StopFailureBehavior.BestEffortContinue = 1 -> Cephalon.Engine.Configuration.StopFailureBehavior
+Cephalon.Engine.Configuration.StopFailureBehavior.FailFast = 0 -> Cephalon.Engine.Configuration.StopFailureBehavior
+Cephalon.Engine.Configuration.StranglerFigMigrationSettings
+Cephalon.Engine.Configuration.StranglerFigMigrationSettings.DefaultProgressPercent.get -> int?
+Cephalon.Engine.Configuration.StranglerFigMigrationSettings.DefaultProgressState.get -> string?
+Cephalon.Engine.Configuration.StranglerFigMigrationSettings.DefaultTarget.get -> Cephalon.Abstractions.Patterns.StranglerFigTarget?
+Cephalon.Engine.Configuration.StranglerFigMigrationSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.StranglerFigMigrationSettings.Routes.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Configuration.StranglerFigRoutePolicySettings!>!
+Cephalon.Engine.Configuration.StranglerFigMigrationSettings.StranglerFigMigrationSettings(Cephalon.Abstractions.Patterns.StranglerFigTarget? defaultTarget = null, string? defaultProgressState = null, int? defaultProgressPercent = null, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Configuration.StranglerFigRoutePolicySettings!>? routes = null) -> void
+Cephalon.Engine.Configuration.StranglerFigRoutePolicySettings
+Cephalon.Engine.Configuration.StranglerFigRoutePolicySettings.Notes.get -> string?
+Cephalon.Engine.Configuration.StranglerFigRoutePolicySettings.ProgressPercent.get -> int?
+Cephalon.Engine.Configuration.StranglerFigRoutePolicySettings.ProgressState.get -> string?
+Cephalon.Engine.Configuration.StranglerFigRoutePolicySettings.RouteId.get -> string!
+Cephalon.Engine.Configuration.StranglerFigRoutePolicySettings.StranglerFigRoutePolicySettings(string! routeId, Cephalon.Abstractions.Patterns.StranglerFigTarget? target = null, string? progressState = null, int? progressPercent = null, string? notes = null) -> void
+Cephalon.Engine.Configuration.StranglerFigRoutePolicySettings.Target.get -> Cephalon.Abstractions.Patterns.StranglerFigTarget?
+Cephalon.Engine.Configuration.TenancySettings
+Cephalon.Engine.Configuration.TenancySettings.Enabled.get -> bool?
+Cephalon.Engine.Configuration.TenancySettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.TenancySettings.Mode.get -> string?
+Cephalon.Engine.Configuration.TenancySettings.TenancySettings(bool? enabled = null, string? mode = null) -> void
+Cephalon.Engine.Configuration.TimeoutSettings
+Cephalon.Engine.Configuration.TimeoutSettings.AttemptTimeoutSeconds.get -> int?
+Cephalon.Engine.Configuration.TimeoutSettings.Enabled.get -> bool?
+Cephalon.Engine.Configuration.TimeoutSettings.HasValues.get -> bool
+Cephalon.Engine.Configuration.TimeoutSettings.TimeoutSettings(bool? enabled = null, int? totalTimeoutSeconds = null, int? attemptTimeoutSeconds = null) -> void
+Cephalon.Engine.Configuration.TimeoutSettings.TotalTimeoutSeconds.get -> int?
+Cephalon.Engine.Configuration.TrustPolicy
+Cephalon.Engine.Configuration.TrustPolicy.AllowedPackageChecksums.get -> System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<string!>!>!
+Cephalon.Engine.Configuration.TrustPolicy.Capabilities.get -> System.Collections.Generic.IReadOnlyDictionary<string!, Cephalon.Abstractions.Capabilities.CapabilityAccess>!
+Cephalon.Engine.Configuration.TrustPolicy.DefaultCapabilityAccess.get -> Cephalon.Abstractions.Capabilities.CapabilityAccess
+Cephalon.Engine.Configuration.TrustPolicy.HasValues.get -> bool
+Cephalon.Engine.Configuration.TrustPolicy.Merge(Cephalon.Engine.Configuration.TrustPolicy? other) -> Cephalon.Engine.Configuration.TrustPolicy!
+Cephalon.Engine.Configuration.TrustPolicy.RequireTrustedPackages.get -> bool
+Cephalon.Engine.Configuration.TrustPolicy.ResolveCapabilityAccess(string! capabilityKey) -> Cephalon.Abstractions.Capabilities.CapabilityAccess
+Cephalon.Engine.Configuration.TrustPolicy.TrustPolicy(bool requireTrustedPackages = false, Cephalon.Abstractions.Capabilities.CapabilityAccess defaultCapabilityAccess = Cephalon.Abstractions.Capabilities.CapabilityAccess.Allowed, System.Collections.Generic.IReadOnlyList<string!>? trustedPackages = null, System.Collections.Generic.IReadOnlyList<string!>? trustedAssemblies = null, System.Collections.Generic.IReadOnlyList<string!>? trustedPublishers = null, System.Collections.Generic.IReadOnlyList<string!>? trustedSignerFingerprints = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? trustedSignaturePublicKeys = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? trustedSignatureCertificates = null, System.Collections.Generic.IReadOnlyList<string!>? trustedSignatureCertificateAuthorities = null, System.Collections.Generic.IReadOnlyDictionary<string!, Cephalon.Abstractions.Capabilities.CapabilityAccess>? capabilities = null, System.Collections.Generic.IReadOnlyDictionary<string!, System.Collections.Generic.IReadOnlyList<string!>!>? allowedPackageChecksums = null) -> void
+Cephalon.Engine.Configuration.TrustPolicy.TrustedAssemblies.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.TrustPolicy.TrustedPackages.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.TrustPolicy.TrustedPublishers.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.TrustPolicy.TrustedSignatureCertificateAuthorities.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.TrustPolicy.TrustedSignatureCertificates.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Engine.Configuration.TrustPolicy.TrustedSignaturePublicKeys.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Engine.Configuration.TrustPolicy.TrustedSignerFingerprints.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Configuration.UriResolution
+Cephalon.Engine.Diagnostics.DiagnosticEventDefinition
+Cephalon.Engine.Diagnostics.DiagnosticEventDefinition.<Clone>$() -> Cephalon.Engine.Diagnostics.DiagnosticEventDefinition!
+Cephalon.Engine.Diagnostics.DiagnosticEventDefinition.Deconstruct(out int Id, out string! Name, out Cephalon.Engine.Diagnostics.DiagnosticSeverity Severity, out string! MessageTemplate, out string! Description) -> void
+Cephalon.Engine.Diagnostics.DiagnosticEventDefinition.Description.get -> string!
+Cephalon.Engine.Diagnostics.DiagnosticEventDefinition.Description.init -> void
+Cephalon.Engine.Diagnostics.DiagnosticEventDefinition.DiagnosticEventDefinition(int Id, string! Name, Cephalon.Engine.Diagnostics.DiagnosticSeverity Severity, string! MessageTemplate, string! Description) -> void
+Cephalon.Engine.Diagnostics.DiagnosticEventDefinition.Equals(Cephalon.Engine.Diagnostics.DiagnosticEventDefinition? other) -> bool
+Cephalon.Engine.Diagnostics.DiagnosticEventDefinition.Id.get -> int
+Cephalon.Engine.Diagnostics.DiagnosticEventDefinition.Id.init -> void
+Cephalon.Engine.Diagnostics.DiagnosticEventDefinition.MessageTemplate.get -> string!
+Cephalon.Engine.Diagnostics.DiagnosticEventDefinition.MessageTemplate.init -> void
+Cephalon.Engine.Diagnostics.DiagnosticEventDefinition.Name.get -> string!
+Cephalon.Engine.Diagnostics.DiagnosticEventDefinition.Name.init -> void
+Cephalon.Engine.Diagnostics.DiagnosticEventDefinition.Severity.get -> Cephalon.Engine.Diagnostics.DiagnosticSeverity
+Cephalon.Engine.Diagnostics.DiagnosticEventDefinition.Severity.init -> void
+Cephalon.Engine.Diagnostics.DiagnosticSeverity
+Cephalon.Engine.Diagnostics.DiagnosticSeverity.Critical = 5 -> Cephalon.Engine.Diagnostics.DiagnosticSeverity
+Cephalon.Engine.Diagnostics.DiagnosticSeverity.Debug = 1 -> Cephalon.Engine.Diagnostics.DiagnosticSeverity
+Cephalon.Engine.Diagnostics.DiagnosticSeverity.Error = 4 -> Cephalon.Engine.Diagnostics.DiagnosticSeverity
+Cephalon.Engine.Diagnostics.DiagnosticSeverity.Information = 2 -> Cephalon.Engine.Diagnostics.DiagnosticSeverity
+Cephalon.Engine.Diagnostics.DiagnosticSeverity.Trace = 0 -> Cephalon.Engine.Diagnostics.DiagnosticSeverity
+Cephalon.Engine.Diagnostics.DiagnosticSeverity.Warning = 3 -> Cephalon.Engine.Diagnostics.DiagnosticSeverity
+Cephalon.Engine.Diagnostics.DiagnosticsConvention
+Cephalon.Engine.Diagnostics.DiagnosticsConvention.<Clone>$() -> Cephalon.Engine.Diagnostics.DiagnosticsConvention!
+Cephalon.Engine.Diagnostics.DiagnosticsConvention.Deconstruct(out string! Source, out string! LoggerCategoryPrefix, out string! Description, out System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Diagnostics.DiagnosticEventDefinition!>! Events) -> void
+Cephalon.Engine.Diagnostics.DiagnosticsConvention.Description.get -> string!
+Cephalon.Engine.Diagnostics.DiagnosticsConvention.Description.init -> void
+Cephalon.Engine.Diagnostics.DiagnosticsConvention.DiagnosticsConvention(string! Source, string! LoggerCategoryPrefix, string! Description, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Diagnostics.DiagnosticEventDefinition!>! Events) -> void
+Cephalon.Engine.Diagnostics.DiagnosticsConvention.Equals(Cephalon.Engine.Diagnostics.DiagnosticsConvention? other) -> bool
+Cephalon.Engine.Diagnostics.DiagnosticsConvention.Events.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Diagnostics.DiagnosticEventDefinition!>!
+Cephalon.Engine.Diagnostics.DiagnosticsConvention.Events.init -> void
+Cephalon.Engine.Diagnostics.DiagnosticsConvention.LoggerCategoryPrefix.get -> string!
+Cephalon.Engine.Diagnostics.DiagnosticsConvention.LoggerCategoryPrefix.init -> void
+Cephalon.Engine.Diagnostics.DiagnosticsConvention.MaximumEventId.get -> int?
+Cephalon.Engine.Diagnostics.DiagnosticsConvention.MinimumEventId.get -> int?
+Cephalon.Engine.Diagnostics.DiagnosticsConvention.Source.get -> string!
+Cephalon.Engine.Diagnostics.DiagnosticsConvention.Source.init -> void
+Cephalon.Engine.Diagnostics.EngineDiagnostics
+Cephalon.Engine.Diagnostics.IDiagnosticsConventionContributor
+Cephalon.Engine.Diagnostics.IDiagnosticsConventionContributor.DescribeDiagnosticsConvention() -> Cephalon.Engine.Diagnostics.DiagnosticsConvention!
+Cephalon.Engine.Diagnostics.IRuntimeDiagnosticsCatalog
+Cephalon.Engine.Diagnostics.IRuntimeDiagnosticsCatalog.Conventions.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Diagnostics.DiagnosticsConvention!>!
+Cephalon.Engine.Diagnostics.IRuntimeDiagnosticsCatalog.GetBySource(string! source) -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Diagnostics.DiagnosticsConvention!>!
+Cephalon.Engine.Localization.LocalizedTextCatalog
+Cephalon.Engine.Localization.LocalizedTextCatalog.CreateSnapshot(string? culture = null) -> Cephalon.Abstractions.Localization.LocalizedResourcesSnapshot!
+Cephalon.Engine.Localization.LocalizedTextCatalog.DefaultCulture.get -> string!
+Cephalon.Engine.Localization.LocalizedTextCatalog.GetResources(string? culture = null) -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Engine.Localization.LocalizedTextCatalog.LocalizedTextCatalog(Cephalon.Engine.Configuration.LocalizationSettings! settings) -> void
+Cephalon.Engine.Localization.LocalizedTextCatalog.ResolveText(string! key, string? culture = null, string? fallback = null) -> string!
+Cephalon.Engine.Localization.LocalizedTextCatalog.SupportedCultures.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Localization.LocalizedTextCatalog.TryGet(string! key, string? culture, out string! value) -> bool
+Cephalon.Engine.Manifest.CapabilityManifest
+Cephalon.Engine.Manifest.CapabilityManifest.CapabilityManifest(string! key, string! displayName, string! description, string! sourceModuleId, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Engine.Manifest.CapabilityManifest.Description.get -> string!
+Cephalon.Engine.Manifest.CapabilityManifest.DisplayName.get -> string!
+Cephalon.Engine.Manifest.CapabilityManifest.Key.get -> string!
+Cephalon.Engine.Manifest.CapabilityManifest.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Engine.Manifest.CapabilityManifest.SourceModuleId.get -> string!
+Cephalon.Engine.Manifest.ModuleManifest
+Cephalon.Engine.Manifest.ModuleManifest.AssemblyName.get -> string!
+Cephalon.Engine.Manifest.ModuleManifest.DependsOn.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Manifest.ModuleManifest.Description.get -> string!
+Cephalon.Engine.Manifest.ModuleManifest.DisplayName.get -> string!
+Cephalon.Engine.Manifest.ModuleManifest.Id.get -> string!
+Cephalon.Engine.Manifest.ModuleManifest.IsTrusted.get -> bool
+Cephalon.Engine.Manifest.ModuleManifest.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Engine.Manifest.ModuleManifest.ModuleManifest(string! id, string! displayName, string! description, string! version, string! assemblyName, string! typeName, System.Collections.Generic.IReadOnlyList<string!>! dependsOn, System.Collections.Generic.IReadOnlyList<string!>! tags, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null, string? packageId = null, bool isTrusted = true) -> void
+Cephalon.Engine.Manifest.ModuleManifest.PackageId.get -> string?
+Cephalon.Engine.Manifest.ModuleManifest.Tags.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Manifest.ModuleManifest.TypeName.get -> string!
+Cephalon.Engine.Manifest.ModuleManifest.Version.get -> string!
+Cephalon.Engine.Manifest.PackageDependencyManifest
+Cephalon.Engine.Manifest.PackageDependencyManifest.Id.get -> string!
+Cephalon.Engine.Manifest.PackageDependencyManifest.MaximumVersion.get -> string?
+Cephalon.Engine.Manifest.PackageDependencyManifest.MinimumVersion.get -> string?
+Cephalon.Engine.Manifest.PackageDependencyManifest.PackageDependencyManifest(string! id, string? minimumVersion = null, string? maximumVersion = null) -> void
+Cephalon.Engine.Manifest.PackageDistributionManifest
+Cephalon.Engine.Manifest.PackageDistributionManifest.Channel.get -> string?
+Cephalon.Engine.Manifest.PackageDistributionManifest.ManifestUri.get -> string?
+Cephalon.Engine.Manifest.PackageDistributionManifest.PackageDistributionManifest(string? channel, string? manifestUri, string? packageUri) -> void
+Cephalon.Engine.Manifest.PackageDistributionManifest.PackageUri.get -> string?
+Cephalon.Engine.Manifest.PackageManifest
+Cephalon.Engine.Manifest.PackageManifest.AssemblyName.get -> string!
+Cephalon.Engine.Manifest.PackageManifest.ChecksumSha256.get -> string!
+Cephalon.Engine.Manifest.PackageManifest.Dependencies.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Manifest.PackageDependencyManifest!>!
+Cephalon.Engine.Manifest.PackageManifest.Dependencies.init -> void
+Cephalon.Engine.Manifest.PackageManifest.Distribution.get -> Cephalon.Engine.Manifest.PackageDistributionManifest?
+Cephalon.Engine.Manifest.PackageManifest.Id.get -> string!
+Cephalon.Engine.Manifest.PackageManifest.IsSignatureVerified.get -> bool
+Cephalon.Engine.Manifest.PackageManifest.IsTrusted.get -> bool
+Cephalon.Engine.Manifest.PackageManifest.Kind.get -> string!
+Cephalon.Engine.Manifest.PackageManifest.LoadContext.get -> string!
+Cephalon.Engine.Manifest.PackageManifest.MaximumEngineVersion.get -> string?
+Cephalon.Engine.Manifest.PackageManifest.MinimumEngineVersion.get -> string?
+Cephalon.Engine.Manifest.PackageManifest.Modules.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Manifest.PackageManifest.PackageManifest(string! id, string! kind, string! assemblyName, string! path, string! sourcePath, string! loadContext, System.Collections.Generic.IReadOnlyList<string!>! modules, string? version, string? minimumEngineVersion, string? maximumEngineVersion, System.Collections.Generic.IReadOnlyList<string!>? supportedTargetFrameworks, string? publisherId, string? publisherDisplayName, string? publisherWebsite, Cephalon.Engine.Manifest.PackageDistributionManifest? distribution, Cephalon.Engine.Manifest.PackageProvenanceManifest? provenance, string? signatureType, string? signatureSigner, string? signatureKeyId, string? signatureFingerprint, string? signatureCertificateThumbprint, string? signatureAlgorithm, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Manifest.PackageSignatureManifest!>? signatures, bool isSignatureVerified, string! signatureVerificationReason, string! checksumSha256, bool isTrusted, string! trustReason) -> void
+Cephalon.Engine.Manifest.PackageManifest.Path.get -> string!
+Cephalon.Engine.Manifest.PackageManifest.Provenance.get -> Cephalon.Engine.Manifest.PackageProvenanceManifest?
+Cephalon.Engine.Manifest.PackageManifest.PublisherDisplayName.get -> string?
+Cephalon.Engine.Manifest.PackageManifest.PublisherId.get -> string?
+Cephalon.Engine.Manifest.PackageManifest.PublisherWebsite.get -> string?
+Cephalon.Engine.Manifest.PackageManifest.SignatureAlgorithm.get -> string?
+Cephalon.Engine.Manifest.PackageManifest.SignatureCertificateThumbprint.get -> string?
+Cephalon.Engine.Manifest.PackageManifest.SignatureFingerprint.get -> string?
+Cephalon.Engine.Manifest.PackageManifest.SignatureKeyId.get -> string?
+Cephalon.Engine.Manifest.PackageManifest.SignatureSigner.get -> string?
+Cephalon.Engine.Manifest.PackageManifest.SignatureType.get -> string?
+Cephalon.Engine.Manifest.PackageManifest.SignatureVerificationReason.get -> string!
+Cephalon.Engine.Manifest.PackageManifest.Signatures.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Manifest.PackageSignatureManifest!>!
+Cephalon.Engine.Manifest.PackageManifest.SourcePath.get -> string!
+Cephalon.Engine.Manifest.PackageManifest.SupportedTargetFrameworks.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Engine.Manifest.PackageManifest.TrustReason.get -> string!
+Cephalon.Engine.Manifest.PackageManifest.Version.get -> string?
+Cephalon.Engine.Manifest.PackageProvenanceManifest
+Cephalon.Engine.Manifest.PackageProvenanceManifest.BuildUri.get -> string?
+Cephalon.Engine.Manifest.PackageProvenanceManifest.PackageProvenanceManifest(string? sourceRepository, string? sourceRevision, string? buildUri, string? statementUri) -> void
+Cephalon.Engine.Manifest.PackageProvenanceManifest.SourceRepository.get -> string?
+Cephalon.Engine.Manifest.PackageProvenanceManifest.SourceRevision.get -> string?
+Cephalon.Engine.Manifest.PackageProvenanceManifest.StatementUri.get -> string?
+Cephalon.Engine.Manifest.PackageSignatureManifest
+Cephalon.Engine.Manifest.PackageSignatureManifest.Algorithm.get -> string?
+Cephalon.Engine.Manifest.PackageSignatureManifest.CertificateThumbprint.get -> string?
+Cephalon.Engine.Manifest.PackageSignatureManifest.Fingerprint.get -> string?
+Cephalon.Engine.Manifest.PackageSignatureManifest.IsVerified.get -> bool
+Cephalon.Engine.Manifest.PackageSignatureManifest.KeyId.get -> string?
+Cephalon.Engine.Manifest.PackageSignatureManifest.PackageSignatureManifest(string? type, string? signer, string? keyId, string? fingerprint, string? algorithm, string? verificationSource, string? certificateThumbprint, bool isVerified, string! verificationReason) -> void
+Cephalon.Engine.Manifest.PackageSignatureManifest.Signer.get -> string?
+Cephalon.Engine.Manifest.PackageSignatureManifest.Type.get -> string?
+Cephalon.Engine.Manifest.PackageSignatureManifest.VerificationReason.get -> string!
+Cephalon.Engine.Manifest.PackageSignatureManifest.VerificationSource.get -> string?
+Cephalon.Engine.Manifest.RuntimeManifest
+Cephalon.Engine.Manifest.RuntimeManifest.AppProfile.get -> Cephalon.Abstractions.AppModel.AppProfile!
+Cephalon.Engine.Manifest.RuntimeManifest.Capabilities.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Manifest.CapabilityManifest!>!
+Cephalon.Engine.Manifest.RuntimeManifest.EngineVersion.get -> string!
+Cephalon.Engine.Manifest.RuntimeManifest.GeneratedAtUtc.get -> System.DateTimeOffset
+Cephalon.Engine.Manifest.RuntimeManifest.ManifestVersion.get -> string!
+Cephalon.Engine.Manifest.RuntimeManifest.Modules.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Manifest.ModuleManifest!>!
+Cephalon.Engine.Manifest.RuntimeManifest.Packages.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Manifest.PackageManifest!>!
+Cephalon.Engine.Manifest.RuntimeManifest.RuntimeManifest(string! manifestVersion, string! engineVersion, System.DateTimeOffset generatedAtUtc, Cephalon.Abstractions.AppModel.AppProfile! appProfile, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Manifest.ModuleManifest!>! modules, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Manifest.CapabilityManifest!>! capabilities, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Manifest.PackageManifest!>? packages = null) -> void
+Cephalon.Engine.Patterns.BuiltInPatterns
+Cephalon.Engine.Runtime.EngineRuntime
+Cephalon.Engine.Runtime.EngineRuntime.Dispose() -> void
+Cephalon.Engine.Runtime.EngineRuntime.EngineRuntime(System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Modules.IModule!>! modules, Cephalon.Engine.Manifest.RuntimeManifest! manifest, Cephalon.Engine.Configuration.FailurePolicy! failurePolicy, System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Execution.ExecutionGraphDescriptor!>? executionGraphs = null, System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Execution.HostedExecutionDescriptor!>? hostedExecutions = null) -> void
+Cephalon.Engine.Runtime.EngineRuntime.FailurePolicy.get -> Cephalon.Engine.Configuration.FailurePolicy!
+Cephalon.Engine.Runtime.EngineRuntime.InitializeAsync(System.IServiceProvider! services, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.Engine.Runtime.EngineRuntime.LastFailure.get -> Cephalon.Engine.Runtime.RuntimeFailureInfo?
+Cephalon.Engine.Runtime.EngineRuntime.Manifest.get -> Cephalon.Engine.Manifest.RuntimeManifest!
+Cephalon.Engine.Runtime.EngineRuntime.Modules.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Modules.IModule!>!
+Cephalon.Engine.Runtime.EngineRuntime.OperationalStory.get -> Cephalon.Engine.Runtime.RuntimeOperationalStory!
+Cephalon.Engine.Runtime.EngineRuntime.RestartAsync(System.IServiceProvider! services, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.Engine.Runtime.EngineRuntime.RestartCount.get -> int
+Cephalon.Engine.Runtime.EngineRuntime.StartAsync(System.IServiceProvider! services, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.Engine.Runtime.EngineRuntime.Status.get -> Cephalon.Engine.Runtime.RuntimeStatus
+Cephalon.Engine.Runtime.EngineRuntime.StatusSnapshot.get -> Cephalon.Engine.Runtime.RuntimeStatusSnapshot!
+Cephalon.Engine.Runtime.EngineRuntime.StopAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.Engine.Runtime.IRuntime
+Cephalon.Engine.Runtime.IRuntime.FailurePolicy.get -> Cephalon.Engine.Configuration.FailurePolicy!
+Cephalon.Engine.Runtime.IRuntime.InitializeAsync(System.IServiceProvider! services, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.Engine.Runtime.IRuntime.LastFailure.get -> Cephalon.Engine.Runtime.RuntimeFailureInfo?
+Cephalon.Engine.Runtime.IRuntime.Manifest.get -> Cephalon.Engine.Manifest.RuntimeManifest!
+Cephalon.Engine.Runtime.IRuntime.Modules.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Modules.IModule!>!
+Cephalon.Engine.Runtime.IRuntime.OperationalStory.get -> Cephalon.Engine.Runtime.RuntimeOperationalStory!
+Cephalon.Engine.Runtime.IRuntime.RestartAsync(System.IServiceProvider! services, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.Engine.Runtime.IRuntime.RestartCount.get -> int
+Cephalon.Engine.Runtime.IRuntime.StartAsync(System.IServiceProvider! services, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.Engine.Runtime.IRuntime.Status.get -> Cephalon.Engine.Runtime.RuntimeStatus
+Cephalon.Engine.Runtime.IRuntime.StatusSnapshot.get -> Cephalon.Engine.Runtime.RuntimeStatusSnapshot!
+Cephalon.Engine.Runtime.IRuntime.StopAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.Engine.Runtime.IRuntimeIntrospectionSnapshotProvider
+Cephalon.Engine.Runtime.IRuntimeIntrospectionSnapshotProvider.CreateSnapshot() -> Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot!
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.<Clone>$() -> Cephalon.Engine.Runtime.RuntimeExecutionGraphState!
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.ActivatedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.ActivatedAtUtc.init -> void
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.DeactivatedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.DeactivatedAtUtc.init -> void
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.Deconstruct(out string! GraphId, out string! DisplayName, out string? Description, out string! SourceModuleId, out string? SourceModuleVersion, out string! EntryNodeId, out System.DateTimeOffset? LoadedAtUtc, out System.DateTimeOffset? ActivatedAtUtc, out System.DateTimeOffset? DeactivatedAtUtc, out string? LastObservedPhase, out System.DateTimeOffset? LastObservedAtUtc) -> void
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.Description.get -> string?
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.Description.init -> void
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.DisplayName.get -> string!
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.DisplayName.init -> void
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.EntryNodeId.get -> string!
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.EntryNodeId.init -> void
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.Equals(Cephalon.Engine.Runtime.RuntimeExecutionGraphState? other) -> bool
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.GraphId.get -> string!
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.GraphId.init -> void
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.IsActive.get -> bool
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.IsDeactivated.get -> bool
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.IsLoaded.get -> bool
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.LastObservedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.LastObservedAtUtc.init -> void
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.LastObservedPhase.get -> string?
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.LastObservedPhase.init -> void
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.LoadedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.LoadedAtUtc.init -> void
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.RuntimeExecutionGraphState(string! GraphId, string! DisplayName, string? Description, string! SourceModuleId, string? SourceModuleVersion, string! EntryNodeId, System.DateTimeOffset? LoadedAtUtc, System.DateTimeOffset? ActivatedAtUtc, System.DateTimeOffset? DeactivatedAtUtc, string? LastObservedPhase, System.DateTimeOffset? LastObservedAtUtc) -> void
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.SourceModuleId.get -> string!
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.SourceModuleId.init -> void
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.SourceModuleVersion.get -> string?
+Cephalon.Engine.Runtime.RuntimeExecutionGraphState.SourceModuleVersion.init -> void
+Cephalon.Engine.Runtime.RuntimeFailureInfo
+Cephalon.Engine.Runtime.RuntimeFailureInfo.<Clone>$() -> Cephalon.Engine.Runtime.RuntimeFailureInfo!
+Cephalon.Engine.Runtime.RuntimeFailureInfo.CanRestart.get -> bool
+Cephalon.Engine.Runtime.RuntimeFailureInfo.CanRestart.init -> void
+Cephalon.Engine.Runtime.RuntimeFailureInfo.Deconstruct(out string! Phase, out string? ModuleId, out string? ModuleVersion, out Cephalon.Engine.Runtime.RuntimeStatus StatusBeforeFailure, out string! ExceptionType, out string! Message, out System.DateTimeOffset OccurredAtUtc, out bool CanRestart, out System.DateTimeOffset? RestartAvailableAtUtc, out Cephalon.Engine.Configuration.StartupFailureBehavior StartupFailureBehavior, out Cephalon.Engine.Configuration.StopFailureBehavior StopFailureBehavior) -> void
+Cephalon.Engine.Runtime.RuntimeFailureInfo.Equals(Cephalon.Engine.Runtime.RuntimeFailureInfo? other) -> bool
+Cephalon.Engine.Runtime.RuntimeFailureInfo.ExceptionType.get -> string!
+Cephalon.Engine.Runtime.RuntimeFailureInfo.ExceptionType.init -> void
+Cephalon.Engine.Runtime.RuntimeFailureInfo.Message.get -> string!
+Cephalon.Engine.Runtime.RuntimeFailureInfo.Message.init -> void
+Cephalon.Engine.Runtime.RuntimeFailureInfo.ModuleId.get -> string?
+Cephalon.Engine.Runtime.RuntimeFailureInfo.ModuleId.init -> void
+Cephalon.Engine.Runtime.RuntimeFailureInfo.ModuleVersion.get -> string?
+Cephalon.Engine.Runtime.RuntimeFailureInfo.ModuleVersion.init -> void
+Cephalon.Engine.Runtime.RuntimeFailureInfo.OccurredAtUtc.get -> System.DateTimeOffset
+Cephalon.Engine.Runtime.RuntimeFailureInfo.OccurredAtUtc.init -> void
+Cephalon.Engine.Runtime.RuntimeFailureInfo.Phase.get -> string!
+Cephalon.Engine.Runtime.RuntimeFailureInfo.Phase.init -> void
+Cephalon.Engine.Runtime.RuntimeFailureInfo.RestartAvailableAtUtc.get -> System.DateTimeOffset?
+Cephalon.Engine.Runtime.RuntimeFailureInfo.RestartAvailableAtUtc.init -> void
+Cephalon.Engine.Runtime.RuntimeFailureInfo.RuntimeFailureInfo(string! Phase, string? ModuleId, string? ModuleVersion, Cephalon.Engine.Runtime.RuntimeStatus StatusBeforeFailure, string! ExceptionType, string! Message, System.DateTimeOffset OccurredAtUtc, bool CanRestart, System.DateTimeOffset? RestartAvailableAtUtc, Cephalon.Engine.Configuration.StartupFailureBehavior StartupFailureBehavior, Cephalon.Engine.Configuration.StopFailureBehavior StopFailureBehavior) -> void
+Cephalon.Engine.Runtime.RuntimeFailureInfo.StartupFailureBehavior.get -> Cephalon.Engine.Configuration.StartupFailureBehavior
+Cephalon.Engine.Runtime.RuntimeFailureInfo.StartupFailureBehavior.init -> void
+Cephalon.Engine.Runtime.RuntimeFailureInfo.StatusBeforeFailure.get -> Cephalon.Engine.Runtime.RuntimeStatus
+Cephalon.Engine.Runtime.RuntimeFailureInfo.StatusBeforeFailure.init -> void
+Cephalon.Engine.Runtime.RuntimeFailureInfo.StopFailureBehavior.get -> Cephalon.Engine.Configuration.StopFailureBehavior
+Cephalon.Engine.Runtime.RuntimeFailureInfo.StopFailureBehavior.init -> void
+Cephalon.Engine.Runtime.RuntimeHealthEvaluator
+Cephalon.Engine.Runtime.RuntimeHealthEvaluator.EvaluateDependencies() -> Cephalon.Abstractions.Health.DependencyHealthReport![]!
+Cephalon.Engine.Runtime.RuntimeHealthEvaluator.EvaluateLiveness() -> Cephalon.Engine.Runtime.RuntimeHealthReport!
+Cephalon.Engine.Runtime.RuntimeHealthEvaluator.EvaluateReadiness() -> Cephalon.Engine.Runtime.RuntimeHealthReport!
+Cephalon.Engine.Runtime.RuntimeHealthEvaluator.RuntimeHealthEvaluator(Cephalon.Engine.Runtime.IRuntime! runtime, System.Collections.Generic.IEnumerable<Cephalon.Abstractions.Health.IDependencyHealthContributor!>! dependencyHealthContributors) -> void
+Cephalon.Engine.Runtime.RuntimeHealthReport
+Cephalon.Engine.Runtime.RuntimeHealthReport.<Clone>$() -> Cephalon.Engine.Runtime.RuntimeHealthReport!
+Cephalon.Engine.Runtime.RuntimeHealthReport.ActiveWindow.get -> string?
+Cephalon.Engine.Runtime.RuntimeHealthReport.ActiveWindow.init -> void
+Cephalon.Engine.Runtime.RuntimeHealthReport.ActiveWindowEndsAtUtc.get -> System.DateTimeOffset?
+Cephalon.Engine.Runtime.RuntimeHealthReport.ActiveWindowEndsAtUtc.init -> void
+Cephalon.Engine.Runtime.RuntimeHealthReport.Deconstruct(out string! Probe, out Cephalon.Engine.Runtime.RuntimeHealthState State, out string! Description, out Cephalon.Engine.Runtime.RuntimeStatus RuntimeStatus, out int RestartCount, out Cephalon.Engine.Runtime.RuntimeFailureInfo? LastFailure, out System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Health.DependencyHealthReport!>! Dependencies, out string? ActiveWindow, out System.DateTimeOffset? ActiveWindowEndsAtUtc) -> void
+Cephalon.Engine.Runtime.RuntimeHealthReport.Dependencies.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Health.DependencyHealthReport!>!
+Cephalon.Engine.Runtime.RuntimeHealthReport.Dependencies.init -> void
+Cephalon.Engine.Runtime.RuntimeHealthReport.Description.get -> string!
+Cephalon.Engine.Runtime.RuntimeHealthReport.Description.init -> void
+Cephalon.Engine.Runtime.RuntimeHealthReport.Equals(Cephalon.Engine.Runtime.RuntimeHealthReport? other) -> bool
+Cephalon.Engine.Runtime.RuntimeHealthReport.IsHealthy.get -> bool
+Cephalon.Engine.Runtime.RuntimeHealthReport.LastFailure.get -> Cephalon.Engine.Runtime.RuntimeFailureInfo?
+Cephalon.Engine.Runtime.RuntimeHealthReport.LastFailure.init -> void
+Cephalon.Engine.Runtime.RuntimeHealthReport.Probe.get -> string!
+Cephalon.Engine.Runtime.RuntimeHealthReport.Probe.init -> void
+Cephalon.Engine.Runtime.RuntimeHealthReport.RestartCount.get -> int
+Cephalon.Engine.Runtime.RuntimeHealthReport.RestartCount.init -> void
+Cephalon.Engine.Runtime.RuntimeHealthReport.RuntimeHealthReport(string! Probe, Cephalon.Engine.Runtime.RuntimeHealthState State, string! Description, Cephalon.Engine.Runtime.RuntimeStatus RuntimeStatus, int RestartCount, Cephalon.Engine.Runtime.RuntimeFailureInfo? LastFailure, System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Health.DependencyHealthReport!>! Dependencies, string? ActiveWindow = null, System.DateTimeOffset? ActiveWindowEndsAtUtc = null) -> void
+Cephalon.Engine.Runtime.RuntimeHealthReport.RuntimeStatus.get -> Cephalon.Engine.Runtime.RuntimeStatus
+Cephalon.Engine.Runtime.RuntimeHealthReport.RuntimeStatus.init -> void
+Cephalon.Engine.Runtime.RuntimeHealthReport.State.get -> Cephalon.Engine.Runtime.RuntimeHealthState
+Cephalon.Engine.Runtime.RuntimeHealthReport.State.init -> void
+Cephalon.Engine.Runtime.RuntimeHealthState
+Cephalon.Engine.Runtime.RuntimeHealthState.Degraded = 1 -> Cephalon.Engine.Runtime.RuntimeHealthState
+Cephalon.Engine.Runtime.RuntimeHealthState.Healthy = 0 -> Cephalon.Engine.Runtime.RuntimeHealthState
+Cephalon.Engine.Runtime.RuntimeHealthState.Unhealthy = 2 -> Cephalon.Engine.Runtime.RuntimeHealthState
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.<Clone>$() -> Cephalon.Engine.Runtime.RuntimeHostedExecutionState!
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.ActivatedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.ActivatedAtUtc.init -> void
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.DeactivatedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.DeactivatedAtUtc.init -> void
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.Deconstruct(out string! HostedExecutionId, out string! DisplayName, out string? Description, out string! SourceModuleId, out string? SourceModuleVersion, out string! Kind, out string? ExecutionGraphId, out bool StartsWithHost, out System.DateTimeOffset? LoadedAtUtc, out System.DateTimeOffset? ActivatedAtUtc, out System.DateTimeOffset? DeactivatedAtUtc, out string? LastObservedPhase, out System.DateTimeOffset? LastObservedAtUtc) -> void
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.Description.get -> string?
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.Description.init -> void
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.DisplayName.get -> string!
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.DisplayName.init -> void
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.Equals(Cephalon.Engine.Runtime.RuntimeHostedExecutionState? other) -> bool
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.ExecutionGraphId.get -> string?
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.ExecutionGraphId.init -> void
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.HostedExecutionId.get -> string!
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.HostedExecutionId.init -> void
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.IsActive.get -> bool
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.IsDeactivated.get -> bool
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.IsLoaded.get -> bool
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.Kind.get -> string!
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.Kind.init -> void
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.LastObservedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.LastObservedAtUtc.init -> void
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.LastObservedPhase.get -> string?
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.LastObservedPhase.init -> void
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.LoadedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.LoadedAtUtc.init -> void
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.RuntimeHostedExecutionState(string! HostedExecutionId, string! DisplayName, string? Description, string! SourceModuleId, string? SourceModuleVersion, string! Kind, string? ExecutionGraphId, bool StartsWithHost, System.DateTimeOffset? LoadedAtUtc, System.DateTimeOffset? ActivatedAtUtc, System.DateTimeOffset? DeactivatedAtUtc, string? LastObservedPhase, System.DateTimeOffset? LastObservedAtUtc) -> void
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.SourceModuleId.get -> string!
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.SourceModuleId.init -> void
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.SourceModuleVersion.get -> string?
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.SourceModuleVersion.init -> void
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.StartsWithHost.get -> bool
+Cephalon.Engine.Runtime.RuntimeHostedExecutionState.StartsWithHost.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.<Clone>$() -> Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.AgentToolRuns.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Agentics.AgentToolRunState!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.AgentToolRuns.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.AuditStores.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Audit.AuditStoreDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.AuditStores.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.AuthorizationPolicies.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Authorization.AuthorizationPolicyDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.AuthorizationPolicies.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.BackendForFrontendBindings.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Patterns.BackendForFrontendClientBindingDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.BackendForFrontendBindings.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.BackendForFrontendRestDocuments.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.BackendForFrontendRestDocumentRuntimeDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.BackendForFrontendRestDocuments.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.BackendForFrontendRestEndpoints.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.BackendForFrontendRestEndpointRuntimeDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.BackendForFrontendRestEndpoints.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.BehaviorResiliencePolicies.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Resilience.BehaviorResilienceRuntimeDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.BehaviorResiliencePolicies.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.CdcCaptureExecutionRuntimes.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.CdcCaptureExecutionRuntimeDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.CdcCaptureExecutionRuntimes.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.CdcCaptureStates.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.CdcCaptureRuntimeState!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.CdcCaptureStates.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.CdcCaptures.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.CdcCaptureDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.CdcCaptures.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.CellBoundaries.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Technologies.CellBoundaryDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.CellBoundaries.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.CellHealthIsolations.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Technologies.CellHealthIsolationDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.CellHealthIsolations.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.CellRoutes.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Technologies.CellRouteDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.CellRoutes.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.CellTrafficAutomations.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Technologies.CellTrafficAutomationRuntimeDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.CellTrafficAutomations.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.DataProducts.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.DataProductDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.DataProducts.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.DatabaseMigrationPlaybook.get -> Cephalon.Abstractions.Data.DatabaseMigrationOperationalPlaybook?
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.DatabaseMigrationPlaybook.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.DatabaseMigrations.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.DatabaseMigrationDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.DatabaseMigrations.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.DatabaseRoles.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.DatabaseRoleDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.DatabaseRoles.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.DatabaseTopology.get -> Cephalon.Abstractions.Data.DatabaseTopologyOperationalSnapshot?
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.DatabaseTopology.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.Deconstruct(out Cephalon.Engine.Manifest.RuntimeManifest! Manifest, out Cephalon.Engine.Runtime.RuntimeStatusSnapshot! Status, out System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Execution.ExecutionGraphDescriptor!>! ExecutionGraphs, out System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Technologies.TechnologyRuntimeSurface!>! TechnologySurfaces, out System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Diagnostics.DiagnosticsConvention!>! DiagnosticsConventions, out Cephalon.Engine.Runtime.RuntimeOperationalStory! OperationalStory) -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.DiagnosticsConventions.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Diagnostics.DiagnosticsConvention!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.DiagnosticsConventions.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.DurableExecutionStates.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Execution.DurableExecutionRuntimeState!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.DurableExecutionStates.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.DurableExecutions.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Execution.DurableExecutionRuntimeDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.DurableExecutions.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.Equals(Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot? other) -> bool
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.EventDispatchRuntimes.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRuntimeDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.EventDispatchRuntimes.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.EventDispatchStates.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRuntimeState!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.EventDispatchStates.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.EventPublicationStates.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventPublicationRuntimeState!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.EventPublicationStates.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.EventSubscriptionExecutionReadiness.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventSubscriptionExecutionReadinessDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.EventSubscriptionExecutionReadiness.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.ExecutionGraphs.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Execution.ExecutionGraphDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.ExecutionGraphs.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.FeatureFlags.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Features.FeatureFlagDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.FeatureFlags.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.HostedExecutions.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Execution.HostedExecutionDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.HostedExecutions.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.Inboxes.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.InboxDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.Inboxes.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.KnowledgeIndexes.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Retrieval.KnowledgeIndexState!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.KnowledgeIndexes.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.Manifest.get -> Cephalon.Engine.Manifest.RuntimeManifest!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.Manifest.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.OperationalStory.get -> Cephalon.Engine.Runtime.RuntimeOperationalStory!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.OperationalStory.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.Outboxes.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.OutboxDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.Outboxes.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.Projections.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.ProjectionDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.Projections.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.RateLimitingPolicies.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Resilience.RateLimitingRuntimeDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.RateLimitingPolicies.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.RestEndpointAuthoringPolicies.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.RestEndpointAuthoringPolicyDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.RestEndpointAuthoringPolicies.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.RestEndpointCandidates.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.RestEndpointCandidateRuntimeDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.RestEndpointCandidates.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.RestEndpointOverrides.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.RestEndpointOverrideDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.RestEndpointOverrides.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.RestEndpointPublicationGroups.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.RestEndpointPublicationGroupDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.RestEndpointPublicationGroups.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.RestEndpointSuppressions.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.RestEndpointSuppressionDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.RestEndpointSuppressions.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.RestEndpoints.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.RestEndpointRuntimeDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.RestEndpoints.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.RuntimeIntrospectionSnapshot(Cephalon.Engine.Manifest.RuntimeManifest! Manifest, Cephalon.Engine.Runtime.RuntimeStatusSnapshot! Status, System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Execution.ExecutionGraphDescriptor!>! ExecutionGraphs, System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Technologies.TechnologyRuntimeSurface!>! TechnologySurfaces, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Diagnostics.DiagnosticsConvention!>! DiagnosticsConventions, Cephalon.Engine.Runtime.RuntimeOperationalStory! OperationalStory) -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.SagaChoreographies.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Execution.SagaChoreographyRuntimeDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.SagaChoreographies.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.SagaChoreographyPublicationStates.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Execution.SagaChoreographyPublicationRuntimeState!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.SagaChoreographyPublicationStates.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.Status.get -> Cephalon.Engine.Runtime.RuntimeStatusSnapshot!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.Status.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.StranglerFigIngressRoutes.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Patterns.StranglerFigIngressRuntimeDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.StranglerFigIngressRoutes.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.StranglerFigRoutePolicies.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Patterns.StranglerFigMigrationRuntimeDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.StranglerFigRoutePolicies.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.StranglerFigRoutes.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Patterns.StranglerFigRouteDescriptor!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.StranglerFigRoutes.init -> void
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.TechnologySurfaces.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Technologies.TechnologyRuntimeSurface!>!
+Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.TechnologySurfaces.init -> void
+Cephalon.Engine.Runtime.RuntimeLifecycleEvent
+Cephalon.Engine.Runtime.RuntimeLifecycleEvent.<Clone>$() -> Cephalon.Engine.Runtime.RuntimeLifecycleEvent!
+Cephalon.Engine.Runtime.RuntimeLifecycleEvent.Deconstruct(out System.DateTimeOffset OccurredAtUtc, out Cephalon.Engine.Runtime.RuntimeLifecycleEventScope Scope, out string! Phase, out Cephalon.Engine.Runtime.RuntimeLifecycleEventOutcome Outcome, out Cephalon.Engine.Runtime.RuntimeStatus RuntimeStatus, out string? SubjectId, out string? SubjectVersion, out string! Message, out string? ExceptionType) -> void
+Cephalon.Engine.Runtime.RuntimeLifecycleEvent.Equals(Cephalon.Engine.Runtime.RuntimeLifecycleEvent? other) -> bool
+Cephalon.Engine.Runtime.RuntimeLifecycleEvent.ExceptionType.get -> string?
+Cephalon.Engine.Runtime.RuntimeLifecycleEvent.ExceptionType.init -> void
+Cephalon.Engine.Runtime.RuntimeLifecycleEvent.Message.get -> string!
+Cephalon.Engine.Runtime.RuntimeLifecycleEvent.Message.init -> void
+Cephalon.Engine.Runtime.RuntimeLifecycleEvent.OccurredAtUtc.get -> System.DateTimeOffset
+Cephalon.Engine.Runtime.RuntimeLifecycleEvent.OccurredAtUtc.init -> void
+Cephalon.Engine.Runtime.RuntimeLifecycleEvent.Outcome.get -> Cephalon.Engine.Runtime.RuntimeLifecycleEventOutcome
+Cephalon.Engine.Runtime.RuntimeLifecycleEvent.Outcome.init -> void
+Cephalon.Engine.Runtime.RuntimeLifecycleEvent.Phase.get -> string!
+Cephalon.Engine.Runtime.RuntimeLifecycleEvent.Phase.init -> void
+Cephalon.Engine.Runtime.RuntimeLifecycleEvent.RuntimeLifecycleEvent(System.DateTimeOffset OccurredAtUtc, Cephalon.Engine.Runtime.RuntimeLifecycleEventScope Scope, string! Phase, Cephalon.Engine.Runtime.RuntimeLifecycleEventOutcome Outcome, Cephalon.Engine.Runtime.RuntimeStatus RuntimeStatus, string? SubjectId, string? SubjectVersion, string! Message, string? ExceptionType) -> void
+Cephalon.Engine.Runtime.RuntimeLifecycleEvent.RuntimeStatus.get -> Cephalon.Engine.Runtime.RuntimeStatus
+Cephalon.Engine.Runtime.RuntimeLifecycleEvent.RuntimeStatus.init -> void
+Cephalon.Engine.Runtime.RuntimeLifecycleEvent.Scope.get -> Cephalon.Engine.Runtime.RuntimeLifecycleEventScope
+Cephalon.Engine.Runtime.RuntimeLifecycleEvent.Scope.init -> void
+Cephalon.Engine.Runtime.RuntimeLifecycleEvent.SubjectId.get -> string?
+Cephalon.Engine.Runtime.RuntimeLifecycleEvent.SubjectId.init -> void
+Cephalon.Engine.Runtime.RuntimeLifecycleEvent.SubjectVersion.get -> string?
+Cephalon.Engine.Runtime.RuntimeLifecycleEvent.SubjectVersion.init -> void
+Cephalon.Engine.Runtime.RuntimeLifecycleEventOutcome
+Cephalon.Engine.Runtime.RuntimeLifecycleEventOutcome.Failed = 1 -> Cephalon.Engine.Runtime.RuntimeLifecycleEventOutcome
+Cephalon.Engine.Runtime.RuntimeLifecycleEventOutcome.Succeeded = 0 -> Cephalon.Engine.Runtime.RuntimeLifecycleEventOutcome
+Cephalon.Engine.Runtime.RuntimeLifecycleEventScope
+Cephalon.Engine.Runtime.RuntimeLifecycleEventScope.ExecutionGraph = 3 -> Cephalon.Engine.Runtime.RuntimeLifecycleEventScope
+Cephalon.Engine.Runtime.RuntimeLifecycleEventScope.HostedExecution = 4 -> Cephalon.Engine.Runtime.RuntimeLifecycleEventScope
+Cephalon.Engine.Runtime.RuntimeLifecycleEventScope.Module = 1 -> Cephalon.Engine.Runtime.RuntimeLifecycleEventScope
+Cephalon.Engine.Runtime.RuntimeLifecycleEventScope.Package = 2 -> Cephalon.Engine.Runtime.RuntimeLifecycleEventScope
+Cephalon.Engine.Runtime.RuntimeLifecycleEventScope.Runtime = 0 -> Cephalon.Engine.Runtime.RuntimeLifecycleEventScope
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.<Clone>$() -> Cephalon.Engine.Runtime.RuntimeModuleLifecycleState!
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.AssemblyName.get -> string!
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.AssemblyName.init -> void
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.Deconstruct(out string! ModuleId, out string! DisplayName, out string! Version, out string! AssemblyName, out string? PackageId, out System.DateTimeOffset? LoadedAtUtc, out System.DateTimeOffset? InitializedAtUtc, out System.DateTimeOffset? StartedAtUtc, out System.DateTimeOffset? StoppedAtUtc, out string? LastObservedPhase, out System.DateTimeOffset? LastObservedAtUtc, out Cephalon.Engine.Runtime.RuntimeFailureInfo? LastFailure) -> void
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.DisplayName.get -> string!
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.DisplayName.init -> void
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.Equals(Cephalon.Engine.Runtime.RuntimeModuleLifecycleState? other) -> bool
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.InitializedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.InitializedAtUtc.init -> void
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.IsInitialized.get -> bool
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.IsLoaded.get -> bool
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.IsStarted.get -> bool
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.IsStopped.get -> bool
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.LastFailure.get -> Cephalon.Engine.Runtime.RuntimeFailureInfo?
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.LastFailure.init -> void
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.LastObservedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.LastObservedAtUtc.init -> void
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.LastObservedPhase.get -> string?
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.LastObservedPhase.init -> void
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.LoadedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.LoadedAtUtc.init -> void
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.ModuleId.get -> string!
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.ModuleId.init -> void
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.PackageId.get -> string?
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.PackageId.init -> void
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.RuntimeModuleLifecycleState(string! ModuleId, string! DisplayName, string! Version, string! AssemblyName, string? PackageId, System.DateTimeOffset? LoadedAtUtc, System.DateTimeOffset? InitializedAtUtc, System.DateTimeOffset? StartedAtUtc, System.DateTimeOffset? StoppedAtUtc, string? LastObservedPhase, System.DateTimeOffset? LastObservedAtUtc, Cephalon.Engine.Runtime.RuntimeFailureInfo? LastFailure) -> void
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.StartedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.StartedAtUtc.init -> void
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.StoppedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.StoppedAtUtc.init -> void
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.Version.get -> string!
+Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.Version.init -> void
+Cephalon.Engine.Runtime.RuntimeOperationalStory
+Cephalon.Engine.Runtime.RuntimeOperationalStory.<Clone>$() -> Cephalon.Engine.Runtime.RuntimeOperationalStory!
+Cephalon.Engine.Runtime.RuntimeOperationalStory.Deconstruct(out System.DateTimeOffset GeneratedAtUtc, out Cephalon.Engine.Runtime.RuntimeStatusSnapshot! Status, out System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Manifest.PackageManifest!>! LoadedPackages, out System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Runtime.RuntimeModuleLifecycleState!>! Modules, out System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Runtime.RuntimeLifecycleEvent!>! Timeline) -> void
+Cephalon.Engine.Runtime.RuntimeOperationalStory.Equals(Cephalon.Engine.Runtime.RuntimeOperationalStory? other) -> bool
+Cephalon.Engine.Runtime.RuntimeOperationalStory.ExecutionGraphs.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Runtime.RuntimeExecutionGraphState!>!
+Cephalon.Engine.Runtime.RuntimeOperationalStory.ExecutionGraphs.init -> void
+Cephalon.Engine.Runtime.RuntimeOperationalStory.GeneratedAtUtc.get -> System.DateTimeOffset
+Cephalon.Engine.Runtime.RuntimeOperationalStory.GeneratedAtUtc.init -> void
+Cephalon.Engine.Runtime.RuntimeOperationalStory.HostedExecutions.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Runtime.RuntimeHostedExecutionState!>!
+Cephalon.Engine.Runtime.RuntimeOperationalStory.HostedExecutions.init -> void
+Cephalon.Engine.Runtime.RuntimeOperationalStory.LoadedPackages.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Manifest.PackageManifest!>!
+Cephalon.Engine.Runtime.RuntimeOperationalStory.LoadedPackages.init -> void
+Cephalon.Engine.Runtime.RuntimeOperationalStory.Modules.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Runtime.RuntimeModuleLifecycleState!>!
+Cephalon.Engine.Runtime.RuntimeOperationalStory.Modules.init -> void
+Cephalon.Engine.Runtime.RuntimeOperationalStory.RuntimeOperationalStory(System.DateTimeOffset GeneratedAtUtc, Cephalon.Engine.Runtime.RuntimeStatusSnapshot! Status, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Manifest.PackageManifest!>! LoadedPackages, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Runtime.RuntimeModuleLifecycleState!>! Modules, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Runtime.RuntimeLifecycleEvent!>! Timeline) -> void
+Cephalon.Engine.Runtime.RuntimeOperationalStory.Status.get -> Cephalon.Engine.Runtime.RuntimeStatusSnapshot!
+Cephalon.Engine.Runtime.RuntimeOperationalStory.Status.init -> void
+Cephalon.Engine.Runtime.RuntimeOperationalStory.Timeline.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Runtime.RuntimeLifecycleEvent!>!
+Cephalon.Engine.Runtime.RuntimeOperationalStory.Timeline.init -> void
+Cephalon.Engine.Runtime.RuntimeStatus
+Cephalon.Engine.Runtime.RuntimeStatus.Created = 0 -> Cephalon.Engine.Runtime.RuntimeStatus
+Cephalon.Engine.Runtime.RuntimeStatus.Failed = 7 -> Cephalon.Engine.Runtime.RuntimeStatus
+Cephalon.Engine.Runtime.RuntimeStatus.Initialized = 2 -> Cephalon.Engine.Runtime.RuntimeStatus
+Cephalon.Engine.Runtime.RuntimeStatus.Initializing = 1 -> Cephalon.Engine.Runtime.RuntimeStatus
+Cephalon.Engine.Runtime.RuntimeStatus.Started = 4 -> Cephalon.Engine.Runtime.RuntimeStatus
+Cephalon.Engine.Runtime.RuntimeStatus.Starting = 3 -> Cephalon.Engine.Runtime.RuntimeStatus
+Cephalon.Engine.Runtime.RuntimeStatus.Stopped = 6 -> Cephalon.Engine.Runtime.RuntimeStatus
+Cephalon.Engine.Runtime.RuntimeStatus.Stopping = 5 -> Cephalon.Engine.Runtime.RuntimeStatus
+Cephalon.Engine.Runtime.RuntimeStatusSnapshot
+Cephalon.Engine.Runtime.RuntimeStatusSnapshot.<Clone>$() -> Cephalon.Engine.Runtime.RuntimeStatusSnapshot!
+Cephalon.Engine.Runtime.RuntimeStatusSnapshot.Deconstruct(out Cephalon.Engine.Runtime.RuntimeStatus Status, out System.DateTimeOffset? InitializedAtUtc, out System.DateTimeOffset? StartedAtUtc, out System.DateTimeOffset? StoppingAtUtc, out System.DateTimeOffset? StoppedAtUtc, out int RestartCount, out Cephalon.Engine.Runtime.RuntimeFailureInfo? LastFailure) -> void
+Cephalon.Engine.Runtime.RuntimeStatusSnapshot.Equals(Cephalon.Engine.Runtime.RuntimeStatusSnapshot? other) -> bool
+Cephalon.Engine.Runtime.RuntimeStatusSnapshot.InitializedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Engine.Runtime.RuntimeStatusSnapshot.InitializedAtUtc.init -> void
+Cephalon.Engine.Runtime.RuntimeStatusSnapshot.LastFailure.get -> Cephalon.Engine.Runtime.RuntimeFailureInfo?
+Cephalon.Engine.Runtime.RuntimeStatusSnapshot.LastFailure.init -> void
+Cephalon.Engine.Runtime.RuntimeStatusSnapshot.RestartCount.get -> int
+Cephalon.Engine.Runtime.RuntimeStatusSnapshot.RestartCount.init -> void
+Cephalon.Engine.Runtime.RuntimeStatusSnapshot.RuntimeStatusSnapshot(Cephalon.Engine.Runtime.RuntimeStatus Status, System.DateTimeOffset? InitializedAtUtc, System.DateTimeOffset? StartedAtUtc, System.DateTimeOffset? StoppingAtUtc, System.DateTimeOffset? StoppedAtUtc, int RestartCount, Cephalon.Engine.Runtime.RuntimeFailureInfo? LastFailure) -> void
+Cephalon.Engine.Runtime.RuntimeStatusSnapshot.StartedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Engine.Runtime.RuntimeStatusSnapshot.StartedAtUtc.init -> void
+Cephalon.Engine.Runtime.RuntimeStatusSnapshot.Status.get -> Cephalon.Engine.Runtime.RuntimeStatus
+Cephalon.Engine.Runtime.RuntimeStatusSnapshot.Status.init -> void
+Cephalon.Engine.Runtime.RuntimeStatusSnapshot.StoppedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Engine.Runtime.RuntimeStatusSnapshot.StoppedAtUtc.init -> void
+Cephalon.Engine.Runtime.RuntimeStatusSnapshot.StoppingAtUtc.get -> System.DateTimeOffset?
+Cephalon.Engine.Runtime.RuntimeStatusSnapshot.StoppingAtUtc.init -> void
+Cephalon.Engine.Technologies.BuiltInTechnologies
+Cephalon.Engine.Technologies.TechnologyCatalogSnapshot
+Cephalon.Engine.Technologies.TechnologyCatalogSnapshot.Technologies.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Technologies.TechnologyDescriptor!>!
+Cephalon.Engine.Technologies.TechnologyCatalogSnapshot.TechnologyCatalogSnapshot(System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Technologies.TechnologyDescriptor!>! technologies) -> void
+Cephalon.Engine.Technologies.TechnologyRuntimeCatalogSnapshot
+Cephalon.Engine.Technologies.TechnologyRuntimeCatalogSnapshot.GetByTechnology(string! technologyId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Technologies.TechnologyRuntimeSurface!>!
+Cephalon.Engine.Technologies.TechnologyRuntimeCatalogSnapshot.Surfaces.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Technologies.TechnologyRuntimeSurface!>!
+Cephalon.Engine.Technologies.TechnologyRuntimeCatalogSnapshot.TechnologyRuntimeCatalogSnapshot(System.Collections.Generic.IEnumerable<Cephalon.Abstractions.Technologies.ITechnologyRuntimeContributor!>! contributors) -> void
+Cephalon.Engine.Technologies.TechnologyRuntimeCatalogSnapshot.TechnologyRuntimeCatalogSnapshot(System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Technologies.TechnologyRuntimeSurface!>! surfaces) -> void
+Cephalon.Engine.Transports.BuiltInTransports
+Cephalon.Engine.Trust.CapabilityPolicyDecision
+Cephalon.Engine.Trust.CapabilityPolicyDecision.<Clone>$() -> Cephalon.Engine.Trust.CapabilityPolicyDecision!
+Cephalon.Engine.Trust.CapabilityPolicyDecision.Access.get -> Cephalon.Abstractions.Capabilities.CapabilityAccess
+Cephalon.Engine.Trust.CapabilityPolicyDecision.Access.init -> void
+Cephalon.Engine.Trust.CapabilityPolicyDecision.CapabilityKey.get -> string!
+Cephalon.Engine.Trust.CapabilityPolicyDecision.CapabilityKey.init -> void
+Cephalon.Engine.Trust.CapabilityPolicyDecision.CapabilityPolicyDecision(string! CapabilityKey, string! SourceModuleId, string? SourcePackageId, Cephalon.Abstractions.Capabilities.CapabilityAccess Access, bool SourceTrusted, bool IsAllowed, string! Reason) -> void
+Cephalon.Engine.Trust.CapabilityPolicyDecision.Deconstruct(out string! CapabilityKey, out string! SourceModuleId, out string? SourcePackageId, out Cephalon.Abstractions.Capabilities.CapabilityAccess Access, out bool SourceTrusted, out bool IsAllowed, out string! Reason) -> void
+Cephalon.Engine.Trust.CapabilityPolicyDecision.Equals(Cephalon.Engine.Trust.CapabilityPolicyDecision? other) -> bool
+Cephalon.Engine.Trust.CapabilityPolicyDecision.IsAllowed.get -> bool
+Cephalon.Engine.Trust.CapabilityPolicyDecision.IsAllowed.init -> void
+Cephalon.Engine.Trust.CapabilityPolicyDecision.Reason.get -> string!
+Cephalon.Engine.Trust.CapabilityPolicyDecision.Reason.init -> void
+Cephalon.Engine.Trust.CapabilityPolicyDecision.SourceModuleId.get -> string!
+Cephalon.Engine.Trust.CapabilityPolicyDecision.SourceModuleId.init -> void
+Cephalon.Engine.Trust.CapabilityPolicyDecision.SourcePackageId.get -> string?
+Cephalon.Engine.Trust.CapabilityPolicyDecision.SourcePackageId.init -> void
+Cephalon.Engine.Trust.CapabilityPolicyDecision.SourceTrusted.get -> bool
+Cephalon.Engine.Trust.CapabilityPolicyDecision.SourceTrusted.init -> void
+Cephalon.Engine.Trust.CapabilityPolicyEvaluator
+Cephalon.Engine.Trust.CapabilityPolicyEvaluator.CapabilityPolicyEvaluator(Cephalon.Engine.Trust.TrustSnapshot! snapshot) -> void
+Cephalon.Engine.Trust.CapabilityPolicyEvaluator.IsAllowed(string! capabilityKey) -> bool
+Cephalon.Engine.Trust.CapabilityPolicyEvaluator.Snapshot.get -> Cephalon.Engine.Trust.TrustSnapshot!
+Cephalon.Engine.Trust.CapabilityPolicyEvaluator.TryGetDecision(string! capabilityKey, out Cephalon.Engine.Trust.CapabilityPolicyDecision! decision) -> bool
+Cephalon.Engine.Trust.PackageSignatureTrustDecision
+Cephalon.Engine.Trust.PackageSignatureTrustDecision.<Clone>$() -> Cephalon.Engine.Trust.PackageSignatureTrustDecision!
+Cephalon.Engine.Trust.PackageSignatureTrustDecision.CertificateThumbprint.get -> string?
+Cephalon.Engine.Trust.PackageSignatureTrustDecision.CertificateThumbprint.init -> void
+Cephalon.Engine.Trust.PackageSignatureTrustDecision.Deconstruct(out string? Signer, out string? KeyId, out string? Fingerprint, out string? VerificationSource, out string? CertificateThumbprint, out bool IsVerified, out string! Reason) -> void
+Cephalon.Engine.Trust.PackageSignatureTrustDecision.Equals(Cephalon.Engine.Trust.PackageSignatureTrustDecision? other) -> bool
+Cephalon.Engine.Trust.PackageSignatureTrustDecision.Fingerprint.get -> string?
+Cephalon.Engine.Trust.PackageSignatureTrustDecision.Fingerprint.init -> void
+Cephalon.Engine.Trust.PackageSignatureTrustDecision.IsVerified.get -> bool
+Cephalon.Engine.Trust.PackageSignatureTrustDecision.IsVerified.init -> void
+Cephalon.Engine.Trust.PackageSignatureTrustDecision.KeyId.get -> string?
+Cephalon.Engine.Trust.PackageSignatureTrustDecision.KeyId.init -> void
+Cephalon.Engine.Trust.PackageSignatureTrustDecision.PackageSignatureTrustDecision(string? Signer, string? KeyId, string? Fingerprint, string? VerificationSource, string? CertificateThumbprint, bool IsVerified, string! Reason) -> void
+Cephalon.Engine.Trust.PackageSignatureTrustDecision.Reason.get -> string!
+Cephalon.Engine.Trust.PackageSignatureTrustDecision.Reason.init -> void
+Cephalon.Engine.Trust.PackageSignatureTrustDecision.Signer.get -> string?
+Cephalon.Engine.Trust.PackageSignatureTrustDecision.Signer.init -> void
+Cephalon.Engine.Trust.PackageSignatureTrustDecision.VerificationSource.get -> string?
+Cephalon.Engine.Trust.PackageSignatureTrustDecision.VerificationSource.init -> void
+Cephalon.Engine.Trust.PackageTrustDecision
+Cephalon.Engine.Trust.PackageTrustDecision.<Clone>$() -> Cephalon.Engine.Trust.PackageTrustDecision!
+Cephalon.Engine.Trust.PackageTrustDecision.AssemblyName.get -> string!
+Cephalon.Engine.Trust.PackageTrustDecision.AssemblyName.init -> void
+Cephalon.Engine.Trust.PackageTrustDecision.Deconstruct(out string! PackageId, out string! AssemblyName, out string! Path, out string? PublisherId, out string? SignatureKeyId, out string? SignatureFingerprint, out string? SignatureCertificateThumbprint, out System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Trust.PackageSignatureTrustDecision!>! Signatures, out bool IsSignatureVerified, out string! SignatureVerificationReason, out bool IsTrusted, out string! Reason) -> void
+Cephalon.Engine.Trust.PackageTrustDecision.Equals(Cephalon.Engine.Trust.PackageTrustDecision? other) -> bool
+Cephalon.Engine.Trust.PackageTrustDecision.IsSignatureVerified.get -> bool
+Cephalon.Engine.Trust.PackageTrustDecision.IsSignatureVerified.init -> void
+Cephalon.Engine.Trust.PackageTrustDecision.IsTrusted.get -> bool
+Cephalon.Engine.Trust.PackageTrustDecision.IsTrusted.init -> void
+Cephalon.Engine.Trust.PackageTrustDecision.PackageId.get -> string!
+Cephalon.Engine.Trust.PackageTrustDecision.PackageId.init -> void
+Cephalon.Engine.Trust.PackageTrustDecision.PackageTrustDecision(string! PackageId, string! AssemblyName, string! Path, string? PublisherId, string? SignatureKeyId, string? SignatureFingerprint, string? SignatureCertificateThumbprint, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Trust.PackageSignatureTrustDecision!>! Signatures, bool IsSignatureVerified, string! SignatureVerificationReason, bool IsTrusted, string! Reason) -> void
+Cephalon.Engine.Trust.PackageTrustDecision.Path.get -> string!
+Cephalon.Engine.Trust.PackageTrustDecision.Path.init -> void
+Cephalon.Engine.Trust.PackageTrustDecision.PublisherId.get -> string?
+Cephalon.Engine.Trust.PackageTrustDecision.PublisherId.init -> void
+Cephalon.Engine.Trust.PackageTrustDecision.Reason.get -> string!
+Cephalon.Engine.Trust.PackageTrustDecision.Reason.init -> void
+Cephalon.Engine.Trust.PackageTrustDecision.SignatureCertificateThumbprint.get -> string?
+Cephalon.Engine.Trust.PackageTrustDecision.SignatureCertificateThumbprint.init -> void
+Cephalon.Engine.Trust.PackageTrustDecision.SignatureFingerprint.get -> string?
+Cephalon.Engine.Trust.PackageTrustDecision.SignatureFingerprint.init -> void
+Cephalon.Engine.Trust.PackageTrustDecision.SignatureKeyId.get -> string?
+Cephalon.Engine.Trust.PackageTrustDecision.SignatureKeyId.init -> void
+Cephalon.Engine.Trust.PackageTrustDecision.SignatureVerificationReason.get -> string!
+Cephalon.Engine.Trust.PackageTrustDecision.SignatureVerificationReason.init -> void
+Cephalon.Engine.Trust.PackageTrustDecision.Signatures.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Trust.PackageSignatureTrustDecision!>!
+Cephalon.Engine.Trust.PackageTrustDecision.Signatures.init -> void
+Cephalon.Engine.Trust.TrustSnapshot
+Cephalon.Engine.Trust.TrustSnapshot.<Clone>$() -> Cephalon.Engine.Trust.TrustSnapshot!
+Cephalon.Engine.Trust.TrustSnapshot.Capabilities.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Trust.CapabilityPolicyDecision!>!
+Cephalon.Engine.Trust.TrustSnapshot.Capabilities.init -> void
+Cephalon.Engine.Trust.TrustSnapshot.Deconstruct(out Cephalon.Engine.Configuration.TrustPolicy! Policy, out System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Trust.PackageTrustDecision!>! Packages, out System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Trust.CapabilityPolicyDecision!>! Capabilities) -> void
+Cephalon.Engine.Trust.TrustSnapshot.Equals(Cephalon.Engine.Trust.TrustSnapshot? other) -> bool
+Cephalon.Engine.Trust.TrustSnapshot.Packages.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Trust.PackageTrustDecision!>!
+Cephalon.Engine.Trust.TrustSnapshot.Packages.init -> void
+Cephalon.Engine.Trust.TrustSnapshot.Policy.get -> Cephalon.Engine.Configuration.TrustPolicy!
+Cephalon.Engine.Trust.TrustSnapshot.Policy.init -> void
+Cephalon.Engine.Trust.TrustSnapshot.TrustSnapshot(Cephalon.Engine.Configuration.TrustPolicy! Policy, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Trust.PackageTrustDecision!>! Packages, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Trust.CapabilityPolicyDecision!>! Capabilities) -> void
+const Cephalon.Engine.Configuration.AuditHistoryExportSettings.DefaultMaxEntries = 1000 -> int
+const Cephalon.Engine.Configuration.AuditHistoryRetentionSettings.DefaultDeleteBatchSize = 500 -> int
+const Cephalon.Engine.Configuration.AuditHistorySettings.DefaultDatabaseRole = "history" -> string!
+const Cephalon.Engine.Configuration.EngineSettings.SectionName = "Engine" -> string!
+const Cephalon.Engine.Configuration.ModulePackageDirectory.DefaultManifestFileName = "cephalon.package.json" -> string!
+const Cephalon.Engine.Configuration.ModulePackageReference.AssemblyPathKind = "assembly-path" -> string!
+const Cephalon.Engine.Configuration.ModulePackageReference.DirectoryManifestKind = "directory-manifest" -> string!
+const Cephalon.Engine.Configuration.ModulePackageReference.ManifestFileKind = "manifest-file" -> string!
+const Cephalon.Engine.Configuration.ProjectConfigurationBuilderExtensions.DefaultRootFolderName = "Configurations" -> string!
+const Cephalon.Engine.Diagnostics.EngineDiagnostics.ActivitySourceName = "Cephalon.Engine" -> string!
+const Cephalon.Engine.Diagnostics.EngineDiagnostics.BuildActivityName = "engine.build" -> string!
+const Cephalon.Engine.Diagnostics.EngineDiagnostics.EngineBuildCounterName = "cephalon.engine.builds" -> string!
+const Cephalon.Engine.Diagnostics.EngineDiagnostics.ExecutionGraphTransitionCounterName = "cephalon.execution-graphs.transitions" -> string!
+const Cephalon.Engine.Diagnostics.EngineDiagnostics.HostedExecutionTransitionCounterName = "cephalon.hosted-executions.transitions" -> string!
+const Cephalon.Engine.Diagnostics.EngineDiagnostics.MeterName = "Cephalon.Engine" -> string!
+const Cephalon.Engine.Diagnostics.EngineDiagnostics.ModuleFailureCounterName = "cephalon.module.failures" -> string!
+const Cephalon.Engine.Diagnostics.EngineDiagnostics.ModuleTransitionCounterName = "cephalon.module.transitions" -> string!
+const Cephalon.Engine.Diagnostics.EngineDiagnostics.RuntimeFailureCounterName = "cephalon.runtime.failures" -> string!
+const Cephalon.Engine.Diagnostics.EngineDiagnostics.RuntimeRestartCounterName = "cephalon.runtime.restarts" -> string!
+const Cephalon.Engine.Diagnostics.EngineDiagnostics.RuntimeTransitionCounterName = "cephalon.runtime.transitions" -> string!
+const Cephalon.Engine.Manifest.RuntimeManifest.CurrentVersion = "2.0" -> string!
+override Cephalon.Engine.Diagnostics.DiagnosticEventDefinition.Equals(object? obj) -> bool
+override Cephalon.Engine.Diagnostics.DiagnosticEventDefinition.GetHashCode() -> int
+override Cephalon.Engine.Diagnostics.DiagnosticEventDefinition.ToString() -> string!
+override Cephalon.Engine.Diagnostics.DiagnosticsConvention.Equals(object? obj) -> bool
+override Cephalon.Engine.Diagnostics.DiagnosticsConvention.GetHashCode() -> int
+override Cephalon.Engine.Diagnostics.DiagnosticsConvention.ToString() -> string!
+override Cephalon.Engine.Runtime.RuntimeExecutionGraphState.Equals(object? obj) -> bool
+override Cephalon.Engine.Runtime.RuntimeExecutionGraphState.GetHashCode() -> int
+override Cephalon.Engine.Runtime.RuntimeExecutionGraphState.ToString() -> string!
+override Cephalon.Engine.Runtime.RuntimeFailureInfo.Equals(object? obj) -> bool
+override Cephalon.Engine.Runtime.RuntimeFailureInfo.GetHashCode() -> int
+override Cephalon.Engine.Runtime.RuntimeFailureInfo.ToString() -> string!
+override Cephalon.Engine.Runtime.RuntimeHealthReport.Equals(object? obj) -> bool
+override Cephalon.Engine.Runtime.RuntimeHealthReport.GetHashCode() -> int
+override Cephalon.Engine.Runtime.RuntimeHealthReport.ToString() -> string!
+override Cephalon.Engine.Runtime.RuntimeHostedExecutionState.Equals(object? obj) -> bool
+override Cephalon.Engine.Runtime.RuntimeHostedExecutionState.GetHashCode() -> int
+override Cephalon.Engine.Runtime.RuntimeHostedExecutionState.ToString() -> string!
+override Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.Equals(object? obj) -> bool
+override Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.GetHashCode() -> int
+override Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.ToString() -> string!
+override Cephalon.Engine.Runtime.RuntimeLifecycleEvent.Equals(object? obj) -> bool
+override Cephalon.Engine.Runtime.RuntimeLifecycleEvent.GetHashCode() -> int
+override Cephalon.Engine.Runtime.RuntimeLifecycleEvent.ToString() -> string!
+override Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.Equals(object? obj) -> bool
+override Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.GetHashCode() -> int
+override Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.ToString() -> string!
+override Cephalon.Engine.Runtime.RuntimeOperationalStory.Equals(object? obj) -> bool
+override Cephalon.Engine.Runtime.RuntimeOperationalStory.GetHashCode() -> int
+override Cephalon.Engine.Runtime.RuntimeOperationalStory.ToString() -> string!
+override Cephalon.Engine.Runtime.RuntimeStatusSnapshot.Equals(object? obj) -> bool
+override Cephalon.Engine.Runtime.RuntimeStatusSnapshot.GetHashCode() -> int
+override Cephalon.Engine.Runtime.RuntimeStatusSnapshot.ToString() -> string!
+override Cephalon.Engine.Trust.CapabilityPolicyDecision.Equals(object? obj) -> bool
+override Cephalon.Engine.Trust.CapabilityPolicyDecision.GetHashCode() -> int
+override Cephalon.Engine.Trust.CapabilityPolicyDecision.ToString() -> string!
+override Cephalon.Engine.Trust.PackageSignatureTrustDecision.Equals(object? obj) -> bool
+override Cephalon.Engine.Trust.PackageSignatureTrustDecision.GetHashCode() -> int
+override Cephalon.Engine.Trust.PackageSignatureTrustDecision.ToString() -> string!
+override Cephalon.Engine.Trust.PackageTrustDecision.Equals(object? obj) -> bool
+override Cephalon.Engine.Trust.PackageTrustDecision.GetHashCode() -> int
+override Cephalon.Engine.Trust.PackageTrustDecision.ToString() -> string!
+override Cephalon.Engine.Trust.TrustSnapshot.Equals(object? obj) -> bool
+override Cephalon.Engine.Trust.TrustSnapshot.GetHashCode() -> int
+override Cephalon.Engine.Trust.TrustSnapshot.ToString() -> string!
+static Cephalon.Engine.AppModel.AppProfileFactory.Create(Cephalon.Engine.Configuration.EngineSettings! settings) -> Cephalon.Abstractions.AppModel.AppProfile!
+static Cephalon.Engine.AppModel.BuiltInBlueprints.All.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.AppModel.AppBlueprint!>!
+static Cephalon.Engine.AppModel.BuiltInBlueprints.Microservice.get -> Cephalon.Abstractions.AppModel.AppBlueprint!
+static Cephalon.Engine.AppModel.BuiltInBlueprints.ModularMonolith.get -> Cephalon.Abstractions.AppModel.AppBlueprint!
+static Cephalon.Engine.AppModel.BuiltInBlueprints.ModularVerticalSlice.get -> Cephalon.Abstractions.AppModel.AppBlueprint!
+static Cephalon.Engine.AppModel.BuiltInBlueprints.Resolve(string! value) -> Cephalon.Abstractions.AppModel.AppBlueprint!
+static Cephalon.Engine.AppModel.BuiltInBlueprints.TryResolve(string! value, out Cephalon.Abstractions.AppModel.AppBlueprint! blueprint) -> bool
+static Cephalon.Engine.AppModel.BuiltInSuiteBlueprints.All.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.AppModel.SuiteBlueprint!>!
+static Cephalon.Engine.AppModel.BuiltInSuiteBlueprints.MicroserviceSuite.get -> Cephalon.Abstractions.AppModel.SuiteBlueprint!
+static Cephalon.Engine.AppModel.BuiltInSuiteBlueprints.Resolve(string! value) -> Cephalon.Abstractions.AppModel.SuiteBlueprint!
+static Cephalon.Engine.AppModel.BuiltInSuiteBlueprints.TryResolve(string! value, out Cephalon.Abstractions.AppModel.SuiteBlueprint! blueprint) -> bool
+static Cephalon.Engine.AppModel.DatabaseTopologyRoleResolver.Resolve(Cephalon.Abstractions.AppModel.DatabaseTopologySelection! databases, string! requestedRoleId) -> Cephalon.Engine.AppModel.DatabaseTopologyRoleResolution!
+static Cephalon.Engine.AppModel.Scaffolding.BuiltInScaffolds.Microservice.get -> Cephalon.Abstractions.AppModel.Scaffolding.ScaffoldPlan!
+static Cephalon.Engine.AppModel.Scaffolding.BuiltInScaffolds.ModularMonolith.get -> Cephalon.Abstractions.AppModel.Scaffolding.ScaffoldPlan!
+static Cephalon.Engine.AppModel.Scaffolding.BuiltInScaffolds.ModularVerticalSlice.get -> Cephalon.Abstractions.AppModel.Scaffolding.ScaffoldPlan!
+static Cephalon.Engine.AppModel.Scaffolding.BuiltInSuiteScaffolds.MicroserviceSuite.get -> Cephalon.Abstractions.AppModel.Scaffolding.SuiteScaffoldPlan!
+static Cephalon.Engine.Composition.EngineServiceCollectionExtensions.AddCephalon(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.Engine.Composition.EngineBuilder!>? configure = null, string! sectionPath = "Engine") -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Engine.Composition.EngineServiceCollectionExtensions.AddCephalon(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.Engine.Composition.EngineBuilder!>! configure) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Engine.Configuration.AuditHistoryExportSettings.Empty.get -> Cephalon.Engine.Configuration.AuditHistoryExportSettings!
+static Cephalon.Engine.Configuration.AuditHistoryExportSettings.FromSection(Microsoft.Extensions.Configuration.IConfigurationSection? section) -> Cephalon.Engine.Configuration.AuditHistoryExportSettings!
+static Cephalon.Engine.Configuration.AuditHistoryRetentionSettings.Empty.get -> Cephalon.Engine.Configuration.AuditHistoryRetentionSettings!
+static Cephalon.Engine.Configuration.AuditHistoryRetentionSettings.FromSection(Microsoft.Extensions.Configuration.IConfigurationSection? section) -> Cephalon.Engine.Configuration.AuditHistoryRetentionSettings!
+static Cephalon.Engine.Configuration.AuditHistorySettings.Empty.get -> Cephalon.Engine.Configuration.AuditHistorySettings!
+static Cephalon.Engine.Configuration.AuditHistorySettings.FromSection(Microsoft.Extensions.Configuration.IConfigurationSection? section) -> Cephalon.Engine.Configuration.AuditHistorySettings!
+static Cephalon.Engine.Configuration.AuditSettings.Empty.get -> Cephalon.Engine.Configuration.AuditSettings!
+static Cephalon.Engine.Configuration.AuditSettings.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Engine.Configuration.AuditSettings!
+static Cephalon.Engine.Configuration.BackendForFrontendBehaviorFilterSettings.Empty.get -> Cephalon.Engine.Configuration.BackendForFrontendBehaviorFilterSettings!
+static Cephalon.Engine.Configuration.BackendForFrontendBehaviorFilterSettings.FromSection(Microsoft.Extensions.Configuration.IConfigurationSection! section) -> Cephalon.Engine.Configuration.BackendForFrontendBehaviorFilterSettings!
+static Cephalon.Engine.Configuration.BackendForFrontendClientBindingSettings.FromSection(Microsoft.Extensions.Configuration.IConfigurationSection! section) -> Cephalon.Engine.Configuration.BackendForFrontendClientBindingSettings!
+static Cephalon.Engine.Configuration.BackendForFrontendSettings.Empty.get -> Cephalon.Engine.Configuration.BackendForFrontendSettings!
+static Cephalon.Engine.Configuration.BackendForFrontendSettings.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Engine.Configuration.BackendForFrontendSettings!
+static Cephalon.Engine.Configuration.BulkheadSettings.Empty.get -> Cephalon.Engine.Configuration.BulkheadSettings!
+static Cephalon.Engine.Configuration.CellSettings.Empty.get -> Cephalon.Engine.Configuration.CellSettings!
+static Cephalon.Engine.Configuration.CellSettings.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Engine.Configuration.CellSettings!
+static Cephalon.Engine.Configuration.CellTrafficAutomationRouteSettings.FromSection(Microsoft.Extensions.Configuration.IConfigurationSection! section) -> Cephalon.Engine.Configuration.CellTrafficAutomationRouteSettings!
+static Cephalon.Engine.Configuration.CellTrafficAutomationSettings.Empty.get -> Cephalon.Engine.Configuration.CellTrafficAutomationSettings!
+static Cephalon.Engine.Configuration.CellTrafficAutomationSettings.FromSection(Microsoft.Extensions.Configuration.IConfigurationSection? section) -> Cephalon.Engine.Configuration.CellTrafficAutomationSettings!
+static Cephalon.Engine.Configuration.CircuitBreakerSettings.Empty.get -> Cephalon.Engine.Configuration.CircuitBreakerSettings!
+static Cephalon.Engine.Configuration.ConnectionStringResolution.Resolve(Microsoft.Extensions.Configuration.IConfiguration? configuration, string? connectionString, string? connectionStringName, string! defaultConnectionString, string! sectionPath, string! providerDisplayName) -> string!
+static Cephalon.Engine.Configuration.DataSettings.Empty.get -> Cephalon.Engine.Configuration.DataSettings!
+static Cephalon.Engine.Configuration.DataSettings.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Engine.Configuration.DataSettings!
+static Cephalon.Engine.Configuration.DatabaseMigrationsSettings.Empty.get -> Cephalon.Engine.Configuration.DatabaseMigrationsSettings!
+static Cephalon.Engine.Configuration.DatabaseMigrationsSettings.FromSection(Microsoft.Extensions.Configuration.IConfigurationSection? section) -> Cephalon.Engine.Configuration.DatabaseMigrationsSettings!
+static Cephalon.Engine.Configuration.DatabaseRuntimeSettings.Empty.get -> Cephalon.Engine.Configuration.DatabaseRuntimeSettings!
+static Cephalon.Engine.Configuration.DatabaseRuntimeSettings.FromSection(Microsoft.Extensions.Configuration.IConfigurationSection? section) -> Cephalon.Engine.Configuration.DatabaseRuntimeSettings!
+static Cephalon.Engine.Configuration.DatabaseTargetSettings.Empty.get -> Cephalon.Engine.Configuration.DatabaseTargetSettings!
+static Cephalon.Engine.Configuration.DatabaseTargetSettings.FromSection(Microsoft.Extensions.Configuration.IConfigurationSection? section) -> Cephalon.Engine.Configuration.DatabaseTargetSettings!
+static Cephalon.Engine.Configuration.DatabaseTopologySettings.Empty.get -> Cephalon.Engine.Configuration.DatabaseTopologySettings!
+static Cephalon.Engine.Configuration.DatabaseTopologySettings.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Engine.Configuration.DatabaseTopologySettings!
+static Cephalon.Engine.Configuration.EngineOptions.Empty.get -> Cephalon.Engine.Configuration.EngineOptions!
+static Cephalon.Engine.Configuration.EngineOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Engine.Configuration.EngineOptions!
+static Cephalon.Engine.Configuration.EngineSettings.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Engine.Configuration.EngineSettings!
+static Cephalon.Engine.Configuration.FailurePolicy.Default.get -> Cephalon.Engine.Configuration.FailurePolicy!
+static Cephalon.Engine.Configuration.FailurePolicy.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Engine.Configuration.FailurePolicy!
+static Cephalon.Engine.Configuration.FeatureFlagProviderBindingSettings.FromSection(Microsoft.Extensions.Configuration.IConfigurationSection! section) -> Cephalon.Engine.Configuration.FeatureFlagProviderBindingSettings!
+static Cephalon.Engine.Configuration.FeatureFlagSettings.FromSection(Microsoft.Extensions.Configuration.IConfigurationSection! section) -> Cephalon.Engine.Configuration.FeatureFlagSettings!
+static Cephalon.Engine.Configuration.FeatureFlagTargetingSettings.Empty.get -> Cephalon.Engine.Configuration.FeatureFlagTargetingSettings!
+static Cephalon.Engine.Configuration.FeatureFlagTargetingSettings.FromSection(Microsoft.Extensions.Configuration.IConfigurationSection! section) -> Cephalon.Engine.Configuration.FeatureFlagTargetingSettings!
+static Cephalon.Engine.Configuration.FeatureSettings.Empty.get -> Cephalon.Engine.Configuration.FeatureSettings!
+static Cephalon.Engine.Configuration.FeatureSettings.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Engine.Configuration.FeatureSettings!
+static Cephalon.Engine.Configuration.IdentitySettings.Empty.get -> Cephalon.Engine.Configuration.IdentitySettings!
+static Cephalon.Engine.Configuration.IdentitySettings.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Engine.Configuration.IdentitySettings!
+static Cephalon.Engine.Configuration.LocalizationSettings.Empty.get -> Cephalon.Engine.Configuration.LocalizationSettings!
+static Cephalon.Engine.Configuration.LocalizationSettings.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Engine.Configuration.LocalizationSettings!
+static Cephalon.Engine.Configuration.MessagingSettings.Empty.get -> Cephalon.Engine.Configuration.MessagingSettings!
+static Cephalon.Engine.Configuration.MessagingSettings.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Engine.Configuration.MessagingSettings!
+static Cephalon.Engine.Configuration.MigrationSettings.Empty.get -> Cephalon.Engine.Configuration.MigrationSettings!
+static Cephalon.Engine.Configuration.MigrationSettings.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Engine.Configuration.MigrationSettings!
+static Cephalon.Engine.Configuration.ModuleDiscoverySettings.Empty.get -> Cephalon.Engine.Configuration.ModuleDiscoverySettings!
+static Cephalon.Engine.Configuration.ModuleDiscoverySettings.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Engine.Configuration.ModuleDiscoverySettings!
+static Cephalon.Engine.Configuration.ModulePackageReference.FromManifest(string! manifestPath, string? id = null) -> Cephalon.Engine.Configuration.ModulePackageReference!
+static Cephalon.Engine.Configuration.PackagePolicy.Default.get -> Cephalon.Engine.Configuration.PackagePolicy!
+static Cephalon.Engine.Configuration.PackagePolicy.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Engine.Configuration.PackagePolicy!
+static Cephalon.Engine.Configuration.ProjectConfigurationBuilderExtensions.AddCephalonProjectConfigurations(this Microsoft.Extensions.Configuration.IConfigurationBuilder! configuration, string! contentRootPath, string! environmentName, string! rootFolderName = "Configurations") -> Microsoft.Extensions.Configuration.IConfigurationBuilder!
+static Cephalon.Engine.Configuration.RateLimitingSettings.Empty.get -> Cephalon.Engine.Configuration.RateLimitingSettings!
+static Cephalon.Engine.Configuration.ResilienceSettings.Empty.get -> Cephalon.Engine.Configuration.ResilienceSettings!
+static Cephalon.Engine.Configuration.ResilienceSettings.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Engine.Configuration.ResilienceSettings!
+static Cephalon.Engine.Configuration.RetrySettings.Empty.get -> Cephalon.Engine.Configuration.RetrySettings!
+static Cephalon.Engine.Configuration.StranglerFigMigrationSettings.Empty.get -> Cephalon.Engine.Configuration.StranglerFigMigrationSettings!
+static Cephalon.Engine.Configuration.StranglerFigMigrationSettings.FromSection(Microsoft.Extensions.Configuration.IConfigurationSection? section) -> Cephalon.Engine.Configuration.StranglerFigMigrationSettings!
+static Cephalon.Engine.Configuration.StranglerFigRoutePolicySettings.FromSection(Microsoft.Extensions.Configuration.IConfigurationSection! section) -> Cephalon.Engine.Configuration.StranglerFigRoutePolicySettings!
+static Cephalon.Engine.Configuration.TenancySettings.Empty.get -> Cephalon.Engine.Configuration.TenancySettings!
+static Cephalon.Engine.Configuration.TenancySettings.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Engine.Configuration.TenancySettings!
+static Cephalon.Engine.Configuration.TimeoutSettings.Empty.get -> Cephalon.Engine.Configuration.TimeoutSettings!
+static Cephalon.Engine.Configuration.TrustPolicy.Default.get -> Cephalon.Engine.Configuration.TrustPolicy!
+static Cephalon.Engine.Configuration.TrustPolicy.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.Engine.Configuration.TrustPolicy!
+static Cephalon.Engine.Configuration.UriResolution.Resolve(Microsoft.Extensions.Configuration.IConfiguration? configuration, string? uri, string? uriName, string! defaultUri, string! sectionPath, string! providerDisplayName) -> string!
+static Cephalon.Engine.Diagnostics.DiagnosticEventDefinition.operator !=(Cephalon.Engine.Diagnostics.DiagnosticEventDefinition? left, Cephalon.Engine.Diagnostics.DiagnosticEventDefinition? right) -> bool
+static Cephalon.Engine.Diagnostics.DiagnosticEventDefinition.operator ==(Cephalon.Engine.Diagnostics.DiagnosticEventDefinition? left, Cephalon.Engine.Diagnostics.DiagnosticEventDefinition? right) -> bool
+static Cephalon.Engine.Diagnostics.DiagnosticsConvention.operator !=(Cephalon.Engine.Diagnostics.DiagnosticsConvention? left, Cephalon.Engine.Diagnostics.DiagnosticsConvention? right) -> bool
+static Cephalon.Engine.Diagnostics.DiagnosticsConvention.operator ==(Cephalon.Engine.Diagnostics.DiagnosticsConvention? left, Cephalon.Engine.Diagnostics.DiagnosticsConvention? right) -> bool
+static Cephalon.Engine.Patterns.BuiltInPatterns.All.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Patterns.PatternDescriptor!>!
+static Cephalon.Engine.Patterns.BuiltInPatterns.AntiCorruptionLayer.get -> Cephalon.Abstractions.Patterns.PatternDescriptor!
+static Cephalon.Engine.Patterns.BuiltInPatterns.BackendForFrontendPattern.get -> Cephalon.Abstractions.Patterns.PatternDescriptor!
+static Cephalon.Engine.Patterns.BuiltInPatterns.CleanArchitecture.get -> Cephalon.Abstractions.Patterns.PatternDescriptor!
+static Cephalon.Engine.Patterns.BuiltInPatterns.CqrsPattern.get -> Cephalon.Abstractions.Patterns.PatternDescriptor!
+static Cephalon.Engine.Patterns.BuiltInPatterns.DomainDrivenDesign.get -> Cephalon.Abstractions.Patterns.PatternDescriptor!
+static Cephalon.Engine.Patterns.BuiltInPatterns.EventSourcingPattern.get -> Cephalon.Abstractions.Patterns.PatternDescriptor!
+static Cephalon.Engine.Patterns.BuiltInPatterns.HexagonalArchitecture.get -> Cephalon.Abstractions.Patterns.PatternDescriptor!
+static Cephalon.Engine.Patterns.BuiltInPatterns.LayeredArchitecture.get -> Cephalon.Abstractions.Patterns.PatternDescriptor!
+static Cephalon.Engine.Patterns.BuiltInPatterns.MediatorPattern.get -> Cephalon.Abstractions.Patterns.PatternDescriptor!
+static Cephalon.Engine.Patterns.BuiltInPatterns.MicroserviceTopology.get -> Cephalon.Abstractions.Patterns.PatternDescriptor!
+static Cephalon.Engine.Patterns.BuiltInPatterns.ModularArchitecture.get -> Cephalon.Abstractions.Patterns.PatternDescriptor!
+static Cephalon.Engine.Patterns.BuiltInPatterns.ModuleFirstOrganization.get -> Cephalon.Abstractions.Patterns.PatternDescriptor!
+static Cephalon.Engine.Patterns.BuiltInPatterns.OnionArchitecture.get -> Cephalon.Abstractions.Patterns.PatternDescriptor!
+static Cephalon.Engine.Patterns.BuiltInPatterns.OutboxPattern.get -> Cephalon.Abstractions.Patterns.PatternDescriptor!
+static Cephalon.Engine.Patterns.BuiltInPatterns.PipelinePattern.get -> Cephalon.Abstractions.Patterns.PatternDescriptor!
+static Cephalon.Engine.Patterns.BuiltInPatterns.Resolve(string! value) -> Cephalon.Abstractions.Patterns.PatternDescriptor!
+static Cephalon.Engine.Patterns.BuiltInPatterns.SharedFoundationPattern.get -> Cephalon.Abstractions.Patterns.PatternDescriptor!
+static Cephalon.Engine.Patterns.BuiltInPatterns.SingleHostTopology.get -> Cephalon.Abstractions.Patterns.PatternDescriptor!
+static Cephalon.Engine.Patterns.BuiltInPatterns.SpecificationPattern.get -> Cephalon.Abstractions.Patterns.PatternDescriptor!
+static Cephalon.Engine.Patterns.BuiltInPatterns.StranglerFigPattern.get -> Cephalon.Abstractions.Patterns.PatternDescriptor!
+static Cephalon.Engine.Patterns.BuiltInPatterns.StrategyPattern.get -> Cephalon.Abstractions.Patterns.PatternDescriptor!
+static Cephalon.Engine.Patterns.BuiltInPatterns.TryResolve(string! value, out Cephalon.Abstractions.Patterns.PatternDescriptor! pattern) -> bool
+static Cephalon.Engine.Patterns.BuiltInPatterns.VerticalSliceOrganization.get -> Cephalon.Abstractions.Patterns.PatternDescriptor!
+static Cephalon.Engine.Runtime.RuntimeExecutionGraphState.operator !=(Cephalon.Engine.Runtime.RuntimeExecutionGraphState? left, Cephalon.Engine.Runtime.RuntimeExecutionGraphState? right) -> bool
+static Cephalon.Engine.Runtime.RuntimeExecutionGraphState.operator ==(Cephalon.Engine.Runtime.RuntimeExecutionGraphState? left, Cephalon.Engine.Runtime.RuntimeExecutionGraphState? right) -> bool
+static Cephalon.Engine.Runtime.RuntimeFailureInfo.operator !=(Cephalon.Engine.Runtime.RuntimeFailureInfo? left, Cephalon.Engine.Runtime.RuntimeFailureInfo? right) -> bool
+static Cephalon.Engine.Runtime.RuntimeFailureInfo.operator ==(Cephalon.Engine.Runtime.RuntimeFailureInfo? left, Cephalon.Engine.Runtime.RuntimeFailureInfo? right) -> bool
+static Cephalon.Engine.Runtime.RuntimeHealthReport.operator !=(Cephalon.Engine.Runtime.RuntimeHealthReport? left, Cephalon.Engine.Runtime.RuntimeHealthReport? right) -> bool
+static Cephalon.Engine.Runtime.RuntimeHealthReport.operator ==(Cephalon.Engine.Runtime.RuntimeHealthReport? left, Cephalon.Engine.Runtime.RuntimeHealthReport? right) -> bool
+static Cephalon.Engine.Runtime.RuntimeHostedExecutionState.operator !=(Cephalon.Engine.Runtime.RuntimeHostedExecutionState? left, Cephalon.Engine.Runtime.RuntimeHostedExecutionState? right) -> bool
+static Cephalon.Engine.Runtime.RuntimeHostedExecutionState.operator ==(Cephalon.Engine.Runtime.RuntimeHostedExecutionState? left, Cephalon.Engine.Runtime.RuntimeHostedExecutionState? right) -> bool
+static Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.operator !=(Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot? left, Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot? right) -> bool
+static Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot.operator ==(Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot? left, Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot? right) -> bool
+static Cephalon.Engine.Runtime.RuntimeLifecycleEvent.operator !=(Cephalon.Engine.Runtime.RuntimeLifecycleEvent? left, Cephalon.Engine.Runtime.RuntimeLifecycleEvent? right) -> bool
+static Cephalon.Engine.Runtime.RuntimeLifecycleEvent.operator ==(Cephalon.Engine.Runtime.RuntimeLifecycleEvent? left, Cephalon.Engine.Runtime.RuntimeLifecycleEvent? right) -> bool
+static Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.operator !=(Cephalon.Engine.Runtime.RuntimeModuleLifecycleState? left, Cephalon.Engine.Runtime.RuntimeModuleLifecycleState? right) -> bool
+static Cephalon.Engine.Runtime.RuntimeModuleLifecycleState.operator ==(Cephalon.Engine.Runtime.RuntimeModuleLifecycleState? left, Cephalon.Engine.Runtime.RuntimeModuleLifecycleState? right) -> bool
+static Cephalon.Engine.Runtime.RuntimeOperationalStory.operator !=(Cephalon.Engine.Runtime.RuntimeOperationalStory? left, Cephalon.Engine.Runtime.RuntimeOperationalStory? right) -> bool
+static Cephalon.Engine.Runtime.RuntimeOperationalStory.operator ==(Cephalon.Engine.Runtime.RuntimeOperationalStory? left, Cephalon.Engine.Runtime.RuntimeOperationalStory? right) -> bool
+static Cephalon.Engine.Runtime.RuntimeStatusSnapshot.operator !=(Cephalon.Engine.Runtime.RuntimeStatusSnapshot? left, Cephalon.Engine.Runtime.RuntimeStatusSnapshot? right) -> bool
+static Cephalon.Engine.Runtime.RuntimeStatusSnapshot.operator ==(Cephalon.Engine.Runtime.RuntimeStatusSnapshot? left, Cephalon.Engine.Runtime.RuntimeStatusSnapshot? right) -> bool
+static Cephalon.Engine.Technologies.BuiltInTechnologies.AgenticWorkloads.get -> Cephalon.Abstractions.Technologies.TechnologyDescriptor!
+static Cephalon.Engine.Technologies.BuiltInTechnologies.All.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Technologies.TechnologyDescriptor!>!
+static Cephalon.Engine.Technologies.BuiltInTechnologies.CellBasedArchitecture.get -> Cephalon.Abstractions.Technologies.TechnologyDescriptor!
+static Cephalon.Engine.Technologies.BuiltInTechnologies.EdgeNativeDelivery.get -> Cephalon.Abstractions.Technologies.TechnologyDescriptor!
+static Cephalon.Engine.Technologies.BuiltInTechnologies.EventDrivenIntegration.get -> Cephalon.Abstractions.Technologies.TechnologyDescriptor!
+static Cephalon.Engine.Technologies.BuiltInTechnologies.HybridCloudRuntime.get -> Cephalon.Abstractions.Technologies.TechnologyDescriptor!
+static Cephalon.Engine.Technologies.BuiltInTechnologies.IdentityAccess.get -> Cephalon.Abstractions.Technologies.TechnologyDescriptor!
+static Cephalon.Engine.Technologies.BuiltInTechnologies.KnowledgeRetrieval.get -> Cephalon.Abstractions.Technologies.TechnologyDescriptor!
+static Cephalon.Engine.Technologies.BuiltInTechnologies.MultiTenancy.get -> Cephalon.Abstractions.Technologies.TechnologyDescriptor!
+static Cephalon.Engine.Technologies.BuiltInTechnologies.RealtimeExperience.get -> Cephalon.Abstractions.Technologies.TechnologyDescriptor!
+static Cephalon.Engine.Technologies.BuiltInTechnologies.Resolve(string! value) -> Cephalon.Abstractions.Technologies.TechnologyDescriptor!
+static Cephalon.Engine.Technologies.BuiltInTechnologies.ServerlessHosting.get -> Cephalon.Abstractions.Technologies.TechnologyDescriptor!
+static Cephalon.Engine.Technologies.BuiltInTechnologies.ServiceMeshIntegration.get -> Cephalon.Abstractions.Technologies.TechnologyDescriptor!
+static Cephalon.Engine.Technologies.BuiltInTechnologies.TryResolve(string! value, out Cephalon.Abstractions.Technologies.TechnologyDescriptor! technology) -> bool
+static Cephalon.Engine.Transports.BuiltInTransports.All.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Transports.TransportDescriptor!>!
+static Cephalon.Engine.Transports.BuiltInTransports.BehaviorHttp.get -> Cephalon.Abstractions.Transports.TransportDescriptor!
+static Cephalon.Engine.Transports.BuiltInTransports.GraphQL.get -> Cephalon.Abstractions.Transports.TransportDescriptor!
+static Cephalon.Engine.Transports.BuiltInTransports.Grpc.get -> Cephalon.Abstractions.Transports.TransportDescriptor!
+static Cephalon.Engine.Transports.BuiltInTransports.JsonRpc.get -> Cephalon.Abstractions.Transports.TransportDescriptor!
+static Cephalon.Engine.Transports.BuiltInTransports.Resolve(string! value) -> Cephalon.Abstractions.Transports.TransportDescriptor!
+static Cephalon.Engine.Transports.BuiltInTransports.RestApi.get -> Cephalon.Abstractions.Transports.TransportDescriptor!
+static Cephalon.Engine.Transports.BuiltInTransports.ServerSentEvents.get -> Cephalon.Abstractions.Transports.TransportDescriptor!
+static Cephalon.Engine.Transports.BuiltInTransports.TryResolve(string! value, out Cephalon.Abstractions.Transports.TransportDescriptor! transport) -> bool
+static Cephalon.Engine.Transports.BuiltInTransports.WebSocket.get -> Cephalon.Abstractions.Transports.TransportDescriptor!
+static Cephalon.Engine.Trust.CapabilityPolicyDecision.operator !=(Cephalon.Engine.Trust.CapabilityPolicyDecision? left, Cephalon.Engine.Trust.CapabilityPolicyDecision? right) -> bool
+static Cephalon.Engine.Trust.CapabilityPolicyDecision.operator ==(Cephalon.Engine.Trust.CapabilityPolicyDecision? left, Cephalon.Engine.Trust.CapabilityPolicyDecision? right) -> bool
+static Cephalon.Engine.Trust.CapabilityPolicyEvaluator.CreateSnapshot(Cephalon.Engine.Configuration.TrustPolicy! policy, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Manifest.PackageManifest!>! packages, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Manifest.ModuleManifest!>! modules, System.Collections.Generic.IReadOnlyList<Cephalon.Engine.Manifest.CapabilityManifest!>! capabilities) -> Cephalon.Engine.Trust.TrustSnapshot!
+static Cephalon.Engine.Trust.PackageSignatureTrustDecision.operator !=(Cephalon.Engine.Trust.PackageSignatureTrustDecision? left, Cephalon.Engine.Trust.PackageSignatureTrustDecision? right) -> bool
+static Cephalon.Engine.Trust.PackageSignatureTrustDecision.operator ==(Cephalon.Engine.Trust.PackageSignatureTrustDecision? left, Cephalon.Engine.Trust.PackageSignatureTrustDecision? right) -> bool
+static Cephalon.Engine.Trust.PackageTrustDecision.operator !=(Cephalon.Engine.Trust.PackageTrustDecision? left, Cephalon.Engine.Trust.PackageTrustDecision? right) -> bool
+static Cephalon.Engine.Trust.PackageTrustDecision.operator ==(Cephalon.Engine.Trust.PackageTrustDecision? left, Cephalon.Engine.Trust.PackageTrustDecision? right) -> bool
+static Cephalon.Engine.Trust.TrustSnapshot.operator !=(Cephalon.Engine.Trust.TrustSnapshot? left, Cephalon.Engine.Trust.TrustSnapshot? right) -> bool
+static Cephalon.Engine.Trust.TrustSnapshot.operator ==(Cephalon.Engine.Trust.TrustSnapshot? left, Cephalon.Engine.Trust.TrustSnapshot? right) -> bool
