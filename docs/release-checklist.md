@@ -2,6 +2,8 @@
 
 This checklist consolidates everything a release manager runs through when cutting a Cephalon release tag (`v*.*.*`). It is the operational counterpart to the publish-side contract declared in [`package-publishing.md`](package-publishing.md), the supply-chain plan in [`supply-chain-uplift-plan.md`](supply-chain-uplift-plan.md), and the SRE error-budget posture in [`sre-posture.md`](sre-posture.md). Run it top-to-bottom; each section names the artefact that proves the step succeeded so a release pass is self-evidencing.
 
+For per-release tracking, copy [`release-checklist-template.md`](release-checklist-template.md) into a working artefact (GitHub Release draft, Linear / Jira issue, or `docs/releases/<tag>-checklist.md`) and fill in the tickboxes there; this rule book itself is never edited per release.
+
 Cross-references: [`package-publishing.md`](package-publishing.md), [`supply-chain-uplift-plan.md`](supply-chain-uplift-plan.md), [`engineering-standards.md`](engineering-standards.md), [`compatibility.md`](compatibility.md), [`sre-posture.md`](sre-posture.md), [`dotnet11-readiness.md`](dotnet11-readiness.md), [`deployment-mode-support.md`](deployment-mode-support.md), [`engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md), [`runtime-contract-index.md`](runtime-contract-index.md), [`conformance-matrix.md`](conformance-matrix.md), [`planning-governance.md`](planning-governance.md).
 
 ## Pre-flight: working-tree truth
