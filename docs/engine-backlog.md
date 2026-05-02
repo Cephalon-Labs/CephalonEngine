@@ -3634,8 +3634,39 @@ Delivered:
 
 Follow-up later:
 
-- when an engine emission site resolves the pipeline, the obvious natural shape is `var pipeline = scope.ServiceProvider.GetService<RedactionPipeline>(); var redacted = pipeline?.Filter(context, value) ?? value;` — short-circuits to passthrough when consumers haven't called `AddRedactionPipeline()`; document the recipe in the Diagnostics component doc once at least one site adopts it
+- when an engine emission site resolves the pipeline, the obvious natural shape is `var pipeline = scope.ServiceProvider.GetService<RedactionPipeline>(); var redacted = pipeline?.Filter(context, value) ?? value;` — short-circuits to passthrough when consumers haven't called `AddRedactionPipeline()`; document the recipe in the Diagnostics component doc once at least one site adopts it — **delivered in `ENG-365`**
 - if consumer apps need named pipelines (e.g. one per emission site with different filter sets), the natural extension is `AddRedactionPipeline<TKey>` keyed singletons aligned with .NET 10's keyed services; defer until at least one consumer has the need
+
+### ENG-365 Promote Cephalon.Diagnostics redaction surface to M1 (HttpRequestResponseLoggingMiddleware routes through RedactionPipeline)
+
+Status: done
+Estimate: 3
+
+Why:
+
+- `ENG-364` closed the redaction adoption arc (contract -> starters -> tests -> orchestration helper -> DI registration) but no engine emission site routed through the pipeline; the contract docs explicitly said "engine emission does not yet route through registered filters"
+- without an actual emission-site adoption, the redaction surface stays taxonomy-only; consumer apps that registered filters got no protection because no engine code path called `pipeline.Filter(...)` before exporter dispatch
+- `Cephalon.AspNetCore`'s `HttpRequestResponseLoggingMiddleware` is the single highest-value pilot site: it is the natural sink for HTTP authorization headers, cookies, and request/response paths that may contain sensitive identifiers; it has one concentrated emission point (`AddLogReferenceEvent` + `ApplyCorrelationToActivity`) so the wiring touches one file rather than scattering across many; and it already references `Cephalon.Diagnostics` so adoption requires no new package edges
+
+Delivered:
+
+- update `src/Cephalon.AspNetCore/Hosting/HttpRequestResponseLoggingMiddleware.cs`:
+    - add `RedactionPipeline redactionPipeline` parameter to the primary constructor (mandatory; resolved from DI)
+    - convert `ApplyCorrelationToActivity` and `AddLogReferenceEvent` from static to instance methods so they can call the pipeline through the captured field
+    - add private `Redact(Activity?, string attributeKey, object? value)` helper that builds a `RedactionContext` from `activity?.Source.Name + attributeKey` and pipes the value through `redactionPipeline.Filter`
+    - route every emitted span tag and `ActivityTagsCollection` value through `Redact(...)`: `cephalon.http.request_id`, `cephalon.http.traceparent`, `cephalon.log.event_id`, `http.request.method`, `url.path`, `cephalon.http.body.truncated`, `http.request.body.content_type`, `http.response.status_code`, `cephalon.http.elapsed_ms`, `http.response.body.content_type`, `exception.type` (11 distinct attribute keys spanning 5 emission events: started / body.logged-request / completed / body.logged-response / failed)
+- update `src/Cephalon.AspNetCore/Hosting/EngineWebApplicationBuilderExtensions.cs` to call `builder.Services.AddRedactionPipeline()` inside `AddCephalon(...)`, so every consumer that uses Cephalon ASP.NET Core hosting gets a `RedactionPipeline` registered automatically; idempotent via `TryAddSingleton` so consumer-side `AddRedactionPipeline()` calls compose cleanly
+- update `src/Cephalon.Diagnostics/Redaction/IRedactionFilter.cs` XML docs and `docs/components/diagnostics.md` *What it owns* paragraph to reflect M1 maturity: the redaction surface is no longer taxonomy-only; the AspNetCore middleware actually routes through registered filters now
+- new `tests/Cephalon.Tests.Composition/Diagnostics/Redaction/HttpRequestResponseLoggingMiddlewareRedactionTests.cs` (2 integration tests):
+    - `Middleware_RoutesEmittedAttributeValues_ThroughRedactionPipeline` — registers a tracking filter, fires an HTTP request through the middleware with a real `Activity`, asserts the filter saw all 6 expected attribute keys with the right values
+    - `Middleware_AppliesRedactionReplacement_BeforeTaggingActivity` — registers a filter that replaces `url.path` values, fires a request with a sensitive path, inspects the resulting `Activity.Events` and confirms the replacement reaches the span event tag (the redacted value is what would flow to an exporter)
+- verified end-to-end with `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors), `dotnet test --filter "FullyQualifiedName~Cephalon.Tests.Diagnostics.Redaction"` (35/35 pass: 8 KeyMatch + 10 Regex + 8 Pipeline + 7 ServiceCollection + 2 middleware integration), and full Composition test pass (no regressions)
+
+Follow-up later:
+
+- promote additional engine emission sites to route through `RedactionPipeline`: `Cephalon.Engine`'s module-phase activity tags (`engine.build`, `module.{phase}`), `Cephalon.Worker`'s lifecycle spans (`worker.lifecycle.start` / `.stop`), and any future `Cephalon.Eventing` / `Cephalon.MultiTenancy.Governance` emission sites; the helper pattern (`Redact(activity, key, value)` returning the pipeline-filtered value) is the canonical shape to copy
+- when the AspNetCore middleware adds explicit header capture (HTTP request/response headers as span attributes today are not emitted; the pilot redacts the small set already emitted), the redaction call sites already in place mean header values automatically flow through the pipeline
+- document the canonical "register `KeyMatchRedactionFilter` for authorization+cookie + `RegexRedactionFilter` for credit-card patterns + call `AddRedactionPipeline()`" recipe in `docs/components/diagnostics.md` once consumer adoption lands; today the surface is complete but the discoverable recipe doc is deferred
 
 ## Completed foundation work
 

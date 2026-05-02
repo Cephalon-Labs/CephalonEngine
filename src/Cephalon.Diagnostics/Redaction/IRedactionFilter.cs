@@ -8,9 +8,12 @@ namespace Cephalon.Diagnostics.Redaction;
 /// </summary>
 /// <remarks>
 /// <para>
-/// The redaction surface is intentionally a contract type only at this maturity level
-/// (taxonomy-only); the engine does not yet route emission through registered filters. When the
-/// runtime wires this surface in, the contract guarantees are:
+/// At M1 maturity the engine routes a first emission site through registered filters:
+/// <c>Cephalon.AspNetCore</c>'s HTTP request/response logging middleware pipes every span tag and
+/// activity-event tag value through the registered <see cref="RedactionPipeline"/> before it
+/// reaches an exporter. Additional emission sites (engine module-phase activity tags, worker
+/// lifecycle spans, eventing emission) will adopt the same pattern as the surface continues to
+/// promote. The contract guarantees the runtime honors are:
 /// </para>
 /// <list type="bullet">
 ///   <item>filters run synchronously at the engine boundary, before exporter dispatch</item>
