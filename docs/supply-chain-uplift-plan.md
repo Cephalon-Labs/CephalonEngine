@@ -30,26 +30,7 @@ The slices sequence across **Sprint 116 through Sprint 120**, one slice per spri
 
 ### `ENG-323` — `Cephalon.Diagnostics` OpenTelemetry semantic-convention adapter package skeleton (Sprint 118)
 
-Quality dimensions advanced: *Auditability*, *Reliability*, *Maintainability*.
-
-Why:
-
-- engine telemetry already uses `System.Diagnostics.ActivitySource`, `System.Diagnostics.Metrics.Meter`, and `Microsoft.Extensions.Logging.ILogger`, but each emitting site re-decides attribute names; without a centralised semantic-convention adapter the engine drifts away from OpenTelemetry semconv as semconv stabilises through 2026
-- the engine SRE posture in [`sre-posture.md`](sre-posture.md) names attribute cardinality and OTel semconv discipline as part of the contract; a single package centralises that discipline so consumers do not re-invent attribute names
-
-Delivered (target):
-
-- new `src/Cephalon.Diagnostics/` package with `IActivitySourceFactory`, `IMeterFactory`-style helpers that emit semconv-correct attributes for HTTP, DB, messaging, and runtime spans / metrics
-- preconfigured `LoggerMessage`-source-generated logging factories aligned with the per-package diagnostic-id range discipline
-- redaction filter at the engine boundary so secrets / PII / authentication tokens never reach exporters; consumers register additional filters additively
-- ship `M0` taxonomy-only at first; promote to `M1` when the engine itself emits at least one span / metric through this package; promote to `M2` when at least one host adapter (`Cephalon.AspNetCore`) routes its telemetry through this package
-- update [`engineering-standards.md`](engineering-standards.md) and [`engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md) to reflect the new package
-- emit reference-doc coverage through `Cephalon.ReferenceDocs`
-
-Follow-up later:
-
-- per-companion-pack OTel adapter rollout (CDC, eventing, agentics, retrieval, multi-tenancy governance) once the base `Cephalon.Diagnostics` shape is proven
-- vendor-specific exporter packs remain out of scope; this package ships exporter-agnostic surface only
+*Shipped at `M0` taxonomy-only.* New [`src/Cephalon.Diagnostics/`](../src/Cephalon.Diagnostics/) package ships three stable static classes — `CephalonActivitySources` (engine / ASP.NET Core / worker), `CephalonMeters` (engine / ASP.NET Core / worker), and `CephalonDiagnosticsAttributeKeys` (`cephalon.module.id`, `cephalon.behavior.id`, `cephalon.cell.id`, `cephalon.app.blueprint`, `cephalon.tenant.id`) — that publish the names engine and host-adapter emission sites will use. `Microsoft.CodeAnalysis.PublicApiAnalyzers` is wired in from day one with `PublicAPI.Shipped.txt` (empty) and `PublicAPI.Unshipped.txt` (the new types). Where OpenTelemetry semantic conventions exist for a concept, engine emission uses the OTel attribute name directly; the `cephalon.*` keys are scoped to engine concepts that have no semconv equivalent. See [`docs/components/diagnostics.md`](components/diagnostics.md) and `ENG-323` in [`engine-backlog.md`](engine-backlog.md). Promote to `M1` when the engine itself emits at least one span / metric through `CephalonActivitySources.Engine` or `CephalonMeters.Engine`; promote to `M2` when at least one host adapter routes its telemetry through this package's name set. Follow-up: redaction filter at the engine boundary, `LoggerMessage` factories, per-companion-pack OTel adapter rollout (CDC, eventing, agentics, retrieval, multi-tenancy governance).
 
 ### `ENG-324` — Release pipeline supply-chain hardening (SLSA L3 + Sigstore + CycloneDX SBOM + NuGet trusted publishing) (Sprint 119)
 

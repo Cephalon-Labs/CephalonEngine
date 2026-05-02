@@ -2715,6 +2715,41 @@ Follow-up later:
 - clean up the RS0026 / RS0027 optional-overload patterns inside `Cephalon.Abstractions` so the per-project suppressions can be removed without the build going red
 - author a generator / `dotnet format analyzers` integration into release validation so the public-API baseline regenerates predictably on intentional surface changes rather than relying on hand-extraction from build output
 
+### ENG-323 Cephalon.Diagnostics OpenTelemetry semantic-convention adapter package skeleton
+
+Status: done
+Estimate: 5
+
+Why:
+
+- engine telemetry already uses `System.Diagnostics.ActivitySource`, `System.Diagnostics.Metrics.Meter`, and `Microsoft.Extensions.Logging.ILogger`, but each emitting site re-decides attribute names and source / meter identifiers; without a centralised semantic-convention adapter the engine drifts away from OpenTelemetry semconv as semconv stabilises through 2026
+- the engine SRE posture in `docs/sre-posture.md` names attribute cardinality and OTel semconv discipline as part of the contract; a single package centralises that discipline so consumers do not re-invent attribute names
+- this slice also serves as the proof-of-concept for adopting `Microsoft.CodeAnalysis.PublicApiAnalyzers` from day one on a brand-new package, complementing `ENG-322`'s retroactive adoption on `Cephalon.Abstractions`
+
+Delivered:
+
+- new `src/Cephalon.Diagnostics/` package targeting `net10.0` with `Microsoft.CodeAnalysis.PublicApiAnalyzers` `4.14.0` wired in from day one as a `PrivateAssets=all` `PackageReference`; `PublicAPI.Shipped.txt` (empty header-only) and `PublicAPI.Unshipped.txt` (the new types) declared as `AdditionalFiles`
+- ship three stable static classes at `M0` taxonomy-only:
+    - `CephalonActivitySources` exposing `Engine` (`Cephalon.Engine`), `AspNetCore` (`Cephalon.AspNetCore`), and `Worker` (`Cephalon.Worker`) source names
+    - `CephalonMeters` exposing the matching meter names
+    - `CephalonDiagnosticsAttributeKeys` exposing `cephalon.module.id`, `cephalon.behavior.id`, `cephalon.cell.id`, `cephalon.app.blueprint`, `cephalon.tenant.id` for engine concepts that have no OpenTelemetry semantic-convention name
+- where OpenTelemetry semantic conventions already exist for a concept (HTTP, DB, messaging, RPC, runtime, exception attributes), engine emission uses the OTel attribute name directly; the `cephalon.*` keys are deliberately scoped to engine concepts without a semconv equivalent so this package stays a complement to OpenTelemetry, not a replacement
+- add the project to `CephalonEngine.slnx` so it builds with the rest of the solution
+- generate `src/Cephalon.Diagnostics/packages.lock.json` so `dotnet restore --locked-mode` (the CI gate from `ENG-321`) still passes
+- add `docs/components/diagnostics.md` declaring what the package owns, the main surfaces, the maturity (`M0` taxonomy-only) and ownership (`taxonomy-only`) labels, the promotion criteria for `M1` and `M2`, and the cross-references back to `engineering-standards.md`, `compatibility.md`, `engine-surface-maturity-audit.md`, `supply-chain-uplift-plan.md`, `sre-posture.md`, and the OpenTelemetry semantic-conventions external source
+- update `docs/components/README.md` to surface the new component page in the canonical list
+- collapse the matching `ENG-323` section in `docs/supply-chain-uplift-plan.md` into a one-paragraph "shipped" back-pointer per the plan's own refresh cadence
+- verified end-to-end with `dotnet build src/Cephalon.Diagnostics/Cephalon.Diagnostics.csproj -c Release` (0 warnings, 0 errors) and full-solution `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors)
+
+Follow-up later:
+
+- promote to `M1` when the engine itself emits at least one span or metric through `CephalonActivitySources.Engine` / `CephalonMeters.Engine` (e.g. behavior dispatch latency histogram, module composition span); promote to `M2` when at least one host adapter (`Cephalon.AspNetCore`, `Cephalon.Worker`) routes its telemetry through this package's name set
+- add a redaction filter primitive at the engine boundary so secrets / PII / authentication tokens never reach exporters; consumers should register additional filters additively
+- add `LoggerMessage`-source-generated logging factories aligned with the per-package diagnostic-id range discipline once the engine itself takes a dependency on this package
+- per-companion-pack OTel adapter rollout (CDC, eventing, agentics, retrieval, multi-tenancy governance) once the base shape is proven
+- update `docs/engine-surface-maturity-audit.md` with a `Cephalon.Diagnostics` row at `M0` / `taxonomy-only` in a follow-up audit refresh
+- vendor-specific exporter packs remain out of scope; this package ships exporter-agnostic surface only
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -10759,6 +10794,10 @@ Upcoming sequence from the April 2026 maturity reset:
 ### Sprint 117
 
 - ENG-322 Public-API contract lock-in proof on Cephalon.Abstractions (shipped)
+
+### Sprint 118
+
+- ENG-323 Cephalon.Diagnostics OpenTelemetry semantic-convention adapter package skeleton (shipped)
 
 ### Later / not scheduled yet
 
