@@ -1,0 +1,58 @@
+#nullable enable
+Cephalon.Data.Postgres.Configuration.PostgresDataOptions
+Cephalon.Data.Postgres.Configuration.PostgresDataOptions.CdcCaptures.get -> System.Collections.Generic.IList<Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions!>!
+Cephalon.Data.Postgres.Configuration.PostgresDataOptions.ConnectionString.get -> string?
+Cephalon.Data.Postgres.Configuration.PostgresDataOptions.ConnectionString.set -> void
+Cephalon.Data.Postgres.Configuration.PostgresDataOptions.ConnectionStringName.get -> string?
+Cephalon.Data.Postgres.Configuration.PostgresDataOptions.ConnectionStringName.set -> void
+Cephalon.Data.Postgres.Configuration.PostgresDataOptions.DatabaseName.get -> string!
+Cephalon.Data.Postgres.Configuration.PostgresDataOptions.DatabaseName.set -> void
+Cephalon.Data.Postgres.Configuration.PostgresDataOptions.PostgresDataOptions() -> void
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.ChannelId.get -> string!
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.ChannelId.set -> void
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.CreateSlotIfMissing.get -> bool
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.CreateSlotIfMissing.set -> void
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.Description.get -> string!
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.Description.set -> void
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.DisplayName.get -> string!
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.DisplayName.set -> void
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.EventFormat.get -> string!
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.EventFormat.set -> void
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.Id.get -> string!
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.Id.set -> void
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.InitialPosition.get -> string!
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.InitialPosition.set -> void
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.MaxAwaitTimeSeconds.get -> int
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.MaxAwaitTimeSeconds.set -> void
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.MaxChangesPerRead.get -> int
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.MaxChangesPerRead.set -> void
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.MessageType.get -> string!
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.MessageType.set -> void
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.Metadata.get -> System.Collections.Generic.IDictionary<string!, string!>!
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.OutboxId.get -> string!
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.OutboxId.set -> void
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.PollingIntervalSeconds.get -> int
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.PollingIntervalSeconds.set -> void
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.PostgresLogicalReplicationCaptureOptions() -> void
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.PublicationName.get -> string!
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.PublicationName.set -> void
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.RecreateSlotIfInvalidated.get -> bool
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.RecreateSlotIfInvalidated.set -> void
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.ResourceIds.get -> System.Collections.Generic.IList<string!>!
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.SlotName.get -> string!
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.SlotName.set -> void
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.SourceId.get -> string!
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.SourceId.set -> void
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.SourceModuleId.get -> string!
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.SourceModuleId.set -> void
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.TableName.get -> string!
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.TableName.set -> void
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.TableSchema.get -> string!
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.TableSchema.set -> void
+Cephalon.Data.Postgres.Configuration.PostgresLogicalReplicationCaptureOptions.Tags.get -> System.Collections.Generic.IList<string!>!
+Cephalon.Data.Postgres.Registration.PostgresDataEngineBuilderExtensions
+const Cephalon.Data.Postgres.Configuration.PostgresDataOptions.ProviderId = "postgresql" -> string!
+const Cephalon.Data.Postgres.Configuration.PostgresDataOptions.SectionPath = "Engine:Data:Postgres" -> string!
+static Cephalon.Data.Postgres.Registration.PostgresDataEngineBuilderExtensions.AddPostgresData(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Data.Postgres.Configuration.PostgresDataOptions!>! configure) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Data.Postgres.Registration.PostgresDataEngineBuilderExtensions.AddPostgresData(this Cephalon.Engine.Composition.EngineBuilder! builder, string! connectionString, string! databaseName, System.Action<Cephalon.Data.Postgres.Configuration.PostgresDataOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!

@@ -1,0 +1,115 @@
+#nullable enable
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions.EnableSfidIdentifiers.get -> bool
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions.EnableSfidIdentifiers.set -> void
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions.EntityFrameworkDataOptions(System.Type! readDbContextType, System.Type! writeDbContextType) -> void
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions.ReadDbContextType.get -> System.Type!
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions.RegisterDbContextCapabilities.get -> bool
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions.RegisterDbContextCapabilities.set -> void
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions.RegisterInbox.get -> bool
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions.RegisterInbox.set -> void
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions.RegisterOutbox.get -> bool
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions.RegisterOutbox.set -> void
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions.RegisterProjections.get -> bool
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions.RegisterProjections.set -> void
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions.RegisterProviderCapability.get -> bool
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions.RegisterProviderCapability.set -> void
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions.UsesEngineDatabaseTopology.get -> bool
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions.UsesEngineDatabaseTopology.set -> void
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions.UsesReadWriteSplit.get -> bool
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions.WriteDbContextType.get -> System.Type!
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext.ConnectionString.get -> string!
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext.ConnectionStringName.get -> string?
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext.EntityFrameworkDatabaseRoleContext(string! requestedRoleId, string! resolvedRoleId, Cephalon.Abstractions.AppModel.DatabaseTargetSelection! target, Cephalon.Abstractions.AppModel.DatabaseRuntimeSelection! runtime, string! connectionString) -> void
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext.IsFallback.get -> bool
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext.Provider.get -> string?
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext.RequestedRoleId.get -> string!
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext.ResolvedRoleId.get -> string!
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext.Role.get -> string!
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext.Runtime.get -> Cephalon.Abstractions.AppModel.DatabaseRuntimeSelection!
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext.Schema.get -> string?
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext.Target.get -> Cephalon.Abstractions.AppModel.DatabaseTargetSelection!
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext.UsesNamedConnectionString.get -> bool
+Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleResolver
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry.ChannelId.get -> string!
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry.ChannelId.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry.ContentType.get -> string?
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry.ContentType.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry.CorrelationId.get -> string?
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry.CorrelationId.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry.EntityFrameworkInboxEntry() -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry.HeadersJson.get -> string!
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry.HeadersJson.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry.Id.get -> string!
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry.Id.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry.MessageType.get -> string!
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry.MessageType.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry.MetadataJson.get -> string!
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry.MetadataJson.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry.Payload.get -> string!
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry.Payload.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry.ProcessedAtUtc.get -> System.DateTimeOffset
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry.ProcessedAtUtc.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry.ReceivedAtUtc.get -> System.DateTimeOffset
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry.ReceivedAtUtc.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry.TenantId.get -> string?
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry.TenantId.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkModelBuilderExtensions
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.ChannelId.get -> string!
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.ChannelId.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.ContentType.get -> string?
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.ContentType.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.CorrelationId.get -> string?
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.CorrelationId.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.CreatedAtUtc.get -> System.DateTimeOffset
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.CreatedAtUtc.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.DispatchAttemptCount.get -> int
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.DispatchAttemptCount.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.DispatchedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.DispatchedAtUtc.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.EntityFrameworkOutboxEntry() -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.HeadersJson.get -> string!
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.HeadersJson.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.Id.get -> string!
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.Id.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.MessageType.get -> string!
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.MessageType.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.MetadataJson.get -> string!
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.MetadataJson.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.NextAttemptAtUtc.get -> System.DateTimeOffset?
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.NextAttemptAtUtc.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.OccurredAtUtc.get -> System.DateTimeOffset
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.OccurredAtUtc.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.Payload.get -> string!
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.Payload.set -> void
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.TenantId.get -> string?
+Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry.TenantId.set -> void
+Cephalon.Data.EntityFramework.Modeling.IEntityFrameworkInboxContext
+Cephalon.Data.EntityFramework.Modeling.IEntityFrameworkInboxContext.InboxMessages.get -> Microsoft.EntityFrameworkCore.DbSet<Cephalon.Data.EntityFramework.Modeling.EntityFrameworkInboxEntry!>!
+Cephalon.Data.EntityFramework.Modeling.IEntityFrameworkOutboxContext
+Cephalon.Data.EntityFramework.Modeling.IEntityFrameworkOutboxContext.OutboxMessages.get -> Microsoft.EntityFrameworkCore.DbSet<Cephalon.Data.EntityFramework.Modeling.EntityFrameworkOutboxEntry!>!
+Cephalon.Data.EntityFramework.Registration.EntityFrameworkDataEngineBuilderExtensions
+Cephalon.Data.EntityFramework.Services.EntityFrameworkDatabaseMigrationHostedService
+Cephalon.Data.EntityFramework.Services.EntityFrameworkDatabaseMigrationHostedService.EntityFrameworkDatabaseMigrationHostedService(System.IServiceProvider! serviceProvider, Cephalon.Abstractions.AppModel.AppProfile! appProfile, System.Collections.Generic.IEnumerable<Cephalon.Data.EntityFramework.Services.EntityFrameworkDatabaseMigrationRegistration!>! registrations) -> void
+Cephalon.Data.EntityFramework.Services.EntityFrameworkDatabaseMigrationHostedService.StartAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+Cephalon.Data.EntityFramework.Services.EntityFrameworkDatabaseMigrationHostedService.StopAsync(System.Threading.CancellationToken cancellationToken) -> System.Threading.Tasks.Task!
+Cephalon.Data.EntityFramework.Services.EntityFrameworkDatabaseMigrationRegistration
+Cephalon.Data.EntityFramework.Services.EntityFrameworkDatabaseMigrationRegistration.DbContextType.get -> System.Type!
+Cephalon.Data.EntityFramework.Services.EntityFrameworkDatabaseMigrationRegistration.EntityFrameworkDatabaseMigrationRegistration(System.Type! dbContextType, System.Collections.Generic.IReadOnlyList<string!>! targetRoleIds) -> void
+Cephalon.Data.EntityFramework.Services.EntityFrameworkDatabaseMigrationRegistration.TargetRoleIds.get -> System.Collections.Generic.IReadOnlyList<string!>!
+const Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions.ProviderId = "entity-framework" -> string!
+static Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleResolver.ResolveHistory(System.IServiceProvider! serviceProvider) -> Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext!
+static Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleResolver.ResolveOutbox(System.IServiceProvider! serviceProvider) -> Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext!
+static Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleResolver.ResolveRead(System.IServiceProvider! serviceProvider) -> Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext!
+static Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleResolver.ResolveRole(System.IServiceProvider! serviceProvider, string! requestedRoleId) -> Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext!
+static Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleResolver.ResolveSharedWrite(System.IServiceProvider! serviceProvider) -> Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext!
+static Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleResolver.ResolveWrite(System.IServiceProvider! serviceProvider) -> Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext!
+static Cephalon.Data.EntityFramework.Modeling.EntityFrameworkModelBuilderExtensions.ConfigureCephalonInbox(this Microsoft.EntityFrameworkCore.ModelBuilder! modelBuilder, string! tableName = "cephalon_inbox_messages") -> Microsoft.EntityFrameworkCore.ModelBuilder!
+static Cephalon.Data.EntityFramework.Modeling.EntityFrameworkModelBuilderExtensions.ConfigureCephalonOutbox(this Microsoft.EntityFrameworkCore.ModelBuilder! modelBuilder, string! tableName = "cephalon_outbox_messages") -> Microsoft.EntityFrameworkCore.ModelBuilder!
+static Cephalon.Data.EntityFramework.Registration.EntityFrameworkDataEngineBuilderExtensions.AddEntityFrameworkData<TDbContext>(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext!, Microsoft.EntityFrameworkCore.DbContextOptionsBuilder!>! configureDbContext, System.Action<Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Data.EntityFramework.Registration.EntityFrameworkDataEngineBuilderExtensions.AddEntityFrameworkData<TDbContext>(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Microsoft.EntityFrameworkCore.DbContextOptionsBuilder!>! configureDbContext, System.Action<Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Data.EntityFramework.Registration.EntityFrameworkDataEngineBuilderExtensions.AddEntityFrameworkData<TReadDbContext, TWriteDbContext>(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDatabaseRoleContext!, Microsoft.EntityFrameworkCore.DbContextOptionsBuilder!>! configureDbContext, System.Action<Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Data.EntityFramework.Registration.EntityFrameworkDataEngineBuilderExtensions.AddEntityFrameworkData<TReadDbContext, TWriteDbContext>(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Microsoft.EntityFrameworkCore.DbContextOptionsBuilder!>! configureReadDbContext, System.Action<Microsoft.EntityFrameworkCore.DbContextOptionsBuilder!>! configureWriteDbContext, System.Action<Cephalon.Data.EntityFramework.Configuration.EntityFrameworkDataOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!

@@ -3162,6 +3162,37 @@ Follow-up later:
 - clean up the RS0026 / RS0027 optional-overload patterns inside each of these five projects so the per-project suppressions can be removed
 - when companion packs cross from `M2` into multi-region or distributed-execution `M3`, those packs declare their own SLI/SLO additively in their component doc per `docs/sre-posture.md`
 
+### ENG-341 Public-API contract lock-in batch rollout to data family (Cephalon.Data + 15 provider packs)
+
+Status: done
+Estimate: 8
+
+Why:
+
+- the data family is the largest single rollout slice remaining: `Cephalon.Data` core plus 15 provider packs (`Cassandra`, `ClickHouse`, `Debezium`, `Elasticsearch`, `EntityFramework`, `MongoDB`, `MySql`, `Nats`, `Neo4j`, `OpenSearch`, `Oracle`, `Postgres`, `Qdrant`, `Redis`, `SqlServer`); landing all 16 in one batch keeps the data-family contract lock-in coherent and avoids 16 small slices each repeating the same pattern
+- combined surface is ~700 entries which is meaningful enough to need consistent NoWarn discipline across the family
+
+Delivered:
+
+- author one-shot helper `scripts/_inject-public-api-analyzers.ps1` that injects the analyzer + AdditionalFiles + RS0026/RS0027 NoWarn into a list of csproj files; run it across all 16 data-family projects, then delete the helper since the slice has shipped (left commented as a note in this card if a future rollout slice wants to re-introduce it)
+- generate baselines per project (16 baselines, ~700 unique entries total):
+    - Core: `Cephalon.Data` (81)
+    - Relational: `Cephalon.Data.EntityFramework` (114), `Cephalon.Data.SqlServer` (53), `Cephalon.Data.Postgres` (57), `Cephalon.Data.MySql` (55), `Cephalon.Data.Oracle` (57)
+    - Non-relational: `Cephalon.Data.MongoDB` (54), `Cephalon.Data.Cassandra` (19), `Cephalon.Data.Redis` (18), `Cephalon.Data.Neo4j` (22), `Cephalon.Data.Qdrant` (17), `Cephalon.Data.Nats` (18)
+    - Search: `Cephalon.Data.Elasticsearch` (22), `Cephalon.Data.OpenSearch` (22), `Cephalon.Data.ClickHouse` (22)
+    - CDC: `Cephalon.Data.Debezium` (70)
+- empty `PublicAPI.Unshipped.txt` for each
+- suppress `RS0026` / `RS0027` per project with a one-line inline comment; cleanup is follow-up
+- refresh `packages.lock.json` for each; locked-mode restore passes
+
+Verified end-to-end with per-project `dotnet build -c Release --no-restore` (0 errors for each), full-solution `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors), and `dotnet restore --locked-mode CephalonEngine.slnx` (passes).
+
+Follow-up later:
+
+- continue the rollout to remaining package families: event sourcing (`Cephalon.EventSourcing.*` 12 packs), observability (`Cephalon.Observability.*` 30+ packs including dependency-health probes), multi-tenancy governance + senders, edge providers; each family is its own `ENG-*` slice
+- clean up the RS0026 / RS0027 optional-overload patterns inside the data family across subsequent slices
+- the `_inject-public-api-analyzers.ps1` helper is intentionally not kept in the repo; if the next family-batch slice wants the same automation, re-introduce it scoped to that slice and remove again on commit, or promote it to a proper repo-tracked helper under `scripts/` once the rollout discipline stabilises
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -11243,6 +11274,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-335 Public-API contract lock-in rollout to transport adapters (Cephalon.AspNetCore.GraphQL + Grpc + JsonRpc) (shipped)
 - ENG-336 Public-API contract lock-in rollout to behaviors family (Cephalon.Behaviors + .Http + .Messaging + .Patterns) (shipped)
 - ENG-340 Public-API contract lock-in batch rollout (Audit + Identity + Agentics + Retrieval + MultiTenancy core) (shipped)
+- ENG-341 Public-API contract lock-in batch rollout to data family (Cephalon.Data + 15 provider packs) (shipped)
 
 ### Later / not scheduled yet
 

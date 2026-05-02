@@ -1,0 +1,23 @@
+#nullable enable
+Cephalon.Data.Neo4j.Configuration.Neo4jDataOptions
+Cephalon.Data.Neo4j.Configuration.Neo4jDataOptions.LabelPrefix.get -> string!
+Cephalon.Data.Neo4j.Configuration.Neo4jDataOptions.LabelPrefix.set -> void
+Cephalon.Data.Neo4j.Configuration.Neo4jDataOptions.Neo4jDataOptions() -> void
+Cephalon.Data.Neo4j.Configuration.Neo4jDataOptions.Password.get -> string!
+Cephalon.Data.Neo4j.Configuration.Neo4jDataOptions.Password.set -> void
+Cephalon.Data.Neo4j.Configuration.Neo4jDataOptions.RegisterInbox.get -> bool
+Cephalon.Data.Neo4j.Configuration.Neo4jDataOptions.RegisterInbox.set -> void
+Cephalon.Data.Neo4j.Configuration.Neo4jDataOptions.RegisterOutbox.get -> bool
+Cephalon.Data.Neo4j.Configuration.Neo4jDataOptions.RegisterOutbox.set -> void
+Cephalon.Data.Neo4j.Configuration.Neo4jDataOptions.Uri.get -> string?
+Cephalon.Data.Neo4j.Configuration.Neo4jDataOptions.Uri.set -> void
+Cephalon.Data.Neo4j.Configuration.Neo4jDataOptions.UriName.get -> string?
+Cephalon.Data.Neo4j.Configuration.Neo4jDataOptions.UriName.set -> void
+Cephalon.Data.Neo4j.Configuration.Neo4jDataOptions.Username.get -> string!
+Cephalon.Data.Neo4j.Configuration.Neo4jDataOptions.Username.set -> void
+Cephalon.Data.Neo4j.Registration.Neo4jDataEngineBuilderExtensions
+const Cephalon.Data.Neo4j.Configuration.Neo4jDataOptions.DefaultUri = "bolt://localhost:7687" -> string!
+const Cephalon.Data.Neo4j.Configuration.Neo4jDataOptions.ProviderId = "neo4j" -> string!
+const Cephalon.Data.Neo4j.Configuration.Neo4jDataOptions.SectionPath = "Engine:Data:Neo4j" -> string!
+static Cephalon.Data.Neo4j.Registration.Neo4jDataEngineBuilderExtensions.AddNeo4jData(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Data.Neo4j.Configuration.Neo4jDataOptions!>! configure) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Data.Neo4j.Registration.Neo4jDataEngineBuilderExtensions.AddNeo4jData(this Cephalon.Engine.Composition.EngineBuilder! builder, string! uri, string! username, string! password, System.Action<Cephalon.Data.Neo4j.Configuration.Neo4jDataOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!
