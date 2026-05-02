@@ -1,0 +1,125 @@
+#nullable enable
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.AsCqrs() -> Cephalon.Abstractions.Behaviors.IBehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.AsDirect() -> Cephalon.Abstractions.Behaviors.IBehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.AsDurableExecution() -> Cephalon.Abstractions.Behaviors.IBehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.AsEventDriven() -> Cephalon.Abstractions.Behaviors.IBehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.AsProcessManager() -> Cephalon.Abstractions.Behaviors.IBehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.AsSaga() -> Cephalon.Abstractions.Behaviors.IBehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.AsSagaChoreography() -> Cephalon.Abstractions.Behaviors.IBehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.BehaviorTopologyBuilder() -> void
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.Build(string! behaviorId) -> Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.RequireFeatureFlag(string! featureFlagId) -> Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.RequireFeatureFlags(params string![]! featureFlagIds) -> Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.ViaGrpc() -> Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.ViaHttpGraphQl() -> Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.ViaHttpGraphQlSse() -> Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.ViaHttpGraphQlWs() -> Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.ViaHttpJsonRpc() -> Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.ViaHttpSse() -> Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.ViaInMemory() -> Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.ViaKafka() -> Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.ViaRabbitMq() -> Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.ViaWebSocket() -> Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.WithApiSurface(string! groupPath, string! operationPath) -> Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.WithCqrsPattern() -> Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.WithDirectPattern() -> Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.WithDurableExecutionPattern() -> Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.WithEventDrivenPattern() -> Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.WithMetadata(string! key, string? value) -> Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.WithOptions(System.Action<Cephalon.Abstractions.Behaviors.BehaviorTopologyOptions!>! configure) -> Cephalon.Abstractions.Behaviors.IBehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.WithProcessManagerPattern() -> Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.WithSagaChoreographyPattern() -> Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!
+Cephalon.Behaviors.Builders.BehaviorTopologyBuilder.WithSagaStepPattern() -> Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!
+Cephalon.Behaviors.Compatibility.Abt001SagaStepStatefulTransportRule
+Cephalon.Behaviors.Compatibility.Abt001SagaStepStatefulTransportRule.Abt001SagaStepStatefulTransportRule() -> void
+Cephalon.Behaviors.Compatibility.Abt001SagaStepStatefulTransportRule.Check(Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor! descriptor) -> Cephalon.Abstractions.Behaviors.BehaviorCompatibilityViolation?
+Cephalon.Behaviors.Compatibility.Abt001SagaStepStatefulTransportRule.Description.get -> string!
+Cephalon.Behaviors.Compatibility.Abt001SagaStepStatefulTransportRule.RuleId.get -> string!
+Cephalon.Behaviors.Compatibility.Abt003ProcessManagerRequiresInboxRule
+Cephalon.Behaviors.Compatibility.Abt003ProcessManagerRequiresInboxRule.Abt003ProcessManagerRequiresInboxRule() -> void
+Cephalon.Behaviors.Compatibility.Abt003ProcessManagerRequiresInboxRule.Check(Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor! descriptor) -> Cephalon.Abstractions.Behaviors.BehaviorCompatibilityViolation?
+Cephalon.Behaviors.Compatibility.Abt003ProcessManagerRequiresInboxRule.Description.get -> string!
+Cephalon.Behaviors.Compatibility.Abt003ProcessManagerRequiresInboxRule.RuleId.get -> string!
+Cephalon.Behaviors.Compatibility.Abt004CqrsMultipleTransportsRule
+Cephalon.Behaviors.Compatibility.Abt004CqrsMultipleTransportsRule.Abt004CqrsMultipleTransportsRule() -> void
+Cephalon.Behaviors.Compatibility.Abt004CqrsMultipleTransportsRule.Check(Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor! descriptor) -> Cephalon.Abstractions.Behaviors.BehaviorCompatibilityViolation?
+Cephalon.Behaviors.Compatibility.Abt004CqrsMultipleTransportsRule.Description.get -> string!
+Cephalon.Behaviors.Compatibility.Abt004CqrsMultipleTransportsRule.RuleId.get -> string!
+Cephalon.Behaviors.Compatibility.Abt005SagaChoreographyOutboxRule
+Cephalon.Behaviors.Compatibility.Abt005SagaChoreographyOutboxRule.Abt005SagaChoreographyOutboxRule() -> void
+Cephalon.Behaviors.Compatibility.Abt005SagaChoreographyOutboxRule.Check(Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor! descriptor) -> Cephalon.Abstractions.Behaviors.BehaviorCompatibilityViolation?
+Cephalon.Behaviors.Compatibility.Abt005SagaChoreographyOutboxRule.Description.get -> string!
+Cephalon.Behaviors.Compatibility.Abt005SagaChoreographyOutboxRule.RuleId.get -> string!
+Cephalon.Behaviors.Compatibility.Abt006DurableExecutionRequiresEventSourcingRule
+Cephalon.Behaviors.Compatibility.Abt006DurableExecutionRequiresEventSourcingRule.Abt006DurableExecutionRequiresEventSourcingRule() -> void
+Cephalon.Behaviors.Compatibility.Abt006DurableExecutionRequiresEventSourcingRule.Check(Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor! descriptor) -> Cephalon.Abstractions.Behaviors.BehaviorCompatibilityViolation?
+Cephalon.Behaviors.Compatibility.Abt006DurableExecutionRequiresEventSourcingRule.Description.get -> string!
+Cephalon.Behaviors.Compatibility.Abt006DurableExecutionRequiresEventSourcingRule.RuleId.get -> string!
+Cephalon.Behaviors.Configuration.BehaviorOptions
+Cephalon.Behaviors.Configuration.BehaviorOptions.AutoRegister.get -> bool
+Cephalon.Behaviors.Configuration.BehaviorOptions.AutoRegister.set -> void
+Cephalon.Behaviors.Configuration.BehaviorOptions.AutoRegisterAssemblies.get -> System.Collections.Generic.List<string!>!
+Cephalon.Behaviors.Configuration.BehaviorOptions.AutoRegisterAssemblies.set -> void
+Cephalon.Behaviors.Configuration.BehaviorOptions.AutoRegisterExcludeAssemblyPrefixes.get -> System.Collections.Generic.List<string!>!
+Cephalon.Behaviors.Configuration.BehaviorOptions.AutoRegisterExcludeAssemblyPrefixes.set -> void
+Cephalon.Behaviors.Configuration.BehaviorOptions.BehaviorOptions() -> void
+Cephalon.Behaviors.Diagnostics.BehaviorDiagnostics
+Cephalon.Behaviors.Hosting.BehaviorEngineBuilderExtensions
+Cephalon.Behaviors.Modules.BehaviorModuleBase
+Cephalon.Behaviors.Modules.BehaviorModuleBase.BehaviorModuleBase() -> void
+Cephalon.Behaviors.Services.BehaviorAdvisoryCatalog
+Cephalon.Behaviors.Services.BehaviorAdvisoryCatalog.All.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Behaviors.IBehaviorAdvisory!>!
+Cephalon.Behaviors.Services.BehaviorAdvisoryCatalog.BehaviorAdvisoryCatalog(System.Collections.Generic.IEnumerable<Cephalon.Abstractions.Behaviors.IBehaviorAdvisoryContributor!>! contributors) -> void
+Cephalon.Behaviors.Services.BehaviorAdvisoryCatalog.GetByBehavior(string! behaviorId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Behaviors.IBehaviorAdvisory!>!
+Cephalon.Behaviors.Services.BehaviorAdvisoryCatalog.GetBySeverity(Cephalon.Abstractions.Behaviors.BehaviorAdvisorySeverity minimumSeverity) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Behaviors.IBehaviorAdvisory!>!
+Cephalon.Behaviors.Services.BehaviorCatalog
+Cephalon.Behaviors.Services.BehaviorCatalog.All.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor!>!
+Cephalon.Behaviors.Services.BehaviorCatalog.BehaviorCatalog(System.Collections.Generic.IEnumerable<Cephalon.Abstractions.Behaviors.IBehaviorContributor!>! contributors) -> void
+Cephalon.Behaviors.Services.BehaviorCatalog.FindById(string! behaviorId) -> Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor?
+Cephalon.Behaviors.Services.BehaviorCatalog.GetByPattern(string! pattern) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor!>!
+Cephalon.Behaviors.Services.BehaviorCatalog.GetByTransport(string! transportId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor!>!
+Cephalon.Behaviors.Services.BehaviorCollectionBuilder
+Cephalon.Behaviors.Services.BehaviorCollectionBuilder.BehaviorCollectionBuilder(Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Cephalon.Behaviors.Services.BehaviorTypeRegistry! typeRegistry) -> void
+Cephalon.Behaviors.Services.BehaviorCollectionBuilder.Register<TBehavior>(System.Action<Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!>? configureTopology = null) -> Cephalon.Behaviors.Services.IBehaviorCollectionBuilder!
+Cephalon.Behaviors.Services.BehaviorCollectionBuilder.Services.get -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+Cephalon.Behaviors.Services.BehaviorDispatcher
+Cephalon.Behaviors.Services.BehaviorDispatcher.BehaviorDispatcher(Cephalon.Abstractions.Behaviors.IBehaviorCatalog! catalog, Cephalon.Behaviors.Services.IBehaviorTypeRegistry! typeRegistry, System.IServiceProvider! services) -> void
+Cephalon.Behaviors.Services.BehaviorDispatcher.DispatchAsync(string! behaviorId, object! input, Cephalon.Abstractions.Behaviors.IBehaviorContext! context, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<object?>!
+Cephalon.Behaviors.Services.BehaviorExecutionSlot
+Cephalon.Behaviors.Services.BehaviorExecutionSlot.InvokeAsync(object! behavior, object! input, Cephalon.Abstractions.Behaviors.IBehaviorContext! context, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<object?>!
+Cephalon.Behaviors.Services.BehaviorRegistry
+Cephalon.Behaviors.Services.BehaviorRegistry.Add(Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor! descriptor) -> void
+Cephalon.Behaviors.Services.BehaviorRegistry.BehaviorRegistry() -> void
+Cephalon.Behaviors.Services.BehaviorRegistry.GetAll() -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor!>!
+Cephalon.Behaviors.Services.BehaviorTypeRegistry
+Cephalon.Behaviors.Services.BehaviorTypeRegistry.BehaviorTypeRegistry() -> void
+Cephalon.Behaviors.Services.BehaviorTypeRegistry.Register(string! behaviorId, System.Type! behaviorType) -> void
+Cephalon.Behaviors.Services.BehaviorTypeRegistry.TryGetType(string! behaviorId, out System.Type? behaviorType) -> bool
+Cephalon.Behaviors.Services.FluentBehaviorContributor
+Cephalon.Behaviors.Services.FluentBehaviorContributor.Contribute() -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor!>!
+Cephalon.Behaviors.Services.FluentBehaviorContributor.FluentBehaviorContributor(Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor! descriptor) -> void
+Cephalon.Behaviors.Services.IBehaviorCollectionBuilder
+Cephalon.Behaviors.Services.IBehaviorCollectionBuilder.Register<TBehavior>(System.Action<Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!>? configureTopology = null) -> Cephalon.Behaviors.Services.IBehaviorCollectionBuilder!
+Cephalon.Behaviors.Services.IBehaviorCollectionBuilder.Services.get -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+Cephalon.Behaviors.Services.IBehaviorTypeRegistry
+Cephalon.Behaviors.Services.IBehaviorTypeRegistry.Register(string! behaviorId, System.Type! behaviorType) -> void
+Cephalon.Behaviors.Services.IBehaviorTypeRegistry.TryGetType(string! behaviorId, out System.Type? behaviorType) -> bool
+Cephalon.Behaviors.Validation.BehaviorAllowlistValidator
+Cephalon.Behaviors.Validation.BehaviorAllowlistValidator.BehaviorAllowlistValidator() -> void
+abstract Cephalon.Behaviors.Modules.BehaviorModuleBase.ConfigureBehaviors(Cephalon.Abstractions.Behaviors.IBehaviorModuleBuilder! behaviors) -> void
+static Cephalon.Behaviors.Hosting.BehaviorEngineBuilderExtensions.AddBehaviors(this Cephalon.Engine.Composition.EngineBuilder! engine, System.Action<Cephalon.Behaviors.Configuration.BehaviorOptions!>? configureOptions, System.Action<Cephalon.Behaviors.Services.IBehaviorCollectionBuilder!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Behaviors.Hosting.BehaviorEngineBuilderExtensions.AddBehaviors(this Cephalon.Engine.Composition.EngineBuilder! engine, System.Action<Cephalon.Behaviors.Services.IBehaviorCollectionBuilder!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!
+static Cephalon.Behaviors.Services.BehaviorExecutionSlot.For<TBehavior, TIn, TOut>() -> Cephalon.Behaviors.Services.BehaviorExecutionSlot!
+static Cephalon.Behaviors.Services.BehaviorExecutionSlot.ForType(System.Type! behaviorType) -> Cephalon.Behaviors.Services.BehaviorExecutionSlot!
+static Cephalon.Behaviors.Validation.BehaviorAllowlistValidator.Validate(Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor! descriptor, System.Type? behaviorType) -> void
+static readonly Cephalon.Behaviors.Diagnostics.BehaviorDiagnostics.AdvisoryRaised -> Microsoft.Extensions.Logging.EventId
+static readonly Cephalon.Behaviors.Diagnostics.BehaviorDiagnostics.BehaviorRegistered -> Microsoft.Extensions.Logging.EventId
+static readonly Cephalon.Behaviors.Diagnostics.BehaviorDiagnostics.CompatibilityViolation -> Microsoft.Extensions.Logging.EventId
+static readonly Cephalon.Behaviors.Diagnostics.BehaviorDiagnostics.DispatchFailed -> Microsoft.Extensions.Logging.EventId
+static readonly Cephalon.Behaviors.Diagnostics.BehaviorDiagnostics.Dispatched -> Microsoft.Extensions.Logging.EventId
+static readonly Cephalon.Behaviors.Diagnostics.BehaviorDiagnostics.Dispatching -> Microsoft.Extensions.Logging.EventId
+static readonly Cephalon.Behaviors.Diagnostics.BehaviorDiagnostics.SlotCompiled -> Microsoft.Extensions.Logging.EventId
+static readonly Cephalon.Behaviors.Diagnostics.BehaviorDiagnostics.TopologyResolved -> Microsoft.Extensions.Logging.EventId
+static readonly Cephalon.Behaviors.Diagnostics.BehaviorDiagnostics.TransportBindFailed -> Microsoft.Extensions.Logging.EventId
+static readonly Cephalon.Behaviors.Diagnostics.BehaviorDiagnostics.TransportBound -> Microsoft.Extensions.Logging.EventId

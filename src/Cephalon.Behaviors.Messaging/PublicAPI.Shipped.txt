@@ -1,0 +1,77 @@
+#nullable enable
+Cephalon.Behaviors.Messaging.Abstractions.IMessagingBehaviorBinding
+Cephalon.Behaviors.Messaging.Abstractions.IMessagingBehaviorBinding.StartAsync(Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor! descriptor, Cephalon.Behaviors.Services.BehaviorDispatcher! dispatcher, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Messaging.Abstractions.IMessagingBehaviorBinding.StopAsync(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Messaging.Abstractions.IMessagingBehaviorBinding.TransportId.get -> string!
+Cephalon.Behaviors.Messaging.Abstractions.IMessagingBehaviorBindingRegistry
+Cephalon.Behaviors.Messaging.Abstractions.IMessagingBehaviorBindingRegistry.All.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Messaging.Abstractions.IMessagingBehaviorBinding!>!
+Cephalon.Behaviors.Messaging.Abstractions.IMessagingBehaviorBindingRegistry.GetBinding(string! transportId) -> Cephalon.Behaviors.Messaging.Abstractions.IMessagingBehaviorBinding?
+Cephalon.Behaviors.Messaging.Bindings.InMemoryTransportBinding
+Cephalon.Behaviors.Messaging.Bindings.InMemoryTransportBinding.DisposeAsync() -> System.Threading.Tasks.ValueTask
+Cephalon.Behaviors.Messaging.Bindings.InMemoryTransportBinding.InMemoryTransportBinding(Cephalon.Behaviors.Messaging.Options.InMemoryTransportOptions! options, Microsoft.Extensions.Logging.ILogger<Cephalon.Behaviors.Messaging.Bindings.InMemoryTransportBinding!>! logger) -> void
+Cephalon.Behaviors.Messaging.Bindings.InMemoryTransportBinding.SendAsync(object! input, Cephalon.Abstractions.Behaviors.IBehaviorContext! context, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Messaging.Bindings.InMemoryTransportBinding.StartAsync(Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor! descriptor, Cephalon.Behaviors.Services.BehaviorDispatcher! dispatcher, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Messaging.Bindings.InMemoryTransportBinding.StopAsync(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Messaging.Bindings.InMemoryTransportBinding.TransportId.get -> string!
+Cephalon.Behaviors.Messaging.Bindings.KafkaTransportBinding
+Cephalon.Behaviors.Messaging.Bindings.KafkaTransportBinding.DisposeAsync() -> System.Threading.Tasks.ValueTask
+Cephalon.Behaviors.Messaging.Bindings.KafkaTransportBinding.KafkaTransportBinding(Cephalon.Behaviors.Messaging.Options.KafkaTransportOptions! options, Microsoft.Extensions.Logging.ILogger<Cephalon.Behaviors.Messaging.Bindings.KafkaTransportBinding!>! logger, Microsoft.Extensions.DependencyInjection.IServiceScopeFactory? scopeFactory = null) -> void
+Cephalon.Behaviors.Messaging.Bindings.KafkaTransportBinding.StartAsync(Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor! descriptor, Cephalon.Behaviors.Services.BehaviorDispatcher! dispatcher, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Messaging.Bindings.KafkaTransportBinding.StopAsync(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Messaging.Bindings.KafkaTransportBinding.TransportId.get -> string!
+Cephalon.Behaviors.Messaging.Bindings.RabbitMqTransportBinding
+Cephalon.Behaviors.Messaging.Bindings.RabbitMqTransportBinding.DisposeAsync() -> System.Threading.Tasks.ValueTask
+Cephalon.Behaviors.Messaging.Bindings.RabbitMqTransportBinding.RabbitMqTransportBinding(Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions! options, Microsoft.Extensions.Logging.ILogger<Cephalon.Behaviors.Messaging.Bindings.RabbitMqTransportBinding!>! logger, Microsoft.Extensions.DependencyInjection.IServiceScopeFactory? scopeFactory = null) -> void
+Cephalon.Behaviors.Messaging.Bindings.RabbitMqTransportBinding.StartAsync(Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor! descriptor, Cephalon.Behaviors.Services.BehaviorDispatcher! dispatcher, System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Messaging.Bindings.RabbitMqTransportBinding.StopAsync(System.Threading.CancellationToken ct) -> System.Threading.Tasks.Task!
+Cephalon.Behaviors.Messaging.Bindings.RabbitMqTransportBinding.TransportId.get -> string!
+Cephalon.Behaviors.Messaging.Hosting.MessagingBehaviorBindingServiceCollectionExtensions
+Cephalon.Behaviors.Messaging.Hosting.MessagingBehaviorBindingsBuilder
+Cephalon.Behaviors.Messaging.Hosting.MessagingBehaviorBindingsBuilder.AddInMemory(System.Action<Cephalon.Behaviors.Messaging.Options.InMemoryTransportOptions!>? configure = null) -> Cephalon.Behaviors.Messaging.Hosting.MessagingBehaviorBindingsBuilder!
+Cephalon.Behaviors.Messaging.Hosting.MessagingBehaviorBindingsBuilder.AddKafka(System.Action<Cephalon.Behaviors.Messaging.Options.KafkaTransportOptions!>? configure = null) -> Cephalon.Behaviors.Messaging.Hosting.MessagingBehaviorBindingsBuilder!
+Cephalon.Behaviors.Messaging.Hosting.MessagingBehaviorBindingsBuilder.AddRabbitMq(System.Action<Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions!>? configure = null) -> Cephalon.Behaviors.Messaging.Hosting.MessagingBehaviorBindingsBuilder!
+Cephalon.Behaviors.Messaging.Options.InMemoryTransportOptions
+Cephalon.Behaviors.Messaging.Options.InMemoryTransportOptions.Capacity.get -> int
+Cephalon.Behaviors.Messaging.Options.InMemoryTransportOptions.Capacity.set -> void
+Cephalon.Behaviors.Messaging.Options.InMemoryTransportOptions.InMemoryTransportOptions() -> void
+Cephalon.Behaviors.Messaging.Options.KafkaTransportOptions
+Cephalon.Behaviors.Messaging.Options.KafkaTransportOptions.AutoOffsetReset.get -> Confluent.Kafka.AutoOffsetReset
+Cephalon.Behaviors.Messaging.Options.KafkaTransportOptions.AutoOffsetReset.set -> void
+Cephalon.Behaviors.Messaging.Options.KafkaTransportOptions.BootstrapServers.get -> string!
+Cephalon.Behaviors.Messaging.Options.KafkaTransportOptions.BootstrapServers.set -> void
+Cephalon.Behaviors.Messaging.Options.KafkaTransportOptions.EnableAutoCommit.get -> bool
+Cephalon.Behaviors.Messaging.Options.KafkaTransportOptions.EnableAutoCommit.set -> void
+Cephalon.Behaviors.Messaging.Options.KafkaTransportOptions.GroupId.get -> string!
+Cephalon.Behaviors.Messaging.Options.KafkaTransportOptions.GroupId.set -> void
+Cephalon.Behaviors.Messaging.Options.KafkaTransportOptions.KafkaTransportOptions() -> void
+Cephalon.Behaviors.Messaging.Options.KafkaTransportOptions.Topic.get -> string?
+Cephalon.Behaviors.Messaging.Options.KafkaTransportOptions.Topic.set -> void
+Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions
+Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions.DeadLetterExchange.get -> string?
+Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions.DeadLetterExchange.set -> void
+Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions.ExchangeName.get -> string?
+Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions.ExchangeName.set -> void
+Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions.HostName.get -> string!
+Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions.HostName.set -> void
+Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions.MaxRetryAttempts.get -> int
+Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions.MaxRetryAttempts.set -> void
+Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions.Password.get -> string!
+Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions.Password.set -> void
+Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions.Port.get -> int
+Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions.Port.set -> void
+Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions.QueueName.get -> string?
+Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions.QueueName.set -> void
+Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions.RabbitMqTransportOptions() -> void
+Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions.RetryDelayMs.get -> int
+Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions.RetryDelayMs.set -> void
+Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions.UserName.get -> string!
+Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions.UserName.set -> void
+Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions.VirtualHost.get -> string!
+Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions.VirtualHost.set -> void
+Cephalon.Behaviors.Messaging.Registry.MessagingBehaviorBindingRegistry
+Cephalon.Behaviors.Messaging.Registry.MessagingBehaviorBindingRegistry.All.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Messaging.Abstractions.IMessagingBehaviorBinding!>!
+Cephalon.Behaviors.Messaging.Registry.MessagingBehaviorBindingRegistry.GetBinding(string! transportId) -> Cephalon.Behaviors.Messaging.Abstractions.IMessagingBehaviorBinding?
+Cephalon.Behaviors.Messaging.Registry.MessagingBehaviorBindingRegistry.MessagingBehaviorBindingRegistry(System.Collections.Generic.IEnumerable<Cephalon.Behaviors.Messaging.Abstractions.IMessagingBehaviorBinding!>! bindings) -> void
+static Cephalon.Behaviors.Messaging.Hosting.MessagingBehaviorBindingServiceCollectionExtensions.AddMessagingBehaviorBindings(this Cephalon.Behaviors.Services.IBehaviorCollectionBuilder! builder) -> Cephalon.Behaviors.Messaging.Hosting.MessagingBehaviorBindingsBuilder!
+static Cephalon.Behaviors.Messaging.Hosting.MessagingBehaviorBindingServiceCollectionExtensions.AddMessagingBehaviorBindings(this Cephalon.Behaviors.Services.IBehaviorCollectionBuilder! builder, Microsoft.Extensions.Configuration.IConfiguration! configuration) -> Cephalon.Behaviors.Messaging.Hosting.MessagingBehaviorBindingsBuilder!
+static Cephalon.Behaviors.Messaging.Hosting.MessagingBehaviorBindingServiceCollectionExtensions.AddMessagingBehaviorBindings(this Cephalon.Behaviors.Services.IBehaviorCollectionBuilder! builder, System.Action<Cephalon.Behaviors.Messaging.Options.InMemoryTransportOptions!>? configureInMemory = null, System.Action<Cephalon.Behaviors.Messaging.Options.RabbitMqTransportOptions!>? configureRabbitMq = null, System.Action<Cephalon.Behaviors.Messaging.Options.KafkaTransportOptions!>? configureKafka = null) -> Cephalon.Behaviors.Services.IBehaviorCollectionBuilder!
