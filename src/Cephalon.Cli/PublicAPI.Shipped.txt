@@ -1,0 +1,3 @@
+#nullable enable
+Cephalon.Cli.CliApplication
+static Cephalon.Cli.CliApplication.RunAsync(string![]! args, System.IO.TextWriter! output, System.IO.TextWriter! error, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<int>!

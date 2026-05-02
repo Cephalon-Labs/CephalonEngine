@@ -1,0 +1,60 @@
+#nullable enable
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.AcceptedStatusCodes.get -> System.Collections.Generic.IReadOnlyList<int>!
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.AcceptedStatusCodes.set -> void
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.AmazonSesInvitationDeliveryOptions() -> void
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.ConfigurationSetName.get -> string?
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.ConfigurationSetName.set -> void
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.Enabled.get -> bool
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.Enabled.set -> void
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.FromEmail.get -> string?
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.FromEmail.set -> void
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.FromName.get -> string?
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.FromName.set -> void
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.HtmlBodyTemplate.get -> string?
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.HtmlBodyTemplate.set -> void
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.IncludeContextTags.get -> bool
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.IncludeContextTags.set -> void
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.RecipientEmailMetadataKey.get -> string!
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.RecipientEmailMetadataKey.set -> void
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.RegionSystemName.get -> string?
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.RegionSystemName.set -> void
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.ReplyToAddresses.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.ReplyToAddresses.set -> void
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.SenderId.get -> string!
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.SenderId.set -> void
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.SubjectTemplate.get -> string!
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.SubjectTemplate.set -> void
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.SupportedChannels.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.SupportedChannels.set -> void
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.Tags.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.Tags.set -> void
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.TextBodyTemplate.get -> string!
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.TextBodyTemplate.set -> void
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.TimeoutSeconds.get -> int
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.TimeoutSeconds.set -> void
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Hosting.AmazonSesInvitationDeliveryServiceCollectionExtensions
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.AmazonSesInvitationDeliveryClientResult
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.AmazonSesInvitationDeliveryClientResult.Accepted.get -> bool
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.AmazonSesInvitationDeliveryClientResult.AmazonSesInvitationDeliveryClientResult(bool accepted, int? statusCode = null, string? providerMessageId = null, string? reason = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.AmazonSesInvitationDeliveryClientResult.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.AmazonSesInvitationDeliveryClientResult.ProviderMessageId.get -> string?
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.AmazonSesInvitationDeliveryClientResult.Reason.get -> string?
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.AmazonSesInvitationDeliveryClientResult.StatusCode.get -> int?
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.AmazonSesInvitationDeliveryMessage
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.AmazonSesInvitationDeliveryMessage.AmazonSesInvitationDeliveryMessage(string! messageId, string! from, string! toEmail, string! subject, string! textBody, string? htmlBody = null, System.Collections.Generic.IReadOnlyList<string!>? replyToAddresses = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? tags = null, string? configurationSetName = null) -> void
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.AmazonSesInvitationDeliveryMessage.ConfigurationSetName.get -> string?
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.AmazonSesInvitationDeliveryMessage.From.get -> string!
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.AmazonSesInvitationDeliveryMessage.HasHtmlBody.get -> bool
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.AmazonSesInvitationDeliveryMessage.HtmlBody.get -> string?
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.AmazonSesInvitationDeliveryMessage.MessageId.get -> string!
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.AmazonSesInvitationDeliveryMessage.ReplyToAddresses.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.AmazonSesInvitationDeliveryMessage.Subject.get -> string!
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.AmazonSesInvitationDeliveryMessage.Tags.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.AmazonSesInvitationDeliveryMessage.TextBody.get -> string!
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.AmazonSesInvitationDeliveryMessage.ToEmail.get -> string!
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.IAmazonSesInvitationDeliveryClient
+Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.IAmazonSesInvitationDeliveryClient.SendAsync(Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.AmazonSesInvitationDeliveryMessage! message, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services.AmazonSesInvitationDeliveryClientResult!>
+static Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions!
+static Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Hosting.AmazonSesInvitationDeliveryServiceCollectionExtensions.AddCephalonAmazonSesInvitationDelivery(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Hosting.AmazonSesInvitationDeliveryServiceCollectionExtensions.AddCephalonAmazonSesInvitationDelivery(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration.AmazonSesInvitationDeliveryOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

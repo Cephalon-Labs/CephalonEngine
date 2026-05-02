@@ -1,0 +1,72 @@
+#nullable enable
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.AcceptedStatusCodes.get -> System.Collections.Generic.IReadOnlyList<int>!
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.AcceptedStatusCodes.set -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.ApiKey.get -> string?
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.ApiKey.set -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.BaseUrl.get -> string!
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.BaseUrl.set -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.DomainName.get -> string?
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.DomainName.set -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.EnableTestMode.get -> bool
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.EnableTestMode.set -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.Enabled.get -> bool
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.Enabled.set -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.FromEmail.get -> string?
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.FromEmail.set -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.FromName.get -> string?
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.FromName.set -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.Headers.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.Headers.set -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.HtmlBodyTemplate.get -> string?
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.HtmlBodyTemplate.set -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.IncludeContextHeaders.get -> bool
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.IncludeContextHeaders.set -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.IncludeContextVariables.get -> bool
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.IncludeContextVariables.set -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.MailgunInvitationDeliveryOptions() -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.ProviderMessageIdJsonPropertyName.get -> string!
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.ProviderMessageIdJsonPropertyName.set -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.RecipientEmailMetadataKey.get -> string!
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.RecipientEmailMetadataKey.set -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.SenderId.get -> string!
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.SenderId.set -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.SubjectTemplate.get -> string!
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.SubjectTemplate.set -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.SupportedChannels.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.SupportedChannels.set -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.Tags.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.Tags.set -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.TextBodyTemplate.get -> string!
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.TextBodyTemplate.set -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.TimeoutSeconds.get -> int
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.TimeoutSeconds.set -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.Variables.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.Variables.set -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Hosting.MailgunInvitationDeliveryServiceCollectionExtensions
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.IMailgunInvitationDeliveryClient
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.IMailgunInvitationDeliveryClient.SendAsync(Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.MailgunInvitationDeliveryMessage! message, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.MailgunInvitationDeliveryClientResult!>
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.MailgunInvitationDeliveryClientResult
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.MailgunInvitationDeliveryClientResult.Accepted.get -> bool
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.MailgunInvitationDeliveryClientResult.MailgunInvitationDeliveryClientResult(bool accepted, int? statusCode = null, string? providerMessageId = null, string? reason = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.MailgunInvitationDeliveryClientResult.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.MailgunInvitationDeliveryClientResult.ProviderMessageId.get -> string?
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.MailgunInvitationDeliveryClientResult.Reason.get -> string?
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.MailgunInvitationDeliveryClientResult.StatusCode.get -> int?
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.MailgunInvitationDeliveryMessage
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.MailgunInvitationDeliveryMessage.From.get -> string!
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.MailgunInvitationDeliveryMessage.Headers.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.MailgunInvitationDeliveryMessage.HtmlBody.get -> string?
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.MailgunInvitationDeliveryMessage.MailgunInvitationDeliveryMessage(string! messageId, string! from, string! to, string! toEmail, string! subject, string! textBody, string? htmlBody = null, System.Collections.Generic.IReadOnlyList<string!>? tags = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? variables = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? headers = null, bool testMode = false) -> void
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.MailgunInvitationDeliveryMessage.MessageId.get -> string!
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.MailgunInvitationDeliveryMessage.Subject.get -> string!
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.MailgunInvitationDeliveryMessage.Tags.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.MailgunInvitationDeliveryMessage.TestMode.get -> bool
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.MailgunInvitationDeliveryMessage.TextBody.get -> string!
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.MailgunInvitationDeliveryMessage.To.get -> string!
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.MailgunInvitationDeliveryMessage.ToEmail.get -> string!
+Cephalon.MultiTenancy.Governance.MailgunDelivery.Services.MailgunInvitationDeliveryMessage.Variables.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+const Cephalon.MultiTenancy.Governance.MailgunDelivery.Hosting.MailgunInvitationDeliveryServiceCollectionExtensions.HttpClientName = "Cephalon.MultiTenancy.Governance.MailgunDelivery" -> string!
+static Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions!
+static Cephalon.MultiTenancy.Governance.MailgunDelivery.Hosting.MailgunInvitationDeliveryServiceCollectionExtensions.AddCephalonMailgunInvitationDelivery(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.MultiTenancy.Governance.MailgunDelivery.Hosting.MailgunInvitationDeliveryServiceCollectionExtensions.AddCephalonMailgunInvitationDelivery(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration.MailgunInvitationDeliveryOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

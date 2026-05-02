@@ -1,0 +1,71 @@
+#nullable enable
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.AcceptedStatusCodes.get -> System.Collections.Generic.IReadOnlyList<int>!
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.AcceptedStatusCodes.set -> void
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.ApiKey.get -> string?
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.ApiKey.set -> void
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.BaseUrl.get -> string!
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.BaseUrl.set -> void
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.Categories.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.Categories.set -> void
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.CustomArgs.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.CustomArgs.set -> void
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.EnableSandboxMode.get -> bool
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.EnableSandboxMode.set -> void
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.Enabled.get -> bool
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.Enabled.set -> void
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.FromEmail.get -> string?
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.FromEmail.set -> void
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.FromName.get -> string?
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.FromName.set -> void
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.Headers.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.Headers.set -> void
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.HtmlBodyTemplate.get -> string?
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.HtmlBodyTemplate.set -> void
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.IncludeContextCustomArgs.get -> bool
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.IncludeContextCustomArgs.set -> void
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.IncludeContextHeaders.get -> bool
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.IncludeContextHeaders.set -> void
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.ProviderMessageIdHeaderName.get -> string!
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.ProviderMessageIdHeaderName.set -> void
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.RecipientEmailMetadataKey.get -> string!
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.RecipientEmailMetadataKey.set -> void
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.SendGridInvitationDeliveryOptions() -> void
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.SenderId.get -> string!
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.SenderId.set -> void
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.SubjectTemplate.get -> string!
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.SubjectTemplate.set -> void
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.SupportedChannels.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.SupportedChannels.set -> void
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.TextBodyTemplate.get -> string!
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.TextBodyTemplate.set -> void
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.TimeoutSeconds.get -> int
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.TimeoutSeconds.set -> void
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Hosting.SendGridInvitationDeliveryServiceCollectionExtensions
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.ISendGridInvitationDeliveryClient
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.ISendGridInvitationDeliveryClient.SendAsync(Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.SendGridInvitationDeliveryMessage! message, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.SendGridInvitationDeliveryClientResult!>
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.SendGridInvitationDeliveryClientResult
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.SendGridInvitationDeliveryClientResult.Accepted.get -> bool
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.SendGridInvitationDeliveryClientResult.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.SendGridInvitationDeliveryClientResult.ProviderMessageId.get -> string?
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.SendGridInvitationDeliveryClientResult.Reason.get -> string?
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.SendGridInvitationDeliveryClientResult.SendGridInvitationDeliveryClientResult(bool accepted, int? statusCode = null, string? providerMessageId = null, string? reason = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.SendGridInvitationDeliveryClientResult.StatusCode.get -> int?
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.SendGridInvitationDeliveryMessage
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.SendGridInvitationDeliveryMessage.Categories.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.SendGridInvitationDeliveryMessage.CustomArgs.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.SendGridInvitationDeliveryMessage.FromEmail.get -> string!
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.SendGridInvitationDeliveryMessage.FromName.get -> string?
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.SendGridInvitationDeliveryMessage.Headers.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.SendGridInvitationDeliveryMessage.HtmlBody.get -> string?
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.SendGridInvitationDeliveryMessage.MessageId.get -> string!
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.SendGridInvitationDeliveryMessage.SandboxMode.get -> bool
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.SendGridInvitationDeliveryMessage.SendGridInvitationDeliveryMessage(string! messageId, string! fromEmail, string? fromName, string! toEmail, string? toName, string! subject, string! textBody, string? htmlBody = null, System.Collections.Generic.IReadOnlyList<string!>? categories = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? customArgs = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? headers = null, bool sandboxMode = false) -> void
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.SendGridInvitationDeliveryMessage.Subject.get -> string!
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.SendGridInvitationDeliveryMessage.TextBody.get -> string!
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.SendGridInvitationDeliveryMessage.ToEmail.get -> string!
+Cephalon.MultiTenancy.Governance.SendGridDelivery.Services.SendGridInvitationDeliveryMessage.ToName.get -> string?
+const Cephalon.MultiTenancy.Governance.SendGridDelivery.Hosting.SendGridInvitationDeliveryServiceCollectionExtensions.HttpClientName = "Cephalon.MultiTenancy.Governance.SendGridDelivery" -> string!
+static Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions!
+static Cephalon.MultiTenancy.Governance.SendGridDelivery.Hosting.SendGridInvitationDeliveryServiceCollectionExtensions.AddCephalonSendGridInvitationDelivery(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.MultiTenancy.Governance.SendGridDelivery.Hosting.SendGridInvitationDeliveryServiceCollectionExtensions.AddCephalonSendGridInvitationDelivery(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration.SendGridInvitationDeliveryOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

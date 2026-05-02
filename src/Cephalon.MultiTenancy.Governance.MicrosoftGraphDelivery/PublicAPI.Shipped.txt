@@ -1,0 +1,66 @@
+#nullable enable
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.AcceptedStatusCodes.get -> System.Collections.Generic.IReadOnlyList<int>!
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.AcceptedStatusCodes.set -> void
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.AccessToken.get -> string?
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.AccessToken.set -> void
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.ApiVersion.get -> string!
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.ApiVersion.set -> void
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.BaseUrl.get -> string!
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.BaseUrl.set -> void
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.Categories.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.Categories.set -> void
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.Enabled.get -> bool
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.Enabled.set -> void
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.Headers.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.Headers.set -> void
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.HtmlBodyTemplate.get -> string?
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.HtmlBodyTemplate.set -> void
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.IncludeContextHeaders.get -> bool
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.IncludeContextHeaders.set -> void
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.MicrosoftGraphInvitationDeliveryOptions() -> void
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.RecipientEmailMetadataKey.get -> string!
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.RecipientEmailMetadataKey.set -> void
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.SaveToSentItems.get -> bool
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.SaveToSentItems.set -> void
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.SenderId.get -> string!
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.SenderId.set -> void
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.SenderUserId.get -> string?
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.SenderUserId.set -> void
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.SubjectTemplate.get -> string!
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.SubjectTemplate.set -> void
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.SupportedChannels.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.SupportedChannels.set -> void
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.TextBodyTemplate.get -> string!
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.TextBodyTemplate.set -> void
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.TimeoutSeconds.get -> int
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.TimeoutSeconds.set -> void
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Hosting.MicrosoftGraphInvitationDeliveryServiceCollectionExtensions
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.IMicrosoftGraphInvitationDeliveryAccessTokenProvider
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.IMicrosoftGraphInvitationDeliveryAccessTokenProvider.GetAccessTokenAsync(System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<string?>
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.IMicrosoftGraphInvitationDeliveryClient
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.IMicrosoftGraphInvitationDeliveryClient.SendAsync(Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryMessage! message, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryClientResult!>
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryClientResult
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryClientResult.Accepted.get -> bool
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryClientResult.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryClientResult.MicrosoftGraphInvitationDeliveryClientResult(bool accepted, int? statusCode = null, string? providerMessageId = null, string? reason = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryClientResult.ProviderMessageId.get -> string?
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryClientResult.Reason.get -> string?
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryClientResult.StatusCode.get -> int?
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryMessage
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryMessage.Categories.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryMessage.HasHtmlBody.get -> bool
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryMessage.Headers.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryMessage.HtmlBody.get -> string?
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryMessage.MessageId.get -> string!
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryMessage.MicrosoftGraphInvitationDeliveryMessage(string! messageId, string! senderUserId, string! toEmail, string? toName, string! subject, string! textBody, string? htmlBody = null, System.Collections.Generic.IReadOnlyList<string!>? categories = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? headers = null, bool saveToSentItems = false) -> void
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryMessage.SaveToSentItems.get -> bool
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryMessage.SenderUserId.get -> string!
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryMessage.Subject.get -> string!
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryMessage.TextBody.get -> string!
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryMessage.ToEmail.get -> string!
+Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services.MicrosoftGraphInvitationDeliveryMessage.ToName.get -> string?
+const Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Hosting.MicrosoftGraphInvitationDeliveryServiceCollectionExtensions.HttpClientName = "Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery" -> string!
+static Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions!
+static Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Hosting.MicrosoftGraphInvitationDeliveryServiceCollectionExtensions.AddCephalonMicrosoftGraphInvitationDelivery(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Hosting.MicrosoftGraphInvitationDeliveryServiceCollectionExtensions.AddCephalonMicrosoftGraphInvitationDelivery(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration.MicrosoftGraphInvitationDeliveryOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

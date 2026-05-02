@@ -1,0 +1,62 @@
+#nullable enable
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.Enabled.get -> bool
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.Enabled.set -> void
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.FromAddress.get -> string?
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.FromAddress.set -> void
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.FromDisplayName.get -> string?
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.FromDisplayName.set -> void
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.Headers.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.Headers.set -> void
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.Host.get -> string?
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.Host.set -> void
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.HtmlBodyTemplate.get -> string?
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.HtmlBodyTemplate.set -> void
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.IncludeContextHeaders.get -> bool
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.IncludeContextHeaders.set -> void
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.MessageIdDomain.get -> string!
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.MessageIdDomain.set -> void
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.Password.get -> string?
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.Password.set -> void
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.Port.get -> int
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.Port.set -> void
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.RecipientAddressMetadataKey.get -> string!
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.RecipientAddressMetadataKey.set -> void
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.SenderId.get -> string!
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.SenderId.set -> void
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.SmtpInvitationDeliveryOptions() -> void
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.SubjectTemplate.get -> string!
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.SubjectTemplate.set -> void
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.SupportedChannels.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.SupportedChannels.set -> void
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.TextBodyTemplate.get -> string!
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.TextBodyTemplate.set -> void
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.TimeoutSeconds.get -> int
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.TimeoutSeconds.set -> void
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.UseSsl.get -> bool
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.UseSsl.set -> void
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.UserName.get -> string?
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.UserName.set -> void
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Hosting.SmtpInvitationDeliveryServiceCollectionExtensions
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.ISmtpInvitationDeliveryClient
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.ISmtpInvitationDeliveryClient.SendAsync(Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.SmtpInvitationDeliveryMessage! message, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.SmtpInvitationDeliveryClientResult!>
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.SmtpInvitationDeliveryClientResult
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.SmtpInvitationDeliveryClientResult.Accepted.get -> bool
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.SmtpInvitationDeliveryClientResult.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.SmtpInvitationDeliveryClientResult.ProviderMessageId.get -> string?
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.SmtpInvitationDeliveryClientResult.Reason.get -> string?
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.SmtpInvitationDeliveryClientResult.SmtpInvitationDeliveryClientResult(bool accepted, string? providerMessageId = null, string? reason = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.SmtpInvitationDeliveryMessage
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.SmtpInvitationDeliveryMessage.FromAddress.get -> string!
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.SmtpInvitationDeliveryMessage.FromDisplayName.get -> string?
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.SmtpInvitationDeliveryMessage.Headers.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.SmtpInvitationDeliveryMessage.HtmlBody.get -> string?
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.SmtpInvitationDeliveryMessage.MessageId.get -> string!
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.SmtpInvitationDeliveryMessage.SmtpInvitationDeliveryMessage(string! messageId, string! fromAddress, string? fromDisplayName, string! toAddress, string? toDisplayName, string! subject, string! textBody, string? htmlBody = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? headers = null) -> void
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.SmtpInvitationDeliveryMessage.Subject.get -> string!
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.SmtpInvitationDeliveryMessage.TextBody.get -> string!
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.SmtpInvitationDeliveryMessage.ToAddress.get -> string!
+Cephalon.MultiTenancy.Governance.SmtpDelivery.Services.SmtpInvitationDeliveryMessage.ToDisplayName.get -> string?
+static Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions!
+static Cephalon.MultiTenancy.Governance.SmtpDelivery.Hosting.SmtpInvitationDeliveryServiceCollectionExtensions.AddCephalonSmtpInvitationDelivery(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.MultiTenancy.Governance.SmtpDelivery.Hosting.SmtpInvitationDeliveryServiceCollectionExtensions.AddCephalonSmtpInvitationDelivery(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration.SmtpInvitationDeliveryOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

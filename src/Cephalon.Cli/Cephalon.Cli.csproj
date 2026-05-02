@@ -7,6 +7,8 @@
     <ToolCommandName>cephalon</ToolCommandName>
     <PackageReadmeFile>PACKAGE.md</PackageReadmeFile>
     <Description>Command-line tooling for generating Cephalon applications from blueprints.</Description>
+    <!-- RS0026/RS0027: optional-overload patterns; suppressed for ENG-344. -->
+    <NoWarn>$(NoWarn);RS0026;RS0027</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,5 +23,16 @@
 
   <ItemGroup>
     <EmbeddedResource Include="..\..\scripts\deployment-mode-support.json" LogicalName="Cephalon.Cli.Resources.deployment-mode-support.json" />
+  </ItemGroup>
+<ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AdditionalFiles Include="PublicAPI.Shipped.txt" />
+    <AdditionalFiles Include="PublicAPI.Unshipped.txt" />
   </ItemGroup>
 </Project>

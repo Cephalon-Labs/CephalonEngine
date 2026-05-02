@@ -1,0 +1,88 @@
+#nullable enable
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.EnableIdempotencyHeader.get -> bool
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.EnableIdempotencyHeader.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.Enabled.get -> bool
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.Enabled.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.Endpoint.get -> string?
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.Endpoint.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.ExpectedStatusCodes.get -> System.Collections.Generic.IReadOnlyList<int>!
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.ExpectedStatusCodes.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.Headers.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.Headers.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.HttpInvitationDeliveryOptions() -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.IdempotencyHeaderName.get -> string!
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.IdempotencyHeaderName.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.IdempotencyMetadataKey.get -> string!
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.IdempotencyMetadataKey.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.IncludeInvitationMetadata.get -> bool
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.IncludeInvitationMetadata.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.IncludeRequestMetadata.get -> bool
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.IncludeRequestMetadata.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.IncludeResponseBodyInMetadata.get -> bool
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.IncludeResponseBodyInMetadata.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.MaxAttempts.get -> int
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.MaxAttempts.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.Method.get -> string!
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.Method.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.ProviderMessageIdHeaderName.get -> string?
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.ProviderMessageIdHeaderName.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.ResponseBodyMetadataLimit.get -> int
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.ResponseBodyMetadataLimit.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.RetryDelayMilliseconds.get -> int
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.RetryDelayMilliseconds.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.RetryStatusCodes.get -> System.Collections.Generic.IReadOnlyList<int>!
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.RetryStatusCodes.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.RetryTransportFailures.get -> bool
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.RetryTransportFailures.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.SenderId.get -> string!
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.SenderId.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.SignatureHeaderName.get -> string!
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.SignatureHeaderName.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.SignatureKeyIdHeaderName.get -> string!
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.SignatureKeyIdHeaderName.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.SignatureTimestampHeaderName.get -> string!
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.SignatureTimestampHeaderName.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.SigningKeyId.get -> string?
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.SigningKeyId.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.SigningSecret.get -> string?
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.SigningSecret.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.SupportedChannels.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.SupportedChannels.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.TimeoutSeconds.get -> int
+Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.TimeoutSeconds.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Hosting.HttpInvitationDeliveryServiceCollectionExtensions
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.Actor.get -> string?
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.Actor.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.Channel.get -> string!
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.Channel.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.CorrelationId.get -> string?
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.CorrelationId.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.DispatchedAtUtc.get -> System.DateTimeOffset
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.DispatchedAtUtc.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.DisplayName.get -> string?
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.DisplayName.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.HttpInvitationDeliveryPayload() -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.InvitationId.get -> string!
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.InvitationId.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.InvitationMetadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.InvitationMetadata.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.InviteeId.get -> string!
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.InviteeId.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.InviteeKind.get -> string!
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.InviteeKind.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.Metadata.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.RequestedSenderId.get -> string?
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.RequestedSenderId.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.Roles.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.Roles.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.Source.get -> string?
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.Source.set -> void
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.TenantId.get -> string!
+Cephalon.MultiTenancy.Governance.HttpDelivery.Services.HttpInvitationDeliveryPayload.TenantId.set -> void
+const Cephalon.MultiTenancy.Governance.HttpDelivery.Hosting.HttpInvitationDeliveryServiceCollectionExtensions.HttpClientName = "Cephalon.MultiTenancy.Governance.HttpDelivery" -> string!
+static Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration, string! sectionPath = "Engine") -> Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions!
+static Cephalon.MultiTenancy.Governance.HttpDelivery.Hosting.HttpInvitationDeliveryServiceCollectionExtensions.AddCephalonHttpInvitationDelivery(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.MultiTenancy.Governance.HttpDelivery.Hosting.HttpInvitationDeliveryServiceCollectionExtensions.AddCephalonHttpInvitationDelivery(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, System.Action<Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration.HttpInvitationDeliveryOptions!>? configure = null) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

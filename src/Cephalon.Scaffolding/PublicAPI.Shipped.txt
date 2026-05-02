@@ -1,0 +1,43 @@
+#nullable enable
+Cephalon.Scaffolding.Generation.RenderedFile
+Cephalon.Scaffolding.Generation.RenderedFile.Contents.get -> string!
+Cephalon.Scaffolding.Generation.RenderedFile.Path.get -> string!
+Cephalon.Scaffolding.Generation.RenderedFile.RenderedFile(string! path, string! contents) -> void
+Cephalon.Scaffolding.Generation.RenderedFolder
+Cephalon.Scaffolding.Generation.RenderedFolder.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Scaffolding.Generation.RenderedFolder.Path.get -> string!
+Cephalon.Scaffolding.Generation.RenderedFolder.ProjectKey.get -> string?
+Cephalon.Scaffolding.Generation.RenderedFolder.Purpose.get -> string!
+Cephalon.Scaffolding.Generation.RenderedFolder.RenderedFolder(string! path, string! purpose, string! scope, string? projectKey = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Scaffolding.Generation.RenderedFolder.Scope.get -> string!
+Cephalon.Scaffolding.Generation.RenderedProject
+Cephalon.Scaffolding.Generation.RenderedProject.Key.get -> string!
+Cephalon.Scaffolding.Generation.RenderedProject.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Scaffolding.Generation.RenderedProject.Name.get -> string!
+Cephalon.Scaffolding.Generation.RenderedProject.Packages.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Scaffolding.Generation.RenderedProject.Path.get -> string!
+Cephalon.Scaffolding.Generation.RenderedProject.ProjectReferences.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Scaffolding.Generation.RenderedProject.RenderedProject(string! key, string! sourceProjectId, string! name, string! path, string! scope, string! role, string! template, System.Collections.Generic.IReadOnlyList<string!>! packages, System.Collections.Generic.IReadOnlyList<string!>! projectReferences, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Scaffolding.Generation.RenderedProject.Role.get -> string!
+Cephalon.Scaffolding.Generation.RenderedProject.Scope.get -> string!
+Cephalon.Scaffolding.Generation.RenderedProject.SourceProjectId.get -> string!
+Cephalon.Scaffolding.Generation.RenderedProject.Template.get -> string!
+Cephalon.Scaffolding.Generation.RenderedScaffold
+Cephalon.Scaffolding.Generation.RenderedScaffold.AppProfile.get -> Cephalon.Abstractions.AppModel.AppProfile!
+Cephalon.Scaffolding.Generation.RenderedScaffold.Files.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Scaffolding.Generation.RenderedFile!>!
+Cephalon.Scaffolding.Generation.RenderedScaffold.Folders.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Scaffolding.Generation.RenderedFolder!>!
+Cephalon.Scaffolding.Generation.RenderedScaffold.Projects.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Scaffolding.Generation.RenderedProject!>!
+Cephalon.Scaffolding.Generation.RenderedScaffold.RenderedScaffold(Cephalon.Abstractions.AppModel.AppProfile! appProfile, Cephalon.Scaffolding.Generation.ScaffoldRequest! request, System.Collections.Generic.IReadOnlyList<Cephalon.Scaffolding.Generation.RenderedProject!>! projects, System.Collections.Generic.IReadOnlyList<Cephalon.Scaffolding.Generation.RenderedFolder!>! folders, System.Collections.Generic.IReadOnlyList<Cephalon.Scaffolding.Generation.RenderedFile!>! files) -> void
+Cephalon.Scaffolding.Generation.RenderedScaffold.Request.get -> Cephalon.Scaffolding.Generation.ScaffoldRequest!
+Cephalon.Scaffolding.Generation.ScaffoldGenerator
+Cephalon.Scaffolding.Generation.ScaffoldRequest
+Cephalon.Scaffolding.Generation.ScaffoldRequest.AppName.get -> string!
+Cephalon.Scaffolding.Generation.ScaffoldRequest.CephalonPackageVersion.get -> string!
+Cephalon.Scaffolding.Generation.ScaffoldRequest.Features.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Scaffolding.Generation.ScaffoldRequest.Modules.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Scaffolding.Generation.ScaffoldRequest.RootNamespace.get -> string!
+Cephalon.Scaffolding.Generation.ScaffoldRequest.ScaffoldRequest(string! appName, System.Collections.Generic.IReadOnlyList<string!>? modules = null, System.Collections.Generic.IReadOnlyList<string!>? features = null, string! targetFramework = "net10.0", string! cephalonPackageVersion = "0.1.0-preview") -> void
+Cephalon.Scaffolding.Generation.ScaffoldRequest.TargetFramework.get -> string!
+Cephalon.Scaffolding.IO.FileSystemScaffoldWriter
+static Cephalon.Scaffolding.Generation.ScaffoldGenerator.Generate(Cephalon.Abstractions.AppModel.AppProfile! appProfile, Cephalon.Scaffolding.Generation.ScaffoldRequest! request) -> Cephalon.Scaffolding.Generation.RenderedScaffold!
+static Cephalon.Scaffolding.IO.FileSystemScaffoldWriter.WriteAsync(string! rootPath, Cephalon.Scaffolding.Generation.RenderedScaffold! scaffold, bool overwrite = false, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task!
