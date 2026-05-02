@@ -26,25 +26,7 @@ The slices sequence across **Sprint 116 through Sprint 120**, one slice per spri
 
 ### `ENG-322` — Public-API contract lock-in proof on `Cephalon.Abstractions` (Sprint 117)
 
-Quality dimensions advanced: *Compatibility*, *Maintainability*, *Auditability*.
-
-Why:
-
-- `Cephalon.Abstractions` is the host-agnostic contract layer (`IModule`, `ModuleDescriptor`, `IBehaviorContext`, runtime catalog interfaces); accidental binary-breaking changes there propagate across every Cephalon-dependent project
-- the engine has analyzer baseline (`AnalysisLevel=latest-recommended`, `TreatWarningsAsErrors=true`) but does not yet track public API as a reviewable artefact
-
-Delivered (target):
-
-- add `Microsoft.CodeAnalysis.PublicApiAnalyzers` to `Cephalon.Abstractions` as a `PrivateAssets=all` analyzer reference
-- generate `PublicAPI.Shipped.txt` from the current public surface and commit it; commit an empty `PublicAPI.Unshipped.txt`
-- ship a single proof package; do not roll the change out across all 84 packable projects in the same slice — `Cephalon.Abstractions` is the right scope because contract churn there is most expensive
-- update [`engineering-standards.md`](engineering-standards.md) library/API design section to declare the analyzer as the public-surface diff gate; declare the rollout to additional packages as follow-up sprints
-- update [`compatibility.md`](compatibility.md) to declare `PublicAPI.Shipped.txt` as part of the public contract artefact set
-
-Follow-up later:
-
-- roll the analyzer out to `Cephalon.Engine`, the host adapters, and the transport / behavior / data / event-sourcing / observability / multi-tenancy / agentics / retrieval / edge package families across subsequent sprints
-- enable `<EnablePackageValidation>true</EnablePackageValidation>` with a `<PackageValidationBaselineVersion>` once a stable GA exists; until then, `PublicApiAnalyzers` is the diff gate and `PackageValidation` runs in cross-target mode only
+*Shipped.* `Microsoft.CodeAnalysis.PublicApiAnalyzers` is wired into [`src/Cephalon.Abstractions/Cephalon.Abstractions.csproj`](../src/Cephalon.Abstractions/Cephalon.Abstractions.csproj) as a `PrivateAssets=all` analyzer reference; [`src/Cephalon.Abstractions/PublicAPI.Shipped.txt`](../src/Cephalon.Abstractions/PublicAPI.Shipped.txt) carries the 8,207-entry baseline (every public type / member of the host-agnostic contract layer); [`src/Cephalon.Abstractions/PublicAPI.Unshipped.txt`](../src/Cephalon.Abstractions/PublicAPI.Unshipped.txt) is the empty next-release diff sheet. RS0026 / RS0027 are suppressed inside `Cephalon.Abstractions` only (existing optional-overload patterns; cleanup is follow-up). [`docs/compatibility.md`](compatibility.md) carries the new *Public-API contract artefacts* section. See `ENG-322` in [`engine-backlog.md`](engine-backlog.md). Follow-up: roll out to `Cephalon.Engine`, host adapters, transport / behavior / data / event-sourcing / observability / multi-tenancy / agentics / retrieval / edge package families; enable `<EnablePackageValidation>true</EnablePackageValidation>` with a `<PackageValidationBaselineVersion>` once a stable GA exists; clean up the RS0026 / RS0027 patterns in `Cephalon.Abstractions` so the suppressions can be removed.
 
 ### `ENG-323` — `Cephalon.Diagnostics` OpenTelemetry semantic-convention adapter package skeleton (Sprint 118)
 

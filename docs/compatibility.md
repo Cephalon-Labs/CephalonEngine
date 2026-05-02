@@ -88,6 +88,18 @@ See also: [Engineering standards](engineering-standards.md) is the broader quali
 - keep the release checksum/provenance manifest aligned with the actual repository source revision, packed file set, and published checksum sidecar
 - keep the stable `cephalon` command name aligned across `Cephalon.Cli` packaging, docs, and validation coverage whenever the tool install surface changes
 
+## Public-API contract artefacts
+
+`Cephalon.Abstractions` is the host-agnostic contract layer that downstream packages and consumers depend on. Its public surface is tracked as a reviewable artefact rather than implied by the codebase:
+
+- [`src/Cephalon.Abstractions/PublicAPI.Shipped.txt`](../src/Cephalon.Abstractions/PublicAPI.Shipped.txt) lists every public type and member that has shipped; an entry here is part of the binary contract
+- [`src/Cephalon.Abstractions/PublicAPI.Unshipped.txt`](../src/Cephalon.Abstractions/PublicAPI.Unshipped.txt) lists additions or removals proposed for the next release; the file should be empty on a clean shipped baseline
+- removals and renames are recorded with the `*REMOVED*` prefix in `PublicAPI.Unshipped.txt` so PR diffs surface the break before it merges
+- `Microsoft.CodeAnalysis.PublicApiAnalyzers` enforces both files as part of the build; an undeclared public symbol fails the build with `RS0016`, and a removal failed to declare with `RS0017`
+- the analyzer is opt-in per package; rolling it out to additional `Cephalon.*` packages is sequenced through follow-up `ENG-*` cards (see [`supply-chain-uplift-plan.md`](supply-chain-uplift-plan.md))
+
+When a public type or member is added, removed, or renamed inside a package that has the analyzer enabled, update both `.txt` files in the same slice as the source change. Both files are part of the public contract and follow the same review discipline as XML doc comments.
+
 ## Repository verification points
 
 - `ScaffoldGeneratorTests` verifies scaffolded package versions and generated module manifests

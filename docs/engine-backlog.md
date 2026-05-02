@@ -2685,6 +2685,36 @@ Follow-up later:
 - automated lock-file refresh PRs from a Renovate / dependabot equivalent so contributor diffs stay reviewable when transitive minimums shift; out of scope in this slice
 - `package-publishing.md` and `external-package-lifecycle.md` cross-reference touch-up if a future readers-facing pass surfaces drift from the standards-doc subsection added here
 
+### ENG-322 Public-API contract lock-in proof on Cephalon.Abstractions
+
+Status: done
+Estimate: 5
+
+Why:
+
+- `Cephalon.Abstractions` is the host-agnostic contract layer (`IModule`, `ModuleDescriptor`, `IBehaviorContext`, runtime catalog interfaces, behavior contracts, capability contracts, lifecycle contracts); accidental binary-breaking changes there propagate across every Cephalon-dependent project
+- the engine had analyzer baseline (`AnalysisLevel=latest-recommended`, `TreatWarningsAsErrors=true`) but did not yet track public API as a reviewable artefact, so a renamed type or removed method could ship through PR review without explicit binary-contract acknowledgement
+- this is the second prerequisite slice for `ENG-324` (release pipeline supply-chain hardening); without an enforceable public-API diff gate, an SLSA-attested signed release could ship a binary break without acknowledging it
+
+Delivered:
+
+- add `Microsoft.CodeAnalysis.PublicApiAnalyzers` `4.14.0` to `Directory.Packages.props` central package management
+- add the analyzer as a `PrivateAssets=all` `PackageReference` to `src/Cephalon.Abstractions/Cephalon.Abstractions.csproj` so the analyzer enforces the contract during build but does not transitively flow to consumers
+- declare `PublicAPI.Shipped.txt` and `PublicAPI.Unshipped.txt` as `AdditionalFiles` in the same `.csproj`
+- generate `src/Cephalon.Abstractions/PublicAPI.Shipped.txt` from the current public surface (8,207 unique entries plus the `#nullable enable` header, covering every public type, method, property, field, and constant in the host-agnostic contract layer); commit an empty `src/Cephalon.Abstractions/PublicAPI.Unshipped.txt`
+- suppress `RS0026` ("Do not add multiple overloads with optional parameters") and `RS0027` ("Public API with optional parameter(s) should have the most parameters") inside `Cephalon.Abstractions` only with an inline comment explaining the existing patterns; clean-up of those overload shapes is a separate follow-up so the contract-lock-in slice itself does not bundle a refactor
+- refresh `src/Cephalon.Abstractions/packages.lock.json` after the new `PackageReference` so `dotnet restore --locked-mode` (the CI gate landed in `ENG-321`) still passes
+- update `docs/compatibility.md` with a new *Public-API contract artefacts* section declaring the analyzer's enforcement contract, the `PublicAPI.Shipped.txt` / `PublicAPI.Unshipped.txt` review discipline, the `*REMOVED*` rename / removal convention, and the rollout sequencing through follow-up `ENG-*` cards
+- collapse the matching `ENG-322` section in `docs/supply-chain-uplift-plan.md` into a one-paragraph "shipped" back-pointer per the plan's own refresh cadence
+- verified end-to-end with `dotnet build src/Cephalon.Abstractions/Cephalon.Abstractions.csproj -c Release` (0 warnings, 0 errors) and full-solution `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors); locked-mode restore passes after the lock-file refresh
+
+Follow-up later:
+
+- roll the analyzer out to `Cephalon.Engine` first (the runtime, manifest, composition, and policy center), then to host adapters (`Cephalon.AspNetCore`, `Cephalon.Worker`), then to the transport / behavior / data / event-sourcing / observability / multi-tenancy / agentics / retrieval / edge package families; each rollout is its own `ENG-*` slice because each public-API baseline is a separate review surface
+- enable `<EnablePackageValidation>true</EnablePackageValidation>` with a `<PackageValidationBaselineVersion>` once a stable GA exists; until then, `PublicApiAnalyzers` is the diff gate and `PackageValidation` runs in cross-target mode only
+- clean up the RS0026 / RS0027 optional-overload patterns inside `Cephalon.Abstractions` so the per-project suppressions can be removed without the build going red
+- author a generator / `dotnet format analyzers` integration into release validation so the public-API baseline regenerates predictably on intentional surface changes rather than relying on hand-extraction from build output
+
 ## Completed foundation work
 
 ### ENG-000 App model and blueprint contract
@@ -10725,6 +10755,10 @@ Upcoming sequence from the April 2026 maturity reset:
 
 - ENG-320 Supply-chain uplift consolidated plan baseline (shipped)
 - ENG-321 NuGet lock files plus RestoreLockedMode in CI baseline (shipped)
+
+### Sprint 117
+
+- ENG-322 Public-API contract lock-in proof on Cephalon.Abstractions (shipped)
 
 ### Later / not scheduled yet
 
