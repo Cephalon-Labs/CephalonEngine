@@ -33,10 +33,9 @@ The curated `BannedSymbols.txt` bans wall-clock time without an injectable abstr
 
 ## Maturity and ownership
 
-- maturity today: `M0` — taxonomy-only; the package bundles analyzers and ships baseline configuration, no engine project consumes it yet
-- promote to `M1` when at least one engine project (`Cephalon.Abstractions` is the natural starter) replaces its individual analyzer references with `<PackageReference Include="Cephalon.Analyzers" />`
+- maturity today: `M1` — `cephalon-managed`; `Cephalon.Abstractions` consumes the meta-package via a `PrivateAssets=all` `ProjectReference` (replacing its previous individual `Microsoft.CodeAnalysis.PublicApiAnalyzers` reference), so the host-agnostic contract layer now inherits the engine's curated analyzer baseline (`PublicApiAnalyzers`, `BannedApiAnalyzers`, `Roslynator`, `Meziantou`, `Microsoft.VisualStudio.Threading.Analyzers`) and the curated `BannedSymbols.txt` is wired in automatically through the package's `buildTransitive/Cephalon.Analyzers.props`
 - promote to `M2` when the meta-package is the documented adoption path in `getting-started.md` and the template-pack starter projects reference it by default
-- ownership: `taxonomy-only` for now; future engine adoption is tracked separately
+- ownership: `cephalon-managed` (since `Cephalon.Abstractions` now consumes the meta-package as the engine's analyzer baseline)
 
 ## Cross-references
 
