@@ -1,6 +1,7 @@
 using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Diagnostics;
+using Cephalon.Diagnostics.Redaction;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.Engine.Manifest;
@@ -69,6 +70,7 @@ public sealed class EngineRuntime : IRuntime, IDisposable
     private readonly List<RuntimeLifecycleEvent> timeline = [];
     private ModuleContext? moduleContext;
     private ILogger? logger;
+    private RedactionPipeline? redactionPipeline;
     private RuntimeStatus status = RuntimeStatus.Created;
     private DateTimeOffset? initializedAtUtc;
     private DateTimeOffset? startedAtUtc;
@@ -403,6 +405,7 @@ public sealed class EngineRuntime : IRuntime, IDisposable
         {
             moduleContext = new ModuleContext(services);
             logger ??= services.GetService<ILoggerFactory>()?.CreateLogger<EngineRuntime>();
+            redactionPipeline ??= services.GetService<RedactionPipeline>();
             return;
         }
 
@@ -654,9 +657,9 @@ public sealed class EngineRuntime : IRuntime, IDisposable
         using var runtimeActivity = EngineDiagnostics.ActivitySource.StartActivity(
             $"runtime.{phase}",
             ActivityKind.Internal);
-        runtimeActivity?.SetTag("cephalon.phase", phase);
-        runtimeActivity?.SetTag("cephalon.blueprint", Manifest.AppProfile.BlueprintId);
-        runtimeActivity?.SetTag("cephalon.module.count", Modules.Count);
+        runtimeActivity?.SetTag("cephalon.phase", Redact(runtimeActivity, "cephalon.phase", phase));
+        runtimeActivity?.SetTag("cephalon.blueprint", Redact(runtimeActivity, "cephalon.blueprint", Manifest.AppProfile.BlueprintId));
+        runtimeActivity?.SetTag("cephalon.module.count", Redact(runtimeActivity, "cephalon.module.count", Modules.Count));
 
         var runtimeTags = new TagList
         {
@@ -718,9 +721,9 @@ public sealed class EngineRuntime : IRuntime, IDisposable
         using var moduleActivity = EngineDiagnostics.ActivitySource.StartActivity(
             $"module.{phase}",
             ActivityKind.Internal);
-        moduleActivity?.SetTag("cephalon.phase", phase);
-        moduleActivity?.SetTag(CephalonDiagnosticsAttributeKeys.ModuleId, module.Descriptor.Id);
-        moduleActivity?.SetTag("cephalon.module.version", moduleVersion);
+        moduleActivity?.SetTag("cephalon.phase", Redact(moduleActivity, "cephalon.phase", phase));
+        moduleActivity?.SetTag(CephalonDiagnosticsAttributeKeys.ModuleId, Redact(moduleActivity, CephalonDiagnosticsAttributeKeys.ModuleId, module.Descriptor.Id));
+        moduleActivity?.SetTag("cephalon.module.version", Redact(moduleActivity, "cephalon.module.version", moduleVersion));
 
         var tags = new TagList
         {
@@ -1321,6 +1324,28 @@ public sealed class EngineRuntime : IRuntime, IDisposable
         }
 
         LogModuleFailureMessage(logger, moduleId, phase, exception);
+    }
+
+    /// <summary>
+    /// Routes <paramref name="value"/> through the consumer-registered <see cref="RedactionPipeline"/>
+    /// (resolved lazily via DI alongside the runtime logger) before the engine emits it as an
+    /// activity tag. The pipeline is empty by default when no consumer registered any
+    /// <see cref="IRedactionFilter"/>; in that case (and when DI did not supply a pipeline at all)
+    /// this method short-circuits to passthrough so module-phase emission stays cheap.
+    /// </summary>
+    private object? Redact(Activity? activity, string attributeKey, object? value)
+    {
+        if (redactionPipeline is null)
+        {
+            return value;
+        }
+
+        var context = new RedactionContext(
+            ActivitySourceName: activity?.Source.Name,
+            MeterName: null,
+            AttributeKey: attributeKey,
+            LoggerCategory: null);
+        return redactionPipeline.Filter(context, value);
     }
 
     /// <summary>

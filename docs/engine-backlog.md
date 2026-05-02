@@ -3664,9 +3664,37 @@ Delivered:
 
 Follow-up later:
 
-- promote additional engine emission sites to route through `RedactionPipeline`: `Cephalon.Engine`'s module-phase activity tags (`engine.build`, `module.{phase}`), `Cephalon.Worker`'s lifecycle spans (`worker.lifecycle.start` / `.stop`), and any future `Cephalon.Eventing` / `Cephalon.MultiTenancy.Governance` emission sites; the helper pattern (`Redact(activity, key, value)` returning the pipeline-filtered value) is the canonical shape to copy
+- promote additional engine emission sites to route through `RedactionPipeline`: `Cephalon.Engine`'s module-phase activity tags (`engine.build`, `module.{phase}`), `Cephalon.Worker`'s lifecycle spans (`worker.lifecycle.start` / `.stop`), and any future `Cephalon.Eventing` / `Cephalon.MultiTenancy.Governance` emission sites; the helper pattern (`Redact(activity, key, value)` returning the pipeline-filtered value) is the canonical shape to copy — **`Cephalon.Engine` runtime module-phase tags delivered in `ENG-366`; `EngineBuilder` build-time tags + worker lifecycle + eventing remain**
 - when the AspNetCore middleware adds explicit header capture (HTTP request/response headers as span attributes today are not emitted; the pilot redacts the small set already emitted), the redaction call sites already in place mean header values automatically flow through the pipeline
 - document the canonical "register `KeyMatchRedactionFilter` for authorization+cookie + `RegexRedactionFilter` for credit-card patterns + call `AddRedactionPipeline()`" recipe in `docs/components/diagnostics.md` once consumer adoption lands; today the surface is complete but the discoverable recipe doc is deferred
+
+### ENG-366 Extend M1 redaction to Cephalon.Engine runtime module-phase emission sites
+
+Status: done
+Estimate: 2
+
+Why:
+
+- `ENG-365` shipped the M1 pilot in `Cephalon.AspNetCore`'s `HttpRequestResponseLoggingMiddleware` but the pattern stayed pilot-shape; the second engine emission site (the runtime's module-phase activity tags emitted during initialize/start/stop) had no redaction wiring, so consumer apps that registered filters got HTTP-side protection but not engine-runtime-side protection
+- the runtime emits five attribute keys per phase transition: `cephalon.phase`, `cephalon.blueprint`, `cephalon.module.count`, `cephalon.module.id`, `cephalon.module.version`; module IDs and blueprint identifiers may carry tenant-specific naming in real consumer deployments, so applying redaction at the runtime emission site closes the same data-flow path the AspNetCore site closed
+- shipping the second emission site validates that the canonical `Redact(activity, key, value)` helper pattern transfers cleanly to engine code that doesn't have constructor-injected DI; the lazy-resolution pattern (resolve from `services.GetService<RedactionPipeline>()` inside `EnsureModuleContext`) becomes the recipe other engine emission sites can copy
+
+Delivered:
+
+- update `src/Cephalon.Engine/Runtime/EngineRuntime.cs`:
+    - add private `RedactionPipeline? redactionPipeline` field and lazily resolve it inside `EnsureModuleContext` via `services.GetService<RedactionPipeline>()`, alongside the existing lazy-logger resolution; null-safe so the runtime stays usable when no consumer registered a pipeline
+    - add private `Redact(Activity?, string attributeKey, object? value)` helper that builds a `RedactionContext` from `activity?.Source.Name + attributeKey` and pipes through the resolved pipeline; short-circuits to passthrough when the pipeline is null
+    - route 6 `SetTag` calls in `ExecuteModulePhaseAsync` (3 tags: `cephalon.phase`, `cephalon.blueprint`, `cephalon.module.count`) and `ExecuteLifecycleModuleAsync` (3 tags: `cephalon.phase`, `cephalon.module.id`, `cephalon.module.version`) through `Redact(...)`
+- update `src/Cephalon.Diagnostics/Redaction/IRedactionFilter.cs` XML docs and `docs/components/diagnostics.md` *What it owns* paragraph to name both M1 emission sites: AspNetCore HTTP middleware + engine runtime module-phase tags
+- 2 new `EngineRuntimeRedactionTests`:
+    - `EngineRuntime_RoutesModulePhaseTagValues_ThroughRedactionPipeline` — registers a tracking filter with `services.AddCephalon`, attaches an `ActivityListener` for `Cephalon.Engine`, calls `runtime.InitializeAsync(provider)`, asserts the filter saw all 5 expected attribute keys
+    - `EngineRuntime_AppliesRedactionReplacement_BeforeTaggingActivity` — registers a filter that replaces `cephalon.module.id` values, captures the `module.initialize` activity via `ActivityStopped`, asserts the redacted value is the one stamped on the activity tags (i.e. what would actually flow to an exporter)
+- verified end-to-end with `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors), `dotnet test --filter "FullyQualifiedName~Cephalon.Tests.Diagnostics.Redaction"` (37/37 pass: 8 KeyMatch + 10 Regex + 8 Pipeline + 7 ServiceCollection + 2 AspNetCore middleware + 2 EngineRuntime), and `dotnet restore --locked-mode` (no drift; the change is internal to `Cephalon.Engine`'s already-existing dependency on `Cephalon.Diagnostics`)
+
+Follow-up later:
+
+- promote `Cephalon.Engine`'s build-time `engine.build` activity tags (in `EngineBuilder.cs` lines 818, 1192-1194: `cephalon.blueprint`, `cephalon.module.count`, `cephalon.capability.count`) once the build flow has access to a `RedactionPipeline`; the builder runs before DI is fully wired, so wiring requires either an early-bind from `EngineSettings`-level options or a deferred-emission queue that gets flushed once the runtime takes over
+- promote `Cephalon.Worker`'s `worker.lifecycle.start` / `.stop` lifecycle spans, `Cephalon.Eventing` emission sites, and `Cephalon.MultiTenancy.Governance` emission sites using the same lazy-resolution pattern; each lands as its own slice when the emission code is touched
 
 ## Completed foundation work
 
@@ -11770,6 +11798,8 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-362 Add unit tests for starter redaction filters (shipped)
 - ENG-363 Add RedactionPipeline orchestration helper in Cephalon.Diagnostics (shipped)
 - ENG-364 Add AddRedactionPipeline IServiceCollection extension in Cephalon.Diagnostics (shipped)
+- ENG-365 Promote Cephalon.Diagnostics redaction surface to M1 (HttpRequestResponseLoggingMiddleware routes through RedactionPipeline) (shipped)
+- ENG-366 Extend M1 redaction to Cephalon.Engine runtime module-phase emission sites (shipped)
 
 ### Later / not scheduled yet
 
