@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Text.Json;
 using System.Net;
+using Cephalon.Diagnostics.Redaction;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
@@ -13,7 +14,8 @@ namespace Cephalon.AspNetCore.Hosting;
 internal sealed class HttpRequestResponseLoggingMiddleware(
     RequestDelegate next,
     HttpRequestResponseLoggingOptions options,
-    ILogger<HttpRequestResponseLoggingMiddleware> logger)
+    ILogger<HttpRequestResponseLoggingMiddleware> logger,
+    RedactionPipeline redactionPipeline)
 {
     private const string TraceParentHeaderName = "traceparent";
     private const string TraceStateHeaderName = "tracestate";
@@ -36,8 +38,8 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
             correlation,
             tags =>
             {
-                tags["http.request.method"] = context.Request.Method;
-                tags["url.path"] = context.Request.Path.Value ?? "/";
+                tags["http.request.method"] = Redact(activity, "http.request.method", context.Request.Method);
+                tags["url.path"] = Redact(activity, "url.path", context.Request.Path.Value ?? "/");
             });
 
         var requestBody = options.LogRequestBody
@@ -55,8 +57,8 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
                 correlation,
                 tags =>
                 {
-                    tags["cephalon.http.body.truncated"] = requestBody.IsTruncated;
-                    tags["http.request.body.content_type"] = requestBody.ContentType;
+                    tags["cephalon.http.body.truncated"] = Redact(activity, "cephalon.http.body.truncated", requestBody.IsTruncated);
+                    tags["http.request.body.content_type"] = Redact(activity, "http.request.body.content_type", requestBody.ContentType);
                 });
         }
 
@@ -83,8 +85,8 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
                 correlation,
                 tags =>
                 {
-                    tags["http.response.status_code"] = context.Response.StatusCode;
-                    tags["cephalon.http.elapsed_ms"] = elapsedMilliseconds;
+                    tags["http.response.status_code"] = Redact(activity, "http.response.status_code", context.Response.StatusCode);
+                    tags["cephalon.http.elapsed_ms"] = Redact(activity, "cephalon.http.elapsed_ms", elapsedMilliseconds);
                 });
 
             var responseBody = RedactBodyCaptureResult(
@@ -100,8 +102,8 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
                     correlation,
                     tags =>
                     {
-                        tags["cephalon.http.body.truncated"] = responseBody.IsTruncated;
-                        tags["http.response.body.content_type"] = responseBody.ContentType;
+                        tags["cephalon.http.body.truncated"] = Redact(activity, "cephalon.http.body.truncated", responseBody.IsTruncated);
+                        tags["http.response.body.content_type"] = Redact(activity, "http.response.body.content_type", responseBody.ContentType);
                     });
             }
         }
@@ -116,9 +118,9 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
                 correlation,
                 tags =>
                 {
-                    tags["http.response.status_code"] = context.Response.StatusCode;
-                    tags["cephalon.http.elapsed_ms"] = elapsedMilliseconds;
-                    tags["exception.type"] = exception.GetType().FullName;
+                    tags["http.response.status_code"] = Redact(activity, "http.response.status_code", context.Response.StatusCode);
+                    tags["cephalon.http.elapsed_ms"] = Redact(activity, "cephalon.http.elapsed_ms", elapsedMilliseconds);
+                    tags["exception.type"] = Redact(activity, "exception.type", exception.GetType().FullName);
                 });
             throw;
         }
@@ -226,22 +228,22 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
             context.Response.StatusCode);
     }
 
-    private static void ApplyCorrelationToActivity(Activity? activity, RequestCorrelation correlation)
+    private void ApplyCorrelationToActivity(Activity? activity, RequestCorrelation correlation)
     {
         if (activity is null)
         {
             return;
         }
 
-        activity.SetTag("cephalon.http.request_id", correlation.RequestId);
+        activity.SetTag("cephalon.http.request_id", Redact(activity, "cephalon.http.request_id", correlation.RequestId));
 
         if (!string.IsNullOrWhiteSpace(correlation.TraceParent))
         {
-            activity.SetTag("cephalon.http.traceparent", correlation.TraceParent);
+            activity.SetTag("cephalon.http.traceparent", Redact(activity, "cephalon.http.traceparent", correlation.TraceParent));
         }
     }
 
-    private static void AddLogReferenceEvent(
+    private void AddLogReferenceEvent(
         Activity? activity,
         string name,
         int eventId,
@@ -255,17 +257,33 @@ internal sealed class HttpRequestResponseLoggingMiddleware(
 
         var tags = new ActivityTagsCollection
         {
-            ["cephalon.log.event_id"] = eventId,
-            ["cephalon.http.request_id"] = correlation.RequestId
+            ["cephalon.log.event_id"] = Redact(activity, "cephalon.log.event_id", eventId),
+            ["cephalon.http.request_id"] = Redact(activity, "cephalon.http.request_id", correlation.RequestId),
         };
 
         if (!string.IsNullOrWhiteSpace(correlation.TraceParent))
         {
-            tags["cephalon.http.traceparent"] = correlation.TraceParent;
+            tags["cephalon.http.traceparent"] = Redact(activity, "cephalon.http.traceparent", correlation.TraceParent);
         }
 
         configureTags?.Invoke(tags);
         activity.AddEvent(new ActivityEvent(name, tags: tags));
+    }
+
+    /// <summary>
+    /// Routes <paramref name="value"/> through the redaction pipeline before it reaches the
+    /// activity span / log event. The pipeline is empty by default (when no consumer registered
+    /// any <see cref="IRedactionFilter"/>) and short-circuits to passthrough; consumer apps that
+    /// register filters via DI redact every value emitted from this middleware in one place.
+    /// </summary>
+    private object? Redact(Activity? activity, string attributeKey, object? value)
+    {
+        var context = new RedactionContext(
+            ActivitySourceName: activity?.Source.Name,
+            MeterName: null,
+            AttributeKey: attributeKey,
+            LoggerCategory: null);
+        return redactionPipeline.Filter(context, value);
     }
 
     private static async Task<BodyCaptureResult> TryReadRequestBodyAsync(

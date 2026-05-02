@@ -9,6 +9,7 @@ using Cephalon.Abstractions.Resilience;
 using Cephalon.Abstractions.Transports;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
+using Cephalon.Diagnostics.Redaction.Extensions;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.Engine.Manifest;
 using Cephalon.Engine.Runtime;
@@ -89,6 +90,7 @@ public static class EngineWebApplicationBuilderExtensions
 
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IProblemDetailsWriter, ResultModelProblemDetailsWriter>());
         builder.Services.AddProblemDetails();
+        builder.Services.AddRedactionPipeline();
         builder.Services.AddHealthChecks()
             .AddCheck<LivenessHealthCheck>("cephalon.liveness", tags: ["live", "engine"])
             .AddCheck<ReadinessHealthCheck>("cephalon.readiness", tags: ["ready", "engine"]);
