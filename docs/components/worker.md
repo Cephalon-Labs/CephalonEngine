@@ -1,5 +1,7 @@
 # Cephalon.Worker
 
+> **Maturity:** `M4` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Worker` hosts the same Cephalon runtime inside the generic host without HTTP.
 
 ## What it owns

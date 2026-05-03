@@ -1,5 +1,7 @@
 # Cephalon.Diagnostics
 
+> **Maturity:** `M4` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Diagnostics` is the engine-level OpenTelemetry semantic-convention adapter for Cephalon. It ships well-known `ActivitySource` and `Meter` names plus a small set of stable Cephalon-prefix attribute keys that complement OpenTelemetry semantic conventions where conventions exist (HTTP, DB, messaging, RPC, runtime).
 
 ## What it owns
