@@ -1,5 +1,7 @@
 # Cephalon.Retrieval
 
+> **Maturity:** `M3` · **Ownership:** mixed: `application-managed` + `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Retrieval` is the baseline technology pack for knowledge retrieval workloads.
 
 ## What it owns

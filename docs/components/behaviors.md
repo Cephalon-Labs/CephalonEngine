@@ -1,5 +1,7 @@
 # Cephalon.Behaviors
 
+> **Maturity:** `M4` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Behaviors` is the Adaptive Behavior Topology (ABT) runtime baseline for Cephalon.
 
 ## What it owns

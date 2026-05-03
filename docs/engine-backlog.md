@@ -3719,6 +3719,36 @@ Follow-up later:
 - wire a smoke test that boots the sample, fires an HTTP request with an `Authorization: Bearer abc123` header, asserts the captured activity does not contain the raw token; today the unit-level integration tests for both M1 emission sites cover the wiring, so a sample-level smoke test is duplicate coverage with marginal value
 - adopt the same recipe in the other samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) as a separate slice when the redaction surface needs broader sample reach — **delivered in `ENG-369`**
 
+### ENG-383 Adopt per-page maturity-badge convention across technology / follow-through entry points (batch 2)
+
+Status: done
+Estimate: 2
+
+Why:
+
+- `ENG-382` introduced the per-page maturity-badge header convention and adopted it across the seven *Core runtime* entry points; the natural next batch is the *Technology and follow-through packs* + the *Multi-tenancy* family + the `Cephalon.Behaviors` core entry points named in `docs/components/README.md`
+- adopting the convention in batches keeps each slice reviewable while the rollout proceeds toward full coverage; this batch is bounded by the *one-entry-per-family* discipline (no provider-specific or sub-pack pages yet) so the next 8 follow-up batches can pick up similar tight scopes
+- the *Updated risk #2* of the May 2026 architecture review remains "still asymmetric" until every page in this map carries the badge; this batch shifts the count from 9 of 104 (after `ENG-382`) to 18 of 104
+
+Delivered:
+
+- adopt the convention across the nine entry points named below, each badge mirroring the audit / matrix row verbatim:
+    - [`agentics.md`](docs/components/agentics.md) — `M3` mixed: `application-managed` + `cephalon-managed`
+    - [`behaviors.md`](docs/components/behaviors.md) — `M4` `cephalon-managed`
+    - [`data.md`](docs/components/data.md) — `M3` mixed: `cephalon-managed` + `provider-managed`
+    - [`event-sourcing.md`](docs/components/event-sourcing.md) — `M1` `application-managed`
+    - [`eventing.md`](docs/components/eventing.md) — `M3` mixed: `application-managed` + `cephalon-managed`
+    - [`multi-tenancy.md`](docs/components/multi-tenancy.md) — `M2` `cephalon-managed`
+    - [`multi-tenancy-governance.md`](docs/components/multi-tenancy-governance.md) — `M2` mixed: `cephalon-managed` + `provider-managed`
+    - [`retrieval.md`](docs/components/retrieval.md) — `M3` mixed: `application-managed` + `cephalon-managed`
+    - [`edge.md`](docs/components/edge.md) — `M2` `cephalon-managed`
+- `docs/engine-backlog.md` ENG-383 backlog card; Sprint 125 placement updated
+
+Follow-up later:
+
+- batch 3 covers the `Cephalon.Behaviors` family sub-packs (`behaviors-http.md`, `behaviors-messaging.md`, `behaviors-patterns.md`, `behaviors-sourcegen.md`) and the `Cephalon.Eventing` companions (`eventing-wolverine.md`, `eventing-behaviors.md`); batch 4 covers `Cephalon.Data.*` provider packs; batch 5 covers `Cephalon.EventSourcing.*` provider packs; batch 6 covers `Cephalon.MultiTenancy.Governance.*` companion packs (delivery / callback receivers); batch 7 covers `Cephalon.Edge.*` provider packs; batch 8 covers `Cephalon.Observability.*` companion packs; batch 9 sweeps the remaining smaller packs
+- when each batch lands, refresh the count in the next monthly architecture review's *Updated risk #2* note so the closure progress is visible without rereading every page
+
 ### ENG-382 Introduce per-page maturity-badge header convention in component docs and adopt across the core-runtime entry points
 
 Status: done
@@ -12197,6 +12227,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-380 Close May 2026 architecture review gaps that were already shipped (shipped)
 - ENG-381 Pre-declare canonical activity-source / meter names for Cephalon.Agentics + Cephalon.Retrieval (shipped)
 - ENG-382 Introduce per-page maturity-badge header convention in component docs and adopt across the core-runtime entry points (shipped)
+- ENG-383 Adopt per-page maturity-badge convention across technology / follow-through entry points (batch 2) (shipped)
 
 ### Later / not scheduled yet
 
