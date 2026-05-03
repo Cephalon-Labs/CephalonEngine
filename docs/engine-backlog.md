@@ -3719,6 +3719,32 @@ Follow-up later:
 - wire a smoke test that boots the sample, fires an HTTP request with an `Authorization: Bearer abc123` header, asserts the captured activity does not contain the raw token; today the unit-level integration tests for both M1 emission sites cover the wiring, so a sample-level smoke test is duplicate coverage with marginal value
 - adopt the same recipe in the other samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) as a separate slice when the redaction surface needs broader sample reach — **delivered in `ENG-369`**
 
+### ENG-380 Close May 2026 architecture review gaps that were already shipped
+
+Status: done
+Estimate: 1
+
+Why:
+
+- the May 2026 architecture review (authored May 2, 2026) listed 5 *Updated gaps* and 5 *Updated risks* and 4 *Architecture recommendations* for the next 30 days; the May 3 redaction-arc + cross-link-refresh + concurrent-run shipping made three of those gaps materially closed: gap #1 (cross-link pass for `long-range-direction.md` + `engineering-standards.md`), gap #4 (AI/agent-facing readability via `runtime-contract-index.md`), and gap #5 (conformance matrix); risk #1 (slice cadence faster than docs cross-link cadence) is also materially closed for May
+- leaving the gap entries open in the review when the work IS done would mislead a future maintainer reading the doc; the discipline declared in `planning-governance.md` is that the monthly review reflects truth at the named date, with explicit gap-closure notes when the work lands later in the same review window
+- this slice closes the loop on the May 3 work cycle: every shipped doc/code change that closes a gap named in the May 2 review now has an explicit closure note in the review itself, with the original gap statement preserved for historical traceability
+
+Delivered:
+
+- update `docs/architecture-review-2026-05.md` review-date metadata to "May 2, 2026 (last extended May 3, 2026 with the redaction-adoption + cleanup-discipline arc and the gap-closure sweep)"
+- mark *Updated risk #1* "Slice cadence is faster than docs cross-link cadence" as **materially closed on May 3, 2026** with an Update note naming the cross-link pass that landed and the redaction-arc 7-doc cross-link refresh; preserve the original risk statement for historical traceability
+- mark *Updated gap #1* "A May 2026 cross-link pass for long-range-direction and engineering-standards" as **closed** with an explicit closure note naming the four target docs (`module-authoring.md` line 5, `learning-roadmap.md` line 16, `compatibility.md` line 5, `architecture/design-patterns-reference.md` line 8) where the cross-links now exist
+- mark *Updated gap #4* "AI/agent-facing readability of the runtime contract" as **closed** with a closure note naming `docs/runtime-contract-index.md` as the shipped consolidated map of `/engine/*` routes, `snapshot.*` data keys, and runtime catalog interfaces
+- mark *Updated gap #5* "Conformance matrix stayed open since April" as **closed** with a closure note naming `docs/conformance-matrix.md` (256 lines, per-package rows + family summary) and the May 3 redaction-arc refresh of the `Cephalon.Diagnostics` row
+- update *Architecture recommendations* → *Next 30 days* and *Next 60 days* to strikethrough-mark the three closed items (cross-link pass, conformance matrix, runtime-contract-index) with explicit "shipped on May 3, 2026; see closure note" pointers; preserve the strikethrough text so a future maintainer can see what was originally recommended
+- `docs/engine-backlog.md` ENG-380 backlog card; Sprint 125 placement updated
+
+Follow-up later:
+
+- the remaining open items in the May review are *Updated risk #2* (maturity-label communication asymmetric across surface families), *Updated risk #3* (trim/AOT/single-file claim story), *Updated gap #2* (architecture-review cadence not formally documented), *Updated gap #3* (deployment-mode claim validation harness), and the *Next 30 days* / *Next 60 days* / *Next 90 days* recommendations that haven't been closed yet; future slices keep these open
+- when June's architecture review supersedes May's, the closed-gap notes in May serve as the historical proof that the gap was identified-and-then-closed within the same monthly cycle; June's review starts fresh with whatever risks/gaps are actually open at June's authoring date
+
 ### ENG-378 Extend May architecture review with redaction adoption arc + cleanup discipline
 
 Status: done
@@ -12114,6 +12140,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-376 Add integration tests for Wolverine M1 redaction wiring (shipped)
 - ENG-377 Surface redaction recipe + diagnostic-id registry in getting-started (shipped)
 - ENG-378 Extend May architecture review with redaction adoption arc + cleanup discipline (shipped)
+- ENG-380 Close May 2026 architecture review gaps that were already shipped (shipped)
 
 ### Later / not scheduled yet
 
