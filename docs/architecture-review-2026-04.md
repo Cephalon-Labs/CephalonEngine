@@ -2,7 +2,9 @@
 
 Review date: `April 13, 2026`
 
-Cross-references: `docs/architecture.md`, `docs/architecture-inventory.md`, `docs/architecture-recommendations.md`, `docs/architecture/rest-endpoint-authoring-strategy.md`, `docs/database-topology.md`, `docs/learning-roadmap.md`, `docs/project-memory.md`
+> **Extended by [Architecture review (May 2026)](architecture-review-2026-05.md)**, dated `May 2, 2026` (last extended `May 3, 2026`). The May review does not replace this April snapshot — April still stands as the previous month's truth, and the supersession discipline declared in [`planning-governance.md`](planning-governance.md) lines 97-117 only treats new recommendations as superseding old where they are explicitly addressed. Read both reviews when triangulating "what changed across April–May 2026".
+
+Cross-references: `docs/architecture.md`, `docs/architecture-inventory.md`, `docs/architecture-recommendations.md`, `docs/architecture/rest-endpoint-authoring-strategy.md`, `docs/database-topology.md`, `docs/learning-roadmap.md`, `docs/project-memory.md`, [`docs/architecture-review-2026-05.md`](architecture-review-2026-05.md)
 
 ## Purpose
 
