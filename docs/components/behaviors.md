@@ -267,6 +267,14 @@ Behavior metadata stays transport-neutral on purpose.
 - Source generator: `Cephalon.Behaviors.SourceGen` (M5 — shipped)
 - Runtime integration: `BehaviorRuntimeContributor`, `IBehaviorAdvisory`, `BehaviorDiagnostics`
   (M6 — shipped)
+- Resilience runtime: [`Cephalon.Resilience`](resilience.md) ships the engine-managed policy
+  resolver, circuit-breaker state registry, default exception classifier, and shared resilience
+  execution context keys consumed by `Microsoft.Extensions.Resilience` pipelines. The
+  behavior-coupled `BehaviorIdempotencyResolver`, `BehaviorResilienceRuntimeCatalog`, and
+  `BehaviorResilienceExecutionMiddleware` remain inside `Cephalon.Behaviors` because they
+  implement or consume the internal behavior dispatch contract plus the public
+  `IBehaviorTypeRegistry` lookup. Consumers that need the resilience runtime without the full
+  behavior dispatch substrate can take a direct dependency on `Cephalon.Resilience`.
 
 ## M2 HTTP Transport Pack (`Cephalon.Behaviors.Http`)
 

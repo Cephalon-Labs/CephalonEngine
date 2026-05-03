@@ -21,6 +21,7 @@ When a component-page maturity label and the maturity audit disagree, the audit 
 
 - [Cephalon.Abstractions](abstractions.md)
 - [Cephalon.Engine](engine.md)
+- [Cephalon.Resilience](resilience.md)
 - [Cephalon.AspNetCore](aspnetcore.md)
 - [Cephalon.AspNetCore.GraphQL](aspnetcore-graphql.md)
 - [Cephalon.AspNetCore.JsonRpc](aspnetcore-jsonrpc.md)

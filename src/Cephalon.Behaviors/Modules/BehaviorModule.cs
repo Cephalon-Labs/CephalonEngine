@@ -12,6 +12,7 @@ using Cephalon.Behaviors.Configuration;
 using Cephalon.Behaviors.Features;
 using Cephalon.Behaviors.Resilience;
 using Cephalon.Behaviors.Runtime;
+using Cephalon.Resilience;
 using Cephalon.Behaviors.Services;
 using Cephalon.Behaviors.Validation;
 using Cephalon.Engine.Configuration;

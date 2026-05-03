@@ -9,7 +9,7 @@ using Polly.RateLimiting;
 using Polly.Retry;
 using Polly.Timeout;
 
-namespace Cephalon.Behaviors.Resilience;
+namespace Cephalon.Resilience;
 
 internal static class BehaviorResiliencePolicyResolver
 {
