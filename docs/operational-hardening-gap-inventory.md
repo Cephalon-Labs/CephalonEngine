@@ -55,6 +55,7 @@ That means phase 2 is follow-through work, not greenfield operational work.
   - `src/Cephalon.AspNetCore/Hosting/HttpRequestResponseLoggingMiddleware.cs` (M1 site)
   - `src/Cephalon.Engine/Runtime/EngineRuntime.cs` (M1 site)
   - `src/Cephalon.Eventing.Wolverine/Services/WolverineEventDispatchHostedService.cs` (M1 site)
+  - `src/Cephalon.MultiTenancy.Governance/Services/TenantInvitationDeliveryDispatcher.cs` (M1 site)
 - prepared composition and runtime hot paths are benchmarked separately from builder/provider setup so the guardrail catalog tracks `Build()` and lifecycle costs directly
 - the guardrail catalog now also covers strict trust-policy composition plus correlated, bounded-truncation, and concurrent ASP.NET Core request-logging paths with request/response body capture enabled
 

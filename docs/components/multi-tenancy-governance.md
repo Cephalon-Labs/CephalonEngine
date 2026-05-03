@@ -49,6 +49,7 @@
 - the `tenant-domain-ownership` technology runtime surface under `multi-tenancy`
 - the `tenant-governance-actions` technology runtime surface under `multi-tenancy`
 - stable governance diagnostics for allowed and denied membership evaluation, invitation validation, invitation delivery dispatch, invitation delivery retry background scheduling, invitation delivery status reconciliation, tenant-administration workflow commands, domain-ownership validation, domain-ownership verification workflow transitions, domain-ownership proof challenge issuance, domain-ownership proof publication planning, domain-ownership HTTP proof publication, domain-ownership proof evaluation, domain-ownership HTTP proof collection, domain-ownership DNS TXT proof collection, domain-ownership proof verification runs, on-demand and automatic background domain-ownership proof polling passes, domain-ownership store persistence, governance-action decisions, governance-action workflow transitions, and governance-action store persistence
+- one OpenTelemetry-shaped activity-emission baseline through `Services/GovernanceDiagnostics.cs` that publishes the stable activity source / meter / activity / counter / tag names against `CephalonActivitySources.MultiTenancyGovernance` and wires `multitenancy.governance.invitation.delivery.dispatch` (`ActivityKind.Producer`) plus `cephalon.multitenancy_governance.invitation_dispatches` around `TenantInvitationDeliveryDispatcher.DispatchAsync`; tag values (`cephalon.tenant.id`, `cephalon.multitenancy_governance.invitation.id`, `cephalon.multitenancy_governance.delivery.channel`, `cephalon.multitenancy_governance.delivery.sender.id`, `cephalon.multitenancy_governance.delivery.outcome`) route through the consumer-registered `RedactionPipeline` before exporter dispatch, joining `Cephalon.AspNetCore` HTTP middleware, `Cephalon.Engine` module-phase tags, and `Cephalon.Eventing.Wolverine` dispatch tags as the fourth M1 redaction emission site
 - a separate runtime ownership boundary from the base `Cephalon.MultiTenancy` tenant-resolution pack
 
 ## Main surfaces
@@ -190,6 +191,7 @@
 - `Services/MultiTenancyGovernanceDomainRuntimeSurfaceContributor.cs`
 - `Services/MultiTenancyGovernanceActionRuntimeSurfaceContributor.cs`
 - `Services/MultiTenancyGovernanceDiagnosticsConventionContributor.cs`
+- `Services/GovernanceDiagnostics.cs`
 
 ## Source structure
 

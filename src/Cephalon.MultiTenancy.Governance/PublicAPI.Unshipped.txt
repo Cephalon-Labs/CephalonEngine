@@ -1,1 +1,10 @@
 #nullable enable
+const Cephalon.MultiTenancy.Governance.Services.GovernanceDiagnostics.ActivitySourceName = "Cephalon.MultiTenancy.Governance" -> string!
+const Cephalon.MultiTenancy.Governance.Services.GovernanceDiagnostics.DeliveryChannelTag = "cephalon.multitenancy_governance.delivery.channel" -> string!
+const Cephalon.MultiTenancy.Governance.Services.GovernanceDiagnostics.DeliveryOutcomeTag = "cephalon.multitenancy_governance.delivery.outcome" -> string!
+const Cephalon.MultiTenancy.Governance.Services.GovernanceDiagnostics.DeliverySenderIdTag = "cephalon.multitenancy_governance.delivery.sender.id" -> string!
+const Cephalon.MultiTenancy.Governance.Services.GovernanceDiagnostics.InvitationDispatchActivityName = "multitenancy.governance.invitation.delivery.dispatch" -> string!
+const Cephalon.MultiTenancy.Governance.Services.GovernanceDiagnostics.InvitationDispatchCounterName = "cephalon.multitenancy_governance.invitation_dispatches" -> string!
+const Cephalon.MultiTenancy.Governance.Services.GovernanceDiagnostics.InvitationIdTag = "cephalon.multitenancy_governance.invitation.id" -> string!
+const Cephalon.MultiTenancy.Governance.Services.GovernanceDiagnostics.MeterName = "Cephalon.MultiTenancy.Governance" -> string!
+Cephalon.MultiTenancy.Governance.Services.GovernanceDiagnostics

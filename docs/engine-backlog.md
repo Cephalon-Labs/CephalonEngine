@@ -3719,6 +3719,32 @@ Follow-up later:
 - wire a smoke test that boots the sample, fires an HTTP request with an `Authorization: Bearer abc123` header, asserts the captured activity does not contain the raw token; today the unit-level integration tests for both M1 emission sites cover the wiring, so a sample-level smoke test is duplicate coverage with marginal value
 - adopt the same recipe in the other samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) as a separate slice when the redaction surface needs broader sample reach — **delivered in `ENG-369`**
 
+### ENG-379 Cephalon.MultiTenancy.Governance OTel adapter activity emission baseline + M1 redaction wiring
+
+Status: done
+Estimate: 2
+
+Why:
+
+- `Cephalon.MultiTenancy.Governance` is one of the five canonical activity-source names declared in `CephalonActivitySources` (`Engine` / `AspNetCore` / `Worker` / `Eventing` / `MultiTenancyGovernance`) but until this slice the package had no `ActivitySource`-shaped emission of its own; the canonical name was a subscription contract with nothing on the publishing side
+- the per-companion-pack OTel adapter rollout follow-up on the `Cephalon.Diagnostics` row of `docs/engine-surface-maturity-audit.md` listed `multi-tenancy governance` alongside CDC / eventing / agentics / retrieval as remaining work; the eventing slice is in flight via PR #878, so multi-tenancy governance is the next clean follow-up that doesn't depend on PR #878 landing first (each pack's diagnostics adapter is independent of the others)
+- the package already references `Cephalon.Diagnostics`, so wiring requires no new package edges; `TenantInvitationDeliveryDispatcher.DispatchAsync` is the most M2-mature method in the family with bounded inputs, a single `Complete(...)` exit point, and an obvious tag set (tenant id, invitation id, channel, sender, outcome)
+- consumer apps deploying multi-tenant governance ship invitation dispatch results to telemetry exporters; without M1 redaction at the new emission site, registered `IRedactionFilter` implementations would have no effect on the new span, so wiring the activity emission and the redaction pipeline in the same slice keeps the new emission site from regressing the engine's M1 redaction posture before it even ships
+
+Delivered:
+
+- new public `Cephalon.MultiTenancy.Governance.Services.GovernanceDiagnostics` declaring the `ActivitySource` and `Meter` against `CephalonActivitySources.MultiTenancyGovernance` / `CephalonMeters.MultiTenancyGovernance` plus stable Cephalon-prefix tag constants (invitation id / delivery channel / delivery sender id / delivery outcome) and the `cephalon.multitenancy_governance.invitation_dispatches` counter
+- `TenantInvitationDeliveryDispatcher.DispatchAsync` now wraps execution with one `multitenancy.governance.invitation.delivery.dispatch` activity (`ActivityKind.Producer`); marks outcome on every return path (disabled, invitation-not-found, invitation-not-pending, invitation-expired, sender-not-configured, sender-failed, store-failed, suppressed, dispatched); sets `ActivityStatusCode.Error` on non-`Disabled` / non-`Suppressed` failure outcomes; increments the dispatch counter with channel / sender / outcome dimensions
+- `TenantInvitationDeliveryDispatcher` now takes an optional `RedactionPipeline?` ctor parameter; the canonical engine-wide `cephalon.tenant.id` tag plus the four pack-prefix tags (`cephalon.multitenancy_governance.invitation.id` / `.delivery.channel` / `.delivery.sender.id` / `.delivery.outcome`) route through `Redact(...)` so consumer-registered filters apply uniformly across the dispatch span
+- two new hosting tests in `tests/Cephalon.Tests.Hosting/MultiTenancyGovernanceInvitationDispatchActivityTests.cs` cover the tracking-filter case (every tag value reaches the pipeline) and the replacement-filter case (filters mutate the tag value before it reaches the activity span); mirror the existing `EventingPublicationDispatchActivityTests` shape so the same recipe works for any future companion-pack OTel adapter slice
+- `docs/components/diagnostics.md` (M1 emission-site list extended from three to four), `docs/components/multi-tenancy-governance.md` (new "What it owns" bullet for the OTel adapter + new entry in *Main surfaces*), `docs/engine-surface-maturity-audit.md` (`Cephalon.Diagnostics` row "Next proof needed" column drops `multi-tenancy governance` from the remaining list), and `docs/operational-hardening-gap-inventory.md` (engine-boundary redaction baseline list now names the new M1 site) all updated in the same slice
+
+Follow-up later:
+
+- once PR #878 lands, the `Cephalon.Diagnostics` row's "Next proof needed" can also drop `eventing`, leaving only CDC / agentics / retrieval as the remaining per-companion-pack OTel adapter rollout work; each remaining pack ships independently using the same `EventingDiagnostics` / `GovernanceDiagnostics` shape
+- broader governance emission sites beyond invitation dispatch (membership evaluation, action workflow execution, domain-ownership verification) remain available for follow-up slices; today's slice is the first emission site, not the only one — but each future site is a small additive PR rather than a re-architecture
+- once `Cephalon.Observability.OpenTelemetry`'s subscription contract is rechecked, confirm the new `Cephalon.MultiTenancy.Governance` activity source and meter are picked up alongside the existing three; the canonical name set was already in `CephalonActivitySources`, so no companion-pack edit should be required, but a one-line check belongs in the next adoption pass
+
 ### ENG-378 Extend May architecture review with redaction adoption arc + cleanup discipline
 
 Status: done
