@@ -1,5 +1,6 @@
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Resilience;
+using Cephalon.Resilience;
 
 namespace Cephalon.Behaviors.Resilience;
 

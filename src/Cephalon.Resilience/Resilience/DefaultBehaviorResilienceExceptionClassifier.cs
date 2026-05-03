@@ -8,7 +8,7 @@ using Polly.CircuitBreaker;
 using Polly.RateLimiting;
 using Polly.Timeout;
 
-namespace Cephalon.Behaviors.Resilience;
+namespace Cephalon.Resilience;
 
 internal sealed class DefaultBehaviorResilienceExceptionClassifier : IBehaviorResilienceExceptionClassifier
 {

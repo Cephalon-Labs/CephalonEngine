@@ -45,6 +45,7 @@
     <Project Path="src/Cephalon.Edge.KubernetesGateway/Cephalon.Edge.KubernetesGateway.csproj" />
     <Project Path="src/Cephalon.Edge.Traefik/Cephalon.Edge.Traefik.csproj" />
     <Project Path="src/Cephalon.Behaviors/Cephalon.Behaviors.csproj" />
+    <Project Path="src/Cephalon.Resilience/Cephalon.Resilience.csproj" />
     <Project Path="src/Cephalon.Behaviors.Http/Cephalon.Behaviors.Http.csproj" />
     <Project Path="src/Cephalon.Behaviors.Messaging/Cephalon.Behaviors.Messaging.csproj" />
     <Project Path="src/Cephalon.Behaviors.Patterns/Cephalon.Behaviors.Patterns.csproj" />
