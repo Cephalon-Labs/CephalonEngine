@@ -1,6 +1,6 @@
 using Polly.CircuitBreaker;
 
-namespace Cephalon.Behaviors.Resilience;
+namespace Cephalon.Resilience;
 
 internal sealed class BehaviorCircuitBreakerStateRegistry
 {

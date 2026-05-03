@@ -1,5 +1,6 @@
 using Cephalon.Behaviors.Services;
 using Cephalon.Abstractions.Behaviors;
+using Cephalon.Resilience;
 using Polly;
 using Polly.Registry;
 
