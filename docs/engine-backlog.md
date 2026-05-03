@@ -3719,6 +3719,35 @@ Follow-up later:
 - wire a smoke test that boots the sample, fires an HTTP request with an `Authorization: Bearer abc123` header, asserts the captured activity does not contain the raw token; today the unit-level integration tests for both M1 emission sites cover the wiring, so a sample-level smoke test is duplicate coverage with marginal value
 - adopt the same recipe in the other samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) as a separate slice when the redaction surface needs broader sample reach — **delivered in `ENG-369`**
 
+### ENG-381 Pre-declare canonical activity-source / meter names for Cephalon.Agentics + Cephalon.Retrieval
+
+Status: done
+Estimate: 2
+
+Why:
+
+- after `ENG-355` extended the canonical name set with `Eventing` + `MultiTenancyGovernance` (sourced from existing literal-string emitters in those two packs), the engine-surface maturity audit's `Cephalon.Diagnostics` row still names `agentics` and `retrieval` as outstanding "per-companion-pack OTel adapter rollout" items
+- the in-flight sibling slices `ENG-371` (Cephalon.Eventing OTel adapter activity emission baseline, PR #878) and `ENG-379` (Cephalon.MultiTenancy.Governance OTel adapter activity emission baseline + M1 redaction wiring, PR #888) are both promoting *already-declared* canonical names from M0 to M1 emission; they only work because the names were pre-declared in `Cephalon.Diagnostics` first — so for `Cephalon.Agentics` and `Cephalon.Retrieval` to receive the same emission baseline next, the canonical names need to land first
+- declaring the names without emission is the correct micro-slice: pre-declaration is purely additive, low-risk, lock-file-safe, and unblocks the next emission slice with zero coupling to the in-flight `ENG-371` / `ENG-379` PRs
+- a sub-agent survey (originally captured in the `ENG-355` commit) confirmed `Cephalon.Agentics` and `Cephalon.Retrieval` have no existing `ActivitySource` / `Meter` / `IDiagnosticsConventionContributor` declarations; verified again at the start of this slice — both packs remain emission-free, so this slice declares the names without modifying the consuming packs
+
+Delivered:
+
+- update `src/Cephalon.Diagnostics/CephalonActivitySources.cs` to add `Agentics = "Cephalon.Agentics"` and `Retrieval = "Cephalon.Retrieval"` const fields with full XML doc comments naming the consuming companion pack family
+- update `src/Cephalon.Diagnostics/CephalonMeters.cs` similarly with `Agentics = "Cephalon.Agentics"` and `Retrieval = "Cephalon.Retrieval"` const fields
+- update `src/Cephalon.Diagnostics/PublicAPI.Unshipped.txt` with the four new public const entries (two activity sources, two meters)
+- update `src/Cephalon.Observability.OpenTelemetry/Hosting/OpenTelemetryHostApplicationBuilderExtensions.cs` to add `tracing.AddSource(CephalonActivitySources.Agentics)` + `.Retrieval` and `metrics.AddMeter(CephalonMeters.Agentics)` + `.Retrieval` so the OTLP exporter pipes those signals by default the moment the matching packs ship their first emissions; until then the subscriptions are no-ops with zero export overhead
+- intentionally **no** changes to `src/Cephalon.Agentics` or `src/Cephalon.Retrieval` — neither pack has any diagnostics infrastructure to redirect, and adding a `ProjectReference` without an emission site would create dead coupling; the canonical-name → consuming-pack wiring lands together when each pack ships its first `ActivitySource` / `Meter` instance
+- documentation: `docs/components/diagnostics.md` *What it owns* canonical name list (5 → 7) plus *Maturity and ownership* OTel pack subscription line refreshed; `docs/engine-surface-maturity-audit.md` `Cephalon.Diagnostics` row canonical name list (5 → 7) plus OTel-pack subscription wording (3 → 7) refreshed and *Next proof needed* clarifies emission baseline scope; `docs/conformance-matrix.md` `Cephalon.Diagnostics` row similarly refreshed (3 → 7 canonical sources / meters)
+- verified end-to-end with full-solution `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors) and `dotnet restore --locked-mode CephalonEngine.slnx` (passes)
+
+Follow-up later:
+
+- when `Cephalon.Agentics` introduces its first `ActivitySource` / `Meter` emissions (most likely on the `IAgentToolDispatcher` execution loop and the dispatcher run-state catalog), the same pattern repeats: add an `IDiagnosticsConventionContributor` (or equivalent emitter) sourcing the source / meter / logger-category prefix from the canonical const, add a `ProjectReference` from `Cephalon.Agentics.csproj` to `Cephalon.Diagnostics`, route emitted attribute values through `RedactionPipeline?` for M1 from day one, refresh the `Cephalon.Diagnostics` audit / matrix rows, and refresh the lock files
+- the same recipe applies to `Cephalon.Retrieval` once `IKnowledgeIndexer` / `IKnowledgeQueryEngine` execution introduces emission sites
+- CDC (canonical-name pre-declaration for `Cephalon.Data` shared CDC capture surface and / or `Cephalon.Data.Debezium`) is a natural follow-up slice; deferred from this slice because the CDC surface lives inside `Cephalon.Data`'s shared runtime rather than a dedicated pack, so the right scoping (one canonical name owned by `Cephalon.Data`, or a separate name owned by `Cephalon.Data.Debezium`) needs explicit analysis first
+- the canonical names declared here will graduate from `PublicAPI.Unshipped.txt` to `PublicAPI.Shipped.txt` on the next release per the standard contract-lock-in promotion cycle
+
 ### ENG-380 Close May 2026 architecture review gaps that were already shipped
 
 Status: done
@@ -12141,6 +12170,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-377 Surface redaction recipe + diagnostic-id registry in getting-started (shipped)
 - ENG-378 Extend May architecture review with redaction adoption arc + cleanup discipline (shipped)
 - ENG-380 Close May 2026 architecture review gaps that were already shipped (shipped)
+- ENG-381 Pre-declare canonical activity-source / meter names for Cephalon.Agentics + Cephalon.Retrieval (shipped)
 
 ### Later / not scheduled yet
 
