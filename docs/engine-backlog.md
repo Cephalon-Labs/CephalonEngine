@@ -3925,6 +3925,41 @@ Follow-up later:
 - CDC (canonical-name pre-declaration for `Cephalon.Data` shared CDC capture surface and / or `Cephalon.Data.Debezium`) is a natural follow-up slice; deferred from this slice because the CDC surface lives inside `Cephalon.Data`'s shared runtime rather than a dedicated pack, so the right scoping (one canonical name owned by `Cephalon.Data`, or a separate name owned by `Cephalon.Data.Debezium`) needs explicit analysis first
 - the canonical names declared here will graduate from `PublicAPI.Unshipped.txt` to `PublicAPI.Shipped.txt` on the next release per the standard contract-lock-in promotion cycle
 
+### ENG-390 Extract Cephalon.Resilience package from Cephalon.Behaviors
+
+Status: done
+Estimate: 3
+
+Why:
+
+- the engine-resilience runtime (Polly v8 + `Microsoft.Extensions.Resilience` policy resolver, circuit-breaker state registry, exception classifier, execution-context keys) lived inside `Cephalon.Behaviors` even though the abstractions in `Cephalon.Abstractions.Resilience` are designed to be reusable beyond behavior dispatch
+- per `docs/project-memory.md` Learning Knowledge Pack recommendation #7 ("partially shipped: declarative descriptors live in Abstractions; runtime in Behaviors backed by Microsoft.Extensions.Resilience; **extracting the runtime into a dedicated `Cephalon.Resilience` package so consumers can adopt resilience without `Cephalon.Behaviors` is the remaining follow-up**"), the consumer-coupling problem is the explicit gap
+- `engine-surface-maturity-audit.md` previously declared engine-resilience promotion to `M3` requires "the dedicated package owns the runtime"; this slice satisfies that prerequisite for the runtime-resolution + circuit-breaker + classifier + execution-context portion
+- originally drafted as `ENG-381` but renumbered to `ENG-390` because a concurrent autonomous run claimed `ENG-381` for the `Cephalon.Diagnostics` activity-source / meter pre-declaration baseline (PR #894, merged); the auto-memory `feedback_eng_number_allocation` warning calls out this exact collision pattern
+
+Delivered:
+
+- new `src/Cephalon.Resilience/Cephalon.Resilience.csproj` — `net10.0`, depends on `Cephalon.Abstractions` + `Cephalon.Engine` + `Microsoft.Extensions.Resilience` + `Microsoft.CodeAnalysis.PublicApiAnalyzers`; ships `PublicAPI.Shipped.txt` + `PublicAPI.Unshipped.txt` (both header-only because the migrated types are all `internal`)
+- new `src/Cephalon.Resilience/Properties/AssemblyInfo.cs` — grants `InternalsVisibleTo` to `Cephalon.Behaviors` plus the four `Cephalon.Tests.*` assemblies
+- 4 of 7 files moved (git-tracked rename, history preserved at 92-99% similarity): `BehaviorResiliencePolicyResolver.cs`, `BehaviorCircuitBreakerStateRegistry.cs`, `DefaultBehaviorResilienceExceptionClassifier.cs`, `BehaviorResilienceExecutionContextKeys.cs` from `src/Cephalon.Behaviors/Resilience/` → `src/Cephalon.Resilience/Resilience/`; namespaces updated `Cephalon.Behaviors.Resilience` → `Cephalon.Resilience` (matches the `Cephalon.Audit` / `.Eventing` / `.Agentics` convention of avoiding stuttering)
+- 3 files **kept** in `Cephalon.Behaviors`: `BehaviorResilienceExecutionMiddleware.cs` (implements `internal IBehaviorExecutionMiddleware` and consumes `internal BehaviorExecutionInvocation` / `BehaviorExecutionDelegate` from `Cephalon.Behaviors.Services` — moving would have required widening surface), `BehaviorIdempotencyResolver.cs` (constructor takes `IBehaviorTypeRegistry` from `Cephalon.Behaviors.Services` — moving would have created a circular project reference), and `BehaviorResilienceRuntimeCatalog.cs` (constructor takes `BehaviorIdempotencyResolver`)
+- `src/Cephalon.Behaviors/Cephalon.Behaviors.csproj` — added `<ProjectReference Include="..\Cephalon.Resilience\Cephalon.Resilience.csproj" />`, removed `<PackageReference Include="Microsoft.Extensions.Resilience" />` (now transitive)
+- `CephalonEngine.slnx` — added `Cephalon.Resilience` project entry
+- `BehaviorModule.cs` + the three kept resilience files — added `using Cephalon.Resilience;` to reach the moved types
+- new `docs/components/resilience.md` — mirrors the `audit.md` template (What it owns / Main surfaces / How it fits / Maturity and ownership)
+- `docs/components/README.md` — `Cephalon.Resilience` entry under *Core runtime*
+- `docs/components/behaviors.md` — Related-components note about the runtime split
+- `docs/engine-surface-maturity-audit.md` — engine-resilience row replaced with a split-ownership description; new `Cephalon.Resilience` row at `M2` / `cephalon-managed`; rebase merged the row alongside the `Cephalon.EventSourcing` / `Cephalon.Audit` / `Cephalon.Identity` rows that landed on master while the agent was working
+- 90+ `packages.lock.json` files refreshed via `dotnet restore` to absorb the new project edge
+- verified end-to-end: `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors), `dotnet test --filter "FullyQualifiedName~Resilience"` (19/19 pass), `dotnet restore --locked-mode CephalonEngine.slnx` (clean across full sln)
+- public API surface unchanged: every migrated type was already `internal`, so neither the new package nor `Cephalon.Behaviors` needs `*REMOVED*` entries; no compatibility break for external consumers
+
+Follow-up later:
+
+- when a future slice removes the residual coupling between `BehaviorResilienceExecutionMiddleware` / `BehaviorIdempotencyResolver` / `BehaviorResilienceRuntimeCatalog` and `Cephalon.Behaviors.Services` (the three kept files), they can move to `Cephalon.Resilience` too; today they stay because moving them would have required widening currently-internal surface
+- the `Cephalon.Resilience` `M2` row promotes to `M3` once an explicit operator surface (catalog routes, snapshot keys) lands and the dedicated package owns the runtime end-to-end (including the three kept files)
+- consumers that want resilience without behavior dispatch can now reference `Cephalon.Resilience` directly; document the canonical "register policies + adopt without behaviors" recipe in `docs/components/resilience.md` once at least one consumer adopts that path
+
 ### ENG-380 Close May 2026 architecture review gaps that were already shipped
 
 Status: done
@@ -12354,6 +12389,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-385 Adopt per-page maturity-badge convention across Cephalon.Data.* provider packs (batch 4) (shipped)
 - ENG-386 Adopt per-page maturity-badge convention across Cephalon.EventSourcing.* provider packs (batch 5) (shipped)
 - ENG-387 Adopt per-page maturity-badge convention across Cephalon.MultiTenancy.Governance.* companions (batch 6) (shipped)
+- ENG-390 Extract Cephalon.Resilience package from Cephalon.Behaviors (shipped) — originally drafted as ENG-381; renumbered after concurrent run claimed ENG-381 for the Diagnostics activity-source / meter pre-declaration
 
 ### Later / not scheduled yet
 

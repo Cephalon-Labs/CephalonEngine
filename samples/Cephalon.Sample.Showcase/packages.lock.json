@@ -821,7 +821,7 @@
         "dependencies": {
           "Cephalon.Abstractions": "[0.1.0-preview, )",
           "Cephalon.Engine": "[0.1.0-preview, )",
-          "Microsoft.Extensions.Resilience": "[10.4.0, )"
+          "Cephalon.Resilience": "[0.1.0-preview, )"
         }
       },
       "cephalon.behaviors.http": {
@@ -958,6 +958,14 @@
           "Cephalon.Observability": "[0.1.0-preview, )",
           "Serilog.Extensions.Hosting": "[10.0.0, )",
           "Serilog.Settings.Configuration": "[10.0.0, )"
+        }
+      },
+      "cephalon.resilience": {
+        "type": "Project",
+        "dependencies": {
+          "Cephalon.Abstractions": "[0.1.0-preview, )",
+          "Cephalon.Engine": "[0.1.0-preview, )",
+          "Microsoft.Extensions.Resilience": "[10.4.0, )"
         }
       },
       "cephalon.retrieval": {

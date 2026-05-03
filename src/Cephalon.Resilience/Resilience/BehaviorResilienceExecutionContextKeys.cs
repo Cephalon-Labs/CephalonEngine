@@ -1,7 +1,7 @@
 using Polly;
 using Cephalon.Abstractions.Behaviors;
 
-namespace Cephalon.Behaviors.Resilience;
+namespace Cephalon.Resilience;
 
 internal static class BehaviorResilienceExecutionContextKeys
 {
