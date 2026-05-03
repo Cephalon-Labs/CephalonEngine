@@ -3719,6 +3719,32 @@ Follow-up later:
 - wire a smoke test that boots the sample, fires an HTTP request with an `Authorization: Bearer abc123` header, asserts the captured activity does not contain the raw token; today the unit-level integration tests for both M1 emission sites cover the wiring, so a sample-level smoke test is duplicate coverage with marginal value
 - adopt the same recipe in the other samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) as a separate slice when the redaction surface needs broader sample reach — **delivered in `ENG-369`**
 
+### ENG-378 Extend May architecture review with redaction adoption arc + cleanup discipline
+
+Status: done
+Estimate: 1
+
+Why:
+
+- the May 2026 architecture review (`docs/architecture-review-2026-05.md`) was authored on May 2, 2026; `ENG-357` through `ENG-377` shipped 21 PRs of redaction-adoption + cleanup-discipline work between May 2 and May 3 that materially changed the engine surface
+- per the planning-governance discipline, the monthly architecture review is the canonical answer to "what changed since last review"; leaving it stuck on May 2 truth would understate the engine state by an order of magnitude (4 strengths instead of 3, full M1 redaction surface instead of an unmentioned gap)
+- the review is a living doc within the same month — extending it to capture the latest May arcs is the right discipline, not waiting for the June review
+
+Delivered:
+
+- bump the review-date metadata at the top to "May 2, 2026 (last extended May 3, 2026 with the redaction-adoption + cleanup-discipline arc)"
+- add 2 new bullets to the *What changed since April 13, 2026* compressed shipped-slices list:
+    - **redaction adoption arc end-to-end (`ENG-357` through `ENG-377`)** naming all 17 ENG slices, 39 tests, 3 M1 emission sites, 5-sample adoption, and the build-time scope-boundary declaration
+    - **cleanup discipline arc (`ENG-370` through `ENG-373`)** naming the central diagnostic-id registry, the 100-package `RS0026`/`RS0027` strip, the surviving `RS0041` audit, and the inline-rationale discipline
+- add 1 new bullet for the **maturity audit + ops-hardening doc refresh** that propagated the redaction state into the audit doc and the ops-hardening gap inventory
+- promote the *Updated strengths* count from "Three are now visibly stronger" to "Four are now visibly stronger" and add a new *4. Engine-boundary redaction is now provable end-to-end* section under *Updated strengths* that describes the full adoption arc + the complementary cleanup discipline + the 39-test verification
+- `docs/engine-backlog.md` ENG-378 backlog card; Sprint 125 placement updated
+
+Follow-up later:
+
+- the *Updated risks* and *Recommended next moves* sections of the May review are unchanged because the redaction arc closes a strength rather than opens a new risk; revisit if June surfaces a follow-up shape (e.g. additional emission sites needing M1 redaction once `Cephalon.Eventing` ships its OTel emission baseline through PR #878)
+- in June, the new monthly review supersedes May; copy the redaction strength forward as ongoing baseline if the surface stays healthy
+
 ### ENG-377 Surface redaction recipe + diagnostic-id registry in getting-started
 
 Status: done
@@ -12087,6 +12113,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-375 Declare EngineBuilder build-time activity tags as deliberate redaction scope boundary (shipped)
 - ENG-376 Add integration tests for Wolverine M1 redaction wiring (shipped)
 - ENG-377 Surface redaction recipe + diagnostic-id registry in getting-started (shipped)
+- ENG-378 Extend May architecture review with redaction adoption arc + cleanup discipline (shipped)
 
 ### Later / not scheduled yet
 
