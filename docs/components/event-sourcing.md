@@ -1,5 +1,7 @@
 # Cephalon.EventSourcing
 
+> **Maturity:** `M1` · **Ownership:** `application-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.EventSourcing` is the runtime-neutral event-sourcing baseline for Cephalon.
 
 ## What it owns

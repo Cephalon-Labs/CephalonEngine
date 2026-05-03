@@ -1,5 +1,7 @@
 # Cephalon.Eventing
 
+> **Maturity:** `M3` · **Ownership:** mixed: `application-managed` + `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Eventing` is the baseline technology pack for event-driven integration.
 
 ## What it owns
