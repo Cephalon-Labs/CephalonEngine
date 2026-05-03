@@ -15,7 +15,7 @@ Each row describes one shipped Cephalon package along these dimensions:
 - **Engine routes** — `/engine/*` HTTP routes the package contributes when active
 - **Snapshot keys** — `snapshot.*` keys the package contributes to `RuntimeIntrospectionSnapshot`
 - **Catalog interfaces** — `I*Catalog` / `I*RuntimeCatalog` interfaces the package owns
-- **Notes** — one-line summary; "(audit pending)" flags rows where the maturity audit is currently silent or where component docs and audit doc disagree
+- **Notes** — one-line summary; "(audit pending)" flags rows where the maturity audit is currently silent or where component docs and audit doc disagree, while "(family-covered by maturity audit)" flags rows where the audit declares maturity through a consolidated family-level entry rather than per-package detail
 
 Maturity recap (full definitions in the maturity audit):
 
@@ -124,19 +124,19 @@ Both agentic surfaces are managed vertical proofs. Cephalon-managed dispatch and
 
 | Package | Maturity | Ownership | Engine routes | Snapshot keys | Catalog interfaces | Notes |
 | --- | --- | --- | --- | --- | --- | --- |
-| `Cephalon.EventSourcing` | M1 | application-managed | — | — | — | event-sourced aggregate contracts and descriptors (audit pending) |
-| `Cephalon.EventSourcing.EntityFramework` | M1 | provider-managed | — | — | — | Entity Framework event store (audit pending) |
-| `Cephalon.EventSourcing.MongoDB` | M1 | provider-managed | — | — | — | MongoDB event store (audit pending) |
-| `Cephalon.EventSourcing.Redis` | M1 | provider-managed | — | — | — | Redis event store (audit pending) |
-| `Cephalon.EventSourcing.Neo4j` | M1 | provider-managed | — | — | — | Neo4j event store (audit pending) |
-| `Cephalon.EventSourcing.Cassandra` | M1 | provider-managed | — | — | — | Cassandra event store (audit pending) |
-| `Cephalon.EventSourcing.ClickHouse` | M1 | provider-managed | — | — | — | ClickHouse event store (audit pending) |
-| `Cephalon.EventSourcing.Elasticsearch` | M1 | provider-managed | — | — | — | Elasticsearch event store (audit pending) |
-| `Cephalon.EventSourcing.OpenSearch` | M1 | provider-managed | — | — | — | OpenSearch event store (audit pending) |
-| `Cephalon.EventSourcing.Qdrant` | M1 | provider-managed | — | — | — | Qdrant event store (audit pending) |
-| `Cephalon.EventSourcing.Nats` | M1 | provider-managed | — | — | — | NATS event store (audit pending) |
+| `Cephalon.EventSourcing` | M1 | application-managed | — | — | — | event-sourced aggregate contracts and descriptors (family-covered by maturity audit) |
+| `Cephalon.EventSourcing.EntityFramework` | M1 | provider-managed | — | — | — | Entity Framework event store (family-covered by maturity audit) |
+| `Cephalon.EventSourcing.MongoDB` | M1 | provider-managed | — | — | — | MongoDB event store (family-covered by maturity audit) |
+| `Cephalon.EventSourcing.Redis` | M1 | provider-managed | — | — | — | Redis event store (family-covered by maturity audit) |
+| `Cephalon.EventSourcing.Neo4j` | M1 | provider-managed | — | — | — | Neo4j event store (family-covered by maturity audit) |
+| `Cephalon.EventSourcing.Cassandra` | M1 | provider-managed | — | — | — | Cassandra event store (family-covered by maturity audit) |
+| `Cephalon.EventSourcing.ClickHouse` | M1 | provider-managed | — | — | — | ClickHouse event store (family-covered by maturity audit) |
+| `Cephalon.EventSourcing.Elasticsearch` | M1 | provider-managed | — | — | — | Elasticsearch event store (family-covered by maturity audit) |
+| `Cephalon.EventSourcing.OpenSearch` | M1 | provider-managed | — | — | — | OpenSearch event store (family-covered by maturity audit) |
+| `Cephalon.EventSourcing.Qdrant` | M1 | provider-managed | — | — | — | Qdrant event store (family-covered by maturity audit) |
+| `Cephalon.EventSourcing.Nats` | M1 | provider-managed | — | — | — | NATS event store (family-covered by maturity audit) |
 
-The event-sourcing family is currently catalog-only. The maturity audit does not yet enumerate each pack individually; broad managed-execution proof remains future work.
+The event-sourcing family is currently catalog-only. The maturity audit now carries a family-level row that confirms `Cephalon.EventSourcing` core plus the ten provider packs share an `M1` catalog-only stance with mixed `application-managed` aggregate logic and `provider-managed` per-pack store contracts; broad managed-execution proof remains future work.
 
 ## Multi-tenancy
 
@@ -236,10 +236,13 @@ The diagnostics + analyzer family ships the engine's canonical telemetry name se
 These rows surfaced during the matrix build and may warrant follow-up cards. They are not blockers — they are alignment opportunities.
 
 1. **`Cephalon.Behaviors.Http` REST publication ownership.** Maturity audit labels it M2 / mixed-ownership. The component doc states "explicit module-owned public REST activation" with "Cephalon-managed materialization, governance, and runtime catalogs." Clarify whether REST publication is application-owned or Cephalon-owned at the publication layer, and whether the matrix should label this as `application-managed` (authoring) plus `cephalon-managed` (materialization).
-2. **Event-sourcing family audit coverage.** All `Cephalon.EventSourcing.*` packs show M1 (catalog-only) here, but the maturity audit does not yet enumerate them individually. Confirm whether the catalog-only stance is intentional or whether managed-execution proof has shipped for any provider.
-3. **Observability provider audit closure.** Cloud platform packs (AWS, GCP, Azure Monitor, etc.) are listed as M1 configuration-binding packs, but the audit doc does not enumerate each one. Confirm maturity and ownership boundaries are stable, or schedule an audit refresh.
-4. **Multi-tenancy delivery sender maturity granularity.** Each of the six invitation-delivery sender packs is at M2. Adoption-quality proof requirements differ per integration (HTTP webhook vs. SMTP relay vs. SaaS API vs. Microsoft Graph). Consider per-sender maturity granularity if any single integration needs to advance independently.
-5. **`Cephalon.Audit` and `Cephalon.Identity` route projection.** Both are marked M1 (taxonomy-only descriptors) yet expose `/engine/audit-*` and `/engine/authorization-policies` routes through `Cephalon.AspNetCore`. Clarify whether the routes are M1 projections of M1 contracts or whether some runtime truth has shipped for either pack.
+2. **Observability provider audit closure.** Cloud platform packs (AWS, GCP, Azure Monitor, etc.) are listed as M1 configuration-binding packs, but the audit doc does not enumerate each one. Confirm maturity and ownership boundaries are stable, or schedule an audit refresh.
+3. **Multi-tenancy delivery sender maturity granularity.** Each of the six invitation-delivery sender packs is at M2. Adoption-quality proof requirements differ per integration (HTTP webhook vs. SMTP relay vs. SaaS API vs. Microsoft Graph). Consider per-sender maturity granularity if any single integration needs to advance independently.
+4. **`Cephalon.Audit` and `Cephalon.Identity` route projection.** Both are marked M1 (taxonomy-only descriptors) yet expose `/engine/audit-*` and `/engine/authorization-policies` routes through `Cephalon.AspNetCore`. Clarify whether the routes are M1 projections of M1 contracts or whether some runtime truth has shipped for either pack.
+
+### Resolved alignment items (kept as durable history)
+
+- **Event-sourcing family audit coverage** (resolved May 2026 via `ENG-388`): the maturity audit now carries a consolidated family-level row that confirms `Cephalon.EventSourcing` core plus the ten provider packs (`Cephalon.EventSourcing.EntityFramework`, `Cephalon.EventSourcing.MongoDB`, `Cephalon.EventSourcing.Redis`, `Cephalon.EventSourcing.Neo4j`, `Cephalon.EventSourcing.Cassandra`, `Cephalon.EventSourcing.ClickHouse`, `Cephalon.EventSourcing.Elasticsearch`, `Cephalon.EventSourcing.OpenSearch`, `Cephalon.EventSourcing.Qdrant`, `Cephalon.EventSourcing.Nats`) share an `M1` catalog-only stance with `application-managed` aggregate logic plus `provider-managed` per-pack store contracts. The matrix Notes-field tag on the eleven rows now reads "(family-covered by maturity audit)" instead of "(audit pending)" so the matrix mirrors the audit-doc truth, and per-pack promotion to `M2` is gated on managed-execution proof per provider pack.
 
 When a row in this matrix becomes inaccurate, update both this page and the [`engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md) entry in the same slice. Do not let one page drift while the other is updated.
 
