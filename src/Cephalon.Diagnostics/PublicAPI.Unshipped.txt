@@ -1,18 +1,22 @@
 #nullable enable
+const Cephalon.Diagnostics.CephalonActivitySources.Agentics = "Cephalon.Agentics" -> string!
 const Cephalon.Diagnostics.CephalonActivitySources.AspNetCore = "Cephalon.AspNetCore" -> string!
 const Cephalon.Diagnostics.CephalonActivitySources.Engine = "Cephalon.Engine" -> string!
 const Cephalon.Diagnostics.CephalonActivitySources.Eventing = "Cephalon.Eventing" -> string!
 const Cephalon.Diagnostics.CephalonActivitySources.MultiTenancyGovernance = "Cephalon.MultiTenancy.Governance" -> string!
+const Cephalon.Diagnostics.CephalonActivitySources.Retrieval = "Cephalon.Retrieval" -> string!
 const Cephalon.Diagnostics.CephalonActivitySources.Worker = "Cephalon.Worker" -> string!
 const Cephalon.Diagnostics.CephalonDiagnosticsAttributeKeys.AppBlueprint = "cephalon.app.blueprint" -> string!
 const Cephalon.Diagnostics.CephalonDiagnosticsAttributeKeys.BehaviorId = "cephalon.behavior.id" -> string!
 const Cephalon.Diagnostics.CephalonDiagnosticsAttributeKeys.CellId = "cephalon.cell.id" -> string!
 const Cephalon.Diagnostics.CephalonDiagnosticsAttributeKeys.ModuleId = "cephalon.module.id" -> string!
 const Cephalon.Diagnostics.CephalonDiagnosticsAttributeKeys.TenantId = "cephalon.tenant.id" -> string!
+const Cephalon.Diagnostics.CephalonMeters.Agentics = "Cephalon.Agentics" -> string!
 const Cephalon.Diagnostics.CephalonMeters.AspNetCore = "Cephalon.AspNetCore" -> string!
 const Cephalon.Diagnostics.CephalonMeters.Engine = "Cephalon.Engine" -> string!
 const Cephalon.Diagnostics.CephalonMeters.Eventing = "Cephalon.Eventing" -> string!
 const Cephalon.Diagnostics.CephalonMeters.MultiTenancyGovernance = "Cephalon.MultiTenancy.Governance" -> string!
+const Cephalon.Diagnostics.CephalonMeters.Retrieval = "Cephalon.Retrieval" -> string!
 const Cephalon.Diagnostics.CephalonMeters.Worker = "Cephalon.Worker" -> string!
 Cephalon.Diagnostics.CephalonActivitySources
 Cephalon.Diagnostics.CephalonDiagnosticsAttributeKeys
