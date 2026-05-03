@@ -3719,6 +3719,37 @@ Follow-up later:
 - wire a smoke test that boots the sample, fires an HTTP request with an `Authorization: Bearer abc123` header, asserts the captured activity does not contain the raw token; today the unit-level integration tests for both M1 emission sites cover the wiring, so a sample-level smoke test is duplicate coverage with marginal value
 - adopt the same recipe in the other samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) as a separate slice when the redaction surface needs broader sample reach — **delivered in `ENG-369`**
 
+### ENG-387 Adopt per-page maturity-badge convention across Cephalon.MultiTenancy.Governance.* companions (batch 6)
+
+Status: done
+Estimate: 1
+
+Why:
+
+- batch 6 of the maturity-badge rollout named in `ENG-386`'s follow-up note: the 11 `Cephalon.MultiTenancy.Governance.*` companion / sender packs (`AspNetCore`, `HttpDelivery`, `SmtpDelivery`, `SendGridDelivery`, `SendGridDelivery.AspNetCore`, `MailgunDelivery`, `MailgunDelivery.AspNetCore`, `AmazonSesDelivery`, `AmazonSesDelivery.AspNetCore`, `MicrosoftGraphDelivery`, `MicrosoftGraphDelivery.AzureIdentity`)
+- this batch shifts the count from 49 of 104 (after `ENG-386`) to 60 of 104 component pages with a maturity badge — past the halfway mark of the convention rollout
+
+Delivered:
+
+- adopt the convention across the eleven `Cephalon.MultiTenancy.Governance.*` companion / sender packs, each badge mirroring the conformance-matrix row verbatim — every pack carries `M2` `cephalon-managed`:
+    - [`multi-tenancy-governance-aspnetcore.md`](docs/components/multi-tenancy-governance-aspnetcore.md)
+    - [`multi-tenancy-governance-httpdelivery.md`](docs/components/multi-tenancy-governance-httpdelivery.md)
+    - [`multi-tenancy-governance-smtpdelivery.md`](docs/components/multi-tenancy-governance-smtpdelivery.md)
+    - [`multi-tenancy-governance-sendgriddelivery.md`](docs/components/multi-tenancy-governance-sendgriddelivery.md)
+    - [`multi-tenancy-governance-sendgriddelivery-aspnetcore.md`](docs/components/multi-tenancy-governance-sendgriddelivery-aspnetcore.md)
+    - [`multi-tenancy-governance-mailgundelivery.md`](docs/components/multi-tenancy-governance-mailgundelivery.md)
+    - [`multi-tenancy-governance-mailgundelivery-aspnetcore.md`](docs/components/multi-tenancy-governance-mailgundelivery-aspnetcore.md)
+    - [`multi-tenancy-governance-amazonsesdelivery.md`](docs/components/multi-tenancy-governance-amazonsesdelivery.md)
+    - [`multi-tenancy-governance-amazonsesdelivery-aspnetcore.md`](docs/components/multi-tenancy-governance-amazonsesdelivery-aspnetcore.md)
+    - [`multi-tenancy-governance-microsoftgraphdelivery.md`](docs/components/multi-tenancy-governance-microsoftgraphdelivery.md)
+    - [`multi-tenancy-governance-microsoftgraphdelivery-azureidentity.md`](docs/components/multi-tenancy-governance-microsoftgraphdelivery-azureidentity.md)
+- `docs/engine-backlog.md` ENG-387 backlog card; Sprint 125 placement updated
+
+Follow-up later:
+
+- batch 7 covers `Cephalon.Edge.*` provider packs (`KubernetesGateway`, `Traefik`); batch 8 covers `Cephalon.Observability.*` companion packs; batch 9 sweeps the remaining smaller packs (`Cli`, `Scaffolding`, `TemplatePack`, `ReferenceDocs`, `Audit` family, `Identity` family, `Ids.Sfid`, etc.)
+- the May 2026 architecture review's *Updated risk #2* ("Maturity-label communication still asymmetric across surface families") is now past the halfway mark of closure — when the remaining batches land, the next monthly architecture review can promote the risk note to "materially closed"
+
 ### ENG-386 Adopt per-page maturity-badge convention across Cephalon.EventSourcing.* provider packs (batch 5)
 
 Status: done
@@ -12322,6 +12353,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-384 Adopt per-page maturity-badge convention across Behaviors family + Eventing companions (batch 3) (shipped)
 - ENG-385 Adopt per-page maturity-badge convention across Cephalon.Data.* provider packs (batch 4) (shipped)
 - ENG-386 Adopt per-page maturity-badge convention across Cephalon.EventSourcing.* provider packs (batch 5) (shipped)
+- ENG-387 Adopt per-page maturity-badge convention across Cephalon.MultiTenancy.Governance.* companions (batch 6) (shipped)
 
 ### Later / not scheduled yet
 

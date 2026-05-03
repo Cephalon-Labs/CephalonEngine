@@ -1,5 +1,7 @@
 # Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity
 
+> **Maturity:** `M2` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity` is the optional Azure Identity token-provider companion for the Microsoft Graph invitation sender.
 
 ## What it owns

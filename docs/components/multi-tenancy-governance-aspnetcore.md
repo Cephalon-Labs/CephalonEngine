@@ -1,5 +1,7 @@
 # Cephalon.MultiTenancy.Governance.AspNetCore
 
+> **Maturity:** `M2` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.MultiTenancy.Governance.AspNetCore` is the optional ASP.NET Core host adapter for tenant-domain ownership HTTP proof publication, tenant-administration workflow commands, tenant-invitation delivery dispatch requests, normalized tenant-invitation delivery status callbacks, and bounded reads plus filtered rollup summaries, attention-category drill-downs, remediation-action filters, provider-message drill-downs, and remediation hints over normalized delivery-status observation history.
 
 ## What it owns

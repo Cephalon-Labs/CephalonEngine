@@ -1,5 +1,7 @@
 # Cephalon.MultiTenancy.Governance.HttpDelivery
 
+> **Maturity:** `M2` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.MultiTenancy.Governance.HttpDelivery` is the optional HTTP webhook sender companion for tenant-invitation delivery.
 
 ## What it owns

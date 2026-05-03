@@ -1,5 +1,7 @@
 # Cephalon.MultiTenancy.Governance.MailgunDelivery
 
+> **Maturity:** `M2` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.MultiTenancy.Governance.MailgunDelivery` is the optional Mailgun Messages API sender companion for tenant-invitation delivery.
 
 ## What it owns
