@@ -3719,6 +3719,27 @@ Follow-up later:
 - wire a smoke test that boots the sample, fires an HTTP request with an `Authorization: Bearer abc123` header, asserts the captured activity does not contain the raw token; today the unit-level integration tests for both M1 emission sites cover the wiring, so a sample-level smoke test is duplicate coverage with marginal value
 - adopt the same recipe in the other samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) as a separate slice when the redaction surface needs broader sample reach — **delivered in `ENG-369`**
 
+### ENG-377 Surface redaction recipe + diagnostic-id registry in getting-started
+
+Status: done
+Estimate: 1
+
+Why:
+
+- the redaction adoption recipe (`ENG-367`) and the diagnostic-id registry (`ENG-370`) are both adoption-grade docs but they live one level down from `docs/getting-started.md`; a reader following the canonical onboarding path doesn't naturally encounter either until they go looking, which means real consumer apps would ship without the filters or without picking a sane `EventId` range
+- adding two short pointers to `getting-started.md` (one inline section about scrubbing telemetry before going live, one entry in *Next Docs*) makes both surfaces discoverable on the canonical onboarding path; the marginal cost is small and the friction-to-adopt drops to one click
+- this is the closing slice on the redaction adoption arc: after `ENG-357..376`, the only remaining gap was discoverability from the front-page onboarding doc
+
+Delivered:
+
+- new "Redact secrets from telemetry before going live" section in `docs/getting-started.md` (between "Optional Template-Pack Path" and "Next Docs") naming the three M1 emission sites and linking the [Redaction quick start](components/diagnostics.md#redaction-quick-start) recipe + the [`Cephalon.Sample.ModularMonolith`](../samples/Cephalon.Sample.ModularMonolith/ModularMonolithSampleApp.cs) running-code companion + the [diagnostic-id registry](diagnostic-id-registry.md) for consumer apps adding their own structured logging
+- 2 new entries in *Next Docs*: `Cephalon.Diagnostics component` (canonical name set + redaction surface) and `Diagnostic ID registry` (authoritative `EventId` range allocations)
+- `docs/engine-backlog.md` ENG-377 backlog card; Sprint 125 placement updated
+
+Follow-up later:
+
+- when a future getting-started revision lands a sample-app deep dive, link the canonical `samples/Cephalon.Sample.ModularMonolith/ModularMonolithSampleApp.cs` redaction recipe directly from a new sample-walkthrough section instead of from the *Redact secrets* paragraph; today the two-link approach is enough
+
 ### ENG-376 Add integration tests for Wolverine M1 redaction wiring
 
 Status: done
@@ -12065,6 +12086,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-374 Extend M1 redaction to Cephalon.Eventing.Wolverine dispatch emission (shipped)
 - ENG-375 Declare EngineBuilder build-time activity tags as deliberate redaction scope boundary (shipped)
 - ENG-376 Add integration tests for Wolverine M1 redaction wiring (shipped)
+- ENG-377 Surface redaction recipe + diagnostic-id registry in getting-started (shipped)
 
 ### Later / not scheduled yet
 
