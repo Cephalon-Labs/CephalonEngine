@@ -1,5 +1,7 @@
 # Cephalon.EventSourcing.MongoDB
 
+> **Maturity:** `M1` · **Ownership:** `provider-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.EventSourcing.MongoDB` is the MongoDB event-store provider for Cephalon, following the same provider pattern as `Cephalon.EventSourcing.EntityFramework`. It delivers the `IEventStore` contract against a MongoDB collection instead of a relational table, with optimistic concurrency enforced by a compound unique index on `(StreamId, StreamVersion)`.
 
 ## What it owns

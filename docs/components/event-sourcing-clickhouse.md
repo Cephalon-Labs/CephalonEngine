@@ -1,5 +1,7 @@
 # Cephalon.EventSourcing.ClickHouse
 
+> **Maturity:** `M1` · **Ownership:** `provider-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.EventSourcing.ClickHouse` is the ClickHouse event-store provider for Cephalon, following the same provider pattern as `Cephalon.EventSourcing.MongoDB`, `Cephalon.EventSourcing.Redis`, `Cephalon.EventSourcing.Neo4j`, and `Cephalon.EventSourcing.Cassandra`. It delivers the `IEventStore` contract against a ClickHouse `MergeTree` table ordered by `(stream_id, stream_version)`, with application-layer optimistic concurrency via a pre-read version check.
 
 ## What it owns

@@ -1,5 +1,7 @@
 # Cephalon.EventSourcing.Elasticsearch
 
+> **Maturity:** `M1` · **Ownership:** `provider-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.EventSourcing.Elasticsearch` is the Elasticsearch event-store provider for Cephalon, following the same provider pattern as `Cephalon.EventSourcing.MongoDB` and `Cephalon.EventSourcing.Redis`. It delivers the `IEventStore` contract against Elasticsearch search indices using compound document ids for uniqueness and application-layer optimistic concurrency.
 
 ## What it owns
