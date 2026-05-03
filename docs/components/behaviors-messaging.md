@@ -1,5 +1,7 @@
 # Cephalon.Behaviors.Messaging
 
+> **Maturity:** `M1` · **Ownership:** `application-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Behaviors.Messaging` is the messaging transport baseline for the Adaptive Behavior Topology (ABT).
 
 ## What it owns

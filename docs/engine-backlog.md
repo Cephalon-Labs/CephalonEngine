@@ -3719,6 +3719,32 @@ Follow-up later:
 - wire a smoke test that boots the sample, fires an HTTP request with an `Authorization: Bearer abc123` header, asserts the captured activity does not contain the raw token; today the unit-level integration tests for both M1 emission sites cover the wiring, so a sample-level smoke test is duplicate coverage with marginal value
 - adopt the same recipe in the other samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) as a separate slice when the redaction surface needs broader sample reach — **delivered in `ENG-369`**
 
+### ENG-384 Adopt per-page maturity-badge convention across Behaviors family + Eventing companions (batch 3)
+
+Status: done
+Estimate: 2
+
+Why:
+
+- batch 3 of the maturity-badge rollout named in `ENG-383`'s follow-up note: the `Cephalon.Behaviors.*` sub-packs (`Http`, `Messaging`, `Patterns`, `SourceGen`) plus the `Cephalon.Eventing.*` companions (`Wolverine`, `Behaviors`)
+- this batch shifts the count from 18 of 104 (after `ENG-383`) to 24 of 104 component pages with a maturity badge
+
+Delivered:
+
+- adopt the convention across the six pages, each badge mirroring the audit / matrix row verbatim:
+    - [`behaviors-http.md`](docs/components/behaviors-http.md) — `M2` mixed: `application-managed` + `cephalon-managed`
+    - [`behaviors-messaging.md`](docs/components/behaviors-messaging.md) — `M1` `application-managed`
+    - [`behaviors-patterns.md`](docs/components/behaviors-patterns.md) — `M1` `application-managed` (existing prose mention of "M4 pattern execution layer" is internal architecture-layer terminology, not a maturity audit label, and is preserved verbatim)
+    - [`behaviors-sourcegen.md`](docs/components/behaviors-sourcegen.md) — `M1` `cephalon-managed` (existing prose mention of "M5 compile-time tooling layer" preserved similarly)
+    - [`eventing-wolverine.md`](docs/components/eventing-wolverine.md) — `M3` `provider-managed`
+    - [`eventing-behaviors.md`](docs/components/eventing-behaviors.md) — `M1` `application-managed`
+- `docs/engine-backlog.md` ENG-384 backlog card; Sprint 125 placement updated
+
+Follow-up later:
+
+- batch 4 covers `Cephalon.Data.*` provider packs (Postgres, MySql, Oracle, SqlServer, MongoDB, Redis, Neo4j, Cassandra, ClickHouse, Elasticsearch, OpenSearch, Qdrant, Nats, EntityFramework, Debezium); batch 5 covers `Cephalon.EventSourcing.*` provider packs; batch 6 covers `Cephalon.MultiTenancy.Governance.*` companion / sender packs; batch 7 covers `Cephalon.Edge.*` provider packs; batch 8 covers `Cephalon.Observability.*` companion packs; batch 9 sweeps the remaining smaller packs (Cli, Scaffolding, TemplatePack, ReferenceDocs, Audit family, Identity family, Ids.Sfid, etc.)
+- the existing prose mentions of "M4 pattern execution layer" / "M5 compile-time tooling layer" in `behaviors-patterns.md` / `behaviors-sourcegen.md` are internal architecture-layer numbering (the ABT runtime's pattern-pipeline layers), not the audit's `M0`–`M4` maturity scale; these are deliberately left alone in this slice because the audit-mirroring discipline only governs the badge text, not the doc body — a future slice may rename the internal layers if the dual-meaning becomes a real adopter confusion source
+
 ### ENG-383 Adopt per-page maturity-badge convention across technology / follow-through entry points (batch 2)
 
 Status: done
@@ -12228,6 +12254,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-381 Pre-declare canonical activity-source / meter names for Cephalon.Agentics + Cephalon.Retrieval (shipped)
 - ENG-382 Introduce per-page maturity-badge header convention in component docs and adopt across the core-runtime entry points (shipped)
 - ENG-383 Adopt per-page maturity-badge convention across technology / follow-through entry points (batch 2) (shipped)
+- ENG-384 Adopt per-page maturity-badge convention across Behaviors family + Eventing companions (batch 3) (shipped)
 
 ### Later / not scheduled yet
 

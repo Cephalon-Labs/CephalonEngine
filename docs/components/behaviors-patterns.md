@@ -1,5 +1,7 @@
 # Cephalon.Behaviors.Patterns
 
+> **Maturity:** `M1` · **Ownership:** `application-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Behaviors.Patterns` is the M4 pattern execution layer of the Adaptive Behavior Topology (ABT).
 It provides built-in strategies that govern how a behavior invocation is dispatched, what
 HTTP status code is returned, and how saga/process-manager state, choreography publications, or
