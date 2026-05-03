@@ -1,5 +1,7 @@
 # Cephalon.EventSourcing.Qdrant
 
+> **Maturity:** `M1` · **Ownership:** `provider-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.EventSourcing.Qdrant` is the Qdrant vector-store event-store provider for Cephalon, implementing `IEventStore` against a Qdrant vector collection using payload-only indexing with 1-dimensional dummy vectors.
 
 ## What it owns

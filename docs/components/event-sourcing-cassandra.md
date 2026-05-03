@@ -1,5 +1,7 @@
 # Cephalon.EventSourcing.Cassandra
 
+> **Maturity:** `M1` · **Ownership:** `provider-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.EventSourcing.Cassandra` is the Apache Cassandra event-store provider for Cephalon, following the same provider pattern as `Cephalon.EventSourcing.MongoDB`, `Cephalon.EventSourcing.Redis`, and `Cephalon.EventSourcing.Neo4j`. It delivers the `IEventStore` contract against a Cassandra wide-column table with a composite primary key on `(stream_id, stream_version)`, with optimistic concurrency detection via LWT `INSERT IF NOT EXISTS`.
 
 ## What it owns

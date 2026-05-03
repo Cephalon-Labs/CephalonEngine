@@ -3719,6 +3719,36 @@ Follow-up later:
 - wire a smoke test that boots the sample, fires an HTTP request with an `Authorization: Bearer abc123` header, asserts the captured activity does not contain the raw token; today the unit-level integration tests for both M1 emission sites cover the wiring, so a sample-level smoke test is duplicate coverage with marginal value
 - adopt the same recipe in the other samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) as a separate slice when the redaction surface needs broader sample reach — **delivered in `ENG-369`**
 
+### ENG-386 Adopt per-page maturity-badge convention across Cephalon.EventSourcing.* provider packs (batch 5)
+
+Status: done
+Estimate: 1
+
+Why:
+
+- batch 5 of the maturity-badge rollout named in `ENG-385`'s follow-up note: the 10 `Cephalon.EventSourcing.*` provider packs (`EntityFramework`, `MongoDB`, `Redis`, `Neo4j`, `Cassandra`, `ClickHouse`, `Elasticsearch`, `OpenSearch`, `Qdrant`, `Nats`)
+- this batch shifts the count from 39 of 104 (after `ENG-385`) to 49 of 104 component pages with a maturity badge — about 47% of the way through the convention rollout
+
+Delivered:
+
+- adopt the convention across the ten `Cephalon.EventSourcing.*` provider packs, each badge mirroring the conformance-matrix row verbatim — every pack carries `M1` `provider-managed`:
+    - [`event-sourcing-entityframework.md`](docs/components/event-sourcing-entityframework.md)
+    - [`event-sourcing-mongodb.md`](docs/components/event-sourcing-mongodb.md)
+    - [`event-sourcing-redis.md`](docs/components/event-sourcing-redis.md)
+    - [`event-sourcing-neo4j.md`](docs/components/event-sourcing-neo4j.md)
+    - [`event-sourcing-cassandra.md`](docs/components/event-sourcing-cassandra.md)
+    - [`event-sourcing-clickhouse.md`](docs/components/event-sourcing-clickhouse.md)
+    - [`event-sourcing-elasticsearch.md`](docs/components/event-sourcing-elasticsearch.md)
+    - [`event-sourcing-opensearch.md`](docs/components/event-sourcing-opensearch.md)
+    - [`event-sourcing-qdrant.md`](docs/components/event-sourcing-qdrant.md)
+    - [`event-sourcing-nats.md`](docs/components/event-sourcing-nats.md)
+- `docs/engine-backlog.md` ENG-386 backlog card; Sprint 125 placement updated
+
+Follow-up later:
+
+- batch 6 covers `Cephalon.MultiTenancy.Governance.*` companion / sender packs (~12 docs); batch 7 covers `Cephalon.Edge.*` provider packs (KubernetesGateway, Traefik); batch 8 covers `Cephalon.Observability.*` companion packs; batch 9 sweeps the remaining smaller packs (`Cli`, `Scaffolding`, `TemplatePack`, `ReferenceDocs`, `Audit` family, `Identity` family, `Ids.Sfid`, etc.)
+- the conformance-matrix entries for every `Cephalon.EventSourcing.*` pack are explicitly noted as "(audit pending)"; when the audit row catches up, those badges remain authoritative against the matrix until the audit overrides them
+
 ### ENG-385 Adopt per-page maturity-badge convention across Cephalon.Data.* provider packs (batch 4)
 
 Status: done
@@ -12291,6 +12321,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-383 Adopt per-page maturity-badge convention across technology / follow-through entry points (batch 2) (shipped)
 - ENG-384 Adopt per-page maturity-badge convention across Behaviors family + Eventing companions (batch 3) (shipped)
 - ENG-385 Adopt per-page maturity-badge convention across Cephalon.Data.* provider packs (batch 4) (shipped)
+- ENG-386 Adopt per-page maturity-badge convention across Cephalon.EventSourcing.* provider packs (batch 5) (shipped)
 
 ### Later / not scheduled yet
 
