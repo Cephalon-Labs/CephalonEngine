@@ -81,9 +81,9 @@ April flagged a real product risk that lower-ceremony shorthand could dilute the
 
 **Closed May 3, 2026.** All four target docs now cross-link `long-range-direction.md` and `engineering-standards.md` in their *See also* prefaces: `module-authoring.md` line 5, `learning-roadmap.md` line 16 (plus a *Cross-references* section at the bottom), `compatibility.md` line 5, and `architecture/design-patterns-reference.md` line 8. Contributors and AI agents now traverse to the new anchors from any of the four entry points. Original gap statement (preserved for historical traceability): the new anchor docs were not referenced from these four entry points; without those cross-links, contributors and AI agents may not traverse to the new anchors.
 
-### 2. Architecture review month-to-month cadence is now de facto monthly
+### 2. Architecture review month-to-month cadence is now de facto monthly (closed)
 
-April was the first dated architecture review. May is now the second. There is no written commitment that a monthly review snapshot is the cadence. If the cadence is monthly, the planning governance doc should record that. If the cadence is reactive (only when scope changes warrant), April and May should explicitly say so. Pick a posture and document it.
+**Closed May 3, 2026.** [`docs/planning-governance.md`](planning-governance.md) lines 97-117 document the architecture-review cadence as monthly snapshots: "Cephalon publishes a dated architecture-review snapshot once per month. The cadence is intentional: monthly snapshots are short enough to capture meaningful slice progress without becoming a quarterly report." The cadence rules also declare that a no-change month still ships a short `nothing material changed; previous review still stands` snapshot so the dated history stays unbroken, and that supersession is explicit — new recommendations supersede old only where they explicitly address them. Original gap statement (preserved for historical traceability): April was the first dated architecture review. May is now the second. There is no written commitment that a monthly review snapshot is the cadence. If the cadence is monthly, the planning governance doc should record that. If the cadence is reactive (only when scope changes warrant), April and May should explicitly say so. Pick a posture and document it.
 
 ### 3. Deployment-mode claim validation needs a real harness
 
@@ -104,7 +104,7 @@ The recommendations below assume `engine-roadmap.md` and `engine-backlog.md` con
 ### Next 30 days (≈ May 2026)
 
 - ~~ship the cross-link pass that wires `long-range-direction.md` and `engineering-standards.md` into `module-authoring.md`, `learning-roadmap.md`, `compatibility.md`, and `architecture/design-patterns-reference.md`~~ — **shipped on May 3, 2026; see Updated gap #1 closure note**
-- decide and document architecture-review cadence (monthly snapshot vs. reactive); update `planning-governance.md` accordingly
+- ~~decide and document architecture-review cadence (monthly snapshot vs. reactive); update `planning-governance.md` accordingly~~ — **shipped on May 3, 2026 (`planning-governance.md` lines 97-117 declare monthly cadence with no-change-month posture); see Updated gap #2 closure note**
 - begin the deployment-mode validation harness work (PowerShell script + companion doc + first claim audit) so the trim/AOT/single-file claim story has a path to truthful proof before the .NET 11 final release window
 - continue the truthful slice cadence for governance, CDC, traffic automation, and feature flags; do not slow code velocity to wait for docs
 
