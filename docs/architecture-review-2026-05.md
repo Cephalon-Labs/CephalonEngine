@@ -1,6 +1,6 @@
 # Cephalon Architecture Review - May 2026
 
-Review date: `May 2, 2026`
+Review date: `May 2, 2026` (last extended `May 3, 2026` with the redaction-adoption + cleanup-discipline arc)
 
 Cross-references: [`architecture-review-2026-04.md`](architecture-review-2026-04.md), [`architecture.md`](architecture.md), [`architecture-inventory.md`](architecture-inventory.md), [`architecture-recommendations.md`](architecture-recommendations.md), [`architecture/rest-endpoint-authoring-strategy.md`](architecture/rest-endpoint-authoring-strategy.md), [`architecture/design-patterns-reference.md`](architecture/design-patterns-reference.md), [`database-topology.md`](database-topology.md), [`learning-roadmap.md`](learning-roadmap.md), [`project-memory.md`](project-memory.md), [`long-range-direction.md`](long-range-direction.md), [`engineering-standards.md`](engineering-standards.md), [`engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md), [`dotnet11-readiness.md`](dotnet11-readiness.md).
 
@@ -27,12 +27,15 @@ Notable shipped slices (compressed):
 - **two new planning anchors**: this session shipped [`long-range-direction.md`](long-range-direction.md) (multi-horizon engine direction across 3/5/8/10/15/20/30+ year horizons) and [`engineering-standards.md`](engineering-standards.md) (consolidated standards baseline naming code quality gates, library design, packaging, testing, security, and documentation discipline as the single index for "what high quality means here")
 - **`.NET 11` readiness anchor refresh**: [`dotnet11-readiness.md`](dotnet11-readiness.md) now reflects May 2, 2026 truth with full Preview 1/2/3 history and a structured Preview 4 expectation
 - **memory contract additions**: `project-memory.md` now pins the OpenAI Codex CLI 5.5 as the primary code-management seat and the `Cephalon-Neza` Git/GitHub account as the default commit/push attribution
+- **redaction adoption arc end-to-end (`ENG-357` through `ENG-377`)**: ship the `IRedactionFilter` + `RedactionContext` contract types under `Cephalon.Diagnostics.Redaction`, the `KeyMatchRedactionFilter` + `RegexRedactionFilter` starters with 18 unit tests, the `RedactionPipeline` orchestration helper with 8 tests, the `IServiceCollection.AddRedactionPipeline()` DI extension with 7 tests, M1 wiring at three real engine emission sites (`Cephalon.AspNetCore`'s `HttpRequestResponseLoggingMiddleware`, `Cephalon.Engine`'s `EngineRuntime` module-phase activity tags, `Cephalon.Eventing.Wolverine`'s `WolverineEventDispatchHostedService` dispatch-time tags) with 6 integration tests covering all three sites, the canonical recipe documented in `docs/components/diagnostics.md` and adopted by all 5 samples, the `EngineBuilder` build-time activity tags declared as a deliberate scope boundary (build runs before DI is wired so the pipeline isn't yet resolvable; the three values are non-sensitive by construction), and the entry-point onboarding doc (`getting-started.md`) updated to surface the recipe + the diagnostic-id registry — 39/39 redaction tests pass; the surface is now genuinely production-ready end-to-end
+- **cleanup discipline arc (`ENG-370` through `ENG-373`)**: ship `docs/diagnostic-id-registry.md` as the authoritative central allocation table for per-package `EventId` ranges (16 ranges allocated, reserved-gap discipline declared, no-new-allocations-below-2000 collision guard, convention block for future maintainers); strip stale `RS0026`/`RS0027` `<NoWarn>` suppressions from 100 csproj files (every suppression was already dead — `dotnet build CephalonEngine.slnx -c Release` hits 0 violations); audit the surviving non-RS0026/RS0027 suppressions and remove a fully-stale 5-rule Meziantou + Roslynator block on `Cephalon.Abstractions` while preserving + documenting the genuinely-load-bearing `RS0041` on `Cephalon.AspNetCore.Grpc` (Grpc.Tools-generated nullable-oblivious code); document every surviving genuine suppression with an inline rationale comment so a future maintainer can tell intentional from stale at a glance
+- **maturity audit + ops-hardening doc refresh**: bump `engine-surface-maturity-audit.md` to name the redaction surface as part of the `Cephalon.Diagnostics` row (5 sources/meters + redaction surface + 3 M1 emission sites + recipe doc + 5-sample adoption); refresh `operational-hardening-gap-inventory.md` *Shipped baseline* + *Evidence in code* + gap `#34` (structured diagnostics + event ids) to point at the new central registry as the authoritative allocation table
 
 The April review already noted that "the next challenge is not inventing a new center; the next challenge is hardening and aligning the broad surface area that now exists." May's slices have continued exactly along that line: depth, ownership truth, runtime-catalog parity, and lifecycle posture rather than fresh categories.
 
 ## Updated strengths
 
-The strengths the April review identified all still hold. Three are now visibly stronger.
+The strengths the April review identified all still hold. Four are now visibly stronger.
 
 ### 1. Runtime ownership truth is now provable across multi-provider control planes
 
@@ -45,6 +48,10 @@ The strengths the April review identified all still hold. Three are now visibly 
 ### 3. Long-range planning is now repo-owned
 
 The April review observed that "documentation language can drift faster than code." The May addition of `long-range-direction.md` and `engineering-standards.md` puts that drift on a leash by giving contributors and AI agents a single place to read forecast assumptions and quality expectations. Memory now cross-references both.
+
+### 4. Engine-boundary redaction is now provable end-to-end
+
+`ENG-357` through `ENG-377` carried the redaction story from a single contract type (`IRedactionFilter` + `RedactionContext`) through starter implementations, an orchestration helper, a DI extension, M1 wiring at three real engine emission sites (HTTP middleware, engine runtime module-phase tags, Wolverine dispatch tags) with 6 integration tests, recipe documentation, adoption in all five samples, and a deliberate scope-boundary declaration for `EngineBuilder` build-time tags. The complementary cleanup discipline (`ENG-370` through `ENG-373`) stripped 100+ stale `RS0026`/`RS0027` suppressions across the package family and shipped `docs/diagnostic-id-registry.md` as the authoritative `EventId` allocation table. Together this turns "the engine handles secrets / PII / authentication tokens correctly before they leave the boundary" from a discipline-only principle into a contract-typed surface a security reviewer can verify by reading the recipe doc and the 39 integration tests, and the static-analysis surface is now actively enforced rather than masked.
 
 ## Updated risks
 
