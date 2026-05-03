@@ -1,5 +1,7 @@
 # Cephalon.Data.EntityFramework
 
+> **Maturity:** `M2` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Data.EntityFramework` is the first provider-backed data companion pack for Cephalon.
 
 ## What it owns

@@ -3719,6 +3719,41 @@ Follow-up later:
 - wire a smoke test that boots the sample, fires an HTTP request with an `Authorization: Bearer abc123` header, asserts the captured activity does not contain the raw token; today the unit-level integration tests for both M1 emission sites cover the wiring, so a sample-level smoke test is duplicate coverage with marginal value
 - adopt the same recipe in the other samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) as a separate slice when the redaction surface needs broader sample reach — **delivered in `ENG-369`**
 
+### ENG-385 Adopt per-page maturity-badge convention across Cephalon.Data.* provider packs (batch 4)
+
+Status: done
+Estimate: 2
+
+Why:
+
+- batch 4 of the maturity-badge rollout named in `ENG-384`'s follow-up note: the 14 `Cephalon.Data.*` provider packs (`SqlServer`, `Postgres`, `MySql`, `Oracle`, `MongoDB`, `EntityFramework`, `Debezium`, `Redis`, `Neo4j`, `Cassandra`, `ClickHouse`, `Elasticsearch`, `OpenSearch`, `Qdrant`, `Nats`)
+- this batch shifts the count from 24 of 104 (after `ENG-384`) to 39 of 104 component pages with a maturity badge — almost 40% of the way through the convention rollout
+
+Delivered:
+
+- adopt the convention across the fifteen `Cephalon.Data.*` provider packs, each badge mirroring the conformance-matrix row verbatim:
+    - [`data-sqlserver.md`](docs/components/data-sqlserver.md) — `M2` `provider-managed`
+    - [`data-postgres.md`](docs/components/data-postgres.md) — `M2` `provider-managed`
+    - [`data-mysql.md`](docs/components/data-mysql.md) — `M2` `provider-managed`
+    - [`data-oracle.md`](docs/components/data-oracle.md) — `M2` `provider-managed`
+    - [`data-mongodb.md`](docs/components/data-mongodb.md) — `M2` `provider-managed`
+    - [`data-entityframework.md`](docs/components/data-entityframework.md) — `M2` `cephalon-managed`
+    - [`data-debezium.md`](docs/components/data-debezium.md) — `M1` `provider-managed`
+    - [`data-redis.md`](docs/components/data-redis.md) — `M1` `provider-managed`
+    - [`data-neo4j.md`](docs/components/data-neo4j.md) — `M1` `provider-managed`
+    - [`data-cassandra.md`](docs/components/data-cassandra.md) — `M1` `provider-managed`
+    - [`data-clickhouse.md`](docs/components/data-clickhouse.md) — `M1` `provider-managed`
+    - [`data-elasticsearch.md`](docs/components/data-elasticsearch.md) — `M1` `provider-managed`
+    - [`data-opensearch.md`](docs/components/data-opensearch.md) — `M1` `provider-managed`
+    - [`data-qdrant.md`](docs/components/data-qdrant.md) — `M1` `provider-managed`
+    - [`data-nats.md`](docs/components/data-nats.md) — `M1` `provider-managed`
+- `docs/engine-backlog.md` ENG-385 backlog card; Sprint 125 placement updated
+
+Follow-up later:
+
+- batch 5 covers the 10 `Cephalon.EventSourcing.*` provider packs (EntityFramework, MongoDB, Redis, Neo4j, Cassandra, ClickHouse, Elasticsearch, OpenSearch, Qdrant, Nats); batch 6 covers `Cephalon.MultiTenancy.Governance.*` companion / sender packs (~12 docs); batch 7 covers `Cephalon.Edge.*` provider packs (KubernetesGateway, Traefik); batch 8 covers `Cephalon.Observability.*` companion packs; batch 9 sweeps the remaining smaller packs
+- the conformance-matrix entries for the audit-pending packs (Redis, Neo4j, Cassandra, ClickHouse, Elasticsearch, OpenSearch, Qdrant, Nats, Debezium) are explicitly noted as "(audit pending)"; when the audit row catches up, those badges remain authoritative against the matrix until the audit overrides them
+
 ### ENG-384 Adopt per-page maturity-badge convention across Behaviors family + Eventing companions (batch 3)
 
 Status: done
@@ -12255,6 +12290,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-382 Introduce per-page maturity-badge header convention in component docs and adopt across the core-runtime entry points (shipped)
 - ENG-383 Adopt per-page maturity-badge convention across technology / follow-through entry points (batch 2) (shipped)
 - ENG-384 Adopt per-page maturity-badge convention across Behaviors family + Eventing companions (batch 3) (shipped)
+- ENG-385 Adopt per-page maturity-badge convention across Cephalon.Data.* provider packs (batch 4) (shipped)
 
 ### Later / not scheduled yet
 

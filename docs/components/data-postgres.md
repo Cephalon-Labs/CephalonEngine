@@ -1,5 +1,7 @@
 # Cephalon.Data.Postgres
 
+> **Maturity:** `M2` · **Ownership:** `provider-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Data.Postgres` is the PostgreSQL provider-native CDC companion pack for Cephalon. It proves that the shared `Cephalon.Data` CDC execution/runtime catalog family also fits logical-replication streaming with slot-backed durable progress, publication/table ownership validation, and module-preserving capture ownership truth without a PostgreSQL-specific registry in `Cephalon.Engine`.
 
 ## What it owns
