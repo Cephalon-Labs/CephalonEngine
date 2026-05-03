@@ -1,5 +1,7 @@
 # Cephalon.MultiTenancy.Governance.AmazonSesDelivery
 
+> **Maturity:** `M2` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.MultiTenancy.Governance.AmazonSesDelivery` is the optional Amazon SES v2 sender companion for tenant-invitation delivery.
 
 ## What it owns

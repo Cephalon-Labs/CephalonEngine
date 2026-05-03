@@ -1,5 +1,7 @@
 # Cephalon.MultiTenancy.Governance.SmtpDelivery
 
+> **Maturity:** `M2` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.MultiTenancy.Governance.SmtpDelivery` is the optional SMTP relay sender companion for tenant-invitation delivery.
 
 ## What it owns

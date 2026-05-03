@@ -1,5 +1,7 @@
 # Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery
 
+> **Maturity:** `M2` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery` is the optional Microsoft Graph `sendMail` sender companion for tenant-invitation delivery.
 
 ## What it owns

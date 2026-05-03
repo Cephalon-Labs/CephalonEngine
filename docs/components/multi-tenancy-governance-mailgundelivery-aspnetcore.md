@@ -1,5 +1,7 @@
 # Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore
 
+> **Maturity:** `M2` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore` is the optional ASP.NET Core Mailgun webhook callback translator for tenant-invitation delivery status reconciliation.
 
 ## What it owns
