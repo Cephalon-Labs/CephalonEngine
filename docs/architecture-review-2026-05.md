@@ -1,6 +1,6 @@
 # Cephalon Architecture Review - May 2026
 
-Review date: `May 2, 2026` (last extended `May 3, 2026` with the redaction-adoption + cleanup-discipline arc)
+Review date: `May 2, 2026` (last extended `May 3, 2026` with the redaction-adoption + cleanup-discipline arc and the gap-closure sweep)
 
 Cross-references: [`architecture-review-2026-04.md`](architecture-review-2026-04.md), [`architecture.md`](architecture.md), [`architecture-inventory.md`](architecture-inventory.md), [`architecture-recommendations.md`](architecture-recommendations.md), [`architecture/rest-endpoint-authoring-strategy.md`](architecture/rest-endpoint-authoring-strategy.md), [`architecture/design-patterns-reference.md`](architecture/design-patterns-reference.md), [`database-topology.md`](database-topology.md), [`learning-roadmap.md`](learning-roadmap.md), [`project-memory.md`](project-memory.md), [`long-range-direction.md`](long-range-direction.md), [`engineering-standards.md`](engineering-standards.md), [`engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md), [`dotnet11-readiness.md`](dotnet11-readiness.md).
 
@@ -55,9 +55,9 @@ The April review observed that "documentation language can drift faster than cod
 
 ## Updated risks
 
-### 1. Slice cadence is faster than docs cross-link cadence
+### 1. Slice cadence is faster than docs cross-link cadence (materially closed on May 3, 2026)
 
-In May, twenty-plus governance, CDC, and traffic-automation slices shipped while the docs surface that consumes them (architecture review, learning roadmap, module authoring, design patterns reference, deployment guides) only got partial cross-link updates. This is the same risk April flagged as "documentation language can drift faster than code"; in May it is more concretely about *cross-references not being woven*. The May fix is to schedule cross-link passes deliberately, not to slow down code work.
+In May, twenty-plus governance, CDC, and traffic-automation slices shipped while the docs surface that consumes them (architecture review, learning roadmap, module authoring, design patterns reference, deployment guides) only got partial cross-link updates. This is the same risk April flagged as "documentation language can drift faster than code"; in May it is more concretely about *cross-references not being woven*. The May fix is to schedule cross-link passes deliberately, not to slow down code work. **Update May 3, 2026:** the cross-link pass landed — `module-authoring.md`, `learning-roadmap.md`, `compatibility.md`, and `architecture/design-patterns-reference.md` now all reference `long-range-direction.md` and `engineering-standards.md` in their *See also* prefaces; the redaction-adoption arc (`ENG-357..377`) shipped alongside its own seven-doc cross-link refresh (engine-backlog, components/diagnostics, engine-surface-maturity-audit, operational-hardening-gap-inventory, getting-started, architecture-review-2026-05, conformance-matrix). The risk is therefore materially closed for May; carry it forward to June only if a future arc ships without the parallel doc-pass.
 
 ### 2. Maturity-label communication still asymmetric across surface families
 
@@ -77,9 +77,9 @@ April flagged a real product risk that lower-ceremony shorthand could dilute the
 
 ## Updated gaps
 
-### 1. A May 2026 cross-link pass for long-range-direction and engineering-standards
+### 1. A May 2026 cross-link pass for long-range-direction and engineering-standards (closed)
 
-The new anchor docs are not yet referenced from `module-authoring.md`, `learning-roadmap.md`, `compatibility.md`, or `architecture/design-patterns-reference.md`. Without those cross-links, contributors and AI agents may not traverse to the new anchors. This is a docs-only, additive, small-diff slice and should ship next.
+**Closed May 3, 2026.** All four target docs now cross-link `long-range-direction.md` and `engineering-standards.md` in their *See also* prefaces: `module-authoring.md` line 5, `learning-roadmap.md` line 16 (plus a *Cross-references* section at the bottom), `compatibility.md` line 5, and `architecture/design-patterns-reference.md` line 8. Contributors and AI agents now traverse to the new anchors from any of the four entry points. Original gap statement (preserved for historical traceability): the new anchor docs were not referenced from these four entry points; without those cross-links, contributors and AI agents may not traverse to the new anchors.
 
 ### 2. Architecture review month-to-month cadence is now de facto monthly
 
@@ -89,13 +89,13 @@ April was the first dated architecture review. May is now the second. There is n
 
 The April recommendation to "finish the truthful trim/AOT/single-file claim story" still needs a validation harness that runs alongside `scripts/validate-dotnet-readiness.ps1` and emits a machine-readable claim-validation report. This harness is the gate that lets future trim/AOT/single-file claims become real support statements.
 
-### 4. AI/agent-facing readability of the runtime contract
+### 4. AI/agent-facing readability of the runtime contract (closed)
 
-Long-range Horizon 3 raises this for ten-to-twenty-year planning, but it is also a near-term concern: `/engine/*` routes and `snapshot.*` data are already machine-readable, but there is no consolidated "agent-readable contract index" doc that lets an autonomous agent (or a non-Cephalon AI consumer) discover the full runtime catalogue without scraping each individual route. A future `docs/runtime-contract-index.md` could solve this.
+**Closed May 3, 2026.** `docs/runtime-contract-index.md` shipped as the consolidated map of every `/engine/*` HTTP route, every `snapshot.*` data key, and every runtime catalog interface that an operator, an AI agent, or external tooling can read to know what the engine is actually doing. Original gap statement (preserved for historical traceability): Long-range Horizon 3 raises this for ten-to-twenty-year planning, but it is also a near-term concern: `/engine/*` routes and `snapshot.*` data are already machine-readable, but there is no consolidated "agent-readable contract index" doc that lets an autonomous agent (or a non-Cephalon AI consumer) discover the full runtime catalogue without scraping each individual route. A future `docs/runtime-contract-index.md` could solve this.
 
-### 5. Conformance matrix stayed open since April
+### 5. Conformance matrix stayed open since April (closed)
 
-The April gap "a stronger conformance matrix is still needed" is still open. The April recommendation tied conformance to the maturity audit; May has not yet shipped the matrix itself. This remains a high-leverage piece of work because it is the operator-facing truth that lets adopters compare provider packs apples-to-apples.
+**Closed May 3, 2026.** `docs/conformance-matrix.md` shipped with per-package rows (maturity, ownership mode, engine routes, snapshot keys, catalog interfaces, notes) plus *Family summary at a glance* groupings; the May 3 redaction-arc PR refreshed the `Cephalon.Diagnostics` row to include the new redaction surface and the central diagnostic-id registry. Original gap statement (preserved for historical traceability): The April gap "a stronger conformance matrix is still needed" is still open. The April recommendation tied conformance to the maturity audit; May has not yet shipped the matrix itself. This remains a high-leverage piece of work because it is the operator-facing truth that lets adopters compare provider packs apples-to-apples.
 
 ## Architecture recommendations
 
@@ -103,17 +103,17 @@ The recommendations below assume `engine-roadmap.md` and `engine-backlog.md` con
 
 ### Next 30 days (≈ May 2026)
 
-- ship the cross-link pass that wires `long-range-direction.md` and `engineering-standards.md` into `module-authoring.md`, `learning-roadmap.md`, `compatibility.md`, and `architecture/design-patterns-reference.md`
+- ~~ship the cross-link pass that wires `long-range-direction.md` and `engineering-standards.md` into `module-authoring.md`, `learning-roadmap.md`, `compatibility.md`, and `architecture/design-patterns-reference.md`~~ — **shipped on May 3, 2026; see Updated gap #1 closure note**
 - decide and document architecture-review cadence (monthly snapshot vs. reactive); update `planning-governance.md` accordingly
 - begin the deployment-mode validation harness work (PowerShell script + companion doc + first claim audit) so the trim/AOT/single-file claim story has a path to truthful proof before the .NET 11 final release window
 - continue the truthful slice cadence for governance, CDC, traffic automation, and feature flags; do not slow code velocity to wait for docs
 
 ### Next 60 days (≈ June 2026)
 
-- close the conformance matrix gap with a per-provider/per-companion matrix that consumes `engine-surface-maturity-audit.md` truth and projects it for adopters
+- ~~close the conformance matrix gap with a per-provider/per-companion matrix that consumes `engine-surface-maturity-audit.md` truth and projects it for adopters~~ — **shipped on May 3, 2026 (`docs/conformance-matrix.md` exists with per-package rows + family summary; the redaction-arc PR refreshed the `Cephalon.Diagnostics` row); see Updated gap #5 closure note. Per-provider/per-companion *extension* of the existing matrix remains future work**
 - promote maturity labels into the human-facing component docs and getting-started flows so adopters see `M0`/`M1`/`M2`/`M3`/`M4` and the four ownership modes without having to read the audit page
 - run a `.NET 11` analyzer-drift pass against Preview 4 (expected on or near May 12, 2026) and Preview 5 (June) so analyzer-only readiness signals stay current
-- consider drafting a `docs/runtime-contract-index.md` that consolidates `/engine/*` routes and `snapshot.*` data into one machine-readable contract index for AI consumers and operators
+- ~~consider drafting a `docs/runtime-contract-index.md` that consolidates `/engine/*` routes and `snapshot.*` data into one machine-readable contract index for AI consumers and operators~~ — **shipped on May 3, 2026; see Updated gap #4 closure note**
 
 ### Next 90 days (≈ July 2026)
 
