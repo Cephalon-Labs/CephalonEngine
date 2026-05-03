@@ -1,5 +1,7 @@
 # Cephalon.Data.Redis
 
+> **Maturity:** `M1` · **Ownership:** `provider-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Data.Redis` is the Redis key-value store companion pack for Cephalon, proving that the companion-pack pattern established by `Cephalon.Data.MongoDB` extends cleanly to key-value stores without any changes to `Cephalon.Engine` or `Cephalon.Abstractions`.
 
 ## What it owns

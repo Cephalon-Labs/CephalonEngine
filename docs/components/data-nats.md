@@ -1,5 +1,7 @@
 # Cephalon.Data.Nats
 
+> **Maturity:** `M1` · **Ownership:** `provider-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Data.Nats` is the NATS JetStream ledger-store companion pack for Cephalon, proving that the companion-pack pattern extends cleanly to NATS-based messaging infrastructure without any changes to `Cephalon.Engine` or `Cephalon.Abstractions`.
 
 ## What it owns
