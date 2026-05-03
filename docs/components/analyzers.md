@@ -1,5 +1,7 @@
 # Cephalon.Analyzers
 
+> **Maturity:** `M1` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Analyzers` is the curated meta-package that gives Cephalon-engine consumers a single `<PackageReference>` for the engine's analyzer baseline plus a curated `BannedSymbols.txt` and `.editorconfig` snippet aligned with Cephalon's quality posture.
 
 ## What it owns

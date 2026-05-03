@@ -1,5 +1,7 @@
 # Cephalon.AspNetCore.Grpc
 
+> **Maturity:** `M2` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.AspNetCore.Grpc` adds gRPC transport support to the ASP.NET Core host.
 
 ## What it owns

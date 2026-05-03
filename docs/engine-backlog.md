@@ -3719,6 +3719,31 @@ Follow-up later:
 - wire a smoke test that boots the sample, fires an HTTP request with an `Authorization: Bearer abc123` header, asserts the captured activity does not contain the raw token; today the unit-level integration tests for both M1 emission sites cover the wiring, so a sample-level smoke test is duplicate coverage with marginal value
 - adopt the same recipe in the other samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) as a separate slice when the redaction surface needs broader sample reach — **delivered in `ENG-369`**
 
+### ENG-382 Introduce per-page maturity-badge header convention in component docs and adopt across the core-runtime entry points
+
+Status: done
+Estimate: 2
+
+Why:
+
+- the May 2026 architecture review's *Updated risk #2* names "maturity-label communication still asymmetric across surface families": new CDC, governance, and traffic-automation surfaces all carry maturity labels in roadmap/backlog cards, but the human-facing docs (component pages, README sections, getting-started doc) still do not surface them prominently; adopters who never read the maturity audit may still treat `M1` or `M2` like fully-claimed runtime ownership
+- the May 2026 architecture review's *Architecture recommendations → Next 60 days* names exactly this: "promote maturity labels into the human-facing component docs and getting-started flows so adopters see `M0`/`M1`/`M2`/`M3`/`M4` and the four ownership modes without having to read the audit page"
+- only 2 of 104 component docs (`docs/components/analyzers.md` and `docs/components/diagnostics.md`) carry a "Maturity and ownership" prose section today; the other 102 component pages defer entirely to the audit / matrix without surfacing the label inline
+- a one-line maturity badge directly under the `# <Package>` title gives adopters the maturity / ownership truth at a glance, deferring the full prose to the audit; the convention scales because each badge is a single line and authoring discipline is one rule (mirror the audit row's `Ownership mode` and `Current maturity` columns verbatim)
+
+Delivered:
+
+- introduce the per-page maturity-badge header convention in `docs/components/README.md` *Maturity at a glance* via a new *Per-page maturity-badge header convention* sub-section that names the exact markdown shape (`> **Maturity:** ... · **Ownership:** ... — authoritative truth in [\`engine-surface-maturity-audit.md\`](...)`), declares the audit-mirroring discipline ("the badge mirrors the audit's wording verbatim so the two never drift"), and notes the incremental rollout posture
+- adopt the convention across the seven *Core runtime* entry points named in `docs/components/README.md`: [`abstractions.md`](docs/components/abstractions.md) (`M4` `cephalon-managed`), [`engine.md`](docs/components/engine.md) (`M4` `cephalon-managed`), [`aspnetcore.md`](docs/components/aspnetcore.md) (`M4` `cephalon-managed`), [`aspnetcore-graphql.md`](docs/components/aspnetcore-graphql.md) (`M2` `cephalon-managed`), [`aspnetcore-jsonrpc.md`](docs/components/aspnetcore-jsonrpc.md) (`M2` `cephalon-managed`), [`aspnetcore-grpc.md`](docs/components/aspnetcore-grpc.md) (`M2` `cephalon-managed`), [`worker.md`](docs/components/worker.md) (`M4` `cephalon-managed`)
+- additionally adopt the convention in the two component pages that already had a prose "Maturity and ownership" section so the badge convention reads consistently across all pages that surface maturity inline: [`diagnostics.md`](docs/components/diagnostics.md) (`M4` `cephalon-managed`) + [`analyzers.md`](docs/components/analyzers.md) (`M1` `cephalon-managed`); existing prose sections retained — the badge complements rather than replaces them
+- `docs/engine-backlog.md` ENG-382 backlog card; Sprint 125 placement updated
+
+Follow-up later:
+
+- adopt the convention across the remaining ~95 component pages in batched slices, prioritized by adopter visibility: technology / follow-through packs (Agentics, Eventing, EventSourcing core, Data core, Retrieval, Edge core, MultiTenancy core + Governance) → Behaviors family → provider packs (Data.* + EventSourcing.*) → observability companions → small remaining packs; each batch updates the audit row at the same time if any maturity / ownership change has happened since the last refresh, so the badge and audit never drift
+- when a future slice touches a component page that does not yet carry the badge, prefer adding it in the same slice over deferring; the discipline is the same as the redaction-arc's adoption pattern (`ENG-368` / `ENG-369`)
+- once the badge is on every page, consider promoting *Updated risk #2* from "still asymmetric" to "materially closed" in the next monthly architecture review; the matrix-adoption follow-up named in the May review (`promote maturity labels into ... getting-started flows`) extends to [`docs/getting-started.md`](docs/getting-started.md) and is tracked as a sibling sub-arc
+
 ### ENG-381 Pre-declare canonical activity-source / meter names for Cephalon.Agentics + Cephalon.Retrieval
 
 Status: done
@@ -12171,6 +12196,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-378 Extend May architecture review with redaction adoption arc + cleanup discipline (shipped)
 - ENG-380 Close May 2026 architecture review gaps that were already shipped (shipped)
 - ENG-381 Pre-declare canonical activity-source / meter names for Cephalon.Agentics + Cephalon.Retrieval (shipped)
+- ENG-382 Introduce per-page maturity-badge header convention in component docs and adopt across the core-runtime entry points (shipped)
 
 ### Later / not scheduled yet
 

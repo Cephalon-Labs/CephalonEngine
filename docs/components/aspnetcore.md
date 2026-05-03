@@ -1,5 +1,7 @@
 # Cephalon.AspNetCore
 
+> **Maturity:** `M4` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.AspNetCore` is the HTTP-first host core for Cephalon.
 
 See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), [Conformance matrix](../conformance-matrix.md), and [Runtime contract index](../runtime-contract-index.md) for the full `/engine/*` route catalog this host adapter projects, plus the per-package maturity and ownership truth. [Engineering standards](../engineering-standards.md) records the library-design baseline the host adapter ships against; [Long-range engine direction](../long-range-direction.md) frames why the host adapter stays a thin projection seam over the engine's host-agnostic catalogs.

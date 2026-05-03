@@ -16,6 +16,20 @@ Each shipped package carries a maturity label (`M0` through `M4`) and an ownersh
 
 When a component-page maturity label and the maturity audit disagree, the audit is the authoritative truth. When in doubt, follow the cross-reference into the conformance matrix.
 
+### Per-page maturity-badge header convention
+
+Each component page surfaces a one-line maturity badge directly under the `# <Package>` title so adopters see the maturity / ownership truth without leaving the page or scrolling for a "Maturity and ownership" section. The convention is:
+
+```markdown
+# Cephalon.<Package>
+
+> **Maturity:** `<M0..M4>` · **Ownership:** `<taxonomy-only | application-managed | cephalon-managed | provider-managed | mixed: ...>` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+```
+
+When a package surface has mixed ownership (for example `Cephalon.Behaviors.Http`'s `mixed: application-managed + cephalon-managed`), the badge mirrors the audit's wording verbatim so the two never drift. When the audit changes a maturity label or ownership mode, the matching component page is updated in the same slice — never trail the audit.
+
+The convention is being rolled out incrementally; component pages without the badge today still defer to the audit row as the source of truth. Pages with prose-style "Maturity and ownership" sections keep those sections (the badge complements rather than replaces them).
+
 
 ## Core runtime
 
