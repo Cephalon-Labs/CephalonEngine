@@ -1,5 +1,7 @@
 # Cephalon.Eventing.Behaviors
 
+> **Maturity:** `M1` · **Ownership:** `application-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Eventing.Behaviors` is the explicit bridge package that routes behavior-authored saga choreography publications into the shared `Cephalon.Eventing` publish path.
 
 ## What it owns
