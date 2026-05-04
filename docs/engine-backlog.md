@@ -3985,6 +3985,47 @@ Follow-up later:
 - when `Cephalon.Identity` promotes from `M1` to `M2` with a Cephalon-managed runtime surface beyond the descriptor catalog, the ABAC composition expansion (multi-attribute precedence ordering, alias-resolved attributes, normalized attribute comparison rules) deserves its own decision-matrix slice
 - the four pre-existing `DebeziumDataCdcPackTests` failures observed during the full `Cephalon.Tests.Composition` run are unrelated to this slice (`Cephalon.Data.Services.CdcCaptureExecutionRuntimeCatalog.Enrich` recursion); they remain tracked under the `v0.1.0-preview-notes.md` "Pre-existing test-flake watch" section and do not block this card
 
+### ENG-404 Direct fallback-chain coverage for `IAuditActorAccessor` and `DefaultAuditRecorder`
+
+Status: done
+Estimate: 2
+
+Why:
+
+- `Cephalon.Audit` ships at `M1` mixed-ownership; the `DefaultAuditRecorder` actor / correlation / tenant / entry-id fallback chain is the runtime-truth surface every audit-recording consumer relies on, but before this slice it had only been exercised end-to-end through the HTTP host bridge in `IdentityAspNetCoreAuditActorBridgeTests` (which proves the `ClaimsPrincipal` → ambient actor projection but not the lower-level fallback rules)
+- the standing test-coverage planning text records this as the high-priority auditability-themed test slice: "M1 mixed-ownership; ambient actor resolution is part of the auditability quality dimension and currently leans on hosting integration"
+- the `DefaultAuditActorAccessor.Current` always-null contract, the explicit-actor-wins / accessor-wins / system-actor-fallback chain, the `Activity.Current.TraceId` correlation fallback, the `ITenantContextAccessor.Current` tenant fallback, the `IIdGenerator` entry-id fallback, the `OccurredAtUtc` default vs explicit branches, and the writer-exception propagation path were all unverified at the unit level
+- claiming `ENG-404` (after `ENG-403` claimed in PR #917) avoids the ENG-N collision pattern the auto-memory feedback warned about; this slice touches only `tests/` and `docs/engine-backlog.md` so it cannot conflict with the open OTel adapter slices (PRs #878, #888, #915, #916) that are regenerating `docs/reference/`
+
+Delivered:
+
+- new `tests/Cephalon.Tests.Composition/Composition/AuditActorAndRecorderFallbackTests.cs` with 16 tests covering:
+    - `DefaultAuditActorAccessor.Current` always returns `null` when no bridge is active
+    - `DefaultAuditRecorder` falls back to the system actor (`actorId = "system"`, `actorType = "system"`, `IsSystem = true`) when both `request.Actor` and `actorAccessor.Current` are null
+    - `DefaultAuditRecorder` prefers the ambient `IAuditActorAccessor.Current` over the system fallback when `request.Actor` is null
+    - `DefaultAuditRecorder` prefers the explicit `request.Actor` over the ambient accessor (the documented precedence rule)
+    - `DefaultAuditRecorder` falls back to `Activity.Current.TraceId.ToString()` for the correlation id when `request.CorrelationId` is null and an activity is active
+    - `DefaultAuditRecorder` prefers an explicit `request.CorrelationId` even when an activity is active
+    - `DefaultAuditRecorder` leaves `entry.CorrelationId` null when no activity and no explicit id are supplied
+    - `DefaultAuditRecorder` generates a `Guid.ToString("N")`-shaped entry id when no `IIdGenerator` is registered
+    - `DefaultAuditRecorder` prefers an explicit `request.EntryId` over the generated fallback
+    - `DefaultAuditRecorder` consults `IIdGenerator.GenerateAsync` when one is registered
+    - `DefaultAuditRecorder` falls back to `ITenantContextAccessor.Current.TenantId` when `request.TenantId` is null
+    - `DefaultAuditRecorder` prefers an explicit `request.TenantId` over the ambient tenant context
+    - `DefaultAuditRecorder` defaults `OccurredAtUtc` to `DateTimeOffset.UtcNow` when no explicit timestamp is supplied
+    - `DefaultAuditRecorder` preserves an explicit `OccurredAtUtc` exactly
+    - `DefaultAuditRecorder` propagates an `IAuditWriter.WriteAsync` exception out of `RecordAsync` (with the failure-log path covered indirectly by the propagation assertion)
+    - `DefaultAuditRecorder.RecordAsync` throws `OperationCanceledException` when called with an already-canceled token
+- four small private test modules (`FixedAuditActorModule`, `FixedTenantContextModule`, `StubIdGeneratorModule`, `ThrowingAuditWriterModule`) plus three private stubs (`FixedTenantContextAccessor`, `StubIdGenerator`, `ThrowingAuditWriter`) live alongside the test class so they do not pollute the shared `Cephalon.Tests.Support` project
+- 16 / 16 tests pass through the public `IAuditActorAccessor` / `IAuditRecorder` seams; no `InternalsVisibleTo` exposure on `Cephalon.Audit` is required
+- existing `IdentityAspNetCoreAuditActorBridgeTests` (3 / 3) still pass — the new fallback-chain tests run alongside the HTTP-host bridge coverage rather than replacing it
+
+Out of scope (intentional):
+
+- the high-priority `Cephalon.AspNetCore.Grpc` streaming / error-mode slice and the `Cephalon.AspNetCore.JsonRpc` error-response slice from the same standing test-coverage planning text — separate cards
+- the medium-priority provider-native CDC slices (SQL Server / Postgres / MongoDB) — separate cards
+- direct unit coverage of the `TryRegisterAuditActorBridge` decision matrix in `Cephalon.Identity.AspNetCore` — that lane already runs through the existing hosting integration in `IdentityAspNetCoreAuditActorBridgeTests` and the bridge function itself is private; a future slice can promote it to a directly testable seam if the bridge logic grows further branches
+
 ### ENG-393 Adopt per-page maturity-badge convention across remaining 44 component docs (final batch)
 
 Status: done
