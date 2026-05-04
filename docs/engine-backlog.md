@@ -3925,6 +3925,38 @@ Follow-up later:
 - CDC (canonical-name pre-declaration for `Cephalon.Data` shared CDC capture surface and / or `Cephalon.Data.Debezium`) is a natural follow-up slice; deferred from this slice because the CDC surface lives inside `Cephalon.Data`'s shared runtime rather than a dedicated pack, so the right scoping (one canonical name owned by `Cephalon.Data`, or a separate name owned by `Cephalon.Data.Debezium`) needs explicit analysis first
 - the canonical names declared here will graduate from `PublicAPI.Unshipped.txt` to `PublicAPI.Shipped.txt` on the next release per the standard contract-lock-in promotion cycle
 
+### ENG-400 Author consolidated v0.1.0-preview release-notes draft
+
+Status: done
+Estimate: 1
+
+Why:
+
+- Sprint 124-125 shipped substantial arcs (public-API contract lock-in across 100+ packages, `Cephalon.Diagnostics` `M2`→`M4` promotion, the redaction adoption arc end-to-end, `Cephalon.Resilience` extraction, the diagnostic-id registry, the `<NoWarn>` cleanup discipline, the per-page maturity-badge convention across all 104 component docs, and 5+ doc-cross-link refreshes) but no consolidated release-notes draft existed for the eventual `v0.1.0-preview` GitHub Release
+- the release-checklist process expects a release-notes-ready summary the release manager hands to the GitHub Release body when the tag is cut; without it, the manager has to reconstruct the shipping arc from `git log` + 30+ PR descriptions, which is exactly the staleness the planning-governance discipline guards against
+- claiming `ENG-400` (skipping past the `ENG-394`-`399` window where concurrent runs are likely to grab numbers) avoids the ENG-N collision pattern the auto-memory feedback warned about; this slice is doc-only and pure additive so it can't conflict with the in-flight concurrent runs
+
+Delivered:
+
+- new `docs/releases/v0.1.0-preview-notes.md` containing:
+    - **Scope of this preview** section naming the package count (104), public-API contract lock-in, M1 redaction wiring at three real emission sites, the 39 redaction-suite tests, the central diagnostic-id registry, and the 11-doc reference refresh + per-page maturity-badge rollout
+    - **What's new in this preview** section grouping the substantive arcs by ENG number range with engine-quality dimensions advanced (Performance / Security / Compatibility / Maintainability / Auditability / Compliance / Reliability) per the engineering-standards baseline
+    - **Compatibility posture** section declaring the engine is preview-not-GA, the `EnablePackageValidation` + `PackageValidationBaselineVersion` cutover plan, and the consumer-pinning guidance
+    - **Supply-chain posture** section describing the SLSA L3 + Sigstore + CycloneDX SBOM pipeline that runs on the first `v*.*.*` tag
+    - **Known gaps and limitations** section listing the four still-open `architecture-review-2026-05` risks (maturity-label asymmetry, trim/AOT/single-file claim, default-path dilution, AI-tooling reversibility) plus the five gaps closed during the May 3-4 shipping window with closure-notes pointers
+    - **Pre-existing test-flake watch** section flagging the Debezium OOM
+    - **Public-API delta artefact** section pointing at the release-pipeline output
+    - **How to consume this preview** section with restore / build / test smoke commands
+    - **Release-manager checklist** preflight at the bottom matching the rule book in `docs/release-checklist.md`
+- `docs/releases/` directory created (didn't exist before; matches the convention declared in `release-checklist.md` line 5: `docs/releases/<tag>-checklist.md`)
+- `docs/engine-backlog.md` ENG-400 backlog card; Sprint 125 placement updated
+
+Follow-up later:
+
+- when the `v0.1.0-preview` tag is cut, the release manager copies this draft into the GitHub Release body with any final timing edits (e.g. trim the test-flake-watch section if the flake is fixed before tag-time, add the SLSA provenance / Sigstore signature / SBOM bundle URLs once the pipeline produces them)
+- once the first GA release lands post-preview, this file becomes the historical reference for `v0.1.0-preview` shipping; future preview / GA releases get their own `v{x.y.z}-notes.md` siblings under `docs/releases/`
+- consider promoting [`scripts/summarise-public-api-deltas.ps1`](../../scripts/summarise-public-api-deltas.ps1) to consume this draft and emit a top-of-release-notes contract-delta summary; today the artefact is reachable but the release-notes-generation flow doesn't wire it directly
+
 ### ENG-393 Adopt per-page maturity-badge convention across remaining 44 component docs (final batch)
 
 Status: done
@@ -12415,6 +12447,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-387 Adopt per-page maturity-badge convention across Cephalon.MultiTenancy.Governance.* companions (batch 6) (shipped)
 - ENG-390 Extract Cephalon.Resilience package from Cephalon.Behaviors (shipped) — originally drafted as ENG-381; renumbered after concurrent run claimed ENG-381 for the Diagnostics activity-source / meter pre-declaration
 - ENG-393 Adopt per-page maturity-badge convention across remaining 44 component docs (final batch) (shipped)
+- ENG-400 Author consolidated v0.1.0-preview release-notes draft (shipped)
 
 ### Later / not scheduled yet
 
