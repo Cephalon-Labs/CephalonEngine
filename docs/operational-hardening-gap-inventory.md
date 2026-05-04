@@ -19,7 +19,7 @@ The repository already ships a meaningful operational baseline:
 - reusable OTLP exporter wiring through `Cephalon.Observability.OpenTelemetry`
 - benchmark guardrail validation through `Cephalon.Benchmarks`, `performance-guardrails.json`, and `scripts/validate-release.ps1`
 - release-validation automation through `.github/workflows/release-validation.yml`
-- engine-boundary redaction surface through `Cephalon.Diagnostics.Redaction`'s `IRedactionFilter` + `RedactionContext` + `RedactionPipeline` + `KeyMatchRedactionFilter` + `RegexRedactionFilter` + `IServiceCollection.AddRedactionPipeline()`; five M1 emission sites (AspNetCore HTTP middleware, engine runtime module-phase tags, Wolverine dispatch tags, Cephalon.Agentics tool-dispatch tags, Cephalon.Retrieval knowledge-indexing + knowledge-query tags) route attribute values through the pipeline before exporter dispatch; canonical recipe documented in `docs/components/diagnostics.md` and adopted across all five samples
+- engine-boundary redaction surface through `Cephalon.Diagnostics.Redaction`'s `IRedactionFilter` + `RedactionContext` + `RedactionPipeline` + `KeyMatchRedactionFilter` + `RegexRedactionFilter` + `IServiceCollection.AddRedactionPipeline()`; six M1 emission sites (AspNetCore HTTP middleware, engine runtime module-phase tags, Wolverine dispatch tags, Cephalon.Agentics tool-dispatch tags, Cephalon.Retrieval knowledge-indexing + knowledge-query tags, Cephalon.Worker lifecycle-start + lifecycle-stop tags) route attribute values through the pipeline before exporter dispatch; canonical recipe documented in `docs/components/diagnostics.md` and adopted across all five samples
 
 That means phase 2 is follow-through work, not greenfield operational work.
 

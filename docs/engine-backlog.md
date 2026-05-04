@@ -3925,6 +3925,38 @@ Follow-up later:
 - CDC (canonical-name pre-declaration for `Cephalon.Data` shared CDC capture surface and / or `Cephalon.Data.Debezium`) is a natural follow-up slice; deferred from this slice because the CDC surface lives inside `Cephalon.Data`'s shared runtime rather than a dedicated pack, so the right scoping (one canonical name owned by `Cephalon.Data`, or a separate name owned by `Cephalon.Data.Debezium`) needs explicit analysis first
 - the canonical names declared here will graduate from `PublicAPI.Unshipped.txt` to `PublicAPI.Shipped.txt` on the next release per the standard contract-lock-in promotion cycle
 
+### ENG-412 Extend Cephalon.Worker lifecycle activity with metadata tags + M1 redaction wiring (sixth emission site)
+
+Status: done
+Estimate: 2
+
+Why:
+
+- `Cephalon.Worker.Hosting.RuntimeHostedService` started `worker.lifecycle.start` and `worker.lifecycle.stop` activities but emitted **zero `SetTag` values** — operators tracing a worker host could not see which blueprint, which engine state, or which module count was being started/stopped from the activity alone, and the M1 redaction surface had no Worker emission site to protect even though the canonical activity-source name (`CephalonActivitySources.Worker`) was already published
+- the redaction adoption arc (`ENG-365` AspNetCore + `ENG-366` EngineRuntime + `ENG-374` Wolverine dispatch + `ENG-401` Agentics + `ENG-402` Retrieval) had landed at five emission sites and the helper pattern (`Redact(activity, key, value)` + lazy `IServiceProvider.GetService<RedactionPipeline>()` resolution) was contract-typed and reusable — extending it to the worker lifecycle was the obvious next move and the emission-site count gap (six vs. five) was already flagged in the `IRedactionFilter` XML doc remarks future-emission-site list
+- `IRuntime.Manifest.AppProfile.BlueprintId` and `IRuntime.Modules.Count` are already exposed through the runtime contract (operators read them through `/engine/manifest` + `/engine/snapshot`) so attaching them to the lifecycle activity is a pure read of existing surface rather than new state
+
+Delivered:
+
+- update `src/Cephalon.Worker/Hosting/WorkerDiagnostics.cs` to publish the `cephalon.lifecycle.phase`, `cephalon.blueprint`, and `cephalon.module.count` tag-name constants plus `LifecyclePhaseStart` / `LifecyclePhaseStop` phase-value constants (all `internal const string`)
+- update `src/Cephalon.Worker/Hosting/RuntimeHostedService.cs` to:
+    - add private `RedactionPipeline? redactionPipeline` field, lazily resolved from `IServiceProvider` via `services.GetService<RedactionPipeline>()` on first emission (the same pattern `EngineRuntime` and `WolverineEventDispatchHostedService` use)
+    - add private `Redact(Activity?, string attributeKey, object? value)` helper that builds a `RedactionContext` from `activity?.Source.Name + attributeKey` and pipes through the resolved pipeline; short-circuits to passthrough when the pipeline is null
+    - add private `SetTag(Activity, string attributeKey, object? value)` helper that wraps `activity.SetTag(...)` with `Redact(...)` so every emitted tag value flows through the pipeline
+    - add private `TagLifecycleActivity(Activity?, string phase)` helper that calls `SetTag` for the three lifecycle tags (phase, blueprint, module count); invoked once per `StartAsync` / `StopAsync`
+- update `src/Cephalon.Diagnostics/Redaction/IRedactionFilter.cs` XML doc remarks to declare **six** M1 emission sites (was five) and name `Cephalon.Worker`'s lifecycle tags explicitly; remove "worker lifecycle spans" from the future-emission-sites list because the wiring is now real
+- update `docs/components/diagnostics.md` *What it owns* paragraph + *Redaction quick start* intro: six engine emission sites; Worker site explicitly named with the three tag names
+- update `docs/operational-hardening-gap-inventory.md` *Shipped baseline* bullet: six M1 emission sites
+- update `docs/conformance-matrix.md` `Cephalon.Diagnostics` row Notes: six real engine emission sites
+- update `docs/releases/v0.1.0-preview-notes.md` Engine-boundary redaction section: six sites with explicit Worker emission description + `RuntimeHostedService` helper-pattern callout
+- `docs/engine-backlog.md` ENG-411 backlog card; Sprint 125 placement updated
+- verified end-to-end with `dotnet build src/Cephalon.Worker/Cephalon.Worker.csproj -c Release` (0 warnings, 0 errors); the wiring is internal-only because `RuntimeHostedService` is `internal sealed` and the wired tags do not change the public API surface
+
+Follow-up later:
+
+- a focused integration test that boots a worker host with a tracking `IRedactionFilter`, calls the lifecycle hooks, and asserts the filter saw the three expected tag keys (mirroring the AspNetCore middleware test in `HttpRequestResponseLoggingMiddlewareRedactionTests` and the engine-runtime test in `EngineRuntimeRedactionTests`) is the natural next slice for this site; deferred today because the helper-pattern correctness is verified at three sites already and `Cephalon.Worker` does not have `InternalsVisibleTo` declared for the test projects (adding that wiring is a separate slice)
+- when `Cephalon.MultiTenancy.Governance` (PR #888) and `Cephalon.Eventing` (PR #878) OTel emission baselines land, count climbs to eight; refresh the same five doc surfaces in the same slice that lands the wiring per the maintenance discipline declared in the test-coverage roadmap
+
 ### ENG-410 Extend test-coverage-roadmap with redaction-suite + Resilience-suite recommendations
 
 Status: done
@@ -12688,6 +12720,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-409 Close Cephalon.Retrieval M1 emission drift in cross-package redaction docs (shipped)
 - ENG-410 Extend test-coverage-roadmap with redaction-suite + Resilience-suite recommendations (shipped)
 - ENG-411 Close docs drift in `docs/runtime-contract-index.md` `/engine/*` route catalog: add 12 missing core engine routes (`/status`, `/options`, `/transports`, `/failure-policy`, `/package-policy`, `/trust-policy`, `/scaffold`, `/reference-docs`, `/localization`, `/dependencies`, `/diagnostics`, `/runtime-story`), 7 missing eventing/agent/knowledge routes (`/event-dispatch-runtimes`, `/event-dispatches`, `/event-publications/runtime`, `POST /event-publications`, `/agent-tool-runs`, `POST /knowledge-indexes/{collectionId}/reindex`, `POST /cdc-capture-runtimes/{executionRuntimeId}/commands/{operationId}`), 3 missing tenant-invitation AspNetCore routes (`POST /tenant-invitations/delivery-dispatches`, `POST /tenant-invitations/delivery-status`, `GET /tenant-invitations/delivery-status/observations`); fix `POST /agent-tools/{toolId}/run` → `/runs` (plural); remove 5 incorrect top-level `/tenant-{memberships,invitations,domain-ownership,governance-actions,administration}` rows that were actually `surfaceId` drill-downs under `/engine/technology-surfaces/{surfaceId}` and add a clarifying note on the `/engine/technology-surfaces` row; add note about provider-specific invitation-delivery callback paths (SendGrid/Mailgun/Amazon SES); add `/engine/agent-tool-runs` filter drill-down note alongside the existing CDC drill-down note. Quality dimensions: Auditability + Maintainability + Compatibility (shipped)
+- ENG-412 Extend Cephalon.Worker lifecycle activity with metadata tags + M1 redaction wiring (sixth emission site) (shipped) — originally drafted as ENG-411; renumbered after concurrent run claimed ENG-411 for the runtime-contract-index drift closure
 
 ### Later / not scheduled yet
 

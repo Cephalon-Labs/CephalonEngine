@@ -21,6 +21,16 @@ internal static class WorkerDiagnostics
 
     public const string LifecycleStopActivityName = "worker.lifecycle.stop";
 
+    public const string LifecyclePhaseTag = "cephalon.lifecycle.phase";
+
+    public const string BlueprintTag = "cephalon.blueprint";
+
+    public const string ModuleCountTag = "cephalon.module.count";
+
+    public const string LifecyclePhaseStart = "start";
+
+    public const string LifecyclePhaseStop = "stop";
+
     private static readonly string Version = typeof(WorkerDiagnostics).Assembly
         .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
         .InformationalVersion
