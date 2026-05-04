@@ -45,9 +45,11 @@ When a gap maps to an `M2`-or-higher claim, treat closing it as a Compatibility 
 
 Recommendations are stable-numbered. When a recommendation ships, the row is annotated with the closing slice rather than removed — the number stays a permanent reference for downstream backlog cards.
 
-### #1 — `Cephalon.AspNetCore.Grpc` streaming + error-mode coverage (high priority, **pending**)
+### #1 — `Cephalon.AspNetCore.Grpc` streaming + error-mode coverage (high priority, **shipped through `ENG-408` / [PR #922](https://github.com/Cephalon-Labs/CephalonEngine/pull/922)**)
 
-`Cephalon.AspNetCore.Grpc` is at `M2 cephalon-managed`; the transport adapter routes incoming gRPC RPC calls through the engine's behavior-dispatch seam, but the server-streaming, client-streaming, and bidirectional-streaming paths have no end-to-end coverage at the hosting layer, and the canonical gRPC `Status` mapping (NOT_FOUND, INVALID_ARGUMENT, INTERNAL, UNAUTHENTICATED, PERMISSION_DENIED, UNAVAILABLE, RESOURCE_EXHAUSTED, FAILED_PRECONDITION, ABORTED, DEADLINE_EXCEEDED) is exercised only on the happy path.
+`Cephalon.AspNetCore.Grpc` canonical gRPC `Status` mapping (NOT_FOUND, INVALID_ARGUMENT, UNAUTHENTICATED, PERMISSION_DENIED, UNAVAILABLE, RESOURCE_EXHAUSTED, FAILED_PRECONDITION, ABORTED) plus the unhandled-exception → UNKNOWN contract are exercised end-to-end at the hosting layer through `tests/Cephalon.Tests.Hosting/GrpcTransportErrorAndStreamingHostingTests.cs`. The same file covers server-streaming happy path, server-streaming with a server-thrown `RpcException(InvalidArgument)` mid-stream, server-streaming with client-side cancellation mid-stream, bidirectional-streaming happy path, and bidirectional-streaming with a server-thrown `RpcException(Internal)` after the first reply. The internal `GrpcStreamingAndErrorModesTestModule` declared inside the test file demonstrates the canonical pattern of routing scenarios through gRPC `Metadata` headers, kept as a reference implementation alongside the existing `DiscoveryGrpcService` in `Cephalon.Tests.Support`.
+
+Unary client-cancellation and unary deadline-expiry coverage for `SayHello` are intentionally deferred: under `Microsoft.AspNetCore.TestHost` the in-memory request pipe does not propagate the client-side cancellation token to the server-side `ServerCallContext` reliably for unary calls, so the canonical cancellation contract is exercised through the streaming variants instead. The test module reserves the `delay` scenario for future coverage if a real-host harness lands.
 
 Quality dimension: **Reliability** (transport contract).
 

@@ -4092,6 +4092,43 @@ Follow-up later:
 - when a second consumer for any of the private test-stub/module patterns appears, promote the relevant module to `Cephalon.Tests.Support` and update the per-recommendation row to reference the shared support type
 - when the quarantine queue gains a second row, consider whether the table needs a stable id column to cross-link from `engine-backlog.md` cards by row id rather than by test-name string
 
+### ENG-408 Streaming + canonical Status mapping coverage for `Cephalon.AspNetCore.Grpc` transport adapter
+
+Status: done
+Estimate: 2
+
+Why:
+
+- `Cephalon.AspNetCore.Grpc` ships at `M2 cephalon-managed`; the transport adapter routes incoming gRPC RPC calls through the engine's behavior-dispatch seam and is named explicitly as recommendation #1 in [`docs/test-coverage-roadmap.md`](test-coverage-roadmap.md) — the only remaining high-priority pending row after `ENG-403` / `ENG-404` / `ENG-405` shipped recommendations #2 / #3 / #4
+- the existing happy-path coverage in `AspNetCoreHostingTests` exercises unary `SayHello`, server-streaming `StreamPrinciples`, and bidirectional-streaming `ExchangeGreetings` against the showcase `DiscoveryGrpcService`, but none of the canonical gRPC `Status` codes (NOT_FOUND, INVALID_ARGUMENT, UNAUTHENTICATED, PERMISSION_DENIED, UNAVAILABLE, RESOURCE_EXHAUSTED, FAILED_PRECONDITION, ABORTED) are pinned at the hosting layer, the unhandled-exception → UNKNOWN contract is unverified, and streaming with mid-stream server errors or client cancellations has no end-to-end coverage
+- claiming `ENG-408` continues the post-`ENG-407` sequence; per the auto-memory `feedback_eng_number_allocation` warning, `gh pr list` confirmed the only open PRs at the time of allocation were `#888` (ENG-379) and `#878` (ENG-371), so 408 is collision-free
+
+Delivered:
+
+- new `tests/Cephalon.Tests.Hosting/GrpcTransportErrorAndStreamingHostingTests.cs` with 15 tests across three groups:
+    - **Canonical Status mapping** (one parameterized `[Theory]` with 8 `[InlineData]` rows): NOT_FOUND, INVALID_ARGUMENT, UNAUTHENTICATED, PERMISSION_DENIED, UNAVAILABLE, RESOURCE_EXHAUSTED, FAILED_PRECONDITION, ABORTED; each scenario throws `RpcException(new Status(<code>, <detail>))` from `DiscoveryServiceBase.SayHello` and the client-side `Grpc.Net.Client.RpcException` is asserted to carry the same `StatusCode` plus the canonical detail substring
+    - **Unary error-frame contract**: `SayHello_MapsUnhandledExceptionToUnknownStatus` confirms a non-`RpcException` thrown by the handler surfaces as `Status.Unknown`, and `SayHello_ReturnsHappyPath_WhenScenarioNameIsOk` confirms the canonical happy-path message round-trips
+    - **Streaming + cancellation contract**: `StreamPrinciples_ProducesFullSequence_OnHappyPath` (3-element happy path), `StreamPrinciples_PropagatesInvalidArgument_WhenServerThrowsMidStream` (server `RpcException(InvalidArgument)` after the first reply), `StreamPrinciples_ReturnsCancelled_WhenClientCancelsMidStream` (client cancellation token after the first reply), `ExchangeGreetings_EchoesEachRequest_OnHappyPath` (bidi happy path), `ExchangeGreetings_PropagatesInternalStatus_WhenServerThrowsAfterFirstReply` (server `RpcException(Internal)` after the first echo)
+- internal `GrpcStreamingAndErrorModesTestModule` declared inside the test file as a reference implementation for the canonical scenario-routing pattern (gRPC `Metadata` headers carry the `test-scenario` selector, server inspects via `ServerCallContext.RequestHeaders`); the module deliberately does not register itself in `Cephalon.Tests.Support` until a second consumer appears, matching the maintenance discipline in [`docs/test-coverage-roadmap.md`](test-coverage-roadmap.md)
+- private `GrpcSubdirectoryHandler` `DelegatingHandler` declared inside the test file mirrors the existing `AspNetCoreHostingTests` pattern for routing in-memory `Microsoft.AspNetCore.TestHost` requests under the configured `/grpc` prefix; not promoted to `Cephalon.Tests.Support` for the same single-consumer reason
+- `docs/test-coverage-roadmap.md` recommendation #1 row annotated with `shipped through ENG-408 / PR #922` plus the deferred-coverage note for unary client-cancellation / unary deadline-expiry; the row stays in place per the roadmap's maintenance discipline
+- 15 / 15 new tests pass; full `Cephalon.Tests.Hosting` baseline shows 22 pre-existing unrelated failures (e.g. `ShowcaseSampleSystemEndpointsHonorCapabilityPolicy` — confirmed to fail at HEAD without this slice's changes), so this slice does not introduce regressions
+
+Out of scope (intentional):
+
+- unary client-cancellation and unary deadline-expiry coverage for `SayHello`: under `Microsoft.AspNetCore.TestHost` the in-memory request pipe does not reliably propagate the client-side cancellation token to the server-side `ServerCallContext` for unary calls, so the canonical cancellation contract is exercised through the streaming `StreamPrinciples_ReturnsCancelled_WhenClientCancelsMidStream` test instead; the test module reserves the `delay` scenario for future coverage if a real-host harness lands
+- recommendation #5 (provider-native CDC integration scenarios for `Cephalon.Data.SqlServer` / `.Postgres` / `.MongoDB`) — separate medium-priority card, requires a new `tests/Cephalon.Tests.Integration` project plus Testcontainers
+- recommendation #6 (`Cephalon.AspNetCore.GraphQL` transport-mapping coverage) — gated until the package widens beyond route mapping
+- recommendation #7 (`DebeziumDataCdcPackTests` quarantine resolution) — gated on the recursion fix in `Cephalon.Data.Services.CdcCaptureExecutionRuntimeCatalog.Enrich`
+- promoting the `GrpcStreamingAndErrorModesTestModule` or `GrpcSubdirectoryHandler` into `Cephalon.Tests.Support` — single-consumer today; the promotion happens when a second test file consumes either type
+- closing the orphaned `ENG-371` / `ENG-379` PRs `#878` / `#888` — separate small slice; this card stays scoped to recommendation #1
+
+Follow-up later:
+
+- when a real-host harness for `Cephalon.AspNetCore.Grpc` lands (e.g. a Kestrel-backed integration test that genuinely round-trips HTTP/2 RST_STREAM frames), the deferred unary client-cancellation / unary deadline-expiry coverage promotes from `delay` reservation to active scenarios; the test module already shapes the catch-block contract for that future slice
+- when the canonical Status mapping list grows (e.g. when the engine starts mapping its own runtime exceptions to gRPC Status codes through a new interceptor), the `[Theory]` `[InlineData]` table is the right home for the new rows; keep the parameterized shape rather than splitting per-status `[Fact]` methods
+- when `Cephalon.AspNetCore.GraphQL` ships transport-mapping coverage, mirror the same `[Theory]`-driven canonical-error pattern for GraphQL's `errors[].extensions.code` taxonomy
+
 ### ENG-406 Close Retrieval OTel emission docs-drift on `engine-surface-maturity-audit.md` and `components/diagnostics.md`
 
 Status: done
