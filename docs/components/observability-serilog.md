@@ -1,5 +1,7 @@
 # Cephalon.Observability.Serilog
 
+> **Maturity:** `M1` · **Ownership:** `cephalon-managed` (family-covered by maturity audit) — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Observability.Serilog` adds a supported Serilog provider-integration path for Cephalon hosts.
 
 ## What it owns

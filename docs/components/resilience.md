@@ -1,5 +1,7 @@
 # Cephalon.Resilience
 
+> **Maturity:** `M2` · **Ownership:** mixed: `application-managed` descriptors + `cephalon-managed` runtime — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Resilience` is the engine-managed resilience runtime companion pack for Cephalon.
 
 ## What it owns

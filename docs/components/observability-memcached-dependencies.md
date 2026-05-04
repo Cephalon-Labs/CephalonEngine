@@ -1,5 +1,7 @@
 # Cephalon.Observability.MemcachedDependencies
 
+> **Maturity:** `M0` · **Ownership:** `taxonomy-only` (family-covered by maturity audit) — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Observability.MemcachedDependencies` adds a supported Memcached dependency-health path for Cephalon hosts.
 
 ## What it owns

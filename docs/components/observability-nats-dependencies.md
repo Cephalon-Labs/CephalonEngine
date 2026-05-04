@@ -1,5 +1,7 @@
 # Cephalon.Observability.NatsDependencies
 
+> **Maturity:** `M0` · **Ownership:** `taxonomy-only` (family-covered by maturity audit) — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Observability.NatsDependencies` is the reusable dependency-health companion package for NATS brokers and clusters.
 
 ## What it owns

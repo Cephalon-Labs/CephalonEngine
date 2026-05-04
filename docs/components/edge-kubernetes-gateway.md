@@ -1,5 +1,7 @@
 # Cephalon.Edge.KubernetesGateway
 
+> **Maturity:** `M3` · **Ownership:** `provider-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Edge.KubernetesGateway` is the first provider-specific control-plane materializer pack for Cephalon cell traffic automation. It proves that a real gateway/control-plane family can stay outside `Cephalon.Engine` while still publishing truthful materialization answers on the shared runtime surfaces. The pack now supports configured intent, opt-in live observation, opt-in apply-and-reconcile, opt-in cleanup sweeps, and typed provider materialization conditions on that same shared runtime story.
 
 ## What it owns

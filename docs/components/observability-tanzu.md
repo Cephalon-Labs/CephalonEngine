@@ -1,5 +1,7 @@
 # Cephalon.Observability.Tanzu
 
+> **Maturity:** `M1` · **Ownership:** `cephalon-managed` (family-covered by maturity audit) — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Observability.Tanzu` adds VMware Tanzu proxy handoff and hosted defaults for Cephalon hosts.
 
 ## What it owns

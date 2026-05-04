@@ -1,5 +1,7 @@
 # Cephalon.Audit.EntityFramework
 
+> **Maturity:** `M1` · **Ownership:** `provider-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Audit.EntityFramework` is the first durable audit-history provider pack for Cephalon.
 
 ## What it owns

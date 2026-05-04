@@ -1,5 +1,7 @@
 # Cephalon.Scaffolding
 
+> **Maturity:** `M4` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Scaffolding` turns the app-model scaffold contract into concrete files and folders.
 
 ## What it owns

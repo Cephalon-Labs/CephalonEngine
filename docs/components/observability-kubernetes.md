@@ -1,5 +1,7 @@
 # Cephalon.Observability.Kubernetes
 
+> **Maturity:** `M1` · **Ownership:** `cephalon-managed` (family-covered by maturity audit) — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Observability.Kubernetes` adds platform-neutral Kubernetes collector defaults and resource guidance for Cephalon hosts.
 
 ## What it owns
