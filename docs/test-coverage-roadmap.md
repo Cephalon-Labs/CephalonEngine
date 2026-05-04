@@ -79,9 +79,9 @@ Four `DebeziumDataCdcPackTests` failures observed during full `Cephalon.Tests.Co
 
 Quality dimension: **Reliability** (existing flake).
 
-### #8 — `Cephalon.Diagnostics.Redaction` contract surface and 6-emission-site integration coverage (high priority, **shipped through `ENG-362` / `ENG-365` / `ENG-366` / `ENG-374` / `ENG-376` plus the Agentics + Retrieval + Worker emission slices `ENG-401` / `ENG-402` / `ENG-412` / `ENG-413`**)
+### #8 — `Cephalon.Diagnostics.Redaction` contract surface and 6-emission-site integration coverage (high priority, **shipped through `ENG-362` / `ENG-365` / `ENG-366` / `ENG-374` / `ENG-376` plus the Agentics + Retrieval + Worker emission slices `ENG-401` / `ENG-402` / `ENG-412` / `ENG-413` / `ENG-418`**)
 
-The redaction surface has 45+ tests across the contract, starter filters, orchestration, DI extension, and the six M1 emission-site integrations:
+The redaction surface has 46+ tests across the contract, starter filters, orchestration, DI extension, and the six M1 emission-site integrations:
 
 - contract types and starter filters: `tests/Cephalon.Tests.Composition/Diagnostics/Redaction/KeyMatchRedactionFilterTests.cs` (8), `RegexRedactionFilterTests.cs` (10) — `ENG-362`
 - orchestration helper: `RedactionPipelineTests.cs` (8) — `ENG-363`
@@ -90,10 +90,10 @@ The redaction surface has 45+ tests across the contract, starter filters, orches
 - engine runtime module-phase integration: `EngineRuntimeRedactionTests.cs` (2) — `ENG-366`
 - Wolverine dispatch integration: `WolverineEventingPackTests.cs` redaction tests (2) — `ENG-374` / `ENG-376`
 - Agentics tool-dispatch integration: `tests/Cephalon.Tests.Hosting/AgenticsToolDispatchActivityTests.cs` (2) — `ENG-401`
-- Retrieval knowledge-indexing + knowledge-query integration: `tests/Cephalon.Tests.Hosting/RetrievalKnowledgeIndexActivityTests.cs` — `ENG-402`
+- Retrieval knowledge-indexing + knowledge-query integration: `tests/Cephalon.Tests.Hosting/RetrievalKnowledgeIndexActivityTests.cs` (4: indexer track + indexer replace + query track from `ENG-402`, plus query replace from `ENG-418`) — `ENG-402` / `ENG-418`
 - Worker lifecycle integration: `tests/Cephalon.Tests.Composition/Diagnostics/Redaction/WorkerLifecycleRedactionTests.cs` (2) — `ENG-413`
 
-All six M1 emission sites now have per-site integration coverage that proves both the tracking-filter route (every emitted attribute value flows through the consumer-registered `RedactionPipeline`) and the replacement-filter route (a redacted value reaches the activity tag, not just the filter input). The shared `Redact(activity, key, value)` helper pattern with lazy `IServiceProvider.GetService<RedactionPipeline>()` resolution is contract-typed across every site so adding a seventh emission site is now a straight repetition rather than an open design question.
+All six M1 emission sites now have symmetric per-site integration coverage that proves both the tracking-filter route (every emitted attribute value flows through the consumer-registered `RedactionPipeline`) and the replacement-filter route (a redacted value reaches the activity tag, not just the filter input). `ENG-418` closed the asymmetric coverage gap that left `KnowledgeQueryEngine` without a replacement-filter assertion even though `KnowledgeIndexer`, `AgentToolDispatcher`, and `RuntimeHostedService` already shipped paired track + replace tests. The shared `Redact(activity, key, value)` helper pattern with lazy `IServiceProvider.GetService<RedactionPipeline>()` resolution is contract-typed across every site so adding a seventh emission site is now a straight repetition rather than an open design question.
 
 Quality dimension: **Security + Auditability + Compliance + Reliability** (engine-boundary redaction is part of the supply-chain contract for any consumer pipeline that exports telemetry beyond the trust boundary).
 
