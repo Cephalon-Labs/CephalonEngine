@@ -3954,8 +3954,37 @@ Delivered:
 
 Follow-up later:
 
-- a focused integration test that boots a worker host with a tracking `IRedactionFilter`, calls the lifecycle hooks, and asserts the filter saw the three expected tag keys (mirroring the AspNetCore middleware test in `HttpRequestResponseLoggingMiddlewareRedactionTests` and the engine-runtime test in `EngineRuntimeRedactionTests`) is the natural next slice for this site; deferred today because the helper-pattern correctness is verified at three sites already and `Cephalon.Worker` does not have `InternalsVisibleTo` declared for the test projects (adding that wiring is a separate slice)
+- the focused integration test that ENG-412 deferred for this site shipped through `ENG-413` (PR follows) — `tests/Cephalon.Tests.Composition/Diagnostics/Redaction/WorkerLifecycleRedactionTests.cs`, two tests, no `InternalsVisibleTo` wiring needed (the test resolves `RuntimeHostedService` by full type name instead of by symbol)
 - when `Cephalon.MultiTenancy.Governance` (PR #888) and `Cephalon.Eventing` (PR #878) OTel emission baselines land, count climbs to eight; refresh the same five doc surfaces in the same slice that lands the wiring per the maintenance discipline declared in the test-coverage roadmap
+
+### ENG-413 Add focused integration test proving Cephalon.Worker lifecycle activity routes tag values through RedactionPipeline (sixth emission site test coverage)
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `ENG-412` shipped the sixth M1 redaction emission site (Cephalon.Worker lifecycle activity tags) and explicitly deferred its focused integration test as the natural next slice; closing that follow-up keeps the redaction adoption arc symmetric with the AspNetCore + EngineRuntime + Wolverine + Agentics + Retrieval emission sites that already have per-site integration coverage
+- the `Cephalon.Tests.Composition/Diagnostics/Redaction/` folder is the canonical home for redaction integration tests; a Worker addition there parallels `EngineRuntimeRedactionTests.cs` (composition-driven, no web host) rather than the Hosting variants for transport-bound emission sites
+- recommendation #8 in `docs/test-coverage-roadmap.md` already counts the redaction surface as shipped through five emission sites — extending the count to six (with explicit per-site rows for Agentics / Retrieval / Worker) and removing the now-stale "deferred gap" note about Agentics + Retrieval per-site tests (which actually shipped in `ENG-401` / `ENG-402` as `tests/Cephalon.Tests.Hosting/AgenticsToolDispatchActivityTests.cs` + `RetrievalKnowledgeIndexActivityTests.cs`) closes the docs-drift between the roadmap and what the test tree actually proves
+
+Delivered:
+
+- new `tests/Cephalon.Tests.Composition/Diagnostics/Redaction/WorkerLifecycleRedactionTests.cs` (two tests, mirroring the `EngineRuntimeRedactionTests` template):
+    - `WorkerLifecycle_RoutesEmittedStartAndStopTagValues_ThroughRedactionPipeline` boots `AddCephalonWorker(...)`, registers a tracking `IRedactionFilter` plus `AddRedactionPipeline()`, drives `IHostedService.StartAsync(...)` then `StopAsync(...)`, asserts the filter saw `cephalon.lifecycle.phase` / `cephalon.blueprint` / `cephalon.module.count` tag keys, asserts both `start` and `stop` phase values reached the pipeline, and asserts the configured blueprint id (normalized to kebab-case `modular-monolith` by engine settings resolution) flows through the pipeline before activity tagging
+    - `WorkerLifecycle_AppliesRedactionReplacement_BeforeTaggingActivity` registers a replacement `IRedactionFilter` that swaps `cephalon.blueprint` tag values for `[REDACTED-BLUEPRINT]` and asserts both `worker.lifecycle.start` and `worker.lifecycle.stop` activities carry the redacted value on the activity itself (not just at filter-input time), proving the SetTag-after-Redact ordering is observable end-to-end
+- both tests resolve `Cephalon.Worker.Hosting.RuntimeHostedService` from `IEnumerable<IHostedService>` by **full type name** rather than by symbol — `RuntimeHostedService` is `internal sealed`, so this avoids adding `InternalsVisibleTo` to `Cephalon.Worker.csproj` for a single test pair; constants for the activity / tag names reuse the public `CephalonActivitySources.Worker` source name plus literal strings for the `worker.lifecycle.*` operation names and `cephalon.lifecycle.*` tag keys (same string contracts the doc surfaces already publish)
+- update recommendation #8 in `docs/test-coverage-roadmap.md`:
+    - rename the recommendation title from "5-emission-site integration coverage" to "6-emission-site integration coverage"
+    - extend the closing-slice annotation to add `ENG-413` after `ENG-401` / `ENG-402`
+    - add three new bullet rows to the itemized 6-test-file list: Agentics tool-dispatch (`AgenticsToolDispatchActivityTests.cs`, 2 tests, `ENG-401`), Retrieval knowledge-indexing + query (`RetrievalKnowledgeIndexActivityTests.cs`, ENG-402), Worker lifecycle (`WorkerLifecycleRedactionTests.cs`, 2 tests, `ENG-413`)
+    - rewrite the trailing "deferred gap" paragraph: drop the stale claim about Agentics + Retrieval per-site tests being deferred (those shipped in ENG-401 / ENG-402), keep the helper-pattern observation, and note that all six M1 emission sites now have per-site integration coverage
+- close ENG-412's follow-up note: rewrite the "deferred today" line to point at the now-shipped ENG-413 test file
+- focused test run: `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --filter "FullyQualifiedName~WorkerLifecycleRedactionTests"` → 2 / 2 pass
+
+Follow-up later:
+
+- when `Cephalon.MultiTenancy.Governance` (PR #888) and `Cephalon.Eventing` (PR #878) OTel emission baselines land, the per-site test slice for each of them ships in the same card that lands the wiring (per the redaction-adoption maintenance discipline declared in `test-coverage-roadmap.md` recommendation #8); the Wolverine dispatch path already has `WolverineEventingPackTests.cs` redaction tests under `ENG-374` / `ENG-376`, so the follow-through is for **non-Wolverine** subscription / publication paths only
 
 ### ENG-410 Extend test-coverage-roadmap with redaction-suite + Resilience-suite recommendations
 
@@ -12721,6 +12750,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-410 Extend test-coverage-roadmap with redaction-suite + Resilience-suite recommendations (shipped)
 - ENG-411 Close docs drift in `docs/runtime-contract-index.md` `/engine/*` route catalog: add 12 missing core engine routes (`/status`, `/options`, `/transports`, `/failure-policy`, `/package-policy`, `/trust-policy`, `/scaffold`, `/reference-docs`, `/localization`, `/dependencies`, `/diagnostics`, `/runtime-story`), 7 missing eventing/agent/knowledge routes (`/event-dispatch-runtimes`, `/event-dispatches`, `/event-publications/runtime`, `POST /event-publications`, `/agent-tool-runs`, `POST /knowledge-indexes/{collectionId}/reindex`, `POST /cdc-capture-runtimes/{executionRuntimeId}/commands/{operationId}`), 3 missing tenant-invitation AspNetCore routes (`POST /tenant-invitations/delivery-dispatches`, `POST /tenant-invitations/delivery-status`, `GET /tenant-invitations/delivery-status/observations`); fix `POST /agent-tools/{toolId}/run` → `/runs` (plural); remove 5 incorrect top-level `/tenant-{memberships,invitations,domain-ownership,governance-actions,administration}` rows that were actually `surfaceId` drill-downs under `/engine/technology-surfaces/{surfaceId}` and add a clarifying note on the `/engine/technology-surfaces` row; add note about provider-specific invitation-delivery callback paths (SendGrid/Mailgun/Amazon SES); add `/engine/agent-tool-runs` filter drill-down note alongside the existing CDC drill-down note. Quality dimensions: Auditability + Maintainability + Compatibility (shipped)
 - ENG-412 Extend Cephalon.Worker lifecycle activity with metadata tags + M1 redaction wiring (sixth emission site) (shipped) — originally drafted as ENG-411; renumbered after concurrent run claimed ENG-411 for the runtime-contract-index drift closure
+- ENG-413 Add focused integration test proving Cephalon.Worker lifecycle activity routes tag values through RedactionPipeline (sixth emission site test coverage) (shipped)
 
 ### Later / not scheduled yet
 
