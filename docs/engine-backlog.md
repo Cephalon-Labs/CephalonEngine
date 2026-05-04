@@ -3957,6 +3957,34 @@ Follow-up later:
 - once the first GA release lands post-preview, this file becomes the historical reference for `v0.1.0-preview` shipping; future preview / GA releases get their own `v{x.y.z}-notes.md` siblings under `docs/releases/`
 - consider promoting [`scripts/summarise-public-api-deltas.ps1`](../../scripts/summarise-public-api-deltas.ps1) to consume this draft and emit a top-of-release-notes contract-delta summary; today the artefact is reachable but the release-notes-generation flow doesn't wire it directly
 
+### ENG-403 Direct decision-matrix coverage for `MetadataDrivenAuthorizationEvaluator`
+
+Status: done
+Estimate: 2
+
+Why:
+
+- `MetadataDrivenAuthorizationEvaluator` is the only Cephalon-managed authorization path; it lives at `M1` mixed-ownership inside `Cephalon.Identity` and gates every `IAuthorizationEvaluator` consumer that opts into the built-in evaluator
+- before this slice, the evaluator's branches were exercised only through the four happy-path policies registered by `IdentityAuthorizationTestModule` (`tenant-admin` / `tenant-boundary` / `document-owner`) plus one explicit-policy-required deny scenario — the `RequiredRoleMatch=all` branch, the `expectedValue is null` empty-required-value branch, the missing-policy-id branch, the `RequireOwner` deny branches, the `RequireTenantMatch` deny branches that don't exit on the first comparison, the `ruleCount == 0` "policy without metadata-driven rules" branch, the special-key resolvers for subject `displayName`, resource `resourceType`, and context `action`, the policy-mode-fallback path through `AppProfile.Identity.AuthorizationModes`, and the cancellation-throwing path were all unverified
+- the standing test-coverage planning text records this as the highest-priority security-themed test slice: "M1 mixed-ownership; the default evaluator is the only Cephalon-managed authorization path and deserves direct coverage beyond hosting integration"
+- claiming `ENG-403` (skipping past `ENG-401` / `ENG-402`, both currently in-flight on a different OTel-emission axis through PRs #915 and #916) avoids the ENG-N collision pattern the auto-memory feedback warned about; this slice touches only `tests/` so it can't conflict with the open OTel adapter slices that are regenerating `docs/reference/`
+
+Delivered:
+
+- new `tests/Cephalon.Tests.Support/IdentityDecisionMatrixTestModule.cs` registering 15 edge-case authorization policies that pin every metadata-rule branch the built-in evaluator advertises (`requiredRoles` ANY / ALL / empty, subject / resource / context attribute prefixes including the empty-required-value case and the special-key resolvers, `requireOwner` standalone, `requireTenantMatch` standalone, the composite tenant-match-plus-attribute case, the no-rules policy, and the policy-mode-fallback policy)
+- new `tests/Cephalon.Tests.Composition/Composition/MetadataDrivenAuthorizationDecisionMatrixTests.cs` with 22 tests covering the deny-reason text, `decision.Metadata["evaluator" / "policyId" / "modes" / "modeCount" / "ruleCount" / "outcome"]` aggregation, the strict vs relaxed `RequireExplicitPolicy` reason variants, the policy-mode fallback to `AppProfile.Identity.AuthorizationModes`, and the canceled-token throw path
+- 22 / 22 tests pass through the public `IAuthorizationEvaluator` seam with no `InternalsVisibleTo` exposure on `Cephalon.Identity`
+
+Out of scope (intentional):
+
+- the medium-priority provider-native CDC slices (SQL Server / Postgres / MongoDB) and the high-priority gRPC streaming + JSON-RPC error-mode slices — separate cards
+- `Cephalon.Identity.AspNetCore` request-pipeline integration coverage already lives in `Cephalon.Tests.Hosting` and remains the right home for integration-level tests; this slice deliberately stays in `Cephalon.Tests.Composition` so it can exercise evaluator branches without an HTTP host
+
+Follow-up later:
+
+- when `Cephalon.Identity` promotes from `M1` to `M2` with a Cephalon-managed runtime surface beyond the descriptor catalog, the ABAC composition expansion (multi-attribute precedence ordering, alias-resolved attributes, normalized attribute comparison rules) deserves its own decision-matrix slice
+- the four pre-existing `DebeziumDataCdcPackTests` failures observed during the full `Cephalon.Tests.Composition` run are unrelated to this slice (`Cephalon.Data.Services.CdcCaptureExecutionRuntimeCatalog.Enrich` recursion); they remain tracked under the `v0.1.0-preview-notes.md` "Pre-existing test-flake watch" section and do not block this card
+
 ### ENG-393 Adopt per-page maturity-badge convention across remaining 44 component docs (final batch)
 
 Status: done
