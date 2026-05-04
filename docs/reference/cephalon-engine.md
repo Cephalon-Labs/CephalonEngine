@@ -6796,6 +6796,8 @@ The event highlights a warning condition or degraded behavior.
 
 Defines the stable meter, activity source, and counter names emitted by the engine runtime.
 
+Remarks: The `MeterName` and `ActivitySourceName` values are sourced from `Engine` and `Engine` respectively, so the engine runtime and observability companion packs share one canonical name set rather than re-declaring the literal "Cephalon.Engine" string.
+
 #### Declaration
 ```csharp
 public static class EngineDiagnostics

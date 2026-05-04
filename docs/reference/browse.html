@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-04-30T21:45:54.097616+00:00",
+  "GeneratedAtUtc": "2026-05-04T15:23:59.0279409+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -127,7 +127,7 @@
       "Description": "ASP.NET Core host core, REST surface, docs, health, and runtime endpoints.",
       "FileName": "cephalon-aspnetcore.md",
       "NamespaceCount": 8,
-      "TypeCount": 24
+      "TypeCount": 25
     },
     {
       "AssemblyName": "Cephalon.AspNetCore.GraphQL",
@@ -703,7 +703,7 @@
       "Description": "Knowledge retrieval runtime services and extension points.",
       "FileName": "cephalon-retrieval.md",
       "NamespaceCount": 3,
-      "TypeCount": 9
+      "TypeCount": 10
     },
     {
       "AssemblyName": "Cephalon.Scaffolding",
@@ -896,7 +896,7 @@
       "AssemblyName": "Cephalon.AspNetCore",
       "FileName": "cephalon-aspnetcore.md",
       "AnchorId": "namespace-cephalon-aspnetcore-diagnostics",
-      "TypeCount": 1
+      "TypeCount": 2
     },
     {
       "NamespaceName": "Cephalon.AspNetCore.Documentation",
@@ -2163,7 +2163,7 @@
       "AssemblyName": "Cephalon.Retrieval",
       "FileName": "cephalon-retrieval.md",
       "AnchorId": "namespace-cephalon-retrieval-services",
-      "TypeCount": 7
+      "TypeCount": 8
     },
     {
       "NamespaceName": "Cephalon.Scaffolding.Generation",
@@ -7540,6 +7540,21 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 6,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "DiagnosticsConventionsSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Diagnostics",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "type-cephalon-aspnetcore-diagnostics-diagnosticsconventionssurface",
+      "Declaration": "public sealed class DiagnosticsConventionsSurface",
+      "Summary": "Describes the canonical OpenTelemetry name set the Cephalon engine and its host adapters emit telemetry under, projected so operators and AI tooling can introspect what the engine emits without reading source.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 3,
         "Methods": 0
       }
     },
@@ -16034,6 +16049,21 @@
       }
     },
     {
+      "DisplayName": "RetrievalDiagnostics",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "type-cephalon-retrieval-services-retrievaldiagnostics",
+      "Declaration": "public static class RetrievalDiagnostics",
+      "Summary": "Defines the stable activity source, meter, activity, counter, and tag names emitted by the retrieval companion runtime. Names are sourced from \u0060Retrieval\u0060 and \u0060Retrieval\u0060 so the retrieval pack and observability companion packs share one canonical name set with the rest of the engine.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 19,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "RetrievalEngineBuilderExtensions",
       "NamespaceName": "Cephalon.Retrieval.Registration",
       "AssemblyName": "Cephalon.Retrieval",
@@ -20637,6 +20667,28 @@
       "Summary": "Gets the activity-source name emitted by the engine."
     },
     {
+      "DisplayName": "ActivitySourceName",
+      "Category": "Fields",
+      "DeclaringTypeName": "RetrievalDiagnostics",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-retrievaldiagnostics-activitysourcename",
+      "Signature": "const string ActivitySourceName",
+      "Summary": "Gets the stable activity-source name emitted by the retrieval runtime."
+    },
+    {
+      "DisplayName": "ActivitySources",
+      "Category": "Properties",
+      "DeclaringTypeName": "DiagnosticsConventionsSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Diagnostics",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-diagnostics-diagnosticsconventionssurface-activitysources",
+      "Signature": "IReadOnlyList\u003Cstring\u003E ActivitySources { get; set; }",
+      "Summary": "The stable \u0060ActivitySource\u0060 names emitted by the engine and its shipped host adapters. Names come from the \u0060Cephalon.Diagnostics\u0060 package\u0027s \u0060CephalonActivitySources\u0060 static class."
+    },
+    {
       "DisplayName": "Actor",
       "Category": "Properties",
       "DeclaringTypeName": "AmazonSesInvitationDeliveryAspNetCoreOptions",
@@ -21020,6 +21072,17 @@
       "AnchorId": "member-p-cephalon-abstractions-retrieval-knowledgequeryrequest-actorid",
       "Signature": "string ActorId { get; }",
       "Summary": "Gets the optional actor that requested the query."
+    },
+    {
+      "DisplayName": "ActorIdTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "RetrievalDiagnostics",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-retrievaldiagnostics-actoridtag",
+      "Signature": "const string ActorIdTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the optional actor identifier emitted on the activity."
     },
     {
       "DisplayName": "ActorType",
@@ -32869,6 +32932,17 @@
       "Summary": "Creates cell traffic-automation settings with provider and edge defaults."
     },
     {
+      "DisplayName": "CephalonAttributeKeys",
+      "Category": "Properties",
+      "DeclaringTypeName": "DiagnosticsConventionsSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Diagnostics",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-diagnostics-diagnosticsconventionssurface-cephalonattributekeys",
+      "Signature": "IReadOnlyList\u003Cstring\u003E CephalonAttributeKeys { get; set; }",
+      "Summary": "The \u0060cephalon.*\u0060 attribute keys that complement OpenTelemetry semantic conventions. Names come from the \u0060Cephalon.Diagnostics\u0060 package\u0027s \u0060CephalonDiagnosticsAttributeKeys\u0060 static class. Engine concepts that have no OpenTelemetry semantic-convention equivalent live here; concepts that have a semconv equivalent are emitted under the OpenTelemetry attribute name directly and are not re-declared in this surface."
+    },
+    {
       "DisplayName": "CephalonPackageVersion",
       "Category": "Properties",
       "DeclaringTypeName": "ScaffoldRequest",
@@ -34374,6 +34448,17 @@
       "AnchorId": "member-p-cephalon-abstractions-retrieval-knowledgequeryresult-collectionid",
       "Signature": "string CollectionId { get; set; }",
       "Summary": "The collection identifier that was queried."
+    },
+    {
+      "DisplayName": "CollectionIdTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "RetrievalDiagnostics",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-retrievaldiagnostics-collectionidtag",
+      "Signature": "const string CollectionIdTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the knowledge-collection identifier emitted on the activity."
     },
     {
       "DisplayName": "Collections",
@@ -39137,6 +39222,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantmembershipevaluationrequest-correlationid",
       "Signature": "string CorrelationId { get; }",
       "Summary": "Gets the optional correlation identifier for the evaluation."
+    },
+    {
+      "DisplayName": "CorrelationIdTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "RetrievalDiagnostics",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-retrievaldiagnostics-correlationidtag",
+      "Signature": "const string CorrelationIdTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the optional correlation identifier emitted on the activity."
     },
     {
       "DisplayName": "Count",
@@ -44647,6 +44743,17 @@
       "Summary": "The diagnostics conventions and published event-id catalogs visible to the runtime at the time the snapshot was created."
     },
     {
+      "DisplayName": "DiagnosticsConventionsSurface",
+      "Category": "Constructors",
+      "DeclaringTypeName": "DiagnosticsConventionsSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Diagnostics",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-diagnostics-diagnosticsconventionssurface-ctor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string",
+      "Signature": "DiagnosticsConventionsSurface(IReadOnlyList\u003Cstring\u003E ActivitySources, IReadOnlyList\u003Cstring\u003E Meters, IReadOnlyList\u003Cstring\u003E CephalonAttributeKeys)",
+      "Summary": "Describes the canonical OpenTelemetry name set the Cephalon engine and its host adapters emit telemetry under, projected so operators and AI tooling can introspect what the engine emits without reading source."
+    },
+    {
       "DisplayName": "DiagnosticsSurface",
       "Category": "Constructors",
       "DeclaringTypeName": "DiagnosticsSurface",
@@ -46592,6 +46699,17 @@
       "AnchorId": "member-p-cephalon-abstractions-retrieval-knowledgeindexstate-documentcount",
       "Signature": "int DocumentCount { get; set; }",
       "Summary": "The number of documents currently stored in the managed index."
+    },
+    {
+      "DisplayName": "DocumentCountTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "RetrievalDiagnostics",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-retrievaldiagnostics-documentcounttag",
+      "Signature": "const string DocumentCountTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the document count of the replacement index when one was published."
     },
     {
       "DisplayName": "DocumentId",
@@ -67901,6 +68019,28 @@
       "Summary": "The UTC timestamp when the replacement index was published."
     },
     {
+      "DisplayName": "IndexerIdTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "RetrievalDiagnostics",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-retrievaldiagnostics-indexeridtag",
+      "Signature": "const string IndexerIdTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the indexer identifier responsible for the run."
+    },
+    {
+      "DisplayName": "IndexingOutcomeTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "RetrievalDiagnostics",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-retrievaldiagnostics-indexingoutcometag",
+      "Signature": "const string IndexingOutcomeTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the terminal indexing outcome emitted on the activity (started, succeeded, failed, or skipped)."
+    },
+    {
       "DisplayName": "Info",
       "Category": "Fields",
       "DeclaringTypeName": "BehaviorAdvisorySeverity",
@@ -72796,6 +72936,28 @@
       "Summary": "Creates provider context for a managed indexing request."
     },
     {
+      "DisplayName": "KnowledgeIndexActivityName",
+      "Category": "Fields",
+      "DeclaringTypeName": "RetrievalDiagnostics",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-retrievaldiagnostics-knowledgeindexactivityname",
+      "Signature": "const string KnowledgeIndexActivityName",
+      "Summary": "Gets the stable activity name emitted around one managed knowledge-index run."
+    },
+    {
+      "DisplayName": "KnowledgeIndexCounterName",
+      "Category": "Fields",
+      "DeclaringTypeName": "RetrievalDiagnostics",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-retrievaldiagnostics-knowledgeindexcountername",
+      "Signature": "const string KnowledgeIndexCounterName",
+      "Summary": "Gets the stable counter name for completed knowledge-index runs."
+    },
+    {
       "DisplayName": "KnowledgeIndexes",
       "Category": "Properties",
       "DeclaringTypeName": "RuntimeIntrospectionSnapshot",
@@ -72838,6 +73000,28 @@
       "AnchorId": "member-m-cephalon-abstractions-retrieval-knowledgeindexstate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-int32-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "KnowledgeIndexState(string CollectionId, string LastRunId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, DateTimeOffset? LastIndexedAtUtc, DateTimeOffset? SourceFreshnessUtc, int DocumentCount, string FreshnessState, int StartedCount, int SucceededCount, int FailedCount, int SkippedCount, int QueryCount, DateTimeOffset? LastQueriedAtUtc, string LastQueryFingerprint, int LastQueryLength, int LastQueryMatchedCount, string LastActorId, string LastCorrelationId, string LastError, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
       "Summary": "Describes the latest managed index and query execution state for one knowledge collection."
+    },
+    {
+      "DisplayName": "KnowledgeQueryActivityName",
+      "Category": "Fields",
+      "DeclaringTypeName": "RetrievalDiagnostics",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-retrievaldiagnostics-knowledgequeryactivityname",
+      "Signature": "const string KnowledgeQueryActivityName",
+      "Summary": "Gets the stable activity name emitted around one managed knowledge-query."
+    },
+    {
+      "DisplayName": "KnowledgeQueryCounterName",
+      "Category": "Fields",
+      "DeclaringTypeName": "RetrievalDiagnostics",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-retrievaldiagnostics-knowledgequerycountername",
+      "Signature": "const string KnowledgeQueryCounterName",
+      "Summary": "Gets the stable counter name for completed knowledge-queries."
     },
     {
       "DisplayName": "KnowledgeQueryMatch",
@@ -78802,6 +78986,17 @@
       "Summary": "Gets or sets the optional API-server override used when the pack creates its own client from kubeconfig."
     },
     {
+      "DisplayName": "MatchCountTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "RetrievalDiagnostics",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-retrievaldiagnostics-matchcounttag",
+      "Signature": "const string MatchCountTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the count of matches returned by the query."
+    },
+    {
       "DisplayName": "Matched",
       "Category": "Properties",
       "DeclaringTypeName": "FeatureFlagEvaluationResult",
@@ -82650,6 +82845,28 @@
       "AnchorId": "member-f-cephalon-engine-diagnostics-enginediagnostics-metername",
       "Signature": "const string MeterName",
       "Summary": "Gets the meter name emitted by the engine."
+    },
+    {
+      "DisplayName": "MeterName",
+      "Category": "Fields",
+      "DeclaringTypeName": "RetrievalDiagnostics",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-retrievaldiagnostics-metername",
+      "Signature": "const string MeterName",
+      "Summary": "Gets the stable meter name emitted by the retrieval runtime."
+    },
+    {
+      "DisplayName": "Meters",
+      "Category": "Properties",
+      "DeclaringTypeName": "DiagnosticsConventionsSurface",
+      "NamespaceName": "Cephalon.AspNetCore.Diagnostics",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-diagnostics-diagnosticsconventionssurface-meters",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Meters { get; set; }",
+      "Summary": "The stable \u0060Meter\u0060 names. Names come from the \u0060Cephalon.Diagnostics\u0060 package\u0027s \u0060CephalonMeters\u0060 static class. These typically match the activity-source names because the engine emits both kinds of instruments under the same logical namespace."
     },
     {
       "DisplayName": "Method",
@@ -94889,6 +95106,17 @@
       "Summary": "The latest provider-owned command could not resolve a provider execution adapter."
     },
     {
+      "DisplayName": "ProviderCountTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "RetrievalDiagnostics",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-retrievaldiagnostics-providercounttag",
+      "Signature": "const string ProviderCountTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the provider count consulted during the indexing run."
+    },
+    {
       "DisplayName": "ProviderExecutable",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
@@ -97923,6 +98151,50 @@
       "AnchorId": "member-p-cephalon-abstractions-retrieval-knowledgeindexstate-querycount",
       "Signature": "int QueryCount { get; set; }",
       "Summary": "The number of managed queries executed against this collection."
+    },
+    {
+      "DisplayName": "QueryEngineIdTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "RetrievalDiagnostics",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-retrievaldiagnostics-queryengineidtag",
+      "Signature": "const string QueryEngineIdTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the query-engine identifier responsible for the query."
+    },
+    {
+      "DisplayName": "QueryLengthTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "RetrievalDiagnostics",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-retrievaldiagnostics-querylengthtag",
+      "Signature": "const string QueryLengthTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the requested-or-effective query length emitted on the query activity. Query text itself is not emitted because retrieval queries can carry user content that should never reach exporters in the clear."
+    },
+    {
+      "DisplayName": "QueryLimitTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "RetrievalDiagnostics",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-retrievaldiagnostics-querylimittag",
+      "Signature": "const string QueryLimitTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the resolved query result limit (after default and maximum-limit clamps) emitted on the query activity."
+    },
+    {
+      "DisplayName": "QueryOutcomeTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "RetrievalDiagnostics",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-retrievaldiagnostics-queryoutcometag",
+      "Signature": "const string QueryOutcomeTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the terminal query outcome emitted on the activity (succeeded or failed). Unlike indexing, queries do not have a skipped or started state on the runtime path."
     },
     {
       "DisplayName": "QueryText",
@@ -107999,6 +108271,17 @@
       "AnchorId": "member-p-cephalon-abstractions-retrieval-knowledgeindexingresult-runid",
       "Signature": "string RunId { get; set; }",
       "Summary": "The stable indexing run identifier."
+    },
+    {
+      "DisplayName": "RunIdTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "RetrievalDiagnostics",
+      "NamespaceName": "Cephalon.Retrieval.Services",
+      "AssemblyName": "Cephalon.Retrieval",
+      "FileName": "cephalon-retrieval.md",
+      "AnchorId": "member-f-cephalon-retrieval-services-retrievaldiagnostics-runidtag",
+      "Signature": "const string RunIdTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the knowledge-index run identifier emitted on the activity."
     },
     {
       "DisplayName": "RunIntervalMinutes",

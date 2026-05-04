@@ -588,3 +588,206 @@ string RunId { get; }
 ```
 
 Gets the stable indexing run identifier.
+
+<a id="type-cephalon-retrieval-services-retrievaldiagnostics"></a>
+
+### `RetrievalDiagnostics`
+
+Defines the stable activity source, meter, activity, counter, and tag names emitted by the retrieval companion runtime. Names are sourced from `Retrieval` and `Retrieval` so the retrieval pack and observability companion packs share one canonical name set with the rest of the engine.
+
+#### Declaration
+```csharp
+public static class RetrievalDiagnostics
+```
+
+#### Fields
+
+<a id="member-f-cephalon-retrieval-services-retrievaldiagnostics-activitysourcename"></a>
+
+##### `ActivitySourceName`
+
+```csharp
+const string ActivitySourceName
+```
+
+Gets the stable activity-source name emitted by the retrieval runtime.
+
+<a id="member-f-cephalon-retrieval-services-retrievaldiagnostics-actoridtag"></a>
+
+##### `ActorIdTag`
+
+```csharp
+const string ActorIdTag
+```
+
+Stable Cephalon-prefix tag carrying the optional actor identifier emitted on the activity.
+
+<a id="member-f-cephalon-retrieval-services-retrievaldiagnostics-collectionidtag"></a>
+
+##### `CollectionIdTag`
+
+```csharp
+const string CollectionIdTag
+```
+
+Stable Cephalon-prefix tag carrying the knowledge-collection identifier emitted on the activity.
+
+<a id="member-f-cephalon-retrieval-services-retrievaldiagnostics-correlationidtag"></a>
+
+##### `CorrelationIdTag`
+
+```csharp
+const string CorrelationIdTag
+```
+
+Stable Cephalon-prefix tag carrying the optional correlation identifier emitted on the activity.
+
+<a id="member-f-cephalon-retrieval-services-retrievaldiagnostics-documentcounttag"></a>
+
+##### `DocumentCountTag`
+
+```csharp
+const string DocumentCountTag
+```
+
+Stable Cephalon-prefix tag carrying the document count of the replacement index when one was published.
+
+<a id="member-f-cephalon-retrieval-services-retrievaldiagnostics-indexeridtag"></a>
+
+##### `IndexerIdTag`
+
+```csharp
+const string IndexerIdTag
+```
+
+Stable Cephalon-prefix tag carrying the indexer identifier responsible for the run.
+
+<a id="member-f-cephalon-retrieval-services-retrievaldiagnostics-indexingoutcometag"></a>
+
+##### `IndexingOutcomeTag`
+
+```csharp
+const string IndexingOutcomeTag
+```
+
+Stable Cephalon-prefix tag carrying the terminal indexing outcome emitted on the activity (started, succeeded, failed, or skipped).
+
+<a id="member-f-cephalon-retrieval-services-retrievaldiagnostics-knowledgeindexactivityname"></a>
+
+##### `KnowledgeIndexActivityName`
+
+```csharp
+const string KnowledgeIndexActivityName
+```
+
+Gets the stable activity name emitted around one managed knowledge-index run.
+
+<a id="member-f-cephalon-retrieval-services-retrievaldiagnostics-knowledgeindexcountername"></a>
+
+##### `KnowledgeIndexCounterName`
+
+```csharp
+const string KnowledgeIndexCounterName
+```
+
+Gets the stable counter name for completed knowledge-index runs.
+
+<a id="member-f-cephalon-retrieval-services-retrievaldiagnostics-knowledgequeryactivityname"></a>
+
+##### `KnowledgeQueryActivityName`
+
+```csharp
+const string KnowledgeQueryActivityName
+```
+
+Gets the stable activity name emitted around one managed knowledge-query.
+
+<a id="member-f-cephalon-retrieval-services-retrievaldiagnostics-knowledgequerycountername"></a>
+
+##### `KnowledgeQueryCounterName`
+
+```csharp
+const string KnowledgeQueryCounterName
+```
+
+Gets the stable counter name for completed knowledge-queries.
+
+<a id="member-f-cephalon-retrieval-services-retrievaldiagnostics-matchcounttag"></a>
+
+##### `MatchCountTag`
+
+```csharp
+const string MatchCountTag
+```
+
+Stable Cephalon-prefix tag carrying the count of matches returned by the query.
+
+<a id="member-f-cephalon-retrieval-services-retrievaldiagnostics-metername"></a>
+
+##### `MeterName`
+
+```csharp
+const string MeterName
+```
+
+Gets the stable meter name emitted by the retrieval runtime.
+
+<a id="member-f-cephalon-retrieval-services-retrievaldiagnostics-providercounttag"></a>
+
+##### `ProviderCountTag`
+
+```csharp
+const string ProviderCountTag
+```
+
+Stable Cephalon-prefix tag carrying the provider count consulted during the indexing run.
+
+<a id="member-f-cephalon-retrieval-services-retrievaldiagnostics-queryengineidtag"></a>
+
+##### `QueryEngineIdTag`
+
+```csharp
+const string QueryEngineIdTag
+```
+
+Stable Cephalon-prefix tag carrying the query-engine identifier responsible for the query.
+
+<a id="member-f-cephalon-retrieval-services-retrievaldiagnostics-querylengthtag"></a>
+
+##### `QueryLengthTag`
+
+```csharp
+const string QueryLengthTag
+```
+
+Stable Cephalon-prefix tag carrying the requested-or-effective query length emitted on the query activity. Query text itself is not emitted because retrieval queries can carry user content that should never reach exporters in the clear.
+
+<a id="member-f-cephalon-retrieval-services-retrievaldiagnostics-querylimittag"></a>
+
+##### `QueryLimitTag`
+
+```csharp
+const string QueryLimitTag
+```
+
+Stable Cephalon-prefix tag carrying the resolved query result limit (after default and maximum-limit clamps) emitted on the query activity.
+
+<a id="member-f-cephalon-retrieval-services-retrievaldiagnostics-queryoutcometag"></a>
+
+##### `QueryOutcomeTag`
+
+```csharp
+const string QueryOutcomeTag
+```
+
+Stable Cephalon-prefix tag carrying the terminal query outcome emitted on the activity (succeeded or failed). Unlike indexing, queries do not have a skipped or started state on the runtime path.
+
+<a id="member-f-cephalon-retrieval-services-retrievaldiagnostics-runidtag"></a>
+
+##### `RunIdTag`
+
+```csharp
+const string RunIdTag
+```
+
+Stable Cephalon-prefix tag carrying the knowledge-index run identifier emitted on the activity.

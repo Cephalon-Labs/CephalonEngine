@@ -18,6 +18,66 @@ Generated from XML comments and the public API surface of the compiled assembly.
 
 ## Namespace Cephalon.AspNetCore.Diagnostics
 
+<a id="type-cephalon-aspnetcore-diagnostics-diagnosticsconventionssurface"></a>
+
+### `DiagnosticsConventionsSurface`
+
+Describes the canonical OpenTelemetry name set the Cephalon engine and its host adapters emit telemetry under, projected so operators and AI tooling can introspect what the engine emits without reading source.
+
+#### Declaration
+```csharp
+public sealed class DiagnosticsConventionsSurface
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-diagnostics-diagnosticsconventionssurface-ctor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string"></a>
+
+##### `DiagnosticsConventionsSurface`
+
+```csharp
+DiagnosticsConventionsSurface(IReadOnlyList<string> ActivitySources, IReadOnlyList<string> Meters, IReadOnlyList<string> CephalonAttributeKeys)
+```
+
+Describes the canonical OpenTelemetry name set the Cephalon engine and its host adapters emit telemetry under, projected so operators and AI tooling can introspect what the engine emits without reading source.
+
+Parameters:
+- `ActivitySources`: The stable `ActivitySource` names emitted by the engine and its shipped host adapters. Names come from the `Cephalon.Diagnostics` package's `CephalonActivitySources` static class.
+- `Meters`: The stable `Meter` names. Names come from the `Cephalon.Diagnostics` package's `CephalonMeters` static class. These typically match the activity-source names because the engine emits both kinds of instruments under the same logical namespace.
+- `CephalonAttributeKeys`: The `cephalon.*` attribute keys that complement OpenTelemetry semantic conventions. Names come from the `Cephalon.Diagnostics` package's `CephalonDiagnosticsAttributeKeys` static class. Engine concepts that have no OpenTelemetry semantic-convention equivalent live here; concepts that have a semconv equivalent are emitted under the OpenTelemetry attribute name directly and are not re-declared in this surface.
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-diagnostics-diagnosticsconventionssurface-activitysources"></a>
+
+##### `ActivitySources`
+
+```csharp
+IReadOnlyList<string> ActivitySources { get; set; }
+```
+
+The stable `ActivitySource` names emitted by the engine and its shipped host adapters. Names come from the `Cephalon.Diagnostics` package's `CephalonActivitySources` static class.
+
+<a id="member-p-cephalon-aspnetcore-diagnostics-diagnosticsconventionssurface-cephalonattributekeys"></a>
+
+##### `CephalonAttributeKeys`
+
+```csharp
+IReadOnlyList<string> CephalonAttributeKeys { get; set; }
+```
+
+The `cephalon.*` attribute keys that complement OpenTelemetry semantic conventions. Names come from the `Cephalon.Diagnostics` package's `CephalonDiagnosticsAttributeKeys` static class. Engine concepts that have no OpenTelemetry semantic-convention equivalent live here; concepts that have a semconv equivalent are emitted under the OpenTelemetry attribute name directly and are not re-declared in this surface.
+
+<a id="member-p-cephalon-aspnetcore-diagnostics-diagnosticsconventionssurface-meters"></a>
+
+##### `Meters`
+
+```csharp
+IReadOnlyList<string> Meters { get; set; }
+```
+
+The stable `Meter` names. Names come from the `Cephalon.Diagnostics` package's `CephalonMeters` static class. These typically match the activity-source names because the engine emits both kinds of instruments under the same logical namespace.
+
 <a id="type-cephalon-aspnetcore-diagnostics-diagnosticssurface"></a>
 
 ### `DiagnosticsSurface`
