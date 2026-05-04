@@ -233,6 +233,76 @@ public sealed class RetrievalKnowledgeIndexActivityTests
         Assert.Equal("operator-query-redaction-001", actorEntry.Value);
     }
 
+    [Fact]
+    public async Task KnowledgeQueryEngine_AppliesRedactionReplacement_BeforeTaggingActivity()
+    {
+        const string redactedActorId = "[REDACTED-QUERY-ACTOR]";
+        Activity? capturedQueryActivity = null;
+        // Match by both operation name AND the redacted actor-id tag value because xUnit runs
+        // tests in parallel and the global ActivitySource listener would otherwise see query
+        // activities from concurrent sibling tests publishing under the same canonical source name.
+        using var listener = new ActivityListener
+        {
+            ShouldListenTo = static source => source.Name == RetrievalDiagnostics.ActivitySourceName,
+            Sample = static (ref ActivityCreationOptions<ActivityContext> _) => ActivitySamplingResult.AllData,
+            SampleUsingParentId = static (ref ActivityCreationOptions<string> _) => ActivitySamplingResult.AllData,
+            ActivityStopped = activity =>
+            {
+                if (activity.OperationName != RetrievalDiagnostics.KnowledgeQueryActivityName)
+                {
+                    return;
+                }
+
+                var actorIdTag = activity.Tags.FirstOrDefault(t => t.Key == RetrievalDiagnostics.ActorIdTag);
+                if (string.Equals(actorIdTag.Value, redactedActorId, StringComparison.Ordinal))
+                {
+                    capturedQueryActivity = activity;
+                }
+            },
+        };
+        ActivitySource.AddActivityListener(listener);
+
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["KnowledgeRetrieval"],
+                transports: ["RestApi"]));
+            engine.AddModule(new TechnologyPackContributionModule());
+            engine.AddRetrieval();
+        });
+        builder.Services.AddSingleton<IRedactionFilter>(new ReplaceActorIdFilter(redactedActorId));
+        builder.Services.AddRedactionPipeline();
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+        await app.StartAsync();
+
+        await using (var scope = app.Services.CreateAsyncScope())
+        {
+            // Index first so the query lane has documents to score and the query path returns
+            // a populated runtime catalog rather than an empty match set.
+            var indexer = scope.ServiceProvider.GetRequiredService<IKnowledgeIndexer>();
+            await indexer.IndexAsync(new KnowledgeIndexingRequest(
+                collectionId: "runbooks",
+                runId: "retrieval-query-replace-precondition-index-001"));
+
+            var queryEngine = scope.ServiceProvider.GetRequiredService<IKnowledgeQueryEngine>();
+            await queryEngine.QueryAsync(new KnowledgeQueryRequest(
+                collectionId: "runbooks",
+                queryText: "retrieval freshness",
+                actorId: "operator-query-replace-001",
+                correlationId: "corr-retrieval-query-replace-001"));
+        }
+
+        Assert.NotNull(capturedQueryActivity);
+        var actorIdTag = capturedQueryActivity!.Tags.FirstOrDefault(t => t.Key == RetrievalDiagnostics.ActorIdTag);
+        Assert.Equal(redactedActorId, actorIdTag.Value);
+    }
+
     private sealed class TrackingRedactionFilter : IRedactionFilter
     {
         private readonly List<(string, object?)> sink;
@@ -254,5 +324,15 @@ public sealed class RetrievalKnowledgeIndexActivityTests
 
         public object? Filter(RedactionContext context, object? value)
             => context.AttributeKey == RetrievalDiagnostics.RunIdTag ? replacement : value;
+    }
+
+    private sealed class ReplaceActorIdFilter : IRedactionFilter
+    {
+        private readonly string replacement;
+
+        public ReplaceActorIdFilter(string replacement) => this.replacement = replacement;
+
+        public object? Filter(RedactionContext context, object? value)
+            => context.AttributeKey == RetrievalDiagnostics.ActorIdTag ? replacement : value;
     }
 }
