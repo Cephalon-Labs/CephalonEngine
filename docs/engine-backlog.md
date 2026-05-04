@@ -3925,6 +3925,32 @@ Follow-up later:
 - CDC (canonical-name pre-declaration for `Cephalon.Data` shared CDC capture surface and / or `Cephalon.Data.Debezium`) is a natural follow-up slice; deferred from this slice because the CDC surface lives inside `Cephalon.Data`'s shared runtime rather than a dedicated pack, so the right scoping (one canonical name owned by `Cephalon.Data`, or a separate name owned by `Cephalon.Data.Debezium`) needs explicit analysis first
 - the canonical names declared here will graduate from `PublicAPI.Unshipped.txt` to `PublicAPI.Shipped.txt` on the next release per the standard contract-lock-in promotion cycle
 
+### ENG-409 Close Cephalon.Retrieval M1 emission drift in cross-package redaction docs
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `ENG-401` (Cephalon.Agentics OTel emission baseline + M1 redaction wiring) and `ENG-402` (Cephalon.Retrieval OTel emission baseline + M1 redaction wiring) shipped real `StartActivity` + `SetTag` emission code in the new `AgentToolDispatcher` (Agentics) and `KnowledgeIndexer` + `KnowledgeQueryEngine` (Retrieval) call sites, each consuming a `RedactionPipeline?` constructor parameter and routing `SetTag` values through a `Redact(activity, key, value)` helper -- the same canonical pattern the AspNetCore middleware (`ENG-365`), engine runtime (`ENG-366`), and Wolverine dispatch (`ENG-374`) already use
+- `ENG-406` closed the Retrieval-side OTel emission docs-drift on `engine-surface-maturity-audit.md` + `components/diagnostics.md` for the *emission* shape (canonical name set + activity surface naming) but did not refresh the count of M1-redaction-wired emission sites in the Diagnostics doc surface; the Diagnostics component doc still said "four engine emission sites" (AspNetCore + EngineRuntime + Wolverine + Agentics) when in fact the count is **five** because Retrieval wires `RedactionPipeline?` into both `KnowledgeIndexer` and `KnowledgeQueryEngine` constructor signatures and routes `SetTag` calls through the same `Redact(...)` helper
+- `IRedactionFilter`'s XML doc remarks similarly read "the engine routes three emission sites through registered filters" -- pre-Agentics + pre-Retrieval truth -- and the operational-hardening gap inventory said "three M1 emission sites" with the same staleness; closing the drift in three doc surfaces (Diagnostics component doc + IRedactionFilter XML + operational-hardening gap inventory) plus the conformance-matrix Diagnostics-row notes column is a focused doc slice that doesn't conflict with in-flight concurrent runs
+
+Delivered:
+
+- update `docs/components/diagnostics.md` *What it owns* paragraph to declare **five** engine emission sites and explicitly name the new `Cephalon.Retrieval` site (the `retrieval.knowledge.index` + `retrieval.knowledge.query` spans emitted under `CephalonActivitySources.Retrieval`, with `KnowledgeIndexer` and `KnowledgeQueryEngine` both consuming the redaction pipeline before tagging activities); also update the *Redaction quick start* section's intro to name the fifth M1 site
+- update `src/Cephalon.Diagnostics/Redaction/IRedactionFilter.cs` XML doc remarks to describe the **five** M1 emission sites (was three) and continue to declare the future emission sites that will adopt the same pattern (worker lifecycle, future eventing publishers, multi-tenancy governance once its OTel adapter lands)
+- update `docs/operational-hardening-gap-inventory.md` *Shipped baseline* bullet to declare **five** M1 emission sites and name Retrieval explicitly
+- update `docs/conformance-matrix.md` `Cephalon.Diagnostics` row Notes to declare **five** real engine emission sites
+- the `architecture-review-2026-05.md` mentions of "three real engine emission sites" stay unchanged because the review is a dated May 2-3 snapshot; June's review supersedes it with the current 5-site truth
+- `docs/engine-backlog.md` ENG-409 backlog card; Sprint 125 placement updated
+- verified end-to-end with `dotnet build src/Cephalon.Diagnostics/Cephalon.Diagnostics.csproj -c Release` (0 warnings, 0 errors)
+
+Follow-up later:
+
+- when `Cephalon.MultiTenancy.Governance` (PR #888) and `Cephalon.Eventing` (PR #878) OTel emission baselines land, count climbs to seven; refresh the same four doc surfaces in the same slice that lands the wiring
+- when `Cephalon.Worker` lifecycle spans add tag values (today they emit no `SetTag` calls so M1 redaction doesn't apply), the count moves to eight
+
 ### ENG-400 Author consolidated v0.1.0-preview release-notes draft
 
 Status: done
@@ -12636,6 +12662,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-405 Direct error-mode coverage for Cephalon.AspNetCore.JsonRpc transport adapter (shipped)
 - ENG-406 Close Retrieval OTel emission docs-drift on engine-surface-maturity-audit + components/diagnostics (shipped)
 - ENG-407 Author the missing docs/test-coverage-roadmap.md (shipped)
+- ENG-409 Close Cephalon.Retrieval M1 emission drift in cross-package redaction docs (shipped)
 
 ### Later / not scheduled yet
 
