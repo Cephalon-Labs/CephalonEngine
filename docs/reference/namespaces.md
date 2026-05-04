@@ -102,7 +102,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.AspNetCore.Diagnostics`
 
-- [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-diagnostics): 1 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics)
+- [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-diagnostics): 2 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics)
 
 ## `Cephalon.AspNetCore.Documentation`
 
@@ -826,7 +826,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Retrieval.Services`
 
-- [Cephalon.Retrieval](cephalon-retrieval.md#namespace-cephalon-retrieval-services): 7 public types [Browse](browse.html?assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services)
+- [Cephalon.Retrieval](cephalon-retrieval.md#namespace-cephalon-retrieval-services): 8 public types [Browse](browse.html?assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services)
 
 ## `Cephalon.Scaffolding.Generation`
 

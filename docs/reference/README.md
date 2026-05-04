@@ -23,11 +23,11 @@ Quick links:
 - [Cephalon.Agentics](cephalon-agentics.md): Agentic workload runtime services and extension points. Contains 3 namespaces and 14 public types. [Browse](browse.html?assembly=Cephalon.Agentics)
 - [Cephalon.Edge](cephalon-edge.md): Edge-native delivery runtime services and extension points. Contains 3 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.Edge)
 - [Cephalon.Eventing](cephalon-eventing.md): Event-driven integration runtime services and extension points. Contains 3 namespaces and 31 public types. [Browse](browse.html?assembly=Cephalon.Eventing)
-- [Cephalon.Retrieval](cephalon-retrieval.md): Knowledge retrieval runtime services and extension points. Contains 3 namespaces and 9 public types. [Browse](browse.html?assembly=Cephalon.Retrieval)
+- [Cephalon.Retrieval](cephalon-retrieval.md): Knowledge retrieval runtime services and extension points. Contains 3 namespaces and 10 public types. [Browse](browse.html?assembly=Cephalon.Retrieval)
 
 ### Hosts
 
-- [Cephalon.AspNetCore](cephalon-aspnetcore.md): ASP.NET Core host core, REST surface, docs, health, and runtime endpoints. Contains 8 namespaces and 24 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore)
+- [Cephalon.AspNetCore](cephalon-aspnetcore.md): ASP.NET Core host core, REST surface, docs, health, and runtime endpoints. Contains 8 namespaces and 25 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore)
 - [Cephalon.AspNetCore.GraphQL](cephalon-aspnetcore-graphql.md): GraphQL transport adapter for ASP.NET Core hosts. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore.GraphQL)
 - [Cephalon.AspNetCore.Grpc](cephalon-aspnetcore-grpc.md): gRPC transport adapter and contracts for ASP.NET Core hosts. Contains 3 namespaces and 10 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore.Grpc)
 - [Cephalon.AspNetCore.JsonRpc](cephalon-aspnetcore-jsonrpc.md): JSON-RPC transport adapter for ASP.NET Core hosts. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore.JsonRpc)

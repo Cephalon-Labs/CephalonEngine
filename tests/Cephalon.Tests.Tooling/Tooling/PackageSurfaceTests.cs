@@ -1117,7 +1117,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Retrieval.Services.IKnowledgeDocumentProvider),
             typeof(global::Cephalon.Retrieval.Services.KnowledgeCollectionDescriptor),
             typeof(global::Cephalon.Retrieval.Services.KnowledgeDocument),
-            typeof(global::Cephalon.Retrieval.Services.KnowledgeDocumentProviderContext));
+            typeof(global::Cephalon.Retrieval.Services.KnowledgeDocumentProviderContext),
+            typeof(global::Cephalon.Retrieval.Services.RetrievalDiagnostics));
     }
 
     [Fact]
