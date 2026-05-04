@@ -4050,6 +4050,48 @@ Follow-up later:
 - if a future component doc lands without the badge, the convention can be re-applied with the same pattern; consider promoting the helper to permanent `scripts/` only if the engine adds enough new packs in a single arc to justify the maintenance overhead — today the 104 docs are all covered and new docs author the badge inline as part of the doc-introduction slice (e.g. `ENG-390` already authored the resilience badge inline rather than relying on a follow-up batch)
 - once `Cephalon.Eventing` (PR #878) and `Cephalon.MultiTenancy.Governance` (PR #888) OTel emission baselines land, their component docs will need refreshes for the new emission posture; the badge frontmatter stays valid, only the *What it owns* and *Maturity and ownership* sections will need updates
 
+### ENG-407 Author the missing `docs/test-coverage-roadmap.md`
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `docs/test-coverage-roadmap.md` is referenced as a real document from at least four authoritative places — [`docs/README.md`](README.md) line 100 lists it under the *Maturity, planning, and roadmap* section, [`docs/sre-posture.md`](sre-posture.md) line 5 lists it among the cross-references and line 75 names it as the home of the test-flake quarantine queue, and the `ENG-405` backlog card at line ~4099 plus the ENG-405 follow-up at line ~4119 cite "recommendation #1" / "recommendation #2" by stable number from the same file
+- `docs/project-memory.md` even claims the file was created `2026-05-02 02:22 UTC` and describes its intended content, but `git log --diff-filter=A -- docs/test-coverage-roadmap.md` shows no commit ever added the file — it was a ghost reference all along
+- without the file, every `recommendation #N` citation from a backlog card is a broken pointer, the `docs/README.md` link is a 404, the `sre-posture.md` flake quarantine workflow has no docs anchor, and any future test-coverage slice has to either (a) re-derive the priority list from scratch or (b) embed the rationale inline in its own backlog card (which is exactly what `ENG-403`, `ENG-404`, and `ENG-405` had to do, leaving the standing planning text scattered)
+- closing this drift now is the right move because the recently-shipped `ENG-403` / `ENG-404` / `ENG-405` slices already established three recommendations by their citation patterns; capturing them as numbered rows in the canonical doc preserves the implicit numbering the cards introduced and gives future cards a stable home to point at
+- claiming `ENG-407` continues the post-`ENG-406` sequence; per the auto-memory `feedback_eng_number_allocation` warning, `gh pr list` confirmed no concurrent run had taken `407`
+
+Delivered:
+
+- new `docs/test-coverage-roadmap.md` (`M2` planning surface) authored to:
+    - declare the canonical home for layered-test posture, gap-definition criteria, prioritized recommendations, and test-flake quarantine queue
+    - cross-reference [`engineering-standards.md`](engineering-standards.md), [`sre-posture.md`](sre-posture.md), [`benchmarking.md`](benchmarking.md), [`runtime-failure-policy.md`](runtime-failure-policy.md), [`operational-hardening-gap-inventory.md`](operational-hardening-gap-inventory.md), [`engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md), [`conformance-matrix.md`](conformance-matrix.md), and [`engine-backlog.md`](engine-backlog.md)
+    - document the five `tests/Cephalon.Tests.*` projects plus `benchmarks/Cephalon.Benchmarks` with one row per layer naming what each layer proves
+    - codify the standing rule that new dedicated test projects are added only when one source pack ships enough independent execution surface to justify a separate harness, layered framework-level tests are the default home for new coverage, and mirroring `src/` 1:1 with per-package test assemblies is explicitly *not* the discipline
+    - codify the four-criterion gap definition (a) no layered test exercises any surface, (b) only the composition seam is exercised without the runtime path, (c) one or more `M2`-or-higher claims have no test that proves the runtime contract, (d) a regression-prone hot path is not covered by a guardrail benchmark
+    - capture seven prioritized recommendations: #1 `Cephalon.AspNetCore.Grpc` streaming + error-mode coverage (high, pending), #2 `Cephalon.AspNetCore.JsonRpc` error-response coverage (high, shipped through `ENG-405` / PR #919), #3 `MetadataDrivenAuthorizationEvaluator` decision-matrix coverage (high, shipped through `ENG-403` / PR #917), #4 `IAuditActorAccessor` and `DefaultAuditRecorder` ambient-fallback coverage (high, shipped through `ENG-404` / PR #918), #5 provider-native CDC integration scenarios for `Cephalon.Data.SqlServer` / `.Postgres` / `.MongoDB` (medium, pending), #6 `Cephalon.AspNetCore.GraphQL` transport-mapping coverage (medium, gated on widening the package beyond route mapping), and #7 direct unit coverage for the pre-existing `DebeziumDataCdcPackTests` recursion failures (low, gated on quarantine resolution)
+    - capture the standing test-flake quarantine queue with one row for the `DebeziumDataCdcPackTests` (4 failures) entry whose root cause lives in `Cephalon.Data.Services.CdcCaptureExecutionRuntimeCatalog.Enrich` recursion
+    - capture the maintenance discipline (recommendations are append-only with stable numbers, closed recommendations are annotated rather than removed, demoted recommendations carry their demotion reason inline, quarantine rows require a deadline)
+- `docs/engine-backlog.md` ENG-407 backlog card; Sprint 125 placement updated
+
+No source changes. No reference-doc regeneration required. No test impact.
+
+Out of scope (intentional):
+
+- closing the sibling drift on `docs/architecture-review-2026-05-followups.md` (also referenced from `docs/README.md` line 99 but missing from disk) — separate slice; the test-coverage-roadmap drift is more directly tied to the ongoing `ENG-403` / `ENG-404` / `ENG-405` arc
+- promoting the doc beyond `M2` (i.e. wiring it into the conformance matrix or the planning-governance toolchain) — the `M2` baseline is the right starting maturity; promotion happens when a downstream consumer (e.g. a CI artefact, a release-validation gate) actually consumes the recommendations table programmatically
+- closing the orphaned `ENG-371` / `ENG-379` PRs `#878` / `#888` — separate small slice; this card stays scoped to the ghost-doc closeout
+- shipping any of the pending recommendations (#1 gRPC, #5 CDC integration, #6 GraphQL) — those are separate cards per the recommendation table; the point of the roadmap is to make those cards easy to author with stable references, not to ship them in the same slice
+
+Follow-up later:
+
+- when the next test-coverage slice ships (likely recommendation #1 gRPC streaming + error-mode coverage as the only remaining high-priority pending row), the closing card cites "recommendation #1 in `docs/test-coverage-roadmap.md`" by stable number and the row is annotated in place with `shipped through ENG-NNN / PR #NNNN`
+- when `Cephalon.AspNetCore.GraphQL` widens beyond route mapping, recommendation #6 promotes from `gated` to `active` and the priority is reassessed against the then-current set
+- when a second consumer for any of the private test-stub/module patterns appears, promote the relevant module to `Cephalon.Tests.Support` and update the per-recommendation row to reference the shared support type
+- when the quarantine queue gains a second row, consider whether the table needs a stable id column to cross-link from `engine-backlog.md` cards by row id rather than by test-name string
+
 ### ENG-406 Close Retrieval OTel emission docs-drift on `engine-surface-maturity-audit.md` and `components/diagnostics.md`
 
 Status: done
@@ -12593,6 +12635,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-400 Author consolidated v0.1.0-preview release-notes draft (shipped)
 - ENG-405 Direct error-mode coverage for Cephalon.AspNetCore.JsonRpc transport adapter (shipped)
 - ENG-406 Close Retrieval OTel emission docs-drift on engine-surface-maturity-audit + components/diagnostics (shipped)
+- ENG-407 Author the missing docs/test-coverage-roadmap.md (shipped)
 
 ### Later / not scheduled yet
 
