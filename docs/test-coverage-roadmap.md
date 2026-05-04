@@ -79,6 +79,27 @@ Four `DebeziumDataCdcPackTests` failures observed during full `Cephalon.Tests.Co
 
 Quality dimension: **Reliability** (existing flake).
 
+### #8 — `Cephalon.Diagnostics.Redaction` contract surface and 5-emission-site integration coverage (high priority, **shipped through `ENG-362` / `ENG-365` / `ENG-366` / `ENG-374` / `ENG-376` plus the Agentics + Retrieval emission slices `ENG-401` / `ENG-402`**)
+
+The redaction surface has 39+ tests across the contract, starter filters, orchestration, DI extension, and the three core M1 emission-site integrations:
+
+- contract types and starter filters: `tests/Cephalon.Tests.Composition/Diagnostics/Redaction/KeyMatchRedactionFilterTests.cs` (8), `RegexRedactionFilterTests.cs` (10) — `ENG-362`
+- orchestration helper: `RedactionPipelineTests.cs` (8) — `ENG-363`
+- DI registration extension: `RedactionServiceCollectionExtensionsTests.cs` (7) — `ENG-364`
+- AspNetCore middleware integration: `HttpRequestResponseLoggingMiddlewareRedactionTests.cs` (2) — `ENG-365`
+- engine runtime module-phase integration: `EngineRuntimeRedactionTests.cs` (2) — `ENG-366`
+- Wolverine dispatch integration: `WolverineEventingPackTests.cs` redaction tests (2) — `ENG-374` / `ENG-376`
+
+The Agentics tool-dispatch emission site (`ENG-401`) and the Retrieval knowledge-indexing + knowledge-query emission sites (`ENG-402`) adopt the same `Redact(activity, key, value)` helper pattern proved by the AspNetCore + EngineRuntime + Wolverine integration tests; per-site integration tests for those two sites remain a deferred gap (low priority, **gated on consumer demand**) because the helper-pattern correctness is already verified at three sites and the lazy-resolution shape is contract-typed across all five.
+
+Quality dimension: **Security + Auditability + Compliance + Reliability** (engine-boundary redaction is part of the supply-chain contract for any consumer pipeline that exports telemetry beyond the trust boundary).
+
+### #9 — `Cephalon.Resilience` engine-managed runtime coverage (medium priority, **shipped through `ENG-390` / [PR #907](https://github.com/Cephalon-Labs/CephalonEngine/pull/907)**)
+
+The 19 resilience tests under `tests/Cephalon.Tests.Composition/Behaviors/Resilience/` (e.g. `BehaviorResilienceTests`, plus the hosting-integration tests in `Cephalon.Tests.Hosting`: `BehaviorResilienceHostingTests`, `BehaviorHttpTransportResilienceHostingTests`, `BehaviorResilienceRestHostingTests`) verify that the dedicated `Cephalon.Resilience` package's policy resolver, circuit-breaker state registry, exception classifier, and execution-context keys still satisfy the resilience descriptor + Polly v8 pipeline contract after extraction from `Cephalon.Behaviors`. The 4-of-7 file move preserved git rename history at 92-99% similarity; the residual 3 files (`BehaviorResilienceExecutionMiddleware`, `BehaviorIdempotencyResolver`, `BehaviorResilienceRuntimeCatalog`) stayed in `Cephalon.Behaviors` because moving them would have widened internal surface or created circular project references — coverage of those continues to live in the existing behavior-dispatch tests.
+
+Quality dimension: **Reliability + Availability + Data Integrity** (the resilience surface is the engine's first-class retry / circuit-breaker / bulkhead / timeout / rate-limit primitive over `Microsoft.Extensions.Resilience`).
+
 ## Test-flake quarantine queue
 
 When `engine.tests.flake-rate.7d` exceeds the target, the affected test enters a quarantine queue per the *Test flake budget* rule in [`sre-posture.md`](sre-posture.md): `[Skip]`-attribute the failing test with a tracking comment within 24 hours, then either fix or delete within 7 days.

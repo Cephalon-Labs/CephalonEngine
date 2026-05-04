@@ -3925,6 +3925,29 @@ Follow-up later:
 - CDC (canonical-name pre-declaration for `Cephalon.Data` shared CDC capture surface and / or `Cephalon.Data.Debezium`) is a natural follow-up slice; deferred from this slice because the CDC surface lives inside `Cephalon.Data`'s shared runtime rather than a dedicated pack, so the right scoping (one canonical name owned by `Cephalon.Data`, or a separate name owned by `Cephalon.Data.Debezium`) needs explicit analysis first
 - the canonical names declared here will graduate from `PublicAPI.Unshipped.txt` to `PublicAPI.Shipped.txt` on the next release per the standard contract-lock-in promotion cycle
 
+### ENG-410 Extend test-coverage-roadmap with redaction-suite + Resilience-suite recommendations
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `ENG-407` (PR #921) authored the new `docs/test-coverage-roadmap.md` with 7 prioritized recommendations covering AspNetCore.Grpc / JsonRpc / GraphQL transport coverage, the MetadataDrivenAuthorizationEvaluator decision matrix, `IAuditActorAccessor` + `DefaultAuditRecorder` ambient-fallback chain, provider-native CDC integration scenarios, and the Debezium recursion-flake quarantine — but did **not** name the redaction-suite (39+ tests across `tests/Cephalon.Tests.Composition/Diagnostics/Redaction/`) or the resilience-suite (19 tests across `tests/Cephalon.Tests.Composition/Behaviors/Resilience/` and `tests/Cephalon.Tests.Hosting/`) anywhere in the *Prioritized recommendations* list
+- both suites cover real `M1`-or-higher claims that the test-coverage roadmap explicitly says belong in its tracking ("a claim is covered when the layered tests prove the claim, not when a test assembly carries the same name as the source pack"); leaving them off the list means a future maintainer reading the roadmap doesn't know that redaction or Resilience are already covered, and might write duplicate or stale coverage cards
+- this is the smallest move that closes the gap — recommendation numbering is stable per the roadmap discipline, so adding `#8` (redaction) and `#9` (Resilience) as already-shipped entries with the closing-slice annotations preserves the recommendation-number contract for downstream backlog cards
+
+Delivered:
+
+- new `#8` *Cephalon.Diagnostics.Redaction contract surface and 5-emission-site integration coverage* recommendation under `## Prioritized recommendations` in `docs/test-coverage-roadmap.md`, marked as **shipped through `ENG-362` / `ENG-365` / `ENG-366` / `ENG-374` / `ENG-376` plus the Agentics + Retrieval emission slices `ENG-401` / `ENG-402`**; itemizes the 6 test files that prove the surface (8 KeyMatch + 10 Regex + 8 Pipeline + 7 ServiceCollection + 2 AspNetCore middleware + 2 EngineRuntime + 2 Wolverine dispatch tests); flags Agentics and Retrieval per-site integration tests as a deferred gap (low priority, gated on consumer demand) because the helper-pattern correctness is verified at three sites and the lazy-resolution shape is contract-typed across all five; quality dimensions named: Security + Auditability + Compliance + Reliability
+- new `#9` *Cephalon.Resilience engine-managed runtime coverage* recommendation, marked as **shipped through `ENG-390` (PR #907)**; names the 19 tests under `tests/Cephalon.Tests.Composition/Behaviors/Resilience/` plus the hosting-layer integration tests; explains why 3 of 7 resilience files stayed in `Cephalon.Behaviors` (internal-surface widening / circular-project-reference avoidance) so the test-shape after extraction stays explainable; quality dimensions named: Reliability + Availability + Data Integrity
+- `docs/engine-backlog.md` ENG-410 backlog card; Sprint 125 placement updated
+
+Follow-up later:
+
+- when concurrent run PR #922 (ENG-408 streaming + canonical Status coverage for `Cephalon.AspNetCore.Grpc`) merges, recommendation `#1` flips from "pending" to "shipped" with the closing-slice annotation; today the entry is still pending because the PR is not yet merged
+- when `Cephalon.MultiTenancy.Governance` (PR #888) and `Cephalon.Eventing` (PR #878) OTel emission baselines land, recommendation `#8` extends to seven emission sites; refresh the entry in the same slice that lands the wiring per the maintenance discipline declared in the roadmap's *Maintenance discipline* section
+- the Agentics + Retrieval per-site integration tests can become a `#10` recommendation if the lazy-resolution-pattern correctness ever needs a per-site verification beyond the existing 3-site coverage; today it stays a deferred gap rather than a backlog card
+
 ### ENG-409 Close Cephalon.Retrieval M1 emission drift in cross-package redaction docs
 
 Status: done
@@ -12663,6 +12686,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-406 Close Retrieval OTel emission docs-drift on engine-surface-maturity-audit + components/diagnostics (shipped)
 - ENG-407 Author the missing docs/test-coverage-roadmap.md (shipped)
 - ENG-409 Close Cephalon.Retrieval M1 emission drift in cross-package redaction docs (shipped)
+- ENG-410 Extend test-coverage-roadmap with redaction-suite + Resilience-suite recommendations (shipped)
 
 ### Later / not scheduled yet
 
