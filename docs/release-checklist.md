@@ -4,7 +4,9 @@ This checklist consolidates everything a release manager runs through when cutti
 
 For per-release tracking, copy [`release-checklist-template.md`](release-checklist-template.md) into a working artefact (GitHub Release draft, Linear / Jira issue, or `docs/releases/<tag>-checklist.md`) and fill in the tickboxes there; this rule book itself is never edited per release.
 
-Cross-references: [`package-publishing.md`](package-publishing.md), [`supply-chain-uplift-plan.md`](supply-chain-uplift-plan.md), [`engineering-standards.md`](engineering-standards.md), [`compatibility.md`](compatibility.md), [`sre-posture.md`](sre-posture.md), [`dotnet11-readiness.md`](dotnet11-readiness.md), [`deployment-mode-support.md`](deployment-mode-support.md), [`engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md), [`runtime-contract-index.md`](runtime-contract-index.md), [`conformance-matrix.md`](conformance-matrix.md), [`planning-governance.md`](planning-governance.md).
+Per-release release-notes drafts live alongside the per-release checklist in `docs/releases/<tag>-notes.md`. The notes draft is the consolidated summary of substantive shipping arcs across the sprint window (engine-quality dimensions advanced, ENG range citations, compatibility posture, supply-chain posture, known gaps and limitations) that the release manager hands to the GitHub Release body when the tag is cut. The first such draft lives at [`docs/releases/v0.1.0-preview-notes.md`](releases/v0.1.0-preview-notes.md).
+
+Cross-references: [`package-publishing.md`](package-publishing.md), [`supply-chain-uplift-plan.md`](supply-chain-uplift-plan.md), [`engineering-standards.md`](engineering-standards.md), [`compatibility.md`](compatibility.md), [`sre-posture.md`](sre-posture.md), [`dotnet11-readiness.md`](dotnet11-readiness.md), [`deployment-mode-support.md`](deployment-mode-support.md), [`engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md), [`runtime-contract-index.md`](runtime-contract-index.md), [`conformance-matrix.md`](conformance-matrix.md), [`planning-governance.md`](planning-governance.md), [`releases/v0.1.0-preview-notes.md`](releases/v0.1.0-preview-notes.md).
 
 ## Pre-flight: working-tree truth
 
@@ -69,7 +71,7 @@ The signed release pipeline at [`.github/workflows/publish-release.yml`](../.git
 - [ ] [`docs/engine-roadmap.md`](engine-roadmap.md) reflects shipped phase / sprint progress; in-flight items have honest status
 - [ ] [`docs/engine-backlog.md`](engine-backlog.md) cards for the just-shipped slice are marked `Status: done` with an Issue reference and Estimate; `Sprint history and next 4 sprints` section names the closing sprint
 - [ ] [`docs/project-memory.md`](project-memory.md) collaboration agreements still hold; any decisions made during the release window that affect "how we work" are recorded here
-- [ ] When a tag is cut, the matching GitHub Release is published with a body that links the public-API delta artefact + the SLSA provenance + the SBOM bundle; release notes name the engine-quality dimensions advanced (Performance / Security / Compatibility / etc. per [`engineering-standards.md`](engineering-standards.md))
+- [ ] When a tag is cut, the matching GitHub Release is published with a body that links the public-API delta artefact + the SLSA provenance + the SBOM bundle; release notes name the engine-quality dimensions advanced (Performance / Security / Compatibility / etc. per [`engineering-standards.md`](engineering-standards.md)). When a per-release `docs/releases/<tag>-notes.md` draft exists for the tag (e.g. [`releases/v0.1.0-preview-notes.md`](releases/v0.1.0-preview-notes.md)), the release manager copies that draft into the GitHub Release body with any final timing edits and adds the SLSA provenance / Sigstore signature / SBOM bundle URLs once the pipeline produces them.
 
 ## Post-release follow-through
 
