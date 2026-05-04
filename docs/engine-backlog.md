@@ -4050,6 +4050,44 @@ Follow-up later:
 - if a future component doc lands without the badge, the convention can be re-applied with the same pattern; consider promoting the helper to permanent `scripts/` only if the engine adds enough new packs in a single arc to justify the maintenance overhead — today the 104 docs are all covered and new docs author the badge inline as part of the doc-introduction slice (e.g. `ENG-390` already authored the resilience badge inline rather than relying on a follow-up batch)
 - once `Cephalon.Eventing` (PR #878) and `Cephalon.MultiTenancy.Governance` (PR #888) OTel emission baselines land, their component docs will need refreshes for the new emission posture; the badge frontmatter stays valid, only the *What it owns* and *Maturity and ownership* sections will need updates
 
+### ENG-406 Close Retrieval OTel emission docs-drift on `engine-surface-maturity-audit.md` and `components/diagnostics.md`
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `ENG-402` (PR #916, merged 2026-05-04) shipped the `Cephalon.Retrieval` OTel adapter activity emission baseline through the new public `RetrievalDiagnostics` adapter and wired one `retrieval.knowledge.index` activity per `IKnowledgeIndexer.IndexAsync` plus one `retrieval.knowledge.query` activity per `IKnowledgeQueryEngine.QueryAsync`, but the `Cephalon.Diagnostics` row in [`docs/engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md) and the matching maturity bullet in [`docs/components/diagnostics.md`](components/diagnostics.md) still claimed the retrieval companion pack "does not yet emit, so the subscription is a no-op until it ships its first `ActivitySource` / `Meter` instances" — that text became stale the moment `ENG-402` merged
+- the same audit row's follow-up paragraph still listed `retrieval` as a remaining baseline ("per-companion-pack OTel adapter emission baseline for CDC / retrieval (canonical names pre-declared for retrieval; …)"), which contradicts the row's own description that already mentions "OTel-emission baseline" as a shipped capability for `Cephalon.Retrieval`
+- the same follow-up paragraph also referenced the in-flight `ENG-371` / `ENG-379` PR pair as still tracking eventing / multi-tenancy governance OTel emission, but `ENG-371` was reused for the shipped `RS0026`/`RS0027` suppression-cleanup work (line 12537 of `engine-backlog.md`) and `ENG-379` PRs `#878` / `#888` are stale `CONFLICTING` orphans on superseded base commits — the follow-up text was pointing at dead in-flight work rather than describing the actual remaining baseline for those packs
+- repo-truth rule #9 ("ปลี่ยน code โดยดู docs graph ที่เกี่ยวข้องทุกครั้ง ไม่แก้ source แล้วปล่อย docs drift") and rule #12 ("ถ้า docs ปัจจุบันขัดกับ shape ที่ดีกว่า ให้แก้ไข docs + source + planning truth") explicitly require closing this kind of drift the moment it appears
+- claiming `ENG-406` continues the post-`ENG-401`/`ENG-402`/`ENG-403`/`ENG-404`/`ENG-405` sequence; per the auto-memory `feedback_eng_number_allocation` warning, `gh pr list` confirmed no concurrent run had taken `406`
+
+Delivered:
+
+- `docs/engine-surface-maturity-audit.md` header date stamp updated from `May 4, 2026` post-`ENG-401` to `May 5, 2026` post-`ENG-402` (and noting the `ENG-406` docs-drift closeout)
+- `docs/engine-surface-maturity-audit.md` `Cephalon.Diagnostics` row description updated: the parenthetical now reads "`.Retrieval` now emits one `retrieval.knowledge.index` activity per `IKnowledgeIndexer.IndexAsync` and one `retrieval.knowledge.query` activity per `IKnowledgeQueryEngine.QueryAsync` plus the matching `cephalon.retrieval.index_runs` / `cephalon.retrieval.queries` counters via the `RetrievalDiagnostics` adapter shipped through `ENG-402`; `.Eventing` and `.MultiTenancyGovernance` remain pre-declared canonical-name-only sources whose subscription is a no-op until those companion packs ship their first emission baseline"
+- `docs/engine-surface-maturity-audit.md` `Cephalon.Diagnostics` row follow-up paragraph updated: drops `retrieval` from the remaining-baseline list (it shipped through `ENG-402`), reorders the remaining baselines as `Cephalon.Eventing`, `Cephalon.MultiTenancy.Governance`, and `Cephalon.Data` CDC, and replaces the dead `in-flight ENG-371` / `in-flight ENG-379` references with one accurate sentence noting that the prior PR pair stalled, those numbers were reused for shipped suppression-cleanup work, and the next emission baseline ships under a fresh ENG card per pack rather than reviving the orphaned PRs
+- `docs/components/diagnostics.md` *Maturity and ownership* `Cephalon.Observability.OpenTelemetry` bullet updated with the same Retrieval-now-emits / Eventing+MultiTenancyGovernance-still-pending phrasing so both surfaces describe the post-`ENG-402` state in lock-step
+- `docs/engine-backlog.md` ENG-406 backlog card; Sprint 125 placement updated
+
+No source changes. No reference-doc regeneration required (no `PublicAPI.*.txt`, no `[Public]` member changes, no engine-emitting code changes). No test impact.
+
+Out of scope (intentional):
+
+- the actual `Cephalon.Eventing`, `Cephalon.MultiTenancy.Governance`, and `Cephalon.Data` CDC OTel adapter activity emission baselines — separate cards per pack; the orphaned PRs `#878` / `#888` will not be revived because the base commits and ENG numbers are no longer recoverable
+- closing or commenting on the orphaned PRs `#878` / `#888` themselves — this slice corrects the drift in the audit/diagnostics doc graph; the upstream PR housekeeping is a separate small slice if it's worth doing at all (the PRs are visibly stale and `CONFLICTING`, so they don't actively mislead readers any more than the absent text would)
+- the medium-priority provider-native CDC slices (SQL Server / Postgres / MongoDB) and the high-priority gRPC streaming + error-mode slice from the same standing test-coverage planning text — separate cards
+- adopting the per-page maturity-badge convention across `docs/components/diagnostics.md` if it isn't already badged — a separate slice; this card stays scoped to the post-`ENG-402` claim drift
+- updating any sample, getting-started, or release-notes prose that might reference Retrieval emission in stale wording — a separate audit pass; this slice closes the two drift sites surfaced by the `pre-declared canonical name|does not yet emit` audit grep against `docs/`
+
+Follow-up later:
+
+- ship the `Cephalon.Eventing` OTel adapter activity emission baseline under a fresh ENG card following the `ENG-401` (Agentics) / `ENG-402` (Retrieval) shape: a public `EventingDiagnostics` adapter exposing the canonical activity-source / meter / counter names, a small set of stable activities (publication-staged, publication-dispatch, subscription-dispatch) wired into the in-process publication-staging and dispatch paths, and a corresponding row update on this audit + the diagnostics component doc
+- ship the `Cephalon.MultiTenancy.Governance` OTel adapter activity emission baseline under a fresh ENG card with the same shape — the convention contributor already lists the membership / invitation / delivery-dispatch / delivery-status-reconciliation / domain-ownership event taxonomy, so the emission slice picks the highest-frequency couple of those for the baseline
+- ship the `Cephalon.Data` CDC OTel adapter activity emission baseline under a fresh ENG card — wrap the shared `data-cdc-capture-pump` execution lifecycle and the `acknowledge-cdc-progress` checkpoint commit so the canonical CDC name set finally has emission to match the catalog truth
+- once all three above ship, the `Cephalon.Diagnostics` row's follow-up paragraph collapses to "all canonical names emit on every shipped Cephalon.* package" and that audit row promotes from the current `M4` *adoption-quality* posture to whatever ceiling the engineering-standards next-tier text declares
+
 ### ENG-405 Direct error-mode coverage for `Cephalon.AspNetCore.JsonRpc` transport adapter
 
 Status: done
@@ -12554,6 +12592,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-393 Adopt per-page maturity-badge convention across remaining 44 component docs (final batch) (shipped)
 - ENG-400 Author consolidated v0.1.0-preview release-notes draft (shipped)
 - ENG-405 Direct error-mode coverage for Cephalon.AspNetCore.JsonRpc transport adapter (shipped)
+- ENG-406 Close Retrieval OTel emission docs-drift on engine-surface-maturity-audit + components/diagnostics (shipped)
 
 ### Later / not scheduled yet
 
