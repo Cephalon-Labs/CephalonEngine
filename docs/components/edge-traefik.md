@@ -1,5 +1,7 @@
 # Cephalon.Edge.Traefik
 
+> **Maturity:** `M3` · **Ownership:** `provider-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Edge.Traefik` is the second provider-specific control-plane materializer pack for Cephalon cell traffic automation. It proves that the shared provider-materializer seam is not overfit to Kubernetes Gateway API by projecting truthful Traefik `IngressRoute` intent and, when enabled, overlaying live Traefik CRD observation, ownership-aware `IngressRoute` apply-and-reconcile posture, typed provider materialization conditions, and additive cleanup sweeps for both primary routes and safe owned dependents back onto the same shared runtime surfaces without moving Traefik-specific assumptions into `Cephalon.Engine`.
 
 ## What it owns

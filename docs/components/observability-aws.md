@@ -1,5 +1,7 @@
 # Cephalon.Observability.Aws
 
+> **Maturity:** `M1` · **Ownership:** `cephalon-managed` (family-covered by maturity audit) — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Observability.Aws` adds AWS-hosted OTLP defaults for Cephalon hosts.
 
 ## What it owns

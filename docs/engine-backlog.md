@@ -3925,6 +3925,30 @@ Follow-up later:
 - CDC (canonical-name pre-declaration for `Cephalon.Data` shared CDC capture surface and / or `Cephalon.Data.Debezium`) is a natural follow-up slice; deferred from this slice because the CDC surface lives inside `Cephalon.Data`'s shared runtime rather than a dedicated pack, so the right scoping (one canonical name owned by `Cephalon.Data`, or a separate name owned by `Cephalon.Data.Debezium`) needs explicit analysis first
 - the canonical names declared here will graduate from `PublicAPI.Unshipped.txt` to `PublicAPI.Shipped.txt` on the next release per the standard contract-lock-in promotion cycle
 
+### ENG-393 Adopt per-page maturity-badge convention across remaining 44 component docs (final batch)
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `ENG-382` introduced the per-page maturity-badge frontmatter convention and `ENG-383` through `ENG-387` rolled it across 6 batches covering core-runtime / technology-follow-through / behaviors+eventing / data / event-sourcing / multi-tenancy-governance entry points
+- 44 component docs were still missing the badge after batch 6 — the audit/identity/edge/cli/ids/scaffolding/reference-docs entry points plus all 33 observability docs (15 cloud/exporter configuration packs + 18 per-provider dependency-health probe packs) plus the freshly-shipped `resilience.md` from `ENG-390`
+- closing the gap in one final batch is the right move because the remaining 44 docs share three uniform maturity profiles by family (M1 cephalon-managed config-binding observability, M0 taxonomy-only dependency probes, plus a small set of one-off packages with mixed/provider-managed ownership) — bulk-applying the badges in one slice with a one-shot PowerShell helper takes minutes and gives every component doc the same surfaced metadata so adopters reading any page see the maturity label without scrolling
+
+Delivered:
+
+- new `docs/components/audit.md`, `audit-entityframework.md`, `cli.md`, `edge-kubernetes-gateway.md`, `edge-traefik.md`, `identity.md`, `identity-aspnetcore.md`, `ids-sfid.md`, `reference-docs.md`, `scaffolding.md`, `observability.md`, `resilience.md` frontmatter badges authored from the maturity-audit + conformance-matrix per-package rows (M1 mixed, M1 provider-managed, M4 cephalon-managed, M3 provider-managed, M3 provider-managed, M1 mixed, M1 application-managed, M2 cephalon-managed, M4 cephalon-managed, M4 cephalon-managed, M2 cephalon-managed, M2 mixed)
+- new frontmatter badges across all 14 observability cloud/exporter configuration packs (`alibaba-cloud`, `aws`, `azure-monitor`, `digitalocean`, `gcp`, `grafana-cloud`, `huawei-cloud`, `kubernetes`, `new-relic`, `openshift`, `opentelemetry`, `oracle-cloud`, `serilog`, `tanzu`) — all `M1` `cephalon-managed` per the consolidated observability family row in the maturity audit, with the `(family-covered by maturity audit)` tag matching the conformance matrix
+- new frontmatter badges across all 18 per-provider dependency-health probe packs (`cassandra`, `clickhouse`, `consul`, `elasticsearch`, `http`, `kafka`, `memcached`, `mongodb`, `mqtt`, `mysql`, `nats`, `neo4j`, `opensearch`, `oracle`, `postgres`, `rabbitmq`, `redis`, `sqlserver` dependencies) — all `M0` `taxonomy-only` per the same family-covered audit row
+- 44 docs touched in total; the only `docs/components/*.md` file not modified is `README.md` (the components-index page, which already has its own *Maturity at a glance* section pointing at the audit + matrix)
+- one-shot UTF-8-safe PowerShell helper used to insert the badge as a blockquote line directly after the H1 heading, pattern-matching either `H1\n\n` or `H1\n` followed by content and inserting the badge plus a separating blank line; the helper was deleted after use because the bulk strip is a one-time application of the convention rather than a recurring need
+
+Follow-up later:
+
+- if a future component doc lands without the badge, the convention can be re-applied with the same pattern; consider promoting the helper to permanent `scripts/` only if the engine adds enough new packs in a single arc to justify the maintenance overhead — today the 104 docs are all covered and new docs author the badge inline as part of the doc-introduction slice (e.g. `ENG-390` already authored the resilience badge inline rather than relying on a follow-up batch)
+- once `Cephalon.Eventing` (PR #878) and `Cephalon.MultiTenancy.Governance` (PR #888) OTel emission baselines land, their component docs will need refreshes for the new emission posture; the badge frontmatter stays valid, only the *What it owns* and *Maturity and ownership* sections will need updates
+
 ### ENG-390 Extract Cephalon.Resilience package from Cephalon.Behaviors
 
 Status: done
@@ -12390,6 +12414,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-386 Adopt per-page maturity-badge convention across Cephalon.EventSourcing.* provider packs (batch 5) (shipped)
 - ENG-387 Adopt per-page maturity-badge convention across Cephalon.MultiTenancy.Governance.* companions (batch 6) (shipped)
 - ENG-390 Extract Cephalon.Resilience package from Cephalon.Behaviors (shipped) — originally drafted as ENG-381; renumbered after concurrent run claimed ENG-381 for the Diagnostics activity-source / meter pre-declaration
+- ENG-393 Adopt per-page maturity-badge convention across remaining 44 component docs (final batch) (shipped)
 
 ### Later / not scheduled yet
 

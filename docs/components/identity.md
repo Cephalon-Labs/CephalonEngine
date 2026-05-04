@@ -1,5 +1,7 @@
 # Cephalon.Identity
 
+> **Maturity:** `M1` · **Ownership:** mixed: `cephalon-managed` default evaluator/runtime/catalog/diagnostics + `application-managed` identity scheme and principal flow — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Identity` is the host-agnostic identity and authorization companion package for Cephalon.
 
 ## What it owns
