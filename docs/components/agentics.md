@@ -16,6 +16,7 @@
 - run-state reporting for tool executions, including retry-scheduled, approval-required, duplicate-completed, and terminal-failure posture
 - policy and observer hooks for approval, denial, audit, and operational projection
 - runtime-surface contribution for introspection
+- the public `AgenticsDiagnostics` OpenTelemetry adapter declared against `CephalonActivitySources.Agentics` and `CephalonMeters.Agentics`; the in-process tool dispatcher emits one `agentics.tool.dispatch` activity per `IAgentToolDispatcher.ExecuteAsync` call with stable Cephalon-prefix tags (`cephalon.agentics.dispatcher.id`, `cephalon.agentics.tool.id`, `cephalon.agentics.run.id`, `cephalon.agentics.actor.id`, `cephalon.agentics.correlation.id`, `cephalon.agentics.attempt`, `cephalon.agentics.execution.outcome`) plus a `cephalon.agentics.tool_executions` counter, all routed through the `RedactionPipeline` resolved from DI so consumer-registered redaction filters scrub dispatcher-emission attributes uniformly with the AspNetCore middleware and engine-runtime emission sites
 
 ## Main surfaces
 
@@ -28,6 +29,7 @@
 - `Services/IAgentToolContributor.cs`
 - `Services/IAgentToolCatalog.cs`
 - `Services/AgentToolDispatcher.cs`
+- `Services/AgenticsDiagnostics.cs`
 - `Services/IAgentToolExecutor.cs`
 - `Services/IAgentToolExecutionPolicy.cs`
 - `Services/IAgentToolExecutionObserver.cs`

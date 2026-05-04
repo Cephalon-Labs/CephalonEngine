@@ -1,1 +1,13 @@
 #nullable enable
+const Cephalon.Agentics.Services.AgenticsDiagnostics.ActivitySourceName = "Cephalon.Agentics" -> string!
+const Cephalon.Agentics.Services.AgenticsDiagnostics.ActorIdTag = "cephalon.agentics.actor.id" -> string!
+const Cephalon.Agentics.Services.AgenticsDiagnostics.AttemptTag = "cephalon.agentics.attempt" -> string!
+const Cephalon.Agentics.Services.AgenticsDiagnostics.CorrelationIdTag = "cephalon.agentics.correlation.id" -> string!
+const Cephalon.Agentics.Services.AgenticsDiagnostics.DispatcherIdTag = "cephalon.agentics.dispatcher.id" -> string!
+const Cephalon.Agentics.Services.AgenticsDiagnostics.ExecutionOutcomeTag = "cephalon.agentics.execution.outcome" -> string!
+const Cephalon.Agentics.Services.AgenticsDiagnostics.MeterName = "Cephalon.Agentics" -> string!
+const Cephalon.Agentics.Services.AgenticsDiagnostics.RunIdTag = "cephalon.agentics.run.id" -> string!
+const Cephalon.Agentics.Services.AgenticsDiagnostics.ToolDispatchActivityName = "agentics.tool.dispatch" -> string!
+const Cephalon.Agentics.Services.AgenticsDiagnostics.ToolDispatchCounterName = "cephalon.agentics.tool_executions" -> string!
+const Cephalon.Agentics.Services.AgenticsDiagnostics.ToolIdTag = "cephalon.agentics.tool.id" -> string!
+Cephalon.Agentics.Services.AgenticsDiagnostics
