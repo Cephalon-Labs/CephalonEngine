@@ -8,7 +8,7 @@ namespace Cephalon.Diagnostics.Redaction;
 /// </summary>
 /// <remarks>
 /// <para>
-/// At M1 maturity the engine routes five emission sites through registered filters:
+/// At M1 maturity the engine routes six emission sites through registered filters:
 /// <c>Cephalon.AspNetCore</c>'s HTTP request/response logging middleware (HTTP request/response
 /// span tags and activity events), <c>Cephalon.Engine</c>'s module-phase runtime activity tags
 /// (<c>runtime.{phase}</c> and <c>module.{phase}</c> spans during initialize/start/stop),
@@ -17,12 +17,15 @@ namespace Cephalon.Diagnostics.Redaction;
 /// <c>cephalon.correlation_id</c> / <c>cephalon.message_id</c>),
 /// <c>Cephalon.Agentics</c>'s in-process tool-dispatch activity tags (the
 /// <c>agentics.tool.dispatch</c> span emitted under <c>CephalonActivitySources.Agentics</c> with
-/// dispatcher / tool / run / actor / correlation identifiers), and <c>Cephalon.Retrieval</c>'s
+/// dispatcher / tool / run / actor / correlation identifiers), <c>Cephalon.Retrieval</c>'s
 /// knowledge-indexing and knowledge-query activity tags (the <c>retrieval.knowledge.index</c>
 /// and <c>retrieval.knowledge.query</c> spans emitted under
-/// <c>CephalonActivitySources.Retrieval</c>). All five sites pipe values through the registered
-/// <see cref="RedactionPipeline"/> resolved from DI before the value reaches an exporter.
-/// Additional emission sites (worker lifecycle spans, future eventing publishers, multi-tenancy
+/// <c>CephalonActivitySources.Retrieval</c>), and <c>Cephalon.Worker</c>'s lifecycle activity
+/// tags (the <c>worker.lifecycle.start</c> and <c>worker.lifecycle.stop</c> spans emitted under
+/// <c>CephalonActivitySources.Worker</c> with <c>cephalon.lifecycle.phase</c> /
+/// <c>cephalon.blueprint</c> / <c>cephalon.module.count</c> tags). All six sites pipe values
+/// through the registered <see cref="RedactionPipeline"/> resolved from DI before the value
+/// reaches an exporter. Additional emission sites (future eventing publishers, multi-tenancy
 /// governance once its OTel adapter lands) will adopt the same pattern as the surface continues
 /// to promote. The contract guarantees the runtime honors are:
 /// </para>
