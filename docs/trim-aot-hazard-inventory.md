@@ -68,11 +68,16 @@ The `Cephalon.EventSourcing.*` provider family persists event payloads alongside
 
 The remediation is uniform: introduce a `Cephalon.EventSourcing` compile-time event-type registry interface that providers consume instead of `Type.GetType`. The interface can be source-generated from the consuming app's known event-contract assembly. Until that ships, every `Cephalon.EventSourcing.*` provider stays `medium` and `not-claimed` for AOT.
 
-### `low` — bounded closed-generic instantiation in REST shape
+### `medium` (reclassified from `low` via `ENG-432`) — REST endpoint group reflection across method dispatch + generic shape
 
-| Package | File | Line | Pattern | Why `low` |
+A deeper read of `Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup` after the `ENG-426` first pass surfaced three additional reflection sites alongside the original `MakeGenericType(ResultModel<>)` site that ENG-426 had logged. The full set is real open-generic *method* dispatch — not just the closed-generic *type* wrapper — so the package belongs in the `medium` tier (uniform remediation through source-gen-emitted dispatch table) rather than the `low` tier (single annotation site).
+
+| Package | File | Line | Pattern | Notes |
 | --- | --- | --- | --- | --- |
-| `Cephalon.Behaviors.Http` | `Hosting/BehaviorRestEndpointGroup.cs` | 700 | `typeof(ResultModel<>).MakeGenericType(contract.ResponseType)` | The closed-over set is small (one `ResultModel<TResponse>` per profile contract) and the generic shape is fully driven by compile-time-known `contract.ResponseType` values. Likely fixable through `DynamicDependency` attributes plus a `[RequiresDynamicCode]` annotation on the wrapper, or a source-gen rewrite that emits the closed `ResultModel<TResponse>` directly. |
+| `Cephalon.Behaviors.Http` | `Hosting/BehaviorRestEndpointGroup.cs` | 32-36 | Five `static readonly MethodInfo` fields initialized via `GetRequiredCoreMethod(nameof(...))` which calls `typeof(BehaviorRestEndpointGroup).GetMethod(name, BindingFlags.NonPublic \| BindingFlags.Static)` | Reflective lookup of five non-public static helper methods (`MapBehavior{Delete,Get,Patch,Post,Put}Core`) at type-init time. AOT-safe replacement is direct method references (no `MethodInfo` indirection) once the source-gen rewrite below is in place. |
+| `Cephalon.Behaviors.Http` | `Hosting/BehaviorRestEndpointGroup.cs` | 486 | `coreMethod.MakeGenericMethod(typeof(TBehavior), contract.InputType, contract.OutputType)` | Open-generic *method* dispatch over an arbitrary `(TBehavior, TInput, TOutput)` triple drawn from runtime `contract` data. This is the dominant hazard in the file. Source-gen-emitted dispatch table keyed by behavior identity is the AOT-safe path; the same generator could also retire the line-32-36 `MethodInfo` fields. |
+| `Cephalon.Behaviors.Http` | `Hosting/BehaviorRestEndpointGroup.cs` | 487 | `(RouteHandlerBuilder)closedMethod.Invoke(null, [this, pattern, contract])!` | Reflection-based method invocation following the `MakeGenericMethod`. Removed by the same source-gen rewrite. |
+| `Cephalon.Behaviors.Http` | `Hosting/BehaviorRestEndpointGroup.cs` | 700 | `typeof(ResultModel<>).MakeGenericType(contract.ResponseType)` | Original ENG-426 entry. Closed-generic wrapper for the response envelope; same source-gen path emits the closed `ResultModel<TResponse>` directly. |
 
 ## Clean-baseline (no observed hazards)
 
@@ -86,8 +91,8 @@ This is a strong claim only at the *Cephalon source-code* layer. Every package i
 | --- | --- | --- |
 | `excluded-by-design` | 2 | not part of the deployment-mode story |
 | `clean-baseline` | ~88 first-party packages (transitive validation pending) | `not-claimed`, blocked on harness + transitive validation |
-| `low` | 1 (`Cephalon.Behaviors.Http`) | `not-claimed`; small annotation/source-gen window |
-| `medium` | 10 (`Cephalon.EventSourcing.*` providers) | `not-claimed`; uniform remediation through compile-time event-type registry |
+| `low` | 0 (the original `Cephalon.Behaviors.Http` entry was reclassified to `medium` via `ENG-432` after a deeper read surfaced open-generic *method* dispatch alongside the original closed-generic *type* wrapper) | n/a |
+| `medium` | 11 (10 `Cephalon.EventSourcing.*` providers + `Cephalon.Behaviors.Http`) | `not-claimed`; uniform remediation through compile-time event-type registry (EventSourcing) or source-gen-emitted dispatch table (Behaviors.Http) |
 | `high` | 3 (`Cephalon.Engine`, `Cephalon.Behaviors`, `Cephalon.Behaviors.Patterns`) | `not-claimed`; structural remediation required (source-gen-emitted module manifest + adapter table + behavior-type registry) |
 
 These counts will move only when remediation slices ship. The doc must be re-run by the same `Grep` queries described in *Scope and method* whenever a new pattern is introduced or removed; the validation harness will eventually emit this inventory automatically as part of its project-property + reflection-pattern audit phase.
