@@ -24,6 +24,43 @@ Current focus:
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
 - treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md) for release validation, and `cephalon doctor --scorecard <path>` provides a local CLI readback over that generated artifact without becoming source truth
 
+### ENG-462 Retire Cephalon.Data command/query dispatch reflection
+
+Status: done
+Estimate: 5
+Issue: #1061
+
+Why:
+
+- core `Cephalon.Data` still resolved default command/query store handlers through runtime `MethodInfo` lookup, `MakeGenericMethod`, and `CreateDelegate`
+- the default read/write store can stay low-code for consumers while using registered closed-generic dispatch descriptors instead of hidden open-generic reflection
+- the deployment-mode manifest must remove only the retired `Cephalon.Data` row and keep global trim, Native AOT, and single-file support `not-claimed`
+
+Delivered:
+
+- add `AddCephalonDataCommand<TCommand>()`, `AddCephalonDataCommand<TCommand, TResult>()`, and `AddCephalonDataQuery<TQuery, TResult>()` service-registration helpers for dispatchable handler shapes
+- add internal command/query dispatch descriptors plus a deterministic dispatch registry consumed by the default `HandlerDispatchingReadStore` and `HandlerDispatchingWriteStore`
+- remove `System.Reflection`, `MakeGenericMethod`, `CreateDelegate`, and `GetMethod(...)` from the two default store files
+- keep missing handler and missing dispatch-shape failures explicit so hosts know whether they forgot the handler service or the dispatch descriptor
+- remove the core `Cephalon.Data` medium-tier package row from `scripts/deployment-mode-support.json`, reducing the current manifest-backed inventory to 9 package entries, 6 packages with known hazards, and 29 known hazard entries
+- update Data component docs, deployment-mode support, trim/AOT hazard inventory, compatibility, `.NET 11` readiness, generated reference docs, architecture follow-ups, roadmap, backlog, and project memory without widening global support claims
+
+Validation:
+
+- passed `dotnet build src/Cephalon.Data/Cephalon.Data.csproj --no-restore /p:UseSharedCompilation=false`
+- passed `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --no-restore --no-build --filter "FullyQualifiedName~DataRuntimePackTests"` (31 tests)
+- passed `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj --no-restore --no-build --filter "FullyQualifiedName=Cephalon.Tests.Tooling.PackageSurfaceTests.DataDefaultStoresUseRegisteredDispatchDescriptorsWithoutOpenGenericReflection"` (1 test)
+- passed `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj --no-restore --no-build --filter "FullyQualifiedName=Cephalon.Tests.Tooling.PackageSurfaceTests.DataAssemblyExposesOnlyTheDocumentedPackContracts"` (1 test)
+- passed `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/deployment-mode-support-manifest.Tests.ps1` (32 tests)
+- passed `pwsh ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode all -SkipPublish -OutputPath artifacts/deployment-mode-claims-eng462` with aggregate `not-claimed`, 9 package entries, 6 packages with known hazards, and 29 known hazard entries
+- passed `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/validate-deployment-mode-claims.Tests.ps1` (77 tests)
+- passed `pwsh ./scripts/publish-reference-docs.ps1 -Configuration Debug -SkipBuild` after the public `Cephalon.Data` extension addition (86 reference doc files generated)
+
+Follow-up later:
+
+- continue structural remediation for the remaining `medium` `Cephalon.Behaviors.Http` dispatch/profile hazards before promoting any global deployment-mode row
+- continue high-tier structural remediation for `Cephalon.Engine`, `Cephalon.Behaviors`, `Cephalon.Behaviors.Patterns`, and `Cephalon.Data.MySql`
+
 ### ENG-461 Remove EventSourcing persisted type-name reflection
 
 Status: done
@@ -57,7 +94,7 @@ Validation:
 
 Follow-up later:
 
-- continue structural remediation for the remaining `medium` `Cephalon.Behaviors.Http` and `Cephalon.Data` dispatch hazards before promoting any global deployment-mode row
+- continue structural remediation for the remaining `medium` `Cephalon.Behaviors.Http` dispatch/profile hazards before promoting any global deployment-mode row
 
 ### ENG-460 Remove remaining CDC capture failure metadata reflection
 

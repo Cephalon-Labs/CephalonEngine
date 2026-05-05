@@ -30,6 +30,7 @@ internal sealed class DataModule(DataRuntimeOptions options) : ModuleBase, IExec
         ArgumentNullException.ThrowIfNull(services);
 
         services.TryAddSingleton(options);
+        services.TryAddSingleton<DataDispatchRegistry>();
         if (options.RegisterReadStore)
         {
             services.TryAddScoped<Abstractions.Data.IReadStore, HandlerDispatchingReadStore>();

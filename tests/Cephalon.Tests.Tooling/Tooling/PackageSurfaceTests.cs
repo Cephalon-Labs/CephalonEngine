@@ -1029,7 +1029,27 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Data.Services.ICdcCaptureRuntimeReporter),
             typeof(global::Cephalon.Data.Services.ICdcCaptureExecutionRuntimeContributor),
             typeof(global::Cephalon.Data.Services.ICdcCaptureExecutionRuntimeRegistry),
+            typeof(global::Cephalon.Data.Registration.DataDispatchServiceCollectionExtensions),
             typeof(global::Cephalon.Data.Registration.DataEngineBuilderExtensions));
+    }
+
+    [Fact]
+    public void DataDefaultStoresUseRegisteredDispatchDescriptorsWithoutOpenGenericReflection()
+    {
+        var sourceFiles = new[]
+        {
+            RepositoryPaths.GetFile("src", "Cephalon.Data", "Services", "HandlerDispatchingReadStore.cs"),
+            RepositoryPaths.GetFile("src", "Cephalon.Data", "Services", "HandlerDispatchingWriteStore.cs")
+        };
+
+        foreach (var file in sourceFiles)
+        {
+            var source = File.ReadAllText(file);
+            Assert.DoesNotContain("System.Reflection", source);
+            Assert.DoesNotContain("MakeGenericMethod", source);
+            Assert.DoesNotContain("CreateDelegate", source);
+            Assert.DoesNotContain("GetMethod(", source);
+        }
     }
 
     [Fact]

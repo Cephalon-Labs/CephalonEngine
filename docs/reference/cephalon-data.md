@@ -319,6 +319,75 @@ Gets or sets a value indicating whether the pack should register the default wri
 
 ## Namespace Cephalon.Data.Registration
 
+<a id="type-cephalon-data-registration-datadispatchservicecollectionextensions"></a>
+
+### `DataDispatchServiceCollectionExtensions`
+
+Registers trim-friendly Cephalon.Data command and query dispatch descriptors.
+
+#### Declaration
+```csharp
+public static class DataDispatchServiceCollectionExtensions
+```
+
+#### Methods
+
+<a id="member-m-cephalon-data-registration-datadispatchservicecollectionextensions-addcephalondatacommand-1-microsoft-extensions-dependencyinjection-iservicecollection"></a>
+
+##### `AddCephalonDataCommand`
+
+```csharp
+IServiceCollection AddCephalonDataCommand<TCommand>(this IServiceCollection services)
+```
+
+Adds a dispatch descriptor for a command handled by `ICommandHandler<T>`.
+
+Returns: The same service collection for fluent registration.
+
+Type parameters:
+- `TCommand`: The command type that should be dispatchable through `IWriteStore`.
+
+Parameters:
+- `services`: The service collection to extend.
+
+<a id="member-m-cephalon-data-registration-datadispatchservicecollectionextensions-addcephalondatacommand-2-microsoft-extensions-dependencyinjection-iservicecollection"></a>
+
+##### `AddCephalonDataCommand`
+
+```csharp
+IServiceCollection AddCephalonDataCommand<TCommand, TResult>(this IServiceCollection services)
+```
+
+Adds a dispatch descriptor for a result-returning command handled by `ICommandHandler<T1, T2>`.
+
+Returns: The same service collection for fluent registration.
+
+Type parameters:
+- `TCommand`: The command type that should be dispatchable through `IWriteStore`.
+- `TResult`: The result type returned by the command handler.
+
+Parameters:
+- `services`: The service collection to extend.
+
+<a id="member-m-cephalon-data-registration-datadispatchservicecollectionextensions-addcephalondataquery-2-microsoft-extensions-dependencyinjection-iservicecollection"></a>
+
+##### `AddCephalonDataQuery`
+
+```csharp
+IServiceCollection AddCephalonDataQuery<TQuery, TResult>(this IServiceCollection services)
+```
+
+Adds a dispatch descriptor for a query handled by `IQueryHandler<T1, T2>`.
+
+Returns: The same service collection for fluent registration.
+
+Type parameters:
+- `TQuery`: The query type that should be dispatchable through `IReadStore`.
+- `TResult`: The result type returned by the query handler.
+
+Parameters:
+- `services`: The service collection to extend.
+
 <a id="type-cephalon-data-registration-dataenginebuilderextensions"></a>
 
 ### `DataEngineBuilderExtensions`

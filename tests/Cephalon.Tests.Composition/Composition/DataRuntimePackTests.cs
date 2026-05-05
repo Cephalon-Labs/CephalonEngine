@@ -67,6 +67,7 @@ public sealed class DataRuntimePackTests
     public async Task AddDataThrowsHelpfulErrorWhenCommandHandlerIsMissing()
     {
         var services = new ServiceCollection();
+        services.AddCephalonDataCommand<MissingCommand>();
         services.AddCephalon(engine =>
         {
             engine.UseSettings(new EngineSettings(blueprint: "ModularMonolith"));
@@ -83,6 +84,28 @@ public sealed class DataRuntimePackTests
 
         Assert.Contains(nameof(MissingCommand), exception.Message, StringComparison.Ordinal);
         Assert.Contains(nameof(ICommandHandler<MissingCommand>), exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task AddDataThrowsHelpfulErrorWhenCommandDispatchDescriptorIsMissing()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(blueprint: "ModularMonolith"));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddData();
+        });
+
+        using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        var writeStore = scope.ServiceProvider.GetRequiredService<IWriteStore>();
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+            await writeStore.ExecuteAsync(new MissingCommand("missing")));
+
+        Assert.Contains(nameof(MissingCommand), exception.Message, StringComparison.Ordinal);
+        Assert.Contains("AddCephalonDataCommand", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]

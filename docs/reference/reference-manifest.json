@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-05T20:25:17.5124654+00:00",
+  "GeneratedAtUtc": "2026-05-05T20:57:44.9225365+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -72,7 +72,7 @@
       "Description": "Runtime-neutral data dispatching services for Cephalon workloads.",
       "FileName": "cephalon-data.md",
       "NamespaceCount": 3,
-      "TypeCount": 8
+      "TypeCount": 9
     },
     {
       "AssemblyName": "Cephalon.Data.Debezium",
@@ -1024,7 +1024,7 @@
       "AssemblyName": "Cephalon.Data",
       "FileName": "cephalon-data.md",
       "AnchorId": "namespace-cephalon-data-registration",
-      "TypeCount": 1
+      "TypeCount": 2
     },
     {
       "NamespaceName": "Cephalon.Data.Services",
@@ -7273,6 +7273,21 @@
         "Fields": 0,
         "Properties": 8,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "DataDispatchServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Data.Registration",
+      "AssemblyName": "Cephalon.Data",
+      "FileName": "cephalon-data.md",
+      "AnchorId": "type-cephalon-data-registration-datadispatchservicecollectionextensions",
+      "Declaration": "public static class DataDispatchServiceCollectionExtensions",
+      "Summary": "Registers trim-friendly Cephalon.Data command and query dispatch descriptors.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 3
       }
     },
     {
@@ -22086,6 +22101,39 @@
       "AnchorId": "member-m-cephalon-observability-consuldependencies-hosting-consuldependencyhealthservicecollectionextensions-addcephalonconsuldependencyhealth-microsoft-extensions-dependencyinjection-iservicecollection-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-observability-consuldependencies-configuration-consuldependencyhealthoptions",
       "Signature": "IServiceCollection AddCephalonConsulDependencyHealth(this IServiceCollection services, IConfiguration configuration, Action\u003CConsulDependencyHealthOptions\u003E configure)",
       "Summary": "Adds Consul dependency-health services using configuration as the primary source of probe settings."
+    },
+    {
+      "DisplayName": "AddCephalonDataCommand",
+      "Category": "Methods",
+      "DeclaringTypeName": "DataDispatchServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Data.Registration",
+      "AssemblyName": "Cephalon.Data",
+      "FileName": "cephalon-data.md",
+      "AnchorId": "member-m-cephalon-data-registration-datadispatchservicecollectionextensions-addcephalondatacommand-1-microsoft-extensions-dependencyinjection-iservicecollection",
+      "Signature": "IServiceCollection AddCephalonDataCommand\u003CTCommand\u003E(this IServiceCollection services)",
+      "Summary": "Adds a dispatch descriptor for a command handled by \u0060ICommandHandler\u003CT\u003E\u0060."
+    },
+    {
+      "DisplayName": "AddCephalonDataCommand",
+      "Category": "Methods",
+      "DeclaringTypeName": "DataDispatchServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Data.Registration",
+      "AssemblyName": "Cephalon.Data",
+      "FileName": "cephalon-data.md",
+      "AnchorId": "member-m-cephalon-data-registration-datadispatchservicecollectionextensions-addcephalondatacommand-2-microsoft-extensions-dependencyinjection-iservicecollection",
+      "Signature": "IServiceCollection AddCephalonDataCommand\u003CTCommand, TResult\u003E(this IServiceCollection services)",
+      "Summary": "Adds a dispatch descriptor for a result-returning command handled by \u0060ICommandHandler\u003CT1, T2\u003E\u0060."
+    },
+    {
+      "DisplayName": "AddCephalonDataQuery",
+      "Category": "Methods",
+      "DeclaringTypeName": "DataDispatchServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Data.Registration",
+      "AssemblyName": "Cephalon.Data",
+      "FileName": "cephalon-data.md",
+      "AnchorId": "member-m-cephalon-data-registration-datadispatchservicecollectionextensions-addcephalondataquery-2-microsoft-extensions-dependencyinjection-iservicecollection",
+      "Signature": "IServiceCollection AddCephalonDataQuery\u003CTQuery, TResult\u003E(this IServiceCollection services)",
+      "Summary": "Adds a dispatch descriptor for a query handled by \u0060IQueryHandler\u003CT1, T2\u003E\u0060."
     },
     {
       "DisplayName": "AddCephalonDigitalOcean",

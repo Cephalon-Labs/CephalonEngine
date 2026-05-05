@@ -1,6 +1,7 @@
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Modules;
+using Cephalon.Data.Registration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.Support;
@@ -19,6 +20,9 @@ internal sealed class DataDispatchingTestModule : ModuleBase
     public override void ConfigureServices(IServiceCollection services)
     {
         services.AddSingleton<DataDispatchingState>();
+        services.AddCephalonDataCommand<ActivateTenantCommand>();
+        services.AddCephalonDataCommand<CreateOrderCommand, string>();
+        services.AddCephalonDataQuery<GetDispatchingSnapshotQuery, DispatchingSnapshot>();
         services.AddSingleton<ICommandHandler<ActivateTenantCommand>, ActivateTenantCommandHandler>();
         services.AddSingleton<ICommandHandler<CreateOrderCommand, string>, CreateOrderCommandHandler>();
         services.AddSingleton<IQueryHandler<GetDispatchingSnapshotQuery, DispatchingSnapshot>, GetDispatchingSnapshotQueryHandler>();

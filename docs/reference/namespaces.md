@@ -234,7 +234,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Data.Registration`
 
-- [Cephalon.Data](cephalon-data.md#namespace-cephalon-data-registration): 1 public types [Browse](browse.html?assembly=Cephalon.Data&namespace=Cephalon.Data.Registration)
+- [Cephalon.Data](cephalon-data.md#namespace-cephalon-data-registration): 2 public types [Browse](browse.html?assembly=Cephalon.Data&namespace=Cephalon.Data.Registration)
 
 ## `Cephalon.Data.Services`
 
