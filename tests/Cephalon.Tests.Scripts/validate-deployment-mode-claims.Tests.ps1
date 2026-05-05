@@ -457,6 +457,13 @@ Write-Output 'IL3050: error: AOT analysis failed for SomePackage'
 Write-Output 'fatal: cannot publish'
 exit 1
 "@ | Set-Content -LiteralPath $script:errorStub -Encoding UTF8
+
+        $script:lockMutatingStub = Join-Path $script:tempRoot "stub-lock-mutating.ps1"
+        @"
+param([Parameter(ValueFromRemainingArguments)] `$rest)
+Set-Content -LiteralPath `$env:CEPHALON_TEST_LOCK_FILE -Value 'mutated by publish probe' -Encoding UTF8
+exit 0
+"@ | Set-Content -LiteralPath $script:lockMutatingStub -Encoding UTF8
     }
 
     It "returns Skipped=true when no targets are supplied" {
@@ -466,7 +473,7 @@ exit 1
     }
 
     It "captures success output cleanly with the success stub" {
-        $r = Invoke-PublishProbe -ModeConfig $script:cfgTrim -Targets @("Cephalon.Engine.csproj") -DotnetCommand $script:successStub
+        $r = Invoke-PublishProbe -ModeConfig $script:cfgTrim -Targets @("Cephalon.Engine.csproj") -DotnetCommand $script:successStub -RepoRoot $script:tempRoot
         $r.Skipped | Should -BeFalse
         $r.Targets.Count | Should -Be 1
         $r.Targets[0].ExitCode | Should -Be 0
@@ -475,22 +482,40 @@ exit 1
     }
 
     It "detects warnings via the mode-specific warning regex" {
-        $r = Invoke-PublishProbe -ModeConfig $script:cfgTrim -Targets @("Cephalon.Engine.csproj") -DotnetCommand $script:warningStub
+        $r = Invoke-PublishProbe -ModeConfig $script:cfgTrim -Targets @("Cephalon.Engine.csproj") -DotnetCommand $script:warningStub -RepoRoot $script:tempRoot
         $r.Targets[0].WarningCount | Should -BeGreaterThan 0
         ($r.Targets[0].Warnings -join " ") | Should -Match "IL2026"
     }
 
     It "detects errors and reports Success=false" {
-        $r = Invoke-PublishProbe -ModeConfig $script:cfgTrim -Targets @("Cephalon.Engine.csproj") -DotnetCommand $script:errorStub
+        $r = Invoke-PublishProbe -ModeConfig $script:cfgTrim -Targets @("Cephalon.Engine.csproj") -DotnetCommand $script:errorStub -RepoRoot $script:tempRoot
         $r.Targets[0].ExitCode | Should -Be 1
         $r.Targets[0].ErrorCount | Should -BeGreaterThan 0
         $r.Targets[0].Success | Should -BeFalse
     }
 
     It "aggregates over multiple targets" {
-        $r = Invoke-PublishProbe -ModeConfig $script:cfgTrim -Targets @("A.csproj", "B.csproj") -DotnetCommand $script:successStub
+        $r = Invoke-PublishProbe -ModeConfig $script:cfgTrim -Targets @("A.csproj", "B.csproj") -DotnetCommand $script:successStub -RepoRoot $script:tempRoot
         $r.Targets.Count | Should -Be 2
         ($r.Targets | Where-Object { $_.Success }).Count | Should -Be 2
+    }
+
+    It "restores packages.lock.json files after publish probes" {
+        $repoRoot = Join-Path $script:tempRoot "lock-restore-repo"
+        New-Item -ItemType Directory -Path $repoRoot | Out-Null
+        $lockFile = Join-Path $repoRoot "packages.lock.json"
+        Set-Content -LiteralPath $lockFile -Value 'original lock content' -Encoding UTF8
+
+        $env:CEPHALON_TEST_LOCK_FILE = $lockFile
+        try {
+            $r = Invoke-PublishProbe -ModeConfig $script:cfgTrim -Targets @("Cephalon.Engine.csproj") -DotnetCommand $script:lockMutatingStub -RepoRoot $repoRoot
+            $r.Targets[0].Success | Should -BeTrue
+
+            (Get-Content -LiteralPath $lockFile -Raw).Trim() | Should -Be "original lock content"
+        }
+        finally {
+            Remove-Item Env:\CEPHALON_TEST_LOCK_FILE -ErrorAction SilentlyContinue
+        }
     }
 }
 

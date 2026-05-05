@@ -162,12 +162,29 @@ Describe "representativePublishTargets" {
         $script:manifest.representativePublishTargets.PSObject.Properties.Name | Should -Contain 'projects'
     }
 
-    It "projects is an array (may be empty until a deliberate audit is staged)" {
+    It "projects is a non-empty array" {
         # Wrap in @() so PowerShell's pipe semantics do not unwrap single-element arrays into the
-        # element type; we want to assert the manifest's projects field is array-shaped regardless
-        # of whether it currently has 0 or N entries.
+        # element type; we want to assert the manifest's projects field is array-shaped even when
+        # future edits shrink or grow the target list.
         $projects = @($script:manifest.representativePublishTargets.projects)
-        $projects.GetType().IsArray | Should -BeTrue -Because "may be empty array but must still be an array"
+        $projects.GetType().IsArray | Should -BeTrue -Because "publish targets must stay array-shaped"
+        $projects.Count | Should -BeGreaterThan 0 -Because "the harness now has manifest-declared default publish-probe targets"
+    }
+
+    It "covers the staged sample publish-probe surface" {
+        $projects = @($script:manifest.representativePublishTargets.projects)
+        $expectedProjects = @(
+            'samples/Cephalon.Sample.ModularMonolith/Cephalon.Sample.ModularMonolith.csproj',
+            'samples/Cephalon.Sample.ModularVerticalSlice/Cephalon.Sample.ModularVerticalSlice.csproj',
+            'samples/Cephalon.Sample.Microservice/Cephalon.Sample.Microservice.csproj',
+            'samples/Cephalon.Sample.MicroserviceSuite/services/CatalogService/Cephalon.Sample.MicroserviceSuite.CatalogService.csproj',
+            'samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.csproj'
+        )
+
+        $projects.Count | Should -Be $expectedProjects.Count -Because "ENG-447 deliberately stages the smallest five-host publish-probe surface"
+        foreach ($expectedProject in $expectedProjects) {
+            $projects | Should -Contain $expectedProject
+        }
     }
 
     It "every projects entry is a relative csproj path string" {

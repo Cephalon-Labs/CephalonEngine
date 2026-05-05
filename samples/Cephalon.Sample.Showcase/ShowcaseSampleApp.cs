@@ -82,7 +82,6 @@ public static class ShowcaseSampleApp
         string? contentRootPath = null)
     {
         var contentRoot = contentRootPath
-            ?? Path.GetDirectoryName(typeof(ShowcaseSampleApp).Assembly.Location)
             ?? AppContext.BaseDirectory;
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions
         {

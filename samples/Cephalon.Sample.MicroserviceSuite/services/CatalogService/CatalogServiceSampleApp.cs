@@ -34,8 +34,7 @@ public static class CatalogServiceSampleApp
         string[]? args = null,
         Action<WebApplicationBuilder>? configureBuilder = null)
     {
-        var contentRoot = Path.GetDirectoryName(typeof(CatalogServiceSampleApp).Assembly.Location)
-            ?? AppContext.BaseDirectory;
+        var contentRoot = AppContext.BaseDirectory;
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions
         {
             Args = args ?? [],

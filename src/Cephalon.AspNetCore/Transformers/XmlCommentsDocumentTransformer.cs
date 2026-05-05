@@ -129,16 +129,17 @@ public sealed class XmlCommentsDocumentTransformer(string[]? xmlFiles = null) : 
                 .ToArray();
         }
 
+        var baseDirectory = AppContext.BaseDirectory;
         var assemblyXmlFiles = AppDomain.CurrentDomain.GetAssemblies()
-            .Select(assembly => assembly.Location)
-            .Where(location => !string.IsNullOrWhiteSpace(location))
-            .Select(location => Path.ChangeExtension(location, ".xml"))
+            .Select(assembly => assembly.GetName().Name)
+            .Where(name => !string.IsNullOrWhiteSpace(name))
+            .Select(name => Path.Combine(baseDirectory, $"{name}.xml"))
             .Where(path => !string.IsNullOrWhiteSpace(path) && File.Exists(path))
             .Select(path => path!)
             .Distinct(StringComparer.OrdinalIgnoreCase);
 
-        var baseDirectoryXmlFiles = Directory.Exists(AppContext.BaseDirectory)
-            ? Directory.GetFiles(AppContext.BaseDirectory, "*.xml", SearchOption.TopDirectoryOnly)
+        var baseDirectoryXmlFiles = Directory.Exists(baseDirectory)
+            ? Directory.GetFiles(baseDirectory, "*.xml", SearchOption.TopDirectoryOnly)
             : [];
 
         return assemblyXmlFiles

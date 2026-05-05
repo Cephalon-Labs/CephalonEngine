@@ -35,8 +35,7 @@ public static class ModularVerticalSliceSampleApp
         string[]? args = null,
         Action<WebApplicationBuilder>? configureBuilder = null)
     {
-        var contentRoot = Path.GetDirectoryName(typeof(ModularVerticalSliceSampleApp).Assembly.Location)
-            ?? AppContext.BaseDirectory;
+        var contentRoot = AppContext.BaseDirectory;
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions
         {
             Args = args ?? [],

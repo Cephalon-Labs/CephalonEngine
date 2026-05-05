@@ -29,7 +29,7 @@ Cross-references: [`package-publishing.md`](package-publishing.md), [`supply-cha
     2. **Build** the solution with `--no-restore`
     3. **Tests** for `Cephalon.Tests.Composition` / `.Hosting` / `.Tooling` (Pester suite for `tests/Cephalon.Tests.Scripts` runs separately in CI)
     4. **`.NET 11` readiness** through `scripts/validate-dotnet-readiness.ps1`
-    5. **Deployment-mode claim** audit through `scripts/validate-deployment-mode-claims.ps1` (audit-only by default; flips to publish-probe mode once the manifest's `representativePublishTargets.projects` is staged)
+    5. **Deployment-mode claim** audit through `scripts/validate-deployment-mode-claims.ps1` (release validation still passes `-SkipPublish`; explicit publish-probe runs use the manifest's staged `representativePublishTargets.projects` list)
     6. **Operational health and export conventions**
     7. **Phase-8 architecture, runtime, and starter conventions**
     8. **Benchmark smoke suite** + benchmark guardrail validation

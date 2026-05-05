@@ -37,8 +37,7 @@ public static class ModularMonolithSampleApp
         Action<WebApplicationBuilder>? configureBuilder = null)
     {
         args ??= [];
-        var contentRoot = Path.GetDirectoryName(typeof(ModularMonolithSampleApp).Assembly.Location)
-            ?? AppContext.BaseDirectory;
+        var contentRoot = AppContext.BaseDirectory;
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions
         {
             Args = args,

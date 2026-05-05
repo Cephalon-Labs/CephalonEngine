@@ -24,7 +24,7 @@ The broader framework-readiness story stays aligned through:
 - [.NET 11 readiness](dotnet11-readiness.md)
 - [Compatibility](compatibility.md)
 - [Package publishing](package-publishing.md)
-- [Trim / Native AOT / single-file hazard inventory](trim-aot-hazard-inventory.md) — per-package reflection / dynamic-code patterns observed in shipped `src/Cephalon.*` runtime code, classified by severity (`excluded-by-design`, `clean-baseline`, `low`, `medium`, `high`), feeding the planned `deploymentModeEligibility` / `knownTransitiveHazards` manifest fields below
+- [Trim / Native AOT / single-file hazard inventory](trim-aot-hazard-inventory.md) — per-package reflection / dynamic-code patterns observed in shipped `src/Cephalon.*` runtime code, classified by severity (`excluded-by-design`, `clean-baseline`, `low`, `medium`, `high`), feeding the manifest-backed `deploymentModeEligibility` / `knownTransitiveHazards` fields below
 
 External adopters can read that same contract through:
 
@@ -53,24 +53,34 @@ For trim, Native AOT, or single-file support to become real Cephalon support sta
 - `docs/engine-roadmap.md`
 - `docs/engine-backlog.md`
 
-## Validation harness (initial slice shipped, follow-through pending)
+## Validation harness (manifest-driven, claims still not claimed)
 
-Today the support claim is `not-claimed` across trim, Native AOT, and single-file. To move any of those to a real `claimed` state honestly, Cephalon needs a machine-checkable validation harness that proves the claim against actual `dotnet publish` results, not only against analyzer signals. The first slice of that harness now ships as `scripts/validate-deployment-mode-claims.ps1` with comprehensive Pester coverage at `tests/Cephalon.Tests.Scripts/validate-deployment-mode-claims.Tests.ps1`. The follow-through work (CI integration via `scripts/validate-release.ps1`, the manifest schema extension below, and an actual representative-publish-target list) is still planned.
+Today the support claim is `not-claimed` across trim, Native AOT, and single-file. Moving any of those to a real `claimed` state requires a machine-checkable validation harness that proves the claim against actual `dotnet publish` results, not only against analyzer signals. That harness now ships as `scripts/validate-deployment-mode-claims.ps1` with comprehensive Pester coverage at `tests/Cephalon.Tests.Scripts/validate-deployment-mode-claims.Tests.ps1`, manifest-schema coverage at `tests/Cephalon.Tests.Scripts/deployment-mode-support-manifest.Tests.ps1`, and a manifest-backed default publish-target list.
 
-The shipped harness now runs as part of `scripts/validate-release.ps1` through the opt-out `-SkipDeploymentModeClaims` switch (audit-only by default until `representativePublishTargets.projects` is populated), so framework readiness and deployment-mode claim truth are reportable in one release-validation flow. The harness also now reads its per-mode `requiredProjectProperties`, `requiredAnalyzerProperties`, and `warningPatterns` from `scripts/deployment-mode-support.json` schema `1.1.0` directly through `Get-DeploymentModeConfigFromManifest`, with the hardcoded `$Script:DeploymentModeConfigs` table kept as a fallback for legacy manifests; manifest edits to those fields take effect on the next harness run without code changes.
+The shipped harness now runs as part of `scripts/validate-release.ps1` through the opt-out `-SkipDeploymentModeClaims` switch, so framework readiness and deployment-mode claim truth are reportable in one release-validation flow. Release validation still passes `-SkipPublish` deliberately, so CI remains audit-only until the project intentionally promotes the publish-probe lane to a non-opt-out gate. The harness reads its per-mode `requiredProjectProperties`, `requiredAnalyzerProperties`, and `warningPatterns` from `scripts/deployment-mode-support.json` schema `1.1.0` directly through `Get-DeploymentModeConfigFromManifest`, with the hardcoded `$Script:DeploymentModeConfigs` table kept as a fallback for legacy manifests; manifest edits to those fields take effect on the next harness run without code changes.
 
-Planned manifest schema additions in `scripts/deployment-mode-support.json`:
+`ENG-449` expanded `representativePublishTargets.projects` from the original ModularMonolith-only probe to five sample hosts:
+
+- `samples/Cephalon.Sample.ModularMonolith/Cephalon.Sample.ModularMonolith.csproj`
+- `samples/Cephalon.Sample.ModularVerticalSlice/Cephalon.Sample.ModularVerticalSlice.csproj`
+- `samples/Cephalon.Sample.Microservice/Cephalon.Sample.Microservice.csproj`
+- `samples/Cephalon.Sample.MicroserviceSuite/services/CatalogService/Cephalon.Sample.MicroserviceSuite.CatalogService.csproj`
+- `samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.csproj`
+
+That expanded set is verified with `scripts/validate-deployment-mode-claims.ps1 -DeploymentMode singleFile` returning successful publish-probe targets with zero warnings and zero errors. Publish probes snapshot and restore `packages.lock.json` files around the probe so validation can restore the RID/linker graph it needs without leaving machine-specific lock-file churn in the worktree. The manifest still declares `not-claimed` for all three deployment modes; this is readiness evidence, not a support claim.
+
+Manifest schema fields in `scripts/deployment-mode-support.json`:
 
 - `validationStrategy`: `analyzer-only`, `publish-required`, or `full-flow`
 - per-package `deploymentModeEligibility`: `packageName`, `nugetId`, `supportedModes` per claim, `requiredProjectProperties` per claim, `minimumAnalyzerPackVersion`, and `knownHazards: []` (reflection, native interop, dynamic dispatch, third-party transitive risk)
-- `representativePublishTargets: []`: the small set of packages the harness actually publishes during validation so the claim is anchored in real binary output
+- `representativePublishTargets.projects`: the small set of sample hosts the harness actually publishes during validation so the claim is anchored in real binary output
 - `expectedPublishOutputShape`: shape constraints (single-file binary signature, allowed warning categories, allowed size bounds)
 
-Planned harness phases:
+Harness phases:
 
 1. **project-property audit** scans every `src/Cephalon.*/*.csproj` and reports which projects set the claimed deployment-mode properties and which do not
 2. **analyzer phase** verifies the matching analyzer pack is enabled and at or above `minimumAnalyzerPackVersion` for projects that claim AOT or trim
-3. **publish phase** runs `dotnet publish -c Release` with the requested mode against each `representativePublishTargets` entry and captures exit code, warnings, errors, and binary artefacts
+3. **publish phase** runs `dotnet publish -c Release` with the requested mode against each `representativePublishTargets.projects` entry and captures exit code, warnings, and errors; output-shape expectations stay declared in the manifest until a later claim-promotion slice makes them load-bearing
 4. **report phase** writes `artifacts/deployment-mode-release/{mode}-claim-validation-report.json` plus a human-readable `README.md`
 
 Aggregate verdicts the report emits:
@@ -88,9 +98,9 @@ Known risks the harness must report on rather than hide:
 - benchmark and test utilities (`BenchmarkDotNet`, broad reflection) that should not poison the framework claim
 - analyzer-pack version drift where a project claims AOT but uses an older analyzer that misses violations
 
-When the harness ships, this section is rewritten in place to describe the actual validation flow, the report path, and the workflow integration; cross-references in [`compatibility.md`](compatibility.md), [`engineering-standards.md`](engineering-standards.md), [`dotnet11-readiness.md`](dotnet11-readiness.md), and [`project-memory.md`](project-memory.md) are updated together in the same slice.
+When the harness grows new load-bearing phases, this section is rewritten in place to describe the actual validation flow, the report path, and the workflow integration; cross-references in [`compatibility.md`](compatibility.md), [`engineering-standards.md`](engineering-standards.md), [`dotnet11-readiness.md`](dotnet11-readiness.md), and [`project-memory.md`](project-memory.md) are updated together in the same slice.
 
-Until the harness ships, the support contract above stays at `not-claimed` for trim, Native AOT, and single-file; analyzer-only or local-experiment signals do not widen the contract.
+Until a mode is deliberately promoted with matching manifest, project-property, publish-probe, and release-validation truth, the support contract above stays at `not-claimed` for trim, Native AOT, and single-file; analyzer-only or local-experiment signals do not widen the contract.
 
 ## What this guide does not mean
 

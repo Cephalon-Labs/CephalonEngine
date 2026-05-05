@@ -426,13 +426,63 @@ function Get-AnalyzerAudit {
     }
 }
 
+function New-PackagesLockSnapshot {
+    [CmdletBinding()]
+    param([string]$Root = "")
+
+    $snapshotRoot = if ([string]::IsNullOrWhiteSpace($Root)) {
+        (Get-Location).Path
+    }
+    else {
+        (Resolve-Path -LiteralPath $Root).Path
+    }
+
+    $files = @(
+        Get-ChildItem -Path $snapshotRoot -Recurse -Filter "packages.lock.json" -File -ErrorAction SilentlyContinue
+    )
+    $contents = @{}
+    foreach ($file in $files) {
+        $contents[$file.FullName] = [System.IO.File]::ReadAllBytes($file.FullName)
+    }
+
+    [pscustomobject]@{
+        Root     = $snapshotRoot
+        Contents = $contents
+    }
+}
+
+function Restore-PackagesLockSnapshot {
+    [CmdletBinding()]
+    param([Parameter(Mandatory)] $Snapshot)
+
+    if ($null -eq $Snapshot -or [string]::IsNullOrWhiteSpace([string]$Snapshot.Root)) {
+        return
+    }
+
+    $knownPaths = @($Snapshot.Contents.Keys)
+    $currentFiles = @(
+        Get-ChildItem -Path $Snapshot.Root -Recurse -Filter "packages.lock.json" -File -ErrorAction SilentlyContinue
+    )
+
+    foreach ($file in $currentFiles) {
+        if ($knownPaths -notcontains $file.FullName) {
+            Remove-Item -LiteralPath $file.FullName -Force
+        }
+    }
+
+    foreach ($path in $knownPaths) {
+        [System.IO.File]::WriteAllBytes($path, [byte[]]$Snapshot.Contents[$path])
+    }
+}
+
 function Invoke-PublishProbe {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)] $ModeConfig,
         [string[]]$Targets = @(),
         [string]$Configuration = "Release",
-        [string]$DotnetCommand = "dotnet"
+        [string]$DotnetCommand = "dotnet",
+        [string]$RepoRoot = ""
     )
 
     if (-not $Targets -or $Targets.Count -eq 0) {
@@ -445,22 +495,35 @@ function Invoke-PublishProbe {
     }
 
     $perTarget = @()
-    foreach ($t in $Targets) {
-        $output = & $DotnetCommand publish $t -c $Configuration $ModeConfig.PublishArg 2>&1
-        $exitCode = $LASTEXITCODE
-        $lines = @($output | ForEach-Object { [string]$_ })
-        $warningLines = @($lines | Where-Object { $_ -match $ModeConfig.WarningRegex -or $_ -match "(?i)warning|warn" })
-        $errorLines = @($lines | Where-Object { $_ -match "(?i)\berror\b|fatal" })
+    $lockSnapshot = New-PackagesLockSnapshot -Root $RepoRoot
+    try {
+        foreach ($t in $Targets) {
+            $publishArgs = @(
+                "publish",
+                $t,
+                "-c",
+                $Configuration,
+                $ModeConfig.PublishArg
+            )
+            $output = & $DotnetCommand @publishArgs 2>&1
+            $exitCode = $LASTEXITCODE
+            $lines = @($output | ForEach-Object { [string]$_ })
+            $warningLines = @($lines | Where-Object { $_ -match $ModeConfig.WarningRegex -or $_ -match "(?i)warning|warn" })
+            $errorLines = @($lines | Where-Object { $_ -match "(?i)\berror\b|fatal" })
 
-        $perTarget += [pscustomobject]@{
-            Target       = $t
-            ExitCode     = $exitCode
-            WarningCount = $warningLines.Count
-            ErrorCount   = $errorLines.Count
-            Warnings     = $warningLines
-            Errors       = $errorLines
-            Success      = ($exitCode -eq 0 -and $errorLines.Count -eq 0)
+            $perTarget += [pscustomobject]@{
+                Target       = $t
+                ExitCode     = $exitCode
+                WarningCount = $warningLines.Count
+                ErrorCount   = $errorLines.Count
+                Warnings     = $warningLines
+                Errors       = $errorLines
+                Success      = ($exitCode -eq 0 -and $errorLines.Count -eq 0)
+            }
         }
+    }
+    finally {
+        Restore-PackagesLockSnapshot -Snapshot $lockSnapshot
     }
 
     return [pscustomobject]@{
@@ -713,7 +776,7 @@ function Invoke-DeploymentModeClaimValidation {
 
         $publishProbe = $null
         if (-not $SkipPublish) {
-            $publishProbe = Invoke-PublishProbe -ModeConfig $cfg -Targets $PublishTargets -Configuration $Configuration -DotnetCommand $DotnetCommand
+            $publishProbe = Invoke-PublishProbe -ModeConfig $cfg -Targets $PublishTargets -Configuration $Configuration -DotnetCommand $DotnetCommand -RepoRoot $RepoRoot
         }
 
         $verdict = Compute-ModeVerdict -Mode $mode -ManifestStatus $manifestStatus `

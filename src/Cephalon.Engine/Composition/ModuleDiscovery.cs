@@ -124,6 +124,7 @@ internal static class ModuleDiscovery
 
     private static string GetAssemblyIdentity(Assembly assembly)
     {
-        return assembly.FullName ?? assembly.GetName().Name ?? assembly.ManifestModule.Name;
+        var assemblyName = assembly.GetName();
+        return assembly.FullName ?? assemblyName.Name ?? assemblyName.FullName ?? "unknown assembly";
     }
 }
