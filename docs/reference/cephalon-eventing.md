@@ -730,6 +730,119 @@ Returns: `true` when either `TerminalFailure` or `RetryExhausted` is set to `tru
 Parameters:
 - `metadata`: The dispatch observation metadata to inspect.
 
+<a id="type-cephalon-eventing-services-eventingdiagnostics"></a>
+
+### `EventingDiagnostics`
+
+Defines the stable activity source, meter, activity, counter, and tag names emitted by the eventing companion runtime. Names are sourced from `Eventing` and `Eventing` so the eventing pack and observability companion packs share one canonical name set with the rest of the engine.
+
+#### Declaration
+```csharp
+public static class EventingDiagnostics
+```
+
+#### Fields
+
+<a id="member-f-cephalon-eventing-services-eventingdiagnostics-activitysourcename"></a>
+
+##### `ActivitySourceName`
+
+```csharp
+const string ActivitySourceName
+```
+
+Gets the stable activity-source name emitted by the eventing runtime.
+
+<a id="member-f-cephalon-eventing-services-eventingdiagnostics-channelidtag"></a>
+
+##### `ChannelIdTag`
+
+```csharp
+const string ChannelIdTag
+```
+
+Stable Cephalon-prefix tag carrying the channel identifier emitted on the activity.
+
+<a id="member-f-cephalon-eventing-services-eventingdiagnostics-eventtypetag"></a>
+
+##### `EventTypeTag`
+
+```csharp
+const string EventTypeTag
+```
+
+Stable Cephalon-prefix tag carrying the event type emitted on the activity.
+
+<a id="member-f-cephalon-eventing-services-eventingdiagnostics-matchedsubscriptioncounttag"></a>
+
+##### `MatchedSubscriptionCountTag`
+
+```csharp
+const string MatchedSubscriptionCountTag
+```
+
+Stable Cephalon-prefix tag carrying the count of subscriptions matched for the publication.
+
+<a id="member-f-cephalon-eventing-services-eventingdiagnostics-metername"></a>
+
+##### `MeterName`
+
+```csharp
+const string MeterName
+```
+
+Gets the stable meter name emitted by the eventing runtime.
+
+<a id="member-f-cephalon-eventing-services-eventingdiagnostics-publicationdispatchactivityname"></a>
+
+##### `PublicationDispatchActivityName`
+
+```csharp
+const string PublicationDispatchActivityName
+```
+
+Gets the stable activity name emitted around one in-process event publication dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventingdiagnostics-publicationdispatchcountername"></a>
+
+##### `PublicationDispatchCounterName`
+
+```csharp
+const string PublicationDispatchCounterName
+```
+
+Gets the stable counter name for completed in-process publication dispatches.
+
+<a id="member-f-cephalon-eventing-services-eventingdiagnostics-publicationidtag"></a>
+
+##### `PublicationIdTag`
+
+```csharp
+const string PublicationIdTag
+```
+
+Stable Cephalon-prefix tag carrying the publication identifier emitted on the activity.
+
+<a id="member-f-cephalon-eventing-services-eventingdiagnostics-publicationoutcometag"></a>
+
+##### `PublicationOutcomeTag`
+
+```csharp
+const string PublicationOutcomeTag
+```
+
+Stable Cephalon-prefix tag carrying the publication outcome emitted on the activity (succeeded, skipped, or failed).
+
+<a id="member-f-cephalon-eventing-services-eventingdiagnostics-publisheridtag"></a>
+
+##### `PublisherIdTag`
+
+```csharp
+const string PublisherIdTag
+```
+
+Stable Cephalon-prefix tag carrying the publisher identifier responsible for the dispatch.
+
 <a id="type-cephalon-eventing-services-eventpublication"></a>
 
 ### `EventPublication`

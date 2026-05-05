@@ -24,6 +24,42 @@ Current focus:
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
 - treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md) for release validation, and `cephalon doctor --scorecard <path>` provides a local CLI readback over that generated artifact without becoming source truth
 
+### ENG-458 Emit durable execution adapter slots
+
+Status: done
+Estimate: 3
+Issue: #1057
+
+Why:
+
+- `Cephalon.Behaviors.Patterns` still carried durable open-generic adapter materialization even when the consuming app had source-generated behavior registration
+- source-generated behavior metadata can now see the closed `IDurableExecution<TInput, TState, TOutput>` tuple, so the durable strategy and runtime catalog should use that compile-time shape before falling back to runtime reflection
+- the deployment-mode manifest must stay honest: reducing the normal source-generated durable path is not the same as claiming trim, Native AOT, or single-file support while runtime-discovery fallback still exists
+
+Delivered:
+
+- add public `DurableExecutionSlot.For<TBehavior, TInput, TState, TOutput>()` as the closed durable adapter metadata surface for generated code
+- update `Cephalon.Behaviors.SourceGen` to detect durable execution contracts and register closed durable slots during generated `Register(...)`
+- update `DurableExecutionStrategy` and `DurableExecutionRuntimeCatalogSnapshot` to prefer generated durable slots and retain `DurableExecutionSlot.ForType(...)` fallback for runtime-discovered or non-generated behaviors
+- update durable execution and source-generator tests so generated-slot strategy execution, generated registration output, and runtime fallback coverage stay intact
+- update deployment-mode support, trim/AOT hazard inventory, compatibility, `.NET 11` readiness, component docs, architecture follow-ups, roadmap, backlog, and project memory without widening global support claims
+
+Validation:
+
+- passed `dotnet build src/Cephalon.Behaviors.Patterns/Cephalon.Behaviors.Patterns.csproj -c Debug --no-restore`
+- passed `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --no-restore --filter FullyQualifiedName~BehaviorSourceGeneratorTests` (35 tests)
+- passed `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --no-restore --filter DurableExecution` (14 tests)
+- passed `dotnet test tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj --no-restore --filter DurableExecution` (2 tests)
+- passed `pwsh ./scripts/publish-reference-docs.ps1 -Configuration Debug`
+- passed `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/deployment-mode-support-manifest.Tests.ps1 -Output Detailed` (32 tests)
+- passed `pwsh ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode all -SkipPublish -OutputPath artifacts/deployment-mode-claims-eng458` with aggregate verdict `not-claimed`
+- passed `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/validate-deployment-mode-claims.Tests.ps1 -Output Detailed` (77 tests)
+
+Follow-up later:
+
+- retire generated carrier-method lookups and runtime assembly-scan fallback through a compile-time module manifest before changing `Cephalon.Behaviors` deployment-mode claim posture
+- retire `DurableExecutionSlot.ForType(...)` fallback through generated durable manifest coverage or explicit trimming annotations before changing `Cephalon.Behaviors.Patterns` deployment-mode claim posture
+
 ### ENG-457 Emit behavior execution-slot hints
 
 Status: done

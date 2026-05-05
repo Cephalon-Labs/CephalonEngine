@@ -46,7 +46,8 @@ public static class PatternBehaviorExtensions
         builder.Services.TryAddSingleton<IDurableExecutionRuntimeCatalog>(static serviceProvider =>
             new DurableExecutionRuntimeCatalogSnapshot(
                 serviceProvider.GetRequiredService<IBehaviorCatalog>(),
-                serviceProvider.GetRequiredService<IBehaviorTypeRegistry>()));
+                serviceProvider.GetRequiredService<IBehaviorTypeRegistry>(),
+                serviceProvider.GetServices<DurableExecutionSlot>()));
         builder.Services.TryAddSingleton<DurableExecutionRuntimeStateCatalog>();
         builder.Services.TryAddSingleton<IDurableExecutionRuntimeStateCatalog>(static serviceProvider =>
             serviceProvider.GetRequiredService<DurableExecutionRuntimeStateCatalog>());
@@ -59,7 +60,10 @@ public static class PatternBehaviorExtensions
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorExecutionStrategy, SagaExecutionStrategy>());
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorExecutionStrategy, ChoreographySagaExecutionStrategy>());
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorExecutionStrategy, ProcessManagerExecutionStrategy>());
-        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorExecutionStrategy, DurableExecutionStrategy>());
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorExecutionStrategy, DurableExecutionStrategy>(static serviceProvider =>
+            new DurableExecutionStrategy(
+                serviceProvider.GetService<IDurableExecutionRuntimeStateCatalog>(),
+                serviceProvider.GetServices<DurableExecutionSlot>())));
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IBehaviorExecutionStrategy, DirectExecutionStrategy>());
 
         // Register the registry — resolved from all IBehaviorExecutionStrategy registrations.

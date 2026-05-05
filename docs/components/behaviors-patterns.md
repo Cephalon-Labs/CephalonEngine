@@ -22,6 +22,7 @@ durable-execution replay are handled.
 - **DurableExecutionState<TState> / DurableExecutionStepResult<TOutput>** — replay snapshot and step-result contracts for durable execution
 - **DurableExecutionPendingTimer / DurableExecutionPendingSignal** — host-agnostic coordination descriptors for pending durable timer and signal waits
 - **DurableExecutionCompensationAction** — host-agnostic operator-facing compensation descriptor for durable workflow recovery guidance
+- **DurableExecutionSlot** — generated closed-generic durable adapter metadata used by the strategy and runtime catalog before the reflection fallback
 - **DurableExecutionRuntimeDescriptor / IDurableExecutionRuntimeCatalog** — operator-facing durable workflow catalog derived from shared behavior topology, ownership, transports, feature flags, and replay metadata
 - **DurableExecutionRuntimeState / IDurableExecutionRuntimeStateCatalog** — operator-facing per-stream durable runtime posture, including last outcome, stage, version progress, append count, pending timers/signals, available compensation actions, completion state, and failure summary
 - **InMemorySagaStateStore** — `ConcurrentDictionary`-backed saga state with JSON serialization
@@ -142,6 +143,9 @@ Durable workflows opt in explicitly through `IBehaviorTopologyBuilder.AsDurableE
 - `DurableExecutionStrategy` replays current state from `IBehaviorContext.EventStore`, passes that
   snapshot to `ExecuteDurablyAsync(...)`, validates that returned events continue the stream with
   sequential versions, and appends them through `IEventStore.AppendAsync(...)`
+- source-generated durable behaviors register closed `DurableExecutionSlot.For<TBehavior, TInput, TState, TOutput>()`
+  adapters; the strategy and runtime catalog prefer those slots, then fall back to
+  `DurableExecutionSlot.ForType(...)` for runtime-discovered behaviors
 - the strategy returns `200` when the step produced local output, `202` when it staged
   continuation events or is still waiting on durable timers/signals without local output, and `204`
   when the step completed without output

@@ -1,5 +1,4 @@
 using System.Collections.Concurrent;
-using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.EventSourcing;
 using Cephalon.Abstractions.Execution;
@@ -14,8 +13,8 @@ namespace Cephalon.Behaviors.Patterns.Strategies;
 /// </summary>
 public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
 {
-    private static readonly JsonSerializerOptions WebJsonSerializerOptions = new(JsonSerializerDefaults.Web);
-    private static readonly ConcurrentDictionary<Type, IDurableExecutionAdapter> Adapters = new();
+    private static readonly ConcurrentDictionary<Type, DurableExecutionSlot> ReflectionSlots = new();
+    private readonly Dictionary<Type, DurableExecutionSlot> generatedSlots;
     private readonly IDurableExecutionRuntimeReporter? runtimeReporter;
 
     /// <summary>
@@ -25,7 +24,22 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
     /// An optional runtime-state catalog that can also accept operator-facing observations for active durable streams.
     /// </param>
     public DurableExecutionStrategy(IDurableExecutionRuntimeStateCatalog? runtimeStateCatalog = null)
+        : this(runtimeStateCatalog, Array.Empty<DurableExecutionSlot>())
     {
+    }
+
+    /// <summary>
+    /// Creates a durable execution strategy with source-generated durable execution slots.
+    /// </summary>
+    /// <param name="runtimeStateCatalog">
+    /// An optional runtime-state catalog that can also accept operator-facing observations for active durable streams.
+    /// </param>
+    /// <param name="executionSlots">The generated durable execution slots registered by behavior source generation.</param>
+    internal DurableExecutionStrategy(
+        IDurableExecutionRuntimeStateCatalog? runtimeStateCatalog,
+        IEnumerable<DurableExecutionSlot> executionSlots)
+    {
+        generatedSlots = BuildSlotMap(executionSlots);
         runtimeReporter = runtimeStateCatalog as IDurableExecutionRuntimeReporter;
     }
 
@@ -54,13 +68,11 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        var adapter = Adapters.GetOrAdd(
-            context.BehaviorInstance.GetType(),
-            static behaviorType => DurableExecutionAdapterFactory.Create(behaviorType));
+        var slot = ResolveSlot(context.BehaviorInstance.GetType());
         var eventStore = context.BehaviorContext.EventStore
             ?? throw new InvalidOperationException(
                 $"DurableExecutionStrategy requires IBehaviorContext.EventStore for behavior '{context.Descriptor.Id}'.");
-        var streamId = adapter.ResolveStreamId(context.BehaviorInstance, context.Descriptor.Id, context.BehaviorContext);
+        var streamId = slot.ResolveStreamId(context.BehaviorInstance, context.Descriptor.Id, context.BehaviorContext);
         if (string.IsNullOrWhiteSpace(streamId))
         {
             throw new InvalidOperationException(
@@ -68,7 +80,7 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
         }
 
         streamId = streamId.Trim();
-        var state = adapter.CreateInitialState(context.BehaviorInstance);
+        var state = slot.CreateInitialState(context.BehaviorInstance);
         var metadata = CreateReportMetadata(context.BehaviorContext);
         long? version = null;
         try
@@ -79,7 +91,7 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
             {
                 await foreach (var domainEvent in eventStore.ReadStreamAsync(streamId, 0, ct))
                 {
-                    state = adapter.Apply(context.BehaviorInstance, state, domainEvent);
+                    state = slot.Apply(context.BehaviorInstance, state, domainEvent);
                 }
             }
         }
@@ -117,7 +129,7 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
         DurableExecutionStepEnvelope step;
         try
         {
-            step = await adapter.ExecuteAsync(
+            step = await slot.ExecuteAsync(
                     context.BehaviorInstance,
                     context.Input,
                     state,
@@ -333,6 +345,46 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
             .ConfigureAwait(false);
     }
 
+    private static Dictionary<Type, DurableExecutionSlot> BuildSlotMap(
+        IEnumerable<DurableExecutionSlot> executionSlots)
+    {
+        ArgumentNullException.ThrowIfNull(executionSlots);
+
+        var map = new Dictionary<Type, DurableExecutionSlot>();
+        foreach (var slot in executionSlots)
+        {
+            ArgumentNullException.ThrowIfNull(slot);
+
+            if (map.TryGetValue(slot.BehaviorType, out var existingSlot))
+            {
+                if (existingSlot.InputType == slot.InputType &&
+                    existingSlot.StateType == slot.StateType &&
+                    existingSlot.OutputType == slot.OutputType)
+                {
+                    continue;
+                }
+
+                throw new InvalidOperationException(
+                    $"A durable execution slot for behavior type '{slot.BehaviorType.FullName}' has already been registered with a different durable contract.");
+            }
+
+            map.Add(slot.BehaviorType, slot);
+        }
+
+        return map;
+    }
+
+    private DurableExecutionSlot ResolveSlot(Type behaviorType)
+    {
+        ArgumentNullException.ThrowIfNull(behaviorType);
+
+        return generatedSlots.TryGetValue(behaviorType, out var generatedSlot)
+            ? generatedSlot
+            : ReflectionSlots.GetOrAdd(
+                behaviorType,
+                static type => DurableExecutionSlot.ForType(type));
+    }
+
     private ValueTask ReportAsync(
         DurableExecutionExecutionReport report,
         CancellationToken cancellationToken)
@@ -350,139 +402,4 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
             : message;
     }
 
-    private interface IDurableExecutionAdapter
-    {
-        string ResolveStreamId(object behavior, string behaviorId, IBehaviorContext context);
-
-        object? CreateInitialState(object behavior);
-
-        object? Apply(object behavior, object? currentState, IDomainEvent domainEvent);
-
-        Task<DurableExecutionStepEnvelope> ExecuteAsync(
-            object behavior,
-            object input,
-            object? currentState,
-            string streamId,
-            long version,
-            IBehaviorContext context,
-            CancellationToken cancellationToken);
-    }
-
-    private static class DurableExecutionAdapterFactory
-    {
-        internal static IDurableExecutionAdapter Create(Type behaviorType)
-        {
-            ArgumentNullException.ThrowIfNull(behaviorType);
-
-            var durableInterface = behaviorType
-                .GetInterfaces()
-                .FirstOrDefault(static candidate =>
-                    candidate.IsGenericType &&
-                    candidate.GetGenericTypeDefinition() == typeof(IDurableExecution<,,>))
-                ?? throw new InvalidOperationException(
-                    $"Behavior type '{behaviorType.FullName}' selected the 'durable-execution' pattern but does not implement IDurableExecution<TInput, TState, TOutput>.");
-
-            var typeArguments = durableInterface.GetGenericArguments();
-            var adapterType = typeof(DurableExecutionAdapter<,,,>).MakeGenericType(
-                behaviorType,
-                typeArguments[0],
-                typeArguments[1],
-                typeArguments[2]);
-
-            return (IDurableExecutionAdapter)Activator.CreateInstance(adapterType)!;
-        }
-    }
-
-    private sealed class DurableExecutionAdapter<TBehavior, TInput, TState, TOutput> : IDurableExecutionAdapter
-        where TBehavior : class, IDurableExecution<TInput, TState, TOutput>
-    {
-        public string ResolveStreamId(object behavior, string behaviorId, IBehaviorContext context)
-        {
-            ArgumentNullException.ThrowIfNull(behavior);
-            ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
-            ArgumentNullException.ThrowIfNull(context);
-
-            return ((TBehavior)behavior).ResolveStreamId(behaviorId, context);
-        }
-
-        public object? CreateInitialState(object behavior)
-        {
-            ArgumentNullException.ThrowIfNull(behavior);
-            return ((TBehavior)behavior).CreateInitialState();
-        }
-
-        public object? Apply(object behavior, object? currentState, IDomainEvent domainEvent)
-        {
-            ArgumentNullException.ThrowIfNull(behavior);
-            ArgumentNullException.ThrowIfNull(domainEvent);
-
-            return ((TBehavior)behavior).Apply(
-                currentState is null ? default! : (TState)currentState,
-                domainEvent);
-        }
-
-        public async Task<DurableExecutionStepEnvelope> ExecuteAsync(
-            object behavior,
-            object input,
-            object? currentState,
-            string streamId,
-            long version,
-            IBehaviorContext context,
-            CancellationToken cancellationToken)
-        {
-            ArgumentNullException.ThrowIfNull(behavior);
-            ArgumentNullException.ThrowIfNull(context);
-            ArgumentException.ThrowIfNullOrWhiteSpace(streamId);
-
-            var typedInput = input is JsonElement jsonElement
-                ? JsonSerializer.Deserialize<TInput>(jsonElement.GetRawText(), WebJsonSerializerOptions)!
-                : (TInput)input;
-            var executionState = new DurableExecutionState<TState>(
-                streamId,
-                currentState is null ? default! : (TState)currentState,
-                version);
-            var result = await ((TBehavior)behavior)
-                .ExecuteDurablyAsync(typedInput, executionState, context, cancellationToken)
-                .ConfigureAwait(false);
-
-            return new DurableExecutionStepEnvelope(
-                result.Output,
-                result.Events,
-                result.IsCompleted,
-                result.PendingTimers,
-                result.PendingSignals,
-                result.CompensationActions);
-        }
-    }
-
-    private sealed class DurableExecutionStepEnvelope
-    {
-        internal DurableExecutionStepEnvelope(
-            object? output,
-            IReadOnlyList<IDomainEvent> events,
-            bool isCompleted,
-            IReadOnlyList<DurableExecutionPendingTimer> pendingTimers,
-            IReadOnlyList<DurableExecutionPendingSignal> pendingSignals,
-            IReadOnlyList<DurableExecutionCompensationAction> compensationActions)
-        {
-            Output = output;
-            Events = events;
-            IsCompleted = isCompleted;
-            PendingTimers = pendingTimers;
-            PendingSignals = pendingSignals;
-            CompensationActions = compensationActions;
-        }
-
-        internal object? Output { get; }
-
-        internal IReadOnlyList<IDomainEvent> Events { get; }
-
-        internal bool IsCompleted { get; }
-
-        internal IReadOnlyList<DurableExecutionPendingTimer> PendingTimers { get; }
-
-        internal IReadOnlyList<DurableExecutionPendingSignal> PendingSignals { get; }
-
-        internal IReadOnlyList<DurableExecutionCompensationAction> CompensationActions { get; }
-    }
 }

@@ -1106,6 +1106,48 @@ public sealed class BehaviorSourceGeneratorTests
     }
 
     [Fact]
+    public void DurableExecutionBehaviorGeneratesClosedDurableExecutionSlotRegistration()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using Cephalon.Behaviors.Patterns.Abstractions;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            namespace Cephalon.Behaviors.Patterns.Abstractions
+            {
+                public interface IDurableExecution<TInput, TState, TOutput> : IAppBehavior<TInput, TOutput> { }
+            }
+
+            public sealed record OrderWorkflowInput(string OrderId);
+            public sealed record OrderWorkflowState(string Status);
+            public sealed record OrderWorkflowOutput(string Status);
+
+            [AppBehavior("orders.workflow")]
+            public sealed class OrderWorkflowBehavior : IDurableExecution<OrderWorkflowInput, OrderWorkflowState, OrderWorkflowOutput>
+            {
+                public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
+                    => builder.AsDurableExecution();
+
+                public Task<OrderWorkflowOutput> HandleAsync(
+                    OrderWorkflowInput input,
+                    IBehaviorContext ctx,
+                    CancellationToken ct = default)
+                    => Task.FromResult(new OrderWorkflowOutput("accepted"));
+            }
+            """;
+
+        var (result, diagnostics) = RunGenerator(source);
+
+        Assert.Empty(diagnostics);
+
+        var autoRegistration = GetGeneratedAutoRegistrationSource(result);
+        Assert.NotNull(autoRegistration);
+        Assert.Contains("typeof(global::Cephalon.Behaviors.Patterns.Strategies.DurableExecutionSlot)", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("global::Cephalon.Behaviors.Patterns.Strategies.DurableExecutionSlot.For<global::OrderWorkflowBehavior, global::OrderWorkflowInput, global::OrderWorkflowState, global::OrderWorkflowOutput>()", autoRegistration, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void BehaviorImplementingSagaEventReactorStillGeneratesCompileTimeDescriptor()
     {
         const string source = """

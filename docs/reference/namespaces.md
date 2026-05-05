@@ -98,7 +98,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Agentics.Services`
 
-- [Cephalon.Agentics](cephalon-agentics.md#namespace-cephalon-agentics-services): 12 public types [Browse](browse.html?assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services)
+- [Cephalon.Agentics](cephalon-agentics.md#namespace-cephalon-agentics-services): 13 public types [Browse](browse.html?assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services)
 
 ## `Cephalon.AspNetCore.Diagnostics`
 
@@ -338,7 +338,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Eventing.Services`
 
-- [Cephalon.Eventing](cephalon-eventing.md#namespace-cephalon-eventing-services): 29 public types [Browse](browse.html?assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services)
+- [Cephalon.Eventing](cephalon-eventing.md#namespace-cephalon-eventing-services): 30 public types [Browse](browse.html?assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services)
 
 ## `Cephalon.Eventing.Wolverine.Configuration`
 
@@ -530,7 +530,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.MultiTenancy.Governance.Services`
 
-- [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md#namespace-cephalon-multitenancy-governance-services): 130 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services)
+- [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md#namespace-cephalon-multitenancy-governance-services): 131 public types [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services)
 
 ## `Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration`
 

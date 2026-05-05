@@ -20,9 +20,9 @@ Quick links:
 
 ### Technology Packs
 
-- [Cephalon.Agentics](cephalon-agentics.md): Agentic workload runtime services and extension points. Contains 3 namespaces and 14 public types. [Browse](browse.html?assembly=Cephalon.Agentics)
+- [Cephalon.Agentics](cephalon-agentics.md): Agentic workload runtime services and extension points. Contains 3 namespaces and 15 public types. [Browse](browse.html?assembly=Cephalon.Agentics)
 - [Cephalon.Edge](cephalon-edge.md): Edge-native delivery runtime services and extension points. Contains 3 namespaces and 6 public types. [Browse](browse.html?assembly=Cephalon.Edge)
-- [Cephalon.Eventing](cephalon-eventing.md): Event-driven integration runtime services and extension points. Contains 3 namespaces and 31 public types. [Browse](browse.html?assembly=Cephalon.Eventing)
+- [Cephalon.Eventing](cephalon-eventing.md): Event-driven integration runtime services and extension points. Contains 3 namespaces and 32 public types. [Browse](browse.html?assembly=Cephalon.Eventing)
 - [Cephalon.Retrieval](cephalon-retrieval.md): Knowledge retrieval runtime services and extension points. Contains 3 namespaces and 10 public types. [Browse](browse.html?assembly=Cephalon.Retrieval)
 
 ### Hosts
@@ -76,7 +76,7 @@ Quick links:
 - [Cephalon.Identity.AspNetCore](cephalon-identity-aspnetcore.md): ASP.NET Core host adapter for Cephalon identity and authorization workloads. Contains 3 namespaces and 5 public types. [Browse](browse.html?assembly=Cephalon.Identity.AspNetCore)
 - [Cephalon.Ids.Sfid](cephalon-ids-sfid.md): Official Sfid.Net-backed identifier generation for Cephalon runtimes. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.Ids.Sfid)
 - [Cephalon.MultiTenancy](cephalon-multitenancy.md): Host-agnostic tenant-resolution and ambient tenant-context baseline for Cephalon runtimes. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.MultiTenancy)
-- [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md): Tenant-membership, invitation, domain-ownership, and governance-action companion pack for Cephalon multi-tenancy workloads. Contains 3 namespaces and 132 public types. [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance)
+- [Cephalon.MultiTenancy.Governance](cephalon-multitenancy-governance.md): Tenant-membership, invitation, domain-ownership, and governance-action companion pack for Cephalon multi-tenancy workloads. Contains 3 namespaces and 133 public types. [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance)
 - [Cephalon.MultiTenancy.Governance.AspNetCore](cephalon-multitenancy-governance-aspnetcore.md): ASP.NET Core HTTP proof publication and tenant-administration command adapter for Cephalon multi-tenancy governance workloads. Contains 2 namespaces and 14 public types. [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.AspNetCore)
 - [Cephalon.MultiTenancy.Governance.HttpDelivery](cephalon-multitenancy-governance-httpdelivery.md): HTTP webhook invitation delivery sender companion package for Cephalon multi-tenancy governance workloads. Contains 3 namespaces and 3 public types. [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.HttpDelivery)
 - [Cephalon.MultiTenancy.Governance.MailgunDelivery](cephalon-multitenancy-governance-mailgundelivery.md): Mailgun Messages API invitation delivery sender companion package for Cephalon multi-tenancy governance workloads. Contains 3 namespaces and 5 public types. [Browse](browse.html?assembly=Cephalon.MultiTenancy.Governance.MailgunDelivery)

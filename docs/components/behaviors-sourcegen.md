@@ -13,6 +13,7 @@ conventions at build time and produce a compile-time-known registration hint fil
   - Emits `BehaviorRegistrationHints.g.cs` listing all discovered `[AppBehavior]` IDs
   - Emits `BehaviorAutoRegistration.g.cs` for zero-reflection DI/type registration plus pre-built topology descriptors when compile-time extraction succeeds
   - Emits `GetExecutionSlots()` with closed `BehaviorExecutionSlot.For<TBehavior, TInput, TOutput>()` calls so `Cephalon.Behaviors` can prefer source-generated dispatch startup over open-generic slot reflection
+  - Emits closed `DurableExecutionSlot.For<TBehavior, TInput, TState, TOutput>()` registrations when a behavior implements `IDurableExecution<TInput, TState, TOutput>` so `Cephalon.Behaviors.Patterns` can prefer generated durable adapters and metadata over the runtime fallback
   - Emits source-generated metadata-only REST profile hints through `GetRestProfiles()` when behaviors declare valid `BehaviorRestProfileAttribute` metadata
   - Extracts compile-time topology from `ConfigureTopology(...)` for pattern, transports, feature flags, and literal `WithApiSurface(...)` overrides
 - Reports ABT0010–ABT0027 diagnostics on invalid behavior declarations, metadata-only REST profile hints, malformed REST profile placeholder syntax, explicit REST binding metadata, and invalid preserved implicit query-fallback authoring before `GetRestProfiles()` is generated
@@ -66,6 +67,16 @@ registration and topology data, including literal `WithApiSurface(...)` override
 ```csharp
 internal static class BehaviorAutoRegistration
 {
+    internal static void Register(IServiceCollection services, IBehaviorTypeRegistry typeRegistry)
+    {
+        services.TryAddTransient(typeof(CatalogLookupBehavior));
+        typeRegistry.Register("catalog.lookup", typeof(CatalogLookupBehavior));
+
+        services.Add(ServiceDescriptor.Singleton(
+            typeof(DurableExecutionSlot),
+            DurableExecutionSlot.For<OrderWorkflowBehavior, OrderWorkflowInput, OrderWorkflowState, OrderWorkflowOutput>()));
+    }
+
     internal static IReadOnlyList<(string Id, Type Type, BehaviorExecutionSlot Slot)> GetExecutionSlots()
     {
         return
@@ -132,8 +143,11 @@ At runtime, `Cephalon.Behaviors` still reflectively locates the generated carrie
 `GetExecutionSlots()`, `GetTopologyDescriptors()`, and runtime-topology fallback methods through
 `ContainsBehaviorsAttribute.RegistrationType`. The `GetExecutionSlots()` hints remove
 `BehaviorExecutionSlot.ForType(...)` open-generic slot materialization from the normal source-generated
-dispatch path, but they do not by themselves make the package trim/AOT claimed because the carrier-method
-lookups and runtime assembly-scan fallback remain documented in the deployment-mode hazard inventory.
+dispatch path. The generated `DurableExecutionSlot` service registrations likewise remove durable
+open-generic adapter materialization from the normal source-generated durable path used by
+`Cephalon.Behaviors.Patterns`. Neither fast path by itself makes the packages trim/AOT claimed because
+the carrier-method lookups and runtime assembly-scan / fallback paths remain documented in the
+deployment-mode hazard inventory.
 
 Compile-time topology extraction intentionally stays conservative. Literal `WithApiSurface(...)`
 arguments are supported, while more complex expressions fall back to runtime topology resolution so

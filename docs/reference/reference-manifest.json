@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-04T15:23:59.0279409+00:00",
+  "GeneratedAtUtc": "2026-05-05T18:38:29.3093498+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -16,7 +16,7 @@
       "Description": "Agentic workload runtime services and extension points.",
       "FileName": "cephalon-agentics.md",
       "NamespaceCount": 3,
-      "TypeCount": 14
+      "TypeCount": 15
     },
     {
       "AssemblyName": "Cephalon.AspNetCore",
@@ -160,7 +160,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 3,
-      "TypeCount": 31
+      "TypeCount": 32
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -232,7 +232,7 @@
       "Description": "Tenant-membership, invitation, domain-ownership, and governance-action companion pack for Cephalon multi-tenancy workloads.",
       "FileName": "cephalon-multitenancy-governance.md",
       "NamespaceCount": 3,
-      "TypeCount": 132
+      "TypeCount": 133
     },
     {
       "AssemblyName": "Cephalon.MultiTenancy.Governance.AmazonSesDelivery",
@@ -786,7 +786,7 @@
       "AssemblyName": "Cephalon.Agentics",
       "FileName": "cephalon-agentics.md",
       "AnchorId": "namespace-cephalon-agentics-services",
-      "TypeCount": 12
+      "TypeCount": 13
     },
     {
       "NamespaceName": "Cephalon.AspNetCore.Diagnostics",
@@ -1206,7 +1206,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 29
+      "TypeCount": 30
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -1542,7 +1542,7 @@
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
       "FileName": "cephalon-multitenancy-governance.md",
       "AnchorId": "namespace-cephalon-multitenancy-governance-services",
-      "TypeCount": 130
+      "TypeCount": 131
     },
     {
       "NamespaceName": "Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration",
@@ -2112,6 +2112,21 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 8,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "AgenticsDiagnostics",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "type-cephalon-agentics-services-agenticsdiagnostics",
+      "Declaration": "public static class AgenticsDiagnostics",
+      "Summary": "Defines the stable activity source, meter, activity, counter, and tag names emitted by the agentics companion runtime. Names are sourced from \u0060Agentics\u0060 and \u0060Agentics\u0060 so the agentics pack and observability companion packs share one canonical name set with the rest of the engine.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 11,
+        "Properties": 0,
         "Methods": 0
       }
     },
@@ -8191,6 +8206,21 @@
       }
     },
     {
+      "DisplayName": "EventingDiagnostics",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventingdiagnostics",
+      "Declaration": "public static class EventingDiagnostics",
+      "Summary": "Defines the stable activity source, meter, activity, counter, and tag names emitted by the eventing companion runtime. Names are sourced from \u0060Eventing\u0060 and \u0060Eventing\u0060 so the eventing pack and observability companion packs share one canonical name set with the rest of the engine.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 10,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "EventingEngineBuilderExtensions",
       "NamespaceName": "Cephalon.Eventing.Registration",
       "AssemblyName": "Cephalon.Eventing",
@@ -8818,6 +8848,21 @@
         "Fields": 0,
         "Properties": 5,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "GovernanceDiagnostics",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "type-cephalon-multitenancy-governance-services-governancediagnostics",
+      "Declaration": "public static class GovernanceDiagnostics",
+      "Summary": "Defines the stable activity source, meter, activity, counter, and tag names emitted by the multi-tenancy governance companion runtime. Names are sourced from \u0060MultiTenancyGovernance\u0060 and \u0060MultiTenancyGovernance\u0060 so the governance pack and observability companion packs share one canonical name set with the rest of the engine.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 8,
+        "Properties": 0,
+        "Methods": 0
       }
     },
     {
@@ -20543,6 +20588,17 @@
     },
     {
       "DisplayName": "ActivitySourceName",
+      "Category": "Fields",
+      "DeclaringTypeName": "AgenticsDiagnostics",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-f-cephalon-agentics-services-agenticsdiagnostics-activitysourcename",
+      "Signature": "const string ActivitySourceName",
+      "Summary": "Gets the stable activity-source name emitted by the agentics runtime."
+    },
+    {
+      "DisplayName": "ActivitySourceName",
       "Category": "Properties",
       "DeclaringTypeName": "DiagnosticsSurface",
       "NamespaceName": "Cephalon.AspNetCore.Diagnostics",
@@ -20562,6 +20618,28 @@
       "AnchorId": "member-f-cephalon-engine-diagnostics-enginediagnostics-activitysourcename",
       "Signature": "const string ActivitySourceName",
       "Summary": "Gets the activity-source name emitted by the engine."
+    },
+    {
+      "DisplayName": "ActivitySourceName",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventingDiagnostics",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventingdiagnostics-activitysourcename",
+      "Signature": "const string ActivitySourceName",
+      "Summary": "Gets the stable activity-source name emitted by the eventing runtime."
+    },
+    {
+      "DisplayName": "ActivitySourceName",
+      "Category": "Fields",
+      "DeclaringTypeName": "GovernanceDiagnostics",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-governancediagnostics-activitysourcename",
+      "Signature": "const string ActivitySourceName",
+      "Summary": "Gets the stable activity-source name emitted by the governance runtime."
     },
     {
       "DisplayName": "ActivitySourceName",
@@ -20969,6 +21047,17 @@
       "AnchorId": "member-p-cephalon-abstractions-retrieval-knowledgequeryrequest-actorid",
       "Signature": "string ActorId { get; }",
       "Summary": "Gets the optional actor that requested the query."
+    },
+    {
+      "DisplayName": "ActorIdTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "AgenticsDiagnostics",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-f-cephalon-agentics-services-agenticsdiagnostics-actoridtag",
+      "Signature": "const string ActorIdTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the optional actor identifier emitted on the activity."
     },
     {
       "DisplayName": "ActorIdTag",
@@ -26150,6 +26239,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-attemptid",
       "Signature": "string AttemptId { get; set; }",
       "Summary": "Gets the stable recorded command-execution attempt identifier when Cephalon has persisted one outcome."
+    },
+    {
+      "DisplayName": "AttemptTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "AgenticsDiagnostics",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-f-cephalon-agentics-services-agenticsdiagnostics-attempttag",
+      "Signature": "const string AttemptTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the requested execution attempt number emitted on the activity."
     },
     {
       "DisplayName": "AttemptTimeoutSeconds",
@@ -33423,6 +33523,17 @@
       "Summary": "Gets the optional channel identifiers that this outbox is explicitly scoped to."
     },
     {
+      "DisplayName": "ChannelIdTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventingDiagnostics",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventingdiagnostics-channelidtag",
+      "Signature": "const string ChannelIdTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the channel identifier emitted on the activity."
+    },
+    {
       "DisplayName": "Channels",
       "Category": "Properties",
       "DeclaringTypeName": "EventingOptions",
@@ -39123,6 +39234,17 @@
     {
       "DisplayName": "CorrelationIdTag",
       "Category": "Fields",
+      "DeclaringTypeName": "AgenticsDiagnostics",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-f-cephalon-agentics-services-agenticsdiagnostics-correlationidtag",
+      "Signature": "const string CorrelationIdTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the optional correlation identifier emitted on the activity."
+    },
+    {
+      "DisplayName": "CorrelationIdTag",
+      "Category": "Fields",
       "DeclaringTypeName": "RetrievalDiagnostics",
       "NamespaceName": "Cephalon.Retrieval.Services",
       "AssemblyName": "Cephalon.Retrieval",
@@ -41956,6 +42078,17 @@
       "Summary": "The invitation was delivered to the provider-recognized recipient endpoint."
     },
     {
+      "DisplayName": "DeliveryChannelTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "GovernanceDiagnostics",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-governancediagnostics-deliverychanneltag",
+      "Signature": "const string DeliveryChannelTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the delivery channel emitted on the activity (for example \u0060email\u0060, \u0060sms\u0060, or a host-defined channel name)."
+    },
+    {
       "DisplayName": "DeliveryDeferred",
       "Category": "Fields",
       "DeclaringTypeName": "TenantInvitationDeliveryStatusObservationAttentionCategories",
@@ -42009,6 +42142,17 @@
       "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-deliverymode",
       "Signature": "const string DeliveryMode",
       "Summary": "Identifies the declared delivery mode for the subscription."
+    },
+    {
+      "DisplayName": "DeliveryOutcomeTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "GovernanceDiagnostics",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-governancediagnostics-deliveryoutcometag",
+      "Signature": "const string DeliveryOutcomeTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the delivery dispatch outcome emitted on the activity (one of the \u0060TenantInvitationDeliveryOutcomes\u0060 values)."
     },
     {
       "DisplayName": "DeliveryResults",
@@ -42328,6 +42472,17 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueuestorekind",
       "Signature": "const string DeliveryRetryQueueStoreKind",
       "Summary": "Metadata key describing the invitation delivery retry queue storage kind."
+    },
+    {
+      "DisplayName": "DeliverySenderIdTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "GovernanceDiagnostics",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-governancediagnostics-deliverysenderidtag",
+      "Signature": "const string DeliverySenderIdTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the delivery sender identifier emitted on the activity once a sender has been resolved for the dispatch."
     },
     {
       "DisplayName": "DeliveryStatusObservationId",
@@ -45210,6 +45365,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-dispatchedcount",
       "Signature": "int DispatchedCount { get; }",
       "Summary": "Gets the number of retry entries dispatched successfully."
+    },
+    {
+      "DisplayName": "DispatcherIdTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "AgenticsDiagnostics",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-f-cephalon-agentics-services-agenticsdiagnostics-dispatcheridtag",
+      "Signature": "const string DispatcherIdTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the dispatcher identifier responsible for the run."
     },
     {
       "DisplayName": "DispatchFailed",
@@ -51812,6 +51978,17 @@
       "Summary": "The logical event type identifier used by the publication."
     },
     {
+      "DisplayName": "EventTypeTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventingDiagnostics",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventingdiagnostics-eventtypetag",
+      "Signature": "const string EventTypeTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the event type emitted on the activity."
+    },
+    {
       "DisplayName": "Evidence",
       "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipVerificationWorkflowRequest",
@@ -53262,6 +53439,17 @@
       "AnchorId": "member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-executionmode",
       "Signature": "string ExecutionMode { get; set; }",
       "Summary": "The enforcement mode used by the active host, such as \u0060aspnetcore-global-middleware\u0060 or \u0060disabled\u0060."
+    },
+    {
+      "DisplayName": "ExecutionOutcomeTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "AgenticsDiagnostics",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-f-cephalon-agentics-services-agenticsdiagnostics-executionoutcometag",
+      "Signature": "const string ExecutionOutcomeTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the terminal execution outcome emitted on the activity (succeeded, failed, skipped, approval-required, or denied)."
     },
     {
       "DisplayName": "ExecutionOwnership",
@@ -68763,6 +68951,28 @@
       "Summary": "Gets or sets the optional JSON file path used for Cephalon-managed durable delivery status observations."
     },
     {
+      "DisplayName": "InvitationDispatchActivityName",
+      "Category": "Fields",
+      "DeclaringTypeName": "GovernanceDiagnostics",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-governancediagnostics-invitationdispatchactivityname",
+      "Signature": "const string InvitationDispatchActivityName",
+      "Summary": "Gets the stable activity name emitted around one in-process invitation delivery dispatch."
+    },
+    {
+      "DisplayName": "InvitationDispatchCounterName",
+      "Category": "Fields",
+      "DeclaringTypeName": "GovernanceDiagnostics",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-governancediagnostics-invitationdispatchcountername",
+      "Signature": "const string InvitationDispatchCounterName",
+      "Summary": "Gets the stable counter name for completed invitation delivery dispatches."
+    },
+    {
       "DisplayName": "InvitationExpired",
       "Category": "Fields",
       "DeclaringTypeName": "TenantInvitationDeliveryOutcomes",
@@ -68959,6 +69169,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-invitationid",
       "Signature": "string InvitationId { get; }",
       "Summary": "Gets the invitation identifier that was validated."
+    },
+    {
+      "DisplayName": "InvitationIdTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "GovernanceDiagnostics",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-governancediagnostics-invitationidtag",
+      "Signature": "const string InvitationIdTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the invitation identifier emitted on the activity."
     },
     {
       "DisplayName": "InvitationLifecycle",
@@ -79136,6 +79357,17 @@
       "Summary": "The number of subscriptions matched by the latest publication observation."
     },
     {
+      "DisplayName": "MatchedSubscriptionCountTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventingDiagnostics",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventingdiagnostics-matchedsubscriptioncounttag",
+      "Signature": "const string MatchedSubscriptionCountTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the count of subscriptions matched for the publication."
+    },
+    {
       "DisplayName": "MatchedSuppressionIds",
       "Category": "Properties",
       "DeclaringTypeName": "RestEndpointCandidateRuntimeDescriptor",
@@ -82723,6 +82955,17 @@
     },
     {
       "DisplayName": "MeterName",
+      "Category": "Fields",
+      "DeclaringTypeName": "AgenticsDiagnostics",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-f-cephalon-agentics-services-agenticsdiagnostics-metername",
+      "Signature": "const string MeterName",
+      "Summary": "Gets the stable meter name emitted by the agentics runtime."
+    },
+    {
+      "DisplayName": "MeterName",
       "Category": "Properties",
       "DeclaringTypeName": "DiagnosticsSurface",
       "NamespaceName": "Cephalon.AspNetCore.Diagnostics",
@@ -82742,6 +82985,28 @@
       "AnchorId": "member-f-cephalon-engine-diagnostics-enginediagnostics-metername",
       "Signature": "const string MeterName",
       "Summary": "Gets the meter name emitted by the engine."
+    },
+    {
+      "DisplayName": "MeterName",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventingDiagnostics",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventingdiagnostics-metername",
+      "Signature": "const string MeterName",
+      "Summary": "Gets the stable meter name emitted by the eventing runtime."
+    },
+    {
+      "DisplayName": "MeterName",
+      "Category": "Fields",
+      "DeclaringTypeName": "GovernanceDiagnostics",
+      "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
+      "AssemblyName": "Cephalon.MultiTenancy.Governance",
+      "FileName": "cephalon-multitenancy-governance.md",
+      "AnchorId": "member-f-cephalon-multitenancy-governance-services-governancediagnostics-metername",
+      "Signature": "const string MeterName",
+      "Summary": "Gets the stable meter name emitted by the governance runtime."
     },
     {
       "DisplayName": "MeterName",
@@ -97654,6 +97919,28 @@
       "Summary": "Gets the staged publication that should be delivered to the managed subscription."
     },
     {
+      "DisplayName": "PublicationDispatchActivityName",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventingDiagnostics",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventingdiagnostics-publicationdispatchactivityname",
+      "Signature": "const string PublicationDispatchActivityName",
+      "Summary": "Gets the stable activity name emitted around one in-process event publication dispatch."
+    },
+    {
+      "DisplayName": "PublicationDispatchCounterName",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventingDiagnostics",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventingdiagnostics-publicationdispatchcountername",
+      "Signature": "const string PublicationDispatchCounterName",
+      "Summary": "Gets the stable counter name for completed in-process publication dispatches."
+    },
+    {
       "DisplayName": "PublicationId",
       "Category": "Properties",
       "DeclaringTypeName": "EventPublicationResult",
@@ -97687,6 +97974,17 @@
       "Summary": "The stable publication identifier declared by the choreography step."
     },
     {
+      "DisplayName": "PublicationIdTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventingDiagnostics",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventingdiagnostics-publicationidtag",
+      "Signature": "const string PublicationIdTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the publication identifier emitted on the activity."
+    },
+    {
       "DisplayName": "PublicationName",
       "Category": "Properties",
       "DeclaringTypeName": "PostgresLogicalReplicationCaptureOptions",
@@ -97696,6 +97994,17 @@
       "AnchorId": "member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-publicationname",
       "Signature": "string PublicationName { get; set; }",
       "Summary": "Gets or sets the PostgreSQL publication that should emit the tracked table changes."
+    },
+    {
+      "DisplayName": "PublicationOutcomeTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventingDiagnostics",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventingdiagnostics-publicationoutcometag",
+      "Signature": "const string PublicationOutcomeTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the publication outcome emitted on the activity (succeeded, skipped, or failed)."
     },
     {
       "DisplayName": "PublicationPlanFailed",
@@ -97949,6 +98258,17 @@
       "AnchorId": "member-p-cephalon-engine-trust-packagetrustdecision-publisherid",
       "Signature": "string PublisherId { get; set; }",
       "Summary": "The declared publisher identifier, when available."
+    },
+    {
+      "DisplayName": "PublisherIdTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventingDiagnostics",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventingdiagnostics-publisheridtag",
+      "Signature": "const string PublisherIdTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the publisher identifier responsible for the dispatch."
     },
     {
       "DisplayName": "PublisherWebsite",
@@ -108168,6 +108488,17 @@
       "AnchorId": "member-p-cephalon-abstractions-retrieval-knowledgeindexingresult-runid",
       "Signature": "string RunId { get; set; }",
       "Summary": "The stable indexing run identifier."
+    },
+    {
+      "DisplayName": "RunIdTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "AgenticsDiagnostics",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-f-cephalon-agentics-services-agenticsdiagnostics-runidtag",
+      "Signature": "const string RunIdTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the agent-tool run identifier emitted on the activity."
     },
     {
       "DisplayName": "RunIdTag",
@@ -121422,6 +121753,28 @@
       "Summary": "Gets the resolved tool descriptor being executed."
     },
     {
+      "DisplayName": "ToolDispatchActivityName",
+      "Category": "Fields",
+      "DeclaringTypeName": "AgenticsDiagnostics",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-f-cephalon-agentics-services-agenticsdiagnostics-tooldispatchactivityname",
+      "Signature": "const string ToolDispatchActivityName",
+      "Summary": "Gets the stable activity name emitted around one managed agent-tool dispatch."
+    },
+    {
+      "DisplayName": "ToolDispatchCounterName",
+      "Category": "Fields",
+      "DeclaringTypeName": "AgenticsDiagnostics",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-f-cephalon-agentics-services-agenticsdiagnostics-tooldispatchcountername",
+      "Signature": "const string ToolDispatchCounterName",
+      "Summary": "Gets the stable counter name for completed agent-tool dispatches."
+    },
+    {
       "DisplayName": "ToolId",
       "Category": "Properties",
       "DeclaringTypeName": "AgentToolExecutionReport",
@@ -121486,6 +121839,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommandbatch-toolids",
       "Signature": "IReadOnlyList\u003Cstring\u003E ToolIds { get; }",
       "Summary": "Gets the stable operator tool identifiers represented in this batch, in encounter order."
+    },
+    {
+      "DisplayName": "ToolIdTag",
+      "Category": "Fields",
+      "DeclaringTypeName": "AgenticsDiagnostics",
+      "NamespaceName": "Cephalon.Agentics.Services",
+      "AssemblyName": "Cephalon.Agentics",
+      "FileName": "cephalon-agentics.md",
+      "AnchorId": "member-f-cephalon-agentics-services-agenticsdiagnostics-toolidtag",
+      "Signature": "const string ToolIdTag",
+      "Summary": "Stable Cephalon-prefix tag carrying the agent-tool identifier emitted on the activity."
     },
     {
       "DisplayName": "Tools",

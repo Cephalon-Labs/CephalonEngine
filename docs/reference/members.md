@@ -453,11 +453,20 @@ Browse the published API surface by public member.
 - [ActiveWindowEndsAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehealthreport-activewindowendsatutc): `Properties` on `RuntimeHealthReport` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ActiveWindowEndsAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The UTC timestamp when the active lifecycle window ends, if applicable.
   - `DateTimeOffset? ActiveWindowEndsAtUtc { get; set; }`
+- [ActivitySourceName](cephalon-agentics.md#member-f-cephalon-agentics-services-agenticsdiagnostics-activitysourcename): `Fields` on `AgenticsDiagnostics` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ActivitySourceName&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the stable activity-source name emitted by the agentics runtime.
+  - `const string ActivitySourceName`
 - [ActivitySourceName](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-activitysourcename): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ActivitySourceName&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
   - The activity source name used for engine tracing.
   - `string ActivitySourceName { get; set; }`
 - [ActivitySourceName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-activitysourcename): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=ActivitySourceName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - Gets the activity-source name emitted by the engine.
+  - `const string ActivitySourceName`
+- [ActivitySourceName](cephalon-eventing.md#member-f-cephalon-eventing-services-eventingdiagnostics-activitysourcename): `Fields` on `EventingDiagnostics` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ActivitySourceName&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the stable activity-source name emitted by the eventing runtime.
+  - `const string ActivitySourceName`
+- [ActivitySourceName](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-governancediagnostics-activitysourcename): `Fields` on `GovernanceDiagnostics` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ActivitySourceName&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the stable activity-source name emitted by the governance runtime.
   - `const string ActivitySourceName`
 - [ActivitySourceName](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-activitysourcename): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=ActivitySourceName&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Gets the stable activity-source name emitted by the retrieval runtime.
@@ -570,6 +579,9 @@ Browse the published API surface by public member.
 - [ActorId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryrequest-actorid): `Properties` on `KnowledgeQueryRequest` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Gets the optional actor that requested the query.
   - `string ActorId { get; }`
+- [ActorIdTag](cephalon-agentics.md#member-f-cephalon-agentics-services-agenticsdiagnostics-actoridtag): `Fields` on `AgenticsDiagnostics` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ActorIdTag&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the optional actor identifier emitted on the activity.
+  - `const string ActorIdTag`
 - [ActorIdTag](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-actoridtag): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=ActorIdTag&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Stable Cephalon-prefix tag carrying the optional actor identifier emitted on the activity.
   - `const string ActorIdTag`
@@ -1983,6 +1995,9 @@ Browse the published API surface by public member.
 - [AttemptId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-attemptid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=AttemptId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable recorded command-execution attempt identifier when Cephalon has persisted one outcome.
   - `string AttemptId { get; set; }`
+- [AttemptTag](cephalon-agentics.md#member-f-cephalon-agentics-services-agenticsdiagnostics-attempttag): `Fields` on `AgenticsDiagnostics` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=AttemptTag&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the requested execution attempt number emitted on the activity.
+  - `const string AttemptTag`
 - [AttemptTimeoutSeconds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-timeoutselection-attempttimeoutseconds): `Properties` on `TimeoutSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=AttemptTimeoutSeconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the per-attempt timeout in seconds requested for an execution.
   - `int? AttemptTimeoutSeconds { get; }`
@@ -3972,6 +3987,9 @@ Browse the published API surface by public member.
 - [ChannelIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxdescriptor-channelids): `Properties` on `OutboxDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ChannelIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the optional channel identifiers that this outbox is explicitly scoped to.
   - `IReadOnlyList<string> ChannelIds { get; }`
+- [ChannelIdTag](cephalon-eventing.md#member-f-cephalon-eventing-services-eventingdiagnostics-channelidtag): `Fields` on `EventingDiagnostics` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ChannelIdTag&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the channel identifier emitted on the activity.
+  - `const string ChannelIdTag`
 - [Channels](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-channels): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=Channels&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
   - Gets the host-defined event channels that should be available to the eventing runtime.
   - `IList<EventChannelDescriptor> Channels { get; }`
@@ -5526,6 +5544,9 @@ Browse the published API surface by public member.
 - [CorrelationId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantmembershipevaluationrequest-correlationid): `Properties` on `TenantMembershipEvaluationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional correlation identifier for the evaluation.
   - `string CorrelationId { get; }`
+- [CorrelationIdTag](cephalon-agentics.md#member-f-cephalon-agentics-services-agenticsdiagnostics-correlationidtag): `Fields` on `AgenticsDiagnostics` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=CorrelationIdTag&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the optional correlation identifier emitted on the activity.
+  - `const string CorrelationIdTag`
 - [CorrelationIdTag](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-correlationidtag): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=CorrelationIdTag&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Stable Cephalon-prefix tag carrying the optional correlation identifier emitted on the activity.
   - `const string CorrelationIdTag`
@@ -6300,6 +6321,9 @@ Browse the published API surface by public member.
 - [Delivered](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatuses-delivered): `Fields` on `TenantInvitationDeliveryStatuses` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Delivered&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The invitation was delivered to the provider-recognized recipient endpoint.
   - `const string Delivered`
+- [DeliveryChannelTag](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-governancediagnostics-deliverychanneltag): `Fields` on `GovernanceDiagnostics` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DeliveryChannelTag&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the delivery channel emitted on the activity (for example `email`, `sms`, or a host-defined channel name).
+  - `const string DeliveryChannelTag`
 - [DeliveryDeferred](cephalon-multitenancy-governance-aspnetcore.md#member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationattentioncategories-deliverydeferred): `Fields` on `TenantInvitationDeliveryStatusObservationAttentionCategories` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=DeliveryDeferred&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - The observation reports a deferred delivery status.
   - `const string DeliveryDeferred`
@@ -6315,6 +6339,9 @@ Browse the published API surface by public member.
 - [DeliveryMode](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-deliverymode): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DeliveryMode&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the declared delivery mode for the subscription.
   - `const string DeliveryMode`
+- [DeliveryOutcomeTag](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-governancediagnostics-deliveryoutcometag): `Fields` on `GovernanceDiagnostics` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DeliveryOutcomeTag&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the delivery dispatch outcome emitted on the activity (one of the `TenantInvitationDeliveryOutcomes` values).
+  - `const string DeliveryOutcomeTag`
 - [DeliveryResults](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-deliveryresults): `Properties` on `TenantInvitationDeliveryRetryResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DeliveryResults&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the delivery dispatch results produced by this pass.
   - `IReadOnlyList<TenantInvitationDeliveryResult> DeliveryResults { get; }`
@@ -6402,6 +6429,9 @@ Browse the published API surface by public member.
 - [DeliveryRetryQueueStoreKind](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliveryretryqueuestorekind): `Fields` on `TenantInvitationDeliveryMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DeliveryRetryQueueStoreKind&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Metadata key describing the invitation delivery retry queue storage kind.
   - `const string DeliveryRetryQueueStoreKind`
+- [DeliverySenderIdTag](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-governancediagnostics-deliverysenderidtag): `Fields` on `GovernanceDiagnostics` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DeliverySenderIdTag&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the delivery sender identifier emitted on the activity once a sender has been resolved for the dispatch.
+  - `const string DeliverySenderIdTag`
 - [DeliveryStatusObservationId](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverymetadatakeys-deliverystatusobservationid): `Fields` on `TenantInvitationDeliveryMetadataKeys` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DeliveryStatusObservationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Metadata key containing the delivery status observation identifier recorded by the observation store.
   - `const string DeliveryStatusObservationId`
@@ -7188,6 +7218,9 @@ Browse the published API surface by public member.
 - [DispatchedCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-dispatchedcount): `Properties` on `TenantInvitationDeliveryRetryResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DispatchedCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the number of retry entries dispatched successfully.
   - `int DispatchedCount { get; }`
+- [DispatcherIdTag](cephalon-agentics.md#member-f-cephalon-agentics-services-agenticsdiagnostics-dispatcheridtag): `Fields` on `AgenticsDiagnostics` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=DispatcherIdTag&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the dispatcher identifier responsible for the run.
+  - `const string DispatcherIdTag`
 - [DispatchFailed](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturepublicationstates-dispatchfailed): `Fields` on `CdcCapturePublicationStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DispatchFailed&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Indicates that the linked outbox dispatch runtime last reported a failure.
   - `const string DispatchFailed`
@@ -8991,6 +9024,9 @@ Browse the published API surface by public member.
 - [EventType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-eventtype): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The logical event type identifier used by the publication.
   - `string EventType { get; set; }`
+- [EventTypeTag](cephalon-eventing.md#member-f-cephalon-eventing-services-eventingdiagnostics-eventtypetag): `Fields` on `EventingDiagnostics` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventTypeTag&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the event type emitted on the activity.
+  - `const string EventTypeTag`
 - [Evidence](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-evidence): `Properties` on `TenantDomainOwnershipVerificationWorkflowRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Evidence&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional evidence summary observed by the application or provider.
   - `string Evidence { get; }`
@@ -9387,6 +9423,9 @@ Browse the published API surface by public member.
 - [ExecutionMode](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-executionmode): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - The enforcement mode used by the active host, such as `aspnetcore-global-middleware` or `disabled`.
   - `string ExecutionMode { get; set; }`
+- [ExecutionOutcomeTag](cephalon-agentics.md#member-f-cephalon-agentics-services-agenticsdiagnostics-executionoutcometag): `Fields` on `AgenticsDiagnostics` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ExecutionOutcomeTag&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the terminal execution outcome emitted on the activity (succeeded, failed, skipped, approval-required, or denied).
+  - `const string ExecutionOutcomeTag`
 - [ExecutionOwnership](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionbindingdescriptor-executionownership): `Properties` on `CdcCaptureExecutionBindingDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionOwnership&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing ownership mode for the effective execution runtime.
   - `string ExecutionOwnership { get; }`
@@ -13626,6 +13665,12 @@ Browse the published API surface by public member.
 - [InvitationDeliveryStatusObservationStoreFilePath](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-configuration-multitenancygovernanceoptions-invitationdeliverystatusobservationstorefilepath): `Properties` on `MultiTenancyGovernanceOptions` in `Cephalon.MultiTenancy.Governance.Configuration` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationDeliveryStatusObservationStoreFilePath&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Configuration&scope=members)
   - Gets or sets the optional JSON file path used for Cephalon-managed durable delivery status observations.
   - `string InvitationDeliveryStatusObservationStoreFilePath { get; set; }`
+- [InvitationDispatchActivityName](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-governancediagnostics-invitationdispatchactivityname): `Fields` on `GovernanceDiagnostics` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationDispatchActivityName&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the stable activity name emitted around one in-process invitation delivery dispatch.
+  - `const string InvitationDispatchActivityName`
+- [InvitationDispatchCounterName](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-governancediagnostics-invitationdispatchcountername): `Fields` on `GovernanceDiagnostics` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationDispatchCounterName&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the stable counter name for completed invitation delivery dispatches.
+  - `const string InvitationDispatchCounterName`
 - [InvitationExpired](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes-invitationexpired): `Fields` on `TenantInvitationDeliveryOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationExpired&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The requested invitation expired before dispatch.
   - `const string InvitationExpired`
@@ -13680,6 +13725,9 @@ Browse the published API surface by public member.
 - [InvitationId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-invitationid): `Properties` on `TenantInvitationValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the invitation identifier that was validated.
   - `string InvitationId { get; }`
+- [InvitationIdTag](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-governancediagnostics-invitationidtag): `Fields` on `GovernanceDiagnostics` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationIdTag&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the invitation identifier emitted on the activity.
+  - `const string InvitationIdTag`
 - [InvitationLifecycle](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantgovernanceactionkinds-invitationlifecycle): `Fields` on `TenantGovernanceActionKinds` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=InvitationLifecycle&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - A governance action that changes an invitation lifecycle.
   - `const string InvitationLifecycle`
@@ -16467,6 +16515,9 @@ Browse the published API surface by public member.
 - [MatchedSubscriptionCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-matchedsubscriptioncount): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchedSubscriptionCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The number of subscriptions matched by the latest publication observation.
   - `int MatchedSubscriptionCount { get; set; }`
+- [MatchedSubscriptionCountTag](cephalon-eventing.md#member-f-cephalon-eventing-services-eventingdiagnostics-matchedsubscriptioncounttag): `Fields` on `EventingDiagnostics` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=MatchedSubscriptionCountTag&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the count of subscriptions matched for the publication.
+  - `const string MatchedSubscriptionCountTag`
 - [MatchedSuppressionIds](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointcandidateruntimedescriptor-matchedsuppressionids): `Properties` on `RestEndpointCandidateRuntimeDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=MatchedSuppressionIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the ordered suppression-rule identifiers that matched this candidate before one winner was selected.
   - `IReadOnlyList<string> MatchedSuppressionIds { get; }`
@@ -17445,11 +17496,20 @@ Browse the published API surface by public member.
 - [MetadataTimeoutMilliseconds](cephalon-observability-digitalocean.md#member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-metadatatimeoutmilliseconds): `Properties` on `DigitalOceanTelemetryExportOptions` in `Cephalon.Observability.DigitalOcean.Configuration` (`Cephalon.Observability.DigitalOcean`) [Browse](browse.html?q=MetadataTimeoutMilliseconds&assembly=Cephalon.Observability.DigitalOcean&namespace=Cephalon.Observability.DigitalOcean.Configuration&scope=members)
   - Gets or sets the timeout, in milliseconds, used for Droplet metadata-service lookups.
   - `int? MetadataTimeoutMilliseconds { get; set; }`
+- [MeterName](cephalon-agentics.md#member-f-cephalon-agentics-services-agenticsdiagnostics-metername): `Fields` on `AgenticsDiagnostics` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=MeterName&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the stable meter name emitted by the agentics runtime.
+  - `const string MeterName`
 - [MeterName](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticssurface-metername): `Properties` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=MeterName&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
   - The meter name used for engine metrics.
   - `string MeterName { get; set; }`
 - [MeterName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-metername): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=MeterName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - Gets the meter name emitted by the engine.
+  - `const string MeterName`
+- [MeterName](cephalon-eventing.md#member-f-cephalon-eventing-services-eventingdiagnostics-metername): `Fields` on `EventingDiagnostics` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=MeterName&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the stable meter name emitted by the eventing runtime.
+  - `const string MeterName`
+- [MeterName](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-governancediagnostics-metername): `Fields` on `GovernanceDiagnostics` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=MeterName&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
+  - Gets the stable meter name emitted by the governance runtime.
   - `const string MeterName`
 - [MeterName](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-metername): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=MeterName&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Gets the stable meter name emitted by the retrieval runtime.
@@ -21522,6 +21582,12 @@ Browse the published API surface by public member.
 - [Publication](cephalon-eventing-wolverine.md#member-p-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-publication): `Properties` on `WolverineManagedEventSubscriptionExecutionRequest` in `Cephalon.Eventing.Wolverine.Services` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=Publication&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Services&scope=members)
   - Gets the staged publication that should be delivered to the managed subscription.
   - `EventPublication Publication { get; }`
+- [PublicationDispatchActivityName](cephalon-eventing.md#member-f-cephalon-eventing-services-eventingdiagnostics-publicationdispatchactivityname): `Fields` on `EventingDiagnostics` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PublicationDispatchActivityName&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the stable activity name emitted around one in-process event publication dispatch.
+  - `const string PublicationDispatchActivityName`
+- [PublicationDispatchCounterName](cephalon-eventing.md#member-f-cephalon-eventing-services-eventingdiagnostics-publicationdispatchcountername): `Fields` on `EventingDiagnostics` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PublicationDispatchCounterName&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the stable counter name for completed in-process publication dispatches.
+  - `const string PublicationDispatchCounterName`
 - [PublicationId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationresult-publicationid): `Properties` on `EventPublicationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PublicationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The stable publication identifier.
   - `string PublicationId { get; set; }`
@@ -21531,9 +21597,15 @@ Browse the published API surface by public member.
 - [PublicationId](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-publicationid): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=PublicationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The stable publication identifier declared by the choreography step.
   - `string PublicationId { get; set; }`
+- [PublicationIdTag](cephalon-eventing.md#member-f-cephalon-eventing-services-eventingdiagnostics-publicationidtag): `Fields` on `EventingDiagnostics` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PublicationIdTag&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the publication identifier emitted on the activity.
+  - `const string PublicationIdTag`
 - [PublicationName](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-publicationname): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=PublicationName&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
   - Gets or sets the PostgreSQL publication that should emit the tracked table changes.
   - `string PublicationName { get; set; }`
+- [PublicationOutcomeTag](cephalon-eventing.md#member-f-cephalon-eventing-services-eventingdiagnostics-publicationoutcometag): `Fields` on `EventingDiagnostics` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PublicationOutcomeTag&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the publication outcome emitted on the activity (succeeded, skipped, or failed).
+  - `const string PublicationOutcomeTag`
 - [PublicationPlanFailed](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-publicationplanfailed): `Fields` on `TenantDomainOwnershipProofVerificationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=PublicationPlanFailed&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Publication planning failed before proof verification could proceed.
   - `const string PublicationPlanFailed`
@@ -21603,6 +21675,9 @@ Browse the published API surface by public member.
 - [PublisherId](cephalon-engine.md#member-p-cephalon-engine-trust-packagetrustdecision-publisherid): `Properties` on `PackageTrustDecision` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=PublisherId&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - The declared publisher identifier, when available.
   - `string PublisherId { get; set; }`
+- [PublisherIdTag](cephalon-eventing.md#member-f-cephalon-eventing-services-eventingdiagnostics-publisheridtag): `Fields` on `EventingDiagnostics` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PublisherIdTag&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the publisher identifier responsible for the dispatch.
+  - `const string PublisherIdTag`
 - [PublisherWebsite](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-publisherwebsite): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=PublisherWebsite&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the publisher website declared by the package manifest, when available.
   - `string PublisherWebsite { get; }`
@@ -24396,6 +24471,9 @@ Browse the published API surface by public member.
 - [RunId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexingresult-runid): `Properties` on `KnowledgeIndexingResult` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=RunId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The stable indexing run identifier.
   - `string RunId { get; set; }`
+- [RunIdTag](cephalon-agentics.md#member-f-cephalon-agentics-services-agenticsdiagnostics-runidtag): `Fields` on `AgenticsDiagnostics` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=RunIdTag&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the agent-tool run identifier emitted on the activity.
+  - `const string RunIdTag`
 - [RunIdTag](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-runidtag): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=RunIdTag&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Stable Cephalon-prefix tag carrying the knowledge-index run identifier emitted on the activity.
   - `const string RunIdTag`
@@ -28014,6 +28092,12 @@ Browse the published API surface by public member.
 - [Tool](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutioncontext-tool): `Properties` on `AgentToolExecutionContext` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Tool&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the resolved tool descriptor being executed.
   - `AgentToolDescriptor Tool { get; }`
+- [ToolDispatchActivityName](cephalon-agentics.md#member-f-cephalon-agentics-services-agenticsdiagnostics-tooldispatchactivityname): `Fields` on `AgenticsDiagnostics` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ToolDispatchActivityName&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the stable activity name emitted around one managed agent-tool dispatch.
+  - `const string ToolDispatchActivityName`
+- [ToolDispatchCounterName](cephalon-agentics.md#member-f-cephalon-agentics-services-agenticsdiagnostics-tooldispatchcountername): `Fields` on `AgenticsDiagnostics` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ToolDispatchCounterName&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Gets the stable counter name for completed agent-tool dispatches.
+  - `const string ToolDispatchCounterName`
 - [ToolId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-toolid): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ToolId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the stable tool identifier.
   - `string ToolId { get; }`
@@ -28032,6 +28116,9 @@ Browse the published API surface by public member.
 - [ToolIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommandbatch-toolids): `Properties` on `DatabaseMigrationOperationalExecutionGroupCommandBatch` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ToolIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable operator tool identifiers represented in this batch, in encounter order.
   - `IReadOnlyList<string> ToolIds { get; }`
+- [ToolIdTag](cephalon-agentics.md#member-f-cephalon-agentics-services-agenticsdiagnostics-toolidtag): `Fields` on `AgenticsDiagnostics` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ToolIdTag&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the agent-tool identifier emitted on the activity.
+  - `const string ToolIdTag`
 - [Tools](cephalon-agentics.md#member-p-cephalon-agentics-configuration-agenticruntimeoptions-tools): `Properties` on `AgenticRuntimeOptions` in `Cephalon.Agentics.Configuration` (`Cephalon.Agentics`) [Browse](browse.html?q=Tools&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Configuration&scope=members)
   - Gets the host-defined tool descriptors that should be available to the agentic runtime.
   - `IList<AgentToolDescriptor> Tools { get; }`

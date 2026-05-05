@@ -623,6 +623,99 @@ Parameters:
 
 ## Namespace Cephalon.MultiTenancy.Governance.Services
 
+<a id="type-cephalon-multitenancy-governance-services-governancediagnostics"></a>
+
+### `GovernanceDiagnostics`
+
+Defines the stable activity source, meter, activity, counter, and tag names emitted by the multi-tenancy governance companion runtime. Names are sourced from `MultiTenancyGovernance` and `MultiTenancyGovernance` so the governance pack and observability companion packs share one canonical name set with the rest of the engine.
+
+#### Declaration
+```csharp
+public static class GovernanceDiagnostics
+```
+
+#### Fields
+
+<a id="member-f-cephalon-multitenancy-governance-services-governancediagnostics-activitysourcename"></a>
+
+##### `ActivitySourceName`
+
+```csharp
+const string ActivitySourceName
+```
+
+Gets the stable activity-source name emitted by the governance runtime.
+
+<a id="member-f-cephalon-multitenancy-governance-services-governancediagnostics-deliverychanneltag"></a>
+
+##### `DeliveryChannelTag`
+
+```csharp
+const string DeliveryChannelTag
+```
+
+Stable Cephalon-prefix tag carrying the delivery channel emitted on the activity (for example `email`, `sms`, or a host-defined channel name).
+
+<a id="member-f-cephalon-multitenancy-governance-services-governancediagnostics-deliveryoutcometag"></a>
+
+##### `DeliveryOutcomeTag`
+
+```csharp
+const string DeliveryOutcomeTag
+```
+
+Stable Cephalon-prefix tag carrying the delivery dispatch outcome emitted on the activity (one of the `TenantInvitationDeliveryOutcomes` values).
+
+<a id="member-f-cephalon-multitenancy-governance-services-governancediagnostics-deliverysenderidtag"></a>
+
+##### `DeliverySenderIdTag`
+
+```csharp
+const string DeliverySenderIdTag
+```
+
+Stable Cephalon-prefix tag carrying the delivery sender identifier emitted on the activity once a sender has been resolved for the dispatch.
+
+<a id="member-f-cephalon-multitenancy-governance-services-governancediagnostics-invitationdispatchactivityname"></a>
+
+##### `InvitationDispatchActivityName`
+
+```csharp
+const string InvitationDispatchActivityName
+```
+
+Gets the stable activity name emitted around one in-process invitation delivery dispatch.
+
+<a id="member-f-cephalon-multitenancy-governance-services-governancediagnostics-invitationdispatchcountername"></a>
+
+##### `InvitationDispatchCounterName`
+
+```csharp
+const string InvitationDispatchCounterName
+```
+
+Gets the stable counter name for completed invitation delivery dispatches.
+
+<a id="member-f-cephalon-multitenancy-governance-services-governancediagnostics-invitationidtag"></a>
+
+##### `InvitationIdTag`
+
+```csharp
+const string InvitationIdTag
+```
+
+Stable Cephalon-prefix tag carrying the invitation identifier emitted on the activity.
+
+<a id="member-f-cephalon-multitenancy-governance-services-governancediagnostics-metername"></a>
+
+##### `MeterName`
+
+```csharp
+const string MeterName
+```
+
+Gets the stable meter name emitted by the governance runtime.
+
 <a id="type-cephalon-multitenancy-governance-services-itenantadministrationworkflow"></a>
 
 ### `ITenantAdministrationWorkflow`

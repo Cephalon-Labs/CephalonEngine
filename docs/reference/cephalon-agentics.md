@@ -165,6 +165,129 @@ Parameters:
 
 ## Namespace Cephalon.Agentics.Services
 
+<a id="type-cephalon-agentics-services-agenticsdiagnostics"></a>
+
+### `AgenticsDiagnostics`
+
+Defines the stable activity source, meter, activity, counter, and tag names emitted by the agentics companion runtime. Names are sourced from `Agentics` and `Agentics` so the agentics pack and observability companion packs share one canonical name set with the rest of the engine.
+
+#### Declaration
+```csharp
+public static class AgenticsDiagnostics
+```
+
+#### Fields
+
+<a id="member-f-cephalon-agentics-services-agenticsdiagnostics-activitysourcename"></a>
+
+##### `ActivitySourceName`
+
+```csharp
+const string ActivitySourceName
+```
+
+Gets the stable activity-source name emitted by the agentics runtime.
+
+<a id="member-f-cephalon-agentics-services-agenticsdiagnostics-actoridtag"></a>
+
+##### `ActorIdTag`
+
+```csharp
+const string ActorIdTag
+```
+
+Stable Cephalon-prefix tag carrying the optional actor identifier emitted on the activity.
+
+<a id="member-f-cephalon-agentics-services-agenticsdiagnostics-attempttag"></a>
+
+##### `AttemptTag`
+
+```csharp
+const string AttemptTag
+```
+
+Stable Cephalon-prefix tag carrying the requested execution attempt number emitted on the activity.
+
+<a id="member-f-cephalon-agentics-services-agenticsdiagnostics-correlationidtag"></a>
+
+##### `CorrelationIdTag`
+
+```csharp
+const string CorrelationIdTag
+```
+
+Stable Cephalon-prefix tag carrying the optional correlation identifier emitted on the activity.
+
+<a id="member-f-cephalon-agentics-services-agenticsdiagnostics-dispatcheridtag"></a>
+
+##### `DispatcherIdTag`
+
+```csharp
+const string DispatcherIdTag
+```
+
+Stable Cephalon-prefix tag carrying the dispatcher identifier responsible for the run.
+
+<a id="member-f-cephalon-agentics-services-agenticsdiagnostics-executionoutcometag"></a>
+
+##### `ExecutionOutcomeTag`
+
+```csharp
+const string ExecutionOutcomeTag
+```
+
+Stable Cephalon-prefix tag carrying the terminal execution outcome emitted on the activity (succeeded, failed, skipped, approval-required, or denied).
+
+<a id="member-f-cephalon-agentics-services-agenticsdiagnostics-metername"></a>
+
+##### `MeterName`
+
+```csharp
+const string MeterName
+```
+
+Gets the stable meter name emitted by the agentics runtime.
+
+<a id="member-f-cephalon-agentics-services-agenticsdiagnostics-runidtag"></a>
+
+##### `RunIdTag`
+
+```csharp
+const string RunIdTag
+```
+
+Stable Cephalon-prefix tag carrying the agent-tool run identifier emitted on the activity.
+
+<a id="member-f-cephalon-agentics-services-agenticsdiagnostics-tooldispatchactivityname"></a>
+
+##### `ToolDispatchActivityName`
+
+```csharp
+const string ToolDispatchActivityName
+```
+
+Gets the stable activity name emitted around one managed agent-tool dispatch.
+
+<a id="member-f-cephalon-agentics-services-agenticsdiagnostics-tooldispatchcountername"></a>
+
+##### `ToolDispatchCounterName`
+
+```csharp
+const string ToolDispatchCounterName
+```
+
+Gets the stable counter name for completed agent-tool dispatches.
+
+<a id="member-f-cephalon-agentics-services-agenticsdiagnostics-toolidtag"></a>
+
+##### `ToolIdTag`
+
+```csharp
+const string ToolIdTag
+```
+
+Stable Cephalon-prefix tag carrying the agent-tool identifier emitted on the activity.
+
 <a id="type-cephalon-agentics-services-agenttooldescriptor"></a>
 
 ### `AgentToolDescriptor`

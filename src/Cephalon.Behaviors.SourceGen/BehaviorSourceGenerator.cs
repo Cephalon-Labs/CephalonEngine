@@ -278,6 +278,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
 
         var inputType = ResolveBehaviorInputType(typeSymbol);
         var implementsInterface = inputType is not null;
+        var durableExecution = ResolveDurableExecutionInfo(typeSymbol);
         var hasRestTransportAttribute = DeclaresRestTransportAttribute(typeSymbol);
         var restProfile = ExtractRestProfile(typeSymbol);
 
@@ -302,6 +303,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             inputType: inputType,
             location: location,
             topology: topology,
+            durableExecution: durableExecution,
             restProfile: restProfile,
             hasRestTransportAttribute: hasRestTransportAttribute,
             hasConfigureTopologyRestTransport: hasConfigureTopologyRestTransport);
@@ -916,6 +918,12 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             sb.AppendLine("        {");
             sb.AppendLine($"            global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddTransient(services, typeof({fqn}));");
             sb.AppendLine($"            typeRegistry.Register(\"{id}\", typeof({fqn}));");
+            if (info.DurableExecution is not null)
+            {
+                sb.AppendLine("            services.Add(global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor.Singleton(");
+                sb.AppendLine("                typeof(global::Cephalon.Behaviors.Patterns.Strategies.DurableExecutionSlot),");
+                sb.AppendLine($"                global::Cephalon.Behaviors.Patterns.Strategies.DurableExecutionSlot.For<{fqn}, {info.DurableExecution.InputTypeName}, {info.DurableExecution.StateTypeName}, {info.DurableExecution.OutputTypeName}>()));");
+            }
             sb.AppendLine("        }");
         }
 
@@ -1561,6 +1569,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             InputTypeInfo? inputType,
             Location location,
             TopologyInfo? topology,
+            DurableExecutionInfo? durableExecution,
             RestProfileInfo? restProfile,
             bool hasRestTransportAttribute,
             bool hasConfigureTopologyRestTransport)
@@ -1574,6 +1583,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             InputType = inputType;
             Location = location;
             Topology = topology;
+            DurableExecution = durableExecution;
             RestProfile = restProfile;
             HasRestTransportAttribute = hasRestTransportAttribute;
             HasConfigureTopologyRestTransport = hasConfigureTopologyRestTransport;
@@ -1588,6 +1598,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         public InputTypeInfo? InputType { get; }
         public Location Location { get; }
         public TopologyInfo? Topology { get; }
+        public DurableExecutionInfo? DurableExecution { get; }
         public RestProfileInfo? RestProfile { get; }
         public bool HasRestTransportAttribute { get; }
         public bool HasConfigureTopologyRestTransport { get; }
@@ -1613,6 +1624,23 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             ValidateRestBindingMetadata(this).IsDefaultOrEmpty &&
             !HasRestTransportAttribute &&
             !HasConfigureTopologyRestTransport;
+    }
+
+    private sealed class DurableExecutionInfo
+    {
+        public DurableExecutionInfo(
+            string inputTypeName,
+            string stateTypeName,
+            string outputTypeName)
+        {
+            InputTypeName = inputTypeName;
+            StateTypeName = stateTypeName;
+            OutputTypeName = outputTypeName;
+        }
+
+        public string InputTypeName { get; }
+        public string StateTypeName { get; }
+        public string OutputTypeName { get; }
     }
 
     private sealed class RestProfileInfo
@@ -1693,6 +1721,22 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         public string GenericOutputTypeName { get; }
         public bool IsSimple { get; }
         public ImmutableDictionary<string, string> PublicProperties { get; }
+    }
+
+    private static DurableExecutionInfo? ResolveDurableExecutionInfo(INamedTypeSymbol typeSymbol)
+    {
+        var durableInterface = typeSymbol.AllInterfaces.FirstOrDefault(static i =>
+            i.OriginalDefinition.ToDisplayString() ==
+            "Cephalon.Behaviors.Patterns.Abstractions.IDurableExecution<TInput, TState, TOutput>");
+        if (durableInterface is null)
+        {
+            return null;
+        }
+
+        return new DurableExecutionInfo(
+            durableInterface.TypeArguments[0].ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+            durableInterface.TypeArguments[1].ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+            durableInterface.TypeArguments[2].ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
     }
 
     private sealed class RestBindingValidationIssue

@@ -1,8 +1,10 @@
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.EventSourcing;
 using Cephalon.Behaviors.Patterns.Abstractions;
+using Cephalon.Behaviors.Patterns.Hosting;
 using Cephalon.Behaviors.Patterns.Strategies;
 using Cephalon.Behaviors.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.Behaviors.Execution;
 
@@ -226,6 +228,44 @@ public sealed class DurableExecutionStrategyTests
     }
 
     [Fact]
+    public async Task DurableExecutionStrategy_UsesGeneratedDurableExecutionSlot()
+    {
+        var eventStore = new RecordingEventStore();
+        var services = new ServiceCollection();
+        var typeRegistry = new BehaviorTypeRegistry();
+        var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+        typeRegistry.Register(nameof(IncrementWorkflow), typeof(IncrementWorkflow));
+        services.AddSingleton(DurableExecutionSlot.For<IncrementWorkflow, IncrementInput, CounterState, string>());
+        services.AddSingleton(DurableExecutionSlot.For<IncrementWorkflow, IncrementInput, CounterState, string>());
+        services.AddSingleton<IBehaviorCatalog>(
+            new BehaviorCatalog(
+            [
+                new StaticBehaviorContributor(
+                    new BehaviorTopologyDescriptor(nameof(IncrementWorkflow), "durable-execution", ["in-memory"]))
+            ]));
+        services.AddSingleton<IBehaviorTypeRegistry>(typeRegistry);
+        services.AddLogging();
+        builder.AddBehaviorPatterns();
+        using var provider = services.BuildServiceProvider();
+        var strategy = provider.GetServices<IBehaviorExecutionStrategy>()
+            .OfType<DurableExecutionStrategy>()
+            .Single();
+        var context = MakeContext(
+            new IncrementWorkflow(),
+            new IncrementInput(3),
+            new TestBehaviorContext(
+                "durable.increment",
+                correlationId: "corr-generated",
+                eventStore: eventStore));
+
+        var result = await strategy.ExecuteAsync(context);
+
+        Assert.Equal(200, result.HttpStatusCode);
+        Assert.Equal("total:3", result.Output);
+        Assert.Equal(0, await eventStore.GetVersionAsync("IncrementWorkflow:corr-generated"));
+    }
+
+    [Fact]
     public async Task DurableExecutionStrategy_WhenOnlyEventsRemain_ReturnsAccepted()
     {
         var eventStore = new RecordingEventStore();
@@ -381,6 +421,14 @@ public sealed class DurableExecutionStrategyTests
                 yield return domainEvent;
                 await Task.CompletedTask;
             }
+        }
+    }
+
+    private sealed class StaticBehaviorContributor(params BehaviorTopologyDescriptor[] descriptors) : IBehaviorContributor
+    {
+        public IReadOnlyList<BehaviorTopologyDescriptor> Contribute()
+        {
+            return descriptors;
         }
     }
 }
