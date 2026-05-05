@@ -128,6 +128,53 @@
         "introducedBy": "ENG-426"
       },
       {
+        "packageName": "Cephalon.Data.MySql",
+        "nugetId": "Cephalon.Data.MySql",
+        "claimAuditTier": "high",
+        "supportedModes": [],
+        "requiredProjectProperties": [],
+        "knownHazards": [
+          {
+            "kind": "reflection-third-party-nonpublic-method",
+            "site": "src/Cephalon.Data.MySql/Services/MySqlBinlogTransport.cs:1177",
+            "pattern": "typeof(ReplicationClient).GetMethod(name, BindingFlags.Instance | BindingFlags.NonPublic) — resolver behind 5 static MethodInfo fields (lines 21-24) targeting non-public members of the third-party SciSharp.MySQL.Replication.ReplicationClient type",
+            "remediation": "Either an upstream SciSharp.MySQL.Replication API surface change that opens these members, or a fully public re-implementation of the binlog transport against the public API; annotation alone cannot reach across an external compiled assembly."
+          },
+          {
+            "kind": "reflection-third-party-nonpublic-method",
+            "site": "src/Cephalon.Data.MySql/Services/MySqlBinlogTransport.cs:1184",
+            "pattern": "typeof(ReplicationClient).GetMethod(name, BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy) — resolver behind the SetupConnection static MethodInfo field (line 25)",
+            "remediation": "Same upstream-API or public-rewrite path as the line-1177 entry."
+          },
+          {
+            "kind": "reflection-third-party-nonpublic-field",
+            "site": "src/Cephalon.Data.MySql/Services/MySqlBinlogTransport.cs:1191",
+            "pattern": "typeof(ReplicationClient).GetField(name, BindingFlags.Instance | BindingFlags.NonPublic) — resolver behind 3 static FieldInfo fields (lines 26-28: _connection, _serverId, _stream)",
+            "remediation": "Same upstream-API or public-rewrite path; non-public fields on a third-party type cannot be preserved by trim/AOT analyzers."
+          },
+          {
+            "kind": "reflection-method-invoke",
+            "site": "src/Cephalon.Data.MySql/Services/MySqlBinlogTransport.cs:1198",
+            "pattern": "method.Invoke(instance, arguments) over the resolved third-party non-public methods",
+            "remediation": "Removed by the same upstream-API or public-rewrite that retires the GetMethod/GetField calls above; trim-hostile because the resolved methods themselves can be stripped from the third-party assembly."
+          },
+          {
+            "kind": "reflection-duck-type-property",
+            "site": "src/Cephalon.Data.MySql/Services/MySqlBinlogCaptureHostedService.cs:194",
+            "pattern": "exception.GetType().GetProperty(\"FailureKind\", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic) — duck-typed fallback when the exception is not the typed MySqlBinlogCaptureException",
+            "remediation": "Lift the duck-typed fallback to a small ICaptureFailureMetadata interface (which the typed exception already implements) plus a registry of additional exception types whose metadata should be projected, so trim warnings stop at the interface boundary."
+          },
+          {
+            "kind": "reflection-duck-type-property",
+            "site": "src/Cephalon.Data.MySql/Services/MySqlBinlogCaptureHostedService.cs:202",
+            "pattern": "exception.GetType().GetProperty(\"Metadata\", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic) — second duck-typed fallback property read",
+            "remediation": "Same ICaptureFailureMetadata + typed-exception-registry path as the line-194 entry."
+          }
+        ],
+        "evidence": "docs/trim-aot-hazard-inventory.md (high tier — third-party non-public reflective access; medium-tier duck-typed fallback also recorded for completeness)",
+        "introducedBy": "ENG-434"
+      },
+      {
         "packageName": "Cephalon.Behaviors.Http",
         "nugetId": "Cephalon.Behaviors.Http",
         "claimAuditTier": "medium",
@@ -209,6 +256,52 @@
         ],
         "evidence": "docs/trim-aot-hazard-inventory.md (medium tier — added via ENG-433 broadened-pattern audit)",
         "introducedBy": "ENG-433"
+      },
+      {
+        "packageName": "Cephalon.Data.Postgres",
+        "nugetId": "Cephalon.Data.Postgres",
+        "claimAuditTier": "medium",
+        "supportedModes": [],
+        "requiredProjectProperties": [],
+        "knownHazards": [
+          {
+            "kind": "reflection-duck-type-property",
+            "site": "src/Cephalon.Data.Postgres/Services/PostgresLogicalReplicationCaptureHostedService.cs:193",
+            "pattern": "exception.GetType().GetProperty(\"FailureKind\", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic) — duck-typed fallback when the exception is not the typed PostgresLogicalReplicationCaptureException",
+            "remediation": "Lift the duck-typed fallback to a small ICaptureFailureMetadata interface plus a registry of additional exception types whose metadata should be projected, so trim warnings stop at the interface boundary."
+          },
+          {
+            "kind": "reflection-duck-type-property",
+            "site": "src/Cephalon.Data.Postgres/Services/PostgresLogicalReplicationCaptureHostedService.cs:201",
+            "pattern": "exception.GetType().GetProperty(\"Metadata\", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic) — second duck-typed fallback property read",
+            "remediation": "Same ICaptureFailureMetadata + typed-exception-registry path as the line-193 entry."
+          }
+        ],
+        "evidence": "docs/trim-aot-hazard-inventory.md (medium tier — duck-typed exception-metadata fallback)",
+        "introducedBy": "ENG-434"
+      },
+      {
+        "packageName": "Cephalon.Data.Oracle",
+        "nugetId": "Cephalon.Data.Oracle",
+        "claimAuditTier": "medium",
+        "supportedModes": [],
+        "requiredProjectProperties": [],
+        "knownHazards": [
+          {
+            "kind": "reflection-duck-type-property",
+            "site": "src/Cephalon.Data.Oracle/Services/OracleLogMinerCaptureHostedService.cs:194",
+            "pattern": "exception.GetType().GetProperty(\"FailureKind\", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic) — duck-typed fallback when the exception is not the typed OracleLogMinerCaptureException",
+            "remediation": "Lift the duck-typed fallback to a small ICaptureFailureMetadata interface plus a registry of additional exception types whose metadata should be projected, so trim warnings stop at the interface boundary."
+          },
+          {
+            "kind": "reflection-duck-type-property",
+            "site": "src/Cephalon.Data.Oracle/Services/OracleLogMinerCaptureHostedService.cs:202",
+            "pattern": "exception.GetType().GetProperty(\"Metadata\", BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic) — second duck-typed fallback property read",
+            "remediation": "Same ICaptureFailureMetadata + typed-exception-registry path as the line-194 entry."
+          }
+        ],
+        "evidence": "docs/trim-aot-hazard-inventory.md (medium tier — duck-typed exception-metadata fallback)",
+        "introducedBy": "ENG-434"
       },
       {
         "packageName": "Cephalon.EventSourcing.Cassandra",
