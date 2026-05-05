@@ -3,6 +3,29 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net10.0</TargetFramework>
     <Description>Reference documentation generator for Cephalon public APIs.</Description>
+    <!--
+      Permanent not-claimed posture for trim / Native AOT / single-file publishing per
+      ENG-438 (docs/trim-aot-hazard-inventory.md, high tier, by-design type-introspection).
+      Cephalon.ReferenceDocs is the published documentation generator; its purpose is to
+      enumerate the public API surface of arbitrary referenced Cephalon.* runtime
+      assemblies through type.GetConstructors / GetFields / GetProperties / GetMethods
+      over arbitrary runtime Type parameters
+      (Generation/ReferenceDocsGenerator.cs:295/301/308/313). That reflection is
+      by-design and cannot be replaced by a source generator without removing the
+      package's reason to exist, so the high-tier remediation alternative ("document a
+      permanent not-claimed posture for that package") is the durable answer rather
+      than a structural rewrite. Declaring IsTrimmable / IsAotCompatible / PublishTrimmed
+      / PublishAot / PublishSingleFile as false here makes that posture machine-checkable
+      through the harness's project-property audit phase
+      (scripts/validate-deployment-mode-claims.ps1) and matches the
+      requiredProjectProperties value seeded in scripts/deployment-mode-support.json
+      under deploymentModeEligibility.packages.
+    -->
+    <IsTrimmable>false</IsTrimmable>
+    <IsAotCompatible>false</IsAotCompatible>
+    <PublishTrimmed>false</PublishTrimmed>
+    <PublishAot>false</PublishAot>
+    <PublishSingleFile>false</PublishSingleFile>
   </PropertyGroup>
 <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers">
