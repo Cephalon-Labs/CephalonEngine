@@ -74,7 +74,7 @@
     }
   },
   "deploymentModeEligibility": {
-    "comment": "Per-package eligibility table seeded from docs/trim-aot-hazard-inventory.md. Originally introduced via ENG-426 (high + first medium-tier seeding); broadened via ENG-432 (Cephalon.Behaviors.Http reclassified low->medium with three additional reflection sites), ENG-433 (Cephalon.Data added at medium tier under broadened MakeGenericMethod / BindingFlags pattern set), ENG-434 (Cephalon.Data.MySql added at high tier + Cephalon.Data.Postgres / Cephalon.Data.Oracle added at medium tier for the CDC capture services), ENG-435 (Cephalon.Abstractions added at low tier + two enum-extension hazard sites appended to Cephalon.Behaviors.Http), and ENG-436 (six additional knownHazards entries appended to Cephalon.Behaviors covering the BehaviorModule.cs two-phase auto-registration pipeline + the BehaviorExecutionSlot.cs open-generic execution-slot dispatch — package tier unchanged at high, hazard list grows). Each entry records the package's claim-audit tier, the actual reflection / dynamic-code call sites observed in its src/Cephalon.* source as of May 5, 2026, and the supportedModes a future claim could advertise (today: empty for every entry — the global manifest claim stays not-claimed until project properties + harness verdicts move). The list intentionally only enumerates packages that are NOT clean-baseline; the harness's project-property and analyzer audit phases scan all src/Cephalon.*.csproj automatically, so the absence of a package here means clean-baseline (no observed source-level hazard) rather than untracked. Excluded-by-design analyzer / source-generator projects are listed separately so the harness can confirm their disable-properties remain in place.",
+    "comment": "Per-package eligibility table seeded from docs/trim-aot-hazard-inventory.md. Originally introduced via ENG-426 (high + first medium-tier seeding); broadened via ENG-432 (Cephalon.Behaviors.Http reclassified low->medium with three additional reflection sites), ENG-433 (Cephalon.Data added at medium tier under broadened MakeGenericMethod / BindingFlags pattern set), ENG-434 (Cephalon.Data.MySql added at high tier + Cephalon.Data.Postgres / Cephalon.Data.Oracle added at medium tier for the CDC capture services), ENG-435 (Cephalon.Abstractions added at low tier + two enum-extension hazard sites appended to Cephalon.Behaviors.Http), ENG-436 (six additional knownHazards entries appended to Cephalon.Behaviors covering the BehaviorModule.cs two-phase auto-registration pipeline + the BehaviorExecutionSlot.cs open-generic execution-slot dispatch — package tier unchanged at high, hazard list grows), and ENG-437 (seven additional knownHazards entries appended to Cephalon.Behaviors.Http covering RestBehaviorProjection.cs reflective method lookup + open-generic dispatch, RestBehaviorModuleBuilder.cs IBehaviorModuleBuilder.Add overload selection + open-generic dispatch, and BehaviorRestProfileResolver.cs phase-1 ContainsBehaviorsAttribute.RegistrationType reflective enumerators — package tier unchanged at medium, hazard list grows from 6 to 13). Each entry records the package's claim-audit tier, the actual reflection / dynamic-code call sites observed in its src/Cephalon.* source as of May 5, 2026, and the supportedModes a future claim could advertise (today: empty for every entry — the global manifest claim stays not-claimed until project properties + harness verdicts move). The list intentionally only enumerates packages that are NOT clean-baseline; the harness's project-property and analyzer audit phases scan all src/Cephalon.*.csproj automatically, so the absence of a package here means clean-baseline (no observed source-level hazard) rather than untracked. Excluded-by-design analyzer / source-generator projects are listed separately so the harness can confirm their disable-properties remain in place.",
     "packages": [
       {
         "packageName": "Cephalon.Engine",
@@ -253,12 +253,54 @@
             "site": "src/Cephalon.Behaviors.Http/Abstractions/BehaviorRestBindingSourceExtensions.cs:54",
             "pattern": "typeof(BehaviorRestBindingSource).GetField(value.ToString(), BindingFlags.Public | BindingFlags.Static) + GetCustomAttribute<JsonStringEnumMemberNameAttribute>() — bounded enum-field wire-name resolver",
             "remediation": "Same annotation or [JsonStringEnumConverter<BehaviorRestBindingSource>] migration path as the BehaviorRestMethod entry."
+          },
+          {
+            "kind": "reflection-method-lookup",
+            "site": "src/Cephalon.Behaviors.Http/Hosting/RestBehaviorProjection.cs:41",
+            "pattern": "typeof(RestBehaviorEndpointProjection).GetMethod(nameof(CreateMapDelegateFactory), BindingFlags.Static | BindingFlags.NonPublic) initializing static readonly MethodInfo CreateMapDelegateFactoryMethod (anchor BindingFlags on line 43)",
+            "remediation": "Replace with a direct method reference once the per-projection source-gen path retires CreateMapDelegate — the same source-gen-emitted dispatch table that retires BehaviorRestEndpointGroup.cs:486."
+          },
+          {
+            "kind": "reflection-open-generic-method",
+            "site": "src/Cephalon.Behaviors.Http/Hosting/RestBehaviorProjection.cs:207",
+            "pattern": "CreateMapDelegateFactoryMethod.MakeGenericMethod(behaviorType) followed by closedMethod.Invoke(null, [method]) (line 208) — open-generic method dispatch over runtime behaviorType to materialize a per-behavior map-delegate factory",
+            "remediation": "Source-gen-emitted dispatch table keyed by behavior identity that materializes the closed generic CreateMapDelegateFactory<TBehavior> at compile time — same shape as the BehaviorRestEndpointGroup.cs:486 remediation."
+          },
+          {
+            "kind": "reflection-method-lookup",
+            "site": "src/Cephalon.Behaviors.Http/Hosting/RestBehaviorModuleBuilder.cs:14",
+            "pattern": "typeof(IBehaviorModuleBuilder).GetMethods().Single(static method => method.Name == nameof(IBehaviorModuleBuilder.Add) && method.IsGenericMethodDefinition && method.GetParameters().Length == 0) initializing static readonly MethodInfo AddOwnedBehaviorMethod",
+            "remediation": "Annotation-recoverable via [DynamicallyAccessedMembers(PublicMethods)] on IBehaviorModuleBuilder once the surrounding MakeGenericMethod (line 230) is retired by the source-gen-emitted dispatch table."
+          },
+          {
+            "kind": "reflection-method-lookup",
+            "site": "src/Cephalon.Behaviors.Http/Hosting/RestBehaviorModuleBuilder.cs:19",
+            "pattern": "typeof(IBehaviorModuleBuilder).GetMethods().Single(static method => method.Name == nameof(IBehaviorModuleBuilder.Add) && method.IsGenericMethodDefinition && method.GetParameters().Length == 1) initializing static readonly MethodInfo AddOwnedBehaviorWithTopologyMethod",
+            "remediation": "Same annotation-recovery + structural fix as the line-14 entry."
+          },
+          {
+            "kind": "reflection-open-generic-method",
+            "site": "src/Cephalon.Behaviors.Http/Hosting/RestBehaviorModuleBuilder.cs:230",
+            "pattern": "(configureTopology is null ? AddOwnedBehaviorMethod : AddOwnedBehaviorWithTopologyMethod).MakeGenericMethod(behaviorType) followed by method.Invoke(builder, ...) (line 231) — open-generic method dispatch over runtime behaviorType to invoke IBehaviorModuleBuilder.Add<TBehavior>",
+            "remediation": "Source-gen-emitted dispatch table keyed by behavior identity that materializes the closed generic Add<TBehavior> at compile time — same shape as the BehaviorRestEndpointGroup.cs:486 remediation."
+          },
+          {
+            "kind": "reflection-method-lookup",
+            "site": "src/Cephalon.Behaviors.Http/Hosting/BehaviorRestProfileResolver.cs:153",
+            "pattern": "registrationType.GetMethod(\"GetRestProfiles\", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, binder: null, Type.EmptyTypes, modifiers: null) followed by method?.Invoke(null, null) (line 159) — phase-1 reflective lookup of the source-gen-emitted REST-profile enumerator on ContainsBehaviorsAttribute.RegistrationType",
+            "remediation": "Annotation-recoverable in isolation via [DynamicallyAccessedMembers] on ContainsBehaviorsAttribute.RegistrationType — same shape as the Cephalon.Behaviors BehaviorModule.cs phase-1 sites recorded by ENG-436."
+          },
+          {
+            "kind": "reflection-method-lookup",
+            "site": "src/Cephalon.Behaviors.Http/Hosting/BehaviorRestProfileResolver.cs:190",
+            "pattern": "registrationType.GetMethod(\"GetRestProfileBehaviorTypes\", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, binder: null, Type.EmptyTypes, modifiers: null) followed by method?.Invoke(null, null) (line 196) — phase-1 reflective lookup of the source-gen-emitted REST-profile-behavior-types enumerator",
+            "remediation": "Same annotation-recovery + structural fix as the line-153 entry."
           }
         ],
-        "evidence": "docs/trim-aot-hazard-inventory.md (medium tier — reclassified from low via ENG-432; two enum-extension hazard sites added via ENG-435)",
+        "evidence": "docs/trim-aot-hazard-inventory.md (medium tier — reclassified from low via ENG-432; two enum-extension hazard sites added via ENG-435; seven REST-projection / module-builder / profile-resolver hazard sites added via ENG-437)",
         "introducedBy": "ENG-426",
         "reclassifiedBy": "ENG-432",
-        "extendedBy": "ENG-435"
+        "extendedBy": ["ENG-435", "ENG-437"]
       },
       {
         "packageName": "Cephalon.Data",
