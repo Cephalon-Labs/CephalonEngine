@@ -74,7 +74,7 @@
     }
   },
   "deploymentModeEligibility": {
-    "comment": "Per-package eligibility table seeded from docs/trim-aot-hazard-inventory.md (ENG-426). Each entry records the package's claim-audit tier, the actual reflection / dynamic-code call sites observed in its src/Cephalon.* source as of May 5, 2026, and the supportedModes a future claim could advertise (today: empty for every entry — the global manifest claim stays not-claimed until project properties + harness verdicts move). The list intentionally only enumerates packages that are NOT clean-baseline; the harness's project-property and analyzer audit phases scan all src/Cephalon.*.csproj automatically, so the absence of a package here means clean-baseline (no observed source-level hazard) rather than untracked. Excluded-by-design analyzer / source-generator projects are listed separately so the harness can confirm their disable-properties remain in place.",
+    "comment": "Per-package eligibility table seeded from docs/trim-aot-hazard-inventory.md. Originally introduced via ENG-426 (high + first medium-tier seeding); broadened via ENG-432 (Cephalon.Behaviors.Http reclassified low->medium with three additional reflection sites), ENG-433 (Cephalon.Data added at medium tier under broadened MakeGenericMethod / BindingFlags pattern set), ENG-434 (Cephalon.Data.MySql added at high tier + Cephalon.Data.Postgres / Cephalon.Data.Oracle added at medium tier for the CDC capture services), and ENG-435 (Cephalon.Abstractions added at low tier + two enum-extension hazard sites appended to Cephalon.Behaviors.Http). Each entry records the package's claim-audit tier, the actual reflection / dynamic-code call sites observed in its src/Cephalon.* source as of May 5, 2026, and the supportedModes a future claim could advertise (today: empty for every entry — the global manifest claim stays not-claimed until project properties + harness verdicts move). The list intentionally only enumerates packages that are NOT clean-baseline; the harness's project-property and analyzer audit phases scan all src/Cephalon.*.csproj automatically, so the absence of a package here means clean-baseline (no observed source-level hazard) rather than untracked. Excluded-by-design analyzer / source-generator projects are listed separately so the harness can confirm their disable-properties remain in place.",
     "packages": [
       {
         "packageName": "Cephalon.Engine",
@@ -204,11 +204,24 @@
             "site": "src/Cephalon.Behaviors.Http/Hosting/BehaviorRestEndpointGroup.cs:700",
             "pattern": "typeof(ResultModel<>).MakeGenericType(contract.ResponseType)",
             "remediation": "Same source-gen rewrite emits the closed ResultModel<TResponse> directly off the profile-contract list, retiring this MakeGenericType call."
+          },
+          {
+            "kind": "reflection-enum-field-attribute",
+            "site": "src/Cephalon.Behaviors.Http/Abstractions/BehaviorRestMethodExtensions.cs:54",
+            "pattern": "typeof(BehaviorRestMethod).GetField(value.ToString(), BindingFlags.Public | BindingFlags.Static) + GetCustomAttribute<JsonStringEnumMemberNameAttribute>() — bounded enum-field wire-name resolver",
+            "remediation": "Annotate BehaviorRestMethod with [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicFields)], or migrate the wire-name + parse helpers to [JsonConverter(typeof(JsonStringEnumConverter<BehaviorRestMethod>))] so the runtime reflection step disappears entirely."
+          },
+          {
+            "kind": "reflection-enum-field-attribute",
+            "site": "src/Cephalon.Behaviors.Http/Abstractions/BehaviorRestBindingSourceExtensions.cs:54",
+            "pattern": "typeof(BehaviorRestBindingSource).GetField(value.ToString(), BindingFlags.Public | BindingFlags.Static) + GetCustomAttribute<JsonStringEnumMemberNameAttribute>() — bounded enum-field wire-name resolver",
+            "remediation": "Same annotation or [JsonStringEnumConverter<BehaviorRestBindingSource>] migration path as the BehaviorRestMethod entry."
           }
         ],
-        "evidence": "docs/trim-aot-hazard-inventory.md (medium tier — reclassified from low via ENG-432)",
+        "evidence": "docs/trim-aot-hazard-inventory.md (medium tier — reclassified from low via ENG-432; two enum-extension hazard sites added via ENG-435)",
         "introducedBy": "ENG-426",
-        "reclassifiedBy": "ENG-432"
+        "reclassifiedBy": "ENG-432",
+        "extendedBy": "ENG-435"
       },
       {
         "packageName": "Cephalon.Data",
@@ -472,6 +485,59 @@
         ],
         "evidence": "docs/trim-aot-hazard-inventory.md (medium tier)",
         "introducedBy": "ENG-426"
+      },
+      {
+        "packageName": "Cephalon.Abstractions",
+        "nugetId": "Cephalon.Abstractions",
+        "claimAuditTier": "low",
+        "supportedModes": [],
+        "requiredProjectProperties": [],
+        "knownHazards": [
+          {
+            "kind": "reflection-enum-field-attribute",
+            "site": "src/Cephalon.Abstractions/Transports/RestEndpointAuthoringPolicySuppressionKindExtensions.cs:54",
+            "pattern": "typeof(RestEndpointAuthoringPolicySuppressionKind).GetField(value.ToString(), BindingFlags.Public | BindingFlags.Static) + GetCustomAttribute<JsonStringEnumMemberNameAttribute>() — bounded enum-field wire-name resolver",
+            "remediation": "Annotate RestEndpointAuthoringPolicySuppressionKind with [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicFields)], or migrate the wire-name + parse helpers to [JsonConverter(typeof(JsonStringEnumConverter<RestEndpointAuthoringPolicySuppressionKind>))] so the runtime reflection step disappears entirely."
+          },
+          {
+            "kind": "reflection-enum-field-attribute",
+            "site": "src/Cephalon.Abstractions/Transports/RestEndpointBindingFallbackModeExtensions.cs:54",
+            "pattern": "typeof(RestEndpointBindingFallbackMode).GetField(value.ToString(), BindingFlags.Public | BindingFlags.Static) + GetCustomAttribute<JsonStringEnumMemberNameAttribute>() — bounded enum-field wire-name resolver",
+            "remediation": "Same annotation or [JsonStringEnumConverter<RestEndpointBindingFallbackMode>] migration path as the RestEndpointAuthoringPolicySuppressionKind entry."
+          },
+          {
+            "kind": "reflection-enum-field-attribute",
+            "site": "src/Cephalon.Abstractions/Transports/RestEndpointBindingSourceExtensions.cs:54",
+            "pattern": "typeof(RestEndpointBindingSource).GetField(value.ToString(), BindingFlags.Public | BindingFlags.Static) + GetCustomAttribute<JsonStringEnumMemberNameAttribute>() — bounded enum-field wire-name resolver",
+            "remediation": "Same annotation or [JsonStringEnumConverter<RestEndpointBindingSource>] migration path."
+          },
+          {
+            "kind": "reflection-enum-field-attribute",
+            "site": "src/Cephalon.Abstractions/Transports/RestEndpointCandidateStatusExtensions.cs:54",
+            "pattern": "typeof(RestEndpointCandidateStatus).GetField(value.ToString(), BindingFlags.Public | BindingFlags.Static) + GetCustomAttribute<JsonStringEnumMemberNameAttribute>() — bounded enum-field wire-name resolver",
+            "remediation": "Same annotation or [JsonStringEnumConverter<RestEndpointCandidateStatus>] migration path."
+          },
+          {
+            "kind": "reflection-enum-field-attribute",
+            "site": "src/Cephalon.Abstractions/Transports/RestEndpointGovernanceRuleSelectionBasisExtensions.cs:56",
+            "pattern": "typeof(RestEndpointGovernanceRuleSelectionBasis).GetField(value.ToString(), BindingFlags.Public | BindingFlags.Static) + GetCustomAttribute<JsonStringEnumMemberNameAttribute>() — bounded enum-field wire-name resolver",
+            "remediation": "Same annotation or [JsonStringEnumConverter<RestEndpointGovernanceRuleSelectionBasis>] migration path."
+          },
+          {
+            "kind": "reflection-enum-field-attribute",
+            "site": "src/Cephalon.Abstractions/Transports/RestEndpointOverrideActionKindExtensions.cs:57",
+            "pattern": "typeof(RestEndpointOverrideActionKind).GetField(value.ToString(), BindingFlags.Public | BindingFlags.Static) + GetCustomAttribute<JsonStringEnumMemberNameAttribute>() — bounded enum-field wire-name resolver",
+            "remediation": "Same annotation or [JsonStringEnumConverter<RestEndpointOverrideActionKind>] migration path."
+          },
+          {
+            "kind": "reflection-enum-field-attribute",
+            "site": "src/Cephalon.Abstractions/Transports/RestEndpointOverrideBindingModeExtensions.cs:57",
+            "pattern": "typeof(RestEndpointOverrideBindingMode).GetField(value.ToString(), BindingFlags.Public | BindingFlags.Static) + GetCustomAttribute<JsonStringEnumMemberNameAttribute>() — bounded enum-field wire-name resolver",
+            "remediation": "Same annotation or [JsonStringEnumConverter<RestEndpointOverrideBindingMode>] migration path."
+          }
+        ],
+        "evidence": "docs/trim-aot-hazard-inventory.md (low tier — added via ENG-435)",
+        "introducedBy": "ENG-435"
       },
       {
         "packageName": "Cephalon.Analyzers",
