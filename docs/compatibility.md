@@ -35,7 +35,7 @@ See also: [Engineering standards](engineering-standards.md) is the broader quali
 - keep `docs/deployment-mode-support.md` aligned as the human-facing explanation of that same manifest-backed support contract, and keep `cephalon doctor` plus `cephalon doctor --app-root <path>` aligned as the adoption-facing readback path for the same support truth
 - do not claim trim, Native AOT, or single-file support until the manifest, project settings, validation coverage, workflow automation, and docs all agree on the same support statement
 - analyzer-only settings are readiness signals, not support claims
-- once the planned `scripts/validate-deployment-mode-claims.ps1` validation harness ships, a `claim-overstated` verdict from the harness blocks any advancement of the matching deployment-mode support statement until the underlying warnings and errors are resolved; `claim-truthful` is the only verdict that unlocks promotion from `not-claimed` to `claimed` (see [`deployment-mode-support.md`](deployment-mode-support.md))
+- a `claim-overstated` verdict from `scripts/validate-deployment-mode-claims.ps1` blocks any advancement of the matching deployment-mode support statement until the underlying warnings and errors are resolved; `claim-truthful` is the only verdict that unlocks promotion from `not-claimed` to `claimed`, and release validation should not remove `-SkipPublish` until the team intentionally wants the manifest-declared publish probe to become a gate (see [`deployment-mode-support.md`](deployment-mode-support.md))
 
 ### Package manifest compatibility
 

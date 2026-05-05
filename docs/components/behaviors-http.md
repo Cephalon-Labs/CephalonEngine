@@ -643,8 +643,9 @@ Current helper behavior:
   hosts expose paths such as `/api/v1/showcase/cart/{cartId}`
 - uses the resolved API major version as the operation-name version segment, falling back to the
   owning module descriptor major version before the default `v1` document name
-- reads XML comments from the module and behavior assemblies when available so ASP.NET Core
-  OpenAPI + Scalar can show summaries and descriptions without extra boilerplate
+- reads XML comments from the module and behavior assembly names under the publish/output base
+  directory when available so ASP.NET Core OpenAPI + Scalar can show summaries and descriptions
+  without extra boilerplate while staying compatible with single-file publish analysis
 - maps behavior `<summary>` to the OpenAPI operation summary and behavior `<remarks>` to the
   OpenAPI operation description so Scalar does not repeat the same text twice
 - lets modules declare candidate OpenAPI document membership through `.ApiVersion(...)`,

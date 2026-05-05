@@ -35,8 +35,7 @@ public static class MicroserviceSampleApp
         string[]? args = null,
         Action<WebApplicationBuilder>? configureBuilder = null)
     {
-        var contentRoot = Path.GetDirectoryName(typeof(MicroserviceSampleApp).Assembly.Location)
-            ?? AppContext.BaseDirectory;
+        var contentRoot = AppContext.BaseDirectory;
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions
         {
             Args = args ?? [],

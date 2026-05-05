@@ -42,11 +42,11 @@ These are the SLIs the engine commits to measure. SLO targets are listed below; 
 
 ### Deployment-mode claim truth SLI
 
-- **`engine.deployment-mode-claims.truthful-fraction`** — fraction of declared deployment-mode claims (`net10.0` published smoke, Windows Service, IIS, Azure App Service, container image, Azure Container Apps, Kubernetes, Linux `systemd`) for which `scripts/validate-deployment-mode-claims.ps1` returns a `claim-truthful` verdict. While the harness is in audit-only mode (no `representativePublishTargets.projects` populated), this SLI reports `audit-only` rather than a numeric value
+- **`engine.deployment-mode-claims.truthful-fraction`** — fraction of declared deployment-mode claims (`net10.0` published smoke, Windows Service, IIS, Azure App Service, container image, Azure Container Apps, Kubernetes, Linux `systemd`) for which `scripts/validate-deployment-mode-claims.ps1` returns a `claim-truthful` verdict. While release validation still invokes the harness with `-SkipPublish`, or while no deployment mode is intentionally claimed, this SLI reports `audit-only` rather than a numeric value even though `representativePublishTargets.projects` is populated
 
 ## SLO targets (initial draft)
 
-These are starting targets, not load-bearing budgets. They will be revised after the next benchmark guardrail run produces a clean baseline and after `scripts/validate-deployment-mode-claims.ps1` flips out of audit-only mode.
+These are starting targets, not load-bearing budgets. They will be revised after the next benchmark guardrail run produces a clean baseline and after `scripts/validate-deployment-mode-claims.ps1` is promoted from release-validation audit mode to a gated publish-probe lane.
 
 | SLI | Initial SLO target | Window |
 | --- | --- | --- |

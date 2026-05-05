@@ -53,7 +53,11 @@
   "representativePublishTargets": {
     "comment": "List the smallest set of csproj paths the harness should publish to honestly prove a claim. The harness defaults to this list when -PublishTargets is not passed and -SkipPublish is not set; pass -SkipPublish to force audit-only mode. Each target is published once per deployment mode (trim / nativeAot / singleFile); the audit-only verdict reports warnings but does not fail the build because the manifest still declares all three modes as not-claimed.",
     "projects": [
-      "samples/Cephalon.Sample.ModularMonolith/Cephalon.Sample.ModularMonolith.csproj"
+      "samples/Cephalon.Sample.ModularMonolith/Cephalon.Sample.ModularMonolith.csproj",
+      "samples/Cephalon.Sample.ModularVerticalSlice/Cephalon.Sample.ModularVerticalSlice.csproj",
+      "samples/Cephalon.Sample.Microservice/Cephalon.Sample.Microservice.csproj",
+      "samples/Cephalon.Sample.MicroserviceSuite/services/CatalogService/Cephalon.Sample.MicroserviceSuite.CatalogService.csproj",
+      "samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.csproj"
     ]
   },
   "expectedPublishOutputShape": {

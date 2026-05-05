@@ -1533,7 +1533,7 @@ public sealed class EngineBuilder
             displayName: module.Descriptor.DisplayName,
             description: module.Descriptor.Description,
             version: GetModuleVersion(module),
-            assemblyName: assembly.Name ?? moduleType.Assembly.ManifestModule.Name,
+            assemblyName: assembly.Name ?? assembly.FullName ?? "unknown assembly",
             typeName: moduleType.FullName ?? moduleType.Name,
             dependsOn: dependsOn,
             tags: module.Descriptor.Tags.ToArray(),
@@ -1547,7 +1547,8 @@ public sealed class EngineBuilder
         TrustPolicy trustPolicy)
     {
         var packageId = GetPackageId(package);
-        var assemblyName = package.Assembly.GetName().Name ?? package.Assembly.ManifestModule.Name;
+        var packageAssemblyName = package.Assembly.GetName();
+        var assemblyName = packageAssemblyName.Name ?? packageAssemblyName.FullName ?? "unknown assembly";
         var primarySignatureCertificateThumbprint = GetPrimarySignatureCertificateThumbprint(package.SignatureVerification.Signatures);
         var (isTrusted, trustReason) = ResolvePackageTrust(
             packageId,

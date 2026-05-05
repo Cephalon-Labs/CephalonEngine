@@ -514,7 +514,10 @@ internal static class BehaviorXmlDocumentation
     private static bool TryGetComments(Type type, out XmlTypeComments comments)
     {
         var typeName = GetXmlMemberTypeName(type);
-        var xmlPath = Path.ChangeExtension(type.Assembly.Location, ".xml");
+        var assemblyName = type.Assembly.GetName().Name;
+        var xmlPath = string.IsNullOrWhiteSpace(assemblyName)
+            ? null
+            : Path.Combine(AppContext.BaseDirectory, $"{assemblyName}.xml");
         if (string.IsNullOrWhiteSpace(xmlPath) || !File.Exists(xmlPath))
         {
             comments = default;
