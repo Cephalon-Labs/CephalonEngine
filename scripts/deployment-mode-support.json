@@ -164,6 +164,53 @@
         "reclassifiedBy": "ENG-432"
       },
       {
+        "packageName": "Cephalon.Data",
+        "nugetId": "Cephalon.Data",
+        "claimAuditTier": "medium",
+        "supportedModes": [],
+        "requiredProjectProperties": [],
+        "knownHazards": [
+          {
+            "kind": "reflection-method-lookup",
+            "site": "src/Cephalon.Data/Services/HandlerDispatchingWriteStore.cs:11",
+            "pattern": "typeof(HandlerDispatchingWriteStore).GetMethod(nameof(DispatchCommandAsync), BindingFlags.NonPublic | BindingFlags.Static)",
+            "remediation": "Replace with direct method reference once the source-gen rewrite of MakeGenericMethod (line 41/47) is in place — the generator owns the per-command-type dispatch and removes the need for runtime MethodInfo indirection."
+          },
+          {
+            "kind": "reflection-method-lookup",
+            "site": "src/Cephalon.Data/Services/HandlerDispatchingWriteStore.cs:14",
+            "pattern": "typeof(HandlerDispatchingWriteStore).GetMethod(nameof(DispatchResultCommandAsync), BindingFlags.NonPublic | BindingFlags.Static)",
+            "remediation": "Same source-gen rewrite — emits per-command-type dispatchers directly without MethodInfo indirection."
+          },
+          {
+            "kind": "reflection-open-generic-method",
+            "site": "src/Cephalon.Data/Services/HandlerDispatchingWriteStore.cs:41",
+            "pattern": "DispatchCommandMethod.MakeGenericMethod(commandType)",
+            "remediation": "Source-gen-emitted dispatch table keyed by command identity that materializes the closed generic method per commandType at compile time. This is the dominant write-path hazard."
+          },
+          {
+            "kind": "reflection-open-generic-method",
+            "site": "src/Cephalon.Data/Services/HandlerDispatchingWriteStore.cs:47",
+            "pattern": "DispatchResultCommandMethod.MakeGenericMethod(commandType, typeof(TResult))",
+            "remediation": "Same source-gen rewrite — emits per-(commandType, TResult) dispatchers."
+          },
+          {
+            "kind": "reflection-method-lookup",
+            "site": "src/Cephalon.Data/Services/HandlerDispatchingReadStore.cs:11",
+            "pattern": "typeof(HandlerDispatchingReadStore).GetMethod(nameof(DispatchQueryAsync), BindingFlags.NonPublic | BindingFlags.Static)",
+            "remediation": "Same source-gen rewrite covers the read path symmetrically."
+          },
+          {
+            "kind": "reflection-open-generic-method",
+            "site": "src/Cephalon.Data/Services/HandlerDispatchingReadStore.cs:27",
+            "pattern": "DispatchQueryMethod.MakeGenericMethod(queryType, typeof(TResult))",
+            "remediation": "Source-gen-emitted dispatch table keyed by query identity that materializes the closed generic method per (queryType, TResult) pair at compile time."
+          }
+        ],
+        "evidence": "docs/trim-aot-hazard-inventory.md (medium tier — added via ENG-433 broadened-pattern audit)",
+        "introducedBy": "ENG-433"
+      },
+      {
         "packageName": "Cephalon.EventSourcing.Cassandra",
         "nugetId": "Cephalon.EventSourcing.Cassandra",
         "claimAuditTier": "medium",
