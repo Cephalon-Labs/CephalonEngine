@@ -1054,6 +1054,23 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void BehaviorsSourceGeneratedRegistrationUsesGeneratedModuleRegistryWithoutCarrierMethodReflection()
+    {
+        var source = File.ReadAllText(RepositoryPaths.GetFile(
+            "src",
+            "Cephalon.Behaviors",
+            "Modules",
+            "BehaviorModule.cs"));
+
+        Assert.Contains("BehaviorGeneratedModuleRegistry.TryGetRegistration", source, StringComparison.Ordinal);
+        Assert.DoesNotContain("GetMethod(\"Register\"", source, StringComparison.Ordinal);
+        Assert.DoesNotContain("GetMethod(\"GetExecutionSlots\"", source, StringComparison.Ordinal);
+        Assert.DoesNotContain("GetMethod(\"GetTopologyDescriptors\"", source, StringComparison.Ordinal);
+        Assert.DoesNotContain("GetMethod(\"GetBehaviorsNeedingRuntimeTopology\"", source, StringComparison.Ordinal);
+        Assert.DoesNotContain("GetCustomAttribute<ContainsBehaviorsAttribute>", source, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void DataEntityFrameworkAssemblyExposesOnlyTheDocumentedPackContracts()
     {
         AssertExportedTypes(

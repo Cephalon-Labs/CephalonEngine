@@ -296,8 +296,8 @@ internal sealed class BehaviorModule(
     /// <summary>
     /// Scans assemblies for behaviors using a two-phase strategy:
     /// <list type="number">
-    ///   <item><description>Source-generated path — uses <see cref="ContainsBehaviorsAttribute"/> to find
-    ///   pre-compiled registration code (zero reflection).</description></item>
+    ///   <item><description>Source-generated path — uses <see cref="BehaviorGeneratedModuleRegistry"/> to find
+    ///   pre-compiled registration hints without reflecting over carrier methods.</description></item>
     ///   <item><description>Reflection fallback — scans remaining assemblies for types with
     ///   <see cref="AppBehaviorAttribute"/> via runtime reflection.</description></item>
     /// </list>
@@ -314,7 +314,7 @@ internal sealed class BehaviorModule(
 
         foreach (var assembly in assemblies)
         {
-            // Phase 1: try source-generated registration through the generated carrier type.
+            // Phase 1: try source-generated registration through the generated module registry.
             if (TrySourceGeneratedRegistration(services, typeRegistry, slotRegistry, assembly, ownedBehaviorIds))
                 continue;
 
@@ -328,9 +328,7 @@ internal sealed class BehaviorModule(
     // ─────────────────────────────────────────────────────────────────────────
 
     /// <summary>
-    /// Checks for <c>[assembly: ContainsBehaviors(typeof(RegistrationClass))]</c> and
-    /// invokes the generated <c>Register</c>, <c>GetExecutionSlots</c>,
-    /// and <c>GetTopologyDescriptors</c> methods.
+    /// Reads generated module hints registered by the behavior source generator's module initializer.
     /// Returns <see langword="true"/> if this assembly was handled via source generation.
     /// </summary>
     private static bool TrySourceGeneratedRegistration(
@@ -340,97 +338,58 @@ internal sealed class BehaviorModule(
         Assembly assembly,
         IReadOnlySet<string>? ownedBehaviorIds)
     {
-        // Single cheap attribute check per assembly — no type scanning needed
-        var attr = assembly.GetCustomAttribute<ContainsBehaviorsAttribute>();
-        if (attr?.RegistrationType is null)
+        if (!BehaviorGeneratedModuleRegistry.TryGetRegistration(assembly, out var registration))
+        {
             return false;
+        }
 
-        var regType = attr.RegistrationType;
+        registration.RegisterBehaviors(services, typeRegistry);
 
-        // Invoke Register(IServiceCollection, IBehaviorTypeRegistry)
-        var registerMethod = regType.GetMethod("Register",
-            BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,
-            null,
-            [typeof(IServiceCollection), typeof(IBehaviorTypeRegistry)],
-            null);
-
-        registerMethod?.Invoke(null, [services, typeRegistry]);
-
-        // Invoke GetExecutionSlots() → register generated closed-generic slots for dispatch.
-        var executionSlotsMethod = regType.GetMethod("GetExecutionSlots",
-            BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,
-            null,
-            Type.EmptyTypes,
-            null);
-
-        if (executionSlotsMethod?.Invoke(null, null) is IReadOnlyList<(string Id, Type Type, BehaviorExecutionSlot Slot)> executionSlots)
+        foreach (var descriptor in registration.ExecutionSlots)
         {
-            foreach (var (id, type, slot) in executionSlots)
+            if (ownedBehaviorIds?.Contains(descriptor.Id) == true)
             {
-                if (ownedBehaviorIds?.Contains(id) == true)
-                {
-                    continue;
-                }
+                continue;
+            }
 
-                if (!typeRegistry.TryGetType(id, out var registeredType) || registeredType != type)
-                {
-                    continue;
-                }
+            if (!typeRegistry.TryGetType(descriptor.Id, out var registeredType) || registeredType != descriptor.Type)
+            {
+                continue;
+            }
 
-                slotRegistry.Register(id, type, slot);
+            slotRegistry.Register(descriptor.Id, descriptor.Type, descriptor.Slot);
+        }
+
+        foreach (var topologyDescriptor in registration.TopologyDescriptors)
+        {
+            if (ownedBehaviorIds?.Contains(topologyDescriptor.Id) == true)
+            {
+                continue;
+            }
+
+            if (!typeRegistry.TryGetType(topologyDescriptor.Id, out var behaviorType) || behaviorType is null)
+            {
+                continue;
+            }
+
+            var normalizedDescriptor = BehaviorAttributeTopologyResolver.Resolve(
+                topologyDescriptor.Id,
+                behaviorType,
+                topologyDescriptor);
+            if (normalizedDescriptor is not null)
+            {
+                services.AddSingleton<IBehaviorContributor>(new FluentBehaviorContributor(normalizedDescriptor));
             }
         }
 
-        // Invoke GetTopologyDescriptors() → register as contributors
-        var topologyMethod = regType.GetMethod("GetTopologyDescriptors",
-            BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,
-            null,
-            Type.EmptyTypes,
-            null);
-
-        if (topologyMethod?.Invoke(null, null) is IReadOnlyList<BehaviorTopologyDescriptor> descriptors)
+        foreach (var runtimeBehavior in registration.RuntimeTopologyBehaviors)
         {
-            foreach (var descriptor in descriptors)
+            if (ownedBehaviorIds?.Contains(runtimeBehavior.Id) == true)
             {
-                if (ownedBehaviorIds?.Contains(descriptor.Id) == true)
-                {
-                    continue;
-                }
-
-                if (!typeRegistry.TryGetType(descriptor.Id, out var behaviorType) || behaviorType is null)
-                {
-                    continue;
-                }
-
-                var normalizedDescriptor = BehaviorAttributeTopologyResolver.Resolve(
-                    descriptor.Id,
-                    behaviorType,
-                    descriptor);
-                if (normalizedDescriptor is not null)
-                {
-                    services.AddSingleton<IBehaviorContributor>(new FluentBehaviorContributor(normalizedDescriptor));
-                }
+                continue;
             }
-        }
 
-        // Invoke GetBehaviorsNeedingRuntimeTopology() → fall back to reflection for those
-        var runtimeTopologyMethod = regType.GetMethod("GetBehaviorsNeedingRuntimeTopology",
-            BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,
-            null,
-            Type.EmptyTypes,
-            null);
-
-        if (runtimeTopologyMethod?.Invoke(null, null) is IReadOnlyList<(string Id, Type Type)> runtimeBehaviors)
-        {
-            foreach (var (id, type) in runtimeBehaviors)
-            {
-                if (ownedBehaviorIds?.Contains(id) == true)
-                {
-                    continue;
-                }
-
-                TryRegisterResolvedTopology(services, type, id);
-            }
+            TryRegisterResolvedTopology(services, runtimeBehavior.Type, runtimeBehavior.Id);
         }
 
         return true;

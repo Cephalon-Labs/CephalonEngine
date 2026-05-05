@@ -24,6 +24,40 @@ Current focus:
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
 - treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md) for release validation, and `cephalon doctor --scorecard <path>` provides a local CLI readback over that generated artifact without becoming source truth
 
+### ENG-465 Retire Behaviors generated module carrier reflection
+
+Status: done
+Estimate: 3
+Issue: #1064
+Iteration: Sprint 125
+
+Why:
+
+- `ENG-457` narrowed source-generated behavior startup through generated execution-slot hints, but `BehaviorModule` still consumed those hints by reflectively finding generated carrier methods through `ContainsBehaviorsAttribute.RegistrationType`
+- the deployment-mode manifest still listed four `Cephalon.Behaviors` carrier-method hazards for `Register`, `GetExecutionSlots`, `GetTopologyDescriptors`, and `GetBehaviorsNeedingRuntimeTopology`
+- source-generated behavior module registration should be an explicit runtime contract, not a name-based reflective convention, while the remaining runtime-discovery fallback hazards stay truthful
+
+Delivered:
+
+- added `BehaviorGeneratedModuleRegistry` plus descriptor contracts for generated behavior module registration, execution slots, and runtime-topology behaviors
+- updated `Cephalon.Behaviors.SourceGen` so generated `BehaviorAutoRegistration` registers DI/type registration, execution-slot descriptors, topology descriptors, and runtime-topology descriptors through a module initializer
+- updated `BehaviorModule` to consume generated registry entries without `GetMethod(...)`, `Invoke(...)`, or `ContainsBehaviorsAttribute.RegistrationType` carrier lookup
+- removed the four generated-carrier rows from `scripts/deployment-mode-support.json`, reducing the manifest-backed known-hazard count from 22 to 18 while keeping `Cephalon.Behaviors` at `high` for `BehaviorTypeRegistry`, fallback assembly scanning, static `ConfigureTopology` lookup, and `BehaviorExecutionSlot.ForType(...)`
+- refreshed deployment-mode support docs, trim/AOT hazard inventory, compatibility and `.NET 11` readiness docs, Behaviors component docs, roadmap/backlog planning truth, project memory, and generated reference docs
+
+Validation:
+
+- `dotnet build src/Cephalon.Behaviors/Cephalon.Behaviors.csproj --no-restore /p:UseSharedCompilation=false`
+- `dotnet build src/Cephalon.Behaviors.SourceGen/Cephalon.Behaviors.SourceGen.csproj --no-restore /p:UseSharedCompilation=false`
+- `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --no-restore --filter "FullyQualifiedName~BehaviorSourceGeneratorTests" /p:UseSharedCompilation=false`
+- `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj --no-restore --filter "FullyQualifiedName=Cephalon.Tests.Tooling.PackageSurfaceTests.BehaviorsSourceGeneratedRegistrationUsesGeneratedModuleRegistryWithoutCarrierMethodReflection" /p:UseSharedCompilation=false`
+- deployment-mode manifest and claim-harness validation
+- reference-doc publishing
+
+Follow-up later:
+
+- retire the remaining `Cephalon.Behaviors` high-tier fallback hazards by replacing runtime discovery, `BehaviorTypeRegistry`, static `ConfigureTopology` reflection, and `BehaviorExecutionSlot.ForType(...)` with a complete compile-time module manifest or an explicitly annotated not-claimed fallback path
+
 ### ENG-464 Retire Behaviors.Http REST profile carrier reflection
 
 Status: done
@@ -13384,7 +13418,8 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-461 Remove EventSourcing persisted type-name reflection: the EventSourcing base pack now owns `EventTypeDescriptor`, `IEventTypeContributor`, `IEventTypeRegistry`, registry registration helpers, stable event names, serializer descriptors, source-generated `JsonTypeInfo` registration, and default legacy `AssemblyQualifiedName` aliases; all ten provider packs now persist registry names and deserialize through `IEventTypeRegistry` instead of provider-local `Type.GetType(...)`, with registry-aware direct-construction paths for provider stores; `scripts/deployment-mode-support.json` removes the ten EventSourcing medium rows and current manifest output reports 10 package entries, 7 packages with known hazards, 35 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility (shipped)
 - ENG-462 Retire Cephalon.Data command/query dispatch reflection: core `Cephalon.Data` default read/write stores now resolve handlers through registered closed-generic dispatch descriptors instead of runtime `MakeGenericMethod`, `CreateDelegate`, or method-name reflection; `scripts/deployment-mode-support.json` removes the core `Cephalon.Data` medium row and current manifest output reports 9 package entries, 6 packages with known hazards, 29 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
 - ENG-463 Retire Behaviors.Http REST dispatch reflection: `Cephalon.Behaviors.Http` REST route materialization, projection application, and generated-profile module ownership now use type-based contracts instead of `MethodInfo.MakeGenericMethod/Invoke`; `IBehaviorModuleBuilder` exposes host-agnostic `Type` overloads for ownership registration; the package then remained `medium` for bounded `ResultModel<>` OpenAPI metadata and generated-profile carrier lookups, and the then-current manifest output reported 9 package entries, 6 packages with known hazards, 21 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility (shipped)
-- ENG-464 Retire Behaviors.Http REST profile carrier reflection: generated REST profile hints now register through `BehaviorRestGeneratedProfileRegistry`, optional result-envelope OpenAPI success schemas use `ResultModelEnvelopeResponseMetadata` instead of runtime `ResultModel<>` construction, and current manifest output reports 9 package entries, 6 packages with known hazards, 22 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim while `Cephalon.Behaviors.Http` stays `medium` for fallback/manual-route reflection. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility (shipped)
+- ENG-464 Retire Behaviors.Http REST profile carrier reflection: generated REST profile hints now register through `BehaviorRestGeneratedProfileRegistry`, optional result-envelope OpenAPI success schemas use `ResultModelEnvelopeResponseMetadata` instead of runtime `ResultModel<>` construction, and the then-current manifest output reported 9 package entries, 6 packages with known hazards, 22 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim while `Cephalon.Behaviors.Http` stayed `medium` for fallback/manual-route reflection. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility (shipped)
+- ENG-465 Retire Behaviors generated module carrier reflection: generated behavior module hints now register through `BehaviorGeneratedModuleRegistry`, `BehaviorModule` consumes them without reflective `ContainsBehaviorsAttribute.RegistrationType` carrier-method lookup, and current manifest output reports 9 package entries, 6 packages with known hazards, 18 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim while `Cephalon.Behaviors` stays `high` for runtime-discovery and open-generic fallback hazards. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility (shipped)
 
 ### Later / not scheduled yet
 

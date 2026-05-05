@@ -899,6 +899,18 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         sb.AppendLine("[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]");
         sb.AppendLine("internal static class BehaviorAutoRegistration");
         sb.AppendLine("{");
+        sb.AppendLine("    [global::System.Runtime.CompilerServices.ModuleInitializer]");
+        sb.AppendLine("    internal static void RegisterGeneratedBehaviors()");
+        sb.AppendLine("    {");
+        sb.AppendLine("        global::Cephalon.Behaviors.Services.BehaviorGeneratedModuleRegistry.Register(");
+        sb.AppendLine("            typeof(global::Cephalon.Behaviors.Generated.BehaviorAutoRegistration).Assembly,");
+        sb.AppendLine("            new global::Cephalon.Behaviors.Services.BehaviorGeneratedModuleRegistration(");
+        sb.AppendLine("                Register,");
+        sb.AppendLine("                GetExecutionSlots(),");
+        sb.AppendLine("                GetTopologyDescriptors(),");
+        sb.AppendLine("                GetBehaviorsNeedingRuntimeTopology()));");
+        sb.AppendLine("    }");
+        sb.AppendLine();
 
         // ── Register method ──
         sb.AppendLine("    /// <summary>Registers all behaviors in this assembly into DI and the type registry.</summary>");
@@ -932,9 +944,9 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
 
         // ── GetExecutionSlots method ──
         sb.AppendLine("    /// <summary>Returns pre-built execution slots for behaviors discovered at compile time.</summary>");
-        sb.AppendLine("    internal static global::System.Collections.Generic.IReadOnlyList<(string Id, global::System.Type Type, global::Cephalon.Behaviors.Services.BehaviorExecutionSlot Slot)> GetExecutionSlots()");
+        sb.AppendLine("    internal static global::System.Collections.Generic.IReadOnlyList<global::Cephalon.Behaviors.Services.BehaviorGeneratedExecutionSlotDescriptor> GetExecutionSlots()");
         sb.AppendLine("    {");
-        sb.AppendLine("        return new (string, global::System.Type, global::Cephalon.Behaviors.Services.BehaviorExecutionSlot)[]");
+        sb.AppendLine("        return new global::Cephalon.Behaviors.Services.BehaviorGeneratedExecutionSlotDescriptor[]");
         sb.AppendLine("        {");
 
         foreach (var info in infos)
@@ -944,7 +956,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             var id = EscapeString(info.BehaviorId);
             var inputType = info.InputType.GenericInputTypeName;
             var outputType = info.InputType.GenericOutputTypeName;
-            sb.AppendLine($"            (\"{id}\", typeof({fqn}), global::Cephalon.Behaviors.Services.BehaviorExecutionSlot.For<{fqn}, {inputType}, {outputType}>()),");
+            sb.AppendLine($"            new global::Cephalon.Behaviors.Services.BehaviorGeneratedExecutionSlotDescriptor(\"{id}\", typeof({fqn}), global::Cephalon.Behaviors.Services.BehaviorExecutionSlot.For<{fqn}, {inputType}, {outputType}>()),");
         }
 
         sb.AppendLine("        };");
@@ -1094,21 +1106,21 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
 
         sb.AppendLine();
         sb.AppendLine("    /// <summary>Returns behavior IDs that need runtime topology resolution (no compile-time topology).</summary>");
-        sb.AppendLine("    internal static global::System.Collections.Generic.IReadOnlyList<(string Id, global::System.Type Type)> GetBehaviorsNeedingRuntimeTopology()");
+        sb.AppendLine("    internal static global::System.Collections.Generic.IReadOnlyList<global::Cephalon.Behaviors.Services.BehaviorGeneratedRuntimeTopologyDescriptor> GetBehaviorsNeedingRuntimeTopology()");
         sb.AppendLine("    {");
 
         if (behaviorsWithoutTopology.Length == 0)
         {
-            sb.AppendLine("        return global::System.Array.Empty<(string, global::System.Type)>();");
+            sb.AppendLine("        return global::System.Array.Empty<global::Cephalon.Behaviors.Services.BehaviorGeneratedRuntimeTopologyDescriptor>();");
         }
         else
         {
-            sb.AppendLine("        return new (string, global::System.Type)[]");
+            sb.AppendLine("        return new global::Cephalon.Behaviors.Services.BehaviorGeneratedRuntimeTopologyDescriptor[]");
             sb.AppendLine("        {");
             foreach (var info in behaviorsWithoutTopology)
             {
                 if (info is null) continue;
-                sb.AppendLine($"            (\"{EscapeString(info.BehaviorId)}\", typeof({info.TypeName})),");
+                sb.AppendLine($"            new global::Cephalon.Behaviors.Services.BehaviorGeneratedRuntimeTopologyDescriptor(\"{EscapeString(info.BehaviorId)}\", typeof({info.TypeName})),");
             }
             sb.AppendLine("        };");
         }

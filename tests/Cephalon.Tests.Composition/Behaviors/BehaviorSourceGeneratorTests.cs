@@ -232,6 +232,15 @@ public sealed class BehaviorSourceGeneratorTests
         var generated = GetGeneratedSource(result);
         Assert.NotNull(generated);
         Assert.Contains("\"orders.create\"", generated);
+
+        var autoRegistration = GetGeneratedAutoRegistrationSource(result);
+        Assert.NotNull(autoRegistration);
+        Assert.Contains("RegisterGeneratedBehaviors()", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorGeneratedModuleRegistry.Register(", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("new global::Cephalon.Behaviors.Services.BehaviorGeneratedModuleRegistration(", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("new global::Cephalon.Behaviors.Services.BehaviorGeneratedExecutionSlotDescriptor(\"orders.create\"", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("new global::Cephalon.Behaviors.Services.BehaviorGeneratedRuntimeTopologyDescriptor(\"orders.create\"", autoRegistration, StringComparison.Ordinal);
+        Assert.DoesNotContain("IReadOnlyList<(string Id, global::System.Type Type, global::Cephalon.Behaviors.Services.BehaviorExecutionSlot Slot)> GetExecutionSlots", autoRegistration, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -259,6 +268,10 @@ public sealed class BehaviorSourceGeneratorTests
         var autoRegistration = GetGeneratedAutoRegistrationSource(result);
         Assert.NotNull(autoRegistration);
         Assert.Contains("GetExecutionSlots()", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("RegisterGeneratedBehaviors()", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorGeneratedModuleRegistry.Register(", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorGeneratedModuleRegistration", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorGeneratedExecutionSlotDescriptor", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("BehaviorExecutionSlot.For<global::GetOrderBehavior", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("[global::System.Runtime.CompilerServices.ModuleInitializer]", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("RegisterRestProfiles()", autoRegistration, StringComparison.Ordinal);

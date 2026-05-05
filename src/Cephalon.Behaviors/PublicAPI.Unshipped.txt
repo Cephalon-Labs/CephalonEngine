@@ -1,1 +1,19 @@
 #nullable enable
+Cephalon.Behaviors.Services.BehaviorGeneratedExecutionSlotDescriptor
+Cephalon.Behaviors.Services.BehaviorGeneratedExecutionSlotDescriptor.BehaviorGeneratedExecutionSlotDescriptor(string! id, System.Type! type, Cephalon.Behaviors.Services.BehaviorExecutionSlot! slot) -> void
+Cephalon.Behaviors.Services.BehaviorGeneratedExecutionSlotDescriptor.Id.get -> string!
+Cephalon.Behaviors.Services.BehaviorGeneratedExecutionSlotDescriptor.Slot.get -> Cephalon.Behaviors.Services.BehaviorExecutionSlot!
+Cephalon.Behaviors.Services.BehaviorGeneratedExecutionSlotDescriptor.Type.get -> System.Type!
+Cephalon.Behaviors.Services.BehaviorGeneratedModuleRegistration
+Cephalon.Behaviors.Services.BehaviorGeneratedModuleRegistration.BehaviorGeneratedModuleRegistration(System.Action<Microsoft.Extensions.DependencyInjection.IServiceCollection!, Cephalon.Behaviors.Services.IBehaviorTypeRegistry!>! registerBehaviors, System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Services.BehaviorGeneratedExecutionSlotDescriptor!>! executionSlots, System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor!>! topologyDescriptors, System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Services.BehaviorGeneratedRuntimeTopologyDescriptor!>! runtimeTopologyBehaviors) -> void
+Cephalon.Behaviors.Services.BehaviorGeneratedModuleRegistration.ExecutionSlots.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Services.BehaviorGeneratedExecutionSlotDescriptor!>!
+Cephalon.Behaviors.Services.BehaviorGeneratedModuleRegistration.RegisterBehaviors.get -> System.Action<Microsoft.Extensions.DependencyInjection.IServiceCollection!, Cephalon.Behaviors.Services.IBehaviorTypeRegistry!>!
+Cephalon.Behaviors.Services.BehaviorGeneratedModuleRegistration.RuntimeTopologyBehaviors.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Services.BehaviorGeneratedRuntimeTopologyDescriptor!>!
+Cephalon.Behaviors.Services.BehaviorGeneratedModuleRegistration.TopologyDescriptors.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor!>!
+Cephalon.Behaviors.Services.BehaviorGeneratedModuleRegistry
+Cephalon.Behaviors.Services.BehaviorGeneratedRuntimeTopologyDescriptor
+Cephalon.Behaviors.Services.BehaviorGeneratedRuntimeTopologyDescriptor.BehaviorGeneratedRuntimeTopologyDescriptor(string! id, System.Type! type) -> void
+Cephalon.Behaviors.Services.BehaviorGeneratedRuntimeTopologyDescriptor.Id.get -> string!
+Cephalon.Behaviors.Services.BehaviorGeneratedRuntimeTopologyDescriptor.Type.get -> System.Type!
+static Cephalon.Behaviors.Services.BehaviorGeneratedModuleRegistry.Register(System.Reflection.Assembly! assembly, Cephalon.Behaviors.Services.BehaviorGeneratedModuleRegistration! registration) -> void
+static Cephalon.Behaviors.Services.BehaviorGeneratedModuleRegistry.TryGetRegistration(System.Reflection.Assembly! assembly, out Cephalon.Behaviors.Services.BehaviorGeneratedModuleRegistration! registration) -> bool
