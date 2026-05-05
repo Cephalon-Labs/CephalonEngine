@@ -15,6 +15,8 @@
                                   on the representative target set?
     4. package-scoped claims    — do deploymentModeEligibility package entries that opt into
                                   a mode carry the expected per-package project properties?
+    5. hazard inventory         — emit the manifest-backed per-package hazard and scoped-claim
+                                  inventory for release managers and follow-up automation.
 
     The harness then computes a per-mode verdict and an aggregate verdict and writes both a
     machine-readable JSON report and a human-readable Markdown report under the output dir.
@@ -546,6 +548,158 @@ function Get-DeploymentModePackageClaimAudits {
     return $audits
 }
 
+function Get-DeploymentModeHazardInventory {
+    [CmdletBinding()]
+    param([Parameter(Mandatory)] $Manifest)
+
+    $tierOrder = @("excluded-by-design", "clean-baseline", "low", "medium", "high")
+    $modeOrder = @("trim", "nativeAot", "singleFile")
+    $tierCounts = [ordered]@{}
+    foreach ($tier in $tierOrder) {
+        $tierCounts[$tier] = 0
+    }
+
+    $packages = @()
+    if ($null -ne $Manifest -and
+        $Manifest.PSObject.Properties.Match("deploymentModeEligibility").Count -gt 0 -and
+        $null -ne $Manifest.deploymentModeEligibility -and
+        $Manifest.deploymentModeEligibility.PSObject.Properties.Match("packages").Count -gt 0) {
+
+        foreach ($pkg in @($Manifest.deploymentModeEligibility.packages)) {
+            if ($null -eq $pkg) { continue }
+
+            $packageName = if ($pkg.PSObject.Properties.Match("packageName").Count -gt 0) { [string]$pkg.packageName } else { "" }
+            $nugetId = if ($pkg.PSObject.Properties.Match("nugetId").Count -gt 0) { [string]$pkg.nugetId } else { "" }
+            $claimAuditTier = if ($pkg.PSObject.Properties.Match("claimAuditTier").Count -gt 0) { [string]$pkg.claimAuditTier } else { "unknown" }
+            if (-not $tierCounts.Contains($claimAuditTier)) {
+                $tierCounts[$claimAuditTier] = 0
+            }
+            $tierCounts[$claimAuditTier]++
+
+            $supportedModes = @()
+            if ($pkg.PSObject.Properties.Match("supportedModes").Count -gt 0) {
+                $supportedModes = @($pkg.supportedModes | ForEach-Object { [string]$_ } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+            }
+
+            $requiredProjectProperties = @()
+            if ($pkg.PSObject.Properties.Match("requiredProjectProperties").Count -gt 0) {
+                $requiredProjectProperties = @($pkg.requiredProjectProperties | ForEach-Object { [string]$_ } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+            }
+
+            $knownHazards = @()
+            if ($pkg.PSObject.Properties.Match("knownHazards").Count -gt 0) {
+                $knownHazards = @($pkg.knownHazards | Where-Object { $null -ne $_ })
+            }
+
+            $hazardKinds = @(
+                $knownHazards |
+                    ForEach-Object {
+                        if ($_.PSObject.Properties.Match("kind").Count -gt 0) { [string]$_.kind }
+                    } |
+                    Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
+                    Select-Object -Unique
+            )
+
+            $packages += [pscustomobject]@{
+                PackageName               = $packageName
+                NugetId                   = $nugetId
+                ClaimAuditTier            = $claimAuditTier
+                SupportedModes            = $supportedModes
+                RequiredProjectProperties = $requiredProjectProperties
+                KnownHazardCount          = $knownHazards.Count
+                HazardKinds               = $hazardKinds
+                IntroducedBy              = if ($pkg.PSObject.Properties.Match("introducedBy").Count -gt 0) { [string]$pkg.introducedBy } else { "" }
+                ExtendedBy                = if ($pkg.PSObject.Properties.Match("extendedBy").Count -gt 0) { [string]$pkg.extendedBy } else { "" }
+                Evidence                  = if ($pkg.PSObject.Properties.Match("evidence").Count -gt 0) { [string]$pkg.evidence } else { "" }
+            }
+        }
+    }
+
+    $allHazardKinds = @()
+    if ($null -ne $Manifest -and
+        $Manifest.PSObject.Properties.Match("deploymentModeEligibility").Count -gt 0 -and
+        $null -ne $Manifest.deploymentModeEligibility -and
+        $Manifest.deploymentModeEligibility.PSObject.Properties.Match("packages").Count -gt 0) {
+        foreach ($pkg in @($Manifest.deploymentModeEligibility.packages)) {
+            if ($null -eq $pkg -or $pkg.PSObject.Properties.Match("knownHazards").Count -eq 0) { continue }
+            foreach ($hazard in @($pkg.knownHazards)) {
+                if ($null -eq $hazard -or $hazard.PSObject.Properties.Match("kind").Count -eq 0) { continue }
+                $kind = [string]$hazard.kind
+                if (-not [string]::IsNullOrWhiteSpace($kind)) {
+                    $allHazardKinds += $kind
+                }
+            }
+        }
+    }
+
+    $knownTransitiveHazards = @()
+    foreach ($mode in $modeOrder) {
+        $entries = @()
+        if ($null -ne $Manifest -and
+            $Manifest.PSObject.Properties.Match("knownTransitiveHazards").Count -gt 0 -and
+            $null -ne $Manifest.knownTransitiveHazards -and
+            $Manifest.knownTransitiveHazards.PSObject.Properties.Match($mode).Count -gt 0) {
+            $entries = @($Manifest.knownTransitiveHazards.$mode | ForEach-Object { [string]$_ } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+        }
+
+        $knownTransitiveHazards += [pscustomobject]@{
+            Mode    = $mode
+            Count   = $entries.Count
+            Entries = $entries
+        }
+    }
+
+    $tierRows = foreach ($tierName in $tierCounts.Keys) {
+        [pscustomobject]@{
+            Tier  = $tierName
+            Count = [int]$tierCounts[$tierName]
+        }
+    }
+
+    $supportedModeRows = foreach ($mode in $modeOrder) {
+        $matchingPackages = @($packages | Where-Object { @($_.SupportedModes) -contains $mode } | ForEach-Object { $_.PackageName })
+        [pscustomobject]@{
+            Mode         = $mode
+            PackageCount = $matchingPackages.Count
+            Packages     = $matchingPackages
+        }
+    }
+
+    $hazardKindRows = @(
+        $allHazardKinds |
+            Group-Object |
+            Sort-Object -Property @{ Expression = "Count"; Descending = $true }, @{ Expression = "Name"; Ascending = $true } |
+            ForEach-Object { [pscustomobject]@{ Kind = $_.Name; Count = $_.Count } }
+    )
+
+    $schemaVersion = ""
+    if ($null -ne $Manifest -and $Manifest.PSObject.Properties.Match('$schemaVersion').Count -gt 0) {
+        $schemaVersion = [string]$Manifest.'$schemaVersion'
+    }
+
+    $totalKnownHazards = 0
+    if ($packages.Count -gt 0) {
+        $hazardSum = $packages | Measure-Object -Property KnownHazardCount -Sum
+        if ($null -ne $hazardSum -and $null -ne $hazardSum.Sum) {
+            $totalKnownHazards = [int]$hazardSum.Sum
+        }
+    }
+
+    return [pscustomobject]@{
+        Source                    = "deploymentModeEligibility"
+        ManifestSchemaVersion     = $schemaVersion
+        TotalPackages             = $packages.Count
+        PackagesWithKnownHazards  = @($packages | Where-Object { $_.KnownHazardCount -gt 0 }).Count
+        PackagesWithScopedClaims  = @($packages | Where-Object { @($_.SupportedModes).Count -gt 0 }).Count
+        TotalKnownHazards         = $totalKnownHazards
+        TierCounts                = @($tierRows)
+        HazardKindCounts          = @($hazardKindRows)
+        SupportedModeClaims       = @($supportedModeRows)
+        KnownTransitiveHazards    = @($knownTransitiveHazards)
+        Packages                  = @($packages)
+    }
+}
+
 function Get-AnalyzerAudit {
     [CmdletBinding()]
     param(
@@ -860,9 +1014,17 @@ function Write-ValidationReport {
     }
 
     $jsonPath = Join-Path $OutputDir "claim-validation-report.json"
+    $hazardInventoryPath = Join-Path $OutputDir "hazard-inventory.json"
     $mdPath = Join-Path $OutputDir "README.md"
 
     $Report | ConvertTo-Json -Depth 32 | Set-Content -LiteralPath $jsonPath -Encoding UTF8
+    $hazardInventory = $null
+    if ($Report.PSObject.Properties.Match("HazardInventory").Count -gt 0) {
+        $hazardInventory = $Report.HazardInventory
+        if ($null -ne $hazardInventory) {
+            $hazardInventory | ConvertTo-Json -Depth 32 | Set-Content -LiteralPath $hazardInventoryPath -Encoding UTF8
+        }
+    }
 
     $sb = [System.Text.StringBuilder]::new()
     [void]$sb.AppendLine("# Deployment-mode claim validation report")
@@ -901,13 +1063,45 @@ function Write-ValidationReport {
         }
     }
     [void]$sb.AppendLine("")
+    [void]$sb.AppendLine("## Hazard inventory")
+    [void]$sb.AppendLine("")
+    if ($null -eq $hazardInventory) {
+        [void]$sb.AppendLine("No hazard inventory was emitted for this report.")
+    }
+    else {
+        [void]$sb.AppendLine("- Packages in manifest inventory: $($hazardInventory.TotalPackages)")
+        [void]$sb.AppendLine("- Packages with known hazards: $($hazardInventory.PackagesWithKnownHazards)")
+        [void]$sb.AppendLine("- Known hazard entries: $($hazardInventory.TotalKnownHazards)")
+        [void]$sb.AppendLine("- Packages with scoped claims: $($hazardInventory.PackagesWithScopedClaims)")
+        [void]$sb.AppendLine("")
+        [void]$sb.AppendLine("Tier counts:")
+        foreach ($tier in @($hazardInventory.TierCounts)) {
+            [void]$sb.AppendLine("- **$($tier.Tier)**: $($tier.Count)")
+        }
+        [void]$sb.AppendLine("")
+        [void]$sb.AppendLine("Supported mode claims:")
+        foreach ($modeClaim in @($hazardInventory.SupportedModeClaims)) {
+            $packageList = if (@($modeClaim.Packages).Count -gt 0) { @($modeClaim.Packages) -join ", " } else { "none" }
+            [void]$sb.AppendLine("- **$($modeClaim.Mode)**: $($modeClaim.PackageCount) ($packageList)")
+        }
+        [void]$sb.AppendLine("")
+        [void]$sb.AppendLine("Known transitive hazard hints:")
+        foreach ($modeHazard in @($hazardInventory.KnownTransitiveHazards)) {
+            [void]$sb.AppendLine("- **$($modeHazard.Mode)**: $($modeHazard.Count)")
+        }
+    }
+    [void]$sb.AppendLine("")
     [void]$sb.AppendLine("See ``claim-validation-report.json`` next to this README for the full structured report.")
+    if ($null -ne $hazardInventory) {
+        [void]$sb.AppendLine("See ``hazard-inventory.json`` for the manifest-backed inventory snapshot.")
+    }
 
     Set-Content -LiteralPath $mdPath -Value $sb.ToString() -Encoding UTF8
 
     return [pscustomobject]@{
-        JsonPath     = $jsonPath
-        MarkdownPath = $mdPath
+        JsonPath             = $jsonPath
+        HazardInventoryPath  = if ($null -ne $hazardInventory) { $hazardInventoryPath } else { $null }
+        MarkdownPath         = $mdPath
     }
 }
 
@@ -936,6 +1130,8 @@ function Invoke-DeploymentModeClaimValidation {
 
     Invoke-Step -Title "Loading manifest" -Detail $ManifestPath
     $manifest = Read-DeploymentModeManifest -Path $ManifestPath
+    $hazardInventory = Get-DeploymentModeHazardInventory -Manifest $manifest
+    Invoke-Step -Title "Building hazard inventory" -Detail ("packages=" + $hazardInventory.TotalPackages + ", hazards=" + $hazardInventory.TotalKnownHazards)
 
     # When the caller did not pass explicit -PublishTargets and did not pass -SkipPublish, default to
     # the manifest-declared representativePublishTargets.projects list so the publish probe runs
@@ -1010,6 +1206,7 @@ function Invoke-DeploymentModeClaimValidation {
         ManifestSnapshot    = $manifest
         Modes               = $modeReports
         Verdicts            = @($modeReports | ForEach-Object { [pscustomobject]@{ Mode = $_.Mode; Verdict = $_.Verdict; Reasons = $_.Reasons } })
+        HazardInventory     = $hazardInventory
         AggregateVerdict    = $aggregateVerdict
         ValidVerdicts       = $Script:ValidVerdicts
         ValidationStrategy  = if ($SkipPublish) { "audit-only" } else { "publish-required" }

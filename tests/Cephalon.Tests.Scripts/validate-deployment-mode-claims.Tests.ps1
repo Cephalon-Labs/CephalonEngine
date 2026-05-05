@@ -766,16 +766,29 @@ Describe "Write-ValidationReport" {
             Verdicts = @(
                 [pscustomobject]@{ Mode = "trim"; Verdict = "not-claimed"; Reasons = @("clean") }
             )
+            HazardInventory = [pscustomobject]@{
+                TotalPackages = 1
+                PackagesWithKnownHazards = 1
+                TotalKnownHazards = 2
+                PackagesWithScopedClaims = 0
+                TierCounts = @([pscustomobject]@{ Tier = "high"; Count = 1 })
+                SupportedModeClaims = @([pscustomobject]@{ Mode = "trim"; PackageCount = 0; Packages = @() })
+                KnownTransitiveHazards = @([pscustomobject]@{ Mode = "trim"; Count = 1; Entries = @("Newtonsoft.Json") })
+            }
             AggregateVerdict = "not-claimed"
         }
         $paths = Write-ValidationReport -OutputDir $outDir -Report $report
         Test-Path -LiteralPath $paths.JsonPath | Should -BeTrue
+        Test-Path -LiteralPath $paths.HazardInventoryPath | Should -BeTrue
         Test-Path -LiteralPath $paths.MarkdownPath | Should -BeTrue
         $json = Get-Content -LiteralPath $paths.JsonPath -Raw | ConvertFrom-Json
         $json.AggregateVerdict | Should -Be "not-claimed"
+        $inventoryJson = Get-Content -LiteralPath $paths.HazardInventoryPath -Raw | ConvertFrom-Json
+        $inventoryJson.TotalKnownHazards | Should -Be 2
         $md = Get-Content -LiteralPath $paths.MarkdownPath -Raw
         $md | Should -Match "# Deployment-mode claim validation report"
         $md | Should -Match "Aggregate verdict"
+        $md | Should -Match "Hazard inventory"
     }
 }
 
@@ -851,6 +864,64 @@ Describe "Get-DeploymentModePackageClaimAudits" {
     }
 }
 
+Describe "Get-DeploymentModeHazardInventory" {
+    It "emits tier, hazard, scoped-claim, and transitive-hazard counts from the manifest" {
+        $manifest = [pscustomobject]@{
+            '$schemaVersion' = "1.2.0"
+            deploymentModeEligibility = [pscustomobject]@{
+                packages = @(
+                    [pscustomobject]@{
+                        packageName = "Cephalon.Diagnostics"
+                        nugetId = "Cephalon.Diagnostics"
+                        claimAuditTier = "clean-baseline"
+                        supportedModes = @("singleFile")
+                        requiredProjectProperties = @("PublishSingleFile=true", "EnableSingleFileAnalyzer=true")
+                        knownHazards = @()
+                        introducedBy = "ENG-454"
+                    },
+                    [pscustomobject]@{
+                        packageName = "Cephalon.Engine"
+                        nugetId = "Cephalon.Engine"
+                        claimAuditTier = "high"
+                        supportedModes = @()
+                        requiredProjectProperties = @()
+                        knownHazards = @(
+                            [pscustomobject]@{ kind = "reflection-assembly-scan"; site = "src/Cephalon.Engine/Composition/ModuleDiscovery.cs:113"; pattern = "Activator.CreateInstance"; remediation = "source generator" },
+                            [pscustomobject]@{ kind = "reflection-method-invoke"; site = "src/Cephalon.Engine/Runtime/Sample.cs:42"; pattern = "Invoke"; remediation = "closed table" }
+                        )
+                        introducedBy = "ENG-426"
+                    }
+                )
+            }
+            knownTransitiveHazards = [pscustomobject]@{
+                trim = @("Newtonsoft.Json")
+                nativeAot = @("Grpc.AspNetCore", "Azure.Identity")
+                singleFile = @("BenchmarkDotNet")
+            }
+        }
+
+        $inventory = Get-DeploymentModeHazardInventory -Manifest $manifest
+
+        $inventory.ManifestSchemaVersion | Should -Be "1.2.0"
+        $inventory.TotalPackages | Should -Be 2
+        $inventory.PackagesWithKnownHazards | Should -Be 1
+        $inventory.TotalKnownHazards | Should -Be 2
+        $inventory.PackagesWithScopedClaims | Should -Be 1
+        ($inventory.TierCounts | Where-Object Tier -eq "high").Count | Should -Be 1
+        ($inventory.TierCounts | Where-Object Tier -eq "clean-baseline").Count | Should -Be 1
+        ($inventory.SupportedModeClaims | Where-Object Mode -eq "singleFile").PackageCount | Should -Be 1
+        ($inventory.HazardKindCounts | Where-Object Kind -eq "reflection-assembly-scan").Count | Should -Be 1
+        ($inventory.KnownTransitiveHazards | Where-Object Mode -eq "nativeAot").Count | Should -Be 2
+    }
+
+    It "returns an empty inventory when the manifest has no eligibility block" {
+        $inventory = Get-DeploymentModeHazardInventory -Manifest ([pscustomobject]@{ deploymentModes = @{} })
+        $inventory.TotalPackages | Should -Be 0
+        $inventory.TotalKnownHazards | Should -Be 0
+        $inventory.Packages.Count | Should -Be 0
+    }
+}
+
 Describe "Invoke-DeploymentModeClaimValidation (integration)" {
     It "runs end-to-end against a not-claimed manifest and returns a not-claimed aggregate verdict" {
         $repo = New-TempRepoRoot -Projects @(
@@ -875,7 +946,9 @@ Describe "Invoke-DeploymentModeClaimValidation (integration)" {
             -SkipPublish
 
         $result.Report.AggregateVerdict | Should -Be "not-claimed"
+        $result.Report.HazardInventory.TotalPackages | Should -Be 0
         Test-Path -LiteralPath $result.Paths.JsonPath | Should -BeTrue
+        Test-Path -LiteralPath $result.Paths.HazardInventoryPath | Should -BeTrue
         Test-Path -LiteralPath $result.Paths.MarkdownPath | Should -BeTrue
     }
 

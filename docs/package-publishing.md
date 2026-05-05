@@ -133,7 +133,7 @@ The GitHub Actions release-validation workflow now proves this package-publishin
 
 The same workflow also carries a dedicated `.NET 11` readiness lane through `scripts/validate-dotnet-readiness.ps1`. That lane exists to assess future-SDK compatibility without changing the stable `net10.0` shipping floor. When package publication quality or support claims need to be assessed under a higher SDK explicitly, use the readiness script directly so the output report, `scripts/deployment-mode-support.json`, [deployment-mode support](deployment-mode-support.md), and the package-publishing docs stay truthful about what was actually validated.
 
-Package-scoped deployment-mode support claims are allowed to move before the global engine support rows, but only through the same manifest-backed path. A published package such as `Cephalon.Diagnostics` can claim a scoped mode only when `scripts/deployment-mode-support.json` lists that package under `deploymentModeEligibility.packages`, records the scoped `supportedModes`, names the required project properties, and the validation harness reports the package claim separately from the global trim / Native AOT / single-file posture.
+Package-scoped deployment-mode support claims are allowed to move before the global engine support rows, but only through the same manifest-backed path. A published package such as `Cephalon.Diagnostics` can claim a scoped mode only when `scripts/deployment-mode-support.json` lists that package under `deploymentModeEligibility.packages`, records the scoped `supportedModes`, names the required project properties, and the validation harness reports the package claim separately from the global trim / Native AOT / single-file posture. The same harness also emits `hazard-inventory.json`, so release managers can see tier counts, scoped-claim counts, and known transitive hazard hints before any package-support claim is promoted.
 
 ## Signed release pipeline (tag-triggered)
 
@@ -166,4 +166,4 @@ The pipeline is intentionally additive over `release-validation.yml`. The per-PR
 - keep release checksum/provenance metadata aligned with the actual repository source revision and package file set
 - keep the published-module staging flow aligned with the CLI package-stage command and external package lifecycle guide
 - keep package-publishing docs, the publish script, and release-validation automation aligned when the package boundary changes
-- do not let package support or global or package-scoped deployment-mode claims exceed what `scripts/deployment-mode-support.json`, `validate-release.ps1`, and `validate-dotnet-readiness.ps1` actually prove together
+- do not let package support or global or package-scoped deployment-mode claims exceed what `scripts/deployment-mode-support.json`, `scripts/validate-deployment-mode-claims.ps1`, `validate-release.ps1`, and `validate-dotnet-readiness.ps1` actually prove together

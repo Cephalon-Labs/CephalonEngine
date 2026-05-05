@@ -18,7 +18,7 @@ This guide records the current Cephalon support contract for trimming, Native AO
 Cephalon now keeps this contract explicit in two layers:
 
 - machine-readable manifest: `scripts/deployment-mode-support.json` (schema `1.2.0`; per-mode `requiredProjectProperties`, `requiredAnalyzerProperties`, `warningPatterns`, package-scoped `deploymentModeEligibility.supportedModes`, plus `representativePublishTargets`, `expectedPublishOutputShape`, and `knownTransitiveHazards`)
-- repo-native validation and reporting: `scripts/validate-dotnet-readiness.ps1`
+- repo-native validation and reporting: `scripts/validate-dotnet-readiness.ps1` plus `scripts/validate-deployment-mode-claims.ps1` (`claim-validation-report.json`, `hazard-inventory.json`, and a human-readable `README.md`)
 
 The broader framework-readiness story stays aligned through:
 
@@ -63,6 +63,8 @@ The shipped harness now runs as part of `scripts/validate-release.ps1` through t
 
 `ENG-454` adds the first package-scoped claim: `Cephalon.Diagnostics` is declared as `clean-baseline` with `supportedModes: ["singleFile"]`, and its project file declares `PublishSingleFile=true` plus `EnableSingleFileAnalyzer=true`. The global single-file row remains `not-claimed`; `scripts/validate-deployment-mode-claims.ps1` now treats that project-property signal as scoped package truth instead of global support drift, and reports the package claim separately in `PackageClaimAudits`.
 
+`ENG-455` makes the manifest-backed hazard inventory an emitted harness artifact instead of a hand-authored-doc-only truth. Every run now includes `HazardInventory` inside `claim-validation-report.json`, writes a sibling `hazard-inventory.json`, and summarizes package count, tier count, scoped-claim count, and transitive-hazard hint count in the report README. A real manifest run on May 5, 2026 reports 23 package entries, 20 packages with known hazards, 59 known hazard entries, 5 `high` + 14 `medium` + 1 `low` + 2 `excluded-by-design` + 1 `clean-baseline` tier counts, 1 package-scoped `singleFile` claim, and transitive-hazard hint counts of `trim=4`, `nativeAot=8`, and `singleFile=2`. This is audit/readiness evidence; it does not widen any global support row.
+
 `ENG-449` expanded `representativePublishTargets.projects` from the original ModularMonolith-only probe to five sample hosts:
 
 - `samples/Cephalon.Sample.ModularMonolith/Cephalon.Sample.ModularMonolith.csproj`
@@ -85,7 +87,8 @@ Harness phases:
 1. **project-property audit** scans every `src/Cephalon.*/*.csproj` and reports which projects set the claimed deployment-mode properties and which do not
 2. **analyzer phase** verifies the matching analyzer pack is enabled and at or above `minimumAnalyzerPackVersion` for projects that claim AOT or trim
 3. **publish phase** runs `dotnet publish -c Release` with the requested mode against each `representativePublishTargets.projects` entry and captures exit code, warnings, and errors; output-shape expectations stay declared in the manifest until a later claim-promotion slice makes them load-bearing
-4. **report phase** writes `artifacts/deployment-mode-release/{mode}-claim-validation-report.json` plus a human-readable `README.md`
+4. **inventory phase** projects `deploymentModeEligibility.packages` and `knownTransitiveHazards` into the manifest-backed `HazardInventory` read model
+5. **report phase** writes `artifacts/deployment-mode-claims-release/claim-validation-report.json`, `artifacts/deployment-mode-claims-release/hazard-inventory.json`, and a human-readable `README.md`
 
 Aggregate verdicts the report emits:
 
@@ -102,7 +105,7 @@ Known risks the harness must report on rather than hide:
 - benchmark and test utilities (`BenchmarkDotNet`, broad reflection) that should not poison the framework claim
 - analyzer-pack version drift where a project claims AOT but uses an older analyzer that misses violations
 
-When the harness grows new load-bearing phases, this section is rewritten in place to describe the actual validation flow, the report path, and the workflow integration; cross-references in [`compatibility.md`](compatibility.md), [`engineering-standards.md`](engineering-standards.md), [`dotnet11-readiness.md`](dotnet11-readiness.md), and [`project-memory.md`](project-memory.md) are updated together in the same slice.
+When the harness grows new load-bearing phases, this section is rewritten in place to describe the actual validation flow, the report paths, and the workflow integration; cross-references in [`compatibility.md`](compatibility.md), [`engineering-standards.md`](engineering-standards.md), [`dotnet11-readiness.md`](dotnet11-readiness.md), and [`project-memory.md`](project-memory.md) are updated together in the same slice.
 
 Until a mode is deliberately promoted with matching manifest, project-property, publish-probe, and release-validation truth, the global support contract above stays at `not-claimed` for trim, Native AOT, and single-file; analyzer-only or local-experiment signals do not widen the contract. Package-scoped claims can move earlier, but only when the package is explicitly listed in `deploymentModeEligibility.packages`, starts from `clean-baseline`, carries the matching project properties, and passes the harness's `PackageClaimAudits` flow.
 

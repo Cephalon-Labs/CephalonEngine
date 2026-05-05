@@ -58,6 +58,7 @@ The script:
 - fails if the repo starts using legacy `TargetFrameworkVersion`
 - records the current trim / Native AOT / single-file claim status from the manifest-backed deployment-mode support contract
 - records package-scoped deployment-mode claims separately so clean-baseline package proofs do not look like global support drift
+- keeps deployment-mode claim status separate from the richer `scripts/validate-deployment-mode-claims.ps1` artifact set, where `HazardInventory` / `hazard-inventory.json` exposes tier counts, scoped claims, and transitive-hazard hints
 - can optionally build, test, publish reference docs, and publish package artifacts under the readiness SDK without editing `global.json`
 
 Example audit-only run:
@@ -135,5 +136,5 @@ After this readiness baseline, the next framework-focused work should be deliber
 - analyzer drift review as new `.NET 11` previews and RCs arrive
 - package-surface review for Microsoft and ecosystem package compatibility under `.NET 11`
 - truthful deployment-mode validation before any trim / AOT / single-file claims are added on top of the shipped support-contract manifest
-- the planned `scripts/validate-deployment-mode-claims.ps1` harness will be the machine-checkable proof gate for trim/AOT/single-file support claims; until it ships and reports `claim-truthful`, the support contract stays `not-claimed`. See [Deployment-mode support](deployment-mode-support.md) for the harness scope.
+- the shipped `scripts/validate-deployment-mode-claims.ps1` harness is the machine-checkable proof gate for trim/AOT/single-file support claims; until it reports `claim-truthful` under an intentionally promoted publish-probe policy, the global support contract stays `not-claimed`. See [Deployment-mode support](deployment-mode-support.md) for the harness scope and emitted inventory artifact.
 - an eventual baseline-migration lane once `.NET 11` is stable enough for Cephalon's package, tooling, and template defaults
