@@ -6396,16 +6396,24 @@ public sealed class BehaviorRestProjectionTests
 
         public IBehaviorModuleBuilder Add<TBehavior>()
             where TBehavior : class
+            => Add(typeof(TBehavior));
+
+        public IBehaviorModuleBuilder Add(Type behaviorType)
         {
-            Registrations.Add(new OwnedBehaviorRegistration(typeof(TBehavior), HasExplicitTopologyOverride: false));
+            ArgumentNullException.ThrowIfNull(behaviorType);
+            Registrations.Add(new OwnedBehaviorRegistration(behaviorType, HasExplicitTopologyOverride: false));
             return this;
         }
 
         public IBehaviorModuleBuilder Add<TBehavior>(Action<IBehaviorTopologyBuilder> configureTopology)
             where TBehavior : class
+            => Add(typeof(TBehavior), configureTopology);
+
+        public IBehaviorModuleBuilder Add(Type behaviorType, Action<IBehaviorTopologyBuilder> configureTopology)
         {
+            ArgumentNullException.ThrowIfNull(behaviorType);
             ArgumentNullException.ThrowIfNull(configureTopology);
-            Registrations.Add(new OwnedBehaviorRegistration(typeof(TBehavior), HasExplicitTopologyOverride: true));
+            Registrations.Add(new OwnedBehaviorRegistration(behaviorType, HasExplicitTopologyOverride: true));
             return this;
         }
     }

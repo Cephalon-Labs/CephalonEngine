@@ -1,4 +1,3 @@
-using System.Reflection;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.AspNetCore.Transports.Rest;
 using Cephalon.Behaviors.Http.Abstractions;
@@ -10,18 +9,6 @@ namespace Cephalon.Behaviors.Http.Hosting;
 internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
 {
     private static readonly Type AppBehaviorOpenGeneric = typeof(IAppBehavior<,>);
-    private static readonly MethodInfo AddOwnedBehaviorMethod = typeof(IBehaviorModuleBuilder)
-        .GetMethods()
-        .Single(static method =>
-            method.Name == nameof(IBehaviorModuleBuilder.Add) &&
-            method.IsGenericMethodDefinition &&
-            method.GetParameters().Length == 0);
-    private static readonly MethodInfo AddOwnedBehaviorWithTopologyMethod = typeof(IBehaviorModuleBuilder)
-        .GetMethods()
-        .Single(static method =>
-            method.Name == nameof(IBehaviorModuleBuilder.Add) &&
-            method.IsGenericMethodDefinition &&
-            method.GetParameters().Length == 1);
     private readonly Dictionary<string, RestBehaviorOwnershipDefinition> ownedBehaviors = new(StringComparer.OrdinalIgnoreCase);
     private readonly List<Action<IBehaviorModuleBuilder>> ownershipRegistrations = [];
     private readonly List<RestBehaviorRouteGroupState> groups = [];
@@ -224,15 +211,13 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNull(behaviorType);
 
-        var method = (configureTopology is null
-                ? AddOwnedBehaviorMethod
-                : AddOwnedBehaviorWithTopologyMethod)
-            .MakeGenericMethod(behaviorType);
-        _ = method.Invoke(
-            builder,
-            configureTopology is null
-                ? []
-                : [configureTopology]);
+        if (configureTopology is null)
+        {
+            builder.Add(behaviorType);
+            return;
+        }
+
+        builder.Add(behaviorType, configureTopology);
     }
 
     private sealed class RestBehaviorEndpointGroupBuilder(

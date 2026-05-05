@@ -10,22 +10,33 @@ internal sealed class OwnedBehaviorModuleBuilder(string sourceModuleId) : IBehav
 
     public IBehaviorModuleBuilder Add<TBehavior>()
         where TBehavior : class
-        => AddCore<TBehavior>(configureTopology: null);
+        => Add(typeof(TBehavior));
 
     public IBehaviorModuleBuilder Add<TBehavior>(Action<IBehaviorTopologyBuilder> configureTopology)
         where TBehavior : class
     {
         ArgumentNullException.ThrowIfNull(configureTopology);
-        return AddCore<TBehavior>(configureTopology);
+        return Add(typeof(TBehavior), configureTopology);
+    }
+
+    public IBehaviorModuleBuilder Add(Type behaviorType)
+        => AddCore(behaviorType, configureTopology: null);
+
+    public IBehaviorModuleBuilder Add(Type behaviorType, Action<IBehaviorTopologyBuilder> configureTopology)
+    {
+        ArgumentNullException.ThrowIfNull(configureTopology);
+        return AddCore(behaviorType, configureTopology);
     }
 
     internal IReadOnlyList<OwnedBehaviorRegistration> Build()
         => registrations.ToArray();
 
-    private OwnedBehaviorModuleBuilder AddCore<TBehavior>(Action<IBehaviorTopologyBuilder>? configureTopology)
-        where TBehavior : class
+    private OwnedBehaviorModuleBuilder AddCore(
+        Type behaviorType,
+        Action<IBehaviorTopologyBuilder>? configureTopology)
     {
-        var behaviorType = typeof(TBehavior);
+        ArgumentNullException.ThrowIfNull(behaviorType);
+
         var attribute = behaviorType.GetCustomAttributes(typeof(AppBehaviorAttribute), inherit: false)
             .OfType<AppBehaviorAttribute>()
             .SingleOrDefault()

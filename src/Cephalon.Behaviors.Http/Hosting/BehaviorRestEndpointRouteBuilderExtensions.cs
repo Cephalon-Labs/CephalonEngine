@@ -43,20 +43,36 @@ internal static class BehaviorRequestJsonComposer
         bool acceptsBody,
         IReadOnlyList<BehaviorRestBindingDescriptor>? bindings = null,
         bool preserveImplicitQueryFallback = false)
+        => await ComposeAsync(
+                context,
+                typeof(TInput),
+                acceptsBody,
+                bindings,
+                preserveImplicitQueryFallback)
+            .ConfigureAwait(false);
+
+    public static async Task<JsonElement> ComposeAsync(
+        HttpContext context,
+        Type inputType,
+        bool acceptsBody,
+        IReadOnlyList<BehaviorRestBindingDescriptor>? bindings = null,
+        bool preserveImplicitQueryFallback = false)
     {
         ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(inputType);
 
         if (bindings is { Count: > 0 })
         {
-            return await ComposeExplicitAsync<TInput>(
+            return await ComposeExplicitAsync(
                     context,
+                    inputType,
                     acceptsBody,
                     bindings,
                     preserveImplicitQueryFallback)
                 .ConfigureAwait(false);
         }
 
-        if (IsSimpleInputType(typeof(TInput)))
+        if (IsSimpleInputType(inputType))
         {
             return await ComposeScalarAsync(context, acceptsBody).ConfigureAwait(false);
         }
@@ -84,16 +100,18 @@ internal static class BehaviorRequestJsonComposer
         return JsonSerializer.SerializeToElement(payload);
     }
 
-    private static async Task<JsonElement> ComposeExplicitAsync<TInput>(
+    private static async Task<JsonElement> ComposeExplicitAsync(
         HttpContext context,
+        Type inputType,
         bool acceptsBody,
         IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
         bool preserveImplicitQueryFallback)
     {
         ArgumentNullException.ThrowIfNull(context);
+        ArgumentNullException.ThrowIfNull(inputType);
         ArgumentNullException.ThrowIfNull(bindings);
 
-        if (IsSimpleInputType(typeof(TInput)))
+        if (IsSimpleInputType(inputType))
         {
             throw new JsonException("Explicit behavior REST bindings are supported only for object inputs.");
         }
@@ -104,7 +122,7 @@ internal static class BehaviorRequestJsonComposer
             bodyObject = await ReadBodyObjectAsync(context).ConfigureAwait(false);
         }
 
-        var inputProperties = typeof(TInput)
+        var inputProperties = inputType
             .GetProperties()
             .Select(static property => property.Name)
             .ToDictionary(static name => name, static name => name, StringComparer.OrdinalIgnoreCase);

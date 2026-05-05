@@ -24,6 +24,44 @@ Current focus:
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
 - treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md) for release validation, and `cephalon doctor --scorecard <path>` provides a local CLI readback over that generated artifact without becoming source truth
 
+### ENG-463 Retire Behaviors.Http REST dispatch reflection
+
+Status: done
+Estimate: 5
+Issue: #1062
+Iteration: Sprint 125
+
+Why:
+
+- `Cephalon.Behaviors.Http` still carried REST route/projection/module-builder hazards around `MethodInfo`, `MakeGenericMethod`, and `MethodInfo.Invoke` after `ENG-462`
+- generated-profile module ownership had to invoke `IBehaviorModuleBuilder.Add<TBehavior>` through reflection because the host-agnostic ownership builder exposed only generic overloads
+
+Scope:
+
+- add `IBehaviorModuleBuilder.Add(Type)` and `Add(Type, Action<IBehaviorTopologyBuilder>)` as host-agnostic ownership declarations, with XML docs and public API tracking
+- move `RestBehaviorModuleBuilder` generated-profile ownership onto the new type-based ownership overloads
+- move `RestBehaviorEndpointProjection` application onto a type-based `BehaviorRestEndpointGroup.MapBehavior(Type, ...)` path instead of a reflected generic delegate factory
+- move `BehaviorRestEndpointGroup` route materialization to type-based endpoint contracts and non-generic request composition, leaving the existing public `MapBehaviorGet/Post/Put/Patch/Delete<TBehavior>()` authoring helpers intact
+- update deployment-mode manifest/docs/reference/planning truth without widening global trim / Native AOT / single-file claims
+
+Validation:
+
+- passed `dotnet build src/Cephalon.Abstractions/Cephalon.Abstractions.csproj --no-restore /p:UseSharedCompilation=false`
+- passed `dotnet build src/Cephalon.Engine/Cephalon.Engine.csproj --no-restore /p:UseSharedCompilation=false`
+- passed `dotnet build src/Cephalon.Behaviors.Http/Cephalon.Behaviors.Http.csproj --no-restore /p:UseSharedCompilation=false`
+- passed `dotnet test tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj --no-restore --filter "FullyQualifiedName~BehaviorRestProjectionTests" /p:UseSharedCompilation=false` (159 tests)
+- passed `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj --no-restore --filter "FullyQualifiedName=Cephalon.Tests.Tooling.PackageSurfaceTests.BehaviorsHttpRestRouteProjectionAndOwnershipAvoidOpenGenericReflection|FullyQualifiedName=Cephalon.Tests.Tooling.PackageSurfaceTests.AbstractionsAssemblyExposesOnlyTheDocumentedContractSurface|FullyQualifiedName=Cephalon.Tests.Tooling.PackageSurfaceTests.BehaviorsHttpAssemblyExposesOnlyTheDocumentedContractSurface" /p:UseSharedCompilation=false` (3 tests)
+- passed `pwsh ./tests/Cephalon.Tests.Scripts/deployment-mode-support-manifest.Tests.ps1` (32 tests)
+- passed `pwsh ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode all -SkipPublish -OutputPath artifacts/deployment-mode-claims-eng463` with aggregate `not-claimed`, 9 package entries, 6 packages with known hazards, and 21 known hazard entries
+- passed `pwsh ./tests/Cephalon.Tests.Scripts/validate-deployment-mode-claims.Tests.ps1` (77 tests)
+- passed `pwsh ./scripts/publish-reference-docs.ps1 -Configuration Debug -SkipBuild` after the public `IBehaviorModuleBuilder` overload additions (86 reference doc files generated)
+
+Follow-up later:
+
+- retire the remaining `Cephalon.Behaviors.Http` bounded `ResultModel<>` OpenAPI metadata row
+- retire generated REST profile carrier method lookup through typed source-generated carriers or documented `[DynamicallyAccessedMembers]` posture
+- audit generated REST profile fallback assembly scanning and input-property reflection before promoting `Cephalon.Behaviors.Http` beyond `medium`
+
 ### ENG-462 Retire Cephalon.Data command/query dispatch reflection
 
 Status: done
@@ -13303,6 +13341,8 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-459 Remove MySQL capture failure metadata reflection: `Cephalon.Data.MySql` now projects hosted-service capture failure metadata through a typed internal failure metadata contract instead of duck-typed `FailureKind` / `Metadata` property reflection, `scripts/deployment-mode-support.json` removes those two hosted-service hazards while keeping the package `high` for the third-party `SciSharp.MySQL.Replication` non-public transport adapter path, and current manifest output reports 22 package entries, 19 packages with known hazards, 49 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability (shipped)
 - ENG-460 Remove remaining CDC capture failure metadata reflection: `Cephalon.Data.Postgres` and `Cephalon.Data.Oracle` now project hosted-service capture failure metadata through typed internal failure metadata contracts instead of duck-typed `FailureKind` / `Metadata` property reflection, `scripts/deployment-mode-support.json` removes the two Postgres rows and two Oracle rows, and current manifest output reports 20 package entries, 17 packages with known hazards, 45 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability (shipped)
 - ENG-461 Remove EventSourcing persisted type-name reflection: the EventSourcing base pack now owns `EventTypeDescriptor`, `IEventTypeContributor`, `IEventTypeRegistry`, registry registration helpers, stable event names, serializer descriptors, source-generated `JsonTypeInfo` registration, and default legacy `AssemblyQualifiedName` aliases; all ten provider packs now persist registry names and deserialize through `IEventTypeRegistry` instead of provider-local `Type.GetType(...)`, with registry-aware direct-construction paths for provider stores; `scripts/deployment-mode-support.json` removes the ten EventSourcing medium rows and current manifest output reports 10 package entries, 7 packages with known hazards, 35 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility (shipped)
+- ENG-462 Retire Cephalon.Data command/query dispatch reflection: core `Cephalon.Data` default read/write stores now resolve handlers through registered closed-generic dispatch descriptors instead of runtime `MakeGenericMethod`, `CreateDelegate`, or method-name reflection; `scripts/deployment-mode-support.json` removes the core `Cephalon.Data` medium row and current manifest output reports 9 package entries, 6 packages with known hazards, 29 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
+- ENG-463 Retire Behaviors.Http REST dispatch reflection: `Cephalon.Behaviors.Http` REST route materialization, projection application, and generated-profile module ownership now use type-based contracts instead of `MethodInfo.MakeGenericMethod/Invoke`; `IBehaviorModuleBuilder` exposes host-agnostic `Type` overloads for ownership registration; the package remains `medium` for bounded `ResultModel<>` OpenAPI metadata and generated-profile carrier lookups, and current manifest output reports 9 package entries, 6 packages with known hazards, 21 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility (shipped)
 
 ### Later / not scheduled yet
 

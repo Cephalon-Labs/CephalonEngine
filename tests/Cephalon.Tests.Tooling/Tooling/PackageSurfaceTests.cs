@@ -2536,6 +2536,41 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void BehaviorsHttpRestRouteProjectionAndOwnershipAvoidOpenGenericReflection()
+    {
+        var routeGroup = File.ReadAllText(RepositoryPaths.GetFile(
+            "src",
+            "Cephalon.Behaviors.Http",
+            "Hosting",
+            "BehaviorRestEndpointGroup.cs"));
+        Assert.DoesNotContain("MethodInfo", routeGroup);
+        Assert.DoesNotContain("MakeGenericMethod", routeGroup);
+        Assert.DoesNotContain("GetRequiredCoreMethod", routeGroup);
+        Assert.DoesNotContain("closedMethod.Invoke", routeGroup);
+        Assert.DoesNotContain("MapBehaviorGetCore<", routeGroup);
+
+        var projection = File.ReadAllText(RepositoryPaths.GetFile(
+            "src",
+            "Cephalon.Behaviors.Http",
+            "Hosting",
+            "RestBehaviorProjection.cs"));
+        Assert.DoesNotContain("System.Reflection", projection);
+        Assert.DoesNotContain("CreateMapDelegateFactoryMethod", projection);
+        Assert.DoesNotContain("MakeGenericMethod", projection);
+        Assert.DoesNotContain(".Invoke(", projection);
+
+        var moduleBuilder = File.ReadAllText(RepositoryPaths.GetFile(
+            "src",
+            "Cephalon.Behaviors.Http",
+            "Hosting",
+            "RestBehaviorModuleBuilder.cs"));
+        Assert.DoesNotContain("System.Reflection", moduleBuilder);
+        Assert.DoesNotContain("GetMethods()", moduleBuilder);
+        Assert.DoesNotContain("MakeGenericMethod", moduleBuilder);
+        Assert.DoesNotContain(".Invoke(", moduleBuilder);
+    }
+
+    [Fact]
     public void RestEndpointRuntimeContractsExposeOriginalProjectionTagName()
     {
         Assert.NotNull(typeof(global::Cephalon.Abstractions.Transports.RestEndpointCandidateProjectionDescriptor)

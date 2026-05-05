@@ -1,4 +1,3 @@
-using System.Reflection;
 using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Modules;
@@ -29,11 +28,6 @@ namespace Cephalon.Behaviors.Http.Hosting;
 public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
 {
     private const string DefaultOpenApiDocumentName = "v1";
-    private static readonly MethodInfo MapDeleteCoreMethod = GetRequiredCoreMethod(nameof(MapBehaviorDeleteCore));
-    private static readonly MethodInfo MapGetCoreMethod = GetRequiredCoreMethod(nameof(MapBehaviorGetCore));
-    private static readonly MethodInfo MapPatchCoreMethod = GetRequiredCoreMethod(nameof(MapBehaviorPatchCore));
-    private static readonly MethodInfo MapPostCoreMethod = GetRequiredCoreMethod(nameof(MapBehaviorPostCore));
-    private static readonly MethodInfo MapPutCoreMethod = GetRequiredCoreMethod(nameof(MapBehaviorPutCore));
 
     private readonly IEndpointRouteBuilder endpoints;
     private readonly string? moduleSummary;
@@ -301,7 +295,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         bool preserveImplicitQueryFallback,
         Action<RouteHandlerBuilder>? configure = null)
         where TBehavior : class
-        => MapBehaviorCore<TBehavior>(MapGetCoreMethod, RestBehaviorHttpMethod.Get, pattern, bindings, preserveImplicitQueryFallback, configure);
+        => MapBehavior(typeof(TBehavior), RestBehaviorHttpMethod.Get, pattern, bindings, preserveImplicitQueryFallback, configure);
 
     /// <summary>
     /// Maps a REST <c>POST</c> endpoint that dispatches into the specified behavior.
@@ -325,7 +319,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         bool preserveImplicitQueryFallback,
         Action<RouteHandlerBuilder>? configure = null)
         where TBehavior : class
-        => MapBehaviorCore<TBehavior>(MapPostCoreMethod, RestBehaviorHttpMethod.Post, pattern, bindings, preserveImplicitQueryFallback, configure);
+        => MapBehavior(typeof(TBehavior), RestBehaviorHttpMethod.Post, pattern, bindings, preserveImplicitQueryFallback, configure);
 
     /// <summary>
     /// Maps a REST <c>PUT</c> endpoint that dispatches into the specified behavior.
@@ -349,7 +343,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         bool preserveImplicitQueryFallback,
         Action<RouteHandlerBuilder>? configure = null)
         where TBehavior : class
-        => MapBehaviorCore<TBehavior>(MapPutCoreMethod, RestBehaviorHttpMethod.Put, pattern, bindings, preserveImplicitQueryFallback, configure);
+        => MapBehavior(typeof(TBehavior), RestBehaviorHttpMethod.Put, pattern, bindings, preserveImplicitQueryFallback, configure);
 
     /// <summary>
     /// Maps a REST <c>PATCH</c> endpoint that dispatches into the specified behavior.
@@ -373,7 +367,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         bool preserveImplicitQueryFallback,
         Action<RouteHandlerBuilder>? configure = null)
         where TBehavior : class
-        => MapBehaviorCore<TBehavior>(MapPatchCoreMethod, RestBehaviorHttpMethod.Patch, pattern, bindings, preserveImplicitQueryFallback, configure);
+        => MapBehavior(typeof(TBehavior), RestBehaviorHttpMethod.Patch, pattern, bindings, preserveImplicitQueryFallback, configure);
 
     /// <summary>
     /// Maps a REST <c>DELETE</c> endpoint that dispatches into the specified behavior.
@@ -397,7 +391,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         bool preserveImplicitQueryFallback,
         Action<RouteHandlerBuilder>? configure = null)
         where TBehavior : class
-        => MapBehaviorCore<TBehavior>(MapDeleteCoreMethod, RestBehaviorHttpMethod.Delete, pattern, bindings, preserveImplicitQueryFallback, configure);
+        => MapBehavior(typeof(TBehavior), RestBehaviorHttpMethod.Delete, pattern, bindings, preserveImplicitQueryFallback, configure);
 
     /// <inheritdoc />
     public void Add(Action<EndpointBuilder> convention)
@@ -459,20 +453,20 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         return $"{versionPrefix}{resolvedPrefix}";
     }
 
-    private RouteHandlerBuilder MapBehaviorCore<TBehavior>(
-        MethodInfo coreMethod,
+    internal RouteHandlerBuilder MapBehavior(
+        Type behaviorType,
         RestBehaviorHttpMethod method,
         string pattern,
         IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
         bool preserveImplicitQueryFallback,
         Action<RouteHandlerBuilder>? configure)
-        where TBehavior : class
     {
+        ArgumentNullException.ThrowIfNull(behaviorType);
         ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
-        ValidateBehaviorOwnership(typeof(TBehavior));
+        ValidateBehaviorOwnership(behaviorType);
 
         var contract = BehaviorRestEndpointContract.Create(
-            typeof(TBehavior),
+            behaviorType,
             ModuleDescriptor,
             TagName,
             ModuleVersionMajor,
@@ -483,10 +477,53 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             bindings,
             preserveImplicitQueryFallback,
             endpoints.ServiceProvider);
-        var closedMethod = coreMethod.MakeGenericMethod(typeof(TBehavior), contract.InputType, contract.OutputType);
-        var builder = (RouteHandlerBuilder)closedMethod.Invoke(null, [this, pattern, contract])!;
+        var acceptsBody = method is RestBehaviorHttpMethod.Post or RestBehaviorHttpMethod.Put or RestBehaviorHttpMethod.Patch;
+        var builder = MapBehaviorCore(method, pattern, contract, acceptsBody);
         configure?.Invoke(builder);
         return builder;
+    }
+
+    private RouteHandlerBuilder MapBehaviorCore(
+        RestBehaviorHttpMethod method,
+        string pattern,
+        BehaviorRestEndpointContract contract,
+        bool acceptsBody)
+    {
+        var builder = method switch
+        {
+            RestBehaviorHttpMethod.Get => Routes.MapGet(
+                pattern,
+                (HttpContext context, [FromServices] BehaviorDispatcher dispatcher) =>
+                    InvokeAsync(context, dispatcher, contract, acceptsBody: false)),
+            RestBehaviorHttpMethod.Post => Routes.MapPost(
+                pattern,
+                (HttpContext context, [FromServices] BehaviorDispatcher dispatcher) =>
+                    InvokeAsync(context, dispatcher, contract, acceptsBody: true)),
+            RestBehaviorHttpMethod.Put => Routes.MapPut(
+                pattern,
+                (HttpContext context, [FromServices] BehaviorDispatcher dispatcher) =>
+                    InvokeAsync(context, dispatcher, contract, acceptsBody: true)),
+            RestBehaviorHttpMethod.Patch => Routes.MapMethods(
+                pattern,
+                ["PATCH"],
+                (HttpContext context, [FromServices] BehaviorDispatcher dispatcher) =>
+                    InvokeAsync(context, dispatcher, contract, acceptsBody: true)),
+            RestBehaviorHttpMethod.Delete => Routes.MapDelete(
+                pattern,
+                (HttpContext context, [FromServices] BehaviorDispatcher dispatcher) =>
+                    InvokeAsync(context, dispatcher, contract, acceptsBody: false)),
+            _ => throw new InvalidOperationException(
+                $"Unsupported REST behavior HTTP method '{method}'. {BehaviorRestWireNameDiagnostics.DescribeMethodSupport()}")
+        };
+
+        return ApplyEndpointConventions(
+                builder,
+                this,
+                contract,
+                method,
+                pattern,
+                acceptsBody)
+            .ApplyCephalonRateLimiting(endpoints.ServiceProvider, "rest-api", contract.BehaviorId);
     }
 
     private void ValidateBehaviorOwnership(Type behaviorType)
@@ -512,125 +549,13 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             $"Behavior '{behaviorId}' is owned by module '{owner.SourceModuleId}' and cannot be mapped by module '{ModuleDescriptor.Id}'.");
     }
 
-    private static RouteHandlerBuilder MapBehaviorGetCore<TBehavior, TInput, TOutput>(
-        BehaviorRestEndpointGroup group,
-        string pattern,
-        BehaviorRestEndpointContract contract)
-        where TBehavior : class, IAppBehavior<TInput, TOutput>
-    {
-        var bindings = contract.Bindings;
-        var preserveImplicitQueryFallback = contract.PreserveImplicitQueryFallback;
-        var builder = group.Routes.MapGet(
-            pattern,
-            (HttpContext context, [FromServices] BehaviorDispatcher dispatcher) =>
-                InvokeWithoutBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings, preserveImplicitQueryFallback));
-        return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
-                builder,
-                group,
-                contract,
-                RestBehaviorHttpMethod.Get,
-                pattern,
-                acceptsBody: false)
-            .ApplyCephalonRateLimiting(group.endpoints.ServiceProvider, "rest-api", contract.BehaviorId);
-    }
-
-    private static RouteHandlerBuilder MapBehaviorPostCore<TBehavior, TInput, TOutput>(
-        BehaviorRestEndpointGroup group,
-        string pattern,
-        BehaviorRestEndpointContract contract)
-        where TBehavior : class, IAppBehavior<TInput, TOutput>
-    {
-        var bindings = contract.Bindings;
-        var preserveImplicitQueryFallback = contract.PreserveImplicitQueryFallback;
-        var builder = group.Routes.MapPost(
-            pattern,
-            (HttpContext context, [FromServices] BehaviorDispatcher dispatcher) =>
-                InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings, preserveImplicitQueryFallback));
-        return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
-                builder,
-                group,
-                contract,
-                RestBehaviorHttpMethod.Post,
-                pattern,
-                acceptsBody: true)
-            .ApplyCephalonRateLimiting(group.endpoints.ServiceProvider, "rest-api", contract.BehaviorId);
-    }
-
-    private static RouteHandlerBuilder MapBehaviorPutCore<TBehavior, TInput, TOutput>(
-        BehaviorRestEndpointGroup group,
-        string pattern,
-        BehaviorRestEndpointContract contract)
-        where TBehavior : class, IAppBehavior<TInput, TOutput>
-    {
-        var bindings = contract.Bindings;
-        var preserveImplicitQueryFallback = contract.PreserveImplicitQueryFallback;
-        var builder = group.Routes.MapPut(
-            pattern,
-            (HttpContext context, [FromServices] BehaviorDispatcher dispatcher) =>
-                InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings, preserveImplicitQueryFallback));
-        return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
-                builder,
-                group,
-                contract,
-                RestBehaviorHttpMethod.Put,
-                pattern,
-                acceptsBody: true)
-            .ApplyCephalonRateLimiting(group.endpoints.ServiceProvider, "rest-api", contract.BehaviorId);
-    }
-
-    private static RouteHandlerBuilder MapBehaviorPatchCore<TBehavior, TInput, TOutput>(
-        BehaviorRestEndpointGroup group,
-        string pattern,
-        BehaviorRestEndpointContract contract)
-        where TBehavior : class, IAppBehavior<TInput, TOutput>
-    {
-        var bindings = contract.Bindings;
-        var preserveImplicitQueryFallback = contract.PreserveImplicitQueryFallback;
-        var builder = group.Routes.MapMethods(
-            pattern,
-            ["PATCH"],
-            (HttpContext context, [FromServices] BehaviorDispatcher dispatcher) =>
-                InvokeWithBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings, preserveImplicitQueryFallback));
-        return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
-                builder,
-                group,
-                contract,
-                RestBehaviorHttpMethod.Patch,
-                pattern,
-                acceptsBody: true)
-            .ApplyCephalonRateLimiting(group.endpoints.ServiceProvider, "rest-api", contract.BehaviorId);
-    }
-
-    private static RouteHandlerBuilder MapBehaviorDeleteCore<TBehavior, TInput, TOutput>(
-        BehaviorRestEndpointGroup group,
-        string pattern,
-        BehaviorRestEndpointContract contract)
-        where TBehavior : class, IAppBehavior<TInput, TOutput>
-    {
-        var bindings = contract.Bindings;
-        var preserveImplicitQueryFallback = contract.PreserveImplicitQueryFallback;
-        var builder = group.Routes.MapDelete(
-            pattern,
-            (HttpContext context, [FromServices] BehaviorDispatcher dispatcher) =>
-                InvokeWithoutBodyAsync<TBehavior, TInput, TOutput>(context, dispatcher, bindings, preserveImplicitQueryFallback));
-        return ApplyEndpointConventions<TBehavior, TInput, TOutput>(
-                builder,
-                group,
-                contract,
-                RestBehaviorHttpMethod.Delete,
-                pattern,
-                acceptsBody: false)
-            .ApplyCephalonRateLimiting(group.endpoints.ServiceProvider, "rest-api", contract.BehaviorId);
-    }
-
-    private static RouteHandlerBuilder ApplyEndpointConventions<TBehavior, TInput, TOutput>(
+    private static RouteHandlerBuilder ApplyEndpointConventions(
         RouteHandlerBuilder builder,
         BehaviorRestEndpointGroup group,
         BehaviorRestEndpointContract contract,
         RestBehaviorHttpMethod method,
         string pattern,
         bool acceptsBody)
-        where TBehavior : class
     {
         ArgumentNullException.ThrowIfNull(group);
         ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
@@ -650,7 +575,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             group.runtimeSourceKind,
             group.runtimeAuthoringStyle,
             contract.BehaviorId,
-            typeof(TBehavior).FullName ?? typeof(TBehavior).Name,
+            contract.BehaviorType.FullName ?? contract.BehaviorType.Name,
             contract.OperationName,
             contract.Summary,
             contract.Description,
@@ -684,7 +609,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
 
         if (acceptsBody)
         {
-            builder.Accepts(typeof(TInput), "application/json");
+            builder.Accepts(contract.InputType, "application/json");
         }
 
         return builder;
@@ -803,53 +728,24 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         }
     }
 
-    private static async Task<IResult> InvokeWithoutBodyAsync<TBehavior, TInput, TOutput>(
+    private static async Task<IResult> InvokeAsync(
         HttpContext context,
         BehaviorDispatcher dispatcher,
-        IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
-        bool preserveImplicitQueryFallback)
-        where TBehavior : class, IAppBehavior<TInput, TOutput>
-    {
-        return await InvokeAsync<TBehavior, TInput, TOutput>(
-            context,
-            dispatcher,
-            acceptsBody: false,
-            bindings,
-            preserveImplicitQueryFallback).ConfigureAwait(false);
-    }
-
-    private static async Task<IResult> InvokeWithBodyAsync<TBehavior, TInput, TOutput>(
-        HttpContext context,
-        BehaviorDispatcher dispatcher,
-        IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
-        bool preserveImplicitQueryFallback)
-        where TBehavior : class, IAppBehavior<TInput, TOutput>
-    {
-        return await InvokeAsync<TBehavior, TInput, TOutput>(
-            context,
-            dispatcher,
-            acceptsBody: true,
-            bindings,
-            preserveImplicitQueryFallback).ConfigureAwait(false);
-    }
-
-    private static async Task<IResult> InvokeAsync<TBehavior, TInput, TOutput>(
-        HttpContext context,
-        BehaviorDispatcher dispatcher,
+        BehaviorRestEndpointContract contract,
         bool acceptsBody,
-        IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
-        bool preserveImplicitQueryFallback)
-        where TBehavior : class, IAppBehavior<TInput, TOutput>
+        IReadOnlyList<BehaviorRestBindingDescriptor>? bindings = null,
+        bool? preserveImplicitQueryFallback = null)
     {
-        var behaviorId = BehaviorRestEndpointContract.GetBehaviorId(typeof(TBehavior));
+        var behaviorId = contract.BehaviorId;
 
         try
         {
-            var input = await BehaviorRequestJsonComposer.ComposeAsync<TInput>(
+            var input = await BehaviorRequestJsonComposer.ComposeAsync(
                     context,
+                    contract.InputType,
                     acceptsBody,
-                    bindings,
-                    preserveImplicitQueryFallback)
+                    bindings ?? contract.Bindings,
+                    preserveImplicitQueryFallback ?? contract.PreserveImplicitQueryFallback)
                 .ConfigureAwait(false);
             var behaviorContext = DefaultBehaviorContext.From(context, behaviorId, "rest-api");
             var result = await dispatcher.DispatchAsync(
@@ -868,7 +764,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 return BehaviorRestResponseMapper.MapBehaviorResult(behaviorResult, context.RequestServices);
             }
 
-            return BehaviorRestResponseMapper.MapSuccess((TOutput)result, context.RequestServices);
+            return BehaviorRestResponseMapper.MapSuccess(result, context.RequestServices);
         }
         catch (BehaviorNotFoundException)
         {
@@ -1096,12 +992,6 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         return statusCodes;
     }
 
-    private static MethodInfo GetRequiredCoreMethod(string methodName)
-    {
-        return typeof(BehaviorRestEndpointGroup).GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Static)
-            ?? throw new InvalidOperationException($"Required helper method '{methodName}' was not found.");
-    }
-
     private sealed record BehaviorRestGroupMetadata(
         string ModuleId,
         string DisplayName,
@@ -1117,6 +1007,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         string ModuleId,
         string? ModuleVersion,
         int? ModuleVersionMajor,
+        Type BehaviorType,
         string BehaviorId,
         string OperationName,
         string TagName,
@@ -1201,6 +1092,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 moduleDescriptor.Id,
                 moduleDescriptor.Version,
                 moduleVersionMajor,
+                behaviorType,
                 behaviorId,
                 operationName,
                 tagName,
@@ -1226,7 +1118,10 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         {
             ArgumentNullException.ThrowIfNull(behaviorType);
 
-            return behaviorType.GetCustomAttribute<AppBehaviorAttribute>(inherit: false)?.Id
+            return behaviorType.GetCustomAttributes(typeof(AppBehaviorAttribute), inherit: false)
+                .OfType<AppBehaviorAttribute>()
+                .SingleOrDefault()
+                ?.Id
                 ?? throw new InvalidOperationException(
                     $"Behavior type '{behaviorType.FullName}' is missing [AppBehavior].");
         }

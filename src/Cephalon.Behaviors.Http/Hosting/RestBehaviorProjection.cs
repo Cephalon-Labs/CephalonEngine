@@ -1,4 +1,3 @@
-using System.Reflection;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.AspNetCore.Transports.Rest;
 using Cephalon.Behaviors.Http.Abstractions;
@@ -34,15 +33,8 @@ internal sealed record RestBehaviorEndpointProjection(
     IReadOnlyList<BehaviorRestBindingDescriptor> Bindings,
     bool PreserveImplicitQueryFallback,
     string AuthoringStyle,
-    Action<RouteHandlerBuilder>? ConfigureEndpoint,
-    Func<BehaviorRestEndpointGroup, string, IReadOnlyList<BehaviorRestBindingDescriptor>, bool, Action<RouteHandlerBuilder>?, RouteHandlerBuilder> Map)
+    Action<RouteHandlerBuilder>? ConfigureEndpoint)
 {
-    private static readonly MethodInfo CreateMapDelegateFactoryMethod =
-        typeof(RestBehaviorEndpointProjection).GetMethod(
-            nameof(CreateMapDelegateFactory),
-            BindingFlags.Static | BindingFlags.NonPublic)
-        ?? throw new InvalidOperationException("Required REST behavior projection factory was not found.");
-
     internal static RestBehaviorEndpointProjection Create<TBehavior>(
         RestBehaviorHttpMethod method,
         string pattern,
@@ -81,8 +73,7 @@ internal sealed record RestBehaviorEndpointProjection(
             bindings ?? [],
             preserveImplicitQueryFallback,
             authoringStyle.Trim(),
-            configureEndpoint,
-            CreateMapDelegate(behaviorType, method));
+            configureEndpoint);
     }
 
     internal static RestBehaviorEndpointProjection Create<TBehavior>(
@@ -134,8 +125,7 @@ internal sealed record RestBehaviorEndpointProjection(
                 Bindings,
                 PreserveImplicitQueryFallback,
                 AuthoringStyle,
-                ConfigureEndpoint,
-                CreateMapDelegate(BehaviorType, method));
+                ConfigureEndpoint);
     }
 
     internal RestBehaviorEndpointProjection WithPattern(string pattern)
@@ -153,8 +143,7 @@ internal sealed record RestBehaviorEndpointProjection(
                 Bindings,
                 PreserveImplicitQueryFallback,
                 AuthoringStyle,
-                ConfigureEndpoint,
-                Map);
+                ConfigureEndpoint);
     }
 
     internal RestBehaviorEndpointProjection WithBindings(IReadOnlyList<BehaviorRestBindingDescriptor> bindings)
@@ -171,8 +160,7 @@ internal sealed record RestBehaviorEndpointProjection(
                 bindings.ToArray(),
                 PreserveImplicitQueryFallback,
                 AuthoringStyle,
-                ConfigureEndpoint,
-                Map);
+                ConfigureEndpoint);
     }
 
     internal RestBehaviorEndpointProjection WithPreserveImplicitQueryFallback(bool preserveImplicitQueryFallback)
@@ -187,53 +175,20 @@ internal sealed record RestBehaviorEndpointProjection(
                 Bindings,
                 preserveImplicitQueryFallback,
                 AuthoringStyle,
-                ConfigureEndpoint,
-                Map);
+                ConfigureEndpoint);
     }
 
     internal RouteHandlerBuilder Apply(BehaviorRestEndpointGroup group)
     {
         ArgumentNullException.ThrowIfNull(group);
         group.UseRuntimeAuthoringStyle(AuthoringStyle);
-        return Map(group, Pattern, Bindings, PreserveImplicitQueryFallback, ConfigureEndpoint);
-    }
-
-    private static Func<BehaviorRestEndpointGroup, string, IReadOnlyList<BehaviorRestBindingDescriptor>, bool, Action<RouteHandlerBuilder>?, RouteHandlerBuilder> CreateMapDelegate(
-        Type behaviorType,
-        RestBehaviorHttpMethod method)
-    {
-        ArgumentNullException.ThrowIfNull(behaviorType);
-
-        var closedMethod = CreateMapDelegateFactoryMethod.MakeGenericMethod(behaviorType);
-        return (Func<BehaviorRestEndpointGroup, string, IReadOnlyList<BehaviorRestBindingDescriptor>, bool, Action<RouteHandlerBuilder>?, RouteHandlerBuilder>)closedMethod.Invoke(
-            null,
-            [method])!;
-    }
-
-    private static Func<BehaviorRestEndpointGroup, string, IReadOnlyList<BehaviorRestBindingDescriptor>, bool, Action<RouteHandlerBuilder>?, RouteHandlerBuilder> CreateMapDelegateFactory<TBehavior>(
-        RestBehaviorHttpMethod method)
-        where TBehavior : class
-        => CreateMapDelegate<TBehavior>(method);
-
-    private static Func<BehaviorRestEndpointGroup, string, IReadOnlyList<BehaviorRestBindingDescriptor>, bool, Action<RouteHandlerBuilder>?, RouteHandlerBuilder> CreateMapDelegate<TBehavior>(
-        RestBehaviorHttpMethod method)
-        where TBehavior : class
-    {
-        return method switch
-        {
-            RestBehaviorHttpMethod.Get => static (group, pattern, bindings, preserveImplicitQueryFallback, configureEndpoint) =>
-                group.MapBehaviorGet<TBehavior>(pattern, bindings, preserveImplicitQueryFallback, configureEndpoint),
-            RestBehaviorHttpMethod.Post => static (group, pattern, bindings, preserveImplicitQueryFallback, configureEndpoint) =>
-                group.MapBehaviorPost<TBehavior>(pattern, bindings, preserveImplicitQueryFallback, configureEndpoint),
-            RestBehaviorHttpMethod.Put => static (group, pattern, bindings, preserveImplicitQueryFallback, configureEndpoint) =>
-                group.MapBehaviorPut<TBehavior>(pattern, bindings, preserveImplicitQueryFallback, configureEndpoint),
-            RestBehaviorHttpMethod.Patch => static (group, pattern, bindings, preserveImplicitQueryFallback, configureEndpoint) =>
-                group.MapBehaviorPatch<TBehavior>(pattern, bindings, preserveImplicitQueryFallback, configureEndpoint),
-            RestBehaviorHttpMethod.Delete => static (group, pattern, bindings, preserveImplicitQueryFallback, configureEndpoint) =>
-                group.MapBehaviorDelete<TBehavior>(pattern, bindings, preserveImplicitQueryFallback, configureEndpoint),
-            _ => throw new InvalidOperationException(
-                $"Unsupported REST behavior HTTP method '{method}'. {BehaviorRestWireNameDiagnostics.DescribeMethodSupport()}")
-        };
+        return group.MapBehavior(
+            BehaviorType,
+            Method,
+            Pattern,
+            Bindings,
+            PreserveImplicitQueryFallback,
+            ConfigureEndpoint);
     }
 
     private static string ResolveBehaviorId(Type behaviorType)

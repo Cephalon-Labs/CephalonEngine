@@ -31,7 +31,9 @@ module-owned REST endpoints.
   expose public endpoints without implementing multiple author-facing interfaces directly
 - **REST behavior-module DSL** — `IRestBehaviorModuleBuilder` plus
   `IRestBehaviorEndpointGroupBuilder` for one-place public REST and internal behavior ownership,
-  compiled internally into a normalized REST projection contract before Minimal API materialization
+  compiled internally into a normalized REST projection contract before Minimal API materialization;
+  generated-profile ownership and route materialization use type-based contracts instead of
+  runtime `MethodInfo.MakeGenericMethod` / `Invoke` dispatch
 - **Metadata-only REST profile contract** — `BehaviorRestProfileAttribute`,
   `BehaviorRestBindingAttribute`, `BehaviorRestMethod`, `BehaviorRestMethodExtensions`,
   `BehaviorRestProfileDescriptor`, `BehaviorRestBindingDescriptor`,
@@ -200,6 +202,11 @@ Current profile behavior:
   module-owned shorthand that consumes those hints through the existing REST projection pipeline
 - profile consumption prefers source-generated `GetRestProfiles()` hints first and falls back to
   the explicitly targeted behavior type's attribute only when generated hints are unavailable
+- REST profile projections, generated-profile ownership, and `MapBehaviorGet/Post/Put/Patch/Delete<TBehavior>()`
+  now share the same type-based endpoint contract before Minimal API materialization, so the
+  REST route/projection/module-builder path no longer uses open-generic reflection; the remaining
+  deployment-mode inventory for this package is narrowed to bounded `ResultModel<>` OpenAPI
+  response metadata plus generated-profile carrier lookups
 - valid profiles currently require a supported REST method, a non-empty leading-slash relative
   pattern such as `"/{cartId}"`, and a positive `ApiVersionMajor` when one is specified
 - when a profile declares explicit bindings, `BehaviorRestProfile(PreserveImplicitQueryFallback = true)`

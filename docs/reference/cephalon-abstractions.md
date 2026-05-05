@@ -7465,6 +7465,21 @@ Returns: The same builder for fluent ownership registration.
 Type parameters:
 - `TBehavior`: The concrete behavior type owned by the module.
 
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-system-type"></a>
+
+##### `Add`
+
+```csharp
+IBehaviorModuleBuilder Add(Type behaviorType)
+```
+
+Declares that the current module owns the specified behavior type.
+
+Returns: The same builder for fluent ownership registration.
+
+Parameters:
+- `behaviorType`: The concrete behavior type owned by the module.
+
 <a id="member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-1-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder"></a>
 
 ##### `Add`
@@ -7481,6 +7496,22 @@ Type parameters:
 - `TBehavior`: The concrete behavior type owned by the module.
 
 Parameters:
+- `configureTopology`: The callback that selects the resolved behavior topology when attribute-only synthesis is not enough.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-system-type-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder"></a>
+
+##### `Add`
+
+```csharp
+IBehaviorModuleBuilder Add(Type behaviorType, Action<IBehaviorTopologyBuilder> configureTopology)
+```
+
+Declares that the current module owns the specified behavior type and supplies an explicit topology override.
+
+Returns: The same builder for fluent ownership registration.
+
+Parameters:
+- `behaviorType`: The concrete behavior type owned by the module.
 - `configureTopology`: The callback that selects the resolved behavior topology when attribute-only synthesis is not enough.
 
 <a id="type-cephalon-abstractions-behaviors-ibehaviorownermodule"></a>
