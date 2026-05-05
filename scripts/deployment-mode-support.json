@@ -74,8 +74,279 @@
     }
   },
   "deploymentModeEligibility": {
-    "comment": "Per-package eligibility table. Empty until a per-package claim audit is staged. The harness's project-property and analyzer audit phases scan src/Cephalon.*.csproj automatically; this table only matters once a package wants to advertise per-package supportedModes outside the global manifest claim. Populate gradually as packages are intentionally moved toward claimed status.",
-    "packages": []
+    "comment": "Per-package eligibility table seeded from docs/trim-aot-hazard-inventory.md (ENG-426). Each entry records the package's claim-audit tier, the actual reflection / dynamic-code call sites observed in its src/Cephalon.* source as of May 5, 2026, and the supportedModes a future claim could advertise (today: empty for every entry — the global manifest claim stays not-claimed until project properties + harness verdicts move). The list intentionally only enumerates packages that are NOT clean-baseline; the harness's project-property and analyzer audit phases scan all src/Cephalon.*.csproj automatically, so the absence of a package here means clean-baseline (no observed source-level hazard) rather than untracked. Excluded-by-design analyzer / source-generator projects are listed separately so the harness can confirm their disable-properties remain in place.",
+    "packages": [
+      {
+        "packageName": "Cephalon.Engine",
+        "nugetId": "Cephalon.Engine",
+        "claimAuditTier": "high",
+        "supportedModes": [],
+        "requiredProjectProperties": [],
+        "knownHazards": [
+          {
+            "kind": "reflection-assembly-scan",
+            "site": "src/Cephalon.Engine/Composition/ModuleDiscovery.cs:113",
+            "pattern": "Activator.CreateInstance(moduleType, nonPublic: true)",
+            "remediation": "Replace assembly-scanned module discovery with a compile-time module manifest emitted by a source generator that registers IModule descriptors at startup."
+          }
+        ],
+        "evidence": "docs/trim-aot-hazard-inventory.md (high tier)",
+        "introducedBy": "ENG-426"
+      },
+      {
+        "packageName": "Cephalon.Behaviors",
+        "nugetId": "Cephalon.Behaviors",
+        "claimAuditTier": "high",
+        "supportedModes": [],
+        "requiredProjectProperties": [],
+        "knownHazards": [
+          {
+            "kind": "reflection-type-registry",
+            "site": "src/Cephalon.Behaviors/Services/BehaviorTypeRegistry.cs",
+            "pattern": "Runtime registry keyed by Type with late-bound resolution from descriptors",
+            "remediation": "Replace runtime type registry with a compile-time descriptor + source-generator-emitted registration table; behaviors register via generated code rather than reflective discovery."
+          }
+        ],
+        "evidence": "docs/trim-aot-hazard-inventory.md (high tier)",
+        "introducedBy": "ENG-426"
+      },
+      {
+        "packageName": "Cephalon.Behaviors.Patterns",
+        "nugetId": "Cephalon.Behaviors.Patterns",
+        "claimAuditTier": "high",
+        "supportedModes": [],
+        "requiredProjectProperties": [],
+        "knownHazards": [
+          {
+            "kind": "reflection-open-generic",
+            "site": "src/Cephalon.Behaviors.Patterns/Strategies/DurableExecutionStrategy.cs:386",
+            "pattern": "typeof(DurableExecutionAdapter<,,,>).MakeGenericType(...) + Activator.CreateInstance(adapterType)",
+            "remediation": "Source-gen-emitted closed-generic adapter table keyed by behavior identity so the four-arg generic shape (TBehavior, TInput, TOutput, TState) is materialized at compile time rather than at runtime."
+          }
+        ],
+        "evidence": "docs/trim-aot-hazard-inventory.md (high tier)",
+        "introducedBy": "ENG-426"
+      },
+      {
+        "packageName": "Cephalon.Behaviors.Http",
+        "nugetId": "Cephalon.Behaviors.Http",
+        "claimAuditTier": "low",
+        "supportedModes": [],
+        "requiredProjectProperties": [],
+        "knownHazards": [
+          {
+            "kind": "reflection-closed-generic-bounded",
+            "site": "src/Cephalon.Behaviors.Http/Hosting/BehaviorRestEndpointGroup.cs:700",
+            "pattern": "typeof(ResultModel<>).MakeGenericType(contract.ResponseType)",
+            "remediation": "Either annotate the wrapper with [DynamicDependency] / [RequiresDynamicCode] preserving the bounded set of TResponse types, or emit the closed ResultModel<TResponse> through a source generator off the profile-contract list."
+          }
+        ],
+        "evidence": "docs/trim-aot-hazard-inventory.md (low tier)",
+        "introducedBy": "ENG-426"
+      },
+      {
+        "packageName": "Cephalon.EventSourcing.Cassandra",
+        "nugetId": "Cephalon.EventSourcing.Cassandra",
+        "claimAuditTier": "medium",
+        "supportedModes": [],
+        "requiredProjectProperties": [],
+        "knownHazards": [
+          {
+            "kind": "reflection-persisted-type-name",
+            "site": "src/Cephalon.EventSourcing.Cassandra/CassandraEventStore.cs:158",
+            "pattern": "Type.GetType(eventTypeName, throwOnError: false)",
+            "remediation": "Replace Type.GetType with a Cephalon.EventSourcing compile-time event-type registry interface; the registry can be source-generated from the consuming app's event-contract assembly."
+          }
+        ],
+        "evidence": "docs/trim-aot-hazard-inventory.md (medium tier)",
+        "introducedBy": "ENG-426"
+      },
+      {
+        "packageName": "Cephalon.EventSourcing.ClickHouse",
+        "nugetId": "Cephalon.EventSourcing.ClickHouse",
+        "claimAuditTier": "medium",
+        "supportedModes": [],
+        "requiredProjectProperties": [],
+        "knownHazards": [
+          {
+            "kind": "reflection-persisted-type-name",
+            "site": "src/Cephalon.EventSourcing.ClickHouse/ClickHouseEventStore.cs:151",
+            "pattern": "Type.GetType(eventTypeName, throwOnError: false)",
+            "remediation": "Same as the EventSourcing family — compile-time event-type registry."
+          }
+        ],
+        "evidence": "docs/trim-aot-hazard-inventory.md (medium tier)",
+        "introducedBy": "ENG-426"
+      },
+      {
+        "packageName": "Cephalon.EventSourcing.Elasticsearch",
+        "nugetId": "Cephalon.EventSourcing.Elasticsearch",
+        "claimAuditTier": "medium",
+        "supportedModes": [],
+        "requiredProjectProperties": [],
+        "knownHazards": [
+          {
+            "kind": "reflection-persisted-type-name",
+            "site": "src/Cephalon.EventSourcing.Elasticsearch/ElasticsearchEventStore.cs:95",
+            "pattern": "Type.GetType(hit.Source.EventType, throwOnError: false)",
+            "remediation": "Same as the EventSourcing family — compile-time event-type registry."
+          }
+        ],
+        "evidence": "docs/trim-aot-hazard-inventory.md (medium tier)",
+        "introducedBy": "ENG-426"
+      },
+      {
+        "packageName": "Cephalon.EventSourcing.EntityFramework",
+        "nugetId": "Cephalon.EventSourcing.EntityFramework",
+        "claimAuditTier": "medium",
+        "supportedModes": [],
+        "requiredProjectProperties": [],
+        "knownHazards": [
+          {
+            "kind": "reflection-persisted-type-name",
+            "site": "src/Cephalon.EventSourcing.EntityFramework/Services/EntityFrameworkEventStore.cs:90",
+            "pattern": "Type.GetType(entry.EventType, throwOnError: false)",
+            "remediation": "Same as the EventSourcing family — compile-time event-type registry."
+          }
+        ],
+        "evidence": "docs/trim-aot-hazard-inventory.md (medium tier)",
+        "introducedBy": "ENG-426"
+      },
+      {
+        "packageName": "Cephalon.EventSourcing.MongoDB",
+        "nugetId": "Cephalon.EventSourcing.MongoDB",
+        "claimAuditTier": "medium",
+        "supportedModes": [],
+        "requiredProjectProperties": [],
+        "knownHazards": [
+          {
+            "kind": "reflection-persisted-type-name",
+            "site": "src/Cephalon.EventSourcing.MongoDB/MongoDbEventStore.cs:130",
+            "pattern": "Type.GetType(entry.EventType, throwOnError: false)",
+            "remediation": "Same as the EventSourcing family — compile-time event-type registry."
+          }
+        ],
+        "evidence": "docs/trim-aot-hazard-inventory.md (medium tier)",
+        "introducedBy": "ENG-426"
+      },
+      {
+        "packageName": "Cephalon.EventSourcing.Nats",
+        "nugetId": "Cephalon.EventSourcing.Nats",
+        "claimAuditTier": "medium",
+        "supportedModes": [],
+        "requiredProjectProperties": [],
+        "knownHazards": [
+          {
+            "kind": "reflection-persisted-type-name",
+            "site": "src/Cephalon.EventSourcing.Nats/NatsEventStore.cs:170",
+            "pattern": "Type.GetType(natsEntry.EventType, throwOnError: false)",
+            "remediation": "Same as the EventSourcing family — compile-time event-type registry."
+          }
+        ],
+        "evidence": "docs/trim-aot-hazard-inventory.md (medium tier)",
+        "introducedBy": "ENG-426"
+      },
+      {
+        "packageName": "Cephalon.EventSourcing.Neo4j",
+        "nugetId": "Cephalon.EventSourcing.Neo4j",
+        "claimAuditTier": "medium",
+        "supportedModes": [],
+        "requiredProjectProperties": [],
+        "knownHazards": [
+          {
+            "kind": "reflection-persisted-type-name",
+            "site": "src/Cephalon.EventSourcing.Neo4j/Neo4jEventStore.cs:200",
+            "pattern": "Type.GetType(entry.EventType, throwOnError: false)",
+            "remediation": "Same as the EventSourcing family — compile-time event-type registry."
+          }
+        ],
+        "evidence": "docs/trim-aot-hazard-inventory.md (medium tier)",
+        "introducedBy": "ENG-426"
+      },
+      {
+        "packageName": "Cephalon.EventSourcing.OpenSearch",
+        "nugetId": "Cephalon.EventSourcing.OpenSearch",
+        "claimAuditTier": "medium",
+        "supportedModes": [],
+        "requiredProjectProperties": [],
+        "knownHazards": [
+          {
+            "kind": "reflection-persisted-type-name",
+            "site": "src/Cephalon.EventSourcing.OpenSearch/OpenSearchEventStore.cs:95",
+            "pattern": "Type.GetType(hit.Source.EventType, throwOnError: false)",
+            "remediation": "Same as the EventSourcing family — compile-time event-type registry."
+          }
+        ],
+        "evidence": "docs/trim-aot-hazard-inventory.md (medium tier)",
+        "introducedBy": "ENG-426"
+      },
+      {
+        "packageName": "Cephalon.EventSourcing.Qdrant",
+        "nugetId": "Cephalon.EventSourcing.Qdrant",
+        "claimAuditTier": "medium",
+        "supportedModes": [],
+        "requiredProjectProperties": [],
+        "knownHazards": [
+          {
+            "kind": "reflection-persisted-type-name",
+            "site": "src/Cephalon.EventSourcing.Qdrant/QdrantEventStore.cs:180",
+            "pattern": "Type.GetType(eventTypeName, throwOnError: false)",
+            "remediation": "Same as the EventSourcing family — compile-time event-type registry."
+          }
+        ],
+        "evidence": "docs/trim-aot-hazard-inventory.md (medium tier)",
+        "introducedBy": "ENG-426"
+      },
+      {
+        "packageName": "Cephalon.EventSourcing.Redis",
+        "nugetId": "Cephalon.EventSourcing.Redis",
+        "claimAuditTier": "medium",
+        "supportedModes": [],
+        "requiredProjectProperties": [],
+        "knownHazards": [
+          {
+            "kind": "reflection-persisted-type-name",
+            "site": "src/Cephalon.EventSourcing.Redis/RedisEventStore.cs:138",
+            "pattern": "Type.GetType(eventTypeStr, throwOnError: false)",
+            "remediation": "Same as the EventSourcing family — compile-time event-type registry."
+          }
+        ],
+        "evidence": "docs/trim-aot-hazard-inventory.md (medium tier)",
+        "introducedBy": "ENG-426"
+      },
+      {
+        "packageName": "Cephalon.Analyzers",
+        "nugetId": "Cephalon.Analyzers",
+        "claimAuditTier": "excluded-by-design",
+        "supportedModes": [],
+        "requiredProjectProperties": [
+          "IsTrimmable=false",
+          "IsAotCompatible=false",
+          "PublishTrimmed=false",
+          "PublishAot=false",
+          "PublishSingleFile=false"
+        ],
+        "knownHazards": [],
+        "evidence": "Roslyn analyzer pack — runs in the compiler, never reaches published output.",
+        "introducedBy": "ENG-332"
+      },
+      {
+        "packageName": "Cephalon.Behaviors.SourceGen",
+        "nugetId": "Cephalon.Behaviors.SourceGen",
+        "claimAuditTier": "excluded-by-design",
+        "supportedModes": [],
+        "requiredProjectProperties": [
+          "IsTrimmable=false",
+          "IsAotCompatible=false",
+          "PublishTrimmed=false",
+          "PublishAot=false",
+          "PublishSingleFile=false"
+        ],
+        "knownHazards": [],
+        "evidence": "Roslyn source generator — runs in the compiler, never reaches published output.",
+        "introducedBy": "ENG-332"
+      }
+    ]
   },
   "knownTransitiveHazards": {
     "comment": "Known third-party packages that emit trim or AOT warnings even when the consuming Cephalon.* project itself looks clean. Listed for reference; the harness does not currently fail on these but reports them in the per-target warnings list so the operator can see the source.",

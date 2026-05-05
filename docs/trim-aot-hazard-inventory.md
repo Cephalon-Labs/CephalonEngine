@@ -109,6 +109,8 @@ The inventory above maps directly to those manifest fields:
 
 When the harness ships, this doc is rewritten in place to read from the harness's machine-readable report instead of a manual `Grep` pass. Until then, this doc is the source of truth for the per-package hazard surface.
 
+**Update May 5, 2026 (`ENG-427`):** the per-package entries in this inventory have been seeded into `scripts/deployment-mode-support.json` under `deploymentModeEligibility.packages` (16 entries: 3 `high` + 10 `medium` + 1 `low` + 2 `excluded-by-design`). Each manifest entry carries `packageName`, `nugetId`, `claimAuditTier`, `supportedModes` (today: empty for every entry), `requiredProjectProperties`, `knownHazards` (with `kind` / `site` / `pattern` / `remediation` per entry), `evidence` pointer back to this doc, and `introducedBy` ENG reference. Schema is contract-locked through extended Pester coverage in `tests/Cephalon.Tests.Scripts/deployment-mode-support-manifest.Tests.ps1` (28 tests passing). Refreshing this doc in a future slice now requires updating the manifest entries in the same slice.
+
 ## Refresh discipline
 
 This inventory is refreshed in the same slice that:

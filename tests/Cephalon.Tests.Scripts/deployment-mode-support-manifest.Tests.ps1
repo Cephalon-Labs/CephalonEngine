@@ -201,6 +201,43 @@ Describe "deploymentModeEligibility" {
         $script:manifest.deploymentModeEligibility.PSObject.Properties.Name | Should -Contain 'comment'
         $script:manifest.deploymentModeEligibility.PSObject.Properties.Name | Should -Contain 'packages'
     }
+
+    It "every package entry carries the per-package shape ENG-427 seeded" {
+        $packages = $script:manifest.deploymentModeEligibility.packages
+        # packages may be empty in a future state; only validate shape when populated
+        foreach ($pkg in $packages) {
+            $pkg.PSObject.Properties.Name | Should -Contain 'packageName'
+            $pkg.PSObject.Properties.Name | Should -Contain 'nugetId'
+            $pkg.PSObject.Properties.Name | Should -Contain 'claimAuditTier'
+            $pkg.PSObject.Properties.Name | Should -Contain 'supportedModes'
+            $pkg.PSObject.Properties.Name | Should -Contain 'requiredProjectProperties'
+            $pkg.PSObject.Properties.Name | Should -Contain 'knownHazards'
+            $pkg.PSObject.Properties.Name | Should -Contain 'evidence'
+            $pkg.PSObject.Properties.Name | Should -Contain 'introducedBy'
+
+            $pkg.packageName | Should -Match '^Cephalon\.'
+            $pkg.nugetId | Should -Match '^Cephalon\.'
+            $pkg.claimAuditTier | Should -BeIn @('excluded-by-design', 'low', 'medium', 'high')
+            # supportedModes today is empty for every entry (the global manifest claim stays not-claimed)
+            $pkg.supportedModes | Should -BeNullOrEmpty
+        }
+    }
+
+    It "every hazard entry on a non-excluded package carries kind/site/pattern/remediation" {
+        $packages = $script:manifest.deploymentModeEligibility.packages
+        foreach ($pkg in $packages) {
+            if ($pkg.claimAuditTier -eq 'excluded-by-design') { continue }
+            $pkg.knownHazards | Should -Not -BeNullOrEmpty -Because "non-excluded package $($pkg.packageName) must record at least one knownHazards entry"
+            foreach ($hz in $pkg.knownHazards) {
+                $hz.PSObject.Properties.Name | Should -Contain 'kind'
+                $hz.PSObject.Properties.Name | Should -Contain 'site'
+                $hz.PSObject.Properties.Name | Should -Contain 'pattern'
+                $hz.PSObject.Properties.Name | Should -Contain 'remediation'
+                $hz.kind | Should -Not -BeNullOrEmpty
+                $hz.site | Should -Not -BeNullOrEmpty
+            }
+        }
+    }
 }
 
 Describe "knownTransitiveHazards" {
