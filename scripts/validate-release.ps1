@@ -4,6 +4,7 @@ param(
     [switch]$SkipTests,
     [switch]$SkipDotNetReadiness,
     [switch]$SkipDeploymentModeClaims,
+    [switch]$SkipEngineCompletionScorecard,
     [switch]$SkipOperationalConventions,
     [switch]$SkipPhase8Conventions,
     [switch]$SkipBenchmarks,
@@ -38,12 +39,14 @@ $testProjectPaths = @(
 $benchmarkProjectPath = [System.IO.Path]::Combine($repoRoot, "benchmarks", "Cephalon.Benchmarks", "Cephalon.Benchmarks.csproj")
 $dotNetReadinessScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-dotnet-readiness.ps1")
 $deploymentModeClaimsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-deployment-mode-claims.ps1")
+$engineCompletionScorecardScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "publish-engine-completion-scorecard.ps1")
 $referenceDocsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "publish-reference-docs.ps1")
 $packageArtifactsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "publish-package-artifacts.ps1")
 $operationalConventionsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-operational-conventions.ps1")
 $phase8ConventionsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-phase8-conventions.ps1")
 $dotNetReadinessOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "dotnet-readiness-release")
 $deploymentModeClaimsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "deployment-mode-claims-release")
+$engineCompletionScorecardOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "engine-completion-scorecard-release")
 $referenceDocsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "reference-docs-release")
 $packageArtifactsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "packages-release")
 $publicApiDeltaScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "summarise-public-api-deltas.ps1")
@@ -170,6 +173,14 @@ try {
                 "-Configuration", "Release",
                 "-OutputPath", $deploymentModeClaimsOutputPath,
                 "-SkipPublish"
+            )
+        }
+    }
+
+    if (-not $SkipEngineCompletionScorecard) {
+        Invoke-Step "Publish engine completion scorecard artifact" {
+            Invoke-PowerShellScript -Path $engineCompletionScorecardScriptPath -Arguments @(
+                "-OutputPath", $engineCompletionScorecardOutputPath
             )
         }
     }

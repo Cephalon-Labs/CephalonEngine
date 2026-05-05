@@ -46,6 +46,7 @@ The durable rule book lives in [`release-checklist.md`](release-checklist.md). T
 - [ ] Tests (Composition + Hosting + Tooling) ✅
 - [ ] `.NET 11` readiness contract ✅
 - [ ] Deployment-mode claim audit ✅
+- [ ] Engine completion scorecard artifact ✅
 - [ ] Operational health + export conventions ✅
 - [ ] Phase-8 architecture / runtime / starter conventions ✅
 - [ ] Benchmark smoke + guardrails ✅
@@ -58,7 +59,7 @@ The durable rule book lives in [`release-checklist.md`](release-checklist.md). T
 
 ## 4. Conformance and maturity truth
 
-- [ ] [`docs/engine-completion-scorecard.md`](engine-completion-scorecard.md) reviewed; gate posture matches the owning source docs
+- [ ] [`docs/engine-completion-scorecard.md`](engine-completion-scorecard.md) reviewed; generated scorecard artifact and gate posture match the owning source docs
 - [ ] [`docs/engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md) Current-audit table reflects shipped state
 - [ ] [`docs/conformance-matrix.md`](conformance-matrix.md) per-family tables + Family summary at a glance match the audit
 - [ ] [`docs/runtime-contract-index.md`](runtime-contract-index.md) `/engine/*` route catalog reflects every shipped route

@@ -46,6 +46,15 @@ Do not use `M4`, "tests pass", or "docs exist" as a synonym for GA. Maturity, va
 | [`test-coverage-roadmap.md`](test-coverage-roadmap.md) | Known coverage gaps and direct-test priorities | Checks whether a package family still has known proof gaps. |
 | [`release-checklist.md`](release-checklist.md) | Release-manager proof sequence | Converts the scorecard into per-release execution. |
 
+## Machine-readable report
+
+[`scripts/publish-engine-completion-scorecard.ps1`](../scripts/publish-engine-completion-scorecard.ps1) exports this page into a release artifact without becoming a new authority. The script parses the status vocabulary, evidence sources, platform gates, quality dimensions, and package-family roll-up from this Markdown document, validates every scorecard status token against the declared vocabulary, and writes:
+
+- `artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json`
+- `artifacts/engine-completion-scorecard-release/README.md`
+
+The JSON artifact uses schema version `1.0.0`. Release validation publishes it by default through `scripts/validate-release.ps1` unless `-SkipEngineCompletionScorecard` is passed for a deliberately narrower local run.
+
 ## Platform-level gates
 
 These gates must all be `ready-for-preview`, `not-applicable`, or explicitly documented as `not-claimed` before a preview release. For a GA release, no gate can remain `blocked`, and any `partial` gate must have a release-manager-approved exception.
@@ -113,7 +122,7 @@ This table is intentionally family-level. The per-package truth remains in the m
 
 The next completion-oriented slices should stay narrow and evidence-driven:
 
-1. Add a machine-readable scorecard emitter once the source documents stabilize enough to avoid duplicating truth by hand.
+1. Keep the shipped machine-readable scorecard emitter schema-stable and extend it only by reading source docs instead of duplicating truth by hand.
 2. Add per-package GA readiness rows that reference, rather than repeat, maturity-audit and conformance-matrix truth.
 3. Promote the first clean-baseline package through an explicit deployment-mode claim only after the manifest, project properties, harness, workflow, and docs all agree.
 4. Extend `cephalon doctor` with a local scorecard summary after the scorecard model is stable.
@@ -129,6 +138,7 @@ Refresh this page when:
 - a deployment-mode claim changes
 - `.NET 11` or another future framework lane changes its status
 - release validation adds or removes a gate
+- the machine-readable scorecard schema or artifact shape changes
 - a monthly architecture review closes or opens a scorecard-relevant risk
 
 Do not append dated change logs here. The durable history belongs in commits, `ENG-*` cards, architecture reviews, and release notes.

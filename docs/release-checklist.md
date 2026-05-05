@@ -30,18 +30,19 @@ Cross-references: [`package-publishing.md`](package-publishing.md), [`supply-cha
     3. **Tests** for `Cephalon.Tests.Composition` / `.Hosting` / `.Tooling` (Pester suite for `tests/Cephalon.Tests.Scripts` runs separately in CI)
     4. **`.NET 11` readiness** through `scripts/validate-dotnet-readiness.ps1`
     5. **Deployment-mode claim** audit through `scripts/validate-deployment-mode-claims.ps1` (release validation still passes `-SkipPublish`; explicit publish-probe runs use the manifest's staged `representativePublishTargets.projects` list)
-    6. **Operational health and export conventions**
-    7. **Phase-8 architecture, runtime, and starter conventions**
-    8. **Benchmark smoke suite** + benchmark guardrail validation
-    9. **Reference-doc publishing** through `scripts/publish-reference-docs.ps1`
-    10. **Package artefact publishing** through `scripts/publish-package-artifacts.ps1`
-    11. **Public-API delta summary** through `scripts/summarise-public-api-deltas.ps1` (per `ENG-352`)
+    6. **Engine completion scorecard artifact** through `scripts/publish-engine-completion-scorecard.ps1`
+    7. **Operational health and export conventions**
+    8. **Phase-8 architecture, runtime, and starter conventions**
+    9. **Benchmark smoke suite** + benchmark guardrail validation
+    10. **Reference-doc publishing** through `scripts/publish-reference-docs.ps1`
+    11. **Package artefact publishing** through `scripts/publish-package-artifacts.ps1`
+    12. **Public-API delta summary** through `scripts/summarise-public-api-deltas.ps1` (per `ENG-352`)
 - [ ] Every step finishes with `0 Warning(s), 0 Error(s)`; benchmark guardrails report no regression beyond the configured allowance
 - [ ] The release-validation GitHub Actions workflow ([`release-validation.yml`](../.github/workflows/release-validation.yml)) passes on both `windows-latest` and `ubuntu-latest`; the `dotnet11-readiness` job passes against the `.NET 11` SDK preview
 
 ## Conformance and maturity truth
 
-- [ ] [`docs/engine-completion-scorecard.md`](engine-completion-scorecard.md) reviewed as the release-readiness roll-up; no gate was promoted there without the owning source document changing first
+- [ ] [`docs/engine-completion-scorecard.md`](engine-completion-scorecard.md) reviewed as the release-readiness roll-up, and the generated `artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json` artifact matches it; no gate was promoted there without the owning source document changing first
 - [ ] [`docs/engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md) Current-audit table reflects shipped state: every shipped `Cephalon.*` package has a row with current maturity, ownership mode, and "next proof needed" populated; recently-promoted packages have their maturity bumped in the audit before the release notes or scorecard mention the promotion
 - [ ] [`docs/conformance-matrix.md`](conformance-matrix.md) per-family tables and the *Family summary at a glance* match the audit; no row reports a maturity that disagrees with the audit
 - [ ] [`docs/runtime-contract-index.md`](runtime-contract-index.md) `/engine/*` route catalog reflects every shipped route; recently-added routes (e.g. `/engine/diagnostics-conventions` from `ENG-351`) are present

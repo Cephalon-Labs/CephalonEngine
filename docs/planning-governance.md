@@ -105,6 +105,7 @@ Maintain it as a read model:
 - never promote a gate from the scorecard alone
 - keep `not-claimed` support postures visible when the lack of support is intentional
 - do not treat `M4` maturity as GA; GA still needs package, validation, SRE, deployment, supply-chain, and adoption evidence
+- keep `scripts/publish-engine-completion-scorecard.ps1` as a generated read model over this page; if the artifact schema changes, update this governance note, the release checklist, and script tests in the same slice
 - when a release branch opens, review the scorecard before the release checklist is copied into a per-release working artifact
 
 ## Architecture review cadence
