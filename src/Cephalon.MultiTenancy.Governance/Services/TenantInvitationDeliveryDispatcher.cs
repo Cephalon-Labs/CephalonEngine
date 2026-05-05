@@ -1,5 +1,9 @@
+using Cephalon.Diagnostics;
+using Cephalon.Diagnostics.Redaction;
 using Cephalon.MultiTenancy.Governance.Configuration;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
@@ -14,7 +18,8 @@ internal sealed class TenantInvitationDeliveryDispatcher(
     IEnumerable<ITenantInvitationDeliverySender> senders,
     TenantInvitationDeliveryRunReporter runReporter,
     TimeProvider timeProvider,
-    ILogger<TenantInvitationDeliveryDispatcher> logger) : ITenantInvitationDeliveryDispatcher
+    ILogger<TenantInvitationDeliveryDispatcher> logger,
+    RedactionPipeline? redactionPipeline = null) : ITenantInvitationDeliveryDispatcher
 {
     private readonly ITenantInvitationDeliverySender[] senders = senders
         .Where(static sender => !string.IsNullOrWhiteSpace(sender.SenderId))
@@ -28,6 +33,19 @@ internal sealed class TenantInvitationDeliveryDispatcher(
         ArgumentNullException.ThrowIfNull(request);
         cancellationToken.ThrowIfCancellationRequested();
 
+        using var dispatchActivity = GovernanceDiagnostics.ActivitySource.StartActivity(
+            GovernanceDiagnostics.InvitationDispatchActivityName,
+            ActivityKind.Producer);
+        dispatchActivity?.SetTag(
+            CephalonDiagnosticsAttributeKeys.TenantId,
+            Redact(dispatchActivity, CephalonDiagnosticsAttributeKeys.TenantId, request.TenantId));
+        dispatchActivity?.SetTag(
+            GovernanceDiagnostics.InvitationIdTag,
+            Redact(dispatchActivity, GovernanceDiagnostics.InvitationIdTag, request.InvitationId));
+        dispatchActivity?.SetTag(
+            GovernanceDiagnostics.DeliveryChannelTag,
+            Redact(dispatchActivity, GovernanceDiagnostics.DeliveryChannelTag, request.Channel));
+
         var dispatchedAtUtc = request.AtUtc ?? timeProvider.GetUtcNow();
         if (!options.EnableInvitationDeliveryDispatch)
         {
@@ -40,7 +58,8 @@ internal sealed class TenantInvitationDeliveryDispatcher(
                 providerMessageId: null,
                 reason: "Tenant invitation delivery dispatch is disabled.",
                 metadata: BuildMetadata(request, null, null, TenantInvitationDeliveryOutcomes.Disabled, dispatchedAtUtc, null, null)),
-                request);
+                request,
+                dispatchActivity);
         }
 
         var invitation = FindInvitation(request);
@@ -55,7 +74,8 @@ internal sealed class TenantInvitationDeliveryDispatcher(
                 providerMessageId: null,
                 reason: "The targeted tenant invitation was not found.",
                 metadata: BuildMetadata(request, null, null, TenantInvitationDeliveryOutcomes.InvitationNotFound, dispatchedAtUtc, null, null)),
-                request);
+                request,
+                dispatchActivity);
         }
 
         if (!string.Equals(invitation.Status, TenantInvitationStatuses.Pending, StringComparison.OrdinalIgnoreCase))
@@ -69,7 +89,8 @@ internal sealed class TenantInvitationDeliveryDispatcher(
                 providerMessageId: null,
                 reason: "The targeted tenant invitation is no longer pending.",
                 senderMetadata: null),
-                request);
+                request,
+                dispatchActivity);
         }
 
         if (invitation.ExpiresAtUtc is not null && invitation.ExpiresAtUtc <= dispatchedAtUtc)
@@ -83,7 +104,8 @@ internal sealed class TenantInvitationDeliveryDispatcher(
                 providerMessageId: null,
                 reason: "The targeted tenant invitation expired before dispatch.",
                 senderMetadata: null),
-                request);
+                request,
+                dispatchActivity);
         }
 
         var sender = ResolveSender(request);
@@ -100,7 +122,8 @@ internal sealed class TenantInvitationDeliveryDispatcher(
                     ? "No tenant invitation delivery sender is registered."
                     : $"Tenant invitation delivery sender '{request.SenderId}' is not registered.",
                 senderMetadata: null),
-                request);
+                request,
+                dispatchActivity);
         }
 
         TenantInvitationDeliverySenderResult senderResult;
@@ -133,7 +156,8 @@ internal sealed class TenantInvitationDeliveryDispatcher(
                     ["senderError"] = exception.Message
                 },
                 exception),
-                request);
+                request,
+                dispatchActivity);
         }
 
         var outcome = ResolveDispatcherOutcome(senderResult);
@@ -150,7 +174,8 @@ internal sealed class TenantInvitationDeliveryDispatcher(
                     ? "Tenant invitation delivery sender did not accept dispatch."
                     : senderResult.Reason,
                 senderResult.Metadata),
-                request);
+                request,
+                dispatchActivity);
         }
 
         var metadata = BuildMetadata(
@@ -189,7 +214,8 @@ internal sealed class TenantInvitationDeliveryDispatcher(
                         senderResult.ProviderMessageId),
                     dispatched: true,
                     exception: exception),
-                    request);
+                    request,
+                    dispatchActivity);
             }
         }
 
@@ -217,7 +243,7 @@ internal sealed class TenantInvitationDeliveryDispatcher(
             result.Channel ?? "default",
             null);
 
-        return Complete(result, request);
+        return Complete(result, request, dispatchActivity);
     }
 
     private TenantInvitationDescriptor? FindInvitation(TenantInvitationDeliveryRequest request)
@@ -337,11 +363,75 @@ internal sealed class TenantInvitationDeliveryDispatcher(
             metadata);
     }
 
-    private TenantInvitationDeliveryResult Complete(TenantInvitationDeliveryResult result, TenantInvitationDeliveryRequest request)
+    private TenantInvitationDeliveryResult Complete(
+        TenantInvitationDeliveryResult result,
+        TenantInvitationDeliveryRequest request,
+        Activity? dispatchActivity)
     {
         var completed = QueueRetryIfNeeded(result, request);
         runReporter.Record(completed);
+        CompleteDispatchActivity(dispatchActivity, completed);
         return completed;
+    }
+
+    /// <summary>
+    /// Sets the resolved sender (when present), delivery outcome, optional error status, and
+    /// increments the invitation-dispatch counter for the given dispatch activity. Tag values are
+    /// routed through the redaction pipeline so consumer-registered redaction filters apply
+    /// uniformly across the dispatch span.
+    /// </summary>
+    private void CompleteDispatchActivity(
+        Activity? dispatchActivity,
+        TenantInvitationDeliveryResult result)
+    {
+        if (!string.IsNullOrWhiteSpace(result.SenderId))
+        {
+            dispatchActivity?.SetTag(
+                GovernanceDiagnostics.DeliverySenderIdTag,
+                Redact(dispatchActivity, GovernanceDiagnostics.DeliverySenderIdTag, result.SenderId));
+        }
+
+        dispatchActivity?.SetTag(
+            GovernanceDiagnostics.DeliveryOutcomeTag,
+            Redact(dispatchActivity, GovernanceDiagnostics.DeliveryOutcomeTag, result.Outcome));
+
+        if (!result.Dispatched
+            && !string.Equals(result.Outcome, TenantInvitationDeliveryOutcomes.Disabled, StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(result.Outcome, TenantInvitationDeliveryOutcomes.Suppressed, StringComparison.OrdinalIgnoreCase))
+        {
+            dispatchActivity?.SetStatus(ActivityStatusCode.Error, result.Reason);
+        }
+
+        GovernanceDiagnostics.InvitationDispatchCounter.Add(
+            1,
+            new TagList
+            {
+                { GovernanceDiagnostics.DeliveryChannelTag, result.Channel ?? string.Empty },
+                { GovernanceDiagnostics.DeliverySenderIdTag, result.SenderId ?? string.Empty },
+                { GovernanceDiagnostics.DeliveryOutcomeTag, result.Outcome }
+            });
+    }
+
+    /// <summary>
+    /// Routes <paramref name="value"/> through the consumer-registered <see cref="RedactionPipeline"/>
+    /// (resolved through the dispatcher's optional ctor parameter) before the dispatcher emits it
+    /// as an activity tag. The pipeline is empty by default when no consumer registered any
+    /// <see cref="IRedactionFilter"/>; in that case (and when DI did not supply a pipeline at all)
+    /// this method short-circuits to passthrough so dispatch emission stays cheap.
+    /// </summary>
+    private object? Redact(Activity? activity, string attributeKey, object? value)
+    {
+        if (redactionPipeline is null)
+        {
+            return value;
+        }
+
+        var context = new RedactionContext(
+            ActivitySourceName: activity?.Source.Name,
+            MeterName: null,
+            AttributeKey: attributeKey,
+            LoggerCategory: null);
+        return redactionPipeline.Filter(context, value);
     }
 
     private TenantInvitationDeliveryResult QueueRetryIfNeeded(
