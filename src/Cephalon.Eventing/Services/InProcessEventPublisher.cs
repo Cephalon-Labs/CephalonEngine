@@ -1,7 +1,10 @@
 using Cephalon.Abstractions.Data;
+using Cephalon.Diagnostics.Redaction;
 using Cephalon.Eventing.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.Globalization;
 
 namespace Cephalon.Eventing.Services;
@@ -13,7 +16,8 @@ internal sealed class InProcessEventPublisher(
     InProcessEventSubscriptionIdempotencyTracker idempotencyTracker,
     IEventSubscriptionRuntimeReporter runtimeReporter,
     IEventPublicationRuntimeReporter publicationRuntimeReporter,
-    ILoggerFactory? loggerFactory = null) : IEventPublisher
+    ILoggerFactory? loggerFactory = null,
+    RedactionPipeline? redactionPipeline = null) : IEventPublisher
 {
     private readonly ILogger logger = (loggerFactory ?? NullLoggerFactory.Instance)
         .CreateLogger<InProcessEventPublisher>();
@@ -30,6 +34,22 @@ internal sealed class InProcessEventPublisher(
             throw new InvalidOperationException(
                 $"Event channel '{publication.ChannelId}' is not registered in the active eventing runtime.");
         }
+
+        using var dispatchActivity = EventingDiagnostics.ActivitySource.StartActivity(
+            EventingDiagnostics.PublicationDispatchActivityName,
+            ActivityKind.Producer);
+        dispatchActivity?.SetTag(
+            EventingDiagnostics.PublisherIdTag,
+            Redact(dispatchActivity, EventingDiagnostics.PublisherIdTag, InProcessEventingRuntimeIds.PublisherId));
+        dispatchActivity?.SetTag(
+            EventingDiagnostics.PublicationIdTag,
+            Redact(dispatchActivity, EventingDiagnostics.PublicationIdTag, publication.Id));
+        dispatchActivity?.SetTag(
+            EventingDiagnostics.ChannelIdTag,
+            Redact(dispatchActivity, EventingDiagnostics.ChannelIdTag, publication.ChannelId));
+        dispatchActivity?.SetTag(
+            EventingDiagnostics.EventTypeTag,
+            Redact(dispatchActivity, EventingDiagnostics.EventTypeTag, publication.EventType));
 
         var entries = executors.GetByChannelId(publication.ChannelId);
         var maxAttempts = InProcessEventingRetryPolicy.GetMaxAttempts(options);
@@ -79,6 +99,11 @@ internal sealed class InProcessEventPublisher(
                         subscriptionIds,
                         skipReason: "no-matching-subscriptions")),
                 cancellationToken).ConfigureAwait(false);
+            CompleteDispatchActivity(
+                dispatchActivity,
+                publication,
+                EventPublicationRuntimeOutcomes.Skipped,
+                matchedSubscriptionCount: 0);
             return;
         }
 
@@ -265,6 +290,13 @@ internal sealed class InProcessEventPublisher(
                         error: message)),
                 cancellationToken).ConfigureAwait(false);
 
+            CompleteDispatchActivity(
+                dispatchActivity,
+                publication,
+                EventPublicationRuntimeOutcomes.Failed,
+                matchedSubscriptionCount,
+                error: message);
+
             if (failureToRethrow is not null)
             {
                 System.Runtime.ExceptionServices.ExceptionDispatchInfo.Capture(failureToRethrow).Throw();
@@ -314,6 +346,69 @@ internal sealed class InProcessEventPublisher(
                         ? "duplicate-completed-subscriptions"
                         : null)),
             cancellationToken).ConfigureAwait(false);
+
+        CompleteDispatchActivity(
+            dispatchActivity,
+            publication,
+            publicationOutcome,
+            matchedSubscriptionCount);
+    }
+
+    /// <summary>
+    /// Sets the publication outcome tag, matched-subscription-count tag, optional error status,
+    /// and increments the publication-dispatch counter for the given dispatch activity. Tag values
+    /// are routed through the redaction pipeline so consumer-registered redaction filters apply
+    /// uniformly across the dispatch span.
+    /// </summary>
+    private void CompleteDispatchActivity(
+        Activity? dispatchActivity,
+        EventPublication publication,
+        string outcome,
+        int matchedSubscriptionCount,
+        string? error = null)
+    {
+        dispatchActivity?.SetTag(
+            EventingDiagnostics.PublicationOutcomeTag,
+            Redact(dispatchActivity, EventingDiagnostics.PublicationOutcomeTag, outcome));
+        dispatchActivity?.SetTag(
+            EventingDiagnostics.MatchedSubscriptionCountTag,
+            Redact(dispatchActivity, EventingDiagnostics.MatchedSubscriptionCountTag, matchedSubscriptionCount));
+
+        if (string.Equals(outcome, EventPublicationRuntimeOutcomes.Failed, StringComparison.OrdinalIgnoreCase))
+        {
+            dispatchActivity?.SetStatus(ActivityStatusCode.Error, error);
+        }
+
+        EventingDiagnostics.PublicationDispatchCounter.Add(
+            1,
+            new TagList
+            {
+                { EventingDiagnostics.ChannelIdTag, publication.ChannelId },
+                { EventingDiagnostics.EventTypeTag, publication.EventType },
+                { EventingDiagnostics.PublicationOutcomeTag, outcome }
+            });
+    }
+
+    /// <summary>
+    /// Routes <paramref name="value"/> through the consumer-registered <see cref="RedactionPipeline"/>
+    /// (resolved through the publisher's optional ctor parameter) before the publisher emits it as
+    /// an activity tag. The pipeline is empty by default when no consumer registered any
+    /// <see cref="IRedactionFilter"/>; in that case (and when DI did not supply a pipeline at all)
+    /// this method short-circuits to passthrough so dispatch emission stays cheap.
+    /// </summary>
+    private object? Redact(Activity? activity, string attributeKey, object? value)
+    {
+        if (redactionPipeline is null)
+        {
+            return value;
+        }
+
+        var context = new RedactionContext(
+            ActivitySourceName: activity?.Source.Name,
+            MeterName: null,
+            AttributeKey: attributeKey,
+            LoggerCategory: null);
+        return redactionPipeline.Filter(context, value);
     }
 
     private static Dictionary<string, string> CreateExecutionMetadata(
