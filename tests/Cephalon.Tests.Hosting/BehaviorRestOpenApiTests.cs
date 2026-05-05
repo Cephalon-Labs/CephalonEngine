@@ -265,7 +265,9 @@ public sealed class BehaviorRestOpenApiTests
             .GetProperty("schemas")
             .GetProperty(componentName);
 
-        Assert.True(successSchema.GetProperty("properties").TryGetProperty("data", out _));
+        Assert.True(successSchema.GetProperty("properties").TryGetProperty("data", out var dataSchema));
+        Assert.True(dataSchema.TryGetProperty("$ref", out var dataSchemaReference), dataSchema.ToString());
+        Assert.Contains("EnvelopeLookupOutput", dataSchemaReference.GetString(), StringComparison.Ordinal);
         Assert.True(successSchema.GetProperty("properties").TryGetProperty("status", out _));
         Assert.False(successSchema.GetProperty("properties").TryGetProperty("status_code", out _));
         Assert.False(successSchema.GetProperty("properties").TryGetProperty("error", out _));
@@ -380,6 +382,9 @@ public sealed class BehaviorRestOpenApiTests
         builder.Configuration["Engine:Resilience:RateLimiting:Overrides:widget-free-pass:Behaviors:0"] = "tests.results.lookup";
         builder.Configuration["Engine:Resilience:RateLimiting:Overrides:widget-free-pass:Transports:0"] = "rest-api";
         builder.Configuration["Engine:Resilience:RateLimiting:Overrides:widget-free-pass:Enabled"] = "false";
+        builder.Configuration["Engine:Resilience:BehaviorExecution:Overrides:widget-free-pass:Behaviors:0"] = "tests.results.lookup";
+        builder.Configuration["Engine:Resilience:BehaviorExecution:Overrides:widget-free-pass:Transports:0"] = "rest-api";
+        builder.Configuration["Engine:Resilience:BehaviorExecution:Overrides:widget-free-pass:RateLimiting:Enabled"] = "false";
         builder.AddCephalon(engine =>
         {
             engine.AddModule(new EnvelopeResultModule());

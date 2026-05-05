@@ -150,7 +150,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.AspNetCore.Transports.Rest`
 
-- [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-transports-rest): 5 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest)
+- [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-transports-rest): 6 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest)
 
 ## `Cephalon.AspNetCore.Transports.ServerSentEvents`
 

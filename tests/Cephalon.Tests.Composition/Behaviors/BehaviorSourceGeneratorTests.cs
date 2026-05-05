@@ -260,10 +260,14 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.NotNull(autoRegistration);
         Assert.Contains("GetExecutionSlots()", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("BehaviorExecutionSlot.For<global::GetOrderBehavior", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("[global::System.Runtime.CompilerServices.ModuleInitializer]", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("RegisterRestProfiles()", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorRestGeneratedProfileRegistry.Register(", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("GetRestProfiles()", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("GetRestProfileBehaviorTypes()", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor(\"orders.get\"", autoRegistration, StringComparison.Ordinal);
-        Assert.Contains("(\"orders.get\", typeof(global::GetOrderBehavior))", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor(\"orders.get\", typeof(global::GetOrderBehavior))", autoRegistration, StringComparison.Ordinal);
+        Assert.DoesNotContain("IReadOnlyList<(string Id, global::System.Type Type)> GetRestProfileBehaviorTypes", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("BehaviorRestMethod.Get", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("\"/{orderId}\"", autoRegistration, StringComparison.Ordinal);
         Assert.Contains(", 2)", autoRegistration, StringComparison.Ordinal);

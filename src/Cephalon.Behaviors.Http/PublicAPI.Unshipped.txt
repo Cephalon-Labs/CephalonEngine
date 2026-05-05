@@ -1,1 +1,19 @@
 #nullable enable
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestGeneratedProfileRegistry
+static Cephalon.Behaviors.Http.Abstractions.BehaviorRestGeneratedProfileRegistry.Register(System.Reflection.Assembly! assembly, System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor!>! profiles, System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor!>! behaviorTypes) -> void
+static Cephalon.Behaviors.Http.Abstractions.BehaviorRestGeneratedProfileRegistry.TryGetBehaviorTypes(System.Reflection.Assembly! assembly, out System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor!>! behaviorTypes) -> bool
+static Cephalon.Behaviors.Http.Abstractions.BehaviorRestGeneratedProfileRegistry.TryGetProfiles(System.Reflection.Assembly! assembly, out System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor!>! profiles) -> bool
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor.<Clone>$() -> Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor!
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor.BehaviorRestProfileBehaviorTypeDescriptor(string! Id, System.Type! Type) -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor.Deconstruct(out string! Id, out System.Type! Type) -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor.Equals(Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor? other) -> bool
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor.Id.get -> string!
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor.Id.init -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor.Type.get -> System.Type!
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor.Type.init -> void
+override Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor.Equals(object? obj) -> bool
+override Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor.GetHashCode() -> int
+override Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor.ToString() -> string!
+static Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor.operator !=(Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor? left, Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor? right) -> bool
+static Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor.operator ==(Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor? left, Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor? right) -> bool

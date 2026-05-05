@@ -14196,6 +14196,9 @@ Browse the published API surface by public member.
 - [IsEngineReady](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopestatus-isengineready): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsEngineReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the managed connector currently sits on an engine-ready execution lane.
   - `bool IsEngineReady { get; }`
+- [IsError](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-rest-resultmodelenveloperesponsemetadata-iserror): `Properties` on `ResultModelEnvelopeResponseMetadata` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=IsError&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
+  - Gets a value indicating whether the response represents an error envelope.
+  - `bool IsError { get; }`
 - [IsExecutionHardened](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-isexecutionhardened): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsExecutionHardened&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether scheduler execution truth currently looks hardened enough for bounded execution.
   - `bool IsExecutionHardened { get; }`
@@ -19967,6 +19970,9 @@ Browse the published API surface by public member.
 - [PayloadType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-payloadtype): `Properties` on `DurableExecutionPendingSignal` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=PayloadType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the expected payload type name when the awaited signal declares one.
   - `string PayloadType { get; }`
+- [PayloadType](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-rest-resultmodelenveloperesponsemetadata-payloadtype): `Properties` on `ResultModelEnvelopeResponseMetadata` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=PayloadType&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
+  - Gets the payload type carried in the envelope `data` property.
+  - `Type PayloadType { get; }`
 - [Pending](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditionstates-pending): `Fields` on `CellTrafficAutomationMaterializationConditionStates` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Pending&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - The condition is expected but not yet reconciled.
   - `const string Pending`
@@ -23904,6 +23910,9 @@ Browse the published API surface by public member.
 - [ResultModel<TModel>](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-transports-rest-resultmodel-1-ctor): `Constructors` on `ResultModel<TModel>` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ResultModel%3CTModel%3E&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
   - Initializes a new instance of the `ResultModel<T>` class.
   - `ResultModel<TModel>()`
+- [ResultModelEnvelopeResponseMetadata](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-transports-rest-resultmodelenveloperesponsemetadata-ctor-system-int32-system-type-system-boolean): `Constructors` on `ResultModelEnvelopeResponseMetadata` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ResultModelEnvelopeResponseMetadata&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
+  - Initializes a new instance of the `ResultModelEnvelopeResponseMetadata` class.
+  - `ResultModelEnvelopeResponseMetadata(int statusCode, Type payloadType, bool isError)`
 - [ResultModelError](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-transports-rest-resultmodelerror-ctor): `Constructors` on `ResultModelError` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ResultModelError&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
   - Initializes a new instance of the `ResultModelError` class.
   - `ResultModelError()`
@@ -26570,6 +26579,9 @@ Browse the published API surface by public member.
 - [StatusCode](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-statuscode): `Properties` on `ResultModel<TModel>` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=StatusCode&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
   - Gets or sets the effective HTTP status code associated with the response.
   - `int StatusCode { get; set; }`
+- [StatusCode](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-transports-rest-resultmodelenveloperesponsemetadata-statuscode): `Properties` on `ResultModelEnvelopeResponseMetadata` in `Cephalon.AspNetCore.Transports.Rest` (`Cephalon.AspNetCore`) [Browse](browse.html?q=StatusCode&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Transports.Rest&scope=members)
+  - Gets the HTTP status code described by this response metadata.
+  - `int StatusCode { get; }`
 - [StatusCode](cephalon-multitenancy-governance-sendgriddelivery.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-services-sendgridinvitationdeliveryclientresult-statuscode): `Properties` on `SendGridInvitationDeliveryClientResult` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.Services` (`Cephalon.MultiTenancy.Governance.SendGridDelivery`) [Browse](browse.html?q=StatusCode&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.Services&scope=members)
   - Gets the HTTP status code returned by SendGrid when one is known.
   - `int? StatusCode { get; }`

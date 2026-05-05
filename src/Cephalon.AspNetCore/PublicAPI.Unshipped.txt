@@ -1,4 +1,9 @@
 #nullable enable
+Cephalon.AspNetCore.Transports.Rest.ResultModelEnvelopeResponseMetadata
+Cephalon.AspNetCore.Transports.Rest.ResultModelEnvelopeResponseMetadata.IsError.get -> bool
+Cephalon.AspNetCore.Transports.Rest.ResultModelEnvelopeResponseMetadata.PayloadType.get -> System.Type!
+Cephalon.AspNetCore.Transports.Rest.ResultModelEnvelopeResponseMetadata.ResultModelEnvelopeResponseMetadata(int statusCode, System.Type! payloadType, bool isError = false) -> void
+Cephalon.AspNetCore.Transports.Rest.ResultModelEnvelopeResponseMetadata.StatusCode.get -> int
 Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface
 Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface.<Clone>$() -> Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface!
 Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface.ActivitySources.get -> System.Collections.Generic.IReadOnlyList<string!>!

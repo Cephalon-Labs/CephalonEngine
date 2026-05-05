@@ -1005,6 +1005,15 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         if (behaviorsWithRestProfiles.Length > 0)
         {
             sb.AppendLine();
+            sb.AppendLine("    [global::System.Runtime.CompilerServices.ModuleInitializer]");
+            sb.AppendLine("    internal static void RegisterRestProfiles()");
+            sb.AppendLine("    {");
+            sb.AppendLine("        global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestGeneratedProfileRegistry.Register(");
+            sb.AppendLine("            typeof(global::Cephalon.Behaviors.Generated.BehaviorAutoRegistration).Assembly,");
+            sb.AppendLine("            GetRestProfiles(),");
+            sb.AppendLine("            GetRestProfileBehaviorTypes());");
+            sb.AppendLine("    }");
+            sb.AppendLine();
             sb.AppendLine("    /// <summary>Returns metadata-only REST profile hints discovered at compile time.</summary>");
             sb.AppendLine("    internal static global::System.Collections.Generic.IReadOnlyList<global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor> GetRestProfiles()");
             sb.AppendLine("    {");
@@ -1056,9 +1065,9 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
 
             sb.AppendLine();
             sb.AppendLine("    /// <summary>Returns the behavior types that correspond to generated REST profile hints.</summary>");
-            sb.AppendLine("    internal static global::System.Collections.Generic.IReadOnlyList<(string Id, global::System.Type Type)> GetRestProfileBehaviorTypes()");
+            sb.AppendLine("    internal static global::System.Collections.Generic.IReadOnlyList<global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor> GetRestProfileBehaviorTypes()");
             sb.AppendLine("    {");
-            sb.AppendLine("        return new (string, global::System.Type)[]");
+            sb.AppendLine("        return new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor[]");
             sb.AppendLine("        {");
 
             foreach (var info in behaviorsWithRestProfiles)
@@ -1069,7 +1078,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                     continue;
                 }
 
-                sb.AppendLine($"            (\"{EscapeString(info.BehaviorId)}\", typeof({info.TypeName})),");
+                sb.AppendLine($"            new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor(\"{EscapeString(info.BehaviorId)}\", typeof({info.TypeName})),");
             }
 
             sb.AppendLine("        };");

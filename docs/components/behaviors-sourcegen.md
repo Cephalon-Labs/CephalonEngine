@@ -14,7 +14,7 @@ conventions at build time and produce a compile-time-known registration hint fil
   - Emits `BehaviorAutoRegistration.g.cs` for zero-reflection DI/type registration plus pre-built topology descriptors when compile-time extraction succeeds
   - Emits `GetExecutionSlots()` with closed `BehaviorExecutionSlot.For<TBehavior, TInput, TOutput>()` calls so `Cephalon.Behaviors` can prefer source-generated dispatch startup over open-generic slot reflection
   - Emits closed `DurableExecutionSlot.For<TBehavior, TInput, TState, TOutput>()` registrations when a behavior implements `IDurableExecution<TInput, TState, TOutput>` so `Cephalon.Behaviors.Patterns` can prefer generated durable adapters and metadata over the runtime fallback
-  - Emits source-generated metadata-only REST profile hints through `GetRestProfiles()` when behaviors declare valid `BehaviorRestProfileAttribute` metadata
+  - Emits source-generated metadata-only REST profile hints through `GetRestProfiles()` when behaviors declare valid `BehaviorRestProfileAttribute` metadata, then registers those hints through a module initializer and `BehaviorRestGeneratedProfileRegistry` so runtime profile consumption does not reflectively find generated REST carrier methods
   - Extracts compile-time topology from `ConfigureTopology(...)` for pattern, transports, feature flags, and literal `WithApiSurface(...)` overrides
 - Reports ABT0010–ABT0027 diagnostics on invalid behavior declarations, metadata-only REST profile hints, malformed REST profile placeholder syntax, explicit REST binding metadata, and invalid preserved implicit query-fallback authoring before `GetRestProfiles()` is generated
 
@@ -101,11 +101,21 @@ internal static class BehaviorAutoRegistration
 ```
 
 When a behavior also declares a valid metadata-only REST profile, the generated registration type
-now emits future-facing REST profile hints without publishing any public REST routes:
+now emits future-facing REST profile hints and registers them through the shared REST profile
+registry without publishing any public REST routes:
 
 ```csharp
 internal static class BehaviorAutoRegistration
 {
+    [ModuleInitializer]
+    internal static void RegisterRestProfiles()
+    {
+        BehaviorRestGeneratedProfileRegistry.Register(
+            typeof(BehaviorAutoRegistration).Assembly,
+            GetRestProfiles(),
+            GetRestProfileBehaviorTypes());
+    }
+
     internal static IReadOnlyList<BehaviorRestProfileDescriptor> GetRestProfiles()
     {
         return
@@ -121,6 +131,14 @@ internal static class BehaviorAutoRegistration
                         BehaviorRestBindingSource.Route,
                         "itemId")
                 ])
+        ];
+    }
+
+    internal static IReadOnlyList<BehaviorRestProfileBehaviorTypeDescriptor> GetRestProfileBehaviorTypes()
+    {
+        return
+        [
+            new BehaviorRestProfileBehaviorTypeDescriptor("catalog.lookup", typeof(CatalogLookupBehavior))
         ];
     }
 }
@@ -160,9 +178,11 @@ path.
 are now the shipped metadata-only bridge for future low-ceremony REST: the generator validates the
 core profile shape plus explicit binding metadata, preserved implicit query-fallback authoring, and
 emits `GetRestProfiles()` hints, including explicit binding descriptors and
-`preserveImplicitQueryFallback: true` when present, plus `GetRestProfileBehaviorTypes()` hints for
-the generated module-owned shorthand path, but that metadata still does not publish public REST
-routes by itself and does not override host OpenAPI document publication policy.
+`preserveImplicitQueryFallback: true` when present, plus descriptor-based
+`GetRestProfileBehaviorTypes()` hints for the generated module-owned shorthand path. A generated
+module initializer registers both lists into `BehaviorRestGeneratedProfileRegistry`, but that
+metadata still does not publish public REST routes by itself and does not override host OpenAPI
+document publication policy.
 `Cephalon.Behaviors.Http` now consumes those hints through the explicit module-owned
 `MapProfile<TBehavior>()`, `MapGeneratedProfiles(...)`, and
 `IRestBehaviorModuleBuilder.MapGeneratedProfileGroups(...)` shorthands, preferring the generated

@@ -46,6 +46,11 @@ module-owned REST endpoints.
   explicit bindings earlier, while runtime normalization still leaves final route parsing
   authoritative to ASP.NET Core; the method/source wire-name helpers use closed switch mappings so
   this metadata stays trim/AOT-friendly without enum-field reflection
+- **Source-generated REST profile registry** — `BehaviorRestGeneratedProfileRegistry` and
+  `BehaviorRestProfileBehaviorTypeDescriptor` let generated assemblies register REST profile
+  descriptors from a module initializer, so normal generated-profile consumption no longer finds
+  `GetRestProfiles()` / `GetRestProfileBehaviorTypes()` through `ContainsBehaviorsAttribute`
+  method reflection
 - **REST runtime ownership metadata** — behavior-backed REST endpoints now publish stable
   `RestEndpointRuntimeMetadataKeys` entries so operators can see that profile/publication
   activation is application-managed while ASP.NET Core materialization, candidate reconciliation,
@@ -62,6 +67,8 @@ module-owned REST endpoints.
 - **Optional REST response envelope** — `ApiRoutes:ResultEnvelope:Enabled` projects REST success
   and error responses through `ResultModel<T>` / `ResultModelError` with `type`, `status`, and
   an `errors` collection
+  while OpenAPI success schemas are driven by descriptor metadata instead of runtime
+  `ResultModel<T>` closed-generic construction
   while leaving GraphQL,
   JSON-RPC, SSE, and WebSocket bindings on their native protocol envelopes
 - **Hosting** — `IBehaviorCollectionBuilder.AddHttpBehaviorBindings()` extension registering the
@@ -204,9 +211,11 @@ Current profile behavior:
   the explicitly targeted behavior type's attribute only when generated hints are unavailable
 - REST profile projections, generated-profile ownership, and `MapBehaviorGet/Post/Put/Patch/Delete<TBehavior>()`
   now share the same type-based endpoint contract before Minimal API materialization, so the
-  REST route/projection/module-builder path no longer uses open-generic reflection; the remaining
-  deployment-mode inventory for this package is narrowed to bounded `ResultModel<>` OpenAPI
-  response metadata plus generated-profile carrier lookups
+  REST route/projection/module-builder path no longer uses open-generic reflection; `ENG-464`
+  also moves generated REST profile hints onto the registry and optional result-envelope OpenAPI
+  projection onto descriptor metadata; the remaining deployment-mode inventory for this package
+  is narrowed to fallback profile discovery, attribute/profile binding fallback, input-shape
+  inspection, and manual/type-based route-contract reflection
 - valid profiles currently require a supported REST method, a non-empty leading-slash relative
   pattern such as `"/{cartId}"`, and a positive `ApiVersionMajor` when one is specified
 - when a profile declares explicit bindings, `BehaviorRestProfile(PreserveImplicitQueryFallback = true)`

@@ -27,7 +27,7 @@ Quick links:
 
 ### Hosts
 
-- [Cephalon.AspNetCore](cephalon-aspnetcore.md): ASP.NET Core host core, REST surface, docs, health, and runtime endpoints. Contains 8 namespaces and 25 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore)
+- [Cephalon.AspNetCore](cephalon-aspnetcore.md): ASP.NET Core host core, REST surface, docs, health, and runtime endpoints. Contains 8 namespaces and 26 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore)
 - [Cephalon.AspNetCore.GraphQL](cephalon-aspnetcore-graphql.md): GraphQL transport adapter for ASP.NET Core hosts. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore.GraphQL)
 - [Cephalon.AspNetCore.Grpc](cephalon-aspnetcore-grpc.md): gRPC transport adapter and contracts for ASP.NET Core hosts. Contains 3 namespaces and 10 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore.Grpc)
 - [Cephalon.AspNetCore.JsonRpc](cephalon-aspnetcore-jsonrpc.md): JSON-RPC transport adapter for ASP.NET Core hosts. Contains 2 namespaces and 2 public types. [Browse](browse.html?assembly=Cephalon.AspNetCore.JsonRpc)

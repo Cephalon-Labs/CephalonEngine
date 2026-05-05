@@ -621,28 +621,26 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
     {
         ArgumentNullException.ThrowIfNull(builder);
 
-        var successResponseType = contract.UseResultModelEnvelope
-            ? typeof(ResultModel<>).MakeGenericType(contract.ResponseType)
-            : contract.ResponseType;
+        var successResponseType = contract.ResponseType;
         var errorResponseType = contract.UseResultModelEnvelope
             ? typeof(ResultModelError)
             : typeof(ProblemDetails);
 
         if (contract.ShouldDocumentStatus(StatusCodes.Status200OK))
         {
-            builder.Produces(StatusCodes.Status200OK, successResponseType, "application/json");
+            AddJsonResponse(builder, StatusCodes.Status200OK, successResponseType, contract.UseResultModelEnvelope);
         }
 
         if (contract.ReturnsBehaviorResult)
         {
             if (contract.ShouldDocumentStatus(StatusCodes.Status201Created))
             {
-                builder.Produces(StatusCodes.Status201Created, successResponseType, "application/json");
+                AddJsonResponse(builder, StatusCodes.Status201Created, successResponseType, contract.UseResultModelEnvelope);
             }
 
             if (contract.ShouldDocumentStatus(StatusCodes.Status202Accepted))
             {
-                builder.Produces(StatusCodes.Status202Accepted, successResponseType, "application/json");
+                AddJsonResponse(builder, StatusCodes.Status202Accepted, successResponseType, contract.UseResultModelEnvelope);
             }
 
             if (contract.ShouldDocumentStatus(StatusCodes.Status204NoContent))
@@ -725,6 +723,19 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             {
                 builder.ProducesProblem(StatusCodes.Status429TooManyRequests);
             }
+        }
+    }
+
+    private static void AddJsonResponse(
+        RouteHandlerBuilder builder,
+        int statusCode,
+        Type responseType,
+        bool useResultModelEnvelope)
+    {
+        builder.Produces(statusCode, responseType, "application/json");
+        if (useResultModelEnvelope)
+        {
+            builder.WithMetadata(new ResultModelEnvelopeResponseMetadata(statusCode, responseType));
         }
     }
 

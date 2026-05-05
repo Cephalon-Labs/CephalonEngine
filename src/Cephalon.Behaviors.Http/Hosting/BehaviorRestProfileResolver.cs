@@ -143,29 +143,17 @@ internal static class BehaviorRestProfileResolver
     {
         ArgumentNullException.ThrowIfNull(assembly);
 
-        var marker = assembly.GetCustomAttribute<ContainsBehaviorsAttribute>();
-        var registrationType = marker?.RegistrationType;
-        if (registrationType is null)
-        {
-            return EmptyProfiles;
-        }
-
-        var method = registrationType.GetMethod(
-            "GetRestProfiles",
-            BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,
-            binder: null,
-            Type.EmptyTypes,
-            modifiers: null);
-        if (method?.Invoke(null, null) is not IReadOnlyList<BehaviorRestProfileDescriptor> profiles ||
+        if (!BehaviorRestGeneratedProfileRegistry.TryGetProfiles(assembly, out var profiles) ||
             profiles.Count == 0)
         {
             return EmptyProfiles;
         }
 
         var resolved = new Dictionary<string, BehaviorRestProfileDescriptor>(StringComparer.OrdinalIgnoreCase);
+        var sourceIdentity = assembly.FullName ?? assembly.GetName().Name ?? assembly.ToString();
         foreach (var profile in profiles)
         {
-            var normalized = Normalize(profile, registrationType.FullName ?? registrationType.Name);
+            var normalized = Normalize(profile, sourceIdentity);
             if (!resolved.TryAdd(normalized.BehaviorId, normalized))
             {
                 throw new InvalidOperationException(
@@ -180,28 +168,17 @@ internal static class BehaviorRestProfileResolver
     {
         ArgumentNullException.ThrowIfNull(assembly);
 
-        var marker = assembly.GetCustomAttribute<ContainsBehaviorsAttribute>();
-        var registrationType = marker?.RegistrationType;
-        if (registrationType is null)
-        {
-            return EmptyBehaviorTypes;
-        }
-
-        var method = registrationType.GetMethod(
-            "GetRestProfileBehaviorTypes",
-            BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,
-            binder: null,
-            Type.EmptyTypes,
-            modifiers: null);
-        if (method?.Invoke(null, null) is not IReadOnlyList<(string Id, Type Type)> behaviorTypes ||
+        if (!BehaviorRestGeneratedProfileRegistry.TryGetBehaviorTypes(assembly, out var behaviorTypes) ||
             behaviorTypes.Count == 0)
         {
             return EmptyBehaviorTypes;
         }
 
         var resolved = new Dictionary<string, Type>(StringComparer.OrdinalIgnoreCase);
-        foreach (var (id, behaviorType) in behaviorTypes)
+        foreach (var descriptor in behaviorTypes)
         {
+            var id = descriptor.Id;
+            var behaviorType = descriptor.Type;
             if (string.IsNullOrWhiteSpace(id))
             {
                 throw new InvalidOperationException(

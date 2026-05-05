@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-05T21:27:28.9864584+00:00",
+  "GeneratedAtUtc": "2026-05-05T22:09:15.5328038+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -24,7 +24,7 @@
       "Description": "ASP.NET Core host core, REST surface, docs, health, and runtime endpoints.",
       "FileName": "cephalon-aspnetcore.md",
       "NamespaceCount": 8,
-      "TypeCount": 25
+      "TypeCount": 26
     },
     {
       "AssemblyName": "Cephalon.AspNetCore.GraphQL",
@@ -877,7 +877,7 @@
       "AssemblyName": "Cephalon.AspNetCore",
       "FileName": "cephalon-aspnetcore.md",
       "AnchorId": "namespace-cephalon-aspnetcore-transports-rest",
-      "TypeCount": 5
+      "TypeCount": 6
     },
     {
       "NamespaceName": "Cephalon.AspNetCore.Transports.ServerSentEvents",
@@ -16032,6 +16032,21 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 7,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "ResultModelEnvelopeResponseMetadata",
+      "NamespaceName": "Cephalon.AspNetCore.Transports.Rest",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "type-cephalon-aspnetcore-transports-rest-resultmodelenveloperesponsemetadata",
+      "Declaration": "public sealed class ResultModelEnvelopeResponseMetadata",
+      "Summary": "Describes a response whose OpenAPI schema should be published through the Cephalon result envelope.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 3,
         "Methods": 0
       }
     },
@@ -70981,6 +70996,17 @@
       "Summary": "Gets a value indicating whether the managed connector currently sits on an engine-ready execution lane."
     },
     {
+      "DisplayName": "IsError",
+      "Category": "Properties",
+      "DeclaringTypeName": "ResultModelEnvelopeResponseMetadata",
+      "NamespaceName": "Cephalon.AspNetCore.Transports.Rest",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-transports-rest-resultmodelenveloperesponsemetadata-iserror",
+      "Signature": "bool IsError { get; }",
+      "Summary": "Gets a value indicating whether the response represents an error envelope."
+    },
+    {
       "DisplayName": "IsExecutionHardened",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus",
@@ -92075,6 +92101,17 @@
       "Summary": "Gets the expected payload type name when the awaited signal declares one."
     },
     {
+      "DisplayName": "PayloadType",
+      "Category": "Properties",
+      "DeclaringTypeName": "ResultModelEnvelopeResponseMetadata",
+      "NamespaceName": "Cephalon.AspNetCore.Transports.Rest",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-transports-rest-resultmodelenveloperesponsemetadata-payloadtype",
+      "Signature": "Type PayloadType { get; }",
+      "Summary": "Gets the payload type carried in the envelope \u0060data\u0060 property."
+    },
+    {
       "DisplayName": "Pending",
       "Category": "Fields",
       "DeclaringTypeName": "CellTrafficAutomationMaterializationConditionStates",
@@ -106494,6 +106531,17 @@
       "Summary": "Initializes a new instance of the \u0060ResultModel\u003CT\u003E\u0060 class."
     },
     {
+      "DisplayName": "ResultModelEnvelopeResponseMetadata",
+      "Category": "Constructors",
+      "DeclaringTypeName": "ResultModelEnvelopeResponseMetadata",
+      "NamespaceName": "Cephalon.AspNetCore.Transports.Rest",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-transports-rest-resultmodelenveloperesponsemetadata-ctor-system-int32-system-type-system-boolean",
+      "Signature": "ResultModelEnvelopeResponseMetadata(int statusCode, Type payloadType, bool isError)",
+      "Summary": "Initializes a new instance of the \u0060ResultModelEnvelopeResponseMetadata\u0060 class."
+    },
+    {
       "DisplayName": "ResultModelError",
       "Category": "Constructors",
       "DeclaringTypeName": "ResultModelError",
@@ -116267,6 +116315,17 @@
       "AnchorId": "member-p-cephalon-aspnetcore-transports-rest-resultmodel-1-statuscode",
       "Signature": "int StatusCode { get; set; }",
       "Summary": "Gets or sets the effective HTTP status code associated with the response."
+    },
+    {
+      "DisplayName": "StatusCode",
+      "Category": "Properties",
+      "DeclaringTypeName": "ResultModelEnvelopeResponseMetadata",
+      "NamespaceName": "Cephalon.AspNetCore.Transports.Rest",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-transports-rest-resultmodelenveloperesponsemetadata-statuscode",
+      "Signature": "int StatusCode { get; }",
+      "Summary": "Gets the HTTP status code described by this response metadata."
     },
     {
       "DisplayName": "StatusCode",

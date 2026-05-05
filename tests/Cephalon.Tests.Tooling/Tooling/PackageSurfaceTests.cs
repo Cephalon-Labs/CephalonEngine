@@ -610,6 +610,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.AspNetCore.Transformers.XmlCommentsDocumentTransformer),
             typeof(global::Cephalon.AspNetCore.Transports.Rest.IRestModule),
             typeof(global::Cephalon.AspNetCore.Transports.Rest.ResultModel<>),
+            typeof(global::Cephalon.AspNetCore.Transports.Rest.ResultModelEnvelopeResponseMetadata),
             typeof(global::Cephalon.AspNetCore.Transports.Rest.ResultModelError),
             typeof(global::Cephalon.AspNetCore.Transports.Rest.ResultModelErrorDetail),
             typeof(global::Cephalon.AspNetCore.Transports.Rest.RestEndpointConventionBuilderExtensions),
@@ -1543,9 +1544,11 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingDescriptor),
             typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource),
             typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSourceExtensions),
+            typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestGeneratedProfileRegistry),
             typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod),
             typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethodExtensions),
             typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileAttribute),
+            typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor),
             typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor),
             typeof(global::Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointGroup),
             typeof(global::Cephalon.Behaviors.Http.Hosting.BehaviorRestEndpointRouteBuilderExtensions),
@@ -2544,10 +2547,22 @@ public sealed class PackageSurfaceTests
             "Hosting",
             "BehaviorRestEndpointGroup.cs"));
         Assert.DoesNotContain("MethodInfo", routeGroup);
+        Assert.DoesNotContain("MakeGenericType", routeGroup);
         Assert.DoesNotContain("MakeGenericMethod", routeGroup);
         Assert.DoesNotContain("GetRequiredCoreMethod", routeGroup);
         Assert.DoesNotContain("closedMethod.Invoke", routeGroup);
         Assert.DoesNotContain("MapBehaviorGetCore<", routeGroup);
+
+        var profileResolver = File.ReadAllText(RepositoryPaths.GetFile(
+            "src",
+            "Cephalon.Behaviors.Http",
+            "Hosting",
+            "BehaviorRestProfileResolver.cs"));
+        Assert.Contains("BehaviorRestGeneratedProfileRegistry.TryGetProfiles", profileResolver);
+        Assert.Contains("BehaviorRestGeneratedProfileRegistry.TryGetBehaviorTypes", profileResolver);
+        Assert.DoesNotContain("\"GetRestProfiles\"", profileResolver);
+        Assert.DoesNotContain("\"GetRestProfileBehaviorTypes\"", profileResolver);
+        Assert.DoesNotContain("method?.Invoke", profileResolver);
 
         var projection = File.ReadAllText(RepositoryPaths.GetFile(
             "src",

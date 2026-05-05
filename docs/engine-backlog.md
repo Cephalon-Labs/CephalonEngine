@@ -24,6 +24,48 @@ Current focus:
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
 - treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md) for release validation, and `cephalon doctor --scorecard <path>` provides a local CLI readback over that generated artifact without becoming source truth
 
+### ENG-464 Retire Behaviors.Http REST profile carrier reflection
+
+Status: done
+Estimate: 3
+Issue: #1063
+Iteration: Sprint 125
+
+Why:
+
+- `ENG-463` left `Cephalon.Behaviors.Http` at `medium` because optional result-envelope OpenAPI metadata still constructed closed `ResultModel<T>` types at runtime
+- source-generated REST profile consumption still depended on reflective `ContainsBehaviorsAttribute.RegistrationType` carrier-method lookup for `GetRestProfiles()` and `GetRestProfileBehaviorTypes()`
+- the manifest needed to retire only those two rows and record the fallback/manual-route reflection that still keeps the package unclaimed
+
+Delivered:
+
+- add `BehaviorRestGeneratedProfileRegistry` plus `BehaviorRestProfileBehaviorTypeDescriptor` so generated assemblies can register REST profile descriptors through a module initializer
+- update `Cephalon.Behaviors.SourceGen` to emit `RegisterRestProfiles()` and descriptor-based behavior type hints
+- update `BehaviorRestProfileResolver` to consume registry entries instead of invoking generated carrier methods by name
+- add `ResultModelEnvelopeResponseMetadata` and update `ResultModelDocumentTransformer` so optional REST result-envelope OpenAPI success schemas are generated from endpoint metadata instead of `ResultModel<>` runtime type construction
+- update `BehaviorRestEndpointGroup` response metadata registration to keep the actual payload type visible while preserving wrapped OpenAPI success envelopes when `ApiRoutes:ResultEnvelope:Enabled` is enabled
+- replace the old `Cephalon.Behaviors.Http` manifest rows with the current fallback/manual-route hazards: profile assembly-scan fallback, attribute/profile binding fallback, input-shape inspection, and manual/type-based endpoint-contract reflection
+- update component docs, deployment-mode support, trim/AOT hazard inventory, compatibility, `.NET 11` readiness, roadmap, backlog, and project memory without widening global trim / Native AOT / single-file claims
+
+Validation:
+
+- passed `dotnet build src/Cephalon.AspNetCore/Cephalon.AspNetCore.csproj --no-restore /p:UseSharedCompilation=false`
+- passed `dotnet build src/Cephalon.Behaviors.Http/Cephalon.Behaviors.Http.csproj --no-restore /p:UseSharedCompilation=false`
+- passed `dotnet build src/Cephalon.Behaviors.SourceGen/Cephalon.Behaviors.SourceGen.csproj --no-restore /p:UseSharedCompilation=false`
+- passed `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --no-restore --filter "FullyQualifiedName~BehaviorSourceGeneratorTests" /p:UseSharedCompilation=false` (35 tests)
+- passed `dotnet test tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj --no-restore --filter "FullyQualifiedName~BehaviorRestOpenApiTests|FullyQualifiedName~BehaviorRestProjectionTests" /p:UseSharedCompilation=false` (171 tests)
+- passed focused tooling public-surface/reflection guard validation (3 tests)
+- passed `pwsh ./tests/Cephalon.Tests.Scripts/deployment-mode-support-manifest.Tests.ps1` (32 tests)
+- passed `pwsh ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode all -SkipPublish -OutputPath artifacts/deployment-mode-claims-eng464` with aggregate `not-claimed`, 9 package entries, 6 packages with known hazards, and 22 known hazard entries
+- passed `pwsh ./tests/Cephalon.Tests.Scripts/validate-deployment-mode-claims.Tests.ps1` (77 tests)
+- passed `pwsh ./scripts/publish-reference-docs.ps1 -Configuration Debug -SkipBuild` (86 reference doc files generated)
+
+Follow-up later:
+
+- retire generated REST profile fallback assembly scanning by requiring generated profile manifests or an explicit host-provided descriptor table
+- retire runtime attribute/profile binding and input-shape fallback through generated or module-provided binding-contract descriptors
+- retire manual/type-based route-contract reflection with generated or explicit endpoint-contract descriptors before promoting `Cephalon.Behaviors.Http` beyond `medium`
+
 ### ENG-463 Retire Behaviors.Http REST dispatch reflection
 
 Status: done
@@ -58,9 +100,8 @@ Validation:
 
 Follow-up later:
 
-- retire the remaining `Cephalon.Behaviors.Http` bounded `ResultModel<>` OpenAPI metadata row
-- retire generated REST profile carrier method lookup through typed source-generated carriers or documented `[DynamicallyAccessedMembers]` posture
-- audit generated REST profile fallback assembly scanning and input-property reflection before promoting `Cephalon.Behaviors.Http` beyond `medium`
+- `ENG-464` retired the bounded `ResultModel<>` OpenAPI metadata row and generated REST profile carrier-method lookup
+- retire generated REST profile fallback assembly scanning and input-property reflection before promoting `Cephalon.Behaviors.Http` beyond `medium`
 
 ### ENG-462 Retire Cephalon.Data command/query dispatch reflection
 
@@ -13342,7 +13383,8 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-460 Remove remaining CDC capture failure metadata reflection: `Cephalon.Data.Postgres` and `Cephalon.Data.Oracle` now project hosted-service capture failure metadata through typed internal failure metadata contracts instead of duck-typed `FailureKind` / `Metadata` property reflection, `scripts/deployment-mode-support.json` removes the two Postgres rows and two Oracle rows, and current manifest output reports 20 package entries, 17 packages with known hazards, 45 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability (shipped)
 - ENG-461 Remove EventSourcing persisted type-name reflection: the EventSourcing base pack now owns `EventTypeDescriptor`, `IEventTypeContributor`, `IEventTypeRegistry`, registry registration helpers, stable event names, serializer descriptors, source-generated `JsonTypeInfo` registration, and default legacy `AssemblyQualifiedName` aliases; all ten provider packs now persist registry names and deserialize through `IEventTypeRegistry` instead of provider-local `Type.GetType(...)`, with registry-aware direct-construction paths for provider stores; `scripts/deployment-mode-support.json` removes the ten EventSourcing medium rows and current manifest output reports 10 package entries, 7 packages with known hazards, 35 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility (shipped)
 - ENG-462 Retire Cephalon.Data command/query dispatch reflection: core `Cephalon.Data` default read/write stores now resolve handlers through registered closed-generic dispatch descriptors instead of runtime `MakeGenericMethod`, `CreateDelegate`, or method-name reflection; `scripts/deployment-mode-support.json` removes the core `Cephalon.Data` medium row and current manifest output reports 9 package entries, 6 packages with known hazards, 29 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
-- ENG-463 Retire Behaviors.Http REST dispatch reflection: `Cephalon.Behaviors.Http` REST route materialization, projection application, and generated-profile module ownership now use type-based contracts instead of `MethodInfo.MakeGenericMethod/Invoke`; `IBehaviorModuleBuilder` exposes host-agnostic `Type` overloads for ownership registration; the package remains `medium` for bounded `ResultModel<>` OpenAPI metadata and generated-profile carrier lookups, and current manifest output reports 9 package entries, 6 packages with known hazards, 21 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility (shipped)
+- ENG-463 Retire Behaviors.Http REST dispatch reflection: `Cephalon.Behaviors.Http` REST route materialization, projection application, and generated-profile module ownership now use type-based contracts instead of `MethodInfo.MakeGenericMethod/Invoke`; `IBehaviorModuleBuilder` exposes host-agnostic `Type` overloads for ownership registration; the package then remained `medium` for bounded `ResultModel<>` OpenAPI metadata and generated-profile carrier lookups, and the then-current manifest output reported 9 package entries, 6 packages with known hazards, 21 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility (shipped)
+- ENG-464 Retire Behaviors.Http REST profile carrier reflection: generated REST profile hints now register through `BehaviorRestGeneratedProfileRegistry`, optional result-envelope OpenAPI success schemas use `ResultModelEnvelopeResponseMetadata` instead of runtime `ResultModel<>` construction, and current manifest output reports 9 package entries, 6 packages with known hazards, 22 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim while `Cephalon.Behaviors.Http` stays `medium` for fallback/manual-route reflection. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility (shipped)
 
 ### Later / not scheduled yet
 

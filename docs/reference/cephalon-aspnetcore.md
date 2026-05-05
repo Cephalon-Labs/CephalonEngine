@@ -2122,6 +2122,68 @@ Parameters:
 - `builder`: The route handler builder to protect.
 - `featureFlagIds`: The feature-flag identifiers that must resolve to enabled.
 
+<a id="type-cephalon-aspnetcore-transports-rest-resultmodelenveloperesponsemetadata"></a>
+
+### `ResultModelEnvelopeResponseMetadata`
+
+Describes a response whose OpenAPI schema should be published through the Cephalon result envelope.
+
+Remarks: Runtime adapters can attach this metadata when the wire response uses `ResultModel<T>` but endpoint metadata should avoid constructing closed generic result-envelope types at runtime.
+
+#### Declaration
+```csharp
+public sealed class ResultModelEnvelopeResponseMetadata
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-transports-rest-resultmodelenveloperesponsemetadata-ctor-system-int32-system-type-system-boolean"></a>
+
+##### `ResultModelEnvelopeResponseMetadata`
+
+```csharp
+ResultModelEnvelopeResponseMetadata(int statusCode, Type payloadType, bool isError)
+```
+
+Initializes a new instance of the `ResultModelEnvelopeResponseMetadata` class.
+
+Parameters:
+- `statusCode`: The HTTP status code described by this response metadata.
+- `payloadType`: The payload type carried in the envelope `data` property.
+- `isError`: Whether the response represents an error envelope.
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-transports-rest-resultmodelenveloperesponsemetadata-iserror"></a>
+
+##### `IsError`
+
+```csharp
+bool IsError { get; }
+```
+
+Gets a value indicating whether the response represents an error envelope.
+
+<a id="member-p-cephalon-aspnetcore-transports-rest-resultmodelenveloperesponsemetadata-payloadtype"></a>
+
+##### `PayloadType`
+
+```csharp
+Type PayloadType { get; }
+```
+
+Gets the payload type carried in the envelope `data` property.
+
+<a id="member-p-cephalon-aspnetcore-transports-rest-resultmodelenveloperesponsemetadata-statuscode"></a>
+
+##### `StatusCode`
+
+```csharp
+int StatusCode { get; }
+```
+
+Gets the HTTP status code described by this response metadata.
+
 <a id="type-cephalon-aspnetcore-transports-rest-resultmodelerror"></a>
 
 ### `ResultModelError`

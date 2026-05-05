@@ -1,3 +1,6 @@
+using System.Globalization;
+using Cephalon.AspNetCore.Transports.Rest;
+using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi;
 using System.Net;
@@ -12,17 +15,24 @@ internal sealed class ResultModelDocumentTransformer : IOpenApiDocumentTransform
             return Task.CompletedTask;
 
         var modelLinkPrefix = CreateModelLinkPrefix(context.DocumentName);
+        var envelopeMetadataByOperation = BuildEnvelopeMetadataByOperation(context);
 
-        foreach (var pathItem in document.Paths.Values)
+        foreach (var pathEntry in document.Paths)
         {
+            var pathItem = pathEntry.Value;
             if (pathItem?.Operations is null)
                 continue;
 
-            foreach (var operation in pathItem.Operations.Values)
+            foreach (var operationEntry in pathItem.Operations)
             {
+                var operation = operationEntry.Value;
                 if (operation?.Responses is null)
                     continue;
 
+                var envelopeMetadata = ResolveEnvelopeMetadata(
+                    envelopeMetadataByOperation,
+                    pathEntry.Key,
+                    operationEntry.Key.ToString());
                 foreach (var responseEntry in operation.Responses)
                 {
                     if (!IsSuccessStatusCode(responseEntry.Key))
@@ -37,6 +47,24 @@ internal sealed class ResultModelDocumentTransformer : IOpenApiDocumentTransform
                         var sourceSchema = ResolveSchema(mediaType.Schema, document);
                         if (sourceSchema is null)
                             continue;
+
+                        var envelopeResponse = envelopeMetadata.FirstOrDefault(metadata =>
+                            !metadata.IsError &&
+                            string.Equals(
+                                metadata.StatusCode.ToString(CultureInfo.InvariantCulture),
+                                responseEntry.Key,
+                                StringComparison.Ordinal));
+                        if (envelopeResponse is not null && !IsResultModelSchema(sourceSchema))
+                        {
+                            mediaType.Schema = CreateEnvelopeSuccessSchema(mediaType.Schema, sourceSchema, document);
+                            var successSchema = ResolveSchema(mediaType.Schema, document);
+                            if (successSchema is not null)
+                            {
+                                AppendModelLink(response, mediaType.Schema, successSchema, document, modelLinkPrefix);
+                            }
+
+                            continue;
+                        }
 
                         if (IsResultModelSchema(sourceSchema) && ContainsErrorProperty(sourceSchema))
                         {
@@ -62,6 +90,89 @@ internal sealed class ResultModelDocumentTransformer : IOpenApiDocumentTransform
 
     private static bool IsSuccessStatusCode(string? statusCode)
         => int.TryParse(statusCode, out var parsed) && parsed is >= 200 and <= 299;
+
+    private static Dictionary<string, IReadOnlyList<ResultModelEnvelopeResponseMetadata>> BuildEnvelopeMetadataByOperation(
+        OpenApiDocumentTransformerContext context)
+    {
+        var result = new Dictionary<string, List<ResultModelEnvelopeResponseMetadata>>(StringComparer.OrdinalIgnoreCase);
+        foreach (var description in context.DescriptionGroups.SelectMany(static group => group.Items))
+        {
+            var metadata = GetResultEnvelopeMetadata(description).ToArray();
+            if (metadata.Length == 0)
+            {
+                continue;
+            }
+
+            var key = CreateOperationKey(description.RelativePath, description.HttpMethod);
+            if (key is null)
+            {
+                continue;
+            }
+
+            if (!result.TryGetValue(key, out var entries))
+            {
+                entries = [];
+                result[key] = entries;
+            }
+
+            entries.AddRange(metadata);
+        }
+
+        return result.ToDictionary(
+            static entry => entry.Key,
+            static entry => (IReadOnlyList<ResultModelEnvelopeResponseMetadata>)entry.Value.ToArray(),
+            StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static IReadOnlyList<ResultModelEnvelopeResponseMetadata> ResolveEnvelopeMetadata(
+        Dictionary<string, IReadOnlyList<ResultModelEnvelopeResponseMetadata>> metadataByOperation,
+        string path,
+        string? method)
+    {
+        var key = CreateOperationKey(path, method);
+        if (key is not null && metadataByOperation.TryGetValue(key, out var metadata))
+        {
+            return metadata;
+        }
+
+        return Array.Empty<ResultModelEnvelopeResponseMetadata>();
+    }
+
+    private static string? CreateOperationKey(string? path, string? method)
+    {
+        if (string.IsNullOrWhiteSpace(path) ||
+            string.IsNullOrWhiteSpace(method))
+        {
+            return null;
+        }
+
+        return $"{method.Trim().ToUpperInvariant()} {NormalizeOperationPath(path)}";
+    }
+
+    private static string NormalizeOperationPath(string path)
+    {
+        var normalized = path.Trim();
+        var queryIndex = normalized.IndexOf('?', StringComparison.Ordinal);
+        if (queryIndex >= 0)
+        {
+            normalized = normalized[..queryIndex];
+        }
+
+        if (normalized.Length == 0)
+        {
+            return "/";
+        }
+
+        return normalized.StartsWith('/')
+            ? normalized
+            : $"/{normalized}";
+    }
+
+    private static IEnumerable<ResultModelEnvelopeResponseMetadata> GetResultEnvelopeMetadata(ApiDescription description)
+    {
+        return description.ActionDescriptor.EndpointMetadata
+            .OfType<ResultModelEnvelopeResponseMetadata>();
+    }
 
     private static bool IsResultModelSchema(OpenApiSchema schema)
     {
@@ -119,6 +230,62 @@ internal sealed class ResultModelDocumentTransformer : IOpenApiDocumentTransform
         {
             Title = responseDisplayName,
             Description = resolvedSchema.Description
+        };
+    }
+
+    private static OpenApiSchemaReference CreateEnvelopeSuccessSchema(
+        IOpenApiSchema? payloadSchema,
+        OpenApiSchema resolvedPayloadSchema,
+        OpenApiDocument document)
+    {
+        var payloadDisplayName = GetSchemaDisplayName(payloadSchema, resolvedPayloadSchema, document);
+        var successDisplayName = string.IsNullOrWhiteSpace(payloadDisplayName)
+            ? "ResultModel<object>"
+            : $"ResultModel<{payloadDisplayName}>";
+        var responseDisplayName = string.IsNullOrWhiteSpace(payloadDisplayName)
+            ? successDisplayName
+            : payloadDisplayName;
+        var successSchemaId = CreateSuccessSchemaComponentId(successDisplayName, document);
+
+        document.Components ??= new OpenApiComponents();
+        document.Components.Schemas ??= new Dictionary<string, IOpenApiSchema>(StringComparer.OrdinalIgnoreCase);
+
+        if (!document.Components.Schemas.ContainsKey(successSchemaId))
+        {
+            document.Components.Schemas[successSchemaId] = new OpenApiSchema
+            {
+                Title = responseDisplayName,
+                Type = JsonSchemaType.Object,
+                Properties = new Dictionary<string, IOpenApiSchema>(StringComparer.OrdinalIgnoreCase)
+                {
+                    ["type"] = CreatePrimitiveSchema(JsonSchemaType.String),
+                    ["title"] = CreatePrimitiveSchema(JsonSchemaType.String),
+                    ["message"] = CreatePrimitiveSchema(JsonSchemaType.String),
+                    ["success"] = CreatePrimitiveSchema(JsonSchemaType.Boolean),
+                    ["status"] = CreatePrimitiveSchema(JsonSchemaType.Integer, "int32"),
+                    ["data"] = payloadSchema ?? resolvedPayloadSchema
+                }
+            };
+        }
+        else if (document.Components.Schemas[successSchemaId] is OpenApiSchema existingSchema &&
+                 !string.Equals(existingSchema.Title, responseDisplayName, StringComparison.Ordinal))
+        {
+            existingSchema.Title = responseDisplayName;
+        }
+
+        return new OpenApiSchemaReference(successSchemaId, document)
+        {
+            Title = responseDisplayName,
+            Description = resolvedPayloadSchema.Description
+        };
+    }
+
+    private static OpenApiSchema CreatePrimitiveSchema(JsonSchemaType type, string? format = null)
+    {
+        return new OpenApiSchema
+        {
+            Type = type,
+            Format = format
         };
     }
 
