@@ -6,11 +6,11 @@ This guide records the current Cephalon truth for future-framework assessment wi
 
 - stable Cephalon packages still ship on `net10.0`
 - `global.json` still pins `.NET SDK 10.0.201`
-- the template-pack package and source-generator surface remain the two `netstandard2.0` exceptions
+- the template-pack package, analyzer meta-package, and source-generator surface remain the intentional `netstandard2.0` exceptions
 - `.NET 11` is currently a readiness lane, not a default-target migration
 - trim, Native AOT, and single-file support remain explicit `not-claimed` support statements tracked through [Deployment-mode support](deployment-mode-support.md) and `scripts/deployment-mode-support.json`, and external adopters can see the same contract through `cephalon doctor` plus `cephalon doctor --app-root <path>`
 
-As of `May 2, 2026`, Microsoft has:
+As of `May 5, 2026`, Microsoft has:
 
 - shipped `.NET 11 Preview 1` on `February 10, 2026`
 - shipped `.NET 11 Preview 2` on `March 10, 2026`
