@@ -24,6 +24,41 @@ Current focus:
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
 - treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md) for release validation, and `cephalon doctor --scorecard <path>` provides a local CLI readback over that generated artifact without becoming source truth
 
+### ENG-460 Remove remaining CDC capture failure metadata reflection
+
+Status: done
+Estimate: 3
+Issue: #1059
+
+Why:
+
+- `Cephalon.Data.Postgres` and `Cephalon.Data.Oracle` still carried the same hosted-service duck-typed `FailureKind` / `Metadata` property reflection fallback that MySQL retired in `ENG-459`
+- the provider-owned exception shapes can expose failure metadata through provider-local typed internal contracts instead of reflecting over arbitrary runtime exception types
+- the deployment-mode manifest must reduce only the hazards actually removed and keep global trim, Native AOT, and single-file support `not-claimed`
+
+Delivered:
+
+- add provider-local typed failure metadata contracts implemented by `PostgresLogicalReplicationCaptureException` and `OracleLogMinerCaptureException`
+- update the Postgres and Oracle CDC hosted services to project failure metadata through those typed contracts and remove `System.Reflection`, `BindingFlags`, `GetProperty(...)`, and `GetValue(...)` from the hosted-service failure paths
+- broaden the tooling guard so MySQL, Postgres, and Oracle CDC hosted-service failure metadata paths stay free of duck-typed reflection
+- remove the Postgres and Oracle medium-tier package rows from `scripts/deployment-mode-support.json`, reducing the current manifest-backed inventory to 20 package entries, 17 packages with known hazards, and 45 known hazard entries
+- update deployment-mode support, trim/AOT hazard inventory, compatibility, `.NET 11` readiness, Postgres/Oracle component docs, architecture follow-ups, roadmap, backlog, and project memory without widening global support claims
+
+Validation:
+
+- passed `dotnet build src/Cephalon.Data.Postgres/Cephalon.Data.Postgres.csproj -c Debug --no-restore` after a parallel-build file-lock retry
+- passed `dotnet build src/Cephalon.Data.Oracle/Cephalon.Data.Oracle.csproj -c Debug --no-restore` after a parallel-build file-lock retry
+- passed `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj --no-restore --filter FullyQualifiedName~CdcCaptureFailureMetadataUsesTypedContractInsteadOfDuckTypedReflection` (3 tests)
+- passed `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --no-restore --filter "FullyQualifiedName~PostgresDataCdcPackTests|FullyQualifiedName~OracleDataCdcPackTests"` (4 tests)
+- passed `dotnet test tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj --no-restore --filter "FullyQualifiedName~PostgresDataCdcHostingTests|FullyQualifiedName~OracleDataCdcHostingTests"` (4 tests)
+- passed `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/deployment-mode-support-manifest.Tests.ps1 -Output Detailed` (32 tests)
+- passed `pwsh ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode all -SkipPublish -OutputPath artifacts/deployment-mode-claims-eng460` with aggregate `not-claimed`, 20 package entries, 17 packages with known hazards, 45 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim
+- passed `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/validate-deployment-mode-claims.Tests.ps1 -Output Detailed` (77 tests)
+
+Follow-up later:
+
+- use generated or compile-time registries for the remaining `medium` EventSourcing, Behaviors.Http, and core Data dispatch hazards before promoting any global deployment-mode row
+
 ### ENG-459 Remove MySQL capture failure metadata reflection
 
 Status: done
@@ -57,7 +92,6 @@ Validation:
 Follow-up later:
 
 - retire the `SciSharp.MySQL.Replication.ReplicationClient` non-public transport adapter path through an upstream public API or a fully public binlog transport implementation before changing `Cephalon.Data.MySql` deployment-mode claim posture
-- apply the same typed failure metadata shape to the remaining Postgres and Oracle CDC hosted-service duck-typed fallback paths in separate provider-scoped slices
 
 ### ENG-458 Emit durable execution adapter slots
 
@@ -13195,6 +13229,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-457 Emit behavior execution-slot hints: `Cephalon.Behaviors.SourceGen` now emits `GetExecutionSlots()` with closed generic `BehaviorExecutionSlot.For<TBehavior, TInput, TOutput>()` calls, `Cephalon.Behaviors` registers matching generated slots and `BehaviorDispatcher` prefers them before runtime fallback, and the deployment-mode manifest records the new carrier-method lookup while keeping global trim / Native AOT / single-file rows `not-claimed`. Current manifest output reports 22 package entries, 19 packages with known hazards, 51 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability (shipped)
 - ENG-458 Emit durable execution adapter slots: `Cephalon.Behaviors.SourceGen` now emits closed `DurableExecutionSlot.For<TBehavior, TInput, TState, TOutput>()` registrations for generated durable behaviors, `Cephalon.Behaviors.Patterns` prefers those slots in strategy/catalog paths before `DurableExecutionSlot.ForType(...)`, and the deployment-mode manifest keeps the package `high` while the runtime-discovery fallback remains. Current manifest output stayed at 22 package entries, 19 packages with known hazards, 51 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability (shipped)
 - ENG-459 Remove MySQL capture failure metadata reflection: `Cephalon.Data.MySql` now projects hosted-service capture failure metadata through a typed internal failure metadata contract instead of duck-typed `FailureKind` / `Metadata` property reflection, `scripts/deployment-mode-support.json` removes those two hosted-service hazards while keeping the package `high` for the third-party `SciSharp.MySQL.Replication` non-public transport adapter path, and current manifest output reports 22 package entries, 19 packages with known hazards, 49 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability (shipped)
+- ENG-460 Remove remaining CDC capture failure metadata reflection: `Cephalon.Data.Postgres` and `Cephalon.Data.Oracle` now project hosted-service capture failure metadata through typed internal failure metadata contracts instead of duck-typed `FailureKind` / `Metadata` property reflection, `scripts/deployment-mode-support.json` removes the two Postgres rows and two Oracle rows, and current manifest output reports 20 package entries, 17 packages with known hazards, 45 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability (shipped)
 
 ### Later / not scheduled yet
 

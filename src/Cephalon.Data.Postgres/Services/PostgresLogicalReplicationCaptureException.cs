@@ -1,10 +1,17 @@
 namespace Cephalon.Data.Postgres.Services;
 
+internal interface IPostgresLogicalReplicationCaptureFailureMetadata
+{
+    string FailureKind { get; }
+
+    IReadOnlyDictionary<string, string> Metadata { get; }
+}
+
 internal sealed class PostgresLogicalReplicationCaptureException(
     string message,
     string failureKind,
     IReadOnlyDictionary<string, string>? metadata = null,
-    Exception? innerException = null) : InvalidOperationException(message, innerException)
+    Exception? innerException = null) : InvalidOperationException(message, innerException), IPostgresLogicalReplicationCaptureFailureMetadata
 {
     public string FailureKind { get; } = failureKind;
 

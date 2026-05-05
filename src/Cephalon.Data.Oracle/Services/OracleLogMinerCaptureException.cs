@@ -1,10 +1,17 @@
 namespace Cephalon.Data.Oracle.Services;
 
+internal interface IOracleLogMinerCaptureFailureMetadata
+{
+    string FailureKind { get; }
+
+    IReadOnlyDictionary<string, string> Metadata { get; }
+}
+
 internal sealed class OracleLogMinerCaptureException(
     string message,
     string failureKind,
     IReadOnlyDictionary<string, string>? metadata = null,
-    Exception? innerException = null) : InvalidOperationException(message, innerException)
+    Exception? innerException = null) : InvalidOperationException(message, innerException), IOracleLogMinerCaptureFailureMetadata
 {
     public string FailureKind { get; } = failureKind;
 

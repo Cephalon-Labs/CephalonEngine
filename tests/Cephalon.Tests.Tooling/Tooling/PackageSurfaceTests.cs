@@ -2435,14 +2435,19 @@ public sealed class PackageSurfaceTests
         Assert.Equal($"\"{expectedWireName}\"", JsonSerializer.Serialize(basis));
     }
 
-    [Fact]
-    public void MySqlCaptureFailureMetadataUsesTypedContractInsteadOfDuckTypedReflection()
+    [Theory]
+    [InlineData("Cephalon.Data.MySql", "MySqlBinlogCaptureHostedService.cs")]
+    [InlineData("Cephalon.Data.Postgres", "PostgresLogicalReplicationCaptureHostedService.cs")]
+    [InlineData("Cephalon.Data.Oracle", "OracleLogMinerCaptureHostedService.cs")]
+    public void CdcCaptureFailureMetadataUsesTypedContractInsteadOfDuckTypedReflection(
+        string packageName,
+        string hostedServiceFileName)
     {
         var contents = File.ReadAllText(RepositoryPaths.GetFile(
             "src",
-            "Cephalon.Data.MySql",
+            packageName,
             "Services",
-            "MySqlBinlogCaptureHostedService.cs"));
+            hostedServiceFileName));
 
         Assert.DoesNotContain("System.Reflection", contents);
         Assert.DoesNotContain("BindingFlags", contents);

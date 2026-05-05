@@ -1,5 +1,4 @@
 using System.Globalization;
-using System.Reflection;
 using Cephalon.Abstractions.Data;
 using Cephalon.Data.Postgres.Configuration;
 using Cephalon.Data.Services;
@@ -183,34 +182,15 @@ internal sealed class PostgresLogicalReplicationCaptureHostedService(
         Exception exception,
         out PostgresLogicalReplicationCaptureFailure? failure)
     {
-        if (exception is PostgresLogicalReplicationCaptureException direct)
+        if (exception is IPostgresLogicalReplicationCaptureFailureMetadata captureFailure
+            && !string.IsNullOrWhiteSpace(captureFailure.FailureKind))
         {
-            failure = new PostgresLogicalReplicationCaptureFailure(direct.FailureKind, direct.Metadata);
+            failure = new PostgresLogicalReplicationCaptureFailure(captureFailure.FailureKind.Trim(), captureFailure.Metadata);
             return true;
         }
 
-        const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-        var failureKindProperty = exception.GetType().GetProperty("FailureKind", bindingFlags);
-        if (failureKindProperty?.GetValue(exception) is not string failureKind || string.IsNullOrWhiteSpace(failureKind))
-        {
-            failure = null;
-            return false;
-        }
-
-        IReadOnlyDictionary<string, string>? metadata = null;
-        var metadataProperty = exception.GetType().GetProperty("Metadata", bindingFlags);
-        var metadataValue = metadataProperty?.GetValue(exception);
-        if (metadataValue is IReadOnlyDictionary<string, string> typedMetadata)
-        {
-            metadata = typedMetadata;
-        }
-        else if (metadataValue is IEnumerable<KeyValuePair<string, string>> sequence)
-        {
-            metadata = new Dictionary<string, string>(sequence, StringComparer.OrdinalIgnoreCase);
-        }
-
-        failure = new PostgresLogicalReplicationCaptureFailure(failureKind.Trim(), metadata);
-        return true;
+        failure = null;
+        return false;
     }
 
     private async Task RunIterationAsync(
