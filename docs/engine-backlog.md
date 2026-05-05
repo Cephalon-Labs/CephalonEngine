@@ -24,6 +24,44 @@ Current focus:
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
 - treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md) for release validation, and `cephalon doctor --scorecard <path>` provides a local CLI readback over that generated artifact without becoming source truth
 
+### ENG-456 Remove REST wire-name enum reflection
+
+Status: done
+Estimate: 3
+Issue: #980
+
+Why:
+
+- the active deployment-mode inventory still carried one `low` package row for bounded enum-field reflection in REST wire-name helpers
+- wire-name values are a closed public contract, so the engine should not ask runtime reflection for values already known at compile time
+- removing the low-tier row is the smallest structural remediation step before the larger source-generator work on high/medium dispatch hazards
+
+Delivered:
+
+- replace seven `Cephalon.Abstractions` REST endpoint wire-name helper maps with closed switch mappings
+- replace two `Cephalon.Behaviors.Http` REST behavior wire-name helper maps with closed switch mappings
+- add a tooling test that drift-protects these helpers from reintroducing `System.Reflection`, `Enum.GetValues<TEnum>()`, enum-field `GetField(...)`, or `GetCustomAttribute(...)`
+- refresh the package-surface expected-type guard for the already documented diagnostics adapters (`DiagnosticsConventionsSurface`, `EventingDiagnostics`, and `GovernanceDiagnostics`) that surfaced during focused tooling validation
+- remove the active `Cephalon.Abstractions` low-tier manifest entry and the two enum-extension hazards from `Cephalon.Behaviors.Http`
+- update deployment-mode support, trim/AOT hazard inventory, component docs, architecture follow-ups, roadmap, backlog, and project memory in the same slice
+
+Validation:
+
+- passed `dotnet build src/Cephalon.Abstractions/Cephalon.Abstractions.csproj -c Release --no-restore`
+- passed `dotnet build src/Cephalon.Behaviors.Http/Cephalon.Behaviors.Http.csproj -c Release --no-restore`
+- passed `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj --no-restore --filter FullyQualifiedName~PackageSurfaceTests` (200 tests)
+- passed `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/deployment-mode-support-manifest.Tests.ps1 -Output Detailed` (32 tests)
+- passed `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/validate-deployment-mode-claims.Tests.ps1 -Output Detailed` (77 tests)
+- passed `pwsh ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode all -SkipPublish -OutputPath artifacts/deployment-mode-claims-eng456` with aggregate `not-claimed`, 22 package entries, 19 packages with known hazards, 50 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim
+- run deployment-mode manifest and harness Pester coverage
+- run `pwsh ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode all -SkipPublish -OutputPath artifacts/deployment-mode-claims-eng456`
+- run `git diff --check`
+
+Follow-up later:
+
+- keep the next structural remediation focused on the remaining high/medium dispatch hazards instead of re-opening enum wire-name helpers
+- do not promote global deployment-mode rows until structural remediation, publish-probe policy, docs, and release validation agree
+
 ### ENG-455 Deployment-mode hazard inventory emission
 
 Status: done
@@ -13046,7 +13084,8 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-452 Extend the machine-readable engine completion scorecard to schema `1.1.0` as a cross-source read model over `docs/engine-completion-scorecard.md` and `docs/conformance-matrix.md`: evidence-source Markdown/backtick references now resolve to real repo-local files, missing scorecard source files fail the publish step, and `PackageGAReadiness` rows summarize each conformance-matrix package with family, maturity, ownership, conservative GA gate status, blocker class, and source-document pointers. `M4` still maps only to `partial` GA readiness until release, SRE, package-validation, supply-chain, public API, and deployment-mode evidence pass; `M0` / `taxonomy-only` rows remain `not-claimed`. Quality dimensions: Maintainability + Auditability + Compatibility + Usability (shipped)
 - ENG-453 Add `cephalon doctor --scorecard <path>` as the local CLI readback over the generated schema `1.1.0` engine-completion scorecard artifact: doctor now reports schema/source/conformance-matrix truth, platform-gate posture, validated evidence-reference count, and per-package GA-readiness counts through the existing check model; explicit missing, malformed, or unsupported artifacts fail doctor, while current partial/not-claimed/needs-refresh posture stays a warning and does not promote GA/support claims. Quality dimensions: Maintainability + Auditability + Compatibility + Usability (shipped)
 - ENG-454 Add the first clean-baseline package-scoped deployment-mode claim: `Cephalon.Diagnostics` now declares `PublishSingleFile=true` and `EnableSingleFileAnalyzer=true`; `scripts/deployment-mode-support.json` schema `1.2.0` lists `Cephalon.Diagnostics` with `supportedModes: ["singleFile"]`, no hazards, and the matching `requiredProjectProperties`; `scripts/validate-deployment-mode-claims.ps1` reports package proofs through `PackageClaimAudits`; `scripts/validate-dotnet-readiness.ps1` projects `PackageScopedClaims`; and `cephalon doctor` summarizes scoped package claims without widening the global trim / Native AOT / single-file `not-claimed` rows. Quality dimensions: Compatibility + Auditability + Maintainability + Usability (shipped)
-- ENG-455 Emit the manifest-backed deployment-mode hazard inventory from `scripts/validate-deployment-mode-claims.ps1`: every run now embeds `HazardInventory` in `claim-validation-report.json`, writes `hazard-inventory.json`, and summarizes tier counts, scoped package claims, and transitive hazard hints in README output; current manifest output reports 23 package entries, 20 packages with known hazards, 59 known hazard entries, 5 `high` + 14 `medium` + 1 `low` + 2 `excluded-by-design` + 1 `clean-baseline`, and 1 scoped `singleFile` claim while global trim / Native AOT / single-file rows remain `not-claimed`. Quality dimensions: Compatibility + Auditability + Maintainability + Usability (shipped)
+- ENG-455 Emit the manifest-backed deployment-mode hazard inventory from `scripts/validate-deployment-mode-claims.ps1`: every run now embeds `HazardInventory` in `claim-validation-report.json`, writes `hazard-inventory.json`, and summarizes tier counts, scoped package claims, and transitive hazard hints in README output; then-current manifest output reported 23 package entries, 20 packages with known hazards, 59 known hazard entries, 5 `high` + 14 `medium` + 1 `low` + 2 `excluded-by-design` + 1 `clean-baseline`, and 1 scoped `singleFile` claim while global trim / Native AOT / single-file rows remain `not-claimed`. Quality dimensions: Compatibility + Auditability + Maintainability + Usability (shipped)
+- ENG-456 Remove REST wire-name enum reflection: nine REST wire-name helpers in `Cephalon.Abstractions` and `Cephalon.Behaviors.Http` now use closed switch mappings instead of enum-field reflection, the `Cephalon.Abstractions` low-tier manifest row is removed, `Cephalon.Behaviors.Http` drops two enum-extension hazards while staying `medium`, and current manifest output reports 22 package entries, 19 packages with known hazards, 50 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability (shipped)
 
 ### Later / not scheduled yet
 

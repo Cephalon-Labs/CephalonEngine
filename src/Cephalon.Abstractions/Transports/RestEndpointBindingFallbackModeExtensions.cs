@@ -1,6 +1,3 @@
-using System.Reflection;
-using System.Text.Json.Serialization;
-
 namespace Cephalon.Abstractions.Transports;
 
 /// <summary>
@@ -8,9 +5,6 @@ namespace Cephalon.Abstractions.Transports;
 /// </summary>
 public static class RestEndpointBindingFallbackModeExtensions
 {
-    private static readonly Dictionary<RestEndpointBindingFallbackMode, string> WireNames = CreateWireNames();
-    private static readonly Dictionary<string, RestEndpointBindingFallbackMode> ModesByWireName = CreateModesByWireName(WireNames);
-
     /// <summary>
     /// Gets the stable wire name used by JSON serialization and compatibility metadata for the fallback mode.
     /// </summary>
@@ -18,15 +12,15 @@ public static class RestEndpointBindingFallbackModeExtensions
     /// <returns>The stable wire name.</returns>
     public static string GetWireName(this RestEndpointBindingFallbackMode mode)
     {
-        if (WireNames.TryGetValue(mode, out var wireName))
+        return mode switch
         {
-            return wireName;
-        }
-
-        throw new ArgumentOutOfRangeException(
-            nameof(mode),
-            mode,
-            "A supported REST endpoint binding fallback mode is required.");
+            RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback => "preserve-source-implicit-fallback",
+            RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback => "preserve-remaining-body-fallback",
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(mode),
+                mode,
+                "A supported REST endpoint binding fallback mode is required.")
+        };
     }
 
     /// <summary>
@@ -37,41 +31,17 @@ public static class RestEndpointBindingFallbackModeExtensions
     /// <returns><see langword="true"/> when the wire name maps to a supported fallback mode; otherwise, <see langword="false"/>.</returns>
     public static bool TryParseWireName(string? value, out RestEndpointBindingFallbackMode mode)
     {
-        if (string.IsNullOrWhiteSpace(value))
+        switch (value?.Trim())
         {
-            mode = default;
-            return false;
+            case "preserve-source-implicit-fallback":
+                mode = RestEndpointBindingFallbackMode.PreserveSourceImplicitFallback;
+                return true;
+            case "preserve-remaining-body-fallback":
+                mode = RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback;
+                return true;
+            default:
+                mode = default;
+                return false;
         }
-
-        return ModesByWireName.TryGetValue(value.Trim(), out mode);
-    }
-
-    private static Dictionary<RestEndpointBindingFallbackMode, string> CreateWireNames()
-    {
-        var result = new Dictionary<RestEndpointBindingFallbackMode, string>();
-        foreach (var value in Enum.GetValues<RestEndpointBindingFallbackMode>())
-        {
-            var field = typeof(RestEndpointBindingFallbackMode).GetField(value.ToString(), BindingFlags.Public | BindingFlags.Static);
-            ArgumentNullException.ThrowIfNull(field);
-
-            var wireName = field.GetCustomAttribute<JsonStringEnumMemberNameAttribute>()?.Name;
-            result[value] = string.IsNullOrWhiteSpace(wireName)
-                ? field.Name
-                : wireName.Trim();
-        }
-
-        return result;
-    }
-
-    private static Dictionary<string, RestEndpointBindingFallbackMode> CreateModesByWireName(
-        IReadOnlyDictionary<RestEndpointBindingFallbackMode, string> wireNames)
-    {
-        var result = new Dictionary<string, RestEndpointBindingFallbackMode>(StringComparer.Ordinal);
-        foreach (var pair in wireNames)
-        {
-            result[pair.Value] = pair.Key;
-        }
-
-        return result;
     }
 }

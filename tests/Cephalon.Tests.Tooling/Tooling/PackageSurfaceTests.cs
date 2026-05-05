@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Text.Json;
 using Cephalon.Cli;
 using Cephalon.ReferenceDocs;
+using Cephalon.Tests.Support;
 
 namespace Cephalon.Tests.Tooling;
 
@@ -589,6 +590,7 @@ public sealed class PackageSurfaceTests
     {
         AssertExportedTypes(
             typeof(global::Cephalon.AspNetCore.Hosting.EngineWebApplicationBuilderExtensions).Assembly,
+            typeof(global::Cephalon.AspNetCore.Diagnostics.DiagnosticsConventionsSurface),
             typeof(global::Cephalon.AspNetCore.Diagnostics.DiagnosticsSurface),
             typeof(global::Cephalon.AspNetCore.Documentation.OpenApiEndpointOptions),
             typeof(global::Cephalon.AspNetCore.Documentation.OpenApiTagMetadata),
@@ -947,6 +949,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Eventing.Services.EventSubscriptionExecutionOutcomes),
             typeof(global::Cephalon.Eventing.Services.EventSubscriptionExecutionReport),
             typeof(global::Cephalon.Eventing.Services.EventSubscriptionDescriptor),
+            typeof(global::Cephalon.Eventing.Services.EventingDiagnostics),
             typeof(global::Cephalon.Eventing.Services.IEventChannelCatalog),
             typeof(global::Cephalon.Eventing.Services.IEventChannelContributor),
             typeof(global::Cephalon.Eventing.Services.IEventChannelRegistry),
@@ -1206,6 +1209,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.MultiTenancy.Governance.Registration.MultiTenancyGovernanceEngineBuilderExtensions).Assembly,
             typeof(global::Cephalon.MultiTenancy.Governance.Configuration.MultiTenancyGovernanceOptions),
             typeof(global::Cephalon.MultiTenancy.Governance.Registration.MultiTenancyGovernanceEngineBuilderExtensions),
+            typeof(global::Cephalon.MultiTenancy.Governance.Services.GovernanceDiagnostics),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantGovernanceActionCatalog),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantGovernanceActionContributor),
             typeof(global::Cephalon.MultiTenancy.Governance.Services.ITenantGovernanceActionDecider),
@@ -2429,6 +2433,34 @@ public sealed class PackageSurfaceTests
         Assert.True(global::Cephalon.Abstractions.Transports.RestEndpointGovernanceRuleSelectionBasisExtensions.TryParseWireName(expectedWireName, out var parsed));
         Assert.Equal(basis, parsed);
         Assert.Equal($"\"{expectedWireName}\"", JsonSerializer.Serialize(basis));
+    }
+
+    [Fact]
+    public void RestWireNameHelpersUseClosedMappingsInsteadOfEnumFieldReflection()
+    {
+        var helperFiles = new[]
+        {
+            new[] { "src", "Cephalon.Abstractions", "Transports", "RestEndpointAuthoringPolicySuppressionKindExtensions.cs" },
+            new[] { "src", "Cephalon.Abstractions", "Transports", "RestEndpointBindingFallbackModeExtensions.cs" },
+            new[] { "src", "Cephalon.Abstractions", "Transports", "RestEndpointBindingSourceExtensions.cs" },
+            new[] { "src", "Cephalon.Abstractions", "Transports", "RestEndpointCandidateStatusExtensions.cs" },
+            new[] { "src", "Cephalon.Abstractions", "Transports", "RestEndpointGovernanceRuleSelectionBasisExtensions.cs" },
+            new[] { "src", "Cephalon.Abstractions", "Transports", "RestEndpointOverrideActionKindExtensions.cs" },
+            new[] { "src", "Cephalon.Abstractions", "Transports", "RestEndpointOverrideBindingModeExtensions.cs" },
+            new[] { "src", "Cephalon.Behaviors.Http", "Abstractions", "BehaviorRestMethodExtensions.cs" },
+            new[] { "src", "Cephalon.Behaviors.Http", "Abstractions", "BehaviorRestBindingSourceExtensions.cs" }
+        };
+
+        foreach (var helperFile in helperFiles)
+        {
+            var contents = File.ReadAllText(RepositoryPaths.GetFile(helperFile));
+
+            Assert.DoesNotContain("System.Reflection", contents);
+            Assert.DoesNotContain("BindingFlags.Public | BindingFlags.Static", contents);
+            Assert.DoesNotContain(".GetField(value.ToString()", contents);
+            Assert.DoesNotContain("GetCustomAttribute<JsonStringEnumMemberNameAttribute>", contents);
+            Assert.DoesNotContain("Enum.GetValues<", contents);
+        }
     }
 
     [Fact]

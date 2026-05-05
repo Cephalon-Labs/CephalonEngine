@@ -22,6 +22,7 @@ See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), 
 - health contracts used across hosts and packages
 - localization contracts used by engine resources and package language packs
 - pattern, migration-routing, technology, and transport contracts shared by the whole stack
+- REST endpoint wire-name helper extensions for transport/governance enums; these use closed switch mappings so JSON/runtime wire names stay stable without enum-field reflection in trim/AOT analysis
 
 ## Main surfaces
 

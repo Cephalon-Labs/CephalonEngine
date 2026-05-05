@@ -42,7 +42,8 @@ module-owned REST endpoints.
   can consume without publishing public REST directly from behaviors; the build now rejects
   malformed placeholder syntax such as unbalanced `{...}` segments and preserved-fallback profiles that omit
   explicit bindings earlier, while runtime normalization still leaves final route parsing
-  authoritative to ASP.NET Core
+  authoritative to ASP.NET Core; the method/source wire-name helpers use closed switch mappings so
+  this metadata stays trim/AOT-friendly without enum-field reflection
 - **REST runtime ownership metadata** — behavior-backed REST endpoints now publish stable
   `RestEndpointRuntimeMetadataKeys` entries so operators can see that profile/publication
   activation is application-managed while ASP.NET Core materialization, candidate reconciliation,

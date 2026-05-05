@@ -1,6 +1,3 @@
-using System.Reflection;
-using System.Text.Json.Serialization;
-
 namespace Cephalon.Abstractions.Transports;
 
 /// <summary>
@@ -8,9 +5,6 @@ namespace Cephalon.Abstractions.Transports;
 /// </summary>
 public static class RestEndpointCandidateStatusExtensions
 {
-    private static readonly Dictionary<RestEndpointCandidateStatus, string> WireNames = CreateWireNames();
-    private static readonly Dictionary<string, RestEndpointCandidateStatus> StatusesByWireName = CreateStatusesByWireName(WireNames);
-
     /// <summary>
     /// Gets the stable wire name used by JSON serialization for the candidate status.
     /// </summary>
@@ -18,15 +12,16 @@ public static class RestEndpointCandidateStatusExtensions
     /// <returns>The stable wire name.</returns>
     public static string GetWireName(this RestEndpointCandidateStatus status)
     {
-        if (WireNames.TryGetValue(status, out var wireName))
+        return status switch
         {
-            return wireName;
-        }
-
-        throw new ArgumentOutOfRangeException(
-            nameof(status),
-            status,
-            "A supported REST endpoint candidate status is required.");
+            RestEndpointCandidateStatus.Unspecified => "unspecified",
+            RestEndpointCandidateStatus.Published => "published",
+            RestEndpointCandidateStatus.Suppressed => "suppressed",
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(status),
+                status,
+                "A supported REST endpoint candidate status is required.")
+        };
     }
 
     /// <summary>
@@ -37,41 +32,20 @@ public static class RestEndpointCandidateStatusExtensions
     /// <returns><see langword="true"/> when the wire name maps to a supported candidate status; otherwise, <see langword="false"/>.</returns>
     public static bool TryParseWireName(string? value, out RestEndpointCandidateStatus status)
     {
-        if (string.IsNullOrWhiteSpace(value))
+        switch (value?.Trim())
         {
-            status = default;
-            return false;
+            case "unspecified":
+                status = RestEndpointCandidateStatus.Unspecified;
+                return true;
+            case "published":
+                status = RestEndpointCandidateStatus.Published;
+                return true;
+            case "suppressed":
+                status = RestEndpointCandidateStatus.Suppressed;
+                return true;
+            default:
+                status = default;
+                return false;
         }
-
-        return StatusesByWireName.TryGetValue(value.Trim(), out status);
-    }
-
-    private static Dictionary<RestEndpointCandidateStatus, string> CreateWireNames()
-    {
-        var result = new Dictionary<RestEndpointCandidateStatus, string>();
-        foreach (var value in Enum.GetValues<RestEndpointCandidateStatus>())
-        {
-            var field = typeof(RestEndpointCandidateStatus).GetField(value.ToString(), BindingFlags.Public | BindingFlags.Static);
-            ArgumentNullException.ThrowIfNull(field);
-
-            var wireName = field.GetCustomAttribute<JsonStringEnumMemberNameAttribute>()?.Name;
-            result[value] = string.IsNullOrWhiteSpace(wireName)
-                ? field.Name
-                : wireName.Trim();
-        }
-
-        return result;
-    }
-
-    private static Dictionary<string, RestEndpointCandidateStatus> CreateStatusesByWireName(
-        IReadOnlyDictionary<RestEndpointCandidateStatus, string> wireNames)
-    {
-        var result = new Dictionary<string, RestEndpointCandidateStatus>(StringComparer.Ordinal);
-        foreach (var pair in wireNames)
-        {
-            result[pair.Value] = pair.Key;
-        }
-
-        return result;
     }
 }

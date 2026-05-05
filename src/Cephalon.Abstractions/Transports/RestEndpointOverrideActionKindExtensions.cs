@@ -1,6 +1,3 @@
-using System.Reflection;
-using System.Text.Json.Serialization;
-
 namespace Cephalon.Abstractions.Transports;
 
 /// <summary>
@@ -8,9 +5,6 @@ namespace Cephalon.Abstractions.Transports;
 /// </summary>
 public static class RestEndpointOverrideActionKindExtensions
 {
-    private static readonly Dictionary<RestEndpointOverrideActionKind, string> WireNames = CreateWireNames();
-    private static readonly Dictionary<string, RestEndpointOverrideActionKind> ActionKindsByWireName = CreateActionKindsByWireName(WireNames);
-
     /// <summary>
     /// Gets the stable wire name used by JSON serialization for the override action kind.
     /// </summary>
@@ -18,15 +12,35 @@ public static class RestEndpointOverrideActionKindExtensions
     /// <returns>The stable wire name.</returns>
     public static string GetWireName(this RestEndpointOverrideActionKind actionKind)
     {
-        if (WireNames.TryGetValue(actionKind, out var wireName))
+        return actionKind switch
         {
-            return wireName;
-        }
-
-        throw new ArgumentOutOfRangeException(
-            nameof(actionKind),
-            actionKind,
-            "A supported REST endpoint override action kind is required.");
+            RestEndpointOverrideActionKind.Unspecified => "Unspecified",
+            RestEndpointOverrideActionKind.ApiVersionMajor => "api-version-major",
+            RestEndpointOverrideActionKind.Method => "method",
+            RestEndpointOverrideActionKind.Pattern => "pattern",
+            RestEndpointOverrideActionKind.RouteGroupPrefix => "route-group-prefix",
+            RestEndpointOverrideActionKind.OpenApiDocumentName => "openapi-document-name",
+            RestEndpointOverrideActionKind.TagName => "tag-name",
+            RestEndpointOverrideActionKind.EndpointName => "endpoint-name",
+            RestEndpointOverrideActionKind.Summary => "summary",
+            RestEndpointOverrideActionKind.Description => "description",
+            RestEndpointOverrideActionKind.ClearEndpointName => "clear-endpoint-name",
+            RestEndpointOverrideActionKind.ClearSummary => "clear-summary",
+            RestEndpointOverrideActionKind.ClearDescription => "clear-description",
+            RestEndpointOverrideActionKind.RequiredCapabilityKey => "required-capability-key",
+            RestEndpointOverrideActionKind.ClearRequiredCapability => "clear-required-capability",
+            RestEndpointOverrideActionKind.ReplaceBindings => "replace-bindings",
+            RestEndpointOverrideActionKind.MergeBindings => "merge-bindings",
+            RestEndpointOverrideActionKind.RemoveBindingProperties => "remove-binding-properties",
+            RestEndpointOverrideActionKind.ClearBindings => "clear-bindings",
+            RestEndpointOverrideActionKind.PreserveImplicitQueryFallback => "preserve-implicit-query-fallback",
+            RestEndpointOverrideActionKind.RequiredFeatureFlagIds => "required-feature-flag-ids",
+            RestEndpointOverrideActionKind.ClearRequiredFeatureFlags => "clear-required-feature-flags",
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(actionKind),
+                actionKind,
+                "A supported REST endpoint override action kind is required.")
+        };
     }
 
     /// <summary>
@@ -40,41 +54,77 @@ public static class RestEndpointOverrideActionKindExtensions
     /// </returns>
     public static bool TryParseWireName(string? value, out RestEndpointOverrideActionKind actionKind)
     {
-        if (string.IsNullOrWhiteSpace(value))
+        switch (value?.Trim())
         {
-            actionKind = default;
-            return false;
+            case "Unspecified":
+                actionKind = RestEndpointOverrideActionKind.Unspecified;
+                return true;
+            case "api-version-major":
+                actionKind = RestEndpointOverrideActionKind.ApiVersionMajor;
+                return true;
+            case "method":
+                actionKind = RestEndpointOverrideActionKind.Method;
+                return true;
+            case "pattern":
+                actionKind = RestEndpointOverrideActionKind.Pattern;
+                return true;
+            case "route-group-prefix":
+                actionKind = RestEndpointOverrideActionKind.RouteGroupPrefix;
+                return true;
+            case "openapi-document-name":
+                actionKind = RestEndpointOverrideActionKind.OpenApiDocumentName;
+                return true;
+            case "tag-name":
+                actionKind = RestEndpointOverrideActionKind.TagName;
+                return true;
+            case "endpoint-name":
+                actionKind = RestEndpointOverrideActionKind.EndpointName;
+                return true;
+            case "summary":
+                actionKind = RestEndpointOverrideActionKind.Summary;
+                return true;
+            case "description":
+                actionKind = RestEndpointOverrideActionKind.Description;
+                return true;
+            case "clear-endpoint-name":
+                actionKind = RestEndpointOverrideActionKind.ClearEndpointName;
+                return true;
+            case "clear-summary":
+                actionKind = RestEndpointOverrideActionKind.ClearSummary;
+                return true;
+            case "clear-description":
+                actionKind = RestEndpointOverrideActionKind.ClearDescription;
+                return true;
+            case "required-capability-key":
+                actionKind = RestEndpointOverrideActionKind.RequiredCapabilityKey;
+                return true;
+            case "clear-required-capability":
+                actionKind = RestEndpointOverrideActionKind.ClearRequiredCapability;
+                return true;
+            case "replace-bindings":
+                actionKind = RestEndpointOverrideActionKind.ReplaceBindings;
+                return true;
+            case "merge-bindings":
+                actionKind = RestEndpointOverrideActionKind.MergeBindings;
+                return true;
+            case "remove-binding-properties":
+                actionKind = RestEndpointOverrideActionKind.RemoveBindingProperties;
+                return true;
+            case "clear-bindings":
+                actionKind = RestEndpointOverrideActionKind.ClearBindings;
+                return true;
+            case "preserve-implicit-query-fallback":
+                actionKind = RestEndpointOverrideActionKind.PreserveImplicitQueryFallback;
+                return true;
+            case "required-feature-flag-ids":
+                actionKind = RestEndpointOverrideActionKind.RequiredFeatureFlagIds;
+                return true;
+            case "clear-required-feature-flags":
+                actionKind = RestEndpointOverrideActionKind.ClearRequiredFeatureFlags;
+                return true;
+            default:
+                actionKind = default;
+                return false;
         }
-
-        return ActionKindsByWireName.TryGetValue(value.Trim(), out actionKind);
-    }
-
-    private static Dictionary<RestEndpointOverrideActionKind, string> CreateWireNames()
-    {
-        var result = new Dictionary<RestEndpointOverrideActionKind, string>();
-        foreach (var value in Enum.GetValues<RestEndpointOverrideActionKind>())
-        {
-            var field = typeof(RestEndpointOverrideActionKind).GetField(value.ToString(), BindingFlags.Public | BindingFlags.Static);
-            ArgumentNullException.ThrowIfNull(field);
-
-            var wireName = field.GetCustomAttribute<JsonStringEnumMemberNameAttribute>()?.Name;
-            result[value] = string.IsNullOrWhiteSpace(wireName)
-                ? field.Name
-                : wireName.Trim();
-        }
-
-        return result;
-    }
-
-    private static Dictionary<string, RestEndpointOverrideActionKind> CreateActionKindsByWireName(
-        IReadOnlyDictionary<RestEndpointOverrideActionKind, string> wireNames)
-    {
-        var result = new Dictionary<string, RestEndpointOverrideActionKind>(StringComparer.Ordinal);
-        foreach (var pair in wireNames)
-        {
-            result[pair.Value] = pair.Key;
-        }
-
-        return result;
     }
 }

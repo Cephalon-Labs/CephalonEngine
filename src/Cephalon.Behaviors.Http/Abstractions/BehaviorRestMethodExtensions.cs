@@ -1,6 +1,3 @@
-using System.Reflection;
-using System.Text.Json.Serialization;
-
 namespace Cephalon.Behaviors.Http.Abstractions;
 
 /// <summary>
@@ -8,9 +5,6 @@ namespace Cephalon.Behaviors.Http.Abstractions;
 /// </summary>
 public static class BehaviorRestMethodExtensions
 {
-    private static readonly Dictionary<BehaviorRestMethod, string> WireNames = CreateWireNames();
-    private static readonly Dictionary<string, BehaviorRestMethod> MethodsByWireName = CreateMethodsByWireName(WireNames);
-
     /// <summary>
     /// Gets the stable wire name used by JSON serialization for the REST method.
     /// </summary>
@@ -18,15 +12,19 @@ public static class BehaviorRestMethodExtensions
     /// <returns>The stable wire name.</returns>
     public static string GetWireName(this BehaviorRestMethod method)
     {
-        if (WireNames.TryGetValue(method, out var wireName))
+        return method switch
         {
-            return wireName;
-        }
-
-        throw new ArgumentOutOfRangeException(
-            nameof(method),
-            method,
-            "A supported behavior REST method is required.");
+            BehaviorRestMethod.Unspecified => "unspecified",
+            BehaviorRestMethod.Get => "get",
+            BehaviorRestMethod.Post => "post",
+            BehaviorRestMethod.Put => "put",
+            BehaviorRestMethod.Patch => "patch",
+            BehaviorRestMethod.Delete => "delete",
+            _ => throw new ArgumentOutOfRangeException(
+                nameof(method),
+                method,
+                "A supported behavior REST method is required.")
+        };
     }
 
     /// <summary>
@@ -37,41 +35,29 @@ public static class BehaviorRestMethodExtensions
     /// <returns><see langword="true"/> when the wire name maps to a supported REST method; otherwise, <see langword="false"/>.</returns>
     public static bool TryParseWireName(string? value, out BehaviorRestMethod method)
     {
-        if (string.IsNullOrWhiteSpace(value))
+        switch (value?.Trim())
         {
-            method = default;
-            return false;
+            case "unspecified":
+                method = BehaviorRestMethod.Unspecified;
+                return true;
+            case "get":
+                method = BehaviorRestMethod.Get;
+                return true;
+            case "post":
+                method = BehaviorRestMethod.Post;
+                return true;
+            case "put":
+                method = BehaviorRestMethod.Put;
+                return true;
+            case "patch":
+                method = BehaviorRestMethod.Patch;
+                return true;
+            case "delete":
+                method = BehaviorRestMethod.Delete;
+                return true;
+            default:
+                method = default;
+                return false;
         }
-
-        return MethodsByWireName.TryGetValue(value.Trim(), out method);
-    }
-
-    private static Dictionary<BehaviorRestMethod, string> CreateWireNames()
-    {
-        var result = new Dictionary<BehaviorRestMethod, string>();
-        foreach (var value in Enum.GetValues<BehaviorRestMethod>())
-        {
-            var field = typeof(BehaviorRestMethod).GetField(value.ToString(), BindingFlags.Public | BindingFlags.Static);
-            ArgumentNullException.ThrowIfNull(field);
-
-            var wireName = field.GetCustomAttribute<JsonStringEnumMemberNameAttribute>()?.Name;
-            result[value] = string.IsNullOrWhiteSpace(wireName)
-                ? field.Name
-                : wireName.Trim();
-        }
-
-        return result;
-    }
-
-    private static Dictionary<string, BehaviorRestMethod> CreateMethodsByWireName(
-        IReadOnlyDictionary<BehaviorRestMethod, string> wireNames)
-    {
-        var result = new Dictionary<string, BehaviorRestMethod>(StringComparer.Ordinal);
-        foreach (var pair in wireNames)
-        {
-            result[pair.Value] = pair.Key;
-        }
-
-        return result;
     }
 }
