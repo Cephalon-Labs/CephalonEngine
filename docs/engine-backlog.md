@@ -4005,7 +4005,7 @@ Delivered:
 
 Follow-up later:
 
-- when concurrent run PR #922 (ENG-408 streaming + canonical Status coverage for `Cephalon.AspNetCore.Grpc`) merges, recommendation `#1` flips from "pending" to "shipped" with the closing-slice annotation; today the entry is still pending because the PR is not yet merged
+- ~~when concurrent run PR #922 (ENG-408 streaming + canonical Status coverage for `Cephalon.AspNetCore.Grpc`) merges, recommendation `#1` flips from "pending" to "shipped" with the closing-slice annotation; today the entry is still pending because the PR is not yet merged~~ — **discharged through `ENG-423`**: PR #922 merged on commit `a4ac22e6` (May 5, 2026); recommendation `#1` is now annotated as **shipped through `ENG-408` / PR #922** in [`docs/test-coverage-roadmap.md`](test-coverage-roadmap.md) line 48 with the deferred-coverage note for unary client-cancellation / unary deadline-expiry
 - when `Cephalon.MultiTenancy.Governance` (PR #888) and `Cephalon.Eventing` (PR #878) OTel emission baselines land, recommendation `#8` extends to seven emission sites; refresh the entry in the same slice that lands the wiring per the maintenance discipline declared in the roadmap's *Maintenance discipline* section
 - the Agentics + Retrieval per-site integration tests can become a `#10` recommendation if the lazy-resolution-pattern correctness ever needs a per-site verification beyond the existing 3-site coverage; today it stays a deferred gap rather than a backlog card
 
