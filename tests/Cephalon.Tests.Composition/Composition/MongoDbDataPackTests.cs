@@ -8,6 +8,7 @@ using Cephalon.Eventing.Registration;
 using Cephalon.Eventing.Services;
 using Cephalon.EventSourcing.MongoDB;
 using Cephalon.EventSourcing.MongoDB.Hosting;
+using Cephalon.EventSourcing.Hosting;
 using Cephalon.Tests.Support;
 using EphemeralMongo;
 using Microsoft.Extensions.Configuration;
@@ -319,6 +320,7 @@ public sealed class MongoDbDataPackTests : IAsyncLifetime
     public async Task MongoDbEventStore_AppendAndRead_RoundTrips()
     {
         var services = new ServiceCollection();
+        services.AddCephalonEventType<MongoTestEvent>("tests.mongo-event");
         services.AddCephalonMongoDbEventSourcing(ConnectionString, "cephalon-events-test");
 
         using var provider = services.BuildServiceProvider();
@@ -353,6 +355,7 @@ public sealed class MongoDbDataPackTests : IAsyncLifetime
     public async Task MongoDbEventStore_OptimisticConcurrency_ThrowsOnVersionMismatch()
     {
         var services = new ServiceCollection();
+        services.AddCephalonEventType<MongoTestEvent>("tests.mongo-event");
         services.AddCephalonMongoDbEventSourcing(ConnectionString, "cephalon-concurrency-test");
 
         using var provider = services.BuildServiceProvider();

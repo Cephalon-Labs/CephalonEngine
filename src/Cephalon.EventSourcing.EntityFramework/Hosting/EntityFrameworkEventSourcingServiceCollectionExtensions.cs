@@ -1,4 +1,5 @@
 using Cephalon.Abstractions.EventSourcing;
+using Cephalon.EventSourcing.Hosting;
 using Cephalon.EventSourcing.EntityFramework.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,6 +24,7 @@ public static class EntityFrameworkEventSourcingServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
+        services.AddCephalonEventTypeRegistry();
         services.TryAddScoped<IEventStore, EntityFrameworkEventStore<TContext>>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreContributor, EntityFrameworkEventStoreContributor<TContext>>());
         return services;

@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
-using System.Text.Json;
 using Cephalon.Abstractions.EventSourcing;
+using Cephalon.EventSourcing.Services;
 using Neo4j.Driver;
 
 namespace Cephalon.EventSourcing.Neo4j;
@@ -14,6 +14,7 @@ public sealed class Neo4jEventStore : IEventStore
 {
     private readonly IDriver _driver;
     private readonly string _eventLabel;
+    private readonly IEventTypeRegistry _eventTypes;
     private volatile bool _constraintCreated;
 
     /// <summary>
@@ -22,11 +23,40 @@ public sealed class Neo4jEventStore : IEventStore
     /// <param name="driver">The Neo4j driver used to open sessions.</param>
     /// <param name="eventLabel">The node label used for event nodes. Defaults to <c>Event</c>.</param>
     public Neo4jEventStore(IDriver driver, string eventLabel = "Event")
+        : this(driver, eventLabel, EventTypeRegistry.Empty)
+    {
+    }
+
+    /// <summary>
+    /// Creates a Neo4j event store that uses the supplied event-type registry.
+    /// </summary>
+    /// <param name="driver">The Neo4j driver used to open sessions.</param>
+    /// <param name="eventTypes">The closed event-type registry used to serialize and rehydrate domain events.</param>
+    /// <param name="eventLabel">The node label used for event nodes. Defaults to <c>Event</c>.</param>
+    /// <returns>A Neo4j event store wired to the supplied event-type registry.</returns>
+    public static Neo4jEventStore Create(
+        IDriver driver,
+        IEventTypeRegistry eventTypes,
+        string eventLabel = "Event") =>
+        new(driver, eventLabel, eventTypes);
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Neo4jEventStore" /> class.
+    /// </summary>
+    /// <param name="driver">The Neo4j driver used to open sessions.</param>
+    /// <param name="eventLabel">The node label used for event nodes. Defaults to <c>Event</c>.</param>
+    /// <param name="eventTypes">The closed event-type registry used to serialize and rehydrate domain events.</param>
+    internal Neo4jEventStore(
+        IDriver driver,
+        string eventLabel,
+        IEventTypeRegistry eventTypes)
     {
         ArgumentNullException.ThrowIfNull(driver);
         ArgumentException.ThrowIfNullOrWhiteSpace(eventLabel);
+        ArgumentNullException.ThrowIfNull(eventTypes);
         _driver = driver;
         _eventLabel = eventLabel;
+        _eventTypes = eventTypes;
     }
 
     /// <inheritdoc />
@@ -107,9 +137,8 @@ public sealed class Neo4jEventStore : IEventStore
             {
                 StreamId = normalizedStreamId,
                 StreamVersion = evt.StreamVersion,
-                EventType = evt.GetType().AssemblyQualifiedName
-                    ?? throw new InvalidOperationException($"The event type '{evt.GetType().FullName}' must expose an assembly-qualified name."),
-                Payload = JsonSerializer.Serialize(evt, evt.GetType()),
+                EventType = _eventTypes.GetName(evt),
+                Payload = _eventTypes.Serialize(evt),
                 OccurredAtUtc = evt.OccurredAtUtc.ToString("O"),
                 AppendedAtUtc = appendedAtUtc
             });
@@ -197,21 +226,7 @@ public sealed class Neo4jEventStore : IEventStore
                 AppendedAtUtc = record["appendedAtUtc"].As<string>()
             };
 
-            var eventType = Type.GetType(entry.EventType, throwOnError: false);
-            if (eventType is null)
-            {
-                throw new InvalidOperationException(
-                    $"The CLR type '{entry.EventType}' could not be resolved while reading stream '{normalizedStreamId}'.");
-            }
-
-            var evt = JsonSerializer.Deserialize(entry.Payload, eventType) as IDomainEvent;
-            if (evt is null)
-            {
-                throw new InvalidOperationException(
-                    $"The payload for event type '{entry.EventType}' in stream '{normalizedStreamId}' could not be deserialized as an IDomainEvent.");
-            }
-
-            yield return evt;
+            yield return _eventTypes.Deserialize(entry.EventType, entry.Payload);
         }
     }
 

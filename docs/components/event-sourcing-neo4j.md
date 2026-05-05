@@ -14,8 +14,8 @@
 - a fallback concurrency guard via the node key constraint — if a concurrent writer commits the same version between the version read and the `CREATE`, Neo4j raises `Neo.ClientError.Schema.ConstraintValidationFailed` and the provider re-reads the actual version before rethrowing `EventStreamConcurrencyException`
 - stream replay through `ReadStreamAsync` returning events ordered by `streamVersion` ascending
 - `GetVersionAsync` returning `-1` for a stream that does not exist yet (via `coalesce(max(e.streamVersion), -1)`)
-- `System.Text.Json` serialization for event payloads using the concrete event CLR type
-- event type round-tripping through `AssemblyQualifiedName` — the type name is stored as written by the CLR and resolved back via `Type.GetType()` on read
+- event payload serialization through the shared Cephalon event-type registry
+- event type round-tripping through stable registry names, with descriptor aliases for legacy `AssemblyQualifiedName` rows
 
 ## Main surfaces
 
@@ -49,7 +49,7 @@ builder.Services.AddCephalonNeo4jEventSourcing(
     eventLabel: "DomainEvent");
 ```
 
-The method registers `IDriver` using `TryAdd` semantics — a host that already registered a shared `IDriver` keeps its own instance. `IEventStore` is registered as scoped.
+The method registers `IDriver` using `TryAdd` semantics — a host that already registered a shared `IDriver` keeps its own instance. `IEventStore` is registered as scoped, and the shared event-type registry is registered if it is not already present. The host still registers concrete event payloads through `AddCephalonEventType<TEvent>(...)` or `AddCephalonEventTypeWithJsonTypeInfo<TEvent>(...)`.
 
 ## Event node schema (`:Event`)
 
@@ -57,8 +57,8 @@ The method registers `IDriver` using `TryAdd` semantics — a host that already 
 |----------|------|-------|
 | `streamId` | string | Logical aggregate / stream identifier |
 | `streamVersion` | long | Per-stream monotonic version (1-based; stream starts at version 1) |
-| `eventType` | string | `AssemblyQualifiedName` of the concrete event CLR type |
-| `payload` | string | `System.Text.Json`-serialized event body using the concrete type |
+| `eventType` | string | Stable Cephalon event-type registry name |
+| `payload` | string | Serialized event body produced by the registered event-type descriptor |
 | `occurredAtUtc` | string | ISO 8601 UTC representation of `IDomainEvent.OccurredAtUtc` |
 | `appendedAtUtc` | string | ISO 8601 UTC wall-clock time of the `CREATE` call |
 
@@ -91,7 +91,7 @@ RETURN e.streamId AS streamId, e.streamVersion AS streamVersion,
 ORDER BY e.streamVersion ASC
 ```
 
-and returns an `IAsyncEnumerable<IDomainEvent>`, yielding events one by one as the result list is iterated. The CLR type is resolved from `eventType` via `Type.GetType(throwOnError: false)` — a missing type throws `InvalidOperationException` with a message that names the unresolvable type and the stream.
+and returns an `IAsyncEnumerable<IDomainEvent>`, yielding events one by one as the result list is iterated. The event payload is resolved through `IEventTypeRegistry` by `eventType`; a missing descriptor throws `InvalidOperationException` with a message that names the unregistered type name and the stream. Descriptors include legacy `AssemblyQualifiedName` aliases by default so older nodes can still be read after hosts register the concrete event type.
 
 ## Constraint bootstrap
 

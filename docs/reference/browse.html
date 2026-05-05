@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-05T18:38:29.3093498+00:00",
+  "GeneratedAtUtc": "2026-05-05T20:25:17.5124654+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -287,7 +287,7 @@
       "Description": "Runtime-neutral event-store contracts, aggregate hydration, and event-stream cataloging for Cephalon runtimes.",
       "FileName": "cephalon-eventsourcing.md",
       "NamespaceCount": 4,
-      "TypeCount": 6
+      "TypeCount": 10
     },
     {
       "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
@@ -1379,7 +1379,7 @@
       "AssemblyName": "Cephalon.EventSourcing",
       "FileName": "cephalon-eventsourcing.md",
       "AnchorId": "namespace-cephalon-eventsourcing-services",
-      "TypeCount": 3
+      "TypeCount": 7
     },
     {
       "NamespaceName": "Cephalon.Identity.AspNetCore.Configuration",
@@ -8485,7 +8485,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 0,
-        "Methods": 1
+        "Methods": 4
       }
     },
     {
@@ -8681,6 +8681,36 @@
         "Fields": 0,
         "Properties": 14,
         "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EventTypeDescriptor",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "type-cephalon-eventsourcing-services-eventtypedescriptor",
+      "Declaration": "public sealed class EventTypeDescriptor",
+      "Summary": "Describes one domain-event payload type known to the Cephalon event-type registry.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 3,
+        "Methods": 4
+      }
+    },
+    {
+      "DisplayName": "EventTypeRegistry",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "type-cephalon-eventsourcing-services-eventtyperegistry",
+      "Declaration": "public sealed class EventTypeRegistry",
+      "Summary": "Default merged implementation of \u0060IEventTypeRegistry\u0060.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 5
       }
     },
     {
@@ -11216,6 +11246,36 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEventTypeContributor",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "type-cephalon-eventsourcing-services-ieventtypecontributor",
+      "Declaration": "public interface IEventTypeContributor",
+      "Summary": "Contributes known domain-event type descriptors to the Cephalon event-type registry.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEventTypeRegistry",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "type-cephalon-eventsourcing-services-ieventtyperegistry",
+      "Declaration": "public interface IEventTypeRegistry",
+      "Summary": "Resolves, serializes, and deserializes the domain-event types known to a Cephalon runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 5
       }
     },
     {
@@ -22186,6 +22246,39 @@
       "Summary": "Adds the Cephalon event-sourcing baseline services to the service collection."
     },
     {
+      "DisplayName": "AddCephalonEventType",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventSourcingServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.EventSourcing.Hosting",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-hosting-eventsourcingservicecollectionextensions-addcephaloneventtype-1-microsoft-extensions-dependencyinjection-iservicecollection-system-string-system-string",
+      "Signature": "IServiceCollection AddCephalonEventType\u003CTEvent\u003E(this IServiceCollection services, string name, string[] aliases)",
+      "Summary": "Registers a domain-event type with the Cephalon event-type registry."
+    },
+    {
+      "DisplayName": "AddCephalonEventTypeRegistry",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventSourcingServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.EventSourcing.Hosting",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-hosting-eventsourcingservicecollectionextensions-addcephaloneventtyperegistry-microsoft-extensions-dependencyinjection-iservicecollection",
+      "Signature": "IServiceCollection AddCephalonEventTypeRegistry(this IServiceCollection services)",
+      "Summary": "Adds the shared Cephalon event-type registry if it has not already been registered."
+    },
+    {
+      "DisplayName": "AddCephalonEventTypeWithJsonTypeInfo",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventSourcingServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.EventSourcing.Hosting",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-hosting-eventsourcingservicecollectionextensions-addcephaloneventtypewithjsontypeinfo-1-microsoft-extensions-dependencyinjection-iservicecollection-system-text-json-serialization-metadata-jsontypeinfo-0-system-string-system-string",
+      "Signature": "IServiceCollection AddCephalonEventTypeWithJsonTypeInfo\u003CTEvent\u003E(this IServiceCollection services, JsonTypeInfo\u003CTEvent\u003E jsonTypeInfo, string name, string[] aliases)",
+      "Summary": "Registers a domain-event type with the Cephalon event-type registry using source-generated JSON metadata."
+    },
+    {
       "DisplayName": "AddCephalonGcp",
       "Category": "Methods",
       "DeclaringTypeName": "GcpHostApplicationBuilderExtensions",
@@ -23761,6 +23854,17 @@
     {
       "DisplayName": "Aliases",
       "Category": "Properties",
+      "DeclaringTypeName": "EventTypeDescriptor",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventtypedescriptor-aliases",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Aliases { get; }",
+      "Summary": "Gets the legacy or alternate names that resolve to this event type."
+    },
+    {
+      "DisplayName": "Aliases",
+      "Category": "Properties",
       "DeclaringTypeName": "PatternDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Patterns",
       "AssemblyName": "Cephalon.Abstractions",
@@ -23860,6 +23964,16 @@
     {
       "DisplayName": "All",
       "Category": "Properties",
+      "DeclaringTypeName": "EventTypeRegistry",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventtyperegistry-all",
+      "Signature": "IReadOnlyList\u003CEventTypeDescriptor\u003E All { get; }"
+    },
+    {
+      "DisplayName": "All",
+      "Category": "Properties",
       "DeclaringTypeName": "IBehaviorAdvisoryCatalog",
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
@@ -23889,6 +24003,17 @@
       "AnchorId": "member-p-cephalon-abstractions-eventsourcing-ieventstorecatalog-all",
       "Signature": "IReadOnlyList\u003CEventStreamDescriptor\u003E All { get; }",
       "Summary": "Gets all event-stream descriptors visible to the current runtime."
+    },
+    {
+      "DisplayName": "All",
+      "Category": "Properties",
+      "DeclaringTypeName": "IEventTypeRegistry",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-ieventtyperegistry-all",
+      "Signature": "IReadOnlyList\u003CEventTypeDescriptor\u003E All { get; }",
+      "Summary": "Gets all event-type descriptors known to this registry."
     },
     {
       "DisplayName": "Allow",
@@ -38147,6 +38272,17 @@
       "Summary": "Returns the event-stream descriptors contributed by the current module or package."
     },
     {
+      "DisplayName": "Contribute",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventTypeContributor",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-ieventtypecontributor-contribute",
+      "Signature": "IReadOnlyList\u003CEventTypeDescriptor\u003E Contribute()",
+      "Summary": "Returns the event-type descriptors contributed by this component."
+    },
+    {
       "DisplayName": "ControllerName",
       "Category": "Properties",
       "DeclaringTypeName": "KubernetesGatewayTrafficMaterializerOptions",
@@ -39511,6 +39647,17 @@
       "Summary": "The selected materializer created a new owned control-plane resource."
     },
     {
+      "DisplayName": "Create",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventTypeDescriptor",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-eventtypedescriptor-create-1-system-string-system-collections-generic-ienumerable-system-string",
+      "Signature": "EventTypeDescriptor Create\u003CTEvent\u003E(string name, IEnumerable\u003Cstring\u003E aliases)",
+      "Summary": "Creates a descriptor for an event type using the default \u0060System.Text.Json\u0060 generic serializer."
+    },
+    {
       "DisplayName": "Created",
       "Category": "Methods",
       "DeclaringTypeName": "BehaviorResult",
@@ -39729,6 +39876,17 @@
       "AnchorId": "member-m-cephalon-engine-localization-localizedtextcatalog-createsnapshot-system-string",
       "Signature": "LocalizedResourcesSnapshot CreateSnapshot(string culture)",
       "Summary": "Creates a serialization-friendly snapshot of the merged localized resources."
+    },
+    {
+      "DisplayName": "CreateWithJsonTypeInfo",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventTypeDescriptor",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-eventtypedescriptor-createwithjsontypeinfo-1-system-text-json-serialization-metadata-jsontypeinfo-0-system-string-system-collections-generic-ienumerable-system-string",
+      "Signature": "EventTypeDescriptor CreateWithJsonTypeInfo\u003CTEvent\u003E(JsonTypeInfo\u003CTEvent\u003E jsonTypeInfo, string name, IEnumerable\u003Cstring\u003E aliases)",
+      "Summary": "Creates a descriptor for an event type using source-generated \u0060JsonTypeInfo\u003CT\u003E\u0060 metadata."
     },
     {
       "DisplayName": "Critical",
@@ -44612,6 +44770,38 @@
       "Summary": "Gets the module descriptor used for discovery, ordering, and manifest output."
     },
     {
+      "DisplayName": "Deserialize",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventTypeDescriptor",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-eventtypedescriptor-deserialize-system-string",
+      "Signature": "IDomainEvent Deserialize(string payload)",
+      "Summary": "Deserializes a payload using this descriptor."
+    },
+    {
+      "DisplayName": "Deserialize",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventTypeRegistry",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-eventtyperegistry-deserialize-system-string-system-string",
+      "Signature": "IDomainEvent Deserialize(string eventTypeName, string payload)"
+    },
+    {
+      "DisplayName": "Deserialize",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventTypeRegistry",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-ieventtyperegistry-deserialize-system-string-system-string",
+      "Signature": "IDomainEvent Deserialize(string eventTypeName, string payload)",
+      "Summary": "Deserializes a persisted payload using the descriptor registered for the event-type name."
+    },
+    {
       "DisplayName": "Design",
       "Category": "Fields",
       "DeclaringTypeName": "PatternKind",
@@ -49091,6 +49281,17 @@
     {
       "DisplayName": "Empty",
       "Category": "Properties",
+      "DeclaringTypeName": "EventTypeRegistry",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventtyperegistry-empty",
+      "Signature": "EventTypeRegistry Empty { get; }",
+      "Summary": "Gets an empty event-type registry for direct provider construction scenarios."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
       "DeclaringTypeName": "FeatureFlagEvaluationContext",
       "NamespaceName": "Cephalon.Abstractions.Features",
       "AssemblyName": "Cephalon.Abstractions",
@@ -52072,6 +52273,17 @@
     {
       "DisplayName": "EventType",
       "Category": "Properties",
+      "DeclaringTypeName": "EventTypeDescriptor",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventtypedescriptor-eventtype",
+      "Signature": "Type EventType { get; }",
+      "Summary": "Gets the concrete domain-event CLR type."
+    },
+    {
+      "DisplayName": "EventType",
+      "Category": "Properties",
       "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -52079,6 +52291,28 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-eventtype",
       "Signature": "string EventType { get; set; }",
       "Summary": "The logical event type identifier used by the publication."
+    },
+    {
+      "DisplayName": "EventTypeDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventTypeDescriptor",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-eventtypedescriptor-ctor-system-type-system-string-system-func-cephalon-abstractions-eventsourcing-idomainevent-system-string-system-func-system-string-cephalon-abstractions-eventsourcing-idomainevent-system-collections-generic-ienumerable-system-string",
+      "Signature": "EventTypeDescriptor(Type eventType, string name, Func\u003CIDomainEvent, string\u003E serialize, Func\u003Cstring, IDomainEvent\u003E deserialize, IEnumerable\u003Cstring\u003E aliases)",
+      "Summary": "Initializes a new instance of the \u0060EventTypeDescriptor\u0060 class."
+    },
+    {
+      "DisplayName": "EventTypeRegistry",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventTypeRegistry",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-eventtyperegistry-ctor-system-collections-generic-ienumerable-cephalon-eventsourcing-services-ieventtypecontributor",
+      "Signature": "EventTypeRegistry(IEnumerable\u003CIEventTypeContributor\u003E contributors)",
+      "Summary": "Initializes a new instance of the \u0060EventTypeRegistry\u0060 class."
     },
     {
       "DisplayName": "EventTypeTag",
@@ -60857,6 +61091,27 @@
       "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getmanagedconnectorcommandexecutionhistory-system-string",
       "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult\u003E GetManagedConnectorCommandExecutionHistory(string executionRuntimeId)",
       "Summary": "Gets the bounded managed-connector command-execution history currently recorded for one execution runtime."
+    },
+    {
+      "DisplayName": "GetName",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventTypeRegistry",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-eventtyperegistry-getname-cephalon-abstractions-eventsourcing-idomainevent",
+      "Signature": "string GetName(IDomainEvent evt)"
+    },
+    {
+      "DisplayName": "GetName",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventTypeRegistry",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-ieventtyperegistry-getname-cephalon-abstractions-eventsourcing-idomainevent",
+      "Signature": "string GetName(IDomainEvent evt)",
+      "Summary": "Gets the persisted event-type name for a domain-event instance."
     },
     {
       "DisplayName": "GetPending",
@@ -85308,6 +85563,17 @@
       "AnchorId": "member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-name",
       "Signature": "string Name { get; set; }",
       "Summary": "The stable event name paired with the numeric identifier."
+    },
+    {
+      "DisplayName": "Name",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventTypeDescriptor",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-p-cephalon-eventsourcing-services-eventtypedescriptor-name",
+      "Signature": "string Name { get; }",
+      "Summary": "Gets the stable event-type name persisted by event stores."
     },
     {
       "DisplayName": "Name",
@@ -111079,6 +111345,38 @@
       "Summary": "Gets the SendGrid message identifier when supplied."
     },
     {
+      "DisplayName": "Serialize",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventTypeDescriptor",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-eventtypedescriptor-serialize-cephalon-abstractions-eventsourcing-idomainevent",
+      "Signature": "string Serialize(IDomainEvent evt)",
+      "Summary": "Serializes a domain-event instance using this descriptor."
+    },
+    {
+      "DisplayName": "Serialize",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventTypeRegistry",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-eventtyperegistry-serialize-cephalon-abstractions-eventsourcing-idomainevent",
+      "Signature": "string Serialize(IDomainEvent evt)"
+    },
+    {
+      "DisplayName": "Serialize",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventTypeRegistry",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-ieventtyperegistry-serialize-cephalon-abstractions-eventsourcing-idomainevent",
+      "Signature": "string Serialize(IDomainEvent evt)",
+      "Summary": "Serializes a domain-event payload using the descriptor registered for its concrete event type."
+    },
+    {
       "DisplayName": "ServerId",
       "Category": "Properties",
       "DeclaringTypeName": "MySqlBinlogCaptureOptions",
@@ -123064,6 +123362,48 @@
       "AnchorId": "member-m-cephalon-engine-trust-trustsnapshot-ctor-cephalon-engine-configuration-trustpolicy-system-collections-generic-ireadonlylist-cephalon-engine-trust-packagetrustdecision-system-collections-generic-ireadonlylist-cephalon-engine-trust-capabilitypolicydecision",
       "Signature": "TrustSnapshot(TrustPolicy Policy, IReadOnlyList\u003CPackageTrustDecision\u003E Packages, IReadOnlyList\u003CCapabilityPolicyDecision\u003E Capabilities)",
       "Summary": "Captures the effective trust policy together with evaluated package and capability decisions."
+    },
+    {
+      "DisplayName": "TryFindByName",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventTypeRegistry",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-eventtyperegistry-tryfindbyname-system-string-cephalon-eventsourcing-services-eventtypedescriptor",
+      "Signature": "bool TryFindByName(string eventTypeName, out EventTypeDescriptor descriptor)"
+    },
+    {
+      "DisplayName": "TryFindByName",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventTypeRegistry",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-ieventtyperegistry-tryfindbyname-system-string-cephalon-eventsourcing-services-eventtypedescriptor",
+      "Signature": "bool TryFindByName(string eventTypeName, out EventTypeDescriptor descriptor)",
+      "Summary": "Attempts to find a descriptor by its persisted event-type name or one of its aliases."
+    },
+    {
+      "DisplayName": "TryFindByType",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventTypeRegistry",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-eventtyperegistry-tryfindbytype-system-type-cephalon-eventsourcing-services-eventtypedescriptor",
+      "Signature": "bool TryFindByType(Type eventType, out EventTypeDescriptor descriptor)"
+    },
+    {
+      "DisplayName": "TryFindByType",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventTypeRegistry",
+      "NamespaceName": "Cephalon.EventSourcing.Services",
+      "AssemblyName": "Cephalon.EventSourcing",
+      "FileName": "cephalon-eventsourcing.md",
+      "AnchorId": "member-m-cephalon-eventsourcing-services-ieventtyperegistry-tryfindbytype-system-type-cephalon-eventsourcing-services-eventtypedescriptor",
+      "Signature": "bool TryFindByType(Type eventType, out EventTypeDescriptor descriptor)",
+      "Summary": "Attempts to find a descriptor by the concrete event CLR type."
     },
     {
       "DisplayName": "TryGet",

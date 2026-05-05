@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
-using System.Text.Json;
 using Cassandra;
 using Cephalon.Abstractions.EventSourcing;
+using Cephalon.EventSourcing.Services;
 
 namespace Cephalon.EventSourcing.Cassandra;
 
@@ -24,6 +24,7 @@ namespace Cephalon.EventSourcing.Cassandra;
 public sealed class CassandraEventStore : IEventStore, IDisposable, IAsyncDisposable
 {
     private readonly ICluster _cluster;
+    private readonly IEventTypeRegistry _eventTypes;
     private readonly string _keyspace;
     private readonly string _tableName;
     private ISession? _session;
@@ -37,11 +38,29 @@ public sealed class CassandraEventStore : IEventStore, IDisposable, IAsyncDispos
     /// <param name="keyspace">The Cassandra keyspace that contains the event-streams table.</param>
     /// <param name="tableName">The Cassandra table name used to persist event stream rows.</param>
     public CassandraEventStore(ICluster cluster, string keyspace, string tableName)
+        : this(cluster, keyspace, tableName, EventTypeRegistry.Empty)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CassandraEventStore" /> class.
+    /// </summary>
+    /// <param name="cluster">The Cassandra cluster. Session is opened lazily on first operation.</param>
+    /// <param name="keyspace">The Cassandra keyspace that contains the event-streams table.</param>
+    /// <param name="tableName">The Cassandra table name used to persist event stream rows.</param>
+    /// <param name="eventTypes">The closed event-type registry used to serialize and rehydrate domain events.</param>
+    public CassandraEventStore(
+        ICluster cluster,
+        string keyspace,
+        string tableName,
+        IEventTypeRegistry eventTypes)
     {
         ArgumentNullException.ThrowIfNull(cluster);
+        ArgumentNullException.ThrowIfNull(eventTypes);
         ArgumentException.ThrowIfNullOrWhiteSpace(keyspace);
         ArgumentException.ThrowIfNullOrWhiteSpace(tableName);
         _cluster = cluster;
+        _eventTypes = eventTypes;
         _keyspace = keyspace;
         _tableName = tableName;
     }
@@ -101,10 +120,8 @@ public sealed class CassandraEventStore : IEventStore, IDisposable, IAsyncDispos
                     $"Domain event '{evt.GetType().FullName}' declared stream version {evt.StreamVersion}, but the append expected version {nextVersion}.");
             }
 
-            var eventType = evt.GetType().AssemblyQualifiedName
-                ?? throw new InvalidOperationException($"The event type '{evt.GetType().FullName}' must expose an assembly-qualified name.");
-
-            var payload = JsonSerializer.Serialize(evt, evt.GetType());
+            var eventType = _eventTypes.GetName(evt);
+            var payload = _eventTypes.Serialize(evt);
 
             var bound = ps.Bind(
                 normalizedStreamId,
@@ -155,24 +172,10 @@ public sealed class CassandraEventStore : IEventStore, IDisposable, IAsyncDispos
             var eventTypeName = row["event_type"] as string
                 ?? throw new InvalidOperationException($"Null event_type encountered while reading stream '{normalizedStreamId}'.");
 
-            var eventType = Type.GetType(eventTypeName, throwOnError: false);
-            if (eventType is null)
-            {
-                throw new InvalidOperationException(
-                    $"The CLR type '{eventTypeName}' could not be resolved while reading stream '{normalizedStreamId}'.");
-            }
-
             var payloadJson = row["payload"] as string
                 ?? throw new InvalidOperationException($"Null payload encountered while reading stream '{normalizedStreamId}'.");
 
-            var evt = JsonSerializer.Deserialize(payloadJson, eventType) as IDomainEvent;
-            if (evt is null)
-            {
-                throw new InvalidOperationException(
-                    $"The payload for event type '{eventTypeName}' in stream '{normalizedStreamId}' could not be deserialized as an IDomainEvent.");
-            }
-
-            yield return evt;
+            yield return _eventTypes.Deserialize(eventTypeName, payloadJson);
         }
     }
 

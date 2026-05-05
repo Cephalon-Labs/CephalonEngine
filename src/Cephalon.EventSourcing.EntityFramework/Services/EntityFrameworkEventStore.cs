@@ -1,12 +1,13 @@
 using System.Runtime.CompilerServices;
-using System.Text.Json;
 using Cephalon.Abstractions.EventSourcing;
+using Cephalon.EventSourcing.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cephalon.EventSourcing.EntityFramework.Services;
 
 internal sealed class EntityFrameworkEventStore<TContext>(
-    TContext dbContext) : IEventStore
+    TContext dbContext,
+    IEventTypeRegistry eventTypes) : IEventStore
     where TContext : DbContext, IEntityFrameworkEventContext
 {
     public async Task AppendAsync(
@@ -57,9 +58,8 @@ internal sealed class EntityFrameworkEventStore<TContext>(
             {
                 StreamId = normalizedStreamId,
                 StreamVersion = evt.StreamVersion,
-                EventType = evt.GetType().AssemblyQualifiedName
-                    ?? throw new InvalidOperationException($"The event type '{evt.GetType().FullName}' must expose an assembly-qualified name."),
-                Payload = JsonSerializer.Serialize(evt, evt.GetType()),
+                EventType = eventTypes.GetName(evt),
+                Payload = eventTypes.Serialize(evt),
                 OccurredAtUtc = evt.OccurredAtUtc,
                 AppendedAtUtc = appendedAtUtc
             });
@@ -87,21 +87,7 @@ internal sealed class EntityFrameworkEventStore<TContext>(
 
         await foreach (var entry in query.WithCancellation(cancellationToken).ConfigureAwait(false))
         {
-            var eventType = Type.GetType(entry.EventType, throwOnError: false);
-            if (eventType is null)
-            {
-                throw new InvalidOperationException(
-                    $"The CLR type '{entry.EventType}' could not be resolved while reading stream '{normalizedStreamId}'.");
-            }
-
-            var evt = JsonSerializer.Deserialize(entry.Payload, eventType) as IDomainEvent;
-            if (evt is null)
-            {
-                throw new InvalidOperationException(
-                    $"The payload for event type '{entry.EventType}' in stream '{normalizedStreamId}' could not be deserialized as an IDomainEvent.");
-            }
-
-            yield return evt;
+            yield return eventTypes.Deserialize(entry.EventType, entry.Payload);
         }
     }
 

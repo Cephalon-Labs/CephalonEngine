@@ -1,5 +1,7 @@
 using Cassandra;
 using Cephalon.Abstractions.EventSourcing;
+using Cephalon.EventSourcing.Hosting;
+using Cephalon.EventSourcing.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -37,6 +39,7 @@ public static class CassandraEventSourcingServiceCollectionExtensions
         var hosts = contactPoints
             .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
+        services.AddCephalonEventTypeRegistry();
         services.TryAddSingleton<ICluster>(_ =>
             Cluster.Builder()
                 .AddContactPoints(hosts)
@@ -46,7 +49,8 @@ public static class CassandraEventSourcingServiceCollectionExtensions
         services.TryAddSingleton<IEventStore>(serviceProvider =>
         {
             var cluster = serviceProvider.GetRequiredService<ICluster>();
-            return new CassandraEventStore(cluster, keyspace, tableName);
+            var eventTypes = serviceProvider.GetRequiredService<IEventTypeRegistry>();
+            return new CassandraEventStore(cluster, keyspace, tableName, eventTypes);
         });
 
         return services;

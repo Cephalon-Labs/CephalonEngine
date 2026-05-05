@@ -1,1 +1,2 @@
 #nullable enable
+static Cephalon.EventSourcing.Neo4j.Neo4jEventStore.Create(Neo4j.Driver.IDriver! driver, Cephalon.EventSourcing.Services.IEventTypeRegistry! eventTypes, string! eventLabel = "Event") -> Cephalon.EventSourcing.Neo4j.Neo4jEventStore!

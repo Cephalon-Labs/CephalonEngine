@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
-using System.Text.Json;
 using Cephalon.Abstractions.EventSourcing;
+using Cephalon.EventSourcing.Services;
 using StackExchange.Redis;
 
 namespace Cephalon.EventSourcing.Redis;
@@ -26,6 +26,7 @@ public sealed class RedisEventStore : IEventStore
 {
     private readonly IConnectionMultiplexer _multiplexer;
     private readonly string _keyPrefix;
+    private readonly IEventTypeRegistry _eventTypes;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RedisEventStore" /> class.
@@ -33,11 +34,40 @@ public sealed class RedisEventStore : IEventStore
     /// <param name="multiplexer">The Redis connection multiplexer.</param>
     /// <param name="keyPrefix">The key prefix applied to all stream keys (e.g. <c>"cephalon:"</c>).</param>
     public RedisEventStore(IConnectionMultiplexer multiplexer, string keyPrefix = "cephalon:")
+        : this(multiplexer, EventTypeRegistry.Empty, keyPrefix)
+    {
+    }
+
+    /// <summary>
+    /// Creates a Redis event store that uses the supplied event-type registry.
+    /// </summary>
+    /// <param name="multiplexer">The Redis connection multiplexer.</param>
+    /// <param name="eventTypes">The closed event-type registry used to serialize and rehydrate domain events.</param>
+    /// <param name="keyPrefix">The key prefix applied to all stream keys (e.g. <c>"cephalon:"</c>).</param>
+    /// <returns>A Redis event store wired to the supplied event-type registry.</returns>
+    public static RedisEventStore Create(
+        IConnectionMultiplexer multiplexer,
+        IEventTypeRegistry eventTypes,
+        string keyPrefix = "cephalon:") =>
+        new(multiplexer, eventTypes, keyPrefix);
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RedisEventStore" /> class.
+    /// </summary>
+    /// <param name="multiplexer">The Redis connection multiplexer.</param>
+    /// <param name="eventTypes">The closed event-type registry used to serialize and rehydrate domain events.</param>
+    /// <param name="keyPrefix">The key prefix applied to all stream keys (e.g. <c>"cephalon:"</c>).</param>
+    internal RedisEventStore(
+        IConnectionMultiplexer multiplexer,
+        IEventTypeRegistry eventTypes,
+        string keyPrefix)
     {
         ArgumentNullException.ThrowIfNull(multiplexer);
+        ArgumentNullException.ThrowIfNull(eventTypes);
         ArgumentException.ThrowIfNullOrWhiteSpace(keyPrefix);
         _multiplexer = multiplexer;
         _keyPrefix = keyPrefix;
+        _eventTypes = eventTypes;
     }
 
     /// <inheritdoc />
@@ -88,11 +118,8 @@ public sealed class RedisEventStore : IEventStore
                     $"Domain event '{evt.GetType().FullName}' declared stream version {evt.StreamVersion}, but the append expected version {nextVersion}.");
             }
 
-            var eventType = evt.GetType().AssemblyQualifiedName
-                ?? throw new InvalidOperationException(
-                    $"The event type '{evt.GetType().FullName}' must expose an assembly-qualified name.");
-
-            var payload = JsonSerializer.Serialize(evt, evt.GetType());
+            var eventType = _eventTypes.GetName(evt);
+            var payload = _eventTypes.Serialize(evt);
 
             var fields = new NameValueEntry[]
             {
@@ -135,21 +162,7 @@ public sealed class RedisEventStore : IEventStore
             var eventTypeStr = GetField(entry, "EventType");
             var payload = GetField(entry, "Payload");
 
-            var eventType = Type.GetType(eventTypeStr, throwOnError: false);
-            if (eventType is null)
-            {
-                throw new InvalidOperationException(
-                    $"The CLR type '{eventTypeStr}' could not be resolved while reading stream '{normalizedStreamId}'.");
-            }
-
-            var evt = JsonSerializer.Deserialize(payload, eventType) as IDomainEvent;
-            if (evt is null)
-            {
-                throw new InvalidOperationException(
-                    $"The payload for event type '{eventTypeStr}' in stream '{normalizedStreamId}' could not be deserialized as an IDomainEvent.");
-            }
-
-            yield return evt;
+            yield return _eventTypes.Deserialize(eventTypeStr, payload);
         }
     }
 

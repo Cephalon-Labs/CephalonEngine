@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
-using System.Text.Json;
 using Cephalon.Abstractions.EventSourcing;
+using Cephalon.EventSourcing.Services;
 using OpenSearch.Client;
 using OpenSearch.Net;
 
@@ -9,8 +9,41 @@ namespace Cephalon.EventSourcing.OpenSearch;
 /// <summary>
 /// OpenSearch-backed implementation of <see cref="IEventStore"/> using a search index for event streams.
 /// </summary>
-public sealed class OpenSearchEventStore(OpenSearchClient client, string indexName) : IEventStore
+public sealed class OpenSearchEventStore : IEventStore
 {
+    private readonly OpenSearchClient _client;
+    private readonly IEventTypeRegistry _eventTypes;
+    private readonly string _indexName;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OpenSearchEventStore" /> class.
+    /// </summary>
+    /// <param name="client">The OpenSearch client used to index and read event documents.</param>
+    /// <param name="indexName">The target OpenSearch index name for event stream documents.</param>
+    public OpenSearchEventStore(OpenSearchClient client, string indexName)
+        : this(client, EventTypeRegistry.Empty, indexName)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="OpenSearchEventStore" /> class.
+    /// </summary>
+    /// <param name="client">The OpenSearch client used to index and read event documents.</param>
+    /// <param name="eventTypes">The closed event-type registry used to serialize and rehydrate domain events.</param>
+    /// <param name="indexName">The target OpenSearch index name for event stream documents.</param>
+    public OpenSearchEventStore(
+        OpenSearchClient client,
+        IEventTypeRegistry eventTypes,
+        string indexName)
+    {
+        ArgumentNullException.ThrowIfNull(client);
+        ArgumentNullException.ThrowIfNull(eventTypes);
+        ArgumentException.ThrowIfNullOrWhiteSpace(indexName);
+        _client = client;
+        _eventTypes = eventTypes;
+        _indexName = indexName;
+    }
+
     /// <inheritdoc />
     public async Task AppendAsync(
         string streamId,
@@ -44,16 +77,15 @@ public sealed class OpenSearchEventStore(OpenSearchClient client, string indexNa
             {
                 StreamId = normalizedStreamId,
                 StreamVersion = evt.StreamVersion,
-                EventType = evt.GetType().AssemblyQualifiedName
-                    ?? throw new InvalidOperationException($"The event type '{evt.GetType().FullName}' must expose an assembly-qualified name."),
-                Payload = JsonSerializer.Serialize(evt, evt.GetType()),
+                EventType = _eventTypes.GetName(evt),
+                Payload = _eventTypes.Serialize(evt),
                 OccurredAtUtc = evt.OccurredAtUtc,
                 AppendedAtUtc = appendedAtUtc
             };
 
             var docId = $"{normalizedStreamId}#{evt.StreamVersion}";
-            var response = await client.IndexAsync(entry, idx => idx
-                    .Index(indexName).Id(docId).OpType(OpType.Create),
+            var response = await _client.IndexAsync(entry, idx => idx
+                    .Index(_indexName).Id(docId).OpType(OpType.Create),
                 cancellationToken).ConfigureAwait(false);
 
             if (!response.IsValid)
@@ -77,8 +109,8 @@ public sealed class OpenSearchEventStore(OpenSearchClient client, string indexNa
         if (string.IsNullOrWhiteSpace(streamId)) throw new ArgumentException("Stream id is required.", nameof(streamId));
         var normalizedStreamId = streamId.Trim();
 
-        var response = await client.SearchAsync<OpenSearchEventEntry>(s => s
-            .Index(indexName)
+        var response = await _client.SearchAsync<OpenSearchEventEntry>(s => s
+            .Index(_indexName)
             .Size(10_000)
             .Query(q => q.Bool(b => b.Must(
                 m => m.Term("stream_id", normalizedStreamId),
@@ -92,13 +124,7 @@ public sealed class OpenSearchEventStore(OpenSearchClient client, string indexNa
         foreach (var hit in response.Hits)
         {
             if (hit.Source is null) continue;
-            var eventType = Type.GetType(hit.Source.EventType, throwOnError: false);
-            if (eventType is null)
-                throw new InvalidOperationException($"The CLR type '{hit.Source.EventType}' could not be resolved while reading stream '{normalizedStreamId}'.");
-            var evt = JsonSerializer.Deserialize(hit.Source.Payload, eventType) as IDomainEvent;
-            if (evt is null)
-                throw new InvalidOperationException($"The payload for event type '{hit.Source.EventType}' in stream '{normalizedStreamId}' could not be deserialized as an IDomainEvent.");
-            yield return evt;
+            yield return _eventTypes.Deserialize(hit.Source.EventType, hit.Source.Payload);
         }
     }
 
@@ -108,8 +134,8 @@ public sealed class OpenSearchEventStore(OpenSearchClient client, string indexNa
         if (string.IsNullOrWhiteSpace(streamId)) throw new ArgumentException("Stream id is required.", nameof(streamId));
         var normalizedStreamId = streamId.Trim();
 
-        var response = await client.SearchAsync<OpenSearchEventEntry>(s => s
-            .Index(indexName)
+        var response = await _client.SearchAsync<OpenSearchEventEntry>(s => s
+            .Index(_indexName)
             .Size(1)
             .Query(q => q.Term("stream_id", normalizedStreamId))
             .Sort(ss => ss.Descending("stream_version")),

@@ -1,8 +1,8 @@
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
-using System.Text.Json;
 using Cephalon.Abstractions.EventSourcing;
+using Cephalon.EventSourcing.Services;
 using Qdrant.Client;
 using Qdrant.Client.Grpc;
 
@@ -27,6 +27,7 @@ public sealed class QdrantEventStore : IEventStore, IDisposable
 {
     private readonly QdrantClient _client;
     private readonly string _collectionName;
+    private readonly IEventTypeRegistry _eventTypes;
     private volatile bool _collectionEnsured;
     private readonly SemaphoreSlim _initLock = new(1, 1);
 
@@ -36,11 +37,27 @@ public sealed class QdrantEventStore : IEventStore, IDisposable
     /// <param name="client">The Qdrant client used to manage collections and points.</param>
     /// <param name="collectionName">The Qdrant collection name used to persist event stream points.</param>
     public QdrantEventStore(QdrantClient client, string collectionName)
+        : this(client, collectionName, EventTypeRegistry.Empty)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="QdrantEventStore" /> class.
+    /// </summary>
+    /// <param name="client">The Qdrant client used to manage collections and points.</param>
+    /// <param name="collectionName">The Qdrant collection name used to persist event stream points.</param>
+    /// <param name="eventTypes">The closed event-type registry used to serialize and rehydrate domain events.</param>
+    public QdrantEventStore(
+        QdrantClient client,
+        string collectionName,
+        IEventTypeRegistry eventTypes)
     {
         ArgumentNullException.ThrowIfNull(client);
         ArgumentException.ThrowIfNullOrWhiteSpace(collectionName);
+        ArgumentNullException.ThrowIfNull(eventTypes);
         _client = client;
         _collectionName = collectionName;
+        _eventTypes = eventTypes;
     }
 
     /// <inheritdoc />
@@ -105,10 +122,8 @@ public sealed class QdrantEventStore : IEventStore, IDisposable
                     $"Domain event '{evt.GetType().FullName}' declared stream version {evt.StreamVersion}, but the append expected version {nextVersion}.");
             }
 
-            var eventType = evt.GetType().AssemblyQualifiedName
-                ?? throw new InvalidOperationException($"The event type '{evt.GetType().FullName}' must expose an assembly-qualified name.");
-
-            var payload = JsonSerializer.Serialize(evt, evt.GetType());
+            var eventType = _eventTypes.GetName(evt);
+            var payload = _eventTypes.Serialize(evt);
             var pointId = DeriveGuid($"{normalizedStreamId}:{evt.StreamVersion}");
 
             var point = new PointStruct
@@ -177,22 +192,8 @@ public sealed class QdrantEventStore : IEventStore, IDisposable
         foreach (var p in sortedPoints)
         {
             var eventTypeName = p.Payload["event_type"].StringValue;
-            var eventType = Type.GetType(eventTypeName, throwOnError: false);
-            if (eventType is null)
-            {
-                throw new InvalidOperationException(
-                    $"The CLR type '{eventTypeName}' could not be resolved while reading stream '{normalizedStreamId}'.");
-            }
-
             var payloadJson = p.Payload["payload"].StringValue;
-            var evt = JsonSerializer.Deserialize(payloadJson, eventType) as IDomainEvent;
-            if (evt is null)
-            {
-                throw new InvalidOperationException(
-                    $"The payload for event type '{eventTypeName}' in stream '{normalizedStreamId}' could not be deserialized as an IDomainEvent.");
-            }
-
-            yield return evt;
+            yield return _eventTypes.Deserialize(eventTypeName, payloadJson);
         }
     }
 

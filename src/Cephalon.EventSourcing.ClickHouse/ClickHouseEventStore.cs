@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
-using System.Text.Json;
 using ClickHouse.Driver.ADO;
 using Cephalon.Abstractions.EventSourcing;
+using Cephalon.EventSourcing.Services;
 
 namespace Cephalon.EventSourcing.ClickHouse;
 
@@ -28,6 +28,7 @@ namespace Cephalon.EventSourcing.ClickHouse;
 public sealed class ClickHouseEventStore : IEventStore, IDisposable
 {
     private readonly string _connectionString;
+    private readonly IEventTypeRegistry _eventTypes;
     private readonly string _tableName;
     private volatile bool _tableCreated;
     private readonly SemaphoreSlim _tableLock = new(1, 1);
@@ -38,10 +39,26 @@ public sealed class ClickHouseEventStore : IEventStore, IDisposable
     /// <param name="connectionString">The ClickHouse ADO.NET connection string.</param>
     /// <param name="tableName">The ClickHouse table name used to persist event stream rows.</param>
     public ClickHouseEventStore(string connectionString, string tableName)
+        : this(connectionString, tableName, EventTypeRegistry.Empty)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ClickHouseEventStore" /> class.
+    /// </summary>
+    /// <param name="connectionString">The ClickHouse ADO.NET connection string.</param>
+    /// <param name="tableName">The ClickHouse table name used to persist event stream rows.</param>
+    /// <param name="eventTypes">The closed event-type registry used to serialize and rehydrate domain events.</param>
+    public ClickHouseEventStore(
+        string connectionString,
+        string tableName,
+        IEventTypeRegistry eventTypes)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(connectionString);
         ArgumentException.ThrowIfNullOrWhiteSpace(tableName);
+        ArgumentNullException.ThrowIfNull(eventTypes);
         _connectionString = connectionString;
+        _eventTypes = eventTypes;
         _tableName = tableName;
     }
 
@@ -93,10 +110,8 @@ public sealed class ClickHouseEventStore : IEventStore, IDisposable
                     $"Domain event '{evt.GetType().FullName}' declared stream version {evt.StreamVersion}, but the append expected version {nextVersion}.");
             }
 
-            var eventType = evt.GetType().AssemblyQualifiedName
-                ?? throw new InvalidOperationException($"The event type '{evt.GetType().FullName}' must expose an assembly-qualified name.");
-
-            var payload = JsonSerializer.Serialize(evt, evt.GetType());
+            var eventType = _eventTypes.GetName(evt);
+            var payload = _eventTypes.Serialize(evt);
 
             using var connection = new ClickHouseConnection(_connectionString);
             await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
@@ -148,24 +163,10 @@ public sealed class ClickHouseEventStore : IEventStore, IDisposable
             var eventTypeName = reader["event_type"] as string
                 ?? throw new InvalidOperationException($"Null event_type encountered while reading stream '{normalizedStreamId}'.");
 
-            var eventType = Type.GetType(eventTypeName, throwOnError: false);
-            if (eventType is null)
-            {
-                throw new InvalidOperationException(
-                    $"The CLR type '{eventTypeName}' could not be resolved while reading stream '{normalizedStreamId}'.");
-            }
-
             var payloadJson = reader["payload"] as string
                 ?? throw new InvalidOperationException($"Null payload encountered while reading stream '{normalizedStreamId}'.");
 
-            var evt = JsonSerializer.Deserialize(payloadJson, eventType) as IDomainEvent;
-            if (evt is null)
-            {
-                throw new InvalidOperationException(
-                    $"The payload for event type '{eventTypeName}' in stream '{normalizedStreamId}' could not be deserialized as an IDomainEvent.");
-            }
-
-            yield return evt;
+            yield return _eventTypes.Deserialize(eventTypeName, payloadJson);
         }
     }
 

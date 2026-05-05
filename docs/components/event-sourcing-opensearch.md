@@ -13,8 +13,8 @@
 - a fallback concurrency guard via `OpType.Create` — if a concurrent writer commits the same version, OpenSearch returns HTTP 409 (`ServerError.Status == 409`) and the provider re-reads the actual version before rethrowing `EventStreamConcurrencyException`
 - stream replay through `ReadStreamAsync` returning events ordered by `stream_version` ascending
 - `GetVersionAsync` returning `-1` for a stream that does not yet exist
-- `System.Text.Json` serialization for event payloads using the concrete event CLR type
-- event type round-tripping through `AssemblyQualifiedName`
+- event payload serialization through the shared Cephalon event-type registry
+- event type round-tripping through stable registry names, with descriptor aliases for legacy `AssemblyQualifiedName` rows
 
 ## Main surfaces
 
@@ -34,7 +34,7 @@ builder.Services.AddCephalonOpenSearchEventSourcing(
     indexName: "event-streams");
 ```
 
-`OpenSearchClient` is registered using `TryAdd` semantics — a host that already registered a shared client keeps its own instance. `IEventStore` is registered as a singleton.
+`OpenSearchClient` is registered using `TryAdd` semantics — a host that already registered a shared client keeps its own instance. `IEventStore` is registered as a singleton, and the shared event-type registry is registered if it is not already present. The host still registers concrete event payloads through `AddCephalonEventType<TEvent>(...)` or `AddCephalonEventTypeWithJsonTypeInfo<TEvent>(...)`.
 
 ## Event document schema
 
@@ -44,8 +44,8 @@ Documents are stored with `_id = {streamId}#{streamVersion}`.
 |-------|-----------|------|-------|
 | `StreamId` | `stream_id` | string | Logical aggregate / stream identifier |
 | `StreamVersion` | `stream_version` | long | Per-stream monotonic version (1-based; stream starts at version 1) |
-| `EventType` | `event_type` | string | `AssemblyQualifiedName` of the concrete event CLR type |
-| `Payload` | `payload` | string | `System.Text.Json`-serialized event body using the concrete type |
+| `EventType` | `event_type` | string | Stable Cephalon event-type registry name |
+| `Payload` | `payload` | string | Serialized event body produced by the registered event-type descriptor |
 | `OccurredAtUtc` | `occurred_at_utc` | DateTime | UTC timestamp when the domain event occurred |
 | `AppendedAtUtc` | `appended_at_utc` | DateTime | UTC wall-clock time of the index call |
 | `CorrelationId` | `correlation_id` | string? | Optional causality tracking identifier |
@@ -65,7 +65,7 @@ Documents are stored with `_id = {streamId}#{streamVersion}`.
 
 ## Stream replay
 
-`ReadStreamAsync(streamId, fromVersion)` uses a `bool/must` query combining a `term` on `stream_id` and a `range` on `stream_version >= fromVersion`, sorted ascending by `stream_version`, with `size: 10000`.
+`ReadStreamAsync(streamId, fromVersion)` uses a `bool/must` query combining a `term` on `stream_id` and a `range` on `stream_version >= fromVersion`, sorted ascending by `stream_version`, with `size: 10000`. It resolves event payloads through `IEventTypeRegistry` by `event_type`; a missing descriptor throws `InvalidOperationException`. Descriptors include legacy `AssemblyQualifiedName` aliases by default so older documents can still be read after hosts register the concrete event type.
 
 ## Not shipped in this slice
 

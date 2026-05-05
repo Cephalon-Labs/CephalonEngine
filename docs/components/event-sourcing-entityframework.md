@@ -33,6 +33,7 @@ builder.Services.AddCephalonEventSourcing(options =>
     options.DefaultProvider = "entity-framework";
 });
 
+builder.Services.AddCephalonEventType<OrderPlaced>("orders.order-placed");
 builder.Services.AddCephalonEntityFrameworkEventSourcing<OrdersDbContext>();
 ```
 
@@ -57,7 +58,8 @@ public sealed class OrdersDbContext(DbContextOptions<OrdersDbContext> options)
 - `AppendAsync(..., expectedVersion: -1)` requires a new stream with no persisted events
 - `AppendAsync` throws `EventStreamConcurrencyException` when the persisted version does not match `expectedVersion`
 - appended events must already carry the exact sequential versions being persisted
-- the provider stores the CLR event type as `AssemblyQualifiedName` and serializes payloads through `System.Text.Json`
+- the provider stores the stable Cephalon event-type registry name and serializes payloads through the registered event-type descriptor
+- descriptors include legacy `AssemblyQualifiedName` aliases by default so older rows can still be read after hosts register the concrete event type
 
 ## Not shipped in this slice
 

@@ -1,4 +1,6 @@
 using Cephalon.Abstractions.EventSourcing;
+using Cephalon.EventSourcing.Hosting;
+using Cephalon.EventSourcing.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -45,7 +47,12 @@ public static class ClickHouseEventSourcingServiceCollectionExtensions
 
         var connectionString = $"Host={host};Port=8123;Database={database};Username={username};Password={password}";
 
-        services.TryAddSingleton<IEventStore>(_ => new ClickHouseEventStore(connectionString, tableName));
+        services.AddCephalonEventTypeRegistry();
+        services.TryAddSingleton<IEventStore>(serviceProvider =>
+        {
+            var eventTypes = serviceProvider.GetRequiredService<IEventTypeRegistry>();
+            return new ClickHouseEventStore(connectionString, tableName, eventTypes);
+        });
 
         return services;
     }

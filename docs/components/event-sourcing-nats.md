@@ -11,8 +11,8 @@
 - enforces optimistic concurrency via a pre-append `GetVersionAsync` check and `CreateAsync` which throws `NatsKVCreateException` if the key already exists (caught and rethrown as `EventStreamConcurrencyException`)
 - creates or updates the KV bucket on first operation via `CreateOrUpdateStoreAsync`
 - reads streams by collecting all keys matching the `{streamId}/` prefix with parsed version >= `fromVersion`, sorting lexicographically (which equals numeric order due to zero-padding), and fetching each entry
-- serializes event payloads with `System.Text.Json`
-- reconstructs domain events by resolving `Type.GetType(AssemblyQualifiedName)` and deserializing via `JsonSerializer`
+- serializes event payloads through the shared Cephalon event-type registry
+- reconstructs domain events through stable registry names, with descriptor aliases for legacy `AssemblyQualifiedName` rows
 - `NatsConnection` does NOT connect on construction — connection is deferred to first use, so DI resolution does not require a live NATS server
 
 ## Main surfaces
@@ -33,6 +33,8 @@ services.AddCephalonNatsEventSourcing(
     bucketName: "cephalon-events");
 ```
 
+The method registers `IEventStore` and the shared event-type registry. The host still registers concrete event payloads through `AddCephalonEventType<TEvent>(...)` or `AddCephalonEventTypeWithJsonTypeInfo<TEvent>(...)`.
+
 ## KV entry schema
 
 | Field | Notes |
@@ -46,8 +48,8 @@ services.AddCephalonNatsEventSourcing(
 |-------|------|-------|
 | `StreamId` | string | Stream identifier |
 | `StreamVersion` | long | Event version within the stream |
-| `EventType` | string | Assembly-qualified CLR type name |
-| `Payload` | string | JSON-serialized event body |
+| `EventType` | string | Stable Cephalon event-type registry name |
+| `Payload` | string | Serialized event body produced by the registered event-type descriptor |
 | `OccurredAtUtc` | DateTime | UTC timestamp when the domain event occurred |
 | `AppendedAtUtc` | DateTime | UTC timestamp when the event was appended |
 

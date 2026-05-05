@@ -861,6 +861,15 @@ Browse the published API surface by public member.
 - [AddCephalonEventSourcing](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-hosting-eventsourcingservicecollectionextensions-addcephaloneventsourcing-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-eventsourcing-configuration-eventsourcingoptions): `Methods` on `EventSourcingServiceCollectionExtensions` in `Cephalon.EventSourcing.Hosting` (`Cephalon.EventSourcing`) [Browse](browse.html?q=AddCephalonEventSourcing&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Hosting&scope=members)
   - Adds the Cephalon event-sourcing baseline services to the service collection.
   - `IServiceCollection AddCephalonEventSourcing(this IServiceCollection services, Action<EventSourcingOptions> configure)`
+- [AddCephalonEventType](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-hosting-eventsourcingservicecollectionextensions-addcephaloneventtype-1-microsoft-extensions-dependencyinjection-iservicecollection-system-string-system-string): `Methods` on `EventSourcingServiceCollectionExtensions` in `Cephalon.EventSourcing.Hosting` (`Cephalon.EventSourcing`) [Browse](browse.html?q=AddCephalonEventType&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Hosting&scope=members)
+  - Registers a domain-event type with the Cephalon event-type registry.
+  - `IServiceCollection AddCephalonEventType<TEvent>(this IServiceCollection services, string name, string[] aliases)`
+- [AddCephalonEventTypeRegistry](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-hosting-eventsourcingservicecollectionextensions-addcephaloneventtyperegistry-microsoft-extensions-dependencyinjection-iservicecollection): `Methods` on `EventSourcingServiceCollectionExtensions` in `Cephalon.EventSourcing.Hosting` (`Cephalon.EventSourcing`) [Browse](browse.html?q=AddCephalonEventTypeRegistry&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Hosting&scope=members)
+  - Adds the shared Cephalon event-type registry if it has not already been registered.
+  - `IServiceCollection AddCephalonEventTypeRegistry(this IServiceCollection services)`
+- [AddCephalonEventTypeWithJsonTypeInfo](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-hosting-eventsourcingservicecollectionextensions-addcephaloneventtypewithjsontypeinfo-1-microsoft-extensions-dependencyinjection-iservicecollection-system-text-json-serialization-metadata-jsontypeinfo-0-system-string-system-string): `Methods` on `EventSourcingServiceCollectionExtensions` in `Cephalon.EventSourcing.Hosting` (`Cephalon.EventSourcing`) [Browse](browse.html?q=AddCephalonEventTypeWithJsonTypeInfo&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Hosting&scope=members)
+  - Registers a domain-event type with the Cephalon event-type registry using source-generated JSON metadata.
+  - `IServiceCollection AddCephalonEventTypeWithJsonTypeInfo<TEvent>(this IServiceCollection services, JsonTypeInfo<TEvent> jsonTypeInfo, string name, string[] aliases)`
 - [AddCephalonGcp](cephalon-observability-gcp.md#member-m-cephalon-observability-gcp-hosting-gcphostapplicationbuilderextensions-addcephalongcp-1-0-system-action-cephalon-observability-gcp-configuration-gcptelemetryexportoptions): `Methods` on `GcpHostApplicationBuilderExtensions` in `Cephalon.Observability.Gcp.Hosting` (`Cephalon.Observability.Gcp`) [Browse](browse.html?q=AddCephalonGcp&assembly=Cephalon.Observability.Gcp&namespace=Cephalon.Observability.Gcp.Hosting&scope=members)
   - Adds GCP-aware OpenTelemetry registration for the Cephalon engine diagnostics surface.
   - `TBuilder AddCephalonGcp<TBuilder>(this TBuilder builder, Action<GcpTelemetryExportOptions> configure)`
@@ -1290,6 +1299,9 @@ Browse the published API surface by public member.
 - [Algorithm](cephalon-engine.md#member-p-cephalon-engine-configuration-ratelimitingsettings-algorithm): `Properties` on `RateLimitingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Algorithm&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the requested rate-limiting algorithm, such as `FixedWindow` or `TokenBucket`.
   - `string Algorithm { get; }`
+- [Aliases](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventtypedescriptor-aliases): `Properties` on `EventTypeDescriptor` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Aliases&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets the legacy or alternate names that resolve to this event type.
+  - `IReadOnlyList<string> Aliases { get; }`
 - [Aliases](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-patterndescriptor-aliases): `Properties` on `PatternDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Aliases&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets optional aliases that can resolve to the same pattern.
   - `IReadOnlyList<string> Aliases { get; }`
@@ -1317,6 +1329,8 @@ Browse the published API surface by public member.
 - [All](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventstreamcatalog-all): `Properties` on `EventStreamCatalog` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=All&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Gets all event-stream descriptors contributed to the current runtime.
   - `IReadOnlyList<EventStreamDescriptor> All { get; }`
+- [All](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventtyperegistry-all): `Properties` on `EventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=All&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - `IReadOnlyList<EventTypeDescriptor> All { get; }`
 - [All](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehavioradvisorycatalog-all): `Properties` on `IBehaviorAdvisoryCatalog` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=All&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets all active advisories.
   - `IReadOnlyList<IBehaviorAdvisory> All { get; }`
@@ -1326,6 +1340,9 @@ Browse the published API surface by public member.
 - [All](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-ieventstorecatalog-all): `Properties` on `IEventStoreCatalog` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=All&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets all event-stream descriptors visible to the current runtime.
   - `IReadOnlyList<EventStreamDescriptor> All { get; }`
+- [All](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-ieventtyperegistry-all): `Properties` on `IEventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=All&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets all event-type descriptors known to this registry.
+  - `IReadOnlyList<EventTypeDescriptor> All { get; }`
 - [Allow](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutiondecision-allow-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `AgentToolExecutionDecision` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Allow&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Creates an allow decision.
   - `AgentToolExecutionDecision Allow(string reason, IReadOnlyDictionary<string, string> metadata)`
@@ -5220,6 +5237,9 @@ Browse the published API surface by public member.
 - [Contribute](cephalon-abstractions.md#member-m-cephalon-abstractions-eventsourcing-ieventstorecontributor-contribute): `Methods` on `IEventStoreContributor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Contribute&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Returns the event-stream descriptors contributed by the current module or package.
   - `IReadOnlyList<EventStreamDescriptor> Contribute()`
+- [Contribute](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-ieventtypecontributor-contribute): `Methods` on `IEventTypeContributor` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Contribute&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Returns the event-type descriptors contributed by this component.
+  - `IReadOnlyList<EventTypeDescriptor> Contribute()`
 - [ControllerName](cephalon-edge-kubernetesgateway.md#member-p-cephalon-edge-kubernetesgateway-configuration-kubernetesgatewaytrafficmaterializeroptions-controllername): `Properties` on `KubernetesGatewayTrafficMaterializerOptions` in `Cephalon.Edge.KubernetesGateway.Configuration` (`Cephalon.Edge.KubernetesGateway`) [Browse](browse.html?q=ControllerName&assembly=Cephalon.Edge.KubernetesGateway&namespace=Cephalon.Edge.KubernetesGateway.Configuration&scope=members)
   - Gets or sets the optional Gateway controller name that owns the configured GatewayClass.
   - `string ControllerName { get; set; }`
@@ -5592,6 +5612,9 @@ Browse the published API surface by public member.
 - [Create](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-create): `Fields` on `CellTrafficAutomationLifecycleActions` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Create&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - The selected materializer created a new owned control-plane resource.
   - `const string Create`
+- [Create](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventtypedescriptor-create-1-system-string-system-collections-generic-ienumerable-system-string): `Methods` on `EventTypeDescriptor` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Create&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Creates a descriptor for an event type using the default `System.Text.Json` generic serializer.
+  - `EventTypeDescriptor Create<TEvent>(string name, IEnumerable<string> aliases)`
 - [Created](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorresult-created-1-0-system-string-system-string): `Methods` on `BehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Created&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates a created result with a payload value.
   - `BehaviorResult<T> Created<T>(T value, string message, string code)`
@@ -5652,6 +5675,9 @@ Browse the published API surface by public member.
 - [CreateSnapshot](cephalon-engine.md#member-m-cephalon-engine-localization-localizedtextcatalog-createsnapshot-system-string): `Methods` on `LocalizedTextCatalog` in `Cephalon.Engine.Localization` (`Cephalon.Engine`) [Browse](browse.html?q=CreateSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Localization&scope=members)
   - Creates a serialization-friendly snapshot of the merged localized resources.
   - `LocalizedResourcesSnapshot CreateSnapshot(string culture)`
+- [CreateWithJsonTypeInfo](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventtypedescriptor-createwithjsontypeinfo-1-system-text-json-serialization-metadata-jsontypeinfo-0-system-string-system-collections-generic-ienumerable-system-string): `Methods` on `EventTypeDescriptor` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=CreateWithJsonTypeInfo&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Creates a descriptor for an event type using source-generated `JsonTypeInfo<T>` metadata.
+  - `EventTypeDescriptor CreateWithJsonTypeInfo<TEvent>(JsonTypeInfo<TEvent> jsonTypeInfo, string name, IEnumerable<string> aliases)`
 - [Critical](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behavioradvisoryseverity-critical): `Fields` on `BehaviorAdvisorySeverity` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Critical&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Critical — immediate attention recommended.
   - `const BehaviorAdvisorySeverity Critical`
@@ -6984,6 +7010,14 @@ Browse the published API surface by public member.
 - [Descriptor](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-modulebase-descriptor): `Properties` on `ModuleBase` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=Descriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
   - Gets the module descriptor used for discovery, ordering, and manifest output.
   - `ModuleDescriptor Descriptor { get; }`
+- [Deserialize](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventtypedescriptor-deserialize-system-string): `Methods` on `EventTypeDescriptor` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Deserialize&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Deserializes a payload using this descriptor.
+  - `IDomainEvent Deserialize(string payload)`
+- [Deserialize](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventtyperegistry-deserialize-system-string-system-string): `Methods` on `EventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Deserialize&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - `IDomainEvent Deserialize(string eventTypeName, string payload)`
+- [Deserialize](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-ieventtyperegistry-deserialize-system-string-system-string): `Methods` on `IEventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Deserialize&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Deserializes a persisted payload using the descriptor registered for the event-type name.
+  - `IDomainEvent Deserialize(string eventTypeName, string payload)`
 - [Design](cephalon-abstractions.md#member-f-cephalon-abstractions-patterns-patternkind-design): `Fields` on `PatternKind` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=Design&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Identifies a design pattern.
   - `const PatternKind Design`
@@ -8208,6 +8242,9 @@ Browse the published API surface by public member.
 - [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-empty): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets an empty runtime summary when no dispatch observations have been reported yet.
   - `EventDispatchRuntimeSummary Empty { get; }`
+- [Empty](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventtyperegistry-empty): `Properties` on `EventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Empty&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets an empty event-type registry for direct provider construction scenarios.
+  - `EventTypeRegistry Empty { get; }`
 - [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationcontext-empty): `Properties` on `FeatureFlagEvaluationContext` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
   - Gets an empty feature-flag evaluation context.
   - `FeatureFlagEvaluationContext Empty { get; }`
@@ -9021,9 +9058,18 @@ Browse the published API surface by public member.
 - [EventType](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationresult-eventtype): `Properties` on `EventPublicationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The logical event type identifier.
   - `string EventType { get; set; }`
+- [EventType](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventtypedescriptor-eventtype): `Properties` on `EventTypeDescriptor` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=EventType&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets the concrete domain-event CLR type.
+  - `Type EventType { get; }`
 - [EventType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographypublicationruntimestate-eventtype): `Properties` on `SagaChoreographyPublicationRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The logical event type identifier used by the publication.
   - `string EventType { get; set; }`
+- [EventTypeDescriptor](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventtypedescriptor-ctor-system-type-system-string-system-func-cephalon-abstractions-eventsourcing-idomainevent-system-string-system-func-system-string-cephalon-abstractions-eventsourcing-idomainevent-system-collections-generic-ienumerable-system-string): `Constructors` on `EventTypeDescriptor` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=EventTypeDescriptor&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Initializes a new instance of the `EventTypeDescriptor` class.
+  - `EventTypeDescriptor(Type eventType, string name, Func<IDomainEvent, string> serialize, Func<string, IDomainEvent> deserialize, IEnumerable<string> aliases)`
+- [EventTypeRegistry](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventtyperegistry-ctor-system-collections-generic-ienumerable-cephalon-eventsourcing-services-ieventtypecontributor): `Constructors` on `EventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=EventTypeRegistry&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Initializes a new instance of the `EventTypeRegistry` class.
+  - `EventTypeRegistry(IEnumerable<IEventTypeContributor> contributors)`
 - [EventTypeTag](cephalon-eventing.md#member-f-cephalon-eventing-services-eventingdiagnostics-eventtypetag): `Fields` on `EventingDiagnostics` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventTypeTag&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Stable Cephalon-prefix tag carrying the event type emitted on the activity.
   - `const string EventTypeTag`
@@ -11424,6 +11470,11 @@ Browse the published API surface by public member.
 - [GetManagedConnectorCommandExecutionHistory](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getmanagedconnectorcommandexecutionhistory-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetManagedConnectorCommandExecutionHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the bounded managed-connector command-execution history currently recorded for one execution runtime.
   - `IReadOnlyList<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult> GetManagedConnectorCommandExecutionHistory(string executionRuntimeId)`
+- [GetName](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventtyperegistry-getname-cephalon-abstractions-eventsourcing-idomainevent): `Methods` on `EventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=GetName&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - `string GetName(IDomainEvent evt)`
+- [GetName](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-ieventtyperegistry-getname-cephalon-abstractions-eventsourcing-idomainevent): `Methods` on `IEventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=GetName&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets the persisted event-type name for a domain-event instance.
+  - `string GetName(IDomainEvent evt)`
 - [GetPending](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore-getpending-system-datetimeoffset-system-int32-system-boolean): `Methods` on `ITenantInvitationDeliveryRetryStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=GetPending&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets retry entries that are pending and optionally due at or before the supplied timestamp.
   - `IReadOnlyList<TenantInvitationDeliveryRetryDescriptor> GetPending(DateTimeOffset atUtc, int limit, bool dueOnly)`
@@ -18112,6 +18163,9 @@ Browse the published API surface by public member.
 - [Name](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticeventdefinition-name): `Properties` on `DiagnosticEventDefinition` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Name&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The stable event name paired with the numeric identifier.
   - `string Name { get; set; }`
+- [Name](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventtypedescriptor-name): `Properties` on `EventTypeDescriptor` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Name&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets the stable event-type name persisted by event stores.
+  - `string Name { get; }`
 - [Name](cephalon-aspnetcore-grpc.md#member-p-cephalon-aspnetcore-grpc-contracts-discovery-hellorequest-name): `Properties` on `HelloRequest` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=Name&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - The display name to greet.
   - `string Name { get; set; }`
@@ -25152,6 +25206,14 @@ Browse the published API surface by public member.
 - [SendGridMessageId](cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-sendgridmessageid): `Properties` on `SendGridInvitationDeliveryStatusCallbackEventResult` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`) [Browse](browse.html?q=SendGridMessageId&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting&scope=members)
   - Gets the SendGrid message identifier when supplied.
   - `string SendGridMessageId { get; }`
+- [Serialize](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventtypedescriptor-serialize-cephalon-abstractions-eventsourcing-idomainevent): `Methods` on `EventTypeDescriptor` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Serialize&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Serializes a domain-event instance using this descriptor.
+  - `string Serialize(IDomainEvent evt)`
+- [Serialize](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventtyperegistry-serialize-cephalon-abstractions-eventsourcing-idomainevent): `Methods` on `EventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Serialize&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - `string Serialize(IDomainEvent evt)`
+- [Serialize](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-ieventtyperegistry-serialize-cephalon-abstractions-eventsourcing-idomainevent): `Methods` on `IEventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Serialize&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Serializes a domain-event payload using the descriptor registered for its concrete event type.
+  - `string Serialize(IDomainEvent evt)`
 - [ServerId](cephalon-data-mysql.md#member-p-cephalon-data-mysql-configuration-mysqlbinlogcaptureoptions-serverid): `Properties` on `MySqlBinlogCaptureOptions` in `Cephalon.Data.MySql.Configuration` (`Cephalon.Data.MySql`) [Browse](browse.html?q=ServerId&assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Configuration&scope=members)
   - Gets or sets the replication-client server identifier used for this capture connection.
   - `int ServerId { get; set; }`
@@ -28422,6 +28484,16 @@ Browse the published API surface by public member.
 - [TrustSnapshot](cephalon-engine.md#member-m-cephalon-engine-trust-trustsnapshot-ctor-cephalon-engine-configuration-trustpolicy-system-collections-generic-ireadonlylist-cephalon-engine-trust-packagetrustdecision-system-collections-generic-ireadonlylist-cephalon-engine-trust-capabilitypolicydecision): `Constructors` on `TrustSnapshot` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=TrustSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - Captures the effective trust policy together with evaluated package and capability decisions.
   - `TrustSnapshot(TrustPolicy Policy, IReadOnlyList<PackageTrustDecision> Packages, IReadOnlyList<CapabilityPolicyDecision> Capabilities)`
+- [TryFindByName](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventtyperegistry-tryfindbyname-system-string-cephalon-eventsourcing-services-eventtypedescriptor): `Methods` on `EventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=TryFindByName&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - `bool TryFindByName(string eventTypeName, out EventTypeDescriptor descriptor)`
+- [TryFindByName](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-ieventtyperegistry-tryfindbyname-system-string-cephalon-eventsourcing-services-eventtypedescriptor): `Methods` on `IEventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=TryFindByName&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Attempts to find a descriptor by its persisted event-type name or one of its aliases.
+  - `bool TryFindByName(string eventTypeName, out EventTypeDescriptor descriptor)`
+- [TryFindByType](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventtyperegistry-tryfindbytype-system-type-cephalon-eventsourcing-services-eventtypedescriptor): `Methods` on `EventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=TryFindByType&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - `bool TryFindByType(Type eventType, out EventTypeDescriptor descriptor)`
+- [TryFindByType](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-ieventtyperegistry-tryfindbytype-system-type-cephalon-eventsourcing-services-eventtypedescriptor): `Methods` on `IEventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=TryFindByType&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Attempts to find a descriptor by the concrete event CLR type.
+  - `bool TryFindByType(Type eventType, out EventTypeDescriptor descriptor)`
 - [TryGet](cephalon-agentics.md#member-m-cephalon-agentics-services-iagenttoolcatalog-tryget-system-string-cephalon-agentics-services-agenttooldescriptor): `Methods` on `IAgentToolCatalog` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Attempts to resolve a tool descriptor by identifier.
   - `bool TryGet(string toolId, out AgentToolDescriptor tool)`

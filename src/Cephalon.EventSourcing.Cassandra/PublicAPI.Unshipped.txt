@@ -1,1 +1,2 @@
 #nullable enable
+Cephalon.EventSourcing.Cassandra.CassandraEventStore.CassandraEventStore(Cassandra.ICluster! cluster, string! keyspace, string! tableName, Cephalon.EventSourcing.Services.IEventTypeRegistry! eventTypes) -> void

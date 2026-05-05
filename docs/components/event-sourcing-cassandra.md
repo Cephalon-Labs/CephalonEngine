@@ -13,8 +13,8 @@
 - a fallback concurrency guard via LWT `INSERT IF NOT EXISTS` — if a concurrent writer commits the same version between the version read and the insert, Cassandra returns `[applied]=false` and the provider re-reads the actual version before rethrowing `EventStreamConcurrencyException`
 - stream replay through `ReadStreamAsync` returning events ordered by `stream_version` ascending as an `IAsyncEnumerable<IDomainEvent>`
 - `GetVersionAsync` returning `-1` for a stream that does not exist yet
-- `System.Text.Json` serialization for event payloads using the concrete event CLR type
-- event type round-tripping through `AssemblyQualifiedName` — stored as written by the CLR and resolved back via `Type.GetType()` on read
+- event payload serialization through the shared Cephalon event-type registry
+- event type round-tripping through stable registry names, with descriptor aliases for legacy `AssemblyQualifiedName` rows
 - lazy session initialization — `ICluster` is stored at construction time; `ISession` is opened on first operation using a `SemaphoreSlim(1,1)` guard
 
 ## Main surfaces
@@ -45,7 +45,7 @@ builder.Services.AddCephalonCassandraEventSourcing(
     tableName: "domain_events");
 ```
 
-The method registers `ICluster` and `IEventStore` using `TryAdd` semantics — a host that already registered a shared `ICluster` keeps its own instance.
+The method registers `ICluster`, `IEventStore`, and the shared event-type registry using `TryAdd` semantics — a host that already registered a shared `ICluster` keeps its own instance. The host still registers concrete event payloads through `AddCephalonEventType<TEvent>(...)` or `AddCephalonEventTypeWithJsonTypeInfo<TEvent>(...)`.
 
 ## Event-streams table schema
 
@@ -53,8 +53,8 @@ The method registers `ICluster` and `IEventStore` using `TryAdd` semantics — a
 |--------|----------|-------|
 | `stream_id` | `text` | Logical aggregate / stream identifier (partition key) |
 | `stream_version` | `bigint` | Per-stream monotonic version (clustering key, ASC order) |
-| `event_type` | `text` | `AssemblyQualifiedName` of the concrete event CLR type |
-| `payload` | `text` | `System.Text.Json`-serialized event body using the concrete type |
+| `event_type` | `text` | Stable Cephalon event-type registry name |
+| `payload` | `text` | Serialized event body produced by the registered event-type descriptor |
 | `occurred_at_utc` | `timestamp` | `IDomainEvent.OccurredAtUtc` as stored by the domain event |
 | `appended_at_utc` | `timestamp` | UTC wall-clock time of the append operation |
 
@@ -88,7 +88,7 @@ WHERE stream_id = ? AND stream_version >= ?
 ORDER BY stream_version ASC
 ```
 
-It returns an `IAsyncEnumerable<IDomainEvent>`, yielding events one by one as the `RowSet` is iterated. The CLR type is resolved from `event_type` via `Type.GetType(throwOnError: false)` — a missing type throws `InvalidOperationException` with a message that names the unresolvable type and the stream.
+It returns an `IAsyncEnumerable<IDomainEvent>`, yielding events one by one as the `RowSet` is iterated. The event payload is resolved through `IEventTypeRegistry` by `event_type`; a missing descriptor throws `InvalidOperationException` with a message that names the unregistered type name and the stream. Descriptors include legacy `AssemblyQualifiedName` aliases by default so older rows can still be read after hosts register the concrete event type.
 
 ## Table bootstrap
 

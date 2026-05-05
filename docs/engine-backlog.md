@@ -24,6 +24,41 @@ Current focus:
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
 - treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md) for release validation, and `cephalon doctor --scorecard <path>` provides a local CLI readback over that generated artifact without becoming source truth
 
+### ENG-461 Remove EventSourcing persisted type-name reflection
+
+Status: done
+Estimate: 5
+Issue: #1060
+
+Why:
+
+- the ten `Cephalon.EventSourcing.*` providers still persisted CLR event type names and rehydrated payloads through provider-local `Type.GetType(...)`
+- the remediation path is uniform across providers: a shared event-type registry gives apps stable persisted names, serializer descriptors, and legacy aliases without provider-local string-to-type reflection
+- the deployment-mode manifest must remove only the hazards actually retired and keep global trim, Native AOT, and single-file support `not-claimed`
+
+Delivered:
+
+- add `EventTypeDescriptor`, `IEventTypeContributor`, `IEventTypeRegistry`, and `EventTypeRegistry` to `Cephalon.EventSourcing`
+- add `AddCephalonEventType<TEvent>(...)`, `AddCephalonEventTypeWithJsonTypeInfo(...)`, and `AddCephalonEventTypeRegistry()` registration helpers
+- move Cassandra, ClickHouse, Elasticsearch, Entity Framework, MongoDB, NATS, Neo4j, OpenSearch, Qdrant, and Redis event stores to persist stable registry names and deserialize through `IEventTypeRegistry`
+- expose registry-aware direct-construction paths for provider stores without reintroducing persisted type-name reflection
+- keep legacy `AssemblyQualifiedName` rows readable through descriptor aliases when hosts register the concrete event type
+- remove the ten EventSourcing medium-tier package rows from `scripts/deployment-mode-support.json`, reducing the current manifest-backed inventory to 10 package entries, 7 packages with known hazards, and 35 known hazard entries
+- update component docs, deployment-mode support, trim/AOT hazard inventory, compatibility, `.NET 11` readiness, reference docs, architecture follow-ups, roadmap, backlog, and project memory without widening global support claims
+
+Validation:
+
+- passed `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --no-restore -m:1 --filter FullyQualifiedName~Cephalon.Tests.EventSourcing.EventStoreTests` (6 tests)
+- passed `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj --no-restore -m:1 --filter "FullyQualifiedName~PackageSurfaceTests.EventSourcingProvidersUseRegistryInsteadOfPersistedTypeNameReflection|FullyQualifiedName~PackageSurfaceTests.EventSourcingAssemblyExposesOnlyTheDocumentedPackContracts"` (11 tests)
+- passed `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/deployment-mode-support-manifest.Tests.ps1 -Output Detailed` (32 tests)
+- passed `pwsh ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode all -SkipPublish -OutputPath artifacts/deployment-mode-claims-eng461` with aggregate `not-claimed`, 10 package entries, 7 packages with known hazards, 35 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim
+- passed `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/validate-deployment-mode-claims.Tests.ps1 -Output Detailed` (77 tests)
+- passed `pwsh ./scripts/publish-reference-docs.ps1 -Configuration Debug` after the public EventSourcing API addition (solution build succeeded with 0 warnings / 0 errors; 86 reference doc files generated)
+
+Follow-up later:
+
+- continue structural remediation for the remaining `medium` `Cephalon.Behaviors.Http` and `Cephalon.Data` dispatch hazards before promoting any global deployment-mode row
+
 ### ENG-460 Remove remaining CDC capture failure metadata reflection
 
 Status: done
@@ -13230,6 +13265,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-458 Emit durable execution adapter slots: `Cephalon.Behaviors.SourceGen` now emits closed `DurableExecutionSlot.For<TBehavior, TInput, TState, TOutput>()` registrations for generated durable behaviors, `Cephalon.Behaviors.Patterns` prefers those slots in strategy/catalog paths before `DurableExecutionSlot.ForType(...)`, and the deployment-mode manifest keeps the package `high` while the runtime-discovery fallback remains. Current manifest output stayed at 22 package entries, 19 packages with known hazards, 51 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability (shipped)
 - ENG-459 Remove MySQL capture failure metadata reflection: `Cephalon.Data.MySql` now projects hosted-service capture failure metadata through a typed internal failure metadata contract instead of duck-typed `FailureKind` / `Metadata` property reflection, `scripts/deployment-mode-support.json` removes those two hosted-service hazards while keeping the package `high` for the third-party `SciSharp.MySQL.Replication` non-public transport adapter path, and current manifest output reports 22 package entries, 19 packages with known hazards, 49 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability (shipped)
 - ENG-460 Remove remaining CDC capture failure metadata reflection: `Cephalon.Data.Postgres` and `Cephalon.Data.Oracle` now project hosted-service capture failure metadata through typed internal failure metadata contracts instead of duck-typed `FailureKind` / `Metadata` property reflection, `scripts/deployment-mode-support.json` removes the two Postgres rows and two Oracle rows, and current manifest output reports 20 package entries, 17 packages with known hazards, 45 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability (shipped)
+- ENG-461 Remove EventSourcing persisted type-name reflection: the EventSourcing base pack now owns `EventTypeDescriptor`, `IEventTypeContributor`, `IEventTypeRegistry`, registry registration helpers, stable event names, serializer descriptors, source-generated `JsonTypeInfo` registration, and default legacy `AssemblyQualifiedName` aliases; all ten provider packs now persist registry names and deserialize through `IEventTypeRegistry` instead of provider-local `Type.GetType(...)`, with registry-aware direct-construction paths for provider stores; `scripts/deployment-mode-support.json` removes the ten EventSourcing medium rows and current manifest output reports 10 package entries, 7 packages with known hazards, 35 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility (shipped)
 
 ### Later / not scheduled yet
 

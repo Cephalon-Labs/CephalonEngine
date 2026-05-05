@@ -978,6 +978,10 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.EventSourcing.Hosting.EventSourcingServiceCollectionExtensions),
             typeof(global::Cephalon.EventSourcing.Registration.EventSourcingEngineBuilderExtensions),
             typeof(global::Cephalon.EventSourcing.Services.AggregateHydrator<,>),
+            typeof(global::Cephalon.EventSourcing.Services.EventTypeDescriptor),
+            typeof(global::Cephalon.EventSourcing.Services.EventTypeRegistry),
+            typeof(global::Cephalon.EventSourcing.Services.IEventTypeContributor),
+            typeof(global::Cephalon.EventSourcing.Services.IEventTypeRegistry),
             typeof(global::Cephalon.EventSourcing.Services.EventStreamCatalog),
             typeof(global::Cephalon.EventSourcing.Services.EventStreamRegistry));
     }
@@ -2454,6 +2458,33 @@ public sealed class PackageSurfaceTests
         Assert.DoesNotContain(".GetProperty(\"FailureKind\"", contents);
         Assert.DoesNotContain(".GetProperty(\"Metadata\"", contents);
         Assert.DoesNotContain(".GetValue(exception)", contents);
+    }
+
+    [Theory]
+    [InlineData("Cephalon.EventSourcing.Cassandra", "", "CassandraEventStore.cs")]
+    [InlineData("Cephalon.EventSourcing.ClickHouse", "", "ClickHouseEventStore.cs")]
+    [InlineData("Cephalon.EventSourcing.Elasticsearch", "", "ElasticsearchEventStore.cs")]
+    [InlineData("Cephalon.EventSourcing.EntityFramework", "Services", "EntityFrameworkEventStore.cs")]
+    [InlineData("Cephalon.EventSourcing.MongoDB", "", "MongoDbEventStore.cs")]
+    [InlineData("Cephalon.EventSourcing.Nats", "", "NatsEventStore.cs")]
+    [InlineData("Cephalon.EventSourcing.Neo4j", "", "Neo4jEventStore.cs")]
+    [InlineData("Cephalon.EventSourcing.OpenSearch", "", "OpenSearchEventStore.cs")]
+    [InlineData("Cephalon.EventSourcing.Qdrant", "", "QdrantEventStore.cs")]
+    [InlineData("Cephalon.EventSourcing.Redis", "", "RedisEventStore.cs")]
+    public void EventSourcingProvidersUseRegistryInsteadOfPersistedTypeNameReflection(
+        string packageName,
+        string subDirectory,
+        string fileName)
+    {
+        var pathSegments = string.IsNullOrWhiteSpace(subDirectory)
+            ? ["src", packageName, fileName]
+            : new[] { "src", packageName, subDirectory, fileName };
+        var contents = File.ReadAllText(RepositoryPaths.GetFile(pathSegments));
+
+        Assert.DoesNotContain("Type.GetType(", contents);
+        Assert.DoesNotContain("evt.GetType().AssemblyQualifiedName", contents);
+        Assert.Contains("IEventTypeRegistry", contents);
+        Assert.Contains("_eventTypes.Deserialize", contents);
     }
 
     [Fact]

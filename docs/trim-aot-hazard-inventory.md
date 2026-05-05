@@ -29,7 +29,7 @@ It does **not** widen the global support contract. Trim, Native AOT, and single-
 | `medium` | Reflection over types loaded from data (e.g. `Type.GetType(persistedString)`). The provider can lift this to AOT-safe by registering a serializer table or polymorphic JSON converter, but the change is non-trivial and the manifest must declare the provider as `claim-overstated` until done. | Replace with a compile-time type registry or polymorphic `System.Text.Json` `[JsonPolymorphic]` baseline. |
 | `high` | Reflection that depends on assembly scanning, runtime-loaded plugins, or open-generic adapter instantiation. Cannot become AOT-safe without a structural rewrite (typically a source generator or compile-time discovery contract). | Replace with a source generator + compile-time descriptor, or document a permanent `not-claimed` posture for that package. |
 
-A package is only as portable as its highest hazard. A `Cephalon.EventSourcing.*` provider that uses `Type.GetType` is `medium` even if the rest of its surface is clean.
+A package is only as portable as its highest hazard. A provider that still resolves persisted app data through `Type.GetType` remains `medium` even when the rest of its surface is clean.
 
 ## Excluded-by-design (analyzer + source-generator projects)
 
@@ -110,24 +110,16 @@ Because the input types are not known at compile time and are not bounded to any
 
 The CDC capture hosted services in `Cephalon.Data.MySql`, `Cephalon.Data.Postgres`, and `Cephalon.Data.Oracle` used to resolve capture-failure metadata through a typed-first / reflection-fallback path. `ENG-459` moved MySQL to a provider-local typed failure-metadata contract, and `ENG-460` applied the same shape to Postgres and Oracle. The hosted-service paths no longer fall back to `exception.GetType().GetProperty("FailureKind" / "Metadata", BindingFlags...)`, so this former medium-tier CDC subsection is now historical context rather than an active hazard list.
 
-### `medium` — reflection over persisted type names (`Type.GetType(string)`)
+### Retired — EventSourcing persisted type-name reflection (added via `ENG-426`, retired via `ENG-461`)
 
-The `Cephalon.EventSourcing.*` provider family persists event payloads alongside their CLR type names and reflectively rehydrates them at read time. Every provider below uses the same shape and shares the same remediation path (replace with a compile-time event-type registry or `[JsonPolymorphic]` discriminator table).
+The `Cephalon.EventSourcing.*` provider family used to persist event payloads alongside CLR type names and rehydrate them through `Type.GetType(...)` at read time. `ENG-461` replaces that provider-local reflection with the shared Cephalon event-type registry:
 
-| Package | File | Line | Persisted-type call site |
-| --- | --- | --- | --- |
-| `Cephalon.EventSourcing.Cassandra` | `CassandraEventStore.cs` | 158 | `Type.GetType(eventTypeName, throwOnError: false)` |
-| `Cephalon.EventSourcing.ClickHouse` | `ClickHouseEventStore.cs` | 151 | `Type.GetType(eventTypeName, throwOnError: false)` |
-| `Cephalon.EventSourcing.Elasticsearch` | `ElasticsearchEventStore.cs` | 95 | `Type.GetType(hit.Source.EventType, throwOnError: false)` |
-| `Cephalon.EventSourcing.EntityFramework` | `Services/EntityFrameworkEventStore.cs` | 90 | `Type.GetType(entry.EventType, throwOnError: false)` |
-| `Cephalon.EventSourcing.MongoDB` | `MongoDbEventStore.cs` | 130 | `Type.GetType(entry.EventType, throwOnError: false)` |
-| `Cephalon.EventSourcing.Nats` | `NatsEventStore.cs` | 170 | `Type.GetType(natsEntry.EventType, throwOnError: false)` |
-| `Cephalon.EventSourcing.Neo4j` | `Neo4jEventStore.cs` | 200 | `Type.GetType(entry.EventType, throwOnError: false)` |
-| `Cephalon.EventSourcing.OpenSearch` | `OpenSearchEventStore.cs` | 95 | `Type.GetType(hit.Source.EventType, throwOnError: false)` |
-| `Cephalon.EventSourcing.Qdrant` | `QdrantEventStore.cs` | 180 | `Type.GetType(eventTypeName, throwOnError: false)` |
-| `Cephalon.EventSourcing.Redis` | `RedisEventStore.cs` | 138 | `Type.GetType(eventTypeStr, throwOnError: false)` |
+- appends persist the stable registry name returned by `IEventTypeRegistry.GetName(...)`
+- reads deserialize through `IEventTypeRegistry.Deserialize(...)` instead of provider-local `Type.GetType(...)`
+- descriptors include `FullName` and historical `AssemblyQualifiedName` aliases by default so older rows can still be read after hosts register the concrete event type
+- source-generated JSON metadata can flow through `AddCephalonEventTypeWithJsonTypeInfo(...)` for future trim / Native AOT hardening without widening the current global claim
 
-The remediation is uniform: introduce a `Cephalon.EventSourcing` compile-time event-type registry interface that providers consume instead of `Type.GetType`. The interface can be source-generated from the consuming app's known event-contract assembly. Until that ships, every `Cephalon.EventSourcing.*` provider stays `medium` and `not-claimed` for AOT.
+The ten former medium rows for Cassandra, ClickHouse, Elasticsearch, Entity Framework, MongoDB, NATS, Neo4j, OpenSearch, Qdrant, and Redis are therefore removed from `scripts/deployment-mode-support.json`. The EventSourcing family returns to clean-baseline absence from the active hazard table, but it still does not claim trim / Native AOT / single-file support until scoped package claims and validation are intentionally promoted.
 
 ### `medium` (reclassified from `low` via `ENG-432`) — REST endpoint group reflection across method dispatch + generic shape
 
@@ -291,6 +283,8 @@ A future slice may add explicit `IsTrimmable=false; IsAotCompatible=false; Publi
 **Update May 6, 2026 (`ENG-459`):** the MySQL CDC hosted-service failure metadata path now uses a provider-local typed internal contract (`IMySqlBinlogCaptureFailureMetadata`) implemented by `MySqlBinlogCaptureException`, and `MySqlBinlogCaptureHostedService` no longer falls back to `exception.GetType().GetProperty("FailureKind" / "Metadata", BindingFlags...)`. That removes the two MySQL duck-typed property hazards from `scripts/deployment-mode-support.json` and this inventory. The manifest-backed inventory now reports 22 package entries, 19 packages with known hazards, 49 known hazard entries, tier counts of 5 `high` + 14 `medium` + 2 `excluded-by-design` + 1 `clean-baseline`, zero active `low` entries, 1 package-scoped `singleFile` claim, and transitive-hazard hint counts of `trim=4`, `nativeAot=8`, and `singleFile=2`. `Cephalon.Data.MySql` stays `high` because the separate `SciSharp.MySQL.Replication.ReplicationClient` non-public transport adapter path remains.
 
 **Update May 6, 2026 (`ENG-460`):** the remaining CDC hosted-service failure metadata paths now follow the same typed-contract shape. `PostgresLogicalReplicationCaptureException` implements `IPostgresLogicalReplicationCaptureFailureMetadata`, `OracleLogMinerCaptureException` implements `IOracleLogMinerCaptureFailureMetadata`, and the Postgres / Oracle hosted services no longer fall back to duck-typed `FailureKind` / `Metadata` property reflection over arbitrary exception types. `scripts/deployment-mode-support.json` removes the two Postgres rows and two Oracle rows. The manifest-backed inventory now reports 20 package entries, 17 packages with known hazards, 45 known hazard entries, tier counts of 5 `high` + 12 `medium` + 2 `excluded-by-design` + 1 `clean-baseline`, zero active `low` entries, 1 package-scoped `singleFile` claim, and transitive-hazard hint counts of `trim=4`, `nativeAot=8`, and `singleFile=2`. Global trim / Native AOT / single-file support remains `not-claimed`.
+
+**Update May 6, 2026 (`ENG-461`):** the EventSourcing provider family no longer resolves persisted event type names through provider-local `Type.GetType(...)`. `Cephalon.EventSourcing` now exposes `EventTypeDescriptor`, `IEventTypeContributor`, `IEventTypeRegistry`, and `EventTypeRegistry`; all ten provider packs consume that registry for append/read payload names and serialization, while legacy `AssemblyQualifiedName` rows resolve through descriptor aliases. `scripts/deployment-mode-support.json` removes the ten EventSourcing medium rows. The manifest-backed inventory now reports 10 package entries, 7 packages with known hazards, 35 known hazard entries, tier counts of 5 `high` + 2 `medium` + 2 `excluded-by-design` + 1 `clean-baseline`, zero active `low` entries, 1 package-scoped `singleFile` claim, and transitive-hazard hint counts of `trim=4`, `nativeAot=8`, and `singleFile=2`. Global trim / Native AOT / single-file support remains `not-claimed`.
 
 ## Refresh discipline
 

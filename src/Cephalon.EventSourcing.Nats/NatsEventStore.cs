@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json;
 using Cephalon.Abstractions.EventSourcing;
+using Cephalon.EventSourcing.Services;
 using NATS.Client.Core;
 using NATS.Client.JetStream;
 using NATS.Client.KeyValueStore;
@@ -19,6 +20,7 @@ public sealed class NatsEventStore : IEventStore
 {
     private readonly INatsConnection _nats;
     private readonly string _bucketName;
+    private readonly IEventTypeRegistry _eventTypes;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NatsEventStore" /> class.
@@ -26,11 +28,27 @@ public sealed class NatsEventStore : IEventStore
     /// <param name="nats">The NATS connection (connection is deferred to first use).</param>
     /// <param name="bucketName">The JetStream KV bucket name used to persist event stream entries.</param>
     public NatsEventStore(INatsConnection nats, string bucketName)
+        : this(nats, bucketName, EventTypeRegistry.Empty)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="NatsEventStore" /> class.
+    /// </summary>
+    /// <param name="nats">The NATS connection (connection is deferred to first use).</param>
+    /// <param name="bucketName">The JetStream KV bucket name used to persist event stream entries.</param>
+    /// <param name="eventTypes">The closed event-type registry used to serialize and rehydrate domain events.</param>
+    public NatsEventStore(
+        INatsConnection nats,
+        string bucketName,
+        IEventTypeRegistry eventTypes)
     {
         ArgumentNullException.ThrowIfNull(nats);
         ArgumentException.ThrowIfNullOrWhiteSpace(bucketName);
+        ArgumentNullException.ThrowIfNull(eventTypes);
         _nats = nats;
         _bucketName = bucketName;
+        _eventTypes = eventTypes;
     }
 
     /// <inheritdoc />
@@ -93,15 +111,12 @@ public sealed class NatsEventStore : IEventStore
                     $"Domain event '{evt.GetType().FullName}' declared stream version {evt.StreamVersion}, but the append expected version {nextVersion}.");
             }
 
-            var eventType = evt.GetType().AssemblyQualifiedName
-                ?? throw new InvalidOperationException($"The event type '{evt.GetType().FullName}' must expose an assembly-qualified name.");
-
             var entry = new NatsEventEntry
             {
                 StreamId = normalizedStreamId,
                 StreamVersion = evt.StreamVersion,
-                EventType = eventType,
-                Payload = JsonSerializer.Serialize(evt, evt.GetType()),
+                EventType = _eventTypes.GetName(evt),
+                Payload = _eventTypes.Serialize(evt),
                 OccurredAtUtc = evt.OccurredAtUtc,
                 AppendedAtUtc = appendedAtUtc
             };
@@ -167,21 +182,7 @@ public sealed class NatsEventStore : IEventStore
                 continue;
             }
 
-            var eventType = Type.GetType(natsEntry.EventType, throwOnError: false);
-            if (eventType is null)
-            {
-                throw new InvalidOperationException(
-                    $"The CLR type '{natsEntry.EventType}' could not be resolved while reading stream '{normalizedStreamId}'.");
-            }
-
-            var evt = JsonSerializer.Deserialize(natsEntry.Payload, eventType) as IDomainEvent;
-            if (evt is null)
-            {
-                throw new InvalidOperationException(
-                    $"The payload for event type '{natsEntry.EventType}' in stream '{normalizedStreamId}' could not be deserialized as an IDomainEvent.");
-            }
-
-            yield return evt;
+            yield return _eventTypes.Deserialize(natsEntry.EventType, natsEntry.Payload);
         }
     }
 

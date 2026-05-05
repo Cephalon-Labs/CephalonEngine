@@ -13,8 +13,8 @@
 - a fallback concurrency guard via `InsertManyAsync` — if a concurrent writer commits the same version between the version read and the insert, MongoDB raises error code 11000 and the provider re-reads the actual version before rethrowing `EventStreamConcurrencyException`
 - stream replay through `ReadStreamAsync` returning events ordered by `StreamVersion` ascending
 - `GetVersionAsync` returning `-1` for a stream that does not exist yet
-- `System.Text.Json` serialization for event payloads using the concrete event CLR type
-- event type round-tripping through `AssemblyQualifiedName` — the type name is stored as written by the CLR and resolved back via `Type.GetType()` on read
+- event payload serialization through the shared Cephalon event-type registry
+- event type round-tripping through stable registry names, with descriptor aliases for legacy `AssemblyQualifiedName` rows
 
 ## Main surfaces
 
@@ -46,7 +46,7 @@ builder.Services.AddCephalonMongoDbEventSourcing(
     collectionName: "domain_events");
 ```
 
-The method registers `IMongoClient`, `IMongoDatabase`, and the typed `IMongoCollection<MongoDbEventEntry>` using `TryAdd` semantics — a host that already registered a shared `IMongoClient` keeps its own instance.
+The method registers `IMongoClient`, `IMongoDatabase`, the typed `IMongoCollection<MongoDbEventEntry>`, and the shared event-type registry using `TryAdd` semantics — a host that already registered a shared `IMongoClient` keeps its own instance. The host still registers concrete event payloads through `AddCephalonEventType<TEvent>(...)` or `AddCephalonEventTypeWithJsonTypeInfo<TEvent>(...)`.
 
 ## Event stream collection schema (`event_streams`)
 
@@ -55,8 +55,8 @@ The method registers `IMongoClient`, `IMongoDatabase`, and the typed `IMongoColl
 | `_id` | ObjectId | Auto-generated surrogate key |
 | `StreamId` | string | Logical aggregate / stream identifier |
 | `StreamVersion` | long | Per-stream monotonic version (1-based; stream starts at version 1) |
-| `EventType` | string | `AssemblyQualifiedName` of the concrete event CLR type |
-| `Payload` | string | `System.Text.Json`-serialized event body using the concrete type |
+| `EventType` | string | Stable Cephalon event-type registry name |
+| `Payload` | string | Serialized event body produced by the registered event-type descriptor |
 | `OccurredAtUtc` | DateTime | `IDomainEvent.OccurredAtUtc` as stored by the domain event |
 | `AppendedAtUtc` | DateTime | UTC wall-clock time of the `InsertManyAsync` call |
 | `CorrelationId` | string? | Optional; not populated in this slice |
@@ -84,7 +84,7 @@ The method registers `IMongoClient`, `IMongoDatabase`, and the typed `IMongoColl
 StreamId == streamId AND StreamVersion >= fromVersion
 ```
 
-and sorts by `StreamVersion` ascending. It returns an `IAsyncEnumerable<IDomainEvent>`, yielding events one by one as the cursor advances. The CLR type is resolved from `EventType` via `Type.GetType(throwOnError: false)` — a missing type throws `InvalidOperationException` with a message that names the unresolvable type and the stream.
+and sorts by `StreamVersion` ascending. It returns an `IAsyncEnumerable<IDomainEvent>`, yielding events one by one as the cursor advances. The event payload is resolved through `IEventTypeRegistry` by `EventType`; a missing descriptor throws `InvalidOperationException` with a message that names the unregistered type name and the stream. Descriptors include legacy `AssemblyQualifiedName` aliases by default so older documents can still be read after hosts register the concrete event type.
 
 ## Index laziness
 

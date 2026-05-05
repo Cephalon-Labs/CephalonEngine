@@ -20,6 +20,7 @@ internal static class EventSourcingServiceRegistration
         services.TryAddSingleton(options);
         services.TryAddSingleton<IOptions<EventSourcingOptions>>(static serviceProvider =>
             Options.Create(serviceProvider.GetRequiredService<EventSourcingOptions>()));
+        RegisterEventTypeRegistry(services);
         services.TryAddSingleton<EventStreamRegistry>();
         services.TryAddSingleton<IEventStoreRegistry>(static serviceProvider =>
             serviceProvider.GetRequiredService<EventStreamRegistry>());
@@ -29,5 +30,13 @@ internal static class EventSourcingServiceRegistration
             new EventStreamCatalog(serviceProvider.GetServices<IEventStoreContributor>()));
         services.TryAddSingleton(typeof(AggregateHydrator<,>));
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventSourcingRuntimeContributor>());
+    }
+
+    public static void RegisterEventTypeRegistry(IServiceCollection services)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        services.TryAddSingleton<IEventTypeRegistry>(static serviceProvider =>
+            new EventTypeRegistry(serviceProvider.GetServices<IEventTypeContributor>()));
     }
 }

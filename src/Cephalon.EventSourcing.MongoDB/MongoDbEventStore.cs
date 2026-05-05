@@ -1,6 +1,6 @@
 using System.Runtime.CompilerServices;
-using System.Text.Json;
 using Cephalon.Abstractions.EventSourcing;
+using Cephalon.EventSourcing.Services;
 using MongoDB.Driver;
 
 namespace Cephalon.EventSourcing.MongoDB;
@@ -11,6 +11,7 @@ namespace Cephalon.EventSourcing.MongoDB;
 public sealed class MongoDbEventStore : IEventStore
 {
     private readonly IMongoCollection<MongoDbEventEntry> _collection;
+    private readonly IEventTypeRegistry _eventTypes;
     private volatile bool _indexesCreated;
 
     /// <summary>
@@ -18,9 +19,23 @@ public sealed class MongoDbEventStore : IEventStore
     /// </summary>
     /// <param name="collection">The MongoDB collection used to persist event entries.</param>
     public MongoDbEventStore(IMongoCollection<MongoDbEventEntry> collection)
+        : this(collection, EventTypeRegistry.Empty)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MongoDbEventStore" /> class.
+    /// </summary>
+    /// <param name="collection">The MongoDB collection used to persist event entries.</param>
+    /// <param name="eventTypes">The closed event-type registry used to serialize and rehydrate domain events.</param>
+    public MongoDbEventStore(
+        IMongoCollection<MongoDbEventEntry> collection,
+        IEventTypeRegistry eventTypes)
     {
         ArgumentNullException.ThrowIfNull(collection);
+        ArgumentNullException.ThrowIfNull(eventTypes);
         _collection = collection;
+        _eventTypes = eventTypes;
     }
 
     /// <inheritdoc />
@@ -76,9 +91,8 @@ public sealed class MongoDbEventStore : IEventStore
             {
                 StreamId = normalizedStreamId,
                 StreamVersion = evt.StreamVersion,
-                EventType = evt.GetType().AssemblyQualifiedName
-                    ?? throw new InvalidOperationException($"The event type '{evt.GetType().FullName}' must expose an assembly-qualified name."),
-                Payload = JsonSerializer.Serialize(evt, evt.GetType()),
+                EventType = _eventTypes.GetName(evt),
+                Payload = _eventTypes.Serialize(evt),
                 OccurredAtUtc = evt.OccurredAtUtc,
                 AppendedAtUtc = appendedAtUtc
             });
@@ -127,21 +141,7 @@ public sealed class MongoDbEventStore : IEventStore
         {
             foreach (var entry in cursor.Current)
             {
-                var eventType = Type.GetType(entry.EventType, throwOnError: false);
-                if (eventType is null)
-                {
-                    throw new InvalidOperationException(
-                        $"The CLR type '{entry.EventType}' could not be resolved while reading stream '{normalizedStreamId}'.");
-                }
-
-                var evt = JsonSerializer.Deserialize(entry.Payload, eventType) as IDomainEvent;
-                if (evt is null)
-                {
-                    throw new InvalidOperationException(
-                        $"The payload for event type '{entry.EventType}' in stream '{normalizedStreamId}' could not be deserialized as an IDomainEvent.");
-                }
-
-                yield return evt;
+                yield return _eventTypes.Deserialize(entry.EventType, entry.Payload);
             }
         }
     }

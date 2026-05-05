@@ -12,8 +12,8 @@
 - enforces optimistic concurrency via a pre-append `GetVersionAsync` check followed by `UpsertAsync`
 - creates the collection and payload indexes on `stream_id` (keyword) and `stream_version` (integer) on first use
 - reads streams via `ScrollAsync` with payload filter on `stream_id` and `stream_version >= fromVersion`, sorted in memory by `stream_version`
-- serializes event payloads with `System.Text.Json`
-- reconstructs domain events by resolving `Type.GetType(AssemblyQualifiedName)` and deserializing via `JsonSerializer`
+- serializes event payloads through the shared Cephalon event-type registry
+- reconstructs domain events through stable registry names, with descriptor aliases for legacy `AssemblyQualifiedName` rows
 
 ## Main surfaces
 
@@ -34,14 +34,16 @@ services.AddCephalonQdrantEventSourcing(
     collectionName: "event-streams");
 ```
 
+The method registers `IEventStore` and the shared event-type registry. The host still registers concrete event payloads through `AddCephalonEventType<TEvent>(...)` or `AddCephalonEventTypeWithJsonTypeInfo<TEvent>(...)`.
+
 ## Point schema (event-streams collection)
 
 | Payload field | Type | Notes |
 |---------------|------|-------|
 | `stream_id` | keyword | Stream identifier; indexed for efficient scroll filtering |
 | `stream_version` | integer | Monotonically increasing version; indexed for range filtering |
-| `event_type` | keyword | Assembly-qualified CLR type name |
-| `payload` | keyword | JSON-serialized event body |
+| `event_type` | keyword | Stable Cephalon event-type registry name |
+| `payload` | keyword | Serialized event body produced by the registered event-type descriptor |
 | `occurred_at_utc` | keyword | ISO 8601 UTC timestamp when the domain event occurred |
 | `appended_at_utc` | keyword | ISO 8601 UTC timestamp when the event was appended |
 
