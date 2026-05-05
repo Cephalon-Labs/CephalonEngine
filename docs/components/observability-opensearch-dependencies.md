@@ -1,5 +1,7 @@
 # Cephalon.Observability.OpenSearchDependencies
 
+> **Maturity:** `M0` · **Ownership:** `taxonomy-only` (family-covered by maturity audit) — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Observability.OpenSearchDependencies` adds a supported OpenSearch dependency-health path for Cephalon hosts.
 
 ## What it owns

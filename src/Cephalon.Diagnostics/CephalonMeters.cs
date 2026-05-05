@@ -46,4 +46,17 @@ public static class CephalonMeters
     /// delivery-status, tenant-administration, and domain-ownership metrics.
     /// </summary>
     public const string MultiTenancyGovernance = "Cephalon.MultiTenancy.Governance";
+
+    /// <summary>
+    /// Stable name of the agentics companion-pack meter, used by <c>Cephalon.Agentics</c>
+    /// tool-execution, dispatcher, run-state, retry, idempotency, approval, and
+    /// terminal-failure metrics.
+    /// </summary>
+    public const string Agentics = "Cephalon.Agentics";
+
+    /// <summary>
+    /// Stable name of the retrieval companion-pack meter, used by <c>Cephalon.Retrieval</c>
+    /// indexing, query, freshness, and reindex metrics.
+    /// </summary>
+    public const string Retrieval = "Cephalon.Retrieval";
 }

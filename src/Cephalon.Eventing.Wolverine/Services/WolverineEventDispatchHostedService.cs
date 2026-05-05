@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Cephalon.Diagnostics.Redaction;
 using Cephalon.Eventing.Services;
 using Cephalon.Eventing.Wolverine.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +29,8 @@ internal sealed class WolverineEventDispatchHostedService(
             LogLevel.Warning,
             new EventId(WolverineEventingDiagnosticsConventions.DispatchReadFailed.Id, WolverineEventingDiagnosticsConventions.DispatchReadFailed.Name),
             WolverineEventingDiagnosticsConventions.DispatchReadFailed.MessageTemplate);
+    private RedactionPipeline? redactionPipeline;
+
     private static readonly Action<ILogger, string, string, Exception?> LogRuntimeObservationProjectionFailedMessage =
         LoggerMessage.Define<string, string>(
             LogLevel.Warning,
@@ -40,7 +43,18 @@ internal sealed class WolverineEventDispatchHostedService(
         IEventDispatchRuntimeReporter runtimeReporter,
         IMessageBus messageBus,
         ILogger<WolverineEventDispatchHostedService> logger)
-        : this(new DirectScopeFactory(dispatchStore, runtimeReporter, messageBus), options, logger)
+        : this(new DirectScopeFactory(dispatchStore, runtimeReporter, messageBus, redactionPipeline: null), options, logger)
+    {
+    }
+
+    internal WolverineEventDispatchHostedService(
+        WolverineEventingOptions options,
+        IEventDispatchStore dispatchStore,
+        IEventDispatchRuntimeReporter runtimeReporter,
+        IMessageBus messageBus,
+        RedactionPipeline? redactionPipeline,
+        ILogger<WolverineEventDispatchHostedService> logger)
+        : this(new DirectScopeFactory(dispatchStore, runtimeReporter, messageBus, redactionPipeline), options, logger)
     {
     }
 
@@ -94,6 +108,7 @@ internal sealed class WolverineEventDispatchHostedService(
         var runtimeReporter = scope.ServiceProvider.GetRequiredService<IEventDispatchRuntimeReporter>();
         var messageBus = scope.ServiceProvider.GetRequiredService<IMessageBus>();
         var managedSubscriptions = scope.ServiceProvider.GetService<WolverineManagedEventSubscriptionDispatcher>();
+        redactionPipeline ??= scope.ServiceProvider.GetService<RedactionPipeline>();
 
         try
         {
@@ -139,17 +154,17 @@ internal sealed class WolverineEventDispatchHostedService(
 
         if (activity is not null)
         {
-            activity.SetTag("cephalon.message_id", item.MessageId);
-            activity.SetTag("cephalon.event_type", item.EventType);
-            activity.SetTag("cephalon.channel_id", item.ChannelId);
-            activity.SetTag("cephalon.dispatch_attempt", attempt);
+            activity.SetTag("cephalon.message_id", Redact(activity, "cephalon.message_id", item.MessageId));
+            activity.SetTag("cephalon.event_type", Redact(activity, "cephalon.event_type", item.EventType));
+            activity.SetTag("cephalon.channel_id", Redact(activity, "cephalon.channel_id", item.ChannelId));
+            activity.SetTag("cephalon.dispatch_attempt", Redact(activity, "cephalon.dispatch_attempt", attempt));
             if (!string.IsNullOrWhiteSpace(item.CorrelationId))
             {
-                activity.SetTag("cephalon.correlation_id", item.CorrelationId);
+                activity.SetTag("cephalon.correlation_id", Redact(activity, "cephalon.correlation_id", item.CorrelationId));
             }
             if (!string.IsNullOrWhiteSpace(item.TenantId))
             {
-                activity.SetTag("cephalon.tenant_id", item.TenantId);
+                activity.SetTag("cephalon.tenant_id", Redact(activity, "cephalon.tenant_id", item.TenantId));
             }
         }
 
@@ -172,7 +187,7 @@ internal sealed class WolverineEventDispatchHostedService(
             if (destinations.Count == 0 && managedSubscriptionCount == 0)
             {
                 WolverineDispatchInstrumentation.DispatchRetries.Add(1);
-                activity?.SetTag("cephalon.dispatch_result", "no-destinations");
+                activity?.SetTag("cephalon.dispatch_result", Redact(activity, "cephalon.dispatch_result", "no-destinations"));
                 activity?.SetStatus(ActivityStatusCode.Error, "No configured destinations");
 
                 if (attempt >= maxAttempts)
@@ -222,7 +237,7 @@ internal sealed class WolverineEventDispatchHostedService(
             stopwatch.Stop();
             WolverineDispatchInstrumentation.DispatchSuccesses.Add(1);
             WolverineDispatchInstrumentation.DispatchDuration.Record(stopwatch.Elapsed.TotalMilliseconds);
-            activity?.SetTag("cephalon.dispatch_result", "succeeded");
+            activity?.SetTag("cephalon.dispatch_result", Redact(activity, "cephalon.dispatch_result", "succeeded"));
 
             await ApplyObservationAsync(
                 dispatchStore,
@@ -245,7 +260,7 @@ internal sealed class WolverineEventDispatchHostedService(
             WolverineDispatchInstrumentation.DispatchRetries.Add(1);
             WolverineDispatchInstrumentation.DispatchDuration.Record(stopwatch.Elapsed.TotalMilliseconds);
             activity?.SetStatus(ActivityStatusCode.Error, exception.Message);
-            activity?.SetTag("cephalon.dispatch_result", "failed");
+            activity?.SetTag("cephalon.dispatch_result", Redact(activity, "cephalon.dispatch_result", "failed"));
 
             if (attempt >= maxAttempts)
             {
@@ -498,10 +513,26 @@ internal sealed class WolverineEventDispatchHostedService(
     private static void LogRuntimeObservationProjectionFailed(ILogger logger, string outcome, string messageId, Exception exception) =>
         LogRuntimeObservationProjectionFailedMessage(logger, outcome, messageId, exception);
 
+    private object? Redact(Activity? activity, string attributeKey, object? value)
+    {
+        if (redactionPipeline is null)
+        {
+            return value;
+        }
+
+        var context = new RedactionContext(
+            ActivitySourceName: activity?.Source.Name,
+            MeterName: null,
+            AttributeKey: attributeKey,
+            LoggerCategory: null);
+        return redactionPipeline.Filter(context, value);
+    }
+
     private sealed class DirectScopeFactory(
         IEventDispatchStore dispatchStore,
         IEventDispatchRuntimeReporter runtimeReporter,
-        IMessageBus messageBus) : IServiceScopeFactory, IServiceScope, IServiceProvider
+        IMessageBus messageBus,
+        RedactionPipeline? redactionPipeline) : IServiceScopeFactory, IServiceScope, IServiceProvider
     {
         public IServiceScope CreateScope() => this;
 
@@ -522,6 +553,11 @@ internal sealed class WolverineEventDispatchHostedService(
             if (serviceType == typeof(IMessageBus))
             {
                 return messageBus;
+            }
+
+            if (serviceType == typeof(RedactionPipeline))
+            {
+                return redactionPipeline;
             }
 
             return null;

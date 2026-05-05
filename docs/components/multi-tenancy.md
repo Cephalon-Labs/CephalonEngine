@@ -1,5 +1,7 @@
 # Cephalon.MultiTenancy
 
+> **Maturity:** `M2` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.MultiTenancy` is the host-agnostic multi-tenancy companion package for Cephalon.
 
 ## What it owns

@@ -1,5 +1,7 @@
 # Cephalon.Behaviors.SourceGen
 
+> **Maturity:** `M1` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Behaviors.SourceGen` is the M5 compile-time tooling layer of the Adaptive Behavior Topology (ABT).
 It provides a Roslyn incremental source generator and diagnostic analyzer that validate behavior authoring
 conventions at build time and produce a compile-time-known registration hint file.

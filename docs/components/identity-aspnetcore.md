@@ -1,5 +1,7 @@
 # Cephalon.Identity.AspNetCore
 
+> **Maturity:** `M1` · **Ownership:** `application-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Identity.AspNetCore` is the ASP.NET Core host adapter for Cephalon identity and authorization.
 
 ## What it owns

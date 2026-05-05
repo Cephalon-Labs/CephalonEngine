@@ -2,12 +2,6 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Description>Composition runtime for the Cephalon engine.</Description>
-    <!--
-      RS0026 / RS0027 are PublicApiAnalyzers style rules that flag pre-existing optional-overload
-      patterns. Suppressed here so the public-API contract lock-in itself does not bundle a
-      breaking refactor; cleanup is tracked as follow-up to `ENG-326`.
-    -->
-    <NoWarn>$(NoWarn);RS0026;RS0027</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

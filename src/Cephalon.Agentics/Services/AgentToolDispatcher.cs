@@ -1,5 +1,8 @@
 using Cephalon.Abstractions.Agentics;
 using Cephalon.Agentics.Configuration;
+using Cephalon.Diagnostics.Redaction;
+using System.Diagnostics;
+using System.Diagnostics.Metrics;
 using System.Globalization;
 
 namespace Cephalon.Agentics.Services;
@@ -11,7 +14,8 @@ internal sealed class AgentToolDispatcher(
     IEnumerable<IAgentToolExecutor> executors,
     IEnumerable<IAgentToolExecutionPolicy> policies,
     IAgentToolRunReporter reporter,
-    IEnumerable<IAgentToolExecutionObserver> observers) : IAgentToolDispatcher
+    IEnumerable<IAgentToolExecutionObserver> observers,
+    RedactionPipeline? redactionPipeline = null) : IAgentToolDispatcher
 {
     private readonly IAgentToolExecutor[] executors = executors.ToArray();
     private readonly IAgentToolExecutionPolicy[] policies = policies.ToArray();
@@ -24,10 +28,31 @@ internal sealed class AgentToolDispatcher(
         ArgumentNullException.ThrowIfNull(request);
         cancellationToken.ThrowIfCancellationRequested();
 
+        using var dispatchActivity = AgenticsDiagnostics.ActivitySource.StartActivity(
+            AgenticsDiagnostics.ToolDispatchActivityName,
+            ActivityKind.Internal);
+        SetTag(dispatchActivity, AgenticsDiagnostics.DispatcherIdTag, InProcessAgenticsRuntimeIds.DispatcherId);
+        SetTag(dispatchActivity, AgenticsDiagnostics.ToolIdTag, request.ToolId);
+        SetTag(dispatchActivity, AgenticsDiagnostics.RunIdTag, request.RunId);
+        if (!string.IsNullOrEmpty(request.ActorId))
+        {
+            SetTag(dispatchActivity, AgenticsDiagnostics.ActorIdTag, request.ActorId);
+        }
+        if (!string.IsNullOrEmpty(request.CorrelationId))
+        {
+            SetTag(dispatchActivity, AgenticsDiagnostics.CorrelationIdTag, request.CorrelationId);
+        }
+        SetTag(dispatchActivity, AgenticsDiagnostics.AttemptTag, request.Attempt);
+
         if (!catalog.TryGet(request.ToolId, out var tool))
         {
-            throw new InvalidOperationException(
-                $"Agent tool '{request.ToolId}' is not registered in the active agentics runtime.");
+            var missingError = $"Agent tool '{request.ToolId}' is not registered in the active agentics runtime.";
+            CompleteDispatchActivity(
+                dispatchActivity,
+                request.ToolId,
+                AgentToolExecutionOutcomes.Failed,
+                error: missingError);
+            throw new InvalidOperationException(missingError);
         }
 
         if (TryResolveDuplicateCompletedRun(
@@ -58,6 +83,10 @@ internal sealed class AgentToolDispatcher(
                 duplicateContext,
                 duplicateResult,
                 cancellationToken).ConfigureAwait(false);
+            CompleteDispatchActivity(
+                dispatchActivity,
+                tool.Id,
+                duplicateResult.Outcome);
             return duplicateResult;
         }
 
@@ -80,6 +109,11 @@ internal sealed class AgentToolDispatcher(
                 context,
                 AgentToolExecutionResult.Failed(error),
                 cancellationToken).ConfigureAwait(false);
+            CompleteDispatchActivity(
+                dispatchActivity,
+                tool.Id,
+                AgentToolExecutionOutcomes.Failed,
+                error: error);
             throw new InvalidOperationException(error);
         }
 
@@ -118,6 +152,10 @@ internal sealed class AgentToolDispatcher(
                                 decision.Reason ?? "Agent-tool execution requires approval.",
                                 decision.Metadata));
                         await RecordResultAsync(context, approvalRequired, cancellationToken).ConfigureAwait(false);
+                        CompleteDispatchActivity(
+                            dispatchActivity,
+                            tool.Id,
+                            approvalRequired.Outcome);
                         return approvalRequired;
 
                     case AgentToolExecutionDecisionKinds.Deny:
@@ -127,6 +165,11 @@ internal sealed class AgentToolDispatcher(
                                 decision.Reason ?? "Agent-tool execution was denied by policy.",
                                 decision.Metadata));
                         await RecordResultAsync(context, denied, cancellationToken).ConfigureAwait(false);
+                        CompleteDispatchActivity(
+                            dispatchActivity,
+                            tool.Id,
+                            denied.Outcome,
+                            error: denied.Error);
                         return denied;
 
                     default:
@@ -159,6 +202,11 @@ internal sealed class AgentToolDispatcher(
                 }
 
                 await RecordResultAsync(context, mergedResult, cancellationToken).ConfigureAwait(false);
+                CompleteDispatchActivity(
+                    dispatchActivity,
+                    tool.Id,
+                    mergedResult.Outcome,
+                    error: mergedResult.Error);
                 return mergedResult;
             }
             catch (Exception exception) when (exception is not OperationCanceledException)
@@ -197,8 +245,73 @@ internal sealed class AgentToolDispatcher(
             }
         }
 
+        CompleteDispatchActivity(
+            dispatchActivity,
+            tool.Id,
+            AgentToolExecutionOutcomes.Failed,
+            error: lastException?.Message);
         throw lastException ?? new InvalidOperationException(
             $"Agent tool '{tool.Id}' did not return an execution result.");
+    }
+
+    /// <summary>
+    /// Sets the terminal execution-outcome tag, optional error status, and increments the
+    /// tool-dispatch counter for the given dispatch activity. Tag values are routed through the
+    /// redaction pipeline so consumer-registered redaction filters apply uniformly across the
+    /// dispatch span.
+    /// </summary>
+    private void CompleteDispatchActivity(
+        Activity? dispatchActivity,
+        string toolId,
+        string outcome,
+        string? error = null)
+    {
+        SetTag(dispatchActivity, AgenticsDiagnostics.ExecutionOutcomeTag, outcome);
+
+        if (string.Equals(outcome, AgentToolExecutionOutcomes.Failed, StringComparison.OrdinalIgnoreCase))
+        {
+            dispatchActivity?.SetStatus(ActivityStatusCode.Error, error);
+        }
+
+        AgenticsDiagnostics.ToolDispatchCounter.Add(
+            1,
+            new TagList
+            {
+                { AgenticsDiagnostics.ToolIdTag, toolId },
+                { AgenticsDiagnostics.ExecutionOutcomeTag, outcome }
+            });
+    }
+
+    /// <summary>
+    /// Sets a tag on <paramref name="activity"/> after routing the value through the consumer
+    /// -registered <see cref="RedactionPipeline"/>. The pipeline is empty by default when no
+    /// consumer registered any <see cref="IRedactionFilter"/>; in that case (and when DI did not
+    /// supply a pipeline at all) this method short-circuits to passthrough so dispatch emission
+    /// stays cheap.
+    /// </summary>
+    private void SetTag(Activity? activity, string attributeKey, object? value)
+    {
+        if (activity is null)
+        {
+            return;
+        }
+
+        activity.SetTag(attributeKey, Redact(activity, attributeKey, value));
+    }
+
+    private object? Redact(Activity? activity, string attributeKey, object? value)
+    {
+        if (redactionPipeline is null)
+        {
+            return value;
+        }
+
+        var context = new RedactionContext(
+            ActivitySourceName: activity?.Source.Name,
+            MeterName: null,
+            AttributeKey: attributeKey,
+            LoggerCategory: null);
+        return redactionPipeline.Filter(context, value);
     }
 
     private IAgentToolExecutor? ResolveExecutor(string toolId)

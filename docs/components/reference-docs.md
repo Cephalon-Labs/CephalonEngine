@@ -1,5 +1,7 @@
 # Cephalon.ReferenceDocs
 
+> **Maturity:** `M4` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.ReferenceDocs` is the optional repo-local publishing tool that turns compiled assemblies plus XML comments into browsable API reference output.
 
 Stable public surface:

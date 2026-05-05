@@ -1,5 +1,7 @@
 # Cephalon.Abstractions
 
+> **Maturity:** `M4` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Abstractions` is the stable contract layer that modules, hosts, and companion packages build against.
 
 See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), [Conformance matrix](../conformance-matrix.md), and [Runtime contract index](../runtime-contract-index.md) for the per-package adoption-truth, maturity, ownership, and `I*Catalog` interface inventory that this contract layer ships. [Long-range engine direction](../long-range-direction.md) frames why these contracts stay host-agnostic and additive across multi-decade horizons; [Engineering standards](../engineering-standards.md) records the library-design and binary-stability baseline these public contracts ship against.

@@ -1,5 +1,7 @@
 # Cephalon.Retrieval
 
+> **Maturity:** `M3` · **Ownership:** mixed: `application-managed` + `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Retrieval` is the baseline technology pack for knowledge retrieval workloads.
 
 ## What it owns
@@ -10,6 +12,7 @@
 - knowledge document provider contracts for module-owned source material
 - one Cephalon-managed lexical indexing and query execution baseline
 - index state implementation, freshness calculation, manual reindex execution behind the abstraction-level `IKnowledgeIndexer`, bounded query execution behind the abstraction-level `IKnowledgeQueryEngine`, opt-in background reindex scheduling, query counters, and runtime-surface contribution for introspection
+- the public `RetrievalDiagnostics` OpenTelemetry adapter declared against `CephalonActivitySources.Retrieval` and `CephalonMeters.Retrieval`; the in-process indexer emits one `retrieval.knowledge.index` activity per `IKnowledgeIndexer.IndexAsync` call and the in-process query engine emits one `retrieval.knowledge.query` activity per `IKnowledgeQueryEngine.QueryAsync` call, both with stable Cephalon-prefix tags (`cephalon.retrieval.indexer.id` / `cephalon.retrieval.query_engine.id`, `cephalon.retrieval.collection.id`, `cephalon.retrieval.run.id`, `cephalon.retrieval.actor.id`, `cephalon.retrieval.correlation.id`, `cephalon.retrieval.index.outcome` / `cephalon.retrieval.query.outcome`, `cephalon.retrieval.document.count`, `cephalon.retrieval.provider.count`, `cephalon.retrieval.query.length`, `cephalon.retrieval.query.limit`, `cephalon.retrieval.match.count`) plus `cephalon.retrieval.index_runs` and `cephalon.retrieval.queries` counters, all routed through the `RedactionPipeline` resolved from DI so consumer-registered redaction filters scrub indexer / query-engine emission attributes uniformly with the AspNetCore middleware, engine-runtime emission, and Cephalon.Agentics dispatcher emission sites; the query span never carries the raw query text — only its character length is emitted
 
 ## Main surfaces
 
@@ -24,7 +27,9 @@
 - `Services/IKnowledgeDocumentProvider.cs`
 - `Services/KnowledgeDocument.cs`
 - `Services/KnowledgeBackgroundReindexHostedService.cs`
+- `Services/KnowledgeIndexer.cs`
 - `Services/KnowledgeQueryEngine.cs`
+- `Services/RetrievalDiagnostics.cs`
 - `Services/RetrievalRuntimeSurfaceContributor.cs`
 
 ## Source structure

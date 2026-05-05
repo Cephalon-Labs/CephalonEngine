@@ -1,5 +1,7 @@
 # Cephalon.Observability.NewRelic
 
+> **Maturity:** `M1` · **Ownership:** `cephalon-managed` (family-covered by maturity audit) — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Observability.NewRelic` adds New Relic native OTLP endpoint defaults for Cephalon hosts.
 
 ## What it owns

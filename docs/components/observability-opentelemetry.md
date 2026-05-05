@@ -1,5 +1,7 @@
 # Cephalon.Observability.OpenTelemetry
 
+> **Maturity:** `M1` · **Ownership:** `cephalon-managed` (family-covered by maturity audit) — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Observability.OpenTelemetry` adds a supported OpenTelemetry OTLP export path for Cephalon hosts.
 
 ## What it owns

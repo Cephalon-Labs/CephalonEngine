@@ -379,6 +379,10 @@ For the matching detached-signature and publisher or signer trust replay, use `p
 For the matching certificate-chain trust replay, use `pwsh ./scripts/validate-signed-package-certificate-chain-governance.ps1`. That script keeps the same external-adoption path but patches `Engine:Trust:TrustedSignatureCertificates` plus `Engine:Trust:TrustedSignatureCertificateAuthorities`, then proves the runtime surfaces expose `trusted-certificate-chain` verification plus the signing `certificateThumbprint`.
 For the settled engine-first REST baseline, start with `cephalon-rest-behavior-module` for behavior-backed public APIs, then continue with `docs/module-authoring.md` and `docs/architecture/rest-endpoint-authoring-strategy.md` so route ownership and host governance stay aligned with the shipped runtime model.
 
+## Redact secrets from telemetry before going live
+
+Before a generated app exports telemetry to a third-party sink, register the canonical redaction recipe so authorization headers, cookies, credit-card-shaped substrings, and bearer tokens are scrubbed at the engine boundary. The shipped engine wires this through **seven M1 emission sites** automatically once consumer apps register the filters: AspNetCore HTTP middleware (`HttpRequestResponseLoggingMiddleware`, `ENG-365`), engine runtime module-phase tags (`EngineRuntime`, `ENG-366`), Wolverine dispatch tags (`WolverineEventDispatchHostedService`, `ENG-374`), Agentics tool-dispatch tags (`AgentToolDispatcher`, `ENG-401`), Retrieval knowledge-indexing + knowledge-query tags (`KnowledgeIndexer` + `KnowledgeQueryEngine`, `ENG-402`), Worker lifecycle tags (`RuntimeHostedService`, `ENG-412`), and Eventing in-process publication-dispatch tags (`InProcessEventPublisher`, `ENG-371`). See [Cephalon.Diagnostics — Redaction quick start](components/diagnostics.md#redaction-quick-start) for the full recipe and [`samples/Cephalon.Sample.ModularMonolith/ModularMonolithSampleApp.cs`](../samples/Cephalon.Sample.ModularMonolith/ModularMonolithSampleApp.cs) for the running-code companion. Consumer apps that add their own structured logging take their `EventId` range from [the diagnostic-id registry](diagnostic-id-registry.md) so future engine packs don't collide on the same id.
+
 ## Next Docs
 
 - [Generated app publishing](generated-app-publishing.md)
@@ -394,4 +398,6 @@ For the settled engine-first REST baseline, start with `cephalon-rest-behavior-m
 - [Module authoring](module-authoring.md)
 - [REST endpoint authoring strategy](architecture/rest-endpoint-authoring-strategy.md)
 - [Operations](operations.md)
+- [Cephalon.Diagnostics component](components/diagnostics.md) — canonical name set + redaction surface
+- [Diagnostic ID registry](diagnostic-id-registry.md) — authoritative `EventId` range allocations per package
 - [Package publishing](package-publishing.md)

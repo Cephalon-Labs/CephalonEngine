@@ -1,5 +1,7 @@
 # Cephalon.Behaviors.Http
 
+> **Maturity:** `M2` · **Ownership:** mixed: `application-managed` + `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Behaviors.Http` provides the HTTP Transport Pack for the Adaptive Behavior Topology
 (ABT) system. It wires behavior topology descriptors to generic HTTP transports through 6 concrete
 `IHttpBehaviorBinding` implementations, a lazy-init registry, and Minimal API helpers for

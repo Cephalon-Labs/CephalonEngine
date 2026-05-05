@@ -2,8 +2,6 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Description>Traefik IngressRoute control-plane materializer companion package for Cephalon cell traffic automation.</Description>
-    <!-- RS0026/RS0027: optional-overload patterns; suppressed for ENG-343 (cleanup follow-up). -->
-    <NoWarn>$(NoWarn);RS0026;RS0027</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

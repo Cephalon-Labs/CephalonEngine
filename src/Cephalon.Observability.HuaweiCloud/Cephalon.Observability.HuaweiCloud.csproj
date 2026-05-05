@@ -2,8 +2,6 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Description>Huawei Cloud observability defaults and managed APM trace integration for Cephalon hosts.</Description>
-    <!-- RS0026/RS0027: optional-overload patterns; suppressed for ENG-345. -->
-    <NoWarn>$(NoWarn);RS0026;RS0027</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

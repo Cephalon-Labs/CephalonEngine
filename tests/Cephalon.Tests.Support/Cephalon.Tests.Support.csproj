@@ -6,6 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- CA1707: Identifiers should not contain underscores. xUnit test method names commonly use underscores ("MethodName_WhenCondition_ShouldResult" style); suppress the rule project-wide. -->
     <NoWarn>$(NoWarn);CA1707</NoWarn>
   </PropertyGroup>
   <ItemGroup>

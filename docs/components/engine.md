@@ -1,5 +1,7 @@
 # Cephalon.Engine
 
+> **Maturity:** `M4` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Engine` is the composition and runtime core of Cephalon.
 
 See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), [Conformance matrix](../conformance-matrix.md), and [Runtime contract index](../runtime-contract-index.md) for the per-package adoption-truth, maturity, ownership, and `/engine/*` route / `snapshot.*` key inventory that this component contributes to. [Long-range engine direction](../long-range-direction.md) frames why the engine stays composition-first and additive across multi-decade horizons; [Engineering standards](../engineering-standards.md) records the quality baseline the engine ships against.
@@ -16,6 +18,7 @@ See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), 
 - configuration binding for the phase-12 `Features` section through `Engine:Features`
 - configuration binding for the phase-13 `Cells` section through `Engine:Cells`, including `TrafficAutomation`
 - runtime lifecycle, failure capture, restart policy, and health evaluation
+- the internal `EngineDiagnostics` activity-source declared against `CephalonActivitySources.Engine` and `CephalonMeters.Engine`; `EngineRuntime` emits one `runtime.{phase}` activity per initialize/start/stop call (with stable Cephalon-prefix tags `cephalon.phase`, `cephalon.blueprint`, `cephalon.module.count`) and one `module.{phase}` activity per per-module phase transition (with stable Cephalon-prefix tags `cephalon.phase`, `cephalon.module.id`, `cephalon.module.version`), all routed through the `RedactionPipeline` resolved from DI so consumer-registered redaction filters scrub runtime-emission attributes uniformly with the AspNetCore middleware emission site; this is the second M1 redaction emission site shipped through `ENG-366`
 - additive execution-graph contracts and runtime execution-graph catalogs
 - additive hosted-execution contracts and runtime hosted-execution catalogs
 - additive projection contracts and runtime projection catalogs
@@ -89,6 +92,7 @@ See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), 
 - `Runtime/RuntimeLifecycleEvent.cs`
 - `Diagnostics/IRuntimeDiagnosticsCatalog.cs`
 - `Diagnostics/DiagnosticsConvention.cs`
+- `Diagnostics/EngineDiagnostics.cs`
 - `Manifest/RuntimeManifest.cs`
 - `Manifest/PackageManifest.cs`
 - `Configuration/EngineSettings.cs`

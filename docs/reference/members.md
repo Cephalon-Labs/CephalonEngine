@@ -459,6 +459,12 @@ Browse the published API surface by public member.
 - [ActivitySourceName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-activitysourcename): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=ActivitySourceName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - Gets the activity-source name emitted by the engine.
   - `const string ActivitySourceName`
+- [ActivitySourceName](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-activitysourcename): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=ActivitySourceName&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+  - Gets the stable activity-source name emitted by the retrieval runtime.
+  - `const string ActivitySourceName`
+- [ActivitySources](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticsconventionssurface-activitysources): `Properties` on `DiagnosticsConventionsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ActivitySources&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
+  - The stable `ActivitySource` names emitted by the engine and its shipped host adapters. Names come from the `Cephalon.Diagnostics` package's `CephalonActivitySources` static class.
+  - `IReadOnlyList<string> ActivitySources { get; set; }`
 - [Actor](cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-actor): `Properties` on `AmazonSesInvitationDeliveryAspNetCoreOptions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore`) [Browse](browse.html?q=Actor&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration&scope=members)
   - Gets or sets the actor value recorded on translated Amazon SES delivery status observations.
   - `string Actor { get; set; }`
@@ -564,6 +570,9 @@ Browse the published API surface by public member.
 - [ActorId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryrequest-actorid): `Properties` on `KnowledgeQueryRequest` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Gets the optional actor that requested the query.
   - `string ActorId { get; }`
+- [ActorIdTag](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-actoridtag): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=ActorIdTag&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the optional actor identifier emitted on the activity.
+  - `const string ActorIdTag`
 - [ActorType](cephalon-abstractions.md#member-p-cephalon-abstractions-audit-auditactor-actortype): `Properties` on `AuditActor` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActorType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Gets the logical actor type when one is known.
   - `string ActorType { get; }`
@@ -3801,6 +3810,9 @@ Browse the published API surface by public member.
 - [CellTrafficAutomationSettings](cephalon-engine.md#member-m-cephalon-engine-configuration-celltrafficautomationsettings-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-engine-configuration-celltrafficautomationroutesettings): `Constructors` on `CellTrafficAutomationSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=CellTrafficAutomationSettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Creates cell traffic-automation settings with provider and edge defaults.
   - `CellTrafficAutomationSettings(string defaultAutomationMode, string defaultTriggerMode, string defaultActionMode, string defaultMaterializationMode, string defaultProviderId, IReadOnlyList<string> defaultEdgeNodeIds, IReadOnlyList<CellTrafficAutomationRouteSettings> routes)`
+- [CephalonAttributeKeys](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticsconventionssurface-cephalonattributekeys): `Properties` on `DiagnosticsConventionsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=CephalonAttributeKeys&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
+  - The `cephalon.*` attribute keys that complement OpenTelemetry semantic conventions. Names come from the `Cephalon.Diagnostics` package's `CephalonDiagnosticsAttributeKeys` static class. Engine concepts that have no OpenTelemetry semantic-convention equivalent live here; concepts that have a semconv equivalent are emitted under the OpenTelemetry attribute name directly and are not re-declared in this surface.
+  - `IReadOnlyList<string> CephalonAttributeKeys { get; set; }`
 - [CephalonPackageVersion](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-scaffoldrequest-cephalonpackageversion): `Properties` on `ScaffoldRequest` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=CephalonPackageVersion&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the Cephalon package version written into the scaffold.
   - `string CephalonPackageVersion { get; }`
@@ -4212,6 +4224,9 @@ Browse the published API surface by public member.
 - [CollectionId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryresult-collectionid): `Properties` on `KnowledgeQueryResult` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=CollectionId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The collection identifier that was queried.
   - `string CollectionId { get; set; }`
+- [CollectionIdTag](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-collectionidtag): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=CollectionIdTag&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the knowledge-collection identifier emitted on the activity.
+  - `const string CollectionIdTag`
 - [Collections](cephalon-retrieval.md#member-p-cephalon-retrieval-services-iknowledgecatalog-collections): `Properties` on `IKnowledgeCatalog` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=Collections&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Gets the effective collection set after host options and module contributors have both been applied.
   - `IReadOnlyList<KnowledgeCollectionDescriptor> Collections { get; }`
@@ -5511,6 +5526,9 @@ Browse the published API surface by public member.
 - [CorrelationId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantmembershipevaluationrequest-correlationid): `Properties` on `TenantMembershipEvaluationRequest` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the optional correlation identifier for the evaluation.
   - `string CorrelationId { get; }`
+- [CorrelationIdTag](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-correlationidtag): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=CorrelationIdTag&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the optional correlation identifier emitted on the activity.
+  - `const string CorrelationIdTag`
 - [Count](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationbreakdownentry-count): `Properties` on `CdcCaptureReporterCoordinationBreakdownEntry` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Count&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of CDC captures currently reporting the bucket.
   - `int Count { get; }`
@@ -7014,6 +7032,9 @@ Browse the published API surface by public member.
 - [DiagnosticsConventions](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-diagnosticsconventions): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DiagnosticsConventions&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The diagnostics conventions and published event-id catalogs visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<DiagnosticsConvention> DiagnosticsConventions { get; set; }`
+- [DiagnosticsConventionsSurface](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-diagnostics-diagnosticsconventionssurface-ctor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string): `Constructors` on `DiagnosticsConventionsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=DiagnosticsConventionsSurface&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
+  - Describes the canonical OpenTelemetry name set the Cephalon engine and its host adapters emit telemetry under, projected so operators and AI tooling can introspect what the engine emits without reading source.
+  - `DiagnosticsConventionsSurface(IReadOnlyList<string> ActivitySources, IReadOnlyList<string> Meters, IReadOnlyList<string> CephalonAttributeKeys)`
 - [DiagnosticsSurface](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-diagnostics-diagnosticssurface-ctor-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticsconvention-cephalon-engine-runtime-runtimehealthreport-cephalon-engine-runtime-runtimehealthreport-system-string-system-string-system-string): `Constructors` on `DiagnosticsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=DiagnosticsSurface&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
   - Describes the operator-facing diagnostics surface exposed by a Cephalon ASP.NET Core host.
   - `DiagnosticsSurface(string MeterName, string ActivitySourceName, IReadOnlyList<string> Counters, IReadOnlyList<DiagnosticsConvention> Conventions, RuntimeHealthReport Liveness, RuntimeHealthReport Readiness, string SummaryPath, string LivenessPath, string ReadinessPath)`
@@ -7545,6 +7566,9 @@ Browse the published API surface by public member.
 - [DocumentCount](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-documentcount): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=DocumentCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The number of documents currently stored in the managed index.
   - `int DocumentCount { get; set; }`
+- [DocumentCountTag](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-documentcounttag): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=DocumentCountTag&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the document count of the replacement index when one was published.
+  - `const string DocumentCountTag`
 - [DocumentId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequerymatch-documentid): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=DocumentId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The matched document identifier.
   - `string DocumentId { get; set; }`
@@ -13371,6 +13395,12 @@ Browse the published API surface by public member.
 - [IndexedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexingresult-indexedatutc): `Properties` on `KnowledgeIndexingResult` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=IndexedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The UTC timestamp when the replacement index was published.
   - `DateTimeOffset? IndexedAtUtc { get; set; }`
+- [IndexerIdTag](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-indexeridtag): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=IndexerIdTag&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the indexer identifier responsible for the run.
+  - `const string IndexerIdTag`
+- [IndexingOutcomeTag](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-indexingoutcometag): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=IndexingOutcomeTag&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the terminal indexing outcome emitted on the activity (started, succeeded, failed, or skipped).
+  - `const string IndexingOutcomeTag`
 - [Info](cephalon-abstractions.md#member-f-cephalon-abstractions-behaviors-behavioradvisoryseverity-info): `Fields` on `BehaviorAdvisorySeverity` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Info&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Informational — no action required.
   - `const BehaviorAdvisorySeverity Info`
@@ -14712,6 +14742,12 @@ Browse the published API surface by public member.
 - [KnowledgeDocumentProviderContext](cephalon-retrieval.md#member-m-cephalon-retrieval-services-knowledgedocumentprovidercontext-ctor-cephalon-retrieval-services-knowledgecollectiondescriptor-system-string-system-datetimeoffset-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `KnowledgeDocumentProviderContext` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=KnowledgeDocumentProviderContext&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Creates provider context for a managed indexing request.
   - `KnowledgeDocumentProviderContext(KnowledgeCollectionDescriptor collection, string runId, DateTimeOffset requestedAtUtc, string actorId, string correlationId, IReadOnlyDictionary<string, string> metadata)`
+- [KnowledgeIndexActivityName](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-knowledgeindexactivityname): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=KnowledgeIndexActivityName&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+  - Gets the stable activity name emitted around one managed knowledge-index run.
+  - `const string KnowledgeIndexActivityName`
+- [KnowledgeIndexCounterName](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-knowledgeindexcountername): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=KnowledgeIndexCounterName&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+  - Gets the stable counter name for completed knowledge-index runs.
+  - `const string KnowledgeIndexCounterName`
 - [KnowledgeIndexes](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-knowledgeindexes): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=KnowledgeIndexes&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the latest managed retrieval index states visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<KnowledgeIndexState> KnowledgeIndexes { get; set; }`
@@ -14724,6 +14760,12 @@ Browse the published API surface by public member.
 - [KnowledgeIndexState](cephalon-abstractions.md#member-m-cephalon-abstractions-retrieval-knowledgeindexstate-ctor-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-int32-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=KnowledgeIndexState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Describes the latest managed index and query execution state for one knowledge collection.
   - `KnowledgeIndexState(string CollectionId, string LastRunId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, DateTimeOffset? LastIndexedAtUtc, DateTimeOffset? SourceFreshnessUtc, int DocumentCount, string FreshnessState, int StartedCount, int SucceededCount, int FailedCount, int SkippedCount, int QueryCount, DateTimeOffset? LastQueriedAtUtc, string LastQueryFingerprint, int LastQueryLength, int LastQueryMatchedCount, string LastActorId, string LastCorrelationId, string LastError, IReadOnlyDictionary<string, string> Metadata)`
+- [KnowledgeQueryActivityName](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-knowledgequeryactivityname): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=KnowledgeQueryActivityName&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+  - Gets the stable activity name emitted around one managed knowledge-query.
+  - `const string KnowledgeQueryActivityName`
+- [KnowledgeQueryCounterName](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-knowledgequerycountername): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=KnowledgeQueryCounterName&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+  - Gets the stable counter name for completed knowledge-queries.
+  - `const string KnowledgeQueryCounterName`
 - [KnowledgeQueryMatch](cephalon-abstractions.md#member-m-cephalon-abstractions-retrieval-knowledgequerymatch-ctor-system-string-system-string-system-string-system-string-system-int32-system-uri-system-collections-generic-ireadonlylist-system-string-system-nullable-system-datetimeoffset-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `KnowledgeQueryMatch` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=KnowledgeQueryMatch&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Describes one ranked document match returned by the managed query engine.
   - `KnowledgeQueryMatch(string CollectionId, string DocumentId, string Title, string ContentSnippet, int Score, Uri Uri, IReadOnlyList<string> Tags, DateTimeOffset? LastModifiedAtUtc, IReadOnlyDictionary<string, string> Metadata)`
@@ -16356,6 +16398,9 @@ Browse the published API surface by public member.
 - [MasterUrl](cephalon-edge-traefik.md#member-p-cephalon-edge-traefik-configuration-traefiktrafficobservationoptions-masterurl): `Properties` on `TraefikTrafficObservationOptions` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=MasterUrl&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
   - Gets or sets the optional API-server override used when the pack creates its own client from kubeconfig.
   - `string MasterUrl { get; set; }`
+- [MatchCountTag](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-matchcounttag): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=MatchCountTag&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the count of matches returned by the query.
+  - `const string MatchCountTag`
 - [Matched](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationresult-matched): `Properties` on `FeatureFlagEvaluationResult` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=Matched&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
   - Indicates whether the supplied evaluation context matched the targeting constraints for the feature flag.
   - `bool Matched { get; set; }`
@@ -17406,6 +17451,12 @@ Browse the published API surface by public member.
 - [MeterName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-metername): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=MeterName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - Gets the meter name emitted by the engine.
   - `const string MeterName`
+- [MeterName](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-metername): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=MeterName&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+  - Gets the stable meter name emitted by the retrieval runtime.
+  - `const string MeterName`
+- [Meters](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-diagnostics-diagnosticsconventionssurface-meters): `Properties` on `DiagnosticsConventionsSurface` in `Cephalon.AspNetCore.Diagnostics` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Meters&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Diagnostics&scope=members)
+  - The stable `Meter` names. Names come from the `Cephalon.Diagnostics` package's `CephalonMeters` static class. These typically match the activity-source names because the engine emits both kinds of instruments under the same logical namespace.
+  - `IReadOnlyList<string> Meters { get; set; }`
 - [Method](cephalon-observability-httpdependencies.md#member-p-cephalon-observability-httpdependencies-configuration-httpdependencydefinition-method): `Properties` on `HttpDependencyDefinition` in `Cephalon.Observability.HttpDependencies.Configuration` (`Cephalon.Observability.HttpDependencies`) [Browse](browse.html?q=Method&assembly=Cephalon.Observability.HttpDependencies&namespace=Cephalon.Observability.HttpDependencies.Configuration&scope=members)
   - Gets or sets the HTTP method used for the probe request.
   - `string Method { get; set; }`
@@ -20748,6 +20799,9 @@ Browse the published API surface by public member.
 - [ProviderCommandUnavailable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providercommandunavailable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderCommandUnavailable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The latest provider-owned command could not resolve a provider execution adapter.
   - `const string ProviderCommandUnavailable`
+- [ProviderCountTag](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-providercounttag): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=ProviderCountTag&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the provider count consulted during the indexing run.
+  - `const string ProviderCountTag`
 - [ProviderExecutable](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providerexecutable): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderExecutable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned write-path execution is currently ready.
   - `const string ProviderExecutable`
@@ -21579,6 +21633,18 @@ Browse the published API surface by public member.
 - [QueryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-querycount): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=QueryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The number of managed queries executed against this collection.
   - `int QueryCount { get; set; }`
+- [QueryEngineIdTag](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-queryengineidtag): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=QueryEngineIdTag&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the query-engine identifier responsible for the query.
+  - `const string QueryEngineIdTag`
+- [QueryLengthTag](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-querylengthtag): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=QueryLengthTag&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the requested-or-effective query length emitted on the query activity. Query text itself is not emitted because retrieval queries can carry user content that should never reach exporters in the clear.
+  - `const string QueryLengthTag`
+- [QueryLimitTag](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-querylimittag): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=QueryLimitTag&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the resolved query result limit (after default and maximum-limit clamps) emitted on the query activity.
+  - `const string QueryLimitTag`
+- [QueryOutcomeTag](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-queryoutcometag): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=QueryOutcomeTag&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the terminal query outcome emitted on the activity (succeeded or failed). Unlike indexing, queries do not have a skipped or started state on the runtime path.
+  - `const string QueryOutcomeTag`
 - [QueryText](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryrequest-querytext): `Properties` on `KnowledgeQueryRequest` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=QueryText&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Gets the text to search for.
   - `string QueryText { get; }`
@@ -24330,6 +24396,9 @@ Browse the published API surface by public member.
 - [RunId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexingresult-runid): `Properties` on `KnowledgeIndexingResult` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=RunId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The stable indexing run identifier.
   - `string RunId { get; set; }`
+- [RunIdTag](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-runidtag): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=RunIdTag&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
+  - Stable Cephalon-prefix tag carrying the knowledge-index run identifier emitted on the activity.
+  - `const string RunIdTag`
 - [RunIntervalMinutes](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryretentionselection-runintervalminutes): `Properties` on `AuditHistoryRetentionSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=RunIntervalMinutes&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the optional recurring retention interval in minutes.
   - `int? RunIntervalMinutes { get; }`

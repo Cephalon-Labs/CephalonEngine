@@ -95,6 +95,7 @@ Downstream provider and edge-runtime integrations that are not shipped as first-
 - [Supply-chain uplift plan](supply-chain-uplift-plan.md)
 - [Release checklist](release-checklist.md)
 - [Release checklist template (per-release working copy)](release-checklist-template.md)
+- [Release notes draft — `v0.1.0-preview`](releases/v0.1.0-preview-notes.md) — consolidated summary of substantive shipping arcs across Sprint 124-125 (public-API contract lock-in, redaction adoption arc, `Cephalon.Resilience` extraction, diagnostic-id registry, cleanup discipline, per-page maturity-badge convention) the release manager hands to the GitHub Release body when the tag is cut
 - [Architecture review 2026-05 follow-ups](architecture-review-2026-05-followups.md)
 - [Test coverage roadmap](test-coverage-roadmap.md)
 - framework-baseline and support-claim changes should stay aligned with [.NET 11 readiness](dotnet11-readiness.md), [Deployment-mode support](deployment-mode-support.md), [Compatibility](compatibility.md), and [Package publishing](package-publishing.md)

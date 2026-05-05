@@ -36,8 +36,20 @@ The route prefix `/engine` is reserved for Cephalon engine introspection. App-ow
 | `GET /` | `Cephalon.AspNetCore` | engine manifest landing | base |
 | `GET /manifest` | `Cephalon.AspNetCore` | canonical manifest of runtime shape | base |
 | `GET /snapshot` | `Cephalon.Engine` | composed introspection snapshot across every active surface | base |
+| `GET /status` | `Cephalon.AspNetCore` | runtime status posture | base |
 | `GET /app-model` | `Cephalon.AspNetCore` | application model and profile configuration | base |
+| `GET /options` | `Cephalon.AspNetCore` | engine option settings | base |
+| `GET /transports` | `Cephalon.AspNetCore` | configured transport descriptors | base |
+| `GET /failure-policy` | `Cephalon.AspNetCore` | runtime failure policy | base |
+| `GET /package-policy` | `Cephalon.AspNetCore` | package policy | base |
+| `GET /trust-policy` | `Cephalon.AspNetCore` | trust policy | base |
+| `GET /scaffold` | `Cephalon.AspNetCore` | scaffold descriptors | base |
+| `GET /reference-docs` | `Cephalon.AspNetCore` | reference-doc projection metadata | base |
+| `GET /localization` | `Cephalon.AspNetCore` | localization settings | base |
+| `GET /diagnostics` | `Cephalon.AspNetCore` | runtime diagnostics surface (catalog + health summary) | base |
 | `GET /diagnostics-conventions` | `Cephalon.AspNetCore` | canonical OpenTelemetry name set the engine and host adapters emit telemetry under (activity sources, meters, `cephalon.*` attribute keys); names sourced from `Cephalon.Diagnostics` constants | base |
+| `GET /dependencies` | `Cephalon.AspNetCore` | runtime dependency-health evaluation | base |
+| `GET /runtime-story` | `Cephalon.AspNetCore` | runtime operational story (`IRuntime.OperationalStory`) | base |
 | `GET /resilience` | `Cephalon.AspNetCore` | requested resilience patterns and settings | base |
 | `GET /behavior-resilience` | `Cephalon.AspNetCore` | effective behavior-execution resilience policies | optional |
 | `GET /behavior-resilience/{policyId}` | `Cephalon.AspNetCore` | single resilience policy | optional |
@@ -47,7 +59,7 @@ The route prefix `/engine` is reserved for Cephalon engine introspection. App-ow
 | `GET /packages` | `Cephalon.AspNetCore` | loaded package manifests | base |
 | `GET /technologies` | `Cephalon.AspNetCore` | technology selections from manifest | base |
 | `GET /technology-catalog` | `Cephalon.AspNetCore` | registered technology catalog | optional |
-| `GET /technology-surfaces` | `Cephalon.AspNetCore` | runtime technology capability surfaces | optional |
+| `GET /technology-surfaces` | `Cephalon.AspNetCore` | runtime technology capability surfaces (companion governance surfaces such as `tenant-memberships`, `tenant-invitations`, `tenant-domain-ownership`, `tenant-governance-actions`, and `tenant-administration` are projected here as `surfaceId` drill-downs rather than top-level `/engine/*` routes) | optional |
 | `GET /patterns` | `Cephalon.AspNetCore` | pattern definitions (cell-based, strangler-fig, BFF, ...) | base |
 | `GET /databases` | `Cephalon.AspNetCore` | configured databases | base |
 | `GET /database-topology` | `Cephalon.AspNetCore` | operational database topology | base |
@@ -60,12 +72,13 @@ The route prefix `/engine` is reserved for Cephalon engine introspection. App-ow
 | `GET /cdc-captures` | `Cephalon.AspNetCore` | CDC capture definitions | optional |
 | `GET /cdc-captures/runtime*` | `Cephalon.AspNetCore` | live CDC runtime state and per-runtime drilldowns | optional |
 | `GET /cdc-capture-runtimes` | `Cephalon.AspNetCore` | CDC execution-runtime catalog plus filter drilldowns by reporter, edge node, coordination, freshness, and governance | optional |
-| `POST /cdc-capture-runtimes/{executionRuntimeId}/reports` | `Cephalon.AspNetCore` | external CDC runtime live reports | conditional (`DataRuntimeOptions.EnableExternalCdcRuntimeReporting`) |
+| `POST /cdc-capture-runtimes/{executionRuntimeId}/reports` | `Cephalon.AspNetCore` | external CDC runtime live reports | conditional (`ICdcCaptureExecutionRuntimeReportSink` registered, gated by `DataRuntimeOptions.EnableExternalCdcRuntimeReporting`) |
+| `POST /cdc-capture-runtimes/{executionRuntimeId}/commands/{operationId}` | `Cephalon.AspNetCore` | issue a CDC managed-connector command | optional |
 | `GET /audit-stores` | `Cephalon.AspNetCore` | audit store descriptors | optional |
 | `GET /audit-history` | `Cephalon.AspNetCore` | queryable audit history | optional |
-| `GET /audit-history/export` | `Cephalon.AspNetCore` | NDJSON export of audit history | conditional (`AppProfile.Audit.History.Export`) |
+| `GET /audit-history/export` | `Cephalon.AspNetCore` | NDJSON export of audit history | conditional (`AppProfile.Audit.History.Export.Enabled`) |
 | `GET /authorization-policies` | `Cephalon.AspNetCore` | authorization policy descriptors | optional |
-| `GET /features` | `Cephalon.AspNetCore` | feature flag definitions | optional |
+| `GET /features` | `Cephalon.AspNetCore` | feature flag definitions plus enabled/disabled/by-module drill-downs | optional |
 | `GET /features/{featureFlagId}/evaluate` | `Cephalon.AspNetCore` | per-flag evaluation including provider-bridge results | optional |
 | `GET /strangler-fig` | `Cephalon.AspNetCore` | strangler-fig migration routes | optional |
 | `GET /strangler-fig/runtime` | `Cephalon.AspNetCore` | strangler-fig runtime policies | optional |
@@ -82,9 +95,14 @@ The route prefix `/engine` is reserved for Cephalon engine introspection. App-ow
 | `GET /cell-traffic-automations` | `Cephalon.AspNetCore` | cell traffic automation policies plus provider/edge drilldowns | optional |
 | `GET /knowledge-indexes` | `Cephalon.AspNetCore` | knowledge retrieval index states | optional |
 | `POST /knowledge-indexes/{collectionId}/queries` | `Cephalon.AspNetCore` | execute a knowledge query | optional |
-| `GET /agent-tools` | `Cephalon.AspNetCore` | registered agent tool definitions | optional |
-| `POST /agent-tools/{toolId}/run` | `Cephalon.AspNetCore` | execute an agent tool | optional |
+| `POST /knowledge-indexes/{collectionId}/reindex` | `Cephalon.AspNetCore` | trigger a manual knowledge reindex | optional |
+| `GET /agent-tool-runs` | `Cephalon.AspNetCore` | agent tool run states plus retry-pending, idempotency-duplicates, approval-required, terminal-failures, by-tool, and per-run drill-downs | optional |
+| `POST /agent-tools/{toolId}/runs` | `Cephalon.AspNetCore` | execute an agent tool through `IAgentToolDispatcher` | optional |
 | `GET /event-subscription-readiness` | `Cephalon.AspNetCore` | event subscription execution readiness | optional |
+| `GET /event-dispatch-runtimes` | `Cephalon.AspNetCore` | event dispatch runtime descriptors | optional |
+| `GET /event-dispatches` | `Cephalon.AspNetCore` | event dispatch states with terminal-failure and per-outbox drill-downs | optional |
+| `GET /event-publications/runtime` | `Cephalon.AspNetCore` | event publication runtime states with channel and per-publication drill-downs | optional |
+| `POST /event-publications` | `Cephalon.AspNetCore` | dispatch an event publication through `IEventPublicationDispatcher` | optional |
 | `GET /inboxes` | `Cephalon.AspNetCore` | inbox descriptors | optional |
 | `GET /outboxes` | `Cephalon.AspNetCore` | outbox descriptors | optional |
 | `GET /projections` | `Cephalon.AspNetCore` | data projection descriptors | optional |
@@ -101,14 +119,14 @@ The route prefix `/engine` is reserved for Cephalon engine introspection. App-ow
 | `GET /rest-endpoint-authoring-policies` | `Cephalon.AspNetCore` | REST endpoint authoring governance | optional |
 | `GET /rest-endpoint-overrides` | `Cephalon.AspNetCore` | REST endpoint runtime overrides | optional |
 | `GET /rest-endpoint-suppressions` | `Cephalon.AspNetCore` | suppressed REST endpoint candidates | optional |
-| `GET /tenant-memberships` | `Cephalon.MultiTenancy.Governance` | tenant membership descriptors | optional |
-| `GET /tenant-invitations` | `Cephalon.MultiTenancy.Governance` | tenant invitation descriptors | optional |
-| `GET /tenant-domain-ownership` | `Cephalon.MultiTenancy.Governance` | tenant domain ownership descriptors and proof state | optional |
-| `GET /tenant-governance-actions` | `Cephalon.MultiTenancy.Governance` | tenant governance action descriptors and decisions | optional |
-| `GET /tenant-administration` | `Cephalon.MultiTenancy.Governance` | tenant administration runtime metadata | optional |
-| `POST /engine/tenant-administration/commands` | `Cephalon.MultiTenancy.Governance.AspNetCore` | tenant administration workflow command endpoint | conditional (`MapCephalonTenantAdministrationCommands()`) |
+| `POST /tenant-administration/commands` | `Cephalon.MultiTenancy.Governance.AspNetCore` | tenant administration workflow command endpoint | conditional (`MapCephalonTenantAdministrationCommands()`) |
+| `POST /tenant-invitations/delivery-dispatches` | `Cephalon.MultiTenancy.Governance.AspNetCore` | tenant invitation delivery dispatch endpoint | conditional (`MapCephalonTenantInvitationDeliveryDispatches()`) |
+| `POST /tenant-invitations/delivery-status` | `Cephalon.MultiTenancy.Governance.AspNetCore` | tenant invitation delivery-status callback endpoint | conditional (`MapCephalonTenantInvitationDeliveryStatusCallbacks()`) |
+| `GET /tenant-invitations/delivery-status/observations` | `Cephalon.MultiTenancy.Governance.AspNetCore` | tenant invitation delivery-status observations endpoint | conditional (`MapCephalonTenantInvitationDeliveryStatusObservations()`) |
 
-The `/engine/cdc-capture-runtimes` family in particular has a number of filter drilldowns that have been added incrementally; treat the route table above as the canonical entry point and let the route response document the available filters in its own metadata rather than re-enumerating each filter variant here.
+The `/engine/cdc-capture-runtimes` family in particular has a large number of filter drill-downs that have been added incrementally (governance, drift, action-plans, write-path-readiness, preflight, dry-runs, execution-intents, execution-approvals, command-envelopes, command-issuances, command-retries, retry-execution-policies, command-journals, command-journal-durability, automatic-retries, automatic-retry-coordinations, distributed-retry-leases, distributed-retry-orchestrations, cross-node-idempotency-hardenings, multi-node-lease-executions, durable-shared-scheduler-orchestrations, scheduler-recovery-execution-hardenings, provider-owned-write-path-executions, provider-execution-orchestrations, provider-owned-control-plane-{ownership,mutation-reconcile,provisioning,apply-and-reconcile-executions,dependency-aware-apply-and-reconcile-hardenings,dependency-aware-provisioning-and-mutation-hardenings}, provider-specific-control-plane-materializers, and provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings). The `/engine/agent-tool-runs` family also has multiple filter drill-downs (`retry-pending`, `idempotency-duplicates`, `approval-required`, `terminal-failures`, `by-tool/{toolId}`, `{runId}`). Treat the route table above as the canonical entry point and let each route response document the available filters in its own metadata rather than re-enumerating every drill-down variant here.
+
+Provider-specific invitation-delivery callbacks are also exposed under the `/engine/tenant-invitations/delivery-status/{provider}` namespace by their AspNetCore companion packs (for example `/engine/tenant-invitations/delivery-status/sendgrid` from `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`, `/engine/tenant-invitations/delivery-status/mailgun` from `Cephalon.MultiTenancy.Governance.MailgunDelivery.AspNetCore`, and `/engine/tenant-invitations/delivery-status/amazon-ses` from `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore`); consult each provider companion's component doc for the canonical route pattern and signature-verification contract rather than re-listing them here.
 
 Companion edge packages (`Cephalon.Edge.KubernetesGateway`, `Cephalon.Edge.Traefik`) project the same `cell-traffic-automations` truth back into provider-specific surfaces such as `kubernetes-gateway-traffic-materializations` and `traefik-ingressroute-traffic-materializations`; those are technology runtime surfaces, not new `/engine/*` routes.
 
@@ -200,6 +218,7 @@ The runtime contract follows a small number of conventions that operators and AI
 - catalog interfaces live in `Cephalon.Abstractions` so consumers can take a thin contract dependency without pulling the full engine; runtime services live in `Cephalon.Engine` or the relevant companion pack
 - snapshot composition is additive: each owner contributes through an `IRuntimeIntrospectionSnapshotContributor` (or equivalent) so adding a new runtime surface does not require changing `RuntimeIntrospectionSnapshot` itself outside its owning slice
 - conditional routes are documented inline above (`conditional (...)`); when a configuration option toggles a route on, the same option is also referenced in the runtime catalog metadata so the route's existence stays explainable
+- the redaction surface is a cross-cutting contract that does not appear in any of the catalog tables above because it is consumer-registered through DI: `Cephalon.Diagnostics.Redaction.IRedactionFilter` (with `RedactionContext` and the orchestration helper `RedactionPipeline`) is registered against the consumer's `IServiceCollection` via `services.AddSingleton<IRedactionFilter>(...)` plus `services.AddRedactionPipeline()`; engine emission sites (`Cephalon.AspNetCore`'s HTTP request/response logging middleware, `Cephalon.Engine`'s module-phase activity tags, `Cephalon.Eventing.Wolverine`'s dispatch-time tags) resolve the pipeline lazily and route attribute values through it before exporter dispatch — see [`components/diagnostics.md`](components/diagnostics.md) *Redaction quick start* for the canonical adoption recipe
 
 When a route, snapshot key, or catalog interface is added, this index must be updated in the same slice. When a route, snapshot key, or catalog interface is renamed or retired, this index must be updated; for retirement, leave a one-line note explaining the replacement so AI agents do not have to reconstruct lineage.
 

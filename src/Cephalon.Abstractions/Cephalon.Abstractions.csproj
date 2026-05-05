@@ -2,19 +2,6 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Description>Contracts for Cephalon modules and capabilities.</Description>
-    <!--
-      RS0026 / RS0027: PublicApiAnalyzers style rules flagging pre-existing optional-overload
-      patterns. Suppressed so the public-API contract lock-in does not bundle a refactor.
-
-      MA0011 / MA0048 / MA0051 / MA0002 / RCS1194: Meziantou + Roslynator style rules surfaced
-      by adopting the Cephalon.Analyzers meta-package on the contract layer. They flag
-      pre-existing patterns (long descriptor methods, file-name vs type-name mismatches,
-      missing IFormatProvider on stable engine-internal strings, missing IEqualityComparer on
-      a couple records, exception-constructor signatures). Suppressed here so the meta-package
-      adoption itself does not bundle a breaking refactor; cleanup tracked as follow-up to
-      `ENG-328`.
-    -->
-    <NoWarn>$(NoWarn);RS0026;RS0027;MA0011;MA0048;MA0051;MA0002;RCS1194</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>

@@ -48,4 +48,17 @@ public static class CephalonActivitySources
     /// delivery-status reconciliation, tenant-administration, and domain-ownership spans.
     /// </summary>
     public const string MultiTenancyGovernance = "Cephalon.MultiTenancy.Governance";
+
+    /// <summary>
+    /// Stable name of the agentics companion-pack activity source, used by
+    /// <c>Cephalon.Agentics</c> tool-execution, dispatcher, run-state, retry, idempotency,
+    /// approval, and terminal-failure spans.
+    /// </summary>
+    public const string Agentics = "Cephalon.Agentics";
+
+    /// <summary>
+    /// Stable name of the retrieval companion-pack activity source, used by
+    /// <c>Cephalon.Retrieval</c> indexing, query, freshness, and reindex spans.
+    /// </summary>
+    public const string Retrieval = "Cephalon.Retrieval";
 }

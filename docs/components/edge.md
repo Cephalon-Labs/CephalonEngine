@@ -1,5 +1,7 @@
 # Cephalon.Edge
 
+> **Maturity:** `M2` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Edge` is the baseline technology pack for edge-native delivery scenarios.
 
 ## What it owns

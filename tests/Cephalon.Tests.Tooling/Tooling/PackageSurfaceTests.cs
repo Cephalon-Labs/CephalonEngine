@@ -913,6 +913,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Agentics.Registration.AgenticEngineBuilderExtensions).Assembly,
             typeof(global::Cephalon.Agentics.Configuration.AgenticRuntimeOptions),
             typeof(global::Cephalon.Agentics.Registration.AgenticEngineBuilderExtensions),
+            typeof(global::Cephalon.Agentics.Services.AgenticsDiagnostics),
             typeof(global::Cephalon.Agentics.Services.AgentToolDescriptor),
             typeof(global::Cephalon.Agentics.Services.AgentToolExecutionContext),
             typeof(global::Cephalon.Agentics.Services.AgentToolExecutionDecision),
@@ -1116,7 +1117,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Retrieval.Services.IKnowledgeDocumentProvider),
             typeof(global::Cephalon.Retrieval.Services.KnowledgeCollectionDescriptor),
             typeof(global::Cephalon.Retrieval.Services.KnowledgeDocument),
-            typeof(global::Cephalon.Retrieval.Services.KnowledgeDocumentProviderContext));
+            typeof(global::Cephalon.Retrieval.Services.KnowledgeDocumentProviderContext),
+            typeof(global::Cephalon.Retrieval.Services.RetrievalDiagnostics));
     }
 
     [Fact]

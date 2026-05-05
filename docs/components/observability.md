@@ -1,5 +1,7 @@
 # Cephalon.Observability
 
+> **Maturity:** `M2` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Observability` is the diagnostics companion package for Cephalon hosts.
 
 ## What it owns

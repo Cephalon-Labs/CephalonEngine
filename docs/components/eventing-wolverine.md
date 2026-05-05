@@ -1,5 +1,7 @@
 # Cephalon.Eventing.Wolverine
 
+> **Maturity:** `M3` · **Ownership:** `provider-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+
 `Cephalon.Eventing.Wolverine` is an optional Wolverine companion package for Cephalon event-driven workloads.
 
 ## What it owns
@@ -18,6 +20,7 @@
 - schedules bounded fixed-delay managed subscription retries through Wolverine's own scheduled-message pipeline instead of inventing a second retry subsystem, and reports terminal `failed` state when `SubscriptionMaxAttempts` is exhausted
 - contributes named dispatch-runtime descriptors that flow through `/engine/event-dispatch-runtimes`, `/engine/event-dispatches`, `/engine/event-dispatches/terminal-failures`, `/engine/outboxes`, and `snapshot.EventDispatchRuntimes` / `snapshot.EventDispatchStates`, with canonical aggregate summaries and terminal-failure counters projected back into those runtime descriptors
 - contributes a dedicated diagnostics convention so `/engine/diagnostics` can advertise the Wolverine loop and managed-subscription event ids and message templates alongside the shared eventing diagnostics catalog
+- the internal `WolverineDispatchInstrumentation` activity-source declared against the dedicated `Cephalon.Eventing.Wolverine.Dispatch` source (separate from `CephalonActivitySources.Eventing` because the dispatch loop is provider-specific); `WolverineEventDispatchHostedService` emits one `wolverine.dispatch` activity per attempted publish with stable Cephalon-prefix tags (`cephalon.message_id`, `cephalon.event_type`, `cephalon.channel_id`, `cephalon.dispatch_attempt`, plus `cephalon.correlation_id` and `cephalon.tenant_id` when carried on the staged item), all routed through the `RedactionPipeline` resolved from DI so consumer-registered redaction filters scrub Wolverine dispatch-emission attributes uniformly with the AspNetCore middleware, engine-runtime emission, Cephalon.Agentics dispatcher emission, Cephalon.Retrieval indexer / query emission, and Cephalon.Worker lifecycle emission sites; the same instrumentation publishes `cephalon.wolverine.dispatch.attempts` / `.successes` / `.failures` / `.retries` counters plus a `cephalon.wolverine.dispatch.duration` histogram. This is the third M1 redaction emission site shipped through `ENG-374` / `ENG-376`
 
 ## Main surfaces
 
@@ -25,6 +28,7 @@
 - `Modules/WolverineEventingModule.cs`
 - `Registration/WolverineEventingEngineBuilderExtensions.cs`
 - `Services/WolverineEventDispatchHostedService.cs`
+- `Services/WolverineDispatchInstrumentation.cs`
 - `Services/WolverineEventingDiagnosticsConventionContributor.cs`
 - `Services/WolverineEventingDispatchRuntimeContributor.cs`
 - `Services/WolverineEventingRuntimeSurfaceContributor.cs`

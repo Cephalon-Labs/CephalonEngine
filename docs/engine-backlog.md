@@ -3719,6 +3719,857 @@ Follow-up later:
 - wire a smoke test that boots the sample, fires an HTTP request with an `Authorization: Bearer abc123` header, asserts the captured activity does not contain the raw token; today the unit-level integration tests for both M1 emission sites cover the wiring, so a sample-level smoke test is duplicate coverage with marginal value
 - adopt the same recipe in the other samples (`Cephalon.Sample.Microservice`, `Cephalon.Sample.MicroserviceSuite`, `Cephalon.Sample.ModularVerticalSlice`, `Cephalon.Sample.Showcase`) as a separate slice when the redaction surface needs broader sample reach — **delivered in `ENG-369`**
 
+### ENG-387 Adopt per-page maturity-badge convention across Cephalon.MultiTenancy.Governance.* companions (batch 6)
+
+Status: done
+Estimate: 1
+
+Why:
+
+- batch 6 of the maturity-badge rollout named in `ENG-386`'s follow-up note: the 11 `Cephalon.MultiTenancy.Governance.*` companion / sender packs (`AspNetCore`, `HttpDelivery`, `SmtpDelivery`, `SendGridDelivery`, `SendGridDelivery.AspNetCore`, `MailgunDelivery`, `MailgunDelivery.AspNetCore`, `AmazonSesDelivery`, `AmazonSesDelivery.AspNetCore`, `MicrosoftGraphDelivery`, `MicrosoftGraphDelivery.AzureIdentity`)
+- this batch shifts the count from 49 of 104 (after `ENG-386`) to 60 of 104 component pages with a maturity badge — past the halfway mark of the convention rollout
+
+Delivered:
+
+- adopt the convention across the eleven `Cephalon.MultiTenancy.Governance.*` companion / sender packs, each badge mirroring the conformance-matrix row verbatim — every pack carries `M2` `cephalon-managed`:
+    - [`multi-tenancy-governance-aspnetcore.md`](docs/components/multi-tenancy-governance-aspnetcore.md)
+    - [`multi-tenancy-governance-httpdelivery.md`](docs/components/multi-tenancy-governance-httpdelivery.md)
+    - [`multi-tenancy-governance-smtpdelivery.md`](docs/components/multi-tenancy-governance-smtpdelivery.md)
+    - [`multi-tenancy-governance-sendgriddelivery.md`](docs/components/multi-tenancy-governance-sendgriddelivery.md)
+    - [`multi-tenancy-governance-sendgriddelivery-aspnetcore.md`](docs/components/multi-tenancy-governance-sendgriddelivery-aspnetcore.md)
+    - [`multi-tenancy-governance-mailgundelivery.md`](docs/components/multi-tenancy-governance-mailgundelivery.md)
+    - [`multi-tenancy-governance-mailgundelivery-aspnetcore.md`](docs/components/multi-tenancy-governance-mailgundelivery-aspnetcore.md)
+    - [`multi-tenancy-governance-amazonsesdelivery.md`](docs/components/multi-tenancy-governance-amazonsesdelivery.md)
+    - [`multi-tenancy-governance-amazonsesdelivery-aspnetcore.md`](docs/components/multi-tenancy-governance-amazonsesdelivery-aspnetcore.md)
+    - [`multi-tenancy-governance-microsoftgraphdelivery.md`](docs/components/multi-tenancy-governance-microsoftgraphdelivery.md)
+    - [`multi-tenancy-governance-microsoftgraphdelivery-azureidentity.md`](docs/components/multi-tenancy-governance-microsoftgraphdelivery-azureidentity.md)
+- `docs/engine-backlog.md` ENG-387 backlog card; Sprint 125 placement updated
+
+Follow-up later:
+
+- batch 7 covers `Cephalon.Edge.*` provider packs (`KubernetesGateway`, `Traefik`); batch 8 covers `Cephalon.Observability.*` companion packs; batch 9 sweeps the remaining smaller packs (`Cli`, `Scaffolding`, `TemplatePack`, `ReferenceDocs`, `Audit` family, `Identity` family, `Ids.Sfid`, etc.)
+- the May 2026 architecture review's *Updated risk #2* ("Maturity-label communication still asymmetric across surface families") is now past the halfway mark of closure — when the remaining batches land, the next monthly architecture review can promote the risk note to "materially closed"
+
+### ENG-386 Adopt per-page maturity-badge convention across Cephalon.EventSourcing.* provider packs (batch 5)
+
+Status: done
+Estimate: 1
+
+Why:
+
+- batch 5 of the maturity-badge rollout named in `ENG-385`'s follow-up note: the 10 `Cephalon.EventSourcing.*` provider packs (`EntityFramework`, `MongoDB`, `Redis`, `Neo4j`, `Cassandra`, `ClickHouse`, `Elasticsearch`, `OpenSearch`, `Qdrant`, `Nats`)
+- this batch shifts the count from 39 of 104 (after `ENG-385`) to 49 of 104 component pages with a maturity badge — about 47% of the way through the convention rollout
+
+Delivered:
+
+- adopt the convention across the ten `Cephalon.EventSourcing.*` provider packs, each badge mirroring the conformance-matrix row verbatim — every pack carries `M1` `provider-managed`:
+    - [`event-sourcing-entityframework.md`](docs/components/event-sourcing-entityframework.md)
+    - [`event-sourcing-mongodb.md`](docs/components/event-sourcing-mongodb.md)
+    - [`event-sourcing-redis.md`](docs/components/event-sourcing-redis.md)
+    - [`event-sourcing-neo4j.md`](docs/components/event-sourcing-neo4j.md)
+    - [`event-sourcing-cassandra.md`](docs/components/event-sourcing-cassandra.md)
+    - [`event-sourcing-clickhouse.md`](docs/components/event-sourcing-clickhouse.md)
+    - [`event-sourcing-elasticsearch.md`](docs/components/event-sourcing-elasticsearch.md)
+    - [`event-sourcing-opensearch.md`](docs/components/event-sourcing-opensearch.md)
+    - [`event-sourcing-qdrant.md`](docs/components/event-sourcing-qdrant.md)
+    - [`event-sourcing-nats.md`](docs/components/event-sourcing-nats.md)
+- `docs/engine-backlog.md` ENG-386 backlog card; Sprint 125 placement updated
+
+Follow-up later:
+
+- batch 6 covers `Cephalon.MultiTenancy.Governance.*` companion / sender packs (~12 docs); batch 7 covers `Cephalon.Edge.*` provider packs (KubernetesGateway, Traefik); batch 8 covers `Cephalon.Observability.*` companion packs; batch 9 sweeps the remaining smaller packs (`Cli`, `Scaffolding`, `TemplatePack`, `ReferenceDocs`, `Audit` family, `Identity` family, `Ids.Sfid`, etc.)
+- the conformance-matrix entries for every `Cephalon.EventSourcing.*` pack are explicitly noted as "(audit pending)"; when the audit row catches up, those badges remain authoritative against the matrix until the audit overrides them
+
+### ENG-385 Adopt per-page maturity-badge convention across Cephalon.Data.* provider packs (batch 4)
+
+Status: done
+Estimate: 2
+
+Why:
+
+- batch 4 of the maturity-badge rollout named in `ENG-384`'s follow-up note: the 14 `Cephalon.Data.*` provider packs (`SqlServer`, `Postgres`, `MySql`, `Oracle`, `MongoDB`, `EntityFramework`, `Debezium`, `Redis`, `Neo4j`, `Cassandra`, `ClickHouse`, `Elasticsearch`, `OpenSearch`, `Qdrant`, `Nats`)
+- this batch shifts the count from 24 of 104 (after `ENG-384`) to 39 of 104 component pages with a maturity badge — almost 40% of the way through the convention rollout
+
+Delivered:
+
+- adopt the convention across the fifteen `Cephalon.Data.*` provider packs, each badge mirroring the conformance-matrix row verbatim:
+    - [`data-sqlserver.md`](docs/components/data-sqlserver.md) — `M2` `provider-managed`
+    - [`data-postgres.md`](docs/components/data-postgres.md) — `M2` `provider-managed`
+    - [`data-mysql.md`](docs/components/data-mysql.md) — `M2` `provider-managed`
+    - [`data-oracle.md`](docs/components/data-oracle.md) — `M2` `provider-managed`
+    - [`data-mongodb.md`](docs/components/data-mongodb.md) — `M2` `provider-managed`
+    - [`data-entityframework.md`](docs/components/data-entityframework.md) — `M2` `cephalon-managed`
+    - [`data-debezium.md`](docs/components/data-debezium.md) — `M1` `provider-managed`
+    - [`data-redis.md`](docs/components/data-redis.md) — `M1` `provider-managed`
+    - [`data-neo4j.md`](docs/components/data-neo4j.md) — `M1` `provider-managed`
+    - [`data-cassandra.md`](docs/components/data-cassandra.md) — `M1` `provider-managed`
+    - [`data-clickhouse.md`](docs/components/data-clickhouse.md) — `M1` `provider-managed`
+    - [`data-elasticsearch.md`](docs/components/data-elasticsearch.md) — `M1` `provider-managed`
+    - [`data-opensearch.md`](docs/components/data-opensearch.md) — `M1` `provider-managed`
+    - [`data-qdrant.md`](docs/components/data-qdrant.md) — `M1` `provider-managed`
+    - [`data-nats.md`](docs/components/data-nats.md) — `M1` `provider-managed`
+- `docs/engine-backlog.md` ENG-385 backlog card; Sprint 125 placement updated
+
+Follow-up later:
+
+- batch 5 covers the 10 `Cephalon.EventSourcing.*` provider packs (EntityFramework, MongoDB, Redis, Neo4j, Cassandra, ClickHouse, Elasticsearch, OpenSearch, Qdrant, Nats); batch 6 covers `Cephalon.MultiTenancy.Governance.*` companion / sender packs (~12 docs); batch 7 covers `Cephalon.Edge.*` provider packs (KubernetesGateway, Traefik); batch 8 covers `Cephalon.Observability.*` companion packs; batch 9 sweeps the remaining smaller packs
+- the conformance-matrix entries for the audit-pending packs (Redis, Neo4j, Cassandra, ClickHouse, Elasticsearch, OpenSearch, Qdrant, Nats, Debezium) are explicitly noted as "(audit pending)"; when the audit row catches up, those badges remain authoritative against the matrix until the audit overrides them
+
+### ENG-384 Adopt per-page maturity-badge convention across Behaviors family + Eventing companions (batch 3)
+
+Status: done
+Estimate: 2
+
+Why:
+
+- batch 3 of the maturity-badge rollout named in `ENG-383`'s follow-up note: the `Cephalon.Behaviors.*` sub-packs (`Http`, `Messaging`, `Patterns`, `SourceGen`) plus the `Cephalon.Eventing.*` companions (`Wolverine`, `Behaviors`)
+- this batch shifts the count from 18 of 104 (after `ENG-383`) to 24 of 104 component pages with a maturity badge
+
+Delivered:
+
+- adopt the convention across the six pages, each badge mirroring the audit / matrix row verbatim:
+    - [`behaviors-http.md`](docs/components/behaviors-http.md) — `M2` mixed: `application-managed` + `cephalon-managed`
+    - [`behaviors-messaging.md`](docs/components/behaviors-messaging.md) — `M1` `application-managed`
+    - [`behaviors-patterns.md`](docs/components/behaviors-patterns.md) — `M1` `application-managed` (existing prose mention of "M4 pattern execution layer" is internal architecture-layer terminology, not a maturity audit label, and is preserved verbatim)
+    - [`behaviors-sourcegen.md`](docs/components/behaviors-sourcegen.md) — `M1` `cephalon-managed` (existing prose mention of "M5 compile-time tooling layer" preserved similarly)
+    - [`eventing-wolverine.md`](docs/components/eventing-wolverine.md) — `M3` `provider-managed`
+    - [`eventing-behaviors.md`](docs/components/eventing-behaviors.md) — `M1` `application-managed`
+- `docs/engine-backlog.md` ENG-384 backlog card; Sprint 125 placement updated
+
+Follow-up later:
+
+- batch 4 covers `Cephalon.Data.*` provider packs (Postgres, MySql, Oracle, SqlServer, MongoDB, Redis, Neo4j, Cassandra, ClickHouse, Elasticsearch, OpenSearch, Qdrant, Nats, EntityFramework, Debezium); batch 5 covers `Cephalon.EventSourcing.*` provider packs; batch 6 covers `Cephalon.MultiTenancy.Governance.*` companion / sender packs; batch 7 covers `Cephalon.Edge.*` provider packs; batch 8 covers `Cephalon.Observability.*` companion packs; batch 9 sweeps the remaining smaller packs (Cli, Scaffolding, TemplatePack, ReferenceDocs, Audit family, Identity family, Ids.Sfid, etc.)
+- the existing prose mentions of "M4 pattern execution layer" / "M5 compile-time tooling layer" in `behaviors-patterns.md` / `behaviors-sourcegen.md` are internal architecture-layer numbering (the ABT runtime's pattern-pipeline layers), not the audit's `M0`–`M4` maturity scale; these are deliberately left alone in this slice because the audit-mirroring discipline only governs the badge text, not the doc body — a future slice may rename the internal layers if the dual-meaning becomes a real adopter confusion source
+
+### ENG-383 Adopt per-page maturity-badge convention across technology / follow-through entry points (batch 2)
+
+Status: done
+Estimate: 2
+
+Why:
+
+- `ENG-382` introduced the per-page maturity-badge header convention and adopted it across the seven *Core runtime* entry points; the natural next batch is the *Technology and follow-through packs* + the *Multi-tenancy* family + the `Cephalon.Behaviors` core entry points named in `docs/components/README.md`
+- adopting the convention in batches keeps each slice reviewable while the rollout proceeds toward full coverage; this batch is bounded by the *one-entry-per-family* discipline (no provider-specific or sub-pack pages yet) so the next 8 follow-up batches can pick up similar tight scopes
+- the *Updated risk #2* of the May 2026 architecture review remains "still asymmetric" until every page in this map carries the badge; this batch shifts the count from 9 of 104 (after `ENG-382`) to 18 of 104
+
+Delivered:
+
+- adopt the convention across the nine entry points named below, each badge mirroring the audit / matrix row verbatim:
+    - [`agentics.md`](docs/components/agentics.md) — `M3` mixed: `application-managed` + `cephalon-managed`
+    - [`behaviors.md`](docs/components/behaviors.md) — `M4` `cephalon-managed`
+    - [`data.md`](docs/components/data.md) — `M3` mixed: `cephalon-managed` + `provider-managed`
+    - [`event-sourcing.md`](docs/components/event-sourcing.md) — `M1` `application-managed`
+    - [`eventing.md`](docs/components/eventing.md) — `M3` mixed: `application-managed` + `cephalon-managed`
+    - [`multi-tenancy.md`](docs/components/multi-tenancy.md) — `M2` `cephalon-managed`
+    - [`multi-tenancy-governance.md`](docs/components/multi-tenancy-governance.md) — `M2` mixed: `cephalon-managed` + `provider-managed`
+    - [`retrieval.md`](docs/components/retrieval.md) — `M3` mixed: `application-managed` + `cephalon-managed`
+    - [`edge.md`](docs/components/edge.md) — `M2` `cephalon-managed`
+- `docs/engine-backlog.md` ENG-383 backlog card; Sprint 125 placement updated
+
+Follow-up later:
+
+- batch 3 covers the `Cephalon.Behaviors` family sub-packs (`behaviors-http.md`, `behaviors-messaging.md`, `behaviors-patterns.md`, `behaviors-sourcegen.md`) and the `Cephalon.Eventing` companions (`eventing-wolverine.md`, `eventing-behaviors.md`); batch 4 covers `Cephalon.Data.*` provider packs; batch 5 covers `Cephalon.EventSourcing.*` provider packs; batch 6 covers `Cephalon.MultiTenancy.Governance.*` companion packs (delivery / callback receivers); batch 7 covers `Cephalon.Edge.*` provider packs; batch 8 covers `Cephalon.Observability.*` companion packs; batch 9 sweeps the remaining smaller packs
+- when each batch lands, refresh the count in the next monthly architecture review's *Updated risk #2* note so the closure progress is visible without rereading every page
+
+### ENG-382 Introduce per-page maturity-badge header convention in component docs and adopt across the core-runtime entry points
+
+Status: done
+Estimate: 2
+
+Why:
+
+- the May 2026 architecture review's *Updated risk #2* names "maturity-label communication still asymmetric across surface families": new CDC, governance, and traffic-automation surfaces all carry maturity labels in roadmap/backlog cards, but the human-facing docs (component pages, README sections, getting-started doc) still do not surface them prominently; adopters who never read the maturity audit may still treat `M1` or `M2` like fully-claimed runtime ownership
+- the May 2026 architecture review's *Architecture recommendations → Next 60 days* names exactly this: "promote maturity labels into the human-facing component docs and getting-started flows so adopters see `M0`/`M1`/`M2`/`M3`/`M4` and the four ownership modes without having to read the audit page"
+- only 2 of 104 component docs (`docs/components/analyzers.md` and `docs/components/diagnostics.md`) carry a "Maturity and ownership" prose section today; the other 102 component pages defer entirely to the audit / matrix without surfacing the label inline
+- a one-line maturity badge directly under the `# <Package>` title gives adopters the maturity / ownership truth at a glance, deferring the full prose to the audit; the convention scales because each badge is a single line and authoring discipline is one rule (mirror the audit row's `Ownership mode` and `Current maturity` columns verbatim)
+
+Delivered:
+
+- introduce the per-page maturity-badge header convention in `docs/components/README.md` *Maturity at a glance* via a new *Per-page maturity-badge header convention* sub-section that names the exact markdown shape (`> **Maturity:** ... · **Ownership:** ... — authoritative truth in [\`engine-surface-maturity-audit.md\`](...)`), declares the audit-mirroring discipline ("the badge mirrors the audit's wording verbatim so the two never drift"), and notes the incremental rollout posture
+- adopt the convention across the seven *Core runtime* entry points named in `docs/components/README.md`: [`abstractions.md`](docs/components/abstractions.md) (`M4` `cephalon-managed`), [`engine.md`](docs/components/engine.md) (`M4` `cephalon-managed`), [`aspnetcore.md`](docs/components/aspnetcore.md) (`M4` `cephalon-managed`), [`aspnetcore-graphql.md`](docs/components/aspnetcore-graphql.md) (`M2` `cephalon-managed`), [`aspnetcore-jsonrpc.md`](docs/components/aspnetcore-jsonrpc.md) (`M2` `cephalon-managed`), [`aspnetcore-grpc.md`](docs/components/aspnetcore-grpc.md) (`M2` `cephalon-managed`), [`worker.md`](docs/components/worker.md) (`M4` `cephalon-managed`)
+- additionally adopt the convention in the two component pages that already had a prose "Maturity and ownership" section so the badge convention reads consistently across all pages that surface maturity inline: [`diagnostics.md`](docs/components/diagnostics.md) (`M4` `cephalon-managed`) + [`analyzers.md`](docs/components/analyzers.md) (`M1` `cephalon-managed`); existing prose sections retained — the badge complements rather than replaces them
+- `docs/engine-backlog.md` ENG-382 backlog card; Sprint 125 placement updated
+
+Follow-up later:
+
+- adopt the convention across the remaining ~95 component pages in batched slices, prioritized by adopter visibility: technology / follow-through packs (Agentics, Eventing, EventSourcing core, Data core, Retrieval, Edge core, MultiTenancy core + Governance) → Behaviors family → provider packs (Data.* + EventSourcing.*) → observability companions → small remaining packs; each batch updates the audit row at the same time if any maturity / ownership change has happened since the last refresh, so the badge and audit never drift
+- when a future slice touches a component page that does not yet carry the badge, prefer adding it in the same slice over deferring; the discipline is the same as the redaction-arc's adoption pattern (`ENG-368` / `ENG-369`)
+- once the badge is on every page, consider promoting *Updated risk #2* from "still asymmetric" to "materially closed" in the next monthly architecture review; the matrix-adoption follow-up named in the May review (`promote maturity labels into ... getting-started flows`) extends to [`docs/getting-started.md`](docs/getting-started.md) and is tracked as a sibling sub-arc
+
+### ENG-381 Pre-declare canonical activity-source / meter names for Cephalon.Agentics + Cephalon.Retrieval
+
+Status: done
+Estimate: 2
+
+Why:
+
+- after `ENG-355` extended the canonical name set with `Eventing` + `MultiTenancyGovernance` (sourced from existing literal-string emitters in those two packs), the engine-surface maturity audit's `Cephalon.Diagnostics` row still names `agentics` and `retrieval` as outstanding "per-companion-pack OTel adapter rollout" items
+- the in-flight sibling slices `ENG-371` (Cephalon.Eventing OTel adapter activity emission baseline, PR #878) and `ENG-379` (Cephalon.MultiTenancy.Governance OTel adapter activity emission baseline + M1 redaction wiring, PR #888) are both promoting *already-declared* canonical names from M0 to M1 emission; they only work because the names were pre-declared in `Cephalon.Diagnostics` first — so for `Cephalon.Agentics` and `Cephalon.Retrieval` to receive the same emission baseline next, the canonical names need to land first
+- declaring the names without emission is the correct micro-slice: pre-declaration is purely additive, low-risk, lock-file-safe, and unblocks the next emission slice with zero coupling to the in-flight `ENG-371` / `ENG-379` PRs
+- a sub-agent survey (originally captured in the `ENG-355` commit) confirmed `Cephalon.Agentics` and `Cephalon.Retrieval` have no existing `ActivitySource` / `Meter` / `IDiagnosticsConventionContributor` declarations; verified again at the start of this slice — both packs remain emission-free, so this slice declares the names without modifying the consuming packs
+
+Delivered:
+
+- update `src/Cephalon.Diagnostics/CephalonActivitySources.cs` to add `Agentics = "Cephalon.Agentics"` and `Retrieval = "Cephalon.Retrieval"` const fields with full XML doc comments naming the consuming companion pack family
+- update `src/Cephalon.Diagnostics/CephalonMeters.cs` similarly with `Agentics = "Cephalon.Agentics"` and `Retrieval = "Cephalon.Retrieval"` const fields
+- update `src/Cephalon.Diagnostics/PublicAPI.Unshipped.txt` with the four new public const entries (two activity sources, two meters)
+- update `src/Cephalon.Observability.OpenTelemetry/Hosting/OpenTelemetryHostApplicationBuilderExtensions.cs` to add `tracing.AddSource(CephalonActivitySources.Agentics)` + `.Retrieval` and `metrics.AddMeter(CephalonMeters.Agentics)` + `.Retrieval` so the OTLP exporter pipes those signals by default the moment the matching packs ship their first emissions; until then the subscriptions are no-ops with zero export overhead
+- intentionally **no** changes to `src/Cephalon.Agentics` or `src/Cephalon.Retrieval` — neither pack has any diagnostics infrastructure to redirect, and adding a `ProjectReference` without an emission site would create dead coupling; the canonical-name → consuming-pack wiring lands together when each pack ships its first `ActivitySource` / `Meter` instance
+- documentation: `docs/components/diagnostics.md` *What it owns* canonical name list (5 → 7) plus *Maturity and ownership* OTel pack subscription line refreshed; `docs/engine-surface-maturity-audit.md` `Cephalon.Diagnostics` row canonical name list (5 → 7) plus OTel-pack subscription wording (3 → 7) refreshed and *Next proof needed* clarifies emission baseline scope; `docs/conformance-matrix.md` `Cephalon.Diagnostics` row similarly refreshed (3 → 7 canonical sources / meters)
+- verified end-to-end with full-solution `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors) and `dotnet restore --locked-mode CephalonEngine.slnx` (passes)
+
+Follow-up later:
+
+- when `Cephalon.Agentics` introduces its first `ActivitySource` / `Meter` emissions (most likely on the `IAgentToolDispatcher` execution loop and the dispatcher run-state catalog), the same pattern repeats: add an `IDiagnosticsConventionContributor` (or equivalent emitter) sourcing the source / meter / logger-category prefix from the canonical const, add a `ProjectReference` from `Cephalon.Agentics.csproj` to `Cephalon.Diagnostics`, route emitted attribute values through `RedactionPipeline?` for M1 from day one, refresh the `Cephalon.Diagnostics` audit / matrix rows, and refresh the lock files
+- the same recipe applies to `Cephalon.Retrieval` once `IKnowledgeIndexer` / `IKnowledgeQueryEngine` execution introduces emission sites
+- CDC (canonical-name pre-declaration for `Cephalon.Data` shared CDC capture surface and / or `Cephalon.Data.Debezium`) is a natural follow-up slice; deferred from this slice because the CDC surface lives inside `Cephalon.Data`'s shared runtime rather than a dedicated pack, so the right scoping (one canonical name owned by `Cephalon.Data`, or a separate name owned by `Cephalon.Data.Debezium`) needs explicit analysis first
+- the canonical names declared here will graduate from `PublicAPI.Unshipped.txt` to `PublicAPI.Shipped.txt` on the next release per the standard contract-lock-in promotion cycle
+
+### ENG-412 Extend Cephalon.Worker lifecycle activity with metadata tags + M1 redaction wiring (sixth emission site)
+
+Status: done
+Estimate: 2
+
+Why:
+
+- `Cephalon.Worker.Hosting.RuntimeHostedService` started `worker.lifecycle.start` and `worker.lifecycle.stop` activities but emitted **zero `SetTag` values** — operators tracing a worker host could not see which blueprint, which engine state, or which module count was being started/stopped from the activity alone, and the M1 redaction surface had no Worker emission site to protect even though the canonical activity-source name (`CephalonActivitySources.Worker`) was already published
+- the redaction adoption arc (`ENG-365` AspNetCore + `ENG-366` EngineRuntime + `ENG-374` Wolverine dispatch + `ENG-401` Agentics + `ENG-402` Retrieval) had landed at five emission sites and the helper pattern (`Redact(activity, key, value)` + lazy `IServiceProvider.GetService<RedactionPipeline>()` resolution) was contract-typed and reusable — extending it to the worker lifecycle was the obvious next move and the emission-site count gap (six vs. five) was already flagged in the `IRedactionFilter` XML doc remarks future-emission-site list
+- `IRuntime.Manifest.AppProfile.BlueprintId` and `IRuntime.Modules.Count` are already exposed through the runtime contract (operators read them through `/engine/manifest` + `/engine/snapshot`) so attaching them to the lifecycle activity is a pure read of existing surface rather than new state
+
+Delivered:
+
+- update `src/Cephalon.Worker/Hosting/WorkerDiagnostics.cs` to publish the `cephalon.lifecycle.phase`, `cephalon.blueprint`, and `cephalon.module.count` tag-name constants plus `LifecyclePhaseStart` / `LifecyclePhaseStop` phase-value constants (all `internal const string`)
+- update `src/Cephalon.Worker/Hosting/RuntimeHostedService.cs` to:
+    - add private `RedactionPipeline? redactionPipeline` field, lazily resolved from `IServiceProvider` via `services.GetService<RedactionPipeline>()` on first emission (the same pattern `EngineRuntime` and `WolverineEventDispatchHostedService` use)
+    - add private `Redact(Activity?, string attributeKey, object? value)` helper that builds a `RedactionContext` from `activity?.Source.Name + attributeKey` and pipes through the resolved pipeline; short-circuits to passthrough when the pipeline is null
+    - add private `SetTag(Activity, string attributeKey, object? value)` helper that wraps `activity.SetTag(...)` with `Redact(...)` so every emitted tag value flows through the pipeline
+    - add private `TagLifecycleActivity(Activity?, string phase)` helper that calls `SetTag` for the three lifecycle tags (phase, blueprint, module count); invoked once per `StartAsync` / `StopAsync`
+- update `src/Cephalon.Diagnostics/Redaction/IRedactionFilter.cs` XML doc remarks to declare **six** M1 emission sites (was five) and name `Cephalon.Worker`'s lifecycle tags explicitly; remove "worker lifecycle spans" from the future-emission-sites list because the wiring is now real
+- update `docs/components/diagnostics.md` *What it owns* paragraph + *Redaction quick start* intro: six engine emission sites; Worker site explicitly named with the three tag names
+- update `docs/operational-hardening-gap-inventory.md` *Shipped baseline* bullet: six M1 emission sites
+- update `docs/conformance-matrix.md` `Cephalon.Diagnostics` row Notes: six real engine emission sites
+- update `docs/releases/v0.1.0-preview-notes.md` Engine-boundary redaction section: six sites with explicit Worker emission description + `RuntimeHostedService` helper-pattern callout
+- `docs/engine-backlog.md` ENG-411 backlog card; Sprint 125 placement updated
+- verified end-to-end with `dotnet build src/Cephalon.Worker/Cephalon.Worker.csproj -c Release` (0 warnings, 0 errors); the wiring is internal-only because `RuntimeHostedService` is `internal sealed` and the wired tags do not change the public API surface
+
+Follow-up later:
+
+- the focused integration test that ENG-412 deferred for this site shipped through `ENG-413` (PR follows) — `tests/Cephalon.Tests.Composition/Diagnostics/Redaction/WorkerLifecycleRedactionTests.cs`, two tests, no `InternalsVisibleTo` wiring needed (the test resolves `RuntimeHostedService` by full type name instead of by symbol)
+- when `Cephalon.MultiTenancy.Governance` (PR #888) and `Cephalon.Eventing` (PR #878) OTel emission baselines land, count climbs to eight; refresh the same five doc surfaces in the same slice that lands the wiring per the maintenance discipline declared in the test-coverage roadmap
+
+### ENG-413 Add focused integration test proving Cephalon.Worker lifecycle activity routes tag values through RedactionPipeline (sixth emission site test coverage)
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `ENG-412` shipped the sixth M1 redaction emission site (Cephalon.Worker lifecycle activity tags) and explicitly deferred its focused integration test as the natural next slice; closing that follow-up keeps the redaction adoption arc symmetric with the AspNetCore + EngineRuntime + Wolverine + Agentics + Retrieval emission sites that already have per-site integration coverage
+- the `Cephalon.Tests.Composition/Diagnostics/Redaction/` folder is the canonical home for redaction integration tests; a Worker addition there parallels `EngineRuntimeRedactionTests.cs` (composition-driven, no web host) rather than the Hosting variants for transport-bound emission sites
+- recommendation #8 in `docs/test-coverage-roadmap.md` already counts the redaction surface as shipped through five emission sites — extending the count to six (with explicit per-site rows for Agentics / Retrieval / Worker) and removing the now-stale "deferred gap" note about Agentics + Retrieval per-site tests (which actually shipped in `ENG-401` / `ENG-402` as `tests/Cephalon.Tests.Hosting/AgenticsToolDispatchActivityTests.cs` + `RetrievalKnowledgeIndexActivityTests.cs`) closes the docs-drift between the roadmap and what the test tree actually proves
+
+Delivered:
+
+- new `tests/Cephalon.Tests.Composition/Diagnostics/Redaction/WorkerLifecycleRedactionTests.cs` (two tests, mirroring the `EngineRuntimeRedactionTests` template):
+    - `WorkerLifecycle_RoutesEmittedStartAndStopTagValues_ThroughRedactionPipeline` boots `AddCephalonWorker(...)`, registers a tracking `IRedactionFilter` plus `AddRedactionPipeline()`, drives `IHostedService.StartAsync(...)` then `StopAsync(...)`, asserts the filter saw `cephalon.lifecycle.phase` / `cephalon.blueprint` / `cephalon.module.count` tag keys, asserts both `start` and `stop` phase values reached the pipeline, and asserts the configured blueprint id (normalized to kebab-case `modular-monolith` by engine settings resolution) flows through the pipeline before activity tagging
+    - `WorkerLifecycle_AppliesRedactionReplacement_BeforeTaggingActivity` registers a replacement `IRedactionFilter` that swaps `cephalon.blueprint` tag values for `[REDACTED-BLUEPRINT]` and asserts both `worker.lifecycle.start` and `worker.lifecycle.stop` activities carry the redacted value on the activity itself (not just at filter-input time), proving the SetTag-after-Redact ordering is observable end-to-end
+- both tests resolve `Cephalon.Worker.Hosting.RuntimeHostedService` from `IEnumerable<IHostedService>` by **full type name** rather than by symbol — `RuntimeHostedService` is `internal sealed`, so this avoids adding `InternalsVisibleTo` to `Cephalon.Worker.csproj` for a single test pair; constants for the activity / tag names reuse the public `CephalonActivitySources.Worker` source name plus literal strings for the `worker.lifecycle.*` operation names and `cephalon.lifecycle.*` tag keys (same string contracts the doc surfaces already publish)
+- update recommendation #8 in `docs/test-coverage-roadmap.md`:
+    - rename the recommendation title from "5-emission-site integration coverage" to "6-emission-site integration coverage"
+    - extend the closing-slice annotation to add `ENG-413` after `ENG-401` / `ENG-402`
+    - add three new bullet rows to the itemized 6-test-file list: Agentics tool-dispatch (`AgenticsToolDispatchActivityTests.cs`, 2 tests, `ENG-401`), Retrieval knowledge-indexing + query (`RetrievalKnowledgeIndexActivityTests.cs`, ENG-402), Worker lifecycle (`WorkerLifecycleRedactionTests.cs`, 2 tests, `ENG-413`)
+    - rewrite the trailing "deferred gap" paragraph: drop the stale claim about Agentics + Retrieval per-site tests being deferred (those shipped in ENG-401 / ENG-402), keep the helper-pattern observation, and note that all six M1 emission sites now have per-site integration coverage
+- close ENG-412's follow-up note: rewrite the "deferred today" line to point at the now-shipped ENG-413 test file
+- focused test run: `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --filter "FullyQualifiedName~WorkerLifecycleRedactionTests"` → 2 / 2 pass
+
+Follow-up later:
+
+- when `Cephalon.MultiTenancy.Governance` (PR #888) and `Cephalon.Eventing` (PR #878) OTel emission baselines land, the per-site test slice for each of them ships in the same card that lands the wiring (per the redaction-adoption maintenance discipline declared in `test-coverage-roadmap.md` recommendation #8); the Wolverine dispatch path already has `WolverineEventingPackTests.cs` redaction tests under `ENG-374` / `ENG-376`, so the follow-through is for **non-Wolverine** subscription / publication paths only
+
+### ENG-410 Extend test-coverage-roadmap with redaction-suite + Resilience-suite recommendations
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `ENG-407` (PR #921) authored the new `docs/test-coverage-roadmap.md` with 7 prioritized recommendations covering AspNetCore.Grpc / JsonRpc / GraphQL transport coverage, the MetadataDrivenAuthorizationEvaluator decision matrix, `IAuditActorAccessor` + `DefaultAuditRecorder` ambient-fallback chain, provider-native CDC integration scenarios, and the Debezium recursion-flake quarantine — but did **not** name the redaction-suite (39+ tests across `tests/Cephalon.Tests.Composition/Diagnostics/Redaction/`) or the resilience-suite (19 tests across `tests/Cephalon.Tests.Composition/Behaviors/Resilience/` and `tests/Cephalon.Tests.Hosting/`) anywhere in the *Prioritized recommendations* list
+- both suites cover real `M1`-or-higher claims that the test-coverage roadmap explicitly says belong in its tracking ("a claim is covered when the layered tests prove the claim, not when a test assembly carries the same name as the source pack"); leaving them off the list means a future maintainer reading the roadmap doesn't know that redaction or Resilience are already covered, and might write duplicate or stale coverage cards
+- this is the smallest move that closes the gap — recommendation numbering is stable per the roadmap discipline, so adding `#8` (redaction) and `#9` (Resilience) as already-shipped entries with the closing-slice annotations preserves the recommendation-number contract for downstream backlog cards
+
+Delivered:
+
+- new `#8` *Cephalon.Diagnostics.Redaction contract surface and 5-emission-site integration coverage* recommendation under `## Prioritized recommendations` in `docs/test-coverage-roadmap.md`, marked as **shipped through `ENG-362` / `ENG-365` / `ENG-366` / `ENG-374` / `ENG-376` plus the Agentics + Retrieval emission slices `ENG-401` / `ENG-402`**; itemizes the 6 test files that prove the surface (8 KeyMatch + 10 Regex + 8 Pipeline + 7 ServiceCollection + 2 AspNetCore middleware + 2 EngineRuntime + 2 Wolverine dispatch tests); flags Agentics and Retrieval per-site integration tests as a deferred gap (low priority, gated on consumer demand) because the helper-pattern correctness is verified at three sites and the lazy-resolution shape is contract-typed across all five; quality dimensions named: Security + Auditability + Compliance + Reliability
+- new `#9` *Cephalon.Resilience engine-managed runtime coverage* recommendation, marked as **shipped through `ENG-390` (PR #907)**; names the 19 tests under `tests/Cephalon.Tests.Composition/Behaviors/Resilience/` plus the hosting-layer integration tests; explains why 3 of 7 resilience files stayed in `Cephalon.Behaviors` (internal-surface widening / circular-project-reference avoidance) so the test-shape after extraction stays explainable; quality dimensions named: Reliability + Availability + Data Integrity
+- `docs/engine-backlog.md` ENG-410 backlog card; Sprint 125 placement updated
+
+Follow-up later:
+
+- ~~when concurrent run PR #922 (ENG-408 streaming + canonical Status coverage for `Cephalon.AspNetCore.Grpc`) merges, recommendation `#1` flips from "pending" to "shipped" with the closing-slice annotation; today the entry is still pending because the PR is not yet merged~~ — **discharged through `ENG-423`**: PR #922 merged on commit `a4ac22e6` (May 5, 2026); recommendation `#1` is now annotated as **shipped through `ENG-408` / PR #922** in [`docs/test-coverage-roadmap.md`](test-coverage-roadmap.md) line 48 with the deferred-coverage note for unary client-cancellation / unary deadline-expiry
+- when `Cephalon.MultiTenancy.Governance` (PR #888) and `Cephalon.Eventing` (PR #878) OTel emission baselines land, recommendation `#8` extends to seven emission sites; refresh the entry in the same slice that lands the wiring per the maintenance discipline declared in the roadmap's *Maintenance discipline* section
+- the Agentics + Retrieval per-site integration tests can become a `#10` recommendation if the lazy-resolution-pattern correctness ever needs a per-site verification beyond the existing 3-site coverage; today it stays a deferred gap rather than a backlog card
+
+### ENG-409 Close Cephalon.Retrieval M1 emission drift in cross-package redaction docs
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `ENG-401` (Cephalon.Agentics OTel emission baseline + M1 redaction wiring) and `ENG-402` (Cephalon.Retrieval OTel emission baseline + M1 redaction wiring) shipped real `StartActivity` + `SetTag` emission code in the new `AgentToolDispatcher` (Agentics) and `KnowledgeIndexer` + `KnowledgeQueryEngine` (Retrieval) call sites, each consuming a `RedactionPipeline?` constructor parameter and routing `SetTag` values through a `Redact(activity, key, value)` helper -- the same canonical pattern the AspNetCore middleware (`ENG-365`), engine runtime (`ENG-366`), and Wolverine dispatch (`ENG-374`) already use
+- `ENG-406` closed the Retrieval-side OTel emission docs-drift on `engine-surface-maturity-audit.md` + `components/diagnostics.md` for the *emission* shape (canonical name set + activity surface naming) but did not refresh the count of M1-redaction-wired emission sites in the Diagnostics doc surface; the Diagnostics component doc still said "four engine emission sites" (AspNetCore + EngineRuntime + Wolverine + Agentics) when in fact the count is **five** because Retrieval wires `RedactionPipeline?` into both `KnowledgeIndexer` and `KnowledgeQueryEngine` constructor signatures and routes `SetTag` calls through the same `Redact(...)` helper
+- `IRedactionFilter`'s XML doc remarks similarly read "the engine routes three emission sites through registered filters" -- pre-Agentics + pre-Retrieval truth -- and the operational-hardening gap inventory said "three M1 emission sites" with the same staleness; closing the drift in three doc surfaces (Diagnostics component doc + IRedactionFilter XML + operational-hardening gap inventory) plus the conformance-matrix Diagnostics-row notes column is a focused doc slice that doesn't conflict with in-flight concurrent runs
+
+Delivered:
+
+- update `docs/components/diagnostics.md` *What it owns* paragraph to declare **five** engine emission sites and explicitly name the new `Cephalon.Retrieval` site (the `retrieval.knowledge.index` + `retrieval.knowledge.query` spans emitted under `CephalonActivitySources.Retrieval`, with `KnowledgeIndexer` and `KnowledgeQueryEngine` both consuming the redaction pipeline before tagging activities); also update the *Redaction quick start* section's intro to name the fifth M1 site
+- update `src/Cephalon.Diagnostics/Redaction/IRedactionFilter.cs` XML doc remarks to describe the **five** M1 emission sites (was three) and continue to declare the future emission sites that will adopt the same pattern (worker lifecycle, future eventing publishers, multi-tenancy governance once its OTel adapter lands)
+- update `docs/operational-hardening-gap-inventory.md` *Shipped baseline* bullet to declare **five** M1 emission sites and name Retrieval explicitly
+- update `docs/conformance-matrix.md` `Cephalon.Diagnostics` row Notes to declare **five** real engine emission sites
+- the `architecture-review-2026-05.md` mentions of "three real engine emission sites" stay unchanged because the review is a dated May 2-3 snapshot; June's review supersedes it with the current 5-site truth
+- `docs/engine-backlog.md` ENG-409 backlog card; Sprint 125 placement updated
+- verified end-to-end with `dotnet build src/Cephalon.Diagnostics/Cephalon.Diagnostics.csproj -c Release` (0 warnings, 0 errors)
+
+Follow-up later:
+
+- when `Cephalon.MultiTenancy.Governance` (PR #888) and `Cephalon.Eventing` (PR #878) OTel emission baselines land, count climbs to seven; refresh the same four doc surfaces in the same slice that lands the wiring
+- when `Cephalon.Worker` lifecycle spans add tag values (today they emit no `SetTag` calls so M1 redaction doesn't apply), the count moves to eight
+
+### ENG-400 Author consolidated v0.1.0-preview release-notes draft
+
+Status: done
+Estimate: 1
+
+Why:
+
+- Sprint 124-125 shipped substantial arcs (public-API contract lock-in across 100+ packages, `Cephalon.Diagnostics` `M2`→`M4` promotion, the redaction adoption arc end-to-end, `Cephalon.Resilience` extraction, the diagnostic-id registry, the `<NoWarn>` cleanup discipline, the per-page maturity-badge convention across all 104 component docs, and 5+ doc-cross-link refreshes) but no consolidated release-notes draft existed for the eventual `v0.1.0-preview` GitHub Release
+- the release-checklist process expects a release-notes-ready summary the release manager hands to the GitHub Release body when the tag is cut; without it, the manager has to reconstruct the shipping arc from `git log` + 30+ PR descriptions, which is exactly the staleness the planning-governance discipline guards against
+- claiming `ENG-400` (skipping past the `ENG-394`-`399` window where concurrent runs are likely to grab numbers) avoids the ENG-N collision pattern the auto-memory feedback warned about; this slice is doc-only and pure additive so it can't conflict with the in-flight concurrent runs
+
+Delivered:
+
+- new `docs/releases/v0.1.0-preview-notes.md` containing:
+    - **Scope of this preview** section naming the package count (104), public-API contract lock-in, M1 redaction wiring at three real emission sites, the 39 redaction-suite tests, the central diagnostic-id registry, and the 11-doc reference refresh + per-page maturity-badge rollout
+    - **What's new in this preview** section grouping the substantive arcs by ENG number range with engine-quality dimensions advanced (Performance / Security / Compatibility / Maintainability / Auditability / Compliance / Reliability) per the engineering-standards baseline
+    - **Compatibility posture** section declaring the engine is preview-not-GA, the `EnablePackageValidation` + `PackageValidationBaselineVersion` cutover plan, and the consumer-pinning guidance
+    - **Supply-chain posture** section describing the SLSA L3 + Sigstore + CycloneDX SBOM pipeline that runs on the first `v*.*.*` tag
+    - **Known gaps and limitations** section listing the four still-open `architecture-review-2026-05` risks (maturity-label asymmetry, trim/AOT/single-file claim, default-path dilution, AI-tooling reversibility) plus the five gaps closed during the May 3-4 shipping window with closure-notes pointers
+    - **Pre-existing test-flake watch** section flagging the Debezium OOM
+    - **Public-API delta artefact** section pointing at the release-pipeline output
+    - **How to consume this preview** section with restore / build / test smoke commands
+    - **Release-manager checklist** preflight at the bottom matching the rule book in `docs/release-checklist.md`
+- `docs/releases/` directory created (didn't exist before; matches the convention declared in `release-checklist.md` line 5: `docs/releases/<tag>-checklist.md`)
+- `docs/engine-backlog.md` ENG-400 backlog card; Sprint 125 placement updated
+
+Follow-up later:
+
+- when the `v0.1.0-preview` tag is cut, the release manager copies this draft into the GitHub Release body with any final timing edits (e.g. trim the test-flake-watch section if the flake is fixed before tag-time, add the SLSA provenance / Sigstore signature / SBOM bundle URLs once the pipeline produces them)
+- once the first GA release lands post-preview, this file becomes the historical reference for `v0.1.0-preview` shipping; future preview / GA releases get their own `v{x.y.z}-notes.md` siblings under `docs/releases/`
+- consider promoting [`scripts/summarise-public-api-deltas.ps1`](../../scripts/summarise-public-api-deltas.ps1) to consume this draft and emit a top-of-release-notes contract-delta summary; today the artefact is reachable but the release-notes-generation flow doesn't wire it directly
+
+### ENG-403 Direct decision-matrix coverage for `MetadataDrivenAuthorizationEvaluator`
+
+Status: done
+Estimate: 2
+
+Why:
+
+- `MetadataDrivenAuthorizationEvaluator` is the only Cephalon-managed authorization path; it lives at `M1` mixed-ownership inside `Cephalon.Identity` and gates every `IAuthorizationEvaluator` consumer that opts into the built-in evaluator
+- before this slice, the evaluator's branches were exercised only through the four happy-path policies registered by `IdentityAuthorizationTestModule` (`tenant-admin` / `tenant-boundary` / `document-owner`) plus one explicit-policy-required deny scenario — the `RequiredRoleMatch=all` branch, the `expectedValue is null` empty-required-value branch, the missing-policy-id branch, the `RequireOwner` deny branches, the `RequireTenantMatch` deny branches that don't exit on the first comparison, the `ruleCount == 0` "policy without metadata-driven rules" branch, the special-key resolvers for subject `displayName`, resource `resourceType`, and context `action`, the policy-mode-fallback path through `AppProfile.Identity.AuthorizationModes`, and the cancellation-throwing path were all unverified
+- the standing test-coverage planning text records this as the highest-priority security-themed test slice: "M1 mixed-ownership; the default evaluator is the only Cephalon-managed authorization path and deserves direct coverage beyond hosting integration"
+- claiming `ENG-403` (skipping past `ENG-401` / `ENG-402`, both currently in-flight on a different OTel-emission axis through PRs #915 and #916) avoids the ENG-N collision pattern the auto-memory feedback warned about; this slice touches only `tests/` so it can't conflict with the open OTel adapter slices that are regenerating `docs/reference/`
+
+Delivered:
+
+- new `tests/Cephalon.Tests.Support/IdentityDecisionMatrixTestModule.cs` registering 15 edge-case authorization policies that pin every metadata-rule branch the built-in evaluator advertises (`requiredRoles` ANY / ALL / empty, subject / resource / context attribute prefixes including the empty-required-value case and the special-key resolvers, `requireOwner` standalone, `requireTenantMatch` standalone, the composite tenant-match-plus-attribute case, the no-rules policy, and the policy-mode-fallback policy)
+- new `tests/Cephalon.Tests.Composition/Composition/MetadataDrivenAuthorizationDecisionMatrixTests.cs` with 22 tests covering the deny-reason text, `decision.Metadata["evaluator" / "policyId" / "modes" / "modeCount" / "ruleCount" / "outcome"]` aggregation, the strict vs relaxed `RequireExplicitPolicy` reason variants, the policy-mode fallback to `AppProfile.Identity.AuthorizationModes`, and the canceled-token throw path
+- 22 / 22 tests pass through the public `IAuthorizationEvaluator` seam with no `InternalsVisibleTo` exposure on `Cephalon.Identity`
+
+Out of scope (intentional):
+
+- the medium-priority provider-native CDC slices (SQL Server / Postgres / MongoDB) and the high-priority gRPC streaming + JSON-RPC error-mode slices — separate cards
+- `Cephalon.Identity.AspNetCore` request-pipeline integration coverage already lives in `Cephalon.Tests.Hosting` and remains the right home for integration-level tests; this slice deliberately stays in `Cephalon.Tests.Composition` so it can exercise evaluator branches without an HTTP host
+
+Follow-up later:
+
+- when `Cephalon.Identity` promotes from `M1` to `M2` with a Cephalon-managed runtime surface beyond the descriptor catalog, the ABAC composition expansion (multi-attribute precedence ordering, alias-resolved attributes, normalized attribute comparison rules) deserves its own decision-matrix slice
+- the four pre-existing `DebeziumDataCdcPackTests` failures observed during the full `Cephalon.Tests.Composition` run are unrelated to this slice (`Cephalon.Data.Services.CdcCaptureExecutionRuntimeCatalog.Enrich` recursion); they remain tracked under the `v0.1.0-preview-notes.md` "Pre-existing test-flake watch" section and do not block this card
+
+### ENG-404 Direct fallback-chain coverage for `IAuditActorAccessor` and `DefaultAuditRecorder`
+
+Status: done
+Estimate: 2
+
+Why:
+
+- `Cephalon.Audit` ships at `M1` mixed-ownership; the `DefaultAuditRecorder` actor / correlation / tenant / entry-id fallback chain is the runtime-truth surface every audit-recording consumer relies on, but before this slice it had only been exercised end-to-end through the HTTP host bridge in `IdentityAspNetCoreAuditActorBridgeTests` (which proves the `ClaimsPrincipal` → ambient actor projection but not the lower-level fallback rules)
+- the standing test-coverage planning text records this as the high-priority auditability-themed test slice: "M1 mixed-ownership; ambient actor resolution is part of the auditability quality dimension and currently leans on hosting integration"
+- the `DefaultAuditActorAccessor.Current` always-null contract, the explicit-actor-wins / accessor-wins / system-actor-fallback chain, the `Activity.Current.TraceId` correlation fallback, the `ITenantContextAccessor.Current` tenant fallback, the `IIdGenerator` entry-id fallback, the `OccurredAtUtc` default vs explicit branches, and the writer-exception propagation path were all unverified at the unit level
+- claiming `ENG-404` (after `ENG-403` claimed in PR #917) avoids the ENG-N collision pattern the auto-memory feedback warned about; this slice touches only `tests/` and `docs/engine-backlog.md` so it cannot conflict with the open OTel adapter slices (PRs #878, #888, #915, #916) that are regenerating `docs/reference/`
+
+Delivered:
+
+- new `tests/Cephalon.Tests.Composition/Composition/AuditActorAndRecorderFallbackTests.cs` with 16 tests covering:
+    - `DefaultAuditActorAccessor.Current` always returns `null` when no bridge is active
+    - `DefaultAuditRecorder` falls back to the system actor (`actorId = "system"`, `actorType = "system"`, `IsSystem = true`) when both `request.Actor` and `actorAccessor.Current` are null
+    - `DefaultAuditRecorder` prefers the ambient `IAuditActorAccessor.Current` over the system fallback when `request.Actor` is null
+    - `DefaultAuditRecorder` prefers the explicit `request.Actor` over the ambient accessor (the documented precedence rule)
+    - `DefaultAuditRecorder` falls back to `Activity.Current.TraceId.ToString()` for the correlation id when `request.CorrelationId` is null and an activity is active
+    - `DefaultAuditRecorder` prefers an explicit `request.CorrelationId` even when an activity is active
+    - `DefaultAuditRecorder` leaves `entry.CorrelationId` null when no activity and no explicit id are supplied
+    - `DefaultAuditRecorder` generates a `Guid.ToString("N")`-shaped entry id when no `IIdGenerator` is registered
+    - `DefaultAuditRecorder` prefers an explicit `request.EntryId` over the generated fallback
+    - `DefaultAuditRecorder` consults `IIdGenerator.GenerateAsync` when one is registered
+    - `DefaultAuditRecorder` falls back to `ITenantContextAccessor.Current.TenantId` when `request.TenantId` is null
+    - `DefaultAuditRecorder` prefers an explicit `request.TenantId` over the ambient tenant context
+    - `DefaultAuditRecorder` defaults `OccurredAtUtc` to `DateTimeOffset.UtcNow` when no explicit timestamp is supplied
+    - `DefaultAuditRecorder` preserves an explicit `OccurredAtUtc` exactly
+    - `DefaultAuditRecorder` propagates an `IAuditWriter.WriteAsync` exception out of `RecordAsync` (with the failure-log path covered indirectly by the propagation assertion)
+    - `DefaultAuditRecorder.RecordAsync` throws `OperationCanceledException` when called with an already-canceled token
+- four small private test modules (`FixedAuditActorModule`, `FixedTenantContextModule`, `StubIdGeneratorModule`, `ThrowingAuditWriterModule`) plus three private stubs (`FixedTenantContextAccessor`, `StubIdGenerator`, `ThrowingAuditWriter`) live alongside the test class so they do not pollute the shared `Cephalon.Tests.Support` project
+- 16 / 16 tests pass through the public `IAuditActorAccessor` / `IAuditRecorder` seams; no `InternalsVisibleTo` exposure on `Cephalon.Audit` is required
+- existing `IdentityAspNetCoreAuditActorBridgeTests` (3 / 3) still pass — the new fallback-chain tests run alongside the HTTP-host bridge coverage rather than replacing it
+
+Out of scope (intentional):
+
+- the high-priority `Cephalon.AspNetCore.Grpc` streaming / error-mode slice and the `Cephalon.AspNetCore.JsonRpc` error-response slice from the same standing test-coverage planning text — separate cards
+- the medium-priority provider-native CDC slices (SQL Server / Postgres / MongoDB) — separate cards
+- direct unit coverage of the `TryRegisterAuditActorBridge` decision matrix in `Cephalon.Identity.AspNetCore` — that lane already runs through the existing hosting integration in `IdentityAspNetCoreAuditActorBridgeTests` and the bridge function itself is private; a future slice can promote it to a directly testable seam if the bridge logic grows further branches
+
+### ENG-393 Adopt per-page maturity-badge convention across remaining 44 component docs (final batch)
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `ENG-382` introduced the per-page maturity-badge frontmatter convention and `ENG-383` through `ENG-387` rolled it across 6 batches covering core-runtime / technology-follow-through / behaviors+eventing / data / event-sourcing / multi-tenancy-governance entry points
+- 44 component docs were still missing the badge after batch 6 — the audit/identity/edge/cli/ids/scaffolding/reference-docs entry points plus all 33 observability docs (15 cloud/exporter configuration packs + 18 per-provider dependency-health probe packs) plus the freshly-shipped `resilience.md` from `ENG-390`
+- closing the gap in one final batch is the right move because the remaining 44 docs share three uniform maturity profiles by family (M1 cephalon-managed config-binding observability, M0 taxonomy-only dependency probes, plus a small set of one-off packages with mixed/provider-managed ownership) — bulk-applying the badges in one slice with a one-shot PowerShell helper takes minutes and gives every component doc the same surfaced metadata so adopters reading any page see the maturity label without scrolling
+
+Delivered:
+
+- new `docs/components/audit.md`, `audit-entityframework.md`, `cli.md`, `edge-kubernetes-gateway.md`, `edge-traefik.md`, `identity.md`, `identity-aspnetcore.md`, `ids-sfid.md`, `reference-docs.md`, `scaffolding.md`, `observability.md`, `resilience.md` frontmatter badges authored from the maturity-audit + conformance-matrix per-package rows (M1 mixed, M1 provider-managed, M4 cephalon-managed, M3 provider-managed, M3 provider-managed, M1 mixed, M1 application-managed, M2 cephalon-managed, M4 cephalon-managed, M4 cephalon-managed, M2 cephalon-managed, M2 mixed)
+- new frontmatter badges across all 14 observability cloud/exporter configuration packs (`alibaba-cloud`, `aws`, `azure-monitor`, `digitalocean`, `gcp`, `grafana-cloud`, `huawei-cloud`, `kubernetes`, `new-relic`, `openshift`, `opentelemetry`, `oracle-cloud`, `serilog`, `tanzu`) — all `M1` `cephalon-managed` per the consolidated observability family row in the maturity audit, with the `(family-covered by maturity audit)` tag matching the conformance matrix
+- new frontmatter badges across all 18 per-provider dependency-health probe packs (`cassandra`, `clickhouse`, `consul`, `elasticsearch`, `http`, `kafka`, `memcached`, `mongodb`, `mqtt`, `mysql`, `nats`, `neo4j`, `opensearch`, `oracle`, `postgres`, `rabbitmq`, `redis`, `sqlserver` dependencies) — all `M0` `taxonomy-only` per the same family-covered audit row
+- 44 docs touched in total; the only `docs/components/*.md` file not modified is `README.md` (the components-index page, which already has its own *Maturity at a glance* section pointing at the audit + matrix)
+- one-shot UTF-8-safe PowerShell helper used to insert the badge as a blockquote line directly after the H1 heading, pattern-matching either `H1\n\n` or `H1\n` followed by content and inserting the badge plus a separating blank line; the helper was deleted after use because the bulk strip is a one-time application of the convention rather than a recurring need
+
+Follow-up later:
+
+- if a future component doc lands without the badge, the convention can be re-applied with the same pattern; consider promoting the helper to permanent `scripts/` only if the engine adds enough new packs in a single arc to justify the maintenance overhead — today the 104 docs are all covered and new docs author the badge inline as part of the doc-introduction slice (e.g. `ENG-390` already authored the resilience badge inline rather than relying on a follow-up batch)
+- once `Cephalon.Eventing` (PR #878) and `Cephalon.MultiTenancy.Governance` (PR #888) OTel emission baselines land, their component docs will need refreshes for the new emission posture; the badge frontmatter stays valid, only the *What it owns* and *Maturity and ownership* sections will need updates
+
+### ENG-407 Author the missing `docs/test-coverage-roadmap.md`
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `docs/test-coverage-roadmap.md` is referenced as a real document from at least four authoritative places — [`docs/README.md`](README.md) line 100 lists it under the *Maturity, planning, and roadmap* section, [`docs/sre-posture.md`](sre-posture.md) line 5 lists it among the cross-references and line 75 names it as the home of the test-flake quarantine queue, and the `ENG-405` backlog card at line ~4099 plus the ENG-405 follow-up at line ~4119 cite "recommendation #1" / "recommendation #2" by stable number from the same file
+- `docs/project-memory.md` even claims the file was created `2026-05-02 02:22 UTC` and describes its intended content, but `git log --diff-filter=A -- docs/test-coverage-roadmap.md` shows no commit ever added the file — it was a ghost reference all along
+- without the file, every `recommendation #N` citation from a backlog card is a broken pointer, the `docs/README.md` link is a 404, the `sre-posture.md` flake quarantine workflow has no docs anchor, and any future test-coverage slice has to either (a) re-derive the priority list from scratch or (b) embed the rationale inline in its own backlog card (which is exactly what `ENG-403`, `ENG-404`, and `ENG-405` had to do, leaving the standing planning text scattered)
+- closing this drift now is the right move because the recently-shipped `ENG-403` / `ENG-404` / `ENG-405` slices already established three recommendations by their citation patterns; capturing them as numbered rows in the canonical doc preserves the implicit numbering the cards introduced and gives future cards a stable home to point at
+- claiming `ENG-407` continues the post-`ENG-406` sequence; per the auto-memory `feedback_eng_number_allocation` warning, `gh pr list` confirmed no concurrent run had taken `407`
+
+Delivered:
+
+- new `docs/test-coverage-roadmap.md` (`M2` planning surface) authored to:
+    - declare the canonical home for layered-test posture, gap-definition criteria, prioritized recommendations, and test-flake quarantine queue
+    - cross-reference [`engineering-standards.md`](engineering-standards.md), [`sre-posture.md`](sre-posture.md), [`benchmarking.md`](benchmarking.md), [`runtime-failure-policy.md`](runtime-failure-policy.md), [`operational-hardening-gap-inventory.md`](operational-hardening-gap-inventory.md), [`engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md), [`conformance-matrix.md`](conformance-matrix.md), and [`engine-backlog.md`](engine-backlog.md)
+    - document the five `tests/Cephalon.Tests.*` projects plus `benchmarks/Cephalon.Benchmarks` with one row per layer naming what each layer proves
+    - codify the standing rule that new dedicated test projects are added only when one source pack ships enough independent execution surface to justify a separate harness, layered framework-level tests are the default home for new coverage, and mirroring `src/` 1:1 with per-package test assemblies is explicitly *not* the discipline
+    - codify the four-criterion gap definition (a) no layered test exercises any surface, (b) only the composition seam is exercised without the runtime path, (c) one or more `M2`-or-higher claims have no test that proves the runtime contract, (d) a regression-prone hot path is not covered by a guardrail benchmark
+    - capture seven prioritized recommendations: #1 `Cephalon.AspNetCore.Grpc` streaming + error-mode coverage (high, pending), #2 `Cephalon.AspNetCore.JsonRpc` error-response coverage (high, shipped through `ENG-405` / PR #919), #3 `MetadataDrivenAuthorizationEvaluator` decision-matrix coverage (high, shipped through `ENG-403` / PR #917), #4 `IAuditActorAccessor` and `DefaultAuditRecorder` ambient-fallback coverage (high, shipped through `ENG-404` / PR #918), #5 provider-native CDC integration scenarios for `Cephalon.Data.SqlServer` / `.Postgres` / `.MongoDB` (medium, pending), #6 `Cephalon.AspNetCore.GraphQL` transport-mapping coverage (medium, gated on widening the package beyond route mapping), and #7 direct unit coverage for the pre-existing `DebeziumDataCdcPackTests` recursion failures (low, gated on quarantine resolution)
+    - capture the standing test-flake quarantine queue with one row for the `DebeziumDataCdcPackTests` (4 failures) entry whose root cause lives in `Cephalon.Data.Services.CdcCaptureExecutionRuntimeCatalog.Enrich` recursion
+    - capture the maintenance discipline (recommendations are append-only with stable numbers, closed recommendations are annotated rather than removed, demoted recommendations carry their demotion reason inline, quarantine rows require a deadline)
+- `docs/engine-backlog.md` ENG-407 backlog card; Sprint 125 placement updated
+
+No source changes. No reference-doc regeneration required. No test impact.
+
+Out of scope (intentional):
+
+- closing the sibling drift on `docs/architecture-review-2026-05-followups.md` (also referenced from `docs/README.md` line 99 but missing from disk) — separate slice; the test-coverage-roadmap drift is more directly tied to the ongoing `ENG-403` / `ENG-404` / `ENG-405` arc
+- promoting the doc beyond `M2` (i.e. wiring it into the conformance matrix or the planning-governance toolchain) — the `M2` baseline is the right starting maturity; promotion happens when a downstream consumer (e.g. a CI artefact, a release-validation gate) actually consumes the recommendations table programmatically
+- closing the orphaned `ENG-371` / `ENG-379` PRs `#878` / `#888` — separate small slice; this card stays scoped to the ghost-doc closeout
+- shipping any of the pending recommendations (#1 gRPC, #5 CDC integration, #6 GraphQL) — those are separate cards per the recommendation table; the point of the roadmap is to make those cards easy to author with stable references, not to ship them in the same slice
+
+Follow-up later:
+
+- when the next test-coverage slice ships (likely recommendation #1 gRPC streaming + error-mode coverage as the only remaining high-priority pending row), the closing card cites "recommendation #1 in `docs/test-coverage-roadmap.md`" by stable number and the row is annotated in place with `shipped through ENG-NNN / PR #NNNN`
+- when `Cephalon.AspNetCore.GraphQL` widens beyond route mapping, recommendation #6 promotes from `gated` to `active` and the priority is reassessed against the then-current set
+- when a second consumer for any of the private test-stub/module patterns appears, promote the relevant module to `Cephalon.Tests.Support` and update the per-recommendation row to reference the shared support type
+- when the quarantine queue gains a second row, consider whether the table needs a stable id column to cross-link from `engine-backlog.md` cards by row id rather than by test-name string
+
+### ENG-408 Streaming + canonical Status mapping coverage for `Cephalon.AspNetCore.Grpc` transport adapter
+
+Status: done
+Estimate: 2
+
+Why:
+
+- `Cephalon.AspNetCore.Grpc` ships at `M2 cephalon-managed`; the transport adapter routes incoming gRPC RPC calls through the engine's behavior-dispatch seam and is named explicitly as recommendation #1 in [`docs/test-coverage-roadmap.md`](test-coverage-roadmap.md) — the only remaining high-priority pending row after `ENG-403` / `ENG-404` / `ENG-405` shipped recommendations #2 / #3 / #4
+- the existing happy-path coverage in `AspNetCoreHostingTests` exercises unary `SayHello`, server-streaming `StreamPrinciples`, and bidirectional-streaming `ExchangeGreetings` against the showcase `DiscoveryGrpcService`, but none of the canonical gRPC `Status` codes (NOT_FOUND, INVALID_ARGUMENT, UNAUTHENTICATED, PERMISSION_DENIED, UNAVAILABLE, RESOURCE_EXHAUSTED, FAILED_PRECONDITION, ABORTED) are pinned at the hosting layer, the unhandled-exception → UNKNOWN contract is unverified, and streaming with mid-stream server errors or client cancellations has no end-to-end coverage
+- claiming `ENG-408` continues the post-`ENG-407` sequence; per the auto-memory `feedback_eng_number_allocation` warning, `gh pr list` confirmed the only open PRs at the time of allocation were `#888` (ENG-379) and `#878` (ENG-371), so 408 is collision-free
+
+Delivered:
+
+- new `tests/Cephalon.Tests.Hosting/GrpcTransportErrorAndStreamingHostingTests.cs` with 15 tests across three groups:
+    - **Canonical Status mapping** (one parameterized `[Theory]` with 8 `[InlineData]` rows): NOT_FOUND, INVALID_ARGUMENT, UNAUTHENTICATED, PERMISSION_DENIED, UNAVAILABLE, RESOURCE_EXHAUSTED, FAILED_PRECONDITION, ABORTED; each scenario throws `RpcException(new Status(<code>, <detail>))` from `DiscoveryServiceBase.SayHello` and the client-side `Grpc.Net.Client.RpcException` is asserted to carry the same `StatusCode` plus the canonical detail substring
+    - **Unary error-frame contract**: `SayHello_MapsUnhandledExceptionToUnknownStatus` confirms a non-`RpcException` thrown by the handler surfaces as `Status.Unknown`, and `SayHello_ReturnsHappyPath_WhenScenarioNameIsOk` confirms the canonical happy-path message round-trips
+    - **Streaming + cancellation contract**: `StreamPrinciples_ProducesFullSequence_OnHappyPath` (3-element happy path), `StreamPrinciples_PropagatesInvalidArgument_WhenServerThrowsMidStream` (server `RpcException(InvalidArgument)` after the first reply), `StreamPrinciples_ReturnsCancelled_WhenClientCancelsMidStream` (client cancellation token after the first reply), `ExchangeGreetings_EchoesEachRequest_OnHappyPath` (bidi happy path), `ExchangeGreetings_PropagatesInternalStatus_WhenServerThrowsAfterFirstReply` (server `RpcException(Internal)` after the first echo)
+- internal `GrpcStreamingAndErrorModesTestModule` declared inside the test file as a reference implementation for the canonical scenario-routing pattern (gRPC `Metadata` headers carry the `test-scenario` selector, server inspects via `ServerCallContext.RequestHeaders`); the module deliberately does not register itself in `Cephalon.Tests.Support` until a second consumer appears, matching the maintenance discipline in [`docs/test-coverage-roadmap.md`](test-coverage-roadmap.md)
+- private `GrpcSubdirectoryHandler` `DelegatingHandler` declared inside the test file mirrors the existing `AspNetCoreHostingTests` pattern for routing in-memory `Microsoft.AspNetCore.TestHost` requests under the configured `/grpc` prefix; not promoted to `Cephalon.Tests.Support` for the same single-consumer reason
+- `docs/test-coverage-roadmap.md` recommendation #1 row annotated with `shipped through ENG-408 / PR #922` plus the deferred-coverage note for unary client-cancellation / unary deadline-expiry; the row stays in place per the roadmap's maintenance discipline
+- 15 / 15 new tests pass; full `Cephalon.Tests.Hosting` baseline shows 22 pre-existing unrelated failures (e.g. `ShowcaseSampleSystemEndpointsHonorCapabilityPolicy` — confirmed to fail at HEAD without this slice's changes), so this slice does not introduce regressions
+
+Out of scope (intentional):
+
+- unary client-cancellation and unary deadline-expiry coverage for `SayHello`: under `Microsoft.AspNetCore.TestHost` the in-memory request pipe does not reliably propagate the client-side cancellation token to the server-side `ServerCallContext` for unary calls, so the canonical cancellation contract is exercised through the streaming `StreamPrinciples_ReturnsCancelled_WhenClientCancelsMidStream` test instead; the test module reserves the `delay` scenario for future coverage if a real-host harness lands
+- recommendation #5 (provider-native CDC integration scenarios for `Cephalon.Data.SqlServer` / `.Postgres` / `.MongoDB`) — separate medium-priority card, requires a new `tests/Cephalon.Tests.Integration` project plus Testcontainers
+- recommendation #6 (`Cephalon.AspNetCore.GraphQL` transport-mapping coverage) — gated until the package widens beyond route mapping
+- recommendation #7 (`DebeziumDataCdcPackTests` quarantine resolution) — gated on the recursion fix in `Cephalon.Data.Services.CdcCaptureExecutionRuntimeCatalog.Enrich`
+- promoting the `GrpcStreamingAndErrorModesTestModule` or `GrpcSubdirectoryHandler` into `Cephalon.Tests.Support` — single-consumer today; the promotion happens when a second test file consumes either type
+- closing the orphaned `ENG-371` / `ENG-379` PRs `#878` / `#888` — separate small slice; this card stays scoped to recommendation #1
+
+Follow-up later:
+
+- when a real-host harness for `Cephalon.AspNetCore.Grpc` lands (e.g. a Kestrel-backed integration test that genuinely round-trips HTTP/2 RST_STREAM frames), the deferred unary client-cancellation / unary deadline-expiry coverage promotes from `delay` reservation to active scenarios; the test module already shapes the catch-block contract for that future slice
+- when the canonical Status mapping list grows (e.g. when the engine starts mapping its own runtime exceptions to gRPC Status codes through a new interceptor), the `[Theory]` `[InlineData]` table is the right home for the new rows; keep the parameterized shape rather than splitting per-status `[Fact]` methods
+- when `Cephalon.AspNetCore.GraphQL` ships transport-mapping coverage, mirror the same `[Theory]`-driven canonical-error pattern for GraphQL's `errors[].extensions.code` taxonomy
+
+### ENG-406 Close Retrieval OTel emission docs-drift on `engine-surface-maturity-audit.md` and `components/diagnostics.md`
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `ENG-402` (PR #916, merged 2026-05-04) shipped the `Cephalon.Retrieval` OTel adapter activity emission baseline through the new public `RetrievalDiagnostics` adapter and wired one `retrieval.knowledge.index` activity per `IKnowledgeIndexer.IndexAsync` plus one `retrieval.knowledge.query` activity per `IKnowledgeQueryEngine.QueryAsync`, but the `Cephalon.Diagnostics` row in [`docs/engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md) and the matching maturity bullet in [`docs/components/diagnostics.md`](components/diagnostics.md) still claimed the retrieval companion pack "does not yet emit, so the subscription is a no-op until it ships its first `ActivitySource` / `Meter` instances" — that text became stale the moment `ENG-402` merged
+- the same audit row's follow-up paragraph still listed `retrieval` as a remaining baseline ("per-companion-pack OTel adapter emission baseline for CDC / retrieval (canonical names pre-declared for retrieval; …)"), which contradicts the row's own description that already mentions "OTel-emission baseline" as a shipped capability for `Cephalon.Retrieval`
+- the same follow-up paragraph also referenced the in-flight `ENG-371` / `ENG-379` PR pair as still tracking eventing / multi-tenancy governance OTel emission, but `ENG-371` was reused for the shipped `RS0026`/`RS0027` suppression-cleanup work (line 12537 of `engine-backlog.md`) and `ENG-379` PRs `#878` / `#888` are stale `CONFLICTING` orphans on superseded base commits — the follow-up text was pointing at dead in-flight work rather than describing the actual remaining baseline for those packs
+- repo-truth rule #9 ("ปลี่ยน code โดยดู docs graph ที่เกี่ยวข้องทุกครั้ง ไม่แก้ source แล้วปล่อย docs drift") and rule #12 ("ถ้า docs ปัจจุบันขัดกับ shape ที่ดีกว่า ให้แก้ไข docs + source + planning truth") explicitly require closing this kind of drift the moment it appears
+- claiming `ENG-406` continues the post-`ENG-401`/`ENG-402`/`ENG-403`/`ENG-404`/`ENG-405` sequence; per the auto-memory `feedback_eng_number_allocation` warning, `gh pr list` confirmed no concurrent run had taken `406`
+
+Delivered:
+
+- `docs/engine-surface-maturity-audit.md` header date stamp updated from `May 4, 2026` post-`ENG-401` to `May 5, 2026` post-`ENG-402` (and noting the `ENG-406` docs-drift closeout)
+- `docs/engine-surface-maturity-audit.md` `Cephalon.Diagnostics` row description updated: the parenthetical now reads "`.Retrieval` now emits one `retrieval.knowledge.index` activity per `IKnowledgeIndexer.IndexAsync` and one `retrieval.knowledge.query` activity per `IKnowledgeQueryEngine.QueryAsync` plus the matching `cephalon.retrieval.index_runs` / `cephalon.retrieval.queries` counters via the `RetrievalDiagnostics` adapter shipped through `ENG-402`; `.Eventing` and `.MultiTenancyGovernance` remain pre-declared canonical-name-only sources whose subscription is a no-op until those companion packs ship their first emission baseline"
+- `docs/engine-surface-maturity-audit.md` `Cephalon.Diagnostics` row follow-up paragraph updated: drops `retrieval` from the remaining-baseline list (it shipped through `ENG-402`), reorders the remaining baselines as `Cephalon.Eventing`, `Cephalon.MultiTenancy.Governance`, and `Cephalon.Data` CDC, and replaces the dead `in-flight ENG-371` / `in-flight ENG-379` references with one accurate sentence noting that the prior PR pair stalled, those numbers were reused for shipped suppression-cleanup work, and the next emission baseline ships under a fresh ENG card per pack rather than reviving the orphaned PRs
+- `docs/components/diagnostics.md` *Maturity and ownership* `Cephalon.Observability.OpenTelemetry` bullet updated with the same Retrieval-now-emits / Eventing+MultiTenancyGovernance-still-pending phrasing so both surfaces describe the post-`ENG-402` state in lock-step
+- `docs/engine-backlog.md` ENG-406 backlog card; Sprint 125 placement updated
+
+No source changes. No reference-doc regeneration required (no `PublicAPI.*.txt`, no `[Public]` member changes, no engine-emitting code changes). No test impact.
+
+Out of scope (intentional):
+
+- the actual `Cephalon.Eventing`, `Cephalon.MultiTenancy.Governance`, and `Cephalon.Data` CDC OTel adapter activity emission baselines — separate cards per pack; the orphaned PRs `#878` / `#888` will not be revived because the base commits and ENG numbers are no longer recoverable
+- closing or commenting on the orphaned PRs `#878` / `#888` themselves — this slice corrects the drift in the audit/diagnostics doc graph; the upstream PR housekeeping is a separate small slice if it's worth doing at all (the PRs are visibly stale and `CONFLICTING`, so they don't actively mislead readers any more than the absent text would)
+- the medium-priority provider-native CDC slices (SQL Server / Postgres / MongoDB) and the high-priority gRPC streaming + error-mode slice from the same standing test-coverage planning text — separate cards
+- adopting the per-page maturity-badge convention across `docs/components/diagnostics.md` if it isn't already badged — a separate slice; this card stays scoped to the post-`ENG-402` claim drift
+- updating any sample, getting-started, or release-notes prose that might reference Retrieval emission in stale wording — a separate audit pass; this slice closes the two drift sites surfaced by the `pre-declared canonical name|does not yet emit` audit grep against `docs/`
+
+Follow-up later:
+
+- ship the `Cephalon.Eventing` OTel adapter activity emission baseline under a fresh ENG card following the `ENG-401` (Agentics) / `ENG-402` (Retrieval) shape: a public `EventingDiagnostics` adapter exposing the canonical activity-source / meter / counter names, a small set of stable activities (publication-staged, publication-dispatch, subscription-dispatch) wired into the in-process publication-staging and dispatch paths, and a corresponding row update on this audit + the diagnostics component doc
+- ship the `Cephalon.MultiTenancy.Governance` OTel adapter activity emission baseline under a fresh ENG card with the same shape — the convention contributor already lists the membership / invitation / delivery-dispatch / delivery-status-reconciliation / domain-ownership event taxonomy, so the emission slice picks the highest-frequency couple of those for the baseline
+- ship the `Cephalon.Data` CDC OTel adapter activity emission baseline under a fresh ENG card — wrap the shared `data-cdc-capture-pump` execution lifecycle and the `acknowledge-cdc-progress` checkpoint commit so the canonical CDC name set finally has emission to match the catalog truth
+- once all three above ship, the `Cephalon.Diagnostics` row's follow-up paragraph collapses to "all canonical names emit on every shipped Cephalon.* package" and that audit row promotes from the current `M4` *adoption-quality* posture to whatever ceiling the engineering-standards next-tier text declares
+
+### ENG-405 Direct error-mode coverage for `Cephalon.AspNetCore.JsonRpc` transport adapter
+
+Status: done
+Estimate: 2
+
+Why:
+
+- `Cephalon.AspNetCore.JsonRpc` is at `M2 cephalon-managed`; the transport adapter routes incoming JSON-RPC requests through `IJsonRpcModule` contributors, but the canonical JSON-RPC 2.0 error envelopes (`-32700` parse error, `-32600` invalid request, `-32601` method not found, `-32602` invalid params, `-32603` internal error) were never end-to-end exercised by the layered hosting suite — only the happy path was covered by the existing `MapCephalonExposesRuntimeAndModuleRoutes` and `MapCephalonHonorsConfiguredJsonRpcPrefix` tests
+- the standing test-coverage planning text records this as a high-priority reliability slice (recommendation #2 in [`test-coverage-roadmap.md`](test-coverage-roadmap.md)): "M2 transport adapter; method-not-found, parse-error, invalid-request, internal-error responses are part of the JSON-RPC contract"
+- claiming `ENG-405` (skipping past `ENG-401` / `ENG-402` / `ENG-403` / `ENG-404`, all currently in-flight on a different OTel-emission and unit-test axis through PRs #915 / #916 / #917 / #918) avoids the ENG-N collision pattern the auto-memory feedback warned about; this slice touches only `tests/` and `docs/engine-backlog.md` so it can't conflict with the open OTel adapter slices that are regenerating `docs/reference/`
+
+Delivered:
+
+- new `tests/Cephalon.Tests.Hosting/JsonRpcErrorResponseHostingTests.cs` with 6 tests covering:
+    - `-32700` parse error returned with `id: null` and HTTP 400 when the request body is not valid JSON
+    - `-32600` invalid request returned with HTTP 400 when the `jsonrpc` version field is missing
+    - `-32601` method not found returned with HTTP 200 when the method id is unknown
+    - `-32602` invalid params returned with HTTP 200 when a required parameter is missing
+    - `-32603` internal error returned with HTTP 500 when the handler throws an unexpected exception
+    - happy-path `result` envelope with HTTP 200 when the request is well-formed (regression guard for the canonical wire shape produced by the same module)
+- new internal `JsonRpcErrorModesTestModule` declared inside the test file (private to the test assembly) that demonstrates the canonical JSON-RPC 2.0 error envelope handling pattern: buffer the body, attempt `JsonDocument.Parse`, branch on error code, and return `{ jsonRpc, result, error: { code, message }, id }` with the correct status code per error class
+- the test module is wired through the existing `IJsonRpcModule` seam — no source changes in `Cephalon.AspNetCore.JsonRpc`, no `InternalsVisibleTo` exposure required, no new `Cephalon.Tests.Support` types, and no conflict with the in-flight OTel adapter slices that touch `Cephalon.Agentics` / `Cephalon.Retrieval` / `Cephalon.Eventing` / `Cephalon.MultiTenancy.Governance` source
+
+6 / 6 new tests pass. Adjacent JSON-RPC happy-path tests in `AspNetCoreHostingTests` continue to pass with no regressions.
+
+Out of scope (intentional):
+
+- the medium-priority provider-native CDC slices (SQL Server / Postgres / MongoDB) and the high-priority gRPC streaming + error-mode slice from the same standing test-coverage planning text — separate cards
+- a sibling `gRPC` slice for `Cephalon.AspNetCore.Grpc` streaming and error-mode coverage (recommendation #1 in `test-coverage-roadmap.md`) — separate card; the gRPC contract maps RPC errors to `Status` codes rather than the JSON-RPC error envelope, so the test shape diverges
+- promoting the test module to `Cephalon.Tests.Support` for cross-project reuse — no second test project consumes JSON-RPC error handling today; promotion is a separate slice when a second consumer appears
+
+Follow-up later:
+
+- when `Cephalon.AspNetCore.JsonRpc` introduces a built-in error-envelope helper (so module authors don't have to hand-roll the `{ jsonRpc, result, error, id }` shape on every endpoint), the test module here can be reduced to a thin wrapper around the helper rather than a full reference implementation
+- when the gRPC sibling slice lands (test-coverage-roadmap recommendation #1), cross-link the two slices in [`docs/components/aspnetcore-jsonrpc.md`](components/aspnetcore-jsonrpc.md) and [`docs/components/aspnetcore-grpc.md`](components/aspnetcore-grpc.md) so adopters reading either page see the canonical error-mode handling pattern for the matching transport
+
+### ENG-390 Extract Cephalon.Resilience package from Cephalon.Behaviors
+
+Status: done
+Estimate: 3
+
+Why:
+
+- the engine-resilience runtime (Polly v8 + `Microsoft.Extensions.Resilience` policy resolver, circuit-breaker state registry, exception classifier, execution-context keys) lived inside `Cephalon.Behaviors` even though the abstractions in `Cephalon.Abstractions.Resilience` are designed to be reusable beyond behavior dispatch
+- per `docs/project-memory.md` Learning Knowledge Pack recommendation #7 ("partially shipped: declarative descriptors live in Abstractions; runtime in Behaviors backed by Microsoft.Extensions.Resilience; **extracting the runtime into a dedicated `Cephalon.Resilience` package so consumers can adopt resilience without `Cephalon.Behaviors` is the remaining follow-up**"), the consumer-coupling problem is the explicit gap
+- `engine-surface-maturity-audit.md` previously declared engine-resilience promotion to `M3` requires "the dedicated package owns the runtime"; this slice satisfies that prerequisite for the runtime-resolution + circuit-breaker + classifier + execution-context portion
+- originally drafted as `ENG-381` but renumbered to `ENG-390` because a concurrent autonomous run claimed `ENG-381` for the `Cephalon.Diagnostics` activity-source / meter pre-declaration baseline (PR #894, merged); the auto-memory `feedback_eng_number_allocation` warning calls out this exact collision pattern
+
+Delivered:
+
+- new `src/Cephalon.Resilience/Cephalon.Resilience.csproj` — `net10.0`, depends on `Cephalon.Abstractions` + `Cephalon.Engine` + `Microsoft.Extensions.Resilience` + `Microsoft.CodeAnalysis.PublicApiAnalyzers`; ships `PublicAPI.Shipped.txt` + `PublicAPI.Unshipped.txt` (both header-only because the migrated types are all `internal`)
+- new `src/Cephalon.Resilience/Properties/AssemblyInfo.cs` — grants `InternalsVisibleTo` to `Cephalon.Behaviors` plus the four `Cephalon.Tests.*` assemblies
+- 4 of 7 files moved (git-tracked rename, history preserved at 92-99% similarity): `BehaviorResiliencePolicyResolver.cs`, `BehaviorCircuitBreakerStateRegistry.cs`, `DefaultBehaviorResilienceExceptionClassifier.cs`, `BehaviorResilienceExecutionContextKeys.cs` from `src/Cephalon.Behaviors/Resilience/` → `src/Cephalon.Resilience/Resilience/`; namespaces updated `Cephalon.Behaviors.Resilience` → `Cephalon.Resilience` (matches the `Cephalon.Audit` / `.Eventing` / `.Agentics` convention of avoiding stuttering)
+- 3 files **kept** in `Cephalon.Behaviors`: `BehaviorResilienceExecutionMiddleware.cs` (implements `internal IBehaviorExecutionMiddleware` and consumes `internal BehaviorExecutionInvocation` / `BehaviorExecutionDelegate` from `Cephalon.Behaviors.Services` — moving would have required widening surface), `BehaviorIdempotencyResolver.cs` (constructor takes `IBehaviorTypeRegistry` from `Cephalon.Behaviors.Services` — moving would have created a circular project reference), and `BehaviorResilienceRuntimeCatalog.cs` (constructor takes `BehaviorIdempotencyResolver`)
+- `src/Cephalon.Behaviors/Cephalon.Behaviors.csproj` — added `<ProjectReference Include="..\Cephalon.Resilience\Cephalon.Resilience.csproj" />`, removed `<PackageReference Include="Microsoft.Extensions.Resilience" />` (now transitive)
+- `CephalonEngine.slnx` — added `Cephalon.Resilience` project entry
+- `BehaviorModule.cs` + the three kept resilience files — added `using Cephalon.Resilience;` to reach the moved types
+- new `docs/components/resilience.md` — mirrors the `audit.md` template (What it owns / Main surfaces / How it fits / Maturity and ownership)
+- `docs/components/README.md` — `Cephalon.Resilience` entry under *Core runtime*
+- `docs/components/behaviors.md` — Related-components note about the runtime split
+- `docs/engine-surface-maturity-audit.md` — engine-resilience row replaced with a split-ownership description; new `Cephalon.Resilience` row at `M2` / `cephalon-managed`; rebase merged the row alongside the `Cephalon.EventSourcing` / `Cephalon.Audit` / `Cephalon.Identity` rows that landed on master while the agent was working
+- 90+ `packages.lock.json` files refreshed via `dotnet restore` to absorb the new project edge
+- verified end-to-end: `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors), `dotnet test --filter "FullyQualifiedName~Resilience"` (19/19 pass), `dotnet restore --locked-mode CephalonEngine.slnx` (clean across full sln)
+- public API surface unchanged: every migrated type was already `internal`, so neither the new package nor `Cephalon.Behaviors` needs `*REMOVED*` entries; no compatibility break for external consumers
+
+Follow-up later:
+
+- when a future slice removes the residual coupling between `BehaviorResilienceExecutionMiddleware` / `BehaviorIdempotencyResolver` / `BehaviorResilienceRuntimeCatalog` and `Cephalon.Behaviors.Services` (the three kept files), they can move to `Cephalon.Resilience` too; today they stay because moving them would have required widening currently-internal surface
+- the `Cephalon.Resilience` `M2` row promotes to `M3` once an explicit operator surface (catalog routes, snapshot keys) lands and the dedicated package owns the runtime end-to-end (including the three kept files)
+- consumers that want resilience without behavior dispatch can now reference `Cephalon.Resilience` directly; document the canonical "register policies + adopt without behaviors" recipe in `docs/components/resilience.md` once at least one consumer adopts that path
+
+### ENG-380 Close May 2026 architecture review gaps that were already shipped
+
+Status: done
+Estimate: 1
+
+Why:
+
+- the May 2026 architecture review (authored May 2, 2026) listed 5 *Updated gaps* and 5 *Updated risks* and 4 *Architecture recommendations* for the next 30 days; the May 3 redaction-arc + cross-link-refresh + concurrent-run shipping made three of those gaps materially closed: gap #1 (cross-link pass for `long-range-direction.md` + `engineering-standards.md`), gap #4 (AI/agent-facing readability via `runtime-contract-index.md`), and gap #5 (conformance matrix); risk #1 (slice cadence faster than docs cross-link cadence) is also materially closed for May
+- leaving the gap entries open in the review when the work IS done would mislead a future maintainer reading the doc; the discipline declared in `planning-governance.md` is that the monthly review reflects truth at the named date, with explicit gap-closure notes when the work lands later in the same review window
+- this slice closes the loop on the May 3 work cycle: every shipped doc/code change that closes a gap named in the May 2 review now has an explicit closure note in the review itself, with the original gap statement preserved for historical traceability
+
+Delivered:
+
+- update `docs/architecture-review-2026-05.md` review-date metadata to "May 2, 2026 (last extended May 3, 2026 with the redaction-adoption + cleanup-discipline arc and the gap-closure sweep)"
+- mark *Updated risk #1* "Slice cadence is faster than docs cross-link cadence" as **materially closed on May 3, 2026** with an Update note naming the cross-link pass that landed and the redaction-arc 7-doc cross-link refresh; preserve the original risk statement for historical traceability
+- mark *Updated gap #1* "A May 2026 cross-link pass for long-range-direction and engineering-standards" as **closed** with an explicit closure note naming the four target docs (`module-authoring.md` line 5, `learning-roadmap.md` line 16, `compatibility.md` line 5, `architecture/design-patterns-reference.md` line 8) where the cross-links now exist
+- mark *Updated gap #4* "AI/agent-facing readability of the runtime contract" as **closed** with a closure note naming `docs/runtime-contract-index.md` as the shipped consolidated map of `/engine/*` routes, `snapshot.*` data keys, and runtime catalog interfaces
+- mark *Updated gap #5* "Conformance matrix stayed open since April" as **closed** with a closure note naming `docs/conformance-matrix.md` (256 lines, per-package rows + family summary) and the May 3 redaction-arc refresh of the `Cephalon.Diagnostics` row
+- update *Architecture recommendations* → *Next 30 days* and *Next 60 days* to strikethrough-mark the three closed items (cross-link pass, conformance matrix, runtime-contract-index) with explicit "shipped on May 3, 2026; see closure note" pointers; preserve the strikethrough text so a future maintainer can see what was originally recommended
+- `docs/engine-backlog.md` ENG-380 backlog card; Sprint 125 placement updated
+
+Follow-up later:
+
+- the remaining open items in the May review are *Updated risk #2* (maturity-label communication asymmetric across surface families), *Updated risk #3* (trim/AOT/single-file claim story), *Updated gap #2* (architecture-review cadence not formally documented), *Updated gap #3* (deployment-mode claim validation harness), and the *Next 30 days* / *Next 60 days* / *Next 90 days* recommendations that haven't been closed yet; future slices keep these open
+- when June's architecture review supersedes May's, the closed-gap notes in May serve as the historical proof that the gap was identified-and-then-closed within the same monthly cycle; June's review starts fresh with whatever risks/gaps are actually open at June's authoring date
+
+### ENG-378 Extend May architecture review with redaction adoption arc + cleanup discipline
+
+Status: done
+Estimate: 1
+
+Why:
+
+- the May 2026 architecture review (`docs/architecture-review-2026-05.md`) was authored on May 2, 2026; `ENG-357` through `ENG-377` shipped 21 PRs of redaction-adoption + cleanup-discipline work between May 2 and May 3 that materially changed the engine surface
+- per the planning-governance discipline, the monthly architecture review is the canonical answer to "what changed since last review"; leaving it stuck on May 2 truth would understate the engine state by an order of magnitude (4 strengths instead of 3, full M1 redaction surface instead of an unmentioned gap)
+- the review is a living doc within the same month — extending it to capture the latest May arcs is the right discipline, not waiting for the June review
+
+Delivered:
+
+- bump the review-date metadata at the top to "May 2, 2026 (last extended May 3, 2026 with the redaction-adoption + cleanup-discipline arc)"
+- add 2 new bullets to the *What changed since April 13, 2026* compressed shipped-slices list:
+    - **redaction adoption arc end-to-end (`ENG-357` through `ENG-377`)** naming all 17 ENG slices, 39 tests, 3 M1 emission sites, 5-sample adoption, and the build-time scope-boundary declaration
+    - **cleanup discipline arc (`ENG-370` through `ENG-373`)** naming the central diagnostic-id registry, the 100-package `RS0026`/`RS0027` strip, the surviving `RS0041` audit, and the inline-rationale discipline
+- add 1 new bullet for the **maturity audit + ops-hardening doc refresh** that propagated the redaction state into the audit doc and the ops-hardening gap inventory
+- promote the *Updated strengths* count from "Three are now visibly stronger" to "Four are now visibly stronger" and add a new *4. Engine-boundary redaction is now provable end-to-end* section under *Updated strengths* that describes the full adoption arc + the complementary cleanup discipline + the 39-test verification
+- `docs/engine-backlog.md` ENG-378 backlog card; Sprint 125 placement updated
+
+Follow-up later:
+
+- the *Updated risks* and *Recommended next moves* sections of the May review are unchanged because the redaction arc closes a strength rather than opens a new risk; revisit if June surfaces a follow-up shape (e.g. additional emission sites needing M1 redaction once `Cephalon.Eventing` ships its OTel emission baseline through PR #878)
+- in June, the new monthly review supersedes May; copy the redaction strength forward as ongoing baseline if the surface stays healthy
+
+### ENG-377 Surface redaction recipe + diagnostic-id registry in getting-started
+
+Status: done
+Estimate: 1
+
+Why:
+
+- the redaction adoption recipe (`ENG-367`) and the diagnostic-id registry (`ENG-370`) are both adoption-grade docs but they live one level down from `docs/getting-started.md`; a reader following the canonical onboarding path doesn't naturally encounter either until they go looking, which means real consumer apps would ship without the filters or without picking a sane `EventId` range
+- adding two short pointers to `getting-started.md` (one inline section about scrubbing telemetry before going live, one entry in *Next Docs*) makes both surfaces discoverable on the canonical onboarding path; the marginal cost is small and the friction-to-adopt drops to one click
+- this is the closing slice on the redaction adoption arc: after `ENG-357..376`, the only remaining gap was discoverability from the front-page onboarding doc
+
+Delivered:
+
+- new "Redact secrets from telemetry before going live" section in `docs/getting-started.md` (between "Optional Template-Pack Path" and "Next Docs") naming the three M1 emission sites and linking the [Redaction quick start](components/diagnostics.md#redaction-quick-start) recipe + the [`Cephalon.Sample.ModularMonolith`](../samples/Cephalon.Sample.ModularMonolith/ModularMonolithSampleApp.cs) running-code companion + the [diagnostic-id registry](diagnostic-id-registry.md) for consumer apps adding their own structured logging
+- 2 new entries in *Next Docs*: `Cephalon.Diagnostics component` (canonical name set + redaction surface) and `Diagnostic ID registry` (authoritative `EventId` range allocations)
+- `docs/engine-backlog.md` ENG-377 backlog card; Sprint 125 placement updated
+
+Follow-up later:
+
+- when a future getting-started revision lands a sample-app deep dive, link the canonical `samples/Cephalon.Sample.ModularMonolith/ModularMonolithSampleApp.cs` redaction recipe directly from a new sample-walkthrough section instead of from the *Redact secrets* paragraph; today the two-link approach is enough
+
+### ENG-376 Add integration tests for Wolverine M1 redaction wiring
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `ENG-374` wired `WolverineEventDispatchHostedService` through the redaction pipeline but explicitly deferred the integration test, citing the cost of constructing a Wolverine + outbox + dispatcher rig; the existing `WolverineEventingPackTests.cs` already builds that rig for other dispatch tests, so the marginal cost of adding two redaction tests in the same file is small
+- locking in the wiring with tests prevents future refactors from silently regressing tag-redaction behavior at the dispatch site, parallel to the test coverage already in place at `HttpRequestResponseLoggingMiddlewareRedactionTests` (AspNetCore) and `EngineRuntimeRedactionTests` (engine runtime)
+- the wiring also surfaced one small surface gap: `DirectScopeFactory` (the in-test scope factory) returned `null` for any service it didn't know about, so a lazily-resolved `RedactionPipeline` always got `null` even when the test wanted to register one; this slice extends the factory to accept an optional pipeline and adds a corresponding internal constructor on the host service
+
+Delivered:
+
+- update `src/Cephalon.Eventing.Wolverine/Services/WolverineEventDispatchHostedService.cs`:
+    - extend `DirectScopeFactory` constructor to accept a 4th parameter `RedactionPipeline? redactionPipeline` and return it from `GetService(typeof(RedactionPipeline))`
+    - add a 6-argument internal constructor on `WolverineEventDispatchHostedService` that takes the pipeline so tests can register one; the existing 5-argument constructor still works (passes `redactionPipeline: null` to the factory)
+- new test methods in `tests/Cephalon.Tests.Composition/Composition/WolverineEventingPackTests.cs`:
+    - `WolverineDispatch_RoutesEmittedAttributeValues_ThroughRedactionPipeline` — registers a tracking filter, fires one dispatch with full tenant + correlation ids, asserts the filter saw all 7 expected attribute keys (`cephalon.message_id`, `.event_type`, `.channel_id`, `.dispatch_attempt`, `.correlation_id`, `.tenant_id`, `.dispatch_result`) and three specific values (message id, tenant id, dispatch result of `succeeded`)
+    - `WolverineDispatch_AppliesRedactionReplacement_BeforeTaggingActivity` — registers a filter that replaces `cephalon.tenant_id` values with `"[REDACTED-TENANT]"`, fires a dispatch with a sensitive tenant id, captures the resulting `wolverine.dispatch` activity via `ActivityStopped`, and asserts the redacted value is what reaches the activity tags (i.e. what would actually flow to an exporter); also asserts that the unrelated `cephalon.message_id` tag is unchanged
+- 2 small private helper classes added inside the test file (TrackingRedactionFilter, ReplaceTenantIdFilter); same pattern used in the AspNetCore + EngineRuntime redaction tests
+- verified end-to-end with `dotnet test --filter "WolverineDispatch_Routes|WolverineDispatch_Applies"` (2/2 pass) and the full redaction suite (39/39 pass: 8 KeyMatch + 10 Regex + 8 Pipeline + 7 ServiceCollection + 2 AspNetCore middleware + 2 EngineRuntime + 2 Wolverine dispatch)
+
+Follow-up later:
+
+- if more emission sites land later (e.g. the worker lifecycle spans add tag values, the future `Cephalon.Eventing` emission baseline that PR #878 is shipping), each new site adopts the same `Redact(activity, key, value)` helper pattern and gets 2 parallel tests in its corresponding test file
+
+### ENG-375 Declare EngineBuilder build-time activity tags as deliberate redaction scope boundary
+
+Status: done
+Estimate: 1
+
+Why:
+
+- after `ENG-365` (AspNetCore middleware), `ENG-366` (engine runtime), and `ENG-374` (Wolverine dispatch), the only remaining `SetTag` emission sites in the engine's source tree are in `EngineBuilder.cs` lines 1192-1194 — three tags emitted on the `engine.build` activity: `cephalon.blueprint`, `cephalon.module.count`, `cephalon.capability.count`
+- the obvious next move would be to wire the redaction pipeline through these too, but the builder runs *before* DI is fully wired (the engine is being constructed; the runtime hasn't been instantiated, so `IServiceProvider` doesn't yet exist for the redaction pipeline to resolve from); wiring would require either an early-bind on `EngineSettings`-level options or a deferred-emission queue flushed once the runtime takes over
+- on inspection, the three values are internally derived from the manifest (blueprint id + module/capability counts) and are **non-sensitive by construction** — consumer apps that need to redact tenant-aware blueprint naming should rename the blueprint instead of trying to filter the tag; the cost of wiring the deferred-emission queue exceeds the value because no real consumer threat model needs it
+- declaring the scope boundary explicitly (in the source comment + adoption recipe doc) is more honest than carrying an open follow-up that pretends future wiring is going to happen
+
+Delivered:
+
+- update `src/Cephalon.Engine/Composition/EngineBuilder.cs` lines 1192-1194 with an inline 6-line comment naming (a) the reason the redaction pipeline is not yet resolvable at build time, (b) the values are internally derived and non-sensitive by construction, (c) the suggested workaround if a consumer thinks they need redaction here, (d) cross-reference to the runtime emission sites that *do* route through the pipeline
+- update `docs/components/diagnostics.md` *Redaction quick start* with a new "What is *not* redacted" subsection naming the build-time activity as the canonical scope boundary; declares this as a deliberate decision, not an oversight, so a security reviewer reading the doc gets a clear answer instead of a TODO
+- close the `ENG-374` follow-up note about extending M1 to `EngineBuilder`; mark it as deliberately scope-bounded
+- `docs/engine-backlog.md` ENG-375 backlog card; Sprint 125 placement updated
+- verified with `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors); no code-path change, only added comments
+
+Follow-up later:
+
+- if a real consumer threat model ever surfaces (e.g. a multi-tenant SaaS where blueprint id IS tenant-derived), revisit with a deferred-emission queue or early-bind from `EngineSettings`; the doc names this case explicitly so it's discoverable
+
+### ENG-374 Extend M1 redaction to Cephalon.Eventing.Wolverine dispatch emission
+
+Status: done
+Estimate: 2
+
+Why:
+
+- `ENG-365` and `ENG-366` shipped M1 redaction at AspNetCore middleware and engine runtime module-phase tags; the third existing emission site -- `Cephalon.Eventing.Wolverine`'s `WolverineEventDispatchHostedService` -- was unwired even though it emits 9 attribute values per dispatched publication including `cephalon.tenant_id` and `cephalon.correlation_id`, both genuinely sensitive in multi-tenant deployments
+- in a multi-tenant Cephalon app, the tenant id is exactly the kind of value an operator wants to redact from third-party telemetry exporters (Honeycomb / Datadog / etc) but ship intact to internal SREs; without M1 redaction at the dispatch site, registered `IRedactionFilter` implementations had no effect on Wolverine span attributes
+- the package already references `Cephalon.Engine` (which transitively brings `Cephalon.Diagnostics.Redaction`), so the wiring requires no new package edges -- just the same lazy-resolution pattern used in `EngineRuntime` (`ENG-366`)
+
+Delivered:
+
+- update `src/Cephalon.Eventing.Wolverine/Services/WolverineEventDispatchHostedService.cs`:
+    - add private `RedactionPipeline? redactionPipeline` field; lazily resolve it inside `DispatchAvailableAsync` via `scope.ServiceProvider.GetService<RedactionPipeline>()` alongside the existing dispatch-store/runtime-reporter/message-bus resolution
+    - add private `Redact(Activity?, string attributeKey, object? value)` helper that builds a `RedactionContext` from `activity?.Source.Name + attributeKey` and pipes through the resolved pipeline; short-circuits to passthrough when the pipeline is null
+    - route 9 `SetTag` calls through `Redact(...)`: `cephalon.message_id`, `cephalon.event_type`, `cephalon.channel_id`, `cephalon.dispatch_attempt`, `cephalon.correlation_id`, `cephalon.tenant_id`, plus three `cephalon.dispatch_result` settings (`no-destinations` / `succeeded` / `failed`)
+- update `src/Cephalon.Diagnostics/Redaction/IRedactionFilter.cs` XML docs and `docs/components/diagnostics.md` *What it owns* paragraph to reflect three M1 emission sites
+- verified end-to-end with `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors)
+
+Follow-up later:
+
+- write a focused integration test that boots a Wolverine dispatch host with a tracking `IRedactionFilter`, calls `dispatchService.DispatchOnceAsync()`, and asserts the filter saw the 9 expected attribute keys (and that a sensitive value gets the redacted replacement); deferred from this slice because the existing AspNetCore + EngineRuntime integration tests already cover the lazy-resolution pattern correctness, and a Wolverine-shaped test requires the full Wolverine + outbox + dispatcher rig
+- promote `Cephalon.Worker`'s lifecycle spans through redaction once worker emission adds tag values (today `worker.lifecycle.start`/`.stop` start activities but emit no `SetTag` calls); the helper pattern is in place to copy
+
+### ENG-373 Document genuine NoWarn suppressions with inline rationale
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `ENG-372`'s discipline declared that any surviving suppression should land with an inline comment naming the specific call site or upstream code that triggered it; auditing the engine after `ENG-371`/`ENG-372` surfaces five surviving suppressions without inline rationale (one in `Directory.Build.props`, four in test-project csprojs)
+- the surviving suppressions are all genuine and load-bearing (`CS1591` everywhere is intentional because `GenerateDocumentationFile=true` shouldn't force XML docs on every public symbol when `PublicApiAnalyzers` already gates the contract surface; `CA1707` in test projects is intentional because xUnit test method names use underscores by convention)
+- but a future maintainer reading the bare `<NoWarn>` line has no way to tell intentional from stale; this slice closes that gap without changing any rule severity, just by adding the *why* inline
+
+Delivered:
+
+- `Directory.Build.props`: inline comment on the `CS1591` suppression naming `GenerateDocumentationFile=true` as the trigger and `PublicApiAnalyzers (RS0016/RS0017)` as the rule that actually gates the contract surface
+- `tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj`: inline comment on the `CA1707` suppression naming xUnit test naming conventions (`MethodName_WhenCondition_ShouldResult`) as the trigger
+- `tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj`: same inline comment
+- `tests/Cephalon.Tests.Support/Cephalon.Tests.Support.csproj`: same inline comment
+- `tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj`: same inline comment
+- verified with `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors)
+
+Follow-up later:
+
+- if a future package adds a new project-level suppression, the `ENG-372` discipline applies: inline comment naming the trigger lands in the same slice; the registry of *why each surviving suppression exists* is maintained by reading those inline comments rather than a separate doc
+
+### ENG-372 Audit and cleanup remaining package-level NoWarn suppressions
+
+Status: done
+Estimate: 1
+
+Why:
+
+- `ENG-371`'s follow-up note flagged the surviving non-RS0026/RS0027 suppressions for staleness audit: `MA0011`/`MA0048`/`MA0051`/`MA0002`/`RCS1194` on `Cephalon.Abstractions`, and `RS0041` on `Cephalon.AspNetCore.Grpc`
+- the same pattern that turned `RS0026`/`RS0027` into dead code (rule cleanup completed, suppression never removed) likely applies here; an audit takes minutes and either confirms the suppressions are still load-bearing or removes another stale layer of static-analysis noise
+- documenting the surviving suppressions inline explains *why* each surviving rule is genuinely suppressed (vs. the previous bare `<NoWarn>` lines that gave no context)
+
+Delivered:
+
+- audit on `Cephalon.Abstractions`: lifting `<NoWarn>$(NoWarn);MA0011;MA0048;MA0051;MA0002;RCS1194</NoWarn>` produces 0 warnings, 0 errors on a clean rebuild — all 5 Meziantou + Roslynator rules are stale and the suppression is removed
+- audit on `Cephalon.AspNetCore.Grpc`: lifting `<NoWarn>$(NoWarn);RS0041</NoWarn>` produces **68 errors** from `Grpc.Tools`-generated `discovery.proto` code (`Discovery.cs` and `DiscoveryGrpc.cs`) where `MergeFrom` / `ExchangeGreetings` / `NewInstance` / `Traits.get` and 60+ other generated symbols use oblivious reference types — the suppression is genuinely load-bearing and is restored with an explicit inline comment naming `Grpc.Tools` as the reason
+- `Cephalon.Abstractions.csproj`: 1 line removed (the `<NoWarn>` line)
+- `Cephalon.AspNetCore.Grpc.csproj`: 1 line added (the inline comment explaining why `RS0041` is suppressed)
+- verified with `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors)
+
+Follow-up later:
+
+- if `Grpc.Tools` ever ships a version that emits non-oblivious nullable annotations, drop the `RS0041` suppression on `Cephalon.AspNetCore.Grpc`; track the upstream issue at <https://github.com/grpc/grpc-dotnet> if needed
+- per the `ENG-371` discipline, any future suppression should land with an inline comment naming the specific call site or upstream code that triggered it; the bulk-suppression-as-bridge pattern is retired
+
+### ENG-371 Remove stale RS0026/RS0027 NoWarn suppressions across all packages
+
+Status: done
+Estimate: 1
+
+Why:
+
+- 100 `Cephalon.*.csproj` files carried `<NoWarn>$(NoWarn);RS0026;RS0027</NoWarn>` with comments referencing follow-up to `ENG-326`, `ENG-340`, `ENG-343` etc; the suppressions were originally added to keep the public-API contract lock-in arc from bundling a breaking optional-overload refactor into the same slice
+- the optional-overload refactors were silently completed during `ENG-345` and adjacent slices (`Cephalon.Engine` and 99 others) but the per-project suppressions never got removed; verified empirically by lifting the suppression in `Cephalon.Engine` and observing 0 violations on a clean rebuild
+- carrying dead suppressions costs nothing at runtime but rots the static-analysis surface: a future refactor that re-introduces an optional-overload conflict would not get flagged because the suppression is still suppressing it; the longer the suppressions stay in place, the more invisible coverage the engine loses
+
+Delivered:
+
+- batch removal of `RS0026` and `RS0027` entries from `<NoWarn>` lines across 100 `Cephalon.*.csproj` files via a one-shot PowerShell helper that:
+    - parses each `<NoWarn>$(NoWarn);A;B;C</NoWarn>` line, drops `RS0026` and `RS0027` while preserving every other entry (the meta-package tokens like `MA0011` / `RCS1194` and the per-pack tokens like `RS0041` for `Cephalon.AspNetCore.Grpc`'s Grpc.Tools-generated nullable-oblivious code stay intact)
+    - drops the now-bare `<NoWarn>$(NoWarn)</NoWarn>` nodes left behind when the only entries were `RS0026`/`RS0027`
+    - strips the now-orphan `<!-- RS0026 / RS0027 ... -->` comment blocks that documented the suppression rationale
+    - normalises the cosmetic indentation that the strip leaves behind (`    </PropertyGroup>` -> `  </PropertyGroup>`)
+- 101 csproj files changed, 257 lines removed, 2 added net (`Cephalon.Engine.csproj` was the canary done first; the other 100 followed via the helper)
+- verified end-to-end with `dotnet build CephalonEngine.slnx -c Release` (0 warnings, 0 errors) — every package is now compiling cleanly with `RS0026` and `RS0027` analyzers actively enforced; if a future refactor reintroduces an optional-overload conflict, PublicApiAnalyzers will surface it instead of silently masking it
+
+Follow-up later:
+
+- if any future package needs to genuinely suppress `RS0026`/`RS0027` (e.g. an inherited overload pattern from a base class outside the package), reintroduce the suppression for that package only with a comment naming the specific call site that triggered it; the bulk-suppression-as-bridge pattern is now retired because the contract-lock-in arc that justified it is complete
+- consider auditing other `NoWarn` entries (`MA0011`, `MA0048`, `MA0051`, `MA0002`, `RCS1194` on `Cephalon.Abstractions`; `RS0041` on `Cephalon.AspNetCore.Grpc`) for similar staleness; defer until at least one of them surfaces real cost (today they're fewer than this RS0026/RS0027 bulk and have specific in-source rationale)
+
 ### ENG-370 Author centralized EventId range registry
 
 Status: done
@@ -3799,7 +4650,7 @@ Delivered:
 
 Follow-up later:
 
-- promote `Cephalon.Engine`'s build-time `engine.build` activity tags (in `EngineBuilder.cs` lines 818, 1192-1194: `cephalon.blueprint`, `cephalon.module.count`, `cephalon.capability.count`) once the build flow has access to a `RedactionPipeline`; the builder runs before DI is fully wired, so wiring requires either an early-bind from `EngineSettings`-level options or a deferred-emission queue that gets flushed once the runtime takes over
+- promote `Cephalon.Engine`'s build-time `engine.build` activity tags (in `EngineBuilder.cs` lines 818, 1192-1194: `cephalon.blueprint`, `cephalon.module.count`, `cephalon.capability.count`) once the build flow has access to a `RedactionPipeline`; the builder runs before DI is fully wired, so wiring requires either an early-bind from `EngineSettings`-level options or a deferred-emission queue that gets flushed once the runtime takes over — **declared as deliberate scope boundary in `ENG-375`: build-time tags are internally derived from the manifest and non-sensitive by construction; this follow-up is closed unless a real consumer threat model surfaces a need**
 - promote `Cephalon.Worker`'s `worker.lifecycle.start` / `.stop` lifecycle spans, `Cephalon.Eventing` emission sites, and `Cephalon.MultiTenancy.Governance` emission sites using the same lazy-resolution pattern; each lands as its own slice when the emission code is touched
 
 ## Completed foundation work
@@ -11910,6 +12761,53 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-368 Adopt redaction recipe in Cephalon.Sample.ModularMonolith composition root (shipped)
 - ENG-369 Adopt redaction recipe across remaining samples (shipped)
 - ENG-370 Author centralized EventId range registry (shipped)
+- ENG-371 Remove stale RS0026/RS0027 NoWarn suppressions across all packages (shipped)
+- ENG-372 Audit and cleanup remaining package-level NoWarn suppressions (shipped)
+- ENG-373 Document genuine NoWarn suppressions with inline rationale (shipped)
+- ENG-374 Extend M1 redaction to Cephalon.Eventing.Wolverine dispatch emission (shipped)
+- ENG-375 Declare EngineBuilder build-time activity tags as deliberate redaction scope boundary (shipped)
+- ENG-376 Add integration tests for Wolverine M1 redaction wiring (shipped)
+- ENG-377 Surface redaction recipe + diagnostic-id registry in getting-started (shipped)
+- ENG-378 Extend May architecture review with redaction adoption arc + cleanup discipline (shipped)
+- ENG-380 Close May 2026 architecture review gaps that were already shipped (shipped)
+- ENG-381 Pre-declare canonical activity-source / meter names for Cephalon.Agentics + Cephalon.Retrieval (shipped)
+- ENG-382 Introduce per-page maturity-badge header convention in component docs and adopt across the core-runtime entry points (shipped)
+- ENG-383 Adopt per-page maturity-badge convention across technology / follow-through entry points (batch 2) (shipped)
+- ENG-384 Adopt per-page maturity-badge convention across Behaviors family + Eventing companions (batch 3) (shipped)
+- ENG-385 Adopt per-page maturity-badge convention across Cephalon.Data.* provider packs (batch 4) (shipped)
+- ENG-386 Adopt per-page maturity-badge convention across Cephalon.EventSourcing.* provider packs (batch 5) (shipped)
+- ENG-387 Adopt per-page maturity-badge convention across Cephalon.MultiTenancy.Governance.* companions (batch 6) (shipped)
+- ENG-390 Extract Cephalon.Resilience package from Cephalon.Behaviors (shipped) — originally drafted as ENG-381; renumbered after concurrent run claimed ENG-381 for the Diagnostics activity-source / meter pre-declaration
+- ENG-393 Adopt per-page maturity-badge convention across remaining 44 component docs (final batch) (shipped)
+- ENG-400 Author consolidated v0.1.0-preview release-notes draft (shipped)
+- ENG-405 Direct error-mode coverage for Cephalon.AspNetCore.JsonRpc transport adapter (shipped)
+- ENG-406 Close Retrieval OTel emission docs-drift on engine-surface-maturity-audit + components/diagnostics (shipped)
+- ENG-407 Author the missing docs/test-coverage-roadmap.md (shipped)
+- ENG-409 Close Cephalon.Retrieval M1 emission drift in cross-package redaction docs (shipped)
+- ENG-410 Extend test-coverage-roadmap with redaction-suite + Resilience-suite recommendations (shipped)
+- ENG-411 Close docs drift in `docs/runtime-contract-index.md` `/engine/*` route catalog: add 12 missing core engine routes (`/status`, `/options`, `/transports`, `/failure-policy`, `/package-policy`, `/trust-policy`, `/scaffold`, `/reference-docs`, `/localization`, `/dependencies`, `/diagnostics`, `/runtime-story`), 7 missing eventing/agent/knowledge routes (`/event-dispatch-runtimes`, `/event-dispatches`, `/event-publications/runtime`, `POST /event-publications`, `/agent-tool-runs`, `POST /knowledge-indexes/{collectionId}/reindex`, `POST /cdc-capture-runtimes/{executionRuntimeId}/commands/{operationId}`), 3 missing tenant-invitation AspNetCore routes (`POST /tenant-invitations/delivery-dispatches`, `POST /tenant-invitations/delivery-status`, `GET /tenant-invitations/delivery-status/observations`); fix `POST /agent-tools/{toolId}/run` → `/runs` (plural); remove 5 incorrect top-level `/tenant-{memberships,invitations,domain-ownership,governance-actions,administration}` rows that were actually `surfaceId` drill-downs under `/engine/technology-surfaces/{surfaceId}` and add a clarifying note on the `/engine/technology-surfaces` row; add note about provider-specific invitation-delivery callback paths (SendGrid/Mailgun/Amazon SES); add `/engine/agent-tool-runs` filter drill-down note alongside the existing CDC drill-down note. Quality dimensions: Auditability + Maintainability + Compatibility (shipped)
+- ENG-412 Extend Cephalon.Worker lifecycle activity with metadata tags + M1 redaction wiring (sixth emission site) (shipped) — originally drafted as ENG-411; renumbered after concurrent run claimed ENG-411 for the runtime-contract-index drift closure
+- ENG-413 Add focused integration test proving Cephalon.Worker lifecycle activity routes tag values through RedactionPipeline (sixth emission site test coverage) (shipped)
+- ENG-408 Direct streaming + canonical Status mapping coverage for Cephalon.AspNetCore.Grpc transport adapter (closes test-coverage-roadmap recommendation #1) (shipped)
+- ENG-414 Log tenth scheduled-task pass in project-memory.md (shipped)
+- ENG-415 Close Evidence-in-code drift for the new 3 M1 emission-site files (Agentics + Retrieval + Worker) (shipped)
+- ENG-416 Close conformance-matrix MultiTenancy.Governance route-projection drift (shipped)
+- ENG-417 Add Cephalon.Resilience row to conformance-matrix (shipped)
+- ENG-418 Add M1 redaction emission-site annotations to 5 conformance-matrix rows + close Retrieval knowledge-query redaction-replacement coverage gap (sixth M1 emission site symmetry) (shipped)
+- ENG-419 Close Cephalon.Worker component-doc drift on the M1 redaction emission site (sixth emission site) (shipped)
+- ENG-420 Close Cephalon.Eventing.Wolverine component-doc drift on the M1 redaction emission site (third emission site) (shipped)
+- ENG-421 Close engine + aspnetcore component-doc drift on M1 redaction emission sites (first + second emission sites) (shipped)
+- ENG-422 Close engine-surface-maturity-audit Cephalon.Diagnostics row drift on M1 redaction emission sites (shipped)
+- ENG-423 Close engine-backlog ENG-410 follow-up drift on shipped PR #922 (shipped)
+- ENG-424 Extend engine-roadmap Sprint 125 narrative + engine-backlog Sprint 125 list with the ENG-408 + ENG-414..423 follow-through arc, log twelfth scheduled-task pass in project-memory.md (shipped)
+- ENG-426 Author per-package trim/AOT/single-file hazard inventory (`docs/trim-aot-hazard-inventory.md`) enumerating the 14 reflection / dynamic-code call sites across shipped Cephalon runtime code, classified into `excluded-by-design` / `clean-baseline` / `low` / `medium` / `high` tiers; cross-linked from `deployment-mode-support.md`, `architecture-review-2026-05.md`, and `engine-roadmap.md` Sprint 125 narrative; deployment-mode support contract stays `not-claimed` and the validation harness remains pending, but the per-package surface the harness will validate is now repo-owned and dated. Quality dimensions: Maintainability + Compatibility + Auditability (shipped)
+- ENG-427 Seed `scripts/deployment-mode-support.json` `deploymentModeEligibility.packages` with the 16 per-package entries from the ENG-426 hazard inventory (3 `high` + 10 `medium` + 1 `low` + 2 `excluded-by-design`); each entry carries `packageName`, `nugetId`, `claimAuditTier`, `supportedModes` (empty), `requiredProjectProperties`, `knownHazards` (`kind` / `site` / `pattern` / `remediation`), `evidence`, and `introducedBy`; extended Pester coverage in `tests/Cephalon.Tests.Scripts/deployment-mode-support-manifest.Tests.ps1` from 26 to 28 tests asserting per-package shape + per-hazard shape; refresh-discipline note added to `docs/trim-aot-hazard-inventory.md` so future inventory updates also update the manifest in the same slice. Quality dimensions: Maintainability + Compatibility + Auditability (shipped)
+- ENG-428 Close `docs/getting-started.md` *Redact secrets from telemetry* paragraph drift on M1 emission count: the line said "three M1 emission sites" naming only AspNetCore HTTP / engine runtime / Wolverine dispatch, leaving Agentics (`ENG-401`), Retrieval (`ENG-402`), and Worker (`ENG-412`) undocumented even though those sites had shipped and were already named in `components/diagnostics.md`, the conformance matrix, the operational-hardening gap inventory, and the v0.1.0-preview release notes; the paragraph now reads "six M1 emission sites" with the canonical class name + closing-slice ENG reference for each (`HttpRequestResponseLoggingMiddleware` / `EngineRuntime` / `WolverineEventDispatchHostedService` / `AgentToolDispatcher` / `KnowledgeIndexer` + `KnowledgeQueryEngine` / `RuntimeHostedService`) so a new adopter walking the getting-started flow sees the same six-site truth as the maturity audit and component docs. Quality dimensions: Auditability + Maintainability (shipped)
+- ENG-429 Close `README.md` line 26 redaction-emission count drift: the repo root README's *Cephalon.Diagnostics* bullet still said "three M1 emission sites (HTTP middleware, engine runtime module-phase tags, Wolverine dispatch tags)" when the rest of the doc surface had moved to six (Agentics ENG-401, Retrieval ENG-402, Worker ENG-412 also wired). The root README is the single most external-adopter-facing surface; updating it is the last public-facing drift point on the redaction adoption arc. Bullet now reads "six M1 emission sites (AspNetCore HTTP middleware, engine runtime module-phase tags, Wolverine dispatch tags, Agentics tool-dispatch tags, Retrieval knowledge-indexing + knowledge-query tags, Worker lifecycle tags)" matching the maturity audit / conformance matrix / operational-hardening gap inventory / `components/diagnostics.md` / `getting-started.md` six-site truth. Quality dimensions: Auditability + Maintainability (shipped)
+- ENG-430 Author `docs/architecture-review-2026-05-followups.md` (the live follow-through tracker for every recommendation / risk / gap from `architecture-review-2026-05.md`) that the project-memory.md scheduled-task run-log entries (sixth, seventh, ninth, tenth, eleventh, twelfth pass) had been pointing at as a next-step routing target since `2026-05-02` even though the doc itself didn't exist yet. The new doc carries explicit status tables (`shipped` / `partial` / `pending` / `superseded` / `closed-no-action`) for every Next-30/60/90-days recommendation, every risk #1..#5, and every updated-gap #1..#5 from the May review, plus refresh discipline (refresh in the same slice that closes any tracked item; fork into a `2026-06-followups.md` when the June review ships and freeze the May version as durable history). Cross-link added to the May review doc's *Cross-references* preamble so the live tracker is discoverable from the dated review. Quality dimensions: Auditability + Maintainability (shipped)
+- ENG-431 Strengthen the deployment-mode manifest contract tests so the per-tier inventory ↔ manifest seeding from `ENG-426` / `ENG-427` is drift-protected at the path-truth layer: extend `tests/Cephalon.Tests.Scripts/deployment-mode-support-manifest.Tests.ps1` from 28 to 31 tests with three new `It` cases — every `representativePublishTargets.projects` entry resolves to a `.csproj` file that exists on disk (so the harness's `Invoke-PublishProbe` default-targets path no longer silently skips a moved or renamed sample), every `deploymentModeEligibility.packages[].packageName` resolves to `src/<packageName>/<packageName>.csproj` on disk (so a renamed Cephalon runtime package can no longer leave a stale name in the per-package hazard list), and every non-excluded package's first `knownHazards.site` `.cs` file path exists on disk (line numbers intentionally not validated; a moved or renamed hazard file forces a manifest update in the same slice). Inventory doc gains a matching `Update May 5, 2026 (ENG-431)` paragraph; `docs/project-memory.md` gains `docs/trim-aot-hazard-inventory.md` in its top-of-file cross-references list (closes the missing-link drift from ENG-426); thirteenth scheduled-task pass entry logged. Harness behavior, deployment-mode claims (still `not-claimed`), and `representativePublishTargets.projects` value (still the single ModularMonolith sample) are unchanged; only the contract test layer is strengthened. Quality dimensions: Maintainability + Auditability + Compatibility (shipped)
+- ENG-432 Reclassify `Cephalon.Behaviors.Http` from `low` to `medium` in the trim/AOT hazard inventory after a deeper read of `Hosting/BehaviorRestEndpointGroup.cs` surfaced three additional reflection sites alongside the original `typeof(ResultModel<>).MakeGenericType` line that the ENG-426 first-pass `Grep` had logged: line 32-36 reflective `MethodInfo` lookups via `GetRequiredCoreMethod` + `BindingFlags.NonPublic | BindingFlags.Static`, line 486 open-generic *method* dispatch via `coreMethod.MakeGenericMethod(typeof(TBehavior), contract.InputType, contract.OutputType)`, and line 487 reflection-based `MethodInfo.Invoke`. The full set is open-generic *method* dispatch — not just the closed-generic *type* wrapper — so the package belongs in the `medium` tier (uniform remediation through source-gen-emitted dispatch table) rather than the `low` tier (single annotation site). `docs/trim-aot-hazard-inventory.md` aggregate-posture table updated (low: 0, medium: 11), Behaviors.Http section heading rewritten with reclassification rationale and the row replaced with a four-hazard `medium` block; `scripts/deployment-mode-support.json` `Cephalon.Behaviors.Http` entry replaced with a four-hazard `medium` block carrying `kind` taxonomy split (`reflection-method-lookup` + `reflection-open-generic-method` + `reflection-method-invoke` + `reflection-closed-generic-bounded`) plus `reclassifiedBy: ENG-432` audit-trail field; first hazard's `site` uses single-line `:32` syntax (not range `:32-36`) so the ENG-431 path-truth Pester test passes; all 31 Pester tests still green. Originally drafted as ENG-431; renumbered after concurrent autonomous run #954 claimed ENG-431 for the path-truth drift-protection tests. Quality dimensions: Auditability + Maintainability + Compatibility (shipped)
+- ENG-433 Broaden the trim/AOT hazard inventory's *Scope and method* pattern set after the ENG-432 deeper read of `Cephalon.Behaviors.Http` revealed that real hazards routinely show up under `MakeGenericMethod`, `MethodInfo.Invoke`, and `BindingFlags.NonPublic`-style member lookups — patterns the ENG-426 first-pass query did not match. The current pattern set now reads: `Activator.CreateInstance`, `Type.GetType(string)`, `MakeGenericType`, `MakeGenericMethod`, `Assembly.LoadFrom`, `MethodInfo.Invoke`, `BindingFlags.*`, `.InvokeMember(`, `Expression.Lambda`, `TypeBuilder` / `DynamicMethod` / `ILGenerator` / `Emit.*`, plus the original `[DynamicallyAccessedMembers]` / `[RequiresUnreferencedCode]` / `[RequiresDynamicCode]` annotation patterns. First-pass under broadened patterns surfaced six new hazards in `Cephalon.Data` (open-generic command/query dispatch via `MakeGenericMethod` in `HandlerDispatchingWriteStore` + `HandlerDispatchingReadStore`), promoting the package from `clean-baseline` to `medium`; aggregate-posture table updated (medium: 11 → 12); manifest gains a six-hazard `Cephalon.Data` entry under the same source-gen-emitted dispatch-table remediation as `Cephalon.Behaviors.Http`. The slice also names a *Known not-yet-classified hazard surface* paragraph that flags additional unclassified hazards in `Cephalon.Behaviors` (`BehaviorModule` lines 347/356/388/494, `BehaviorExecutionSlot` lines 73-74), `Cephalon.Behaviors.Http` beyond ENG-432's four sites (`RestBehaviorProjection` lines 43/207, `RestBehaviorModuleBuilder` line 230, `BehaviorRestProfileResolver` lines 155/192, `BehaviorRestMethodExtensions` / `BehaviorRestBindingSourceExtensions`), the CDC capture services in `Cephalon.Data.MySql` / `Cephalon.Data.Postgres` / `Cephalon.Data.Oracle`, `Cephalon.Abstractions` enum-field `[EnumMember]` lookups, and `Cephalon.ReferenceDocs` doc-generation member enumeration — these are intentionally not yet classified to avoid landing classifications without a deeper read of each call site (the ENG-432 precedent showed first-pass classifications materially understate hazards). All 31 Pester tests still pass; manifest count moves from 16 to 17 packages. Quality dimensions: Auditability + Maintainability + Compatibility (shipped)
 
 ### Later / not scheduled yet
 
