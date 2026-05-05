@@ -12788,6 +12788,18 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-411 Close docs drift in `docs/runtime-contract-index.md` `/engine/*` route catalog: add 12 missing core engine routes (`/status`, `/options`, `/transports`, `/failure-policy`, `/package-policy`, `/trust-policy`, `/scaffold`, `/reference-docs`, `/localization`, `/dependencies`, `/diagnostics`, `/runtime-story`), 7 missing eventing/agent/knowledge routes (`/event-dispatch-runtimes`, `/event-dispatches`, `/event-publications/runtime`, `POST /event-publications`, `/agent-tool-runs`, `POST /knowledge-indexes/{collectionId}/reindex`, `POST /cdc-capture-runtimes/{executionRuntimeId}/commands/{operationId}`), 3 missing tenant-invitation AspNetCore routes (`POST /tenant-invitations/delivery-dispatches`, `POST /tenant-invitations/delivery-status`, `GET /tenant-invitations/delivery-status/observations`); fix `POST /agent-tools/{toolId}/run` → `/runs` (plural); remove 5 incorrect top-level `/tenant-{memberships,invitations,domain-ownership,governance-actions,administration}` rows that were actually `surfaceId` drill-downs under `/engine/technology-surfaces/{surfaceId}` and add a clarifying note on the `/engine/technology-surfaces` row; add note about provider-specific invitation-delivery callback paths (SendGrid/Mailgun/Amazon SES); add `/engine/agent-tool-runs` filter drill-down note alongside the existing CDC drill-down note. Quality dimensions: Auditability + Maintainability + Compatibility (shipped)
 - ENG-412 Extend Cephalon.Worker lifecycle activity with metadata tags + M1 redaction wiring (sixth emission site) (shipped) — originally drafted as ENG-411; renumbered after concurrent run claimed ENG-411 for the runtime-contract-index drift closure
 - ENG-413 Add focused integration test proving Cephalon.Worker lifecycle activity routes tag values through RedactionPipeline (sixth emission site test coverage) (shipped)
+- ENG-408 Direct streaming + canonical Status mapping coverage for Cephalon.AspNetCore.Grpc transport adapter (closes test-coverage-roadmap recommendation #1) (shipped)
+- ENG-414 Log tenth scheduled-task pass in project-memory.md (shipped)
+- ENG-415 Close Evidence-in-code drift for the new 3 M1 emission-site files (Agentics + Retrieval + Worker) (shipped)
+- ENG-416 Close conformance-matrix MultiTenancy.Governance route-projection drift (shipped)
+- ENG-417 Add Cephalon.Resilience row to conformance-matrix (shipped)
+- ENG-418 Add M1 redaction emission-site annotations to 5 conformance-matrix rows + close Retrieval knowledge-query redaction-replacement coverage gap (sixth M1 emission site symmetry) (shipped)
+- ENG-419 Close Cephalon.Worker component-doc drift on the M1 redaction emission site (sixth emission site) (shipped)
+- ENG-420 Close Cephalon.Eventing.Wolverine component-doc drift on the M1 redaction emission site (third emission site) (shipped)
+- ENG-421 Close engine + aspnetcore component-doc drift on M1 redaction emission sites (first + second emission sites) (shipped)
+- ENG-422 Close engine-surface-maturity-audit Cephalon.Diagnostics row drift on M1 redaction emission sites (shipped)
+- ENG-423 Close engine-backlog ENG-410 follow-up drift on shipped PR #922 (shipped)
+- ENG-424 Extend engine-roadmap Sprint 125 narrative + engine-backlog Sprint 125 list with the ENG-408 + ENG-414..423 follow-through arc, log twelfth scheduled-task pass in project-memory.md (shipped)
 
 ### Later / not scheduled yet
 
