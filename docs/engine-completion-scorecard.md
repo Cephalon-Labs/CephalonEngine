@@ -55,6 +55,8 @@ Do not use `M4`, "tests pass", or "docs exist" as a synonym for GA. Maturity, va
 
 The JSON artifact uses schema version `1.1.0`. Release validation publishes it by default through `scripts/validate-release.ps1` unless `-SkipEngineCompletionScorecard` is passed for a deliberately narrower local run.
 
+For a local release-manager readback, `cephalon doctor --scorecard <path-to-engine-completion-scorecard.json>` summarizes that generated artifact's schema/source documents, platform-gate posture, validated evidence-reference count, and per-package GA-readiness count. The CLI consumes the generated JSON read model only; it does not parse this Markdown page, replace source documents, or promote support/GA claims by itself.
+
 ## Platform-level gates
 
 These gates must all be `ready-for-preview`, `not-applicable`, or explicitly documented as `not-claimed` before a preview release. For a GA release, no gate can remain `blocked`, and any `partial` gate must have a release-manager-approved exception.
@@ -135,7 +137,7 @@ The next completion-oriented slices should stay narrow and evidence-driven:
 1. Keep the shipped machine-readable scorecard emitter source-reference validation and per-package readiness mapping aligned with source docs instead of duplicating truth by hand.
 2. Keep per-package GA readiness rows generated from maturity-audit and conformance-matrix truth; do not hand-maintain a second package table here.
 3. Promote the first clean-baseline package through an explicit deployment-mode claim only after the manifest, project properties, harness, workflow, and docs all agree.
-4. Extend `cephalon doctor` with a local scorecard summary after the scorecard model is stable.
+4. Keep `cephalon doctor --scorecard <path>` aligned with the generated JSON schema so local summaries remain a readback of the scorecard artifact, not a second source of truth.
 5. Publish one out-of-repo generated-app adoption smoke path that consumes local packages, stages a reference module, runs the host, and validates the runtime operator surfaces.
 
 ## Refresh cadence

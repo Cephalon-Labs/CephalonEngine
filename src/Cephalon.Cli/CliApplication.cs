@@ -214,6 +214,7 @@ New options:
 
 Doctor options:
   --app-root <path>          Also validate a generated app root, local package source, host project, and publish profile.
+  --scorecard <path>         Also summarize a generated engine completion scorecard JSON artifact.
 
 Package stage options:
   --package <path>           Published module .nupkg to stage into a loadable package directory.

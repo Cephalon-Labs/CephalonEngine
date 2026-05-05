@@ -22,7 +22,38 @@ Current focus:
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane plus the abstraction-level `/engine/knowledge-indexes`, `POST /engine/knowledge-indexes/{collectionId}/queries`, `POST /engine/knowledge-indexes/{collectionId}/reindex`, `snapshot.KnowledgeIndexes`, and opt-in background reindex scheduler seams as the first retrieval-family managed/operator proof instead of widening catalog breadth there again
 - keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, local durable stores, invitation delivery dispatch/retry/status reconciliation, delivery-status observation storage, tenant administration, declared domain ownership, proof collection/polling, and governance-action proofs; `Cephalon.MultiTenancy.Governance.AspNetCore` owns optional fail-closed governance endpoints plus provider-neutral callback signature/replay protection, filtered observation rollup summaries, attention-category drill-down filters, provider-message drill-down filters, remediation-action filters, and deterministic remediation hints over stored observations; HTTP, SMTP, SendGrid, Mailgun, Amazon SES, and Microsoft Graph sender companions own outbound delivery handoff; `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity` owns the optional Azure Identity access-token provider for the Graph sender; SendGrid ASP.NET Core owns callback translation/signature/replay/event-id hardening; Mailgun ASP.NET Core owns callback translation/signature/replay-token/event-id hardening; and Amazon SES ASP.NET Core owns SNS-wrapped SES event callback translation plus opt-in SNS signature verification, bounded process-local SNS replay protection, observation-store-backed SNS message-id idempotency, opt-in verified SNS subscription confirmation, and opt-in verified SNS unsubscribe-confirmation observation. Distributed or provider-backed membership/invitation/domain/action-store backends, additional provider-specific email API senders beyond the shipped SMTP/SendGrid/Mailgun/Amazon SES/Microsoft Graph set, SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, cross-node retry leases, provider-specific or distributed callback inboxes, cross-node callback replay protection, distributed event-id ledgers, provider-specific delivery-status callback payload translation beyond shipped SendGrid/Mailgun/Amazon SES translators, provider-specific callback signature verification beyond shipped SendGrid/Mailgun/Amazon SNS hardening, provider polling, remediation execution beyond state transitions, actual DNS proof publication, provider-backed proof publication or mutation, identity-provider synchronization, Microsoft Entra app registration/permission consent/mailbox access policy, AWS account/IAM/identity verification, DKIM/SPF/DMARC, SES sandbox/configuration-set event destination setup, SNS topic/subscription creation, automatic resubscribe/restore, subscription lifecycle governance, public onboarding, and tenant-admin UI/backoffice flows remain later package-owned work
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
-- treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, and reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md) for release validation
+- treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md) for release validation, and `cephalon doctor --scorecard <path>` provides a local CLI readback over that generated artifact without becoming source truth
+
+### ENG-453 Local engine completion scorecard summary in cephalon doctor
+
+Status: done
+Estimate: 5
+Issue: #977
+
+Why:
+
+- release managers need a quick local readback of the generated scorecard artifact after `ENG-451` and `ENG-452` stabilized schema `1.1.0`
+- contributors should be able to see platform-gate and package-GA posture without opening the JSON artifact manually
+- the CLI must consume the scorecard as a read model only, not parse Markdown or promote support claims
+
+Delivered:
+
+- add `cephalon doctor --scorecard <path>` as an explicit opt-in summary over generated `engine-completion-scorecard.json` artifacts
+- report schema/source document, conformance matrix, platform-gate counts, validated evidence-reference counts, and per-package GA readiness counts through the existing doctor check model
+- treat missing, malformed, or unsupported explicit scorecard artifacts as required doctor issues while keeping current partial/not-claimed/needs-refresh scorecard posture as warnings
+- update CLI help, CLI package README, CLI component docs, scorecard docs, release checklist/template, planning governance, project memory, roadmap, and backlog so docs/source/planning truth stay aligned
+
+Validation:
+
+- run `pwsh ./scripts/publish-engine-completion-scorecard.ps1 -OutputPath artifacts/engine-completion-scorecard-dev`
+- run `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj --no-restore --filter FullyQualifiedName~CliApplicationTests`
+- run `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj --no-restore --filter FullyQualifiedName~DocumentationCoverageTests`
+- run `git diff --check`
+
+Follow-up later:
+
+- keep `cephalon doctor --scorecard` additive when future scorecard schemas grow
+- keep ordinary `cephalon doctor` independent of repo-local scorecard artifacts
 
 ### ENG-452 Per-package GA readiness scorecard read model
 
@@ -54,7 +85,7 @@ Validation:
 Follow-up later:
 
 - keep future schema changes additive until a real release consumer requires a breaking change
-- surface a local `cephalon doctor` scorecard summary after the JSON model proves stable enough for CLI consumption
+- surface a local `cephalon doctor` scorecard summary after the JSON model proves stable enough for CLI consumption - delivered in `ENG-453`
 
 ### ENG-451 Machine-readable engine completion scorecard emitter baseline
 
@@ -86,7 +117,7 @@ Follow-up later:
 
 - keep future schema changes additive until a real release consumer requires a breaking change
 - add per-package GA-readiness rows only after they can reference maturity-audit and conformance-matrix truth instead of repeating those tables - delivered in `ENG-452`
-- surface a local `cephalon doctor` scorecard summary after the JSON model proves stable enough for CLI consumption
+- surface a local `cephalon doctor` scorecard summary after the JSON model proves stable enough for CLI consumption - delivered in `ENG-453`
 
 ### ENG-450 Engine completion scorecard and GA-readiness roll-up baseline
 
@@ -117,7 +148,7 @@ Follow-up later:
 
 - keep the shipped scorecard emitter schema stable and continue extending it by reading source documents rather than duplicating truth
 - add per-package GA-readiness rows that point to maturity-audit and conformance-matrix evidence instead of repeating those tables
-- surface a local scorecard summary through `cephalon doctor` after the scorecard model is stable
+- surface a local scorecard summary through `cephalon doctor` after the scorecard model is stable - delivered in `ENG-453`
 
 ### ENG-230 Engine surface maturity model and audit baseline
 
@@ -12947,6 +12978,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-450 Author `docs/engine-completion-scorecard.md` as the first cross-document release-readiness roll-up for the 12 engine quality dimensions, maturity/conformance/runtime-contract truth, public API compatibility, package publishing, supply chain, deployment-mode claims, `.NET 11` readiness, SRE posture, release checklist, and adoption evidence; wire it into docs hub, planning governance, release checklist/template, engineering standards, project memory, roadmap, backlog, and May follow-up tracking. The scorecard is deliberately a read model: it does not promote trim / Native AOT / single-file from `not-claimed`, does not make `.NET 11` the shipping baseline, and does not equate `M4` maturity with GA. Quality dimensions: Maintainability + Auditability + Compatibility + Usability (shipped)
 - ENG-451 Publish a machine-readable engine completion scorecard artifact from `docs/engine-completion-scorecard.md`: `scripts/publish-engine-completion-scorecard.ps1` now emits JSON/README release artifacts, validates status vocabulary, is wired into `scripts/validate-release.ps1` with `-SkipEngineCompletionScorecard`, and carries focused Pester coverage for artifact shape, status rejection, and release-validation wiring. The artifact remains a read model and does not promote support claims, `.NET 11`, trim, Native AOT, single-file, or GA readiness by itself. Quality dimensions: Maintainability + Auditability + Compatibility + Usability (shipped)
 - ENG-452 Extend the machine-readable engine completion scorecard to schema `1.1.0` as a cross-source read model over `docs/engine-completion-scorecard.md` and `docs/conformance-matrix.md`: evidence-source Markdown/backtick references now resolve to real repo-local files, missing scorecard source files fail the publish step, and `PackageGAReadiness` rows summarize each conformance-matrix package with family, maturity, ownership, conservative GA gate status, blocker class, and source-document pointers. `M4` still maps only to `partial` GA readiness until release, SRE, package-validation, supply-chain, public API, and deployment-mode evidence pass; `M0` / `taxonomy-only` rows remain `not-claimed`. Quality dimensions: Maintainability + Auditability + Compatibility + Usability (shipped)
+- ENG-453 Add `cephalon doctor --scorecard <path>` as the local CLI readback over the generated schema `1.1.0` engine-completion scorecard artifact: doctor now reports schema/source/conformance-matrix truth, platform-gate posture, validated evidence-reference count, and per-package GA-readiness counts through the existing check model; explicit missing, malformed, or unsupported artifacts fail doctor, while current partial/not-claimed/needs-refresh posture stays a warning and does not promote GA/support claims. Quality dimensions: Maintainability + Auditability + Compatibility + Usability (shipped)
 
 ### Later / not scheduled yet
 

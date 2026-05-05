@@ -375,6 +375,151 @@ public sealed class CliApplicationTests
     }
 
     [Fact]
+    public async Task RunAsyncDoctorReportsEngineCompletionScorecardSummary()
+    {
+        var scorecardPath = Path.Combine(Path.GetTempPath(), $"cephalon-scorecard-{Guid.NewGuid():N}.json");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        await File.WriteAllTextAsync(scorecardPath, """
+            {
+              "$schemaVersion": "1.1.0",
+              "SourceDocument": "docs/engine-completion-scorecard.md",
+              "ConformanceMatrix": "docs/conformance-matrix.md",
+              "Summary": {
+                "PlatformGateCount": 12,
+                "BlockedPlatformGates": 0,
+                "NeedsRefreshGates": 1,
+                "PartialPlatformGates": 7,
+                "NotClaimedPlatformGates": 1,
+                "EvidenceSourceReferenceCount": 13,
+                "PackageGAReadinessCount": 88,
+                "PartialPackageGAGates": 87,
+                "NotClaimedPackageGAGates": 1,
+                "NeedsRefreshPackageGAGates": 0
+              }
+            }
+            """);
+
+        UseReadyDoctorProcessRunner();
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--scorecard",
+                    scorecardPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(0, exitCode);
+            Assert.Contains("[ok] Engine completion scorecard artifact: schema 1.1.0 from docs/engine-completion-scorecard.md; conformance matrix docs/conformance-matrix.md.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[warn] Engine completion scorecard platform gates: 12 gates; blocked 0, needs-refresh 1, partial 7, not-claimed 1.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Engine completion scorecard evidence references: 13 repo-local references validated by the published artifact.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[warn] Engine completion scorecard package GA readiness: 88 package rows; partial 87, not-claimed 1, needs-refresh 0.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Equal(string.Empty, stderr.ToString());
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (File.Exists(scorecardPath))
+            {
+                File.Delete(scorecardPath);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncDoctorFailsWhenScorecardArtifactIsMissing()
+    {
+        var scorecardPath = Path.Combine(Path.GetTempPath(), $"cephalon-scorecard-missing-{Guid.NewGuid():N}.json");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        UseReadyDoctorProcessRunner();
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--scorecard",
+                    scorecardPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(1, exitCode);
+            Assert.Contains("[error] Engine completion scorecard artifact: File", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains(scorecardPath, stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("scorecard artifact blockers", stderr.ToString(), StringComparison.Ordinal);
+            Assert.Contains("scorecard JSON artifact", stderr.ToString(), StringComparison.Ordinal);
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncDoctorFailsWhenScorecardSchemaIsUnsupported()
+    {
+        var scorecardPath = Path.Combine(Path.GetTempPath(), $"cephalon-scorecard-schema-{Guid.NewGuid():N}.json");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        await File.WriteAllTextAsync(scorecardPath, """
+            {
+              "$schemaVersion": "1.0.0",
+              "SourceDocument": "docs/engine-completion-scorecard.md",
+              "ConformanceMatrix": "docs/conformance-matrix.md",
+              "Summary": {
+                "PlatformGateCount": 12,
+                "BlockedPlatformGates": 0,
+                "NeedsRefreshGates": 1,
+                "PartialPlatformGates": 7,
+                "NotClaimedPlatformGates": 1,
+                "EvidenceSourceReferenceCount": 13,
+                "PackageGAReadinessCount": 88,
+                "PartialPackageGAGates": 87,
+                "NotClaimedPackageGAGates": 1,
+                "NeedsRefreshPackageGAGates": 0
+              }
+            }
+            """);
+
+        UseReadyDoctorProcessRunner();
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--scorecard",
+                    scorecardPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(1, exitCode);
+            Assert.Contains("[error] Engine completion scorecard artifact: Unsupported schema '1.0.0'. Doctor expects scorecard schema '1.1.0'.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("scorecard artifact blockers", stderr.ToString(), StringComparison.Ordinal);
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (File.Exists(scorecardPath))
+            {
+                File.Delete(scorecardPath);
+            }
+        }
+    }
+
+    [Fact]
     public async Task RunAsyncDoctorUsesConfiguredTemplateHiveForTemplatePackCommands()
     {
         var stdout = new StringWriter();
@@ -2132,6 +2277,25 @@ public sealed class CliApplicationTests
     }
 
     [Fact]
+    public async Task RunAsyncDoctorRequiresScorecardValue()
+    {
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        var exitCode = await CliApplication.RunAsync(
+            [
+                "doctor",
+                "--scorecard"
+            ],
+            stdout,
+            stderr);
+
+        Assert.Equal(1, exitCode);
+        Assert.Equal(string.Empty, stdout.ToString());
+        Assert.Contains("Option '--scorecard' requires a value.", stderr.ToString(), StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task RunAsyncStagesPublishedModulePackageIntoLoadableDirectory()
     {
         var packageOutputPath = Path.Combine(Path.GetTempPath(), $"cephalon-cli-package-stage-pack-{Guid.NewGuid():N}");
@@ -2714,10 +2878,33 @@ public sealed class CliApplicationTests
         Assert.Equal(0, exitCode);
         Assert.Contains("cephalon doctor [options]", stdout.ToString(), StringComparison.Ordinal);
         Assert.Contains("--app-root <path>", stdout.ToString(), StringComparison.Ordinal);
+        Assert.Contains("--scorecard <path>", stdout.ToString(), StringComparison.Ordinal);
         Assert.Contains("cephalon package stage", stdout.ToString(), StringComparison.Ordinal);
         Assert.Contains("Doctor options:", stdout.ToString(), StringComparison.Ordinal);
         Assert.Contains("Package stage options:", stdout.ToString(), StringComparison.Ordinal);
         Assert.Equal(string.Empty, stderr.ToString());
+    }
+
+    private static void UseReadyDoctorProcessRunner()
+    {
+        CommandProcessRunner.RunOverride = static (fileName, arguments, _, _) =>
+        {
+            Assert.Equal("dotnet", fileName);
+
+            return Task.FromResult(arguments switch
+            {
+                ["--version"] => new CommandProcessResult(0, "10.0.201", string.Empty),
+                ["--list-sdks"] => new CommandProcessResult(0, """
+                    10.0.201 [C:\Program Files\dotnet\sdk]
+                    """, string.Empty),
+                ["--list-runtimes"] => new CommandProcessResult(0, """
+                    Microsoft.AspNetCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.AspNetCore.App]
+                    Microsoft.NETCore.App 10.0.5 [C:\Program Files\dotnet\shared\Microsoft.NETCore.App]
+                    """, string.Empty),
+                ["new", "list", "cephalon"] => new CommandProcessResult(103, "No templates found matching: 'cephalon'.", string.Empty),
+                _ => throw new InvalidOperationException($"Unexpected command: {fileName} {string.Join(' ', arguments)}")
+            });
+        };
     }
 
     private static void CreateGeneratedDoctorAppRoot(

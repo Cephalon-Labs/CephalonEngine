@@ -182,6 +182,26 @@ public sealed class DocumentationCoverageTests
     }
 
     [Fact]
+    public void CompletionScorecardDocsStayAlignedWithDoctorSummary()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var scorecard = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "engine-completion-scorecard.md"));
+        var planningGovernance = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "planning-governance.md"));
+        var releaseChecklist = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "release-checklist.md"));
+        var releaseChecklistTemplate = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "release-checklist-template.md"));
+        var cliComponentDoc = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "components", "cli.md"));
+        var cliPackageReadme = File.ReadAllText(Path.Combine(repositoryRoot, "src", "Cephalon.Cli", "PACKAGE.md"));
+
+        Assert.Contains("cephalon doctor --scorecard <path>", scorecard, StringComparison.Ordinal);
+        Assert.Contains("schema version `1.1.0`", scorecard, StringComparison.Ordinal);
+        Assert.Contains("cephalon doctor --scorecard <path>", planningGovernance, StringComparison.Ordinal);
+        Assert.Contains("cephalon doctor --scorecard artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json", releaseChecklist, StringComparison.Ordinal);
+        Assert.Contains("cephalon doctor --scorecard artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json", releaseChecklistTemplate, StringComparison.Ordinal);
+        Assert.Contains("cephalon doctor --scorecard <path>", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("cephalon doctor --scorecard <path>", cliPackageReadme, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void AdoptionGuideAndPackageReadmesStayAlignedWithDoctorPath()
     {
         var repositoryRoot = GetRepositoryRoot();

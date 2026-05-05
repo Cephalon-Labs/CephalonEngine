@@ -291,14 +291,10 @@ internal static class DoctorCommand
         if (evaluation.HasFailures)
         {
             await console.WriteErrorAsync(
-                evaluation.GeneratedApp is null
-                    ? $"Cephalon doctor found {evaluation.FailureCount} required issue(s). Install or select the missing prerequisites and rerun `cephalon doctor`."
-                    : $"Cephalon doctor found {evaluation.FailureCount} required issue(s). Fix the missing prerequisites or generated-app bootstrap blockers and rerun `cephalon doctor --app-root {FormatCommandPath(evaluation.GeneratedApp.ResolvedAppRootPath)}`.",
+                BuildDoctorFailureSummary(options, evaluation),
                 cancellationToken);
             await console.WriteErrorAsync(
-                evaluation.GeneratedApp is null
-                    ? "Required baseline: current dotnet SDK selection 10.x, an installed 10.x SDK family, Microsoft.NETCore.App 10.x, and Microsoft.AspNetCore.App 10.x."
-                    : "Required baseline: current dotnet SDK selection 10.x, an installed 10.x SDK family, Microsoft.NETCore.App 10.x, Microsoft.AspNetCore.App 10.x, and a generated app root with a usable Cephalon package source plus host bootstrap assets.",
+                BuildDoctorRequiredBaseline(options, evaluation),
                 cancellationToken);
             return 1;
         }
@@ -360,6 +356,74 @@ internal static class DoctorCommand
         return 0;
     }
 
+    private static string BuildDoctorFailureSummary(DoctorOptions options, DoctorEvaluation evaluation)
+    {
+        var hasScorecardPath = !string.IsNullOrWhiteSpace(options.ScorecardPath);
+
+        if (evaluation.GeneratedApp is null && !hasScorecardPath)
+        {
+            return $"Cephalon doctor found {evaluation.FailureCount} required issue(s). Install or select the missing prerequisites and rerun `cephalon doctor`.";
+        }
+
+        if (evaluation.GeneratedApp is not null && !hasScorecardPath)
+        {
+            return $"Cephalon doctor found {evaluation.FailureCount} required issue(s). Fix the missing prerequisites or generated-app bootstrap blockers and rerun `cephalon doctor --app-root {FormatCommandPath(evaluation.GeneratedApp.ResolvedAppRootPath)}`.";
+        }
+
+        if (evaluation.GeneratedApp is null)
+        {
+            return $"Cephalon doctor found {evaluation.FailureCount} required issue(s). Fix the missing prerequisites or scorecard artifact blockers and rerun `{BuildDoctorRerunCommand(options, evaluation)}`.";
+        }
+
+        return $"Cephalon doctor found {evaluation.FailureCount} required issue(s). Fix the missing prerequisites, generated-app bootstrap blockers, or scorecard artifact blockers and rerun `{BuildDoctorRerunCommand(options, evaluation)}`.";
+    }
+
+    private static string BuildDoctorRequiredBaseline(DoctorOptions options, DoctorEvaluation evaluation)
+    {
+        var hasScorecardPath = !string.IsNullOrWhiteSpace(options.ScorecardPath);
+
+        if (evaluation.GeneratedApp is null && !hasScorecardPath)
+        {
+            return "Required baseline: current dotnet SDK selection 10.x, an installed 10.x SDK family, Microsoft.NETCore.App 10.x, and Microsoft.AspNetCore.App 10.x.";
+        }
+
+        if (evaluation.GeneratedApp is not null && !hasScorecardPath)
+        {
+            return "Required baseline: current dotnet SDK selection 10.x, an installed 10.x SDK family, Microsoft.NETCore.App 10.x, Microsoft.AspNetCore.App 10.x, and a generated app root with a usable Cephalon package source plus host bootstrap assets.";
+        }
+
+        if (evaluation.GeneratedApp is null)
+        {
+            return "Required baseline: current dotnet SDK selection 10.x, an installed 10.x SDK family, Microsoft.NETCore.App 10.x, Microsoft.AspNetCore.App 10.x, and a readable schema 1.1.0 engine completion scorecard JSON artifact when `--scorecard` is supplied.";
+        }
+
+        return "Required baseline: current dotnet SDK selection 10.x, an installed 10.x SDK family, Microsoft.NETCore.App 10.x, Microsoft.AspNetCore.App 10.x, a generated app root with a usable Cephalon package source plus host bootstrap assets, and a readable schema 1.1.0 engine completion scorecard JSON artifact when `--scorecard` is supplied.";
+    }
+
+    private static string BuildDoctorRerunCommand(DoctorOptions options, DoctorEvaluation evaluation)
+    {
+        var command = new StringBuilder("cephalon doctor");
+
+        if (!string.IsNullOrWhiteSpace(options.ScorecardPath))
+        {
+            command.Append(" --scorecard ");
+            command.Append(FormatCommandPath(options.ScorecardPath!));
+        }
+
+        if (evaluation.GeneratedApp is not null)
+        {
+            command.Append(" --app-root ");
+            command.Append(FormatCommandPath(evaluation.GeneratedApp.ResolvedAppRootPath));
+        }
+        else if (!string.IsNullOrWhiteSpace(options.AppRootPath))
+        {
+            command.Append(" --app-root ");
+            command.Append(FormatCommandPath(options.AppRootPath!));
+        }
+
+        return command.ToString();
+    }
+
     /// <summary>
     /// Parses raw command-line arguments into a <see cref="DoctorOptions" /> instance.
     /// </summary>
@@ -378,6 +442,7 @@ internal static class DoctorCommand
         error = null;
 
         string? appRootPath = null;
+        string? scorecardPath = null;
 
         for (var index = 0; index < args.Length; index++)
         {
@@ -393,6 +458,16 @@ internal static class DoctorCommand
                     appRootPath = args[index + 1].Trim();
                     index++;
                     break;
+                case "--scorecard":
+                    if (index + 1 >= args.Length || string.IsNullOrWhiteSpace(args[index + 1]))
+                    {
+                        error = "Option '--scorecard' requires a value.";
+                        return false;
+                    }
+
+                    scorecardPath = args[index + 1].Trim();
+                    index++;
+                    break;
                 default:
                     error = $"Unknown option '{args[index]}'.";
                     return false;
@@ -401,7 +476,8 @@ internal static class DoctorCommand
 
         options = new DoctorOptions
         {
-            AppRootPath = appRootPath
+            AppRootPath = appRootPath,
+            ScorecardPath = scorecardPath
         };
         return true;
     }
@@ -546,6 +622,8 @@ internal static class DoctorCommand
             AddDeploymentModeSupportChecks(checks, supportContract);
         }
 
+        EvaluateEngineCompletionScorecard(options.ScorecardPath, checks);
+
         var generatedApp = EvaluateGeneratedApp(options.AppRootPath, supportContract, checks);
         return new DoctorEvaluation(checks, templatePackInstalled, generatedApp);
     }
@@ -582,6 +660,203 @@ internal static class DoctorCommand
             title,
             $"{supportMode.Status}. {supportMode.Summary}",
             guidance));
+    }
+
+    private static void EvaluateEngineCompletionScorecard(
+        string? scorecardPath,
+        ICollection<DoctorCheck> checks)
+    {
+        if (string.IsNullOrWhiteSpace(scorecardPath))
+        {
+            return;
+        }
+
+        string resolvedScorecardPath;
+
+        try
+        {
+            resolvedScorecardPath = Path.GetFullPath(scorecardPath.Trim());
+        }
+        catch (Exception exception)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Engine completion scorecard artifact",
+                $"Could not resolve '{scorecardPath}': {exception.Message}",
+                "Pass the JSON file written by `scripts/publish-engine-completion-scorecard.ps1`, then rerun `cephalon doctor --scorecard <path>`."));
+            return;
+        }
+
+        if (!File.Exists(resolvedScorecardPath))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Engine completion scorecard artifact",
+                $"File '{resolvedScorecardPath}' does not exist.",
+                "Run `pwsh ./scripts/publish-engine-completion-scorecard.ps1` or `pwsh ./scripts/validate-release.ps1`, then rerun `cephalon doctor --scorecard <path>`."));
+            return;
+        }
+
+        JsonNode? scorecard;
+
+        try
+        {
+            scorecard = JsonNode.Parse(File.ReadAllText(resolvedScorecardPath));
+        }
+        catch (Exception exception)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Engine completion scorecard artifact",
+                $"Could not parse '{resolvedScorecardPath}' as JSON: {exception.Message}",
+                "Regenerate the scorecard artifact from the matching repository snapshot."));
+            return;
+        }
+
+        if (scorecard is null)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Engine completion scorecard artifact",
+                $"File '{resolvedScorecardPath}' did not contain a JSON document.",
+                "Regenerate the scorecard artifact from the matching repository snapshot."));
+            return;
+        }
+
+        var errors = new List<string>();
+        var schemaVersion = GetRequiredScorecardString(scorecard, "$schemaVersion", errors);
+        var sourceDocument = GetRequiredScorecardString(scorecard, "SourceDocument", errors);
+        var conformanceMatrix = GetRequiredScorecardString(scorecard, "ConformanceMatrix", errors);
+        var summary = scorecard["Summary"];
+
+        if (summary is null)
+        {
+            errors.Add("Summary");
+        }
+
+        var platformGateCount = GetRequiredScorecardInt(summary, "PlatformGateCount", errors);
+        var blockedPlatformGates = GetRequiredScorecardInt(summary, "BlockedPlatformGates", errors);
+        var needsRefreshGates = GetRequiredScorecardInt(summary, "NeedsRefreshGates", errors);
+        var partialPlatformGates = GetRequiredScorecardInt(summary, "PartialPlatformGates", errors);
+        var notClaimedPlatformGates = GetRequiredScorecardInt(summary, "NotClaimedPlatformGates", errors);
+        var evidenceSourceReferenceCount = GetRequiredScorecardInt(summary, "EvidenceSourceReferenceCount", errors);
+        var packageGAReadinessCount = GetRequiredScorecardInt(summary, "PackageGAReadinessCount", errors);
+        var partialPackageGAGates = GetRequiredScorecardInt(summary, "PartialPackageGAGates", errors);
+        var notClaimedPackageGAGates = GetRequiredScorecardInt(summary, "NotClaimedPackageGAGates", errors);
+        var needsRefreshPackageGAGates = GetRequiredScorecardInt(summary, "NeedsRefreshPackageGAGates", errors);
+
+        if (errors.Count > 0)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Engine completion scorecard artifact",
+                $"Artifact '{resolvedScorecardPath}' is missing required scorecard fields: {string.Join(", ", errors)}.",
+                "Regenerate the scorecard artifact with the current `scripts/publish-engine-completion-scorecard.ps1` before using it with doctor."));
+            return;
+        }
+
+        if (!string.Equals(schemaVersion, "1.1.0", StringComparison.Ordinal))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Engine completion scorecard artifact",
+                $"Unsupported schema '{schemaVersion}'. Doctor expects scorecard schema '1.1.0'.",
+                "Regenerate the scorecard artifact with the current `scripts/publish-engine-completion-scorecard.ps1`."));
+            return;
+        }
+
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Engine completion scorecard artifact",
+            $"schema {schemaVersion} from {sourceDocument}; conformance matrix {conformanceMatrix}.",
+            null));
+
+        var platformSeverity =
+            blockedPlatformGates > 0 ||
+            needsRefreshGates > 0 ||
+            partialPlatformGates > 0 ||
+            notClaimedPlatformGates > 0
+                ? DoctorCheckSeverity.Warning
+                : DoctorCheckSeverity.Pass;
+        checks.Add(new DoctorCheck(
+            platformSeverity,
+            "Engine completion scorecard platform gates",
+            $"{platformGateCount} gates; blocked {blockedPlatformGates}, needs-refresh {needsRefreshGates}, partial {partialPlatformGates}, not-claimed {notClaimedPlatformGates}.",
+            platformSeverity == DoctorCheckSeverity.Pass
+                ? null
+                : "Treat this as release-readiness posture, not a local machine failure; update the owning source docs before promoting the scorecard."));
+
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Engine completion scorecard evidence references",
+            $"{evidenceSourceReferenceCount} repo-local references validated by the published artifact.",
+            null));
+
+        var packageSeverity =
+            partialPackageGAGates > 0 ||
+            notClaimedPackageGAGates > 0 ||
+            needsRefreshPackageGAGates > 0
+                ? DoctorCheckSeverity.Warning
+                : DoctorCheckSeverity.Pass;
+        checks.Add(new DoctorCheck(
+            packageSeverity,
+            "Engine completion scorecard package GA readiness",
+            $"{packageGAReadinessCount} package rows; partial {partialPackageGAGates}, not-claimed {notClaimedPackageGAGates}, needs-refresh {needsRefreshPackageGAGates}.",
+            packageSeverity == DoctorCheckSeverity.Pass
+                ? null
+                : "Do not equate package maturity with GA; use this summary to find the source document and blocker class before release promotion."));
+    }
+
+    private static string? GetRequiredScorecardString(
+        JsonNode scorecard,
+        string propertyName,
+        List<string> errors)
+    {
+        try
+        {
+            var value = scorecard[propertyName]?.GetValue<string>();
+
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                errors.Add(propertyName);
+            }
+
+            return value;
+        }
+        catch
+        {
+            errors.Add(propertyName);
+            return null;
+        }
+    }
+
+    private static int GetRequiredScorecardInt(
+        JsonNode? scorecard,
+        string propertyName,
+        List<string> errors)
+    {
+        if (scorecard is null)
+        {
+            return 0;
+        }
+
+        try
+        {
+            var value = scorecard[propertyName]?.GetValue<int>();
+
+            if (value is null)
+            {
+                errors.Add($"Summary.{propertyName}");
+                return 0;
+            }
+
+            return value.Value;
+        }
+        catch
+        {
+            errors.Add($"Summary.{propertyName}");
+            return 0;
+        }
     }
 
     private static GeneratedAppDoctorEvaluation? EvaluateGeneratedApp(

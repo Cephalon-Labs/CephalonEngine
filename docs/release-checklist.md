@@ -30,7 +30,7 @@ Cross-references: [`package-publishing.md`](package-publishing.md), [`supply-cha
     3. **Tests** for `Cephalon.Tests.Composition` / `.Hosting` / `.Tooling` (Pester suite for `tests/Cephalon.Tests.Scripts` runs separately in CI)
     4. **`.NET 11` readiness** through `scripts/validate-dotnet-readiness.ps1`
     5. **Deployment-mode claim** audit through `scripts/validate-deployment-mode-claims.ps1` (release validation still passes `-SkipPublish`; explicit publish-probe runs use the manifest's staged `representativePublishTargets.projects` list)
-    6. **Engine completion scorecard artifact** through `scripts/publish-engine-completion-scorecard.ps1`, including evidence-source references and per-package GA readiness rows
+    6. **Engine completion scorecard artifact** through `scripts/publish-engine-completion-scorecard.ps1`, including evidence-source references and per-package GA readiness rows; optionally run `cephalon doctor --scorecard artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json` to get the local CLI summary over the generated artifact
     7. **Operational health and export conventions**
     8. **Phase-8 architecture, runtime, and starter conventions**
     9. **Benchmark smoke suite** + benchmark guardrail validation
@@ -42,7 +42,7 @@ Cross-references: [`package-publishing.md`](package-publishing.md), [`supply-cha
 
 ## Conformance and maturity truth
 
-- [ ] [`docs/engine-completion-scorecard.md`](engine-completion-scorecard.md) reviewed as the release-readiness roll-up, and the generated `artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json` artifact matches it, validates evidence-source references, and carries per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md); no gate was promoted there without the owning source document changing first
+- [ ] [`docs/engine-completion-scorecard.md`](engine-completion-scorecard.md) reviewed as the release-readiness roll-up, and the generated `artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json` artifact matches it, validates evidence-source references, and carries per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md); no gate was promoted there without the owning source document changing first; the optional `cephalon doctor --scorecard artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json` summary is treated as artifact readback only
 - [ ] [`docs/engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md) Current-audit table reflects shipped state: every shipped `Cephalon.*` package has a row with current maturity, ownership mode, and "next proof needed" populated; recently-promoted packages have their maturity bumped in the audit before the release notes or scorecard mention the promotion
 - [ ] [`docs/conformance-matrix.md`](conformance-matrix.md) per-family tables and the *Family summary at a glance* match the audit; no row reports a maturity that disagrees with the audit
 - [ ] [`docs/runtime-contract-index.md`](runtime-contract-index.md) `/engine/*` route catalog reflects every shipped route; recently-added routes (e.g. `/engine/diagnostics-conventions` from `ENG-351`) are present

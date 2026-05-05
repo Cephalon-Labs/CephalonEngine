@@ -54,6 +54,7 @@ The repository is aiming at a modular .NET engine/framework foundation that is g
 - treat performance, security, usability, reliability, maintainability, scalability, flexibility, compatibility, data integrity, availability, auditability, and compliance as first-class engine qualities rather than later hardening chores
 - use `docs/engine-completion-scorecard.md` as the release-readiness roll-up for those qualities: it reads the maturity audit, conformance matrix, runtime contract index, compatibility, deployment-mode, `.NET 11` readiness, package-publishing, supply-chain, SRE, and release-checklist docs without replacing any of them as the authoritative source
 - use `scripts/publish-engine-completion-scorecard.ps1` to export that scorecard into JSON/README release artifacts; the generated artifact validates evidence-source references, reads per-package GA readiness rows from `docs/conformance-matrix.md`, remains conservative about `M0`-`M4`, and cannot promote support claims on its own
+- use `cephalon doctor --scorecard <path>` when a local CLI readback of a generated scorecard artifact is useful; this command consumes the JSON read model only and must not parse scorecard Markdown, duplicate source truth, or promote GA/support claims
 
 ## Repo shape at a glance
 
