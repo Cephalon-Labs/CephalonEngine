@@ -6,7 +6,7 @@ For per-release tracking, copy [`release-checklist-template.md`](release-checkli
 
 Per-release release-notes drafts live alongside the per-release checklist in `docs/releases/<tag>-notes.md`. The notes draft is the consolidated summary of substantive shipping arcs across the sprint window (engine-quality dimensions advanced, ENG range citations, compatibility posture, supply-chain posture, known gaps and limitations) that the release manager hands to the GitHub Release body when the tag is cut. The first such draft lives at [`docs/releases/v0.1.0-preview-notes.md`](releases/v0.1.0-preview-notes.md).
 
-Cross-references: [`package-publishing.md`](package-publishing.md), [`supply-chain-uplift-plan.md`](supply-chain-uplift-plan.md), [`engineering-standards.md`](engineering-standards.md), [`compatibility.md`](compatibility.md), [`sre-posture.md`](sre-posture.md), [`dotnet11-readiness.md`](dotnet11-readiness.md), [`deployment-mode-support.md`](deployment-mode-support.md), [`engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md), [`runtime-contract-index.md`](runtime-contract-index.md), [`conformance-matrix.md`](conformance-matrix.md), [`planning-governance.md`](planning-governance.md), [`releases/v0.1.0-preview-notes.md`](releases/v0.1.0-preview-notes.md).
+Cross-references: [`package-publishing.md`](package-publishing.md), [`supply-chain-uplift-plan.md`](supply-chain-uplift-plan.md), [`engineering-standards.md`](engineering-standards.md), [`engine-completion-scorecard.md`](engine-completion-scorecard.md), [`compatibility.md`](compatibility.md), [`sre-posture.md`](sre-posture.md), [`dotnet11-readiness.md`](dotnet11-readiness.md), [`deployment-mode-support.md`](deployment-mode-support.md), [`engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md), [`runtime-contract-index.md`](runtime-contract-index.md), [`conformance-matrix.md`](conformance-matrix.md), [`planning-governance.md`](planning-governance.md), [`releases/v0.1.0-preview-notes.md`](releases/v0.1.0-preview-notes.md).
 
 ## Pre-flight: working-tree truth
 
@@ -41,7 +41,8 @@ Cross-references: [`package-publishing.md`](package-publishing.md), [`supply-cha
 
 ## Conformance and maturity truth
 
-- [ ] [`docs/engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md) Current-audit table reflects shipped state: every shipped `Cephalon.*` package has a row with current maturity, ownership mode, and "next proof needed" populated; recently-promoted packages have their maturity bumped (e.g. `Cephalon.Diagnostics` at `M3` after `ENG-351`)
+- [ ] [`docs/engine-completion-scorecard.md`](engine-completion-scorecard.md) reviewed as the release-readiness roll-up; no gate was promoted there without the owning source document changing first
+- [ ] [`docs/engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md) Current-audit table reflects shipped state: every shipped `Cephalon.*` package has a row with current maturity, ownership mode, and "next proof needed" populated; recently-promoted packages have their maturity bumped in the audit before the release notes or scorecard mention the promotion
 - [ ] [`docs/conformance-matrix.md`](conformance-matrix.md) per-family tables and the *Family summary at a glance* match the audit; no row reports a maturity that disagrees with the audit
 - [ ] [`docs/runtime-contract-index.md`](runtime-contract-index.md) `/engine/*` route catalog reflects every shipped route; recently-added routes (e.g. `/engine/diagnostics-conventions` from `ENG-351`) are present
 - [ ] [`docs/components/README.md`](components/README.md) lists every shipped component page; new packages added during the release window have a matching `docs/components/<package>.md` page

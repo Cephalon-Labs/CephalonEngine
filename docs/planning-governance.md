@@ -46,6 +46,7 @@ Use repo docs for the durable planning and product record:
 - [Engine roadmap](engine-roadmap.md) for phase-level and sprint-level sequencing
 - [Engine backlog](engine-backlog.md) for task-level status, estimates, and acceptance framing
 - [Project memory](project-memory.md) for standing collaboration rules and settled decisions
+- [Engine completion scorecard](engine-completion-scorecard.md) for the cross-document release-readiness roll-up
 - feature, component, and operations docs for shipped behavior and adoption guidance
 
 ### 2. GitHub Project tracking
@@ -93,6 +94,18 @@ Intentional `M0` taxonomy work and `M1` catalog/runtime-truth work are allowed.
 They still need to be labeled explicitly.
 
 Do not use execution-oriented language for a surface unless the package actually owns an execution or provisioning path.
+
+## Completion scorecard maintenance
+
+[`docs/engine-completion-scorecard.md`](engine-completion-scorecard.md) is the release-readiness roll-up that connects maturity, conformance, runtime contracts, compatibility, deployment-mode truth, `.NET 11` readiness, package publishing, supply-chain, SRE, and release validation into one view.
+
+Maintain it as a read model:
+
+- update the source document first, then update the scorecard summary
+- never promote a gate from the scorecard alone
+- keep `not-claimed` support postures visible when the lack of support is intentional
+- do not treat `M4` maturity as GA; GA still needs package, validation, SRE, deployment, supply-chain, and adoption evidence
+- when a release branch opens, review the scorecard before the release checklist is copied into a per-release working artifact
 
 ## Architecture review cadence
 

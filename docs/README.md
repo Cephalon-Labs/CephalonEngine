@@ -29,6 +29,7 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 - [Database topology](database-topology.md)
 - [Component catalog](components/README.md)
 - [Engine surface maturity audit](engine-surface-maturity-audit.md)
+- [Engine completion scorecard](engine-completion-scorecard.md)
 - [Compatibility](compatibility.md)
 - [Deployment-mode support](deployment-mode-support.md)
 - [.NET 11 readiness](dotnet11-readiness.md)
@@ -69,6 +70,7 @@ This directory is the documentation hub for the Cephalon engine, its host adapte
 - [.NET ecosystem reference](dotnet-ecosystem-reference.md)
 - [Long-range engine direction](long-range-direction.md)
 - [Engineering standards](engineering-standards.md)
+- [Engine completion scorecard](engine-completion-scorecard.md)
 - [SRE posture](sre-posture.md)
 - [Runtime contract index](runtime-contract-index.md)
 - [Conformance matrix](conformance-matrix.md)
@@ -89,6 +91,7 @@ Downstream provider and edge-runtime integrations that are not shipped as first-
 ## Planning
 
 - [Planning governance](planning-governance.md)
+- [Engine completion scorecard](engine-completion-scorecard.md)
 - [Engine surface maturity audit](engine-surface-maturity-audit.md)
 - [Engine roadmap](engine-roadmap.md)
 - [Engine backlog](engine-backlog.md)

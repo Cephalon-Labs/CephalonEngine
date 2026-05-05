@@ -2,7 +2,7 @@
 
 This document is the consolidated standards baseline for code, packaging, documentation, testing, and quality gates that apply to the Cephalon engine and every shipped `Cephalon.*` package, host adapter, companion pack, and tooling surface.
 
-Cross-references: [`project-memory.md`](project-memory.md), [`architecture.md`](architecture.md), [`architecture-patterns-research.md`](architecture-patterns-research.md), [`architecture/design-patterns-reference.md`](architecture/design-patterns-reference.md), [`compatibility.md`](compatibility.md), [`package-publishing.md`](package-publishing.md), [`engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md), [`conformance-matrix.md`](conformance-matrix.md), [`reference-docs.md`](reference-docs.md), [`benchmarking.md`](benchmarking.md), [`dotnet11-readiness.md`](dotnet11-readiness.md), [`long-range-direction.md`](long-range-direction.md).
+Cross-references: [`project-memory.md`](project-memory.md), [`architecture.md`](architecture.md), [`architecture-patterns-research.md`](architecture-patterns-research.md), [`architecture/design-patterns-reference.md`](architecture/design-patterns-reference.md), [`compatibility.md`](compatibility.md), [`package-publishing.md`](package-publishing.md), [`engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md), [`conformance-matrix.md`](conformance-matrix.md), [`engine-completion-scorecard.md`](engine-completion-scorecard.md), [`reference-docs.md`](reference-docs.md), [`benchmarking.md`](benchmarking.md), [`dotnet11-readiness.md`](dotnet11-readiness.md), [`long-range-direction.md`](long-range-direction.md).
 
 ## How to use this document
 
@@ -26,6 +26,8 @@ Every shipped surface must consider the following qualities deliberately, not as
 - **Compliance.** Multi-tenancy, governance, sovereignty routing, retention, and data-handling decisions stay declarative and inspectable.
 
 These qualities are listed in the same order in [`project-memory.md`](project-memory.md). When a planning card claims to advance one of them, name the dimension explicitly in the card so reviewers can check the claim.
+
+The release-readiness roll-up for these qualities lives in [`engine-completion-scorecard.md`](engine-completion-scorecard.md). The scorecard consumes this standards page plus maturity, compatibility, deployment, SRE, package-publishing, and release-validation evidence; it does not replace the source documents behind those gates.
 
 ## Quality framework mapping
 

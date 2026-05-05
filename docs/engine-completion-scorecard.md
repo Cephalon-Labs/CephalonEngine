@@ -1,0 +1,134 @@
+# Engine Completion Scorecard
+
+This scorecard is the roll-up view for answering one question: "what still blocks Cephalon from being complete enough to publish and support as a reusable engine platform?"
+
+It is not a new source of package truth. It reads the existing truth sources and turns them into a product-readiness checklist for preview, release-candidate, and eventual GA decisions.
+
+Cross-references: [`project-memory.md`](project-memory.md), [`engineering-standards.md`](engineering-standards.md), [`engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md), [`conformance-matrix.md`](conformance-matrix.md), [`runtime-contract-index.md`](runtime-contract-index.md), [`compatibility.md`](compatibility.md), [`deployment-mode-support.md`](deployment-mode-support.md), [`dotnet11-readiness.md`](dotnet11-readiness.md), [`package-publishing.md`](package-publishing.md), [`supply-chain-uplift-plan.md`](supply-chain-uplift-plan.md), [`sre-posture.md`](sre-posture.md), [`release-checklist.md`](release-checklist.md), [`engine-roadmap.md`](engine-roadmap.md), [`engine-backlog.md`](engine-backlog.md), [`planning-governance.md`](planning-governance.md).
+
+## Role
+
+Use this page before any release train, architecture review, NuGet publication decision, or large planning reset.
+
+The scorecard exists to prevent three common failure modes:
+
+- a package reads as production-ready because it has a high maturity label, even though release, deployment, package, SRE, or support evidence is still missing
+- a readiness lane such as `.NET 11`, trimming, Native AOT, or single-file starts reading like a supported baseline before the repo has proof
+- planning cards advance one quality dimension while silently regressing another, such as improving usability by weakening compatibility or improving performance by reducing auditability
+
+## Status vocabulary
+
+Use these values when summarizing a gate or package family.
+
+| Status | Meaning |
+| --- | --- |
+| `ready-for-preview` | Enough evidence exists for preview adopters, with documented gaps and no unsupported claim. |
+| `partial` | Useful evidence exists, but one or more required proof sources are still missing. |
+| `blocked` | A known gap prevents the gate from being promoted. |
+| `not-claimed` | Cephalon deliberately makes no support promise yet. This is valid when the docs say so clearly. |
+| `not-applicable` | The gate does not apply to the package or release shape. |
+| `needs-refresh` | The evidence source is date-sensitive or known to drift and must be refreshed before release. |
+
+Do not use `M4`, "tests pass", or "docs exist" as a synonym for GA. Maturity, validation, packaging, operations, support, and adoption are separate dimensions.
+
+## Evidence sources
+
+| Evidence source | Truth owned there | How the scorecard consumes it |
+| --- | --- | --- |
+| [`engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md) | Package maturity, ownership mode, next proof needed | Reads current `M0`-`M4` posture; never overrides it. |
+| [`conformance-matrix.md`](conformance-matrix.md) | Per-package adoption truth, routes, snapshot keys, catalog interfaces | Checks whether adopters can find the runtime answer for each package family. |
+| [`runtime-contract-index.md`](runtime-contract-index.md) | `/engine/*`, `snapshot.*`, and runtime catalog contract map | Checks operator/API contract completeness. |
+| [`compatibility.md`](compatibility.md) | Framework, package, manifest, generator, and support-claim alignment rules | Checks whether a change can ship without silent drift. |
+| [`deployment-mode-support.md`](deployment-mode-support.md) + `scripts/deployment-mode-support.json` | trim, Native AOT, single-file, and publish-probe support posture | Controls deployment-mode promotion; `claim-truthful` is required before support claims widen. |
+| [`dotnet11-readiness.md`](dotnet11-readiness.md) | Future SDK assessment and current framework baseline | Keeps `net10.0` shipping truth separate from `.NET 11` readiness. |
+| [`package-publishing.md`](package-publishing.md) + [`supply-chain-uplift-plan.md`](supply-chain-uplift-plan.md) | NuGet/package artifact, provenance, SBOM, signing, trusted-publishing posture | Checks release evidence and supply-chain readiness. |
+| [`sre-posture.md`](sre-posture.md) + [`benchmarking.md`](benchmarking.md) | Engine SLIs, SLOs, benchmark guardrails, error-budget rules | Checks operational reliability and performance evidence. |
+| [`test-coverage-roadmap.md`](test-coverage-roadmap.md) | Known coverage gaps and direct-test priorities | Checks whether a package family still has known proof gaps. |
+| [`release-checklist.md`](release-checklist.md) | Release-manager proof sequence | Converts the scorecard into per-release execution. |
+
+## Platform-level gates
+
+These gates must all be `ready-for-preview`, `not-applicable`, or explicitly documented as `not-claimed` before a preview release. For a GA release, no gate can remain `blocked`, and any `partial` gate must have a release-manager-approved exception.
+
+| Gate | Current posture | Blocks preview? | Blocks GA? | Next proof needed |
+| --- | --- | --- | --- | --- |
+| Product identity and architecture contract | `ready-for-preview` | No | No, while docs/source/planning stay aligned | Keep `project-memory.md`, `architecture.md`, and `long-range-direction.md` aligned when the engine shape changes. |
+| Package maturity and ownership truth | `ready-for-preview` | No | Yes, if audit or matrix drifts | Keep every shipped package row in the maturity audit and conformance matrix current. |
+| Runtime introspection contract | `ready-for-preview` | No | Yes, if routes or snapshot keys drift | Keep `/engine/*`, `snapshot.*`, and catalog interfaces in the runtime contract index. |
+| Public API compatibility | `partial` | No | Yes | Review all `PublicAPI.Unshipped.txt` files, enforce removals, and enable package validation baselines when stable packages ship. |
+| Package publishing and NuGet discoverability | `partial` | No | Yes | Dry-run signed release flow, reserve/protect `Cephalon.*` when eligible, and verify package readmes/tags/source/symbols. |
+| Supply-chain and release provenance | `partial` | No | Yes | Produce release artifacts with SBOM, SLSA provenance, Sigstore/Rekor evidence, and trusted-publishing proof. |
+| Deployment-mode support claims | `not-claimed` for trim, Native AOT, and single-file support | No, because the lack of claim is explicit | Yes, if GA claims those modes | Promote only after manifest, project properties, harness output, workflow, docs, and package guidance agree. |
+| `.NET 11` migration | `needs-refresh` readiness lane | No | Not for a `net10.0` GA; yes for any `.NET 11` baseline claim | Refresh official preview/RC/GA truth, run readiness validation, and approve a separate migration lane. |
+| Engine SRE posture | `partial` | No | Yes | Publish stable SLI baselines and make release validation summarize SLO posture. |
+| Performance guardrails | `partial` | No | Yes | Keep benchmark smoke and guardrail validation current for hot paths; tighten SLOs after stable baselines. |
+| Security and compliance posture | `partial` | No | Yes | Keep trust policy, vulnerability scans, signing, audit metadata, and compliance evidence in the release bundle. |
+| Developer adoption and low-code ergonomics | `partial` | No | Yes | Prove external generated-app, template-pack, CLI, package-stage, and reference-module flows outside the repo. |
+
+## Quality-dimension gates
+
+Every meaningful `ENG-*` card should name which quality dimensions it advances. A release is not "complete" just because many cards shipped; it is complete when the evidence below exists for the release scope.
+
+| Quality | Release-ready evidence |
+| --- | --- |
+| Performance | Benchmark smoke passes, guardrails show no unapproved regression, and hot-path SLOs are not burning. |
+| Security | Trust, signature, vulnerability, secret-handling, and package-policy evidence are current. |
+| Usability | CLI, templates, generated apps, samples, docs, and IntelliSense tell one coherent story with minimal consumer code. |
+| Reliability | Failure policy, retries, timeouts, circuit breakers, health, and runtime-story answers are explicit and tested. |
+| Maintainability | Source, hand-authored docs, generated reference docs, roadmap, backlog, and project tracking agree. |
+| Scalability | Cell, edge, topology, provider, and distributed-execution claims are explicit about ownership and limits. |
+| Flexibility | Architecture, transport, host, topology, and policy changes are expressed through engine configuration/composition where feasible. |
+| Compatibility | Binary/API baselines, package dependencies, framework baselines, and manifest contracts are reviewed before release. |
+| Data integrity | Outbox/inbox, CDC, event-sourcing, idempotency, durable execution, and replay semantics have focused proof. |
+| Availability | Liveness/readiness, dependency-health, degradation posture, and deployment-path evidence are visible. |
+| Auditability | Runtime catalogs, diagnostics, package provenance, governance decisions, and release artifacts are inspectable. |
+| Compliance | SBOM/provenance, CRA/AI/security framework mappings, data-handling posture, and vulnerability-response evidence are collected. |
+
+## Package-family readiness roll-up
+
+This table is intentionally family-level. The per-package truth remains in the maturity audit and conformance matrix.
+
+| Family | Current scorecard posture | GA blockers to keep visible |
+| --- | --- | --- |
+| Core runtime (`Abstractions`, `Engine`, ASP.NET Core, Worker) | `ready-for-preview` with public API and deployment-mode gaps still tracked | Package validation baselines, release SLI baselines, deployment-mode claim truth. |
+| Transports and REST projection | `ready-for-preview` for the shipped runtime contracts | Keep OpenAPI/Scalar/runtime route truth aligned with behavior REST governance and non-REST boundaries. |
+| Behaviors and resilience | `ready-for-preview` for the shipped managed lanes | Keep benchmark guardrails and runtime diagnostics current before widening hot-path claims. |
+| Data, eventing, event-sourcing, CDC | `partial` because many provider lanes exist with different ownership levels | Do not collapse provider-managed, application-managed, and cephalon-managed ownership; keep durable/distributed claims explicit. |
+| Agentics and retrieval | `partial` with first managed/operator lanes shipped | Keep AI/provider orchestration, durable memory, vector/embedding, and autonomous planning outside the claim until a package owns them. |
+| Multi-tenancy governance | `partial` with many bounded governance proofs shipped | Provider-backed distributed storage, identity-provider sync, public onboarding, and UI/backoffice remain future package-owned work. |
+| Edge, cell, and topology automation | `partial` with strong runtime truth and provider proofs | Keep multi-provider mutation, teardown, and distributed control-plane claims scoped to shipped provider packages. |
+| Observability, diagnostics, and cloud/provider packs | `ready-for-preview` for current companion posture | Keep SLI emission, event-id registry, provider docs, and operational validation aligned. |
+| Tooling, CLI, scaffolding, templates, reference docs | `partial` | GA needs out-of-repo adoption smoke, release artifact proof, package-stage proof, hosted-reference docs proof, and clear support boundaries. |
+
+## Promotion rules
+
+1. A package or gate can move upward only when the owning evidence source moves first.
+2. A support claim can never be promoted from this page alone.
+3. A `not-claimed` posture is acceptable only when the public docs explain the non-claim clearly.
+4. A high maturity label does not bypass release validation, package publishing, SRE, supply-chain, or deployment-mode evidence.
+5. `.NET 11` preview readiness can inform migration planning, but it does not change the `net10.0` shipping floor until the migration lane is approved across source, docs, templates, package metadata, and planning.
+6. If a gate is date-sensitive, refresh the source document first, then update this scorecard in the same slice.
+
+## First follow-through queue
+
+The next completion-oriented slices should stay narrow and evidence-driven:
+
+1. Add a machine-readable scorecard emitter once the source documents stabilize enough to avoid duplicating truth by hand.
+2. Add per-package GA readiness rows that reference, rather than repeat, maturity-audit and conformance-matrix truth.
+3. Promote the first clean-baseline package through an explicit deployment-mode claim only after the manifest, project properties, harness, workflow, and docs all agree.
+4. Extend `cephalon doctor` with a local scorecard summary after the scorecard model is stable.
+5. Publish one out-of-repo generated-app adoption smoke path that consumes local packages, stages a reference module, runs the host, and validates the runtime operator surfaces.
+
+## Refresh cadence
+
+Refresh this page when:
+
+- a release branch opens
+- a package changes maturity or ownership
+- a runtime route, snapshot key, or catalog interface changes
+- a deployment-mode claim changes
+- `.NET 11` or another future framework lane changes its status
+- release validation adds or removes a gate
+- a monthly architecture review closes or opens a scorecard-relevant risk
+
+Do not append dated change logs here. The durable history belongs in commits, `ENG-*` cards, architecture reviews, and release notes.

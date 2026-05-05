@@ -4,7 +4,7 @@ Project memory in this document reflects the repository state observed on `May 5
 
 This page is a repo-oriented orientation snapshot. It is meant to help contributors recover context quickly before they change code, docs, planning, or package surfaces.
 
-Cross-references: `README.md`, `docs/README.md`, `docs/architecture.md`, `docs/architecture-inventory.md`, `docs/architecture-recommendations.md`, `docs/engine-roadmap.md`, `docs/engine-backlog.md`, `docs/supply-chain-uplift-plan.md`, `docs/compatibility.md`, `docs/long-range-direction.md`, `docs/engineering-standards.md`, `docs/sre-posture.md`, `docs/dotnet11-readiness.md`, `docs/runtime-contract-index.md`, `docs/conformance-matrix.md`, `docs/architecture-review-2026-04.md`, `docs/architecture-review-2026-05.md`, `docs/architecture-review-2026-05-followups.md`, `docs/engine-surface-maturity-audit.md`, `docs/test-coverage-roadmap.md`, `docs/planning-governance.md`, `docs/deployment-mode-support.md`, `docs/trim-aot-hazard-inventory.md`
+Cross-references: `README.md`, `docs/README.md`, `docs/architecture.md`, `docs/architecture-inventory.md`, `docs/architecture-recommendations.md`, `docs/engine-roadmap.md`, `docs/engine-backlog.md`, `docs/supply-chain-uplift-plan.md`, `docs/compatibility.md`, `docs/long-range-direction.md`, `docs/engineering-standards.md`, `docs/engine-completion-scorecard.md`, `docs/sre-posture.md`, `docs/dotnet11-readiness.md`, `docs/runtime-contract-index.md`, `docs/conformance-matrix.md`, `docs/architecture-review-2026-04.md`, `docs/architecture-review-2026-05.md`, `docs/architecture-review-2026-05-followups.md`, `docs/engine-surface-maturity-audit.md`, `docs/test-coverage-roadmap.md`, `docs/planning-governance.md`, `docs/deployment-mode-support.md`, `docs/trim-aot-hazard-inventory.md`
 
 ## Identity
 
@@ -52,6 +52,7 @@ The repository is aiming at a modular .NET engine/framework foundation that is g
 - framework-quality gates should keep expanding beyond unit tests: use analyzers and `.editorconfig` as policy, keep package validation baselines for public surface drift, keep NuGet vulnerability/supply-chain checks visible, and add truthful trimming/AOT/single-file readiness analysis where Cephalon claims those deployment modes
 - while the engine remains in POC, prefer materially better architecture, design patterns, packaging, code quality, developer ergonomics, or newly invented engine primitives over preserving transitional shapes that would weaken the long-term framework
 - treat performance, security, usability, reliability, maintainability, scalability, flexibility, compatibility, data integrity, availability, auditability, and compliance as first-class engine qualities rather than later hardening chores
+- use `docs/engine-completion-scorecard.md` as the release-readiness roll-up for those qualities: it reads the maturity audit, conformance matrix, runtime contract index, compatibility, deployment-mode, `.NET 11` readiness, package-publishing, supply-chain, SRE, and release-checklist docs without replacing any of them as the authoritative source
 
 ## Repo shape at a glance
 
