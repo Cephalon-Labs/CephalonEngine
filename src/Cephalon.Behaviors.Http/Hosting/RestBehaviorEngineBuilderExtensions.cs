@@ -15,8 +15,9 @@ public static class RestBehaviorEngineBuilderExtensions
     /// </summary>
     /// <typeparam name="TMarker">
     /// A stable marker type from the module's behavior assembly. Cephalon uses this marker both to
-    /// create a distinct module type for engine validation and to resolve generated REST profile
-    /// hints from the correct assembly when <c>MapGeneratedProfiles(...)</c> is used.
+    /// create a distinct module type for engine validation and to resolve registered
+    /// source-generated REST profile hints from the correct assembly when
+    /// <c>MapGeneratedProfiles(...)</c> is used.
     /// </typeparam>
     /// <param name="engine">The engine builder to extend.</param>
     /// <param name="moduleId">The stable module identifier.</param>
@@ -56,8 +57,9 @@ public static class RestBehaviorEngineBuilderExtensions
     /// </summary>
     /// <typeparam name="TMarker">
     /// A stable marker type from the module's behavior assembly. Cephalon uses this marker both to
-    /// create a distinct module type for engine validation and to resolve generated REST profile
-    /// hints from the correct assembly when <c>MapGeneratedProfiles(...)</c> is used.
+    /// create a distinct module type for engine validation and to resolve registered
+    /// source-generated REST profile hints from the correct assembly when
+    /// <c>MapGeneratedProfiles(...)</c> is used.
     /// </typeparam>
     /// <param name="engine">The engine builder to extend.</param>
     /// <param name="descriptor">The descriptor that identifies the inline module.</param>

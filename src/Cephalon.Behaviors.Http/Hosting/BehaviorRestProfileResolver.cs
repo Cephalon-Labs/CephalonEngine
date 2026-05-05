@@ -66,7 +66,8 @@ internal static class BehaviorRestProfileResolver
         var generatedProfiles = Cache.GetOrAdd(assembly, BuildGeneratedProfiles);
         if (generatedProfiles.Count == 0)
         {
-            return ScanAssemblyProfiles(assembly, normalizedPrefix);
+            throw new InvalidOperationException(
+                $"Assembly '{assembly.FullName}' does not expose generated REST profile hints required by MapGeneratedProfiles(). Rebuild the assembly with the current Cephalon.Behaviors.SourceGen package or use explicit MapProfile<TBehavior>() mappings.");
         }
 
         var behaviorTypes = BehaviorTypeCache.GetOrAdd(assembly, BuildGeneratedProfileBehaviorTypes);
@@ -101,42 +102,6 @@ internal static class BehaviorRestProfileResolver
         }
 
         return resolvedProfiles;
-    }
-
-    private static ResolvedBehaviorRestProfile[] ScanAssemblyProfiles(
-        Assembly assembly,
-        string behaviorIdPrefix)
-    {
-        ArgumentNullException.ThrowIfNull(assembly);
-        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorIdPrefix);
-
-        Type[] behaviorTypes;
-        try
-        {
-            behaviorTypes = assembly.DefinedTypes
-                .Select(static typeInfo => typeInfo.AsType())
-                .ToArray();
-        }
-        catch (ReflectionTypeLoadException exception)
-        {
-            behaviorTypes = exception.Types
-                .Where(static type => type is not null)
-                .Cast<Type>()
-                .ToArray();
-        }
-
-        return behaviorTypes
-            .Where(static behaviorType =>
-                behaviorType.IsClass &&
-                !behaviorType.IsAbstract &&
-                behaviorType.GetCustomAttribute<AppBehaviorAttribute>(inherit: false) is not null &&
-                behaviorType.GetCustomAttribute<BehaviorRestProfileAttribute>(inherit: false) is not null)
-            .Select(behaviorType => new ResolvedBehaviorRestProfile(
-                behaviorType,
-                Resolve(behaviorType)))
-            .Where(resolved => BehaviorIdMatchesPrefix(resolved.Profile.BehaviorId, behaviorIdPrefix))
-            .OrderBy(static resolved => resolved.Profile.BehaviorId, StringComparer.OrdinalIgnoreCase)
-            .ToArray();
     }
 
     private static IReadOnlyDictionary<string, BehaviorRestProfileDescriptor> BuildGeneratedProfiles(Assembly assembly)

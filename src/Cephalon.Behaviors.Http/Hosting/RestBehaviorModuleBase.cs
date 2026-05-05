@@ -51,7 +51,9 @@ public abstract class RestBehaviorModuleBase : BehaviorModuleBase, IRestModule
     /// <remarks>
     /// Most modules should use the default implementation, which points at the concrete module
     /// type itself. Low-code wrappers can override this to point at a stable marker type from the
-    /// behavior assembly when the module instance is implemented by a reusable helper type.
+    /// behavior assembly when the module instance is implemented by a reusable helper type. The
+    /// marker assembly must expose source-generated profile hints; generated-profile mapping does
+    /// not scan assemblies for attributed behavior types.
     /// </remarks>
     protected virtual Type GetRestBehaviorProfileSourceType()
         => GetType();

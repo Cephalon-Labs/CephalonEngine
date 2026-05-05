@@ -16,6 +16,30 @@ namespace Cephalon.Tests.Hosting;
 
 public sealed class BehaviorRestProjectionTests
 {
+    static BehaviorRestProjectionTests()
+    {
+        BehaviorRestGeneratedProfileRegistry.Register(
+            typeof(GeneratedProjectionRestModule).Assembly,
+            [
+                new("tests.generated.projection.publish.get", BehaviorRestMethod.Get, "/{cartId}", 9),
+                new("tests.generated.projection.publish.post", BehaviorRestMethod.Post, "/{cartId}/items", 9),
+                new("tests.generated.projection.grouped.orders.lookup", BehaviorRestMethod.Get, "/{cartId}", 12),
+                new("tests.generated.projection.grouped.orders.create", BehaviorRestMethod.Post, "/{cartId}/items", 12),
+                new("tests.generated.projection.grouped.inventory.lookup", BehaviorRestMethod.Get, "/{cartId}", 13),
+                new("tests.generated.projection.precedence.lookup", BehaviorRestMethod.Get, "/{cartId}", 10),
+                new("tests.generated.projection.threeway.lookup", BehaviorRestMethod.Get, "/{cartId}", 11),
+            ],
+            [
+                new("tests.generated.projection.publish.get", typeof(GeneratedProjectionGetBehavior)),
+                new("tests.generated.projection.publish.post", typeof(GeneratedProjectionPostBehavior)),
+                new("tests.generated.projection.grouped.orders.lookup", typeof(GeneratedProjectionGroupedOrdersLookupBehavior)),
+                new("tests.generated.projection.grouped.orders.create", typeof(GeneratedProjectionGroupedOrdersCreateBehavior)),
+                new("tests.generated.projection.grouped.inventory.lookup", typeof(GeneratedProjectionGroupedInventoryBehavior)),
+                new("tests.generated.projection.precedence.lookup", typeof(GeneratedProjectionProfilePrecedenceBehavior)),
+                new("tests.generated.projection.threeway.lookup", typeof(GeneratedProjectionThreeWayBehavior)),
+            ]);
+    }
+
     [Fact]
     public void RestBehaviorModuleBuilderBuildNormalizesRouteGroupsAndEndpoints()
     {
@@ -210,6 +234,19 @@ public sealed class BehaviorRestProjectionTests
                 Assert.Empty(postEndpoint.Bindings);
                 Assert.Equal(RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle, postEndpoint.AuthoringStyle);
             });
+    }
+
+    [Fact]
+    public void RestBehaviorModuleBuilderBuildRejectsGeneratedProfileMappingWithoutGeneratedRegistry()
+    {
+        var builder = new RestBehaviorModuleBuilder(typeof(string));
+
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            builder.Group("/tests/missing-generated-profiles")
+                .MapGeneratedProfiles("tests.missing.generated"));
+
+        Assert.Contains("does not expose generated REST profile hints", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("MapProfile<TBehavior>()", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]

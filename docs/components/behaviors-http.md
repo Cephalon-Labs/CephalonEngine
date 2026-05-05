@@ -50,7 +50,7 @@ module-owned REST endpoints.
   `BehaviorRestProfileBehaviorTypeDescriptor` let generated assemblies register REST profile
   descriptors from a module initializer, so normal generated-profile consumption no longer finds
   `GetRestProfiles()` / `GetRestProfileBehaviorTypes()` through `ContainsBehaviorsAttribute`
-  method reflection
+  method reflection and no longer falls back to scanning the owning module assembly
 - **REST runtime ownership metadata** — behavior-backed REST endpoints now publish stable
   `RestEndpointRuntimeMetadataKeys` entries so operators can see that profile/publication
   activation is application-managed while ASP.NET Core materialization, candidate reconciliation,
@@ -207,15 +207,18 @@ Current profile behavior:
   generated module-owned shorthand
 - `IRestBehaviorEndpointGroupBuilder.MapProfile<TBehavior>()` is now the shipped low-ceremony
   module-owned shorthand that consumes those hints through the existing REST projection pipeline
-- profile consumption prefers source-generated `GetRestProfiles()` hints first and falls back to
-  the explicitly targeted behavior type's attribute only when generated hints are unavailable
+- `MapProfile<TBehavior>()` still targets one explicit behavior type and can fall back to that
+  type's profile attribute when generated hints are unavailable; `MapGeneratedProfiles(...)` and
+  `MapGeneratedProfileGroups(...)` now require source-generated registry hints for the owning
+  module assembly instead of scanning for attributed behavior types
 - REST profile projections, generated-profile ownership, and `MapBehaviorGet/Post/Put/Patch/Delete<TBehavior>()`
   now share the same type-based endpoint contract before Minimal API materialization, so the
   REST route/projection/module-builder path no longer uses open-generic reflection; `ENG-464`
   also moves generated REST profile hints onto the registry and optional result-envelope OpenAPI
-  projection onto descriptor metadata; the remaining deployment-mode inventory for this package
-  is narrowed to fallback profile discovery, attribute/profile binding fallback, input-shape
-  inspection, and manual/type-based route-contract reflection
+  projection onto descriptor metadata; `ENG-466` removes the generated-profile assembly-scan
+  fallback; the remaining deployment-mode inventory for this package is narrowed to
+  attribute/profile binding fallback, input-shape inspection, and manual/type-based
+  route-contract reflection
 - valid profiles currently require a supported REST method, a non-empty leading-slash relative
   pattern such as `"/{cartId}"`, and a positive `ApiVersionMajor` when one is specified
 - when a profile declares explicit bindings, `BehaviorRestProfile(PreserveImplicitQueryFallback = true)`
@@ -409,7 +412,9 @@ public sealed class CartModule : RestBehaviorModuleBase
 
 `MapGeneratedProfiles()` derives the behavior-id prefix from the route-group prefix, so the example
 above selects behaviors whose ids start with `showcase.cart`. If a module wants a different
-selection rule, use `MapGeneratedProfiles("custom.prefix")` explicitly.
+selection rule, use `MapGeneratedProfiles("custom.prefix")` explicitly. The owning module assembly
+must expose source-generated profile registry hints; if it does not, generated-profile mapping
+fails fast and the module should use explicit `MapProfile<TBehavior>()` mappings instead.
 
 If the module wants to start from the behavior-id prefix instead, use
 `behaviors.GroupFromBehaviorIdPrefix("showcase.cart").MapGeneratedProfiles();`. Cephalon derives
@@ -495,11 +500,12 @@ engine.AddRestBehaviorModule<GetCartBehavior>(
 feeds the same `RestBehaviorModuleBuilder` projection pipeline, and still never publishes public
 REST from `[AppBehavior]` alone. The marker type should come from the same behavior assembly that
 owns the published behaviors, especially when the inline module uses `MapGeneratedProfiles(...)`,
-because Cephalon resolves generated REST profile hints from that marker assembly. Use one stable
-marker type per inline module; if a module needs richer lifecycle hooks, extra services, or more
-advanced manual endpoints, prefer a dedicated `RestBehaviorModuleBase` subclass instead. The
-string-based overload keeps the common path low-ceremony; the `ModuleDescriptor` overload remains
-the advanced path when an inline module needs explicit dependency, tag, or metadata declarations.
+because Cephalon resolves source-generated REST profile registry hints from that marker assembly
+and does not scan the assembly for attributed behavior types. Use one stable marker type per
+inline module; if a module needs richer lifecycle hooks, extra services, or more advanced manual
+endpoints, prefer a dedicated `RestBehaviorModuleBase` subclass instead. The string-based overload
+keeps the common path low-ceremony; the `ModuleDescriptor` overload remains the advanced path when
+an inline module needs explicit dependency, tag, or metadata declarations.
 
 For the common generated-profile case where the route group should mirror the behavior-id prefix,
 the host can now use the lower-ceremony inline helper:
@@ -600,7 +606,8 @@ Current helper behavior:
   profile's method, relative pattern, optional candidate API version, any explicit binding
   descriptors, and optional preserved implicit query-fallback intent for explicitly bound profiles
 - adds `MapGeneratedProfiles()` and `MapGeneratedProfiles(string)` as explicit module-owned
-  low-code shorthands that publish every matching profiled behavior beneath one owned route group
+  low-code shorthands that publish every matching source-generated profile beneath one owned route
+  group without scanning the owning module assembly
 - adds `MapGeneratedProfileGroups(string)`, the shared-group-configuration overload, the
   derived-prefix-aware overload, and matching `AddGeneratedRestBehaviorModuleGroups<TMarker>(...)`
   helpers when one generated root prefix should fan out into several derived owned route groups

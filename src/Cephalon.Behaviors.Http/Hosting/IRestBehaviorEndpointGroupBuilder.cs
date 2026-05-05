@@ -85,7 +85,8 @@ public interface IRestBehaviorEndpointGroupBuilder
     /// <remarks>
     /// <para>
     /// This is an explicit module-owned low-code opt-in. It never publishes public REST from
-    /// <c>[AppBehavior]</c> alone.
+    /// <c>[AppBehavior]</c> alone and requires source-generated profile hints registered for the
+    /// owning module assembly.
     /// </para>
     /// <para>
     /// Cephalon derives the behavior-id prefix from the group prefix by trimming leading and
@@ -104,9 +105,10 @@ public interface IRestBehaviorEndpointGroupBuilder
     /// </param>
     /// <returns>The same group builder for fluent route composition.</returns>
     /// <remarks>
-    /// This is an explicit module-owned low-code opt-in. It prefers source-generated REST profile
-    /// hints and keeps generated routes in the same normalized projection and precedence pipeline as
-    /// the rest of the REST DSL.
+    /// This is an explicit module-owned low-code opt-in. It consumes source-generated REST profile
+    /// hints from the owning module assembly instead of scanning the assembly for attributed
+    /// behavior types, and keeps generated routes in the same normalized projection and precedence
+    /// pipeline as the rest of the REST DSL.
     /// </remarks>
     IRestBehaviorEndpointGroupBuilder MapGeneratedProfiles(string behaviorIdPrefix);
 

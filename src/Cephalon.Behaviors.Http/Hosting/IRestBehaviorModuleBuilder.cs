@@ -66,7 +66,9 @@ public interface IRestBehaviorModuleBuilder
     /// This broader low-code opt-in remains explicit and module-owned. Cephalon groups matching
     /// behavior ids by their parent prefix, so behaviors such as <c>showcase.orders.lookup</c> and
     /// <c>showcase.orders.create</c> share one derived route group while
-    /// <c>showcase.inventory.lookup</c> lands in another. Use
+    /// <c>showcase.inventory.lookup</c> lands in another. The owning module assembly must expose
+    /// source-generated profile hints; this path does not scan the assembly for attributed behavior
+    /// types. Use
     /// <see cref="GroupFromBehaviorIdPrefix(string)" /> plus
     /// <see cref="IRestBehaviorEndpointGroupBuilder.MapGeneratedProfiles(string)" /> when each
     /// generated route group should still be declared manually.

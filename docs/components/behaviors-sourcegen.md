@@ -199,17 +199,18 @@ metadata still does not publish public REST routes by itself and does not overri
 document publication policy.
 `Cephalon.Behaviors.Http` now consumes those hints through the explicit module-owned
 `MapProfile<TBehavior>()`, `MapGeneratedProfiles(...)`, and
-`IRestBehaviorModuleBuilder.MapGeneratedProfileGroups(...)` shorthands, preferring the generated
-hints and falling back only to the explicitly targeted behavior type's attribute or to a bounded
-scan of the explicit owning module assembly when the current assembly lacks generated type hints.
+`IRestBehaviorModuleBuilder.MapGeneratedProfileGroups(...)` shorthands. `MapProfile<TBehavior>()`
+can still fall back to the explicitly targeted behavior type's attribute, but generated-profile
+group mapping now requires the source-generated registry hints for the owning module assembly and
+does not scan that assembly for attributed behavior types.
 Generated REST profile and binding hints now resolve their enum member names from the actual
 attribute arguments instead of assuming fixed numeric ordinals.
 The build now rejects unsupported binding sources, malformed route placeholder syntax, missing or
 duplicate input-property targets, scalar-input misuse, body-binding verb restrictions,
 route-placeholder mismatches, and preserved implicit-query fallback without any explicit bindings
 earlier, while `Cephalon.Behaviors.Http` still re-checks the same contract when the runtime falls
-back to direct attribute resolution for `MapProfile<TBehavior>()` or to the bounded owner-assembly
-scan used by `MapGeneratedProfiles(...)` and `MapGeneratedProfileGroups(...)`. Runtime
+back to direct attribute resolution for `MapProfile<TBehavior>()`; generated-profile mapping uses
+the registry hints directly. Runtime
 normalization still lets ASP.NET Core route parsing stay authoritative for the final route-shape
 truth even after the generator moves the most common placeholder-shape mistakes and preserved-
 fallback authoring errors to compile time.
