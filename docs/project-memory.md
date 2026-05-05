@@ -53,7 +53,7 @@ The repository is aiming at a modular .NET engine/framework foundation that is g
 - while the engine remains in POC, prefer materially better architecture, design patterns, packaging, code quality, developer ergonomics, or newly invented engine primitives over preserving transitional shapes that would weaken the long-term framework
 - treat performance, security, usability, reliability, maintainability, scalability, flexibility, compatibility, data integrity, availability, auditability, and compliance as first-class engine qualities rather than later hardening chores
 - use `docs/engine-completion-scorecard.md` as the release-readiness roll-up for those qualities: it reads the maturity audit, conformance matrix, runtime contract index, compatibility, deployment-mode, `.NET 11` readiness, package-publishing, supply-chain, SRE, and release-checklist docs without replacing any of them as the authoritative source
-- use `scripts/publish-engine-completion-scorecard.ps1` to export that scorecard into JSON/README release artifacts; the generated artifact is a machine-readable read model and cannot promote support claims on its own
+- use `scripts/publish-engine-completion-scorecard.ps1` to export that scorecard into JSON/README release artifacts; the generated artifact validates evidence-source references, reads per-package GA readiness rows from `docs/conformance-matrix.md`, remains conservative about `M0`-`M4`, and cannot promote support claims on its own
 
 ## Repo shape at a glance
 

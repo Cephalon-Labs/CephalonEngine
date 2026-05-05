@@ -48,12 +48,12 @@ Do not use `M4`, "tests pass", or "docs exist" as a synonym for GA. Maturity, va
 
 ## Machine-readable report
 
-[`scripts/publish-engine-completion-scorecard.ps1`](../scripts/publish-engine-completion-scorecard.ps1) exports this page into a release artifact without becoming a new authority. The script parses the status vocabulary, evidence sources, platform gates, quality dimensions, and package-family roll-up from this Markdown document, validates every scorecard status token against the declared vocabulary, and writes:
+[`scripts/publish-engine-completion-scorecard.ps1`](../scripts/publish-engine-completion-scorecard.ps1) exports this page into a release artifact without becoming a new authority. The script parses the status vocabulary, evidence sources, platform gates, quality dimensions, and package-family roll-up from this Markdown document, validates every scorecard status token against the declared vocabulary, validates every repo-local evidence-source reference, and reads per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md).
 
 - `artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json`
 - `artifacts/engine-completion-scorecard-release/README.md`
 
-The JSON artifact uses schema version `1.0.0`. Release validation publishes it by default through `scripts/validate-release.ps1` unless `-SkipEngineCompletionScorecard` is passed for a deliberately narrower local run.
+The JSON artifact uses schema version `1.1.0`. Release validation publishes it by default through `scripts/validate-release.ps1` unless `-SkipEngineCompletionScorecard` is passed for a deliberately narrower local run.
 
 ## Platform-level gates
 
@@ -109,6 +109,16 @@ This table is intentionally family-level. The per-package truth remains in the m
 | Observability, diagnostics, and cloud/provider packs | `ready-for-preview` for current companion posture | Keep SLI emission, event-id registry, provider docs, and operational validation aligned. |
 | Tooling, CLI, scaffolding, templates, reference docs | `partial` | GA needs out-of-repo adoption smoke, release artifact proof, package-stage proof, hosted-reference docs proof, and clear support boundaries. |
 
+## Per-package GA readiness read model
+
+The generated report includes `PackageGAReadiness` rows for every package row in [`conformance-matrix.md`](conformance-matrix.md). These rows intentionally do not copy the matrix table into this page. They carry the package name, family, maturity, ownership, GA gate status, blocker class, and source-document references so release managers can sort the JSON artifact without treating this scorecard as a maturity authority.
+
+The mapping is conservative:
+
+- `M4` rows remain `partial` for GA until release, SRE, package-validation, supply-chain, public API, and deployment-mode evidence pass for the release scope
+- `M3`, `M2`, and `M1` rows remain `partial` until their next maturity proof and release evidence are complete
+- `M0` or `taxonomy-only` rows are `not-claimed` for runtime support unless the owning docs deliberately widen the claim
+
 ## Promotion rules
 
 1. A package or gate can move upward only when the owning evidence source moves first.
@@ -122,8 +132,8 @@ This table is intentionally family-level. The per-package truth remains in the m
 
 The next completion-oriented slices should stay narrow and evidence-driven:
 
-1. Keep the shipped machine-readable scorecard emitter schema-stable and extend it only by reading source docs instead of duplicating truth by hand.
-2. Add per-package GA readiness rows that reference, rather than repeat, maturity-audit and conformance-matrix truth.
+1. Keep the shipped machine-readable scorecard emitter source-reference validation and per-package readiness mapping aligned with source docs instead of duplicating truth by hand.
+2. Keep per-package GA readiness rows generated from maturity-audit and conformance-matrix truth; do not hand-maintain a second package table here.
 3. Promote the first clean-baseline package through an explicit deployment-mode claim only after the manifest, project properties, harness, workflow, and docs all agree.
 4. Extend `cephalon doctor` with a local scorecard summary after the scorecard model is stable.
 5. Publish one out-of-repo generated-app adoption smoke path that consumes local packages, stages a reference module, runs the host, and validates the runtime operator surfaces.
