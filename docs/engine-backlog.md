@@ -12800,6 +12800,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-422 Close engine-surface-maturity-audit Cephalon.Diagnostics row drift on M1 redaction emission sites (shipped)
 - ENG-423 Close engine-backlog ENG-410 follow-up drift on shipped PR #922 (shipped)
 - ENG-424 Extend engine-roadmap Sprint 125 narrative + engine-backlog Sprint 125 list with the ENG-408 + ENG-414..423 follow-through arc, log twelfth scheduled-task pass in project-memory.md (shipped)
+- ENG-426 Author per-package trim/AOT/single-file hazard inventory (`docs/trim-aot-hazard-inventory.md`) enumerating the 14 reflection / dynamic-code call sites across shipped Cephalon runtime code, classified into `excluded-by-design` / `clean-baseline` / `low` / `medium` / `high` tiers; cross-linked from `deployment-mode-support.md`, `architecture-review-2026-05.md`, and `engine-roadmap.md` Sprint 125 narrative; deployment-mode support contract stays `not-claimed` and the validation harness remains pending, but the per-package surface the harness will validate is now repo-owned and dated. Quality dimensions: Maintainability + Compatibility + Auditability (shipped)
 
 ### Later / not scheduled yet
 
