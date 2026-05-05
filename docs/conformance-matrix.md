@@ -228,7 +228,7 @@ The diagnostics + analyzer family ships the engine's canonical telemetry name se
 
 - **Adoption-ready (M4):** core runtime, host adapters, behaviors core, scaffolding, CLI, **`Cephalon.Diagnostics`** (canonical name set consumed by engine + both host adapters + `Cephalon.Observability.OpenTelemetry` as a real subscription contract)
 - **Broad managed execution (M3):** eventing core, eventing Wolverine bridge, agentics, retrieval, data core, edge providers (Kubernetes Gateway, Traefik)
-- **Narrow managed execution (M2):** transport adapters, behaviors HTTP, EntityFramework data, relational data providers (SqlServer, Postgres, MySql, Oracle, MongoDB), multi-tenancy core + governance + delivery senders, edge core, observability core, Sfid, ReferenceDocs
+- **Narrow managed execution (M2):** transport adapters, behaviors HTTP, **`Cephalon.Resilience`** (engine-managed resilience runtime extracted from `Cephalon.Behaviors` via `ENG-390`), EntityFramework data, relational data providers (SqlServer, Postgres, MySql, Oracle, MongoDB), multi-tenancy core + governance + delivery senders, edge core, observability core, Sfid, ReferenceDocs
 - **Catalog-only (M1):** behaviors messaging/patterns/sourcegen, eventing behaviors bridge, non-relational data providers (Redis, Neo4j, Cassandra, ClickHouse, Elasticsearch, OpenSearch, Qdrant, Nats, Debezium), event-sourcing family, audit, identity, observability provider configuration packs, **`Cephalon.Analyzers`** (curated consumer-facing analyzer meta-package)
 - **Taxonomy-only (M0):** observability dependency-health provider packs
 
