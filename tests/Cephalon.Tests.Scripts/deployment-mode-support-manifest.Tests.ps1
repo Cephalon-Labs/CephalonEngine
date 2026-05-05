@@ -177,6 +177,17 @@ Describe "representativePublishTargets" {
             [System.IO.Path]::IsPathRooted($entry) | Should -BeFalse -Because "publish targets stay relative to repo root"
         }
     }
+
+    It "every projects entry resolves to a csproj file that exists on disk" {
+        # ENG-431: prevent the harness from being seeded with a path that has been moved or
+        # renamed without updating the manifest in the same slice. The harness's default-targets
+        # behavior (Invoke-PublishProbe in scripts/validate-deployment-mode-claims.ps1) silently
+        # skips an entry whose file is missing, which would mask drift. Surface it here instead.
+        foreach ($entry in @($script:manifest.representativePublishTargets.projects)) {
+            $resolved = Join-Path $script:repoRoot ($entry -replace '/', [System.IO.Path]::DirectorySeparatorChar)
+            Test-Path -LiteralPath $resolved -PathType Leaf | Should -BeTrue -Because "representativePublishTargets.projects entry '$entry' must exist at '$resolved'"
+        }
+    }
 }
 
 Describe "expectedPublishOutputShape" {
@@ -235,6 +246,43 @@ Describe "deploymentModeEligibility" {
                 $hz.PSObject.Properties.Name | Should -Contain 'remediation'
                 $hz.kind | Should -Not -BeNullOrEmpty
                 $hz.site | Should -Not -BeNullOrEmpty
+            }
+        }
+    }
+
+    It "every package's packageName resolves to an existing src csproj on disk" {
+        # ENG-431: drift-protect the inventory ↔ manifest seeding from ENG-426 / ENG-427. When a
+        # package is renamed or moved, this test fails until the manifest entry is updated, so a
+        # rename slice cannot silently leave the per-package hazard list pointing at a stale name.
+        # Convention: every shipped Cephalon.* runtime package lives at src/<packageName>/<packageName>.csproj.
+        $packages = $script:manifest.deploymentModeEligibility.packages
+        foreach ($pkg in $packages) {
+            $relativePath = "src/$($pkg.packageName)/$($pkg.packageName).csproj"
+            $resolved = Join-Path $script:repoRoot ($relativePath -replace '/', [System.IO.Path]::DirectorySeparatorChar)
+            Test-Path -LiteralPath $resolved -PathType Leaf | Should -BeTrue -Because "deploymentModeEligibility.packages entry '$($pkg.packageName)' must exist at '$resolved'"
+        }
+    }
+
+    It "every non-excluded package's first knownHazards.site points at a file that exists on disk" {
+        # ENG-431: drift-protect the per-hazard call-site references seeded from the inventory.
+        # Each hazard.site is recorded as either 'src/.../File.cs' or 'src/.../File.cs:line'; we
+        # strip any trailing ':line' suffix and assert the .cs file itself exists. Line numbers
+        # are intentionally not validated because they shift with unrelated edits, but a rename or
+        # move of the hazard file must be reflected in the manifest in the same slice.
+        $packages = $script:manifest.deploymentModeEligibility.packages
+        foreach ($pkg in $packages) {
+            if ($pkg.claimAuditTier -eq 'excluded-by-design') { continue }
+            foreach ($hz in $pkg.knownHazards) {
+                # site shape examples:
+                #   "src/Cephalon.Engine/Composition/ModuleDiscovery.cs:113"
+                #   "src/Cephalon.Behaviors/Services/BehaviorTypeRegistry.cs (+ src/Cephalon.Behaviors/IBehaviorTypeRegistry.cs)"
+                # take the first ".cs" path (stop at the first close-paren / whitespace+'(' / ':line' boundary)
+                $rawSite = [string]$hz.site
+                $firstCs = ($rawSite -split '\s|\(' | Where-Object { $_ -match '\.cs(:|$)' } | Select-Object -First 1)
+                if (-not $firstCs) { continue }
+                $relPath = ($firstCs -replace ':\d+$', '')
+                $resolved = Join-Path $script:repoRoot ($relPath -replace '/', [System.IO.Path]::DirectorySeparatorChar)
+                Test-Path -LiteralPath $resolved -PathType Leaf | Should -BeTrue -Because "knownHazards.site '$($hz.site)' on package '$($pkg.packageName)' must resolve to an existing file at '$resolved'"
             }
         }
     }

@@ -111,6 +111,14 @@ When the harness ships, this doc is rewritten in place to read from the harness'
 
 **Update May 5, 2026 (`ENG-427`):** the per-package entries in this inventory have been seeded into `scripts/deployment-mode-support.json` under `deploymentModeEligibility.packages` (16 entries: 3 `high` + 10 `medium` + 1 `low` + 2 `excluded-by-design`). Each manifest entry carries `packageName`, `nugetId`, `claimAuditTier`, `supportedModes` (today: empty for every entry), `requiredProjectProperties`, `knownHazards` (with `kind` / `site` / `pattern` / `remediation` per entry), `evidence` pointer back to this doc, and `introducedBy` ENG reference. Schema is contract-locked through extended Pester coverage in `tests/Cephalon.Tests.Scripts/deployment-mode-support-manifest.Tests.ps1` (28 tests passing). Refreshing this doc in a future slice now requires updating the manifest entries in the same slice.
 
+**Update May 5, 2026 (`ENG-431`):** the manifest contract tests now drift-protect the inventory ↔ manifest seeding at the path-truth layer. Three new Pester `It` cases lift the suite from 28 → 31:
+
+- every `representativePublishTargets.projects` entry must resolve to a `.csproj` file that exists on disk (a moved or renamed sample is no longer silently skipped by the harness's `Invoke-PublishProbe` default-targets path);
+- every `deploymentModeEligibility.packages[].packageName` must resolve to `src/<packageName>/<packageName>.csproj` on disk (a renamed Cephalon runtime package can no longer leave a stale name in the per-package hazard list);
+- every non-excluded package's first `knownHazards.site` must point at a `.cs` file that exists on disk (the trailing `:line` suffix is intentionally not validated because line numbers shift with unrelated edits, but a moved or renamed hazard file forces a manifest update in the same slice).
+
+The harness publish surface, the deployment-mode claims (`not-claimed` for trim / nativeAot / singleFile), and the `representativePublishTargets.projects` value (still `samples/Cephalon.Sample.ModularMonolith/Cephalon.Sample.ModularMonolith.csproj` only) are unchanged by this slice; only the contract test layer is strengthened.
+
 ## Refresh discipline
 
 This inventory is refreshed in the same slice that:
