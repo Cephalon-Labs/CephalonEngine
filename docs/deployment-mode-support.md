@@ -24,6 +24,7 @@ The broader framework-readiness story stays aligned through:
 - [.NET 11 readiness](dotnet11-readiness.md)
 - [Compatibility](compatibility.md)
 - [Package publishing](package-publishing.md)
+- [Trim / Native AOT / single-file hazard inventory](trim-aot-hazard-inventory.md) — per-package reflection / dynamic-code patterns observed in shipped `src/Cephalon.*` runtime code, classified by severity (`excluded-by-design`, `clean-baseline`, `low`, `medium`, `high`), feeding the planned `deploymentModeEligibility` / `knownTransitiveHazards` manifest fields below
 
 External adopters can read that same contract through:
 
