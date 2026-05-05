@@ -1,5 +1,4 @@
 using System.Globalization;
-using System.Reflection;
 using Cephalon.Abstractions.Data;
 using Cephalon.Data.MySql.Configuration;
 using Cephalon.Data.Services;
@@ -184,34 +183,15 @@ internal sealed class MySqlBinlogCaptureHostedService(
         Exception exception,
         out MySqlBinlogCaptureFailure? failure)
     {
-        if (exception is MySqlBinlogCaptureException direct)
+        if (exception is IMySqlBinlogCaptureFailureMetadata captureFailure
+            && !string.IsNullOrWhiteSpace(captureFailure.FailureKind))
         {
-            failure = new MySqlBinlogCaptureFailure(direct.FailureKind, direct.Metadata);
+            failure = new MySqlBinlogCaptureFailure(captureFailure.FailureKind.Trim(), captureFailure.Metadata);
             return true;
         }
 
-        const BindingFlags bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-        var failureKindProperty = exception.GetType().GetProperty("FailureKind", bindingFlags);
-        if (failureKindProperty?.GetValue(exception) is not string failureKind || string.IsNullOrWhiteSpace(failureKind))
-        {
-            failure = null;
-            return false;
-        }
-
-        IReadOnlyDictionary<string, string>? metadata = null;
-        var metadataProperty = exception.GetType().GetProperty("Metadata", bindingFlags);
-        var metadataValue = metadataProperty?.GetValue(exception);
-        if (metadataValue is IReadOnlyDictionary<string, string> typedMetadata)
-        {
-            metadata = typedMetadata;
-        }
-        else if (metadataValue is IEnumerable<KeyValuePair<string, string>> sequence)
-        {
-            metadata = new Dictionary<string, string>(sequence, StringComparer.OrdinalIgnoreCase);
-        }
-
-        failure = new MySqlBinlogCaptureFailure(failureKind.Trim(), metadata);
-        return true;
+        failure = null;
+        return false;
     }
 
     private async Task RunIterationAsync(

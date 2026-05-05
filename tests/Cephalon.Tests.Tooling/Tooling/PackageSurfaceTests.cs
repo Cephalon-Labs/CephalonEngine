@@ -2436,6 +2436,22 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void MySqlCaptureFailureMetadataUsesTypedContractInsteadOfDuckTypedReflection()
+    {
+        var contents = File.ReadAllText(RepositoryPaths.GetFile(
+            "src",
+            "Cephalon.Data.MySql",
+            "Services",
+            "MySqlBinlogCaptureHostedService.cs"));
+
+        Assert.DoesNotContain("System.Reflection", contents);
+        Assert.DoesNotContain("BindingFlags", contents);
+        Assert.DoesNotContain(".GetProperty(\"FailureKind\"", contents);
+        Assert.DoesNotContain(".GetProperty(\"Metadata\"", contents);
+        Assert.DoesNotContain(".GetValue(exception)", contents);
+    }
+
+    [Fact]
     public void RestWireNameHelpersUseClosedMappingsInsteadOfEnumFieldReflection()
     {
         var helperFiles = new[]

@@ -1,10 +1,17 @@
 namespace Cephalon.Data.MySql.Services;
 
+internal interface IMySqlBinlogCaptureFailureMetadata
+{
+    string FailureKind { get; }
+
+    IReadOnlyDictionary<string, string> Metadata { get; }
+}
+
 internal sealed class MySqlBinlogCaptureException(
     string message,
     string failureKind,
     IReadOnlyDictionary<string, string>? metadata = null,
-    Exception? innerException = null) : InvalidOperationException(message, innerException)
+    Exception? innerException = null) : InvalidOperationException(message, innerException), IMySqlBinlogCaptureFailureMetadata
 {
     public string FailureKind { get; } = failureKind;
 
