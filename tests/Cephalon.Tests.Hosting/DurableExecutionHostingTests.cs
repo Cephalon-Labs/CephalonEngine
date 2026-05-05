@@ -35,6 +35,8 @@ public sealed class DurableExecutionHostingTests
                 configure: behaviors => behaviors.AddBehaviorPatterns());
             engine.AddModule(new DurableExecutionHostingModule());
         });
+        builder.Services.AddSingleton(
+            DurableExecutionSlot.For<HostedApprovalWorkflowBehavior, HostedApprovalWorkflowInput, HostedApprovalWorkflowState, HostedApprovalWorkflowOutput>());
 
         await using var app = builder.Build();
         app.MapCephalon();
@@ -88,6 +90,8 @@ public sealed class DurableExecutionHostingTests
                 configure: behaviors => behaviors.AddBehaviorPatterns());
             engine.AddModule(new DurableExecutionHostingModule());
         });
+        builder.Services.AddSingleton(
+            DurableExecutionSlot.For<HostedApprovalWorkflowBehavior, HostedApprovalWorkflowInput, HostedApprovalWorkflowState, HostedApprovalWorkflowOutput>());
 
         await using var app = builder.Build();
         app.MapCephalon();

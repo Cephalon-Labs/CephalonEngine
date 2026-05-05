@@ -186,6 +186,14 @@ public sealed class DurableExecutionStrategyTests
         };
     }
 
+    private static DurableExecutionStrategy CreateStrategy<TBehavior, TInput, TState, TOutput>()
+        where TBehavior : class, IDurableExecution<TInput, TState, TOutput>
+    {
+        return DurableExecutionStrategy.CreateWithSlots(
+            runtimeStateCatalog: null,
+            [DurableExecutionSlot.For<TBehavior, TInput, TState, TOutput>()]);
+    }
+
     [Fact]
     public async Task DurableExecutionStrategy_ReplaysExistingState_AppendsEventsAndReturnsOutput()
     {
@@ -201,7 +209,7 @@ public sealed class DurableExecutionStrategyTests
                     IsCompleted: false)
             ],
             -1);
-        var strategy = new DurableExecutionStrategy();
+        var strategy = CreateStrategy<IncrementWorkflow, IncrementInput, CounterState, string>();
         var context = MakeContext(
             new IncrementWorkflow(),
             new IncrementInput(3),
@@ -269,7 +277,7 @@ public sealed class DurableExecutionStrategyTests
     public async Task DurableExecutionStrategy_WhenOnlyEventsRemain_ReturnsAccepted()
     {
         var eventStore = new RecordingEventStore();
-        var strategy = new DurableExecutionStrategy();
+        var strategy = CreateStrategy<QueueOnlyWorkflow, IncrementInput, CounterState, string?>();
         var context = MakeContext(
             new QueueOnlyWorkflow(),
             new IncrementInput(4),
@@ -289,7 +297,7 @@ public sealed class DurableExecutionStrategyTests
     public async Task DurableExecutionStrategy_WhenCompletedWithoutOutput_ReturnsNoContent()
     {
         var eventStore = new RecordingEventStore();
-        var strategy = new DurableExecutionStrategy();
+        var strategy = CreateStrategy<CompletionWorkflow, IncrementInput, CounterState, string?>();
         var context = MakeContext(
             new CompletionWorkflow(),
             new IncrementInput(0),
@@ -308,7 +316,7 @@ public sealed class DurableExecutionStrategyTests
     [Fact]
     public async Task DurableExecutionStrategy_RequiresEventStore()
     {
-        var strategy = new DurableExecutionStrategy();
+        var strategy = CreateStrategy<IncrementWorkflow, IncrementInput, CounterState, string>();
         var context = MakeContext(
             new IncrementWorkflow(),
             new IncrementInput(1),
@@ -322,10 +330,28 @@ public sealed class DurableExecutionStrategyTests
     }
 
     [Fact]
+    public async Task DurableExecutionStrategy_RequiresRegisteredDurableExecutionSlot()
+    {
+        var strategy = new DurableExecutionStrategy();
+        var context = MakeContext(
+            new IncrementWorkflow(),
+            new IncrementInput(1),
+            new TestBehaviorContext(
+                "durable.increment",
+                correlationId: "corr-missing-slot",
+                eventStore: new RecordingEventStore()));
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => strategy.ExecuteAsync(context));
+
+        Assert.Contains("DurableExecutionSlot", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Behaviors.SourceGen", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task DurableExecutionStrategy_RejectsUnexpectedEventVersion()
     {
         var eventStore = new RecordingEventStore();
-        var strategy = new DurableExecutionStrategy();
+        var strategy = CreateStrategy<InvalidVersionWorkflow, IncrementInput, CounterState, string?>();
         var context = MakeContext(
             new InvalidVersionWorkflow(),
             new IncrementInput(1),

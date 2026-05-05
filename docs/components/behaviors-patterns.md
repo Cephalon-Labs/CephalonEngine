@@ -22,7 +22,7 @@ durable-execution replay are handled.
 - **DurableExecutionState<TState> / DurableExecutionStepResult<TOutput>** — replay snapshot and step-result contracts for durable execution
 - **DurableExecutionPendingTimer / DurableExecutionPendingSignal** — host-agnostic coordination descriptors for pending durable timer and signal waits
 - **DurableExecutionCompensationAction** — host-agnostic operator-facing compensation descriptor for durable workflow recovery guidance
-- **DurableExecutionSlot** — generated closed-generic durable adapter metadata used by the strategy and runtime catalog before the reflection fallback
+- **DurableExecutionSlot** — closed-generic durable adapter metadata used by the strategy and runtime catalog; emitted by source generation for generated behaviors and available for explicit host/module registration
 - **DurableExecutionRuntimeDescriptor / IDurableExecutionRuntimeCatalog** — operator-facing durable workflow catalog derived from shared behavior topology, ownership, transports, feature flags, and replay metadata
 - **DurableExecutionRuntimeState / IDurableExecutionRuntimeStateCatalog** — operator-facing per-stream durable runtime posture, including last outcome, stage, version progress, append count, pending timers/signals, available compensation actions, completion state, and failure summary
 - **InMemorySagaStateStore** — `ConcurrentDictionary`-backed saga state with JSON serialization
@@ -144,8 +144,11 @@ Durable workflows opt in explicitly through `IBehaviorTopologyBuilder.AsDurableE
   snapshot to `ExecuteDurablyAsync(...)`, validates that returned events continue the stream with
   sequential versions, and appends them through `IEventStore.AppendAsync(...)`
 - source-generated durable behaviors register closed `DurableExecutionSlot.For<TBehavior, TInput, TState, TOutput>()`
-  adapters; the strategy and runtime catalog prefer those slots, then fall back to
-  `DurableExecutionSlot.ForType(...)` for runtime-discovered behaviors
+  adapters; manually wired durable workflows must register the same slot shape explicitly before
+  `DurableExecutionStrategy` or `IDurableExecutionRuntimeCatalog` can execute/project that workflow
+- durable execution no longer materializes missing slots through runtime open-generic reflection; missing slot
+  registrations fail fast with guidance to rebuild with `Cephalon.Behaviors.SourceGen` or register
+  `DurableExecutionSlot.For<TBehavior, TInput, TState, TOutput>()`
 - the strategy returns `200` when the step produced local output, `202` when it staged
   continuation events or is still waiting on durable timers/signals without local output, and `204`
   when the step completed without output

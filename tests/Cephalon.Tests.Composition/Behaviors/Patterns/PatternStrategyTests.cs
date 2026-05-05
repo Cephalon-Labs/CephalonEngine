@@ -310,7 +310,9 @@ public sealed class PatternStrategyTests
                     2)
             ],
             -1);
-        var strategy = new DurableExecutionStrategy();
+        var strategy = DurableExecutionStrategy.CreateWithSlots(
+            runtimeStateCatalog: null,
+            [DurableExecutionSlot.For<DurableBehavior, string, DurableState, string>()]);
         var ctx = MakeContext(
             new DurableBehavior(),
             "3",

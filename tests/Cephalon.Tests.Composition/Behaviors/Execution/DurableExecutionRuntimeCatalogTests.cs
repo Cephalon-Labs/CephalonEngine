@@ -6,6 +6,7 @@ using Cephalon.Behaviors.Hosting;
 using Cephalon.Behaviors.Modules;
 using Cephalon.Behaviors.Patterns.Abstractions;
 using Cephalon.Behaviors.Patterns.Hosting;
+using Cephalon.Behaviors.Patterns.Strategies;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Runtime;
@@ -27,6 +28,8 @@ public sealed class DurableExecutionRuntimeCatalogTests
                 configure: behaviors => behaviors.AddBehaviorPatterns());
             engine.AddModule(new DurableExecutionCatalogModule());
         });
+        services.AddSingleton(
+            DurableExecutionSlot.For<ApprovalWorkflowBehavior, ApprovalWorkflowInput, ApprovalWorkflowState, ApprovalWorkflowOutput>());
 
         using var provider = services.BuildServiceProvider();
         var catalog = provider.GetRequiredService<IDurableExecutionRuntimeCatalog>();

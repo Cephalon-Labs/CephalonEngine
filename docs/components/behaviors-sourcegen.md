@@ -14,7 +14,7 @@ conventions at build time and produce a compile-time-known registration hint fil
   - Emits `BehaviorAutoRegistration.g.cs` for generated module registration, zero-reflection DI/type registration, execution-slot descriptors, and pre-built topology descriptors when compile-time extraction succeeds
   - Emits a `RegisterGeneratedBehaviors()` module initializer that registers generated hints with `BehaviorGeneratedModuleRegistry` so `Cephalon.Behaviors` does not reflect over generated carrier methods
   - Emits `GetExecutionSlots()` with closed `BehaviorGeneratedExecutionSlotDescriptor` / `BehaviorExecutionSlot.For<TBehavior, TInput, TOutput>()` calls so `Cephalon.Behaviors` can prefer source-generated dispatch startup over open-generic slot reflection
-  - Emits closed `DurableExecutionSlot.For<TBehavior, TInput, TState, TOutput>()` registrations when a behavior implements `IDurableExecution<TInput, TState, TOutput>` so `Cephalon.Behaviors.Patterns` can prefer generated durable adapters and metadata over the runtime fallback
+  - Emits closed `DurableExecutionSlot.For<TBehavior, TInput, TState, TOutput>()` registrations when a behavior implements `IDurableExecution<TInput, TState, TOutput>` so `Cephalon.Behaviors.Patterns` can execute durable workflows and project durable metadata without runtime open-generic fallback
   - Emits source-generated metadata-only REST profile hints through `GetRestProfiles()` when behaviors declare valid `BehaviorRestProfileAttribute` metadata, then registers those hints through a module initializer and `BehaviorRestGeneratedProfileRegistry` so runtime profile consumption does not reflectively find generated REST carrier methods
   - Extracts compile-time topology from `ConfigureTopology(...)` for pattern, transports, feature flags, and literal `WithApiSurface(...)` overrides
 - Reports ABT0010–ABT0027 diagnostics on invalid behavior declarations, metadata-only REST profile hints, malformed REST profile placeholder syntax, explicit REST binding metadata, and invalid preserved implicit query-fallback authoring before `GetRestProfiles()` is generated
@@ -178,8 +178,10 @@ generated module initializer instead of reflectively locating generated carrier 
 `BehaviorExecutionSlot.ForType(...)` open-generic slot materialization from the normal source-generated
 dispatch path. The generated `DurableExecutionSlot` service registrations likewise remove durable
 open-generic adapter materialization from the normal source-generated durable path used by
-`Cephalon.Behaviors.Patterns`. These fast paths do not make the packages trim/AOT claimed because
-runtime assembly-scan and fallback paths remain documented in the deployment-mode hazard inventory.
+`Cephalon.Behaviors.Patterns`. The durable fallback is now removed; these fast paths still do not
+make the behavior packages trim/AOT claimed because runtime assembly-scan, behavior dispatch fallback,
+HTTP fallback/manual-route reflection, and saga choreography runtime-catalog shape inspection remain
+documented in the deployment-mode hazard inventory.
 
 Compile-time topology extraction intentionally stays conservative. Literal `WithApiSurface(...)`
 arguments are supported, while more complex expressions fall back to runtime topology resolution so

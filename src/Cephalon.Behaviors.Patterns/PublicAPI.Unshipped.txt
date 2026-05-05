@@ -1,3 +1,4 @@
 #nullable enable
 Cephalon.Behaviors.Patterns.Strategies.DurableExecutionSlot
+static Cephalon.Behaviors.Patterns.Strategies.DurableExecutionStrategy.CreateWithSlots(Cephalon.Abstractions.Execution.IDurableExecutionRuntimeStateCatalog? runtimeStateCatalog, System.Collections.Generic.IEnumerable<Cephalon.Behaviors.Patterns.Strategies.DurableExecutionSlot!>! executionSlots) -> Cephalon.Behaviors.Patterns.Strategies.DurableExecutionStrategy!
 static Cephalon.Behaviors.Patterns.Strategies.DurableExecutionSlot.For<TBehavior, TInput, TState, TOutput>() -> Cephalon.Behaviors.Patterns.Strategies.DurableExecutionSlot!

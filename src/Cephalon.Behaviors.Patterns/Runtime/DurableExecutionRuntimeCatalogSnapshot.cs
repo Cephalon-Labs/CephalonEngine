@@ -1,6 +1,5 @@
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Execution;
-using Cephalon.Behaviors.Patterns.Abstractions;
 using Cephalon.Behaviors.Patterns.Strategies;
 using Cephalon.Behaviors.Services;
 
@@ -103,7 +102,7 @@ internal sealed class DurableExecutionRuntimeCatalogSnapshot : IDurableExecution
                 $"Durable execution behavior '{descriptor.Id}' does not have a registered implementation type.");
         }
 
-        var contract = ResolveDurableContract(descriptor.Id, behaviorType, generatedSlots);
+        var slot = ResolveDurableSlot(descriptor.Id, behaviorType, generatedSlots);
         var metadata = new Dictionary<string, string>(descriptor.Metadata, Comparer)
         {
             ["pattern"] = descriptor.Pattern,
@@ -123,9 +122,9 @@ internal sealed class DurableExecutionRuntimeCatalogSnapshot : IDurableExecution
             displayName: descriptor.DisplayName ?? descriptor.Id,
             description: descriptor.Description ?? $"Durable execution workflow '{descriptor.Id}'.",
             behaviorType: GetTypeName(behaviorType),
-            inputType: GetTypeName(contract.InputType),
-            stateType: GetTypeName(contract.StateType),
-            outputType: GetTypeName(contract.OutputType),
+            inputType: GetTypeName(slot.InputType),
+            stateType: GetTypeName(slot.StateType),
+            outputType: GetTypeName(slot.OutputType),
             executionMode: "event-store-replay",
             sourceModuleId: descriptor.SourceModuleId,
             transportIds: descriptor.TransportIds,
@@ -163,26 +162,18 @@ internal sealed class DurableExecutionRuntimeCatalogSnapshot : IDurableExecution
         return map;
     }
 
-    private static (Type InputType, Type StateType, Type OutputType) ResolveDurableContract(
+    private static DurableExecutionSlot ResolveDurableSlot(
         string behaviorId,
         Type behaviorType,
         IReadOnlyDictionary<Type, DurableExecutionSlot> generatedSlots)
     {
         if (generatedSlots.TryGetValue(behaviorType, out var generatedSlot))
         {
-            return (generatedSlot.InputType, generatedSlot.StateType, generatedSlot.OutputType);
+            return generatedSlot;
         }
 
-        var durableInterface = behaviorType
-            .GetInterfaces()
-            .FirstOrDefault(static candidate =>
-                candidate.IsGenericType &&
-                candidate.GetGenericTypeDefinition() == typeof(IDurableExecution<,,>))
-            ?? throw new InvalidOperationException(
-                $"Behavior '{behaviorId}' selected the durable-execution pattern but '{behaviorType.FullName}' does not implement IDurableExecution<TInput, TState, TOutput>.");
-
-        var genericArguments = durableInterface.GetGenericArguments();
-        return (genericArguments[0], genericArguments[1], genericArguments[2]);
+        throw new InvalidOperationException(
+            $"Durable execution behavior '{behaviorId}' with implementation type '{behaviorType.FullName}' requires a source-generated or explicitly registered DurableExecutionSlot before its runtime catalog metadata can be projected.");
     }
 
     private static string GetTypeName(Type type)

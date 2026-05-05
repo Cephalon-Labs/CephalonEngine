@@ -1,4 +1,3 @@
-using System.Reflection;
 using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.EventSourcing;
@@ -92,30 +91,6 @@ public sealed class DurableExecutionSlot
                     result.PendingSignals,
                     result.CompensationActions);
             });
-    }
-
-    internal static DurableExecutionSlot ForType(Type behaviorType)
-    {
-        ArgumentNullException.ThrowIfNull(behaviorType);
-
-        var durableInterface = behaviorType
-            .GetInterfaces()
-            .FirstOrDefault(static candidate =>
-                candidate.IsGenericType &&
-                candidate.GetGenericTypeDefinition() == typeof(IDurableExecution<,,>))
-            ?? throw new InvalidOperationException(
-                $"Behavior type '{behaviorType.FullName}' selected the 'durable-execution' pattern but does not implement IDurableExecution<TInput, TState, TOutput>.");
-
-        var typeArguments = durableInterface.GetGenericArguments();
-        var forMethod = typeof(DurableExecutionSlot)
-            .GetMethod(nameof(For), BindingFlags.Public | BindingFlags.Static)!
-            .MakeGenericMethod(
-                behaviorType,
-                typeArguments[0],
-                typeArguments[1],
-                typeArguments[2]);
-
-        return (DurableExecutionSlot)forMethod.Invoke(null, null)!;
     }
 
     internal string ResolveStreamId(object behavior, string behaviorId, IBehaviorContext context)

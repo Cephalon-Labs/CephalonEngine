@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.EventSourcing;
 using Cephalon.Abstractions.Execution;
@@ -13,28 +12,50 @@ namespace Cephalon.Behaviors.Patterns.Strategies;
 /// </summary>
 public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
 {
-    private static readonly ConcurrentDictionary<Type, DurableExecutionSlot> ReflectionSlots = new();
     private readonly Dictionary<Type, DurableExecutionSlot> generatedSlots;
     private readonly IDurableExecutionRuntimeReporter? runtimeReporter;
 
     /// <summary>
-    /// Creates a durable execution strategy.
+    /// Creates a durable execution strategy without pre-registered durable execution slots.
     /// </summary>
     /// <param name="runtimeStateCatalog">
     /// An optional runtime-state catalog that can also accept operator-facing observations for active durable streams.
     /// </param>
+    /// <remarks>
+    /// Executing a durable workflow requires a source-generated or explicitly registered
+    /// <see cref="DurableExecutionSlot" /> supplied through dependency injection or <see cref="CreateWithSlots" />.
+    /// </remarks>
     public DurableExecutionStrategy(IDurableExecutionRuntimeStateCatalog? runtimeStateCatalog = null)
         : this(runtimeStateCatalog, Array.Empty<DurableExecutionSlot>())
     {
     }
 
     /// <summary>
-    /// Creates a durable execution strategy with source-generated durable execution slots.
+    /// Creates a durable execution strategy with source-generated or explicitly registered durable execution slots.
     /// </summary>
     /// <param name="runtimeStateCatalog">
     /// An optional runtime-state catalog that can also accept operator-facing observations for active durable streams.
     /// </param>
-    /// <param name="executionSlots">The generated durable execution slots registered by behavior source generation.</param>
+    /// <param name="executionSlots">
+    /// The durable execution slots registered by behavior source generation or by an explicit host/module registration.
+    /// </param>
+    /// <returns>A durable execution strategy that can execute behaviors matching the supplied slots.</returns>
+    public static DurableExecutionStrategy CreateWithSlots(
+        IDurableExecutionRuntimeStateCatalog? runtimeStateCatalog,
+        IEnumerable<DurableExecutionSlot> executionSlots)
+    {
+        return new DurableExecutionStrategy(runtimeStateCatalog, executionSlots);
+    }
+
+    /// <summary>
+    /// Creates a durable execution strategy with source-generated or explicitly registered durable execution slots.
+    /// </summary>
+    /// <param name="runtimeStateCatalog">
+    /// An optional runtime-state catalog that can also accept operator-facing observations for active durable streams.
+    /// </param>
+    /// <param name="executionSlots">
+    /// The durable execution slots registered by behavior source generation or by an explicit host/module registration.
+    /// </param>
     internal DurableExecutionStrategy(
         IDurableExecutionRuntimeStateCatalog? runtimeStateCatalog,
         IEnumerable<DurableExecutionSlot> executionSlots)
@@ -58,9 +79,9 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
     /// output remains and the step completed without follow-up work.
     /// </returns>
     /// <exception cref="InvalidOperationException">
-    /// Thrown when durable execution is selected for a behavior that does not implement
-    /// <c>IDurableExecution&lt;TInput, TState, TOutput&gt;</c>, when the behavior context does not carry an event store,
-    /// or when the returned events do not match the expected stream identity or version sequence.
+    /// Thrown when durable execution is selected for a behavior without a registered durable execution slot, when the
+    /// behavior context does not carry an event store, or when the returned events do not match the expected stream identity
+    /// or version sequence.
     /// </exception>
     public async Task<BehaviorExecutionResult> ExecuteAsync(
         BehaviorExecutionContext context,
@@ -68,7 +89,7 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
     {
         ArgumentNullException.ThrowIfNull(context);
 
-        var slot = ResolveSlot(context.BehaviorInstance.GetType());
+        var slot = ResolveSlot(context.Descriptor.Id, context.BehaviorInstance.GetType());
         var eventStore = context.BehaviorContext.EventStore
             ?? throw new InvalidOperationException(
                 $"DurableExecutionStrategy requires IBehaviorContext.EventStore for behavior '{context.Descriptor.Id}'.");
@@ -374,15 +395,18 @@ public sealed class DurableExecutionStrategy : IBehaviorExecutionStrategy
         return map;
     }
 
-    private DurableExecutionSlot ResolveSlot(Type behaviorType)
+    private DurableExecutionSlot ResolveSlot(string behaviorId, Type behaviorType)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
         ArgumentNullException.ThrowIfNull(behaviorType);
 
-        return generatedSlots.TryGetValue(behaviorType, out var generatedSlot)
-            ? generatedSlot
-            : ReflectionSlots.GetOrAdd(
-                behaviorType,
-                static type => DurableExecutionSlot.ForType(type));
+        if (generatedSlots.TryGetValue(behaviorType, out var generatedSlot))
+        {
+            return generatedSlot;
+        }
+
+        throw new InvalidOperationException(
+            $"Durable execution behavior '{behaviorId}' with implementation type '{behaviorType.FullName}' requires a source-generated or explicitly registered DurableExecutionSlot. Rebuild with Cephalon.Behaviors.SourceGen or register DurableExecutionSlot.For<TBehavior, TInput, TState, TOutput>() before executing the workflow.");
     }
 
     private ValueTask ReportAsync(

@@ -30,6 +30,8 @@ public sealed class DurableExecutionRuntimeStateCatalogTests
                 configure: behaviors => behaviors.AddBehaviorPatterns());
             engine.AddModule(new DurableExecutionRuntimeStateModule());
         });
+        services.AddSingleton(
+            DurableExecutionSlot.For<ObservedApprovalWorkflowBehavior, ObservedApprovalWorkflowInput, ObservedApprovalWorkflowState, string?>());
 
         using var provider = services.BuildServiceProvider();
         var strategy = provider.GetServices<IBehaviorExecutionStrategy>()

@@ -1071,6 +1071,39 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void BehaviorsPatternsDurableExecutionRequiresRegisteredSlotsWithoutOpenGenericReflection()
+    {
+        var slot = File.ReadAllText(RepositoryPaths.GetFile(
+            "src",
+            "Cephalon.Behaviors.Patterns",
+            "Strategies",
+            "DurableExecutionSlot.cs"));
+        Assert.DoesNotContain("System.Reflection", slot, StringComparison.Ordinal);
+        Assert.DoesNotContain("ForType", slot, StringComparison.Ordinal);
+        Assert.DoesNotContain("GetInterfaces()", slot, StringComparison.Ordinal);
+        Assert.DoesNotContain("MakeGenericMethod", slot, StringComparison.Ordinal);
+        Assert.DoesNotContain(".Invoke(", slot, StringComparison.Ordinal);
+
+        var strategy = File.ReadAllText(RepositoryPaths.GetFile(
+            "src",
+            "Cephalon.Behaviors.Patterns",
+            "Strategies",
+            "DurableExecutionStrategy.cs"));
+        Assert.Contains("requires a source-generated or explicitly registered DurableExecutionSlot", strategy, StringComparison.Ordinal);
+        Assert.DoesNotContain("ConcurrentDictionary", strategy, StringComparison.Ordinal);
+        Assert.DoesNotContain("ReflectionSlots", strategy, StringComparison.Ordinal);
+
+        var catalog = File.ReadAllText(RepositoryPaths.GetFile(
+            "src",
+            "Cephalon.Behaviors.Patterns",
+            "Runtime",
+            "DurableExecutionRuntimeCatalogSnapshot.cs"));
+        Assert.Contains("requires a source-generated or explicitly registered DurableExecutionSlot", catalog, StringComparison.Ordinal);
+        Assert.DoesNotContain("GetInterfaces()", catalog, StringComparison.Ordinal);
+        Assert.DoesNotContain("GetGenericTypeDefinition", catalog, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void DataEntityFrameworkAssemblyExposesOnlyTheDocumentedPackContracts()
     {
         AssertExportedTypes(
