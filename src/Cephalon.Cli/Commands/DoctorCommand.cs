@@ -641,6 +641,22 @@ internal static class DoctorCommand
         AddDeploymentModeCheck(checks, "Trim support contract", supportContract.DeploymentModes.Trim);
         AddDeploymentModeCheck(checks, "Native AOT support contract", supportContract.DeploymentModes.NativeAot);
         AddDeploymentModeCheck(checks, "Single-file support contract", supportContract.DeploymentModes.SingleFile);
+
+        var scopedPackages = supportContract.DeploymentModeEligibility?.Packages ?? [];
+        var packageClaims = scopedPackages
+            .Where(package => package.SupportedModes is { Count: > 0 })
+            .Select(package => $"{package.PackageName}: {string.Join(", ", package.SupportedModes)} ({package.ClaimAuditTier})")
+            .OrderBy(entry => entry, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        if (packageClaims.Length > 0)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Pass,
+                "Package-scoped deployment-mode claims",
+                string.Join("; ", packageClaims),
+                "These package-scoped claims do not change the global trim, Native AOT, or single-file support contract."));
+        }
     }
 
     private static void AddDeploymentModeCheck(

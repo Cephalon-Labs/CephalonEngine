@@ -200,6 +200,7 @@ function Get-ProjectMetadata {
             "PublishAot",
             "EnableAotAnalyzer",
             "PublishSingleFile",
+            "EnableSingleFileAnalyzer",
             "SelfContained",
             "TrimMode"
         )) {
@@ -237,6 +238,56 @@ function Test-ExplicitTrue {
     )
 
     return @($Values | Where-Object { $_ -match '^(?i:true)$' }).Count -gt 0
+}
+
+function Get-PackageScopedDeploymentModeClaims {
+    param(
+        [Parameter(Mandatory = $true)]
+        [object]$Manifest
+    )
+
+    if ($null -eq $Manifest -or -not $Manifest.PSObject.Properties.Match("deploymentModeEligibility").Count) {
+        return @()
+    }
+
+    $eligibility = $Manifest.deploymentModeEligibility
+    if ($null -eq $eligibility -or -not $eligibility.PSObject.Properties.Match("packages").Count) {
+        return @()
+    }
+
+    return @(
+        foreach ($pkg in @($eligibility.packages)) {
+            $supportedModes = @($pkg.supportedModes | ForEach-Object { [string]$_ } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+            if ($supportedModes.Count -eq 0) {
+                continue
+            }
+
+            $packageName = [string]$pkg.packageName
+            [pscustomobject]@{
+                PackageName = $packageName
+                NugetId = [string]$pkg.nugetId
+                ClaimAuditTier = [string]$pkg.claimAuditTier
+                SupportedModes = $supportedModes
+                Project = "src/$packageName/$packageName.csproj"
+                RequiredProjectProperties = @($pkg.requiredProjectProperties)
+            }
+        }
+    )
+}
+
+function Get-ScopedClaimProjectsForMode {
+    param(
+        [Parameter(Mandatory = $true)]
+        [object[]]$PackageClaims,
+        [Parameter(Mandatory = $true)]
+        [string]$Mode
+    )
+
+    return @(
+        $PackageClaims |
+            Where-Object { @($_.SupportedModes) -contains $Mode } |
+            ForEach-Object { [string]$_.Project }
+    )
 }
 
 function New-CheckResult {
@@ -384,6 +435,13 @@ try {
                 (Test-ExplicitTrue -Values $_.Values)
             }
     )
+    $packageScopedClaims = @(Get-PackageScopedDeploymentModeClaims -Manifest $deploymentModeSupport)
+    $trimScopedClaimProjects = @(Get-ScopedClaimProjectsForMode -PackageClaims $packageScopedClaims -Mode "trim")
+    $nativeAotScopedClaimProjects = @(Get-ScopedClaimProjectsForMode -PackageClaims $packageScopedClaims -Mode "nativeAot")
+    $singleFileScopedClaimProjects = @(Get-ScopedClaimProjectsForMode -PackageClaims $packageScopedClaims -Mode "singleFile")
+    $trimUnscopedClaimProjects = @($trimClaimProjects | Where-Object { $trimScopedClaimProjects -notcontains $_.Project })
+    $nativeAotUnscopedClaimProjects = @($aotClaimProjects | Where-Object { $nativeAotScopedClaimProjects -notcontains $_.Project })
+    $singleFileUnscopedClaimProjects = @($singleFileClaimProjects | Where-Object { $singleFileScopedClaimProjects -notcontains $_.Project })
     $trimAnalyzerProjects = @(
         $claimEntries |
             Where-Object { $_.Property -eq "EnableTrimAnalyzer" -and (Test-ExplicitTrue -Values $_.Values) }
@@ -392,9 +450,13 @@ try {
         $claimEntries |
             Where-Object { $_.Property -eq "EnableAotAnalyzer" -and (Test-ExplicitTrue -Values $_.Values) }
     )
-    $trimDetectedStatus = if ($trimClaimProjects.Count -eq 0) { "not-claimed" } else { "claimed" }
-    $nativeAotDetectedStatus = if ($aotClaimProjects.Count -eq 0) { "not-claimed" } else { "claimed" }
-    $singleFileDetectedStatus = if ($singleFileClaimProjects.Count -eq 0) { "not-claimed" } else { "claimed" }
+    $singleFileAnalyzerProjects = @(
+        $claimEntries |
+            Where-Object { $_.Property -eq "EnableSingleFileAnalyzer" -and (Test-ExplicitTrue -Values $_.Values) }
+    )
+    $trimDetectedStatus = if ($trimUnscopedClaimProjects.Count -eq 0) { "not-claimed" } else { "claimed" }
+    $nativeAotDetectedStatus = if ($nativeAotUnscopedClaimProjects.Count -eq 0) { "not-claimed" } else { "claimed" }
+    $singleFileDetectedStatus = if ($singleFileUnscopedClaimProjects.Count -eq 0) { "not-claimed" } else { "claimed" }
 
     $allowedDeploymentModeStatuses = @("not-claimed", "claimed")
     $expectedTrimStatus = [string]$deploymentModeSupport.deploymentModes.trim.status
@@ -614,6 +676,7 @@ try {
             }
             AnalyzerOnlySignalsDoNotCount = [bool]$deploymentModeSupport.analyzerOnlySignalsDoNotCount
             SupportChangeRequirements = @($deploymentModeSupport.supportChangeRequirements)
+            PackageScopedClaims = $packageScopedClaims
             DeploymentModes = [pscustomobject]@{
                 Trim = [pscustomobject]@{
                     Status = $expectedTrimStatus
@@ -633,19 +696,26 @@ try {
             Trim = [pscustomobject]@{
                 Status = $trimDetectedStatus
                 SupportContractStatus = $expectedTrimStatus
-                ClaimProjects = $trimClaimProjects
+                ClaimProjects = $trimUnscopedClaimProjects
+                PackageScopedClaimProjects = $trimScopedClaimProjects
+                AllClaimProjects = $trimClaimProjects
                 AnalyzerProjects = $trimAnalyzerProjects
             }
             NativeAot = [pscustomobject]@{
                 Status = $nativeAotDetectedStatus
                 SupportContractStatus = $expectedNativeAotStatus
-                ClaimProjects = $aotClaimProjects
+                ClaimProjects = $nativeAotUnscopedClaimProjects
+                PackageScopedClaimProjects = $nativeAotScopedClaimProjects
+                AllClaimProjects = $aotClaimProjects
                 AnalyzerProjects = $aotAnalyzerProjects
             }
             SingleFile = [pscustomobject]@{
                 Status = $singleFileDetectedStatus
                 SupportContractStatus = $expectedSingleFileStatus
-                ClaimProjects = $singleFileClaimProjects
+                ClaimProjects = $singleFileUnscopedClaimProjects
+                PackageScopedClaimProjects = $singleFileScopedClaimProjects
+                AllClaimProjects = $singleFileClaimProjects
+                AnalyzerProjects = $singleFileAnalyzerProjects
             }
         }
         DeploymentModeClaimValidation = [pscustomobject]@{
@@ -674,6 +744,7 @@ try {
         ('- Trim support contract: **{0}**' -f $report.DeploymentModeSupport.DeploymentModes.Trim.Status)
         ('- Native AOT support contract: **{0}**' -f $report.DeploymentModeSupport.DeploymentModes.NativeAot.Status)
         ('- Single-file support contract: **{0}**' -f $report.DeploymentModeSupport.DeploymentModes.SingleFile.Status)
+        ('- Package-scoped claims: **{0}**' -f (@($report.DeploymentModeSupport.PackageScopedClaims).Count))
         '- Project-detected deployment-mode statuses must match the manifest before repo truth changes.'
     )
 

@@ -2,6 +2,15 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Description>Engine-level OpenTelemetry semantic-convention adapter for Cephalon. Ships well-known ActivitySource and Meter names plus Cephalon-prefix attribute keys that complement OpenTelemetry semantic conventions.</Description>
+    <!--
+      ENG-454: first package-scoped single-file claim. This package has no observed
+      reflection or dynamic-code hazards in first-party source and no runtime
+      ProjectReference into the structurally blocked engine packages, so it is the
+      clean-baseline pilot for manifest-backed package-scoped support. The global
+      deployment-mode contract remains not-claimed.
+    -->
+    <PublishSingleFile>true</PublishSingleFile>
+    <EnableSingleFileAnalyzer>true</EnableSingleFileAnalyzer>
   </PropertyGroup>
 
   <ItemGroup>

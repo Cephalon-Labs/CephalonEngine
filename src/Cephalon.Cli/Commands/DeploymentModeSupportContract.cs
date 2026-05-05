@@ -6,7 +6,8 @@ namespace Cephalon.Cli.Commands;
 
 internal sealed record DeploymentModeSupportContract(
     DeploymentModeSupportShippingBaseline ShippingBaseline,
-    DeploymentModeSupportModes DeploymentModes)
+    DeploymentModeSupportModes DeploymentModes,
+    DeploymentModeEligibility? DeploymentModeEligibility)
 {
     private const string ResourceName = "Cephalon.Cli.Resources.deployment-mode-support.json";
 
@@ -67,6 +68,16 @@ internal sealed record DeploymentModeSupportModes(
 internal sealed record DeploymentModeSupportMode(
     string Status,
     string Summary);
+
+internal sealed record DeploymentModeEligibility(
+    IReadOnlyList<DeploymentModePackageEligibility> Packages);
+
+internal sealed record DeploymentModePackageEligibility(
+    string PackageName,
+    string NugetId,
+    string ClaimAuditTier,
+    IReadOnlyList<string> SupportedModes,
+    IReadOnlyList<string> RequiredProjectProperties);
 
 [JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true)]
 [JsonSerializable(typeof(DeploymentModeSupportContract))]

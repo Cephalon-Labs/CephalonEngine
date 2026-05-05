@@ -69,7 +69,7 @@ These gates must all be `ready-for-preview`, `not-applicable`, or explicitly doc
 | Public API compatibility | `partial` | No | Yes | Review all `PublicAPI.Unshipped.txt` files, enforce removals, and enable package validation baselines when stable packages ship. |
 | Package publishing and NuGet discoverability | `partial` | No | Yes | Dry-run signed release flow, reserve/protect `Cephalon.*` when eligible, and verify package readmes/tags/source/symbols. |
 | Supply-chain and release provenance | `partial` | No | Yes | Produce release artifacts with SBOM, SLSA provenance, Sigstore/Rekor evidence, and trusted-publishing proof. |
-| Deployment-mode support claims | `not-claimed` for trim, Native AOT, and single-file support | No, because the lack of claim is explicit | Yes, if GA claims those modes | Promote only after manifest, project properties, harness output, workflow, docs, and package guidance agree. |
+| Deployment-mode support claims | global `not-claimed` for trim, Native AOT, and single-file support; `Cephalon.Diagnostics` has a package-scoped single-file claim | No, because the lack of global claim is explicit and the scoped claim is bounded | Yes, if GA claims those modes globally | Promote only after manifest, project properties, harness output, workflow, docs, and package guidance agree. |
 | `.NET 11` migration | `needs-refresh` readiness lane | No | Not for a `net10.0` GA; yes for any `.NET 11` baseline claim | Refresh official preview/RC/GA truth, run readiness validation, and approve a separate migration lane. |
 | Engine SRE posture | `partial` | No | Yes | Publish stable SLI baselines and make release validation summarize SLO posture. |
 | Performance guardrails | `partial` | No | Yes | Keep benchmark smoke and guardrail validation current for hot paths; tighten SLOs after stable baselines. |
@@ -136,7 +136,7 @@ The next completion-oriented slices should stay narrow and evidence-driven:
 
 1. Keep the shipped machine-readable scorecard emitter source-reference validation and per-package readiness mapping aligned with source docs instead of duplicating truth by hand.
 2. Keep per-package GA readiness rows generated from maturity-audit and conformance-matrix truth; do not hand-maintain a second package table here.
-3. Promote the first clean-baseline package through an explicit deployment-mode claim only after the manifest, project properties, harness, workflow, and docs all agree.
+3. Keep the first clean-baseline package-scoped claim (`Cephalon.Diagnostics` single-file) honest across manifest, project properties, harness, workflow, docs, and package guidance while global deployment-mode rows remain `not-claimed`.
 4. Keep `cephalon doctor --scorecard <path>` aligned with the generated JSON schema so local summaries remain a readback of the scorecard artifact, not a second source of truth.
 5. Publish one out-of-repo generated-app adoption smoke path that consumes local packages, stages a reference module, runs the host, and validates the runtime operator surfaces.
 

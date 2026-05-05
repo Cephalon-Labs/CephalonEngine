@@ -13,6 +13,8 @@
     2. analyzer audit           — is the matching analyzer enabled where the property is set?
     3. publish probe (optional) — does dotnet publish for the requested mode complete cleanly
                                   on the representative target set?
+    4. package-scoped claims    — do deploymentModeEligibility package entries that opt into
+                                  a mode carry the expected per-package project properties?
 
     The harness then computes a per-mode verdict and an aggregate verdict and writes both a
     machine-readable JSON report and a human-readable Markdown report under the output dir.
@@ -20,7 +22,7 @@
     Verdict semantics:
       claim-truthful                  manifest claims the mode and every audit/probe passes
       claim-overstated                manifest claims the mode but at least one audit/probe shows drift
-      not-claimed                     manifest says not-claimed and no project sets the property
+      not-claimed                     manifest says not-claimed and no unscoped project sets the property
       not-claimed-with-property-drift manifest says not-claimed yet some project does set the property
       mixed                           per-mode verdicts disagree across modes (aggregate only)
 
@@ -301,6 +303,33 @@ function Get-DeploymentModeConfigFromManifest {
     }
 }
 
+function Convert-RequiredProjectPropertyExpectation {
+    [CmdletBinding()]
+    param([Parameter(Mandatory)] [string]$Entry)
+
+    $raw = $Entry.Trim()
+    if ([string]::IsNullOrWhiteSpace($raw)) {
+        throw "requiredProjectProperties entry cannot be empty"
+    }
+
+    $parts = $raw -split "=", 2
+    $name = $parts[0].Trim()
+    if ([string]::IsNullOrWhiteSpace($name)) {
+        throw "requiredProjectProperties entry '$Entry' is missing a property name"
+    }
+
+    $expectedValue = if ($parts.Count -gt 1) { $parts[1].Trim() } else { "true" }
+    if ($expectedValue -notin @("true", "false")) {
+        throw "requiredProjectProperties entry '$Entry' must use '=true' or '=false' when an expected value is supplied"
+    }
+
+    return [pscustomobject]@{
+        Name          = $name
+        ExpectedValue = $expectedValue
+        Raw           = $raw
+    }
+}
+
 function Test-CsprojProperty {
     [CmdletBinding()]
     param(
@@ -342,6 +371,32 @@ function Test-CsprojProperty {
     $result.Value = [string]$node.InnerText
     $result.Truthy = Test-IsTruthyMsBuildValue -Value $result.Value
     return [pscustomobject]$result
+}
+
+function Test-CsprojPropertyExpectation {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)] [string]$CsprojPath,
+        [Parameter(Mandatory)] [string]$Entry
+    )
+
+    $expectation = Convert-RequiredProjectPropertyExpectation -Entry $Entry
+    $observation = Test-CsprojProperty -CsprojPath $CsprojPath -Property $expectation.Name
+    $actualValue = if ($null -eq $observation.Value) { "" } else { ([string]$observation.Value).Trim() }
+    $matched = $observation.Found -and
+        [string]::IsNullOrWhiteSpace([string]$observation.Error) -and
+        $actualValue -ieq $expectation.ExpectedValue
+
+    return [pscustomobject]@{
+        Path          = $observation.Path
+        Property      = $expectation.Name
+        ExpectedValue = $expectation.ExpectedValue
+        Found         = $observation.Found
+        Value         = $observation.Value
+        Matched       = $matched
+        Error         = $observation.Error
+        Raw           = $expectation.Raw
+    }
 }
 
 function Get-DefaultProjectPaths {
@@ -393,6 +448,102 @@ function Get-ProjectPropertyAudit {
         Errored         = $errored
         ScannedProjects = $ProjectPaths
     }
+}
+
+function Resolve-PackageProjectPath {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)] [string]$RepoRoot,
+        [Parameter(Mandatory)] [string]$PackageName
+    )
+
+    return Join-Path $RepoRoot (Join-Path "src" (Join-Path $PackageName "$PackageName.csproj"))
+}
+
+function Get-DeploymentModePackageClaimAudits {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)] $Manifest,
+        [Parameter(Mandatory)] [string]$Mode,
+        [Parameter(Mandatory)] [string]$RepoRoot
+    )
+
+    if ($null -eq $Manifest -or -not $Manifest.PSObject.Properties.Match("deploymentModeEligibility").Count) {
+        return @()
+    }
+
+    $eligibility = $Manifest.deploymentModeEligibility
+    if ($null -eq $eligibility -or -not $eligibility.PSObject.Properties.Match("packages").Count) {
+        return @()
+    }
+
+    $audits = @()
+    foreach ($pkg in @($eligibility.packages)) {
+        $supportedModes = @($pkg.supportedModes | ForEach-Object { [string]$_ } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+        if ($supportedModes -notcontains $Mode) {
+            continue
+        }
+
+        $packageName = [string]$pkg.packageName
+        $projectPath = Resolve-PackageProjectPath -RepoRoot $RepoRoot -PackageName $packageName
+        $requiredEntries = @($pkg.requiredProjectProperties | ForEach-Object { [string]$_ } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+        $propertyResults = @()
+        $reasons = @()
+
+        if ([string]::IsNullOrWhiteSpace($packageName)) {
+            $reasons += "package-scoped claim is missing packageName"
+        }
+
+        $claimAuditTier = [string]$pkg.claimAuditTier
+        if ($claimAuditTier -ne "clean-baseline") {
+            $reasons += "package-scoped claim for '$packageName' requires claimAuditTier 'clean-baseline' but found '$claimAuditTier'"
+        }
+
+        if (-not (Test-Path -LiteralPath $projectPath -PathType Leaf)) {
+            $reasons += "package project not found at $projectPath"
+        }
+
+        if ($requiredEntries.Count -eq 0) {
+            $reasons += "package-scoped claim for '$packageName' has no requiredProjectProperties entries"
+        }
+
+        foreach ($entry in $requiredEntries) {
+            try {
+                $propertyResults += Test-CsprojPropertyExpectation -CsprojPath $projectPath -Entry $entry
+            }
+            catch {
+                $reasons += $_.Exception.Message
+            }
+        }
+
+        foreach ($failed in @($propertyResults | Where-Object { -not $_.Matched })) {
+            if ($failed.Error) {
+                $reasons += "$packageName expected $($failed.Property)=$($failed.ExpectedValue) but audit failed: $($failed.Error)"
+            }
+            elseif (-not $failed.Found) {
+                $reasons += "$packageName expected $($failed.Property)=$($failed.ExpectedValue) but the property was not declared"
+            }
+            else {
+                $reasons += "$packageName expected $($failed.Property)=$($failed.ExpectedValue) but found '$($failed.Value)'"
+            }
+        }
+
+        $verdict = if ($reasons.Count -eq 0) { "claim-truthful" } else { "claim-overstated" }
+        $audits += [pscustomobject]@{
+            Mode                      = $Mode
+            PackageName               = $packageName
+            NugetId                   = [string]$pkg.nugetId
+            ClaimAuditTier            = $claimAuditTier
+            SupportedModes            = $supportedModes
+            ProjectPath               = $projectPath
+            RequiredProjectProperties = $requiredEntries
+            PropertyResults           = $propertyResults
+            Verdict                   = $verdict
+            Reasons                   = if ($reasons.Count -eq 0) { @("package-scoped claim properties match manifest") } else { $reasons }
+        }
+    }
+
+    return $audits
 }
 
 function Get-AnalyzerAudit {
@@ -542,6 +693,7 @@ function Compute-ModeVerdict {
         $PropertyAudit,
         $AnalyzerAudit,
         $PublishProbe,
+        $PackageClaimAudits = @(),
         [bool]$PropertyAuditSkipped = $false,
         [bool]$AnalyzerSkipped = $false,
         [bool]$PublishSkipped = $false
@@ -558,6 +710,27 @@ function Compute-ModeVerdict {
         }
     }
 
+    $packageClaims = @(
+        $PackageClaimAudits |
+            Where-Object {
+                $null -ne $_ -and
+                $_.PSObject.Properties.Match("Mode").Count -gt 0 -and
+                $_.Mode -eq $Mode
+            }
+    )
+    $failedPackageClaims = @($packageClaims | Where-Object { $_.Verdict -ne "claim-truthful" })
+    if ($failedPackageClaims.Count -gt 0) {
+        foreach ($claim in $failedPackageClaims) {
+            $reasons += "package-scoped claim failed for $($claim.PackageName): $($claim.Reasons -join '; ')"
+        }
+
+        return [pscustomobject]@{
+            Mode    = $Mode
+            Verdict = "claim-overstated"
+            Reasons = $reasons
+        }
+    }
+
     if ($statusString -eq "not-claimed") {
         if ($PropertyAuditSkipped -or -not $PropertyAudit) {
             return [pscustomobject]@{
@@ -566,14 +739,26 @@ function Compute-ModeVerdict {
                 Reasons = @("manifest claim is not-claimed; property audit skipped — no drift detection")
             }
         }
-        if ($PropertyAudit.PassedCount -eq 0) {
+
+        $passedProjects = if ($PropertyAudit.PSObject.Properties.Match("Passed").Count) { @($PropertyAudit.Passed) } else { @() }
+        $scopedClaimPaths = @($packageClaims | Where-Object { $_.Verdict -eq "claim-truthful" } | ForEach-Object { $_.ProjectPath })
+        $unexpectedPassedProjects = @($passedProjects | Where-Object { $scopedClaimPaths -notcontains $_.Path })
+        if ($PropertyAudit.PassedCount -eq 0 -or $unexpectedPassedProjects.Count -eq 0) {
+            $reason = if ($PropertyAudit.PassedCount -eq 0) {
+                "manifest claim is not-claimed; no project sets $($PropertyAudit.Property)"
+            }
+            else {
+                $packageNames = ($packageClaims | ForEach-Object { $_.PackageName }) -join ", "
+                "manifest claim is not-claimed globally; package-scoped claim(s) account for all projects setting $($PropertyAudit.Property): $packageNames"
+            }
+
             return [pscustomobject]@{
                 Mode    = $Mode
                 Verdict = "not-claimed"
-                Reasons = @("manifest claim is not-claimed; no project sets $($PropertyAudit.Property)")
+                Reasons = @($reason)
             }
         }
-        $reasons += "manifest claim is not-claimed but $($PropertyAudit.PassedCount) project(s) set $($PropertyAudit.Property)"
+        $reasons += "manifest claim is not-claimed but $($unexpectedPassedProjects.Count) unscoped project(s) set $($PropertyAudit.Property)"
         return [pscustomobject]@{
             Mode    = $Mode
             Verdict = "not-claimed-with-property-drift"
@@ -701,6 +886,21 @@ function Write-ValidationReport {
         }
     }
     [void]$sb.AppendLine("")
+    [void]$sb.AppendLine("## Package-scoped claims")
+    [void]$sb.AppendLine("")
+    $packageClaimRows = @($Report.Modes | ForEach-Object { $_.PackageClaimAudits } | Where-Object { $null -ne $_ })
+    if ($packageClaimRows.Count -eq 0) {
+        [void]$sb.AppendLine("No package-scoped claims were declared for the requested mode set.")
+    }
+    else {
+        foreach ($claim in $packageClaimRows) {
+            [void]$sb.AppendLine("- **$($claim.PackageName)** / **$($claim.Mode)**: $($claim.Verdict)")
+            foreach ($r in $claim.Reasons) {
+                [void]$sb.AppendLine("  - $r")
+            }
+        }
+    }
+    [void]$sb.AppendLine("")
     [void]$sb.AppendLine("See ``claim-validation-report.json`` next to this README for the full structured report.")
 
     Set-Content -LiteralPath $mdPath -Value $sb.ToString() -Encoding UTF8
@@ -763,6 +963,7 @@ function Invoke-DeploymentModeClaimValidation {
         Invoke-Step -Title "Validating mode" -Detail $mode
         $cfg = Get-DeploymentModeConfigFromManifest -Manifest $manifest -Mode $mode
         $manifestStatus = Get-ManifestModeStatus -Manifest $manifest -Mode $mode
+        $packageClaimAudits = Get-DeploymentModePackageClaimAudits -Manifest $manifest -Mode $mode -RepoRoot $RepoRoot
 
         $propAudit = $null
         if (-not $SkipPropertyAudit) {
@@ -781,6 +982,7 @@ function Invoke-DeploymentModeClaimValidation {
 
         $verdict = Compute-ModeVerdict -Mode $mode -ManifestStatus $manifestStatus `
             -PropertyAudit $propAudit -AnalyzerAudit $analyzerAudit -PublishProbe $publishProbe `
+            -PackageClaimAudits $packageClaimAudits `
             -PropertyAuditSkipped:$SkipPropertyAudit `
             -AnalyzerSkipped:$SkipAnalyzerCheck `
             -PublishSkipped:$SkipPublish
@@ -791,6 +993,7 @@ function Invoke-DeploymentModeClaimValidation {
             PropertyAudit  = $propAudit
             AnalyzerAudit  = $analyzerAudit
             PublishProbe   = $publishProbe
+            PackageClaimAudits = $packageClaimAudits
             Verdict        = $verdict.Verdict
             Reasons        = $verdict.Reasons
         }

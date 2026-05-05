@@ -3,7 +3,7 @@
 
 <#
 .SYNOPSIS
-    Pester test suite for scripts/deployment-mode-support.json schema 1.1.0.
+    Pester test suite for scripts/deployment-mode-support.json schema 1.x.
 
 .DESCRIPTION
     Asserts the deployment-mode support manifest parses successfully and carries
@@ -37,7 +37,7 @@ Describe "deployment-mode-support.json — top-level schema" {
         $script:manifest | Should -Not -BeNullOrEmpty
     }
 
-    It "declares schema version 1.1.0 (or higher)" {
+    It "declares schema version 1.x" {
         $script:manifest.PSObject.Properties.Name | Should -Contain '$schemaVersion'
         $script:manifest.'$schemaVersion' | Should -Not -BeNullOrEmpty
         # accept any version that starts with 1. — schema 1.x is the manifest family
@@ -245,16 +245,29 @@ Describe "deploymentModeEligibility" {
 
             $pkg.packageName | Should -Match '^Cephalon\.'
             $pkg.nugetId | Should -Match '^Cephalon\.'
-            $pkg.claimAuditTier | Should -BeIn @('excluded-by-design', 'low', 'medium', 'high')
-            # supportedModes today is empty for every entry (the global manifest claim stays not-claimed)
-            $pkg.supportedModes | Should -BeNullOrEmpty
+            $pkg.claimAuditTier | Should -BeIn @('excluded-by-design', 'clean-baseline', 'low', 'medium', 'high')
+
+            $supportedModes = @($pkg.supportedModes)
+            foreach ($mode in $supportedModes) {
+                $mode | Should -BeIn @('trim', 'nativeAot', 'singleFile')
+            }
+
+            if ($supportedModes.Count -gt 0) {
+                $pkg.claimAuditTier | Should -Be 'clean-baseline' -Because "package-scoped support claims must start from clean-baseline packages"
+                $pkg.requiredProjectProperties | Should -Not -BeNullOrEmpty -Because "package-scoped support claims must be backed by explicit project properties"
+
+                if ($supportedModes -contains 'singleFile') {
+                    $pkg.requiredProjectProperties | Should -Contain 'PublishSingleFile=true'
+                    $pkg.requiredProjectProperties | Should -Contain 'EnableSingleFileAnalyzer=true'
+                }
+            }
         }
     }
 
     It "every hazard entry on a non-excluded package carries kind/site/pattern/remediation" {
         $packages = $script:manifest.deploymentModeEligibility.packages
         foreach ($pkg in $packages) {
-            if ($pkg.claimAuditTier -eq 'excluded-by-design') { continue }
+            if ($pkg.claimAuditTier -in @('excluded-by-design', 'clean-baseline')) { continue }
             $pkg.knownHazards | Should -Not -BeNullOrEmpty -Because "non-excluded package $($pkg.packageName) must record at least one knownHazards entry"
             foreach ($hz in $pkg.knownHazards) {
                 $hz.PSObject.Properties.Name | Should -Contain 'kind'
@@ -288,7 +301,7 @@ Describe "deploymentModeEligibility" {
         # move of the hazard file must be reflected in the manifest in the same slice.
         $packages = $script:manifest.deploymentModeEligibility.packages
         foreach ($pkg in $packages) {
-            if ($pkg.claimAuditTier -eq 'excluded-by-design') { continue }
+            if ($pkg.claimAuditTier -in @('excluded-by-design', 'clean-baseline')) { continue }
             foreach ($hz in $pkg.knownHazards) {
                 # site shape examples:
                 #   "src/Cephalon.Engine/Composition/ModuleDiscovery.cs:113"

@@ -522,7 +522,19 @@ exit 0
 Describe "Compute-ModeVerdict" {
     BeforeAll {
         function script:New-PropertyAudit {
-            param([int]$PassedCount = 0, [int]$Total = 0, [string]$Property = "PublishTrimmed")
+            param(
+                [int]$PassedCount = 0,
+                [int]$Total = 0,
+                [string]$Property = "PublishTrimmed",
+                [string[]]$PassedPaths = @()
+            )
+            $passed = @()
+            if ($PassedPaths.Count -gt 0) {
+                $passed = @($PassedPaths | ForEach-Object { [pscustomobject]@{ Path = $_; Property = $Property; Truthy = $true } })
+            }
+            elseif ($PassedCount -gt 0) {
+                $passed = @(0..($PassedCount - 1) | ForEach-Object { [pscustomobject]@{ Path = "claiming-$_.csproj"; Property = $Property; Truthy = $true } })
+            }
             [pscustomobject]@{
                 Property = $Property
                 TotalScanned = $Total
@@ -530,6 +542,7 @@ Describe "Compute-ModeVerdict" {
                 UnsetCount = ($Total - $PassedCount)
                 FalsyCount = 0
                 ErrorCount = 0
+                Passed = $passed
             }
         }
         function script:New-AnalyzerAudit {
@@ -593,6 +606,45 @@ Describe "Compute-ModeVerdict" {
             -AnalyzerAudit (New-AnalyzerAudit -Total 5 -EnabledCount 1) `
             -PublishProbe (New-PublishProbe -Skipped $true)).Verdict |
             Should -Be "not-claimed-with-property-drift"
+    }
+
+    It "keeps global 'not-claimed' when a project property is explained by a truthful package-scoped claim" {
+        $projectPath = Join-Path $script:tempRoot "src/Cephalon.Diagnostics/Cephalon.Diagnostics.csproj"
+        $packageClaims = @(
+            [pscustomobject]@{
+                Mode = "singleFile"
+                PackageName = "Cephalon.Diagnostics"
+                ProjectPath = $projectPath
+                Verdict = "claim-truthful"
+                Reasons = @("package-scoped claim properties match manifest")
+            }
+        )
+
+        (Compute-ModeVerdict -Mode "singleFile" -ManifestStatus "not-claimed" `
+            -PropertyAudit (New-PropertyAudit -Total 5 -PassedCount 1 -Property "PublishSingleFile" -PassedPaths @($projectPath)) `
+            -AnalyzerAudit (New-AnalyzerAudit -Total 5 -EnabledCount 1 -AnalyzerProperty "EnableSingleFileAnalyzer") `
+            -PublishProbe (New-PublishProbe -Skipped $true) `
+            -PackageClaimAudits $packageClaims).Verdict |
+            Should -Be "not-claimed"
+    }
+
+    It "returns 'claim-overstated' when a package-scoped claim fails its project-property audit" {
+        $packageClaims = @(
+            [pscustomobject]@{
+                Mode = "singleFile"
+                PackageName = "Cephalon.Diagnostics"
+                ProjectPath = "src/Cephalon.Diagnostics/Cephalon.Diagnostics.csproj"
+                Verdict = "claim-overstated"
+                Reasons = @("Cephalon.Diagnostics expected EnableSingleFileAnalyzer=true but the property was not declared")
+            }
+        )
+
+        (Compute-ModeVerdict -Mode "singleFile" -ManifestStatus "not-claimed" `
+            -PropertyAudit (New-PropertyAudit -Total 5 -PassedCount 0 -Property "PublishSingleFile") `
+            -AnalyzerAudit (New-AnalyzerAudit -Total 5 -EnabledCount 0 -AnalyzerProperty "EnableSingleFileAnalyzer") `
+            -PublishProbe (New-PublishProbe -Skipped $true) `
+            -PackageClaimAudits $packageClaims).Verdict |
+            Should -Be "claim-overstated"
     }
 
     It "returns 'claim-truthful' when manifest claims the mode and every check passes" {
@@ -724,6 +776,78 @@ Describe "Write-ValidationReport" {
         $md = Get-Content -LiteralPath $paths.MarkdownPath -Raw
         $md | Should -Match "# Deployment-mode claim validation report"
         $md | Should -Match "Aggregate verdict"
+    }
+}
+
+Describe "Test-CsprojPropertyExpectation" {
+    It "matches a true-valued expected property" {
+        $path = New-TempCsproj -Properties @{ PublishSingleFile = "true" }
+        $result = Test-CsprojPropertyExpectation -CsprojPath $path -Entry "PublishSingleFile=true"
+        $result.Property | Should -Be "PublishSingleFile"
+        $result.ExpectedValue | Should -Be "true"
+        $result.Matched | Should -BeTrue
+    }
+
+    It "matches a false-valued expected property" {
+        $path = New-TempCsproj -Properties @{ PublishSingleFile = "false" }
+        $result = Test-CsprojPropertyExpectation -CsprojPath $path -Entry "PublishSingleFile=false"
+        $result.Matched | Should -BeTrue
+    }
+
+    It "defaults bare property names to true expectations" {
+        $path = New-TempCsproj -Properties @{ EnableSingleFileAnalyzer = "true" }
+        $result = Test-CsprojPropertyExpectation -CsprojPath $path -Entry "EnableSingleFileAnalyzer"
+        $result.ExpectedValue | Should -Be "true"
+        $result.Matched | Should -BeTrue
+    }
+}
+
+Describe "Get-DeploymentModePackageClaimAudits" {
+    It "returns claim-truthful for a clean-baseline package whose required properties match" {
+        $repo = New-TempRepoRoot -Projects @(
+            @{ Name = "Cephalon.Diagnostics"; Properties = @{ PublishSingleFile = "true"; EnableSingleFileAnalyzer = "true" } }
+        )
+        $manifest = [pscustomobject]@{
+            deploymentModeEligibility = [pscustomobject]@{
+                packages = @(
+                    [pscustomobject]@{
+                        packageName = "Cephalon.Diagnostics"
+                        nugetId = "Cephalon.Diagnostics"
+                        claimAuditTier = "clean-baseline"
+                        supportedModes = @("singleFile")
+                        requiredProjectProperties = @("PublishSingleFile=true", "EnableSingleFileAnalyzer=true")
+                    }
+                )
+            }
+        }
+
+        $result = Get-DeploymentModePackageClaimAudits -Manifest $manifest -Mode "singleFile" -RepoRoot $repo.Root
+        $result.Count | Should -Be 1
+        $result[0].PackageName | Should -Be "Cephalon.Diagnostics"
+        $result[0].Verdict | Should -Be "claim-truthful"
+    }
+
+    It "returns claim-overstated when a supported package is not clean-baseline" {
+        $repo = New-TempRepoRoot -Projects @(
+            @{ Name = "Cephalon.Engine"; Properties = @{ PublishSingleFile = "true"; EnableSingleFileAnalyzer = "true" } }
+        )
+        $manifest = [pscustomobject]@{
+            deploymentModeEligibility = [pscustomobject]@{
+                packages = @(
+                    [pscustomobject]@{
+                        packageName = "Cephalon.Engine"
+                        nugetId = "Cephalon.Engine"
+                        claimAuditTier = "high"
+                        supportedModes = @("singleFile")
+                        requiredProjectProperties = @("PublishSingleFile=true", "EnableSingleFileAnalyzer=true")
+                    }
+                )
+            }
+        }
+
+        $result = Get-DeploymentModePackageClaimAudits -Manifest $manifest -Mode "singleFile" -RepoRoot $repo.Root
+        $result[0].Verdict | Should -Be "claim-overstated"
+        ($result[0].Reasons -join " ") | Should -Match "clean-baseline"
     }
 }
 

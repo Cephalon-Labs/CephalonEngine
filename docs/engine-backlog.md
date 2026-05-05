@@ -24,6 +24,41 @@ Current focus:
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
 - treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md) for release validation, and `cephalon doctor --scorecard <path>` provides a local CLI readback over that generated artifact without becoming source truth
 
+### ENG-454 Package-scoped single-file claim for Cephalon.Diagnostics
+
+Status: done
+Estimate: 5
+Issue: #978
+
+Why:
+
+- Cephalon needs the deployment-mode claim story to advance without over-promising global trim / Native AOT / single-file support
+- `Cephalon.Diagnostics` is a clean-baseline package with no observed first-party reflection / dynamic-code hazards and a small dependency surface
+- adopters and release managers need package-scoped support claims to be visible through the same manifest, readiness, and doctor paths that expose global support posture
+
+Delivered:
+
+- add `Cephalon.Diagnostics` to `scripts/deployment-mode-support.json` schema `1.2.0` with `supportedModes: ["singleFile"]`, `claimAuditTier: "clean-baseline"`, no known hazards, and required properties `PublishSingleFile=true` plus `EnableSingleFileAnalyzer=true`
+- declare those properties in `src/Cephalon.Diagnostics/Cephalon.Diagnostics.csproj`
+- extend `scripts/validate-deployment-mode-claims.ps1` with package-scoped claim audits so truthful scoped project-property signals no longer read as global support drift
+- extend `scripts/validate-dotnet-readiness.ps1` and `cephalon doctor` so package-scoped claims are reported beside, but separate from, the global trim / Native AOT / single-file `not-claimed` rows
+- update deployment-mode support, hazard inventory, compatibility, package-publishing, `.NET 11` readiness, component docs, scorecard, roadmap, architecture-followup, project-memory, and backlog truth in the same slice
+
+Validation:
+
+- run `dotnet build src/Cephalon.Diagnostics/Cephalon.Diagnostics.csproj -c Release --no-restore`
+- run `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/deployment-mode-support-manifest.Tests.ps1 -Output Detailed`
+- run `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/validate-deployment-mode-claims.Tests.ps1 -Output Detailed`
+- run `pwsh ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode singleFile -SkipPublish`
+- run `pwsh ./scripts/validate-dotnet-readiness.ps1 -Configuration Release -SkipBuild -SkipTests -SkipReferenceDocs -SkipPackages`
+- run focused tooling tests for `cephalon doctor` and readiness report output
+- run `git diff --check`
+
+Follow-up later:
+
+- keep package-scoped claims additive and manifest-backed
+- do not promote global trim / Native AOT / single-file rows until structural remediation, publish-probe policy, docs, and release validation agree
+
 ### ENG-453 Local engine completion scorecard summary in cephalon doctor
 
 Status: done
@@ -12979,6 +13014,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-451 Publish a machine-readable engine completion scorecard artifact from `docs/engine-completion-scorecard.md`: `scripts/publish-engine-completion-scorecard.ps1` now emits JSON/README release artifacts, validates status vocabulary, is wired into `scripts/validate-release.ps1` with `-SkipEngineCompletionScorecard`, and carries focused Pester coverage for artifact shape, status rejection, and release-validation wiring. The artifact remains a read model and does not promote support claims, `.NET 11`, trim, Native AOT, single-file, or GA readiness by itself. Quality dimensions: Maintainability + Auditability + Compatibility + Usability (shipped)
 - ENG-452 Extend the machine-readable engine completion scorecard to schema `1.1.0` as a cross-source read model over `docs/engine-completion-scorecard.md` and `docs/conformance-matrix.md`: evidence-source Markdown/backtick references now resolve to real repo-local files, missing scorecard source files fail the publish step, and `PackageGAReadiness` rows summarize each conformance-matrix package with family, maturity, ownership, conservative GA gate status, blocker class, and source-document pointers. `M4` still maps only to `partial` GA readiness until release, SRE, package-validation, supply-chain, public API, and deployment-mode evidence pass; `M0` / `taxonomy-only` rows remain `not-claimed`. Quality dimensions: Maintainability + Auditability + Compatibility + Usability (shipped)
 - ENG-453 Add `cephalon doctor --scorecard <path>` as the local CLI readback over the generated schema `1.1.0` engine-completion scorecard artifact: doctor now reports schema/source/conformance-matrix truth, platform-gate posture, validated evidence-reference count, and per-package GA-readiness counts through the existing check model; explicit missing, malformed, or unsupported artifacts fail doctor, while current partial/not-claimed/needs-refresh posture stays a warning and does not promote GA/support claims. Quality dimensions: Maintainability + Auditability + Compatibility + Usability (shipped)
+- ENG-454 Add the first clean-baseline package-scoped deployment-mode claim: `Cephalon.Diagnostics` now declares `PublishSingleFile=true` and `EnableSingleFileAnalyzer=true`; `scripts/deployment-mode-support.json` schema `1.2.0` lists `Cephalon.Diagnostics` with `supportedModes: ["singleFile"]`, no hazards, and the matching `requiredProjectProperties`; `scripts/validate-deployment-mode-claims.ps1` reports package proofs through `PackageClaimAudits`; `scripts/validate-dotnet-readiness.ps1` projects `PackageScopedClaims`; and `cephalon doctor` summarizes scoped package claims without widening the global trim / Native AOT / single-file `not-claimed` rows. Quality dimensions: Compatibility + Auditability + Maintainability + Usability (shipped)
 
 ### Later / not scheduled yet
 

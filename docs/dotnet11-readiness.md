@@ -8,7 +8,7 @@ This guide records the current Cephalon truth for future-framework assessment wi
 - `global.json` still pins `.NET SDK 10.0.201`
 - the template-pack package, analyzer meta-package, and source-generator surface remain the intentional `netstandard2.0` exceptions
 - `.NET 11` is currently a readiness lane, not a default-target migration
-- trim, Native AOT, and single-file support remain explicit `not-claimed` support statements tracked through [Deployment-mode support](deployment-mode-support.md) and `scripts/deployment-mode-support.json`, and external adopters can see the same contract through `cephalon doctor` plus `cephalon doctor --app-root <path>`
+- trim, Native AOT, and single-file support remain explicit global `not-claimed` support statements tracked through [Deployment-mode support](deployment-mode-support.md) and `scripts/deployment-mode-support.json`; package-scoped claims such as `Cephalon.Diagnostics` single-file support are narrower manifest entries and do not change the global support rows
 
 As of `May 5, 2026`, Microsoft has:
 
@@ -57,6 +57,7 @@ The script:
 - confirms starter template project files still align with the stable `net10.0` floor
 - fails if the repo starts using legacy `TargetFrameworkVersion`
 - records the current trim / Native AOT / single-file claim status from the manifest-backed deployment-mode support contract
+- records package-scoped deployment-mode claims separately so clean-baseline package proofs do not look like global support drift
 - can optionally build, test, publish reference docs, and publish package artifacts under the readiness SDK without editing `global.json`
 
 Example audit-only run:
@@ -115,6 +116,8 @@ For those claims to become real support statements, Cephalon must update all of 
 - backlog and roadmap tracking
 
 Analyzer-only settings are useful readiness signals, but they are not support claims by themselves.
+
+Package-scoped claims follow the same rule at a narrower boundary: the package must be listed in `deploymentModeEligibility.packages`, the scoped `supportedModes` entry must match explicit project properties, and the validation harness must report the package claim separately from global support posture.
 
 The machine-readable contract exists so future support claims cannot drift away from what the readiness report and the human-facing docs say.
 
