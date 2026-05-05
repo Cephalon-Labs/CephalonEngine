@@ -74,7 +74,7 @@
     }
   },
   "deploymentModeEligibility": {
-    "comment": "Per-package eligibility table seeded from docs/trim-aot-hazard-inventory.md. Originally introduced via ENG-426 (high + first medium-tier seeding); broadened via ENG-432 (Cephalon.Behaviors.Http reclassified low->medium with three additional reflection sites), ENG-433 (Cephalon.Data added at medium tier under broadened MakeGenericMethod / BindingFlags pattern set), ENG-434 (Cephalon.Data.MySql added at high tier + Cephalon.Data.Postgres / Cephalon.Data.Oracle added at medium tier for the CDC capture services), and ENG-435 (Cephalon.Abstractions added at low tier + two enum-extension hazard sites appended to Cephalon.Behaviors.Http). Each entry records the package's claim-audit tier, the actual reflection / dynamic-code call sites observed in its src/Cephalon.* source as of May 5, 2026, and the supportedModes a future claim could advertise (today: empty for every entry — the global manifest claim stays not-claimed until project properties + harness verdicts move). The list intentionally only enumerates packages that are NOT clean-baseline; the harness's project-property and analyzer audit phases scan all src/Cephalon.*.csproj automatically, so the absence of a package here means clean-baseline (no observed source-level hazard) rather than untracked. Excluded-by-design analyzer / source-generator projects are listed separately so the harness can confirm their disable-properties remain in place.",
+    "comment": "Per-package eligibility table seeded from docs/trim-aot-hazard-inventory.md. Originally introduced via ENG-426 (high + first medium-tier seeding); broadened via ENG-432 (Cephalon.Behaviors.Http reclassified low->medium with three additional reflection sites), ENG-433 (Cephalon.Data added at medium tier under broadened MakeGenericMethod / BindingFlags pattern set), ENG-434 (Cephalon.Data.MySql added at high tier + Cephalon.Data.Postgres / Cephalon.Data.Oracle added at medium tier for the CDC capture services), ENG-435 (Cephalon.Abstractions added at low tier + two enum-extension hazard sites appended to Cephalon.Behaviors.Http), and ENG-436 (six additional knownHazards entries appended to Cephalon.Behaviors covering the BehaviorModule.cs two-phase auto-registration pipeline + the BehaviorExecutionSlot.cs open-generic execution-slot dispatch — package tier unchanged at high, hazard list grows). Each entry records the package's claim-audit tier, the actual reflection / dynamic-code call sites observed in its src/Cephalon.* source as of May 5, 2026, and the supportedModes a future claim could advertise (today: empty for every entry — the global manifest claim stays not-claimed until project properties + harness verdicts move). The list intentionally only enumerates packages that are NOT clean-baseline; the harness's project-property and analyzer audit phases scan all src/Cephalon.*.csproj automatically, so the absence of a package here means clean-baseline (no observed source-level hazard) rather than untracked. Excluded-by-design analyzer / source-generator projects are listed separately so the harness can confirm their disable-properties remain in place.",
     "packages": [
       {
         "packageName": "Cephalon.Engine",
@@ -105,10 +105,47 @@
             "site": "src/Cephalon.Behaviors/Services/BehaviorTypeRegistry.cs",
             "pattern": "Runtime registry keyed by Type with late-bound resolution from descriptors",
             "remediation": "Replace runtime type registry with a compile-time descriptor + source-generator-emitted registration table; behaviors register via generated code rather than reflective discovery."
+          },
+          {
+            "kind": "reflection-method-lookup",
+            "site": "src/Cephalon.Behaviors/Modules/BehaviorModule.cs:345",
+            "pattern": "regType.GetMethod(\"Register\", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, null, [typeof(IServiceCollection), typeof(IBehaviorTypeRegistry)], null) — phase-1 reflective lookup of the source-gen-emitted Register helper on ContainsBehaviorsAttribute.RegistrationType (matching Invoke on line 351)",
+            "remediation": "Annotation-recoverable in isolation via [DynamicallyAccessedMembers(PublicMethods | NonPublicMethods)] on ContainsBehaviorsAttribute.RegistrationType; package tier still gated by the phase-2 assembly-scan fallback below, so the structural fix is the same source-gen-emitted compile-time module manifest that retires BehaviorTypeRegistry."
+          },
+          {
+            "kind": "reflection-method-lookup",
+            "site": "src/Cephalon.Behaviors/Modules/BehaviorModule.cs:354",
+            "pattern": "regType.GetMethod(\"GetTopologyDescriptors\", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null) — phase-1 reflective lookup of the source-gen-emitted topology-descriptor enumerator (matching Invoke on line 360)",
+            "remediation": "Same annotation-recovery + structural fix as the line-345 entry."
+          },
+          {
+            "kind": "reflection-method-lookup",
+            "site": "src/Cephalon.Behaviors/Modules/BehaviorModule.cs:386",
+            "pattern": "regType.GetMethod(\"GetBehaviorsNeedingRuntimeTopology\", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic, null, Type.EmptyTypes, null) — phase-1 reflective lookup of the source-gen-emitted runtime-topology enumerator (matching Invoke on line 392)",
+            "remediation": "Same annotation-recovery + structural fix as the line-345 entry."
+          },
+          {
+            "kind": "reflection-assembly-scan",
+            "site": "src/Cephalon.Behaviors/Modules/BehaviorModule.cs:425",
+            "pattern": "assembly.DefinedTypes.Select(ti => ti.AsType()).ToArray() then Attribute.GetCustomAttribute(type, typeof(AppBehaviorAttribute)) plus type.GetInterfaces().FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IAppBehavior<,>)) — phase-2 reflection-fallback assembly scan over every type in the assembly",
+            "remediation": "Source-gen-emitted compile-time module manifest that enumerates behaviors at build time, retiring both the assembly scan here and the BehaviorTypeRegistry runtime registry. Annotation alone is not sufficient — this is the dominant high-tier driver in the file."
+          },
+          {
+            "kind": "reflection-method-lookup",
+            "site": "src/Cephalon.Behaviors/Modules/BehaviorModule.cs:491",
+            "pattern": "behaviorType.GetMethod(\"ConfigureTopology\", BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy, null, [typeof(IBehaviorTopologyBuilder)], null) — reflective lookup of the optional static ConfigureTopology helper on each behavior type (matching Invoke on line 502)",
+            "remediation": "Reachable from both phase-1 and phase-2; the phase-2 reach makes it high. Removed by the same source-gen-emitted module manifest that retires the assembly scan and BehaviorTypeRegistry."
+          },
+          {
+            "kind": "reflection-open-generic-method",
+            "site": "src/Cephalon.Behaviors/Services/BehaviorExecutionSlot.cs:73",
+            "pattern": "typeof(BehaviorExecutionSlot).GetMethod(nameof(For), BindingFlags.Public | BindingFlags.Static)!.MakeGenericMethod(behaviorType, tIn, tOut) followed by forMethod.Invoke(null, null) (line 76) — open-generic method dispatch over the (behaviorType, TInput, TOutput) triple drawn from the runtime registry",
+            "remediation": "Source-gen-emitted dispatch table keyed by behavior identity that materializes the closed generic For<TBehavior, TInput, TOutput>() at compile time. Same structural fix as the BehaviorTypeRegistry retirement above; high here (rather than medium like BehaviorRestEndpointGroup.cs:486) because behaviorType is sourced from the assembly-scanned registry rather than from a closed compile-time profile."
           }
         ],
-        "evidence": "docs/trim-aot-hazard-inventory.md (high tier)",
-        "introducedBy": "ENG-426"
+        "evidence": "docs/trim-aot-hazard-inventory.md (high tier — additional Cephalon.Behaviors evidence appended via ENG-436: module-discovery pipeline + open-generic execution-slot dispatch)",
+        "introducedBy": "ENG-426",
+        "extendedBy": "ENG-436"
       },
       {
         "packageName": "Cephalon.Behaviors.Patterns",
