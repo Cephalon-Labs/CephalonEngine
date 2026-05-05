@@ -12,6 +12,7 @@ conventions at build time and produce a compile-time-known registration hint fil
   - Uses `ForAttributeWithMetadataName` for efficient incremental processing
   - Emits `BehaviorRegistrationHints.g.cs` listing all discovered `[AppBehavior]` IDs
   - Emits `BehaviorAutoRegistration.g.cs` for zero-reflection DI/type registration plus pre-built topology descriptors when compile-time extraction succeeds
+  - Emits `GetExecutionSlots()` with closed `BehaviorExecutionSlot.For<TBehavior, TInput, TOutput>()` calls so `Cephalon.Behaviors` can prefer source-generated dispatch startup over open-generic slot reflection
   - Emits source-generated metadata-only REST profile hints through `GetRestProfiles()` when behaviors declare valid `BehaviorRestProfileAttribute` metadata
   - Extracts compile-time topology from `ConfigureTopology(...)` for pattern, transports, feature flags, and literal `WithApiSurface(...)` overrides
 - Reports ABT0010–ABT0027 diagnostics on invalid behavior declarations, metadata-only REST profile hints, malformed REST profile placeholder syntax, explicit REST binding metadata, and invalid preserved implicit query-fallback authoring before `GetRestProfiles()` is generated
@@ -65,6 +66,15 @@ registration and topology data, including literal `WithApiSurface(...)` override
 ```csharp
 internal static class BehaviorAutoRegistration
 {
+    internal static IReadOnlyList<(string Id, Type Type, BehaviorExecutionSlot Slot)> GetExecutionSlots()
+    {
+        return
+        [
+            ("catalog.lookup", typeof(CatalogLookupBehavior),
+                BehaviorExecutionSlot.For<CatalogLookupBehavior, CatalogLookupInput, CatalogLookupResult>())
+        ];
+    }
+
     internal static IReadOnlyList<BehaviorTopologyDescriptor> GetTopologyDescriptors()
     {
         return
@@ -118,6 +128,13 @@ The generator is automatically applied when `Cephalon.Behaviors` is referenced. 
 The `Cephalon.Behaviors` package references `Cephalon.Behaviors.SourceGen` as an analyzer, so the generator
 and diagnostics activate for any project that references `Cephalon.Behaviors`.
 
+At runtime, `Cephalon.Behaviors` still reflectively locates the generated carrier type's `Register`,
+`GetExecutionSlots()`, `GetTopologyDescriptors()`, and runtime-topology fallback methods through
+`ContainsBehaviorsAttribute.RegistrationType`. The `GetExecutionSlots()` hints remove
+`BehaviorExecutionSlot.ForType(...)` open-generic slot materialization from the normal source-generated
+dispatch path, but they do not by themselves make the package trim/AOT claimed because the carrier-method
+lookups and runtime assembly-scan fallback remain documented in the deployment-mode hazard inventory.
+
 Compile-time topology extraction intentionally stays conservative. Literal `WithApiSurface(...)`
 arguments are supported, while more complex expressions fall back to runtime topology resolution so
 the generated surface stays truthful. Public REST is module-owned and therefore sits outside the
@@ -159,7 +176,7 @@ until another topology source selects one explicitly.
 
 ## Status
 
-> Status: ✅ Shipped — targeted source-generator tests 29/29
+> Status: ✅ Shipped — targeted source-generator tests 34/34
 
 ## Related components
 

@@ -261,6 +261,38 @@ public sealed class BehaviorBaselineTests
 
         var typeRegistry = new BehaviorTypeRegistry();
         typeRegistry.Register("greeting.direct", typeof(DirectGreetingBehavior));
+        var slotRegistry = new BehaviorExecutionSlotRegistry();
+        slotRegistry.Register(
+            "greeting.direct",
+            typeof(DirectGreetingBehavior),
+            BehaviorExecutionSlot.For<DirectGreetingBehavior, string, string>());
+
+        var descriptor = new BehaviorTopologyDescriptor("greeting.direct", "direct", []);
+        var contributor = new FluentBehaviorContributor(descriptor);
+        services.AddSingleton<IBehaviorContributor>(contributor);
+        services.AddSingleton<IBehaviorTypeRegistry>(typeRegistry);
+        services.AddSingleton(slotRegistry);
+        services.AddSingleton<IBehaviorCatalog>(sp =>
+            new BehaviorCatalog(sp.GetServices<IBehaviorContributor>()));
+
+        var provider = services.BuildServiceProvider();
+        var catalog = provider.GetRequiredService<IBehaviorCatalog>();
+        var dispatcher = new BehaviorDispatcher(catalog, typeRegistry, provider);
+
+        var ctx = new TestBehaviorContext("greeting.direct", isDirect: true);
+        var result = await dispatcher.DispatchAsync("greeting.direct", "World", ctx);
+
+        Assert.Equal("Hello, World!", result);
+    }
+
+    [Fact]
+    public async Task BehaviorDispatcherFallsBackToRuntimeSlotWhenGeneratedSlotIsMissing()
+    {
+        var services = new ServiceCollection();
+        services.AddTransient<DirectGreetingBehavior>();
+
+        var typeRegistry = new BehaviorTypeRegistry();
+        typeRegistry.Register("greeting.direct", typeof(DirectGreetingBehavior));
 
         var descriptor = new BehaviorTopologyDescriptor("greeting.direct", "direct", []);
         var contributor = new FluentBehaviorContributor(descriptor);

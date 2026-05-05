@@ -330,6 +330,8 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
 
         return new InputTypeInfo(
             inputType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+            behaviorInterface.TypeArguments[0].ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+            behaviorInterface.TypeArguments[1].ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
             IsSimpleInputType(inputType),
             publicProperties);
     }
@@ -917,6 +919,27 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             sb.AppendLine("        }");
         }
 
+        sb.AppendLine("    }");
+        sb.AppendLine();
+
+        // ── GetExecutionSlots method ──
+        sb.AppendLine("    /// <summary>Returns pre-built execution slots for behaviors discovered at compile time.</summary>");
+        sb.AppendLine("    internal static global::System.Collections.Generic.IReadOnlyList<(string Id, global::System.Type Type, global::Cephalon.Behaviors.Services.BehaviorExecutionSlot Slot)> GetExecutionSlots()");
+        sb.AppendLine("    {");
+        sb.AppendLine("        return new (string, global::System.Type, global::Cephalon.Behaviors.Services.BehaviorExecutionSlot)[]");
+        sb.AppendLine("        {");
+
+        foreach (var info in infos)
+        {
+            if (info is not { IsValid: true, InputType: not null }) continue;
+            var fqn = info.TypeName;
+            var id = EscapeString(info.BehaviorId);
+            var inputType = info.InputType.GenericInputTypeName;
+            var outputType = info.InputType.GenericOutputTypeName;
+            sb.AppendLine($"            (\"{id}\", typeof({fqn}), global::Cephalon.Behaviors.Services.BehaviorExecutionSlot.For<{fqn}, {inputType}, {outputType}>()),");
+        }
+
+        sb.AppendLine("        };");
         sb.AppendLine("    }");
         sb.AppendLine();
 
@@ -1653,15 +1676,21 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
     {
         public InputTypeInfo(
             string displayName,
+            string genericInputTypeName,
+            string genericOutputTypeName,
             bool isSimple,
             ImmutableDictionary<string, string> publicProperties)
         {
             DisplayName = displayName;
+            GenericInputTypeName = genericInputTypeName;
+            GenericOutputTypeName = genericOutputTypeName;
             IsSimple = isSimple;
             PublicProperties = publicProperties;
         }
 
         public string DisplayName { get; }
+        public string GenericInputTypeName { get; }
+        public string GenericOutputTypeName { get; }
         public bool IsSimple { get; }
         public ImmutableDictionary<string, string> PublicProperties { get; }
     }

@@ -11,7 +11,7 @@
   attribute-only baseline when the pattern choice is unambiguous
 - **CompatibilityMatrix** — startup-time validation of resolved topologies against
   `IBehaviorCompatibilityRule` implementations
-- **BehaviorExecutionSlot** — compiled `Expression.Lambda` invoker built once at startup
+- **BehaviorExecutionSlot** — typed invocation delegate built once at dispatcher construction; source-generated auto-registration can now supply closed generic slots, while runtime-discovered behaviors still fall back to `ForType(...)`
 - **IBehaviorCatalog / IBehaviorRegistry** — populated by `IBehaviorContributor` implementations
 - **Hosting** — `IEngineBuilder.AddBehaviors(configure?)` extension + `BehaviorModule`
 - **Configuration** — `Engine:Behaviors` auto-registration controls
@@ -257,7 +257,7 @@ Behavior metadata stays transport-neutral on purpose.
 ## Performance characteristics
 
 - Dispatch table built once at `EngineBuilder.Build()` into a `FrozenDictionary`
-- Zero reflection on the hot dispatch path — `Expression.Lambda` compiled once per behavior type
+- Zero reflection on the hot dispatch path — the dispatcher reuses typed execution delegates; source-generated behavior slots are materialized as closed generics, with `BehaviorExecutionSlot.ForType(...)` kept as the startup fallback for runtime-discovered behaviors
 - Transport bindings deferred to first request (`LazyTransportBinding`) — zero startup overhead per transport
 - Compatibility matrix runs at startup only — no runtime overhead
 
@@ -335,6 +335,13 @@ Implements `ITechnologyRuntimeContributor` and reports the behavior subsystem su
 `BehaviorExecutionSlot` now also deserializes `JsonElement` payloads with
 `JsonSerializerDefaults.Web`, so camelCase HTTP inputs bind cleanly into typical C# DTOs without
 per-behavior casing workarounds.
+
+Source-generated behavior registration now also emits closed generic execution-slot hints. The
+dispatcher prefers those generated slots when the behavior id and concrete type still match the
+runtime registry, so the common source-generated path avoids `BehaviorExecutionSlot.ForType(...)`
+open-generic method dispatch during startup. Assemblies without generated hints and behavior types
+found through runtime discovery continue to use the reflection fallback until the broader
+compile-time module-manifest remediation lands.
 
 ### BehaviorDiagnostics EventId constants (5100-5109)
 

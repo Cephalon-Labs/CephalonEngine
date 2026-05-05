@@ -59,6 +59,7 @@ The script:
 - records the current trim / Native AOT / single-file claim status from the manifest-backed deployment-mode support contract
 - records package-scoped deployment-mode claims separately so clean-baseline package proofs do not look like global support drift
 - keeps deployment-mode claim status separate from the richer `scripts/validate-deployment-mode-claims.ps1` artifact set, where `HazardInventory` / `hazard-inventory.json` exposes tier counts, scoped claims, and transitive-hazard hints
+- keeps source-generated remediation evidence separate from support promotion: `Cephalon.Behaviors` generated execution-slot hints now reduce source-generated dispatch startup reflection, but global trim / Native AOT / single-file rows stay `not-claimed` while manifest-listed fallback and carrier-method hazards remain
 - can optionally build, test, publish reference docs, and publish package artifacts under the readiness SDK without editing `global.json`
 
 Example audit-only run:

@@ -46,6 +46,7 @@ public sealed class BehaviorDispatcher
 
         _services = services;
         var executionMiddlewares = middlewares?.ToArray() ?? [];
+        var slotRegistry = services.GetService<BehaviorExecutionSlotRegistry>();
 
         var dict = new Dictionary<string, (BehaviorExecutionDelegate, Type, BehaviorTopologyDescriptor)>(
             StringComparer.OrdinalIgnoreCase);
@@ -54,7 +55,11 @@ public sealed class BehaviorDispatcher
         {
             if (typeRegistry.TryGetType(descriptor.Id, out var behaviorType) && behaviorType is not null)
             {
-                var slot = BehaviorExecutionSlot.ForType(behaviorType);
+                var slot = slotRegistry is not null &&
+                    slotRegistry.TryGetSlot(descriptor.Id, behaviorType, out var generatedSlot) &&
+                    generatedSlot is not null
+                        ? generatedSlot
+                        : BehaviorExecutionSlot.ForType(behaviorType);
                 var pipeline = BuildExecutionPipeline(
                     descriptor.Id,
                     behaviorType,

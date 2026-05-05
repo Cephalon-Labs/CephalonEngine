@@ -258,6 +258,8 @@ public sealed class BehaviorSourceGeneratorTests
 
         var autoRegistration = GetGeneratedAutoRegistrationSource(result);
         Assert.NotNull(autoRegistration);
+        Assert.Contains("GetExecutionSlots()", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorExecutionSlot.For<global::GetOrderBehavior", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("GetRestProfiles()", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("GetRestProfileBehaviorTypes()", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor(\"orders.get\"", autoRegistration, StringComparison.Ordinal);

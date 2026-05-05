@@ -72,6 +72,8 @@ internal sealed class BehaviorModule(
         // Type registry — shared singleton populated by BehaviorCollectionBuilder
         var typeRegistry = new BehaviorTypeRegistry();
         services.TryAddSingleton<IBehaviorTypeRegistry>(typeRegistry);
+        var slotRegistry = new BehaviorExecutionSlotRegistry();
+        services.TryAddSingleton(slotRegistry);
 
         // Run fluent registrations so contributors and DI types are wired up before catalog build
         if (configureBehaviors is not null)
@@ -101,7 +103,7 @@ internal sealed class BehaviorModule(
         // Auto-register behaviors from assemblies when enabled (default: true)
         if (options.AutoRegister)
         {
-            AutoRegisterBehaviors(services, typeRegistry, options, ownedBehaviorIds);
+            AutoRegisterBehaviors(services, typeRegistry, slotRegistry, options, ownedBehaviorIds);
         }
 
         RegisterBehaviorResilienceServices(
@@ -303,6 +305,7 @@ internal sealed class BehaviorModule(
     private static void AutoRegisterBehaviors(
         IServiceCollection services,
         BehaviorTypeRegistry typeRegistry,
+        BehaviorExecutionSlotRegistry slotRegistry,
         BehaviorOptions options,
         IReadOnlySet<string>? ownedBehaviorIds)
     {
@@ -311,8 +314,8 @@ internal sealed class BehaviorModule(
 
         foreach (var assembly in assemblies)
         {
-            // Phase 1: Try source-generated registration (zero reflection)
-            if (TrySourceGeneratedRegistration(services, typeRegistry, assembly, ownedBehaviorIds))
+            // Phase 1: try source-generated registration through the generated carrier type.
+            if (TrySourceGeneratedRegistration(services, typeRegistry, slotRegistry, assembly, ownedBehaviorIds))
                 continue;
 
             // Phase 2: Reflection fallback for assemblies without source generation
@@ -326,12 +329,14 @@ internal sealed class BehaviorModule(
 
     /// <summary>
     /// Checks for <c>[assembly: ContainsBehaviors(typeof(RegistrationClass))]</c> and
-    /// invokes the generated <c>Register</c> and <c>GetTopologyDescriptors</c> methods.
+    /// invokes the generated <c>Register</c>, <c>GetExecutionSlots</c>,
+    /// and <c>GetTopologyDescriptors</c> methods.
     /// Returns <see langword="true"/> if this assembly was handled via source generation.
     /// </summary>
     private static bool TrySourceGeneratedRegistration(
         IServiceCollection services,
         BehaviorTypeRegistry typeRegistry,
+        BehaviorExecutionSlotRegistry slotRegistry,
         Assembly assembly,
         IReadOnlySet<string>? ownedBehaviorIds)
     {
@@ -350,6 +355,31 @@ internal sealed class BehaviorModule(
             null);
 
         registerMethod?.Invoke(null, [services, typeRegistry]);
+
+        // Invoke GetExecutionSlots() → register generated closed-generic slots for dispatch.
+        var executionSlotsMethod = regType.GetMethod("GetExecutionSlots",
+            BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,
+            null,
+            Type.EmptyTypes,
+            null);
+
+        if (executionSlotsMethod?.Invoke(null, null) is IReadOnlyList<(string Id, Type Type, BehaviorExecutionSlot Slot)> executionSlots)
+        {
+            foreach (var (id, type, slot) in executionSlots)
+            {
+                if (ownedBehaviorIds?.Contains(id) == true)
+                {
+                    continue;
+                }
+
+                if (!typeRegistry.TryGetType(id, out var registeredType) || registeredType != type)
+                {
+                    continue;
+                }
+
+                slotRegistry.Register(id, type, slot);
+            }
+        }
 
         // Invoke GetTopologyDescriptors() → register as contributors
         var topologyMethod = regType.GetMethod("GetTopologyDescriptors",

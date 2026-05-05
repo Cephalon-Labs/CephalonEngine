@@ -24,6 +24,41 @@ Current focus:
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
 - treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md) for release validation, and `cephalon doctor --scorecard <path>` provides a local CLI readback over that generated artifact without becoming source truth
 
+### ENG-457 Emit behavior execution-slot hints
+
+Status: done
+Estimate: 3
+Issue: #981
+
+Why:
+
+- `Cephalon.Behaviors` still carried an open-generic `BehaviorExecutionSlot.ForType(...)` startup hazard even when the consuming app had source-generated behavior registration
+- source-generated behavior metadata already knows the closed `(TBehavior, TInput, TOutput)` tuple, so the engine should use that compile-time shape before falling back to runtime reflection
+- the deployment-mode manifest must stay honest: reducing the common source-generated path is not the same as claiming trim, Native AOT, or single-file support while carrier lookups and runtime discovery still exist
+
+Delivered:
+
+- emit `BehaviorAutoRegistration.GetExecutionSlots()` from `Cephalon.Behaviors.SourceGen` with closed `BehaviorExecutionSlot.For<TBehavior, TInput, TOutput>()` calls for each valid discovered behavior
+- add an internal `BehaviorExecutionSlotRegistry` and wire `BehaviorModule` to register generated slots only when the generated id/type still matches the runtime behavior registry
+- update `BehaviorDispatcher` to prefer generated slots and retain the `BehaviorExecutionSlot.ForType(...)` fallback for runtime-discovered or non-generated behaviors
+- update behavior baseline/source-generator tests so both generated-slot dispatch and runtime fallback dispatch stay covered
+- update deployment-mode support, trim/AOT hazard inventory, compatibility, `.NET 11` readiness, component docs, architecture follow-ups, roadmap, backlog, and project memory without widening global support claims
+
+Validation:
+
+- passed `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --no-restore --filter FullyQualifiedName~BehaviorSourceGeneratorTests` (34 tests)
+- passed `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --no-restore --filter FullyQualifiedName~BehaviorBaselineTests` (49 tests)
+- passed `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --no-restore --filter FullyQualifiedName~Behaviors` (207 tests)
+- passed `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/deployment-mode-support-manifest.Tests.ps1 -Output Detailed` (32 tests)
+- passed `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/validate-deployment-mode-claims.Tests.ps1 -Output Detailed` (77 tests)
+- passed `pwsh ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode all -SkipPublish -OutputPath artifacts/deployment-mode-claims-eng457` with aggregate `not-claimed`, 22 package entries, 19 packages with known hazards, 51 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim
+- passed `git diff --check`
+
+Follow-up later:
+
+- retire generated carrier-method lookups and runtime assembly-scan fallback through a compile-time module manifest before changing `Cephalon.Behaviors` deployment-mode claim posture
+- carry the same closed-generic dispatch-table idea into `Cephalon.Behaviors.Http` after the core behavior fallback path is structurally removed
+
 ### ENG-456 Remove REST wire-name enum reflection
 
 Status: done
@@ -13086,6 +13121,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-454 Add the first clean-baseline package-scoped deployment-mode claim: `Cephalon.Diagnostics` now declares `PublishSingleFile=true` and `EnableSingleFileAnalyzer=true`; `scripts/deployment-mode-support.json` schema `1.2.0` lists `Cephalon.Diagnostics` with `supportedModes: ["singleFile"]`, no hazards, and the matching `requiredProjectProperties`; `scripts/validate-deployment-mode-claims.ps1` reports package proofs through `PackageClaimAudits`; `scripts/validate-dotnet-readiness.ps1` projects `PackageScopedClaims`; and `cephalon doctor` summarizes scoped package claims without widening the global trim / Native AOT / single-file `not-claimed` rows. Quality dimensions: Compatibility + Auditability + Maintainability + Usability (shipped)
 - ENG-455 Emit the manifest-backed deployment-mode hazard inventory from `scripts/validate-deployment-mode-claims.ps1`: every run now embeds `HazardInventory` in `claim-validation-report.json`, writes `hazard-inventory.json`, and summarizes tier counts, scoped package claims, and transitive hazard hints in README output; then-current manifest output reported 23 package entries, 20 packages with known hazards, 59 known hazard entries, 5 `high` + 14 `medium` + 1 `low` + 2 `excluded-by-design` + 1 `clean-baseline`, and 1 scoped `singleFile` claim while global trim / Native AOT / single-file rows remain `not-claimed`. Quality dimensions: Compatibility + Auditability + Maintainability + Usability (shipped)
 - ENG-456 Remove REST wire-name enum reflection: nine REST wire-name helpers in `Cephalon.Abstractions` and `Cephalon.Behaviors.Http` now use closed switch mappings instead of enum-field reflection, the `Cephalon.Abstractions` low-tier manifest row is removed, `Cephalon.Behaviors.Http` drops two enum-extension hazards while staying `medium`, and current manifest output reports 22 package entries, 19 packages with known hazards, 50 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability (shipped)
+- ENG-457 Emit behavior execution-slot hints: `Cephalon.Behaviors.SourceGen` now emits `GetExecutionSlots()` with closed generic `BehaviorExecutionSlot.For<TBehavior, TInput, TOutput>()` calls, `Cephalon.Behaviors` registers matching generated slots and `BehaviorDispatcher` prefers them before runtime fallback, and the deployment-mode manifest records the new carrier-method lookup while keeping global trim / Native AOT / single-file rows `not-claimed`. Current manifest output reports 22 package entries, 19 packages with known hazards, 51 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability (shipped)
 
 ### Later / not scheduled yet
 
