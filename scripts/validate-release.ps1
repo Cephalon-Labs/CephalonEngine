@@ -150,12 +150,23 @@ function Write-EngineCompletionScorecardSreSummary {
         throw "Engine completion scorecard JSON is missing SrePostureEvidence."
     }
 
+    if ($null -eq $scorecard.SupplyChainEvidence) {
+        throw "Engine completion scorecard JSON is missing SupplyChainEvidence."
+    }
+
     Write-Host ("SRE posture: {0} SLIs; target-declared {1}; pending stable baselines {2}; stable baselines {3}; summary mode {4}." -f `
         $scorecard.SrePostureEvidence.SliCount,
         $scorecard.SrePostureEvidence.TargetDeclaredCount,
         $scorecard.SrePostureEvidence.PendingStableBaselineCount,
         $scorecard.SrePostureEvidence.StableBaselineCount,
         $scorecard.SrePostureEvidence.ReleaseValidationSummaryMode)
+
+    Write-Host ("Supply-chain release evidence: {0} items; workflow-ready {1}; external policy pending {2}; blocked {3}; status {4}." -f `
+        $scorecard.SupplyChainEvidence.EvidenceItemCount,
+        $scorecard.SupplyChainEvidence.WorkflowReadyCount,
+        $scorecard.SupplyChainEvidence.ExternalPolicyPendingCount,
+        $scorecard.SupplyChainEvidence.BlockedCount,
+        $scorecard.SupplyChainEvidence.Status)
 }
 
 Push-Location $repoRoot

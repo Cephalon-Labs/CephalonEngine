@@ -164,6 +164,8 @@ Per-package nuget.org configuration must be in place before the first push:
 
 The pipeline is intentionally additive over `release-validation.yml`. The per-PR validation gate stays unchanged; this workflow only runs on a tag and only pushes when run from a tag.
 
+The release-readiness scorecard validates the workflow-facing portion of this posture through [`scripts/supply-chain-release-support.json`](../scripts/supply-chain-release-support.json) before emitting `SupplyChainEvidence`. That generated evidence records which release-provenance items are already workflow-ready (locked release validation, package checksums, CycloneDX SBOM, Sigstore/Cosign signatures, SLSA provenance, Rekor transparency, and release-bundle checksums) and which items still require external nuget.org or repository policy (trusted-publishing policy, `Cephalon.*` prefix reservation, and `NUGET_USER`).
+
 ## Maintenance rules
 
 - keep the intended packable surface explicit; do not rely on solution-wide `dotnet pack` defaults

@@ -3,6 +3,7 @@ param(
     [string]$ConformanceMatrixPath = "docs/conformance-matrix.md",
     [string]$AdoptionSmokeManifestPath = "scripts/adoption-smoke-support.json",
     [string]$SrePostureManifestPath = "scripts/sre-posture-support.json",
+    [string]$SupplyChainManifestPath = "scripts/supply-chain-release-support.json",
     [string]$PublicApiDeltaScriptPath = "scripts/summarise-public-api-deltas.ps1",
     [string]$OutputPath = "artifacts/engine-completion-scorecard-release",
     [string]$RepoRoot
@@ -11,7 +12,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$Script:SchemaVersion = "1.4.0"
+$Script:SchemaVersion = "1.5.0"
 $Script:AllowedStatuses = @(
     "ready-for-preview",
     "partial",
@@ -696,6 +697,62 @@ function Resolve-SrePostureManifestPath {
     })
 }
 
+function Resolve-SupplyChainManifestPath {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$DeclaredPath,
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedRepoRoot,
+        [Parameter(Mandatory = $true)]
+        [string]$Context,
+        [string]$PathType = "Any"
+    )
+
+    if ([string]::IsNullOrWhiteSpace($DeclaredPath)) {
+        throw "Supply-chain release support manifest contains an empty path in $Context."
+    }
+
+    $resolvedPath = Resolve-FullPath -Path $DeclaredPath -BasePath $ResolvedRepoRoot
+    $exists = if ($PathType -eq "File") {
+        Test-Path -LiteralPath $resolvedPath -PathType Leaf
+    }
+    elseif ($PathType -eq "Directory") {
+        Test-Path -LiteralPath $resolvedPath -PathType Container
+    }
+    else {
+        Test-Path -LiteralPath $resolvedPath
+    }
+
+    if (-not $exists) {
+        throw "Supply-chain release support manifest path '$DeclaredPath' in $Context was not found at '$resolvedPath'."
+    }
+
+    return [pscustomobject]([ordered]@{
+        Reference  = Get-RepoRelativePath -Path $resolvedPath -RepoRoot $ResolvedRepoRoot
+        DeclaredAs = $DeclaredPath
+        Kind       = Get-SourceReferenceKind -Reference $DeclaredPath
+    })
+}
+
+function ConvertTo-RequiredSupplyChainBoolean {
+    param(
+        $Value,
+        [Parameter(Mandatory = $true)]
+        [string]$Name
+    )
+
+    if ($Value -is [bool]) {
+        return $Value
+    }
+
+    $parsed = $false
+    if ([bool]::TryParse([string]$Value, [ref]$parsed)) {
+        return $parsed
+    }
+
+    throw "Supply-chain release evidence '$Name' must be a boolean value."
+}
+
 function Convert-AdoptionSmokeEvidence {
     param(
         [Parameter(Mandatory = $true)]
@@ -967,6 +1024,154 @@ function Convert-SrePostureEvidence {
     })
 }
 
+function Convert-SupplyChainEvidence {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedManifestPath,
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedRepoRoot
+    )
+
+    if (-not (Test-Path -LiteralPath $ResolvedManifestPath -PathType Leaf)) {
+        throw "Supply-chain release support manifest '$ResolvedManifestPath' was not found."
+    }
+
+    $manifest = Get-Content -LiteralPath $ResolvedManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
+    $schemaVersion = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName '$schemaVersion' -DefaultValue "")
+    if ([string]::IsNullOrWhiteSpace($schemaVersion)) {
+        throw "Supply-chain release support manifest is missing '`$schemaVersion'."
+    }
+
+    $status = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "status" -DefaultValue "")
+    if ([string]::IsNullOrWhiteSpace($status)) {
+        throw "Supply-chain release support manifest is missing status."
+    }
+
+    $releaseWorkflowPath = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "releaseWorkflow" -DefaultValue "")
+    $releaseWorkflowReference = Resolve-SupplyChainManifestPath -DeclaredPath $releaseWorkflowPath -ResolvedRepoRoot $ResolvedRepoRoot -Context "releaseWorkflow" -PathType "File"
+    $releaseWorkflow = Get-Content -LiteralPath (Resolve-FullPath -Path $releaseWorkflowPath -BasePath $ResolvedRepoRoot) -Raw -Encoding UTF8
+
+    $sourceDocumentReferences = @(
+        Get-ManifestPropertyValue -Object $manifest -PropertyName "sourceDocs" -DefaultValue @() |
+            ForEach-Object {
+                Resolve-SupplyChainManifestPath -DeclaredPath ([string]$_) -ResolvedRepoRoot $ResolvedRepoRoot -Context "sourceDocs" -PathType "File"
+            }
+    )
+    if ($sourceDocumentReferences.Count -eq 0) {
+        throw "Supply-chain release support manifest must declare at least one sourceDocs entry."
+    }
+
+    $validationScriptReferences = @(
+        Get-ManifestPropertyValue -Object $manifest -PropertyName "validationScripts" -DefaultValue @() |
+            ForEach-Object {
+                Resolve-SupplyChainManifestPath -DeclaredPath ([string]$_) -ResolvedRepoRoot $ResolvedRepoRoot -Context "validationScripts" -PathType "File"
+            }
+    )
+    if ($validationScriptReferences.Count -eq 0) {
+        throw "Supply-chain release support manifest must declare at least one validationScripts entry."
+    }
+
+    $requiredWorkflowTokens = @(
+        Get-ManifestPropertyValue -Object $manifest -PropertyName "requiredWorkflowTokens" -DefaultValue @() |
+            ForEach-Object { [string]$_ } |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    )
+    foreach ($token in $requiredWorkflowTokens) {
+        if (-not $releaseWorkflow.Contains($token, [System.StringComparison]::OrdinalIgnoreCase)) {
+            throw "Supply-chain release workflow '$releaseWorkflowPath' does not contain required token '$token'."
+        }
+    }
+
+    $allowedEvidenceStatuses = @("workflow-ready", "external-policy-pending", "blocked")
+    $evidenceItems = @(
+        Get-ManifestPropertyValue -Object $manifest -PropertyName "evidenceItems" -DefaultValue @() |
+            ForEach-Object {
+                $id = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "id" -DefaultValue "")
+                $category = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "category" -DefaultValue "")
+                $itemStatus = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "status" -DefaultValue "")
+                $summary = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "summary" -DefaultValue "")
+                $sourceDocumentPath = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "sourceDocument" -DefaultValue "")
+                $sourceToken = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "sourceToken" -DefaultValue "")
+
+                foreach ($field in @(
+                    @{ Name = "id"; Value = $id },
+                    @{ Name = "category"; Value = $category },
+                    @{ Name = "status"; Value = $itemStatus },
+                    @{ Name = "summary"; Value = $summary },
+                    @{ Name = "sourceDocument"; Value = $sourceDocumentPath },
+                    @{ Name = "sourceToken"; Value = $sourceToken }
+                )) {
+                    if ([string]::IsNullOrWhiteSpace([string]$field.Value)) {
+                        throw "Supply-chain release evidence item must include $($field.Name)."
+                    }
+                }
+
+                if ($allowedEvidenceStatuses -notcontains $itemStatus) {
+                    throw "Unsupported supply-chain release evidence status '$itemStatus' for item '$id'."
+                }
+
+                $sourceDocumentReference = Resolve-SupplyChainManifestPath -DeclaredPath $sourceDocumentPath -ResolvedRepoRoot $ResolvedRepoRoot -Context "evidence item '$id' sourceDocument" -PathType "File"
+                $sourceDocument = Get-Content -LiteralPath (Resolve-FullPath -Path $sourceDocumentPath -BasePath $ResolvedRepoRoot) -Raw -Encoding UTF8
+                if (-not $sourceDocument.Contains($sourceToken, [System.StringComparison]::OrdinalIgnoreCase)) {
+                    throw "Supply-chain source document '$($sourceDocumentReference.Reference)' does not contain token '$sourceToken' for evidence item '$id'."
+                }
+
+                $workflowTokens = @(
+                    Get-ManifestPropertyValue -Object $_ -PropertyName "workflowTokens" -DefaultValue @() |
+                        ForEach-Object { [string]$_ } |
+                        Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+                )
+                foreach ($workflowToken in $workflowTokens) {
+                    if (-not $releaseWorkflow.Contains($workflowToken, [System.StringComparison]::OrdinalIgnoreCase)) {
+                        throw "Supply-chain release workflow '$releaseWorkflowPath' does not contain workflow token '$workflowToken' for evidence item '$id'."
+                    }
+                }
+
+                $externalPolicyRequired = ConvertTo-RequiredSupplyChainBoolean -Value (Get-ManifestPropertyValue -Object $_ -PropertyName "externalPolicyRequired" -DefaultValue $false) -Name "$id.externalPolicyRequired"
+
+                [pscustomobject]([ordered]@{
+                    Id                     = $id
+                    Category               = $category
+                    Status                 = $itemStatus
+                    Summary                = $summary
+                    SourceDocument         = $sourceDocumentReference.Reference
+                    SourceToken            = $sourceToken
+                    WorkflowTokens         = $workflowTokens
+                    ExternalPolicyRequired = $externalPolicyRequired
+                })
+            }
+    )
+
+    if ($evidenceItems.Count -eq 0) {
+        throw "Supply-chain release support manifest must declare at least one evidence item."
+    }
+
+    $workflowReadyCount = @($evidenceItems | Where-Object { $_.Status -eq "workflow-ready" }).Count
+    $externalPolicyPendingCount = @($evidenceItems | Where-Object { $_.Status -eq "external-policy-pending" }).Count
+    $blockedCount = @($evidenceItems | Where-Object { $_.Status -eq "blocked" }).Count
+
+    return [pscustomobject]([ordered]@{
+        Manifest                   = Get-RepoRelativePath -Path $ResolvedManifestPath -RepoRoot $ResolvedRepoRoot
+        ManifestSchemaVersion      = $schemaVersion
+        Status                     = $status
+        Summary                    = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "summary" -DefaultValue "")
+        ReleaseWorkflow            = $releaseWorkflowReference.Reference
+        SourceDocuments            = @($sourceDocumentReferences | ForEach-Object { $_.Reference })
+        ValidationScripts          = @($validationScriptReferences | ForEach-Object { $_.Reference })
+        RequiredWorkflowTokens     = $requiredWorkflowTokens
+        EvidenceItemCount          = $evidenceItems.Count
+        WorkflowReadyCount         = $workflowReadyCount
+        ExternalPolicyPendingCount = $externalPolicyPendingCount
+        BlockedCount               = $blockedCount
+        EvidenceItems              = $evidenceItems
+        ValidatedReferences        = @(
+            $releaseWorkflowReference
+            $sourceDocumentReferences
+            $validationScriptReferences
+        ) | Sort-Object Reference -Unique
+    })
+}
+
 function Convert-PublicApiCompatibilityEvidence {
     param(
         [Parameter(Mandatory = $true)]
@@ -1095,6 +1300,8 @@ function New-EngineCompletionScorecardReport {
         [Parameter(Mandatory = $true)]
         [string]$ResolvedSrePostureManifestPath,
         [Parameter(Mandatory = $true)]
+        [string]$ResolvedSupplyChainManifestPath,
+        [Parameter(Mandatory = $true)]
         [string]$ResolvedPublicApiDeltaScriptPath,
         [Parameter(Mandatory = $true)]
         [string]$ResolvedRepoRoot
@@ -1115,6 +1322,7 @@ function New-EngineCompletionScorecardReport {
     $packageGAReadinessRows = Convert-ConformancePackageRows -ResolvedConformanceMatrixPath $ResolvedConformanceMatrixPath -ResolvedRepoRoot $ResolvedRepoRoot
     $adoptionSmokeEvidence = Convert-AdoptionSmokeEvidence -ResolvedManifestPath $ResolvedAdoptionSmokeManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
     $srePostureEvidence = Convert-SrePostureEvidence -ResolvedManifestPath $ResolvedSrePostureManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
+    $supplyChainEvidence = Convert-SupplyChainEvidence -ResolvedManifestPath $ResolvedSupplyChainManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
     $publicApiCompatibilityEvidence = Convert-PublicApiCompatibilityEvidence -ResolvedPublicApiDeltaScriptPath $ResolvedPublicApiDeltaScriptPath -ResolvedRepoRoot $ResolvedRepoRoot
     $promotionRules = @(Get-ScorecardListItems -Lines $lines -Heading "Promotion rules" | ForEach-Object { Remove-MarkdownInlineFormatting -Value $_ })
     $refreshCadence = @(Get-ScorecardListItems -Lines $lines -Heading "Refresh cadence" | ForEach-Object { Remove-MarkdownInlineFormatting -Value $_ })
@@ -1143,6 +1351,7 @@ function New-EngineCompletionScorecardReport {
         ConformanceMatrix  = Get-RepoRelativePath -Path $ResolvedConformanceMatrixPath -RepoRoot $ResolvedRepoRoot
         AdoptionSmokeManifest = Get-RepoRelativePath -Path $ResolvedAdoptionSmokeManifestPath -RepoRoot $ResolvedRepoRoot
         SrePostureManifest = Get-RepoRelativePath -Path $ResolvedSrePostureManifestPath -RepoRoot $ResolvedRepoRoot
+        SupplyChainManifest = Get-RepoRelativePath -Path $ResolvedSupplyChainManifestPath -RepoRoot $ResolvedRepoRoot
         PublicApiDeltaScript = Get-RepoRelativePath -Path $ResolvedPublicApiDeltaScriptPath -RepoRoot $ResolvedRepoRoot
         StatusVocabulary   = $statusVocabulary
         EvidenceSources    = $evidenceSources
@@ -1153,6 +1362,7 @@ function New-EngineCompletionScorecardReport {
         PackageGAReadiness = $packageGAReadinessRows
         AdoptionSmokeEvidence = $adoptionSmokeEvidence
         SrePostureEvidence = $srePostureEvidence
+        SupplyChainEvidence = $supplyChainEvidence
         PublicApiCompatibilityEvidence = $publicApiCompatibilityEvidence
         PromotionRules     = $promotionRules
         RefreshCadence     = $refreshCadence
@@ -1168,6 +1378,10 @@ function New-EngineCompletionScorecardReport {
             SreTargetDeclaredCount = $srePostureEvidence.TargetDeclaredCount
             SrePendingStableBaselineCount = $srePostureEvidence.PendingStableBaselineCount
             SreStableBaselineCount = $srePostureEvidence.StableBaselineCount
+            SupplyChainEvidenceItemCount = $supplyChainEvidence.EvidenceItemCount
+            SupplyChainWorkflowReadyCount = $supplyChainEvidence.WorkflowReadyCount
+            SupplyChainExternalPolicyPendingCount = $supplyChainEvidence.ExternalPolicyPendingCount
+            SupplyChainBlockedCount = $supplyChainEvidence.BlockedCount
             PublicApiPackageCount = $publicApiCompatibilityEvidence.PackageCount
             PublicApiPendingPackageCount = $publicApiCompatibilityEvidence.PendingPackageCount
             PublicApiAdditiveEntryCount = $publicApiCompatibilityEvidence.AdditiveEntryCount
@@ -1210,6 +1424,7 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("Conformance matrix: ``$($Report.ConformanceMatrix)``")
     $markdown.Add("Adoption smoke manifest: ``$($Report.AdoptionSmokeManifest)``")
     $markdown.Add("SRE posture manifest: ``$($Report.SrePostureManifest)``")
+    $markdown.Add("Supply-chain release manifest: ``$($Report.SupplyChainManifest)``")
     $markdown.Add("Public API delta script: ``$($Report.PublicApiDeltaScript)``")
     $markdown.Add("Generated at UTC: ``$($Report.GeneratedAtUtc)``")
     $markdown.Add("Schema version: ``$($Report.'$schemaVersion')``")
@@ -1226,6 +1441,10 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- SRE target-declared SLIs: $($Report.Summary.SreTargetDeclaredCount)")
     $markdown.Add("- SRE pending stable baselines: $($Report.Summary.SrePendingStableBaselineCount)")
     $markdown.Add("- SRE stable baselines: $($Report.Summary.SreStableBaselineCount)")
+    $markdown.Add("- Supply-chain evidence items: $($Report.Summary.SupplyChainEvidenceItemCount)")
+    $markdown.Add("- Supply-chain workflow-ready items: $($Report.Summary.SupplyChainWorkflowReadyCount)")
+    $markdown.Add("- Supply-chain external-policy-pending items: $($Report.Summary.SupplyChainExternalPolicyPendingCount)")
+    $markdown.Add("- Supply-chain blocked items: $($Report.Summary.SupplyChainBlockedCount)")
     $markdown.Add("- Public API packages: $($Report.Summary.PublicApiPackageCount)")
     $markdown.Add("- Public API packages with pending changes: $($Report.Summary.PublicApiPendingPackageCount)")
     $markdown.Add("- Public API additive entries: $($Report.Summary.PublicApiAdditiveEntryCount)")
@@ -1268,6 +1487,23 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("| --- | --- | --- | --- |")
     foreach ($sli in $Report.SrePostureEvidence.SliRows) {
         $markdown.Add("| ``$($sli.Id)`` | $($sli.Category) | $($sli.TargetStatus) | $($sli.BaselineStatus) |")
+    }
+
+    $markdown.Add("")
+    $markdown.Add("## Supply-Chain Release Evidence")
+    $markdown.Add("")
+    $markdown.Add("- Manifest: ``$($Report.SupplyChainEvidence.Manifest)``")
+    $markdown.Add("- Status: $($Report.SupplyChainEvidence.Status)")
+    $markdown.Add("- Release workflow: ``$($Report.SupplyChainEvidence.ReleaseWorkflow)``")
+    $markdown.Add("- Evidence items: $($Report.SupplyChainEvidence.EvidenceItemCount)")
+    $markdown.Add("- Workflow-ready items: $($Report.SupplyChainEvidence.WorkflowReadyCount)")
+    $markdown.Add("- External-policy-pending items: $($Report.SupplyChainEvidence.ExternalPolicyPendingCount)")
+    $markdown.Add("- Blocked items: $($Report.SupplyChainEvidence.BlockedCount)")
+    $markdown.Add("")
+    $markdown.Add("| Evidence item | Category | Status | Source document |")
+    $markdown.Add("| --- | --- | --- | --- |")
+    foreach ($item in $Report.SupplyChainEvidence.EvidenceItems) {
+        $markdown.Add("| ``$($item.Id)`` | $($item.Category) | $($item.Status) | ``$($item.SourceDocument)`` |")
     }
 
     $markdown.Add("")
@@ -1336,6 +1572,7 @@ function Invoke-EngineCompletionScorecardPublish {
         [string]$ConformanceMatrixPath,
         [string]$AdoptionSmokeManifestPath = "scripts/adoption-smoke-support.json",
         [string]$SrePostureManifestPath = "scripts/sre-posture-support.json",
+        [string]$SupplyChainManifestPath = "scripts/supply-chain-release-support.json",
         [string]$PublicApiDeltaScriptPath = "scripts/summarise-public-api-deltas.ps1",
         [Parameter(Mandatory = $true)]
         [string]$OutputPath,
@@ -1348,10 +1585,11 @@ function Invoke-EngineCompletionScorecardPublish {
     $resolvedConformanceMatrixPath = Resolve-FullPath -Path $ConformanceMatrixPath -BasePath $resolvedRepoRoot
     $resolvedAdoptionSmokeManifestPath = Resolve-FullPath -Path $AdoptionSmokeManifestPath -BasePath $resolvedRepoRoot
     $resolvedSrePostureManifestPath = Resolve-FullPath -Path $SrePostureManifestPath -BasePath $resolvedRepoRoot
+    $resolvedSupplyChainManifestPath = Resolve-FullPath -Path $SupplyChainManifestPath -BasePath $resolvedRepoRoot
     $resolvedPublicApiDeltaScriptPath = Resolve-FullPath -Path $PublicApiDeltaScriptPath -BasePath $resolvedRepoRoot
     $resolvedOutputPath = Resolve-FullPath -Path $OutputPath -BasePath $resolvedRepoRoot
 
-    $report = New-EngineCompletionScorecardReport -ResolvedScorecardPath $resolvedScorecardPath -ResolvedConformanceMatrixPath $resolvedConformanceMatrixPath -ResolvedAdoptionSmokeManifestPath $resolvedAdoptionSmokeManifestPath -ResolvedSrePostureManifestPath $resolvedSrePostureManifestPath -ResolvedPublicApiDeltaScriptPath $resolvedPublicApiDeltaScriptPath -ResolvedRepoRoot $resolvedRepoRoot
+    $report = New-EngineCompletionScorecardReport -ResolvedScorecardPath $resolvedScorecardPath -ResolvedConformanceMatrixPath $resolvedConformanceMatrixPath -ResolvedAdoptionSmokeManifestPath $resolvedAdoptionSmokeManifestPath -ResolvedSrePostureManifestPath $resolvedSrePostureManifestPath -ResolvedSupplyChainManifestPath $resolvedSupplyChainManifestPath -ResolvedPublicApiDeltaScriptPath $resolvedPublicApiDeltaScriptPath -ResolvedRepoRoot $resolvedRepoRoot
     $paths = Write-EngineCompletionScorecardReport -Report $report -ResolvedOutputPath $resolvedOutputPath
 
     Write-Host "Engine completion scorecard artifact written to $($paths.JsonPath)"
@@ -1370,5 +1608,5 @@ if (-not $env:CEPHALON_ENGINE_COMPLETION_SCORECARD_NO_RUN) {
         $resolvedRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
     }
 
-    $null = Invoke-EngineCompletionScorecardPublish -ScorecardPath $ScorecardPath -ConformanceMatrixPath $ConformanceMatrixPath -AdoptionSmokeManifestPath $AdoptionSmokeManifestPath -SrePostureManifestPath $SrePostureManifestPath -PublicApiDeltaScriptPath $PublicApiDeltaScriptPath -OutputPath $OutputPath -RepoRoot $resolvedRoot
+    $null = Invoke-EngineCompletionScorecardPublish -ScorecardPath $ScorecardPath -ConformanceMatrixPath $ConformanceMatrixPath -AdoptionSmokeManifestPath $AdoptionSmokeManifestPath -SrePostureManifestPath $SrePostureManifestPath -SupplyChainManifestPath $SupplyChainManifestPath -PublicApiDeltaScriptPath $PublicApiDeltaScriptPath -OutputPath $OutputPath -RepoRoot $resolvedRoot
 }

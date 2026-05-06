@@ -1,0 +1,166 @@
+{
+  "$schemaVersion": "1.0.0",
+  "status": "workflow-ready-external-policy-pending",
+  "summary": "Tag-triggered package release provenance is wired in GitHub Actions, while nuget.org-side trusted-publishing policy, prefix reservation, and the publishing account secret remain external release-manager prerequisites before the first real tag push.",
+  "releaseWorkflow": ".github/workflows/publish-release.yml",
+  "sourceDocs": [
+    "docs/package-publishing.md",
+    "docs/supply-chain-uplift-plan.md",
+    "docs/engineering-standards.md",
+    "docs/release-checklist.md",
+    "docs/release-checklist-template.md",
+    "docs/engine-completion-scorecard.md"
+  ],
+  "validationScripts": [
+    "scripts/validate-release.ps1",
+    "scripts/publish-package-artifacts.ps1"
+  ],
+  "requiredWorkflowTokens": [
+    "workflow_dispatch",
+    "v*.*.*",
+    "id-token: write",
+    "actions/attest-build-provenance",
+    "CycloneDX",
+    "sigstore/cosign-installer",
+    "cosign sign-blob",
+    "Rekor",
+    "NuGet/login",
+    "dotnet nuget push",
+    "NUGET_USER",
+    "artifacts/release-bundle",
+    "release-manifest.json"
+  ],
+  "evidenceItems": [
+    {
+      "id": "locked-restore-release-validation",
+      "category": "deterministic-build-inputs",
+      "status": "workflow-ready",
+      "summary": "Release validation starts from locked-mode restore before package publishing.",
+      "sourceDocument": "docs/supply-chain-uplift-plan.md",
+      "sourceToken": "NuGet lock files",
+      "workflowTokens": [
+        "Run release validation",
+        "validate-release.ps1"
+      ],
+      "externalPolicyRequired": false
+    },
+    {
+      "id": "package-artifact-manifest-checksums",
+      "category": "package-provenance",
+      "status": "workflow-ready",
+      "summary": "Package artifacts carry SHA-256 checksum metadata before the signed release workflow wraps them.",
+      "sourceDocument": "docs/package-publishing.md",
+      "sourceToken": "package-artifacts-manifest.json",
+      "workflowTokens": [
+        "artifacts/packages-release",
+        "release-manifest.json"
+      ],
+      "externalPolicyRequired": false
+    },
+    {
+      "id": "cyclonedx-sbom-per-package",
+      "category": "sbom",
+      "status": "workflow-ready",
+      "summary": "The release workflow generates CycloneDX SBOM output per package project.",
+      "sourceDocument": "docs/package-publishing.md",
+      "sourceToken": "CycloneDX SBOM",
+      "workflowTokens": [
+        "Install CycloneDX dotnet tool",
+        "dotnet CycloneDX",
+        "artifacts/sboms-release"
+      ],
+      "externalPolicyRequired": false
+    },
+    {
+      "id": "sigstore-cosign-keyless-signatures",
+      "category": "signing",
+      "status": "workflow-ready",
+      "summary": "Every nupkg is signed through Sigstore Cosign keyless signing with the workflow OIDC identity.",
+      "sourceDocument": "docs/package-publishing.md",
+      "sourceToken": "Sigstore Cosign keyless signing",
+      "workflowTokens": [
+        "sigstore/cosign-installer",
+        "cosign sign-blob",
+        "artifacts/signatures-release"
+      ],
+      "externalPolicyRequired": false
+    },
+    {
+      "id": "slsa-build-provenance",
+      "category": "provenance",
+      "status": "workflow-ready",
+      "summary": "SLSA v1.1 build provenance is emitted for package subjects.",
+      "sourceDocument": "docs/package-publishing.md",
+      "sourceToken": "SLSA v1.1 build provenance",
+      "workflowTokens": [
+        "actions/attest-build-provenance",
+        "subject-path"
+      ],
+      "externalPolicyRequired": false
+    },
+    {
+      "id": "rekor-transparency-log",
+      "category": "transparency-log",
+      "status": "workflow-ready",
+      "summary": "The signature posture includes Rekor transparency-log evidence through the keyless signing lane.",
+      "sourceDocument": "docs/package-publishing.md",
+      "sourceToken": "transparency log is Rekor",
+      "workflowTokens": [
+        "Rekor",
+        "COSIGN_EXPERIMENTAL"
+      ],
+      "externalPolicyRequired": false
+    },
+    {
+      "id": "release-bundle-manifest",
+      "category": "release-bundle",
+      "status": "workflow-ready",
+      "summary": "The release bundle records package, SBOM, and signature artifact checksums.",
+      "sourceDocument": "docs/package-publishing.md",
+      "sourceToken": "release-manifest.json",
+      "workflowTokens": [
+        "Compute checksums for release artefact bundle",
+        "release-bundle",
+        "release-manifest.json"
+      ],
+      "externalPolicyRequired": false
+    },
+    {
+      "id": "nuget-trusted-publishing-policy",
+      "category": "publisher-identity",
+      "status": "external-policy-pending",
+      "summary": "The workflow is ready for NuGet trusted publishing, but the nuget.org-side trusted-publishing policy must be configured before a real tag push.",
+      "sourceDocument": "docs/package-publishing.md",
+      "sourceToken": "NuGet trusted-publishing login",
+      "workflowTokens": [
+        "NuGet/login",
+        "id-token: write"
+      ],
+      "externalPolicyRequired": true
+    },
+    {
+      "id": "nuget-prefix-reservation",
+      "category": "package-discoverability",
+      "status": "external-policy-pending",
+      "summary": "The package family is documented for Cephalon.* prefix protection, but nuget.org reservation remains a release-manager action before stable GA.",
+      "sourceDocument": "docs/package-publishing.md",
+      "sourceToken": "prefix on nuget.org",
+      "workflowTokens": [
+        "Cephalon.* prefix"
+      ],
+      "externalPolicyRequired": true
+    },
+    {
+      "id": "nuget-user-secret",
+      "category": "publisher-identity",
+      "status": "external-policy-pending",
+      "summary": "The workflow expects the repository NUGET_USER secret so NuGet trusted-publishing login can resolve the publishing account.",
+      "sourceDocument": "docs/package-publishing.md",
+      "sourceToken": "NUGET_USER",
+      "workflowTokens": [
+        "NUGET_USER"
+      ],
+      "externalPolicyRequired": true
+    }
+  ]
+}

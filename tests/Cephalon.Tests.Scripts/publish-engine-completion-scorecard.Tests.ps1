@@ -48,15 +48,16 @@ Describe "publish-engine-completion-scorecard.ps1" {
 
         $json = Get-Content -LiteralPath $result.Paths.JsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
 
-        $json.'$schemaVersion' | Should -Be "1.4.0"
+        $json.'$schemaVersion' | Should -Be "1.5.0"
         $json.SourceDocument | Should -Be "docs/engine-completion-scorecard.md"
         $json.ConformanceMatrix | Should -Be "docs/conformance-matrix.md"
         $json.AdoptionSmokeManifest | Should -Be "scripts/adoption-smoke-support.json"
         $json.SrePostureManifest | Should -Be "scripts/sre-posture-support.json"
+        $json.SupplyChainManifest | Should -Be "scripts/supply-chain-release-support.json"
         $json.PublicApiDeltaScript | Should -Be "scripts/summarise-public-api-deltas.ps1"
         $json.StatusVocabulary.Count | Should -Be 6
         $json.EvidenceSources.Count | Should -Be 12
-        $json.EvidenceSourceReferences.Count | Should -Be 17
+        $json.EvidenceSourceReferences.Count | Should -Be 19
         $json.PlatformGates.Count | Should -Be 12
         $json.QualityDimensions.Count | Should -Be 12
         $json.PackageFamilies.Count | Should -Be 9
@@ -72,12 +73,16 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.SreTargetDeclaredCount | Should -Be 11
         $json.Summary.SrePendingStableBaselineCount | Should -Be 11
         $json.Summary.SreStableBaselineCount | Should -Be 0
+        $json.Summary.SupplyChainEvidenceItemCount | Should -Be 10
+        $json.Summary.SupplyChainWorkflowReadyCount | Should -Be 7
+        $json.Summary.SupplyChainExternalPolicyPendingCount | Should -Be 3
+        $json.Summary.SupplyChainBlockedCount | Should -Be 0
         $json.Summary.PublicApiPackageCount | Should -Be 104
         $json.Summary.PublicApiPendingPackageCount | Should -Be 21
         $json.Summary.PublicApiAdditiveEntryCount | Should -Be 288
         $json.Summary.PublicApiRemovalEntryCount | Should -Be 0
         $json.Summary.EvidenceSourceCount | Should -Be 12
-        $json.Summary.EvidenceSourceReferenceCount | Should -Be 17
+        $json.Summary.EvidenceSourceReferenceCount | Should -Be 19
         $json.Summary.PlatformStatusCounts.'ready-for-preview' | Should -Be 3
         $json.Summary.PlatformStatusCounts.partial | Should -Be 7
         $json.Summary.PlatformStatusCounts.'not-claimed' | Should -Be 1
@@ -92,6 +97,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/deployment-mode-support.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/adoption-smoke-support.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/sre-posture-support.json"
+        $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/supply-chain-release-support.json"
+        $json.EvidenceSourceReferences.Reference | Should -Contain ".github/workflows/publish-release.yml"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/validate-out-of-tree-package-adoption.ps1"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/summarise-public-api-deltas.ps1"
 
@@ -121,6 +128,22 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.SrePostureEvidence.ValidationScripts | Should -Contain "scripts/validate-release.ps1"
         $json.SrePostureEvidence.SliRows.Id | Should -Contain "engine.behavior.dispatch.latency.p95"
         $json.SrePostureEvidence.SliRows.BaselineStatus | Select-Object -Unique | Should -Be "pending-stable-baseline"
+
+        $json.SupplyChainEvidence.ManifestSchemaVersion | Should -Be "1.0.0"
+        $json.SupplyChainEvidence.Status | Should -Be "workflow-ready-external-policy-pending"
+        $json.SupplyChainEvidence.ReleaseWorkflow | Should -Be ".github/workflows/publish-release.yml"
+        $json.SupplyChainEvidence.SourceDocuments | Should -Contain "docs/package-publishing.md"
+        $json.SupplyChainEvidence.SourceDocuments | Should -Contain "docs/supply-chain-uplift-plan.md"
+        $json.SupplyChainEvidence.ValidationScripts | Should -Contain "scripts/validate-release.ps1"
+        $json.SupplyChainEvidence.RequiredWorkflowTokens | Should -Contain "actions/attest-build-provenance"
+        $json.SupplyChainEvidence.RequiredWorkflowTokens | Should -Contain "NuGet/login"
+        $json.SupplyChainEvidence.EvidenceItemCount | Should -Be 10
+        $json.SupplyChainEvidence.WorkflowReadyCount | Should -Be 7
+        $json.SupplyChainEvidence.ExternalPolicyPendingCount | Should -Be 3
+        $json.SupplyChainEvidence.BlockedCount | Should -Be 0
+        $json.SupplyChainEvidence.EvidenceItems.Id | Should -Contain "cyclonedx-sbom-per-package"
+        $json.SupplyChainEvidence.EvidenceItems.Id | Should -Contain "nuget-trusted-publishing-policy"
+        $json.SupplyChainEvidence.EvidenceItems.Status | Should -Contain "external-policy-pending"
 
         $json.PublicApiCompatibilityEvidence.DeltaScript | Should -Be "scripts/summarise-public-api-deltas.ps1"
         $json.PublicApiCompatibilityEvidence.PackageCount | Should -Be 104
@@ -156,6 +179,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "SRE Posture Evidence"
         $markdown | Should -Match "SRE SLIs: 11"
         $markdown | Should -Match "SRE pending stable baselines: 11"
+        $markdown | Should -Match "Supply-Chain Release Evidence"
+        $markdown | Should -Match "Supply-chain evidence items: 10"
+        $markdown | Should -Match "external-policy-pending"
         $markdown | Should -Match "Public API Compatibility Evidence"
         $markdown | Should -Match "Public API packages with pending changes: 21"
         $markdown | Should -Match "Cephalon.Abstractions"
@@ -316,6 +342,67 @@ Start-Process
         } | Should -Throw "*does not contain SLI 'engine.fixture.missing'*"
     }
 
+    It "fails when supply-chain release evidence drifts away from the release workflow" {
+        $fixtureRoot = Join-Path $script:tempRoot "supply-chain-fixture"
+        $scriptsRoot = Join-Path $fixtureRoot "scripts"
+        $docsRoot = Join-Path $fixtureRoot "docs"
+        $workflowRoot = Join-Path $fixtureRoot ".github\workflows"
+        New-Item -ItemType Directory -Path $scriptsRoot -Force | Out-Null
+        New-Item -ItemType Directory -Path $docsRoot -Force | Out-Null
+        New-Item -ItemType Directory -Path $workflowRoot -Force | Out-Null
+
+        Set-Content -LiteralPath (Join-Path $workflowRoot "publish-release.yml") -Value @'
+name: Publish Release
+permissions:
+  id-token: write
+jobs:
+  build-sign-attest:
+    steps:
+      - name: Generate SLSA
+        uses: actions/attest-build-provenance@v2
+'@ -Encoding UTF8
+
+        Set-Content -LiteralPath (Join-Path $docsRoot "package-publishing.md") -Value "# Package publishing fixture`nCycloneDX SBOM`nNuGet trusted-publishing login" -Encoding UTF8
+        Set-Content -LiteralPath (Join-Path $docsRoot "supply-chain-uplift-plan.md") -Value "# Supply-chain fixture`nNuGet lock files" -Encoding UTF8
+        Set-Content -LiteralPath (Join-Path $scriptsRoot "validate-release.ps1") -Value "# release validation fixture" -Encoding UTF8
+        Set-Content -LiteralPath (Join-Path $scriptsRoot "publish-package-artifacts.ps1") -Value "# package publishing fixture" -Encoding UTF8
+
+        $manifestPath = Join-Path $scriptsRoot "supply-chain-release-support.json"
+        @{
+            '$schemaVersion' = "1.0.0"
+            status = "workflow-ready"
+            summary = "fixture"
+            releaseWorkflow = ".github/workflows/publish-release.yml"
+            sourceDocs = @(
+                "docs/package-publishing.md",
+                "docs/supply-chain-uplift-plan.md"
+            )
+            validationScripts = @(
+                "scripts/validate-release.ps1",
+                "scripts/publish-package-artifacts.ps1"
+            )
+            requiredWorkflowTokens = @("CycloneDX")
+            evidenceItems = @(
+                @{
+                    id = "fixture-sbom"
+                    category = "sbom"
+                    status = "workflow-ready"
+                    summary = "fixture"
+                    sourceDocument = "docs/package-publishing.md"
+                    sourceToken = "CycloneDX SBOM"
+                    workflowTokens = @("CycloneDX")
+                    externalPolicyRequired = $false
+                }
+            )
+        } | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $manifestPath -Encoding UTF8
+
+        {
+            Convert-SupplyChainEvidence `
+                -ResolvedManifestPath $manifestPath `
+                -ResolvedRepoRoot $fixtureRoot
+        } | Should -Throw "*does not contain required token 'CycloneDX'*"
+    }
+
     It "fails when the status vocabulary contains an unsupported status" {
         $fixtureRoot = Join-Path $script:tempRoot "fixture"
         $docsRoot = Join-Path $fixtureRoot "docs"
@@ -341,11 +428,15 @@ Start-Process
         $fixtureRoot = Join-Path $script:tempRoot "fixture"
         $docsRoot = Join-Path $fixtureRoot "docs"
         $scriptsRoot = Join-Path $fixtureRoot "scripts"
+        $workflowRoot = Join-Path $fixtureRoot ".github\workflows"
         New-Item -ItemType Directory -Path $docsRoot -Force | Out-Null
         New-Item -ItemType Directory -Path $scriptsRoot -Force | Out-Null
+        New-Item -ItemType Directory -Path $workflowRoot -Force | Out-Null
 
         Copy-Item -LiteralPath (Join-Path $script:repoRoot "docs\conformance-matrix.md") -Destination (Join-Path $docsRoot "conformance-matrix.md")
         Copy-Item -LiteralPath (Join-Path $script:repoRoot "scripts\deployment-mode-support.json") -Destination (Join-Path $scriptsRoot "deployment-mode-support.json")
+        Copy-Item -LiteralPath (Join-Path $script:repoRoot "scripts\supply-chain-release-support.json") -Destination (Join-Path $scriptsRoot "supply-chain-release-support.json")
+        Copy-Item -LiteralPath (Join-Path $script:repoRoot ".github\workflows\publish-release.yml") -Destination (Join-Path $workflowRoot "publish-release.yml")
 
         $supportingDocs = @(
             "benchmarking.md",
@@ -388,6 +479,8 @@ Start-Process
         $releaseValidation | Should -Match "Publish engine completion scorecard artifact"
         $releaseValidation | Should -Match "Write-EngineCompletionScorecardSreSummary"
         $releaseValidation | Should -Match "SrePostureEvidence"
+        $releaseValidation | Should -Match "SupplyChainEvidence"
+        $releaseValidation | Should -Match "Supply-chain release evidence"
         $releaseValidation | Should -Match "summarise-public-api-deltas\.ps1"
         $releaseValidation | Should -Match "public-api-delta-release"
     }
