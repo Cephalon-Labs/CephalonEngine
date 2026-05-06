@@ -37,6 +37,7 @@ $testProjectPaths = @(
     [System.IO.Path]::Combine($repoRoot, "tests", "Cephalon.Tests.Tooling", "Cephalon.Tests.Tooling.csproj")
 )
 $benchmarkProjectPath = [System.IO.Path]::Combine($repoRoot, "benchmarks", "Cephalon.Benchmarks", "Cephalon.Benchmarks.csproj")
+$deploymentModeSupportManifestPath = [System.IO.Path]::Combine($repoRoot, "scripts", "deployment-mode-support.json")
 $dotNetReadinessScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-dotnet-readiness.ps1")
 $deploymentModeClaimsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-deployment-mode-claims.ps1")
 $engineCompletionScorecardScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "publish-engine-completion-scorecard.ps1")
@@ -112,6 +113,30 @@ function Invoke-PowerShellScript {
     }
 }
 
+function Get-DeploymentModeReleaseValidationSkipsPublish {
+    param([Parameter(Mandatory = $true)] [string]$ManifestPath)
+
+    if (-not (Test-Path -LiteralPath $ManifestPath)) {
+        throw "Deployment-mode support manifest not found: $ManifestPath"
+    }
+
+    $manifest = Get-Content -LiteralPath $ManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
+    if ($manifest.PSObject.Properties.Match("publishProbePolicy").Count -eq 0) {
+        return $true
+    }
+
+    $policy = $manifest.publishProbePolicy
+    if ($policy.PSObject.Properties.Match("releaseValidationSkipsPublish").Count -eq 0) {
+        return $true
+    }
+
+    if ($policy.releaseValidationSkipsPublish -is [bool]) {
+        return $policy.releaseValidationSkipsPublish
+    }
+
+    return [System.Convert]::ToBoolean([string]$policy.releaseValidationSkipsPublish, [System.Globalization.CultureInfo]::InvariantCulture)
+}
+
 Push-Location $repoRoot
 try {
     foreach ($testProjectPath in $testProjectPaths) {
@@ -167,13 +192,25 @@ try {
     }
 
     if (-not $SkipDeploymentModeClaims) {
-        Invoke-Step "Validate deployment-mode claim truthfulness (audit-only)" {
-            Invoke-PowerShellScript -Path $deploymentModeClaimsScriptPath -Arguments @(
+        $releaseValidationSkipsPublish = Get-DeploymentModeReleaseValidationSkipsPublish -ManifestPath $deploymentModeSupportManifestPath
+        $deploymentModeStepName = if ($releaseValidationSkipsPublish) {
+            "Validate deployment-mode claim truthfulness (audit-only)"
+        }
+        else {
+            "Validate deployment-mode claim truthfulness (publish-required)"
+        }
+
+        Invoke-Step $deploymentModeStepName {
+            $deploymentModeClaimArguments = @(
                 "-DeploymentMode", "all",
                 "-Configuration", "Release",
-                "-OutputPath", $deploymentModeClaimsOutputPath,
-                "-SkipPublish"
+                "-OutputPath", $deploymentModeClaimsOutputPath
             )
+            if ($releaseValidationSkipsPublish) {
+                $deploymentModeClaimArguments += "-SkipPublish"
+            }
+
+            Invoke-PowerShellScript -Path $deploymentModeClaimsScriptPath -Arguments $deploymentModeClaimArguments
         }
     }
 

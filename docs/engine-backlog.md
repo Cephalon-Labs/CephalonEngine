@@ -24,6 +24,47 @@ Current focus:
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
 - treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md) for release validation, and `cephalon doctor --scorecard <path>` provides a local CLI readback over that generated artifact without becoming source truth
 
+### ENG-480 Make publish-probe gate posture machine-checkable
+
+Status: done
+Estimate: 2
+Issue: #1081
+Iteration: Sprint 125
+
+Why:
+
+- after `ENG-479`, the deployment-mode inventory and transitive-hazard audit were machine-checkable,
+  but the release-validation publish-probe gate decision still lived mostly in prose and in
+  `validate-release.ps1` passing `-SkipPublish`
+- release managers need generated artifacts to explain whether publish probes are an audit-only
+  readback or a non-opt-out gate before any trim, Native AOT, or single-file claim can widen
+- the current POC posture should keep direct publish-probe experiments available without silently
+  treating them as support evidence
+
+Delivered:
+
+- raised `scripts/deployment-mode-support.json` to schema `1.4.0` and added
+  `publishProbePolicy`
+- taught `scripts/validate-deployment-mode-claims.ps1` to emit `PublishProbePolicy` in
+  `claim-validation-report.json` and the human-readable README
+- aligned `scripts/validate-release.ps1` to read `publishProbePolicy.releaseValidationSkipsPublish`
+  before deciding whether to pass `-SkipPublish`
+- added Pester coverage for manifest policy shape, fallback policy readback, generated report
+  output, and integration report output
+- refreshed deployment-mode support, compatibility, readiness, package-publishing, SRE,
+  release-checklist, scorecard, trim/AOT inventory, roadmap/follow-up tracker, and project memory
+
+Validation:
+
+- deployment-mode manifest Pester coverage (`39/39`)
+- deployment-mode claim-harness Pester coverage (`80/80`)
+- deployment-mode claim harness in audit mode (`not-claimed`, `PublishProbePolicy=audit-only`,
+  5 representative targets, 6 packages, 14 hazards, `knownTransitiveHazardAudit=matched`)
+- release-validation deployment-mode policy path (`Validate deployment-mode claim truthfulness
+  (audit-only)`, success)
+- dotnet-readiness validation with build/test/reference/package publishing skipped
+- engine-completion scorecard artifact publishing
+
 ### ENG-479 Make transitive deployment-mode hazard hints lock-file-audited
 
 Status: done
@@ -14096,6 +14137,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-477 Isolate MySQL SciSharp binlog transport reflection: `Cephalon.Data.MySql` no longer references `SciSharp.MySQL.Replication` or `MySql.Data`; the current SciSharp-backed `IMySqlBinlogTransport` moves into optional `Cephalon.Data.MySql.SciSharpReplication` behind `AddSciSharpMySqlBinlogReplication(...)`; and the core MySQL package now fails fast with `binlog-transport-adapter-missing` when CDC is configured without an adapter. Current manifest output reports 6 package entries, 2 packages with known hazards, 14 known hazard entries, 2 `high` entries, zero active `medium` or `low` entries, 3 `excluded-by-design` entries, and 1 scoped `singleFile` claim while global trim / Native AOT / single-file rows remain `not-claimed`. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
 - ENG-478 Make SciSharp adapter deployment posture machine-checkable: `Cephalon.Data.MySql.SciSharpReplication` now declares explicit permanent `not-claimed` project properties for trim, Native AOT, and single-file publishing; `scripts/deployment-mode-support.json` records the matching `requiredProjectProperties`; and manifest Pester coverage verifies package-level required properties against csproj truth. Hazard counts and global support rows stay unchanged at 6 package entries, 2 packages with known hazards, 14 known hazard entries, and global `not-claimed`. Quality dimensions: Compatibility + Auditability + Maintainability + Usability (shipped)
 - ENG-479 Make transitive deployment-mode hazard hints lock-file-audited: `scripts/deployment-mode-support.json` schema `1.3.0` now carries `knownTransitiveHazardAudit`, the validation harness scans current `src`, `samples`, and `benchmarks` lock files, and `hazard-inventory.json` reports a matched audit subset for 7 package-pattern entries across 116 lock files with 0 missing entries while global trim / Native AOT / single-file rows remain `not-claimed`. Quality dimensions: Compatibility + Auditability + Maintainability + Usability (shipped)
+- ENG-480 Make publish-probe gate posture machine-checkable: `scripts/deployment-mode-support.json` schema `1.4.0` now carries `publishProbePolicy`, and the validation harness emits `PublishProbePolicy` into `claim-validation-report.json` plus README output so release managers can see that release validation remains audit-only, still passes `-SkipPublish`, and is not yet a non-opt-out gate. Quality dimensions: Compatibility + Auditability + Maintainability + Reliability + Usability (shipped)
 
 ### Later / not scheduled yet
 

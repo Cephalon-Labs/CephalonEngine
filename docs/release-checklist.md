@@ -29,7 +29,7 @@ Cross-references: [`package-publishing.md`](package-publishing.md), [`supply-cha
     2. **Build** the solution with `--no-restore`
     3. **Tests** for `Cephalon.Tests.Composition` / `.Hosting` / `.Tooling` (Pester suite for `tests/Cephalon.Tests.Scripts` runs separately in CI)
     4. **`.NET 11` readiness** through `scripts/validate-dotnet-readiness.ps1`
-    5. **Deployment-mode claim** audit through `scripts/validate-deployment-mode-claims.ps1` (release validation still passes `-SkipPublish`; explicit publish-probe runs use the manifest's staged `representativePublishTargets.projects` list)
+    5. **Deployment-mode claim** audit through `scripts/validate-deployment-mode-claims.ps1` (release validation still passes `-SkipPublish` while `publishProbePolicy.releaseValidationMode` is `audit-only`; explicit publish-probe runs use the manifest's staged `representativePublishTargets.projects` list)
     6. **Engine completion scorecard artifact** through `scripts/publish-engine-completion-scorecard.ps1`, including evidence-source references and per-package GA readiness rows; optionally run `cephalon doctor --scorecard artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json` to get the local CLI summary over the generated artifact
     7. **Operational health and export conventions**
     8. **Phase-8 architecture, runtime, and starter conventions**
@@ -51,7 +51,7 @@ Cross-references: [`package-publishing.md`](package-publishing.md), [`supply-cha
 ## Deployment-mode claim truthfulness
 
 - [ ] [`scripts/deployment-mode-support.json`](../scripts/deployment-mode-support.json) `deploymentModes.{trim,nativeAot,singleFile}.status` accurately reflects what the engine claims; `not-claimed` until the claim is actually proven by `scripts/validate-deployment-mode-claims.ps1` returning `claim-truthful` (per the contract in [`deployment-mode-support.md`](deployment-mode-support.md))
-- [ ] The harness's publish-probe lane (activated in `ENG-331`) reports the expected verdict for the manifest-declared `representativePublishTargets.projects`; the `engine.deployment-mode-claims.truthful-fraction` SLI in [`sre-posture.md`](sre-posture.md) is in the expected state (`audit-only` until trim / AOT / single-file claim flips)
+- [ ] The harness's publish-probe lane (activated in `ENG-331`) reports the expected verdict for the manifest-declared `representativePublishTargets.projects`; `claim-validation-report.json` includes `PublishProbePolicy` matching `publishProbePolicy`, and the `engine.deployment-mode-claims.truthful-fraction` SLI in [`sre-posture.md`](sre-posture.md) is in the expected state (`audit-only` until trim / AOT / single-file claim flips)
 - [ ] [`docs/dotnet11-readiness.md`](dotnet11-readiness.md) reflects current `.NET 11` preview window observation; `.NET 10` LTS remains the shipping floor
 
 ## Signed release pipeline (tag-triggered)

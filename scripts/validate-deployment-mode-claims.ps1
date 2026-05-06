@@ -6,7 +6,7 @@
 
 .DESCRIPTION
     Audits whether the support contract recorded in scripts/deployment-mode-support.json
-    matches what the repository actually proves. The harness runs three phases:
+    matches what the repository actually proves. The harness runs six phases:
 
     1. project-property audit   — does each src/Cephalon.* csproj that the manifest claims
                                   the mode for actually set the matching MSBuild property?
@@ -15,7 +15,9 @@
                                   on the representative target set?
     4. package-scoped claims    — do deploymentModeEligibility package entries that opt into
                                   a mode carry the expected per-package project properties?
-    5. hazard inventory         — emit the manifest-backed per-package hazard and scoped-claim
+    5. publish-probe policy     — emit the manifest-backed release-validation gate posture
+                                  so audit-only runs are visible in release artifacts.
+    6. hazard inventory         — emit the manifest-backed per-package hazard and scoped-claim
                                   inventory for release managers and follow-up automation.
 
     The harness then computes a per-mode verdict and an aggregate verdict and writes both a
@@ -176,6 +178,43 @@ function Test-IsTruthyMsBuildValue {
     return ($Value.Trim() -ieq "true")
 }
 
+function ConvertTo-BooleanValue {
+    [CmdletBinding()]
+    param(
+        $Value,
+        [bool]$DefaultValue = $false
+    )
+
+    if ($null -eq $Value) {
+        return $DefaultValue
+    }
+    if ($Value -is [bool]) {
+        return $Value
+    }
+
+    $parsed = $false
+    if ([bool]::TryParse([string]$Value, [ref]$parsed)) {
+        return $parsed
+    }
+
+    return $DefaultValue
+}
+
+function Get-ObjectPropertyValue {
+    [CmdletBinding()]
+    param(
+        $Object,
+        [Parameter(Mandatory)] [string]$PropertyName,
+        $DefaultValue = $null
+    )
+
+    if ($null -ne $Object -and $Object.PSObject.Properties.Match($PropertyName).Count -gt 0) {
+        return $Object.$PropertyName
+    }
+
+    return $DefaultValue
+}
+
 function Read-DeploymentModeManifest {
     [CmdletBinding()]
     param([Parameter(Mandatory)] [string]$Path)
@@ -204,6 +243,52 @@ function Read-DeploymentModeManifest {
     }
 
     return $manifest
+}
+
+function Get-PublishProbePolicySnapshot {
+    [CmdletBinding()]
+    param(
+        $Manifest,
+        [bool]$CurrentRunSkipsPublish,
+        [int]$RepresentativePublishTargetCount = 0
+    )
+
+    $policy = $null
+    $source = "default"
+    if ($null -ne $Manifest -and $Manifest.PSObject.Properties.Match("publishProbePolicy").Count -gt 0) {
+        $policy = $Manifest.publishProbePolicy
+        $source = "manifest"
+    }
+
+    $releaseValidationMode = [string](Get-ObjectPropertyValue -Object $policy -PropertyName "releaseValidationMode" -DefaultValue "audit-only")
+    if ([string]::IsNullOrWhiteSpace($releaseValidationMode)) {
+        $releaseValidationMode = "audit-only"
+    }
+
+    $gatePromotion = [string](Get-ObjectPropertyValue -Object $policy -PropertyName "gatePromotion" -DefaultValue "requires-deliberate-release-manager-decision")
+    if ([string]::IsNullOrWhiteSpace($gatePromotion)) {
+        $gatePromotion = "requires-deliberate-release-manager-decision"
+    }
+
+    $promotionRequirements = @()
+    if ($null -ne $policy -and $policy.PSObject.Properties.Match("promotionRequirements").Count -gt 0) {
+        $promotionRequirements = @(
+            $policy.promotionRequirements |
+                ForEach-Object { [string]$_ } |
+                Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+        )
+    }
+
+    return [pscustomobject]@{
+        Source                       = $source
+        ReleaseValidationMode        = $releaseValidationMode
+        ReleaseValidationSkipsPublish = ConvertTo-BooleanValue -Value (Get-ObjectPropertyValue -Object $policy -PropertyName "releaseValidationSkipsPublish" -DefaultValue $true) -DefaultValue $true
+        CurrentRunSkipsPublish       = $CurrentRunSkipsPublish
+        NonOptOutGate                = ConvertTo-BooleanValue -Value (Get-ObjectPropertyValue -Object $policy -PropertyName "nonOptOutGate" -DefaultValue $false) -DefaultValue $false
+        GatePromotion                = $gatePromotion
+        RepresentativePublishTargets = $RepresentativePublishTargetCount
+        PromotionRequirements        = $promotionRequirements
+    }
 }
 
 function Get-DeploymentModeConfig {
@@ -1253,6 +1338,33 @@ function Write-ValidationReport {
         }
     }
     [void]$sb.AppendLine("")
+    [void]$sb.AppendLine("## Publish-probe policy")
+    [void]$sb.AppendLine("")
+    $publishProbePolicy = $null
+    if ($Report.PSObject.Properties.Match("PublishProbePolicy").Count -gt 0) {
+        $publishProbePolicy = $Report.PublishProbePolicy
+    }
+    if ($null -eq $publishProbePolicy) {
+        [void]$sb.AppendLine("No publish-probe policy was emitted for this report.")
+    }
+    else {
+        [void]$sb.AppendLine("- Source: $($publishProbePolicy.Source)")
+        [void]$sb.AppendLine("- Release-validation mode: $($publishProbePolicy.ReleaseValidationMode)")
+        [void]$sb.AppendLine("- Release validation skips publish: $($publishProbePolicy.ReleaseValidationSkipsPublish)")
+        [void]$sb.AppendLine("- Current run skipped publish: $($publishProbePolicy.CurrentRunSkipsPublish)")
+        [void]$sb.AppendLine("- Non-opt-out gate: $($publishProbePolicy.NonOptOutGate)")
+        [void]$sb.AppendLine("- Gate promotion: $($publishProbePolicy.GatePromotion)")
+        [void]$sb.AppendLine("- Representative publish targets: $($publishProbePolicy.RepresentativePublishTargets)")
+        $requirements = @($publishProbePolicy.PromotionRequirements)
+        if ($requirements.Count -gt 0) {
+            [void]$sb.AppendLine("")
+            [void]$sb.AppendLine("Promotion requirements:")
+            foreach ($requirement in $requirements) {
+                [void]$sb.AppendLine("- $requirement")
+            }
+        }
+    }
+    [void]$sb.AppendLine("")
     [void]$sb.AppendLine("## Hazard inventory")
     [void]$sb.AppendLine("")
     if ($null -eq $hazardInventory) {
@@ -1353,6 +1465,19 @@ function Invoke-DeploymentModeClaimValidation {
         }
     }
 
+    $representativePublishTargetCount = @($PublishTargets).Count
+    if ($representativePublishTargetCount -eq 0 -and
+        $manifest.PSObject.Properties.Match("representativePublishTargets").Count -gt 0 -and
+        $null -ne $manifest.representativePublishTargets.projects) {
+        $representativePublishTargetCount = @($manifest.representativePublishTargets.projects).Count
+    }
+
+    $publishProbePolicy = Get-PublishProbePolicySnapshot `
+        -Manifest $manifest `
+        -CurrentRunSkipsPublish:$SkipPublish `
+        -RepresentativePublishTargetCount $representativePublishTargetCount
+    Invoke-Step -Title "Publish-probe policy" -Detail ("releaseValidationMode=" + $publishProbePolicy.ReleaseValidationMode + ", currentRunSkipsPublish=" + $publishProbePolicy.CurrentRunSkipsPublish)
+
     $modesToCheck = if ($DeploymentMode -eq "all") {
         @("trim", "nativeAot", "singleFile")
     }
@@ -1413,6 +1538,7 @@ function Invoke-DeploymentModeClaimValidation {
         Modes               = $modeReports
         Verdicts            = @($modeReports | ForEach-Object { [pscustomobject]@{ Mode = $_.Mode; Verdict = $_.Verdict; Reasons = $_.Reasons } })
         HazardInventory     = $hazardInventory
+        PublishProbePolicy  = $publishProbePolicy
         AggregateVerdict    = $aggregateVerdict
         ValidVerdicts       = $Script:ValidVerdicts
         ValidationStrategy  = if ($SkipPublish) { "audit-only" } else { "publish-required" }

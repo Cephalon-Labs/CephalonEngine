@@ -30,6 +30,7 @@ BeforeAll {
 
     $script:manifestRaw = Get-Content -LiteralPath $script:manifestPath -Raw -Encoding UTF8
     $script:manifest = $script:manifestRaw | ConvertFrom-Json -Depth 16
+    $script:validateReleaseRaw = Get-Content -LiteralPath (Join-Path $script:repoRoot "scripts\validate-release.ps1") -Raw -Encoding UTF8
 
     function Test-CsprojPropertyExpectation {
         param(
@@ -150,6 +151,7 @@ Describe "deployment-mode-support.json — top-level schema" {
             'documentation',
             'analyzerOnlySignalsDoNotCount',
             'validationStrategy',
+            'publishProbePolicy',
             'supportChangeRequirements',
             'deploymentModes',
             'representativePublishTargets',
@@ -161,6 +163,39 @@ Describe "deployment-mode-support.json — top-level schema" {
         foreach ($field in $expected) {
             $script:manifest.PSObject.Properties.Name | Should -Contain $field
         }
+    }
+}
+
+Describe "publishProbePolicy" {
+    It "keeps release validation audit-only until a deliberate non-opt-out gate promotion" {
+        $script:manifest.publishProbePolicy.PSObject.Properties.Name | Should -Contain 'comment'
+        $script:manifest.publishProbePolicy.PSObject.Properties.Name | Should -Contain 'releaseValidationMode'
+        $script:manifest.publishProbePolicy.PSObject.Properties.Name | Should -Contain 'releaseValidationSkipsPublish'
+        $script:manifest.publishProbePolicy.PSObject.Properties.Name | Should -Contain 'nonOptOutGate'
+        $script:manifest.publishProbePolicy.PSObject.Properties.Name | Should -Contain 'gatePromotion'
+        $script:manifest.publishProbePolicy.PSObject.Properties.Name | Should -Contain 'promotionRequirements'
+        $script:manifest.publishProbePolicy.releaseValidationMode | Should -BeIn @('audit-only', 'publish-required', 'full-flow')
+        $script:manifest.publishProbePolicy.releaseValidationSkipsPublish | Should -BeTrue
+        $script:manifest.publishProbePolicy.nonOptOutGate | Should -BeFalse
+        $script:manifest.publishProbePolicy.gatePromotion | Should -Be 'requires-deliberate-release-manager-decision'
+        @($script:manifest.publishProbePolicy.promotionRequirements).Count | Should -BeGreaterThan 0
+    }
+
+    It "names source, workflow, docs, and release-validation promotion requirements" {
+        $requirements = @($script:manifest.publishProbePolicy.promotionRequirements) -join "|"
+        $requirements | Should -Match 'deploymentModes'
+        $requirements | Should -Match 'validate-deployment-mode-claims\.ps1'
+        $requirements | Should -Match 'validate-release\.ps1'
+        $requirements | Should -Match 'release-validation workflow'
+        $requirements | Should -Match 'docs/deployment-mode-support\.md'
+        $requirements | Should -Match 'docs/project-memory\.md'
+    }
+
+    It "keeps validate-release wired to the manifest-backed release-validation skip flag" {
+        $script:validateReleaseRaw | Should -Match 'Get-DeploymentModeReleaseValidationSkipsPublish'
+        $script:validateReleaseRaw | Should -Match 'publishProbePolicy'
+        $script:validateReleaseRaw | Should -Match 'releaseValidationSkipsPublish'
+        $script:validateReleaseRaw | Should -Match '-SkipPublish'
     }
 }
 

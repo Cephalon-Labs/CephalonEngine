@@ -783,6 +783,47 @@ Describe "Compute-AggregateVerdict" {
     }
 }
 
+Describe "Get-PublishProbePolicySnapshot" {
+    It "reads the manifest-backed audit-only release-validation policy" {
+        $manifest = [pscustomobject]@{
+            publishProbePolicy = [pscustomobject]@{
+                releaseValidationMode = "audit-only"
+                releaseValidationSkipsPublish = $true
+                nonOptOutGate = $false
+                gatePromotion = "requires-deliberate-release-manager-decision"
+                promotionRequirements = @("publish probes pass without -SkipPublish")
+            }
+        }
+
+        $policy = Get-PublishProbePolicySnapshot `
+            -Manifest $manifest `
+            -CurrentRunSkipsPublish $true `
+            -RepresentativePublishTargetCount 5
+
+        $policy.Source | Should -Be "manifest"
+        $policy.ReleaseValidationMode | Should -Be "audit-only"
+        $policy.ReleaseValidationSkipsPublish | Should -BeTrue
+        $policy.CurrentRunSkipsPublish | Should -BeTrue
+        $policy.NonOptOutGate | Should -BeFalse
+        $policy.RepresentativePublishTargets | Should -Be 5
+        $policy.PromotionRequirements | Should -Contain "publish probes pass without -SkipPublish"
+    }
+
+    It "defaults to audit-only when older manifests omit publishProbePolicy" {
+        $policy = Get-PublishProbePolicySnapshot `
+            -Manifest ([pscustomobject]@{ deploymentModes = @{} }) `
+            -CurrentRunSkipsPublish $false `
+            -RepresentativePublishTargetCount 0
+
+        $policy.Source | Should -Be "default"
+        $policy.ReleaseValidationMode | Should -Be "audit-only"
+        $policy.ReleaseValidationSkipsPublish | Should -BeTrue
+        $policy.CurrentRunSkipsPublish | Should -BeFalse
+        $policy.NonOptOutGate | Should -BeFalse
+        $policy.GatePromotion | Should -Be "requires-deliberate-release-manager-decision"
+    }
+}
+
 Describe "Write-ValidationReport" {
     It "creates the output directory if missing and writes JSON + Markdown" {
         $outDir = Join-Path $script:tempRoot "report-$(Get-Random)"
@@ -826,6 +867,16 @@ Describe "Write-ValidationReport" {
                     )
                 }
             }
+            PublishProbePolicy = [pscustomobject]@{
+                Source = "manifest"
+                ReleaseValidationMode = "audit-only"
+                ReleaseValidationSkipsPublish = $true
+                CurrentRunSkipsPublish = $true
+                NonOptOutGate = $false
+                GatePromotion = "requires-deliberate-release-manager-decision"
+                RepresentativePublishTargets = 5
+                PromotionRequirements = @("remove -SkipPublish in the support-promotion slice")
+            }
             AggregateVerdict = "not-claimed"
         }
         $paths = Write-ValidationReport -OutputDir $outDir -Report $report
@@ -839,6 +890,9 @@ Describe "Write-ValidationReport" {
         $md = Get-Content -LiteralPath $paths.MarkdownPath -Raw
         $md | Should -Match "# Deployment-mode claim validation report"
         $md | Should -Match "Aggregate verdict"
+        $md | Should -Match "Publish-probe policy"
+        $md | Should -Match "Release validation skips publish: True"
+        $md | Should -Match "remove -SkipPublish"
         $md | Should -Match "Hazard inventory"
         $md | Should -Match "Known transitive hazard lock-file audit"
         $md | Should -Match "Newtonsoft.Json"
@@ -1029,6 +1083,7 @@ Describe "Invoke-DeploymentModeClaimValidation (integration)" {
         $manifestPath = Join-Path $repo.Root "deployment-mode-support.json"
         @{
             shippingBaseline = @{ stableTargetFramework = "net10.0" }
+            representativePublishTargets = @{ projects = @("samples/alpha/Alpha.csproj", "samples/beta/Beta.csproj") }
             deploymentModes  = @{
                 trim       = @{ status = "not-claimed" }
                 nativeAot  = @{ status = "not-claimed" }
@@ -1046,6 +1101,9 @@ Describe "Invoke-DeploymentModeClaimValidation (integration)" {
 
         $result.Report.AggregateVerdict | Should -Be "not-claimed"
         $result.Report.HazardInventory.TotalPackages | Should -Be 0
+        $result.Report.PublishProbePolicy.ReleaseValidationMode | Should -Be "audit-only"
+        $result.Report.PublishProbePolicy.CurrentRunSkipsPublish | Should -BeTrue
+        $result.Report.PublishProbePolicy.RepresentativePublishTargets | Should -Be 2
         Test-Path -LiteralPath $result.Paths.JsonPath | Should -BeTrue
         Test-Path -LiteralPath $result.Paths.HazardInventoryPath | Should -BeTrue
         Test-Path -LiteralPath $result.Paths.MarkdownPath | Should -BeTrue
