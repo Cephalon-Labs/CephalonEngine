@@ -395,10 +395,10 @@ internal static class DoctorCommand
 
         if (evaluation.GeneratedApp is null)
         {
-            return "Required baseline: current dotnet SDK selection 10.x, an installed 10.x SDK family, Microsoft.NETCore.App 10.x, Microsoft.AspNetCore.App 10.x, and a readable schema 1.1.0 engine completion scorecard JSON artifact when `--scorecard` is supplied.";
+            return "Required baseline: current dotnet SDK selection 10.x, an installed 10.x SDK family, Microsoft.NETCore.App 10.x, Microsoft.AspNetCore.App 10.x, and a readable schema 1.3.0 engine completion scorecard JSON artifact when `--scorecard` is supplied.";
         }
 
-        return "Required baseline: current dotnet SDK selection 10.x, an installed 10.x SDK family, Microsoft.NETCore.App 10.x, Microsoft.AspNetCore.App 10.x, a generated app root with a usable Cephalon package source plus host bootstrap assets, and a readable schema 1.1.0 engine completion scorecard JSON artifact when `--scorecard` is supplied.";
+        return "Required baseline: current dotnet SDK selection 10.x, an installed 10.x SDK family, Microsoft.NETCore.App 10.x, Microsoft.AspNetCore.App 10.x, a generated app root with a usable Cephalon package source plus host bootstrap assets, and a readable schema 1.3.0 engine completion scorecard JSON artifact when `--scorecard` is supplied.";
     }
 
     private static string BuildDoctorRerunCommand(DoctorOptions options, DoctorEvaluation evaluation)
@@ -751,6 +751,33 @@ internal static class DoctorCommand
             errors.Add("Summary");
         }
 
+        if (errors.Count > 0)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Engine completion scorecard artifact",
+                $"Artifact '{resolvedScorecardPath}' is missing required scorecard fields: {string.Join(", ", errors)}.",
+                "Regenerate the scorecard artifact with the current `scripts/publish-engine-completion-scorecard.ps1` before using it with doctor."));
+            return;
+        }
+
+        if (!string.Equals(schemaVersion, "1.3.0", StringComparison.Ordinal))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Engine completion scorecard artifact",
+                $"Unsupported schema '{schemaVersion}'. Doctor expects scorecard schema '1.3.0'.",
+                "Regenerate the scorecard artifact with the current `scripts/publish-engine-completion-scorecard.ps1`."));
+            return;
+        }
+
+        var publicApiCompatibilityEvidence = scorecard["PublicApiCompatibilityEvidence"];
+
+        if (publicApiCompatibilityEvidence is null)
+        {
+            errors.Add("PublicApiCompatibilityEvidence");
+        }
+
         var platformGateCount = GetRequiredScorecardInt(summary, "PlatformGateCount", errors);
         var blockedPlatformGates = GetRequiredScorecardInt(summary, "BlockedPlatformGates", errors);
         var needsRefreshGates = GetRequiredScorecardInt(summary, "NeedsRefreshGates", errors);
@@ -761,6 +788,14 @@ internal static class DoctorCommand
         var partialPackageGAGates = GetRequiredScorecardInt(summary, "PartialPackageGAGates", errors);
         var notClaimedPackageGAGates = GetRequiredScorecardInt(summary, "NotClaimedPackageGAGates", errors);
         var needsRefreshPackageGAGates = GetRequiredScorecardInt(summary, "NeedsRefreshPackageGAGates", errors);
+        var publicApiPackageCount = GetRequiredScorecardInt(summary, "PublicApiPackageCount", errors);
+        var publicApiPendingPackageCount = GetRequiredScorecardInt(summary, "PublicApiPendingPackageCount", errors);
+        var publicApiAdditiveEntryCount = GetRequiredScorecardInt(summary, "PublicApiAdditiveEntryCount", errors);
+        var publicApiRemovalEntryCount = GetRequiredScorecardInt(summary, "PublicApiRemovalEntryCount", errors);
+        var evidencePublicApiPackageCount = GetRequiredScorecardInt(publicApiCompatibilityEvidence, "PackageCount", errors, "PublicApiCompatibilityEvidence");
+        var evidencePublicApiPendingPackageCount = GetRequiredScorecardInt(publicApiCompatibilityEvidence, "PendingPackageCount", errors, "PublicApiCompatibilityEvidence");
+        var evidencePublicApiAdditiveEntryCount = GetRequiredScorecardInt(publicApiCompatibilityEvidence, "AdditiveEntryCount", errors, "PublicApiCompatibilityEvidence");
+        var evidencePublicApiRemovalEntryCount = GetRequiredScorecardInt(publicApiCompatibilityEvidence, "RemovalEntryCount", errors, "PublicApiCompatibilityEvidence");
 
         if (errors.Count > 0)
         {
@@ -772,12 +807,15 @@ internal static class DoctorCommand
             return;
         }
 
-        if (!string.Equals(schemaVersion, "1.1.0", StringComparison.Ordinal))
+        if (publicApiPackageCount != evidencePublicApiPackageCount ||
+            publicApiPendingPackageCount != evidencePublicApiPendingPackageCount ||
+            publicApiAdditiveEntryCount != evidencePublicApiAdditiveEntryCount ||
+            publicApiRemovalEntryCount != evidencePublicApiRemovalEntryCount)
         {
             checks.Add(new DoctorCheck(
                 DoctorCheckSeverity.Failure,
-                "Engine completion scorecard artifact",
-                $"Unsupported schema '{schemaVersion}'. Doctor expects scorecard schema '1.1.0'.",
+                "Engine completion scorecard public API compatibility",
+                $"Artifact '{resolvedScorecardPath}' has public API summary counts that do not match PublicApiCompatibilityEvidence.",
                 "Regenerate the scorecard artifact with the current `scripts/publish-engine-completion-scorecard.ps1`."));
             return;
         }
@@ -822,6 +860,17 @@ internal static class DoctorCommand
             packageSeverity == DoctorCheckSeverity.Pass
                 ? null
                 : "Do not equate package maturity with GA; use this summary to find the source document and blocker class before release promotion."));
+
+        var publicApiSeverity = publicApiRemovalEntryCount > 0
+            ? DoctorCheckSeverity.Warning
+            : DoctorCheckSeverity.Pass;
+        checks.Add(new DoctorCheck(
+            publicApiSeverity,
+            "Engine completion scorecard public API compatibility",
+            $"{publicApiPackageCount} package baselines; pending packages {publicApiPendingPackageCount}, additions {publicApiAdditiveEntryCount}, removals {publicApiRemovalEntryCount}.",
+            publicApiSeverity == DoctorCheckSeverity.Pass
+                ? null
+                : "Review public API removal entries and compatibility guidance before release promotion."));
     }
 
     private static string? GetRequiredScorecardString(
@@ -850,7 +899,8 @@ internal static class DoctorCommand
     private static int GetRequiredScorecardInt(
         JsonNode? scorecard,
         string propertyName,
-        List<string> errors)
+        List<string> errors,
+        string ownerName = "Summary")
     {
         if (scorecard is null)
         {
@@ -863,7 +913,7 @@ internal static class DoctorCommand
 
             if (value is null)
             {
-                errors.Add($"Summary.{propertyName}");
+                errors.Add($"{ownerName}.{propertyName}");
                 return 0;
             }
 
@@ -871,7 +921,7 @@ internal static class DoctorCommand
         }
         catch
         {
-            errors.Add($"Summary.{propertyName}");
+            errors.Add($"{ownerName}.{propertyName}");
             return 0;
         }
     }

@@ -22,7 +22,43 @@ Current focus:
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane plus the abstraction-level `/engine/knowledge-indexes`, `POST /engine/knowledge-indexes/{collectionId}/queries`, `POST /engine/knowledge-indexes/{collectionId}/reindex`, `snapshot.KnowledgeIndexes`, and opt-in background reindex scheduler seams as the first retrieval-family managed/operator proof instead of widening catalog breadth there again
 - keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, local durable stores, invitation delivery dispatch/retry/status reconciliation, delivery-status observation storage, tenant administration, declared domain ownership, proof collection/polling, and governance-action proofs; `Cephalon.MultiTenancy.Governance.AspNetCore` owns optional fail-closed governance endpoints plus provider-neutral callback signature/replay protection, filtered observation rollup summaries, attention-category drill-down filters, provider-message drill-down filters, remediation-action filters, and deterministic remediation hints over stored observations; HTTP, SMTP, SendGrid, Mailgun, Amazon SES, and Microsoft Graph sender companions own outbound delivery handoff; `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity` owns the optional Azure Identity access-token provider for the Graph sender; SendGrid ASP.NET Core owns callback translation/signature/replay/event-id hardening; Mailgun ASP.NET Core owns callback translation/signature/replay-token/event-id hardening; and Amazon SES ASP.NET Core owns SNS-wrapped SES event callback translation plus opt-in SNS signature verification, bounded process-local SNS replay protection, observation-store-backed SNS message-id idempotency, opt-in verified SNS subscription confirmation, and opt-in verified SNS unsubscribe-confirmation observation. Distributed or provider-backed membership/invitation/domain/action-store backends, additional provider-specific email API senders beyond the shipped SMTP/SendGrid/Mailgun/Amazon SES/Microsoft Graph set, SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, cross-node retry leases, provider-specific or distributed callback inboxes, cross-node callback replay protection, distributed event-id ledgers, provider-specific delivery-status callback payload translation beyond shipped SendGrid/Mailgun/Amazon SES translators, provider-specific callback signature verification beyond shipped SendGrid/Mailgun/Amazon SNS hardening, provider polling, remediation execution beyond state transitions, actual DNS proof publication, provider-backed proof publication or mutation, identity-provider synchronization, Microsoft Entra app registration/permission consent/mailbox access policy, AWS account/IAM/identity verification, DKIM/SPF/DMARC, SES sandbox/configuration-set event destination setup, SNS topic/subscription creation, automatic resubscribe/restore, subscription lifecycle governance, public onboarding, and tenant-admin UI/backoffice flows remain later package-owned work
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
-- treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md), validates the adoption-smoke support manifest, scans public API delta files into `PublicApiCompatibilityEvidence`, and `cephalon doctor --scorecard <path>` provides a local CLI readback over that generated artifact without becoming source truth
+- treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md), validates the adoption-smoke support manifest, scans public API delta files into `PublicApiCompatibilityEvidence`, and `cephalon doctor --scorecard <path>` provides a schema `1.3.0` local CLI readback over that generated artifact including public API package/pending/addition/removal counts without becoming source truth
+
+### ENG-483 Align doctor scorecard readback with public API evidence
+
+Status: done
+Estimate: 2
+Issue: #1084
+Iteration: Sprint 125
+
+Why:
+
+- `scripts/publish-engine-completion-scorecard.ps1` now emits schema `1.3.0` with
+  `PublicApiCompatibilityEvidence`, but `cephalon doctor --scorecard <path>` still required the
+  older schema `1.1.0`
+- release managers should see the same public API package, pending-package, additive, and removal
+  counts from the local doctor readback that they see in the generated JSON/README artifact
+- doctor should catch generated-artifact drift when `Summary` public API counts no longer match
+  `PublicApiCompatibilityEvidence`
+
+Delivered:
+
+- moved `cephalon doctor --scorecard <path>` to schema `1.3.0` and updated the required baseline
+  text shown when scorecard blockers exist
+- added public API compatibility readback for package baselines, pending packages, additive entries,
+  and removal entries from `PublicApiCompatibilityEvidence`
+- added a mismatch failure path so summary public API counts must agree with the detailed public API
+  evidence node
+- refreshed CLI component/package docs, release checklist/template, completion scorecard, roadmap,
+  architecture follow-up tracker, and project-memory truth
+
+Validation:
+
+- focused tooling tests for scorecard success, unsupported schema, and public API evidence drift
+  (`3/3`)
+- engine-completion scorecard artifact publishing (`schema=1.3.0`)
+- local `cephalon doctor --scorecard` readback over the generated schema `1.3.0` artifact
+- `git diff --check`
 
 ### ENG-482 Make public API delta evidence scorecard-backed
 
@@ -14215,6 +14251,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-480 Make publish-probe gate posture machine-checkable: `scripts/deployment-mode-support.json` schema `1.4.0` now carries `publishProbePolicy`, and the validation harness emits `PublishProbePolicy` into `claim-validation-report.json` plus README output so release managers can see that release validation remains audit-only, still passes `-SkipPublish`, and is not yet a non-opt-out gate. Quality dimensions: Compatibility + Auditability + Maintainability + Reliability + Usability (shipped)
 - ENG-481 Make adoption smoke evidence scorecard-backed: `scripts/adoption-smoke-support.json` now captures the out-of-repo generated-app package-stage replay, and `scripts/publish-engine-completion-scorecard.ps1` schema `1.2.0` validates that manifest before emitting `AdoptionSmokeEvidence` with replay script, staged reference module, required assertions, required script tokens, and runtime probes. Quality dimensions: Auditability + Maintainability + Usability + Reliability (shipped)
 - ENG-482 Make public API delta evidence scorecard-backed: `scripts/publish-engine-completion-scorecard.ps1` schema `1.3.0` now scans `src/Cephalon.*/PublicAPI.Unshipped.txt` with matching shipped baselines and emits `PublicApiCompatibilityEvidence` summarizing 104 package baselines, 21 packages with pending API entries, 288 additive entries, and 0 removals. Quality dimensions: Compatibility + Auditability + Maintainability + Usability (shipped)
+- ENG-483 Align doctor scorecard readback with public API evidence: `cephalon doctor --scorecard <path>` now requires schema `1.3.0`, reports `PublicApiCompatibilityEvidence` package/pending/addition/removal counts, and fails if generated summary counts drift from the detailed public API evidence node. Quality dimensions: Compatibility + Auditability + Maintainability + Usability (shipped)
 
 ### Later / not scheduled yet
 

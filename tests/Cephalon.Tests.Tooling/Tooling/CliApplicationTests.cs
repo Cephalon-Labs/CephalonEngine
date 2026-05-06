@@ -384,9 +384,16 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.1.0",
+              "$schemaVersion": "1.3.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
+              "PublicApiCompatibilityEvidence": {
+                "PackageCount": 104,
+                "PendingPackageCount": 21,
+                "HeaderOnlyPackageCount": 83,
+                "AdditiveEntryCount": 288,
+                "RemovalEntryCount": 0
+              },
               "Summary": {
                 "PlatformGateCount": 12,
                 "BlockedPlatformGates": 0,
@@ -397,7 +404,11 @@ public sealed class CliApplicationTests
                 "PackageGAReadinessCount": 88,
                 "PartialPackageGAGates": 87,
                 "NotClaimedPackageGAGates": 1,
-                "NeedsRefreshPackageGAGates": 0
+                "NeedsRefreshPackageGAGates": 0,
+                "PublicApiPackageCount": 104,
+                "PublicApiPendingPackageCount": 21,
+                "PublicApiAdditiveEntryCount": 288,
+                "PublicApiRemovalEntryCount": 0
               }
             }
             """);
@@ -416,10 +427,11 @@ public sealed class CliApplicationTests
                 stderr);
 
             Assert.Equal(0, exitCode);
-            Assert.Contains("[ok] Engine completion scorecard artifact: schema 1.1.0 from docs/engine-completion-scorecard.md; conformance matrix docs/conformance-matrix.md.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Engine completion scorecard artifact: schema 1.3.0 from docs/engine-completion-scorecard.md; conformance matrix docs/conformance-matrix.md.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard platform gates: 12 gates; blocked 0, needs-refresh 1, partial 7, not-claimed 1.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Engine completion scorecard evidence references: 13 repo-local references validated by the published artifact.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard package GA readiness: 88 package rows; partial 87, not-claimed 1, needs-refresh 0.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Engine completion scorecard public API compatibility: 104 package baselines; pending packages 21, additions 288, removals 0.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Equal(string.Empty, stderr.ToString());
         }
         finally
@@ -506,7 +518,74 @@ public sealed class CliApplicationTests
                 stderr);
 
             Assert.Equal(1, exitCode);
-            Assert.Contains("[error] Engine completion scorecard artifact: Unsupported schema '1.0.0'. Doctor expects scorecard schema '1.1.0'.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Engine completion scorecard artifact: Unsupported schema '1.0.0'. Doctor expects scorecard schema '1.3.0'.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("scorecard artifact blockers", stderr.ToString(), StringComparison.Ordinal);
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (File.Exists(scorecardPath))
+            {
+                File.Delete(scorecardPath);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncDoctorFailsWhenScorecardPublicApiEvidenceDriftsFromSummary()
+    {
+        var scorecardPath = Path.Combine(Path.GetTempPath(), $"cephalon-scorecard-public-api-{Guid.NewGuid():N}.json");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        await File.WriteAllTextAsync(scorecardPath, """
+            {
+              "$schemaVersion": "1.3.0",
+              "SourceDocument": "docs/engine-completion-scorecard.md",
+              "ConformanceMatrix": "docs/conformance-matrix.md",
+              "PublicApiCompatibilityEvidence": {
+                "PackageCount": 103,
+                "PendingPackageCount": 21,
+                "HeaderOnlyPackageCount": 82,
+                "AdditiveEntryCount": 288,
+                "RemovalEntryCount": 0
+              },
+              "Summary": {
+                "PlatformGateCount": 12,
+                "BlockedPlatformGates": 0,
+                "NeedsRefreshGates": 1,
+                "PartialPlatformGates": 7,
+                "NotClaimedPlatformGates": 1,
+                "EvidenceSourceReferenceCount": 13,
+                "PackageGAReadinessCount": 88,
+                "PartialPackageGAGates": 87,
+                "NotClaimedPackageGAGates": 1,
+                "NeedsRefreshPackageGAGates": 0,
+                "PublicApiPackageCount": 104,
+                "PublicApiPendingPackageCount": 21,
+                "PublicApiAdditiveEntryCount": 288,
+                "PublicApiRemovalEntryCount": 0
+              }
+            }
+            """);
+
+        UseReadyDoctorProcessRunner();
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--scorecard",
+                    scorecardPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(1, exitCode);
+            Assert.Contains("[error] Engine completion scorecard public API compatibility: Artifact", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("public API summary counts that do not match PublicApiCompatibilityEvidence", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("scorecard artifact blockers", stderr.ToString(), StringComparison.Ordinal);
         }
         finally

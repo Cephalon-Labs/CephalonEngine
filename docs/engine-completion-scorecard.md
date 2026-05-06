@@ -57,7 +57,7 @@ Do not use `M4`, "tests pass", or "docs exist" as a synonym for GA. Maturity, va
 
 The JSON artifact uses schema version `1.3.0`. Release validation publishes it by default through `scripts/validate-release.ps1` unless `-SkipEngineCompletionScorecard` is passed for a deliberately narrower local run.
 
-For a local release-manager readback, `cephalon doctor --scorecard <path-to-engine-completion-scorecard.json>` summarizes that generated artifact's schema/source documents, platform-gate posture, validated evidence-reference count, and per-package GA-readiness count. The generated artifact also carries public API package/addition/removal counts for release-note review. The CLI consumes the generated JSON read model only; it does not parse this Markdown page, replace source documents, or promote support/GA claims by itself.
+For a local release-manager readback, `cephalon doctor --scorecard <path-to-engine-completion-scorecard.json>` summarizes that generated artifact's schema/source documents, platform-gate posture, validated evidence-reference count, per-package GA-readiness count, and public API compatibility counts from `PublicApiCompatibilityEvidence` (package baselines, pending packages, additions, and removals). The CLI consumes the generated JSON read model only; it does not parse this Markdown page, replace source documents, or promote support/GA claims by itself.
 
 ## Platform-level gates
 
@@ -139,9 +139,9 @@ The next completion-oriented slices should stay narrow and evidence-driven:
 1. Keep the shipped machine-readable scorecard emitter source-reference validation and per-package readiness mapping aligned with source docs instead of duplicating truth by hand.
 2. Keep per-package GA readiness rows generated from maturity-audit and conformance-matrix truth; do not hand-maintain a second package table here.
 3. Keep the first clean-baseline package-scoped claim (`Cephalon.Diagnostics` single-file), the emitted publish-probe policy, and the emitted hazard inventory honest across manifest, project properties, harness output, workflow, docs, and package guidance while global deployment-mode rows remain `not-claimed`.
-4. Keep `cephalon doctor --scorecard <path>` aligned with the generated JSON schema so local summaries remain a readback of the scorecard artifact, not a second source of truth.
+4. Keep `cephalon doctor --scorecard <path>` aligned with the generated JSON schema, including `PublicApiCompatibilityEvidence`, so local summaries remain a readback of the scorecard artifact, not a second source of truth.
 5. Keep the out-of-repo generated-app adoption smoke evidence manifest aligned with `validate-out-of-tree-package-adoption.ps1` so the generated scorecard artifact keeps naming the local-package, reference-module staging, host-run, and runtime operator-surface probes it validates.
-6. Keep public API delta readback aligned with `scripts/summarise-public-api-deltas.ps1` and the per-package `PublicAPI.*.txt` files so release managers see package/addition/removal counts from the generated artifact.
+6. Keep public API delta publishing aligned with `scripts/summarise-public-api-deltas.ps1` and the per-package `PublicAPI.*.txt` files so the generated artifact and CLI readback keep reporting the same package/addition/removal counts.
 
 ## Refresh cadence
 
