@@ -100,7 +100,7 @@ internal sealed class BehaviorModule(
             }
         }
 
-        // Auto-register behaviors from assemblies when enabled (default: true)
+        // Auto-register behaviors from generated assembly hints when enabled.
         if (options.AutoRegister)
         {
             AutoRegisterBehaviors(services, typeRegistry, slotRegistry, options, ownedBehaviorIds);
@@ -291,16 +291,8 @@ internal sealed class BehaviorModule(
         };
     }
 
-    private static readonly Type AppBehaviorOpenGeneric = typeof(IAppBehavior<,>);
-
     /// <summary>
-    /// Scans assemblies for behaviors using a two-phase strategy:
-    /// <list type="number">
-    ///   <item><description>Source-generated path — uses <see cref="BehaviorGeneratedModuleRegistry"/> to find
-    ///   pre-compiled registration hints without reflecting over carrier methods.</description></item>
-    ///   <item><description>Reflection fallback — scans remaining assemblies for types with
-    ///   <see cref="AppBehaviorAttribute"/> via runtime reflection.</description></item>
-    /// </list>
+    /// Registers behaviors from source-generated assembly hints without scanning assembly types.
     /// </summary>
     private static void AutoRegisterBehaviors(
         IServiceCollection services,
@@ -312,19 +304,36 @@ internal sealed class BehaviorModule(
         var assemblies = options.ResolveAutoRegisterAssemblies();
         if (assemblies.Count == 0) return;
 
+        var requiresGeneratedHints = options.AutoRegisterAssemblies.Any(static name => !string.IsNullOrWhiteSpace(name));
+        var missingGeneratedHintAssemblies = new List<string>();
         foreach (var assembly in assemblies)
         {
-            // Phase 1: try source-generated registration through the generated module registry.
             if (TrySourceGeneratedRegistration(services, typeRegistry, slotRegistry, assembly, ownedBehaviorIds))
+            {
                 continue;
+            }
 
-            // Phase 2: Reflection fallback for assemblies without source generation
-            ReflectionScanAssembly(services, typeRegistry, assembly, ownedBehaviorIds);
+            if (requiresGeneratedHints)
+            {
+                missingGeneratedHintAssemblies.Add(assembly.GetName().Name ?? assembly.FullName ?? assembly.ToString());
+            }
         }
+
+        if (missingGeneratedHintAssemblies.Count == 0)
+        {
+            return;
+        }
+
+        throw new InvalidOperationException(
+            "Engine:Behaviors:AutoRegisterAssemblies can only auto-register assemblies that expose " +
+            $"source-generated behavior module hints through {nameof(BehaviorGeneratedModuleRegistry)}. " +
+            $"The following assemblies did not register generated hints: {string.Join(", ", missingGeneratedHintAssemblies.OrderBy(static name => name, StringComparer.OrdinalIgnoreCase))}. " +
+            "Reference the current Cephalon.Behaviors.SourceGen package and rebuild the behavior assembly, " +
+            "or register behaviors explicitly through module ownership or AddBehaviors(..., behaviors => ...).");
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // Phase 1: Source-generated registration (zero-reflection per-type)
+    // Source-generated registration (zero-reflection per-type)
     // ─────────────────────────────────────────────────────────────────────────
 
     /// <summary>
@@ -393,66 +402,6 @@ internal sealed class BehaviorModule(
         }
 
         return true;
-    }
-
-    // ─────────────────────────────────────────────────────────────────────────
-    // Phase 2: Reflection fallback
-    // ─────────────────────────────────────────────────────────────────────────
-
-    /// <summary>
-    /// Scans a single assembly using runtime reflection to discover behavior types.
-    /// Used for assemblies without source-generated registration code (e.g., plugins, NuGet packages).
-    /// </summary>
-    private static void ReflectionScanAssembly(
-        IServiceCollection services,
-        BehaviorTypeRegistry typeRegistry,
-        Assembly assembly,
-        IReadOnlySet<string>? ownedBehaviorIds)
-    {
-        Type[] types;
-        try
-        {
-            types = assembly.DefinedTypes
-                .Select(ti => ti.AsType())
-                .ToArray();
-        }
-        catch (ReflectionTypeLoadException)
-        {
-            return;
-        }
-
-        foreach (var type in types)
-        {
-            if (!type.IsClass || type.IsAbstract || type.ContainsGenericParameters)
-                continue;
-
-            var attr = (AppBehaviorAttribute?)Attribute.GetCustomAttribute(
-                type, typeof(AppBehaviorAttribute));
-            if (attr is null) continue;
-
-            if (ownedBehaviorIds?.Contains(attr.Id) == true)
-            {
-                continue;
-            }
-
-            // Must implement IAppBehavior<TIn, TOut>
-            var appBehaviorInterface = type.GetInterfaces()
-                .FirstOrDefault(i => i.IsGenericType &&
-                                    i.GetGenericTypeDefinition() == AppBehaviorOpenGeneric);
-            if (appBehaviorInterface is null) continue;
-
-            // Skip if already registered (manual registration takes precedence)
-            if (typeRegistry.TryGetType(attr.Id, out _)) continue;
-
-            // Register the type in DI as transient
-            services.TryAddTransient(type);
-
-            // Populate the type registry
-            typeRegistry.Register(attr.Id, type);
-
-            // Invoke static ConfigureTopology if the concrete type defines one
-            TryRegisterResolvedTopology(services, type, attr.Id);
-        }
     }
 
     /// <summary>

@@ -8,32 +8,31 @@ namespace Cephalon.Behaviors.Configuration;
 public sealed class BehaviorOptions
 {
     /// <summary>
-    /// Gets or sets whether the engine automatically discovers and registers behaviors
-    /// from loaded assemblies. When <see langword="true" />, the engine
-    /// scans assemblies for concrete types decorated with
-    /// <c>[AppBehavior]</c> and implementing <c>IAppBehavior&lt;TIn, TOut&gt;</c>,
-    /// registering any that have not already been registered manually.
+    /// Gets or sets whether the engine automatically registers source-generated behavior
+    /// hints from loaded assemblies. When <see langword="true" />, the engine resolves
+    /// candidate assemblies and consumes their generated <c>[AppBehavior]</c> registration
+    /// tables without scanning runtime types.
     /// </summary>
     /// <remarks>
     /// Explicit module-owned behavior registration through <c>BehaviorModuleBase</c> and
     /// <c>RestBehaviorModuleBase</c> is now the preferred default path. Use auto-registration as
-    /// an opt-in fallback for legacy, exploratory, or convention-driven scenarios that still rely
-    /// on assembly scanning.
+    /// an opt-in source-generated discovery path for legacy, exploratory, or
+    /// convention-driven scenarios that still need configuration-driven assembly selection.
     /// </remarks>
     public bool AutoRegister { get; set; }
 
     /// <summary>
-    /// Gets or sets the list of assembly names to scan for auto-registration.
+    /// Gets or sets the list of assembly names to resolve for generated auto-registration hints.
     /// When empty and <see cref="AutoRegister" /> is <see langword="true" />,
-    /// the engine scans all loaded assemblies that reference <c>Cephalon.Abstractions</c>,
+    /// the engine considers loaded assemblies that reference <c>Cephalon.Abstractions</c>,
     /// excluding well-known framework prefixes and any entries in
     /// <see cref="AutoRegisterExcludeAssemblyPrefixes" />.
     /// </summary>
     public List<string> AutoRegisterAssemblies { get; set; } = [];
 
     /// <summary>
-    /// Gets or sets additional assembly name prefixes to exclude from auto-registration scanning.
-    /// Only effective when <see cref="AutoRegisterAssemblies" /> is empty (default scan mode).
+    /// Gets or sets additional assembly name prefixes to exclude from generated auto-registration lookup.
+    /// Only effective when <see cref="AutoRegisterAssemblies" /> is empty (default lookup mode).
     /// The engine already excludes well-known framework prefixes (<c>System.</c>,
     /// <c>Microsoft.</c>, etc.) — use this property to add project-specific exclusions
     /// such as <c>"MyCompany.Shared."</c> or <c>"ThirdParty."</c>.
@@ -41,15 +40,15 @@ public sealed class BehaviorOptions
     public List<string> AutoRegisterExcludeAssemblyPrefixes { get; set; } = [];
 
     /// <summary>
-    /// Resolves the assemblies to scan for auto-registration.
+    /// Resolves the assemblies to inspect for generated auto-registration hints.
     /// </summary>
-    /// <returns>The assemblies to scan.</returns>
+    /// <returns>The assemblies to inspect for generated hints.</returns>
     internal IReadOnlyList<Assembly> ResolveAutoRegisterAssemblies()
     {
         if (!AutoRegister)
             return [];
 
-        // Explicit list: scan only the named assemblies
+        // Explicit list: resolve only the named assemblies.
         if (AutoRegisterAssemblies.Count > 0)
         {
             return AutoRegisterAssemblies
@@ -62,7 +61,7 @@ public sealed class BehaviorOptions
                 .ToArray();
         }
 
-        // Default: scan all loaded assemblies that reference Cephalon.Abstractions,
+        // Default: consider all loaded assemblies that reference Cephalon.Abstractions,
         // excluding well-known framework assemblies that can never contain behaviors.
         var abstractionsName = typeof(Abstractions.Behaviors.AppBehaviorAttribute).Assembly.GetName().Name!;
 

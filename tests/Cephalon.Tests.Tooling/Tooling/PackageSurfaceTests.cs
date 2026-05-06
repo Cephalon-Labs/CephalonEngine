@@ -1063,6 +1063,10 @@ public sealed class PackageSurfaceTests
             "BehaviorModule.cs"));
 
         Assert.Contains("BehaviorGeneratedModuleRegistry.TryGetRegistration", source, StringComparison.Ordinal);
+        Assert.DoesNotContain("ReflectionScanAssembly", source, StringComparison.Ordinal);
+        Assert.DoesNotContain(".DefinedTypes", source, StringComparison.Ordinal);
+        Assert.DoesNotContain("Attribute.GetCustomAttribute", source, StringComparison.Ordinal);
+        Assert.DoesNotContain("AppBehaviorOpenGeneric", source, StringComparison.Ordinal);
         Assert.DoesNotContain("GetMethod(\"Register\"", source, StringComparison.Ordinal);
         Assert.DoesNotContain("GetMethod(\"GetExecutionSlots\"", source, StringComparison.Ordinal);
         Assert.DoesNotContain("GetMethod(\"GetTopologyDescriptors\"", source, StringComparison.Ordinal);

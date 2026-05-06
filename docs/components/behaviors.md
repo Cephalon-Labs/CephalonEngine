@@ -208,10 +208,13 @@ error envelopes.
 }
 ```
 
-`Engine:Behaviors` now controls discovery and auto-registration only. It no longer acts as a
-per-behavior topology override surface, and explicit module ownership is now the preferred default
-path. Turn `AutoRegister` on only when a host deliberately wants ambient assembly scanning as a
-fallback.
+`Engine:Behaviors` now controls generated-hint lookup and auto-registration only. It no longer acts
+as a per-behavior topology override surface, and explicit module ownership is now the preferred
+default path. Turn `AutoRegister` on only when a host deliberately wants configuration-driven
+assembly selection over source-generated behavior module hints. Explicit `AutoRegisterAssemblies`
+entries now fail fast when an assembly does not expose `BehaviorGeneratedModuleRegistry` hints; add
+`Cephalon.Behaviors.SourceGen` to that behavior assembly or register the behavior through module
+ownership / `AddBehaviors(..., behaviors => ...)`.
 
 ## Resolution model
 
@@ -238,7 +241,7 @@ Behavior metadata stays transport-neutral on purpose.
 - do not declare `http.rest` in behavior allowlists or topology; public REST is mapped by modules
   through `RestBehaviorModuleBase.ConfigureRestBehaviors(...)`
 - prefer `BehaviorModuleBase` or `RestBehaviorModuleBase` when a module should explicitly own the
-  behaviors it ships instead of relying only on assembly scanning
+  behaviors it ships instead of relying on generated auto-registration
 - if a behavior declares multiple allowed patterns, add `ConfigureTopology(...)` or fluent
   registration so the runtime does not need to guess
 - use `WithApiSurface(groupPath, operationPath)` when route-shaped generic transports should project

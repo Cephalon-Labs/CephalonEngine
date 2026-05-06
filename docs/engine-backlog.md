@@ -24,6 +24,43 @@ Current focus:
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
 - treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md) for release validation, and `cephalon doctor --scorecard <path>` provides a local CLI readback over that generated artifact without becoming source truth
 
+### ENG-469 Retire Behaviors auto-registration fallback assembly scan
+
+Status: done
+Estimate: 3
+Issue: #1068
+Iteration: Sprint 125
+
+Why:
+
+- `ENG-465` moved generated behavior module registration onto `BehaviorGeneratedModuleRegistry`, but `AutoRegister=true` still fell back to scanning `assembly.DefinedTypes` for `[AppBehavior]` types when generated hints were absent
+- auto-registration should be a generated-hint path, not a hidden runtime type scan that weakens trim / Native AOT / single-file truth
+- explicit module ownership remains the preferred low-code path, while explicit `AutoRegisterAssemblies` should fail fast when a selected assembly is not source-generator-ready
+
+Delivered:
+
+- removed `ReflectionScanAssembly(...)` and the `assembly.DefinedTypes` / `Attribute.GetCustomAttribute` / `IAppBehavior<,>` interface-shape fallback from `BehaviorModule`
+- kept `AutoRegister=true` on `BehaviorGeneratedModuleRegistry` hints only; explicit `AutoRegisterAssemblies` entries without generated hints now fail fast with `Cephalon.Behaviors.SourceGen` / explicit-registration guidance
+- updated `BehaviorOptions` XML comments and Behaviors component docs so `AutoRegister` is described as generated-hint lookup rather than assembly scanning
+- added composition coverage for explicit-assembly missing-hint fail-fast behavior and a package-surface guard blocking the old scan from returning
+- removed the `Cephalon.Behaviors` fallback assembly-scan row from `scripts/deployment-mode-support.json`, keeping the package at `high` for `BehaviorTypeRegistry`, static `ConfigureTopology` lookup, and `BehaviorExecutionSlot.ForType(...)`
+- refreshed deployment-mode support, trim/AOT hazard inventory, compatibility, `.NET 11` readiness, architecture follow-ups, roadmap/backlog planning truth, and project memory without widening support claims
+
+Validation:
+
+- passed `dotnet build src/Cephalon.Behaviors/Cephalon.Behaviors.csproj --no-restore /p:UseSharedCompilation=false` with 0 warnings / 0 errors
+- passed `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --no-restore --filter "FullyQualifiedName~BehaviorOwnerModuleTests|FullyQualifiedName~BehaviorBaselineTests" /p:UseSharedCompilation=false` (`56/56`)
+- passed focused tooling/package-surface validation (`1/1`)
+- passed deployment-mode manifest Pester validation (`32/32`)
+- passed deployment-mode claim harness (`not-claimed`, 8 packages / 15 hazards)
+- passed claim-harness Pester validation (`77/77`)
+- passed reference-doc publishing (`86` files generated; timestamp-only generated-doc diff was not retained)
+
+Follow-up later:
+
+- retire the remaining `Cephalon.Behaviors` high-tier blockers: `BehaviorTypeRegistry`, static `ConfigureTopology` lookup, and `BehaviorExecutionSlot.ForType(...)`
+- continue `Cephalon.Behaviors.Http` medium-tier remediation for attribute/profile binding, input-shape, and manual/type-based route-contract reflection
+
 ### ENG-468 Retire Behaviors.Patterns saga choreography runtime catalog reflection
 
 Status: done
@@ -13527,6 +13564,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-466 Retire Behaviors.Http generated profile assembly scan fallback: `MapGeneratedProfiles(...)` and generated-profile groups now require source-generated registry hints instead of falling back to `assembly.DefinedTypes` scanning, explicit `MapProfile<TBehavior>()` remains the direct type-targeted path, and the then-current manifest output reported 9 package entries, 6 packages with known hazards, 17 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim while `Cephalon.Behaviors.Http` stays `medium` for attribute/profile/manual-route reflection. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
 - ENG-467 Retire Behaviors.Patterns durable execution slot reflection fallback: durable execution now requires source-generated or explicitly registered `DurableExecutionSlot` registrations for execution and runtime-catalog projection instead of `DurableExecutionSlot.ForType(...)` open-generic fallback; `Cephalon.Behaviors.Patterns` was reclassified from `high` to `medium` by recording the remaining saga choreography runtime-catalog shape reflection, and the then-current manifest output reported 9 package entries, 6 packages with known hazards, 17 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
 - ENG-468 Retire Behaviors.Patterns saga choreography runtime catalog reflection: saga choreography runtime catalog projection now uses source-generated or explicitly registered `SagaChoreographyRuntimeSlot` metadata instead of runtime interface/result-shape reflection; `Cephalon.Behaviors.SourceGen` emits the closed slot registration when the patterns runtime slot is referenced, manual hosts can register it explicitly, and `scripts/deployment-mode-support.json` removes the remaining `Cephalon.Behaviors.Patterns` medium row. Current manifest output reports 8 package entries, 5 packages with known hazards, 16 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
+- ENG-469 Retire Behaviors auto-registration fallback assembly scan: `BehaviorModule.AutoRegisterBehaviors(...)` now consumes `BehaviorGeneratedModuleRegistry` hints only instead of scanning `assembly.DefinedTypes` for `[AppBehavior]` types, explicit `AutoRegisterAssemblies` entries without generated hints fail fast with source-generator / explicit-registration guidance, and `scripts/deployment-mode-support.json` removes the `Cephalon.Behaviors` fallback assembly-scan row while keeping the package `high` for `BehaviorTypeRegistry`, static `ConfigureTopology` lookup, and `BehaviorExecutionSlot.ForType(...)`. Current manifest output reports 8 package entries, 5 packages with known hazards, 15 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
 
 ### Later / not scheduled yet
 

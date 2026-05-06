@@ -32,7 +32,7 @@ The current shipped model is already opinionated:
 - `http.rest` is intentionally rejected in behavior transport allowlists and topology
 - `RestBehaviorModuleBase` is the canonical authoring path for behavior-backed public REST
 - `BehaviorModuleBase` is the canonical path for behavior ownership without public REST
-- `Engine:Behaviors:AutoRegister` is an opt-in fallback, not the default behavior-ownership model
+- `Engine:Behaviors:AutoRegister` is an opt-in generated-hint lookup path, not the default behavior-ownership model
 - the current module-owned REST DSL now compiles into one normalized internal projection contract
   before ASP.NET Core materializes route groups and endpoints
 - host governance is still shorthand-first by default; explicit module-DSL route groups only
@@ -732,7 +732,7 @@ That means:
 
 1. explicit module-owned behavior registration
 2. fluent explicit registration
-3. auto-registration / assembly scanning
+3. generated-hint auto-registration
 
 This already matches the shipped model and should stay stable.
 

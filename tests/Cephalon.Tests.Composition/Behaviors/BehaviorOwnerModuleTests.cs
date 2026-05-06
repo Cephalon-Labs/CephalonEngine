@@ -1,5 +1,6 @@
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Modules;
+using Cephalon.Behaviors.Configuration;
 using Cephalon.Behaviors.Http.Abstractions;
 using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Behaviors.Hosting;
@@ -77,6 +78,25 @@ public sealed class BehaviorOwnerModuleTests
         Assert.Contains("http.ws", descriptor.TransportIds, StringComparer.OrdinalIgnoreCase);
         Assert.DoesNotContain("http.graphql", descriptor.TransportIds, StringComparer.OrdinalIgnoreCase);
         Assert.DoesNotContain("http.sse", descriptor.TransportIds, StringComparer.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BehaviorAutoRegisterExplicitAssemblyWithoutGeneratedHintsFailsFast()
+    {
+        var services = new ServiceCollection();
+        var builder = new EngineBuilder(services);
+        builder.UseSettings(new EngineSettings(blueprint: "ModularMonolith"));
+        builder.AddBehaviors(configureOptions: options =>
+        {
+            options.AutoRegister = true;
+            options.AutoRegisterAssemblies = [typeof(BehaviorOptions).Assembly.GetName().Name!];
+        });
+
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+        Assert.Contains("AutoRegisterAssemblies", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("source-generated behavior module hints", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Behaviors.SourceGen", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
