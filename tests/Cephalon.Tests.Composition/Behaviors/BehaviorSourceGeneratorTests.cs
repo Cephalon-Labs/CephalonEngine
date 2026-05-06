@@ -43,6 +43,24 @@ public sealed class BehaviorSourceGeneratorTests
 
             public interface IBehaviorContext { }
 
+            public enum BehaviorIdempotencyMode
+            {
+                Unknown = 0,
+                Idempotent = 1,
+                NonIdempotent = 2
+            }
+
+            [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+            public sealed class BehaviorIdempotencyAttribute : System.Attribute
+            {
+                public BehaviorIdempotencyAttribute(BehaviorIdempotencyMode mode = BehaviorIdempotencyMode.Idempotent)
+                {
+                    Mode = mode;
+                }
+
+                public BehaviorIdempotencyMode Mode { get; }
+            }
+
             [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
             public sealed class BehaviorAllowedTransportsAttribute : System.Attribute
             {
@@ -258,9 +276,41 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.Contains("RegisterGeneratedBehaviors()", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("BehaviorGeneratedModuleRegistry.Register(", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("new global::Cephalon.Behaviors.Services.BehaviorGeneratedModuleRegistration(", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorImplementationRegistration.TryRegister(", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorIdempotencyMode.Unknown", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("new global::Cephalon.Behaviors.Services.BehaviorGeneratedExecutionSlotDescriptor(\"orders.create\"", autoRegistration, StringComparison.Ordinal);
         Assert.DoesNotContain("new global::Cephalon.Behaviors.Services.BehaviorGeneratedRuntimeTopologyDescriptor(\"orders.create\"", autoRegistration, StringComparison.Ordinal);
+        Assert.DoesNotContain("IBehaviorTypeRegistry", autoRegistration, StringComparison.Ordinal);
+        Assert.DoesNotContain("typeRegistry", autoRegistration, StringComparison.Ordinal);
         Assert.DoesNotContain("IReadOnlyList<(string Id, global::System.Type Type, global::Cephalon.Behaviors.Services.BehaviorExecutionSlot Slot)> GetExecutionSlots", autoRegistration, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void BehaviorIdempotencyAttributeGeneratesImplementationDescriptorMode()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            [AppBehavior("orders.charge")]
+            [BehaviorIdempotency(BehaviorIdempotencyMode.NonIdempotent)]
+            public sealed class ChargeOrderBehavior : IAppBehavior<string, string>
+            {
+                public Task<string> HandleAsync(string input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("charged");
+            }
+            """;
+
+        var (result, diagnostics) = RunGenerator(source);
+
+        Assert.Empty(diagnostics);
+
+        var autoRegistration = GetGeneratedAutoRegistrationSource(result);
+        Assert.NotNull(autoRegistration);
+        Assert.Contains("BehaviorImplementationRegistration.TryRegister(", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorIdempotencyMode.NonIdempotent", autoRegistration, StringComparison.Ordinal);
+        Assert.DoesNotContain("IBehaviorTypeRegistry", autoRegistration, StringComparison.Ordinal);
     }
 
     [Fact]

@@ -16,16 +16,17 @@ internal sealed class DurableExecutionRuntimeCatalogSnapshot : IDurableExecution
 
     public DurableExecutionRuntimeCatalogSnapshot(
         IBehaviorCatalog behaviorCatalog,
-        IBehaviorTypeRegistry typeRegistry,
+        IEnumerable<BehaviorImplementationDescriptor> implementations,
         IEnumerable<DurableExecutionSlot>? durableExecutionSlots = null)
     {
         ArgumentNullException.ThrowIfNull(behaviorCatalog);
-        ArgumentNullException.ThrowIfNull(typeRegistry);
+        ArgumentNullException.ThrowIfNull(implementations);
 
+        var implementationsById = BuildImplementationMap(implementations);
         var generatedSlots = BuildSlotMap(durableExecutionSlots ?? []);
         durableExecutions = behaviorCatalog
             .GetByPattern("durable-execution")
-            .Select(descriptor => CreateDescriptor(descriptor, typeRegistry, generatedSlots))
+            .Select(descriptor => CreateDescriptor(descriptor, implementationsById, generatedSlots))
             .OrderBy(static descriptor => descriptor.SourceModuleId, Comparer)
             .ThenBy(static descriptor => descriptor.Id, Comparer)
             .ToArray();
@@ -89,19 +90,20 @@ internal sealed class DurableExecutionRuntimeCatalogSnapshot : IDurableExecution
 
     private static DurableExecutionRuntimeDescriptor CreateDescriptor(
         BehaviorTopologyDescriptor descriptor,
-        IBehaviorTypeRegistry typeRegistry,
-        IReadOnlyDictionary<Type, DurableExecutionSlot> generatedSlots)
+        Dictionary<string, BehaviorImplementationDescriptor> implementationsById,
+        Dictionary<Type, DurableExecutionSlot> generatedSlots)
     {
         ArgumentNullException.ThrowIfNull(descriptor);
-        ArgumentNullException.ThrowIfNull(typeRegistry);
+        ArgumentNullException.ThrowIfNull(implementationsById);
         ArgumentNullException.ThrowIfNull(generatedSlots);
 
-        if (!typeRegistry.TryGetType(descriptor.Id, out var behaviorType) || behaviorType is null)
+        if (!implementationsById.TryGetValue(descriptor.Id, out var implementation))
         {
             throw new InvalidOperationException(
                 $"Durable execution behavior '{descriptor.Id}' does not have a registered implementation type.");
         }
 
+        var behaviorType = implementation.BehaviorType;
         var slot = ResolveDurableSlot(descriptor.Id, behaviorType, generatedSlots);
         var metadata = new Dictionary<string, string>(descriptor.Metadata, Comparer)
         {
@@ -162,10 +164,35 @@ internal sealed class DurableExecutionRuntimeCatalogSnapshot : IDurableExecution
         return map;
     }
 
+    private static Dictionary<string, BehaviorImplementationDescriptor> BuildImplementationMap(
+        IEnumerable<BehaviorImplementationDescriptor> implementations)
+    {
+        var map = new Dictionary<string, BehaviorImplementationDescriptor>(Comparer);
+        foreach (var implementation in implementations)
+        {
+            ArgumentNullException.ThrowIfNull(implementation);
+
+            if (map.TryGetValue(implementation.Id, out var existing))
+            {
+                if (existing.BehaviorType == implementation.BehaviorType)
+                {
+                    continue;
+                }
+
+                throw new InvalidOperationException(
+                    $"Behavior id '{implementation.Id}' is registered by both '{existing.BehaviorType.FullName}' and '{implementation.BehaviorType.FullName}'.");
+            }
+
+            map.Add(implementation.Id, implementation);
+        }
+
+        return map;
+    }
+
     private static DurableExecutionSlot ResolveDurableSlot(
         string behaviorId,
         Type behaviorType,
-        IReadOnlyDictionary<Type, DurableExecutionSlot> generatedSlots)
+        Dictionary<Type, DurableExecutionSlot> generatedSlots)
     {
         if (generatedSlots.TryGetValue(behaviorType, out var generatedSlot))
         {

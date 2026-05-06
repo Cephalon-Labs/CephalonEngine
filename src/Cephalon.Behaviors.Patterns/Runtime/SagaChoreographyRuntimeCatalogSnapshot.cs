@@ -16,18 +16,19 @@ internal sealed class SagaChoreographyRuntimeCatalogSnapshot : ISagaChoreography
 
     public SagaChoreographyRuntimeCatalogSnapshot(
         IBehaviorCatalog behaviorCatalog,
-        IBehaviorTypeRegistry typeRegistry,
+        IEnumerable<BehaviorImplementationDescriptor> implementations,
         IEnumerable<SagaChoreographyRuntimeSlot>? sagaChoreographyRuntimeSlots = null)
     {
         ArgumentNullException.ThrowIfNull(behaviorCatalog);
-        ArgumentNullException.ThrowIfNull(typeRegistry);
+        ArgumentNullException.ThrowIfNull(implementations);
 
+        var implementationsById = BuildImplementationMap(implementations);
         var slotsByBehaviorType = (sagaChoreographyRuntimeSlots ?? [])
             .ToDictionary(static slot => slot.BehaviorType);
 
         sagaChoreographies = behaviorCatalog
             .GetByPattern("saga-choreography")
-            .Select(descriptor => CreateDescriptor(descriptor, typeRegistry, slotsByBehaviorType))
+            .Select(descriptor => CreateDescriptor(descriptor, implementationsById, slotsByBehaviorType))
             .OrderBy(static descriptor => descriptor.SourceModuleId, Comparer)
             .ThenBy(static descriptor => descriptor.Id, Comparer)
             .ToArray();
@@ -91,19 +92,20 @@ internal sealed class SagaChoreographyRuntimeCatalogSnapshot : ISagaChoreography
 
     private static SagaChoreographyRuntimeDescriptor CreateDescriptor(
         BehaviorTopologyDescriptor descriptor,
-        IBehaviorTypeRegistry typeRegistry,
+        Dictionary<string, BehaviorImplementationDescriptor> implementationsById,
         Dictionary<Type, SagaChoreographyRuntimeSlot> slotsByBehaviorType)
     {
         ArgumentNullException.ThrowIfNull(descriptor);
-        ArgumentNullException.ThrowIfNull(typeRegistry);
+        ArgumentNullException.ThrowIfNull(implementationsById);
         ArgumentNullException.ThrowIfNull(slotsByBehaviorType);
 
-        if (!typeRegistry.TryGetType(descriptor.Id, out var behaviorType) || behaviorType is null)
+        if (!implementationsById.TryGetValue(descriptor.Id, out var implementation))
         {
             throw new InvalidOperationException(
                 $"Saga choreography behavior '{descriptor.Id}' does not have a registered implementation type.");
         }
 
+        var behaviorType = implementation.BehaviorType;
         if (!slotsByBehaviorType.TryGetValue(behaviorType, out var slot))
         {
             throw new InvalidOperationException(
@@ -136,6 +138,31 @@ internal sealed class SagaChoreographyRuntimeCatalogSnapshot : ISagaChoreography
             requiredFeatureFlagIds: descriptor.RequiredFeatureFlagIds,
             successStatusCodes: [200, 202, 204],
             metadata: metadata);
+    }
+
+    private static Dictionary<string, BehaviorImplementationDescriptor> BuildImplementationMap(
+        IEnumerable<BehaviorImplementationDescriptor> implementations)
+    {
+        var map = new Dictionary<string, BehaviorImplementationDescriptor>(Comparer);
+        foreach (var implementation in implementations)
+        {
+            ArgumentNullException.ThrowIfNull(implementation);
+
+            if (map.TryGetValue(implementation.Id, out var existing))
+            {
+                if (existing.BehaviorType == implementation.BehaviorType)
+                {
+                    continue;
+                }
+
+                throw new InvalidOperationException(
+                    $"Behavior id '{implementation.Id}' is registered by both '{existing.BehaviorType.FullName}' and '{implementation.BehaviorType.FullName}'.");
+            }
+
+            map.Add(implementation.Id, implementation);
+        }
+
+        return map;
     }
 
     private static string GetTypeName(Type type)

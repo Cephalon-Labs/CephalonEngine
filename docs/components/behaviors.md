@@ -273,6 +273,7 @@ Behavior metadata stays transport-neutral on purpose.
 
 - Dispatch table built once at `EngineBuilder.Build()` into a `FrozenDictionary`
 - Zero reflection on the hot dispatch path — the dispatcher reuses typed execution delegates; source-generated module hints are read from `BehaviorGeneratedModuleRegistry`, source-generated behavior slots and topology descriptors are materialized as closed generated metadata, unsupported generated topology declarations fail fast, and dispatch startup fails fast when a runtime-discovered behavior does not have a source-generated or explicitly registered closed execution slot
+- Behavior implementation lookup is descriptor-based: source-generated, fluent, and module-owned registrations contribute `BehaviorImplementationDescriptor` records, and runtime services consume those descriptors instead of a mutable id-to-`Type` registry.
 - Transport bindings deferred to first request (`LazyTransportBinding`) — zero startup overhead per transport
 - Compatibility matrix runs at startup only — no runtime overhead
 
@@ -289,9 +290,9 @@ Behavior metadata stays transport-neutral on purpose.
   execution context keys consumed by `Microsoft.Extensions.Resilience` pipelines. The
   behavior-coupled `BehaviorIdempotencyResolver`, `BehaviorResilienceRuntimeCatalog`, and
   `BehaviorResilienceExecutionMiddleware` remain inside `Cephalon.Behaviors` because they
-  implement or consume the internal behavior dispatch contract plus the public
-  `IBehaviorTypeRegistry` lookup. Consumers that need the resilience runtime without the full
-  behavior dispatch substrate can take a direct dependency on `Cephalon.Resilience`.
+  implement or consume the internal behavior dispatch contract plus registered
+  `BehaviorImplementationDescriptor` metadata. Consumers that need the resilience runtime without
+  the full behavior dispatch substrate can take a direct dependency on `Cephalon.Resilience`.
 
 ## M2 HTTP Transport Pack (`Cephalon.Behaviors.Http`)
 

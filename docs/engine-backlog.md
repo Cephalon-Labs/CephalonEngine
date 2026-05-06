@@ -24,6 +24,64 @@ Current focus:
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
 - treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md) for release validation, and `cephalon doctor --scorecard <path>` provides a local CLI readback over that generated artifact without becoming source truth
 
+### ENG-472 Retire Behaviors type-registry runtime mapping
+
+Status: done
+Estimate: 3
+Issue: #1071
+Iteration: Sprint 125
+
+Why:
+
+- `ENG-471` removed open-generic execution-slot materialization, but behavior topology still
+  reached concrete implementations through the mutable `BehaviorTypeRegistry` /
+  `IBehaviorTypeRegistry` runtime mapping
+- dispatch, resilience idempotency resolution, durable runtime projection, and saga runtime
+  projection should all read explicit implementation descriptors instead of a registry that can
+  drift from source-generated or manual registration truth
+- retiring the final `Cephalon.Behaviors` high-tier deployment-mode blocker lets the package return
+  to clean-baseline absence from the active manifest table while keeping global deployment-mode
+  support truth unchanged
+
+Delivered:
+
+- removed `BehaviorTypeRegistry` and `IBehaviorTypeRegistry`
+- added `BehaviorImplementationDescriptor` and `BehaviorImplementationRegistration.TryRegister(...)`
+  as the source-generated/manual registration record for behavior id, implementation type, and
+  idempotency mode
+- changed source-generated registration, fluent registration, module-owned registration,
+  `BehaviorDispatcher`, `BehaviorIdempotencyResolver`, durable runtime catalogs, saga runtime
+  catalogs, and the behavior dispatch benchmark to consume implementation descriptors directly
+- updated public API baselines for the new descriptor-based surface and the generated module
+  registration callback shape
+- added source-generator idempotency-mode coverage and package-surface regression guards that block
+  the registry files or source references from returning
+- removed the final `Cephalon.Behaviors` hazard row from
+  `scripts/deployment-mode-support.json`, leaving 7 package entries, 4 packages with known hazards,
+  and 12 known hazard entries while global trim / Native AOT / single-file rows remain
+  `not-claimed`
+
+Validation:
+
+- focused SourceGen, Behaviors, Behaviors.Patterns, and Benchmarks builds passed with
+  `/p:UseSharedCompilation=false`
+- focused behavior composition coverage passed at `126/126`
+- focused behavior hosting coverage passed at `164/164` after the REST-only durable/saga hosting
+  fixtures explicitly cleared `Engine:Transports:1` so ambient array configuration cannot select
+  `BehaviorHttp` without registering the optional HTTP binding pack
+- focused package-surface guard coverage passed at `2/2`
+- deployment-mode manifest, claim harness, harness tests, and reference-doc publishing are recorded
+  in the `ENG-472` project-memory entry after the closeout run
+- a solution-wide `dotnet test CephalonEngine.slnx --no-restore` sweep was attempted but stopped
+  after unrelated full Hosting-suite instability produced CDC/showcase/behavior REST failures and
+  very large JSON responses; it is not treated as the `ENG-472` acceptance gate
+
+Follow-up later:
+
+- continue `Cephalon.Behaviors.Http` medium-tier remediation for attribute/profile binding,
+  input-shape, and manual/type-based route-contract reflection
+- continue `Cephalon.Engine` high-tier remediation for source-generator-backed module discovery
+
 ### ENG-471 Retire Behaviors execution-slot open-generic fallback
 
 Status: done
@@ -82,7 +140,8 @@ Validation:
 
 Follow-up later:
 
-- retire the remaining `Cephalon.Behaviors` high-tier blocker: `BehaviorTypeRegistry`
+- `BehaviorTypeRegistry` was retired by `ENG-472`; `Cephalon.Behaviors` has returned to
+  clean-baseline absence from the active deployment-mode table
 - continue `Cephalon.Behaviors.Http` medium-tier remediation for attribute/profile binding,
   input-shape, and manual/type-based route-contract reflection
 
@@ -138,8 +197,8 @@ Validation:
 
 Follow-up later:
 
-- `BehaviorExecutionSlot.ForType(...)` was retired by `ENG-471`; the remaining
-  `Cephalon.Behaviors` high-tier blocker is `BehaviorTypeRegistry`
+- `BehaviorExecutionSlot.ForType(...)` was retired by `ENG-471`, and `BehaviorTypeRegistry` was
+  retired by `ENG-472`
 - continue `Cephalon.Behaviors.Http` medium-tier remediation for attribute/profile binding,
   input-shape, and manual/type-based route-contract reflection
 
@@ -178,7 +237,8 @@ Validation:
 Follow-up later:
 
 - static `ConfigureTopology` runtime lookup was retired by `ENG-470`
-- `BehaviorExecutionSlot.ForType(...)` was retired by `ENG-471`; the remaining `Cephalon.Behaviors` high-tier blocker is `BehaviorTypeRegistry`
+- `BehaviorExecutionSlot.ForType(...)` was retired by `ENG-471`, and `BehaviorTypeRegistry` was
+  retired by `ENG-472`
 - continue `Cephalon.Behaviors.Http` medium-tier remediation for attribute/profile binding, input-shape, and manual/type-based route-contract reflection
 
 ### ENG-468 Retire Behaviors.Patterns saga choreography runtime catalog reflection
@@ -319,7 +379,9 @@ Validation:
 
 Follow-up later:
 
-- retire the remaining `Cephalon.Behaviors` high-tier fallback hazards by replacing runtime discovery, `BehaviorTypeRegistry`, static `ConfigureTopology` reflection, and `BehaviorExecutionSlot.ForType(...)` with a complete compile-time module manifest or an explicitly annotated not-claimed fallback path
+- completed by `ENG-469` through `ENG-472`: generated-hint-only auto-registration, generated
+  topology descriptors, closed execution slots, and `BehaviorImplementationDescriptor` replaced the
+  remaining `Cephalon.Behaviors` high-tier fallback hazards
 
 ### ENG-464 Retire Behaviors.Http REST profile carrier reflection
 
@@ -5147,7 +5209,7 @@ Delivered:
 - new `src/Cephalon.Resilience/Cephalon.Resilience.csproj` — `net10.0`, depends on `Cephalon.Abstractions` + `Cephalon.Engine` + `Microsoft.Extensions.Resilience` + `Microsoft.CodeAnalysis.PublicApiAnalyzers`; ships `PublicAPI.Shipped.txt` + `PublicAPI.Unshipped.txt` (both header-only because the migrated types are all `internal`)
 - new `src/Cephalon.Resilience/Properties/AssemblyInfo.cs` — grants `InternalsVisibleTo` to `Cephalon.Behaviors` plus the four `Cephalon.Tests.*` assemblies
 - 4 of 7 files moved (git-tracked rename, history preserved at 92-99% similarity): `BehaviorResiliencePolicyResolver.cs`, `BehaviorCircuitBreakerStateRegistry.cs`, `DefaultBehaviorResilienceExceptionClassifier.cs`, `BehaviorResilienceExecutionContextKeys.cs` from `src/Cephalon.Behaviors/Resilience/` → `src/Cephalon.Resilience/Resilience/`; namespaces updated `Cephalon.Behaviors.Resilience` → `Cephalon.Resilience` (matches the `Cephalon.Audit` / `.Eventing` / `.Agentics` convention of avoiding stuttering)
-- 3 files **kept** in `Cephalon.Behaviors`: `BehaviorResilienceExecutionMiddleware.cs` (implements `internal IBehaviorExecutionMiddleware` and consumes `internal BehaviorExecutionInvocation` / `BehaviorExecutionDelegate` from `Cephalon.Behaviors.Services` — moving would have required widening surface), `BehaviorIdempotencyResolver.cs` (constructor takes `IBehaviorTypeRegistry` from `Cephalon.Behaviors.Services` — moving would have created a circular project reference), and `BehaviorResilienceRuntimeCatalog.cs` (constructor takes `BehaviorIdempotencyResolver`)
+- 3 files **kept** in `Cephalon.Behaviors`: `BehaviorResilienceExecutionMiddleware.cs` (implements `internal IBehaviorExecutionMiddleware` and consumes `internal BehaviorExecutionInvocation` / `BehaviorExecutionDelegate` from `Cephalon.Behaviors.Services` — moving would have required widening surface), `BehaviorIdempotencyResolver.cs` (still consumes behavior implementation metadata from `Cephalon.Behaviors.Services`; `ENG-472` later moved that metadata from `IBehaviorTypeRegistry` to `BehaviorImplementationDescriptor`), and `BehaviorResilienceRuntimeCatalog.cs` (constructor takes `BehaviorIdempotencyResolver`)
 - `src/Cephalon.Behaviors/Cephalon.Behaviors.csproj` — added `<ProjectReference Include="..\Cephalon.Resilience\Cephalon.Resilience.csproj" />`, removed `<PackageReference Include="Microsoft.Extensions.Resilience" />` (now transitive)
 - `CephalonEngine.slnx` — added `Cephalon.Resilience` project entry
 - `BehaviorModule.cs` + the three kept resilience files — added `using Cephalon.Resilience;` to reach the moved types
@@ -12828,7 +12890,7 @@ Delivered:
 - `Cephalon.Abstractions` now exposes `DurableExecutionRuntimeDescriptor` and
   `IDurableExecutionRuntimeCatalog` as the host-agnostic durable workflow operator contract
 - `Cephalon.Behaviors.Patterns` now derives `IDurableExecutionRuntimeCatalog` from
-  `IBehaviorCatalog` plus `IBehaviorTypeRegistry` so active durable workflows preserve source
+  `IBehaviorCatalog` plus `BehaviorImplementationDescriptor` records so active durable workflows preserve source
   module ownership, transport ids, required feature flags, typed input/state/output contracts,
   `200` / `202` / `204` success posture, and replay metadata from shared durable topology truth
 - `Cephalon.Engine` now projects additive `snapshot.DurableExecutions` through optional service
@@ -13065,7 +13127,7 @@ Delivered:
   behavior ownership, transports, feature gates, result-contract shape, and operator-facing
   metadata
 - `Cephalon.Behaviors.Patterns` now derives that static choreography catalog from
-  `IBehaviorCatalog` plus `IBehaviorTypeRegistry`, classifying authoring model and result shape from
+  `IBehaviorCatalog` plus `BehaviorImplementationDescriptor` records, classifying authoring model and result shape from
   the shared choreography contracts instead of inventing a second choreography registry
 - `Cephalon.Engine` now projects additive `snapshot.SagaChoreographies` through optional service
   resolution so the engine core stays host-agnostic while exposing the choreography runtime answer
@@ -13687,6 +13749,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-469 Retire Behaviors auto-registration fallback assembly scan: `BehaviorModule.AutoRegisterBehaviors(...)` now consumes `BehaviorGeneratedModuleRegistry` hints only instead of scanning `assembly.DefinedTypes` for `[AppBehavior]` types, explicit `AutoRegisterAssemblies` entries without generated hints fail fast with source-generator / explicit-registration guidance, and `scripts/deployment-mode-support.json` removed the `Cephalon.Behaviors` fallback assembly-scan row while keeping the package `high` for `BehaviorTypeRegistry`, static `ConfigureTopology` lookup, and `BehaviorExecutionSlot.ForType(...)` at that checkpoint. The ENG-469 manifest output reported 8 package entries, 5 packages with known hazards, 15 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
 - ENG-470 Retire Behavior runtime topology reflection fallback: generated behavior auto-registration no longer invokes static `ConfigureTopology(...)` at runtime; `Cephalon.Behaviors.SourceGen` emits topology descriptors for supported fluent chains and unambiguous attribute-only declarations, unsupported generated topology fails fast with source-generator / explicit-registration guidance, and `scripts/deployment-mode-support.json` removes the static topology row while keeping `Cephalon.Behaviors` `high` for `BehaviorTypeRegistry` and `BehaviorExecutionSlot.ForType(...)`. Current manifest output reports 8 package entries, 5 packages with known hazards, 14 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
 - ENG-471 Retire Behaviors execution-slot open-generic fallback: `BehaviorExecutionSlot.ForType(...)` is removed; `BehaviorDispatcher` now fails fast when a behavior has no source-generated or explicitly registered closed execution slot, typed fluent and module ownership overloads provide low-ceremony manual registration, module-owned typed registrations carry closed delegates, and `scripts/deployment-mode-support.json` removes the execution-slot row while keeping `Cephalon.Behaviors` `high` only for `BehaviorTypeRegistry`. Current manifest output reports 8 package entries, 5 packages with known hazards, 13 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
+- ENG-472 Retire Behaviors type-registry runtime mapping: `BehaviorTypeRegistry` and `IBehaviorTypeRegistry` are removed; source-generated, fluent, and module-owned behavior registration now contributes `BehaviorImplementationDescriptor` records consumed by dispatch, resilience idempotency resolution, durable runtime projection, and saga runtime projection. `scripts/deployment-mode-support.json` removes the final `Cephalon.Behaviors` hazard row, returning the package to clean-baseline absence from the active table. Current manifest output reports 7 package entries, 4 packages with known hazards, 12 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
 
 ### Later / not scheduled yet
 

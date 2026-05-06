@@ -47,6 +47,7 @@ internal sealed class BenchmarkResultCommandHandler : ICommandHandler<BenchmarkR
 // ───── Behavior Dispatch Stubs ─────
 
 /// <summary>Minimal echo behavior returning the input string unchanged.</summary>
+[AppBehavior("echo")]
 internal sealed class EchoBenchmarkBehavior : IAppBehavior<string, string>
 {
     public Task<string> HandleAsync(string input, IBehaviorContext context, CancellationToken ct = default)
@@ -81,17 +82,6 @@ internal sealed class StubBehaviorCatalog(params BehaviorTopologyDescriptor[] de
 
     public IReadOnlyList<BehaviorTopologyDescriptor> GetByTransport(string transportId)
         => All.Where(d => d.TransportIds.Contains(transportId, StringComparer.OrdinalIgnoreCase)).ToList();
-}
-
-/// <summary>Minimal behavior type registry backed by a dictionary.</summary>
-internal sealed class StubBehaviorTypeRegistry : IBehaviorTypeRegistry
-{
-    private readonly Dictionary<string, Type> _map = new(StringComparer.OrdinalIgnoreCase);
-
-    public void Register(string behaviorId, Type behaviorType) => _map[behaviorId] = behaviorType;
-
-    public bool TryGetType(string behaviorId, out Type? behaviorType)
-        => _map.TryGetValue(behaviorId, out behaviorType);
 }
 
 // ───── Authorization Policy Module ─────

@@ -1133,6 +1133,58 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void BehaviorsRuntimeUsesImplementationDescriptorsWithoutBehaviorTypeRegistry()
+    {
+        var registryPath = Path.Combine(
+            RepositoryPaths.GetRepositoryRoot(),
+            "src",
+            "Cephalon.Behaviors",
+            "Services",
+            "BehaviorTypeRegistry.cs");
+        var registryInterfacePath = Path.Combine(
+            RepositoryPaths.GetRepositoryRoot(),
+            "src",
+            "Cephalon.Behaviors",
+            "Services",
+            "IBehaviorTypeRegistry.cs");
+
+        Assert.False(File.Exists(registryPath), "BehaviorTypeRegistry.cs should not return to the runtime path.");
+        Assert.False(File.Exists(registryInterfacePath), "IBehaviorTypeRegistry.cs should not return to the runtime path.");
+
+        var files = new[]
+        {
+            RepositoryPaths.GetFile("src", "Cephalon.Behaviors", "Modules", "BehaviorModule.cs"),
+            RepositoryPaths.GetFile("src", "Cephalon.Behaviors", "Services", "BehaviorCollectionBuilder.cs"),
+            RepositoryPaths.GetFile("src", "Cephalon.Behaviors", "Services", "BehaviorDispatcher.cs"),
+            RepositoryPaths.GetFile("src", "Cephalon.Behaviors", "Resilience", "BehaviorIdempotencyResolver.cs"),
+            RepositoryPaths.GetFile("src", "Cephalon.Behaviors.SourceGen", "BehaviorSourceGenerator.cs"),
+            RepositoryPaths.GetFile("src", "Cephalon.Behaviors.Patterns", "Runtime", "DurableExecutionRuntimeCatalogSnapshot.cs"),
+            RepositoryPaths.GetFile("src", "Cephalon.Behaviors.Patterns", "Runtime", "SagaChoreographyRuntimeCatalogSnapshot.cs")
+        };
+
+        foreach (var file in files)
+        {
+            var contents = File.ReadAllText(file);
+            Assert.DoesNotContain("IBehaviorTypeRegistry", contents, StringComparison.Ordinal);
+            Assert.DoesNotContain("BehaviorTypeRegistry", contents, StringComparison.Ordinal);
+        }
+
+        var descriptor = File.ReadAllText(RepositoryPaths.GetFile(
+            "src",
+            "Cephalon.Behaviors",
+            "Services",
+            "BehaviorImplementationDescriptor.cs"));
+        Assert.Contains("IdempotencyMode", descriptor, StringComparison.Ordinal);
+
+        var registration = File.ReadAllText(RepositoryPaths.GetFile(
+            "src",
+            "Cephalon.Behaviors",
+            "Services",
+            "BehaviorImplementationRegistration.cs"));
+        Assert.Contains("TryRegister", registration, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void BehaviorsPatternsSagaChoreographyRuntimeCatalogRequiresRegisteredSlotsWithoutRuntimeShapeReflection()
     {
         var slot = File.ReadAllText(RepositoryPaths.GetFile(

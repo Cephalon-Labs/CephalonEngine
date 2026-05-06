@@ -305,7 +305,7 @@ Describe "deploymentModeEligibility" {
             foreach ($hz in $pkg.knownHazards) {
                 # site shape examples:
                 #   "src/Cephalon.Engine/Composition/ModuleDiscovery.cs:113"
-                #   "src/Cephalon.Behaviors/Services/BehaviorTypeRegistry.cs (+ src/Cephalon.Behaviors/IBehaviorTypeRegistry.cs)"
+                #   "src/Cephalon.ReferenceDocs/Generation/ReferenceDocsGenerator.cs:295"
                 # take the first ".cs" path (stop at the first close-paren / whitespace+'(' / ':line' boundary)
                 $rawSite = [string]$hz.site
                 $firstCs = ($rawSite -split '\s|\(' | Where-Object { $_ -match '\.cs(:|$)' } | Select-Object -First 1)

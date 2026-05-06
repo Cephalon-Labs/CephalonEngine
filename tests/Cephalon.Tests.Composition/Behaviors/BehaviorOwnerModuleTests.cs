@@ -108,7 +108,7 @@ public sealed class BehaviorOwnerModuleTests
         BehaviorGeneratedModuleRegistry.Register(
             assembly,
             new BehaviorGeneratedModuleRegistration(
-                static (_, _) => { },
+                static _ => { },
                 [],
                 [],
                 [new BehaviorGeneratedRuntimeTopologyDescriptor("tests.unsupported-topology", typeof(OwnedGreetingBehavior))]));

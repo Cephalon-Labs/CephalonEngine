@@ -29,6 +29,7 @@ public sealed class SagaChoreographyHostingTests
         builder.WebHost.UseTestServer();
         builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:1"] = string.Empty;
         builder.AddCephalon(engine =>
         {
             engine.AddBehaviors(
@@ -118,6 +119,7 @@ public sealed class SagaChoreographyHostingTests
             serviceProvider.GetRequiredService<HostingObservedSagaPublisher>());
         builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:1"] = string.Empty;
         builder.AddCephalon(engine =>
         {
             engine.AddBehaviors(

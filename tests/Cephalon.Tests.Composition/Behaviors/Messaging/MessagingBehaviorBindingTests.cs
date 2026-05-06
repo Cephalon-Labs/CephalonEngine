@@ -31,17 +31,21 @@ public sealed class MessagingBehaviorBindingTests
 
     private static BehaviorDispatcher BuildDispatcher(BehaviorTopologyDescriptor descriptor)
     {
-        var typeRegistry = new BehaviorTypeRegistry();
-        typeRegistry.Register(descriptor.Id, typeof(EchoBehavior));
-
         var contributor = new FluentBehaviorContributor(descriptor);
         var catalog = new BehaviorCatalog([contributor]);
 
         var services = new ServiceCollection();
         services.AddTransient<EchoBehavior>();
+        services.AddSingleton(new BehaviorImplementationDescriptor(descriptor.Id, typeof(EchoBehavior)));
+        var slotRegistry = new BehaviorExecutionSlotRegistry();
+        slotRegistry.Register(
+            descriptor.Id,
+            typeof(EchoBehavior),
+            BehaviorExecutionSlot.For<EchoBehavior, string, string>());
+        services.AddSingleton(slotRegistry);
         var provider = services.BuildServiceProvider();
 
-        return new BehaviorDispatcher(catalog, typeRegistry, provider);
+        return new BehaviorDispatcher(catalog, provider.GetServices<BehaviorImplementationDescriptor>(), provider);
     }
 
     private static InMemoryTransportBinding MakeInMemory(int capacity = 1000) =>

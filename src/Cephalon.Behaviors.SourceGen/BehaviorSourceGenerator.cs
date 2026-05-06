@@ -279,6 +279,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         var inputType = ResolveBehaviorInputType(typeSymbol);
         var implementsInterface = inputType is not null;
         var durableExecution = ResolveDurableExecutionInfo(typeSymbol);
+        var idempotencyMode = ResolveBehaviorIdempotencyMode(typeSymbol);
         var hasRestTransportAttribute = DeclaresRestTransportAttribute(typeSymbol);
         var restProfile = ExtractRestProfile(typeSymbol);
 
@@ -316,6 +317,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             location: location,
             topology: topology,
             durableExecution: durableExecution,
+            idempotencyMode: idempotencyMode,
             sagaChoreographyRuntime: sagaChoreographyRuntime,
             restProfile: restProfile,
             hasRestTransportAttribute: hasRestTransportAttribute,
@@ -356,6 +358,46 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         return typeSymbol.AllInterfaces.FirstOrDefault(static i =>
             i.OriginalDefinition.ToDisplayString() ==
             "Cephalon.Abstractions.Behaviors.IAppBehavior<TIn, TOut>");
+    }
+
+    private static string ResolveBehaviorIdempotencyMode(INamedTypeSymbol typeSymbol)
+    {
+        foreach (var attribute in typeSymbol.GetAttributes())
+        {
+            if (!string.Equals(
+                    attribute.AttributeClass?.ToDisplayString(),
+                    "Cephalon.Abstractions.Behaviors.BehaviorIdempotencyAttribute",
+                    StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            if (attribute.ConstructorArguments.Length == 0)
+            {
+                return "Idempotent";
+            }
+
+            var value = attribute.ConstructorArguments[0].Value;
+            if (value is int intValue)
+            {
+                return intValue switch
+                {
+                    1 => "Idempotent",
+                    2 => "NonIdempotent",
+                    _ => "Unknown"
+                };
+            }
+
+            var valueText = value?.ToString();
+            return valueText switch
+            {
+                "Idempotent" => "Idempotent",
+                "NonIdempotent" => "NonIdempotent",
+                _ => "Unknown"
+            };
+        }
+
+        return "Unknown";
     }
 
     private static bool DeclaresRestTransportAttribute(INamedTypeSymbol typeSymbol)
@@ -1045,10 +1087,9 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         sb.AppendLine();
 
         // ── Register method ──
-        sb.AppendLine("    /// <summary>Registers all behaviors in this assembly into DI and the type registry.</summary>");
+        sb.AppendLine("    /// <summary>Registers all behaviors in this assembly into DI and implementation descriptors.</summary>");
         sb.AppendLine("    internal static void Register(");
-        sb.AppendLine("        global::Microsoft.Extensions.DependencyInjection.IServiceCollection services,");
-        sb.AppendLine("        global::Cephalon.Behaviors.Services.IBehaviorTypeRegistry typeRegistry)");
+        sb.AppendLine("        global::Microsoft.Extensions.DependencyInjection.IServiceCollection services)");
         sb.AppendLine("    {");
 
         foreach (var info in infos)
@@ -1058,10 +1099,13 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             var id = EscapeString(info.BehaviorId);
             sb.AppendLine();
             sb.AppendLine($"        // {info.ShortName} → \"{id}\"");
-            sb.AppendLine($"        if (!typeRegistry.TryGetType(\"{id}\", out _))");
+            sb.AppendLine("        if (global::Cephalon.Behaviors.Services.BehaviorImplementationRegistration.TryRegister(");
+            sb.AppendLine("                services,");
+            sb.AppendLine($"                \"{id}\",");
+            sb.AppendLine($"                typeof({fqn}),");
+            sb.AppendLine($"                global::Cephalon.Abstractions.Behaviors.BehaviorIdempotencyMode.{info.IdempotencyMode}))");
             sb.AppendLine("        {");
             sb.AppendLine($"            global::Microsoft.Extensions.DependencyInjection.Extensions.ServiceCollectionDescriptorExtensions.TryAddTransient(services, typeof({fqn}));");
-            sb.AppendLine($"            typeRegistry.Register(\"{id}\", typeof({fqn}));");
             if (info.DurableExecution is not null)
             {
                 sb.AppendLine("            services.Add(global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor.Singleton(");
@@ -1733,6 +1777,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             Location location,
             TopologyInfo? topology,
             DurableExecutionInfo? durableExecution,
+            string idempotencyMode,
             SagaChoreographyRuntimeInfo? sagaChoreographyRuntime,
             RestProfileInfo? restProfile,
             bool hasRestTransportAttribute,
@@ -1750,6 +1795,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             Location = location;
             Topology = topology;
             DurableExecution = durableExecution;
+            IdempotencyMode = idempotencyMode;
             SagaChoreographyRuntime = sagaChoreographyRuntime;
             RestProfile = restProfile;
             HasRestTransportAttribute = hasRestTransportAttribute;
@@ -1768,6 +1814,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         public Location Location { get; }
         public TopologyInfo? Topology { get; }
         public DurableExecutionInfo? DurableExecution { get; }
+        public string IdempotencyMode { get; }
         public SagaChoreographyRuntimeInfo? SagaChoreographyRuntime { get; }
         public RestProfileInfo? RestProfile { get; }
         public bool HasRestTransportAttribute { get; }

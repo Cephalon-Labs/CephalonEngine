@@ -82,10 +82,16 @@ internal static class BehaviorAutoRegistration
                 GetBehaviorsNeedingRuntimeTopology()));
     }
 
-    internal static void Register(IServiceCollection services, IBehaviorTypeRegistry typeRegistry)
+    internal static void Register(IServiceCollection services)
     {
-        services.TryAddTransient(typeof(CatalogLookupBehavior));
-        typeRegistry.Register("catalog.lookup", typeof(CatalogLookupBehavior));
+        if (BehaviorImplementationRegistration.TryRegister(
+            services,
+            "catalog.lookup",
+            typeof(CatalogLookupBehavior),
+            BehaviorIdempotencyMode.Unknown))
+        {
+            services.TryAddTransient(typeof(CatalogLookupBehavior));
+        }
 
         services.Add(ServiceDescriptor.Singleton(
             typeof(DurableExecutionSlot),

@@ -28,20 +28,16 @@ public class BehaviorDispatchBenchmarks
     public void Setup()
     {
         var services = new ServiceCollection();
-        services.AddTransient<EchoBenchmarkBehavior>();
+        var behaviorBuilder = new BehaviorCollectionBuilder(services);
+        behaviorBuilder.Register<EchoBenchmarkBehavior, string, string>();
 
         provider = services.BuildServiceProvider();
+        var catalog = new BehaviorCatalog(provider.GetServices<IBehaviorContributor>());
 
-        var descriptor = new BehaviorTopologyDescriptor(
-            id: "echo",
-            pattern: "direct",
-            transportIds: ["rest-api"]);
-
-        var catalog = new StubBehaviorCatalog(descriptor);
-        var registry = new StubBehaviorTypeRegistry();
-        registry.Register("echo", typeof(EchoBenchmarkBehavior));
-
-        dispatcher = new BehaviorDispatcher(catalog, registry, provider);
+        dispatcher = new BehaviorDispatcher(
+            catalog,
+            provider.GetServices<BehaviorImplementationDescriptor>(),
+            provider);
         context = new StubBehaviorContext("echo");
     }
 

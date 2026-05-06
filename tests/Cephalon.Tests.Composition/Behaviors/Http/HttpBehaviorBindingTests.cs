@@ -122,22 +122,25 @@ public sealed class HttpBehaviorBindingTests
     private static async Task<(WebApplication App, HttpClient Client)> BuildAppAsync<TBehavior>(
         BehaviorTopologyDescriptor descriptor,
         params IHttpBehaviorBinding[] bindings)
-        where TBehavior : class
+        where TBehavior : class, new()
     {
         var services = new ServiceCollection();
         services.AddTransient<TBehavior>();
-
-        var typeRegistry = new BehaviorTypeRegistry();
-        typeRegistry.Register(descriptor.Id, typeof(TBehavior));
+        services.AddSingleton(new BehaviorImplementationDescriptor(descriptor.Id, typeof(TBehavior)));
+        var slotRegistry = new BehaviorExecutionSlotRegistry();
+        slotRegistry.Register(
+            descriptor.Id,
+            typeof(TBehavior),
+            BehaviorExecutionTestSlots.For(new TBehavior()));
 
         services.AddSingleton<IBehaviorContributor>(new FluentBehaviorContributor(descriptor));
-        services.AddSingleton<IBehaviorTypeRegistry>(typeRegistry);
+        services.AddSingleton(slotRegistry);
         services.AddSingleton<IBehaviorCatalog>(sp =>
             new BehaviorCatalog(sp.GetServices<IBehaviorContributor>()));
 
         var provider = services.BuildServiceProvider();
         var catalog = provider.GetRequiredService<IBehaviorCatalog>();
-        var dispatcher = new BehaviorDispatcher(catalog, typeRegistry, provider);
+        var dispatcher = new BehaviorDispatcher(catalog, provider.GetServices<BehaviorImplementationDescriptor>(), provider);
 
         var builder = WebApplication.CreateBuilder();
         builder.WebHost.UseTestServer();
@@ -170,10 +173,14 @@ public sealed class HttpBehaviorBindingTests
         builder.Services.AddTransient<RestHelperEchoBehavior>();
         builder.Services.AddSingleton<IEventStore, StubEventStore>();
 
-        var typeRegistry = new BehaviorTypeRegistry();
-        typeRegistry.Register(descriptor.Id, typeof(RestHelperEchoBehavior));
+        builder.Services.AddSingleton(new BehaviorImplementationDescriptor(descriptor.Id, typeof(RestHelperEchoBehavior)));
+        var slotRegistry = new BehaviorExecutionSlotRegistry();
+        slotRegistry.Register(
+            descriptor.Id,
+            typeof(RestHelperEchoBehavior),
+            BehaviorExecutionSlot.For<RestHelperEchoBehavior, RestHelperEchoInput, RestHelperEchoOutput>());
         builder.Services.AddSingleton<IBehaviorContributor>(new FluentBehaviorContributor(descriptor));
-        builder.Services.AddSingleton<IBehaviorTypeRegistry>(typeRegistry);
+        builder.Services.AddSingleton(slotRegistry);
         builder.Services.AddSingleton<IBehaviorCatalog>(sp =>
             new BehaviorCatalog(sp.GetServices<IBehaviorContributor>()));
         builder.Services.AddSingleton<BehaviorDispatcher>();
@@ -390,8 +397,7 @@ public sealed class HttpBehaviorBindingTests
     public void AddHttpBehaviorBindingsRegistersAllBindingsInDi()
     {
         var services = new ServiceCollection();
-        var typeRegistry = new BehaviorTypeRegistry();
-        var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+        var builder = new BehaviorCollectionBuilder(services);
 
         builder.AddHttpBehaviorBindings();
 

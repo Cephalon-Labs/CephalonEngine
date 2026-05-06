@@ -16,19 +16,19 @@ public sealed class BehaviorDispatcher
     private readonly IServiceProvider _services;
 
     /// <summary>
-    /// Initializes the dispatcher by building its frozen dispatch table from the catalog and type registry.
-    /// Only behaviors that appear in both the catalog and the type registry are dispatchable.
+    /// Initializes the dispatcher by building its frozen dispatch table from the catalog and implementation descriptors.
+    /// Only behaviors that appear in both the catalog and the implementation descriptor set are dispatchable.
     /// </summary>
     /// <param name="catalog">The behavior catalog that exposes topology descriptors.</param>
-    /// <param name="typeRegistry">The registry that maps behavior identifiers to concrete types.</param>
+    /// <param name="implementations">The behavior implementation descriptors registered through source generation or explicit host code.</param>
     /// <param name="services">The service provider used to resolve behavior instances at dispatch time.</param>
     public BehaviorDispatcher(
         IBehaviorCatalog catalog,
-        IBehaviorTypeRegistry typeRegistry,
+        IEnumerable<BehaviorImplementationDescriptor> implementations,
         IServiceProvider services)
         : this(
             catalog,
-            typeRegistry,
+            implementations,
             services,
             services.GetServices<IBehaviorExecutionMiddleware>())
     {
@@ -36,25 +36,27 @@ public sealed class BehaviorDispatcher
 
     private BehaviorDispatcher(
         IBehaviorCatalog catalog,
-        IBehaviorTypeRegistry typeRegistry,
+        IEnumerable<BehaviorImplementationDescriptor> implementations,
         IServiceProvider services,
         IEnumerable<IBehaviorExecutionMiddleware>? middlewares)
     {
         ArgumentNullException.ThrowIfNull(catalog);
-        ArgumentNullException.ThrowIfNull(typeRegistry);
+        ArgumentNullException.ThrowIfNull(implementations);
         ArgumentNullException.ThrowIfNull(services);
 
         _services = services;
         var executionMiddlewares = middlewares?.ToArray() ?? [];
         var slotRegistry = services.GetService<BehaviorExecutionSlotRegistry>();
+        var implementationsById = BuildImplementationMap(implementations);
 
         var dict = new Dictionary<string, (BehaviorExecutionDelegate, Type, BehaviorTopologyDescriptor)>(
             StringComparer.OrdinalIgnoreCase);
 
         foreach (var descriptor in catalog.All)
         {
-            if (typeRegistry.TryGetType(descriptor.Id, out var behaviorType) && behaviorType is not null)
+            if (implementationsById.TryGetValue(descriptor.Id, out var implementation))
             {
+                var behaviorType = implementation.BehaviorType;
                 var slot = slotRegistry is not null &&
                     slotRegistry.TryGetSlot(descriptor.Id, behaviorType, out var generatedSlot) &&
                     generatedSlot is not null
@@ -71,6 +73,31 @@ public sealed class BehaviorDispatcher
         }
 
         _table = dict.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static Dictionary<string, BehaviorImplementationDescriptor> BuildImplementationMap(
+        IEnumerable<BehaviorImplementationDescriptor> implementations)
+    {
+        var map = new Dictionary<string, BehaviorImplementationDescriptor>(StringComparer.OrdinalIgnoreCase);
+        foreach (var implementation in implementations)
+        {
+            ArgumentNullException.ThrowIfNull(implementation);
+
+            if (map.TryGetValue(implementation.Id, out var existing))
+            {
+                if (existing.BehaviorType == implementation.BehaviorType)
+                {
+                    continue;
+                }
+
+                throw new InvalidOperationException(
+                    $"Behavior id '{implementation.Id}' is registered by both '{existing.BehaviorType.FullName}' and '{implementation.BehaviorType.FullName}'.");
+            }
+
+            map.Add(implementation.Id, implementation);
+        }
+
+        return map;
     }
 
     /// <summary>

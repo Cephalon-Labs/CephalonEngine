@@ -8,24 +8,19 @@ namespace Cephalon.Behaviors.Services;
 
 /// <summary>
 /// Default implementation of <see cref="IBehaviorCollectionBuilder" />.
-/// Registers behavior types in DI, populates the type registry,
+/// Registers behavior types in DI, contributes implementation descriptors,
 /// and optionally contributes a fluent topology descriptor at Layer 4.
 /// </summary>
 public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
 {
-    private readonly BehaviorTypeRegistry _typeRegistry;
-
     /// <summary>
-    /// Initializes the builder with the target service collection and shared type registry.
+    /// Initializes the builder with the target service collection.
     /// </summary>
     /// <param name="services">The service collection to register behaviors into.</param>
-    /// <param name="typeRegistry">The type registry to populate with behavior id-to-type mappings.</param>
-    public BehaviorCollectionBuilder(IServiceCollection services, BehaviorTypeRegistry typeRegistry)
+    public BehaviorCollectionBuilder(IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
-        ArgumentNullException.ThrowIfNull(typeRegistry);
         Services = services;
-        _typeRegistry = typeRegistry;
     }
 
     /// <inheritdoc />
@@ -36,7 +31,7 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
     /// <list type="number">
     ///   <item><description>Resolves the behavior id from <see cref="AppBehaviorAttribute" />.</description></item>
     ///   <item><description>Registers <typeparamref name="TBehavior" /> as a transient service in DI.</description></item>
-    ///   <item><description>Records the id-to-type mapping in the shared <see cref="BehaviorTypeRegistry" />.</description></item>
+    ///   <item><description>Contributes a descriptor for the behavior implementation.</description></item>
     ///   <item><description>When <paramref name="configureTopology" /> is provided, adds a <see cref="FluentBehaviorContributor" /> at Layer 4.</description></item>
     /// </list>
     /// </summary>
@@ -142,22 +137,15 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
 
         var behaviorId = attr.Id;
 
-        if (_typeRegistry.TryGetType(behaviorId, out var existingBehaviorType) && existingBehaviorType is not null)
-        {
-            if (existingBehaviorType != behaviorType)
-            {
-                throw new InvalidOperationException(
-                    $"Cannot register behavior id '{behaviorId}' for '{behaviorType.FullName}' because it is already registered by '{existingBehaviorType.FullName}'.");
-            }
-
-            return behaviorId;
-        }
-
         // 1. Register the type in DI as transient
         Services.TryAddTransient(behaviorType);
 
-        // 2. Populate the type registry
-        _typeRegistry.Register(behaviorId, behaviorType);
+        // 2. Contribute the implementation descriptor
+        BehaviorImplementationRegistration.TryRegister(
+            Services,
+            behaviorId,
+            behaviorType,
+            ResolveIdempotencyMode(behaviorType));
 
         // 3. If fluent topology provided, add a Layer-4 contributor
         BehaviorTopologyDescriptor? descriptor = null;
@@ -238,5 +226,15 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
             requiredFeatureFlagIds: descriptor.RequiredFeatureFlagIds,
             sourceModuleId: sourceModuleId,
             metadata: descriptor.Metadata);
+    }
+
+    private static BehaviorIdempotencyMode ResolveIdempotencyMode(Type behaviorType)
+    {
+        ArgumentNullException.ThrowIfNull(behaviorType);
+
+        return ((BehaviorIdempotencyAttribute?)Attribute.GetCustomAttribute(
+                behaviorType,
+                typeof(BehaviorIdempotencyAttribute)))
+            ?.Mode ?? BehaviorIdempotencyMode.Unknown;
     }
 }

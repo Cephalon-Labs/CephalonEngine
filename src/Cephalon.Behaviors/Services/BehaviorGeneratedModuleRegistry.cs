@@ -56,16 +56,14 @@ public sealed class BehaviorGeneratedModuleRegistration
     /// <summary>
     /// Initializes a new generated behavior-module registration.
     /// </summary>
-    /// <param name="registerBehaviors">
-    /// Registers generated behavior implementations into dependency injection and the behavior type registry.
-    /// </param>
+    /// <param name="registerBehaviors">Registers generated behavior implementations into dependency injection.</param>
     /// <param name="executionSlots">The generated closed-generic execution slots for dispatch startup.</param>
     /// <param name="topologyDescriptors">The generated topology descriptors for behaviors with compile-time topology.</param>
     /// <param name="runtimeTopologyBehaviors">
     /// The generated behavior types that declared topology but could not be reduced to generated descriptors.
     /// </param>
     public BehaviorGeneratedModuleRegistration(
-        Action<IServiceCollection, IBehaviorTypeRegistry> registerBehaviors,
+        Action<IServiceCollection> registerBehaviors,
         IReadOnlyList<BehaviorGeneratedExecutionSlotDescriptor> executionSlots,
         IReadOnlyList<BehaviorTopologyDescriptor> topologyDescriptors,
         IReadOnlyList<BehaviorGeneratedRuntimeTopologyDescriptor> runtimeTopologyBehaviors)
@@ -79,7 +77,7 @@ public sealed class BehaviorGeneratedModuleRegistration
     /// <summary>
     /// Gets the generated behavior service-registration callback.
     /// </summary>
-    public Action<IServiceCollection, IBehaviorTypeRegistry> RegisterBehaviors { get; }
+    public Action<IServiceCollection> RegisterBehaviors { get; }
 
     /// <summary>
     /// Gets the generated closed-generic execution slots for dispatch startup.

@@ -241,9 +241,8 @@ public sealed class DurableExecutionStrategyTests
     {
         var eventStore = new RecordingEventStore();
         var services = new ServiceCollection();
-        var typeRegistry = new BehaviorTypeRegistry();
-        var builder = new BehaviorCollectionBuilder(services, typeRegistry);
-        typeRegistry.Register(nameof(IncrementWorkflow), typeof(IncrementWorkflow));
+        var builder = new BehaviorCollectionBuilder(services);
+        services.AddSingleton(new BehaviorImplementationDescriptor(nameof(IncrementWorkflow), typeof(IncrementWorkflow)));
         services.AddSingleton(DurableExecutionSlot.For<IncrementWorkflow, IncrementInput, CounterState, string>());
         services.AddSingleton(DurableExecutionSlot.For<IncrementWorkflow, IncrementInput, CounterState, string>());
         services.AddSingleton<IBehaviorCatalog>(
@@ -252,7 +251,6 @@ public sealed class DurableExecutionStrategyTests
                 new StaticBehaviorContributor(
                     new BehaviorTopologyDescriptor(nameof(IncrementWorkflow), "durable-execution", ["in-memory"]))
             ]));
-        services.AddSingleton<IBehaviorTypeRegistry>(typeRegistry);
         services.AddLogging();
         builder.AddBehaviorPatterns();
         using var provider = services.BuildServiceProvider();

@@ -259,8 +259,7 @@ public sealed class BehaviorBaselineTests
         var services = new ServiceCollection();
         services.AddTransient<DirectGreetingBehavior>();
 
-        var typeRegistry = new BehaviorTypeRegistry();
-        typeRegistry.Register("greeting.direct", typeof(DirectGreetingBehavior));
+        services.AddSingleton(new BehaviorImplementationDescriptor("greeting.direct", typeof(DirectGreetingBehavior)));
         var slotRegistry = new BehaviorExecutionSlotRegistry();
         slotRegistry.Register(
             "greeting.direct",
@@ -270,14 +269,13 @@ public sealed class BehaviorBaselineTests
         var descriptor = new BehaviorTopologyDescriptor("greeting.direct", "direct", []);
         var contributor = new FluentBehaviorContributor(descriptor);
         services.AddSingleton<IBehaviorContributor>(contributor);
-        services.AddSingleton<IBehaviorTypeRegistry>(typeRegistry);
         services.AddSingleton(slotRegistry);
         services.AddSingleton<IBehaviorCatalog>(sp =>
             new BehaviorCatalog(sp.GetServices<IBehaviorContributor>()));
 
         var provider = services.BuildServiceProvider();
         var catalog = provider.GetRequiredService<IBehaviorCatalog>();
-        var dispatcher = new BehaviorDispatcher(catalog, typeRegistry, provider);
+        var dispatcher = new BehaviorDispatcher(catalog, provider.GetServices<BehaviorImplementationDescriptor>(), provider);
 
         var ctx = new TestBehaviorContext("greeting.direct", isDirect: true);
         var result = await dispatcher.DispatchAsync("greeting.direct", "World", ctx);
@@ -291,13 +289,11 @@ public sealed class BehaviorBaselineTests
         var services = new ServiceCollection();
         services.AddTransient<DirectGreetingBehavior>();
 
-        var typeRegistry = new BehaviorTypeRegistry();
-        typeRegistry.Register("greeting.direct", typeof(DirectGreetingBehavior));
+        services.AddSingleton(new BehaviorImplementationDescriptor("greeting.direct", typeof(DirectGreetingBehavior)));
 
         var descriptor = new BehaviorTopologyDescriptor("greeting.direct", "direct", []);
         var contributor = new FluentBehaviorContributor(descriptor);
         services.AddSingleton<IBehaviorContributor>(contributor);
-        services.AddSingleton<IBehaviorTypeRegistry>(typeRegistry);
         services.AddSingleton<IBehaviorCatalog>(sp =>
             new BehaviorCatalog(sp.GetServices<IBehaviorContributor>()));
 
@@ -305,7 +301,7 @@ public sealed class BehaviorBaselineTests
         var catalog = provider.GetRequiredService<IBehaviorCatalog>();
 
         var exception = Assert.Throws<InvalidOperationException>(() =>
-            new BehaviorDispatcher(catalog, typeRegistry, provider));
+            new BehaviorDispatcher(catalog, provider.GetServices<BehaviorImplementationDescriptor>(), provider));
 
         Assert.Contains("no source-generated or explicitly registered BehaviorExecutionSlot", exception.Message, StringComparison.Ordinal);
         Assert.Contains("Register<TBehavior, TInput, TOutput>", exception.Message, StringComparison.Ordinal);
@@ -315,12 +311,11 @@ public sealed class BehaviorBaselineTests
     public async Task BehaviorDispatcherThrowsBehaviorNotFoundExceptionForUnknownId()
     {
         var services = new ServiceCollection();
-        var typeRegistry = new BehaviorTypeRegistry();
         services.AddSingleton<IBehaviorCatalog>(new BehaviorCatalog([]));
 
         var provider = services.BuildServiceProvider();
         var catalog = provider.GetRequiredService<IBehaviorCatalog>();
-        var dispatcher = new BehaviorDispatcher(catalog, typeRegistry, provider);
+        var dispatcher = new BehaviorDispatcher(catalog, provider.GetServices<BehaviorImplementationDescriptor>(), provider);
 
         var ctx = new TestBehaviorContext("missing");
         await Assert.ThrowsAsync<BehaviorNotFoundException>(() =>
@@ -418,20 +413,23 @@ public sealed class BehaviorBaselineTests
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // BehaviorCollectionBuilder — Register wires up DI + type registry
+    // BehaviorCollectionBuilder — Register wires up DI + implementation descriptors
     // ─────────────────────────────────────────────────────────────────────────
 
     [Fact]
-    public void BehaviorCollectionBuilderRegisterWiresDiAndTypeRegistry()
+    public void BehaviorCollectionBuilderRegisterWiresDiAndImplementationDescriptor()
     {
         var services = new ServiceCollection();
-        var typeRegistry = new BehaviorTypeRegistry();
-        var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+        var builder = new BehaviorCollectionBuilder(services);
 
         builder.Register<DirectGreetingBehavior>();
 
-        Assert.True(typeRegistry.TryGetType("greeting.direct", out var type));
-        Assert.Equal(typeof(DirectGreetingBehavior), type);
+        var descriptor = Assert.Single(services.Where(static service =>
+            service.ServiceType == typeof(BehaviorImplementationDescriptor))
+            .Select(static service => service.ImplementationInstance)
+            .OfType<BehaviorImplementationDescriptor>());
+        Assert.Equal("greeting.direct", descriptor.Id);
+        Assert.Equal(typeof(DirectGreetingBehavior), descriptor.BehaviorType);
 
         var provider = services.BuildServiceProvider();
         var resolved = provider.GetService<DirectGreetingBehavior>();
@@ -442,19 +440,17 @@ public sealed class BehaviorBaselineTests
     public async Task BehaviorCollectionBuilderTypedRegisterWiresExecutionSlot()
     {
         var services = new ServiceCollection();
-        var typeRegistry = new BehaviorTypeRegistry();
-        var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+        var builder = new BehaviorCollectionBuilder(services);
 
         builder.Register<DirectGreetingBehavior, string, string>();
 
-        services.AddSingleton<IBehaviorTypeRegistry>(typeRegistry);
         services.AddSingleton<IBehaviorCatalog>(sp =>
             new BehaviorCatalog(sp.GetServices<IBehaviorContributor>()));
 
         var provider = services.BuildServiceProvider();
         var dispatcher = new BehaviorDispatcher(
             provider.GetRequiredService<IBehaviorCatalog>(),
-            typeRegistry,
+            provider.GetServices<BehaviorImplementationDescriptor>(),
             provider);
         var ctx = new TestBehaviorContext("greeting.direct", isDirect: true);
 
@@ -467,8 +463,7 @@ public sealed class BehaviorBaselineTests
     public void BehaviorCollectionBuilderRegisterThrowsWhenNoAppBehaviorAttribute()
     {
         var services = new ServiceCollection();
-        var typeRegistry = new BehaviorTypeRegistry();
-        var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+        var builder = new BehaviorCollectionBuilder(services);
 
         Assert.Throws<InvalidOperationException>(() =>
             builder.Register<NoAttributeBehavior>());
@@ -478,8 +473,7 @@ public sealed class BehaviorBaselineTests
     public void BehaviorCollectionBuilderRegisterWithFluentTopologyAddsContributor()
     {
         var services = new ServiceCollection();
-        var typeRegistry = new BehaviorTypeRegistry();
-        var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+        var builder = new BehaviorCollectionBuilder(services);
 
         builder.Register<DirectGreetingBehavior>(b => b.ViaHttpJsonRpc().ViaInMemory());
 
@@ -498,8 +492,7 @@ public sealed class BehaviorBaselineTests
     public void BehaviorCollectionBuilderRegisterThrowsWhenRestIsDeclaredByAttribute()
     {
         var services = new ServiceCollection();
-        var typeRegistry = new BehaviorTypeRegistry();
-        var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+        var builder = new BehaviorCollectionBuilder(services);
 
         var exception = Assert.Throws<BehaviorSecurityException>(() =>
             builder.Register<RestAnnotationBehavior>());
@@ -511,8 +504,7 @@ public sealed class BehaviorBaselineTests
     public void BehaviorCollectionBuilderRegisterUsesSingleAllowedPatternAndDeclaredTransportsWhenNoTopologyExists()
     {
         var services = new ServiceCollection();
-        var typeRegistry = new BehaviorTypeRegistry();
-        var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+        var builder = new BehaviorCollectionBuilder(services);
 
         builder.Register<AttributeOnlyCqrsBehavior>();
 
@@ -531,8 +523,7 @@ public sealed class BehaviorBaselineTests
     public void BehaviorCollectionBuilderRegisterThrowsWhenMultipleAllowedPatternsNeedAnExplicitSelection()
     {
         var services = new ServiceCollection();
-        var typeRegistry = new BehaviorTypeRegistry();
-        var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+        var builder = new BehaviorCollectionBuilder(services);
 
         var exception = Assert.Throws<BehaviorSecurityException>(() =>
             builder.Register<AttributeOnlyAmbiguousPatternBehavior>());
@@ -545,8 +536,7 @@ public sealed class BehaviorBaselineTests
     public void BehaviorCollectionBuilderRegisterThrowsWhenRestIsDeclaredByTopology()
     {
         var services = new ServiceCollection();
-        var typeRegistry = new BehaviorTypeRegistry();
-        var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+        var builder = new BehaviorCollectionBuilder(services);
 
         var restDescriptor = new BehaviorTopologyDescriptor("orders.rest-topology", "direct", ["http.rest"]);
         var exception = Assert.Throws<BehaviorSecurityException>(() =>
@@ -559,8 +549,7 @@ public sealed class BehaviorBaselineTests
     public void BehaviorCollectionBuilderRegisterAcceptsHttpGrpcAliasWhenTopologyUsesGrpc()
     {
         var services = new ServiceCollection();
-        var typeRegistry = new BehaviorTypeRegistry();
-        var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+        var builder = new BehaviorCollectionBuilder(services);
 
         builder.Register<GrpcAliasAllowlistBehavior>(topology => topology.ViaGrpc());
 
@@ -577,8 +566,7 @@ public sealed class BehaviorBaselineTests
     public void BehaviorCollectionBuilderRegisterSupportsAttributeOnlyNonRestTopology()
     {
         var services = new ServiceCollection();
-        var typeRegistry = new BehaviorTypeRegistry();
-        var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+        var builder = new BehaviorCollectionBuilder(services);
 
         builder.Register<AttributeOnlyCqrsBehavior>();
 

@@ -69,16 +69,13 @@ internal sealed class BehaviorModule(
         // Then apply code-level overrides (code wins over config)
         configureOptions?.Invoke(options);
 
-        // Type registry — shared singleton populated by BehaviorCollectionBuilder
-        var typeRegistry = new BehaviorTypeRegistry();
-        services.TryAddSingleton<IBehaviorTypeRegistry>(typeRegistry);
         var slotRegistry = new BehaviorExecutionSlotRegistry();
         services.TryAddSingleton(slotRegistry);
 
         // Run fluent registrations so contributors and DI types are wired up before catalog build
         if (configureBehaviors is not null)
         {
-            var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+            var builder = new BehaviorCollectionBuilder(services);
             configureBehaviors(builder);
         }
 
@@ -90,7 +87,7 @@ internal sealed class BehaviorModule(
                 .ToHashSet(StringComparer.OrdinalIgnoreCase);
         if (ownedBehaviorRegistrations.Count > 0)
         {
-            var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+            var builder = new BehaviorCollectionBuilder(services);
             foreach (var registration in ownedBehaviorRegistrations)
             {
                 builder.Register(registration);
@@ -100,7 +97,7 @@ internal sealed class BehaviorModule(
         // Auto-register behaviors from generated assembly hints when enabled.
         if (options.AutoRegister)
         {
-            AutoRegisterBehaviors(services, typeRegistry, slotRegistry, options, ownedBehaviorIds);
+            AutoRegisterBehaviors(services, slotRegistry, options, ownedBehaviorIds);
         }
 
         RegisterBehaviorResilienceServices(
@@ -293,7 +290,6 @@ internal sealed class BehaviorModule(
     /// </summary>
     private static void AutoRegisterBehaviors(
         IServiceCollection services,
-        BehaviorTypeRegistry typeRegistry,
         BehaviorExecutionSlotRegistry slotRegistry,
         BehaviorOptions options,
         IReadOnlySet<string>? ownedBehaviorIds)
@@ -305,7 +301,7 @@ internal sealed class BehaviorModule(
         var missingGeneratedHintAssemblies = new List<string>();
         foreach (var assembly in assemblies)
         {
-            if (TrySourceGeneratedRegistration(services, typeRegistry, slotRegistry, assembly, ownedBehaviorIds))
+            if (TrySourceGeneratedRegistration(services, slotRegistry, assembly, ownedBehaviorIds))
             {
                 continue;
             }
@@ -339,7 +335,6 @@ internal sealed class BehaviorModule(
     /// </summary>
     private static bool TrySourceGeneratedRegistration(
         IServiceCollection services,
-        BehaviorTypeRegistry typeRegistry,
         BehaviorExecutionSlotRegistry slotRegistry,
         Assembly assembly,
         IReadOnlySet<string>? ownedBehaviorIds)
@@ -349,7 +344,10 @@ internal sealed class BehaviorModule(
             return false;
         }
 
-        registration.RegisterBehaviors(services, typeRegistry);
+        registration.RegisterBehaviors(services);
+        var implementationDescriptors = BehaviorImplementationRegistration
+            .GetRegisteredDescriptors(services)
+            .ToDictionary(static descriptor => descriptor.Id, static descriptor => descriptor, StringComparer.OrdinalIgnoreCase);
 
         foreach (var descriptor in registration.ExecutionSlots)
         {
@@ -358,7 +356,8 @@ internal sealed class BehaviorModule(
                 continue;
             }
 
-            if (!typeRegistry.TryGetType(descriptor.Id, out var registeredType) || registeredType != descriptor.Type)
+            if (!implementationDescriptors.TryGetValue(descriptor.Id, out var implementationDescriptor) ||
+                implementationDescriptor.BehaviorType != descriptor.Type)
             {
                 continue;
             }
@@ -373,14 +372,14 @@ internal sealed class BehaviorModule(
                 continue;
             }
 
-            if (!typeRegistry.TryGetType(topologyDescriptor.Id, out var behaviorType) || behaviorType is null)
+            if (!implementationDescriptors.TryGetValue(topologyDescriptor.Id, out var implementationDescriptor))
             {
                 continue;
             }
 
             var normalizedDescriptor = BehaviorAttributeTopologyResolver.Resolve(
                 topologyDescriptor.Id,
-                behaviorType,
+                implementationDescriptor.BehaviorType,
                 topologyDescriptor);
             if (normalizedDescriptor is not null)
             {

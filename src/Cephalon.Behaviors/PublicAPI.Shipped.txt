@@ -80,11 +80,9 @@ Cephalon.Behaviors.Services.BehaviorCatalog.FindById(string! behaviorId) -> Ceph
 Cephalon.Behaviors.Services.BehaviorCatalog.GetByPattern(string! pattern) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor!>!
 Cephalon.Behaviors.Services.BehaviorCatalog.GetByTransport(string! transportId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor!>!
 Cephalon.Behaviors.Services.BehaviorCollectionBuilder
-Cephalon.Behaviors.Services.BehaviorCollectionBuilder.BehaviorCollectionBuilder(Microsoft.Extensions.DependencyInjection.IServiceCollection! services, Cephalon.Behaviors.Services.BehaviorTypeRegistry! typeRegistry) -> void
 Cephalon.Behaviors.Services.BehaviorCollectionBuilder.Register<TBehavior>(System.Action<Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!>? configureTopology = null) -> Cephalon.Behaviors.Services.IBehaviorCollectionBuilder!
 Cephalon.Behaviors.Services.BehaviorCollectionBuilder.Services.get -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 Cephalon.Behaviors.Services.BehaviorDispatcher
-Cephalon.Behaviors.Services.BehaviorDispatcher.BehaviorDispatcher(Cephalon.Abstractions.Behaviors.IBehaviorCatalog! catalog, Cephalon.Behaviors.Services.IBehaviorTypeRegistry! typeRegistry, System.IServiceProvider! services) -> void
 Cephalon.Behaviors.Services.BehaviorDispatcher.DispatchAsync(string! behaviorId, object! input, Cephalon.Abstractions.Behaviors.IBehaviorContext! context, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<object?>!
 Cephalon.Behaviors.Services.BehaviorExecutionSlot
 Cephalon.Behaviors.Services.BehaviorExecutionSlot.InvokeAsync(object! behavior, object! input, Cephalon.Abstractions.Behaviors.IBehaviorContext! context, System.Threading.CancellationToken ct = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.Task<object?>!
@@ -92,19 +90,12 @@ Cephalon.Behaviors.Services.BehaviorRegistry
 Cephalon.Behaviors.Services.BehaviorRegistry.Add(Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor! descriptor) -> void
 Cephalon.Behaviors.Services.BehaviorRegistry.BehaviorRegistry() -> void
 Cephalon.Behaviors.Services.BehaviorRegistry.GetAll() -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor!>!
-Cephalon.Behaviors.Services.BehaviorTypeRegistry
-Cephalon.Behaviors.Services.BehaviorTypeRegistry.BehaviorTypeRegistry() -> void
-Cephalon.Behaviors.Services.BehaviorTypeRegistry.Register(string! behaviorId, System.Type! behaviorType) -> void
-Cephalon.Behaviors.Services.BehaviorTypeRegistry.TryGetType(string! behaviorId, out System.Type? behaviorType) -> bool
 Cephalon.Behaviors.Services.FluentBehaviorContributor
 Cephalon.Behaviors.Services.FluentBehaviorContributor.Contribute() -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor!>!
 Cephalon.Behaviors.Services.FluentBehaviorContributor.FluentBehaviorContributor(Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor! descriptor) -> void
 Cephalon.Behaviors.Services.IBehaviorCollectionBuilder
 Cephalon.Behaviors.Services.IBehaviorCollectionBuilder.Register<TBehavior>(System.Action<Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!>? configureTopology = null) -> Cephalon.Behaviors.Services.IBehaviorCollectionBuilder!
 Cephalon.Behaviors.Services.IBehaviorCollectionBuilder.Services.get -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
-Cephalon.Behaviors.Services.IBehaviorTypeRegistry
-Cephalon.Behaviors.Services.IBehaviorTypeRegistry.Register(string! behaviorId, System.Type! behaviorType) -> void
-Cephalon.Behaviors.Services.IBehaviorTypeRegistry.TryGetType(string! behaviorId, out System.Type? behaviorType) -> bool
 Cephalon.Behaviors.Validation.BehaviorAllowlistValidator
 Cephalon.Behaviors.Validation.BehaviorAllowlistValidator.BehaviorAllowlistValidator() -> void
 abstract Cephalon.Behaviors.Modules.BehaviorModuleBase.ConfigureBehaviors(Cephalon.Abstractions.Behaviors.IBehaviorModuleBuilder! behaviors) -> void

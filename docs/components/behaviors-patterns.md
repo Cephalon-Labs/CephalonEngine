@@ -104,7 +104,7 @@ all use the same execution contract.
 That same shared topology now also drives the first choreography operator surface.
 `AddBehaviorPatterns()` registers `ISagaChoreographyRuntimeCatalog`,
 `SagaChoreographyRuntimeCatalogSnapshot` derives one static descriptor per active choreography
-behavior from `IBehaviorCatalog`, `IBehaviorTypeRegistry`, and registered
+behavior from `IBehaviorCatalog`, `BehaviorImplementationDescriptor` records, and registered
 `SagaChoreographyRuntimeSlot` metadata. `Cephalon.Engine` projects the same answer through
 `snapshot.SagaChoreographies`, and ASP.NET Core exposes `/engine/saga-choreographies` plus
 id/module/transport drill-down routes. That runtime answer preserves module ownership, transport ids,
