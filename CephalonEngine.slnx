@@ -32,6 +32,7 @@
     <Project Path="src/Cephalon.Data.MongoDB/Cephalon.Data.MongoDB.csproj" />
     <Project Path="src/Cephalon.Data.Debezium/Cephalon.Data.Debezium.csproj" />
     <Project Path="src/Cephalon.Data.MySql/Cephalon.Data.MySql.csproj" />
+    <Project Path="src/Cephalon.Data.MySql.SciSharpReplication/Cephalon.Data.MySql.SciSharpReplication.csproj" />
     <Project Path="src/Cephalon.Data.Oracle/Cephalon.Data.Oracle.csproj" />
     <Project Path="src/Cephalon.Data.Postgres/Cephalon.Data.Postgres.csproj" />
     <Project Path="src/Cephalon.Data.SqlServer/Cephalon.Data.SqlServer.csproj" />

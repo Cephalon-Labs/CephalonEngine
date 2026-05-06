@@ -6,11 +6,8 @@ using Cephalon.Abstractions.Modules;
 using Cephalon.Data.MySql.Configuration;
 using Cephalon.Data.MySql.Services;
 using Cephalon.Data.Services;
-using Cephalon.Engine.Configuration;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Data.MySql.Modules;
 
@@ -44,13 +41,7 @@ internal sealed class MySqlDataModule(MySqlDataOptions options)
 
         if (options.CdcCaptures.Count > 0)
         {
-            services.TryAddSingleton<IMySqlBinlogTransport>(serviceProvider =>
-            {
-                var configuration = serviceProvider.GetService<IConfiguration>();
-                var connectionString = ResolveConnectionString(configuration);
-                var logger = serviceProvider.GetRequiredService<ILogger<MySqlBinlogTransport>>();
-                return new MySqlBinlogTransport(connectionString, options, logger);
-            });
+            services.TryAddSingleton<IMySqlBinlogTransport, UnsupportedMySqlBinlogTransport>();
             services.TryAddEnumerable(ServiceDescriptor.Singleton<ICdcCaptureExecutionRuntimeContributor, MySqlBinlogExecutionRuntimeContributor>());
             services.AddHostedService<MySqlBinlogCaptureHostedService>();
         }
@@ -275,25 +266,6 @@ internal sealed class MySqlDataModule(MySqlDataOptions options)
             {
                 ["surface"] = "mysql-cdc"
             }));
-    }
-
-    private string ResolveConnectionString(IConfiguration? configuration)
-    {
-        var connectionString = ConnectionStringResolution.Resolve(
-            configuration,
-            options.ConnectionString,
-            options.ConnectionStringName,
-            string.Empty,
-            MySqlDataOptions.SectionPath,
-            "MySQL");
-
-        if (string.IsNullOrWhiteSpace(connectionString))
-        {
-            throw new InvalidOperationException(
-                $"{MySqlDataOptions.SectionPath} must configure either ConnectionStringName or ConnectionString before MySQL binlog CDC can start.");
-        }
-
-        return connectionString.Trim();
     }
 
     private string ResolveTableSchema(MySqlBinlogCaptureOptions capture)

@@ -6,14 +6,20 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>latest</LangVersion>
-    <Description>MySQL binlog CDC companion package for the Cephalon engine.</Description>
+    <Description>SciSharp-backed MySQL binlog transport adapter for the Cephalon MySQL data pack.</Description>
   </PropertyGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\Cephalon.Data\Cephalon.Data.csproj" />
-    <ProjectReference Include="..\Cephalon.Engine\Cephalon.Engine.csproj" />
-    <ProjectReference Include="..\Cephalon.Eventing\Cephalon.Eventing.csproj" />
+    <PackageReference Include="MySql.Data" />
+    <PackageReference Include="SciSharp.MySQL.Replication" />
   </ItemGroup>
-<ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cephalon.Data.MySql\Cephalon.Data.MySql.csproj" />
+    <ProjectReference Include="..\Cephalon.Engine\Cephalon.Engine.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.CodeAnalysis.PublicApiAnalyzers">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

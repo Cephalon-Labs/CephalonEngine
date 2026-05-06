@@ -2,18 +2,19 @@ using System.Reflection;
 using System.Text.Json;
 using Cephalon.Abstractions.Data;
 using Cephalon.Data.MySql.Configuration;
+using Cephalon.Data.MySql.Services;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using SciSharp.MySQL.Replication;
 using SciSharp.MySQL.Replication.Events;
 using SuperSocket.Connection;
 
-namespace Cephalon.Data.MySql.Services;
+namespace Cephalon.Data.MySql.SciSharpReplication.Services;
 
-internal sealed class MySqlBinlogTransport(
+internal sealed class SciSharpMySqlBinlogTransport(
     string connectionString,
     MySqlDataOptions options,
-    ILogger<MySqlBinlogTransport> logger)
+    ILogger<SciSharpMySqlBinlogTransport> logger)
     : IMySqlBinlogTransport
 {
     private const string ContentType = "application/vnd.cephalon.mysql.binlog+json";

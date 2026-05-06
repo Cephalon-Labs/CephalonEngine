@@ -108,6 +108,7 @@ Both agentic surfaces are managed vertical proofs. Cephalon-managed dispatch and
 | `Cephalon.Data.SqlServer` | M2 | provider-managed | — (CDC projects via `Cephalon.Data`) | `DatabaseRoles`, `DatabaseMigrations`, `DatabaseTopology` | `IDatabaseRoleCatalog`, `IDatabaseMigrationCatalog` | SQL Server data + CDC capture provider |
 | `Cephalon.Data.Postgres` | M2 | provider-managed | — | `DatabaseRoles`, `DatabaseMigrations`, `DatabaseTopology` | `IDatabaseRoleCatalog`, `IDatabaseMigrationCatalog` | PostgreSQL data + logical-replication CDC provider |
 | `Cephalon.Data.MySql` | M2 | provider-managed | — | `DatabaseRoles`, `DatabaseMigrations`, `DatabaseTopology` | `IDatabaseRoleCatalog`, `IDatabaseMigrationCatalog` | MySQL data pack |
+| `Cephalon.Data.MySql.SciSharpReplication` | M0 | provider-managed | — | — | — | Optional SciSharp-backed MySQL binlog transport adapter; carries the current third-party non-public transport reflection posture |
 | `Cephalon.Data.Oracle` | M2 | provider-managed | — | `DatabaseRoles`, `DatabaseMigrations`, `DatabaseTopology` | `IDatabaseRoleCatalog`, `IDatabaseMigrationCatalog` | Oracle Database data pack |
 | `Cephalon.Data.MongoDB` | M2 | provider-managed | — | — | `IDataProductCatalog` | MongoDB data + change-stream CDC provider |
 | `Cephalon.Data.Redis` | M1 | provider-managed | — | — | — | Redis cache and data structures pack (family-covered by maturity audit) |

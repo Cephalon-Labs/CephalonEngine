@@ -1301,6 +1301,36 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void DataMySqlSciSharpReplicationAssemblyExposesOnlyTheDocumentedAdapterRegistrationSurface()
+    {
+        AssertExportedTypes(
+            typeof(global::Cephalon.Data.MySql.SciSharpReplication.Registration.MySqlSciSharpReplicationEngineBuilderExtensions).Assembly,
+            typeof(global::Cephalon.Data.MySql.SciSharpReplication.Registration.MySqlSciSharpReplicationEngineBuilderExtensions));
+    }
+
+    [Fact]
+    public void DataMySqlCorePackageDoesNotCarrySciSharpBinlogTransportReflection()
+    {
+        var project = File.ReadAllText(RepositoryPaths.GetFile(
+            "src",
+            "Cephalon.Data.MySql",
+            "Cephalon.Data.MySql.csproj"));
+        Assert.DoesNotContain("SciSharp.MySQL.Replication", project, StringComparison.Ordinal);
+        Assert.DoesNotContain("MySql.Data", project, StringComparison.Ordinal);
+
+        var sourceRoot = RepositoryPaths.GetDirectory("src", "Cephalon.Data.MySql");
+        foreach (var sourceFile in Directory.GetFiles(sourceRoot, "*.cs", SearchOption.AllDirectories))
+        {
+            var source = File.ReadAllText(sourceFile);
+            Assert.DoesNotContain("SciSharp.MySQL.Replication", source, StringComparison.Ordinal);
+            Assert.DoesNotContain("BindingFlags.NonPublic", source, StringComparison.Ordinal);
+            Assert.DoesNotContain(".GetMethod(", source, StringComparison.Ordinal);
+            Assert.DoesNotContain(".GetField(", source, StringComparison.Ordinal);
+            Assert.DoesNotContain("method.Invoke(", source, StringComparison.Ordinal);
+        }
+    }
+
+    [Fact]
     public void DataOracleAssemblyExposesOnlyTheDocumentedPackContracts()
     {
         AssertExportedTypes(

@@ -24,6 +24,48 @@ Current focus:
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
 - treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md) for release validation, and `cephalon doctor --scorecard <path>` provides a local CLI readback over that generated artifact without becoming source truth
 
+### ENG-477 Isolate MySQL SciSharp binlog transport reflection
+
+Status: done
+Estimate: 3
+Issue: #1078
+Iteration: Sprint 125
+
+Why:
+
+- `Cephalon.Data.MySql` still carried the final MySQL deployment-mode blocker after `ENG-459`:
+  the SciSharp-backed binlog transport depended on non-public members of the third-party
+  `SciSharp.MySQL.Replication.ReplicationClient` type
+- the current NuGet release does not expose the start-position API Cephalon needs, while relying
+  on unreleased upstream source would make the core package's support posture unstable
+- the core MySQL package should own CDC contracts, hosted execution, checkpoints, and failure
+  projection without forcing every adopter to reference the current SciSharp transport path
+
+Delivered:
+
+- added `Cephalon.Data.MySql.SciSharpReplication` as the optional SciSharp-backed binlog transport
+  adapter package with `AddSciSharpMySqlBinlogReplication(...)` as its public registration surface
+- moved the current `IMySqlBinlogTransport` implementation and its `SciSharp.MySQL.Replication` /
+  `MySql.Data` dependencies out of `Cephalon.Data.MySql`
+- changed `Cephalon.Data.MySql` to register a fail-fast unsupported transport when MySQL CDC is
+  configured without an adapter, returning a deterministic `binlog-transport-adapter-missing`
+  failure instead of hiding an implicit dependency
+- moved the deployment-mode high-tier rows from core `Cephalon.Data.MySql` to optional
+  `Cephalon.Data.MySql.SciSharpReplication`, leaving global trim / Native AOT / single-file rows
+  `not-claimed`
+- refreshed component docs, compatibility/readiness docs, conformance/maturity docs, reference-doc
+  catalog output, the deployment-mode manifest, and planning truth for the new package boundary
+
+Validation:
+
+- `dotnet restore CephalonEngine.slnx --use-lock-file`
+- focused `Cephalon.Data.MySql`, `Cephalon.Data.MySql.SciSharpReplication`, and Tooling builds
+  passed with `/p:UseSharedCompilation=false`
+- focused tooling package-surface / documentation / readiness coverage passed at `237/237`
+- deployment-mode manifest Pester coverage passed at `109/109`
+- deployment-mode claim harness passed in audit mode with `not-claimed`, 6 packages, and 14 hazards
+- dotnet-readiness validation and reference-doc publishing passed; reference docs generated 87 files
+
 ### ENG-476 Retire Engine module discovery reflection
 
 Status: done
@@ -13970,6 +14012,8 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-473 Retire Behaviors.Http profile attribute fallback: `MapProfile<TBehavior>()` now requires generated or explicitly registered `BehaviorRestProfileDescriptor` metadata plus behavior-type hints instead of reading `BehaviorRestProfileAttribute`, `BehaviorRestBindingAttribute`, or `AppBehaviorAttribute` directly from runtime behavior types. Explicit verb mappings are now the no-profile direct path. The ENG-473 checkpoint manifest output reported 7 package entries, 4 packages with known hazards, 11 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim while `Cephalon.Behaviors.Http` stayed `medium` for input-shape/manual-route reflection. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
 - ENG-474 Retire Behaviors.Http input-shape fallback: `BehaviorRestProfileDescriptor.InputContract` now carries descriptor-backed input shape through `BehaviorRestInputContractDescriptor` and `BehaviorRestInputPropertyDescriptor`; `Cephalon.Behaviors.SourceGen` emits scalar/object input contract descriptors; and `BehaviorRestProfileResolver` validates explicit profile bindings without resolving runtime behavior/input type shape. The ENG-474 checkpoint manifest output reported 7 package entries, 4 packages with known hazards, 10 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim while `Cephalon.Behaviors.Http` still had the manual/type-based route-contract row that `ENG-475` later retired. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
 - ENG-475 Retire Behaviors.Http manual route-contract fallback: `BehaviorContractDescriptor`, `BehaviorInputPropertyDescriptor`, and `BehaviorContractRegistry` now carry generated or explicit behavior endpoint-contract metadata; `Cephalon.Behaviors.SourceGen` emits `GetBehaviorContracts()` and registers it from a module initializer; and `Cephalon.Behaviors.Http` route materialization, profile projection, module-builder ownership, binding normalization, fallback-mode resolution, and candidate validation consume descriptor metadata instead of resolving behavior interfaces, attributes, or structured-result wrappers from runtime types. Current manifest output reports 6 package entries, 3 packages with known hazards, 9 known hazard entries, zero active `low` entries, zero active `medium` entries, and 1 scoped `singleFile` claim while global trim / Native AOT / single-file rows remain `not-claimed`. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
+- ENG-476 Retire Engine module discovery reflection: `Cephalon.Engine.SourceGen` now emits `ModuleDiscoveryDescriptor` metadata and `ModuleDiscovery` consumes generated descriptors instead of scanning assembly types or using `Activator.CreateInstance(...)`; the `Cephalon.Engine` high-tier row leaves the active package table and `Cephalon.Engine.SourceGen` is listed as `excluded-by-design`. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
+- ENG-477 Isolate MySQL SciSharp binlog transport reflection: `Cephalon.Data.MySql` no longer references `SciSharp.MySQL.Replication` or `MySql.Data`; the current SciSharp-backed `IMySqlBinlogTransport` moves into optional `Cephalon.Data.MySql.SciSharpReplication` behind `AddSciSharpMySqlBinlogReplication(...)`; and the core MySQL package now fails fast with `binlog-transport-adapter-missing` when CDC is configured without an adapter. Current manifest output reports 6 package entries, 2 packages with known hazards, 14 known hazard entries, 2 `high` entries, zero active `medium` or `low` entries, 3 `excluded-by-design` entries, and 1 scoped `singleFile` claim while global trim / Native AOT / single-file rows remain `not-claimed`. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
 
 ### Later / not scheduled yet
 

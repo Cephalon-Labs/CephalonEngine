@@ -54,6 +54,7 @@ The convention is being rolled out incrementally; component pages without the ba
 - [Cephalon.Data.SqlServer](data-sqlserver.md)
 - [Cephalon.Data.Postgres](data-postgres.md)
 - [Cephalon.Data.MySql](data-mysql.md)
+- [Cephalon.Data.MySql.SciSharpReplication](data-mysql-scisharp-replication.md)
 - [Cephalon.Data.Oracle](data-oracle.md)
 - [Cephalon.Data.Debezium](data-debezium.md)
 - [Cephalon.Retrieval](retrieval.md)

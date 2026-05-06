@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-06T08:21:29.4875785+00:00",
+  "GeneratedAtUtc": "2026-05-06T10:13:05.3619526+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -200,6 +200,14 @@
       "FileName": "cephalon-data-mysql.md",
       "NamespaceCount": 2,
       "TypeCount": 3
+    },
+    {
+      "AssemblyName": "Cephalon.Data.MySql.SciSharpReplication",
+      "Category": "Phase 13 Companion Packs",
+      "Description": "Optional SciSharp-backed MySQL binlog transport adapter for Cephalon data workloads.",
+      "FileName": "cephalon-data-mysql-scisharpreplication.md",
+      "NamespaceCount": 1,
+      "TypeCount": 1
     },
     {
       "AssemblyName": "Cephalon.Data.Oracle",
@@ -1092,6 +1100,13 @@
       "AssemblyName": "Cephalon.Data.MySql",
       "FileName": "cephalon-data-mysql.md",
       "AnchorId": "namespace-cephalon-data-mysql-registration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Data.MySql.SciSharpReplication.Registration",
+      "AssemblyName": "Cephalon.Data.MySql.SciSharpReplication",
+      "FileName": "cephalon-data-mysql-scisharpreplication.md",
+      "AnchorId": "namespace-cephalon-data-mysql-scisharpreplication-registration",
       "TypeCount": 1
     },
     {
@@ -14309,6 +14324,21 @@
       }
     },
     {
+      "DisplayName": "MySqlSciSharpReplicationEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Data.MySql.SciSharpReplication.Registration",
+      "AssemblyName": "Cephalon.Data.MySql.SciSharpReplication",
+      "FileName": "cephalon-data-mysql-scisharpreplication.md",
+      "AnchorId": "type-cephalon-data-mysql-scisharpreplication-registration-mysqlscisharpreplicationenginebuilderextensions",
+      "Declaration": "public static class MySqlSciSharpReplicationEngineBuilderExtensions",
+      "Summary": "Registers the SciSharp-backed MySQL binlog transport adapter for \u0060EngineBuilder\u0060.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "NatsDependencyDefinition",
       "NamespaceName": "Cephalon.Observability.NatsDependencies.Configuration",
       "AssemblyName": "Cephalon.Observability.NatsDependencies",
@@ -23646,6 +23676,17 @@
       "AnchorId": "member-m-cephalon-retrieval-registration-retrievalenginebuilderextensions-addretrieval-cephalon-engine-composition-enginebuilder-system-action-cephalon-retrieval-configuration-retrievaloptions",
       "Signature": "EngineBuilder AddRetrieval(this EngineBuilder builder, Action\u003CRetrievalOptions\u003E configure)",
       "Summary": "Adds the retrieval runtime pack to the engine."
+    },
+    {
+      "DisplayName": "AddSciSharpMySqlBinlogReplication",
+      "Category": "Methods",
+      "DeclaringTypeName": "MySqlSciSharpReplicationEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Data.MySql.SciSharpReplication.Registration",
+      "AssemblyName": "Cephalon.Data.MySql.SciSharpReplication",
+      "FileName": "cephalon-data-mysql-scisharpreplication.md",
+      "AnchorId": "member-m-cephalon-data-mysql-scisharpreplication-registration-mysqlscisharpreplicationenginebuilderextensions-addscisharpmysqlbinlogreplication-cephalon-engine-composition-enginebuilder",
+      "Signature": "EngineBuilder AddSciSharpMySqlBinlogReplication(this EngineBuilder builder)",
+      "Summary": "Adds the SciSharp-backed MySQL binlog transport used by configured MySQL CDC captures."
     },
     {
       "DisplayName": "AddSfidIds",

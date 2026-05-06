@@ -76,6 +76,8 @@ public sealed class DocumentationCoverageTests
             ["Cephalon.Observability.RabbitMqDependencies"] = "observability-rabbitmq-dependencies.md",
             ["Cephalon.Observability.RedisDependencies"] = "observability-redis-dependencies.md",
             ["Cephalon.Observability.SqlServerDependencies"] = "observability-sqlserver-dependencies.md",
+            // "SciSharpReplication" -> "scisharp-replication"
+            ["Cephalon.Data.MySql.SciSharpReplication"] = "data-mysql-scisharp-replication.md",
         };
 
     private static string DeriveComponentDocFileName(string projectName)

@@ -8,6 +8,55 @@
         "resolved": "4.14.0",
         "contentHash": "5zBDSa8D1pfn5VyDzRekcYdVx/DGAzwegblVJhzdN0kvPt97TPr12haA6ZG0wS2WgBb1W42GeZJRiRtlNaoY1w=="
       },
+      "MySql.Data": {
+        "type": "Direct",
+        "requested": "[9.6.0, )",
+        "resolved": "9.6.0",
+        "contentHash": "jjCXNBxLLQHBcyYyOP4yp5jqljStH2qGFXXg3jBMdwYQk9ihpLH9BXoMyc/J3421pENBDjCf/eGi9Ow0Ib7LUA==",
+        "dependencies": {
+          "BouncyCastle.Cryptography": "2.6.2",
+          "Google.Protobuf": "3.32.0",
+          "K4os.Compression.LZ4.Streams": "1.3.8",
+          "System.Configuration.ConfigurationManager": "8.0.0",
+          "System.Security.Permissions": "8.0.0",
+          "ZstdSharp.Port": "0.8.6"
+        }
+      },
+      "SciSharp.MySQL.Replication": {
+        "type": "Direct",
+        "requested": "[1.0.0-beta.3, )",
+        "resolved": "1.0.0-beta.3",
+        "contentHash": "71YIhMbc5fE46H4Li4CRZeAxSs7JTlRyZbrkoGqSOgiiuX3CQj4Yn8ATdMVnC8RyOAR2W+W7Wx5w/WIvFwOM5w==",
+        "dependencies": {
+          "Microsoft.Extensions.Logging": "8.0.0",
+          "MySql.Data": "8.4.0",
+          "SuperSocket.Client": "2.0.0"
+        }
+      },
+      "BouncyCastle.Cryptography": {
+        "type": "Transitive",
+        "resolved": "2.6.2",
+        "contentHash": "7oWOcvnntmMKNzDLsdxAYqApt+AjpRpP2CShjMfIa3umZ42UQMvH0tl1qAliYPNYO6vTdcGMqnRrCPmsfzTI1w=="
+      },
+      "K4os.Compression.LZ4": {
+        "type": "Transitive",
+        "resolved": "1.3.8",
+        "contentHash": "LhwlPa7c1zs1OV2XadMtAWdImjLIsqFJPoRcIWAadSRn0Ri1DepK65UbWLPmt4riLqx2d40xjXRk0ogpqNtK7g=="
+      },
+      "K4os.Compression.LZ4.Streams": {
+        "type": "Transitive",
+        "resolved": "1.3.8",
+        "contentHash": "P15qr8dZAeo9GvYbUIPEYFQ0MEJ0i5iqr37wsYeRC3la2uCldOoeCa6to0CZ1taiwxIV+Mk8NGuZi+4iWivK9w==",
+        "dependencies": {
+          "K4os.Compression.LZ4": "1.3.8",
+          "K4os.Hash.xxHash": "1.0.8"
+        }
+      },
+      "K4os.Hash.xxHash": {
+        "type": "Transitive",
+        "resolved": "1.0.8",
+        "contentHash": "Wp2F7BamQ2Q/7Hk834nV9vRQapgcr8kgv9Jvfm8J3D0IhDqZMMl+a2yxUq5ltJitvXvQfB8W6K4F4fCbw/P6YQ=="
+      },
       "Microsoft.Extensions.Configuration": {
         "type": "Transitive",
         "resolved": "10.0.5",
@@ -183,6 +232,11 @@
           "Microsoft.Extensions.Primitives": "10.0.5"
         }
       },
+      "Microsoft.Extensions.ObjectPool": {
+        "type": "Transitive",
+        "resolved": "8.0.0",
+        "contentHash": "4pm+XgxSukskwjzDDfSjG4KNUIOdFF2VaqZZDtTzoyQMOVSnlV6ZM8a9aVu5dg9LVZTB//utzSc8fOi0b0Mb2Q=="
+      },
       "Microsoft.Extensions.Options.ConfigurationExtensions": {
         "type": "Transitive",
         "resolved": "10.0.5",
@@ -200,10 +254,68 @@
         "resolved": "10.0.5",
         "contentHash": "/HUHJ0tw/LQvD0DZrz50eQy/3z7PfX7WWEaXnjKTV9/TNdcgFlNTZGo49QhS7PTmhDqMyHRMqAXSBxLh0vso4g=="
       },
+      "SuperSocket.Client": {
+        "type": "Transitive",
+        "resolved": "2.0.0",
+        "contentHash": "Bw7VfU8OhyG6HzahYCFwOk1MRKyJgBoD3uX8ZfY0eBFVoAIa4XyEvu4jRSrTbsP50Yck/R3H2ZcYwHr2CYFM4A==",
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.0",
+          "SuperSocket.Connection": "2.0.0",
+          "SuperSocket.ProtoBase": "2.0.0"
+        }
+      },
+      "SuperSocket.Connection": {
+        "type": "Transitive",
+        "resolved": "2.0.0",
+        "contentHash": "2g5wF7KKdWR7JYZb2+drA/nQYCE2l6dA034SKH+HHIZIWjV7ENq0yE0S7IRs8KCECzCrJIzQIsHXdPlTuWAY8w==",
+        "dependencies": {
+          "Microsoft.Extensions.Logging.Abstractions": "8.0.0",
+          "Microsoft.Extensions.ObjectPool": "8.0.0",
+          "Microsoft.Extensions.Options": "8.0.0",
+          "SuperSocket.ProtoBase": "2.0.0"
+        }
+      },
+      "SuperSocket.ProtoBase": {
+        "type": "Transitive",
+        "resolved": "2.0.0",
+        "contentHash": "fU5dl5LsYm4AdN8I6ANQn6zHXGR392vZQ63OnaG+QqU4yUCq4W138f7DU9Ttlq8GrOXN6XprRr9WkRnccf97fg=="
+      },
+      "System.Configuration.ConfigurationManager": {
+        "type": "Transitive",
+        "resolved": "8.0.0",
+        "contentHash": "JlYi9XVvIREURRUlGMr1F6vOFLk7YSY4p1vHo4kX3tQ0AGrjqlRWHDi66ImHhy6qwXBG3BJ6Y1QlYQ+Qz6Xgww==",
+        "dependencies": {
+          "System.Diagnostics.EventLog": "8.0.0",
+          "System.Security.Cryptography.ProtectedData": "8.0.0"
+        }
+      },
       "System.Diagnostics.EventLog": {
         "type": "Transitive",
         "resolved": "10.0.5",
         "contentHash": "wugvy+pBVzjQEnRs9wMTWwoaeNFX3hsaHeVHFDIvJSWXp7wfmNWu3mxAwBIE6pyW+g6+rHa1Of5fTzb0QVqUTA=="
+      },
+      "System.Security.Cryptography.ProtectedData": {
+        "type": "Transitive",
+        "resolved": "8.0.0",
+        "contentHash": "+TUFINV2q2ifyXauQXRwy4CiBhqvDEDZeVJU7qfxya4aRYOKzVBpN+4acx25VcPB9ywUN6C0n8drWl110PhZEg=="
+      },
+      "System.Security.Permissions": {
+        "type": "Transitive",
+        "resolved": "8.0.0",
+        "contentHash": "v/BBylw7XevuAsHXoX9dDUUfmBIcUf7Lkz8K3ZXIKz3YRKpw8YftpSir4n4e/jDTKFoaK37AsC3xnk+GNFI1Ow==",
+        "dependencies": {
+          "System.Windows.Extensions": "8.0.0"
+        }
+      },
+      "System.Windows.Extensions": {
+        "type": "Transitive",
+        "resolved": "8.0.0",
+        "contentHash": "Obg3a90MkOw9mYKxrardLpY2u0axDMrSmy4JCdq2cYbelM2cUwmUir5Bomvd1yxmPL9h5LVHU1tuKBZpUjfASg=="
+      },
+      "ZstdSharp.Port": {
+        "type": "Transitive",
+        "resolved": "0.8.6",
+        "contentHash": "iP4jVLQoQmUjMU88g1WObiNr6YKZGvh4aOXn3yOJsHqZsflwRsxZPcIBvNXgjXO3vQKSLctXGLTpcBPLnWPS8A=="
       },
       "cephalon.abstractions": {
         "type": "Project",
@@ -217,6 +329,14 @@
           "Cephalon.Engine": "[0.1.0-preview, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.5, )",
           "Microsoft.Extensions.Hosting": "[10.0.5, )"
+        }
+      },
+      "cephalon.data.mysql": {
+        "type": "Project",
+        "dependencies": {
+          "Cephalon.Data": "[0.1.0-preview, )",
+          "Cephalon.Engine": "[0.1.0-preview, )",
+          "Cephalon.Eventing": "[0.1.0-preview, )"
         }
       },
       "cephalon.diagnostics": {
@@ -243,6 +363,12 @@
           "Cephalon.Engine": "[0.1.0-preview, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.5, )"
         }
+      },
+      "Google.Protobuf": {
+        "type": "CentralTransitive",
+        "requested": "[3.34.1, )",
+        "resolved": "3.32.0",
+        "contentHash": "fsKxV5bhcvXmZi+cUo5+IxzRMBHwHeFO8G5utNa9f+Mu37kmfy8JcUVvWPt4cX7EuQWAjjHUjZqVl7nGSTRHRg=="
       },
       "Microsoft.Extensions.Configuration.Abstractions": {
         "type": "CentralTransitive",

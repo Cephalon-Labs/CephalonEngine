@@ -1,0 +1,3 @@
+#nullable enable
+Cephalon.Data.MySql.SciSharpReplication.Registration.MySqlSciSharpReplicationEngineBuilderExtensions
+static Cephalon.Data.MySql.SciSharpReplication.Registration.MySqlSciSharpReplicationEngineBuilderExtensions.AddSciSharpMySqlBinlogReplication(this Cephalon.Engine.Composition.EngineBuilder! builder) -> Cephalon.Engine.Composition.EngineBuilder!

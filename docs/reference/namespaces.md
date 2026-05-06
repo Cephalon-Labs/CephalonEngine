@@ -216,6 +216,10 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Data.MySql](cephalon-data-mysql.md#namespace-cephalon-data-mysql-registration): 1 public types [Browse](browse.html?assembly=Cephalon.Data.MySql&namespace=Cephalon.Data.MySql.Registration)
 
+## `Cephalon.Data.MySql.SciSharpReplication.Registration`
+
+- [Cephalon.Data.MySql.SciSharpReplication](cephalon-data-mysql-scisharpreplication.md#namespace-cephalon-data-mysql-scisharpreplication-registration): 1 public types [Browse](browse.html?assembly=Cephalon.Data.MySql.SciSharpReplication&namespace=Cephalon.Data.MySql.SciSharpReplication.Registration)
+
 ## `Cephalon.Data.Oracle.Configuration`
 
 - [Cephalon.Data.Oracle](cephalon-data-oracle.md#namespace-cephalon-data-oracle-configuration): 2 public types [Browse](browse.html?assembly=Cephalon.Data.Oracle&namespace=Cephalon.Data.Oracle.Configuration)
