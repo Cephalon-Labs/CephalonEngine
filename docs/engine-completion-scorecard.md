@@ -46,17 +46,18 @@ Do not use `M4`, "tests pass", or "docs exist" as a synonym for GA. Maturity, va
 | [`test-coverage-roadmap.md`](test-coverage-roadmap.md) | Known coverage gaps and direct-test priorities | Checks whether a package family still has known proof gaps. |
 | [`release-checklist.md`](release-checklist.md) | Release-manager proof sequence | Converts the scorecard into per-release execution. |
 | [`../scripts/adoption-smoke-support.json`](../scripts/adoption-smoke-support.json) + [`../scripts/validate-out-of-tree-package-adoption.ps1`](../scripts/validate-out-of-tree-package-adoption.ps1) | Out-of-repo generated-app, local-package, reference-module staging, host-run, and runtime-surface adoption replay | Checks that the developer-adoption gate points at a replayable external smoke path instead of prose-only adoption confidence. |
+| [`../scripts/summarise-public-api-deltas.ps1`](../scripts/summarise-public-api-deltas.ps1) + `src/Cephalon.*/PublicAPI.*.txt` | Per-package public API delta files, shipped baselines, additive entries, and removal entries | Checks that the public API compatibility gate has machine-readable package counts and removal counts instead of prose-only review posture. |
 
 ## Machine-readable report
 
-[`scripts/publish-engine-completion-scorecard.ps1`](../scripts/publish-engine-completion-scorecard.ps1) exports this page into a release artifact without becoming a new authority. The script parses the status vocabulary, evidence sources, platform gates, quality dimensions, and package-family roll-up from this Markdown document, validates every scorecard status token against the declared vocabulary, validates every repo-local evidence-source reference, reads per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md), and validates the adoption-smoke support manifest before emitting `AdoptionSmokeEvidence`.
+[`scripts/publish-engine-completion-scorecard.ps1`](../scripts/publish-engine-completion-scorecard.ps1) exports this page into a release artifact without becoming a new authority. The script parses the status vocabulary, evidence sources, platform gates, quality dimensions, and package-family roll-up from this Markdown document, validates every scorecard status token against the declared vocabulary, validates every repo-local evidence-source reference, reads per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md), validates the adoption-smoke support manifest before emitting `AdoptionSmokeEvidence`, and scans `src/Cephalon.*/PublicAPI.Unshipped.txt` plus matching shipped baselines before emitting `PublicApiCompatibilityEvidence`.
 
 - `artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json`
 - `artifacts/engine-completion-scorecard-release/README.md`
 
-The JSON artifact uses schema version `1.2.0`. Release validation publishes it by default through `scripts/validate-release.ps1` unless `-SkipEngineCompletionScorecard` is passed for a deliberately narrower local run.
+The JSON artifact uses schema version `1.3.0`. Release validation publishes it by default through `scripts/validate-release.ps1` unless `-SkipEngineCompletionScorecard` is passed for a deliberately narrower local run.
 
-For a local release-manager readback, `cephalon doctor --scorecard <path-to-engine-completion-scorecard.json>` summarizes that generated artifact's schema/source documents, platform-gate posture, validated evidence-reference count, and per-package GA-readiness count. The CLI consumes the generated JSON read model only; it does not parse this Markdown page, replace source documents, or promote support/GA claims by itself.
+For a local release-manager readback, `cephalon doctor --scorecard <path-to-engine-completion-scorecard.json>` summarizes that generated artifact's schema/source documents, platform-gate posture, validated evidence-reference count, and per-package GA-readiness count. The generated artifact also carries public API package/addition/removal counts for release-note review. The CLI consumes the generated JSON read model only; it does not parse this Markdown page, replace source documents, or promote support/GA claims by itself.
 
 ## Platform-level gates
 
@@ -67,7 +68,7 @@ These gates must all be `ready-for-preview`, `not-applicable`, or explicitly doc
 | Product identity and architecture contract | `ready-for-preview` | No | No, while docs/source/planning stay aligned | Keep `project-memory.md`, `architecture.md`, and `long-range-direction.md` aligned when the engine shape changes. |
 | Package maturity and ownership truth | `ready-for-preview` | No | Yes, if audit or matrix drifts | Keep every shipped package row in the maturity audit and conformance matrix current. |
 | Runtime introspection contract | `ready-for-preview` | No | Yes, if routes or snapshot keys drift | Keep `/engine/*`, `snapshot.*`, and catalog interfaces in the runtime contract index. |
-| Public API compatibility | `partial` | No | Yes | Review all `PublicAPI.Unshipped.txt` files, enforce removals, and enable package validation baselines when stable packages ship. |
+| Public API compatibility | `partial` | No | Yes | Keep generated `PublicApiCompatibilityEvidence` aligned with `PublicAPI.Unshipped.txt` / `PublicAPI.Shipped.txt`, enforce removals, and enable package validation baselines when stable packages ship. |
 | Package publishing and NuGet discoverability | `partial` | No | Yes | Dry-run signed release flow, reserve/protect `Cephalon.*` when eligible, and verify package readmes/tags/source/symbols. |
 | Supply-chain and release provenance | `partial` | No | Yes | Produce release artifacts with SBOM, SLSA provenance, Sigstore/Rekor evidence, and trusted-publishing proof. |
 | Deployment-mode support claims | global `not-claimed` for trim, Native AOT, and single-file support; `Cephalon.Diagnostics` has a package-scoped single-file claim; harness emits PublishProbePolicy showing release validation is audit-only and HazardInventory / `hazard-inventory.json` with a matched transitive-hazard lock-file audit subset | No, because the lack of global claim is explicit and the scoped claim is bounded | Yes, if GA claims those modes globally | Promote only after manifest, project properties, structural remediation, `publishProbePolicy.nonOptOutGate`, workflow, docs, and package guidance agree. |
@@ -140,6 +141,7 @@ The next completion-oriented slices should stay narrow and evidence-driven:
 3. Keep the first clean-baseline package-scoped claim (`Cephalon.Diagnostics` single-file), the emitted publish-probe policy, and the emitted hazard inventory honest across manifest, project properties, harness output, workflow, docs, and package guidance while global deployment-mode rows remain `not-claimed`.
 4. Keep `cephalon doctor --scorecard <path>` aligned with the generated JSON schema so local summaries remain a readback of the scorecard artifact, not a second source of truth.
 5. Keep the out-of-repo generated-app adoption smoke evidence manifest aligned with `validate-out-of-tree-package-adoption.ps1` so the generated scorecard artifact keeps naming the local-package, reference-module staging, host-run, and runtime operator-surface probes it validates.
+6. Keep public API delta readback aligned with `scripts/summarise-public-api-deltas.ps1` and the per-package `PublicAPI.*.txt` files so release managers see package/addition/removal counts from the generated artifact.
 
 ## Refresh cadence
 

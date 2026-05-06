@@ -2,6 +2,7 @@ param(
     [string]$ScorecardPath = "docs/engine-completion-scorecard.md",
     [string]$ConformanceMatrixPath = "docs/conformance-matrix.md",
     [string]$AdoptionSmokeManifestPath = "scripts/adoption-smoke-support.json",
+    [string]$PublicApiDeltaScriptPath = "scripts/summarise-public-api-deltas.ps1",
     [string]$OutputPath = "artifacts/engine-completion-scorecard-release",
     [string]$RepoRoot
 )
@@ -9,7 +10,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$Script:SchemaVersion = "1.2.0"
+$Script:SchemaVersion = "1.3.0"
 $Script:AllowedStatuses = @(
     "ready-for-preview",
     "partial",
@@ -789,6 +790,103 @@ function Convert-AdoptionSmokeEvidence {
     })
 }
 
+function Convert-PublicApiCompatibilityEvidence {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedPublicApiDeltaScriptPath,
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedRepoRoot
+    )
+
+    if (-not (Test-Path -LiteralPath $ResolvedPublicApiDeltaScriptPath -PathType Leaf)) {
+        throw "Public API delta script '$ResolvedPublicApiDeltaScriptPath' was not found."
+    }
+
+    $srcRoot = Join-Path $ResolvedRepoRoot "src"
+    if (-not (Test-Path -LiteralPath $srcRoot -PathType Container)) {
+        throw "src folder '$srcRoot' was not found for public API compatibility evidence."
+    }
+
+    $unshippedFiles = @(Get-ChildItem -LiteralPath $srcRoot -Filter "PublicAPI.Unshipped.txt" -File -Recurse | Sort-Object FullName)
+    if ($unshippedFiles.Count -eq 0) {
+        throw "No PublicAPI.Unshipped.txt files were found under '$srcRoot'."
+    }
+
+    $packageDeltas = [System.Collections.Generic.List[object]]::new()
+    $totalAdditions = 0
+    $totalRemovals = 0
+    $packagesWithPendingChanges = 0
+    $headerOnlyPackages = 0
+
+    foreach ($file in $unshippedFiles) {
+        $packageDirectory = $file.Directory.FullName
+        $packageId = $file.Directory.Name
+        $shippedPath = Join-Path $packageDirectory "PublicAPI.Shipped.txt"
+        if (-not (Test-Path -LiteralPath $shippedPath -PathType Leaf)) {
+            throw "Public API package '$packageId' has PublicAPI.Unshipped.txt but is missing PublicAPI.Shipped.txt."
+        }
+
+        $projectPath = Join-Path $packageDirectory "$packageId.csproj"
+        if (-not (Test-Path -LiteralPath $projectPath -PathType Leaf)) {
+            throw "Public API package '$packageId' is missing expected project file '$projectPath'."
+        }
+
+        $additions = [System.Collections.Generic.List[string]]::new()
+        $removals = [System.Collections.Generic.List[string]]::new()
+        foreach ($line in Get-Content -LiteralPath $file.FullName -Encoding UTF8) {
+            $trimmed = $line.Trim()
+            if ([string]::IsNullOrWhiteSpace($trimmed)) {
+                continue
+            }
+
+            if ($trimmed.StartsWith("#", [System.StringComparison]::Ordinal)) {
+                continue
+            }
+
+            if ($trimmed.StartsWith("*REMOVED*", [System.StringComparison]::Ordinal)) {
+                $removals.Add($trimmed.Substring("*REMOVED*".Length).TrimStart())
+                continue
+            }
+
+            $additions.Add($trimmed)
+        }
+
+        $pendingEntryCount = $additions.Count + $removals.Count
+        if ($pendingEntryCount -eq 0) {
+            $headerOnlyPackages++
+        }
+        else {
+            $packagesWithPendingChanges++
+        }
+
+        $totalAdditions += $additions.Count
+        $totalRemovals += $removals.Count
+
+        $packageDeltas.Add([pscustomobject]([ordered]@{
+            Package            = $packageId
+            Project            = Get-RepoRelativePath -Path $projectPath -RepoRoot $ResolvedRepoRoot
+            Unshipped          = Get-RepoRelativePath -Path $file.FullName -RepoRoot $ResolvedRepoRoot
+            Shipped            = Get-RepoRelativePath -Path $shippedPath -RepoRoot $ResolvedRepoRoot
+            AdditiveEntryCount = $additions.Count
+            RemovalEntryCount  = $removals.Count
+            PendingEntryCount  = $pendingEntryCount
+            HasPendingChanges  = $pendingEntryCount -gt 0
+            HasRemovalEntries  = $removals.Count -gt 0
+        }))
+    }
+
+    return [pscustomobject]([ordered]@{
+        DeltaScript            = Get-RepoRelativePath -Path $ResolvedPublicApiDeltaScriptPath -RepoRoot $ResolvedRepoRoot
+        PackageCount           = $packageDeltas.Count
+        PendingPackageCount    = $packagesWithPendingChanges
+        HeaderOnlyPackageCount = $headerOnlyPackages
+        AdditiveEntryCount     = $totalAdditions
+        RemovalEntryCount      = $totalRemovals
+        HasRemovalEntries      = $totalRemovals -gt 0
+        PackageDeltas          = $packageDeltas.ToArray()
+    })
+}
+
 function Get-StatusCountObject {
     param(
         [Parameter(Mandatory = $true)]
@@ -818,6 +916,8 @@ function New-EngineCompletionScorecardReport {
         [Parameter(Mandatory = $true)]
         [string]$ResolvedAdoptionSmokeManifestPath,
         [Parameter(Mandatory = $true)]
+        [string]$ResolvedPublicApiDeltaScriptPath,
+        [Parameter(Mandatory = $true)]
         [string]$ResolvedRepoRoot
     )
 
@@ -835,6 +935,7 @@ function New-EngineCompletionScorecardReport {
     $packageFamilies = Convert-PackageFamilies -Rows (Get-ScorecardTable -Lines $lines -Heading "Package-family readiness roll-up")
     $packageGAReadinessRows = Convert-ConformancePackageRows -ResolvedConformanceMatrixPath $ResolvedConformanceMatrixPath -ResolvedRepoRoot $ResolvedRepoRoot
     $adoptionSmokeEvidence = Convert-AdoptionSmokeEvidence -ResolvedManifestPath $ResolvedAdoptionSmokeManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
+    $publicApiCompatibilityEvidence = Convert-PublicApiCompatibilityEvidence -ResolvedPublicApiDeltaScriptPath $ResolvedPublicApiDeltaScriptPath -ResolvedRepoRoot $ResolvedRepoRoot
     $promotionRules = @(Get-ScorecardListItems -Lines $lines -Heading "Promotion rules" | ForEach-Object { Remove-MarkdownInlineFormatting -Value $_ })
     $refreshCadence = @(Get-ScorecardListItems -Lines $lines -Heading "Refresh cadence" | ForEach-Object { Remove-MarkdownInlineFormatting -Value $_ })
 
@@ -861,6 +962,7 @@ function New-EngineCompletionScorecardReport {
         SourceDocument     = Get-RepoRelativePath -Path $ResolvedScorecardPath -RepoRoot $ResolvedRepoRoot
         ConformanceMatrix  = Get-RepoRelativePath -Path $ResolvedConformanceMatrixPath -RepoRoot $ResolvedRepoRoot
         AdoptionSmokeManifest = Get-RepoRelativePath -Path $ResolvedAdoptionSmokeManifestPath -RepoRoot $ResolvedRepoRoot
+        PublicApiDeltaScript = Get-RepoRelativePath -Path $ResolvedPublicApiDeltaScriptPath -RepoRoot $ResolvedRepoRoot
         StatusVocabulary   = $statusVocabulary
         EvidenceSources    = $evidenceSources
         EvidenceSourceReferences = $evidenceSourceReferences
@@ -869,6 +971,7 @@ function New-EngineCompletionScorecardReport {
         PackageFamilies    = $packageFamilies
         PackageGAReadiness = $packageGAReadinessRows
         AdoptionSmokeEvidence = $adoptionSmokeEvidence
+        PublicApiCompatibilityEvidence = $publicApiCompatibilityEvidence
         PromotionRules     = $promotionRules
         RefreshCadence     = $refreshCadence
         Summary            = [pscustomobject]([ordered]@{
@@ -879,6 +982,10 @@ function New-EngineCompletionScorecardReport {
             AdoptionSmokeScenarioCount = if ($null -ne $adoptionSmokeEvidence) { 1 } else { 0 }
             AdoptionSmokeRuntimeProbeCount = @($adoptionSmokeEvidence.RuntimeProbes).Count
             AdoptionSmokeAssertionCount = @($adoptionSmokeEvidence.Assertions).Count
+            PublicApiPackageCount = $publicApiCompatibilityEvidence.PackageCount
+            PublicApiPendingPackageCount = $publicApiCompatibilityEvidence.PendingPackageCount
+            PublicApiAdditiveEntryCount = $publicApiCompatibilityEvidence.AdditiveEntryCount
+            PublicApiRemovalEntryCount = $publicApiCompatibilityEvidence.RemovalEntryCount
             EvidenceSourceCount    = $evidenceSources.Count
             EvidenceSourceReferenceCount = $evidenceSourceReferences.Count
             PlatformStatusCounts   = $platformStatusCounts
@@ -916,6 +1023,7 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("Source: ``$($Report.SourceDocument)``")
     $markdown.Add("Conformance matrix: ``$($Report.ConformanceMatrix)``")
     $markdown.Add("Adoption smoke manifest: ``$($Report.AdoptionSmokeManifest)``")
+    $markdown.Add("Public API delta script: ``$($Report.PublicApiDeltaScript)``")
     $markdown.Add("Generated at UTC: ``$($Report.GeneratedAtUtc)``")
     $markdown.Add("Schema version: ``$($Report.'$schemaVersion')``")
     $markdown.Add("")
@@ -927,6 +1035,10 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- Package GA readiness rows: $($Report.Summary.PackageGAReadinessCount)")
     $markdown.Add("- Adoption smoke scenarios: $($Report.Summary.AdoptionSmokeScenarioCount)")
     $markdown.Add("- Adoption smoke runtime probes: $($Report.Summary.AdoptionSmokeRuntimeProbeCount)")
+    $markdown.Add("- Public API packages: $($Report.Summary.PublicApiPackageCount)")
+    $markdown.Add("- Public API packages with pending changes: $($Report.Summary.PublicApiPendingPackageCount)")
+    $markdown.Add("- Public API additive entries: $($Report.Summary.PublicApiAdditiveEntryCount)")
+    $markdown.Add("- Public API removal entries: $($Report.Summary.PublicApiRemovalEntryCount)")
     $markdown.Add("- Evidence sources: $($Report.Summary.EvidenceSourceCount)")
     $markdown.Add("- Evidence source references: $($Report.Summary.EvidenceSourceReferenceCount)")
     $markdown.Add("- Blocked platform gates: $($Report.Summary.BlockedPlatformGates)")
@@ -949,6 +1061,22 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("| --- | --- |")
     foreach ($reference in $Report.EvidenceSourceReferences) {
         $markdown.Add("| $($reference.Reference) | $($reference.Kind) |")
+    }
+
+    $markdown.Add("")
+    $markdown.Add("## Public API Compatibility Evidence")
+    $markdown.Add("")
+    $markdown.Add("- Delta script: ``$($Report.PublicApiCompatibilityEvidence.DeltaScript)``")
+    $markdown.Add("- Packages with PublicAPI.Unshipped.txt: $($Report.PublicApiCompatibilityEvidence.PackageCount)")
+    $markdown.Add("- Packages with pending changes: $($Report.PublicApiCompatibilityEvidence.PendingPackageCount)")
+    $markdown.Add("- Header-only packages: $($Report.PublicApiCompatibilityEvidence.HeaderOnlyPackageCount)")
+    $markdown.Add("- Additive entries: $($Report.PublicApiCompatibilityEvidence.AdditiveEntryCount)")
+    $markdown.Add("- Removal entries: $($Report.PublicApiCompatibilityEvidence.RemovalEntryCount)")
+    $markdown.Add("")
+    $markdown.Add("| Package | Additions | Removals | Unshipped |")
+    $markdown.Add("| --- | --- | --- | --- |")
+    foreach ($package in @($Report.PublicApiCompatibilityEvidence.PackageDeltas | Where-Object { $_.HasPendingChanges })) {
+        $markdown.Add("| $($package.Package) | $($package.AdditiveEntryCount) | $($package.RemovalEntryCount) | ``$($package.Unshipped)`` |")
     }
 
     $markdown.Add("")
@@ -1000,6 +1128,7 @@ function Invoke-EngineCompletionScorecardPublish {
         [Parameter(Mandatory = $true)]
         [string]$ConformanceMatrixPath,
         [string]$AdoptionSmokeManifestPath = "scripts/adoption-smoke-support.json",
+        [string]$PublicApiDeltaScriptPath = "scripts/summarise-public-api-deltas.ps1",
         [Parameter(Mandatory = $true)]
         [string]$OutputPath,
         [Parameter(Mandatory = $true)]
@@ -1010,9 +1139,10 @@ function Invoke-EngineCompletionScorecardPublish {
     $resolvedScorecardPath = Resolve-FullPath -Path $ScorecardPath -BasePath $resolvedRepoRoot
     $resolvedConformanceMatrixPath = Resolve-FullPath -Path $ConformanceMatrixPath -BasePath $resolvedRepoRoot
     $resolvedAdoptionSmokeManifestPath = Resolve-FullPath -Path $AdoptionSmokeManifestPath -BasePath $resolvedRepoRoot
+    $resolvedPublicApiDeltaScriptPath = Resolve-FullPath -Path $PublicApiDeltaScriptPath -BasePath $resolvedRepoRoot
     $resolvedOutputPath = Resolve-FullPath -Path $OutputPath -BasePath $resolvedRepoRoot
 
-    $report = New-EngineCompletionScorecardReport -ResolvedScorecardPath $resolvedScorecardPath -ResolvedConformanceMatrixPath $resolvedConformanceMatrixPath -ResolvedAdoptionSmokeManifestPath $resolvedAdoptionSmokeManifestPath -ResolvedRepoRoot $resolvedRepoRoot
+    $report = New-EngineCompletionScorecardReport -ResolvedScorecardPath $resolvedScorecardPath -ResolvedConformanceMatrixPath $resolvedConformanceMatrixPath -ResolvedAdoptionSmokeManifestPath $resolvedAdoptionSmokeManifestPath -ResolvedPublicApiDeltaScriptPath $resolvedPublicApiDeltaScriptPath -ResolvedRepoRoot $resolvedRepoRoot
     $paths = Write-EngineCompletionScorecardReport -Report $report -ResolvedOutputPath $resolvedOutputPath
 
     Write-Host "Engine completion scorecard artifact written to $($paths.JsonPath)"
@@ -1031,5 +1161,5 @@ if (-not $env:CEPHALON_ENGINE_COMPLETION_SCORECARD_NO_RUN) {
         $resolvedRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
     }
 
-    $null = Invoke-EngineCompletionScorecardPublish -ScorecardPath $ScorecardPath -ConformanceMatrixPath $ConformanceMatrixPath -AdoptionSmokeManifestPath $AdoptionSmokeManifestPath -OutputPath $OutputPath -RepoRoot $resolvedRoot
+    $null = Invoke-EngineCompletionScorecardPublish -ScorecardPath $ScorecardPath -ConformanceMatrixPath $ConformanceMatrixPath -AdoptionSmokeManifestPath $AdoptionSmokeManifestPath -PublicApiDeltaScriptPath $PublicApiDeltaScriptPath -OutputPath $OutputPath -RepoRoot $resolvedRoot
 }

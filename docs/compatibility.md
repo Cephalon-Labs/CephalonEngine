@@ -100,7 +100,7 @@ See also: [Engineering standards](engineering-standards.md) is the broader quali
 - [`src/Cephalon.Abstractions/PublicAPI.Unshipped.txt`](../src/Cephalon.Abstractions/PublicAPI.Unshipped.txt) lists additions or removals proposed for the next release; the file should be empty on a clean shipped baseline
 - removals and renames are recorded with the `*REMOVED*` prefix in `PublicAPI.Unshipped.txt` so PR diffs surface the break before it merges
 - `Microsoft.CodeAnalysis.PublicApiAnalyzers` enforces both files as part of the build; an undeclared public symbol fails the build with `RS0016`, and a removal failed to declare with `RS0017`
-- the analyzer is opt-in per package; rolling it out to additional `Cephalon.*` packages is sequenced through follow-up `ENG-*` cards (see [`supply-chain-uplift-plan.md`](supply-chain-uplift-plan.md))
+- current `src/Cephalon.*` packages carry shipped/unshipped public API artifacts; [`scripts/summarise-public-api-deltas.ps1`](../scripts/summarise-public-api-deltas.ps1) emits the release-note delta, and the generated engine completion scorecard emits `PublicApiCompatibilityEvidence` with package/addition/removal counts from those files
 
 When a public type or member is added, removed, or renamed inside a package that has the analyzer enabled, update both `.txt` files in the same slice as the source change. Both files are part of the public contract and follow the same review discipline as XML doc comments.
 

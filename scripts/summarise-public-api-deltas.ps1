@@ -6,7 +6,7 @@
 .DESCRIPTION
     Cephalon's contract lock-in arc (ENG-322 through ENG-345) added Microsoft.CodeAnalysis
     .PublicApiAnalyzers + per-project PublicAPI.Shipped.txt + PublicAPI.Unshipped.txt artefacts
-    to all 101 shipped packages. Public-API additions and removals land in PublicAPI.Unshipped
+    to shipped packages. Public-API additions and removals land in PublicAPI.Unshipped
     .txt first; on a release they graduate to PublicAPI.Shipped.txt. This script walks every
     Cephalon.*/PublicAPI.Unshipped.txt file under the repo, parses the entries, and emits a
     markdown report so PR reviewers and release managers can read the API delta in human form

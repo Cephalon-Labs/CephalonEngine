@@ -48,13 +48,14 @@ Describe "publish-engine-completion-scorecard.ps1" {
 
         $json = Get-Content -LiteralPath $result.Paths.JsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
 
-        $json.'$schemaVersion' | Should -Be "1.2.0"
+        $json.'$schemaVersion' | Should -Be "1.3.0"
         $json.SourceDocument | Should -Be "docs/engine-completion-scorecard.md"
         $json.ConformanceMatrix | Should -Be "docs/conformance-matrix.md"
         $json.AdoptionSmokeManifest | Should -Be "scripts/adoption-smoke-support.json"
+        $json.PublicApiDeltaScript | Should -Be "scripts/summarise-public-api-deltas.ps1"
         $json.StatusVocabulary.Count | Should -Be 6
-        $json.EvidenceSources.Count | Should -Be 11
-        $json.EvidenceSourceReferences.Count | Should -Be 15
+        $json.EvidenceSources.Count | Should -Be 12
+        $json.EvidenceSourceReferences.Count | Should -Be 16
         $json.PlatformGates.Count | Should -Be 12
         $json.QualityDimensions.Count | Should -Be 12
         $json.PackageFamilies.Count | Should -Be 9
@@ -66,7 +67,12 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.AdoptionSmokeScenarioCount | Should -Be 1
         $json.Summary.AdoptionSmokeRuntimeProbeCount | Should -Be 6
         $json.Summary.AdoptionSmokeAssertionCount | Should -Be 7
-        $json.Summary.EvidenceSourceReferenceCount | Should -Be 15
+        $json.Summary.PublicApiPackageCount | Should -Be 104
+        $json.Summary.PublicApiPendingPackageCount | Should -Be 21
+        $json.Summary.PublicApiAdditiveEntryCount | Should -Be 288
+        $json.Summary.PublicApiRemovalEntryCount | Should -Be 0
+        $json.Summary.EvidenceSourceCount | Should -Be 12
+        $json.Summary.EvidenceSourceReferenceCount | Should -Be 16
         $json.Summary.PlatformStatusCounts.'ready-for-preview' | Should -Be 3
         $json.Summary.PlatformStatusCounts.partial | Should -Be 7
         $json.Summary.PlatformStatusCounts.'not-claimed' | Should -Be 1
@@ -81,6 +87,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/deployment-mode-support.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/adoption-smoke-support.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/validate-out-of-tree-package-adoption.ps1"
+        $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/summarise-public-api-deltas.ps1"
 
         $json.AdoptionSmokeEvidence.ManifestSchemaVersion | Should -Be "1.0.0"
         $json.AdoptionSmokeEvidence.ScenarioId | Should -Be "out-of-tree-generated-app-package-stage"
@@ -92,6 +99,22 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.AdoptionSmokeEvidence.RuntimeProbes.Path | Should -Contain "/engine/packages"
         $json.AdoptionSmokeEvidence.RuntimeProbes.Path | Should -Contain "/engine/trust-policy"
         $json.AdoptionSmokeEvidence.RuntimeProbes.Path | Should -Contain "/api/operations/status"
+
+        $json.PublicApiCompatibilityEvidence.DeltaScript | Should -Be "scripts/summarise-public-api-deltas.ps1"
+        $json.PublicApiCompatibilityEvidence.PackageCount | Should -Be 104
+        $json.PublicApiCompatibilityEvidence.PendingPackageCount | Should -Be 21
+        $json.PublicApiCompatibilityEvidence.HeaderOnlyPackageCount | Should -Be 83
+        $json.PublicApiCompatibilityEvidence.AdditiveEntryCount | Should -Be 288
+        $json.PublicApiCompatibilityEvidence.RemovalEntryCount | Should -Be 0
+        $json.PublicApiCompatibilityEvidence.HasRemovalEntries | Should -BeFalse
+        $json.PublicApiCompatibilityEvidence.PackageDeltas.Count | Should -Be 104
+        $abstractionsDelta = $json.PublicApiCompatibilityEvidence.PackageDeltas | Where-Object { $_.Package -eq "Cephalon.Abstractions" }
+        $abstractionsDelta.Project | Should -Be "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj"
+        $abstractionsDelta.Unshipped | Should -Be "src/Cephalon.Abstractions/PublicAPI.Unshipped.txt"
+        $abstractionsDelta.Shipped | Should -Be "src/Cephalon.Abstractions/PublicAPI.Shipped.txt"
+        $abstractionsDelta.AdditiveEntryCount | Should -Be 15
+        $abstractionsDelta.RemovalEntryCount | Should -Be 0
+        $abstractionsDelta.HasPendingChanges | Should -BeTrue
 
         $corePackage = $json.PackageGAReadiness | Where-Object { $_.Package -eq "Cephalon.Abstractions" }
         $corePackage.Family | Should -Be "Core runtime"
@@ -108,10 +131,30 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "Engine Completion Scorecard Report"
         $markdown | Should -Match "Platform gates: 12"
         $markdown | Should -Match "Package families: 9"
+        $markdown | Should -Match "Public API Compatibility Evidence"
+        $markdown | Should -Match "Public API packages with pending changes: 21"
+        $markdown | Should -Match "Cephalon.Abstractions"
         $markdown | Should -Match "Adoption Smoke Evidence"
         $markdown | Should -Match "out-of-tree-generated-app-package-stage"
         $markdown | Should -Match "Evidence Source References"
         $markdown | Should -Match "Package GA Readiness"
+    }
+
+    It "fails when public API unshipped files are missing shipped baselines" {
+        $fixtureRoot = Join-Path $script:tempRoot "public-api-fixture"
+        $scriptsRoot = Join-Path $fixtureRoot "scripts"
+        $packageRoot = Join-Path $fixtureRoot "src\Cephalon.Fixture"
+        New-Item -ItemType Directory -Path $scriptsRoot -Force | Out-Null
+        New-Item -ItemType Directory -Path $packageRoot -Force | Out-Null
+        Set-Content -LiteralPath (Join-Path $scriptsRoot "summarise-public-api-deltas.ps1") -Value "# public API delta fixture" -Encoding UTF8
+        Set-Content -LiteralPath (Join-Path $packageRoot "Cephalon.Fixture.csproj") -Value "<Project />" -Encoding UTF8
+        Set-Content -LiteralPath (Join-Path $packageRoot "PublicAPI.Unshipped.txt") -Value "#nullable enable`nCephalon.Fixture.PendingApi" -Encoding UTF8
+
+        {
+            Convert-PublicApiCompatibilityEvidence `
+                -ResolvedPublicApiDeltaScriptPath (Join-Path $scriptsRoot "summarise-public-api-deltas.ps1") `
+                -ResolvedRepoRoot $fixtureRoot
+        } | Should -Throw "*missing PublicAPI.Shipped.txt*"
     }
 
     It "fails when adoption smoke runtime probes drift away from the replay script" {
@@ -260,5 +303,7 @@ Start-Process
         $releaseValidation | Should -Match "publish-engine-completion-scorecard\.ps1"
         $releaseValidation | Should -Match "engine-completion-scorecard-release"
         $releaseValidation | Should -Match "Publish engine completion scorecard artifact"
+        $releaseValidation | Should -Match "summarise-public-api-deltas\.ps1"
+        $releaseValidation | Should -Match "public-api-delta-release"
     }
 }
