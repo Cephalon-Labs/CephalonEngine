@@ -184,7 +184,9 @@ When `SqlServerDataModule` is active, the following capability keys appear in th
 
 ## Live integration testing
 
-The default repository test lane does not require a developer-managed SQL Server instance or Docker. SQL Server live CDC tests belong in `tests/Cephalon.Tests.CdcIntegration` and should use the shared external-service gate documented in that test project's README. The gate keeps SQL Server tests skipped by default, then lets a developer or CI job opt into either `CEPHALON_CDC_SQLSERVER_CONNECTION_STRING` for a pre-provisioned database or `CEPHALON_CDC_TESTCONTAINERS=1` for a disposable Testcontainers-backed service.
+The default repository test lane does not require a developer-managed SQL Server instance or Docker. SQL Server live CDC coverage lives in `tests/Cephalon.Tests.CdcIntegration` behind the shared external-service gate documented in that test project's README. The default run discovers `SqlServerCdc_StagesOutboxAndPersistsCheckpointAgainstLiveDatabase` but skips it until a developer or CI job opts into either `CEPHALON_CDC_SQLSERVER_CONNECTION_STRING` for a pre-provisioned service or `CEPHALON_CDC_TESTCONTAINERS=1` for a disposable Testcontainers-backed SQL Server service.
+
+The live test creates an isolated database, enables database and table CDC for `dbo.orders`, inserts a real row, waits for the provider-native hosted runner to stage the linked outbox message, verifies runtime-state and execution-runtime aggregation, and asserts the Cephalon-managed SQL Server checkpoint table contains the same checkpoint token reported through the shared CDC state catalog.
 
 ## Not shipped in this slice
 
