@@ -27,6 +27,33 @@ Current focus:
 - treat the Debezium test-flake quarantine as resolved by shared catalog hardening: CDC execution-runtime filters now reuse versioned snapshots over indexed capture ownership instead of re-enriching every runtime for every state/category selector
 - treat the CDC execution-runtime catalog hot path as benchmark-governed: `CdcExecutionRuntimeCatalogBenchmarks` now covers Debezium-managed external runtimes, external observations, repeated managed-connector drift/dry-run/command-issuance filters, and compact multi-selector operator flows against the shared versioned snapshot
 
+### ENG-493 Sweep CDC readiness documentation after live-provider hardening
+
+Status: done
+Estimate: 1
+Issue: #1102
+Iteration: Sprint 125
+Area: docs / readiness / CDC integration
+Quality dimensions: Auditability, Maintainability, Reliability
+
+Why:
+
+- `ENG-487`, `ENG-490`, `ENG-491`, and `ENG-492` changed recommendation #5 from a planned provider-native CDC integration gap into shipped evidence across MongoDB, SQL Server, and Postgres
+- a few older planning/readiness paragraphs still read as if provider-specific live CDC implementation or a separate `tests/Cephalon.Tests.Integration` project remained the current path
+- the architecture recommendation should distinguish shipped MongoDB / SQL Server / PostgreSQL live-provider evidence from still-future provider-specific expansion so adopters do not under-trust the current runtime surface
+
+Delivered:
+
+- refreshed `docs/architecture-recommendations.md` so MongoDB change streams, SQL Server CDC, and PostgreSQL logical replication appear in the shipped CDC baseline with their dedicated live-provider evidence
+- narrowed the CDC "later follow-through" language to additional provider implementations and deeper source-specific posture beyond the shipped SQL checkpoint, PostgreSQL slot confirmed-flush, and MongoDB resume-token proofs
+- added superseded-context notes to older `docs/engine-backlog.md` ENG-407/ENG-408/ENG-491 planning prose so historical cards remain readable without implying a current Postgres or test-project gap
+- logged this docs/readiness sweep in project memory and the Sprint 125 backlog list
+
+Validation:
+
+- focused PowerShell drift search for CDC provider gap phrases
+- `git diff --check`
+
 ### ENG-492 Add Postgres live CDC integration
 
 Status: done
@@ -78,7 +105,7 @@ Delivered:
 - consumed the shared `ExternalCdcServiceFactAttribute(ExternalCdcServiceProvider.SqlServer)` gate so the test is discovered but skipped by default
 - added `Microsoft.Data.SqlClient` and `Testcontainers.MsSql` to the focused CDC integration project so SQL Server live runs can use either a pre-provisioned connection string or a disposable Testcontainers-backed service
 - made the live test create an isolated database, enable database/table CDC for `dbo.orders`, run `Cephalon.Data` plus `Cephalon.Data.SqlServer`, insert a real row, assert outbox staging, runtime-state reporting, execution-runtime aggregation, and persisted checkpoint truth
-- refreshed the CDC integration README, SQL Server component doc, test-coverage roadmap, roadmap, backlog, and project-memory truth while leaving Postgres live CDC as the remaining provider-specific recommendation #5 gap
+- refreshed the CDC integration README, SQL Server component doc, test-coverage roadmap, roadmap, backlog, and project-memory truth; at the time this left Postgres live CDC as the remaining provider-specific recommendation #5 gap, which `ENG-492` closes above
 
 Validation:
 
@@ -99,7 +126,7 @@ Why:
 
 - SQL Server/Postgres provider-native CDC paths need real database runtimes before Cephalon can honestly claim live-provider integration coverage beyond fake transport harnesses
 - the default `Cephalon.Tests.CdcIntegration` lane must remain deterministic and should not suddenly require Docker, Testcontainers, or developer-managed services
-- future SQL Server/Postgres live tests need one shared opt-in contract so provider-specific tests do not invent different skip, connection-string, or disposable-service conventions
+- the then-future SQL Server/Postgres live tests needed one shared opt-in contract so provider-specific tests would not invent different skip, connection-string, or disposable-service conventions
 
 Delivered:
 
@@ -5856,7 +5883,7 @@ Delivered:
     - document the five `tests/Cephalon.Tests.*` projects plus `benchmarks/Cephalon.Benchmarks` with one row per layer naming what each layer proves
     - codify the standing rule that new dedicated test projects are added only when one source pack ships enough independent execution surface to justify a separate harness, layered framework-level tests are the default home for new coverage, and mirroring `src/` 1:1 with per-package test assemblies is explicitly *not* the discipline
     - codify the four-criterion gap definition (a) no layered test exercises any surface, (b) only the composition seam is exercised without the runtime path, (c) one or more `M2`-or-higher claims have no test that proves the runtime contract, (d) a regression-prone hot path is not covered by a guardrail benchmark
-    - capture seven prioritized recommendations: #1 `Cephalon.AspNetCore.Grpc` streaming + error-mode coverage (high, pending), #2 `Cephalon.AspNetCore.JsonRpc` error-response coverage (high, shipped through `ENG-405` / PR #919), #3 `MetadataDrivenAuthorizationEvaluator` decision-matrix coverage (high, shipped through `ENG-403` / PR #917), #4 `IAuditActorAccessor` and `DefaultAuditRecorder` ambient-fallback coverage (high, shipped through `ENG-404` / PR #918), #5 provider-native CDC integration scenarios for `Cephalon.Data.SqlServer` / `.Postgres` / `.MongoDB` (medium, pending), #6 `Cephalon.AspNetCore.GraphQL` transport-mapping coverage (medium, gated on widening the package beyond route mapping), and #7 direct unit coverage for the pre-existing `DebeziumDataCdcPackTests` recursion failures (low, gated on quarantine resolution)
+    - capture seven prioritized recommendations as they stood when `ENG-407` authored the roadmap: #1 `Cephalon.AspNetCore.Grpc` streaming + error-mode coverage (high, pending), #2 `Cephalon.AspNetCore.JsonRpc` error-response coverage (high, shipped through `ENG-405` / PR #919), #3 `MetadataDrivenAuthorizationEvaluator` decision-matrix coverage (high, shipped through `ENG-403` / PR #917), #4 `IAuditActorAccessor` and `DefaultAuditRecorder` ambient-fallback coverage (high, shipped through `ENG-404` / PR #918), #5 provider-native CDC integration scenarios for `Cephalon.Data.SqlServer` / `.Postgres` / `.MongoDB` (then pending, later shipped through `ENG-487` / `ENG-490` / `ENG-491` / `ENG-492`), #6 `Cephalon.AspNetCore.GraphQL` transport-mapping coverage (medium, gated on widening the package beyond route mapping), and #7 direct unit coverage for the pre-existing `DebeziumDataCdcPackTests` recursion failures (low, gated on quarantine resolution)
     - capture the standing test-flake quarantine queue with one row for the `DebeziumDataCdcPackTests` (4 failures) entry whose root cause lives in `Cephalon.Data.Services.CdcCaptureExecutionRuntimeCatalog.Enrich` recursion
     - capture the maintenance discipline (recommendations are append-only with stable numbers, closed recommendations are annotated rather than removed, demoted recommendations carry their demotion reason inline, quarantine rows require a deadline)
 - `docs/engine-backlog.md` ENG-407 backlog card; Sprint 125 placement updated
@@ -5868,7 +5895,7 @@ Out of scope (intentional):
 - closing the sibling drift on `docs/architecture-review-2026-05-followups.md` (also referenced from `docs/README.md` line 99 but missing from disk) — separate slice; the test-coverage-roadmap drift is more directly tied to the ongoing `ENG-403` / `ENG-404` / `ENG-405` arc
 - promoting the doc beyond `M2` (i.e. wiring it into the conformance matrix or the planning-governance toolchain) — the `M2` baseline is the right starting maturity; promotion happens when a downstream consumer (e.g. a CI artefact, a release-validation gate) actually consumes the recommendations table programmatically
 - closing the orphaned `ENG-371` / `ENG-379` PRs `#878` / `#888` — separate small slice; this card stays scoped to the ghost-doc closeout
-- shipping any of the pending recommendations (#1 gRPC, #5 CDC integration, #6 GraphQL) — those are separate cards per the recommendation table; the point of the roadmap is to make those cards easy to author with stable references, not to ship them in the same slice
+- shipping any of the then-pending recommendations (#1 gRPC, #5 CDC integration, #6 GraphQL) — those were separate cards per the recommendation table; #1, #5, and #7 are now annotated in the roadmap as shipped by later slices, while #6 remains gated until `Cephalon.AspNetCore.GraphQL` widens beyond route mapping
 
 Follow-up later:
 
@@ -5902,7 +5929,7 @@ Delivered:
 Out of scope (intentional):
 
 - unary client-cancellation and unary deadline-expiry coverage for `SayHello`: under `Microsoft.AspNetCore.TestHost` the in-memory request pipe does not reliably propagate the client-side cancellation token to the server-side `ServerCallContext` for unary calls, so the canonical cancellation contract is exercised through the streaming `StreamPrinciples_ReturnsCancelled_WhenClientCancelsMidStream` test instead; the test module reserves the `delay` scenario for future coverage if a real-host harness lands
-- recommendation #5 (provider-native CDC integration scenarios for `Cephalon.Data.SqlServer` / `.Postgres` / `.MongoDB`) — separate medium-priority card, requires a new `tests/Cephalon.Tests.Integration` project plus Testcontainers
+- recommendation #5 (provider-native CDC integration scenarios for `Cephalon.Data.SqlServer` / `.Postgres` / `.MongoDB`) — this was out of scope for `ENG-408` and is now superseded by the shipped `tests/Cephalon.Tests.CdcIntegration` lane plus the `ENG-487` / `ENG-490` / `ENG-491` / `ENG-492` sequence; the final shape uses `EphemeralMongo7` for MongoDB and the shared external-service/Testcontainers gate for SQL Server/Postgres rather than the originally guessed `tests/Cephalon.Tests.Integration` project name
 - recommendation #6 (`Cephalon.AspNetCore.GraphQL` transport-mapping coverage) — gated until the package widens beyond route mapping
 - recommendation #7 (`DebeziumDataCdcPackTests` quarantine resolution) — gated on the recursion fix in `Cephalon.Data.Services.CdcCaptureExecutionRuntimeCatalog.Enrich`
 - promoting the `GrpcStreamingAndErrorModesTestModule` or `GrpcSubdirectoryHandler` into `Cephalon.Tests.Support` — single-consumer today; the promotion happens when a second test file consumes either type
@@ -14566,6 +14593,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-490 Define external-service Testcontainers gate for live CDC: `tests/Cephalon.Tests.CdcIntegration` now carries a provider-aware external-service gate with explicit `CEPHALON_CDC_EXTERNAL_SERVICES`, `CEPHALON_CDC_TESTCONTAINERS`, `CEPHALON_CDC_SQLSERVER_CONNECTION_STRING`, and `CEPHALON_CDC_POSTGRES_CONNECTION_STRING` semantics so SQL Server/Postgres live tests are discoverable but skipped by default. Quality dimensions: Reliability + Compatibility + Auditability + Maintainability (shipped)
 - ENG-491 Add SQL Server live CDC integration: `tests/Cephalon.Tests.CdcIntegration` now proves SQL Server CDC against an opt-in live service by creating an isolated CDC-enabled database/table, inserting a real row, verifying `Cephalon.Data.SqlServer` outbox staging, shared runtime-state and execution-runtime aggregation, and the persisted SQL checkpoint table while default CI remains Docker-free. Quality dimensions: Reliability + Compatibility + Auditability + Data Integrity (shipped)
 - ENG-492 Add Postgres live CDC integration: `tests/Cephalon.Tests.CdcIntegration` now proves Postgres logical replication against an opt-in live service by creating an isolated schema/table/publication/slot, inserting a real row, verifying `Cephalon.Data.Postgres` outbox staging, shared runtime-state and execution-runtime aggregation, and slot confirmed-flush checkpoint truth while default CI remains Docker-free. Quality dimensions: Reliability + Compatibility + Auditability + Data Integrity (shipped)
+- ENG-493 Sweep CDC readiness documentation after live-provider hardening: `docs/architecture-recommendations.md` now names MongoDB / SQL Server / PostgreSQL live-provider CDC evidence as shipped, and older backlog planning prose carries superseded-context notes so the current docs no longer imply a remaining Postgres or separate integration-project gap. Quality dimensions: Auditability + Maintainability + Reliability (shipped)
 
 ### Later / not scheduled yet
 

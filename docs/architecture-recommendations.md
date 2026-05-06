@@ -331,13 +331,15 @@ Shipped baseline:
 - CDC runtime-state catalog in the runtime surface through `/engine/cdc-captures/runtime*` and `snapshot.CdcCaptureStates`
 - shared `data.cdc.execution` capability plus the `data-cdc-capture-flow` execution graph and `data-cdc-capture-pump` hosted execution through `/engine/execution-graphs`, `/engine/hosted-executions`, `/engine/runtime-story`, and `snapshot.OperationalStory`
 - build-time validation that rejects missing source-module ownership or missing outbox references before broken operator metadata can ship
+- provider-native CDC runners for MongoDB change streams, SQL Server CDC, and PostgreSQL logical replication, each reporting through the same descriptor, runtime-state, execution-runtime, checkpoint, and runtime-story surfaces instead of provider-local registries
+- dedicated live-provider evidence in `tests/Cephalon.Tests.CdcIntegration`: MongoDB runs against a disposable replica set by default, while SQL Server and Postgres run behind the explicit external-service/Testcontainers gate so default CI remains Docker-free
 
 Later follow-through:
-- provider-specific capture implementations over the shipped `ICdcCapture` / `CdcCaptureExecutionResult` contract, such as PostgreSQL WAL or MongoDB change streams
-- richer provider-native execution semantics and deeper source-specific posture beyond the shipped typed freshness/lag/publication baseline
+- additional provider-specific capture implementations beyond the shipped MongoDB, SQL Server, and PostgreSQL baselines
+- richer provider-native execution semantics and deeper source-specific posture beyond the shipped typed freshness/lag/publication baseline and the shipped SQL Server checkpoint / PostgreSQL slot-confirmed-flush / MongoDB resume-token live proofs
 - out-of-process or edge-aware CDC execution ownership only when a project truly needs topology beyond the shipped shared in-process host loop
 
-Effort: medium for the remaining provider-specific follow-through.
+Effort: medium for additional provider-specific follow-through; the MongoDB / SQL Server / PostgreSQL live-provider evidence baseline is now shipped.
 
 ## Planned phases
 
