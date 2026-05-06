@@ -24,6 +24,60 @@ Current focus:
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
 - treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md) for release validation, and `cephalon doctor --scorecard <path>` provides a local CLI readback over that generated artifact without becoming source truth
 
+### ENG-473 Retire Behaviors.Http profile attribute fallback
+
+Status: done
+Estimate: 3
+Issue: #1072
+Iteration: Sprint 125
+
+Why:
+
+- `ENG-466` made generated-profile mapping registry-only, but explicit
+  `MapProfile<TBehavior>()` could still read `BehaviorRestProfileAttribute`,
+  `BehaviorRestBindingAttribute`, and `AppBehaviorAttribute` from runtime behavior types
+- profile metadata should be generated or explicitly registered so the low-ceremony REST path
+  stays introspectable and does not hide a runtime attribute fallback behind the module DSL
+- retiring the attribute/profile fallback reduces `Cephalon.Behaviors.Http` to the remaining
+  input-shape and manual/type-based route-contract reflection blockers without widening global
+  trim / Native AOT / single-file posture
+
+Delivered:
+
+- changed `BehaviorRestProfileResolver.Resolve(Type)` to require a generated or explicitly
+  registered `BehaviorRestProfileDescriptor` plus behavior-type hint for the targeted behavior
+- updated fail-fast guidance to use the current `Cephalon.Behaviors.SourceGen` package or explicit
+  verb mappings (`MapGet<TBehavior>()`, `MapPost<TBehavior>()`, `MapPut<TBehavior>()`,
+  `MapPatch<TBehavior>()`, `MapDelete<TBehavior>()`) when no profile descriptor is available
+- made `BehaviorRestGeneratedProfileRegistry.Register(...)` merge registrations per assembly so
+  generated and explicit test/host registrations can coexist without overwriting each other
+- changed profile-backed REST projection to use descriptor behavior ids directly instead of
+  re-reading `[AppBehavior]` from the behavior type
+- added test-only generated-profile registration helpers and explicit composition-test descriptors
+  so runtime tests no longer depend on attribute fallback
+- added a package-surface guard that blocks `BehaviorRestProfileResolver` from reintroducing
+  direct `BehaviorRestProfileAttribute`, `BehaviorRestBindingAttribute`, `AppBehaviorAttribute`, or
+  `GetCustomAttributes` usage
+- removed the attribute/profile fallback row from `scripts/deployment-mode-support.json`, leaving
+  7 package entries, 4 packages with known hazards, and 11 known hazard entries while global trim /
+  Native AOT / single-file rows remain `not-claimed`
+
+Validation:
+
+- focused Behaviors.Http build passed with `/p:UseSharedCompilation=false`
+- focused `BehaviorRestProjectionTests` passed at `160/160`
+- focused composition ownership coverage and package-surface guard coverage are part of the
+  closeout validation for this slice
+- deployment-mode manifest, claim harness, harness tests, and reference-doc publishing are recorded
+  in the `ENG-473` project-memory entry after the closeout run
+
+Follow-up later:
+
+- retire the remaining `Cephalon.Behaviors.Http` input-shape inspection through generated or
+  module-provided binding-contract descriptors
+- retire manual/type-based route-contract reflection with generated or explicit endpoint-contract
+  descriptors before promoting `Cephalon.Behaviors.Http` beyond `medium`
+
 ### ENG-472 Retire Behaviors type-registry runtime mapping
 
 Status: done
@@ -58,7 +112,8 @@ Delivered:
   the registry files or source references from returning
 - removed the final `Cephalon.Behaviors` hazard row from
   `scripts/deployment-mode-support.json`, leaving 7 package entries, 4 packages with known hazards,
-  and 12 known hazard entries while global trim / Native AOT / single-file rows remain
+  and 12 known hazard entries at the `ENG-472` checkpoint while global trim / Native AOT /
+  single-file rows remain
   `not-claimed`
 
 Validation:
@@ -78,8 +133,10 @@ Validation:
 
 Follow-up later:
 
-- continue `Cephalon.Behaviors.Http` medium-tier remediation for attribute/profile binding,
-  input-shape, and manual/type-based route-contract reflection
+- completed by `ENG-473`: `MapProfile<TBehavior>()` attribute/profile binding fallback now requires
+  generated or explicitly registered descriptors
+- continue `Cephalon.Behaviors.Http` medium-tier remediation for input-shape and
+  manual/type-based route-contract reflection
 - continue `Cephalon.Engine` high-tier remediation for source-generator-backed module discovery
 
 ### ENG-471 Retire Behaviors execution-slot open-generic fallback
@@ -239,7 +296,9 @@ Follow-up later:
 - static `ConfigureTopology` runtime lookup was retired by `ENG-470`
 - `BehaviorExecutionSlot.ForType(...)` was retired by `ENG-471`, and `BehaviorTypeRegistry` was
   retired by `ENG-472`
-- continue `Cephalon.Behaviors.Http` medium-tier remediation for attribute/profile binding, input-shape, and manual/type-based route-contract reflection
+- `Cephalon.Behaviors.Http` attribute/profile binding fallback was retired by `ENG-473`
+- continue `Cephalon.Behaviors.Http` medium-tier remediation for input-shape and
+  manual/type-based route-contract reflection
 
 ### ENG-468 Retire Behaviors.Patterns saga choreography runtime catalog reflection
 
@@ -278,7 +337,9 @@ Validation:
 Follow-up later:
 
 - continue high-tier structural remediation for `Cephalon.Engine`, `Cephalon.Behaviors`, and `Cephalon.Data.MySql`
-- continue `Cephalon.Behaviors.Http` medium-tier remediation for attribute/profile binding, input-shape, and manual/type-based route-contract reflection
+- `Cephalon.Behaviors.Http` attribute/profile binding fallback was retired by `ENG-473`
+- continue `Cephalon.Behaviors.Http` medium-tier remediation for input-shape and
+  manual/type-based route-contract reflection
 
 ### ENG-467 Retire Behaviors.Patterns durable execution slot reflection fallback
 
@@ -325,14 +386,14 @@ Why:
 
 - `ENG-464` intentionally left `Cephalon.Behaviors.Http` at `medium` with a generated-profile fallback that still scanned the owning module assembly when registry hints were absent
 - generated-profile mapping is now meant to be source-generator-backed and explicit; runtime assembly scanning should not be the hidden compatibility path for low-code REST publication
-- explicit `MapProfile<TBehavior>()` can remain the direct type-targeted fallback while the generated-profile shorthand becomes registry-only and trim/AOT-truthful
+- explicit `MapProfile<TBehavior>()` could temporarily remain the direct type-targeted fallback while the generated-profile shorthand became registry-only and trim/AOT-truthful; `ENG-473` later retired that fallback too
 
 Delivered:
 
 - removed `BehaviorRestProfileResolver.ScanAssemblyProfiles(...)` and the `assembly.DefinedTypes` enumeration fallback
-- changed `ResolveGeneratedProfiles(...)` to fail fast when the owning module assembly does not expose generated REST profile hints, with guidance to rebuild with the current source generator or use explicit `MapProfile<TBehavior>()`
+- changed `ResolveGeneratedProfiles(...)` to fail fast when the owning module assembly does not expose generated REST profile hints, with then-current guidance to rebuild with the current source generator or use explicit `MapProfile<TBehavior>()`; `ENG-473` later narrowed no-profile fallback guidance to explicit verb mappings
 - added focused hosting coverage for missing generated registries plus a tooling guard that blocks `ScanAssemblyProfiles` / `.DefinedTypes` from returning to `BehaviorRestProfileResolver`
-- removed the generated-profile assembly-scan row from `scripts/deployment-mode-support.json`, reducing the manifest-backed known-hazard count from 18 to 17 while keeping `Cephalon.Behaviors.Http` at `medium` for attribute/profile binding fallback, input-shape inspection, and manual/type-based endpoint-contract reflection
+- removed the generated-profile assembly-scan row from `scripts/deployment-mode-support.json`, reducing the manifest-backed known-hazard count from 18 to 17 while keeping `Cephalon.Behaviors.Http` at `medium` for the then-current attribute/profile binding fallback, input-shape inspection, and manual/type-based endpoint-contract reflection
 - refreshed component docs, deployment-mode support, trim/AOT hazard inventory, compatibility and `.NET 11` readiness docs, roadmap/backlog planning truth, and project memory without widening global trim / Native AOT / single-file claims
 
 Validation:
@@ -344,7 +405,8 @@ Validation:
 
 Follow-up later:
 
-- retire runtime attribute/profile binding and input-shape fallback through generated or module-provided binding-contract descriptors
+- completed by `ENG-473`: retire runtime attribute/profile binding fallback through generated or explicitly registered profile descriptors
+- retire input-shape fallback through generated or module-provided binding-contract descriptors
 - retire manual/type-based route-contract reflection with generated or explicit endpoint-contract descriptors before promoting `Cephalon.Behaviors.Http` beyond `medium`
 
 ### ENG-465 Retire Behaviors generated module carrier reflection
@@ -421,7 +483,8 @@ Validation:
 
 Follow-up later:
 
-- retire runtime attribute/profile binding and input-shape fallback through generated or module-provided binding-contract descriptors
+- completed by `ENG-473`: retire runtime attribute/profile binding fallback through generated or explicitly registered profile descriptors
+- retire input-shape fallback through generated or module-provided binding-contract descriptors
 - retire manual/type-based route-contract reflection with generated or explicit endpoint-contract descriptors before promoting `Cephalon.Behaviors.Http` beyond `medium`
 
 ### ENG-463 Retire Behaviors.Http REST dispatch reflection
@@ -13743,13 +13806,14 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-463 Retire Behaviors.Http REST dispatch reflection: `Cephalon.Behaviors.Http` REST route materialization, projection application, and generated-profile module ownership now use type-based contracts instead of `MethodInfo.MakeGenericMethod/Invoke`; `IBehaviorModuleBuilder` exposes host-agnostic `Type` overloads for ownership registration; the package then remained `medium` for bounded `ResultModel<>` OpenAPI metadata and generated-profile carrier lookups, and the then-current manifest output reported 9 package entries, 6 packages with known hazards, 21 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility (shipped)
 - ENG-464 Retire Behaviors.Http REST profile carrier reflection: generated REST profile hints now register through `BehaviorRestGeneratedProfileRegistry`, optional result-envelope OpenAPI success schemas use `ResultModelEnvelopeResponseMetadata` instead of runtime `ResultModel<>` construction, and the then-current manifest output reported 9 package entries, 6 packages with known hazards, 22 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim while `Cephalon.Behaviors.Http` stayed `medium` for fallback/manual-route reflection. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility (shipped)
 - ENG-465 Retire Behaviors generated module carrier reflection: generated behavior module hints now register through `BehaviorGeneratedModuleRegistry`, `BehaviorModule` consumes them without reflective `ContainsBehaviorsAttribute.RegistrationType` carrier-method lookup, and the then-current manifest output reported 9 package entries, 6 packages with known hazards, 18 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim while `Cephalon.Behaviors` stayed `high` for runtime-discovery and open-generic fallback hazards. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility (shipped)
-- ENG-466 Retire Behaviors.Http generated profile assembly scan fallback: `MapGeneratedProfiles(...)` and generated-profile groups now require source-generated registry hints instead of falling back to `assembly.DefinedTypes` scanning, explicit `MapProfile<TBehavior>()` remains the direct type-targeted path, and the then-current manifest output reported 9 package entries, 6 packages with known hazards, 17 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim while `Cephalon.Behaviors.Http` stays `medium` for attribute/profile/manual-route reflection. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
+- ENG-466 Retire Behaviors.Http generated profile assembly scan fallback: `MapGeneratedProfiles(...)` and generated-profile groups now require source-generated registry hints instead of falling back to `assembly.DefinedTypes` scanning, explicit `MapProfile<TBehavior>()` remained the direct type-targeted path until `ENG-473`, and the then-current manifest output reported 9 package entries, 6 packages with known hazards, 17 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim while `Cephalon.Behaviors.Http` stayed `medium` for the then-current attribute/profile/manual-route reflection. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
 - ENG-467 Retire Behaviors.Patterns durable execution slot reflection fallback: durable execution now requires source-generated or explicitly registered `DurableExecutionSlot` registrations for execution and runtime-catalog projection instead of `DurableExecutionSlot.ForType(...)` open-generic fallback; `Cephalon.Behaviors.Patterns` was reclassified from `high` to `medium` by recording the remaining saga choreography runtime-catalog shape reflection, and the then-current manifest output reported 9 package entries, 6 packages with known hazards, 17 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
 - ENG-468 Retire Behaviors.Patterns saga choreography runtime catalog reflection: saga choreography runtime catalog projection now uses source-generated or explicitly registered `SagaChoreographyRuntimeSlot` metadata instead of runtime interface/result-shape reflection; `Cephalon.Behaviors.SourceGen` emits the closed slot registration when the patterns runtime slot is referenced, manual hosts can register it explicitly, and `scripts/deployment-mode-support.json` removes the remaining `Cephalon.Behaviors.Patterns` medium row. Current manifest output reports 8 package entries, 5 packages with known hazards, 16 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
 - ENG-469 Retire Behaviors auto-registration fallback assembly scan: `BehaviorModule.AutoRegisterBehaviors(...)` now consumes `BehaviorGeneratedModuleRegistry` hints only instead of scanning `assembly.DefinedTypes` for `[AppBehavior]` types, explicit `AutoRegisterAssemblies` entries without generated hints fail fast with source-generator / explicit-registration guidance, and `scripts/deployment-mode-support.json` removed the `Cephalon.Behaviors` fallback assembly-scan row while keeping the package `high` for `BehaviorTypeRegistry`, static `ConfigureTopology` lookup, and `BehaviorExecutionSlot.ForType(...)` at that checkpoint. The ENG-469 manifest output reported 8 package entries, 5 packages with known hazards, 15 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
 - ENG-470 Retire Behavior runtime topology reflection fallback: generated behavior auto-registration no longer invokes static `ConfigureTopology(...)` at runtime; `Cephalon.Behaviors.SourceGen` emits topology descriptors for supported fluent chains and unambiguous attribute-only declarations, unsupported generated topology fails fast with source-generator / explicit-registration guidance, and `scripts/deployment-mode-support.json` removes the static topology row while keeping `Cephalon.Behaviors` `high` for `BehaviorTypeRegistry` and `BehaviorExecutionSlot.ForType(...)`. Current manifest output reports 8 package entries, 5 packages with known hazards, 14 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
 - ENG-471 Retire Behaviors execution-slot open-generic fallback: `BehaviorExecutionSlot.ForType(...)` is removed; `BehaviorDispatcher` now fails fast when a behavior has no source-generated or explicitly registered closed execution slot, typed fluent and module ownership overloads provide low-ceremony manual registration, module-owned typed registrations carry closed delegates, and `scripts/deployment-mode-support.json` removes the execution-slot row while keeping `Cephalon.Behaviors` `high` only for `BehaviorTypeRegistry`. Current manifest output reports 8 package entries, 5 packages with known hazards, 13 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
-- ENG-472 Retire Behaviors type-registry runtime mapping: `BehaviorTypeRegistry` and `IBehaviorTypeRegistry` are removed; source-generated, fluent, and module-owned behavior registration now contributes `BehaviorImplementationDescriptor` records consumed by dispatch, resilience idempotency resolution, durable runtime projection, and saga runtime projection. `scripts/deployment-mode-support.json` removes the final `Cephalon.Behaviors` hazard row, returning the package to clean-baseline absence from the active table. Current manifest output reports 7 package entries, 4 packages with known hazards, 12 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
+- ENG-472 Retire Behaviors type-registry runtime mapping: `BehaviorTypeRegistry` and `IBehaviorTypeRegistry` are removed; source-generated, fluent, and module-owned behavior registration now contributes `BehaviorImplementationDescriptor` records consumed by dispatch, resilience idempotency resolution, durable runtime projection, and saga runtime projection. `scripts/deployment-mode-support.json` removes the final `Cephalon.Behaviors` hazard row, returning the package to clean-baseline absence from the active table. Current manifest output at the checkpoint reported 7 package entries, 4 packages with known hazards, 12 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
+- ENG-473 Retire Behaviors.Http profile attribute fallback: `MapProfile<TBehavior>()` now requires generated or explicitly registered `BehaviorRestProfileDescriptor` metadata plus behavior-type hints instead of reading `BehaviorRestProfileAttribute`, `BehaviorRestBindingAttribute`, or `AppBehaviorAttribute` directly from runtime behavior types. Explicit verb mappings are now the no-profile direct path. Current manifest output reports 7 package entries, 4 packages with known hazards, 11 known hazard entries, zero active `low` entries, and 1 scoped `singleFile` claim while `Cephalon.Behaviors.Http` stays `medium` for input-shape/manual-route reflection. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
 
 ### Later / not scheduled yet
 
@@ -14032,7 +14096,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-058-T114 truthful shorthand REST remaining-body fallback visibility: `Cephalon.Abstractions` now extends `RestEndpointBindingFallbackMode` with `PreserveRemainingBodyFallback`, `Cephalon.Behaviors.Http` now resolves that typed fallback mode for body-capable behavior-backed REST endpoints whenever explicit bindings still leave deterministic remaining request-body surface, and `Cephalon.AspNetCore` now carries the same answer through actual endpoint metadata plus `/engine/rest-endpoints` and `snapshot.RestEndpoints` while keeping `metadata.bindingFallbackMode = preserve-remaining-body-fallback` as compatibility-only metadata — **Shipped** · GitHub issue `#380` · targeted REST projection tests 118/118 + targeted REST runtime/hosting tests 73/73 + package-surface tests 75/75
 - ENG-058-T115 truthful shorthand REST preserved-fallback diagnostics parity: `Cephalon.Behaviors.Http` now emits `RestEndpointBindingFallbackPreserved` event `5204` for any changed non-null typed `BindingFallbackMode` instead of only the earlier implicit-query preservation case, so startup logging stays aligned when merge removal or other shorthand override reconciliation preserves `PreserveRemainingBodyFallback`; focused projection and hosting coverage now prove both the runtime-catalog answer and emitted logging for that body-fallback path — **Shipped** · GitHub issue `#381` · targeted REST projection tests 119/119 + targeted REST runtime/hosting tests 74/74
 - ENG-058-T116 centralize shorthand REST binding-fallback wire names: `Cephalon.Abstractions` now exposes `RestEndpointBindingFallbackModeExtensions.GetWireName()` plus `TryParseWireName(...)` as the canonical compatibility bridge for `RestEndpointBindingFallbackMode`, `Cephalon.AspNetCore` now derives additive `metadata.bindingFallbackMode` values from that helper instead of maintaining independent hardcoded strings, and the public XML/docs wording now describes both preserved implicit-query and remaining request-body fallback semantics truthfully — **Shipped** · GitHub issue `#382` · targeted REST projection tests 119/119 + targeted REST runtime/hosting tests 74/74 + package-surface tests 77/77
-- ENG-058-T117 compile-time shorthand REST route-pattern validation: `Cephalon.Behaviors.SourceGen` now rejects malformed `BehaviorRestProfileAttribute.RelativePattern` placeholder syntax through `ABT0026`, withholds generated `GetRestProfiles()` hints when the declared route pattern is malformed, and `BehaviorRestProfileResolver` now parses declared route patterns during runtime normalization even when no explicit bindings are present so direct attribute fallback or stale generated hints still fail fast before shorthand publication can materialize an invalid route shape — **Shipped** · GitHub issue `#383` · targeted source-generator tests 27/27 + targeted REST runtime/hosting tests 120/120
+- ENG-058-T117 compile-time shorthand REST route-pattern validation: `Cephalon.Behaviors.SourceGen` now rejects malformed `BehaviorRestProfileAttribute.RelativePattern` placeholder syntax through `ABT0026`, withholds generated `GetRestProfiles()` hints when the declared route pattern is malformed, and `BehaviorRestProfileResolver` parses declared route patterns during runtime normalization even when no explicit bindings are present so stale generated hints fail fast before shorthand publication can materialize an invalid route shape; the direct attribute fallback named by this historical slice was later removed by `ENG-473` — **Shipped** · GitHub issue `#383` · targeted source-generator tests 27/27 + targeted REST runtime/hosting tests 120/120
 - ENG-058-T118 shorthand REST binding-fallback selector targeting: `Cephalon.Abstractions` now extends `RestEndpointSuppressionDescriptor` plus `RestEndpointOverrideDescriptor` with `BindingFallbackModes`, `Cephalon.AspNetCore` now binds and publishes those selector arrays through `/engine/rest-endpoint-suppressions`, `/engine/rest-endpoint-overrides`, and `snapshot`, and `Cephalon.Behaviors.Http` now matches those selectors against the original shorthand `BindingFallbackMode` identity before override actions are applied so hosts can target one of several same-behavior candidates by preserved fallback semantics without depending on rewritten published shape — **Shipped** · GitHub issue `#384` · targeted REST projection tests 120/120 + targeted REST runtime/hosting tests 76/76 + package-surface tests 78/78
 - ENG-058-T119 profile-authored shorthand REST implicit query-fallback parity: `Cephalon.Behaviors.Http` now extends `BehaviorRestProfileAttribute` plus `BehaviorRestProfileDescriptor` with `PreserveImplicitQueryFallback` so metadata-only REST profiles that already declare explicit bindings can keep the remaining implicit query-string fallback surface intentionally, `BehaviorRestProfileResolver` now re-checks that preserved-fallback rule during runtime normalization and rejects profiles that set it without any explicit bindings, `Cephalon.Behaviors.SourceGen` now validates the same authoring contract through `ABT0027` and carries the flag through generated `GetRestProfiles()` output, and shorthand projection/runtime surfaces now keep the resulting `PreserveSourceImplicitFallback` answer aligned for module-owned profile consumption — **Shipped** · GitHub issue `#385` · targeted source-generator tests 29/29 + targeted REST projection/runtime hosting tests 203/203 + package-surface tests 1/1
 - ENG-058-T120 shorthand REST original binding-plan selector targeting: `Cephalon.Abstractions` now extends `RestEndpointSuppressionDescriptor` plus `RestEndpointOverrideDescriptor`, and `Cephalon.AspNetCore` suppression/override options, with exact original explicit `TargetBindings` selector sets that the runtime catalogs publish through `/engine/rest-endpoint-suppressions`, `/engine/rest-endpoint-overrides`, and `snapshot`; `Cephalon.Behaviors.Http` now matches those selectors against the original shorthand explicit binding-plan identity before override actions are applied, using descriptor-set equivalence so hosts can target route-only versus richer explicitly bound candidates without depending on rewritten published shape — **Shipped** · GitHub issue `#386` · targeted REST projection/runtime hosting tests 6/6 + package-surface tests 1/1
@@ -14058,7 +14122,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-058-T140 stabilize REST candidate-status wire names: `Cephalon.Abstractions` now exposes `RestEndpointCandidateStatusExtensions` plus stable `published` / `suppressed` JSON wire names for `RestEndpointCandidateStatus`, and `/engine/rest-endpoint-candidates`, `/engine/rest-endpoint-candidates/{candidateId}`, and `snapshot.RestEndpointCandidates` now expose candidate publication state through that canonical operator-facing vocabulary instead of raw enum-number serialization — **Shipped** · GitHub issue `#407` · targeted REST runtime/hosting tests 1/1 + package-surface tests 4/4
 - ENG-058-T141 normalize behavior REST binding-source wire names: `Cephalon.Behaviors.Http` now exposes `BehaviorRestBindingSourceExtensions` plus stable `route` / `query` / `header` / `body` JSON wire names for `BehaviorRestBindingSource`, and `Cephalon.Behaviors.SourceGen` now validates `[BehaviorRestBinding]` metadata against that canonical wire-name vocabulary while still emitting the resolved enum member names into generated `GetRestProfiles()` hints so future enum-member renames that preserve the wire-name contract do not break module-owned REST shorthand — **Shipped** · GitHub issue `#408` · targeted source-generator tests 3/3 + package-surface tests 6/6
 - ENG-058-T142 normalize behavior REST method wire names: `Cephalon.Behaviors.Http` now exposes `BehaviorRestMethodExtensions` plus stable `get` / `post` / `put` / `patch` / `delete` JSON wire names for `BehaviorRestMethod`, and `Cephalon.Behaviors.SourceGen` now validates `[BehaviorRestProfile]` metadata against that canonical wire-name vocabulary while still emitting the resolved enum member names into generated `GetRestProfiles()` hints so future enum-member renames that preserve the wire-name contract do not break module-owned REST shorthand — **Shipped** · GitHub issue `#409` · targeted source-generator tests 4/4 + package-surface tests 7/7
-- ENG-058-T143 align behavior REST runtime guidance with stable wire names: `Cephalon.Behaviors.Http` now reuses the same canonical `get` / `post` / `put` / `patch` / `delete` and `route` / `query` / `header` / `body` vocabularies in runtime attribute-fallback and explicit binding-plan normalization errors, so direct `MapProfile<TBehavior>()` fallback, binding-plan normalization, and last-mile profile-method conversion all point developers/operators at the same stable wire-name contract already used by JSON serialization and source generation — **Shipped** · GitHub issue `#410` · targeted hosting/runtime tests 3/3
+- ENG-058-T143 align behavior REST runtime guidance with stable wire names: `Cephalon.Behaviors.Http` now reuses the same canonical `get` / `post` / `put` / `patch` / `delete` and `route` / `query` / `header` / `body` vocabularies in descriptor consumption and explicit binding-plan normalization errors, so `MapProfile<TBehavior>()` descriptor consumption, binding-plan normalization, and last-mile profile-method conversion all point developers/operators at the same stable wire-name contract already used by JSON serialization and source generation; the direct runtime attribute fallback named by the original slice was later removed by `ENG-473` — **Shipped** · GitHub issue `#410` · targeted hosting/runtime tests 3/3
 - ENG-058-T144 finish behavior REST method-guidance parity: `Cephalon.Behaviors.Http` now also reuses the canonical `get` / `post` / `put` / `patch` / `delete` vocabulary in non-body method body-binding rejections and unsupported REST method parser failures, so source generation, JSON serialization, primary runtime fallback, body-capability validation, and method-parser guidance all point at one stable behavior-authored REST method contract — **Shipped** · GitHub issue `#411` · targeted hosting/runtime tests 3/3
 - ENG-058-T145 lock authoring-policy suppression wire names in runtime JSON: `/engine/rest-endpoint-candidates`, `/engine/rest-endpoint-candidates/{candidateId}`, and `snapshot.RestEndpointCandidates` now have targeted hosting/runtime coverage that locks `SuppressedByAuthoringPolicyKind` onto the canonical `disallowed-authoring-style`, `not-allowed-authoring-style`, and `preferred-authoring-style-selected` wire names, so operator-facing shorthand-governance payloads do not drift back to raw enum-member or numeric serialization behavior — **Shipped** · GitHub issue `#412` · targeted hosting/runtime tests 1/1
 - ENG-058-T146 surface authoring-policy suppression kinds in publication groups: `Cephalon.Abstractions` now exposes `RestEndpointPublicationGroupAuthoringPolicySuppressionDescriptor`, grouped publication answers now also carry `AuthoringPolicySuppressionSummaries` at both the behavior-group level and inside each `RestEndpointPublicationGroupAuthoringStyleDescriptor`, and `/engine/rest-endpoint-publication-groups`, `/engine/rest-endpoint-publication-groups/{behaviorId}`, plus `snapshot.RestEndpointPublicationGroups` now round-trip the canonical grouped `disallowed-authoring-style` and `not-allowed-authoring-style` suppression breakdown directly instead of forcing operators to re-join candidate payloads — **Shipped** · GitHub issue `#413` · targeted hosting/runtime tests 2/2 + package-surface tests 3/3

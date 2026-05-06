@@ -113,23 +113,26 @@ public interface IRestBehaviorEndpointGroupBuilder
     IRestBehaviorEndpointGroupBuilder MapGeneratedProfiles(string behaviorIdPrefix);
 
     /// <summary>
-    /// Maps a REST endpoint by consuming the metadata-only REST profile declared on the specified behavior.
+    /// Maps a REST endpoint by consuming the generated or explicitly registered REST profile descriptor
+    /// for the specified behavior.
     /// </summary>
     /// <typeparam name="TBehavior">The behavior type to expose through the owning module.</typeparam>
     /// <param name="configureEndpoint">Optional endpoint-level Minimal API customization.</param>
     /// <returns>The same group builder for fluent route composition.</returns>
     /// <remarks>
     /// The owning module still controls the public group prefix, tags, and published OpenAPI documents.
-    /// The behavior profile contributes only the candidate method, relative pattern, and optional API
-    /// major version metadata.
+    /// The behavior profile contributes only the candidate method, relative pattern, explicit binding
+    /// plan, preserved query-fallback intent, and optional API major version metadata. The descriptor
+    /// must already be available through source-generated or explicit registration; this shorthand does
+    /// not fall back to reading behavior attributes at runtime.
     /// </remarks>
     IRestBehaviorEndpointGroupBuilder MapProfile<TBehavior>(
         Action<RouteHandlerBuilder>? configureEndpoint = null)
         where TBehavior : class;
 
     /// <summary>
-    /// Maps a REST endpoint by consuming the metadata-only REST profile declared on the specified behavior
-    /// while applying an explicit topology override during ownership registration.
+    /// Maps a REST endpoint by consuming the generated or explicitly registered REST profile descriptor
+    /// for the specified behavior while applying an explicit topology override during ownership registration.
     /// </summary>
     /// <typeparam name="TBehavior">The behavior type to expose through the owning module.</typeparam>
     /// <param name="configureTopology">The explicit topology selection callback.</param>

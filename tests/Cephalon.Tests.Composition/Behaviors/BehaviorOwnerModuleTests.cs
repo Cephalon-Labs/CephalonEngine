@@ -17,6 +17,20 @@ namespace Cephalon.Tests.Behaviors;
 
 public sealed class BehaviorOwnerModuleTests
 {
+    static BehaviorOwnerModuleTests()
+    {
+        BehaviorRestGeneratedProfileRegistry.Register(
+            typeof(OwnedRestProfileBehavior).Assembly,
+            [
+                new BehaviorRestProfileDescriptor(
+                    "tests.owned.rest.profile",
+                    BehaviorRestMethod.Get,
+                    "/{name}",
+                    2)
+            ],
+            [new BehaviorRestProfileBehaviorTypeDescriptor("tests.owned.rest.profile", typeof(OwnedRestProfileBehavior))]);
+    }
+
     [Fact]
     public async Task BehaviorModuleBaseRegistersOwnedBehaviorsWhenAutoRegisterIsDisabled()
     {

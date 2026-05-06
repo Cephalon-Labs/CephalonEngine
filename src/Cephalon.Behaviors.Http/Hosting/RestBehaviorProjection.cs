@@ -96,21 +96,15 @@ internal sealed record RestBehaviorEndpointProjection(
         ArgumentNullException.ThrowIfNull(profile);
         ArgumentException.ThrowIfNullOrWhiteSpace(authoringStyle);
 
-        var behaviorId = ResolveBehaviorId(behaviorType);
-        if (!string.Equals(behaviorId, profile.BehaviorId, StringComparison.OrdinalIgnoreCase))
-        {
-            throw new InvalidOperationException(
-                $"Resolved REST profile behavior id '{profile.BehaviorId}' does not match behavior type '{behaviorType.FullName}' with id '{behaviorId}'.");
-        }
-
-        return Create(
-            behaviorType,
+        return new RestBehaviorEndpointProjection(
             ConvertMethod(profile.Method),
-            profile.RelativePattern,
-            configureEndpoint,
+            profile.BehaviorId,
+            behaviorType,
+            profile.RelativePattern.Trim(),
+            profile.Bindings ?? [],
+            profile.PreserveImplicitQueryFallback,
             authoringStyle,
-            profile.Bindings,
-            profile.PreserveImplicitQueryFallback);
+            configureEndpoint);
     }
 
     internal RestBehaviorEndpointProjection WithMethod(RestBehaviorHttpMethod method)

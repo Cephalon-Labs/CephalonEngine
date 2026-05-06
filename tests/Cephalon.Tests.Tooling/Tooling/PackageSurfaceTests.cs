@@ -2721,6 +2721,10 @@ public sealed class PackageSurfaceTests
             "BehaviorRestProfileResolver.cs"));
         Assert.Contains("BehaviorRestGeneratedProfileRegistry.TryGetProfiles", profileResolver);
         Assert.Contains("BehaviorRestGeneratedProfileRegistry.TryGetBehaviorTypes", profileResolver);
+        Assert.DoesNotContain("BehaviorRestProfileAttribute", profileResolver);
+        Assert.DoesNotContain("BehaviorRestBindingAttribute", profileResolver);
+        Assert.DoesNotContain("AppBehaviorAttribute", profileResolver);
+        Assert.DoesNotContain("GetCustomAttributes", profileResolver);
         Assert.DoesNotContain("ScanAssemblyProfiles", profileResolver);
         Assert.DoesNotContain(".DefinedTypes", profileResolver);
         Assert.DoesNotContain("\"GetRestProfiles\"", profileResolver);

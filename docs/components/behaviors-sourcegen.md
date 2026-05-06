@@ -188,10 +188,10 @@ dispatch path. The generated `DurableExecutionSlot` service registrations likewi
 open-generic adapter materialization from the normal source-generated durable path used by
 `Cephalon.Behaviors.Patterns`. The generated `SagaChoreographyRuntimeSlot` registrations remove saga
 choreography runtime-catalog shape inspection from the normal source-generated choreography path used
-by `Cephalon.Behaviors.Patterns`. The durable and choreography fallbacks are now removed; these fast
-paths still do not make the behavior packages trim/AOT claimed because runtime assembly-scan,
-behavior dispatch fallback, and HTTP fallback/manual-route reflection remain documented in the
-deployment-mode hazard inventory.
+by `Cephalon.Behaviors.Patterns`. The durable, choreography, runtime assembly-scan, behavior
+dispatch, and behavior implementation-registry fallbacks are now removed; these fast paths still do
+not make the behavior packages trim/AOT claimed because `Cephalon.Behaviors.Http` input-shape and
+manual-route reflection remain documented in the deployment-mode hazard inventory.
 
 Compile-time topology extraction intentionally stays conservative. Literal `WithApiSurface(...)`
 arguments are supported, while more complex expressions are emitted as unsupported generated
@@ -216,17 +216,18 @@ document publication policy.
 `Cephalon.Behaviors.Http` now consumes those hints through the explicit module-owned
 `MapProfile<TBehavior>()`, `MapGeneratedProfiles(...)`, and
 `IRestBehaviorModuleBuilder.MapGeneratedProfileGroups(...)` shorthands. `MapProfile<TBehavior>()`
-can still fall back to the explicitly targeted behavior type's attribute, but generated-profile
-group mapping now requires the source-generated registry hints for the owning module assembly and
-does not scan that assembly for attributed behavior types.
+now requires generated or explicitly registered profile descriptors plus behavior-type hints for
+the explicitly targeted behavior type, while generated-profile group mapping requires the
+source-generated registry hints for the owning module assembly and does not scan that assembly for
+attributed behavior types.
 Generated REST profile and binding hints now resolve their enum member names from the actual
 attribute arguments instead of assuming fixed numeric ordinals.
 The build now rejects unsupported binding sources, malformed route placeholder syntax, missing or
 duplicate input-property targets, scalar-input misuse, body-binding verb restrictions,
 route-placeholder mismatches, and preserved implicit-query fallback without any explicit bindings
-earlier, while `Cephalon.Behaviors.Http` still re-checks the same contract when the runtime falls
-back to direct attribute resolution for `MapProfile<TBehavior>()`; generated-profile mapping uses
-the registry hints directly. Runtime
+earlier, while `Cephalon.Behaviors.Http` still re-checks the same contract when generated or
+explicitly registered descriptors are consumed; generated-profile mapping uses the registry hints
+directly. Runtime
 normalization still lets ASP.NET Core route parsing stay authoritative for the final route-shape
 truth even after the generator moves the most common placeholder-shape mistakes and preserved-
 fallback authoring errors to compile time.

@@ -246,7 +246,7 @@ public sealed class BehaviorRestProjectionTests
                 .MapGeneratedProfiles("tests.missing.generated"));
 
         Assert.Contains("does not expose generated REST profile hints", exception.Message, StringComparison.Ordinal);
-        Assert.Contains("MapProfile<TBehavior>()", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("MapGet<TBehavior>()", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -4449,7 +4449,7 @@ public sealed class BehaviorRestProjectionTests
             group.MapProfile<ProjectionCartBehavior>());
 
         Assert.Contains("MapProfile<TBehavior>()", exception.Message, StringComparison.Ordinal);
-        Assert.Contains("BehaviorRestProfile", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("generated REST profile behavior-type hint", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -4535,7 +4535,7 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
-    public void BehaviorRestProfileResolverRejectsProfilesWithoutSupportedMethodFromAttributeFallback()
+    public void BehaviorRestProfileResolverRejectsProfilesWithoutSupportedMethodFromGeneratedDescriptor()
     {
         var behaviorType = CreateDynamicProfileBehaviorType(
             "tests.profile.projection.unsupported-method.dynamic",
@@ -4555,7 +4555,7 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
-    public void BehaviorRestProfileResolverRejectsInvalidRoutePatternFromAttributeFallback()
+    public void BehaviorRestProfileResolverRejectsInvalidRoutePatternFromGeneratedDescriptor()
     {
         var behaviorType = CreateDynamicProfileBehaviorType(
             "tests.profile.projection.invalid-route-pattern.dynamic",
@@ -4571,7 +4571,7 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
-    public void BehaviorRestProfileResolverRejectsProfileBindingsForUnknownInputPropertyFromAttributeFallback()
+    public void BehaviorRestProfileResolverRejectsProfileBindingsForUnknownInputPropertyFromGeneratedDescriptor()
     {
         var behaviorType = CreateDynamicProfileBehaviorType(
             "tests.profile.projection.unknown-binding.dynamic",
@@ -4587,7 +4587,7 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
-    public void BehaviorRestProfileResolverRejectsProfileBindingsForScalarInputFromAttributeFallback()
+    public void BehaviorRestProfileResolverRejectsProfileBindingsForScalarInputFromGeneratedDescriptor()
     {
         var behaviorType = CreateDynamicProfileBehaviorType(
             "tests.profile.projection.scalar-binding.dynamic",
@@ -4603,7 +4603,7 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
-    public void BehaviorRestProfileResolverRejectsProfileBodyBindingsForGetEndpointsFromAttributeFallback()
+    public void BehaviorRestProfileResolverRejectsProfileBodyBindingsForGetEndpointsFromGeneratedDescriptor()
     {
         var behaviorType = CreateDynamicProfileBehaviorType(
             "tests.profile.projection.get-body-binding.dynamic",
@@ -4645,7 +4645,7 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
-    public void BehaviorRestProfileResolverRejectsProfileBindingsWithoutSupportedSourceFromAttributeFallback()
+    public void BehaviorRestProfileResolverRejectsProfileBindingsWithoutSupportedSourceFromGeneratedDescriptor()
     {
         var behaviorType = CreateDynamicProfileBehaviorType(
             "tests.profile.projection.unsupported-source.dynamic",
@@ -4705,7 +4705,7 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
-    public void BehaviorRestProfileResolverRejectsDuplicateProfileBindingsFromAttributeFallback()
+    public void BehaviorRestProfileResolverRejectsDuplicateProfileBindingsFromGeneratedDescriptor()
     {
         var behaviorType = CreateDynamicProfileBehaviorType(
             "tests.profile.projection.duplicate-binding.dynamic",
@@ -4722,7 +4722,7 @@ public sealed class BehaviorRestProjectionTests
     }
 
     [Fact]
-    public void BehaviorRestProfileResolverRejectsProfileRouteBindingsWhenPlaceholderIsMissingFromPatternFromAttributeFallback()
+    public void BehaviorRestProfileResolverRejectsProfileRouteBindingsWhenPlaceholderIsMissingFromPatternFromGeneratedDescriptor()
     {
         var behaviorType = CreateDynamicProfileBehaviorType(
             "tests.profile.projection.missing-route-placeholder.dynamic",
@@ -6102,7 +6102,26 @@ public sealed class BehaviorRestProjectionTests
         il.Emit(OpCodes.Ret);
         typeBuilder.DefineMethodOverride(handleAsyncMethod, behaviorInterface.GetMethod(nameof(IAppBehavior<object, string>.HandleAsync))!);
 
-        return typeBuilder.CreateType()!;
+        var behaviorType = typeBuilder.CreateType()!;
+        BehaviorRestGeneratedProfileRegistry.Register(
+            behaviorType.Assembly,
+            [
+                new BehaviorRestProfileDescriptor(
+                    behaviorId,
+                    method,
+                    relativePattern,
+                    6,
+                    bindings
+                        .Select(static binding => new BehaviorRestBindingDescriptor(
+                            binding.PropertyName,
+                            (BehaviorRestBindingSource)binding.SourceValue,
+                            binding.Name))
+                        .ToArray(),
+                    preserveImplicitQueryFallback)
+            ],
+            [new BehaviorRestProfileBehaviorTypeDescriptor(behaviorId, behaviorType)]);
+
+        return behaviorType;
     }
 
     private static string BuildBehaviorProjectionCandidateId(

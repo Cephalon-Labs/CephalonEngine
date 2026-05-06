@@ -4,12 +4,13 @@ using System.Reflection;
 namespace Cephalon.Behaviors.Http.Abstractions;
 
 /// <summary>
-/// Stores source-generated REST profile hints for loaded behavior assemblies.
+/// Stores REST profile hints for loaded behavior assemblies.
 /// </summary>
 /// <remarks>
-/// The behavior source generator registers profile descriptors through a module initializer.
-/// Runtime profile projection can then read the descriptors by assembly without scanning generated
-/// carrier methods through reflection.
+/// The behavior source generator registers profile descriptors through a module initializer, and
+/// advanced hosts or tests can register equivalent descriptors explicitly. Runtime profile
+/// projection can then read the descriptors by assembly without scanning generated carrier methods
+/// or attributed behavior types through reflection.
 /// </remarks>
 public static class BehaviorRestGeneratedProfileRegistry
 {
@@ -22,11 +23,11 @@ public static class BehaviorRestGeneratedProfileRegistry
     private static readonly ConcurrentDictionary<Assembly, Registration> Registrations = new();
 
     /// <summary>
-    /// Registers generated REST profile descriptors for a loaded behavior assembly.
+    /// Registers or merges REST profile descriptors for a loaded behavior assembly.
     /// </summary>
     /// <param name="assembly">The assembly that owns the generated descriptors.</param>
-    /// <param name="profiles">The generated REST profile descriptors.</param>
-    /// <param name="behaviorTypes">The generated behavior-type descriptors paired with the profiles.</param>
+    /// <param name="profiles">The REST profile descriptors to register.</param>
+    /// <param name="behaviorTypes">The behavior-type descriptors paired with the profiles.</param>
     public static void Register(
         Assembly assembly,
         IReadOnlyList<BehaviorRestProfileDescriptor> profiles,
@@ -36,9 +37,13 @@ public static class BehaviorRestGeneratedProfileRegistry
         ArgumentNullException.ThrowIfNull(profiles);
         ArgumentNullException.ThrowIfNull(behaviorTypes);
 
-        Registrations[assembly] = new Registration(
+        var registration = new Registration(
             profiles.ToArray(),
             behaviorTypes.ToArray());
+        Registrations.AddOrUpdate(
+            assembly,
+            registration,
+            (_, existing) => Merge(existing, registration));
     }
 
     /// <summary>
@@ -83,6 +88,22 @@ public static class BehaviorRestGeneratedProfileRegistry
 
         behaviorTypes = EmptyBehaviorTypes;
         return false;
+    }
+
+    private static Registration Merge(Registration existing, Registration incoming)
+    {
+        var profiles = existing.Profiles
+            .Concat(incoming.Profiles)
+            .GroupBy(static profile => profile.BehaviorId, StringComparer.OrdinalIgnoreCase)
+            .Select(static group => group.Last())
+            .ToArray();
+        var behaviorTypes = existing.BehaviorTypes
+            .Concat(incoming.BehaviorTypes)
+            .GroupBy(static descriptor => descriptor.Id, StringComparer.OrdinalIgnoreCase)
+            .Select(static group => group.Last())
+            .ToArray();
+
+        return new Registration(profiles, behaviorTypes);
     }
 
     private sealed record Registration(

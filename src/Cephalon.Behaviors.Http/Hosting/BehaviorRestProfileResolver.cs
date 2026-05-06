@@ -23,35 +23,46 @@ internal static class BehaviorRestProfileResolver
     {
         ArgumentNullException.ThrowIfNull(behaviorType);
 
-        var behaviorId = ResolveBehaviorId(behaviorType);
-        var generatedProfiles = Cache.GetOrAdd(behaviorType.Assembly, BuildGeneratedProfiles);
-        if (generatedProfiles.TryGetValue(behaviorId, out var profile))
-        {
-            return Normalize(
-                profile,
-                behaviorType.Assembly.FullName ?? behaviorType.Assembly.GetName().Name ?? behaviorType.Assembly.ToString(),
-                behaviorType);
-        }
-
-        var attribute = behaviorType.GetCustomAttributes(typeof(BehaviorRestProfileAttribute), inherit: false)
-            .OfType<BehaviorRestProfileAttribute>()
-            .SingleOrDefault();
-
-        if (attribute is null)
+        var assembly = behaviorType.Assembly;
+        var generatedProfiles = Cache.GetOrAdd(assembly, BuildGeneratedProfiles);
+        if (generatedProfiles.Count == 0)
         {
             throw new InvalidOperationException(
-                $"Cannot map '{behaviorType.FullName}' through MapProfile<TBehavior>() because it does not declare [BehaviorRestProfile(...)].");
+                $"Cannot map '{behaviorType.FullName}' through MapProfile<TBehavior>() because assembly '{assembly.FullName}' does not expose generated REST profile hints. Rebuild the assembly with the current Cephalon.Behaviors.SourceGen package or use explicit MapGet<TBehavior>() / MapPost<TBehavior>() / MapPut<TBehavior>() / MapPatch<TBehavior>() / MapDelete<TBehavior>() mappings.");
+        }
+
+        var behaviorTypes = BehaviorTypeCache.GetOrAdd(assembly, BuildGeneratedProfileBehaviorTypes);
+        if (behaviorTypes.Count == 0)
+        {
+            throw new InvalidOperationException(
+                $"Cannot map '{behaviorType.FullName}' through MapProfile<TBehavior>() because assembly '{assembly.FullName}' exposes generated REST profile hints without generated behavior-type hints. Rebuild the assembly with the current Cephalon.Behaviors.SourceGen package or use explicit MapGet<TBehavior>() / MapPost<TBehavior>() / MapPut<TBehavior>() / MapPatch<TBehavior>() / MapDelete<TBehavior>() mappings.");
+        }
+
+        var behaviorIds = behaviorTypes
+            .Where(pair => pair.Value == behaviorType)
+            .Select(static pair => pair.Key)
+            .ToArray();
+        if (behaviorIds.Length == 0)
+        {
+            throw new InvalidOperationException(
+                $"Cannot map '{behaviorType.FullName}' through MapProfile<TBehavior>() because assembly '{assembly.FullName}' does not expose a generated REST profile behavior-type hint for that behavior. Rebuild the assembly with the current Cephalon.Behaviors.SourceGen package or use explicit MapGet<TBehavior>() / MapPost<TBehavior>() / MapPut<TBehavior>() / MapPatch<TBehavior>() / MapDelete<TBehavior>() mappings.");
+        }
+
+        if (behaviorIds.Length > 1)
+        {
+            throw new InvalidOperationException(
+                $"Cannot map '{behaviorType.FullName}' through MapProfile<TBehavior>() because assembly '{assembly.FullName}' exposes multiple generated REST profile behavior-type hints for that behavior type: {string.Join(", ", behaviorIds)}.");
+        }
+
+        if (!generatedProfiles.TryGetValue(behaviorIds[0], out var profile))
+        {
+            throw new InvalidOperationException(
+                $"Cannot map '{behaviorType.FullName}' through MapProfile<TBehavior>() because assembly '{assembly.FullName}' exposes a generated behavior-type hint for behavior '{behaviorIds[0]}' without the matching generated REST profile descriptor.");
         }
 
         return Normalize(
-            new BehaviorRestProfileDescriptor(
-                behaviorId,
-                attribute.Method,
-                attribute.RelativePattern,
-                attribute.ApiVersionMajor > 0 ? attribute.ApiVersionMajor : null,
-                ExtractAttributeBindings(behaviorType),
-                attribute.PreserveImplicitQueryFallback),
-            behaviorType.FullName ?? behaviorType.Name,
+            profile,
+            assembly.FullName ?? assembly.GetName().Name ?? assembly.ToString(),
             behaviorType);
     }
 
@@ -67,14 +78,14 @@ internal static class BehaviorRestProfileResolver
         if (generatedProfiles.Count == 0)
         {
             throw new InvalidOperationException(
-                $"Assembly '{assembly.FullName}' does not expose generated REST profile hints required by MapGeneratedProfiles(). Rebuild the assembly with the current Cephalon.Behaviors.SourceGen package or use explicit MapProfile<TBehavior>() mappings.");
+                $"Assembly '{assembly.FullName}' does not expose generated REST profile hints required by MapGeneratedProfiles(). Rebuild the assembly with the current Cephalon.Behaviors.SourceGen package or use explicit MapGet<TBehavior>() / MapPost<TBehavior>() / MapPut<TBehavior>() / MapPatch<TBehavior>() / MapDelete<TBehavior>() mappings.");
         }
 
         var behaviorTypes = BehaviorTypeCache.GetOrAdd(assembly, BuildGeneratedProfileBehaviorTypes);
         if (behaviorTypes.Count == 0)
         {
             throw new InvalidOperationException(
-                $"Assembly '{assembly.FullName}' exposes generated REST profile hints, but it does not expose generated behavior-type hints required by MapGeneratedProfiles(). Rebuild the assembly with the current Cephalon.Behaviors.SourceGen package or use explicit MapProfile<TBehavior>() mappings.");
+                $"Assembly '{assembly.FullName}' exposes generated REST profile hints, but it does not expose generated behavior-type hints required by MapGeneratedProfiles(). Rebuild the assembly with the current Cephalon.Behaviors.SourceGen package or use explicit MapGet<TBehavior>() / MapPost<TBehavior>() / MapPut<TBehavior>() / MapPatch<TBehavior>() / MapDelete<TBehavior>() mappings.");
         }
 
         var sourceIdentity = assembly.FullName ?? assembly.GetName().Name ?? assembly.ToString();
@@ -254,19 +265,6 @@ internal static class BehaviorRestProfileResolver
         }
     }
 
-    private static BehaviorRestBindingDescriptor[] ExtractAttributeBindings(Type behaviorType)
-    {
-        ArgumentNullException.ThrowIfNull(behaviorType);
-
-        return behaviorType.GetCustomAttributes(typeof(BehaviorRestBindingAttribute), inherit: false)
-            .OfType<BehaviorRestBindingAttribute>()
-            .Select(static attribute => new BehaviorRestBindingDescriptor(
-                attribute.PropertyName,
-                attribute.Source,
-                attribute.Name))
-            .ToArray();
-    }
-
     private static BehaviorRestBindingDescriptor[] NormalizeBindings(
         IReadOnlyList<BehaviorRestBindingDescriptor>? bindings)
     {
@@ -369,18 +367,6 @@ internal static class BehaviorRestProfileResolver
         }
 
         return normalized.Values.ToArray();
-    }
-
-    private static string ResolveBehaviorId(Type behaviorType)
-    {
-        ArgumentNullException.ThrowIfNull(behaviorType);
-
-        return behaviorType.GetCustomAttributes(typeof(AppBehaviorAttribute), inherit: false)
-            .OfType<AppBehaviorAttribute>()
-            .SingleOrDefault()
-            ?.Id
-            ?? throw new InvalidOperationException(
-                $"Cannot resolve a REST profile for '{behaviorType.FullName}' because it is missing [AppBehavior(id)].");
     }
 
     private static bool BehaviorIdMatchesPrefix(string behaviorId, string behaviorIdPrefix)

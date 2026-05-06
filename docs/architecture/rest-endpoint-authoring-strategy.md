@@ -178,11 +178,12 @@ Status update:
   vocabularies, and `Cephalon.Behaviors.SourceGen` now validates both profile methods and explicit
   binding metadata against those canonical wire-name contracts while still emitting resolved enum
   member names into generated `GetRestProfiles()` output
-- the next runtime-guidance parity follow-through is now also shipped through `ENG-058-T143`:
-  runtime attribute-fallback, explicit binding-plan normalization, and last-mile profile-method
-  conversion now echo those same canonical `get` / `post` / `put` / `patch` / `delete` and
-  `route` / `query` / `header` / `body` wire names in their exception guidance, so operator and
-  developer troubleshooting no longer diverges from the JSON/source-generation contract
+- the next runtime-guidance parity follow-through is now also shipped through `ENG-058-T143`;
+  `ENG-473` later removed the direct runtime attribute fallback, while descriptor consumption,
+  explicit binding-plan normalization, and last-mile profile-method conversion continue to echo
+  those same canonical `get` / `post` / `put` / `patch` / `delete` and `route` / `query` /
+  `header` / `body` wire names in their exception guidance, so operator and developer
+  troubleshooting no longer diverges from the JSON/source-generation contract
 - the next method-guidance completion follow-through is now also shipped through `ENG-058-T144`:
   non-body method body-binding rejections and unsupported REST method parser failures now also
   echo the canonical `get` / `post` / `put` / `patch` / `delete` vocabulary, so the remaining
@@ -191,8 +192,8 @@ Status update:
   `ENG-058-T117`: `Cephalon.Behaviors.SourceGen` now rejects malformed
   `BehaviorRestProfileAttribute.RelativePattern` placeholder syntax earlier through `ABT0026`, and
   `BehaviorRestProfileResolver` now also parses the declared route pattern even when no explicit
-  bindings are present so direct attribute fallback or stale generated hints still fail fast before
-  shorthand publication can materialize an invalid route shape
+  bindings are present so stale generated or explicitly registered descriptors still fail fast
+  before shorthand publication can materialize an invalid route shape
 - the next explicit-binding authoring-parity follow-through is now also shipped through
   `ENG-058-T119`: metadata-only REST profiles can now declare
   `BehaviorRestProfile(PreserveImplicitQueryFallback = true)` when they already carry explicit
@@ -201,7 +202,8 @@ Status update:
   explicit-binding shorthand candidate into that same preserved source query surface through
   `RestApi:Overrides:*:PreserveImplicitQueryFallback` when the module did not declare it up front,
   while `Cephalon.Behaviors.SourceGen` still rejects missing-binding cases through `ABT0027` and
-  `BehaviorRestProfileResolver` re-checks the same rule during runtime fallback
+  `BehaviorRestProfileResolver` re-checks the same rule when generated or explicitly registered
+  descriptors are consumed
 - the next runtime-contract follow-through is now shipped through `ENG-058-T65`: the engine-owned
   transport contract now publishes explicit binding plans through
   `RestEndpointRuntimeDescriptor.BindingDescriptors`, `RestEndpointBindingDescriptor`, and

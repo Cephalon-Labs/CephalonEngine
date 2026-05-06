@@ -198,24 +198,24 @@ Current `BehaviorRestProfileAttribute` behavior:
   that canonical vocabulary while still emitting resolved enum member names into generated
   `GetRestProfiles()` hints so future enum-member renames can stay source-compatible by preserving
   those wire names
-- runtime attribute-fallback and explicit binding-plan normalization now also point errors at those
-  same canonical binding-source wire names, so troubleshooting unsupported profile bindings uses the
-  same vocabulary as JSON and source generation
+- runtime descriptor consumption and explicit binding-plan normalization now also point errors at
+  those same canonical binding-source wire names, so troubleshooting unsupported profile bindings
+  uses the same vocabulary as JSON and source generation
 - `BehaviorRestMethod` remains the code-authoring enum surface, but `BehaviorRestMethodExtensions`
   now exposes the same stable `get`, `post`, `put`, `patch`, and `delete` wire names that JSON
   serialization uses; `Cephalon.Behaviors.SourceGen` validates against that canonical vocabulary
   while still emitting resolved enum member names into generated `GetRestProfiles()` hints so
   future enum-member renames can stay source-compatible by preserving those wire names
-- runtime profile fallback now also points unsupported or missing method guidance at those same
-  canonical wire names, so build-time validation and runtime troubleshooting stay aligned
+- runtime profile normalization now also points unsupported or missing method guidance at those
+  same canonical wire names, so build-time validation and runtime troubleshooting stay aligned
 - the remaining runtime method guards now stay aligned too: non-body method body-binding rejections
   and unsupported REST method parser failures now also point at canonical `get`, `post`, `put`,
   `patch`, and `delete` wire names instead of mixing in enum/member-name wording
 - the owning module still decides whether the behavior becomes public REST through
   `ConfigureRestBehaviors(...)`
 - `IRestBehaviorEndpointGroupBuilder.MapProfile<TBehavior>()` is now the shipped low-ceremony
-  module-owned shorthand that consumes those profile hints through the same normalized REST
-  projection pipeline, including explicit binding descriptors
+  module-owned shorthand that consumes generated or explicitly registered profile descriptors
+  through the same normalized REST projection pipeline, including explicit binding descriptors
 - `IRestBehaviorEndpointGroupBuilder.MapGeneratedProfiles()` and
   `MapGeneratedProfiles(string behaviorIdPrefix)` are now the shipped generated module-owned
   shorthands when one module-owned route group wants to publish every matching profiled behavior
@@ -233,9 +233,10 @@ Current `BehaviorRestProfileAttribute` behavior:
   allow-list settings
 - when `BehaviorRestBindingAttribute` uses `Route`, keep the declared binding name aligned with a
   placeholder that actually exists in `BehaviorRestProfileAttribute.RelativePattern`; the build now
-  rejects route-binding placeholder mismatches before `MapProfile<TBehavior>()` is generated
-- runtime shorthand fallback still re-checks the final pattern with ASP.NET Core route parsing, so
-  stale generated hints or direct attribute fallback cannot publish an invalid route shape silently
+  rejects route-binding placeholder mismatches before generated profile descriptors are emitted
+- runtime shorthand consumption still re-checks the final pattern with ASP.NET Core route parsing,
+  so stale generated or explicitly registered profile descriptors cannot publish an invalid route
+  shape silently
 
 When a behavior needs to communicate expected branches without throwing exceptions for normal domain
 flow, prefer `Result<T>` over a transport-specific envelope:
@@ -564,9 +565,9 @@ query-string properties on the original implicit fallback surface, set
 `BehaviorRestProfile(PreserveImplicitQueryFallback = true)` alongside at least one explicit
 `BehaviorRestBindingAttribute`. `Cephalon.Behaviors.SourceGen` now rejects the flag through
 `ABT0027` when no explicit bindings are present, and runtime normalization re-checks the same rule
-when generated hints are unavailable or stale. When that preserved source query surface is part of
-the module's intentional contract, prefer declaring it here in the module-owned profile; a host can
-now also opt the same preservation back in later through
+when generated or explicitly registered descriptors are consumed. When that preserved source query
+surface is part of the module's intentional contract, prefer declaring it here in the module-owned
+profile; a host can now also opt the same preservation back in later through
 `RestApi:Overrides:*:PreserveImplicitQueryFallback`, but that path is best reserved for
 environment- or host-governed publication policy rather than source-owned route semantics.
 
@@ -646,8 +647,8 @@ Current helper behavior:
   profile bindings, while profile-driven explicit bindings switch to descriptor-aware source
   resolution with deterministic route/body fallback
 - validates explicit binding metadata at build time and re-checks the same route-placeholder truth
-  plus preserved implicit-query fallback requirements during runtime fallback so low-ceremony
-  profile authoring stays deterministic
+  plus preserved implicit-query fallback requirements when generated or explicitly registered
+  descriptors are consumed so low-ceremony profile authoring stays deterministic
 - derives the default generated-selection prefix from the route-group path by trimming slashes and
   replacing `/` separators with `.`, while still allowing an explicit behavior-id prefix override
 - uses the module display name for OpenAPI tags

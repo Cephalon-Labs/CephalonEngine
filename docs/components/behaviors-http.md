@@ -40,8 +40,9 @@ module-owned REST endpoints.
   `BehaviorRestBindingSource`, and `BehaviorRestBindingSourceExtensions` for behavior-authored
   candidate REST method, relative route, optional API-version hints, explicit
   route/query/header/body binding plans, and optional preserved implicit-query fallback intent for
-  explicitly bound profiles that explicit module-owned shorthand such as `MapProfile<TBehavior>()`
-  can consume without publishing public REST directly from behaviors; the build now rejects
+  explicitly bound profiles that source generation or explicit hosts can project into descriptors
+  for module-owned shorthand such as `MapProfile<TBehavior>()` without publishing public REST
+  directly from behaviors; the build now rejects
   malformed placeholder syntax such as unbalanced `{...}` segments and preserved-fallback profiles that omit
   explicit bindings earlier, while runtime normalization still leaves final route parsing
   authoritative to ASP.NET Core; the method/source wire-name helpers use closed switch mappings so
@@ -207,19 +208,21 @@ Current profile behavior:
   query-fallback intent when they are declared, plus `GetRestProfileBehaviorTypes()` hints for
   generated module-owned shorthand
 - `IRestBehaviorEndpointGroupBuilder.MapProfile<TBehavior>()` is now the shipped low-ceremony
-  module-owned shorthand that consumes those hints through the existing REST projection pipeline
-- `MapProfile<TBehavior>()` still targets one explicit behavior type and can fall back to that
-  type's profile attribute when generated hints are unavailable; `MapGeneratedProfiles(...)` and
-  `MapGeneratedProfileGroups(...)` now require source-generated registry hints for the owning
-  module assembly instead of scanning for attributed behavior types
+  module-owned shorthand that consumes generated or explicitly registered profile descriptors
+  through the existing REST projection pipeline
+- `MapProfile<TBehavior>()` still targets one explicit behavior type, but it no longer reads that
+  type's profile attribute at runtime; it requires source-generated or explicitly registered
+  profile descriptors plus behavior-type hints, while `MapGeneratedProfiles(...)` and
+  `MapGeneratedProfileGroups(...)` require source-generated registry hints for the owning module
+  assembly instead of scanning for attributed behavior types
 - REST profile projections, generated-profile ownership, and `MapBehaviorGet/Post/Put/Patch/Delete<TBehavior>()`
   now share the same type-based endpoint contract before Minimal API materialization, so the
   REST route/projection/module-builder path no longer uses open-generic reflection; `ENG-464`
   also moves generated REST profile hints onto the registry and optional result-envelope OpenAPI
   projection onto descriptor metadata; `ENG-466` removes the generated-profile assembly-scan
-  fallback; the remaining deployment-mode inventory for this package is narrowed to
-  attribute/profile binding fallback, input-shape inspection, and manual/type-based
-  route-contract reflection
+  fallback; `ENG-473` removes the `MapProfile<TBehavior>()` runtime attribute/profile fallback;
+  the remaining deployment-mode inventory for this package is narrowed to input-shape inspection
+  and manual/type-based route-contract reflection
 - valid profiles currently require a supported REST method, a non-empty leading-slash relative
   pattern such as `"/{cartId}"`, and a positive `ApiVersionMajor` when one is specified
 - when a profile declares explicit bindings, `BehaviorRestProfile(PreserveImplicitQueryFallback = true)`
@@ -242,14 +245,14 @@ Current profile behavior:
 - explicit profile bindings currently support `route`, `query`, `header`, and `body` sources for
   object inputs only; build-time diagnostics now reject invalid property names, duplicate property
   bindings, unsupported sources, route-placeholder mismatches, and body bindings on `GET` or
-  `DELETE`, while module-owned profile consumption still re-checks the same contract when runtime
-  falls back to direct attribute metadata
+  `DELETE`, while module-owned profile consumption still re-checks the same contract when it
+  consumes generated or explicitly registered descriptor metadata
 - `BehaviorRestBindingSource` now also exposes `BehaviorRestBindingSourceExtensions` plus the same
   stable `route`, `query`, `header`, and `body` wire names that JSON serialization uses; source
   generation validates profile bindings against that canonical vocabulary while still emitting the
   resolved enum member names into generated `GetRestProfiles()` hints so future enum-member renames
   can preserve valid metadata by keeping the wire-name contract stable
-- runtime attribute-fallback and explicit binding-plan normalization now also echo those same
+- runtime descriptor consumption and explicit binding-plan normalization now also echo those same
   canonical binding-source wire names in their exception guidance, so profile authoring,
   normalization, and troubleshooting all point at one stable source vocabulary
 - when explicit bindings are present, they override the implicit merge baseline, while unbound
@@ -415,7 +418,9 @@ public sealed class CartModule : RestBehaviorModuleBase
 above selects behaviors whose ids start with `showcase.cart`. If a module wants a different
 selection rule, use `MapGeneratedProfiles("custom.prefix")` explicitly. The owning module assembly
 must expose source-generated profile registry hints; if it does not, generated-profile mapping
-fails fast and the module should use explicit `MapProfile<TBehavior>()` mappings instead.
+fails fast and the module should rebuild with the current `Cephalon.Behaviors.SourceGen` package
+or use explicit `MapGet<TBehavior>()` / `MapPost<TBehavior>()` / `MapPut<TBehavior>()` /
+`MapPatch<TBehavior>()` / `MapDelete<TBehavior>()` mappings instead.
 
 If the module wants to start from the behavior-id prefix instead, use
 `behaviors.GroupFromBehaviorIdPrefix("showcase.cart").MapGeneratedProfiles();`. Cephalon derives
