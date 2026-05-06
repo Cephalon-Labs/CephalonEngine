@@ -52,6 +52,7 @@ $referenceDocsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "re
 $packageArtifactsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "packages-release")
 $publicApiDeltaScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "summarise-public-api-deltas.ps1")
 $publicApiDeltaOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "public-api-delta-release", "public-api-delta.md")
+$publicApiDeltaJsonOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "public-api-delta-release", "public-api-delta.json")
 
 function Invoke-Step {
     param(
@@ -351,6 +352,7 @@ try {
         Invoke-Step "Summarise public-API delta across PublicAPI.Unshipped.txt" {
             Invoke-PowerShellScript -Path $publicApiDeltaScriptPath -Arguments @(
                 "-OutputPath", $publicApiDeltaOutputPath,
+                "-JsonOutputPath", $publicApiDeltaJsonOutputPath,
                 "-FailOnRemovals"
             )
         }

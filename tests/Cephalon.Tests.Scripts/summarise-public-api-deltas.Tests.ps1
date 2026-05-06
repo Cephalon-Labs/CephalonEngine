@@ -45,7 +45,7 @@ Describe "summarise-public-api-deltas.ps1" {
         }
     }
 
-    It "writes removal counts without failing when the release gate is not requested" {
+    It "writes markdown and JSON removal counts without failing when the release gate is not requested" {
         New-PublicApiFixturePackage `
             -FixtureRoot $script:tempRoot `
             -PackageId "Cephalon.Fixture" `
@@ -56,15 +56,34 @@ Describe "summarise-public-api-deltas.ps1" {
             )
 
         $outputPath = Join-Path $script:tempRoot "artifacts\public-api-delta.md"
-        $output = & $script:powerShellHostPath -NoLogo -NoProfile -File $script:scriptPath -RepoRoot $script:tempRoot -OutputPath $outputPath 2>&1
+        $jsonOutputPath = Join-Path $script:tempRoot "artifacts\public-api-delta.json"
+        $output = & $script:powerShellHostPath -NoLogo -NoProfile -File $script:scriptPath -RepoRoot $script:tempRoot -OutputPath $outputPath -JsonOutputPath $jsonOutputPath 2>&1
 
         $LASTEXITCODE | Should -Be 0
         ($output | Out-String) | Should -Match "Total removal entries: 1"
+        ($output | Out-String) | Should -Match "Wrote public-API delta JSON"
 
         $report = Get-Content -LiteralPath $outputPath -Raw -Encoding UTF8
         $report | Should -Match "Total additive entries: \*\*1\*\*"
         $report | Should -Match "Total removal entries: \*\*1\*\*"
         $report | Should -Match "\*REMOVED\* Cephalon\.Fixture\.OldApi"
+
+        $json = Get-Content -LiteralPath $jsonOutputPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
+        $json.'$schemaVersion' | Should -Be "1.0.0"
+        $json.UnshippedPackageCount | Should -Be 1
+        $json.PendingPackageCount | Should -Be 1
+        $json.HeaderOnlyPackageCount | Should -Be 0
+        $json.AdditiveEntryCount | Should -Be 1
+        $json.RemovalEntryCount | Should -Be 1
+        $json.HasRemovalEntries | Should -BeTrue
+        $json.RemovalGateWouldFail | Should -BeFalse
+        $json.PackageDeltas.Count | Should -Be 1
+        $json.PackageDeltas[0].PackageId | Should -Be "Cephalon.Fixture"
+        $json.PackageDeltas[0].UnshippedPath.Replace('\', '/') | Should -Be "src/Cephalon.Fixture/PublicAPI.Unshipped.txt"
+        $json.PackageDeltas[0].AdditiveEntryCount | Should -Be 1
+        $json.PackageDeltas[0].RemovalEntryCount | Should -Be 1
+        @($json.PackageDeltas[0].Additions).Count | Should -Be 1
+        @($json.PackageDeltas[0].Removals).Count | Should -Be 1
     }
 
     It "writes the report then fails when removal entries are gated" {
@@ -77,13 +96,17 @@ Describe "summarise-public-api-deltas.ps1" {
             )
 
         $outputPath = Join-Path $script:tempRoot "artifacts\public-api-delta.md"
-        $output = & $script:powerShellHostPath -NoLogo -NoProfile -File $script:scriptPath -RepoRoot $script:tempRoot -OutputPath $outputPath -FailOnRemovals 2>&1
+        $jsonOutputPath = Join-Path $script:tempRoot "artifacts\public-api-delta.json"
+        $output = & $script:powerShellHostPath -NoLogo -NoProfile -File $script:scriptPath -RepoRoot $script:tempRoot -OutputPath $outputPath -JsonOutputPath $jsonOutputPath -FailOnRemovals 2>&1
 
         $LASTEXITCODE | Should -Not -Be 0
         Test-Path -LiteralPath $outputPath -PathType Leaf | Should -BeTrue
+        Test-Path -LiteralPath $jsonOutputPath -PathType Leaf | Should -BeTrue
 
         $report = Get-Content -LiteralPath $outputPath -Raw -Encoding UTF8
         $report | Should -Match "Total removal entries: \*\*1\*\*"
+        $json = Get-Content -LiteralPath $jsonOutputPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
+        $json.RemovalGateWouldFail | Should -BeTrue
         ($output | Out-String) | Should -Match "Public API removal entries detected: 1 removal\(s\) across 1 package\(s\): Cephalon\.Fixture"
     }
 
@@ -109,6 +132,8 @@ Describe "summarise-public-api-deltas.ps1" {
         $releaseValidation | Should -Match "PublicApiCompatibilityEvidence"
         $releaseValidation | Should -Match "Public API compatibility"
         $releaseValidation | Should -Match "summarise-public-api-deltas\.ps1"
+        $releaseValidation | Should -Match "public-api-delta\.json"
+        $releaseValidation | Should -Match "JsonOutputPath"
         $releaseValidation | Should -Match "FailOnRemovals"
     }
 }

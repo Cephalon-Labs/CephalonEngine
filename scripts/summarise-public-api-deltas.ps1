@@ -22,7 +22,8 @@
 
     The report groups entries by package, then splits additions vs removals, and emits a count
     per package plus a total at the top so a release manager can see the contract delta size at
-    a glance. The output is written to stdout by default; use -OutputPath to write to a file.
+    a glance. The markdown output is written to stdout by default; use -OutputPath to write it
+    to a file. Use -JsonOutputPath to emit the same package/count model as structured JSON.
 
 .PARAMETER RepoRoot
     Repository root. Defaults to the parent of the script directory so the script can be
@@ -31,6 +32,11 @@
 .PARAMETER OutputPath
     Optional file path to write the markdown report. When omitted the report is written to
     stdout.
+
+.PARAMETER JsonOutputPath
+    Optional file path to write a machine-readable JSON report beside the markdown report.
+    The JSON artifact includes aggregate counts, removal-gate posture, and per-package
+    additions/removals for release tooling that should not parse markdown.
 
 .PARAMETER IncludeHeaderless
     Include packages whose Unshipped.txt is header-only (no real entries) in the output as
@@ -53,6 +59,11 @@
     Write the report to `artifacts/public-api-delta.md` for use as a release-notes input.
 
 .EXAMPLE
+    pwsh ./scripts/summarise-public-api-deltas.ps1 -OutputPath artifacts/public-api-delta.md -JsonOutputPath artifacts/public-api-delta.json
+
+    Write both markdown and JSON public API delta artifacts.
+
+.EXAMPLE
     pwsh ./scripts/summarise-public-api-deltas.ps1 -IncludeHeaderless
 
     Include rows for packages with no pending changes too, for a complete inventory.
@@ -65,6 +76,7 @@
 param(
     [string]$RepoRoot = (Split-Path -Parent $PSScriptRoot),
     [string]$OutputPath = '',
+    [string]$JsonOutputPath = '',
     [switch]$IncludeHeaderless,
     [switch]$FailOnRemovals
 )
@@ -87,8 +99,8 @@ $packagesHeaderOnly = 0
 $totalAdditions = 0
 $totalRemovals = 0
 
-$unshippedFiles = Get-ChildItem -Path $srcRoot -Filter 'PublicAPI.Unshipped.txt' -File -Recurse |
-    Sort-Object FullName
+$unshippedFiles = @(Get-ChildItem -Path $srcRoot -Filter 'PublicAPI.Unshipped.txt' -File -Recurse |
+    Sort-Object FullName)
 
 foreach ($file in $unshippedFiles) {
     $packageDir = $file.Directory
@@ -136,10 +148,11 @@ foreach ($file in $unshippedFiles) {
     }
 }
 
+$generatedAtUtc = [System.DateTimeOffset]::UtcNow.ToString('o')
 $lines = @()
 $lines += '# Cephalon public-API delta summary'
 $lines += ''
-$lines += ('Generated: {0}' -f ([System.DateTimeOffset]::UtcNow.ToString('o')))
+$lines += ('Generated: {0}' -f $generatedAtUtc)
 $lines += ('Repo root: `{0}`' -f $RepoRoot)
 $lines += ''
 $lines += '## Aggregate'
@@ -189,6 +202,38 @@ else {
 }
 
 $report = $lines -join [System.Environment]::NewLine
+$packageDeltas = @(
+    $entries | ForEach-Object {
+        $additions = @($_.Additions)
+        $removals = @($_.Removals)
+        [pscustomobject]([ordered]@{
+            PackageId          = $_.PackageId
+            UnshippedPath      = $_.Path
+            AdditiveEntryCount = $additions.Count
+            RemovalEntryCount  = $removals.Count
+            PendingEntryCount  = $additions.Count + $removals.Count
+            HasPendingChanges  = ($additions.Count + $removals.Count) -gt 0
+            HasRemovalEntries  = $removals.Count -gt 0
+            Additions          = $additions
+            Removals           = $removals
+        })
+    }
+)
+$jsonReport = [pscustomobject]([ordered]@{
+    '$schemaVersion'             = '1.0.0'
+    GeneratedAtUtc               = $generatedAtUtc
+    RepoRoot                     = $RepoRoot
+    IncludeHeaderless            = [bool]$IncludeHeaderless
+    FailOnRemovalsRequested      = [bool]$FailOnRemovals
+    UnshippedPackageCount        = $unshippedFiles.Count
+    PendingPackageCount          = $packagesWithEntries
+    HeaderOnlyPackageCount       = $packagesHeaderOnly
+    AdditiveEntryCount           = $totalAdditions
+    RemovalEntryCount            = $totalRemovals
+    HasRemovalEntries            = $totalRemovals -gt 0
+    RemovalGateWouldFail         = [bool]($FailOnRemovals -and $totalRemovals -gt 0)
+    PackageDeltas                = $packageDeltas
+})
 
 if ([string]::IsNullOrWhiteSpace($OutputPath)) {
     Write-Output $report
@@ -206,6 +251,18 @@ else {
     Write-Host ('  Packages with pending API changes: {0}' -f $packagesWithEntries)
     Write-Host ('  Total additive entries: {0}' -f $totalAdditions)
     Write-Host ('  Total removal entries: {0}' -f $totalRemovals)
+}
+
+if (-not [string]::IsNullOrWhiteSpace($JsonOutputPath)) {
+    if (-not [System.IO.Path]::IsPathRooted($JsonOutputPath)) {
+        $JsonOutputPath = Join-Path $RepoRoot $JsonOutputPath
+    }
+    $jsonOutDir = Split-Path -Parent $JsonOutputPath
+    if (-not [string]::IsNullOrWhiteSpace($jsonOutDir) -and -not (Test-Path -LiteralPath $jsonOutDir)) {
+        New-Item -Path $jsonOutDir -ItemType Directory -Force | Out-Null
+    }
+    $jsonReport | ConvertTo-Json -Depth 16 | Set-Content -LiteralPath $JsonOutputPath -Encoding UTF8
+    Write-Host ('Wrote public-API delta JSON to {0}' -f $JsonOutputPath)
 }
 
 if ($FailOnRemovals -and $totalRemovals -gt 0) {
