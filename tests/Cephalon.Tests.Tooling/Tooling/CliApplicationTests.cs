@@ -384,9 +384,18 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.5.0",
+              "$schemaVersion": "1.6.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
+              "DeploymentModeEvidence": {
+                "GlobalClaimCount": 3,
+                "GlobalNotClaimedCount": 3,
+                "PackageScopedClaimPackageCount": 1,
+                "KnownHazardPackageCount": 2,
+                "KnownHazardEntryCount": 14,
+                "TransitiveAuditEntryCount": 7,
+                "PublishProbeReleaseValidationMode": "audit-only"
+              },
               "SrePostureEvidence": {
                 "SliCount": 11,
                 "TargetDeclaredCount": 11,
@@ -417,6 +426,12 @@ public sealed class CliApplicationTests
                 "PartialPackageGAGates": 88,
                 "NotClaimedPackageGAGates": 2,
                 "NeedsRefreshPackageGAGates": 0,
+                "DeploymentModeGlobalClaimCount": 3,
+                "DeploymentModeGlobalNotClaimedCount": 3,
+                "DeploymentModePackageScopedClaimPackageCount": 1,
+                "DeploymentModeKnownHazardPackageCount": 2,
+                "DeploymentModeKnownHazardEntryCount": 14,
+                "DeploymentModeTransitiveAuditEntryCount": 7,
                 "SreSliCount": 11,
                 "SreTargetDeclaredCount": 11,
                 "SrePendingStableBaselineCount": 11,
@@ -447,10 +462,11 @@ public sealed class CliApplicationTests
                 stderr);
 
             Assert.Equal(0, exitCode);
-            Assert.Contains("[ok] Engine completion scorecard artifact: schema 1.5.0 from docs/engine-completion-scorecard.md; conformance matrix docs/conformance-matrix.md.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Engine completion scorecard artifact: schema 1.6.0 from docs/engine-completion-scorecard.md; conformance matrix docs/conformance-matrix.md.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard platform gates: 12 gates; blocked 0, needs-refresh 1, partial 7, not-claimed 1.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Engine completion scorecard evidence references: 19 repo-local references validated by the published artifact.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard package GA readiness: 90 package rows; partial 88, not-claimed 2, needs-refresh 0.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[warn] Engine completion scorecard deployment-mode evidence: 3 global claims; not-claimed 3, package-scoped claim packages 1, known hazards 14 across 2 packages, transitive audit entries 7, publish probes audit-only.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard SRE posture: 11 SLIs; target-declared 11, pending stable baselines 11, stable baselines 0.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard supply-chain release evidence: 10 items; workflow-ready 7, external-policy-pending 3, blocked 0.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Engine completion scorecard public API compatibility: 104 package baselines; pending packages 21, additions 288, removals 0.", stdout.ToString(), StringComparison.Ordinal);
@@ -540,7 +556,109 @@ public sealed class CliApplicationTests
                 stderr);
 
             Assert.Equal(1, exitCode);
-            Assert.Contains("[error] Engine completion scorecard artifact: Unsupported schema '1.0.0'. Doctor expects scorecard schema '1.5.0'.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Engine completion scorecard artifact: Unsupported schema '1.0.0'. Doctor expects scorecard schema '1.6.0'.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("scorecard artifact blockers", stderr.ToString(), StringComparison.Ordinal);
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (File.Exists(scorecardPath))
+            {
+                File.Delete(scorecardPath);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncDoctorFailsWhenScorecardDeploymentModeEvidenceDriftsFromSummary()
+    {
+        var scorecardPath = Path.Combine(Path.GetTempPath(), $"cephalon-scorecard-deployment-mode-{Guid.NewGuid():N}.json");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        await File.WriteAllTextAsync(scorecardPath, """
+            {
+              "$schemaVersion": "1.6.0",
+              "SourceDocument": "docs/engine-completion-scorecard.md",
+              "ConformanceMatrix": "docs/conformance-matrix.md",
+              "DeploymentModeEvidence": {
+                "GlobalClaimCount": 3,
+                "GlobalNotClaimedCount": 3,
+                "PackageScopedClaimPackageCount": 1,
+                "KnownHazardPackageCount": 2,
+                "KnownHazardEntryCount": 13,
+                "TransitiveAuditEntryCount": 7,
+                "PublishProbeReleaseValidationMode": "audit-only"
+              },
+              "SrePostureEvidence": {
+                "SliCount": 11,
+                "TargetDeclaredCount": 11,
+                "PendingStableBaselineCount": 11,
+                "StableBaselineCount": 0
+              },
+              "SupplyChainEvidence": {
+                "EvidenceItemCount": 10,
+                "WorkflowReadyCount": 7,
+                "ExternalPolicyPendingCount": 3,
+                "BlockedCount": 0
+              },
+              "PublicApiCompatibilityEvidence": {
+                "PackageCount": 104,
+                "PendingPackageCount": 21,
+                "HeaderOnlyPackageCount": 83,
+                "AdditiveEntryCount": 288,
+                "RemovalEntryCount": 0
+              },
+              "Summary": {
+                "PlatformGateCount": 12,
+                "BlockedPlatformGates": 0,
+                "NeedsRefreshGates": 1,
+                "PartialPlatformGates": 7,
+                "NotClaimedPlatformGates": 1,
+                "EvidenceSourceReferenceCount": 19,
+                "PackageGAReadinessCount": 90,
+                "PartialPackageGAGates": 88,
+                "NotClaimedPackageGAGates": 2,
+                "NeedsRefreshPackageGAGates": 0,
+                "DeploymentModeGlobalClaimCount": 3,
+                "DeploymentModeGlobalNotClaimedCount": 3,
+                "DeploymentModePackageScopedClaimPackageCount": 1,
+                "DeploymentModeKnownHazardPackageCount": 2,
+                "DeploymentModeKnownHazardEntryCount": 14,
+                "DeploymentModeTransitiveAuditEntryCount": 7,
+                "SreSliCount": 11,
+                "SreTargetDeclaredCount": 11,
+                "SrePendingStableBaselineCount": 11,
+                "SreStableBaselineCount": 0,
+                "SupplyChainEvidenceItemCount": 10,
+                "SupplyChainWorkflowReadyCount": 7,
+                "SupplyChainExternalPolicyPendingCount": 3,
+                "SupplyChainBlockedCount": 0,
+                "PublicApiPackageCount": 104,
+                "PublicApiPendingPackageCount": 21,
+                "PublicApiAdditiveEntryCount": 288,
+                "PublicApiRemovalEntryCount": 0
+              }
+            }
+            """);
+
+        UseReadyDoctorProcessRunner();
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--scorecard",
+                    scorecardPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(1, exitCode);
+            Assert.Contains("[error] Engine completion scorecard deployment-mode evidence: Artifact", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("deployment-mode summary counts that do not match DeploymentModeEvidence", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("scorecard artifact blockers", stderr.ToString(), StringComparison.Ordinal);
         }
         finally
@@ -563,9 +681,18 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.5.0",
+              "$schemaVersion": "1.6.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
+              "DeploymentModeEvidence": {
+                "GlobalClaimCount": 3,
+                "GlobalNotClaimedCount": 3,
+                "PackageScopedClaimPackageCount": 1,
+                "KnownHazardPackageCount": 2,
+                "KnownHazardEntryCount": 14,
+                "TransitiveAuditEntryCount": 7,
+                "PublishProbeReleaseValidationMode": "audit-only"
+              },
               "SrePostureEvidence": {
                 "SliCount": 11,
                 "TargetDeclaredCount": 11,
@@ -596,6 +723,12 @@ public sealed class CliApplicationTests
                 "PartialPackageGAGates": 88,
                 "NotClaimedPackageGAGates": 2,
                 "NeedsRefreshPackageGAGates": 0,
+                "DeploymentModeGlobalClaimCount": 3,
+                "DeploymentModeGlobalNotClaimedCount": 3,
+                "DeploymentModePackageScopedClaimPackageCount": 1,
+                "DeploymentModeKnownHazardPackageCount": 2,
+                "DeploymentModeKnownHazardEntryCount": 14,
+                "DeploymentModeTransitiveAuditEntryCount": 7,
                 "SreSliCount": 11,
                 "SreTargetDeclaredCount": 11,
                 "SrePendingStableBaselineCount": 11,
@@ -650,9 +783,18 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.5.0",
+              "$schemaVersion": "1.6.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
+              "DeploymentModeEvidence": {
+                "GlobalClaimCount": 3,
+                "GlobalNotClaimedCount": 3,
+                "PackageScopedClaimPackageCount": 1,
+                "KnownHazardPackageCount": 2,
+                "KnownHazardEntryCount": 14,
+                "TransitiveAuditEntryCount": 7,
+                "PublishProbeReleaseValidationMode": "audit-only"
+              },
               "SrePostureEvidence": {
                 "SliCount": 10,
                 "TargetDeclaredCount": 10,
@@ -683,6 +825,12 @@ public sealed class CliApplicationTests
                 "PartialPackageGAGates": 88,
                 "NotClaimedPackageGAGates": 2,
                 "NeedsRefreshPackageGAGates": 0,
+                "DeploymentModeGlobalClaimCount": 3,
+                "DeploymentModeGlobalNotClaimedCount": 3,
+                "DeploymentModePackageScopedClaimPackageCount": 1,
+                "DeploymentModeKnownHazardPackageCount": 2,
+                "DeploymentModeKnownHazardEntryCount": 14,
+                "DeploymentModeTransitiveAuditEntryCount": 7,
                 "SreSliCount": 11,
                 "SreTargetDeclaredCount": 11,
                 "SrePendingStableBaselineCount": 11,
@@ -737,9 +885,18 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.5.0",
+              "$schemaVersion": "1.6.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
+              "DeploymentModeEvidence": {
+                "GlobalClaimCount": 3,
+                "GlobalNotClaimedCount": 3,
+                "PackageScopedClaimPackageCount": 1,
+                "KnownHazardPackageCount": 2,
+                "KnownHazardEntryCount": 14,
+                "TransitiveAuditEntryCount": 7,
+                "PublishProbeReleaseValidationMode": "audit-only"
+              },
               "SrePostureEvidence": {
                 "SliCount": 11,
                 "TargetDeclaredCount": 11,
@@ -770,6 +927,12 @@ public sealed class CliApplicationTests
                 "PartialPackageGAGates": 88,
                 "NotClaimedPackageGAGates": 2,
                 "NeedsRefreshPackageGAGates": 0,
+                "DeploymentModeGlobalClaimCount": 3,
+                "DeploymentModeGlobalNotClaimedCount": 3,
+                "DeploymentModePackageScopedClaimPackageCount": 1,
+                "DeploymentModeKnownHazardPackageCount": 2,
+                "DeploymentModeKnownHazardEntryCount": 14,
+                "DeploymentModeTransitiveAuditEntryCount": 7,
                 "SreSliCount": 11,
                 "SreTargetDeclaredCount": 11,
                 "SrePendingStableBaselineCount": 11,
