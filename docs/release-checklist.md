@@ -19,7 +19,7 @@ Cross-references: [`package-publishing.md`](package-publishing.md), [`supply-cha
 
 - [ ] Review every `PublicAPI.Unshipped.txt` entry that is about to graduate into `PublicAPI.Shipped.txt`; intentional additions ship, accidental additions are reverted before tagging
 - [ ] Run [`scripts/summarise-public-api-deltas.ps1`](../scripts/summarise-public-api-deltas.ps1) (or read the `public-api-delta-*` artefact emitted by `scripts/validate-release.ps1`) for the full additive / removal delta across all packages with public API baselines; confirm the markdown report matches the release-notes intent
-- [ ] Removals are recorded with the `*REMOVED*` prefix in `PublicAPI.Unshipped.txt` and follow the deprecation discipline in [`compatibility.md`](compatibility.md): an `[Obsolete]` major before a removal, never silent
+- [ ] Removals are recorded with the `*REMOVED*` prefix in `PublicAPI.Unshipped.txt`, follow the deprecation discipline in [`compatibility.md`](compatibility.md) (an `[Obsolete]` major before a removal; never silent), and are resolved before the default `scripts/validate-release.ps1` run because the public-API summary step passes `-FailOnRemovals`
 - [ ] When the engine cuts its first stable GA (post-`0.1.0-preview`), enable `<EnablePackageValidation>true</EnablePackageValidation>` with a `<PackageValidationBaselineVersion>` per stable package so binary-breaking changes fail packaging time on the next release
 
 ## Validation pipeline
@@ -36,7 +36,7 @@ Cross-references: [`package-publishing.md`](package-publishing.md), [`supply-cha
     9. **Benchmark smoke suite** + benchmark guardrail validation
     10. **Reference-doc publishing** through `scripts/publish-reference-docs.ps1`
     11. **Package artefact publishing** through `scripts/publish-package-artifacts.ps1`
-    12. **Public-API delta summary** through `scripts/summarise-public-api-deltas.ps1` (per `ENG-352`)
+    12. **Public-API delta summary** through `scripts/summarise-public-api-deltas.ps1 -FailOnRemovals` (per `ENG-352` / `ENG-495`)
 - [ ] Every step finishes with `0 Warning(s), 0 Error(s)`; benchmark guardrails report no regression beyond the configured allowance
 - [ ] The release-validation GitHub Actions workflow ([`release-validation.yml`](../.github/workflows/release-validation.yml)) passes on both `windows-latest` and `ubuntu-latest`; the `dotnet11-readiness` job passes against the `.NET 11` SDK preview
 

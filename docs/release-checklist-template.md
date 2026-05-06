@@ -33,7 +33,7 @@ The durable rule book lives in [`release-checklist.md`](release-checklist.md). T
 
 - [ ] Reviewed every `PublicAPI.Unshipped.txt` entry that will graduate into `PublicAPI.Shipped.txt`
 - [ ] Ran [`scripts/summarise-public-api-deltas.ps1`](../scripts/summarise-public-api-deltas.ps1) (or read the `public-api-delta-*` workflow artefact); markdown report matches release-notes intent
-- [ ] Removals follow `[Obsolete]` deprecation discipline from [`compatibility.md`](compatibility.md)
+- [ ] Removals follow `[Obsolete]` deprecation discipline from [`compatibility.md`](compatibility.md) and are resolved before the default `scripts/validate-release.ps1` run because it passes `-FailOnRemovals`
 - [ ] (At GA only) `<EnablePackageValidation>true</EnablePackageValidation>` + `<PackageValidationBaselineVersion>` are configured per stable package
 
 **Public-API delta summary:** _link to `public-api-delta-*` artefact or paste counts here (packages with changes / total additions / total removals)_
@@ -52,7 +52,7 @@ The durable rule book lives in [`release-checklist.md`](release-checklist.md). T
 - [ ] Benchmark smoke + guardrails ✅
 - [ ] Reference-doc publishing ✅
 - [ ] Package artefact publishing ✅
-- [ ] Public-API delta summary ✅
+- [ ] Public-API delta summary with removal gate ✅
 - [ ] GitHub Actions [`release-validation.yml`](../.github/workflows/release-validation.yml) green on `windows-latest` + `ubuntu-latest` + `dotnet11-readiness`
 
 **Workflow run URL:** _link to the green CI run_

@@ -158,6 +158,10 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         throw "Engine completion scorecard JSON is missing SupplyChainEvidence."
     }
 
+    if ($null -eq $scorecard.PublicApiCompatibilityEvidence) {
+        throw "Engine completion scorecard JSON is missing PublicApiCompatibilityEvidence."
+    }
+
     Write-Host ("Deployment-mode evidence: {0} global claims; not-claimed {1}; package-scoped claim packages {2}; known hazards {3}; transitive audit entries {4}; publish probes {5}." -f `
         $scorecard.DeploymentModeEvidence.GlobalClaimCount,
         $scorecard.DeploymentModeEvidence.GlobalNotClaimedCount,
@@ -179,6 +183,12 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         $scorecard.SupplyChainEvidence.ExternalPolicyPendingCount,
         $scorecard.SupplyChainEvidence.BlockedCount,
         $scorecard.SupplyChainEvidence.Status)
+
+    Write-Host ("Public API compatibility: {0} packages; pending packages {1}; additions {2}; removals {3}." -f `
+        $scorecard.PublicApiCompatibilityEvidence.PackageCount,
+        $scorecard.PublicApiCompatibilityEvidence.PendingPackageCount,
+        $scorecard.PublicApiCompatibilityEvidence.AdditiveEntryCount,
+        $scorecard.PublicApiCompatibilityEvidence.RemovalEntryCount)
 }
 
 Push-Location $repoRoot
@@ -340,7 +350,8 @@ try {
     if (-not $SkipPublicApiDeltaSummary) {
         Invoke-Step "Summarise public-API delta across PublicAPI.Unshipped.txt" {
             Invoke-PowerShellScript -Path $publicApiDeltaScriptPath -Arguments @(
-                "-OutputPath", $publicApiDeltaOutputPath
+                "-OutputPath", $publicApiDeltaOutputPath,
+                "-FailOnRemovals"
             )
         }
     }

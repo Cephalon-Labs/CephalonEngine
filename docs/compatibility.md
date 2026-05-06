@@ -101,6 +101,7 @@ See also: [Engineering standards](engineering-standards.md) is the broader quali
 - removals and renames are recorded with the `*REMOVED*` prefix in `PublicAPI.Unshipped.txt` so PR diffs surface the break before it merges
 - `Microsoft.CodeAnalysis.PublicApiAnalyzers` enforces both files as part of the build; an undeclared public symbol fails the build with `RS0016`, and a removal failed to declare with `RS0017`
 - current `src/Cephalon.*` packages carry shipped/unshipped public API artifacts; [`scripts/summarise-public-api-deltas.ps1`](../scripts/summarise-public-api-deltas.ps1) emits the release-note delta, and the generated engine completion scorecard emits `PublicApiCompatibilityEvidence` with package/addition/removal counts from those files
+- release validation runs the public-API delta summary with `-FailOnRemovals`, so any pending `*REMOVED*` entry still writes a reviewable `public-api-delta-*` artifact but fails the release gate until the removal has explicit compatibility approval and deprecation evidence
 
 When a public type or member is added, removed, or renamed inside a package that has the analyzer enabled, update both `.txt` files in the same slice as the source change. Both files are part of the public contract and follow the same review discipline as XML doc comments.
 

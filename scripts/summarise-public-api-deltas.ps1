@@ -1,7 +1,8 @@
 <#
 .SYNOPSIS
     Produces a release-notes-friendly markdown summary of every Cephalon.* package's pending
-    PublicAPI.Unshipped.txt entries, grouped by package and additive-vs-removal kind.
+    PublicAPI.Unshipped.txt entries, grouped by package and additive-vs-removal kind, with
+    an optional release gate for removal entries.
 
 .DESCRIPTION
     Cephalon's contract lock-in arc (ENG-322 through ENG-345) added Microsoft.CodeAnalysis
@@ -36,6 +37,11 @@
     "no pending API changes" rows. Default: false (header-only files are skipped to keep the
     report focused on actual deltas).
 
+.PARAMETER FailOnRemovals
+    Fail with a non-zero exit after writing the report when any `*REMOVED*` entry is found.
+    Release validation uses this switch so binary-breaking public API removals cannot pass as
+    report-only evidence.
+
 .EXAMPLE
     pwsh ./scripts/summarise-public-api-deltas.ps1
 
@@ -50,11 +56,17 @@
     pwsh ./scripts/summarise-public-api-deltas.ps1 -IncludeHeaderless
 
     Include rows for packages with no pending changes too, for a complete inventory.
+
+.EXAMPLE
+    pwsh ./scripts/summarise-public-api-deltas.ps1 -OutputPath artifacts/public-api-delta.md -FailOnRemovals
+
+    Write the report and fail the command if the pending public API delta contains removals.
 #>
 param(
     [string]$RepoRoot = (Split-Path -Parent $PSScriptRoot),
     [string]$OutputPath = '',
-    [switch]$IncludeHeaderless
+    [switch]$IncludeHeaderless,
+    [switch]$FailOnRemovals
 )
 
 Set-StrictMode -Version Latest
@@ -194,4 +206,17 @@ else {
     Write-Host ('  Packages with pending API changes: {0}' -f $packagesWithEntries)
     Write-Host ('  Total additive entries: {0}' -f $totalAdditions)
     Write-Host ('  Total removal entries: {0}' -f $totalRemovals)
+}
+
+if ($FailOnRemovals -and $totalRemovals -gt 0) {
+    $packagesWithRemovals = @(
+        $entries |
+            Where-Object { $_.Removals.Count -gt 0 } |
+            Select-Object -ExpandProperty PackageId
+    )
+    $packageList = $packagesWithRemovals -join ', '
+    throw ('Public API removal entries detected: {0} removal(s) across {1} package(s): {2}. Release validation fails on removals; keep deprecation, obsoletion, and compatibility approval visible before shipping.' -f `
+        $totalRemovals,
+        $packagesWithRemovals.Count,
+        $packageList)
 }

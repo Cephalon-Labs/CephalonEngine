@@ -558,7 +558,10 @@ jobs:
         $releaseValidation | Should -Match "SrePostureEvidence"
         $releaseValidation | Should -Match "SupplyChainEvidence"
         $releaseValidation | Should -Match "Supply-chain release evidence"
+        $releaseValidation | Should -Match "PublicApiCompatibilityEvidence"
+        $releaseValidation | Should -Match "Public API compatibility"
         $releaseValidation | Should -Match "summarise-public-api-deltas\.ps1"
         $releaseValidation | Should -Match "public-api-delta-release"
+        $releaseValidation | Should -Match "FailOnRemovals"
     }
 }
