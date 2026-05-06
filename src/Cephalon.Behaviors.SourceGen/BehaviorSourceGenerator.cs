@@ -293,6 +293,11 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             topology = ExtractTopologyFromConfigureMethod(classDecl);
         }
 
+        var sagaChoreographyRuntime = ResolveSagaChoreographyRuntimeInfo(
+            typeSymbol,
+            topology,
+            ctx.SemanticModel.Compilation);
+
         return new BehaviorInfo(
             typeName: typeSymbol.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
             shortName: typeSymbol.Name,
@@ -304,6 +309,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             location: location,
             topology: topology,
             durableExecution: durableExecution,
+            sagaChoreographyRuntime: sagaChoreographyRuntime,
             restProfile: restProfile,
             hasRestTransportAttribute: hasRestTransportAttribute,
             hasConfigureTopologyRestTransport: hasConfigureTopologyRestTransport);
@@ -311,9 +317,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
 
     private static InputTypeInfo? ResolveBehaviorInputType(INamedTypeSymbol typeSymbol)
     {
-        var behaviorInterface = typeSymbol.AllInterfaces.FirstOrDefault(static i =>
-            i.OriginalDefinition.ToDisplayString() ==
-            "Cephalon.Abstractions.Behaviors.IAppBehavior<TIn, TOut>");
+        var behaviorInterface = ResolveBehaviorInterface(typeSymbol);
         if (behaviorInterface is null)
         {
             return null;
@@ -336,6 +340,13 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             behaviorInterface.TypeArguments[1].ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
             IsSimpleInputType(inputType),
             publicProperties);
+    }
+
+    private static INamedTypeSymbol? ResolveBehaviorInterface(INamedTypeSymbol typeSymbol)
+    {
+        return typeSymbol.AllInterfaces.FirstOrDefault(static i =>
+            i.OriginalDefinition.ToDisplayString() ==
+            "Cephalon.Abstractions.Behaviors.IAppBehavior<TIn, TOut>");
     }
 
     private static bool DeclaresRestTransportAttribute(INamedTypeSymbol typeSymbol)
@@ -935,6 +946,15 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                 sb.AppendLine("            services.Add(global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor.Singleton(");
                 sb.AppendLine("                typeof(global::Cephalon.Behaviors.Patterns.Strategies.DurableExecutionSlot),");
                 sb.AppendLine($"                global::Cephalon.Behaviors.Patterns.Strategies.DurableExecutionSlot.For<{fqn}, {info.DurableExecution.InputTypeName}, {info.DurableExecution.StateTypeName}, {info.DurableExecution.OutputTypeName}>()));");
+            }
+            if (info.SagaChoreographyRuntime is not null && info.InputType is not null)
+            {
+                var localOutputTypeExpression = info.SagaChoreographyRuntime.LocalOutputTypeName is null
+                    ? "null"
+                    : $"typeof({info.SagaChoreographyRuntime.LocalOutputTypeName}).FullName";
+                sb.AppendLine("            services.Add(global::Microsoft.Extensions.DependencyInjection.ServiceDescriptor.Singleton(");
+                sb.AppendLine("                typeof(global::Cephalon.Behaviors.Patterns.Runtime.SagaChoreographyRuntimeSlot),");
+                sb.AppendLine($"                global::Cephalon.Behaviors.Patterns.Runtime.SagaChoreographyRuntimeSlot.For<{fqn}, {info.InputType.GenericInputTypeName}, {info.InputType.GenericOutputTypeName}>(\"{EscapeString(info.SagaChoreographyRuntime.AuthoringModel)}\", \"{EscapeString(info.SagaChoreographyRuntime.PublicationResultShape)}\", {localOutputTypeExpression})));");
             }
             sb.AppendLine("        }");
         }
@@ -1591,6 +1611,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             Location location,
             TopologyInfo? topology,
             DurableExecutionInfo? durableExecution,
+            SagaChoreographyRuntimeInfo? sagaChoreographyRuntime,
             RestProfileInfo? restProfile,
             bool hasRestTransportAttribute,
             bool hasConfigureTopologyRestTransport)
@@ -1605,6 +1626,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             Location = location;
             Topology = topology;
             DurableExecution = durableExecution;
+            SagaChoreographyRuntime = sagaChoreographyRuntime;
             RestProfile = restProfile;
             HasRestTransportAttribute = hasRestTransportAttribute;
             HasConfigureTopologyRestTransport = hasConfigureTopologyRestTransport;
@@ -1620,6 +1642,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         public Location Location { get; }
         public TopologyInfo? Topology { get; }
         public DurableExecutionInfo? DurableExecution { get; }
+        public SagaChoreographyRuntimeInfo? SagaChoreographyRuntime { get; }
         public RestProfileInfo? RestProfile { get; }
         public bool HasRestTransportAttribute { get; }
         public bool HasConfigureTopologyRestTransport { get; }
@@ -1662,6 +1685,23 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         public string InputTypeName { get; }
         public string StateTypeName { get; }
         public string OutputTypeName { get; }
+    }
+
+    private sealed class SagaChoreographyRuntimeInfo
+    {
+        public SagaChoreographyRuntimeInfo(
+            string authoringModel,
+            string publicationResultShape,
+            string? localOutputTypeName)
+        {
+            AuthoringModel = authoringModel;
+            PublicationResultShape = publicationResultShape;
+            LocalOutputTypeName = localOutputTypeName;
+        }
+
+        public string AuthoringModel { get; }
+        public string PublicationResultShape { get; }
+        public string? LocalOutputTypeName { get; }
     }
 
     private sealed class RestProfileInfo
@@ -1758,6 +1798,119 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             durableInterface.TypeArguments[0].ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
             durableInterface.TypeArguments[1].ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
             durableInterface.TypeArguments[2].ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat));
+    }
+
+    private static SagaChoreographyRuntimeInfo? ResolveSagaChoreographyRuntimeInfo(
+        INamedTypeSymbol typeSymbol,
+        TopologyInfo? topology,
+        Compilation compilation)
+    {
+        if (!string.Equals(topology?.Pattern, "saga-choreography", StringComparison.OrdinalIgnoreCase) ||
+            compilation.GetTypeByMetadataName("Cephalon.Behaviors.Patterns.Runtime.SagaChoreographyRuntimeSlot") is null)
+        {
+            return null;
+        }
+
+        var behaviorInterface = ResolveBehaviorInterface(typeSymbol);
+        if (behaviorInterface is null)
+        {
+            return null;
+        }
+
+        var resultType = UnwrapNullable(behaviorInterface.TypeArguments[1]);
+        var publicationResultShape = ResolveSagaChoreographyResultShape(resultType, out var localOutputTypeName);
+        var authoringModel = typeSymbol.AllInterfaces.Any(static i =>
+            i.OriginalDefinition.ToDisplayString() is
+                "Cephalon.Behaviors.Patterns.Abstractions.ISagaEventReactor<TEvent>" or
+                "Cephalon.Behaviors.Patterns.Abstractions.ISagaEventReactor<TEvent, TOutput>")
+            ? "reactor"
+            : "behavior";
+
+        return new SagaChoreographyRuntimeInfo(
+            authoringModel,
+            publicationResultShape,
+            localOutputTypeName);
+    }
+
+    private static string ResolveSagaChoreographyResultShape(
+        ITypeSymbol resultType,
+        out string? localOutputTypeName)
+    {
+        localOutputTypeName = null;
+
+        if (IsSagaPublicationType(resultType))
+        {
+            return "single-publication";
+        }
+
+        if (IsSagaPublicationSequence(resultType))
+        {
+            return "publication-sequence";
+        }
+
+        if (IsNamedType(resultType, "Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyStepResult"))
+        {
+            return "step-result";
+        }
+
+        if (resultType is INamedTypeSymbol namedResultType &&
+            string.Equals(
+                namedResultType.OriginalDefinition.ToDisplayString(),
+                "Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyStepResult<TOutput>",
+                StringComparison.Ordinal))
+        {
+            localOutputTypeName = namedResultType.TypeArguments[0].ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            return "typed-step-result";
+        }
+
+        if (IsNamedType(resultType, "Cephalon.Behaviors.Patterns.Abstractions.ISagaChoreographyStepResult"))
+        {
+            return "step-result-contract";
+        }
+
+        if (ImplementsNamedInterface(resultType, "Cephalon.Behaviors.Patterns.Abstractions.ISagaChoreographyStepResult"))
+        {
+            return "custom-step-result";
+        }
+
+        return "custom-result";
+    }
+
+    private static bool IsSagaPublicationSequence(ITypeSymbol resultType)
+    {
+        if (resultType is IArrayTypeSymbol arrayTypeSymbol)
+        {
+            return IsSagaPublicationType(arrayTypeSymbol.ElementType);
+        }
+
+        return IsGenericEnumerableOfSagaPublication(resultType) ||
+               resultType.AllInterfaces.Any(IsGenericEnumerableOfSagaPublication);
+    }
+
+    private static bool IsGenericEnumerableOfSagaPublication(ITypeSymbol typeSymbol)
+    {
+        return typeSymbol is INamedTypeSymbol namedTypeSymbol &&
+               string.Equals(
+                   namedTypeSymbol.OriginalDefinition.ToDisplayString(),
+                   "System.Collections.Generic.IEnumerable<T>",
+                   StringComparison.Ordinal) &&
+               namedTypeSymbol.TypeArguments.Length == 1 &&
+               IsSagaPublicationType(namedTypeSymbol.TypeArguments[0]);
+    }
+
+    private static bool IsSagaPublicationType(ITypeSymbol typeSymbol)
+    {
+        return IsNamedType(typeSymbol, "Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyPublication");
+    }
+
+    private static bool ImplementsNamedInterface(ITypeSymbol typeSymbol, string metadataName)
+    {
+        return typeSymbol.AllInterfaces.Any(candidate => IsNamedType(candidate, metadataName));
+    }
+
+    private static bool IsNamedType(ITypeSymbol typeSymbol, string metadataName)
+    {
+        return string.Equals(typeSymbol.ToDisplayString(), metadataName, StringComparison.Ordinal);
     }
 
     private sealed class RestBindingValidationIssue

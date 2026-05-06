@@ -36,6 +36,7 @@ durable-execution replay are handled.
 - **DurableExecutionStrategy** — pattern: `"durable-execution"`, replays state from `IEventStore` and appends deterministic continuation events
 - **DurableExecutionRuntimeCatalogSnapshot** — runtime projection used by `IDurableExecutionRuntimeCatalog`, `/engine/durable-executions`, and `snapshot.DurableExecutions`
 - **SagaChoreographyRuntimeCatalogSnapshot** — runtime projection used by `ISagaChoreographyRuntimeCatalog`, `/engine/saga-choreographies`, and `snapshot.SagaChoreographies`
+- **SagaChoreographyRuntimeSlot** — closed generic metadata slot used by source generation or explicit host wiring so choreography catalog projection does not inspect runtime interface shape
 - **DirectExecutionStrategy** — pattern: `"direct"`, 200 with output / 204 with null
 - **ExecutionStrategyRegistry** — `FrozenDictionary` O(1) registry for all strategies
 - **Hosting** — `AddBehaviorPatterns()` extension on `IBehaviorCollectionBuilder`
@@ -103,12 +104,17 @@ all use the same execution contract.
 That same shared topology now also drives the first choreography operator surface.
 `AddBehaviorPatterns()` registers `ISagaChoreographyRuntimeCatalog`,
 `SagaChoreographyRuntimeCatalogSnapshot` derives one static descriptor per active choreography
-behavior from `IBehaviorCatalog` plus `IBehaviorTypeRegistry`, `Cephalon.Engine` projects the same
-answer through `snapshot.SagaChoreographies`, and ASP.NET Core exposes `/engine/saga-choreographies`
-plus id/module/transport drill-down routes. That runtime answer preserves module ownership,
-transport ids, required feature ids, typed input/result/local-output metadata, and authoring-model
-or publication-shape classification without pretending to be downstream publish or broker-dispatch
-truth.
+behavior from `IBehaviorCatalog`, `IBehaviorTypeRegistry`, and registered
+`SagaChoreographyRuntimeSlot` metadata. `Cephalon.Engine` projects the same answer through
+`snapshot.SagaChoreographies`, and ASP.NET Core exposes `/engine/saga-choreographies` plus
+id/module/transport drill-down routes. That runtime answer preserves module ownership, transport ids,
+required feature ids, typed input/result/local-output metadata, and authoring-model or
+publication-shape classification without pretending to be downstream publish or broker-dispatch
+truth. Source-generated choreography behaviors register closed
+`SagaChoreographyRuntimeSlot.For<TBehavior, TInput, TResult>(...)` metadata automatically when the
+pattern runtime slot is referenced; manually wired hosts must register that same slot explicitly when
+`AutoRegister=false` or custom choreography result shapes need explicit metadata. Missing slots fail
+fast instead of falling back to runtime interface-shape reflection.
 
 The same package now also owns the first live choreography publication-state follow-through.
 `AddBehaviorPatterns()` registers `ISagaChoreographyPublicationRuntimeStateCatalog`,

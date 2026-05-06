@@ -8,6 +8,7 @@ using Cephalon.Behaviors.Hosting;
 using Cephalon.Behaviors.Modules;
 using Cephalon.Behaviors.Patterns.Abstractions;
 using Cephalon.Behaviors.Patterns.Hosting;
+using Cephalon.Behaviors.Patterns.Runtime;
 using Cephalon.Behaviors.Patterns.Strategies;
 using Cephalon.Behaviors.Services;
 using Cephalon.Engine.Configuration;
@@ -35,6 +36,7 @@ public sealed class SagaChoreographyHostingTests
                 configure: behaviors => behaviors.AddBehaviorPatterns());
             engine.AddModule(new SagaChoreographyHostingModule());
         });
+        RegisterHostedCatalogSlots(builder.Services);
 
         await using var app = builder.Build();
         app.MapCephalon();
@@ -123,6 +125,7 @@ public sealed class SagaChoreographyHostingTests
                 configure: behaviors => behaviors.AddBehaviorPatterns());
             engine.AddModule(new SagaChoreographyRuntimeStateHostingModule());
         });
+        RegisterHostedRuntimeStateSlots(builder.Services);
 
         await using var app = builder.Build();
         app.MapCephalon();
@@ -301,6 +304,19 @@ public sealed class SagaChoreographyHostingTests
 
     private sealed record HostedApprovalReviewedPayload(string ApprovalId, string Decision);
 
+    private static void RegisterHostedCatalogSlots(IServiceCollection services)
+    {
+        services.AddSingleton(
+            SagaChoreographyRuntimeSlot.For<HostedApprovalEscalationBehavior, HostedApprovalEscalationInput, SagaChoreographyPublication[]>(
+                "behavior",
+                "publication-sequence"));
+        services.AddSingleton(
+            SagaChoreographyRuntimeSlot.For<HostedApprovalReviewReactor, HostedApprovalReviewEvent, SagaChoreographyStepResult<string>>(
+                "reactor",
+                "typed-step-result",
+                typeof(string).FullName));
+    }
+
     private static BehaviorExecutionContext MakeRuntimeStateContext<TBehavior>(
         string behaviorId,
         TBehavior behavior,
@@ -393,6 +409,15 @@ public sealed class SagaChoreographyHostingTests
     private sealed record HostedObservedApprovalSagaInput(string Mode, string ApprovalId);
 
     private sealed record HostedObservedApprovalPayload(string ApprovalId, string Mode);
+
+    private static void RegisterHostedRuntimeStateSlots(IServiceCollection services)
+    {
+        services.AddSingleton(
+            SagaChoreographyRuntimeSlot.For<HostedObservedApprovalSagaBehavior, HostedObservedApprovalSagaInput, SagaChoreographyStepResult<string?>>(
+                "behavior",
+                "typed-step-result",
+                typeof(string).FullName));
+    }
 
     [AppBehavior("tests.sagas.hosted.runtime.progress")]
     private sealed class HostedObservedApprovalSagaBehavior : IAppBehavior<HostedObservedApprovalSagaInput, SagaChoreographyStepResult<string?>>

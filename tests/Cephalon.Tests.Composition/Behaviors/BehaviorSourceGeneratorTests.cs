@@ -159,6 +159,19 @@ public sealed class BehaviorSourceGeneratorTests
                 public bool PreserveImplicitQueryFallback { get; }
             }
         }
+
+        namespace Cephalon.Behaviors.Patterns.Runtime
+        {
+            public sealed class SagaChoreographyRuntimeSlot
+            {
+                public static SagaChoreographyRuntimeSlot For<TBehavior, TInput, TResult>(
+                    string authoringModel,
+                    string publicationResultShape,
+                    string? localOutputType = null)
+                    where TBehavior : class, Cephalon.Abstractions.Behaviors.IAppBehavior<TInput, TResult>
+                    => new SagaChoreographyRuntimeSlot();
+            }
+        }
         """;
 
     private static (GeneratorDriverRunResult Result, ImmutableArray<Diagnostic> Diagnostics)
@@ -1174,13 +1187,13 @@ public sealed class BehaviorSourceGeneratorTests
 
             namespace Cephalon.Behaviors.Patterns.Abstractions
             {
-                public sealed class SagaChoreographyStepResult { }
+                public sealed class SagaChoreographyStepResult<TOutput> { }
 
-                public interface ISagaEventReactor<in TEvent> : IAppBehavior<TEvent, SagaChoreographyStepResult>
+                public interface ISagaEventReactor<in TEvent, TOutput> : IAppBehavior<TEvent, SagaChoreographyStepResult<TOutput>>
                 {
-                    Task<SagaChoreographyStepResult> ReactAsync(TEvent input, IBehaviorContext context, CancellationToken ct = default);
+                    Task<SagaChoreographyStepResult<TOutput>> ReactAsync(TEvent input, IBehaviorContext context, CancellationToken ct = default);
 
-                    Task<SagaChoreographyStepResult> IAppBehavior<TEvent, SagaChoreographyStepResult>.HandleAsync(
+                    Task<SagaChoreographyStepResult<TOutput>> IAppBehavior<TEvent, SagaChoreographyStepResult<TOutput>>.HandleAsync(
                         TEvent input,
                         IBehaviorContext context,
                         CancellationToken ct)
@@ -1189,16 +1202,16 @@ public sealed class BehaviorSourceGeneratorTests
             }
 
             [AppBehavior("orders.choreography")]
-            public sealed class OrderPlacedReactor : Cephalon.Behaviors.Patterns.Abstractions.ISagaEventReactor<string>
+            public sealed class OrderPlacedReactor : Cephalon.Behaviors.Patterns.Abstractions.ISagaEventReactor<string, string>
             {
                 public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
                     => builder.AsSagaChoreography();
 
-                public Task<Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyStepResult> ReactAsync(
+                public Task<Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyStepResult<string>> ReactAsync(
                     string input,
                     IBehaviorContext context,
                     CancellationToken ct = default)
-                    => Task.FromResult(new Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyStepResult());
+                    => Task.FromResult(new Cephalon.Behaviors.Patterns.Abstractions.SagaChoreographyStepResult<string>());
             }
             """;
 
@@ -1210,6 +1223,9 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.NotNull(autoRegistration);
         Assert.Contains("\"orders.choreography\"", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("\"saga-choreography\"", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("typeof(global::Cephalon.Behaviors.Patterns.Runtime.SagaChoreographyRuntimeSlot)", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("global::Cephalon.Behaviors.Patterns.Runtime.SagaChoreographyRuntimeSlot.For<global::OrderPlacedReactor", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("\"reactor\", \"typed-step-result\", typeof(string).FullName", autoRegistration, StringComparison.Ordinal);
     }
 
     [Fact]

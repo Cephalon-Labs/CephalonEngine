@@ -5,6 +5,7 @@ using Cephalon.Behaviors.Hosting;
 using Cephalon.Behaviors.Modules;
 using Cephalon.Behaviors.Patterns.Abstractions;
 using Cephalon.Behaviors.Patterns.Hosting;
+using Cephalon.Behaviors.Patterns.Runtime;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Runtime;
@@ -26,6 +27,7 @@ public sealed class SagaChoreographyRuntimeCatalogTests
                 configure: behaviors => behaviors.AddBehaviorPatterns());
             engine.AddModule(new SagaChoreographyCatalogModule());
         });
+        RegisterSagaChoreographyCatalogSlots(services);
 
         using var provider = services.BuildServiceProvider();
         var catalog = provider.GetRequiredService<ISagaChoreographyRuntimeCatalog>();
@@ -106,6 +108,7 @@ public sealed class SagaChoreographyRuntimeCatalogTests
                 configure: behaviors => behaviors.AddBehaviorPatterns());
             engine.AddModule(new SagaChoreographyCatalogModule());
         });
+        RegisterSagaChoreographyCatalogSlots(services);
 
         using var provider = services.BuildServiceProvider();
         var runtime = provider.GetRequiredService<IRuntime>();
@@ -157,6 +160,42 @@ public sealed class SagaChoreographyRuntimeCatalogTests
         Assert.DoesNotContain(
             runtime.Manifest.Capabilities,
             static capability => string.Equals(capability.Key, "behaviors.saga-choreography.publication-state", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void BuildRequiresRegisteredSagaChoreographyRuntimeSlotsForCatalogProjection()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(blueprint: "ModularMonolith"));
+            engine.AddBehaviors(
+                configureOptions: options => options.AutoRegister = false,
+                configure: behaviors => behaviors.AddBehaviorPatterns());
+            engine.AddModule(new SagaChoreographyCatalogModule());
+        });
+
+        using var provider = services.BuildServiceProvider();
+
+        var exception = Assert.Throws<InvalidOperationException>(
+            () => provider.GetRequiredService<ISagaChoreographyRuntimeCatalog>());
+        Assert.Contains(
+            "requires a source-generated or explicitly registered SagaChoreographyRuntimeSlot",
+            exception.Message,
+            StringComparison.Ordinal);
+    }
+
+    private static void RegisterSagaChoreographyCatalogSlots(IServiceCollection services)
+    {
+        services.AddSingleton(
+            SagaChoreographyRuntimeSlot.For<ApprovalEscalationBehavior, ApprovalEscalationInput, SagaChoreographyPublication[]>(
+                "behavior",
+                "publication-sequence"));
+        services.AddSingleton(
+            SagaChoreographyRuntimeSlot.For<ApprovalReviewReactor, ApprovalReviewEvent, SagaChoreographyStepResult<string>>(
+                "reactor",
+                "typed-step-result",
+                typeof(string).FullName));
     }
 
     private sealed class SagaChoreographyCatalogModule : BehaviorModuleBase

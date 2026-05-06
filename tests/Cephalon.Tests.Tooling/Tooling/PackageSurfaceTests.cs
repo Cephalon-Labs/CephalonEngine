@@ -1104,6 +1104,36 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void BehaviorsPatternsSagaChoreographyRuntimeCatalogRequiresRegisteredSlotsWithoutRuntimeShapeReflection()
+    {
+        var slot = File.ReadAllText(RepositoryPaths.GetFile(
+            "src",
+            "Cephalon.Behaviors.Patterns",
+            "Runtime",
+            "SagaChoreographyRuntimeSlot.cs"));
+        Assert.DoesNotContain("System.Reflection", slot, StringComparison.Ordinal);
+        Assert.DoesNotContain("GetInterfaces()", slot, StringComparison.Ordinal);
+        Assert.DoesNotContain("GetGenericTypeDefinition", slot, StringComparison.Ordinal);
+        Assert.DoesNotContain("GetGenericArguments", slot, StringComparison.Ordinal);
+        Assert.DoesNotContain("MakeGenericMethod", slot, StringComparison.Ordinal);
+        Assert.DoesNotContain(".Invoke(", slot, StringComparison.Ordinal);
+
+        var catalog = File.ReadAllText(RepositoryPaths.GetFile(
+            "src",
+            "Cephalon.Behaviors.Patterns",
+            "Runtime",
+            "SagaChoreographyRuntimeCatalogSnapshot.cs"));
+        Assert.Contains("requires a source-generated or explicitly registered SagaChoreographyRuntimeSlot", catalog, StringComparison.Ordinal);
+        Assert.DoesNotContain("ResolveAuthoringModel", catalog, StringComparison.Ordinal);
+        Assert.DoesNotContain("ResolveResultShape", catalog, StringComparison.Ordinal);
+        Assert.DoesNotContain("IsPublicationSequence", catalog, StringComparison.Ordinal);
+        Assert.DoesNotContain("GetInterfaces()", catalog, StringComparison.Ordinal);
+        Assert.DoesNotContain("GetGenericTypeDefinition", catalog, StringComparison.Ordinal);
+        Assert.DoesNotContain("GetGenericArguments", catalog, StringComparison.Ordinal);
+        Assert.DoesNotContain("IsAssignableFrom", catalog, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void DataEntityFrameworkAssemblyExposesOnlyTheDocumentedPackContracts()
     {
         AssertExportedTypes(
@@ -6416,9 +6446,11 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Behaviors.Patterns.Registry.ExecutionStrategyRegistry),
             typeof(global::Cephalon.Behaviors.Patterns.Stores.InMemoryProcessCheckpointStore),
             typeof(global::Cephalon.Behaviors.Patterns.Stores.InMemorySagaStateStore),
+            typeof(global::Cephalon.Behaviors.Patterns.Runtime.SagaChoreographyRuntimeSlot),
             typeof(global::Cephalon.Behaviors.Patterns.Strategies.ChoreographySagaExecutionStrategy),
             typeof(global::Cephalon.Behaviors.Patterns.Strategies.CqrsExecutionStrategy),
             typeof(global::Cephalon.Behaviors.Patterns.Strategies.DirectExecutionStrategy),
+            typeof(global::Cephalon.Behaviors.Patterns.Strategies.DurableExecutionSlot),
             typeof(global::Cephalon.Behaviors.Patterns.Strategies.DurableExecutionStrategy),
             typeof(global::Cephalon.Behaviors.Patterns.Strategies.EventDrivenExecutionStrategy),
             typeof(global::Cephalon.Behaviors.Patterns.Strategies.ProcessManagerExecutionStrategy),

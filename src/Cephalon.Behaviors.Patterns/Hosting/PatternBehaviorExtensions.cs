@@ -37,7 +37,8 @@ public static class PatternBehaviorExtensions
         builder.Services.TryAddSingleton<ISagaChoreographyRuntimeCatalog>(static serviceProvider =>
             new SagaChoreographyRuntimeCatalogSnapshot(
                 serviceProvider.GetRequiredService<IBehaviorCatalog>(),
-                serviceProvider.GetRequiredService<IBehaviorTypeRegistry>()));
+                serviceProvider.GetRequiredService<IBehaviorTypeRegistry>(),
+                serviceProvider.GetServices<SagaChoreographyRuntimeSlot>()));
         builder.Services.TryAddSingleton<SagaChoreographyPublicationRuntimeStateCatalog>();
         builder.Services.TryAddSingleton<ISagaChoreographyPublicationRuntimeStateCatalog>(static serviceProvider =>
             serviceProvider.GetRequiredService<SagaChoreographyPublicationRuntimeStateCatalog>());

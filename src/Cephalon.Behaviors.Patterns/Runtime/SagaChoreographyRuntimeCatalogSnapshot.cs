@@ -16,14 +16,18 @@ internal sealed class SagaChoreographyRuntimeCatalogSnapshot : ISagaChoreography
 
     public SagaChoreographyRuntimeCatalogSnapshot(
         IBehaviorCatalog behaviorCatalog,
-        IBehaviorTypeRegistry typeRegistry)
+        IBehaviorTypeRegistry typeRegistry,
+        IEnumerable<SagaChoreographyRuntimeSlot>? sagaChoreographyRuntimeSlots = null)
     {
         ArgumentNullException.ThrowIfNull(behaviorCatalog);
         ArgumentNullException.ThrowIfNull(typeRegistry);
 
+        var slotsByBehaviorType = (sagaChoreographyRuntimeSlots ?? [])
+            .ToDictionary(static slot => slot.BehaviorType);
+
         sagaChoreographies = behaviorCatalog
             .GetByPattern("saga-choreography")
-            .Select(descriptor => CreateDescriptor(descriptor, typeRegistry))
+            .Select(descriptor => CreateDescriptor(descriptor, typeRegistry, slotsByBehaviorType))
             .OrderBy(static descriptor => descriptor.SourceModuleId, Comparer)
             .ThenBy(static descriptor => descriptor.Id, Comparer)
             .ToArray();
@@ -87,10 +91,12 @@ internal sealed class SagaChoreographyRuntimeCatalogSnapshot : ISagaChoreography
 
     private static SagaChoreographyRuntimeDescriptor CreateDescriptor(
         BehaviorTopologyDescriptor descriptor,
-        IBehaviorTypeRegistry typeRegistry)
+        IBehaviorTypeRegistry typeRegistry,
+        Dictionary<Type, SagaChoreographyRuntimeSlot> slotsByBehaviorType)
     {
         ArgumentNullException.ThrowIfNull(descriptor);
         ArgumentNullException.ThrowIfNull(typeRegistry);
+        ArgumentNullException.ThrowIfNull(slotsByBehaviorType);
 
         if (!typeRegistry.TryGetType(descriptor.Id, out var behaviorType) || behaviorType is null)
         {
@@ -98,19 +104,12 @@ internal sealed class SagaChoreographyRuntimeCatalogSnapshot : ISagaChoreography
                 $"Saga choreography behavior '{descriptor.Id}' does not have a registered implementation type.");
         }
 
-        var behaviorInterface = behaviorType
-            .GetInterfaces()
-            .FirstOrDefault(static candidate =>
-                candidate.IsGenericType &&
-                candidate.GetGenericTypeDefinition() == typeof(IAppBehavior<,>))
-            ?? throw new InvalidOperationException(
-                $"Behavior '{descriptor.Id}' selected the saga-choreography pattern but '{behaviorType.FullName}' does not implement IAppBehavior<TInput, TResult>.");
+        if (!slotsByBehaviorType.TryGetValue(behaviorType, out var slot))
+        {
+            throw new InvalidOperationException(
+                $"Saga choreography behavior '{descriptor.Id}' with implementation type '{GetTypeName(behaviorType)}' requires a source-generated or explicitly registered SagaChoreographyRuntimeSlot before its runtime catalog metadata can be projected.");
+        }
 
-        var genericArguments = behaviorInterface.GetGenericArguments();
-        var inputType = genericArguments[0];
-        var resultType = genericArguments[1];
-        var authoringModel = ResolveAuthoringModel(behaviorType);
-        var resultShape = ResolveResultShape(resultType, out var localOutputType);
         var metadata = new Dictionary<string, string>(descriptor.Metadata, Comparer)
         {
             ["pattern"] = descriptor.Pattern,
@@ -118,8 +117,8 @@ internal sealed class SagaChoreographyRuntimeCatalogSnapshot : ISagaChoreography
             ["compatibilityRuleId"] = "ABT-005",
             ["publisherContract"] = typeof(ISagaChoreographyPublisher).FullName ?? nameof(ISagaChoreographyPublisher),
             ["publicationMode"] = "choreography-publications",
-            ["authoringModel"] = authoringModel,
-            ["publicationResultShape"] = resultShape,
+            ["authoringModel"] = slot.AuthoringModel,
+            ["publicationResultShape"] = slot.PublicationResultShape,
             ["apiSurfaceGroupPath"] = descriptor.ApiSurface.GroupPath,
             ["apiSurfaceOperationPath"] = descriptor.ApiSurface.OperationPath
         };
@@ -129,97 +128,14 @@ internal sealed class SagaChoreographyRuntimeCatalogSnapshot : ISagaChoreography
             displayName: descriptor.DisplayName ?? descriptor.Id,
             description: descriptor.Description ?? $"Saga choreography behavior '{descriptor.Id}'.",
             behaviorType: GetTypeName(behaviorType),
-            inputType: GetTypeName(inputType),
-            resultType: GetTypeName(resultType),
-            localOutputType: localOutputType,
+            inputType: GetTypeName(slot.InputType),
+            resultType: GetTypeName(slot.ResultType),
+            localOutputType: slot.LocalOutputType,
             sourceModuleId: descriptor.SourceModuleId,
             transportIds: descriptor.TransportIds,
             requiredFeatureFlagIds: descriptor.RequiredFeatureFlagIds,
             successStatusCodes: [200, 202, 204],
             metadata: metadata);
-    }
-
-    private static string ResolveAuthoringModel(Type behaviorType)
-    {
-        ArgumentNullException.ThrowIfNull(behaviorType);
-
-        return behaviorType
-            .GetInterfaces()
-            .Any(static candidate =>
-                candidate.IsGenericType &&
-                (candidate.GetGenericTypeDefinition() == typeof(ISagaEventReactor<>) ||
-                 candidate.GetGenericTypeDefinition() == typeof(ISagaEventReactor<,>)))
-            ? "reactor"
-            : "behavior";
-    }
-
-    private static string ResolveResultShape(Type resultType, out string? localOutputType)
-    {
-        ArgumentNullException.ThrowIfNull(resultType);
-
-        localOutputType = null;
-
-        if (resultType == typeof(SagaChoreographyPublication))
-        {
-            return "single-publication";
-        }
-
-        if (IsPublicationSequence(resultType))
-        {
-            return "publication-sequence";
-        }
-
-        if (resultType == typeof(SagaChoreographyStepResult))
-        {
-            return "step-result";
-        }
-
-        if (resultType.IsGenericType &&
-            resultType.GetGenericTypeDefinition() == typeof(SagaChoreographyStepResult<>))
-        {
-            localOutputType = GetTypeName(resultType.GetGenericArguments()[0]);
-            return "typed-step-result";
-        }
-
-        if (resultType == typeof(ISagaChoreographyStepResult))
-        {
-            return "step-result-contract";
-        }
-
-        if (typeof(ISagaChoreographyStepResult).IsAssignableFrom(resultType))
-        {
-            return "custom-step-result";
-        }
-
-        return "custom-result";
-    }
-
-    private static bool IsPublicationSequence(Type resultType)
-    {
-        ArgumentNullException.ThrowIfNull(resultType);
-
-        if (resultType.IsArray)
-        {
-            return resultType.GetElementType() == typeof(SagaChoreographyPublication);
-        }
-
-        if (!resultType.IsGenericType)
-        {
-            return false;
-        }
-
-        if (resultType.GetGenericTypeDefinition() == typeof(IEnumerable<>) &&
-            resultType.GetGenericArguments()[0] == typeof(SagaChoreographyPublication))
-        {
-            return true;
-        }
-
-        return resultType
-            .GetInterfaces()
-            .Any(static candidate =>
-                candidate.IsGenericType &&
-                candidate.GetGenericTypeDefinition() == typeof(IEnumerable<>) &&
-                candidate.GetGenericArguments()[0] == typeof(SagaChoreographyPublication));
     }
 
     private static string GetTypeName(Type type)
