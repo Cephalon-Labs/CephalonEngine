@@ -23,9 +23,39 @@ Current focus:
 - keep `Cephalon.MultiTenancy` core narrow while `Cephalon.MultiTenancy.Governance` owns membership catalog/evaluation, local durable stores, invitation delivery dispatch/retry/status reconciliation, delivery-status observation storage, tenant administration, declared domain ownership, proof collection/polling, and governance-action proofs; `Cephalon.MultiTenancy.Governance.AspNetCore` owns optional fail-closed governance endpoints plus provider-neutral callback signature/replay protection, filtered observation rollup summaries, attention-category drill-down filters, provider-message drill-down filters, remediation-action filters, and deterministic remediation hints over stored observations; HTTP, SMTP, SendGrid, Mailgun, Amazon SES, and Microsoft Graph sender companions own outbound delivery handoff; `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity` owns the optional Azure Identity access-token provider for the Graph sender; SendGrid ASP.NET Core owns callback translation/signature/replay/event-id hardening; Mailgun ASP.NET Core owns callback translation/signature/replay-token/event-id hardening; and Amazon SES ASP.NET Core owns SNS-wrapped SES event callback translation plus opt-in SNS signature verification, bounded process-local SNS replay protection, observation-store-backed SNS message-id idempotency, opt-in verified SNS subscription confirmation, and opt-in verified SNS unsubscribe-confirmation observation. Distributed or provider-backed membership/invitation/domain/action-store backends, additional provider-specific email API senders beyond the shipped SMTP/SendGrid/Mailgun/Amazon SES/Microsoft Graph set, SMS/chat/CRM/identity-provider invitation senders, distributed retry queues, cross-node retry leases, provider-specific or distributed callback inboxes, cross-node callback replay protection, distributed event-id ledgers, provider-specific delivery-status callback payload translation beyond shipped SendGrid/Mailgun/Amazon SES translators, provider-specific callback signature verification beyond shipped SendGrid/Mailgun/Amazon SNS hardening, provider polling, remediation execution beyond state transitions, actual DNS proof publication, provider-backed proof publication or mutation, identity-provider synchronization, Microsoft Entra app registration/permission consent/mailbox access policy, AWS account/IAM/identity verification, DKIM/SPF/DMARC, SES sandbox/configuration-set event destination setup, SNS topic/subscription creation, automatic resubscribe/restore, subscription lifecycle governance, public onboarding, and tenant-admin UI/backoffice flows remain later package-owned work
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
 - treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md), validates the deployment-mode, adoption-smoke, SRE, and supply-chain release support manifests, scans public API delta files into `PublicApiCompatibilityEvidence`, and `cephalon doctor --scorecard <path>` provides a schema `1.6.0` local CLI readback over that generated artifact including deployment-mode global/package-scoped/hazard/publish-probe counts, SRE target/baseline counts, supply-chain workflow/external-policy counts, and public API package/pending/addition/removal counts without becoming source truth
-- treat the CDC integration-test lane as additive evidence over the runtime catalog truth: `tests/Cephalon.Tests.CdcIntegration` now proves MongoDB change streams against a real disposable replica set, while SQL Server/Postgres live CDC coverage remains a later external-service-gated lane instead of being implied by fake transport harnesses
+- treat the CDC integration-test lane as additive evidence over the runtime catalog truth: `tests/Cephalon.Tests.CdcIntegration` now proves MongoDB change streams against a real disposable replica set and carries a shared external-service gate for future SQL Server/Postgres live CDC coverage, instead of implying those provider paths through fake transport harnesses
 - treat the Debezium test-flake quarantine as resolved by shared catalog hardening: CDC execution-runtime filters now reuse versioned snapshots over indexed capture ownership instead of re-enriching every runtime for every state/category selector
 - treat the CDC execution-runtime catalog hot path as benchmark-governed: `CdcExecutionRuntimeCatalogBenchmarks` now covers Debezium-managed external runtimes, external observations, repeated managed-connector drift/dry-run/command-issuance filters, and compact multi-selector operator flows against the shared versioned snapshot
+
+### ENG-490 Define external-service Testcontainers gate for live CDC
+
+Status: done
+Estimate: 1
+Issue: #1096
+Iteration: Sprint 125
+Area: test-coverage / CDC / external-service integration
+Quality dimensions: Reliability, Compatibility, Auditability, Maintainability
+
+Why:
+
+- SQL Server/Postgres provider-native CDC paths need real database runtimes before Cephalon can honestly claim live-provider integration coverage beyond fake transport harnesses
+- the default `Cephalon.Tests.CdcIntegration` lane must remain deterministic and should not suddenly require Docker, Testcontainers, or developer-managed services
+- future SQL Server/Postgres live tests need one shared opt-in contract so provider-specific tests do not invent different skip, connection-string, or disposable-service conventions
+
+Delivered:
+
+- added `ExternalCdcServiceGate`, `ExternalCdcServiceFactAttribute`, and provider-mode parsing to `tests/Cephalon.Tests.CdcIntegration`
+- defined the opt-in variables `CEPHALON_CDC_EXTERNAL_SERVICES`, `CEPHALON_CDC_TESTCONTAINERS`, `CEPHALON_CDC_SQLSERVER_CONNECTION_STRING`, and `CEPHALON_CDC_POSTGRES_CONNECTION_STRING`
+- kept Testcontainers as an explicit provider-test mode without introducing package references before the first SQL Server/Postgres live test consumes them
+- added deterministic gate coverage plus discoverable skipped lane/provider facts so the default and provider-specific skip posture is visible in test output
+- refreshed the CDC integration README, SQL Server/Postgres component docs, test-coverage roadmap, roadmap, backlog, and project-memory truth
+
+Validation:
+
+- `Cephalon.Tests.CdcIntegration` (`11` passed / `2` skipped)
+- focused opt-in provider-mode smoke (`1/1`)
+- solution locked restore
+- `git diff --check`
 
 ### ENG-489 Add CDC runtime catalog benchmark guardrail
 
