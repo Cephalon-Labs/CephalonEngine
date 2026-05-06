@@ -2,7 +2,7 @@
 
 This document is the engine-level Site Reliability Engineering (SRE) posture for the Cephalon engine itself. It is *not* a prescription for consumer applications that adopt Cephalon — those teams own their own SLOs against their own user journeys. Instead, this page declares the reliability semantics the engine commits to as a framework: cold-start time, dispatch latency, allocation discipline, build/restore/release-validation wall time, and test-suite flake rate.
 
-Cross-references: [`engineering-standards.md`](engineering-standards.md), [`benchmarking.md`](benchmarking.md), [`runtime-failure-policy.md`](runtime-failure-policy.md), [`operational-hardening-gap-inventory.md`](operational-hardening-gap-inventory.md), [`test-coverage-roadmap.md`](test-coverage-roadmap.md), [`project-memory.md`](project-memory.md), [`planning-governance.md`](planning-governance.md).
+Cross-references: [`engineering-standards.md`](engineering-standards.md), [`benchmarking.md`](benchmarking.md), [`runtime-failure-policy.md`](runtime-failure-policy.md), [`operational-hardening-gap-inventory.md`](operational-hardening-gap-inventory.md), [`test-coverage-roadmap.md`](test-coverage-roadmap.md), [`engine-completion-scorecard.md`](engine-completion-scorecard.md), [`../scripts/sre-posture-support.json`](../scripts/sre-posture-support.json), [`project-memory.md`](project-memory.md), [`planning-governance.md`](planning-governance.md).
 
 ## Why the engine itself has SLOs
 
@@ -91,7 +91,8 @@ The SLI catalogue above is meant to be reachable from three operator-facing surf
 
 - **`cephalon doctor`** — surfaces the latest local benchmark and validation wall-time signals so a contributor can see SLI health on the local box before pushing
 - **`/engine/snapshot`** — projects relevant runtime SLI metadata (counters, latest dispatch outcomes, latest cold-start posture) so a deployed Cephalon instance can answer "is the engine itself behaving" without log archaeology
-- **`scripts/validate-release.ps1`** output — emits a per-SLI summary at the end of a validation pass so release reviewers can read SLO compliance in one place
+- **`scripts/validate-release.ps1`** output — publishes the engine-completion scorecard artifact and prints the `SrePostureEvidence` target-declared, pending-baseline, and stable-baseline counts so release reviewers can see whether the SRE posture is still target-only
+- **`scripts/sre-posture-support.json`** — keeps the SLI target list, source-document links, release-validation summary mode, and baseline-status posture machine-readable for the scorecard without promoting initial draft SLO targets into stable baselines
 
 The intent is that SLI signal flows through the existing engine introspection surface rather than through a parallel dashboard. Consumer SRE teams can compose engine SLI signal into their own SLO targets through OTLP export, without the engine forcing a dashboard topology on them.
 

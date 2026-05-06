@@ -46,7 +46,7 @@ The durable rule book lives in [`release-checklist.md`](release-checklist.md). T
 - [ ] Tests (Composition + Hosting + Tooling) ✅
 - [ ] `.NET 11` readiness contract ✅
 - [ ] Deployment-mode claim audit ✅
-- [ ] Engine completion scorecard artifact + source references + per-package GA rows + adoption-smoke evidence + public API compatibility evidence + optional `cephalon doctor --scorecard artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json` readback with public API counts ✅
+- [ ] Engine completion scorecard artifact + source references + per-package GA rows + adoption-smoke evidence + SRE posture evidence + public API compatibility evidence + optional `cephalon doctor --scorecard artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json` readback with SRE and public API counts ✅
 - [ ] Operational health + export conventions ✅
 - [ ] Phase-8 architecture / runtime / starter conventions ✅
 - [ ] Benchmark smoke + guardrails ✅
@@ -59,7 +59,7 @@ The durable rule book lives in [`release-checklist.md`](release-checklist.md). T
 
 ## 4. Conformance and maturity truth
 
-- [ ] [`docs/engine-completion-scorecard.md`](engine-completion-scorecard.md) reviewed; generated scorecard artifact, source references, per-package GA rows, adoption-smoke evidence, public API compatibility evidence, optional `cephalon doctor --scorecard` summary with public API counts, and gate posture match the owning source docs
+- [ ] [`docs/engine-completion-scorecard.md`](engine-completion-scorecard.md) reviewed; generated scorecard artifact, source references, per-package GA rows, adoption-smoke evidence, SRE posture evidence, public API compatibility evidence, optional `cephalon doctor --scorecard` summary with SRE and public API counts, and gate posture match the owning source docs
 - [ ] [`docs/engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md) Current-audit table reflects shipped state
 - [ ] [`docs/conformance-matrix.md`](conformance-matrix.md) per-family tables + Family summary at a glance match the audit
 - [ ] [`docs/runtime-contract-index.md`](runtime-contract-index.md) `/engine/*` route catalog reflects every shipped route

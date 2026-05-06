@@ -137,6 +137,27 @@ function Get-DeploymentModeReleaseValidationSkipsPublish {
     return [System.Convert]::ToBoolean([string]$policy.releaseValidationSkipsPublish, [System.Globalization.CultureInfo]::InvariantCulture)
 }
 
+function Write-EngineCompletionScorecardSreSummary {
+    param([Parameter(Mandatory = $true)] [string]$ScorecardOutputPath)
+
+    $scorecardJsonPath = [System.IO.Path]::Combine($ScorecardOutputPath, "engine-completion-scorecard.json")
+    if (-not (Test-Path -LiteralPath $scorecardJsonPath -PathType Leaf)) {
+        throw "Engine completion scorecard JSON was not found at '$scorecardJsonPath'."
+    }
+
+    $scorecard = Get-Content -LiteralPath $scorecardJsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
+    if ($null -eq $scorecard.SrePostureEvidence) {
+        throw "Engine completion scorecard JSON is missing SrePostureEvidence."
+    }
+
+    Write-Host ("SRE posture: {0} SLIs; target-declared {1}; pending stable baselines {2}; stable baselines {3}; summary mode {4}." -f `
+        $scorecard.SrePostureEvidence.SliCount,
+        $scorecard.SrePostureEvidence.TargetDeclaredCount,
+        $scorecard.SrePostureEvidence.PendingStableBaselineCount,
+        $scorecard.SrePostureEvidence.StableBaselineCount,
+        $scorecard.SrePostureEvidence.ReleaseValidationSummaryMode)
+}
+
 Push-Location $repoRoot
 try {
     foreach ($testProjectPath in $testProjectPaths) {
@@ -219,6 +240,7 @@ try {
             Invoke-PowerShellScript -Path $engineCompletionScorecardScriptPath -Arguments @(
                 "-OutputPath", $engineCompletionScorecardOutputPath
             )
+            Write-EngineCompletionScorecardSreSummary -ScorecardOutputPath $engineCompletionScorecardOutputPath
         }
     }
 

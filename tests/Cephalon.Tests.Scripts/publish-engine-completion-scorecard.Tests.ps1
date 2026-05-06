@@ -48,14 +48,15 @@ Describe "publish-engine-completion-scorecard.ps1" {
 
         $json = Get-Content -LiteralPath $result.Paths.JsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
 
-        $json.'$schemaVersion' | Should -Be "1.3.0"
+        $json.'$schemaVersion' | Should -Be "1.4.0"
         $json.SourceDocument | Should -Be "docs/engine-completion-scorecard.md"
         $json.ConformanceMatrix | Should -Be "docs/conformance-matrix.md"
         $json.AdoptionSmokeManifest | Should -Be "scripts/adoption-smoke-support.json"
+        $json.SrePostureManifest | Should -Be "scripts/sre-posture-support.json"
         $json.PublicApiDeltaScript | Should -Be "scripts/summarise-public-api-deltas.ps1"
         $json.StatusVocabulary.Count | Should -Be 6
         $json.EvidenceSources.Count | Should -Be 12
-        $json.EvidenceSourceReferences.Count | Should -Be 16
+        $json.EvidenceSourceReferences.Count | Should -Be 17
         $json.PlatformGates.Count | Should -Be 12
         $json.QualityDimensions.Count | Should -Be 12
         $json.PackageFamilies.Count | Should -Be 9
@@ -67,12 +68,16 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.AdoptionSmokeScenarioCount | Should -Be 1
         $json.Summary.AdoptionSmokeRuntimeProbeCount | Should -Be 6
         $json.Summary.AdoptionSmokeAssertionCount | Should -Be 7
+        $json.Summary.SreSliCount | Should -Be 11
+        $json.Summary.SreTargetDeclaredCount | Should -Be 11
+        $json.Summary.SrePendingStableBaselineCount | Should -Be 11
+        $json.Summary.SreStableBaselineCount | Should -Be 0
         $json.Summary.PublicApiPackageCount | Should -Be 104
         $json.Summary.PublicApiPendingPackageCount | Should -Be 21
         $json.Summary.PublicApiAdditiveEntryCount | Should -Be 288
         $json.Summary.PublicApiRemovalEntryCount | Should -Be 0
         $json.Summary.EvidenceSourceCount | Should -Be 12
-        $json.Summary.EvidenceSourceReferenceCount | Should -Be 16
+        $json.Summary.EvidenceSourceReferenceCount | Should -Be 17
         $json.Summary.PlatformStatusCounts.'ready-for-preview' | Should -Be 3
         $json.Summary.PlatformStatusCounts.partial | Should -Be 7
         $json.Summary.PlatformStatusCounts.'not-claimed' | Should -Be 1
@@ -86,6 +91,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.EvidenceSourceReferences.Reference | Should -Contain "docs/engine-surface-maturity-audit.md"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/deployment-mode-support.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/adoption-smoke-support.json"
+        $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/sre-posture-support.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/validate-out-of-tree-package-adoption.ps1"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/summarise-public-api-deltas.ps1"
 
@@ -99,6 +105,22 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.AdoptionSmokeEvidence.RuntimeProbes.Path | Should -Contain "/engine/packages"
         $json.AdoptionSmokeEvidence.RuntimeProbes.Path | Should -Contain "/engine/trust-policy"
         $json.AdoptionSmokeEvidence.RuntimeProbes.Path | Should -Contain "/api/operations/status"
+
+        $json.SrePostureEvidence.ManifestSchemaVersion | Should -Be "1.0.0"
+        $json.SrePostureEvidence.Status | Should -Be "target-declared"
+        $json.SrePostureEvidence.ReleaseValidationSummaryMode | Should -Be "release-validation-console-and-scorecard-artifact"
+        $json.SrePostureEvidence.StableBaselinesPublished | Should -BeFalse
+        $json.SrePostureEvidence.GuardrailCatalog | Should -Be "benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json"
+        $json.SrePostureEvidence.GuardrailCatalogEntryCount | Should -Be 24
+        $json.SrePostureEvidence.SliCount | Should -Be 11
+        $json.SrePostureEvidence.TargetDeclaredCount | Should -Be 11
+        $json.SrePostureEvidence.PendingStableBaselineCount | Should -Be 11
+        $json.SrePostureEvidence.StableBaselineCount | Should -Be 0
+        $json.SrePostureEvidence.SourceDocuments | Should -Contain "docs/sre-posture.md"
+        $json.SrePostureEvidence.SourceDocuments | Should -Contain "docs/benchmarking.md"
+        $json.SrePostureEvidence.ValidationScripts | Should -Contain "scripts/validate-release.ps1"
+        $json.SrePostureEvidence.SliRows.Id | Should -Contain "engine.behavior.dispatch.latency.p95"
+        $json.SrePostureEvidence.SliRows.BaselineStatus | Select-Object -Unique | Should -Be "pending-stable-baseline"
 
         $json.PublicApiCompatibilityEvidence.DeltaScript | Should -Be "scripts/summarise-public-api-deltas.ps1"
         $json.PublicApiCompatibilityEvidence.PackageCount | Should -Be 104
@@ -131,6 +153,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "Engine Completion Scorecard Report"
         $markdown | Should -Match "Platform gates: 12"
         $markdown | Should -Match "Package families: 9"
+        $markdown | Should -Match "SRE Posture Evidence"
+        $markdown | Should -Match "SRE SLIs: 11"
+        $markdown | Should -Match "SRE pending stable baselines: 11"
         $markdown | Should -Match "Public API Compatibility Evidence"
         $markdown | Should -Match "Public API packages with pending changes: 21"
         $markdown | Should -Match "Cephalon.Abstractions"
@@ -233,6 +258,64 @@ Start-Process
         } | Should -Throw "*runtime probe '/engine/trust-policy'*"
     }
 
+    It "fails when SRE posture manifest SLIs drift away from source docs" {
+        $fixtureRoot = Join-Path $script:tempRoot "sre-fixture"
+        $scriptsRoot = Join-Path $fixtureRoot "scripts"
+        $docsRoot = Join-Path $fixtureRoot "docs"
+        $guardrailRoot = Join-Path $fixtureRoot "benchmarks\Cephalon.Benchmarks\guardrails"
+        New-Item -ItemType Directory -Path $scriptsRoot -Force | Out-Null
+        New-Item -ItemType Directory -Path $docsRoot -Force | Out-Null
+        New-Item -ItemType Directory -Path $guardrailRoot -Force | Out-Null
+
+        Set-Content -LiteralPath (Join-Path $docsRoot "sre-posture.md") -Value "# SRE posture fixture`nThis fixture intentionally omits the declared SLI." -Encoding UTF8
+        Set-Content -LiteralPath (Join-Path $docsRoot "benchmarking.md") -Value "# Benchmarking fixture" -Encoding UTF8
+        Set-Content -LiteralPath (Join-Path $scriptsRoot "validate-release.ps1") -Value "# release validation fixture" -Encoding UTF8
+        @{
+            version = "1.0"
+            entries = @(
+                @{
+                    reportFileName = "fixture.csv"
+                    benchmark = "Fixture"
+                    maxMeanNanoseconds = 1
+                    maxAllocatedBytes = 1
+                }
+            )
+        } | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $guardrailRoot "performance-guardrails.json") -Encoding UTF8
+
+        $manifestPath = Join-Path $scriptsRoot "sre-posture-support.json"
+        @{
+            '$schemaVersion' = "1.0.0"
+            status = "target-declared"
+            summary = "fixture"
+            releaseValidationSummaryMode = "scorecard-artifact"
+            stableBaselinesPublished = $false
+            sourceDocs = @(
+                "docs/sre-posture.md",
+                "docs/benchmarking.md"
+            )
+            validationScripts = @("scripts/validate-release.ps1")
+            guardrailCatalog = "benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json"
+            slis = @(
+                @{
+                    id = "engine.fixture.missing"
+                    category = "fixture"
+                    measurementSurface = "benchmark"
+                    sourceDocument = "docs/sre-posture.md"
+                    sloTarget = "fixture"
+                    window = "fixture"
+                    targetStatus = "target-declared"
+                    baselineStatus = "pending-stable-baseline"
+                }
+            )
+        } | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $manifestPath -Encoding UTF8
+
+        {
+            Convert-SrePostureEvidence `
+                -ResolvedManifestPath $manifestPath `
+                -ResolvedRepoRoot $fixtureRoot
+        } | Should -Throw "*does not contain SLI 'engine.fixture.missing'*"
+    }
+
     It "fails when the status vocabulary contains an unsupported status" {
         $fixtureRoot = Join-Path $script:tempRoot "fixture"
         $docsRoot = Join-Path $fixtureRoot "docs"
@@ -303,6 +386,8 @@ Start-Process
         $releaseValidation | Should -Match "publish-engine-completion-scorecard\.ps1"
         $releaseValidation | Should -Match "engine-completion-scorecard-release"
         $releaseValidation | Should -Match "Publish engine completion scorecard artifact"
+        $releaseValidation | Should -Match "Write-EngineCompletionScorecardSreSummary"
+        $releaseValidation | Should -Match "SrePostureEvidence"
         $releaseValidation | Should -Match "summarise-public-api-deltas\.ps1"
         $releaseValidation | Should -Match "public-api-delta-release"
     }

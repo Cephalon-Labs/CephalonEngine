@@ -2,6 +2,7 @@ param(
     [string]$ScorecardPath = "docs/engine-completion-scorecard.md",
     [string]$ConformanceMatrixPath = "docs/conformance-matrix.md",
     [string]$AdoptionSmokeManifestPath = "scripts/adoption-smoke-support.json",
+    [string]$SrePostureManifestPath = "scripts/sre-posture-support.json",
     [string]$PublicApiDeltaScriptPath = "scripts/summarise-public-api-deltas.ps1",
     [string]$OutputPath = "artifacts/engine-completion-scorecard-release",
     [string]$RepoRoot
@@ -10,7 +11,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$Script:SchemaVersion = "1.3.0"
+$Script:SchemaVersion = "1.4.0"
 $Script:AllowedStatuses = @(
     "ready-for-preview",
     "partial",
@@ -658,6 +659,43 @@ function Resolve-AdoptionSmokeManifestPath {
     })
 }
 
+function Resolve-SrePostureManifestPath {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$DeclaredPath,
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedRepoRoot,
+        [Parameter(Mandatory = $true)]
+        [string]$Context,
+        [string]$PathType = "Any"
+    )
+
+    if ([string]::IsNullOrWhiteSpace($DeclaredPath)) {
+        throw "SRE posture support manifest contains an empty path in $Context."
+    }
+
+    $resolvedPath = Resolve-FullPath -Path $DeclaredPath -BasePath $ResolvedRepoRoot
+    $exists = if ($PathType -eq "File") {
+        Test-Path -LiteralPath $resolvedPath -PathType Leaf
+    }
+    elseif ($PathType -eq "Directory") {
+        Test-Path -LiteralPath $resolvedPath -PathType Container
+    }
+    else {
+        Test-Path -LiteralPath $resolvedPath
+    }
+
+    if (-not $exists) {
+        throw "SRE posture support manifest path '$DeclaredPath' in $Context was not found at '$resolvedPath'."
+    }
+
+    return [pscustomobject]([ordered]@{
+        Reference  = Get-RepoRelativePath -Path $resolvedPath -RepoRoot $ResolvedRepoRoot
+        DeclaredAs = $DeclaredPath
+        Kind       = Get-SourceReferenceKind -Reference $DeclaredPath
+    })
+}
+
 function Convert-AdoptionSmokeEvidence {
     param(
         [Parameter(Mandatory = $true)]
@@ -790,6 +828,145 @@ function Convert-AdoptionSmokeEvidence {
     })
 }
 
+function Convert-SrePostureEvidence {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedManifestPath,
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedRepoRoot
+    )
+
+    if (-not (Test-Path -LiteralPath $ResolvedManifestPath -PathType Leaf)) {
+        throw "SRE posture support manifest '$ResolvedManifestPath' was not found."
+    }
+
+    $manifest = Get-Content -LiteralPath $ResolvedManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
+    $schemaVersion = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName '$schemaVersion' -DefaultValue "")
+    if ([string]::IsNullOrWhiteSpace($schemaVersion)) {
+        throw "SRE posture support manifest is missing '`$schemaVersion'."
+    }
+
+    $status = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "status" -DefaultValue "")
+    if ([string]::IsNullOrWhiteSpace($status)) {
+        throw "SRE posture support manifest is missing status."
+    }
+
+    $releaseValidationSummaryMode = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "releaseValidationSummaryMode" -DefaultValue "")
+    if ([string]::IsNullOrWhiteSpace($releaseValidationSummaryMode)) {
+        throw "SRE posture support manifest is missing releaseValidationSummaryMode."
+    }
+
+    $stableBaselinesPublishedValue = Get-ManifestPropertyValue -Object $manifest -PropertyName "stableBaselinesPublished" -DefaultValue $false
+    if ($stableBaselinesPublishedValue -isnot [bool]) {
+        throw "SRE posture support manifest stableBaselinesPublished must be a boolean value."
+    }
+
+    $sourceDocumentReferences = @(
+        Get-ManifestPropertyValue -Object $manifest -PropertyName "sourceDocs" -DefaultValue @() |
+            ForEach-Object {
+                Resolve-SrePostureManifestPath -DeclaredPath ([string]$_) -ResolvedRepoRoot $ResolvedRepoRoot -Context "sourceDocs" -PathType "File"
+            }
+    )
+    if ($sourceDocumentReferences.Count -eq 0) {
+        throw "SRE posture support manifest must declare at least one sourceDocs entry."
+    }
+
+    $validationScriptReferences = @(
+        Get-ManifestPropertyValue -Object $manifest -PropertyName "validationScripts" -DefaultValue @() |
+            ForEach-Object {
+                Resolve-SrePostureManifestPath -DeclaredPath ([string]$_) -ResolvedRepoRoot $ResolvedRepoRoot -Context "validationScripts" -PathType "File"
+            }
+    )
+    if ($validationScriptReferences.Count -eq 0) {
+        throw "SRE posture support manifest must declare at least one validationScripts entry."
+    }
+
+    $guardrailCatalogPath = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "guardrailCatalog" -DefaultValue "")
+    $guardrailCatalogReference = Resolve-SrePostureManifestPath -DeclaredPath $guardrailCatalogPath -ResolvedRepoRoot $ResolvedRepoRoot -Context "guardrailCatalog" -PathType "File"
+    $guardrailCatalog = Get-Content -LiteralPath (Resolve-FullPath -Path $guardrailCatalogPath -BasePath $ResolvedRepoRoot) -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
+    $guardrailEntries = @(Get-ManifestPropertyValue -Object $guardrailCatalog -PropertyName "entries" -DefaultValue @())
+    if ($guardrailEntries.Count -eq 0) {
+        throw "SRE posture guardrail catalog '$($guardrailCatalogReference.Reference)' must contain at least one entry."
+    }
+
+    $sliRows = @(
+        Get-ManifestPropertyValue -Object $manifest -PropertyName "slis" -DefaultValue @() |
+            ForEach-Object {
+                $id = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "id" -DefaultValue "")
+                $category = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "category" -DefaultValue "")
+                $measurementSurface = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "measurementSurface" -DefaultValue "")
+                $sourceDocumentPath = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "sourceDocument" -DefaultValue "")
+                $sloTarget = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "sloTarget" -DefaultValue "")
+                $window = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "window" -DefaultValue "")
+                $targetStatus = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "targetStatus" -DefaultValue "")
+                $baselineStatus = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "baselineStatus" -DefaultValue "")
+
+                foreach ($field in @(
+                    @{ Name = "id"; Value = $id },
+                    @{ Name = "category"; Value = $category },
+                    @{ Name = "measurementSurface"; Value = $measurementSurface },
+                    @{ Name = "sourceDocument"; Value = $sourceDocumentPath },
+                    @{ Name = "sloTarget"; Value = $sloTarget },
+                    @{ Name = "window"; Value = $window },
+                    @{ Name = "targetStatus"; Value = $targetStatus },
+                    @{ Name = "baselineStatus"; Value = $baselineStatus }
+                )) {
+                    if ([string]::IsNullOrWhiteSpace([string]$field.Value)) {
+                        throw "SRE posture SLI entry must include $($field.Name)."
+                    }
+                }
+
+                $sourceDocumentReference = Resolve-SrePostureManifestPath -DeclaredPath $sourceDocumentPath -ResolvedRepoRoot $ResolvedRepoRoot -Context "SLI '$id' sourceDocument" -PathType "File"
+                $sourceDocument = Get-Content -LiteralPath (Resolve-FullPath -Path $sourceDocumentPath -BasePath $ResolvedRepoRoot) -Raw -Encoding UTF8
+                if (-not $sourceDocument.Contains($id, [System.StringComparison]::Ordinal)) {
+                    throw "SRE posture source document '$($sourceDocumentReference.Reference)' does not contain SLI '$id'."
+                }
+
+                [pscustomobject]([ordered]@{
+                    Id                 = $id
+                    Category           = $category
+                    MeasurementSurface = $measurementSurface
+                    SourceDocument     = $sourceDocumentReference.Reference
+                    SloTarget          = $sloTarget
+                    Window             = $window
+                    TargetStatus       = $targetStatus
+                    BaselineStatus     = $baselineStatus
+                })
+            }
+    )
+
+    if ($sliRows.Count -eq 0) {
+        throw "SRE posture support manifest must declare at least one SLI."
+    }
+
+    $targetDeclaredCount = @($sliRows | Where-Object { $_.TargetStatus -eq "target-declared" }).Count
+    $pendingStableBaselineCount = @($sliRows | Where-Object { $_.BaselineStatus -eq "pending-stable-baseline" }).Count
+    $stableBaselineCount = @($sliRows | Where-Object { $_.BaselineStatus -eq "stable-baseline" }).Count
+
+    return [pscustomobject]([ordered]@{
+        Manifest                   = Get-RepoRelativePath -Path $ResolvedManifestPath -RepoRoot $ResolvedRepoRoot
+        ManifestSchemaVersion      = $schemaVersion
+        Status                     = $status
+        Summary                    = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "summary" -DefaultValue "")
+        ReleaseValidationSummaryMode = $releaseValidationSummaryMode
+        StableBaselinesPublished   = [bool]$stableBaselinesPublishedValue
+        SourceDocuments            = @($sourceDocumentReferences | ForEach-Object { $_.Reference })
+        ValidationScripts          = @($validationScriptReferences | ForEach-Object { $_.Reference })
+        GuardrailCatalog           = $guardrailCatalogReference.Reference
+        GuardrailCatalogEntryCount = $guardrailEntries.Count
+        SliCount                   = $sliRows.Count
+        TargetDeclaredCount        = $targetDeclaredCount
+        PendingStableBaselineCount = $pendingStableBaselineCount
+        StableBaselineCount        = $stableBaselineCount
+        SliRows                    = $sliRows
+        ValidatedReferences        = @(
+            $sourceDocumentReferences
+            $validationScriptReferences
+            $guardrailCatalogReference
+        ) | Sort-Object Reference -Unique
+    })
+}
+
 function Convert-PublicApiCompatibilityEvidence {
     param(
         [Parameter(Mandatory = $true)]
@@ -916,6 +1093,8 @@ function New-EngineCompletionScorecardReport {
         [Parameter(Mandatory = $true)]
         [string]$ResolvedAdoptionSmokeManifestPath,
         [Parameter(Mandatory = $true)]
+        [string]$ResolvedSrePostureManifestPath,
+        [Parameter(Mandatory = $true)]
         [string]$ResolvedPublicApiDeltaScriptPath,
         [Parameter(Mandatory = $true)]
         [string]$ResolvedRepoRoot
@@ -935,6 +1114,7 @@ function New-EngineCompletionScorecardReport {
     $packageFamilies = Convert-PackageFamilies -Rows (Get-ScorecardTable -Lines $lines -Heading "Package-family readiness roll-up")
     $packageGAReadinessRows = Convert-ConformancePackageRows -ResolvedConformanceMatrixPath $ResolvedConformanceMatrixPath -ResolvedRepoRoot $ResolvedRepoRoot
     $adoptionSmokeEvidence = Convert-AdoptionSmokeEvidence -ResolvedManifestPath $ResolvedAdoptionSmokeManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
+    $srePostureEvidence = Convert-SrePostureEvidence -ResolvedManifestPath $ResolvedSrePostureManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
     $publicApiCompatibilityEvidence = Convert-PublicApiCompatibilityEvidence -ResolvedPublicApiDeltaScriptPath $ResolvedPublicApiDeltaScriptPath -ResolvedRepoRoot $ResolvedRepoRoot
     $promotionRules = @(Get-ScorecardListItems -Lines $lines -Heading "Promotion rules" | ForEach-Object { Remove-MarkdownInlineFormatting -Value $_ })
     $refreshCadence = @(Get-ScorecardListItems -Lines $lines -Heading "Refresh cadence" | ForEach-Object { Remove-MarkdownInlineFormatting -Value $_ })
@@ -962,6 +1142,7 @@ function New-EngineCompletionScorecardReport {
         SourceDocument     = Get-RepoRelativePath -Path $ResolvedScorecardPath -RepoRoot $ResolvedRepoRoot
         ConformanceMatrix  = Get-RepoRelativePath -Path $ResolvedConformanceMatrixPath -RepoRoot $ResolvedRepoRoot
         AdoptionSmokeManifest = Get-RepoRelativePath -Path $ResolvedAdoptionSmokeManifestPath -RepoRoot $ResolvedRepoRoot
+        SrePostureManifest = Get-RepoRelativePath -Path $ResolvedSrePostureManifestPath -RepoRoot $ResolvedRepoRoot
         PublicApiDeltaScript = Get-RepoRelativePath -Path $ResolvedPublicApiDeltaScriptPath -RepoRoot $ResolvedRepoRoot
         StatusVocabulary   = $statusVocabulary
         EvidenceSources    = $evidenceSources
@@ -971,6 +1152,7 @@ function New-EngineCompletionScorecardReport {
         PackageFamilies    = $packageFamilies
         PackageGAReadiness = $packageGAReadinessRows
         AdoptionSmokeEvidence = $adoptionSmokeEvidence
+        SrePostureEvidence = $srePostureEvidence
         PublicApiCompatibilityEvidence = $publicApiCompatibilityEvidence
         PromotionRules     = $promotionRules
         RefreshCadence     = $refreshCadence
@@ -982,6 +1164,10 @@ function New-EngineCompletionScorecardReport {
             AdoptionSmokeScenarioCount = if ($null -ne $adoptionSmokeEvidence) { 1 } else { 0 }
             AdoptionSmokeRuntimeProbeCount = @($adoptionSmokeEvidence.RuntimeProbes).Count
             AdoptionSmokeAssertionCount = @($adoptionSmokeEvidence.Assertions).Count
+            SreSliCount = $srePostureEvidence.SliCount
+            SreTargetDeclaredCount = $srePostureEvidence.TargetDeclaredCount
+            SrePendingStableBaselineCount = $srePostureEvidence.PendingStableBaselineCount
+            SreStableBaselineCount = $srePostureEvidence.StableBaselineCount
             PublicApiPackageCount = $publicApiCompatibilityEvidence.PackageCount
             PublicApiPendingPackageCount = $publicApiCompatibilityEvidence.PendingPackageCount
             PublicApiAdditiveEntryCount = $publicApiCompatibilityEvidence.AdditiveEntryCount
@@ -1023,6 +1209,7 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("Source: ``$($Report.SourceDocument)``")
     $markdown.Add("Conformance matrix: ``$($Report.ConformanceMatrix)``")
     $markdown.Add("Adoption smoke manifest: ``$($Report.AdoptionSmokeManifest)``")
+    $markdown.Add("SRE posture manifest: ``$($Report.SrePostureManifest)``")
     $markdown.Add("Public API delta script: ``$($Report.PublicApiDeltaScript)``")
     $markdown.Add("Generated at UTC: ``$($Report.GeneratedAtUtc)``")
     $markdown.Add("Schema version: ``$($Report.'$schemaVersion')``")
@@ -1035,6 +1222,10 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- Package GA readiness rows: $($Report.Summary.PackageGAReadinessCount)")
     $markdown.Add("- Adoption smoke scenarios: $($Report.Summary.AdoptionSmokeScenarioCount)")
     $markdown.Add("- Adoption smoke runtime probes: $($Report.Summary.AdoptionSmokeRuntimeProbeCount)")
+    $markdown.Add("- SRE SLIs: $($Report.Summary.SreSliCount)")
+    $markdown.Add("- SRE target-declared SLIs: $($Report.Summary.SreTargetDeclaredCount)")
+    $markdown.Add("- SRE pending stable baselines: $($Report.Summary.SrePendingStableBaselineCount)")
+    $markdown.Add("- SRE stable baselines: $($Report.Summary.SreStableBaselineCount)")
     $markdown.Add("- Public API packages: $($Report.Summary.PublicApiPackageCount)")
     $markdown.Add("- Public API packages with pending changes: $($Report.Summary.PublicApiPendingPackageCount)")
     $markdown.Add("- Public API additive entries: $($Report.Summary.PublicApiAdditiveEntryCount)")
@@ -1061,6 +1252,22 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("| --- | --- |")
     foreach ($reference in $Report.EvidenceSourceReferences) {
         $markdown.Add("| $($reference.Reference) | $($reference.Kind) |")
+    }
+
+    $markdown.Add("")
+    $markdown.Add("## SRE Posture Evidence")
+    $markdown.Add("")
+    $markdown.Add("- Manifest: ``$($Report.SrePostureEvidence.Manifest)``")
+    $markdown.Add("- Status: $($Report.SrePostureEvidence.Status)")
+    $markdown.Add("- Release validation summary mode: $($Report.SrePostureEvidence.ReleaseValidationSummaryMode)")
+    $markdown.Add("- Stable baselines published: $($Report.SrePostureEvidence.StableBaselinesPublished)")
+    $markdown.Add("- Guardrail catalog: ``$($Report.SrePostureEvidence.GuardrailCatalog)``")
+    $markdown.Add("- Guardrail catalog entries: $($Report.SrePostureEvidence.GuardrailCatalogEntryCount)")
+    $markdown.Add("")
+    $markdown.Add("| SLI | Category | Target status | Baseline status |")
+    $markdown.Add("| --- | --- | --- | --- |")
+    foreach ($sli in $Report.SrePostureEvidence.SliRows) {
+        $markdown.Add("| ``$($sli.Id)`` | $($sli.Category) | $($sli.TargetStatus) | $($sli.BaselineStatus) |")
     }
 
     $markdown.Add("")
@@ -1128,6 +1335,7 @@ function Invoke-EngineCompletionScorecardPublish {
         [Parameter(Mandatory = $true)]
         [string]$ConformanceMatrixPath,
         [string]$AdoptionSmokeManifestPath = "scripts/adoption-smoke-support.json",
+        [string]$SrePostureManifestPath = "scripts/sre-posture-support.json",
         [string]$PublicApiDeltaScriptPath = "scripts/summarise-public-api-deltas.ps1",
         [Parameter(Mandatory = $true)]
         [string]$OutputPath,
@@ -1139,10 +1347,11 @@ function Invoke-EngineCompletionScorecardPublish {
     $resolvedScorecardPath = Resolve-FullPath -Path $ScorecardPath -BasePath $resolvedRepoRoot
     $resolvedConformanceMatrixPath = Resolve-FullPath -Path $ConformanceMatrixPath -BasePath $resolvedRepoRoot
     $resolvedAdoptionSmokeManifestPath = Resolve-FullPath -Path $AdoptionSmokeManifestPath -BasePath $resolvedRepoRoot
+    $resolvedSrePostureManifestPath = Resolve-FullPath -Path $SrePostureManifestPath -BasePath $resolvedRepoRoot
     $resolvedPublicApiDeltaScriptPath = Resolve-FullPath -Path $PublicApiDeltaScriptPath -BasePath $resolvedRepoRoot
     $resolvedOutputPath = Resolve-FullPath -Path $OutputPath -BasePath $resolvedRepoRoot
 
-    $report = New-EngineCompletionScorecardReport -ResolvedScorecardPath $resolvedScorecardPath -ResolvedConformanceMatrixPath $resolvedConformanceMatrixPath -ResolvedAdoptionSmokeManifestPath $resolvedAdoptionSmokeManifestPath -ResolvedPublicApiDeltaScriptPath $resolvedPublicApiDeltaScriptPath -ResolvedRepoRoot $resolvedRepoRoot
+    $report = New-EngineCompletionScorecardReport -ResolvedScorecardPath $resolvedScorecardPath -ResolvedConformanceMatrixPath $resolvedConformanceMatrixPath -ResolvedAdoptionSmokeManifestPath $resolvedAdoptionSmokeManifestPath -ResolvedSrePostureManifestPath $resolvedSrePostureManifestPath -ResolvedPublicApiDeltaScriptPath $resolvedPublicApiDeltaScriptPath -ResolvedRepoRoot $resolvedRepoRoot
     $paths = Write-EngineCompletionScorecardReport -Report $report -ResolvedOutputPath $resolvedOutputPath
 
     Write-Host "Engine completion scorecard artifact written to $($paths.JsonPath)"
@@ -1161,5 +1370,5 @@ if (-not $env:CEPHALON_ENGINE_COMPLETION_SCORECARD_NO_RUN) {
         $resolvedRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
     }
 
-    $null = Invoke-EngineCompletionScorecardPublish -ScorecardPath $ScorecardPath -ConformanceMatrixPath $ConformanceMatrixPath -AdoptionSmokeManifestPath $AdoptionSmokeManifestPath -PublicApiDeltaScriptPath $PublicApiDeltaScriptPath -OutputPath $OutputPath -RepoRoot $resolvedRoot
+    $null = Invoke-EngineCompletionScorecardPublish -ScorecardPath $ScorecardPath -ConformanceMatrixPath $ConformanceMatrixPath -AdoptionSmokeManifestPath $AdoptionSmokeManifestPath -SrePostureManifestPath $SrePostureManifestPath -PublicApiDeltaScriptPath $PublicApiDeltaScriptPath -OutputPath $OutputPath -RepoRoot $resolvedRoot
 }

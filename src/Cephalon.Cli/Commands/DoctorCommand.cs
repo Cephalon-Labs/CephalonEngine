@@ -17,6 +17,7 @@ internal static class DoctorCommand
     private const string DotNetSdkDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/sdk:";
     private const string DotNetAspNetDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/aspnet:";
     private const string TemplatePackCustomHiveEnvironmentVariable = "CEPHALON_DOCTOR_TEMPLATE_HIVE";
+    private const string RequiredScorecardSchemaVersion = "1.4.0";
 
     private static readonly string[] ExpectedTemplateShortNames =
     [
@@ -395,10 +396,10 @@ internal static class DoctorCommand
 
         if (evaluation.GeneratedApp is null)
         {
-            return "Required baseline: current dotnet SDK selection 10.x, an installed 10.x SDK family, Microsoft.NETCore.App 10.x, Microsoft.AspNetCore.App 10.x, and a readable schema 1.3.0 engine completion scorecard JSON artifact when `--scorecard` is supplied.";
+            return $"Required baseline: current dotnet SDK selection 10.x, an installed 10.x SDK family, Microsoft.NETCore.App 10.x, Microsoft.AspNetCore.App 10.x, and a readable schema {RequiredScorecardSchemaVersion} engine completion scorecard JSON artifact when `--scorecard` is supplied.";
         }
 
-        return "Required baseline: current dotnet SDK selection 10.x, an installed 10.x SDK family, Microsoft.NETCore.App 10.x, Microsoft.AspNetCore.App 10.x, a generated app root with a usable Cephalon package source plus host bootstrap assets, and a readable schema 1.3.0 engine completion scorecard JSON artifact when `--scorecard` is supplied.";
+        return $"Required baseline: current dotnet SDK selection 10.x, an installed 10.x SDK family, Microsoft.NETCore.App 10.x, Microsoft.AspNetCore.App 10.x, a generated app root with a usable Cephalon package source plus host bootstrap assets, and a readable schema {RequiredScorecardSchemaVersion} engine completion scorecard JSON artifact when `--scorecard` is supplied.";
     }
 
     private static string BuildDoctorRerunCommand(DoctorOptions options, DoctorEvaluation evaluation)
@@ -761,17 +762,23 @@ internal static class DoctorCommand
             return;
         }
 
-        if (!string.Equals(schemaVersion, "1.3.0", StringComparison.Ordinal))
+        if (!string.Equals(schemaVersion, RequiredScorecardSchemaVersion, StringComparison.Ordinal))
         {
             checks.Add(new DoctorCheck(
                 DoctorCheckSeverity.Failure,
                 "Engine completion scorecard artifact",
-                $"Unsupported schema '{schemaVersion}'. Doctor expects scorecard schema '1.3.0'.",
+                $"Unsupported schema '{schemaVersion}'. Doctor expects scorecard schema '{RequiredScorecardSchemaVersion}'.",
                 "Regenerate the scorecard artifact with the current `scripts/publish-engine-completion-scorecard.ps1`."));
             return;
         }
 
+        var srePostureEvidence = scorecard["SrePostureEvidence"];
         var publicApiCompatibilityEvidence = scorecard["PublicApiCompatibilityEvidence"];
+
+        if (srePostureEvidence is null)
+        {
+            errors.Add("SrePostureEvidence");
+        }
 
         if (publicApiCompatibilityEvidence is null)
         {
@@ -788,10 +795,18 @@ internal static class DoctorCommand
         var partialPackageGAGates = GetRequiredScorecardInt(summary, "PartialPackageGAGates", errors);
         var notClaimedPackageGAGates = GetRequiredScorecardInt(summary, "NotClaimedPackageGAGates", errors);
         var needsRefreshPackageGAGates = GetRequiredScorecardInt(summary, "NeedsRefreshPackageGAGates", errors);
+        var sreSliCount = GetRequiredScorecardInt(summary, "SreSliCount", errors);
+        var sreTargetDeclaredCount = GetRequiredScorecardInt(summary, "SreTargetDeclaredCount", errors);
+        var srePendingStableBaselineCount = GetRequiredScorecardInt(summary, "SrePendingStableBaselineCount", errors);
+        var sreStableBaselineCount = GetRequiredScorecardInt(summary, "SreStableBaselineCount", errors);
         var publicApiPackageCount = GetRequiredScorecardInt(summary, "PublicApiPackageCount", errors);
         var publicApiPendingPackageCount = GetRequiredScorecardInt(summary, "PublicApiPendingPackageCount", errors);
         var publicApiAdditiveEntryCount = GetRequiredScorecardInt(summary, "PublicApiAdditiveEntryCount", errors);
         var publicApiRemovalEntryCount = GetRequiredScorecardInt(summary, "PublicApiRemovalEntryCount", errors);
+        var evidenceSreSliCount = GetRequiredScorecardInt(srePostureEvidence, "SliCount", errors, "SrePostureEvidence");
+        var evidenceSreTargetDeclaredCount = GetRequiredScorecardInt(srePostureEvidence, "TargetDeclaredCount", errors, "SrePostureEvidence");
+        var evidenceSrePendingStableBaselineCount = GetRequiredScorecardInt(srePostureEvidence, "PendingStableBaselineCount", errors, "SrePostureEvidence");
+        var evidenceSreStableBaselineCount = GetRequiredScorecardInt(srePostureEvidence, "StableBaselineCount", errors, "SrePostureEvidence");
         var evidencePublicApiPackageCount = GetRequiredScorecardInt(publicApiCompatibilityEvidence, "PackageCount", errors, "PublicApiCompatibilityEvidence");
         var evidencePublicApiPendingPackageCount = GetRequiredScorecardInt(publicApiCompatibilityEvidence, "PendingPackageCount", errors, "PublicApiCompatibilityEvidence");
         var evidencePublicApiAdditiveEntryCount = GetRequiredScorecardInt(publicApiCompatibilityEvidence, "AdditiveEntryCount", errors, "PublicApiCompatibilityEvidence");
@@ -804,6 +819,19 @@ internal static class DoctorCommand
                 "Engine completion scorecard artifact",
                 $"Artifact '{resolvedScorecardPath}' is missing required scorecard fields: {string.Join(", ", errors)}.",
                 "Regenerate the scorecard artifact with the current `scripts/publish-engine-completion-scorecard.ps1` before using it with doctor."));
+            return;
+        }
+
+        if (sreSliCount != evidenceSreSliCount ||
+            sreTargetDeclaredCount != evidenceSreTargetDeclaredCount ||
+            srePendingStableBaselineCount != evidenceSrePendingStableBaselineCount ||
+            sreStableBaselineCount != evidenceSreStableBaselineCount)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Engine completion scorecard SRE posture",
+                $"Artifact '{resolvedScorecardPath}' has SRE summary counts that do not match SrePostureEvidence.",
+                "Regenerate the scorecard artifact with the current `scripts/publish-engine-completion-scorecard.ps1`."));
             return;
         }
 
@@ -860,6 +888,17 @@ internal static class DoctorCommand
             packageSeverity == DoctorCheckSeverity.Pass
                 ? null
                 : "Do not equate package maturity with GA; use this summary to find the source document and blocker class before release promotion."));
+
+        var sreSeverity = srePendingStableBaselineCount > 0
+            ? DoctorCheckSeverity.Warning
+            : DoctorCheckSeverity.Pass;
+        checks.Add(new DoctorCheck(
+            sreSeverity,
+            "Engine completion scorecard SRE posture",
+            $"{sreSliCount} SLIs; target-declared {sreTargetDeclaredCount}, pending stable baselines {srePendingStableBaselineCount}, stable baselines {sreStableBaselineCount}.",
+            sreSeverity == DoctorCheckSeverity.Pass
+                ? null
+                : "Treat SRE posture as release-readiness evidence, not a stable SLO claim, until baselineStatus entries move out of pending-stable-baseline."));
 
         var publicApiSeverity = publicApiRemovalEntryCount > 0
             ? DoctorCheckSeverity.Warning
