@@ -24,6 +24,47 @@ Current focus:
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
 - treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md) for release validation, and `cephalon doctor --scorecard <path>` provides a local CLI readback over that generated artifact without becoming source truth
 
+### ENG-478 Make SciSharp adapter deployment posture machine-checkable
+
+Status: done
+Estimate: 2
+Issue: #1079
+Iteration: Sprint 125
+
+Why:
+
+- `ENG-477` correctly moved the current SciSharp binlog transport reflection out of the core
+  `Cephalon.Data.MySql` package, but the optional adapter still needed an explicit package-level
+  deployment-mode posture so adopters could not mistake the clean core package for adapter support
+- the adapter remains useful for teams that deliberately accept the current runtime tradeoff, but
+  it must not imply trim, Native AOT, or single-file compatibility while it still reaches into
+  third-party `SciSharp.MySQL.Replication` internals
+- manifest `requiredProjectProperties` should guard both scoped support claims and permanent
+  not-claimed postures against project-file drift
+
+Delivered:
+
+- declared `IsTrimmable=false`, `IsAotCompatible=false`, `PublishTrimmed=false`,
+  `PublishAot=false`, and `PublishSingleFile=false` in
+  `Cephalon.Data.MySql.SciSharpReplication`
+- recorded the same values in the adapter's `scripts/deployment-mode-support.json`
+  `requiredProjectProperties`
+- added manifest Pester coverage that verifies every package-level `requiredProjectProperties`
+  entry against the owning csproj, covering scoped support claims and permanent not-claimed
+  postures in one guard
+- refreshed the adapter component doc, deployment-mode support guide, trim/AOT hazard inventory,
+  compatibility/readiness docs, roadmap/follow-up tracker, and project memory
+
+Validation:
+
+- `dotnet build src/Cephalon.Data.MySql.SciSharpReplication/Cephalon.Data.MySql.SciSharpReplication.csproj -c Debug --no-restore /p:UseSharedCompilation=false`
+- deployment-mode manifest Pester coverage (`33/33`)
+- deployment-mode manifest JSON parse
+- deployment-mode claim harness in audit mode (`not-claimed`, 6 packages, 14 hazards)
+- dotnet-readiness validation
+- combined deployment-mode script Pester suites (`110/110`)
+- `git diff --check`
+
 ### ENG-477 Isolate MySQL SciSharp binlog transport reflection
 
 Status: done
@@ -14014,6 +14055,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-475 Retire Behaviors.Http manual route-contract fallback: `BehaviorContractDescriptor`, `BehaviorInputPropertyDescriptor`, and `BehaviorContractRegistry` now carry generated or explicit behavior endpoint-contract metadata; `Cephalon.Behaviors.SourceGen` emits `GetBehaviorContracts()` and registers it from a module initializer; and `Cephalon.Behaviors.Http` route materialization, profile projection, module-builder ownership, binding normalization, fallback-mode resolution, and candidate validation consume descriptor metadata instead of resolving behavior interfaces, attributes, or structured-result wrappers from runtime types. Current manifest output reports 6 package entries, 3 packages with known hazards, 9 known hazard entries, zero active `low` entries, zero active `medium` entries, and 1 scoped `singleFile` claim while global trim / Native AOT / single-file rows remain `not-claimed`. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
 - ENG-476 Retire Engine module discovery reflection: `Cephalon.Engine.SourceGen` now emits `ModuleDiscoveryDescriptor` metadata and `ModuleDiscovery` consumes generated descriptors instead of scanning assembly types or using `Activator.CreateInstance(...)`; the `Cephalon.Engine` high-tier row leaves the active package table and `Cephalon.Engine.SourceGen` is listed as `excluded-by-design`. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
 - ENG-477 Isolate MySQL SciSharp binlog transport reflection: `Cephalon.Data.MySql` no longer references `SciSharp.MySQL.Replication` or `MySql.Data`; the current SciSharp-backed `IMySqlBinlogTransport` moves into optional `Cephalon.Data.MySql.SciSharpReplication` behind `AddSciSharpMySqlBinlogReplication(...)`; and the core MySQL package now fails fast with `binlog-transport-adapter-missing` when CDC is configured without an adapter. Current manifest output reports 6 package entries, 2 packages with known hazards, 14 known hazard entries, 2 `high` entries, zero active `medium` or `low` entries, 3 `excluded-by-design` entries, and 1 scoped `singleFile` claim while global trim / Native AOT / single-file rows remain `not-claimed`. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
+- ENG-478 Make SciSharp adapter deployment posture machine-checkable: `Cephalon.Data.MySql.SciSharpReplication` now declares explicit permanent `not-claimed` project properties for trim, Native AOT, and single-file publishing; `scripts/deployment-mode-support.json` records the matching `requiredProjectProperties`; and manifest Pester coverage verifies package-level required properties against csproj truth. Hazard counts and global support rows stay unchanged at 6 package entries, 2 packages with known hazards, 14 known hazard entries, and global `not-claimed`. Quality dimensions: Compatibility + Auditability + Maintainability + Usability (shipped)
 
 ### Later / not scheduled yet
 

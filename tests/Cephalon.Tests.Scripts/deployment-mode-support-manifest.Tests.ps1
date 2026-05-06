@@ -30,6 +30,44 @@ BeforeAll {
 
     $script:manifestRaw = Get-Content -LiteralPath $script:manifestPath -Raw -Encoding UTF8
     $script:manifest = $script:manifestRaw | ConvertFrom-Json -Depth 16
+
+    function Test-CsprojPropertyExpectation {
+        param(
+            [Parameter(Mandatory = $true)][string]$CsprojPath,
+            [Parameter(Mandatory = $true)][string]$Entry
+        )
+
+        $parts = $Entry -split "=", 2
+        $propertyName = $parts[0].Trim()
+        if ([string]::IsNullOrWhiteSpace($propertyName)) {
+            throw "requiredProjectProperties entry '$Entry' is missing a property name"
+        }
+
+        $expectedValue = if ($parts.Count -gt 1) { $parts[1].Trim() } else { "true" }
+        if ($expectedValue -notin @("true", "false")) {
+            throw "requiredProjectProperties entry '$Entry' must use '=true' or '=false' when an expected value is supplied"
+        }
+
+        [xml]$projectXml = Get-Content -LiteralPath $CsprojPath -Raw -Encoding UTF8
+        $values = @(
+            $projectXml.Project.PropertyGroup |
+                ForEach-Object {
+                    $_.ChildNodes |
+                        Where-Object { $_.NodeType -eq [System.Xml.XmlNodeType]::Element -and $_.Name -eq $propertyName } |
+                        ForEach-Object { $_.InnerText.Trim() }
+                } |
+                Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+        )
+
+        $actualValue = if ($values.Count -gt 0) { $values[$values.Count - 1] } else { $null }
+
+        return [pscustomobject]@{
+            Property      = $propertyName
+            ExpectedValue = $expectedValue
+            ActualValue   = $actualValue
+            Matched       = $null -ne $actualValue -and [string]::Equals($actualValue, $expectedValue, [System.StringComparison]::OrdinalIgnoreCase)
+        }
+    }
 }
 
 Describe "deployment-mode-support.json — top-level schema" {
@@ -290,6 +328,24 @@ Describe "deploymentModeEligibility" {
             $relativePath = "src/$($pkg.packageName)/$($pkg.packageName).csproj"
             $resolved = Join-Path $script:repoRoot ($relativePath -replace '/', [System.IO.Path]::DirectorySeparatorChar)
             Test-Path -LiteralPath $resolved -PathType Leaf | Should -BeTrue -Because "deploymentModeEligibility.packages entry '$($pkg.packageName)' must exist at '$resolved'"
+        }
+    }
+
+    It "every package requiredProjectProperties entry matches its project file" {
+        # ENG-478: requiredProjectProperties now protects both scoped support claims and permanent
+        # not-claimed package postures. If the manifest says a package explicitly disables or
+        # enables a deployment-mode property, the owning project must carry that exact value.
+        $packages = $script:manifest.deploymentModeEligibility.packages
+        foreach ($pkg in $packages) {
+            $entries = @($pkg.requiredProjectProperties | ForEach-Object { [string]$_ } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+            if ($entries.Count -eq 0) { continue }
+
+            $relativePath = "src/$($pkg.packageName)/$($pkg.packageName).csproj"
+            $resolved = Join-Path $script:repoRoot ($relativePath -replace '/', [System.IO.Path]::DirectorySeparatorChar)
+            foreach ($entry in $entries) {
+                $result = Test-CsprojPropertyExpectation -CsprojPath $resolved -Entry $entry
+                $result.Matched | Should -BeTrue -Because "deploymentModeEligibility.packages entry '$($pkg.packageName)' requires '$entry', but '$($result.Property)' in '$relativePath' was '$($result.ActualValue)'"
+            }
         }
     }
 

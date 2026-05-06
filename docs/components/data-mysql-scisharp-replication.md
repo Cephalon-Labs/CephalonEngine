@@ -56,7 +56,9 @@ The split is deliberate. The NuGet release currently available for `SciSharp.MyS
 
 ## Deployment-mode posture
 
-This package is not a trim, native AOT, or single-file support claim. The current implementation still carries the known third-party reflective adapter path. It exists so teams can make a conscious runtime tradeoff while Cephalon keeps the safer package boundary ready for a future public upstream API or first-party transport.
+This package is a permanent package-level `not-claimed` posture for trim, native AOT, and single-file publishing until the transport no longer depends on the current SciSharp reflective path. The project file explicitly declares `IsTrimmable=false`, `IsAotCompatible=false`, `PublishTrimmed=false`, `PublishAot=false`, and `PublishSingleFile=false`; `scripts/deployment-mode-support.json` records those same values in this package's `requiredProjectProperties`; and the manifest Pester suite verifies the values do not drift from the project file.
+
+The current implementation still carries the known third-party reflective adapter path. It exists so teams can make a conscious runtime tradeoff while Cephalon keeps the safer package boundary ready for a future public upstream API or first-party transport.
 
 ## Related docs
 

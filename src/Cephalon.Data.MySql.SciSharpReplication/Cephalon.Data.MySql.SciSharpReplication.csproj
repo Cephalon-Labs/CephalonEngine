@@ -7,6 +7,20 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <LangVersion>latest</LangVersion>
     <Description>SciSharp-backed MySQL binlog transport adapter for the Cephalon MySQL data pack.</Description>
+    <!--
+      Permanent not-claimed posture for trim / Native AOT / single-file publishing per
+      ENG-478. This optional adapter depends on the current SciSharp.MySQL.Replication
+      public NuGet surface, which still requires Cephalon to resolve and invoke third-party
+      ReplicationClient members reflectively to resume from an exact binlog position. Keep
+      this package useful as an explicit runtime tradeoff, but make the deployment-mode
+      posture machine-checkable instead of letting an adopter infer support from the
+      cleaned-up core Cephalon.Data.MySql package.
+    -->
+    <IsTrimmable>false</IsTrimmable>
+    <IsAotCompatible>false</IsAotCompatible>
+    <PublishTrimmed>false</PublishTrimmed>
+    <PublishAot>false</PublishAot>
+    <PublishSingleFile>false</PublishSingleFile>
   </PropertyGroup>
 
   <ItemGroup>
