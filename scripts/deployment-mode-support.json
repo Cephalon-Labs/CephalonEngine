@@ -219,9 +219,9 @@
             "remediation": "Removed by the same upstream-API or public-rewrite that retires the GetMethod/GetField calls above; trim-hostile because the resolved methods themselves can be stripped from the third-party assembly."
           }
         ],
-        "evidence": "docs/trim-aot-hazard-inventory.md (high tier — third-party reflective access remains in optional SciSharp adapter; ENG-477 removed this dependency from the core MySQL package; ENG-478 makes the adapter's permanent not-claimed posture machine-checkable)",
+        "evidence": "docs/trim-aot-hazard-inventory.md (high tier — third-party reflective access remains in optional SciSharp adapter; ENG-477 removed this dependency from the core MySQL package; ENG-478 makes the adapter's permanent not-claimed posture machine-checkable; ENG-494 confirms this is a resolved package-level support boundary, not an open global remediation blocker)",
         "introducedBy": "ENG-434",
-        "extendedBy": "ENG-459; ENG-477; ENG-478"
+        "extendedBy": "ENG-459; ENG-477; ENG-478; ENG-494"
       },
       {
         "packageName": "Cephalon.ReferenceDocs",
@@ -240,7 +240,7 @@
             "kind": "reflection-by-design-type-introspection",
             "site": "src/Cephalon.ReferenceDocs/Generation/ReferenceDocsGenerator.cs:295",
             "pattern": "type.GetConstructors(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly) over an arbitrary runtime Type parameter — by-design enumeration of the public-and-static constructors of any type the generator is asked to document, used to emit per-constructor MemberPage entries",
-            "remediation": "Permanent not-claimed posture for the package (the high-tier remediation alternative). The package's purpose is type-introspection of arbitrary referenced assemblies, so a source-generator-emitted descriptor table cannot replace this reflection without removing the package's reason to exist. A future slice may declare IsTrimmable=false; IsAotCompatible=false; PublishTrimmed=false; PublishAot=false; PublishSingleFile=false in the csproj to make the permanent posture machine-checkable through the harness's project-property audit phase."
+            "remediation": "Permanent not-claimed posture for the package (the high-tier remediation alternative). The package's purpose is type-introspection of arbitrary referenced assemblies, so a source-generator-emitted descriptor table cannot replace this reflection without removing the package's reason to exist. The csproj already declares IsTrimmable=false; IsAotCompatible=false; PublishTrimmed=false; PublishAot=false; PublishSingleFile=false, and the manifest Pester suite verifies those requiredProjectProperties against the project file."
           },
           {
             "kind": "reflection-by-design-type-introspection",
@@ -261,9 +261,9 @@
             "remediation": "Same permanent not-claimed posture as the line-295 entry."
           }
         ],
-        "evidence": "docs/trim-aot-hazard-inventory.md (high tier — by-design type-introspection in the published documentation generator; permanent not-claimed posture is the intended durable answer rather than a structural rewrite; csproj posture properties declared via ENG-439)",
+        "evidence": "docs/trim-aot-hazard-inventory.md (high tier — by-design type-introspection in the published documentation generator; permanent not-claimed posture is the intended durable answer rather than a structural rewrite; csproj posture properties declared via ENG-439; ENG-494 confirms this is a resolved package-level support boundary, not an open global remediation blocker)",
         "introducedBy": "ENG-438",
-        "extendedBy": "ENG-439"
+        "extendedBy": "ENG-439; ENG-494"
       },
       {
         "packageName": "Cephalon.Analyzers",

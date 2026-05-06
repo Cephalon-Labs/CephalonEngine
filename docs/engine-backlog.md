@@ -27,6 +27,35 @@ Current focus:
 - treat the Debezium test-flake quarantine as resolved by shared catalog hardening: CDC execution-runtime filters now reuse versioned snapshots over indexed capture ownership instead of re-enriching every runtime for every state/category selector
 - treat the CDC execution-runtime catalog hot path as benchmark-governed: `CdcExecutionRuntimeCatalogBenchmarks` now covers Debezium-managed external runtimes, external observations, repeated managed-connector drift/dry-run/command-issuance filters, and compact multi-selector operator flows against the shared versioned snapshot
 
+### ENG-494 Decide deployment-mode posture for high-tier packages
+
+Status: done
+Estimate: 1
+Issue: #1104
+Iteration: Sprint 125
+Area: release-readiness / deployment-mode / docs
+Quality dimensions: Compatibility, Auditability, Maintainability, Usability
+
+Why:
+
+- after `ENG-480`, planning docs still read as if the two remaining high-tier packages were open structural remediation blockers
+- `Cephalon.Data.MySql.SciSharpReplication` and `Cephalon.ReferenceDocs` already had machine-checkable false deployment-mode properties, but component and readiness docs needed the final support-boundary decision stated plainly
+- release managers need to distinguish "global deployment modes remain not claimed" from "these optional/tooling packages are deliberately outside any future promoted deploy-anywhere set unless their implementations change"
+
+Delivered:
+
+- confirmed `Cephalon.Data.MySql.SciSharpReplication` remains a deliberate package-level `not-claimed` boundary until a released public SciSharp start-position API or first-party binlog transport replaces the current reflective adapter path
+- confirmed `Cephalon.ReferenceDocs` remains a deliberate package-level `not-claimed` boundary because runtime assembly/type/member introspection is the package's purpose
+- refreshed the ReferenceDocs and SciSharp component docs, reference-doc publishing guide, deployment-mode support guide, trim/AOT hazard inventory, compatibility/readiness docs, completion scorecard, architecture follow-up tracker, roadmap, backlog, and project memory so the two high-tier rows no longer read as unresolved global blockers
+- updated `scripts/deployment-mode-support.json` evidence/remediation prose so the manifest points at the final support-boundary decision while preserving the same package counts, hazard counts, and global `not-claimed` posture
+
+Validation:
+
+- deployment-mode manifest Pester coverage
+- deployment-mode claim harness in audit mode
+- engine-completion scorecard artifact publishing
+- `git diff --check`
+
 ### ENG-493 Sweep CDC readiness documentation after live-provider hardening
 
 Status: done
@@ -14594,6 +14623,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-491 Add SQL Server live CDC integration: `tests/Cephalon.Tests.CdcIntegration` now proves SQL Server CDC against an opt-in live service by creating an isolated CDC-enabled database/table, inserting a real row, verifying `Cephalon.Data.SqlServer` outbox staging, shared runtime-state and execution-runtime aggregation, and the persisted SQL checkpoint table while default CI remains Docker-free. Quality dimensions: Reliability + Compatibility + Auditability + Data Integrity (shipped)
 - ENG-492 Add Postgres live CDC integration: `tests/Cephalon.Tests.CdcIntegration` now proves Postgres logical replication against an opt-in live service by creating an isolated schema/table/publication/slot, inserting a real row, verifying `Cephalon.Data.Postgres` outbox staging, shared runtime-state and execution-runtime aggregation, and slot confirmed-flush checkpoint truth while default CI remains Docker-free. Quality dimensions: Reliability + Compatibility + Auditability + Data Integrity (shipped)
 - ENG-493 Sweep CDC readiness documentation after live-provider hardening: `docs/architecture-recommendations.md` now names MongoDB / SQL Server / PostgreSQL live-provider CDC evidence as shipped, and older backlog planning prose carries superseded-context notes so the current docs no longer imply a remaining Postgres or separate integration-project gap. Quality dimensions: Auditability + Maintainability + Reliability (shipped)
+- ENG-494 Decide deployment-mode posture for high-tier packages: `Cephalon.Data.MySql.SciSharpReplication` and `Cephalon.ReferenceDocs` now read as deliberate package-level `not-claimed` boundaries across component docs, deployment-mode support, hazard inventory, scorecard, readiness, roadmap, backlog, project memory, and manifest evidence/remediation prose; remaining global promotion work is a later non-opt-out publish-probe gate plus any scoped package claims that deliberately enter the promoted support set. Quality dimensions: Compatibility + Auditability + Maintainability + Usability (shipped)
 
 ### Later / not scheduled yet
 

@@ -29,6 +29,12 @@ The documentation model for this repository is:
 
 The generator reads built assemblies plus their adjacent XML documentation files, reflects the public API surface, and writes assembly-level Markdown pages together with shared navigation assets for assemblies, namespaces, types, and members.
 
+## Deployment-mode boundary
+
+`Cephalon.ReferenceDocs` is intentionally outside Cephalon's trim, Native AOT, and single-file support claims. The tool reflects arbitrary referenced assemblies at runtime because that is how it discovers the API members it publishes. Its project file and `scripts/deployment-mode-support.json` both declare `IsTrimmable=false`, `IsAotCompatible=false`, `PublishTrimmed=false`, `PublishAot=false`, and `PublishSingleFile=false`, and the deployment-mode manifest tests verify those values against the project file.
+
+That boundary does not weaken the generated docs contract: hand-authored docs remain the primary product documentation, XML comments remain the API explanation layer, and generated reference output remains optional release/adoption evidence. It only means this repo-local generator is not itself a deploy-anywhere runtime package.
+
 ## DocFX readiness
 
 Cephalon's XML comments should stay good enough for DocFX-style API publishing, not only for the repo-local `Cephalon.ReferenceDocs` generator.

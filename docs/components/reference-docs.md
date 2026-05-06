@@ -49,6 +49,12 @@ The ASP.NET Core host can then serve that generated output, and the CLI can publ
 
 For package-surface hardening, the reusable library contract stays centered on request/generate/write flows. Assembly-load plumbing and browser-asset rendering stay internal so future docs-site changes do not widen the public API unnecessarily.
 
+## Deployment-mode posture
+
+`Cephalon.ReferenceDocs` is a deliberate package-level `not-claimed` surface for trim, Native AOT, and single-file publishing. The generator's job is to load arbitrary referenced assemblies and enumerate public constructors, fields, properties, and methods so XML-comment-backed API docs can be published. That by-design reflection is the feature, not an accidental implementation detail.
+
+The project file explicitly declares `IsTrimmable=false`, `IsAotCompatible=false`, `PublishTrimmed=false`, `PublishAot=false`, and `PublishSingleFile=false`; `scripts/deployment-mode-support.json` records the same values in this package's `requiredProjectProperties`; and the manifest Pester suite verifies those values against the project file. A future documentation pipeline can add a separate source-generated or descriptor-backed publisher, but this package itself must not be presented as trim, Native AOT, or single-file compatible while it remains the runtime assembly-introspection tool.
+
 ## Related docs
 
 - [Reference docs publishing](../reference-docs.md)
