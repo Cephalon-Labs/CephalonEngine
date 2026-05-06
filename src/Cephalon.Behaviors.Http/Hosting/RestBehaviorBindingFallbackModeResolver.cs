@@ -1,5 +1,3 @@
-using System.Reflection;
-using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Transports;
 using Cephalon.Behaviors.Http.Abstractions;
 using Microsoft.AspNetCore.Routing.Patterns;
@@ -8,51 +6,23 @@ namespace Cephalon.Behaviors.Http.Hosting;
 
 internal static class RestBehaviorBindingFallbackModeResolver
 {
-    internal static RestEndpointBindingFallbackMode? ResolveForBehavior(
-        Type behaviorType,
+    internal static RestEndpointBindingFallbackMode? ResolveForInputContract(
+        BehaviorRestInputContractDescriptor inputContract,
         RestBehaviorHttpMethod method,
         string pattern,
         IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
         bool preserveImplicitQueryFallback)
     {
-        ArgumentNullException.ThrowIfNull(behaviorType);
-
-        var contractInterface = behaviorType.GetInterfaces()
-            .FirstOrDefault(static candidate =>
-                candidate.IsGenericType &&
-                candidate.GetGenericTypeDefinition() == typeof(IAppBehavior<,>));
-        if (contractInterface is null)
-        {
-            return null;
-        }
-
-        return ResolveForInputType(
-            contractInterface.GetGenericArguments()[0],
-            method,
-            pattern,
-            bindings,
-            preserveImplicitQueryFallback);
-    }
-
-    internal static RestEndpointBindingFallbackMode? ResolveForInputType(
-        Type inputType,
-        RestBehaviorHttpMethod method,
-        string pattern,
-        IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
-        bool preserveImplicitQueryFallback)
-    {
-        ArgumentNullException.ThrowIfNull(inputType);
+        ArgumentNullException.ThrowIfNull(inputContract);
         ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
         ArgumentNullException.ThrowIfNull(bindings);
 
-        var effectiveInputType = Nullable.GetUnderlyingType(inputType) ?? inputType;
-        if (IsSimpleInputType(effectiveInputType))
+        if (inputContract.IsScalar)
         {
             return null;
         }
 
-        var inputProperties = effectiveInputType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-            .Where(static property => property.CanRead)
+        var inputProperties = (inputContract.Properties ?? Array.Empty<BehaviorRestInputPropertyDescriptor>())
             .Select(static property => property.Name)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
         if (inputProperties.Count == 0)
@@ -89,21 +59,5 @@ internal static class RestBehaviorBindingFallbackModeResolver
         return hasRemainingImplicitFallbackSurface
             ? RestEndpointBindingFallbackMode.PreserveRemainingBodyFallback
             : null;
-    }
-
-    private static bool IsSimpleInputType(Type inputType)
-    {
-        ArgumentNullException.ThrowIfNull(inputType);
-
-        var type = Nullable.GetUnderlyingType(inputType) ?? inputType;
-        return type.IsPrimitive ||
-               type.IsEnum ||
-               type == typeof(string) ||
-               type == typeof(decimal) ||
-               type == typeof(Guid) ||
-               type == typeof(DateTime) ||
-               type == typeof(DateTimeOffset) ||
-               type == typeof(DateOnly) ||
-               type == typeof(TimeOnly);
     }
 }

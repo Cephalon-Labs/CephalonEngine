@@ -350,10 +350,15 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                     ToTypeofTypeName(property.Type)))
                 .ToImmutableDictionary(static property => property.Name, static property => property, StringComparer.OrdinalIgnoreCase);
 
+        var outputType = behaviorInterface.TypeArguments[1];
+        var returnsStructuredResult = TryResolveStructuredResultPayloadType(outputType, out var responseType);
+
         return new InputTypeInfo(
             inputType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
             behaviorInterface.TypeArguments[0].ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-            behaviorInterface.TypeArguments[1].ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+            outputType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
+            ToTypeofTypeName(responseType),
+            returnsStructuredResult,
             isSimpleInput,
             publicProperties);
     }
@@ -363,6 +368,33 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         return typeSymbol.AllInterfaces.FirstOrDefault(static i =>
             i.OriginalDefinition.ToDisplayString() ==
             "Cephalon.Abstractions.Behaviors.IAppBehavior<TIn, TOut>");
+    }
+
+    private static bool TryResolveStructuredResultPayloadType(
+        ITypeSymbol outputType,
+        out ITypeSymbol responseType)
+    {
+        var effectiveOutputType = UnwrapNullable(outputType);
+        responseType = effectiveOutputType;
+        if (effectiveOutputType is not INamedTypeSymbol
+            {
+                IsGenericType: true,
+                TypeArguments.Length: 1
+            } namedOutputType)
+        {
+            return false;
+        }
+
+        var originalDefinition = namedOutputType.OriginalDefinition.ToDisplayString();
+        if (originalDefinition is not
+            ("Cephalon.Abstractions.Behaviors.Result<T>" or
+             "Cephalon.Abstractions.Behaviors.BehaviorResult<T>"))
+        {
+            return false;
+        }
+
+        responseType = UnwrapNullable(namedOutputType.TypeArguments[0]);
+        return true;
     }
 
     private static string ResolveBehaviorIdempotencyMode(INamedTypeSymbol typeSymbol)
@@ -1088,6 +1120,9 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         sb.AppendLine("                GetExecutionSlots(),");
         sb.AppendLine("                GetTopologyDescriptors(),");
         sb.AppendLine("                GetBehaviorsNeedingRuntimeTopology()));");
+        sb.AppendLine("        global::Cephalon.Behaviors.Services.BehaviorContractRegistry.Register(");
+        sb.AppendLine("            typeof(global::Cephalon.Behaviors.Generated.BehaviorAutoRegistration).Assembly,");
+        sb.AppendLine("            GetBehaviorContracts());");
         sb.AppendLine("    }");
         sb.AppendLine();
 
@@ -1147,6 +1182,46 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             var inputType = info.InputType.GenericInputTypeName;
             var outputType = info.InputType.GenericOutputTypeName;
             sb.AppendLine($"            new global::Cephalon.Behaviors.Services.BehaviorGeneratedExecutionSlotDescriptor(\"{id}\", typeof({fqn}), global::Cephalon.Behaviors.Services.BehaviorExecutionSlot.For<{fqn}, {inputType}, {outputType}>()),");
+        }
+
+        sb.AppendLine("        };");
+        sb.AppendLine("    }");
+        sb.AppendLine();
+
+        // ── GetBehaviorContracts method ──
+        sb.AppendLine("    /// <summary>Returns pre-built behavior contract descriptors discovered at compile time.</summary>");
+        sb.AppendLine("    internal static global::System.Collections.Generic.IReadOnlyList<global::Cephalon.Behaviors.Services.BehaviorContractDescriptor> GetBehaviorContracts()");
+        sb.AppendLine("    {");
+        sb.AppendLine("        return new global::Cephalon.Behaviors.Services.BehaviorContractDescriptor[]");
+        sb.AppendLine("        {");
+
+        foreach (var info in infos)
+        {
+            if (info is not { IsValid: true, InputType: not null }) continue;
+            var id = EscapeString(info.BehaviorId);
+            var inputType = info.InputType;
+            sb.Append("            new global::Cephalon.Behaviors.Services.BehaviorContractDescriptor(");
+            sb.Append($"\"{id}\", ");
+            sb.Append($"typeof({info.TypeName}), ");
+            sb.Append($"typeof({inputType.GenericInputTypeName}), ");
+            sb.Append($"typeof({inputType.GenericOutputTypeName}), ");
+            sb.Append($"typeof({inputType.ResponseTypeName}), ");
+            sb.Append(inputType.ReturnsStructuredResult ? "true" : "false");
+            sb.Append(", ");
+            sb.Append(inputType.IsSimple ? "true" : "false");
+            if (inputType.PublicProperties.Count > 0)
+            {
+                sb.Append(", new global::Cephalon.Behaviors.Services.BehaviorInputPropertyDescriptor[] { ");
+                sb.Append(string.Join(
+                    ", ",
+                    inputType.PublicProperties.Values
+                        .OrderBy(static property => property.Name, StringComparer.Ordinal)
+                        .Select(static property =>
+                            $"new global::Cephalon.Behaviors.Services.BehaviorInputPropertyDescriptor(\"{EscapeString(property.Name)}\", typeof({property.TypeName}))")));
+                sb.Append(" }");
+            }
+
+            sb.AppendLine("),");
         }
 
         sb.AppendLine("        };");
@@ -1988,12 +2063,16 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             string displayName,
             string genericInputTypeName,
             string genericOutputTypeName,
+            string responseTypeName,
+            bool returnsStructuredResult,
             bool isSimple,
             ImmutableDictionary<string, InputPropertyInfo> publicProperties)
         {
             DisplayName = displayName;
             GenericInputTypeName = genericInputTypeName;
             GenericOutputTypeName = genericOutputTypeName;
+            ResponseTypeName = responseTypeName;
+            ReturnsStructuredResult = returnsStructuredResult;
             IsSimple = isSimple;
             PublicProperties = publicProperties;
         }
@@ -2001,6 +2080,8 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         public string DisplayName { get; }
         public string GenericInputTypeName { get; }
         public string GenericOutputTypeName { get; }
+        public string ResponseTypeName { get; }
+        public bool ReturnsStructuredResult { get; }
         public bool IsSimple { get; }
         public ImmutableDictionary<string, InputPropertyInfo> PublicProperties { get; }
     }

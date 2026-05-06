@@ -647,6 +647,9 @@ Current helper behavior:
   profile bindings, while profile-driven explicit bindings switch to descriptor-aware source
   resolution over `BehaviorRestInputContractDescriptor` metadata with deterministic route/body
   fallback
+- maps manual and profile-backed REST endpoints from generated or explicitly registered
+  `BehaviorContractDescriptor` metadata, so route contracts do not need to infer
+  `IAppBehavior<TInput,TOutput>` or structured result wrappers from runtime types
 - validates explicit binding metadata at build time and re-checks the same route-placeholder truth
   plus preserved implicit-query fallback requirements when generated or explicitly registered
   descriptors are consumed so low-ceremony profile authoring stays deterministic

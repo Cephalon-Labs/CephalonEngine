@@ -43,6 +43,10 @@ public sealed class BehaviorSourceGeneratorTests
 
             public interface IBehaviorContext { }
 
+            public sealed class Result<T> { }
+
+            public sealed class BehaviorResult<T> { }
+
             public enum BehaviorIdempotencyMode
             {
                 Unknown = 0,
@@ -80,6 +84,62 @@ public sealed class BehaviorSourceGeneratorTests
                 IBehaviorTopologyBuilder AsDurableExecution();
                 IBehaviorTopologyBuilder AsSagaChoreography();
                 IBehaviorTopologyBuilder ViaHttpJsonRpc();
+            }
+        }
+
+        namespace Cephalon.Behaviors.Services
+        {
+            public sealed class BehaviorContractDescriptor
+            {
+                public BehaviorContractDescriptor(
+                    string id,
+                    System.Type behaviorType,
+                    System.Type inputType,
+                    System.Type outputType,
+                    System.Type responseType,
+                    bool returnsStructuredResult,
+                    bool inputIsScalar,
+                    System.Collections.Generic.IReadOnlyList<BehaviorInputPropertyDescriptor>? inputProperties = null)
+                {
+                    Id = id;
+                    BehaviorType = behaviorType;
+                    InputType = inputType;
+                    OutputType = outputType;
+                    ResponseType = responseType;
+                    ReturnsStructuredResult = returnsStructuredResult;
+                    InputIsScalar = inputIsScalar;
+                    InputProperties = inputProperties;
+                }
+
+                public string Id { get; }
+                public System.Type BehaviorType { get; }
+                public System.Type InputType { get; }
+                public System.Type OutputType { get; }
+                public System.Type ResponseType { get; }
+                public bool ReturnsStructuredResult { get; }
+                public bool InputIsScalar { get; }
+                public System.Collections.Generic.IReadOnlyList<BehaviorInputPropertyDescriptor>? InputProperties { get; }
+            }
+
+            public sealed class BehaviorInputPropertyDescriptor
+            {
+                public BehaviorInputPropertyDescriptor(string name, System.Type type)
+                {
+                    Name = name;
+                    Type = type;
+                }
+
+                public string Name { get; }
+                public System.Type Type { get; }
+            }
+
+            public static class BehaviorContractRegistry
+            {
+                public static void Register(
+                    System.Reflection.Assembly assembly,
+                    System.Collections.Generic.IReadOnlyList<BehaviorContractDescriptor> contracts)
+                {
+                }
             }
         }
 
@@ -305,7 +365,10 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.NotNull(autoRegistration);
         Assert.Contains("RegisterGeneratedBehaviors()", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("BehaviorGeneratedModuleRegistry.Register(", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorContractRegistry.Register(", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("GetBehaviorContracts()", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("new global::Cephalon.Behaviors.Services.BehaviorGeneratedModuleRegistration(", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("new global::Cephalon.Behaviors.Services.BehaviorContractDescriptor(\"orders.create\"", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("BehaviorImplementationRegistration.TryRegister(", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("BehaviorIdempotencyMode.Unknown", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("new global::Cephalon.Behaviors.Services.BehaviorGeneratedExecutionSlotDescriptor(\"orders.create\"", autoRegistration, StringComparison.Ordinal);
@@ -401,7 +464,10 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.Contains("GetExecutionSlots()", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("RegisterGeneratedBehaviors()", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("BehaviorGeneratedModuleRegistry.Register(", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorContractRegistry.Register(", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("GetBehaviorContracts()", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("BehaviorGeneratedModuleRegistration", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("new global::Cephalon.Behaviors.Services.BehaviorContractDescriptor(\"orders.get\"", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("BehaviorGeneratedExecutionSlotDescriptor", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("BehaviorExecutionSlot.For<global::GetOrderBehavior", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("[global::System.Runtime.CompilerServices.ModuleInitializer]", autoRegistration, StringComparison.Ordinal);
@@ -456,6 +522,9 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.Contains("BehaviorRestInputPropertyDescriptor(\"OrderId\"", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("BehaviorRestInputPropertyDescriptor(\"Quantity\"", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("BehaviorRestInputPropertyDescriptor(\"CorrelationId\"", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorInputPropertyDescriptor(\"OrderId\"", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorInputPropertyDescriptor(\"Quantity\"", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorInputPropertyDescriptor(\"CorrelationId\"", autoRegistration, StringComparison.Ordinal);
     }
 
     [Fact]

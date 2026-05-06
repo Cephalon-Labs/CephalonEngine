@@ -226,8 +226,10 @@ Current profile behavior:
   projection onto descriptor metadata; `ENG-466` removes the generated-profile assembly-scan
   fallback; `ENG-473` removes the `MapProfile<TBehavior>()` runtime attribute/profile fallback;
   `ENG-474` removes input-shape inspection by requiring `BehaviorRestInputContractDescriptor`
-  metadata for explicit profile binding validation; the remaining deployment-mode inventory for
-  this package is narrowed to manual/type-based route-contract reflection
+  metadata for explicit profile binding validation; `ENG-475` removes the remaining manual/profile
+  route-contract fallback by resolving endpoint contracts from generated or explicitly registered
+  `BehaviorContractDescriptor` metadata, so `Cephalon.Behaviors.Http` no longer has an active
+  first-party row in the deployment-mode hazard manifest
 - valid profiles currently require a supported REST method, a non-empty leading-slash relative
   pattern such as `"/{cartId}"`, and a positive `ApiVersionMajor` when one is specified
 - when a profile declares explicit bindings, `BehaviorRestProfile(PreserveImplicitQueryFallback = true)`

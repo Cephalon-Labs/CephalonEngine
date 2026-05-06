@@ -199,10 +199,10 @@ open-generic adapter materialization from the normal source-generated durable pa
 `Cephalon.Behaviors.Patterns`. The generated `SagaChoreographyRuntimeSlot` registrations remove saga
 choreography runtime-catalog shape inspection from the normal source-generated choreography path used
 by `Cephalon.Behaviors.Patterns`. The durable, choreography, runtime assembly-scan, behavior
-dispatch, and behavior implementation-registry fallbacks are now removed; these fast paths still do
-not make the behavior packages trim/AOT claimed because `Cephalon.Behaviors.Http`
-manual/type-based route-contract reflection remains documented in the deployment-mode hazard
-inventory.
+dispatch, behavior implementation-registry, and REST manual/profile route-contract fallbacks are now
+removed; these fast paths return the behavior package family to clean-baseline absence from the
+active first-party deployment-mode hazard table, but they still do not make the packages trim/AOT
+claimed until scoped package claims and publish-probe policy are promoted deliberately.
 
 Compile-time topology extraction intentionally stays conservative. Literal `WithApiSurface(...)`
 arguments are supported, while more complex expressions are emitted as unsupported generated
@@ -220,10 +220,11 @@ are now the shipped metadata-only bridge for future low-ceremony REST: the gener
 core profile shape plus explicit binding metadata, preserved implicit query-fallback authoring, and
 emits `GetRestProfiles()` hints, including explicit binding descriptors and
 `preserveImplicitQueryFallback: true` when present, descriptor-backed input contract metadata for
-runtime binding validation, plus descriptor-based `GetRestProfileBehaviorTypes()` hints for the
-generated module-owned shorthand path. A generated
-module initializer registers both lists into `BehaviorRestGeneratedProfileRegistry`, but that
-metadata still does not publish public REST routes by itself and does not override host OpenAPI
+runtime binding validation, descriptor-based `GetRestProfileBehaviorTypes()` hints for the generated
+module-owned shorthand path, and `GetBehaviorContracts()` endpoint-contract metadata consumed by
+manual/profile REST routes. A generated module initializer registers REST profiles into
+`BehaviorRestGeneratedProfileRegistry` and endpoint contracts into `BehaviorContractRegistry`, but
+that metadata still does not publish public REST routes by itself and does not override host OpenAPI
 document publication policy.
 `Cephalon.Behaviors.Http` now consumes those hints through the explicit module-owned
 `MapProfile<TBehavior>()`, `MapGeneratedProfiles(...)`, and
@@ -239,7 +240,8 @@ duplicate input-property targets, scalar-input misuse, body-binding verb restric
 route-placeholder mismatches, and preserved implicit-query fallback without any explicit bindings
 earlier, while `Cephalon.Behaviors.Http` still re-checks the same contract when generated or
 explicitly registered descriptors are consumed through `BehaviorRestInputContractDescriptor`
-metadata; generated-profile mapping uses the registry hints directly. Runtime
+metadata and uses `BehaviorContractDescriptor` metadata for endpoint input/output contracts;
+generated-profile mapping uses the registry hints directly. Runtime
 normalization still lets ASP.NET Core route parsing stay authoritative for the final route-shape
 truth even after the generator moves the most common placeholder-shape mistakes and preserved-
 fallback authoring errors to compile time.

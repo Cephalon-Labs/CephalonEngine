@@ -1,6 +1,7 @@
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.AspNetCore.Transports.Rest;
 using Cephalon.Behaviors.Http.Abstractions;
+using Cephalon.Behaviors.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 
@@ -29,6 +30,7 @@ internal sealed record RestBehaviorEndpointProjection(
     RestBehaviorHttpMethod Method,
     string BehaviorId,
     Type BehaviorType,
+    BehaviorContractDescriptor BehaviorContract,
     string Pattern,
     IReadOnlyList<BehaviorRestBindingDescriptor> Bindings,
     bool PreserveImplicitQueryFallback,
@@ -65,10 +67,12 @@ internal sealed record RestBehaviorEndpointProjection(
         ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
         ArgumentException.ThrowIfNullOrWhiteSpace(authoringStyle);
 
+        var behaviorContract = BehaviorRestEndpointContractResolver.Resolve(behaviorType);
         return new RestBehaviorEndpointProjection(
             method,
-            ResolveBehaviorId(behaviorType),
+            behaviorContract.Id,
             behaviorType,
+            behaviorContract,
             pattern.Trim(),
             bindings ?? [],
             preserveImplicitQueryFallback,
@@ -96,10 +100,18 @@ internal sealed record RestBehaviorEndpointProjection(
         ArgumentNullException.ThrowIfNull(profile);
         ArgumentException.ThrowIfNullOrWhiteSpace(authoringStyle);
 
+        var behaviorContract = BehaviorRestEndpointContractResolver.Resolve(behaviorType);
+        if (!string.Equals(behaviorContract.Id, profile.BehaviorId, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException(
+                $"REST profile metadata for behavior '{profile.BehaviorId}' does not match behavior contract '{behaviorContract.Id}' for type '{behaviorType.FullName}'.");
+        }
+
         return new RestBehaviorEndpointProjection(
             ConvertMethod(profile.Method),
             profile.BehaviorId,
             behaviorType,
+            behaviorContract,
             profile.RelativePattern.Trim(),
             profile.Bindings ?? [],
             profile.PreserveImplicitQueryFallback,
@@ -115,6 +127,7 @@ internal sealed record RestBehaviorEndpointProjection(
                 method,
                 BehaviorId,
                 BehaviorType,
+                BehaviorContract,
                 Pattern,
                 Bindings,
                 PreserveImplicitQueryFallback,
@@ -133,6 +146,7 @@ internal sealed record RestBehaviorEndpointProjection(
                 Method,
                 BehaviorId,
                 BehaviorType,
+                BehaviorContract,
                 normalizedPattern,
                 Bindings,
                 PreserveImplicitQueryFallback,
@@ -150,6 +164,7 @@ internal sealed record RestBehaviorEndpointProjection(
                 Method,
                 BehaviorId,
                 BehaviorType,
+                BehaviorContract,
                 Pattern,
                 bindings.ToArray(),
                 PreserveImplicitQueryFallback,
@@ -165,6 +180,7 @@ internal sealed record RestBehaviorEndpointProjection(
                 Method,
                 BehaviorId,
                 BehaviorType,
+                BehaviorContract,
                 Pattern,
                 Bindings,
                 preserveImplicitQueryFallback,
@@ -177,24 +193,12 @@ internal sealed record RestBehaviorEndpointProjection(
         ArgumentNullException.ThrowIfNull(group);
         group.UseRuntimeAuthoringStyle(AuthoringStyle);
         return group.MapBehavior(
-            BehaviorType,
+            BehaviorContract,
             Method,
             Pattern,
             Bindings,
             PreserveImplicitQueryFallback,
             ConfigureEndpoint);
-    }
-
-    private static string ResolveBehaviorId(Type behaviorType)
-    {
-        ArgumentNullException.ThrowIfNull(behaviorType);
-
-        return behaviorType.GetCustomAttributes(typeof(AppBehaviorAttribute), inherit: false)
-            .OfType<AppBehaviorAttribute>()
-            .SingleOrDefault()
-            ?.Id
-            ?? throw new InvalidOperationException(
-                $"Behavior type '{behaviorType.FullName}' is missing [AppBehavior(id)].");
     }
 
     private static RestBehaviorHttpMethod ConvertMethod(BehaviorRestMethod method)

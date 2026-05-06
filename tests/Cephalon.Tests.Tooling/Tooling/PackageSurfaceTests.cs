@@ -1185,6 +1185,27 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void BehaviorsRuntimeExposesContractDescriptorRegistryForGeneratedRouteContracts()
+    {
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Services.BehaviorContractDescriptor)
+            .GetProperty("BehaviorType", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Services.BehaviorContractDescriptor)
+            .GetProperty("InputType", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Services.BehaviorContractDescriptor)
+            .GetProperty("ResponseType", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Services.BehaviorContractDescriptor)
+            .GetProperty("ReturnsStructuredResult", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Services.BehaviorContractDescriptor)
+            .GetProperty("InputProperties", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Services.BehaviorInputPropertyDescriptor)
+            .GetProperty("Type", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Services.BehaviorContractRegistry)
+            .GetMethod("Register", BindingFlags.Static | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Services.BehaviorContractRegistry)
+            .GetMethod("TryGetContracts", BindingFlags.Static | BindingFlags.Public));
+    }
+
+    [Fact]
     public void BehaviorsPatternsSagaChoreographyRuntimeCatalogRequiresRegisteredSlotsWithoutRuntimeShapeReflection()
     {
         var slot = File.ReadAllText(RepositoryPaths.GetFile(
@@ -2719,6 +2740,24 @@ public sealed class PackageSurfaceTests
         Assert.DoesNotContain("GetRequiredCoreMethod", routeGroup);
         Assert.DoesNotContain("closedMethod.Invoke", routeGroup);
         Assert.DoesNotContain("MapBehaviorGetCore<", routeGroup);
+        Assert.DoesNotContain("IAppBehavior<", routeGroup);
+        Assert.DoesNotContain("AppBehaviorAttribute", routeGroup);
+        Assert.DoesNotContain("GetInterfaces()", routeGroup);
+        Assert.DoesNotContain("GetGenericArguments", routeGroup);
+        Assert.DoesNotContain("GetProperties(", routeGroup);
+        Assert.DoesNotContain("BindingFlags", routeGroup);
+
+        var contractResolver = File.ReadAllText(RepositoryPaths.GetFile(
+            "src",
+            "Cephalon.Behaviors.Http",
+            "Hosting",
+            "BehaviorRestEndpointContractResolver.cs"));
+        Assert.Contains("BehaviorContractRegistry.TryGetContracts", contractResolver);
+        Assert.DoesNotContain("IAppBehavior<", contractResolver);
+        Assert.DoesNotContain("AppBehaviorAttribute", contractResolver);
+        Assert.DoesNotContain("GetInterfaces()", contractResolver);
+        Assert.DoesNotContain("GetGenericArguments", contractResolver);
+        Assert.DoesNotContain("GetProperties(", contractResolver);
 
         var profileResolver = File.ReadAllText(RepositoryPaths.GetFile(
             "src",
@@ -2750,6 +2789,45 @@ public sealed class PackageSurfaceTests
         Assert.DoesNotContain("CreateMapDelegateFactoryMethod", projection);
         Assert.DoesNotContain("MakeGenericMethod", projection);
         Assert.DoesNotContain(".Invoke(", projection);
+
+        var bindingPlanNormalizer = File.ReadAllText(RepositoryPaths.GetFile(
+            "src",
+            "Cephalon.Behaviors.Http",
+            "Hosting",
+            "BehaviorRestBindingPlanNormalizer.cs"));
+        Assert.Contains("NormalizeForInputContract", bindingPlanNormalizer);
+        Assert.DoesNotContain("IAppBehavior<", bindingPlanNormalizer);
+        Assert.DoesNotContain("AppBehaviorAttribute", bindingPlanNormalizer);
+        Assert.DoesNotContain("GetInterfaces()", bindingPlanNormalizer);
+        Assert.DoesNotContain("GetGenericArguments", bindingPlanNormalizer);
+        Assert.DoesNotContain("GetProperties(", bindingPlanNormalizer);
+        Assert.DoesNotContain("BindingFlags", bindingPlanNormalizer);
+
+        var fallbackModeResolver = File.ReadAllText(RepositoryPaths.GetFile(
+            "src",
+            "Cephalon.Behaviors.Http",
+            "Hosting",
+            "RestBehaviorBindingFallbackModeResolver.cs"));
+        Assert.Contains("ResolveForInputContract", fallbackModeResolver);
+        Assert.DoesNotContain("IAppBehavior<", fallbackModeResolver);
+        Assert.DoesNotContain("AppBehaviorAttribute", fallbackModeResolver);
+        Assert.DoesNotContain("GetInterfaces()", fallbackModeResolver);
+        Assert.DoesNotContain("GetGenericArguments", fallbackModeResolver);
+        Assert.DoesNotContain("GetProperties(", fallbackModeResolver);
+        Assert.DoesNotContain("BindingFlags", fallbackModeResolver);
+
+        var candidateResolver = File.ReadAllText(RepositoryPaths.GetFile(
+            "src",
+            "Cephalon.Behaviors.Http",
+            "Hosting",
+            "RestBehaviorProjectionCandidateResolver.cs"));
+        Assert.Contains("BehaviorRestContractAdapter.ToRestInputContract", candidateResolver);
+        Assert.DoesNotContain("IAppBehavior<", candidateResolver);
+        Assert.DoesNotContain("AppBehaviorAttribute", candidateResolver);
+        Assert.DoesNotContain("GetInterfaces()", candidateResolver);
+        Assert.DoesNotContain("GetGenericArguments", candidateResolver);
+        Assert.DoesNotContain("GetProperties(", candidateResolver);
+        Assert.DoesNotContain("BindingFlags", candidateResolver);
 
         var moduleBuilder = File.ReadAllText(RepositoryPaths.GetFile(
             "src",

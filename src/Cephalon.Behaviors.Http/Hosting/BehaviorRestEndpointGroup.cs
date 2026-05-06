@@ -462,11 +462,30 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         Action<RouteHandlerBuilder>? configure)
     {
         ArgumentNullException.ThrowIfNull(behaviorType);
+
+        return MapBehavior(
+            BehaviorRestEndpointContractResolver.Resolve(behaviorType),
+            method,
+            pattern,
+            bindings,
+            preserveImplicitQueryFallback,
+            configure);
+    }
+
+    internal RouteHandlerBuilder MapBehavior(
+        BehaviorContractDescriptor behaviorContract,
+        RestBehaviorHttpMethod method,
+        string pattern,
+        IReadOnlyList<BehaviorRestBindingDescriptor> bindings,
+        bool preserveImplicitQueryFallback,
+        Action<RouteHandlerBuilder>? configure)
+    {
+        ArgumentNullException.ThrowIfNull(behaviorContract);
         ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
-        ValidateBehaviorOwnership(behaviorType);
+        ValidateBehaviorOwnership(behaviorContract.Id);
 
         var contract = BehaviorRestEndpointContract.Create(
-            behaviorType,
+            behaviorContract,
             ModuleDescriptor,
             TagName,
             ModuleVersionMajor,
@@ -526,9 +545,9 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             .ApplyCephalonRateLimiting(endpoints.ServiceProvider, "rest-api", contract.BehaviorId);
     }
 
-    private void ValidateBehaviorOwnership(Type behaviorType)
+    private void ValidateBehaviorOwnership(string behaviorId)
     {
-        ArgumentNullException.ThrowIfNull(behaviorType);
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
 
         var ownedBehaviors = endpoints.ServiceProvider.GetService<IReadOnlyList<OwnedBehaviorRegistration>>();
         if (ownedBehaviors is null || ownedBehaviors.Count == 0)
@@ -536,7 +555,6 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             return;
         }
 
-        var behaviorId = BehaviorRestEndpointContract.GetBehaviorId(behaviorType);
         var owner = ownedBehaviors.FirstOrDefault(registration =>
             string.Equals(registration.BehaviorId, behaviorId, StringComparison.OrdinalIgnoreCase));
         if (owner is null ||
@@ -1038,7 +1056,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         bool PreserveImplicitQueryFallback)
     {
         internal static BehaviorRestEndpointContract Create(
-            Type behaviorType,
+            BehaviorContractDescriptor behaviorContract,
             ModuleDescriptor moduleDescriptor,
             string tagName,
             int? moduleVersionMajor,
@@ -1050,7 +1068,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             bool preserveImplicitQueryFallback,
             IServiceProvider services)
         {
-            ArgumentNullException.ThrowIfNull(behaviorType);
+            ArgumentNullException.ThrowIfNull(behaviorContract);
             ArgumentNullException.ThrowIfNull(moduleDescriptor);
             ArgumentException.ThrowIfNullOrWhiteSpace(tagName);
             ArgumentException.ThrowIfNullOrWhiteSpace(openApiDocumentName);
@@ -1058,28 +1076,20 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
             ArgumentNullException.ThrowIfNull(bindings);
             ArgumentNullException.ThrowIfNull(services);
 
-            var contractInterface = behaviorType.GetInterfaces()
-                .FirstOrDefault(static candidate =>
-                    candidate.IsGenericType &&
-                    candidate.GetGenericTypeDefinition() == typeof(IAppBehavior<,>))
-                ?? throw new InvalidOperationException(
-                    $"Behavior type '{behaviorType.FullName}' does not implement IAppBehavior<TInput, TOutput>.");
-            var typeArguments = contractInterface.GetGenericArguments();
-            var behaviorId = GetBehaviorId(behaviorType);
+            var behaviorId = behaviorContract.Id;
+            var inputContract = BehaviorRestContractAdapter.ToRestInputContract(behaviorContract);
             var operationVersionMajor = apiVersionMajor ?? moduleVersionMajor;
             var operationName = RestBehaviorEndpointMetadataConventions.BuildOperationName(
                 moduleDescriptor.Id,
                 operationVersionMajor,
                 behaviorId);
             var documentation = RestBehaviorEndpointMetadataConventions.ResolveOperationDocumentation(
-                behaviorType,
+                behaviorContract.BehaviorType,
                 moduleDescriptor,
                 behaviorId);
-            var outputType = typeArguments[1];
-            var returnsBehaviorResult = TryResolveBehaviorResultPayloadType(outputType, out var responseType);
-            var normalizedBindings = BehaviorRestBindingPlanNormalizer.NormalizeForInputType(
+            var normalizedBindings = BehaviorRestBindingPlanNormalizer.NormalizeForInputContract(
                 $"Behavior '{behaviorId}'",
-                typeArguments[0],
+                inputContract,
                 method,
                 pattern,
                 bindings);
@@ -1092,8 +1102,8 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 .FindById(behaviorId)?
                 .RequiredFeatureFlagIds
                 ?? [];
-            var bindingFallbackMode = RestBehaviorBindingFallbackModeResolver.ResolveForInputType(
-                typeArguments[0],
+            var bindingFallbackMode = RestBehaviorBindingFallbackModeResolver.ResolveForInputContract(
+                inputContract,
                 method,
                 pattern,
                 normalizedBindings,
@@ -1103,7 +1113,7 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 moduleDescriptor.Id,
                 moduleDescriptor.Version,
                 moduleVersionMajor,
-                behaviorType,
+                behaviorContract.BehaviorType,
                 behaviorId,
                 operationName,
                 tagName,
@@ -1111,10 +1121,10 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
                 documentation.Description,
                 openApiDocumentName,
                 operationVersionMajor,
-                typeArguments[0],
-                outputType,
-                responseType,
-                returnsBehaviorResult,
+                behaviorContract.InputType,
+                behaviorContract.OutputType,
+                behaviorContract.ResponseType,
+                behaviorContract.ReturnsStructuredResult,
                 useResultModelEnvelope,
                 documentedStatusCodes,
                 requiredFeatureFlagIds,
@@ -1124,39 +1134,5 @@ public sealed class BehaviorRestEndpointGroup : IEndpointConventionBuilder
         }
 
         internal bool ShouldDocumentStatus(int statusCode) => DocumentedStatusCodes.Contains(statusCode);
-
-        internal static string GetBehaviorId(Type behaviorType)
-        {
-            ArgumentNullException.ThrowIfNull(behaviorType);
-
-            return behaviorType.GetCustomAttributes(typeof(AppBehaviorAttribute), inherit: false)
-                .OfType<AppBehaviorAttribute>()
-                .SingleOrDefault()
-                ?.Id
-                ?? throw new InvalidOperationException(
-                    $"Behavior type '{behaviorType.FullName}' is missing [AppBehavior].");
-        }
-
-        private static bool TryResolveBehaviorResultPayloadType(Type outputType, out Type responseType)
-        {
-            ArgumentNullException.ThrowIfNull(outputType);
-
-            responseType = outputType;
-            if (!outputType.IsGenericType)
-            {
-                return false;
-            }
-
-            var genericDefinition = outputType.GetGenericTypeDefinition();
-            if (genericDefinition != typeof(Result<>) &&
-                genericDefinition != typeof(BehaviorResult<>))
-            {
-                return false;
-            }
-
-            responseType = outputType.GetGenericArguments()[0];
-            return true;
-        }
-
     }
 }

@@ -8,6 +8,7 @@ using Cephalon.AspNetCore.Transports.Rest;
 using Cephalon.Behaviors.Hosting;
 using Cephalon.Behaviors.Http.Abstractions;
 using Cephalon.Behaviors.Http.Hosting;
+using Cephalon.Behaviors.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Routing;
@@ -4624,9 +4625,9 @@ public sealed class BehaviorRestProjectionTests
     public void BehaviorRestBindingPlanNormalizerRejectsBodyBindingsForGetUsingCanonicalWireName()
     {
         var exception = Assert.Throws<InvalidOperationException>(() =>
-            BehaviorRestBindingPlanNormalizer.NormalizeForInputType(
+            BehaviorRestBindingPlanNormalizer.NormalizeForInputContract(
                 "tests.binding-normalizer",
-                typeof(DynamicProfileBindingInput),
+                BuildInputContract(typeof(DynamicProfileBindingInput)),
                 RestBehaviorHttpMethod.Get,
                 "/{cartId}",
                 [
@@ -4671,9 +4672,9 @@ public sealed class BehaviorRestProjectionTests
     public void BehaviorRestBindingPlanNormalizerRejectsBindingsWithoutSupportedSourceUsingCanonicalWireNames()
     {
         var exception = Assert.Throws<InvalidOperationException>(() =>
-            BehaviorRestBindingPlanNormalizer.NormalizeForInputType(
+            BehaviorRestBindingPlanNormalizer.NormalizeForInputContract(
                 "tests.binding-normalizer",
-                typeof(DynamicProfileBindingInput),
+                BuildInputContract(typeof(DynamicProfileBindingInput)),
                 RestBehaviorHttpMethod.Post,
                 "/{cartId}",
                 [
@@ -6103,6 +6104,19 @@ public sealed class BehaviorRestProjectionTests
         typeBuilder.DefineMethodOverride(handleAsyncMethod, behaviorInterface.GetMethod(nameof(IAppBehavior<object, string>.HandleAsync))!);
 
         var behaviorType = typeBuilder.CreateType()!;
+        BehaviorContractRegistry.Register(
+            behaviorType.Assembly,
+            [
+                new BehaviorContractDescriptor(
+                    behaviorId,
+                    behaviorType,
+                    inputType,
+                    typeof(string),
+                    typeof(string),
+                    returnsStructuredResult: false,
+                    inputIsScalar: IsScalarInputType(inputType),
+                    inputProperties: BuildBehaviorInputProperties(inputType))
+            ]);
         BehaviorRestGeneratedProfileRegistry.Register(
             behaviorType.Assembly,
             [
@@ -6125,6 +6139,20 @@ public sealed class BehaviorRestProjectionTests
             [new BehaviorRestProfileBehaviorTypeDescriptor(behaviorId, behaviorType)]);
 
         return behaviorType;
+    }
+
+    private static BehaviorInputPropertyDescriptor[] BuildBehaviorInputProperties(Type inputType)
+    {
+        if (IsScalarInputType(inputType))
+        {
+            return [];
+        }
+
+        return inputType
+            .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+            .Where(static property => property.GetMethod is not null)
+            .Select(static property => new BehaviorInputPropertyDescriptor(property.Name, property.PropertyType))
+            .ToArray();
     }
 
     private static BehaviorRestInputContractDescriptor BuildInputContract(Type inputType)

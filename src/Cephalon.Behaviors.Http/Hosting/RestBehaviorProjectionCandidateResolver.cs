@@ -1,10 +1,9 @@
-using System.Reflection;
 using System.Text;
-using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Transports;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Transports.Rest;
+using Cephalon.Behaviors.Services;
 using Cephalon.Behaviors.Http.Abstractions;
 using Microsoft.AspNetCore.Routing.Patterns;
 
@@ -474,8 +473,8 @@ internal static class RestBehaviorProjectionCandidateResolver
         ArgumentNullException.ThrowIfNull(apiRoutesOptions);
         ArgumentNullException.ThrowIfNull(group);
 
-        var originalBindingFallbackMode = RestBehaviorBindingFallbackModeResolver.ResolveForBehavior(
-            endpointProjection.BehaviorType,
+        var originalBindingFallbackMode = RestBehaviorBindingFallbackModeResolver.ResolveForInputContract(
+            BehaviorRestContractAdapter.ToRestInputContract(endpointProjection.BehaviorContract),
             endpointProjection.Method,
             endpointProjection.Pattern,
             endpointProjection.Bindings,
@@ -532,8 +531,8 @@ internal static class RestBehaviorProjectionCandidateResolver
             publishedRouteGroupPrefix,
             effectiveEndpointProjection.Pattern);
         var runtimeBindings = RestEndpointBindingDescriptorAdapter.ToRuntimeDescriptors(effectiveEndpointProjection.Bindings);
-        var projectedBindingFallbackMode = RestBehaviorBindingFallbackModeResolver.ResolveForBehavior(
-            effectiveEndpointProjection.BehaviorType,
+        var projectedBindingFallbackMode = RestBehaviorBindingFallbackModeResolver.ResolveForInputContract(
+            BehaviorRestContractAdapter.ToRestInputContract(effectiveEndpointProjection.BehaviorContract),
             effectiveEndpointProjection.Method,
             effectiveEndpointProjection.Pattern,
             effectiveEndpointProjection.Bindings,
@@ -1014,9 +1013,9 @@ internal static class RestBehaviorProjectionCandidateResolver
         IReadOnlyList<BehaviorRestBindingDescriptor>? normalizedBindings = null;
         if (shouldRevalidateBindings)
         {
-            normalizedBindings = BehaviorRestBindingPlanNormalizer.Normalize(
+            normalizedBindings = BehaviorRestBindingPlanNormalizer.NormalizeForInputContract(
                 $"REST endpoint override rule '{matchedOverride.Id}' for behavior '{endpointProjection.BehaviorId}'",
-                effectiveEndpointProjection.BehaviorType,
+                BehaviorRestContractAdapter.ToRestInputContract(effectiveEndpointProjection.BehaviorContract),
                 effectiveEndpointProjection.Method,
                 effectiveEndpointProjection.Pattern,
                 effectiveEndpointProjection.Bindings);
@@ -1451,14 +1450,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         ArgumentNullException.ThrowIfNull(endpointProjection);
         ArgumentException.ThrowIfNullOrWhiteSpace(effectivePattern);
 
-        var inputType = ResolveBehaviorInputType(endpointProjection.BehaviorType);
-        if (inputType is null)
-        {
-            return;
-        }
-
-        var effectiveInputType = Nullable.GetUnderlyingType(inputType) ?? inputType;
-        if (IsSimpleInputType(effectiveInputType))
+        if (endpointProjection.BehaviorContract.InputIsScalar)
         {
             return;
         }
@@ -1469,7 +1461,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             return;
         }
 
-        var inputProperties = ResolveBehaviorInputProperties(endpointProjection.BehaviorType);
+        var inputProperties = ResolveBehaviorInputProperties(endpointProjection.BehaviorContract);
         var unresolvedPlaceholders = routePlaceholders
             .Where(placeholder => !inputProperties.Contains(placeholder))
             .OrderBy(static placeholder => placeholder, StringComparer.OrdinalIgnoreCase)
@@ -1493,7 +1485,7 @@ internal static class RestBehaviorProjectionCandidateResolver
             ? "none"
             : string.Join(", ", explicitRouteBindings);
         throw new InvalidOperationException(
-            $"REST endpoint override rule '{overrideId}' cannot clear explicit bindings for behavior '{endpointProjection.BehaviorId}' because the effective route pattern '{effectivePattern}' would rely on implicit property-name inference for placeholder(s) '{string.Join("', '", unresolvedPlaceholders)}', but input type '{effectiveInputType.FullName}' does not expose matching property names. The source shorthand candidate currently covers route placeholders through explicit route bindings ({explicitRouteBindingSummary}). Keep explicit Bindings or rename the placeholders to match the input contract before using ClearBindings.");
+            $"REST endpoint override rule '{overrideId}' cannot clear explicit bindings for behavior '{endpointProjection.BehaviorId}' because the effective route pattern '{effectivePattern}' would rely on implicit property-name inference for placeholder(s) '{string.Join("', '", unresolvedPlaceholders)}', but input type '{endpointProjection.BehaviorContract.InputType.FullName}' does not expose matching property names. The source shorthand candidate currently covers route placeholders through explicit route bindings ({explicitRouteBindingSummary}). Keep explicit Bindings or rename the placeholders to match the input contract before using ClearBindings.");
     }
 
     private static HashSet<string> ResolveImplicitFallbackEligibleProperties(
@@ -1505,7 +1497,7 @@ internal static class RestBehaviorProjectionCandidateResolver
         ArgumentNullException.ThrowIfNull(originalExplicitlyBoundProperties);
         ArgumentNullException.ThrowIfNull(originalPlaceholders);
 
-        var inputProperties = ResolveBehaviorInputProperties(endpointProjection.BehaviorType);
+        var inputProperties = ResolveBehaviorInputProperties(endpointProjection.BehaviorContract);
         if (inputProperties.Count == 0)
         {
             return [];
@@ -1677,56 +1669,19 @@ internal static class RestBehaviorProjectionCandidateResolver
         return merged;
     }
 
-    private static HashSet<string> ResolveBehaviorInputProperties(Type behaviorType)
+    private static HashSet<string> ResolveBehaviorInputProperties(BehaviorContractDescriptor behaviorContract)
     {
-        ArgumentNullException.ThrowIfNull(behaviorType);
+        ArgumentNullException.ThrowIfNull(behaviorContract);
 
-        var inputType = ResolveBehaviorInputType(behaviorType);
-        if (inputType is null)
+        if (behaviorContract.InputIsScalar)
         {
             return [];
         }
 
-        var effectiveInputType = Nullable.GetUnderlyingType(inputType) ?? inputType;
-        if (IsSimpleInputType(effectiveInputType))
-        {
-            return [];
-        }
-
-        return effectiveInputType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-            .Where(static property => property.CanRead)
+        return behaviorContract.InputProperties
             .Select(static property => property.Name.Trim())
             .Where(static propertyName => !string.IsNullOrWhiteSpace(propertyName))
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
-    }
-
-    private static Type? ResolveBehaviorInputType(Type behaviorType)
-    {
-        ArgumentNullException.ThrowIfNull(behaviorType);
-
-        var contractInterface = behaviorType.GetInterfaces()
-            .FirstOrDefault(static candidate =>
-                candidate.IsGenericType &&
-                candidate.GetGenericTypeDefinition() == typeof(IAppBehavior<,>));
-        return contractInterface is null
-            ? null
-            : contractInterface.GetGenericArguments()[0];
-    }
-
-    private static bool IsSimpleInputType(Type inputType)
-    {
-        ArgumentNullException.ThrowIfNull(inputType);
-
-        var type = Nullable.GetUnderlyingType(inputType) ?? inputType;
-        return type.IsPrimitive ||
-               type.IsEnum ||
-               type == typeof(string) ||
-               type == typeof(decimal) ||
-               type == typeof(Guid) ||
-               type == typeof(DateTime) ||
-               type == typeof(DateTimeOffset) ||
-               type == typeof(DateOnly) ||
-               type == typeof(TimeOnly);
     }
 
     private static RestEndpointSuppressionOptions[] ResolveMatchingSuppressions(

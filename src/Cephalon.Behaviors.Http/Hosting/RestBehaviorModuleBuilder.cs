@@ -1,6 +1,7 @@
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.AspNetCore.Transports.Rest;
 using Cephalon.Behaviors.Http.Abstractions;
+using Cephalon.Behaviors.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Routing;
 
@@ -8,7 +9,6 @@ namespace Cephalon.Behaviors.Http.Hosting;
 
 internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
 {
-    private static readonly Type AppBehaviorOpenGeneric = typeof(IAppBehavior<,>);
     private readonly Dictionary<string, RestBehaviorOwnershipDefinition> ownedBehaviors = new(StringComparer.OrdinalIgnoreCase);
     private readonly List<Action<IBehaviorModuleBuilder>> ownershipRegistrations = [];
     private readonly List<RestBehaviorRouteGroupState> groups = [];
@@ -170,7 +170,18 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
     {
         ArgumentNullException.ThrowIfNull(behaviorType);
 
-        var ownership = RestBehaviorOwnershipDefinition.Create(behaviorType, configureTopology is not null);
+        RegisterOwnedBehavior(
+            BehaviorRestEndpointContractResolver.Resolve(behaviorType),
+            configureTopology);
+    }
+
+    private void RegisterOwnedBehavior(
+        BehaviorContractDescriptor behaviorContract,
+        Action<IBehaviorTopologyBuilder>? configureTopology)
+    {
+        ArgumentNullException.ThrowIfNull(behaviorContract);
+
+        var ownership = RestBehaviorOwnershipDefinition.Create(behaviorContract, configureTopology is not null);
         if (ownedBehaviors.TryGetValue(ownership.BehaviorId, out var existing))
         {
             if (existing.BehaviorType != ownership.BehaviorType)
@@ -192,11 +203,11 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
         {
             if (configureTopology is null)
             {
-                AddOwnedBehavior(builder, behaviorType);
+                AddOwnedBehavior(builder, behaviorContract.BehaviorType);
             }
             else
             {
-                AddOwnedBehavior(builder, behaviorType, configureTopology);
+                AddOwnedBehavior(builder, behaviorContract.BehaviorType, configureTopology);
             }
         });
 
@@ -377,12 +388,13 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
         {
             ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
 
-            moduleBuilder.RegisterOwnedBehavior<TBehavior>(configureTopology);
-            state.Endpoints.Add(RestBehaviorEndpointProjection.Create<TBehavior>(
+            var projection = RestBehaviorEndpointProjection.Create<TBehavior>(
                 method,
                 pattern,
                 configureEndpoint,
-                RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle));
+                RestEndpointRuntimeMetadata.BehaviorModuleDslAuthoringStyle);
+            moduleBuilder.RegisterOwnedBehavior(projection.BehaviorContract, configureTopology);
+            state.Endpoints.Add(projection);
             return this;
         }
 
@@ -393,10 +405,11 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
         {
             var profile = BehaviorRestProfileResolver.Resolve<TBehavior>();
             SeedProfileApiVersion(profile);
-            moduleBuilder.RegisterOwnedBehavior<TBehavior>(configureTopology);
-            state.Endpoints.Add(RestBehaviorEndpointProjection.Create<TBehavior>(
+            var projection = RestBehaviorEndpointProjection.Create<TBehavior>(
                 profile,
-                configureEndpoint));
+                configureEndpoint);
+            moduleBuilder.RegisterOwnedBehavior(projection.BehaviorContract, configureTopology);
+            state.Endpoints.Add(projection);
             return this;
         }
 
@@ -426,12 +439,13 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
             foreach (var generatedProfile in generatedProfiles)
             {
                 SeedProfileApiVersion(generatedProfile.Profile);
-                moduleBuilder.RegisterOwnedBehavior(generatedProfile.BehaviorType, configureTopology: null);
-                state.Endpoints.Add(RestBehaviorEndpointProjection.Create(
+                var projection = RestBehaviorEndpointProjection.Create(
                     generatedProfile.BehaviorType,
                     generatedProfile.Profile,
                     configureEndpoint: null,
-                    RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle));
+                    RestEndpointRuntimeMetadata.BehaviorModuleGeneratedAuthoringStyle);
+                moduleBuilder.RegisterOwnedBehavior(projection.BehaviorContract, configureTopology: null);
+                state.Endpoints.Add(projection);
             }
 
             return this;
@@ -533,27 +547,15 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
         Type BehaviorType,
         bool HasExplicitTopologyOverride)
     {
-        internal static RestBehaviorOwnershipDefinition Create(Type behaviorType, bool hasExplicitTopologyOverride)
+        internal static RestBehaviorOwnershipDefinition Create(
+            BehaviorContractDescriptor behaviorContract,
+            bool hasExplicitTopologyOverride)
         {
-            ArgumentNullException.ThrowIfNull(behaviorType);
-
-            var attribute = behaviorType.GetCustomAttributes(typeof(AppBehaviorAttribute), inherit: false)
-                .OfType<AppBehaviorAttribute>()
-                .SingleOrDefault()
-                ?? throw new InvalidOperationException(
-                    $"Cannot declare '{behaviorType.FullName}' as a REST behavior-module behavior because it is missing [AppBehavior(id)].");
-
-            if (!behaviorType.GetInterfaces().Any(static candidate =>
-                    candidate.IsGenericType &&
-                    candidate.GetGenericTypeDefinition() == AppBehaviorOpenGeneric))
-            {
-                throw new InvalidOperationException(
-                    $"Cannot declare '{behaviorType.FullName}' as a REST behavior-module behavior because it does not implement IAppBehavior<TInput, TOutput>.");
-            }
+            ArgumentNullException.ThrowIfNull(behaviorContract);
 
             return new RestBehaviorOwnershipDefinition(
-                attribute.Id,
-                behaviorType,
+                behaviorContract.Id,
+                behaviorContract.BehaviorType,
                 hasExplicitTopologyOverride);
         }
     }

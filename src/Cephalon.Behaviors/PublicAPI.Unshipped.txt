@@ -1,4 +1,19 @@
 #nullable enable
+Cephalon.Behaviors.Services.BehaviorContractDescriptor
+Cephalon.Behaviors.Services.BehaviorContractDescriptor.BehaviorContractDescriptor(string! id, System.Type! behaviorType, System.Type! inputType, System.Type! outputType, System.Type! responseType, bool returnsStructuredResult, bool inputIsScalar, System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Services.BehaviorInputPropertyDescriptor!>? inputProperties = null) -> void
+Cephalon.Behaviors.Services.BehaviorContractDescriptor.BehaviorType.get -> System.Type!
+Cephalon.Behaviors.Services.BehaviorContractDescriptor.Id.get -> string!
+Cephalon.Behaviors.Services.BehaviorContractDescriptor.InputIsScalar.get -> bool
+Cephalon.Behaviors.Services.BehaviorContractDescriptor.InputProperties.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Services.BehaviorInputPropertyDescriptor!>!
+Cephalon.Behaviors.Services.BehaviorContractDescriptor.InputType.get -> System.Type!
+Cephalon.Behaviors.Services.BehaviorContractDescriptor.OutputType.get -> System.Type!
+Cephalon.Behaviors.Services.BehaviorContractDescriptor.ResponseType.get -> System.Type!
+Cephalon.Behaviors.Services.BehaviorContractDescriptor.ReturnsStructuredResult.get -> bool
+Cephalon.Behaviors.Services.BehaviorContractRegistry
+Cephalon.Behaviors.Services.BehaviorInputPropertyDescriptor
+Cephalon.Behaviors.Services.BehaviorInputPropertyDescriptor.BehaviorInputPropertyDescriptor(string! name, System.Type! type) -> void
+Cephalon.Behaviors.Services.BehaviorInputPropertyDescriptor.Name.get -> string!
+Cephalon.Behaviors.Services.BehaviorInputPropertyDescriptor.Type.get -> System.Type!
 Cephalon.Behaviors.Services.BehaviorGeneratedExecutionSlotDescriptor
 Cephalon.Behaviors.Services.BehaviorGeneratedExecutionSlotDescriptor.BehaviorGeneratedExecutionSlotDescriptor(string! id, System.Type! type, Cephalon.Behaviors.Services.BehaviorExecutionSlot! slot) -> void
 Cephalon.Behaviors.Services.BehaviorGeneratedExecutionSlotDescriptor.Id.get -> string!
@@ -25,6 +40,8 @@ Cephalon.Behaviors.Services.BehaviorImplementationDescriptor.Id.get -> string!
 Cephalon.Behaviors.Services.BehaviorImplementationDescriptor.IdempotencyMode.get -> Cephalon.Abstractions.Behaviors.BehaviorIdempotencyMode
 Cephalon.Behaviors.Services.BehaviorImplementationRegistration
 Cephalon.Behaviors.Services.IBehaviorCollectionBuilder.Register<TBehavior, TInput, TOutput>(System.Action<Cephalon.Behaviors.Builders.BehaviorTopologyBuilder!>? configureTopology = null) -> Cephalon.Behaviors.Services.IBehaviorCollectionBuilder!
+static Cephalon.Behaviors.Services.BehaviorContractRegistry.Register(System.Reflection.Assembly! assembly, System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Services.BehaviorContractDescriptor!>! contracts) -> void
+static Cephalon.Behaviors.Services.BehaviorContractRegistry.TryGetContracts(System.Reflection.Assembly! assembly, out System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Services.BehaviorContractDescriptor!>! contracts) -> bool
 static Cephalon.Behaviors.Services.BehaviorImplementationRegistration.TryRegister(Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! id, System.Type! behaviorType, Cephalon.Abstractions.Behaviors.BehaviorIdempotencyMode idempotencyMode = Cephalon.Abstractions.Behaviors.BehaviorIdempotencyMode.Unknown) -> bool
 static Cephalon.Behaviors.Services.BehaviorGeneratedModuleRegistry.Register(System.Reflection.Assembly! assembly, Cephalon.Behaviors.Services.BehaviorGeneratedModuleRegistration! registration) -> void
 static Cephalon.Behaviors.Services.BehaviorGeneratedModuleRegistry.TryGetRegistration(System.Reflection.Assembly! assembly, out Cephalon.Behaviors.Services.BehaviorGeneratedModuleRegistration! registration) -> bool

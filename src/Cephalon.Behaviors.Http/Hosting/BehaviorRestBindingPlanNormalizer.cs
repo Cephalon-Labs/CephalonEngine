@@ -1,5 +1,3 @@
-using System.Reflection;
-using Cephalon.Abstractions.Behaviors;
 using Cephalon.Behaviors.Http.Abstractions;
 using Microsoft.AspNetCore.Routing.Patterns;
 
@@ -7,40 +5,15 @@ namespace Cephalon.Behaviors.Http.Hosting;
 
 internal static class BehaviorRestBindingPlanNormalizer
 {
-    internal static IReadOnlyList<BehaviorRestBindingDescriptor> Normalize(
+    internal static IReadOnlyList<BehaviorRestBindingDescriptor> NormalizeForInputContract(
         string sourceLabel,
-        Type behaviorType,
+        BehaviorRestInputContractDescriptor inputContract,
         RestBehaviorHttpMethod method,
         string pattern,
         IReadOnlyList<BehaviorRestBindingDescriptor> bindings)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceLabel);
-        ArgumentNullException.ThrowIfNull(behaviorType);
-
-        var contractInterface = behaviorType.GetInterfaces()
-            .FirstOrDefault(static candidate =>
-                candidate.IsGenericType &&
-                candidate.GetGenericTypeDefinition() == typeof(IAppBehavior<,>))
-            ?? throw new InvalidOperationException(
-                $"Behavior type '{behaviorType.FullName}' does not implement IAppBehavior<TInput, TOutput>.");
-
-        return NormalizeForInputType(
-            sourceLabel,
-            contractInterface.GetGenericArguments()[0],
-            method,
-            pattern,
-            bindings);
-    }
-
-    internal static IReadOnlyList<BehaviorRestBindingDescriptor> NormalizeForInputType(
-        string sourceLabel,
-        Type inputType,
-        RestBehaviorHttpMethod method,
-        string pattern,
-        IReadOnlyList<BehaviorRestBindingDescriptor> bindings)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(sourceLabel);
-        ArgumentNullException.ThrowIfNull(inputType);
+        ArgumentNullException.ThrowIfNull(inputContract);
         ArgumentException.ThrowIfNullOrWhiteSpace(pattern);
         ArgumentNullException.ThrowIfNull(bindings);
 
@@ -49,19 +22,17 @@ internal static class BehaviorRestBindingPlanNormalizer
             return [];
         }
 
-        var effectiveInputType = Nullable.GetUnderlyingType(inputType) ?? inputType;
-        if (IsSimpleInputType(effectiveInputType))
+        if (inputContract.IsScalar)
         {
             throw new InvalidOperationException(
-                $"{sourceLabel} declares explicit REST bindings, but input type '{effectiveInputType.FullName}' is scalar. Explicit REST bindings currently require an object input.");
+                $"{sourceLabel} declares explicit REST bindings, but input type '{inputContract.InputType.FullName ?? inputContract.InputType.Name}' is scalar. Explicit REST bindings currently require an object input.");
         }
 
         var routeParameters = RoutePatternFactory.Parse(pattern)
             .Parameters
             .Select(static parameter => parameter.Name)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
-        var inputProperties = effectiveInputType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-            .Where(static property => property.CanRead)
+        var inputProperties = (inputContract.Properties ?? Array.Empty<BehaviorRestInputPropertyDescriptor>())
             .Select(static property => property.Name)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
         var normalized = new List<BehaviorRestBindingDescriptor>(bindings.Count);
@@ -91,7 +62,7 @@ internal static class BehaviorRestBindingPlanNormalizer
             if (!inputProperties.Contains(propertyName))
             {
                 throw new InvalidOperationException(
-                    $"{sourceLabel} declares an explicit REST binding for input property '{propertyName}', but '{effectiveInputType.FullName}' does not expose a matching public property.");
+                    $"{sourceLabel} declares an explicit REST binding for input property '{propertyName}', but '{inputContract.InputType.FullName ?? inputContract.InputType.Name}' does not expose a matching public property.");
             }
 
             if (!Enum.IsDefined(binding.Source) || binding.Source == BehaviorRestBindingSource.Unspecified)
@@ -122,21 +93,5 @@ internal static class BehaviorRestBindingPlanNormalizer
         }
 
         return normalized;
-    }
-
-    private static bool IsSimpleInputType(Type inputType)
-    {
-        ArgumentNullException.ThrowIfNull(inputType);
-
-        var type = Nullable.GetUnderlyingType(inputType) ?? inputType;
-        return type.IsPrimitive ||
-               type.IsEnum ||
-               type == typeof(string) ||
-               type == typeof(decimal) ||
-               type == typeof(Guid) ||
-               type == typeof(DateTime) ||
-               type == typeof(DateTimeOffset) ||
-               type == typeof(DateOnly) ||
-               type == typeof(TimeOnly);
     }
 }
