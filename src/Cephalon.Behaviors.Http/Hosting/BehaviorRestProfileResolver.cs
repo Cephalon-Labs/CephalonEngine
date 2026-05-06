@@ -1,6 +1,5 @@
 using System.Collections.Concurrent;
 using System.Reflection;
-using Cephalon.Abstractions.Behaviors;
 using Cephalon.Behaviors.Http.Abstractions;
 using Microsoft.AspNetCore.Routing.Patterns;
 
@@ -63,7 +62,7 @@ internal static class BehaviorRestProfileResolver
         return Normalize(
             profile,
             assembly.FullName ?? assembly.GetName().Name ?? assembly.ToString(),
-            behaviorType);
+            validateBindings: true);
     }
 
     internal static IReadOnlyList<ResolvedBehaviorRestProfile> ResolveGeneratedProfiles(
@@ -109,7 +108,7 @@ internal static class BehaviorRestProfileResolver
 
             resolvedProfiles.Add(new ResolvedBehaviorRestProfile(
                 behaviorType,
-                Normalize(profile, sourceIdentity, behaviorType)));
+                Normalize(profile, sourceIdentity, validateBindings: true)));
         }
 
         return resolvedProfiles;
@@ -180,7 +179,7 @@ internal static class BehaviorRestProfileResolver
     private static BehaviorRestProfileDescriptor Normalize(
         BehaviorRestProfileDescriptor descriptor,
         string sourceIdentity,
-        Type? behaviorType = null)
+        bool validateBindings = false)
     {
         ArgumentNullException.ThrowIfNull(descriptor);
         ArgumentException.ThrowIfNullOrWhiteSpace(sourceIdentity);
@@ -219,11 +218,15 @@ internal static class BehaviorRestProfileResolver
                 $"REST profile metadata for behavior '{descriptor.BehaviorId}' from '{sourceIdentity}' must use a positive API major version when one is specified.");
         }
 
-        var normalizedBindings = behaviorType is null
+        var normalizedInputContract = NormalizeInputContract(
+            descriptor.InputContract,
+            sourceIdentity,
+            descriptor.BehaviorId);
+        var normalizedBindings = !validateBindings
             ? NormalizeBindings(descriptor.Bindings)
             : NormalizeBindings(
                 descriptor.Bindings,
-                behaviorType,
+                normalizedInputContract,
                 descriptor.Method,
                 normalizedPattern,
                 sourceIdentity,
@@ -241,7 +244,10 @@ internal static class BehaviorRestProfileResolver
             normalizedPattern,
             descriptor.ApiVersionMajor,
             normalizedBindings,
-            descriptor.PreserveImplicitQueryFallback);
+            descriptor.PreserveImplicitQueryFallback)
+        {
+            InputContract = normalizedInputContract
+        };
     }
 
     private static void EnsureValidRoutePattern(
@@ -283,7 +289,7 @@ internal static class BehaviorRestProfileResolver
 
     private static BehaviorRestBindingDescriptor[] NormalizeBindings(
         IReadOnlyList<BehaviorRestBindingDescriptor>? bindings,
-        Type behaviorType,
+        BehaviorRestInputContractDescriptor? inputContract,
         BehaviorRestMethod method,
         string relativePattern,
         string sourceIdentity,
@@ -296,18 +302,24 @@ internal static class BehaviorRestProfileResolver
 
         ArgumentException.ThrowIfNullOrWhiteSpace(relativePattern);
 
-        var inputType = ResolveInputType(behaviorType);
-        if (IsSimpleInputType(inputType))
+        if (inputContract is null)
         {
             throw new InvalidOperationException(
-                $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' cannot declare explicit input bindings because '{inputType.FullName ?? inputType.Name}' is a scalar input type.");
+                $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' declares explicit input bindings without an input contract descriptor. Rebuild the assembly with the current Cephalon.Behaviors.SourceGen package or register BehaviorRestInputContractDescriptor metadata explicitly.");
         }
 
-        var inputProperties = ResolveInputProperties(inputType);
+        if (inputContract.IsScalar)
+        {
+            throw new InvalidOperationException(
+                $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' cannot declare explicit input bindings because '{inputContract.InputType.FullName ?? inputContract.InputType.Name}' is a scalar input type.");
+        }
+
+        var inputProperties = (inputContract.Properties ?? Array.Empty<BehaviorRestInputPropertyDescriptor>())
+            .ToDictionary(static property => property.Name, StringComparer.OrdinalIgnoreCase);
         if (inputProperties.Count == 0)
         {
             throw new InvalidOperationException(
-                $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' cannot declare explicit input bindings because '{inputType.FullName ?? inputType.Name}' does not expose public input properties.");
+                $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' cannot declare explicit input bindings because '{inputContract.InputType.FullName ?? inputContract.InputType.Name}' does not expose public input properties.");
         }
 
         var routeParameters = RoutePatternFactory.Parse(relativePattern)
@@ -378,42 +390,51 @@ internal static class BehaviorRestProfileResolver
                behaviorId.StartsWith($"{behaviorIdPrefix}.", StringComparison.OrdinalIgnoreCase);
     }
 
-    private static Type ResolveInputType(Type behaviorType)
+    private static BehaviorRestInputContractDescriptor? NormalizeInputContract(
+        BehaviorRestInputContractDescriptor? inputContract,
+        string sourceIdentity,
+        string behaviorId)
     {
-        ArgumentNullException.ThrowIfNull(behaviorType);
+        if (inputContract is null)
+        {
+            return null;
+        }
 
-        return behaviorType.GetInterfaces()
-            .FirstOrDefault(static candidate =>
-                candidate.IsGenericType &&
-                candidate.GetGenericTypeDefinition() == typeof(IAppBehavior<,>))
-            ?.GetGenericArguments()[0]
-            ?? throw new InvalidOperationException(
-                $"Cannot resolve REST profile input bindings for '{behaviorType.FullName}' because it does not implement IAppBehavior<TInput, TOutput>.");
-    }
+        if (inputContract.InputType is null)
+        {
+            throw new InvalidOperationException(
+                $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' declares an input contract without an input type.");
+        }
 
-    private static Dictionary<string, PropertyInfo> ResolveInputProperties(Type inputType)
-    {
-        ArgumentNullException.ThrowIfNull(inputType);
+        var properties = new Dictionary<string, BehaviorRestInputPropertyDescriptor>(StringComparer.OrdinalIgnoreCase);
+        foreach (var property in inputContract.Properties ?? Array.Empty<BehaviorRestInputPropertyDescriptor>())
+        {
+            if (string.IsNullOrWhiteSpace(property.Name))
+            {
+                throw new InvalidOperationException(
+                    $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' declares an input contract property without a name.");
+            }
 
-        return inputType.GetProperties(BindingFlags.Instance | BindingFlags.Public)
-            .Where(static property => property.GetMethod is not null)
-            .ToDictionary(static property => property.Name, StringComparer.OrdinalIgnoreCase);
-    }
+            if (property.Type is null)
+            {
+                throw new InvalidOperationException(
+                    $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' declares input contract property '{property.Name}' without a property type.");
+            }
 
-    private static bool IsSimpleInputType(Type inputType)
-    {
-        ArgumentNullException.ThrowIfNull(inputType);
+            var normalizedName = property.Name.Trim();
+            if (!properties.TryAdd(
+                    normalizedName,
+                    new BehaviorRestInputPropertyDescriptor(normalizedName, property.Type)))
+            {
+                throw new InvalidOperationException(
+                    $"REST profile metadata for behavior '{behaviorId}' from '{sourceIdentity}' declares multiple input contract properties named '{normalizedName}'.");
+            }
+        }
 
-        var type = Nullable.GetUnderlyingType(inputType) ?? inputType;
-        return type.IsPrimitive ||
-               type.IsEnum ||
-               type == typeof(string) ||
-               type == typeof(decimal) ||
-               type == typeof(Guid) ||
-               type == typeof(DateTime) ||
-               type == typeof(DateTimeOffset) ||
-               type == typeof(DateOnly) ||
-               type == typeof(TimeOnly);
+        return new BehaviorRestInputContractDescriptor(
+            inputContract.InputType,
+            inputContract.IsScalar,
+            properties.Values.ToArray());
     }
 }
 

@@ -814,7 +814,10 @@ The long-term projection model now has a first shipped explicit-binding baseline
 `BehaviorRestBindingAttribute` declarations on a behavior profile. That baseline feeds
 `BehaviorRestProfileDescriptor.Bindings`, source-generated `GetRestProfiles()` hints, explicit
 module-owned `MapProfile<TBehavior>()` consumption, and the engine-owned
-`RestEndpointRuntimeDescriptor.BindingDescriptors` runtime contract.
+`RestEndpointRuntimeDescriptor.BindingDescriptors` runtime contract. `ENG-474` moves the runtime
+validation side of that explicit-binding model onto `BehaviorRestProfileDescriptor.InputContract`
+metadata, so generated or explicitly registered profiles describe scalar/object input shape without
+re-reading `IAppBehavior<TInput,TOutput>` or public input properties from runtime behavior types.
 
 The current binding-descriptor baseline supports:
 

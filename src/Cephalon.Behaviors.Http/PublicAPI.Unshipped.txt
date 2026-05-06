@@ -1,5 +1,27 @@
 #nullable enable
 Cephalon.Behaviors.Http.Abstractions.BehaviorRestGeneratedProfileRegistry
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor.<Clone>$() -> Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor!
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor.BehaviorRestInputContractDescriptor(System.Type! InputType, bool IsScalar, System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor!>? Properties = null) -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor.Deconstruct(out System.Type! InputType, out bool IsScalar, out System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor!>? Properties) -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor.Equals(Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor? other) -> bool
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor.InputType.get -> System.Type!
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor.InputType.init -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor.IsScalar.get -> bool
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor.IsScalar.init -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor.Properties.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor!>?
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor.Properties.init -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor.<Clone>$() -> Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor!
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor.BehaviorRestInputPropertyDescriptor(string! Name, System.Type! Type) -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor.Deconstruct(out string! Name, out System.Type! Type) -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor.Equals(Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor? other) -> bool
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor.Name.get -> string!
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor.Name.init -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor.Type.get -> System.Type!
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor.Type.init -> void
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor.InputContract.get -> Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor?
+Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor.InputContract.init -> void
 static Cephalon.Behaviors.Http.Abstractions.BehaviorRestGeneratedProfileRegistry.Register(System.Reflection.Assembly! assembly, System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor!>! profiles, System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor!>! behaviorTypes) -> void
 static Cephalon.Behaviors.Http.Abstractions.BehaviorRestGeneratedProfileRegistry.TryGetBehaviorTypes(System.Reflection.Assembly! assembly, out System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor!>! behaviorTypes) -> bool
 static Cephalon.Behaviors.Http.Abstractions.BehaviorRestGeneratedProfileRegistry.TryGetProfiles(System.Reflection.Assembly! assembly, out System.Collections.Generic.IReadOnlyList<Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor!>! profiles) -> bool
@@ -15,5 +37,15 @@ Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor.T
 override Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor.Equals(object? obj) -> bool
 override Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor.GetHashCode() -> int
 override Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor.ToString() -> string!
+override Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor.Equals(object? obj) -> bool
+override Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor.GetHashCode() -> int
+override Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor.ToString() -> string!
+override Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor.Equals(object? obj) -> bool
+override Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor.GetHashCode() -> int
+override Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor.ToString() -> string!
+static Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor.operator !=(Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor? left, Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor? right) -> bool
+static Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor.operator ==(Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor? left, Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor? right) -> bool
+static Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor.operator !=(Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor? left, Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor? right) -> bool
+static Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor.operator ==(Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor? left, Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor? right) -> bool
 static Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor.operator !=(Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor? left, Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor? right) -> bool
 static Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor.operator ==(Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor? left, Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor? right) -> bool

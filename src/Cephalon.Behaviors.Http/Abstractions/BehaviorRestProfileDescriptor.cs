@@ -24,4 +24,11 @@ public sealed record BehaviorRestProfileDescriptor(
     string RelativePattern,
     int? ApiVersionMajor,
     IReadOnlyList<BehaviorRestBindingDescriptor>? Bindings = null,
-    bool PreserveImplicitQueryFallback = false);
+    bool PreserveImplicitQueryFallback = false)
+{
+    /// <summary>
+    /// Gets compile-time or explicitly provided input-shape metadata used to validate explicit
+    /// REST profile bindings without inspecting behavior/input types at runtime.
+    /// </summary>
+    public BehaviorRestInputContractDescriptor? InputContract { get; init; }
+}

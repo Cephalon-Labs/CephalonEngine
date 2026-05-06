@@ -335,21 +335,26 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         }
 
         var inputType = UnwrapNullable(behaviorInterface.TypeArguments[0]);
-        var publicProperties = inputType
-            .GetMembers()
-            .OfType<IPropertySymbol>()
-            .Where(static property =>
-                !property.IsStatic &&
-                property.GetMethod is not null &&
-                property.DeclaredAccessibility == Accessibility.Public)
-            .Select(static property => property.Name)
-            .ToImmutableDictionary(static property => property, static property => property, StringComparer.OrdinalIgnoreCase);
+        var isSimpleInput = IsSimpleInputType(inputType);
+        var publicProperties = isSimpleInput
+            ? ImmutableDictionary<string, InputPropertyInfo>.Empty.WithComparers(StringComparer.OrdinalIgnoreCase)
+            : inputType
+                .GetMembers()
+                .OfType<IPropertySymbol>()
+                .Where(static property =>
+                    !property.IsStatic &&
+                    property.GetMethod is not null &&
+                    property.DeclaredAccessibility == Accessibility.Public)
+                .Select(static property => new InputPropertyInfo(
+                    property.Name,
+                    ToTypeofTypeName(property.Type)))
+                .ToImmutableDictionary(static property => property.Name, static property => property, StringComparer.OrdinalIgnoreCase);
 
         return new InputTypeInfo(
             inputType.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
             behaviorInterface.TypeArguments[0].ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
             behaviorInterface.TypeArguments[1].ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat),
-            IsSimpleInputType(inputType),
+            isSimpleInput,
             publicProperties);
     }
 
@@ -1254,7 +1259,9 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                         sb.Append(", PreserveImplicitQueryFallback: true");
                     }
                 }
-                sb.AppendLine("),");
+                sb.Append(") { InputContract = ");
+                AppendRestInputContractDescriptor(sb, info);
+                sb.AppendLine(" },");
             }
 
             sb.AppendLine("        };");
@@ -1315,6 +1322,32 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         sb.AppendLine("}");
 
         return SourceText.From(sb.ToString(), Encoding.UTF8);
+    }
+
+    private static void AppendRestInputContractDescriptor(StringBuilder sb, BehaviorInfo info)
+    {
+        if (info.InputType is null)
+        {
+            sb.Append("null");
+            return;
+        }
+
+        sb.Append("new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor(");
+        sb.Append($"typeof({info.InputType.GenericInputTypeName}), ");
+        sb.Append(info.InputType.IsSimple ? "true" : "false");
+        if (info.InputType.PublicProperties.Count > 0)
+        {
+            sb.Append(", new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor[] { ");
+            sb.Append(string.Join(
+                ", ",
+                info.InputType.PublicProperties.Values
+                    .OrderBy(static property => property.Name, StringComparer.Ordinal)
+                    .Select(static property =>
+                        $"new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor(\"{EscapeString(property.Name)}\", typeof({property.TypeName}))")));
+            sb.Append(" }");
+        }
+
+        sb.Append(')');
     }
 
     private static string EscapeString(string s) =>
@@ -1490,8 +1523,8 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             }
 
             var propertyName = binding.PropertyName.Trim();
-            var propertyExists = info.InputType.PublicProperties.TryGetValue(propertyName, out var canonicalPropertyName);
-            var effectivePropertyName = propertyExists ? canonicalPropertyName! : propertyName;
+            var propertyExists = info.InputType.PublicProperties.TryGetValue(propertyName, out var inputProperty);
+            var effectivePropertyName = propertyExists ? inputProperty!.Name : propertyName;
 
             if (!propertyExists)
             {
@@ -1502,12 +1535,12 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                     info.InputType.DisplayName));
             }
 
-            if (propertyExists && !seenProperties.Add(canonicalPropertyName!))
+            if (propertyExists && !seenProperties.Add(inputProperty!.Name))
             {
                 issues.Add(new RestBindingValidationIssue(
                     Abt023RestBindingPropertyMustNotBeDuplicated,
                     info.ShortName,
-                    canonicalPropertyName!));
+                    inputProperty.Name));
             }
 
             if (!IsSupportedRestBindingSourceWireName(binding.SourceWireName))
@@ -1701,6 +1734,19 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         } namedTypeSymbol
             ? namedTypeSymbol.TypeArguments[0]
             : typeSymbol;
+    }
+
+    private static string ToTypeofTypeName(ITypeSymbol typeSymbol)
+    {
+        var type = typeSymbol is INamedTypeSymbol
+        {
+            OriginalDefinition.SpecialType: SpecialType.System_Nullable_T,
+            TypeArguments.Length: 1
+        }
+            ? typeSymbol
+            : typeSymbol.WithNullableAnnotation(NullableAnnotation.NotAnnotated);
+
+        return type.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
     }
 
     private static bool IsSimpleInputType(ITypeSymbol inputType)
@@ -1943,7 +1989,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             string genericInputTypeName,
             string genericOutputTypeName,
             bool isSimple,
-            ImmutableDictionary<string, string> publicProperties)
+            ImmutableDictionary<string, InputPropertyInfo> publicProperties)
         {
             DisplayName = displayName;
             GenericInputTypeName = genericInputTypeName;
@@ -1956,7 +2002,19 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         public string GenericInputTypeName { get; }
         public string GenericOutputTypeName { get; }
         public bool IsSimple { get; }
-        public ImmutableDictionary<string, string> PublicProperties { get; }
+        public ImmutableDictionary<string, InputPropertyInfo> PublicProperties { get; }
+    }
+
+    private sealed class InputPropertyInfo
+    {
+        public InputPropertyInfo(string name, string typeName)
+        {
+            Name = name;
+            TypeName = typeName;
+        }
+
+        public string Name { get; }
+        public string TypeName { get; }
     }
 
     private static DurableExecutionInfo? ResolveDurableExecutionInfo(INamedTypeSymbol typeSymbol)

@@ -187,8 +187,8 @@ Current `BehaviorRestProfileAttribute` behavior:
 - `Cephalon.Behaviors.SourceGen` validates the method, relative pattern, and optional API version
   at build time, now also rejects malformed placeholder syntax such as unbalanced `{...}` route
   segments, and emits `GetRestProfiles()` hints that now preserve explicit binding descriptors when
-  they are declared, plus `GetRestProfileBehaviorTypes()` hints for generated module-owned
-  shorthand
+  they are declared, descriptor-backed input contracts for explicit binding validation, plus
+  `GetRestProfileBehaviorTypes()` hints for generated module-owned shorthand
 - repeated `BehaviorRestBindingAttribute` declarations can describe explicit `route`, `query`,
   `header`, and `body` sources for object inputs when the module-owned shorthand needs deterministic
   input sourcing
@@ -200,7 +200,7 @@ Current `BehaviorRestProfileAttribute` behavior:
   those wire names
 - runtime descriptor consumption and explicit binding-plan normalization now also point errors at
   those same canonical binding-source wire names, so troubleshooting unsupported profile bindings
-  uses the same vocabulary as JSON and source generation
+  uses the same vocabulary as JSON and source generation without inspecting runtime input shape
 - `BehaviorRestMethod` remains the code-authoring enum surface, but `BehaviorRestMethodExtensions`
   now exposes the same stable `get`, `post`, `put`, `patch`, and `delete` wire names that JSON
   serialization uses; `Cephalon.Behaviors.SourceGen` validates against that canonical vocabulary
@@ -645,7 +645,8 @@ Current helper behavior:
 - dispatches through `BehaviorDispatcher` and `DefaultBehaviorContext`
 - keeps the implicit route/query/body merge baseline for DSL-authored routes without explicit
   profile bindings, while profile-driven explicit bindings switch to descriptor-aware source
-  resolution with deterministic route/body fallback
+  resolution over `BehaviorRestInputContractDescriptor` metadata with deterministic route/body
+  fallback
 - validates explicit binding metadata at build time and re-checks the same route-placeholder truth
   plus preserved implicit-query fallback requirements when generated or explicitly registered
   descriptors are consumed so low-ceremony profile authoring stays deterministic
@@ -666,8 +667,8 @@ Current helper behavior:
   `RestEndpointRuntimeDescriptor.BindingDescriptors` and the matching `bindingDescriptors` JSON
   field on `/engine/rest-endpoints` and `snapshot.RestEndpoints`
 - prefers source-generated `GetRestProfiles()` plus `GetRestProfileBehaviorTypes()` hints for
-  generated shorthand and falls back only to a bounded scan of the explicit owning module assembly
-  when generated type hints are unavailable
+  generated shorthand; generated-profile group mapping now fails fast when the owning module
+  assembly does not expose registry hints instead of scanning for attributed behavior types
 - lets the inline helper keep generated-profile discovery truthful by using the supplied marker
   type as the source assembly for `MapGeneratedProfiles(...)`
 - prefixes the mapped REST route group with `/v{major}` for the resolved API major version, so ASP.NET Core hosts expose routes such as `/api/v1/showcase/cart/{cartId}`

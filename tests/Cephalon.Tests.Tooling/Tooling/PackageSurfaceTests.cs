@@ -1706,6 +1706,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSource),
             typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestBindingSourceExtensions),
             typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestGeneratedProfileRegistry),
+            typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor),
+            typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor),
             typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethod),
             typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestMethodExtensions),
             typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileAttribute),
@@ -1819,6 +1821,10 @@ public sealed class PackageSurfaceTests
             .GetProperty("PreserveImplicitQueryFallback", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor)
             .GetProperty("PreserveImplicitQueryFallback", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor)
+            .GetProperty("InputContract", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor));
+        Assert.NotNull(typeof(global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputPropertyDescriptor));
     }
 
     [Fact]
@@ -2730,6 +2736,10 @@ public sealed class PackageSurfaceTests
         Assert.DoesNotContain("\"GetRestProfiles\"", profileResolver);
         Assert.DoesNotContain("\"GetRestProfileBehaviorTypes\"", profileResolver);
         Assert.DoesNotContain("method?.Invoke", profileResolver);
+        Assert.DoesNotContain("GetInterfaces()", profileResolver);
+        Assert.DoesNotContain("GetGenericArguments", profileResolver);
+        Assert.DoesNotContain("GetProperties(", profileResolver);
+        Assert.DoesNotContain("BindingFlags", profileResolver);
 
         var projection = File.ReadAllText(RepositoryPaths.GetFile(
             "src",

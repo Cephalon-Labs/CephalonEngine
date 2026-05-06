@@ -182,6 +182,36 @@ public sealed class BehaviorSourceGeneratorTests
                 public int? ApiVersionMajor { get; }
                 public System.Collections.Generic.IReadOnlyList<BehaviorRestBindingDescriptor>? Bindings { get; }
                 public bool PreserveImplicitQueryFallback { get; }
+                public BehaviorRestInputContractDescriptor? InputContract { get; set; }
+            }
+
+            public sealed class BehaviorRestInputContractDescriptor
+            {
+                public BehaviorRestInputContractDescriptor(
+                    System.Type inputType,
+                    bool isScalar,
+                    System.Collections.Generic.IReadOnlyList<BehaviorRestInputPropertyDescriptor>? properties = null)
+                {
+                    InputType = inputType;
+                    IsScalar = isScalar;
+                    Properties = properties;
+                }
+
+                public System.Type InputType { get; }
+                public bool IsScalar { get; }
+                public System.Collections.Generic.IReadOnlyList<BehaviorRestInputPropertyDescriptor>? Properties { get; }
+            }
+
+            public sealed class BehaviorRestInputPropertyDescriptor
+            {
+                public BehaviorRestInputPropertyDescriptor(string name, System.Type type)
+                {
+                    Name = name;
+                    Type = type;
+                }
+
+                public string Name { get; }
+                public System.Type Type { get; }
             }
         }
 
@@ -380,6 +410,8 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.Contains("GetRestProfiles()", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("GetRestProfileBehaviorTypes()", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileDescriptor(\"orders.get\"", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("InputContract = new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestInputContractDescriptor(", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains(", true)", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("new global::Cephalon.Behaviors.Http.Abstractions.BehaviorRestProfileBehaviorTypeDescriptor(\"orders.get\", typeof(global::GetOrderBehavior))", autoRegistration, StringComparison.Ordinal);
         Assert.DoesNotContain("IReadOnlyList<(string Id, global::System.Type Type)> GetRestProfileBehaviorTypes", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("BehaviorRestMethod.Get", autoRegistration, StringComparison.Ordinal);
@@ -421,6 +453,9 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.Contains("\"OrderId\"", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("BehaviorRestBindingSource.Route", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("\"X-Correlation-Id\"", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorRestInputPropertyDescriptor(\"OrderId\"", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorRestInputPropertyDescriptor(\"Quantity\"", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorRestInputPropertyDescriptor(\"CorrelationId\"", autoRegistration, StringComparison.Ordinal);
     }
 
     [Fact]

@@ -37,9 +37,10 @@ module-owned REST endpoints.
 - **Metadata-only REST profile contract** — `BehaviorRestProfileAttribute`,
   `BehaviorRestBindingAttribute`, `BehaviorRestMethod`, `BehaviorRestMethodExtensions`,
   `BehaviorRestProfileDescriptor`, `BehaviorRestBindingDescriptor`,
+  `BehaviorRestInputContractDescriptor`, `BehaviorRestInputPropertyDescriptor`,
   `BehaviorRestBindingSource`, and `BehaviorRestBindingSourceExtensions` for behavior-authored
-  candidate REST method, relative route, optional API-version hints, explicit
-  route/query/header/body binding plans, and optional preserved implicit-query fallback intent for
+  candidate REST method, relative route, optional API-version hints, descriptor-backed input-shape
+  metadata, explicit route/query/header/body binding plans, and optional preserved implicit-query fallback intent for
   explicitly bound profiles that source generation or explicit hosts can project into descriptors
   for module-owned shorthand such as `MapProfile<TBehavior>()` without publishing public REST
   directly from behaviors; the build now rejects
@@ -49,7 +50,9 @@ module-owned REST endpoints.
   this metadata stays trim/AOT-friendly without enum-field reflection
 - **Source-generated REST profile registry** — `BehaviorRestGeneratedProfileRegistry` and
   `BehaviorRestProfileBehaviorTypeDescriptor` let generated assemblies register REST profile
-  descriptors from a module initializer, so normal generated-profile consumption no longer finds
+  descriptors plus behavior-type hints from a module initializer, and generated
+  `BehaviorRestProfileDescriptor.InputContract` metadata carries scalar/object input contract
+  truth, so normal generated-profile consumption no longer finds
   `GetRestProfiles()` / `GetRestProfileBehaviorTypes()` through `ContainsBehaviorsAttribute`
   method reflection and no longer falls back to scanning the owning module assembly
 - **REST runtime ownership metadata** — behavior-backed REST endpoints now publish stable
@@ -205,8 +208,9 @@ Current profile behavior:
   `ConfigureRestBehaviors(...)`
 - `Cephalon.Behaviors.SourceGen` validates the core profile shape at build time and emits
   `GetRestProfiles()` hints, including explicit binding descriptors and preserved implicit
-  query-fallback intent when they are declared, plus `GetRestProfileBehaviorTypes()` hints for
-  generated module-owned shorthand
+  query-fallback intent when they are declared, descriptor-backed scalar/object input contract
+  metadata for runtime binding validation, plus `GetRestProfileBehaviorTypes()` hints for generated
+  module-owned shorthand
 - `IRestBehaviorEndpointGroupBuilder.MapProfile<TBehavior>()` is now the shipped low-ceremony
   module-owned shorthand that consumes generated or explicitly registered profile descriptors
   through the existing REST projection pipeline
@@ -221,8 +225,9 @@ Current profile behavior:
   also moves generated REST profile hints onto the registry and optional result-envelope OpenAPI
   projection onto descriptor metadata; `ENG-466` removes the generated-profile assembly-scan
   fallback; `ENG-473` removes the `MapProfile<TBehavior>()` runtime attribute/profile fallback;
-  the remaining deployment-mode inventory for this package is narrowed to input-shape inspection
-  and manual/type-based route-contract reflection
+  `ENG-474` removes input-shape inspection by requiring `BehaviorRestInputContractDescriptor`
+  metadata for explicit profile binding validation; the remaining deployment-mode inventory for
+  this package is narrowed to manual/type-based route-contract reflection
 - valid profiles currently require a supported REST method, a non-empty leading-slash relative
   pattern such as `"/{cartId}"`, and a positive `ApiVersionMajor` when one is specified
 - when a profile declares explicit bindings, `BehaviorRestProfile(PreserveImplicitQueryFallback = true)`
@@ -246,7 +251,8 @@ Current profile behavior:
   object inputs only; build-time diagnostics now reject invalid property names, duplicate property
   bindings, unsupported sources, route-placeholder mismatches, and body bindings on `GET` or
   `DELETE`, while module-owned profile consumption still re-checks the same contract when it
-  consumes generated or explicitly registered descriptor metadata
+  consumes generated or explicitly registered descriptor metadata without resolving input shape
+  from the runtime behavior type
 - `BehaviorRestBindingSource` now also exposes `BehaviorRestBindingSourceExtensions` plus the same
   stable `route`, `query`, `header`, and `body` wire names that JSON serialization uses; source
   generation validates profile bindings against that canonical vocabulary while still emitting the

@@ -39,7 +39,10 @@ internal static class BehaviorRestProfileTestRegistry
                 profile.RelativePattern,
                 profile.ApiVersionMajor > 0 ? profile.ApiVersionMajor : null,
                 ExtractBindings(type),
-                profile.PreserveImplicitQueryFallback));
+                profile.PreserveImplicitQueryFallback)
+            {
+                InputContract = ExtractInputContract(type)
+            });
             behaviorTypes.Add(new BehaviorRestProfileBehaviorTypeDescriptor(behavior.Id, type));
         }
 
@@ -53,4 +56,46 @@ internal static class BehaviorRestProfileTestRegistry
                 attribute.Source,
                 attribute.Name))
             .ToArray();
+
+    private static BehaviorRestInputContractDescriptor? ExtractInputContract(Type behaviorType)
+    {
+        var behaviorInterface = behaviorType
+            .GetInterfaces()
+            .FirstOrDefault(static candidate =>
+                candidate.IsGenericType &&
+                candidate.GetGenericTypeDefinition() == typeof(IAppBehavior<,>));
+        if (behaviorInterface is null)
+        {
+            return null;
+        }
+
+        var inputType = behaviorInterface.GetGenericArguments()[0];
+        var isScalar = IsScalarInputType(inputType);
+        return new BehaviorRestInputContractDescriptor(
+            inputType,
+            isScalar,
+            isScalar
+                ? []
+                : inputType
+                    .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                    .Where(static property => property.GetMethod is not null)
+                    .Select(static property => new BehaviorRestInputPropertyDescriptor(
+                        property.Name,
+                        property.PropertyType))
+                    .ToArray());
+    }
+
+    private static bool IsScalarInputType(Type inputType)
+    {
+        var type = Nullable.GetUnderlyingType(inputType) ?? inputType;
+        return type.IsPrimitive ||
+               type.IsEnum ||
+               type == typeof(string) ||
+               type == typeof(decimal) ||
+               type == typeof(Guid) ||
+               type == typeof(DateTime) ||
+               type == typeof(DateTimeOffset) ||
+               type == typeof(DateOnly) ||
+               type == typeof(TimeOnly);
+    }
 }

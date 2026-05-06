@@ -6118,10 +6118,42 @@ public sealed class BehaviorRestProjectionTests
                             binding.Name))
                         .ToArray(),
                     preserveImplicitQueryFallback)
+                {
+                    InputContract = BuildInputContract(inputType)
+                }
             ],
             [new BehaviorRestProfileBehaviorTypeDescriptor(behaviorId, behaviorType)]);
 
         return behaviorType;
+    }
+
+    private static BehaviorRestInputContractDescriptor BuildInputContract(Type inputType)
+    {
+        var isScalar = IsScalarInputType(inputType);
+        return new BehaviorRestInputContractDescriptor(
+            inputType,
+            isScalar,
+            isScalar
+                ? []
+                : inputType
+                .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                .Where(static property => property.GetMethod is not null)
+                .Select(static property => new BehaviorRestInputPropertyDescriptor(property.Name, property.PropertyType))
+                .ToArray());
+    }
+
+    private static bool IsScalarInputType(Type inputType)
+    {
+        var type = Nullable.GetUnderlyingType(inputType) ?? inputType;
+        return type.IsPrimitive ||
+               type.IsEnum ||
+               type == typeof(string) ||
+               type == typeof(decimal) ||
+               type == typeof(Guid) ||
+               type == typeof(DateTime) ||
+               type == typeof(DateTimeOffset) ||
+               type == typeof(DateOnly) ||
+               type == typeof(TimeOnly);
     }
 
     private static string BuildBehaviorProjectionCandidateId(
