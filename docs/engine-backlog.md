@@ -24,6 +24,37 @@ Current focus:
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
 - treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md), validates the deployment-mode, adoption-smoke, SRE, and supply-chain release support manifests, scans public API delta files into `PublicApiCompatibilityEvidence`, and `cephalon doctor --scorecard <path>` provides a schema `1.6.0` local CLI readback over that generated artifact including deployment-mode global/package-scoped/hazard/publish-probe counts, SRE target/baseline counts, supply-chain workflow/external-policy counts, and public API package/pending/addition/removal counts without becoming source truth
 - treat the CDC integration-test lane as additive evidence over the runtime catalog truth: `tests/Cephalon.Tests.CdcIntegration` now proves MongoDB change streams against a real disposable replica set, while SQL Server/Postgres live CDC coverage remains a later external-service-gated lane instead of being implied by fake transport harnesses
+- treat the Debezium test-flake quarantine as resolved by shared catalog hardening: CDC execution-runtime filters now reuse versioned snapshots over indexed capture ownership instead of re-enriching every runtime for every state/category selector
+
+### ENG-488 Fix CDC execution-runtime filter projection recursion
+
+Status: done
+Estimate: 2
+Issue: #1092
+Iteration: Sprint 125
+Area: data / CDC / Debezium runtime catalog
+Quality dimensions: Reliability, Performance, Maintainability, Auditability
+
+Why:
+
+- full `Cephalon.Tests.Composition` runs exposed pre-existing `DebeziumDataCdcPackTests` timeouts and memory pressure in the shared CDC execution-runtime catalog rather than in Debezium-specific report ingestion
+- repeated managed-connector filters walked `index.Values.Select(Enrich)` for every selector, and `Enrich` re-entered capture/runtime-state lookup paths that amplified work across the large operator surface
+- the test-coverage roadmap recommendation #7 and the preview release-note flake watch both needed a source fix plus regression coverage instead of a quarantine skip
+
+Delivered:
+
+- pre-indexed capture ids by effective execution-runtime ownership when `CdcCaptureExecutionRuntimeCatalog` is constructed
+- added version counters to the shared CDC runtime-state catalog and managed-connector command-history store so execution-runtime projections can invalidate when reports, rejected conflicts, command history, persistence, or recovery state changes
+- added a bounded execution-runtime snapshot cache keyed by runtime-state version, command-history version, and freshness time bucket, while still calculating each snapshot from one observed clock value
+- added `AddDebeziumData_ExecutionRuntimeFilterSnapshotRefreshesAfterRuntimeReports` to prove repeated Debezium drift filters stay bounded and refresh after later runtime reports
+- refreshed shared data, Debezium, test-coverage, release-note, roadmap, backlog, and project-memory truth so the old flake watch no longer reads like an open environmental issue
+
+Validation:
+
+- focused Debezium dry-run regression (`1/1`)
+- full `DebeziumDataCdcPackTests` suite (`13/13`)
+- solution locked restore
+- `git diff --check`
 
 ### ENG-487 Add opt-in CDC integration baseline
 
@@ -14409,6 +14440,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-485 Make supply-chain release evidence scorecard-backed: `scripts/supply-chain-release-support.json` now carries the tag-triggered release workflow token contract, workflow-ready release provenance items, and external-policy-pending publisher prerequisites; `scripts/publish-engine-completion-scorecard.ps1` schema `1.5.0` emits `SupplyChainEvidence`; `scripts/validate-release.ps1` prints the generated supply-chain count summary; and `cephalon doctor --scorecard <path>` reports workflow-ready / external-policy-pending / blocked counts while failing if summary counts drift from the detailed supply-chain evidence node. Quality dimensions: Security + Compliance + Auditability + Maintainability + Reliability + Usability (shipped)
 - ENG-486 Make deployment-mode evidence scorecard-backed: `scripts/publish-engine-completion-scorecard.ps1` schema `1.6.0` now emits `DeploymentModeEvidence` from `scripts/deployment-mode-support.json`, validating deployment docs/scripts, global trim / Native AOT / single-file `not-claimed` rows, package-scoped claims, known hazard counts, transitive audit entries, representative publish targets, and publish-probe policy before artifact publishing; `scripts/validate-release.ps1` prints the generated deployment-mode evidence summary; and `cephalon doctor --scorecard <path>` reports global/package-scoped/hazard/transitive-audit/publish-probe counts while failing if summary counts drift from the detailed deployment-mode evidence node. Quality dimensions: Compatibility + Auditability + Maintainability + Reliability + Usability (shipped)
 - ENG-487 Add opt-in CDC integration baseline: `tests/Cephalon.Tests.CdcIntegration` now carries the first dedicated live CDC integration lane, proving MongoDB change streams against a disposable `EphemeralMongo7` replica set with real outbox staging, provider-native runtime binding, runtime-state reporting, execution-runtime aggregation, and checkpoint persistence; `data.slnf` now points at the split data-relevant test projects instead of the retired monolithic test project, and SQL Server/Postgres live CDC coverage stays explicitly later until an external-service/Testcontainers gate exists. Quality dimensions: Reliability + Compatibility + Auditability + Maintainability (shipped)
+- ENG-488 Fix CDC execution-runtime filter projection recursion: `CdcCaptureExecutionRuntimeCatalog` now indexes capture ids by effective execution runtime and reuses a versioned snapshot for repeated managed-connector filter projections; runtime-state reports, rejected reporter conflicts, managed-connector command-history changes, persistence/recovery changes, and freshness time buckets invalidate that snapshot, and `DebeziumDataCdcPackTests` now carry a regression proving repeated drift filters refresh after later reports. Quality dimensions: Reliability + Performance + Maintainability + Auditability (shipped)
 
 ### Later / not scheduled yet
 

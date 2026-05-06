@@ -21,6 +21,9 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
     private readonly Dictionary<string, CdcCaptureRuntimeState> reportedStatesById = new(Comparer);
     private readonly Dictionary<string, RuntimeReporterCoordinationMemory> runtimeReporterCoordinationById = new(Comparer);
     private readonly TimeProvider timeProvider = timeProvider ?? TimeProvider.System;
+    private long version;
+
+    internal long Version => System.Threading.Interlocked.Read(ref version);
 
     private static readonly CdcCaptureFreshnessStatus UnknownFreshness =
         new(CdcCaptureFreshnessStates.Unknown);
@@ -628,6 +631,7 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
             }
 
             reportedStatesById[report.CdcCaptureId] = current;
+            IncrementVersion();
         }
     }
 
@@ -1106,6 +1110,7 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                     report.CdcCaptureId,
                     report.EdgeNodeId))
         };
+        IncrementVersion();
     }
 
     private void RecordAcceptedReporterObservation(
@@ -1322,6 +1327,11 @@ internal sealed class CdcCaptureRuntimeStateCatalog(
                 !Comparer.Equals(item.ReporterId, reporterId))
             .OrderBy(static item => item.ReporterId, Comparer)
             .ToArray();
+    }
+
+    private void IncrementVersion()
+    {
+        System.Threading.Interlocked.Increment(ref version);
     }
 
     private static void UpsertOptional(

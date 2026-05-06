@@ -41,6 +41,7 @@ The foundation is no longer hypothetical. The repository already ships:
 - a GitHub Actions release-validation workflow that runs the repo-native build, test, benchmark, and guardrail flow
 - a repo-native `.NET` readiness assessment flow plus a dedicated `.NET 11` workflow lane that keep future-SDK validation separate from the stable `net10.0` shipping baseline
 - an [Engine completion scorecard](engine-completion-scorecard.md) plus machine-readable JSON/README artifact emitter and `cephalon doctor --scorecard` local readback that roll maturity, conformance, runtime-contract, compatibility, deployment-mode, `.NET 11`, package-publishing, supply-chain, SRE, release-checklist evidence, evidence-source references, per-package GA readiness, deployment-mode manifest evidence, adoption-smoke evidence, SRE target/baseline evidence, supply-chain release provenance/external-policy evidence, and public API delta counts into one release-readiness view without replacing the owning source docs
+- a shared CDC execution-runtime projection path that now keeps filter-heavy managed-connector operator surfaces bounded by indexing capture ownership and reusing versioned snapshots while still refreshing after runtime reports, rejected reporter conflicts, managed-connector command-history changes, and freshness time-bucket changes
 
 That changes the plan materially:
 
