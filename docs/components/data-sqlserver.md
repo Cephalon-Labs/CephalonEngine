@@ -182,6 +182,10 @@ When `SqlServerDataModule` is active, the following capability keys appear in th
 | `data.relational-store` | Always |
 | `data.cdc.sqlserver` | `CdcCaptures.Count > 0` |
 
+## Live integration testing
+
+The default repository test lane does not require a developer-managed SQL Server instance or Docker. SQL Server live CDC tests belong in `tests/Cephalon.Tests.CdcIntegration` and should use the shared external-service gate documented in that test project's README. The gate keeps SQL Server tests skipped by default, then lets a developer or CI job opt into either `CEPHALON_CDC_SQLSERVER_CONNECTION_STRING` for a pre-provisioned database or `CEPHALON_CDC_TESTCONTAINERS=1` for a disposable Testcontainers-backed service.
+
 ## Not shipped in this slice
 
 This pack intentionally still does not claim:
