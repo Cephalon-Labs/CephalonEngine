@@ -60,6 +60,8 @@ This package is a permanent package-level `not-claimed` posture for trim, native
 
 The current implementation still carries the known third-party reflective adapter path. It exists so teams can make a conscious runtime tradeoff while Cephalon keeps the safer package boundary ready for a future public upstream API or first-party transport.
 
+This is a resolved support boundary, not a hidden global engine blocker. Global trim, Native AOT, and single-file support still remain `not-claimed`; if Cephalon later promotes those modes, this adapter either needs a released public SciSharp API / first-party transport rewrite or it stays outside that promoted package set.
+
 ## Related docs
 
 - [Cephalon.Data.MySql](data-mysql.md)
