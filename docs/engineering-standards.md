@@ -35,7 +35,7 @@ Each first-class engine quality maps onto one or more external frameworks. Plann
 
 The matrix below is the durable mapping. Refresh it in place when ISO/IEC 25010, OWASP ASVS, NIST SSDF, SLSA, OpenTelemetry semantic conventions, or the EU regulatory framework publishes a new revision; do not append a dated change log here.
 
-| Engine quality | ISO/IEC 25010:2023 anchor | OWASP ASVS 5.0 anchor | NIST SSDF v1.2 anchor | SLSA v1.1 / supply-chain anchor | Other / regulatory anchor |
+| Engine quality | ISO/IEC 25010:2023 anchor | OWASP ASVS 5.0 anchor | NIST SSDF anchor | SLSA v1.1 / supply-chain anchor | Other / regulatory anchor |
 | --- | --- | --- | --- | --- | --- |
 | Performance | *Performance Efficiency* (time behaviour, resource utilisation, capacity) | — | — | — | BenchmarkDotNet guardrails; `Microsoft.DotNet.PackageValidation` for binary-perf-affecting changes |
 | Security | *Security* | ASVS V1–V17 (architecture, authn, session, access control, validation, crypto, errors, data protection, comm, malicious code, business logic, files/resources, API/web, config, supply chain, web client, OAuth/OIDC) | PS, PW, PO, RV practice groups | SLSA L3 build target; Sigstore Cosign + Fulcio + Rekor; CycloneDX SBOM | OWASP AISVS for AI-touching surfaces |
@@ -56,7 +56,7 @@ Authoritative external sources for the mapping:
 - [arc42 — ISO/IEC 25010:2023 update summary](https://quality.arc42.org/articles/iso-25010-update-2023)
 - [OWASP Application Security Verification Standard 5.0](https://owasp.org/www-project-application-security-verification-standard/)
 - [OWASP AI Security Verification Standard (AISVS)](https://owasp.org/www-project-artificial-intelligence-security-verification-standard/)
-- [NIST SSDF (SP 800-218 v1.2 draft, Dec 2025)](https://csrc.nist.gov/projects/ssdf)
+- [NIST SSDF (SP 800-218 / SSDF v1.1 final, plus SP 800-218 Rev. 1 / SSDF v1.2 draft readiness input)](https://csrc.nist.gov/projects/ssdf/publications)
 - [NIST SP 800-218A — SSDF Practices for Generative AI](https://csrc.nist.gov/publications/detail/sp/800-218a/final)
 - [SLSA framework v1.1](https://slsa.dev/spec/v1.1/)
 - [Sigstore (Cosign + Fulcio + Rekor)](https://www.sigstore.dev/)
