@@ -6,7 +6,8 @@ This project is the focused integration-test lane for provider-backed CDC behavi
 
 - MongoDB change streams run against a disposable single-node replica set through `MongoDbReplicaSetRunner` and `EphemeralMongo7`, so the baseline does not require Docker or a developer-managed MongoDB instance.
 - The MongoDB test proves outbox staging, provider-native runtime binding, runtime-state reporting, execution-runtime aggregation, and durable checkpoint persistence through the same contracts exposed by `Cephalon.Data` and `Cephalon.Data.MongoDB`.
-- SQL Server and Postgres live CDC tests are intentionally opt-in. Their current coverage remains in the fake transport harnesses under the hosting/support test projects until the provider-specific live tests land on the external-service gate below.
+- SQL Server live CDC now runs on the shared external-service gate below. The test creates an isolated SQL Server database, enables native CDC on a real `dbo.orders` table, verifies outbox staging and runtime-state reporting through `Cephalon.Data.SqlServer`, and stays skipped unless a developer or CI job opts into a provider mode.
+- Postgres live CDC tests are still intentionally opt-in future coverage. Their current coverage remains in the fake transport harnesses under the hosting/support test projects until the provider-specific live test lands on the same gate.
 
 ## External-service gate
 
@@ -23,13 +24,33 @@ The shared gate uses these environment variables:
 
 Provider-specific live tests should prefer a pre-provisioned connection string when present, otherwise use Testcontainers only when both `CEPHALON_CDC_EXTERNAL_SERVICES` and `CEPHALON_CDC_TESTCONTAINERS` are enabled. If neither provider mode resolves, the test should remain skipped rather than silently passing with fake transport coverage.
 
+## SQL Server live lane
+
+`SqlServerCdcIntegrationTests.SqlServerCdc_StagesOutboxAndPersistsCheckpointAgainstLiveDatabase` is the first provider-specific live relational CDC test on this gate. It needs a SQL Server instance where the login can create and drop an isolated test database, enable database/table CDC, and run SQL Server Agent-backed CDC capture jobs. In Testcontainers mode the test uses the Microsoft SQL Server 2022 container image with `MSSQL_AGENT_ENABLED=true`; in pre-provisioned mode the supplied connection string is normalized to `master` before the isolated database is created.
+
+To run only the SQL Server live lane through Testcontainers:
+
+```powershell
+$env:CEPHALON_CDC_EXTERNAL_SERVICES = '1'
+$env:CEPHALON_CDC_TESTCONTAINERS = '1'
+dotnet test .\tests\Cephalon.Tests.CdcIntegration\Cephalon.Tests.CdcIntegration.csproj --no-restore --filter FullyQualifiedName~SqlServerCdc_StagesOutboxAndPersistsCheckpointAgainstLiveDatabase --logger "console;verbosity=normal"
+```
+
+To run only the SQL Server live lane against a pre-provisioned service:
+
+```powershell
+$env:CEPHALON_CDC_EXTERNAL_SERVICES = '1'
+$env:CEPHALON_CDC_SQLSERVER_CONNECTION_STRING = 'Server=localhost;User Id=sa;Password=<password>;TrustServerCertificate=true'
+dotnet test .\tests\Cephalon.Tests.CdcIntegration\Cephalon.Tests.CdcIntegration.csproj --no-restore --filter FullyQualifiedName~SqlServerCdc_StagesOutboxAndPersistsCheckpointAgainstLiveDatabase --logger "console;verbosity=normal"
+```
+
 ## Run
 
 ```powershell
 dotnet test .\tests\Cephalon.Tests.CdcIntegration\Cephalon.Tests.CdcIntegration.csproj --no-restore --logger "console;verbosity=normal"
 ```
 
-To run the future SQL Server/Postgres live lane through Testcontainers:
+To run all current and future external-service live lanes through Testcontainers:
 
 ```powershell
 $env:CEPHALON_CDC_EXTERNAL_SERVICES = '1'
@@ -37,7 +58,7 @@ $env:CEPHALON_CDC_TESTCONTAINERS = '1'
 dotnet test .\tests\Cephalon.Tests.CdcIntegration\Cephalon.Tests.CdcIntegration.csproj --no-restore --logger "console;verbosity=normal"
 ```
 
-To run the future live lane against pre-provisioned services:
+To run all current and future live lanes against pre-provisioned services:
 
 ```powershell
 $env:CEPHALON_CDC_EXTERNAL_SERVICES = '1'

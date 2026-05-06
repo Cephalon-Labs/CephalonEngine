@@ -11,6 +11,8 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="EphemeralMongo7" />
+    <PackageReference Include="Microsoft.Data.SqlClient" />
+    <PackageReference Include="Testcontainers.MsSql" />
     <PackageReference Include="coverlet.collector">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -24,6 +26,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Cephalon.Data.MongoDB\Cephalon.Data.MongoDB.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Data.SqlServer\Cephalon.Data.SqlServer.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data\Cephalon.Data.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Eventing\Cephalon.Eventing.csproj" />
     <ProjectReference Include="..\..\tests\Cephalon.Tests.Support\Cephalon.Tests.Support.csproj" />
