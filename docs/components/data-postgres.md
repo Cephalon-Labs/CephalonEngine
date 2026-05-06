@@ -178,7 +178,9 @@ When `PostgresDataModule` is active, the following capability keys appear in the
 
 ## Live integration testing
 
-The default repository test lane does not require a developer-managed PostgreSQL instance or Docker. PostgreSQL live CDC tests belong in `tests/Cephalon.Tests.CdcIntegration` and should use the shared external-service gate documented in that test project's README. The gate keeps PostgreSQL tests skipped by default, then lets a developer or CI job opt into either `CEPHALON_CDC_POSTGRES_CONNECTION_STRING` for a pre-provisioned database or `CEPHALON_CDC_TESTCONTAINERS=1` for a disposable Testcontainers-backed service.
+The default repository test lane does not require a developer-managed PostgreSQL instance or Docker. `tests/Cephalon.Tests.CdcIntegration/PostgresCdcIntegrationTests.cs` carries the live provider proof behind the shared external-service gate documented in that test project's README. The gate keeps PostgreSQL tests skipped by default, then lets a developer or CI job opt into either `CEPHALON_CDC_POSTGRES_CONNECTION_STRING` for a pre-provisioned database or `CEPHALON_CDC_TESTCONTAINERS=1` for a disposable Testcontainers-backed service.
+
+`PostgresCdcIntegrationTests.PostgresCdc_StagesOutboxAndConfirmsSlotCheckpointAgainstLiveDatabase` creates a unique schema, table, publication, and logical replication slot against the live database, inserts a real order row, verifies outbox staging plus shared runtime-state and execution-runtime aggregation, and compares Cephalon's serialized checkpoint token with the slot's `confirmed_flush_lsn`. Testcontainers mode uses `postgres:16-alpine` with logical replication enabled through `wal_level=logical`, `max_wal_senders=10`, and `max_replication_slots=10`; pre-provisioned mode expects the supplied login to have the corresponding schema/publication/slot permissions.
 
 ## Not shipped in this slice
 

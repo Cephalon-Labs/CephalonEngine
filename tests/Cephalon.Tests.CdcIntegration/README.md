@@ -7,7 +7,7 @@ This project is the focused integration-test lane for provider-backed CDC behavi
 - MongoDB change streams run against a disposable single-node replica set through `MongoDbReplicaSetRunner` and `EphemeralMongo7`, so the baseline does not require Docker or a developer-managed MongoDB instance.
 - The MongoDB test proves outbox staging, provider-native runtime binding, runtime-state reporting, execution-runtime aggregation, and durable checkpoint persistence through the same contracts exposed by `Cephalon.Data` and `Cephalon.Data.MongoDB`.
 - SQL Server live CDC now runs on the shared external-service gate below. The test creates an isolated SQL Server database, enables native CDC on a real `dbo.orders` table, verifies outbox staging and runtime-state reporting through `Cephalon.Data.SqlServer`, and stays skipped unless a developer or CI job opts into a provider mode.
-- Postgres live CDC tests are still intentionally opt-in future coverage. Their current coverage remains in the fake transport harnesses under the hosting/support test projects until the provider-specific live test lands on the same gate.
+- Postgres live CDC now runs on the same external-service gate. The test creates an isolated PostgreSQL schema, table, publication, and logical replication slot, verifies provider-native outbox staging and runtime-state reporting through `Cephalon.Data.Postgres`, confirms slot-backed checkpoint truth, and stays skipped unless a developer or CI job opts into a provider mode.
 
 ## External-service gate
 
@@ -44,13 +44,33 @@ $env:CEPHALON_CDC_SQLSERVER_CONNECTION_STRING = 'Server=localhost;User Id=sa;Pas
 dotnet test .\tests\Cephalon.Tests.CdcIntegration\Cephalon.Tests.CdcIntegration.csproj --no-restore --filter FullyQualifiedName~SqlServerCdc_StagesOutboxAndPersistsCheckpointAgainstLiveDatabase --logger "console;verbosity=normal"
 ```
 
+## Postgres live lane
+
+`PostgresCdcIntegrationTests.PostgresCdc_StagesOutboxAndConfirmsSlotCheckpointAgainstLiveDatabase` proves the PostgreSQL logical-replication runner against a live service. It needs a PostgreSQL database where the login can create and drop an isolated schema, create/drop a publication, and create/drop logical replication slots. In Testcontainers mode the test uses `postgres:16-alpine` with `wal_level=logical`, `max_wal_senders=10`, and `max_replication_slots=10`; in pre-provisioned mode the supplied connection string is used directly and the test creates unique schema/publication/slot names inside that database.
+
+To run only the Postgres live lane through Testcontainers:
+
+```powershell
+$env:CEPHALON_CDC_EXTERNAL_SERVICES = '1'
+$env:CEPHALON_CDC_TESTCONTAINERS = '1'
+dotnet test .\tests\Cephalon.Tests.CdcIntegration\Cephalon.Tests.CdcIntegration.csproj --no-restore --filter FullyQualifiedName~PostgresCdc_StagesOutboxAndConfirmsSlotCheckpointAgainstLiveDatabase --logger "console;verbosity=normal"
+```
+
+To run only the Postgres live lane against a pre-provisioned service:
+
+```powershell
+$env:CEPHALON_CDC_EXTERNAL_SERVICES = '1'
+$env:CEPHALON_CDC_POSTGRES_CONNECTION_STRING = 'Host=localhost;Port=5432;Database=cephalon_cdc;Username=postgres;Password=<password>'
+dotnet test .\tests\Cephalon.Tests.CdcIntegration\Cephalon.Tests.CdcIntegration.csproj --no-restore --filter FullyQualifiedName~PostgresCdc_StagesOutboxAndConfirmsSlotCheckpointAgainstLiveDatabase --logger "console;verbosity=normal"
+```
+
 ## Run
 
 ```powershell
 dotnet test .\tests\Cephalon.Tests.CdcIntegration\Cephalon.Tests.CdcIntegration.csproj --no-restore --logger "console;verbosity=normal"
 ```
 
-To run all current and future external-service live lanes through Testcontainers:
+To run all external-service live lanes through Testcontainers:
 
 ```powershell
 $env:CEPHALON_CDC_EXTERNAL_SERVICES = '1'
@@ -58,7 +78,7 @@ $env:CEPHALON_CDC_TESTCONTAINERS = '1'
 dotnet test .\tests\Cephalon.Tests.CdcIntegration\Cephalon.Tests.CdcIntegration.csproj --no-restore --logger "console;verbosity=normal"
 ```
 
-To run all current and future live lanes against pre-provisioned services:
+To run all live lanes against pre-provisioned services:
 
 ```powershell
 $env:CEPHALON_CDC_EXTERNAL_SERVICES = '1'
