@@ -24,6 +24,7 @@
                       OutputItemType="Analyzer"
                       ReferenceOutputAssembly="false" />
     <ProjectReference Include="..\..\src\Cephalon.Data\Cephalon.Data.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Data.Debezium\Cephalon.Data.Debezium.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Engine\Cephalon.Engine.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Eventing\Cephalon.Eventing.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Eventing.Wolverine\Cephalon.Eventing.Wolverine.csproj" />

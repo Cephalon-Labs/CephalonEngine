@@ -105,6 +105,12 @@ The 19 resilience tests under `tests/Cephalon.Tests.Composition/Behaviors/Resili
 
 Quality dimension: **Reliability + Availability + Data Integrity** (the resilience surface is the engine's first-class retry / circuit-breaker / bulkhead / timeout / rate-limit primitive over `Microsoft.Extensions.Resilience`).
 
+### #10 — CDC execution-runtime catalog hot-path guardrail (medium priority, **shipped through `ENG-489` / [PR #1095](https://github.com/Cephalon-Labs/CephalonEngine/pull/1095)**)
+
+`ENG-489` turns the ENG-488 shared snapshot fix into a benchmark-governed hot path. `CdcExecutionRuntimeCatalogBenchmarks` builds 24 Debezium-managed external runtimes with 48 captures through public engine composition APIs, reports live external observations, warms the shared execution-runtime snapshot, and measures runtime enumeration plus repeated managed-connector drift, dry-run, command-issuance, and compact multi-selector operator drill-down filters. The guardrail catalog now has dedicated caps for those five CDC projections, so future snapshot invalidation, external-runtime report projection, or managed-connector drill-down changes cannot silently reintroduce the filter-heavy recursion pressure that caused the pre-existing Debezium flake watch.
+
+Quality dimension: **Performance + Reliability + Maintainability + Auditability** (benchmark guardrail over the CDC operator hot path).
+
 ## Test-flake quarantine queue
 
 When `engine.tests.flake-rate.7d` exceeds the target, the affected test enters a quarantine queue per the *Test flake budget* rule in [`sre-posture.md`](sre-posture.md): `[Skip]`-attribute the failing test with a tracking comment within 24 hours, then either fix or delete within 7 days.

@@ -169,6 +169,7 @@ When Debezium connectors are configured:
 - the shared `POST /engine/cdc-capture-runtimes/{executionRuntimeId}/reports` route becomes available without requiring `EnableExternalCdcRuntimeReporting = true` explicitly on `DataRuntimeOptions`
 - later runtime reports can still surface reporter id, edge node id, stale observation posture, reporter-lease expiry, degraded coordination posture, connector or task lifecycle metadata, and operator drill-downs through the same `/engine/cdc-captures/runtime*`, `/engine/cdc-capture-runtimes*`, `/engine/runtime-story`, and `snapshot` surfaces already used by the rest of the shared CDC model
 - repeated managed-connector operator filters reuse the shared `Cephalon.Data` execution-runtime snapshot instead of recomputing the whole enrichment graph for every state/category selector; the snapshot refreshes after new runtime reports, rejected reporter conflicts, managed-connector command-history changes, or the next freshness time bucket
+- the shared benchmark suite now exercises a Debezium-managed topology with 24 external runtimes and 48 captures, then guardrails runtime enumeration plus repeated drift, dry-run, command-issuance, and compact multi-selector operator projections over that same shared snapshot
 
 ## Lifecycle and reconciliation hardening
 
