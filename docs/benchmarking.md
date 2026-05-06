@@ -15,6 +15,7 @@ It currently tracks the following benchmark lanes across composition, runtime, A
 - `Cephalon.Benchmarks.Runtime`: engine-first REST projection, governance, and runtime-catalog materialization across generated/profile/DSL precedence, grouped generated module ownership, authoring policy, suppression, override, and preserved implicit query fallback
 - `Cephalon.Benchmarks.Scaffolding`: blueprint-to-files scaffold generation
 - `Cephalon.Benchmarks.Scaffolding`: phase-8 blueprint-to-files scaffold generation with structured `Engine:*` sections, additive pack hints, and starter-test conventions
+- `Cephalon.Benchmarks.HotPath`: CDC execution-runtime catalog projections over Debezium-managed external runtimes, including repeated managed-connector operator filters against the shared versioned runtime snapshot
 
 The benchmark suite now also ships a guardrail catalog at `benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json`.
 
@@ -31,9 +32,11 @@ That catalog is the repository baseline for the currently shipped benchmark meth
 - `TenantResolutionBenchmarks`: `ResolveByTenantId`, `ResolveByHostName`, `ResolveDefaultTenant`
 - `EventSourcingBenchmarks`: `AppendSingleEvent`, `ReadStream`, `GetStreamVersion`
 - `OutboxStagingBenchmarks`: `StageOutboxMessage`
+- `CdcExecutionRuntimeCatalogBenchmarks`: `EnumerateRuntimes`, `FilterManagedConnectorDriftState`, `FilterManagedConnectorDryRunState`, `FilterManagedConnectorCommandIssuanceState`, `FilterManagedConnectorOperatorSelectors`
 
 The composition and runtime baselines prepare configured builders, runtimes, and service providers outside the measured loop so the guardrails track `Build()` and lifecycle transition costs rather than one-time benchmark harness setup.
 That baseline now also includes the stricter trust-policy composition path, the shipped phase-8 low-ceremony companion-pack path, the bounded-truncation HTTP logging path, the engine-first REST projection/governance startup path, and a concurrent logging throughput path so security hardening work stays measurable under both single-request and multi-request pressure.
+The hot-path data baseline now also includes the CDC execution-runtime catalog path that powers filter-heavy managed-connector operator surfaces, so the versioned snapshot and capture-ownership indexes remain benchmark-governed after the ENG-488 runtime fix.
 The shipped local smoke suite now uses a shared in-process short-run BenchmarkDotNet config across every benchmark class so mirrored worktree artifacts such as repo-local `.build/*` copies do not break benchmark project resolution during `validate-release`.
 
 ## Run all benchmarks
@@ -56,6 +59,7 @@ dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*Aut
 dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*TenantResolutionBenchmarks*"
 dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*EventSourcingBenchmarks*"
 dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*OutboxStagingBenchmarks*"
+dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*CdcExecutionRuntimeCatalogBenchmarks*"
 ```
 
 The phase-8 composition, runtime, and scaffolding scenarios live in the same benchmark classes as the earlier baselines, so those filters cover both the original and phase-8 paths.
@@ -90,7 +94,7 @@ pwsh ./scripts/validate-release.ps1 -SkipTests
 pwsh ./scripts/validate-release.ps1 -SkipOperationalConventions
 pwsh ./scripts/validate-release.ps1 -SkipPhase8Conventions
 pwsh ./scripts/validate-release.ps1 -SkipReferenceDocs
-pwsh ./scripts/validate-release.ps1 -BenchmarkFilters "*EngineBuilderBenchmarks*" "*EngineRuntimeBenchmarks*" "*AspNetCoreRequestLoggingBenchmarks*" "*RestEndpointProjectionGovernanceBenchmarks*" "*ScaffoldGeneratorBenchmarks*" "*DataDispatchBenchmarks*" "*BehaviorDispatchBenchmarks*" "*AuthorizationEvaluationBenchmarks*" "*TenantResolutionBenchmarks*" "*EventSourcingBenchmarks*" "*OutboxStagingBenchmarks*"
+pwsh ./scripts/validate-release.ps1 -BenchmarkFilters "*EngineBuilderBenchmarks*" "*EngineRuntimeBenchmarks*" "*AspNetCoreRequestLoggingBenchmarks*" "*RestEndpointProjectionGovernanceBenchmarks*" "*ScaffoldGeneratorBenchmarks*" "*DataDispatchBenchmarks*" "*BehaviorDispatchBenchmarks*" "*AuthorizationEvaluationBenchmarks*" "*TenantResolutionBenchmarks*" "*EventSourcingBenchmarks*" "*OutboxStagingBenchmarks*" "*CdcExecutionRuntimeCatalogBenchmarks*"
 ```
 
 Run only the focused health/export convention suite:
@@ -131,3 +135,4 @@ Treat `scripts/validate-release.ps1` as the source of truth. If the local releas
 - keep at least one end-to-end REST projection/governance startup path benchmarked when module-owned REST authoring, grouped generation, or runtime catalog truth changes materially
 - keep at least one concurrent HTTP-host path benchmarked when request logging changes materially enough to affect shared-host throughput
 - keep trust-policy and bounded-capture paths benchmarked when security-sensitive host behavior changes materially
+- keep CDC execution-runtime catalog operator filters benchmarked when runtime snapshot invalidation, external-runtime report projection, or managed-connector drill-down behavior changes materially

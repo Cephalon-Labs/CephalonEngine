@@ -1708,6 +1708,7 @@
           "Cephalon.Behaviors": "[0.1.0-preview, )",
           "Cephalon.Behaviors.Http": "[0.1.0-preview, )",
           "Cephalon.Data": "[0.1.0-preview, )",
+          "Cephalon.Data.Debezium": "[0.1.0-preview, )",
           "Cephalon.Engine": "[0.1.0-preview, )",
           "Cephalon.Eventing": "[0.1.0-preview, )",
           "Cephalon.Eventing.Wolverine": "[0.1.0-preview, )",

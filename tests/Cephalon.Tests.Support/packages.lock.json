@@ -1354,6 +1354,7 @@
           "Cephalon.Behaviors": "[0.1.0-preview, )",
           "Cephalon.Behaviors.Http": "[0.1.0-preview, )",
           "Cephalon.Data": "[0.1.0-preview, )",
+          "Cephalon.Data.Debezium": "[0.1.0-preview, )",
           "Cephalon.Engine": "[0.1.0-preview, )",
           "Cephalon.Eventing": "[0.1.0-preview, )",
           "Cephalon.Eventing.Wolverine": "[0.1.0-preview, )",
@@ -1394,6 +1395,13 @@
           "Cephalon.Data": "[0.1.0-preview, )",
           "Cephalon.Engine": "[0.1.0-preview, )",
           "ClickHouse.Driver": "[1.0.2, )"
+        }
+      },
+      "cephalon.data.debezium": {
+        "type": "Project",
+        "dependencies": {
+          "Cephalon.Data": "[0.1.0-preview, )",
+          "Cephalon.Engine": "[0.1.0-preview, )"
         }
       },
       "cephalon.data.elasticsearch": {

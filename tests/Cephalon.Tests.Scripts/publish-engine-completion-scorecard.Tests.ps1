@@ -158,7 +158,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.SrePostureEvidence.ReleaseValidationSummaryMode | Should -Be "release-validation-console-and-scorecard-artifact"
         $json.SrePostureEvidence.StableBaselinesPublished | Should -BeFalse
         $json.SrePostureEvidence.GuardrailCatalog | Should -Be "benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json"
-        $json.SrePostureEvidence.GuardrailCatalogEntryCount | Should -Be 24
+        $json.SrePostureEvidence.GuardrailCatalogEntryCount | Should -Be 29
         $json.SrePostureEvidence.SliCount | Should -Be 11
         $json.SrePostureEvidence.TargetDeclaredCount | Should -Be 11
         $json.SrePostureEvidence.PendingStableBaselineCount | Should -Be 11

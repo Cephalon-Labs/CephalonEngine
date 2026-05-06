@@ -107,11 +107,6 @@
         "resolved": "0.15.8",
         "contentHash": "hfucY0ycAsB0SsoaZcaAp9oq5wlWBJcylvEJb9pmvdYUx6PD6S4mDiYnZWjdjAlLhIpe/xtGCwzORfzAzPqvzA=="
       },
-      "BouncyCastle.Cryptography": {
-        "type": "Transitive",
-        "resolved": "2.6.2",
-        "contentHash": "7oWOcvnntmMKNzDLsdxAYqApt+AjpRpP2CShjMfIa3umZ42UQMvH0tl1qAliYPNYO6vTdcGMqnRrCPmsfzTI1w=="
-      },
       "ChilliCream.Nitro.App": {
         "type": "Transitive",
         "resolved": "28.0.7",
@@ -545,22 +540,8 @@
       },
       "K4os.Compression.LZ4": {
         "type": "Transitive",
-        "resolved": "1.3.8",
-        "contentHash": "LhwlPa7c1zs1OV2XadMtAWdImjLIsqFJPoRcIWAadSRn0Ri1DepK65UbWLPmt4riLqx2d40xjXRk0ogpqNtK7g=="
-      },
-      "K4os.Compression.LZ4.Streams": {
-        "type": "Transitive",
-        "resolved": "1.3.8",
-        "contentHash": "P15qr8dZAeo9GvYbUIPEYFQ0MEJ0i5iqr37wsYeRC3la2uCldOoeCa6to0CZ1taiwxIV+Mk8NGuZi+4iWivK9w==",
-        "dependencies": {
-          "K4os.Compression.LZ4": "1.3.8",
-          "K4os.Hash.xxHash": "1.0.8"
-        }
-      },
-      "K4os.Hash.xxHash": {
-        "type": "Transitive",
-        "resolved": "1.0.8",
-        "contentHash": "Wp2F7BamQ2Q/7Hk834nV9vRQapgcr8kgv9Jvfm8J3D0IhDqZMMl+a2yxUq5ltJitvXvQfB8W6K4F4fCbw/P6YQ=="
+        "resolved": "1.1.11",
+        "contentHash": "RNvJw0UGkedPhCqVBNIogtfQebY+bQt0PN7xDbVe5LWLra0ZEqPfjPSl7iStj3rgDnkqkkTTpm+vCX3hU1qKmA=="
       },
       "librdkafka.redist": {
         "type": "Transitive",
@@ -1090,28 +1071,6 @@
           "SQLitePCLRaw.core": "2.1.11"
         }
       },
-      "SuperSocket.Client": {
-        "type": "Transitive",
-        "resolved": "2.0.0",
-        "contentHash": "Bw7VfU8OhyG6HzahYCFwOk1MRKyJgBoD3uX8ZfY0eBFVoAIa4XyEvu4jRSrTbsP50Yck/R3H2ZcYwHr2CYFM4A==",
-        "dependencies": {
-          "SuperSocket.Connection": "2.0.0",
-          "SuperSocket.ProtoBase": "2.0.0"
-        }
-      },
-      "SuperSocket.Connection": {
-        "type": "Transitive",
-        "resolved": "2.0.0",
-        "contentHash": "2g5wF7KKdWR7JYZb2+drA/nQYCE2l6dA034SKH+HHIZIWjV7ENq0yE0S7IRs8KCECzCrJIzQIsHXdPlTuWAY8w==",
-        "dependencies": {
-          "SuperSocket.ProtoBase": "2.0.0"
-        }
-      },
-      "SuperSocket.ProtoBase": {
-        "type": "Transitive",
-        "resolved": "2.0.0",
-        "contentHash": "fU5dl5LsYm4AdN8I6ANQn6zHXGR392vZQ63OnaG+QqU4yUCq4W138f7DU9Ttlq8GrOXN6XprRr9WkRnccf97fg=="
-      },
       "System.ClientModel": {
         "type": "Transitive",
         "resolved": "1.10.0",
@@ -1236,19 +1195,6 @@
         "resolved": "9.0.13",
         "contentHash": "t8S9IDpjJKsLpLkeBdW8cWtcPyYqrGu93Dej1RO6WwuL/lkFSqWlan3rMJfortqz1mRIh+sys2AFsSA6jWJ3Jg=="
       },
-      "System.Security.Permissions": {
-        "type": "Transitive",
-        "resolved": "8.0.0",
-        "contentHash": "v/BBylw7XevuAsHXoX9dDUUfmBIcUf7Lkz8K3ZXIKz3YRKpw8YftpSir4n4e/jDTKFoaK37AsC3xnk+GNFI1Ow==",
-        "dependencies": {
-          "System.Windows.Extensions": "8.0.0"
-        }
-      },
-      "System.Windows.Extensions": {
-        "type": "Transitive",
-        "resolved": "8.0.0",
-        "contentHash": "Obg3a90MkOw9mYKxrardLpY2u0axDMrSmy4JCdq2cYbelM2cUwmUir5Bomvd1yxmPL9h5LVHU1tuKBZpUjfASg=="
-      },
       "xunit.abstractions": {
         "type": "Transitive",
         "resolved": "2.0.3",
@@ -1304,8 +1250,8 @@
       },
       "ZstdSharp.Port": {
         "type": "Transitive",
-        "resolved": "0.8.6",
-        "contentHash": "iP4jVLQoQmUjMU88g1WObiNr6YKZGvh4aOXn3yOJsHqZsflwRsxZPcIBvNXgjXO3vQKSLctXGLTpcBPLnWPS8A=="
+        "resolved": "0.7.3",
+        "contentHash": "U9Ix4l4cl58Kzz1rJzj5hoVTjmbx1qGMwzAcbv1j/d3NzrFaESIurQyg+ow4mivCgkE3S413y+U9k4WdnEIkRA=="
       },
       "cephalon.abstractions": {
         "type": "Project"
@@ -1407,6 +1353,7 @@
           "Cephalon.Behaviors": "[0.1.0-preview, )",
           "Cephalon.Behaviors.Http": "[0.1.0-preview, )",
           "Cephalon.Data": "[0.1.0-preview, )",
+          "Cephalon.Data.Debezium": "[0.1.0-preview, )",
           "Cephalon.Engine": "[0.1.0-preview, )",
           "Cephalon.Eventing": "[0.1.0-preview, )",
           "Cephalon.Eventing.Wolverine": "[0.1.0-preview, )",
@@ -1490,9 +1437,7 @@
         "dependencies": {
           "Cephalon.Data": "[0.1.0-preview, )",
           "Cephalon.Engine": "[0.1.0-preview, )",
-          "Cephalon.Eventing": "[0.1.0-preview, )",
-          "MySql.Data": "[9.6.0, )",
-          "SciSharp.MySQL.Replication": "[1.0.0-beta.3, )"
+          "Cephalon.Eventing": "[0.1.0-preview, )"
         }
       },
       "cephalon.data.nats": {
@@ -2595,20 +2540,6 @@
           "ZstdSharp.Port": "0.7.3"
         }
       },
-      "MySql.Data": {
-        "type": "CentralTransitive",
-        "requested": "[9.6.0, )",
-        "resolved": "9.6.0",
-        "contentHash": "jjCXNBxLLQHBcyYyOP4yp5jqljStH2qGFXXg3jBMdwYQk9ihpLH9BXoMyc/J3421pENBDjCf/eGi9Ow0Ib7LUA==",
-        "dependencies": {
-          "BouncyCastle.Cryptography": "2.6.2",
-          "Google.Protobuf": "3.32.0",
-          "K4os.Compression.LZ4.Streams": "1.3.8",
-          "System.Configuration.ConfigurationManager": "8.0.0",
-          "System.Security.Permissions": "8.0.0",
-          "ZstdSharp.Port": "0.8.6"
-        }
-      },
       "MySqlConnector": {
         "type": "CentralTransitive",
         "requested": "[2.5.0, )",
@@ -2772,16 +2703,6 @@
         "requested": "[2.13.18, )",
         "resolved": "2.13.18",
         "contentHash": "SOe5I8KspXwmcMbey+6G4drRWhCa/ON/ZjyVKfm5FpXvcsCmb9MfiVcKAiQ8UYV+ki3fAaqcCFc5ahzx/NTXOw=="
-      },
-      "SciSharp.MySQL.Replication": {
-        "type": "CentralTransitive",
-        "requested": "[1.0.0-beta.3, )",
-        "resolved": "1.0.0-beta.3",
-        "contentHash": "71YIhMbc5fE46H4Li4CRZeAxSs7JTlRyZbrkoGqSOgiiuX3CQj4Yn8ATdMVnC8RyOAR2W+W7Wx5w/WIvFwOM5w==",
-        "dependencies": {
-          "MySql.Data": "8.4.0",
-          "SuperSocket.Client": "2.0.0"
-        }
       },
       "Serilog.Extensions.Hosting": {
         "type": "CentralTransitive",

@@ -100,6 +100,41 @@
       "notes": "Handler-dispatching write store result command dispatch with a warm cache should stay below 5 us and under roughly 5 KB allocated per call."
     },
     {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.CdcExecutionRuntimeCatalogBenchmarks-report.csv",
+      "benchmark": "EnumerateRuntimes",
+      "maxMeanNanoseconds": 500,
+      "maxAllocatedBytes": 1000,
+      "notes": "CDC execution-runtime catalog enumeration over the shipped Debezium-managed benchmark topology should stay below 500 ns and under roughly 1 KB allocated per catalog operation."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.CdcExecutionRuntimeCatalogBenchmarks-report.csv",
+      "benchmark": "FilterManagedConnectorDriftState",
+      "maxMeanNanoseconds": 2000,
+      "maxAllocatedBytes": 2000,
+      "notes": "Repeated managed-connector drift-state filtering against the warmed CDC runtime snapshot should stay below 2 us and under roughly 2 KB allocated per selector."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.CdcExecutionRuntimeCatalogBenchmarks-report.csv",
+      "benchmark": "FilterManagedConnectorDryRunState",
+      "maxMeanNanoseconds": 2000,
+      "maxAllocatedBytes": 2000,
+      "notes": "Repeated managed-connector dry-run-state filtering against the warmed CDC runtime snapshot should stay below 2 us and under roughly 2 KB allocated per selector."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.CdcExecutionRuntimeCatalogBenchmarks-report.csv",
+      "benchmark": "FilterManagedConnectorCommandIssuanceState",
+      "maxMeanNanoseconds": 500,
+      "maxAllocatedBytes": 1000,
+      "notes": "Repeated managed-connector command-issuance-state filtering against the warmed CDC runtime snapshot should stay below 500 ns and under roughly 1 KB allocated per selector."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.CdcExecutionRuntimeCatalogBenchmarks-report.csv",
+      "benchmark": "FilterManagedConnectorOperatorSelectors",
+      "maxMeanNanoseconds": 5000,
+      "maxAllocatedBytes": 5000,
+      "notes": "A compact multi-selector CDC operator drill-down over drift, dry-run, command-issuance, and materializer posture should stay below 5 us and under roughly 5 KB allocated per selector group."
+    },
+    {
       "reportFileName": "Cephalon.Benchmarks.HotPath.BehaviorDispatchBenchmarks-report.csv",
       "benchmark": "DispatchBehavior",
       "maxMeanNanoseconds": 10000,

@@ -163,7 +163,9 @@ shared catalog indexes capture ids by effective execution-runtime ownership once
 time and reuses a versioned runtime snapshot for state/category drill-down filters. Runtime-state
 reports, rejected reporter conflicts, managed-connector command history changes, and bounded
 time-bucket freshness changes invalidate that snapshot, so filter-heavy operator flows stay
-current without re-entering the full enrichment path for every selector.
+current without re-entering the full enrichment path for every selector. That hot path is now
+covered by `CdcExecutionRuntimeCatalogBenchmarks` plus guardrail catalog entries for runtime
+enumeration, drift/dry-run/command-issuance filters, and a compact multi-selector operator flow.
 
 That same shared execution-runtime story now also keeps managed-connector governance explicit.
 `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorGovernance` publishes stable

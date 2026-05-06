@@ -1,6 +1,6 @@
 # Cephalon Engine Backlog
 
-Backlog status in this document reflects the repository state as of `April 30, 2026`.
+Backlog status in this document reflects the repository state as of `May 7, 2026`.
 
 ## Current planning reset (April 2026)
 
@@ -25,6 +25,38 @@ Current focus:
 - treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md), validates the deployment-mode, adoption-smoke, SRE, and supply-chain release support manifests, scans public API delta files into `PublicApiCompatibilityEvidence`, and `cephalon doctor --scorecard <path>` provides a schema `1.6.0` local CLI readback over that generated artifact including deployment-mode global/package-scoped/hazard/publish-probe counts, SRE target/baseline counts, supply-chain workflow/external-policy counts, and public API package/pending/addition/removal counts without becoming source truth
 - treat the CDC integration-test lane as additive evidence over the runtime catalog truth: `tests/Cephalon.Tests.CdcIntegration` now proves MongoDB change streams against a real disposable replica set, while SQL Server/Postgres live CDC coverage remains a later external-service-gated lane instead of being implied by fake transport harnesses
 - treat the Debezium test-flake quarantine as resolved by shared catalog hardening: CDC execution-runtime filters now reuse versioned snapshots over indexed capture ownership instead of re-enriching every runtime for every state/category selector
+- treat the CDC execution-runtime catalog hot path as benchmark-governed: `CdcExecutionRuntimeCatalogBenchmarks` now covers Debezium-managed external runtimes, external observations, repeated managed-connector drift/dry-run/command-issuance filters, and compact multi-selector operator flows against the shared versioned snapshot
+
+### ENG-489 Add CDC runtime catalog benchmark guardrail
+
+Status: done
+Estimate: 2
+Issue: #1094
+Iteration: Sprint 125
+Area: performance / data / CDC runtime catalog
+Quality dimensions: Performance, Reliability, Maintainability, Auditability
+
+Why:
+
+- `ENG-488` fixed repeated CDC execution-runtime operator projections by indexing capture ownership and reusing a versioned runtime snapshot, but that hot path needed benchmark pressure so future changes cannot silently regress
+- Debezium-managed connector operators repeatedly filter by drift, dry-run, command-issuance, and related state/category selectors, making the shared catalog a performance-sensitive runtime surface even though it is not a request handler
+- test-coverage recommendation #10 needed a guardrail-backed answer that ties the old Debezium flake watch to measurable performance evidence instead of relying on one regression test alone
+
+Delivered:
+
+- added `CdcExecutionRuntimeCatalogBenchmarks` to build 24 Debezium-managed external runtimes with 48 captures through public engine composition APIs
+- reported external CDC runtime observations before measurement so the benchmark covers the live report-enriched operator story, not only descriptor placeholders
+- measured runtime enumeration plus repeated managed-connector drift, dry-run, command-issuance, and compact multi-selector operator projections over the warmed shared snapshot
+- added five CDC guardrail catalog entries and refreshed benchmarking, test-coverage, data, Debezium, roadmap, backlog, and project-memory truth
+- refreshed the benchmark and dependent test lock files so solution locked restore accepts the new benchmark project graph
+
+Validation:
+
+- benchmark project build
+- focused `CdcExecutionRuntimeCatalogBenchmarks` run (`5/5`)
+- focused CDC guardrail validation (`5/5`)
+- solution locked restore
+- `git diff --check`
 
 ### ENG-488 Fix CDC execution-runtime filter projection recursion
 
