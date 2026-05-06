@@ -75,9 +75,9 @@ Quality dimension: **Reliability + Compatibility** (provider contract).
 
 `Cephalon.AspNetCore.GraphQL` ships `M1` with route-mapping only today. When the package widens beyond route mapping (schema generation, query execution, error mapping), recommendation #6 promotes from gated to active and the test shape mirrors recommendation #1 (gRPC) and recommendation #2 (JSON-RPC) for the GraphQL canonical error envelope.
 
-### #7 — Direct unit coverage for the four pre-existing `DebeziumDataCdcPackTests` recursion failures (low priority, **gated on quarantine resolution**)
+### #7 — Direct unit coverage for the four pre-existing `DebeziumDataCdcPackTests` recursion failures (low priority, **shipped through `ENG-488` / [PR #1093](https://github.com/Cephalon-Labs/CephalonEngine/pull/1093)**)
 
-Four `DebeziumDataCdcPackTests` failures observed during full `Cephalon.Tests.Composition` runs are tracked under the *Pre-existing test-flake watch* section of [`docs/releases/v0.1.0-preview-notes.md`](releases/v0.1.0-preview-notes.md) and under the quarantine queue below. The recursion lives in `Cephalon.Data.Services.CdcCaptureExecutionRuntimeCatalog.Enrich`. Closing this gap means either fixing the recursion in source or skipping the failing tests with a tracking comment per the *Test flake budget* rule in [`sre-posture.md`](sre-posture.md).
+Four `DebeziumDataCdcPackTests` failures observed during full `Cephalon.Tests.Composition` runs were tracked under the *Pre-existing test-flake watch* section of [`docs/releases/v0.1.0-preview-notes.md`](releases/v0.1.0-preview-notes.md) and under the quarantine queue below. `ENG-488` fixes the shared `Cephalon.Data.Services.CdcCaptureExecutionRuntimeCatalog` hot path by pre-indexing capture ownership and reusing a versioned runtime snapshot for repeated managed-connector filter projections. The regression test `AddDebeziumData_ExecutionRuntimeFilterSnapshotRefreshesAfterRuntimeReports` proves repeated drift filters stay bounded and refresh after later runtime reports instead of skipping the failing surface.
 
 Quality dimension: **Reliability** (existing flake).
 
@@ -111,9 +111,9 @@ When `engine.tests.flake-rate.7d` exceeds the target, the affected test enters a
 
 | Test | Project | First observed | Quarantine action | Deadline |
 | --- | --- | --- | --- | --- |
-| `DebeziumDataCdcPackTests` (4 failures) | `Cephalon.Tests.Composition` | Pre-`v0.1.0-preview` | Documented under `releases/v0.1.0-preview-notes.md` *Pre-existing test-flake watch*; root cause is `Cephalon.Data.Services.CdcCaptureExecutionRuntimeCatalog.Enrich` recursion | Resolve through recommendation #7 before the GA release that follows `v0.1.0-preview` |
+| `DebeziumDataCdcPackTests` (4 failures) | `Cephalon.Tests.Composition` | Pre-`v0.1.0-preview` | Resolved through `ENG-488`: shared execution-runtime filters now reuse a versioned snapshot over indexed capture ownership, and the Debezium regression refreshes after later reports | Closed before the GA release that follows `v0.1.0-preview` |
 
-The queue is empty otherwise.
+The queue is empty.
 
 ## Maintenance discipline
 

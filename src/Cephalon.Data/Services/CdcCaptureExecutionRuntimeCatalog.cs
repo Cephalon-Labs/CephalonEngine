@@ -33,7 +33,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
     private const string ManagedConnectorProviderSpecificControlPlaneConnectorIdMetadataKey = "managedConnectorProviderSpecificControlPlaneConnectorId";
     private const string ManagedConnectorProviderSpecificControlPlaneWorkerIdMetadataKey = "managedConnectorProviderSpecificControlPlaneWorkerId";
     private readonly Dictionary<string, CdcCaptureExecutionRuntimeDescriptor> index;
-    private readonly ICdcCaptureCatalog captureCatalog;
+    private readonly Dictionary<string, string[]> captureIdsByExecutionRuntimeId;
     private readonly ICdcCaptureRuntimeStateCatalog? runtimeStateCatalog;
     private readonly ICdcCaptureExecutionRuntimeManagedConnectorExecutionAdapter[] executionAdapters;
     private readonly ManagedConnectorCommandExecutionHistoryStore? commandExecutionHistoryStore;
@@ -41,6 +41,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
     private readonly bool managedConnectorAutomaticRetryEnabled;
     private readonly int managedConnectorAutomaticRetryPollingIntervalSeconds;
     private readonly string? managedConnectorAutomaticRetryCoordinationOwnerId;
+    private readonly object snapshotSyncRoot = new();
+    private RuntimeSnapshot? snapshot;
 
     public CdcCaptureExecutionRuntimeCatalog(
         CdcCaptureExecutionRuntimeDescriptorCatalog runtimeDescriptorCatalog,
@@ -54,7 +56,22 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         ArgumentNullException.ThrowIfNull(runtimeDescriptorCatalog);
         ArgumentNullException.ThrowIfNull(captureCatalog);
 
-        this.captureCatalog = captureCatalog;
+        captureIdsByExecutionRuntimeId = captureCatalog.CdcCaptures
+            .Where(static cdcCapture => !string.IsNullOrWhiteSpace(cdcCapture.ExecutionBinding.EffectiveExecutionRuntimeId))
+            .Select(static cdcCapture => new
+            {
+                RuntimeId = cdcCapture.ExecutionBinding.EffectiveExecutionRuntimeId!.Trim(),
+                CaptureId = cdcCapture.Id
+            })
+            .GroupBy(static item => item.RuntimeId, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(
+                static group => group.Key,
+                static group => group
+                    .Select(static item => item.CaptureId)
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(static id => id, StringComparer.OrdinalIgnoreCase)
+                    .ToArray(),
+                StringComparer.OrdinalIgnoreCase);
         this.runtimeStateCatalog = runtimeStateCatalog;
         this.executionAdapters = executionAdapters?.ToArray() ?? [];
         this.commandExecutionHistoryStore = commandExecutionHistoryStore;
@@ -68,10 +85,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         index = runtimes.ToDictionary(static runtime => runtime.Id, StringComparer.OrdinalIgnoreCase);
     }
 
-    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> Runtimes => index.Values
-        .Select(Enrich)
-        .OrderBy(static runtime => runtime.DisplayName, StringComparer.OrdinalIgnoreCase)
-        .ToArray();
+    public IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> Runtimes => [.. GetRuntimeSnapshot()];
 
     public CdcCaptureExecutionRuntimeDescriptor? GetById(string executionRuntimeId)
     {
@@ -81,7 +95,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         }
 
         return index.TryGetValue(executionRuntimeId.Trim(), out var runtime)
-            ? Enrich(runtime)
+            ? Enrich(runtime, timeProvider.GetUtcNow())
             : null;
     }
 
@@ -1423,21 +1437,67 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
     {
         ArgumentNullException.ThrowIfNull(predicate);
 
-        return index.Values
-            .Select(Enrich)
+        return GetRuntimeSnapshot()
             .Where(predicate)
             .OrderBy(static runtime => runtime.DisplayName, StringComparer.OrdinalIgnoreCase)
             .ToArray();
     }
 
-    private CdcCaptureExecutionRuntimeDescriptor Enrich(CdcCaptureExecutionRuntimeDescriptor runtime)
+    private CdcCaptureExecutionRuntimeDescriptor[] GetRuntimeSnapshot()
+    {
+        var observedAtUtc = timeProvider.GetUtcNow();
+        var key = CreateSnapshotKey(observedAtUtc);
+        lock (snapshotSyncRoot)
+        {
+            if (snapshot?.Key == key)
+            {
+                return snapshot.Runtimes;
+            }
+        }
+
+        var runtimes = index.Values
+            .Select(runtime => Enrich(runtime, observedAtUtc))
+            .OrderBy(static runtime => runtime.DisplayName, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        lock (snapshotSyncRoot)
+        {
+            if (snapshot?.Key == key)
+            {
+                return snapshot.Runtimes;
+            }
+
+            snapshot = new RuntimeSnapshot(key, runtimes);
+            return runtimes;
+        }
+    }
+
+    private RuntimeSnapshotKey CreateSnapshotKey(DateTimeOffset observedAtUtc)
+    {
+        var runtimeStateVersion = runtimeStateCatalog switch
+        {
+            CdcCaptureRuntimeStateCatalog stateCatalog => stateCatalog.Version,
+            null => 0,
+            _ => observedAtUtc.UtcTicks
+        };
+        var commandHistoryVersion = commandExecutionHistoryStore?.Version ?? 0;
+
+        return new RuntimeSnapshotKey(
+            runtimeStateVersion,
+            commandHistoryVersion,
+            observedAtUtc.ToUnixTimeSeconds());
+    }
+
+    private CdcCaptureExecutionRuntimeDescriptor Enrich(
+        CdcCaptureExecutionRuntimeDescriptor runtime,
+        DateTimeOffset observedAtUtc)
     {
         var captureIds = ResolveCaptureIds(runtime.Id);
         var matchingStates = runtimeStateCatalog?.GetByExecutionRuntimeId(runtime.Id) ?? [];
         var mergedMetadata = MergeRuntimeMetadata(runtime.Metadata, matchingStates);
         var summary = matchingStates.Count == 0
             ? CreateEmptySummary(runtime, captureIds)
-            : CreateSummary(runtime, captureIds, matchingStates);
+            : CreateSummary(runtime, captureIds, matchingStates, observedAtUtc);
         var managedConnectorGovernance = CreateManagedConnectorGovernance(runtime.ExecutionTopology, mergedMetadata);
         var managedConnectorDrift = CreateManagedConnectorDrift(runtime.ExecutionTopology, mergedMetadata);
         var managedConnectorActionPlan = CreateManagedConnectorActionPlan(
@@ -1582,7 +1642,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             managedConnectorExecutionAdapter,
             managedConnectorCommandExecution,
             commandExecutionHistory,
-            timeProvider.GetUtcNow());
+            observedAtUtc);
         var managedConnectorRetryExecutionPolicy = CreateManagedConnectorRetryExecutionPolicy(
             runtime.Id,
             captureIds,
@@ -2065,10 +2125,11 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         };
     }
 
-    private CdcCaptureExecutionRuntimeSummary CreateSummary(
+    private static CdcCaptureExecutionRuntimeSummary CreateSummary(
         CdcCaptureExecutionRuntimeDescriptor runtime,
         IReadOnlyList<string> captureIds,
-        IReadOnlyList<CdcCaptureRuntimeState> matchingStates)
+        IReadOnlyList<CdcCaptureRuntimeState> matchingStates,
+        DateTimeOffset observedAtUtc)
     {
         var reportedCaptureIds = matchingStates
             .Where(static state => state.HasReports)
@@ -2082,7 +2143,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             .ThenBy(static state => state.CdcCaptureId, StringComparer.OrdinalIgnoreCase)
             .First();
         latestState.Metadata.TryGetValue("acknowledgement", out var lastAcknowledgement);
-        var activeReporterId = ResolveActiveReporterId(matchingStates, timeProvider.GetUtcNow());
+        var activeReporterId = ResolveActiveReporterId(matchingStates, observedAtUtc);
         var reportingCoverage = CreateReportingCoverage(captureIds, matchingStates);
         var remediation = CreateRemediation(reportingCoverage, matchingStates);
 
@@ -19193,10 +19254,9 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
 
     private string[] ResolveCaptureIds(string executionRuntimeId)
     {
-        return captureCatalog.GetByExecutionRuntimeId(executionRuntimeId)
-            .Select(static cdcCapture => cdcCapture.Id)
-            .OrderBy(static id => id, StringComparer.OrdinalIgnoreCase)
-            .ToArray();
+        return captureIdsByExecutionRuntimeId.TryGetValue(executionRuntimeId.Trim(), out var captureIds)
+            ? captureIds
+            : [];
     }
 
     private static string? ResolveActiveReporterId(
@@ -20901,6 +20961,15 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             ? CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningSources.Metadata
             : CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningSources.Unknown;
     }
+
+    private sealed record RuntimeSnapshot(
+        RuntimeSnapshotKey Key,
+        CdcCaptureExecutionRuntimeDescriptor[] Runtimes);
+
+    private readonly record struct RuntimeSnapshotKey(
+        long RuntimeStateVersion,
+        long CommandHistoryVersion,
+        long ObservedAtUtcSecond);
 
     private sealed record ManagedConnectorMetadataSnapshot(
         string? ManagementMode,

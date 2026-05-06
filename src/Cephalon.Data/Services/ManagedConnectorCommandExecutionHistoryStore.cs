@@ -19,6 +19,9 @@ internal sealed class ManagedConnectorCommandExecutionHistoryStore
     private DateTimeOffset? lastPersistedAtUtc;
     private string? lastRecoveryError;
     private string? lastPersistenceError;
+    private long version;
+
+    internal long Version => System.Threading.Interlocked.Read(ref version);
 
     public ManagedConnectorCommandExecutionHistoryStore(
         DataRuntimeOptions? options = null,
@@ -68,6 +71,8 @@ internal sealed class ManagedConnectorCommandExecutionHistoryStore
             {
                 PersistSnapshotLocked(timeProvider.GetUtcNow());
             }
+
+            IncrementVersion();
         }
 
         return normalizedResult;
@@ -243,6 +248,7 @@ internal sealed class ManagedConnectorCommandExecutionHistoryStore
                 lastRecoveredAtUtc = timeProvider.GetUtcNow();
                 lastRecoveryError = null;
                 lastPersistenceError = null;
+                IncrementVersion();
             }
             catch (Exception exception)
             {
@@ -252,6 +258,7 @@ internal sealed class ManagedConnectorCommandExecutionHistoryStore
                 lastPersistedAtUtc = null;
                 lastRecoveredAtUtc = null;
                 lastRecoveryError = exception.Message;
+                IncrementVersion();
             }
         }
     }
@@ -295,6 +302,7 @@ internal sealed class ManagedConnectorCommandExecutionHistoryStore
             lastPersistedAtUtc = persistedAtUtc;
             lastPersistenceError = null;
             lastRecoveryError = null;
+            IncrementVersion();
         }
         catch (Exception exception)
         {
@@ -304,6 +312,12 @@ internal sealed class ManagedConnectorCommandExecutionHistoryStore
             }
 
             lastPersistenceError = exception.Message;
+            IncrementVersion();
         }
+    }
+
+    private void IncrementVersion()
+    {
+        System.Threading.Interlocked.Increment(ref version);
     }
 }

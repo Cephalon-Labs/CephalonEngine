@@ -282,6 +282,109 @@ public sealed class DebeziumDataCdcPackTests
     }
 
     [Fact]
+    public async Task AddDebeziumData_ExecutionRuntimeFilterSnapshotRefreshesAfterRuntimeReports()
+    {
+        var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-23T05:01:30Z", CultureInfo.InvariantCulture));
+        var services = new ServiceCollection();
+        services.AddSingleton<TimeProvider>(timeProvider);
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"]));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new Phase8CatalogModule());
+            engine.AddData();
+            engine.AddDebeziumData(options =>
+            {
+                options.Connectors.Add(CreateConnector(
+                    runtimeId: RuntimeId,
+                    captureId: CaptureId,
+                    displayName: "Inventory Snapshot Connector",
+                    captureDisplayName: "Inventory Snapshot CDC",
+                    captureDescription: "Exercises repeated runtime filter projections against the shared Debezium catalog.",
+                    connectClusterId: "connect-cluster-a",
+                    connectorClass: "io.debezium.connector.postgresql.PostgresConnector",
+                    sourceProviderId: "postgresql",
+                    topicPrefix: "inventory-snapshot",
+                    managementMode: "observe-only",
+                    expectedTaskCount: 1,
+                    taskIds: ["0"]));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var reportSink = provider.GetRequiredService<ICdcCaptureExecutionRuntimeReportSink>();
+        var runtimeCatalog = provider.GetRequiredService<ICdcCaptureExecutionRuntimeCatalog>();
+
+        await reportSink.ReportAsync(
+            RuntimeId,
+            [
+                CreateObservation(
+                    reportId: "debezium-snapshot-report-001",
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-23T05:01:00Z", CultureInfo.InvariantCulture),
+                    reportedTaskIds: "0",
+                    activeTaskIds: "0")
+            ]);
+
+        for (var index = 0; index < 5; index++)
+        {
+            Assert.Equal(
+                [RuntimeId],
+                runtimeCatalog
+                    .GetByManagedConnectorDriftState(CdcCaptureExecutionRuntimeManagedConnectorDriftStates.InSync)
+                    .Select(static runtime => runtime.Id)
+                    .ToArray());
+        }
+
+        timeProvider.SetUtcNow(DateTimeOffset.Parse("2026-04-23T05:02:30Z", CultureInfo.InvariantCulture));
+        await reportSink.ReportAsync(
+            RuntimeId,
+            [
+                CreateObservation(
+                    reportId: "debezium-snapshot-report-002",
+                    observedAtUtc: DateTimeOffset.Parse("2026-04-23T05:02:00Z", CultureInfo.InvariantCulture),
+                    reportedTaskIds: "0,2",
+                    activeTaskIds: "0,2")
+            ]);
+
+        Assert.Empty(runtimeCatalog.GetByManagedConnectorDriftState(CdcCaptureExecutionRuntimeManagedConnectorDriftStates.InSync));
+        Assert.Equal(
+            [RuntimeId],
+            runtimeCatalog
+                .GetByManagedConnectorDriftState(CdcCaptureExecutionRuntimeManagedConnectorDriftStates.Drifted)
+                .Select(static runtime => runtime.Id)
+                .ToArray());
+
+        static CdcCaptureRuntimeObservation CreateObservation(
+            string reportId,
+            DateTimeOffset observedAtUtc,
+            string reportedTaskIds,
+            string activeTaskIds)
+        {
+            return new CdcCaptureRuntimeObservation(
+                cdcCaptureId: CaptureId,
+                outcome: CdcCaptureRuntimeOutcomes.Captured,
+                observedAtUtc: observedAtUtc,
+                reportId: reportId,
+                capturedChangeCount: 1,
+                producedMessageCount: 1,
+                changeId: reportId,
+                checkpoint: $"connect-offset:{reportId}",
+                metadata: new Dictionary<string, string>
+                {
+                    ["connectorState"] = "RUNNING",
+                    ["connectClusterId"] = "connect-cluster-a",
+                    ["connectorClass"] = "io.debezium.connector.postgresql.PostgresConnector",
+                    ["sourceProviderId"] = "postgresql",
+                    ["reportedTaskIds"] = reportedTaskIds,
+                    ["activeTaskIds"] = activeTaskIds
+                },
+                reporterId: "connect-worker-snapshot");
+        }
+    }
+
+    [Fact]
     public void AddDebeziumData_ManagedConnectorGovernanceCatalogExposesSharedStateAndCategoryFilters()
     {
         var services = new ServiceCollection();

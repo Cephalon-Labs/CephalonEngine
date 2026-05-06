@@ -158,6 +158,13 @@ coverage and remediation stay truthful even when capture ownership comes from au
 `/engine/cdc-capture-runtimes*` plus `snapshot.CdcCaptureExecutionRuntimes` instead of inventing a
 second external-runtime remediation registry.
 
+That same shared execution-runtime story now keeps repeated operator projections bounded. The
+shared catalog indexes capture ids by effective execution-runtime ownership once at construction
+time and reuses a versioned runtime snapshot for state/category drill-down filters. Runtime-state
+reports, rejected reporter conflicts, managed-connector command history changes, and bounded
+time-bucket freshness changes invalidate that snapshot, so filter-heavy operator flows stay
+current without re-entering the full enrichment path for every selector.
+
 That same shared execution-runtime story now also keeps managed-connector governance explicit.
 `CdcCaptureExecutionRuntimeDescriptor.ManagedConnectorGovernance` publishes stable
 `not-applicable` / `observe-only` / `future-control-plane` / `out-of-policy` posture together with
