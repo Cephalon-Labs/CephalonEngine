@@ -216,6 +216,8 @@ When `ChangeStreamCaptures` are configured:
 - the runtime-state surface keeps typed freshness, current lag, pending-publication posture, checkpoint, change id, last operation type, checkpoint collection, and failure-kind metadata on the same `/engine/cdc-captures/runtime*` catalog instead of inventing a MongoDB-only monitor
 - if a provider pack contributes a descriptor on behalf of another module, the authored `SourceModuleId` remains authoritative and `metadata.contributorModuleId` keeps the contributing pack explicit
 
+The dedicated CDC integration lane under `tests/Cephalon.Tests.CdcIntegration` now proves this MongoDB change-stream path against a real disposable replica set using `EphemeralMongo7`. That lane validates outbox staging, provider-native runtime binding, runtime-state reporting, execution-runtime aggregation, and checkpoint persistence without requiring Docker or a developer-managed MongoDB instance.
+
 ### Checkpoint collection schema (`cdc_change_stream_checkpoints`)
 
 The collection name is `{CollectionPrefix}cdc_change_stream_checkpoints`.
