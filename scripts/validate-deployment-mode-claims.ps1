@@ -548,9 +548,196 @@ function Get-DeploymentModePackageClaimAudits {
     return $audits
 }
 
+function Get-DeploymentModeLockFilePackageRows {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)] [string]$RepoRoot,
+        [string[]]$LockFileGlobs = @()
+    )
+
+    if ([string]::IsNullOrWhiteSpace($RepoRoot) -or -not (Test-Path -LiteralPath $RepoRoot -PathType Container)) {
+        return @()
+    }
+
+    $normalizedGlobs = @(
+        $LockFileGlobs |
+            ForEach-Object { [string]$_ } |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
+            ForEach-Object { ($_ -replace '\\', '/') }
+    )
+
+    $lockFiles = Get-ChildItem -LiteralPath $RepoRoot -Recurse -Filter "packages.lock.json" -File -ErrorAction SilentlyContinue |
+        Where-Object {
+            if ($normalizedGlobs.Count -eq 0) { return $true }
+
+            $relativePath = [System.IO.Path]::GetRelativePath($RepoRoot, $_.FullName) -replace '\\', '/'
+            foreach ($glob in $normalizedGlobs) {
+                $matcher = [System.Management.Automation.WildcardPattern]::new(
+                    $glob,
+                    [System.Management.Automation.WildcardOptions]::IgnoreCase)
+                if ($matcher.IsMatch($relativePath)) {
+                    return $true
+                }
+            }
+
+            return $false
+        }
+
+    $rows = @()
+    foreach ($lockFile in $lockFiles) {
+        $relativePath = [System.IO.Path]::GetRelativePath($RepoRoot, $lockFile.FullName) -replace '\\', '/'
+        try {
+            $lockJson = Get-Content -LiteralPath $lockFile.FullName -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 100
+        }
+        catch {
+            throw "Unable to parse packages lock file '$relativePath': $($_.Exception.Message)"
+        }
+
+        if ($null -eq $lockJson -or
+            -not $lockJson.PSObject.Properties.Match("dependencies").Count -or
+            $null -eq $lockJson.dependencies) {
+            continue
+        }
+
+        foreach ($tfm in $lockJson.dependencies.PSObject.Properties) {
+            foreach ($dependency in $tfm.Value.PSObject.Properties) {
+                $dependencyValue = $dependency.Value
+                $rows += [pscustomobject]@{
+                    PackageId = [string]$dependency.Name
+                    Type      = if ($null -ne $dependencyValue -and $dependencyValue.PSObject.Properties.Match("type").Count) { [string]$dependencyValue.type } else { "" }
+                    Target    = [string]$tfm.Name
+                    LockFile  = $relativePath
+                }
+            }
+        }
+    }
+
+    return $rows
+}
+
+function Get-DeploymentModeTransitiveHazardAudit {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)] $Manifest,
+        [string]$RepoRoot = ""
+    )
+
+    $emptyAudit = {
+        param([string]$Status)
+        [pscustomobject]@{
+            Source            = "knownTransitiveHazardAudit"
+            Status            = $Status
+            TotalEntries      = 0
+            MissingEntries    = 0
+            LockFileCount     = 0
+            PackageMatchCount = 0
+            Entries           = @()
+        }
+    }
+
+    if ($null -eq $Manifest -or
+        -not $Manifest.PSObject.Properties.Match("knownTransitiveHazardAudit").Count -or
+        $null -eq $Manifest.knownTransitiveHazardAudit) {
+        return & $emptyAudit "not-configured"
+    }
+
+    $audit = $Manifest.knownTransitiveHazardAudit
+    $entries = @()
+    if ($audit.PSObject.Properties.Match("entries").Count -gt 0) {
+        $entries = @($audit.entries | Where-Object { $null -ne $_ })
+    }
+
+    if ($entries.Count -eq 0) {
+        return & $emptyAudit "not-configured"
+    }
+
+    $lockFileGlobs = @()
+    if ($audit.PSObject.Properties.Match("lockFileGlobs").Count -gt 0) {
+        $lockFileGlobs = @($audit.lockFileGlobs | ForEach-Object { [string]$_ } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+    }
+
+    $lockFilePackages = @()
+    if (-not [string]::IsNullOrWhiteSpace($RepoRoot) -and (Test-Path -LiteralPath $RepoRoot -PathType Container)) {
+        $lockFilePackages = @(Get-DeploymentModeLockFilePackageRows -RepoRoot $RepoRoot -LockFileGlobs $lockFileGlobs)
+    }
+
+    $notAudited = [string]::IsNullOrWhiteSpace($RepoRoot) -or -not (Test-Path -LiteralPath $RepoRoot -PathType Container)
+    $auditRows = @()
+    foreach ($entry in $entries) {
+        $packagePattern = if ($entry.PSObject.Properties.Match("packagePattern").Count -gt 0) { [string]$entry.packagePattern } else { "" }
+        $modes = @()
+        if ($entry.PSObject.Properties.Match("modes").Count -gt 0) {
+            $modes = @($entry.modes | ForEach-Object { [string]$_ } | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+        }
+
+        $minimumLockFileMatches = 1
+        if ($entry.PSObject.Properties.Match("minimumLockFileMatches").Count -gt 0) {
+            $minimumLockFileMatches = [Math]::Max(1, [int]$entry.minimumLockFileMatches)
+        }
+
+        $matches = @()
+        if (-not $notAudited -and -not [string]::IsNullOrWhiteSpace($packagePattern)) {
+            $matcher = [System.Management.Automation.WildcardPattern]::new(
+                $packagePattern,
+                [System.Management.Automation.WildcardOptions]::IgnoreCase)
+            $matches = @($lockFilePackages | Where-Object { $matcher.IsMatch($_.PackageId) })
+        }
+
+        $matchedPackageIds = @($matches | ForEach-Object { $_.PackageId } | Sort-Object -Unique)
+        $matchedLockFiles = @($matches | ForEach-Object { $_.LockFile } | Sort-Object -Unique)
+        $entryStatus = if ($notAudited) {
+            "not-audited"
+        }
+        elseif ([string]::IsNullOrWhiteSpace($packagePattern)) {
+            "invalid-pattern"
+        }
+        elseif ($matchedLockFiles.Count -ge $minimumLockFileMatches) {
+            "matched"
+        }
+        else {
+            "missing-lock-file-match"
+        }
+
+        $auditRows += [pscustomobject]@{
+            PackagePattern         = $packagePattern
+            Modes                  = $modes
+            MinimumLockFileMatches = $minimumLockFileMatches
+            MatchCount             = $matchedLockFiles.Count
+            MatchedPackageIds      = $matchedPackageIds
+            MatchedLockFiles       = $matchedLockFiles
+            Status                 = $entryStatus
+            Evidence               = if ($entry.PSObject.Properties.Match("evidence").Count -gt 0) { [string]$entry.evidence } else { "" }
+        }
+    }
+
+    $missingEntries = @($auditRows | Where-Object { $_.Status -ne "matched" }).Count
+    $status = if ($notAudited) {
+        "not-audited"
+    }
+    elseif ($missingEntries -gt 0) {
+        "missing-lock-file-match"
+    }
+    else {
+        "matched"
+    }
+
+    return [pscustomobject]@{
+        Source            = "knownTransitiveHazardAudit"
+        Status            = $status
+        TotalEntries      = $auditRows.Count
+        MissingEntries    = $missingEntries
+        LockFileCount     = @($lockFilePackages | ForEach-Object { $_.LockFile } | Sort-Object -Unique).Count
+        PackageMatchCount = @($auditRows | ForEach-Object { $_.MatchedPackageIds } | Sort-Object -Unique).Count
+        Entries           = @($auditRows)
+    }
+}
+
 function Get-DeploymentModeHazardInventory {
     [CmdletBinding()]
-    param([Parameter(Mandatory)] $Manifest)
+    param(
+        [Parameter(Mandatory)] $Manifest,
+        [string]$RepoRoot = ""
+    )
 
     $tierOrder = @("excluded-by-design", "clean-baseline", "low", "medium", "high")
     $modeOrder = @("trim", "nativeAot", "singleFile")
@@ -649,6 +836,8 @@ function Get-DeploymentModeHazardInventory {
         }
     }
 
+    $knownTransitiveHazardAudit = Get-DeploymentModeTransitiveHazardAudit -Manifest $Manifest -RepoRoot $RepoRoot
+
     $tierRows = foreach ($tierName in $tierCounts.Keys) {
         [pscustomobject]@{
             Tier  = $tierName
@@ -696,6 +885,7 @@ function Get-DeploymentModeHazardInventory {
         HazardKindCounts          = @($hazardKindRows)
         SupportedModeClaims       = @($supportedModeRows)
         KnownTransitiveHazards    = @($knownTransitiveHazards)
+        KnownTransitiveHazardAudit = $knownTransitiveHazardAudit
         Packages                  = @($packages)
     }
 }
@@ -1089,6 +1279,22 @@ function Write-ValidationReport {
         foreach ($modeHazard in @($hazardInventory.KnownTransitiveHazards)) {
             [void]$sb.AppendLine("- **$($modeHazard.Mode)**: $($modeHazard.Count)")
         }
+        if ($hazardInventory.PSObject.Properties.Match("KnownTransitiveHazardAudit").Count -gt 0 -and
+            $null -ne $hazardInventory.KnownTransitiveHazardAudit) {
+            $audit = $hazardInventory.KnownTransitiveHazardAudit
+            [void]$sb.AppendLine("")
+            [void]$sb.AppendLine("Known transitive hazard lock-file audit:")
+            [void]$sb.AppendLine("- Status: $($audit.Status)")
+            [void]$sb.AppendLine("- Audit entries: $($audit.TotalEntries)")
+            [void]$sb.AppendLine("- Missing entries: $($audit.MissingEntries)")
+            [void]$sb.AppendLine("- Lock files scanned: $($audit.LockFileCount)")
+            [void]$sb.AppendLine("- Package families matched: $($audit.PackageMatchCount)")
+            foreach ($entry in @($audit.Entries)) {
+                $modes = if (@($entry.Modes).Count -gt 0) { @($entry.Modes) -join ", " } else { "none" }
+                $packages = if (@($entry.MatchedPackageIds).Count -gt 0) { @($entry.MatchedPackageIds) -join ", " } else { "none" }
+                [void]$sb.AppendLine("- **$($entry.PackagePattern)**: $($entry.Status), lock-file matches=$($entry.MatchCount), modes=$modes, packages=$packages")
+            }
+        }
     }
     [void]$sb.AppendLine("")
     [void]$sb.AppendLine("See ``claim-validation-report.json`` next to this README for the full structured report.")
@@ -1130,7 +1336,7 @@ function Invoke-DeploymentModeClaimValidation {
 
     Invoke-Step -Title "Loading manifest" -Detail $ManifestPath
     $manifest = Read-DeploymentModeManifest -Path $ManifestPath
-    $hazardInventory = Get-DeploymentModeHazardInventory -Manifest $manifest
+    $hazardInventory = Get-DeploymentModeHazardInventory -Manifest $manifest -RepoRoot $RepoRoot
     Invoke-Step -Title "Building hazard inventory" -Detail ("packages=" + $hazardInventory.TotalPackages + ", hazards=" + $hazardInventory.TotalKnownHazards)
 
     # When the caller did not pass explicit -PublishTargets and did not pass -SkipPublish, default to

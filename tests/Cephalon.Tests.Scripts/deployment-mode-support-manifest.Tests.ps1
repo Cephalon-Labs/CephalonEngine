@@ -68,6 +68,59 @@ BeforeAll {
             Matched       = $null -ne $actualValue -and [string]::Equals($actualValue, $expectedValue, [System.StringComparison]::OrdinalIgnoreCase)
         }
     }
+
+    function Get-LockFilePackageRows {
+        param(
+            [Parameter(Mandatory = $true)][string]$RepoRoot,
+            [string[]]$LockFileGlobs = @()
+        )
+
+        $normalizedGlobs = @(
+            $LockFileGlobs |
+                ForEach-Object { [string]$_ } |
+                Where-Object { -not [string]::IsNullOrWhiteSpace($_) } |
+                ForEach-Object { ($_ -replace '\\', '/') }
+        )
+
+        $lockFiles = Get-ChildItem -LiteralPath $RepoRoot -Recurse -Filter "packages.lock.json" -File -ErrorAction SilentlyContinue |
+            Where-Object {
+                if ($normalizedGlobs.Count -eq 0) { return $true }
+
+                $relativePath = [System.IO.Path]::GetRelativePath($RepoRoot, $_.FullName) -replace '\\', '/'
+                foreach ($glob in $normalizedGlobs) {
+                    $matcher = [System.Management.Automation.WildcardPattern]::new(
+                        $glob,
+                        [System.Management.Automation.WildcardOptions]::IgnoreCase)
+                    if ($matcher.IsMatch($relativePath)) {
+                        return $true
+                    }
+                }
+
+                return $false
+            }
+
+        $rows = @()
+        foreach ($lockFile in $lockFiles) {
+            $relativePath = [System.IO.Path]::GetRelativePath($RepoRoot, $lockFile.FullName) -replace '\\', '/'
+            $lockJson = Get-Content -LiteralPath $lockFile.FullName -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 100
+            if ($null -eq $lockJson -or
+                -not $lockJson.PSObject.Properties.Match("dependencies").Count -or
+                $null -eq $lockJson.dependencies) {
+                continue
+            }
+
+            foreach ($tfm in $lockJson.dependencies.PSObject.Properties) {
+                foreach ($dependency in $tfm.Value.PSObject.Properties) {
+                    $rows += [pscustomobject]@{
+                        PackageId = [string]$dependency.Name
+                        LockFile  = $relativePath
+                    }
+                }
+            }
+        }
+
+        return $rows
+    }
 }
 
 Describe "deployment-mode-support.json — top-level schema" {
@@ -102,6 +155,7 @@ Describe "deployment-mode-support.json — top-level schema" {
             'representativePublishTargets',
             'expectedPublishOutputShape',
             'deploymentModeEligibility',
+            'knownTransitiveHazardAudit',
             'knownTransitiveHazards'
         )
         foreach ($field in $expected) {
@@ -380,5 +434,48 @@ Describe "knownTransitiveHazards" {
         $script:manifest.knownTransitiveHazards.PSObject.Properties.Name | Should -Contain 'trim'
         $script:manifest.knownTransitiveHazards.PSObject.Properties.Name | Should -Contain 'nativeAot'
         $script:manifest.knownTransitiveHazards.PSObject.Properties.Name | Should -Contain 'singleFile'
+    }
+}
+
+Describe "knownTransitiveHazardAudit" {
+    It "exists with a comment, lock-file globs, and entries" {
+        $script:manifest.knownTransitiveHazardAudit.PSObject.Properties.Name | Should -Contain 'comment'
+        $script:manifest.knownTransitiveHazardAudit.PSObject.Properties.Name | Should -Contain 'lockFileGlobs'
+        $script:manifest.knownTransitiveHazardAudit.PSObject.Properties.Name | Should -Contain 'entries'
+        @($script:manifest.knownTransitiveHazardAudit.lockFileGlobs).Count | Should -BeGreaterThan 0
+        @($script:manifest.knownTransitiveHazardAudit.entries).Count | Should -BeGreaterThan 0
+    }
+
+    It "uses valid entry shape and deployment modes" {
+        foreach ($entry in @($script:manifest.knownTransitiveHazardAudit.entries)) {
+            $entry.PSObject.Properties.Name | Should -Contain 'packagePattern'
+            $entry.PSObject.Properties.Name | Should -Contain 'modes'
+            $entry.PSObject.Properties.Name | Should -Contain 'minimumLockFileMatches'
+            $entry.PSObject.Properties.Name | Should -Contain 'evidence'
+            [string]$entry.packagePattern | Should -Not -BeNullOrEmpty
+            [int]$entry.minimumLockFileMatches | Should -BeGreaterThan 0
+            foreach ($mode in @($entry.modes)) {
+                [string]$mode | Should -BeIn @('trim', 'nativeAot', 'singleFile')
+            }
+        }
+    }
+
+    It "matches the declared audited package patterns against current lock files" {
+        $rows = @(Get-LockFilePackageRows -RepoRoot $script:repoRoot -LockFileGlobs @($script:manifest.knownTransitiveHazardAudit.lockFileGlobs))
+        $rows.Count | Should -BeGreaterThan 0
+
+        foreach ($entry in @($script:manifest.knownTransitiveHazardAudit.entries)) {
+            $matcher = [System.Management.Automation.WildcardPattern]::new(
+                [string]$entry.packagePattern,
+                [System.Management.Automation.WildcardOptions]::IgnoreCase)
+            $lockFileMatches = @(
+                $rows |
+                    Where-Object { $matcher.IsMatch($_.PackageId) } |
+                    ForEach-Object { $_.LockFile } |
+                    Sort-Object -Unique
+            )
+            ($lockFileMatches.Count -ge [int]$entry.minimumLockFileMatches) |
+                Should -BeTrue -Because "packagePattern '$($entry.packagePattern)' should appear in at least $($entry.minimumLockFileMatches) audited lock file(s)"
+        }
     }
 }

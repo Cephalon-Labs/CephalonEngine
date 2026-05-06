@@ -84,6 +84,37 @@ BeforeAll {
         }
         return [pscustomobject]@{ Root = $root; Projects = $paths }
     }
+
+    function script:Add-TempPackagesLockFile {
+        param(
+            [Parameter(Mandatory)] [string]$RepoRoot,
+            [Parameter(Mandatory)] [string]$RelativePath,
+            [Parameter(Mandatory)] [string[]]$PackageIds
+        )
+
+        $path = Join-Path $RepoRoot ($RelativePath -replace '/', [System.IO.Path]::DirectorySeparatorChar)
+        $dir = Split-Path -Parent $path
+        New-Item -Path $dir -ItemType Directory -Force | Out-Null
+
+        $dependencyRows = [ordered]@{}
+        foreach ($packageId in $PackageIds) {
+            $dependencyRows[$packageId] = [ordered]@{
+                type        = "Transitive"
+                resolved    = "1.0.0"
+                contentHash = "test"
+            }
+        }
+
+        $lockObject = [ordered]@{
+            version      = 1
+            dependencies = [ordered]@{
+                "net10.0" = $dependencyRows
+            }
+        }
+
+        $lockObject | ConvertTo-Json -Depth 16 | Set-Content -LiteralPath $path -Encoding UTF8
+        return $path
+    }
 }
 
 AfterAll {
@@ -774,6 +805,26 @@ Describe "Write-ValidationReport" {
                 TierCounts = @([pscustomobject]@{ Tier = "high"; Count = 1 })
                 SupportedModeClaims = @([pscustomobject]@{ Mode = "trim"; PackageCount = 0; Packages = @() })
                 KnownTransitiveHazards = @([pscustomobject]@{ Mode = "trim"; Count = 1; Entries = @("Newtonsoft.Json") })
+                KnownTransitiveHazardAudit = [pscustomobject]@{
+                    Source = "knownTransitiveHazardAudit"
+                    Status = "matched"
+                    TotalEntries = 1
+                    MissingEntries = 0
+                    LockFileCount = 1
+                    PackageMatchCount = 1
+                    Entries = @(
+                        [pscustomobject]@{
+                            PackagePattern = "Newtonsoft.Json"
+                            Modes = @("trim", "nativeAot")
+                            MinimumLockFileMatches = 1
+                            MatchCount = 1
+                            MatchedPackageIds = @("Newtonsoft.Json")
+                            MatchedLockFiles = @("src/Cephalon.Sample/packages.lock.json")
+                            Status = "matched"
+                            Evidence = "unit test"
+                        }
+                    )
+                }
             }
             AggregateVerdict = "not-claimed"
         }
@@ -789,6 +840,8 @@ Describe "Write-ValidationReport" {
         $md | Should -Match "# Deployment-mode claim validation report"
         $md | Should -Match "Aggregate verdict"
         $md | Should -Match "Hazard inventory"
+        $md | Should -Match "Known transitive hazard lock-file audit"
+        $md | Should -Match "Newtonsoft.Json"
     }
 }
 
@@ -912,6 +965,51 @@ Describe "Get-DeploymentModeHazardInventory" {
         ($inventory.SupportedModeClaims | Where-Object Mode -eq "singleFile").PackageCount | Should -Be 1
         ($inventory.HazardKindCounts | Where-Object Kind -eq "reflection-assembly-scan").Count | Should -Be 1
         ($inventory.KnownTransitiveHazards | Where-Object Mode -eq "nativeAot").Count | Should -Be 2
+        $inventory.KnownTransitiveHazardAudit.Status | Should -Be "not-configured"
+    }
+
+    It "audits declared transitive hazard package patterns against lock files" {
+        $repo = New-TempRepoRoot -Projects @()
+        Add-TempPackagesLockFile `
+            -RepoRoot $repo.Root `
+            -RelativePath "src/Cephalon.Sample/packages.lock.json" `
+            -PackageIds @("Newtonsoft.Json", "Grpc.AspNetCore") | Out-Null
+        Add-TempPackagesLockFile `
+            -RepoRoot $repo.Root `
+            -RelativePath "samples/Cephalon.Sample/packages.lock.json" `
+            -PackageIds @("Azure.Identity") | Out-Null
+
+        $manifest = [pscustomobject]@{
+            '$schemaVersion' = "1.3.0"
+            deploymentModeEligibility = [pscustomobject]@{ packages = @() }
+            knownTransitiveHazardAudit = [pscustomobject]@{
+                lockFileGlobs = @("src/**/packages.lock.json", "samples/**/packages.lock.json")
+                entries = @(
+                    [pscustomobject]@{
+                        packagePattern = "Newtonsoft.Json"
+                        modes = @("trim", "nativeAot")
+                        minimumLockFileMatches = 1
+                        evidence = "JSON serialization"
+                    },
+                    [pscustomobject]@{
+                        packagePattern = "Azure.*"
+                        modes = @("nativeAot")
+                        minimumLockFileMatches = 1
+                        evidence = "Azure identity dependency family"
+                    }
+                )
+            }
+        }
+
+        $inventory = Get-DeploymentModeHazardInventory -Manifest $manifest -RepoRoot $repo.Root
+
+        $inventory.KnownTransitiveHazardAudit.Status | Should -Be "matched"
+        $inventory.KnownTransitiveHazardAudit.TotalEntries | Should -Be 2
+        $inventory.KnownTransitiveHazardAudit.MissingEntries | Should -Be 0
+        $inventory.KnownTransitiveHazardAudit.LockFileCount | Should -Be 2
+        $inventory.KnownTransitiveHazardAudit.PackageMatchCount | Should -Be 2
+        ($inventory.KnownTransitiveHazardAudit.Entries | Where-Object PackagePattern -eq "Azure.*").MatchedPackageIds |
+            Should -Contain "Azure.Identity"
     }
 
     It "returns an empty inventory when the manifest has no eligibility block" {
@@ -919,6 +1017,7 @@ Describe "Get-DeploymentModeHazardInventory" {
         $inventory.TotalPackages | Should -Be 0
         $inventory.TotalKnownHazards | Should -Be 0
         $inventory.Packages.Count | Should -Be 0
+        $inventory.KnownTransitiveHazardAudit.Status | Should -Be "not-configured"
     }
 }
 

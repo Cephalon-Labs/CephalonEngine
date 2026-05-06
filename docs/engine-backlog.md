@@ -24,6 +24,45 @@ Current focus:
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
 - treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md) for release validation, and `cephalon doctor --scorecard <path>` provides a local CLI readback over that generated artifact without becoming source truth
 
+### ENG-479 Make transitive deployment-mode hazard hints lock-file-audited
+
+Status: done
+Estimate: 2
+Issue: #1080
+Iteration: Sprint 125
+
+Why:
+
+- the first-party deployment-mode hazard table is now narrow and machine-checkable, but the
+  transitive hazard hints still lived as advisory prose/counts only
+- broad hints such as cloud SDKs, EF Core, gRPC, JSON serialization, and benchmark utilities
+  should remain visible in release artifacts without pretending they are support claims
+- lock-file truth is the right middle ground during POC: it proves the audited package families
+  are currently present in the repo graph while keeping publish probes as the real claim gate
+
+Delivered:
+
+- raised `scripts/deployment-mode-support.json` to schema `1.3.0` and added
+  `knownTransitiveHazardAudit`
+- taught `scripts/validate-deployment-mode-claims.ps1` to scan `src`, `samples`, and `benchmarks`
+  `packages.lock.json` files and emit audit status into `HazardInventory` / `hazard-inventory.json`
+- added Markdown report output for the lock-file audit summary
+- added manifest Pester coverage for audit shape and current lock-file matches, plus harness
+  coverage for matched audit rows
+- refreshed deployment-mode support docs, trim/AOT hazard inventory, compatibility/readiness,
+  package-publishing, scorecard, roadmap/follow-up tracker, and project memory
+
+Validation:
+
+- deployment-mode manifest JSON parse (`schema=1.3.0`, 7 audited entries)
+- deployment-mode manifest Pester coverage (`36/36`)
+- deployment-mode claim harness in audit mode (`not-claimed`, 6 packages, 14 hazards,
+  `knownTransitiveHazardAudit=matched`, 7 entries, 116 lock files, 0 missing)
+- deployment-mode claim-harness Pester coverage (`78/78`)
+- combined deployment-mode script Pester suites (`114/114`)
+- dotnet-readiness validation
+- `git diff --check`
+
 ### ENG-478 Make SciSharp adapter deployment posture machine-checkable
 
 Status: done
@@ -14056,6 +14095,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-476 Retire Engine module discovery reflection: `Cephalon.Engine.SourceGen` now emits `ModuleDiscoveryDescriptor` metadata and `ModuleDiscovery` consumes generated descriptors instead of scanning assembly types or using `Activator.CreateInstance(...)`; the `Cephalon.Engine` high-tier row leaves the active package table and `Cephalon.Engine.SourceGen` is listed as `excluded-by-design`. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
 - ENG-477 Isolate MySQL SciSharp binlog transport reflection: `Cephalon.Data.MySql` no longer references `SciSharp.MySQL.Replication` or `MySql.Data`; the current SciSharp-backed `IMySqlBinlogTransport` moves into optional `Cephalon.Data.MySql.SciSharpReplication` behind `AddSciSharpMySqlBinlogReplication(...)`; and the core MySQL package now fails fast with `binlog-transport-adapter-missing` when CDC is configured without an adapter. Current manifest output reports 6 package entries, 2 packages with known hazards, 14 known hazard entries, 2 `high` entries, zero active `medium` or `low` entries, 3 `excluded-by-design` entries, and 1 scoped `singleFile` claim while global trim / Native AOT / single-file rows remain `not-claimed`. Quality dimensions: Compatibility + Auditability + Maintainability + Performance + Reliability + Flexibility + Usability (shipped)
 - ENG-478 Make SciSharp adapter deployment posture machine-checkable: `Cephalon.Data.MySql.SciSharpReplication` now declares explicit permanent `not-claimed` project properties for trim, Native AOT, and single-file publishing; `scripts/deployment-mode-support.json` records the matching `requiredProjectProperties`; and manifest Pester coverage verifies package-level required properties against csproj truth. Hazard counts and global support rows stay unchanged at 6 package entries, 2 packages with known hazards, 14 known hazard entries, and global `not-claimed`. Quality dimensions: Compatibility + Auditability + Maintainability + Usability (shipped)
+- ENG-479 Make transitive deployment-mode hazard hints lock-file-audited: `scripts/deployment-mode-support.json` schema `1.3.0` now carries `knownTransitiveHazardAudit`, the validation harness scans current `src`, `samples`, and `benchmarks` lock files, and `hazard-inventory.json` reports a matched audit subset for 7 package-pattern entries across 116 lock files with 0 missing entries while global trim / Native AOT / single-file rows remain `not-claimed`. Quality dimensions: Compatibility + Auditability + Maintainability + Usability (shipped)
 
 ### Later / not scheduled yet
 
