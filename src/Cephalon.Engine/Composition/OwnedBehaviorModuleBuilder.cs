@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
 
 namespace Cephalon.Engine.Composition;
@@ -5,6 +6,7 @@ namespace Cephalon.Engine.Composition;
 internal sealed class OwnedBehaviorModuleBuilder(string sourceModuleId) : IBehaviorModuleBuilder
 {
     private static readonly Type AppBehaviorOpenGeneric = typeof(IAppBehavior<,>);
+    private static readonly JsonSerializerOptions WebJsonSerializerOptions = new(JsonSerializerDefaults.Web);
     private readonly string sourceModuleId = NormalizeRequired(sourceModuleId);
     private readonly List<OwnedBehaviorRegistration> registrations = [];
 
@@ -12,11 +14,31 @@ internal sealed class OwnedBehaviorModuleBuilder(string sourceModuleId) : IBehav
         where TBehavior : class
         => Add(typeof(TBehavior));
 
+    public IBehaviorModuleBuilder Add<TBehavior, TInput, TOutput>()
+        where TBehavior : class, IAppBehavior<TInput, TOutput>
+        where TInput : notnull
+        => AddCore(
+            typeof(TBehavior),
+            configureTopology: null,
+            CreateExecutionDelegate<TBehavior, TInput, TOutput>());
+
     public IBehaviorModuleBuilder Add<TBehavior>(Action<IBehaviorTopologyBuilder> configureTopology)
         where TBehavior : class
     {
         ArgumentNullException.ThrowIfNull(configureTopology);
         return Add(typeof(TBehavior), configureTopology);
+    }
+
+    public IBehaviorModuleBuilder Add<TBehavior, TInput, TOutput>(
+        Action<IBehaviorTopologyBuilder> configureTopology)
+        where TBehavior : class, IAppBehavior<TInput, TOutput>
+        where TInput : notnull
+    {
+        ArgumentNullException.ThrowIfNull(configureTopology);
+        return AddCore(
+            typeof(TBehavior),
+            configureTopology,
+            CreateExecutionDelegate<TBehavior, TInput, TOutput>());
     }
 
     public IBehaviorModuleBuilder Add(Type behaviorType)
@@ -33,7 +55,8 @@ internal sealed class OwnedBehaviorModuleBuilder(string sourceModuleId) : IBehav
 
     private OwnedBehaviorModuleBuilder AddCore(
         Type behaviorType,
-        Action<IBehaviorTopologyBuilder>? configureTopology)
+        Action<IBehaviorTopologyBuilder>? configureTopology,
+        Func<object, object, IBehaviorContext, CancellationToken, Task<object?>>? executionDelegate = null)
     {
         ArgumentNullException.ThrowIfNull(behaviorType);
 
@@ -62,9 +85,26 @@ internal sealed class OwnedBehaviorModuleBuilder(string sourceModuleId) : IBehav
             sourceModuleId,
             attribute.Id,
             behaviorType,
-            configureTopology));
+            configureTopology,
+            executionDelegate));
 
         return this;
+    }
+
+    private static Func<object, object, IBehaviorContext, CancellationToken, Task<object?>> CreateExecutionDelegate<TBehavior, TInput, TOutput>()
+        where TBehavior : class, IAppBehavior<TInput, TOutput>
+        where TInput : notnull
+    {
+        return static async (behavior, input, context, cancellationToken) =>
+        {
+            TInput typedInput = input is JsonElement jsonElement
+                ? JsonSerializer.Deserialize<TInput>(jsonElement.GetRawText(), WebJsonSerializerOptions)!
+                : (TInput)input;
+            var result = await ((TBehavior)behavior)
+                .HandleAsync(typedInput, context, cancellationToken)
+                .ConfigureAwait(false);
+            return result;
+        };
     }
 
     private static string NormalizeRequired(string value)

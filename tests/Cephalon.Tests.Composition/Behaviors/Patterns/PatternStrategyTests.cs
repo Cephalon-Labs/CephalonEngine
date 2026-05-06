@@ -6,6 +6,7 @@ using Cephalon.Behaviors.Patterns.Registry;
 using Cephalon.Behaviors.Patterns.Stores;
 using Cephalon.Behaviors.Patterns.Strategies;
 using Cephalon.Behaviors.Services;
+using Cephalon.Tests.Behaviors;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Cephalon.Tests.Behaviors.Patterns;
@@ -138,7 +139,7 @@ public sealed class PatternStrategyTests
         where TBehavior : class
     {
         var descriptor = MakeDescriptor(typeof(TBehavior).Name, pattern);
-        var slot = BehaviorExecutionSlot.ForType(typeof(TBehavior));
+        var slot = BehaviorExecutionTestSlots.For(behavior);
         return new BehaviorExecutionContext
         {
             Descriptor = descriptor,

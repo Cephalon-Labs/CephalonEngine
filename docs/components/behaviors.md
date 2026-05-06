@@ -11,7 +11,7 @@
   attribute-only baseline when the pattern choice is unambiguous
 - **CompatibilityMatrix** — startup-time validation of resolved topologies against
   `IBehaviorCompatibilityRule` implementations
-- **BehaviorGeneratedModuleRegistry / BehaviorExecutionSlot** — source-generated module hints register once through a module initializer, source-generated topology descriptors cover supported fluent chains and attribute-only declarations, unsupported generated topology fails fast, and typed invocation delegates are built once at dispatcher construction; source-generated auto-registration can now supply closed generic slots, while runtime-discovered behaviors still fall back to `ForType(...)`
+- **BehaviorGeneratedModuleRegistry / BehaviorExecutionSlot** — source-generated module hints register once through a module initializer, source-generated topology descriptors cover supported fluent chains and attribute-only declarations, unsupported generated topology fails fast, and typed invocation delegates are built once at dispatcher construction; dispatch now requires a source-generated or explicitly registered closed execution slot instead of materializing an open-generic runtime fallback
 - **IBehaviorCatalog / IBehaviorRegistry** — populated by `IBehaviorContributor` implementations
 - **Hosting** — `IEngineBuilder.AddBehaviors(configure?)` extension + `BehaviorModule`
 - **Configuration** — `Engine:Behaviors` auto-registration controls
@@ -46,11 +46,15 @@
 ```csharp
 services.AddCephalon(config, engine => engine
     .AddBehaviors(behaviors => behaviors
-        .Register<PlaceOrderBehavior>()
-        .Register<GetOrderBehavior>(b => b.AsCqrs().ViaHttpJsonRpc())
+        .Register<PlaceOrderBehavior, PlaceOrderInput, PlaceOrderOutput>()
+        .Register<GetOrderBehavior, GetOrderInput, GetOrderOutput>(b => b.AsCqrs().ViaHttpJsonRpc())
     )
 );
 ```
+
+Use the typed overload when the fluent registration is meant to dispatch at runtime. The type-only
+`Register<TBehavior>(...)` overload still records behavior metadata/topology, but dispatch requires
+a source-generated `BehaviorExecutionSlot` or a typed explicit registration.
 
 ## Module-owned behaviors
 
@@ -73,8 +77,8 @@ public sealed class CartModule : BehaviorModuleBase
 
     public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
     {
-        behaviors.Add<RepriceCartBehavior>();
-        behaviors.Add<CheckoutWorkflowBehavior>(topology => topology
+        behaviors.Add<RepriceCartBehavior, RepriceCartInput, RepriceCartOutput>();
+        behaviors.Add<CheckoutWorkflowBehavior, CheckoutWorkflowInput, CheckoutWorkflowOutput>(topology => topology
             .AsProcessManager()
             .ViaKafka()
             .RequireFeatureFlag("checkout-workflow"));
@@ -220,7 +224,8 @@ ownership / `AddBehaviors(..., behaviors => ...)`.
 
 Resolved topology follows a small, explicit model:
 
-1. explicit topology from `Register<T>(b => ...)`, module ownership, or a source-generator-supported
+1. explicit topology from typed `Register<TBehavior, TInput, TOutput>(b => ...)`, typed module
+   ownership, or a source-generator-supported
    `static ConfigureTopology(...)` fluent chain
 2. source-generated attribute-only descriptors when no explicit topology exists and the behavior
    declares unambiguous allowlist metadata: zero or one allowed pattern, plus any declared allowed
@@ -267,7 +272,7 @@ Behavior metadata stays transport-neutral on purpose.
 ## Performance characteristics
 
 - Dispatch table built once at `EngineBuilder.Build()` into a `FrozenDictionary`
-- Zero reflection on the hot dispatch path — the dispatcher reuses typed execution delegates; source-generated module hints are read from `BehaviorGeneratedModuleRegistry`, source-generated behavior slots and topology descriptors are materialized as closed generated metadata, unsupported generated topology declarations fail fast, and `BehaviorExecutionSlot.ForType(...)` is kept as the startup fallback for runtime-discovered behaviors
+- Zero reflection on the hot dispatch path — the dispatcher reuses typed execution delegates; source-generated module hints are read from `BehaviorGeneratedModuleRegistry`, source-generated behavior slots and topology descriptors are materialized as closed generated metadata, unsupported generated topology declarations fail fast, and dispatch startup fails fast when a runtime-discovered behavior does not have a source-generated or explicitly registered closed execution slot
 - Transport bindings deferred to first request (`LazyTransportBinding`) — zero startup overhead per transport
 - Compatibility matrix runs at startup only — no runtime overhead
 
@@ -350,14 +355,16 @@ Source-generated behavior registration now also emits a generated module registr
 generic execution-slot hints. `BehaviorModule` consumes `BehaviorGeneratedModuleRegistry` directly
 instead of reflectively invoking generated carrier methods, and the dispatcher prefers generated
 slots when the behavior id and concrete type still match the runtime registry. The common
-source-generated path therefore avoids both generated-carrier method lookup and
-`BehaviorExecutionSlot.ForType(...)` open-generic method dispatch during startup. Source-generated
-topology descriptors now also cover supported `ConfigureTopology(...)` fluent chains and
-attribute-only `[BehaviorAllowedPatterns]` / `[BehaviorAllowedTransports]` declarations; generated
-auto-registration fails fast when a behavior still needs runtime `ConfigureTopology(...)`
-execution, because `BehaviorModule` no longer invokes that method reflectively. Assemblies without
-generated hints and behavior types found through runtime discovery continue to use the execution-slot
-reflection fallback until the broader compile-time module-manifest remediation lands.
+source-generated path therefore avoids both generated-carrier method lookup and open-generic method
+dispatch during startup. Source-generated topology descriptors now also cover supported
+`ConfigureTopology(...)` fluent chains and attribute-only `[BehaviorAllowedPatterns]` /
+`[BehaviorAllowedTransports]` declarations; generated auto-registration fails fast when a behavior
+still needs runtime `ConfigureTopology(...)` execution, because `BehaviorModule` no longer invokes
+that method reflectively. Type-only registrations and runtime-discovered behavior metadata now fail
+fast at dispatcher construction if no source-generated or explicitly registered
+`BehaviorExecutionSlot` is available; use `Register<TBehavior, TInput, TOutput>(...)` or
+`IBehaviorModuleBuilder.Add<TBehavior, TInput, TOutput>(...)` for dispatch-ready manual
+registrations.
 
 ### BehaviorDiagnostics EventId constants (5100-5109)
 

@@ -669,12 +669,18 @@ Browse the published API surface by public member.
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-1): `Methods` on `IBehaviorModuleBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Declares that the current module owns the specified behavior.
   - `IBehaviorModuleBuilder Add<TBehavior>()`
+- [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-3): `Methods` on `IBehaviorModuleBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Declares that the current module owns the specified behavior and supplies a closed execution slot.
+  - `IBehaviorModuleBuilder Add<TBehavior, TInput, TOutput>()`
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-system-type): `Methods` on `IBehaviorModuleBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Declares that the current module owns the specified behavior type.
   - `IBehaviorModuleBuilder Add(Type behaviorType)`
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-1-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder): `Methods` on `IBehaviorModuleBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Declares that the current module owns the specified behavior and supplies an explicit topology override.
   - `IBehaviorModuleBuilder Add<TBehavior>(Action<IBehaviorTopologyBuilder> configureTopology)`
+- [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-3-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder): `Methods` on `IBehaviorModuleBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Declares that the current module owns the specified behavior, supplies a closed execution slot, and applies an explicit topology override.
+  - `IBehaviorModuleBuilder Add<TBehavior, TInput, TOutput>(Action<IBehaviorTopologyBuilder> configureTopology)`
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-system-type-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder): `Methods` on `IBehaviorModuleBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Declares that the current module owns the specified behavior type and supplies an explicit topology override.
   - `IBehaviorModuleBuilder Add(Type behaviorType, Action<IBehaviorTopologyBuilder> configureTopology)`
@@ -9343,6 +9349,9 @@ Browse the published API surface by public member.
 - [ExecutionCategory](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-executioncategory): `Properties` on `DatabaseMigrationCommandDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionCategory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the execution category when the provider can distinguish deploy-time, manual, or other command paths.
   - `string ExecutionCategory { get; }`
+- [ExecutionDelegate](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-executiondelegate): `Properties` on `OwnedBehaviorRegistration` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionDelegate&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Gets the optional closed execution delegate used by dispatch when the owning module registered one explicitly.
+  - `Func<object, object, IBehaviorContext, CancellationToken, Task<object>> ExecutionDelegate { get; }`
 - [ExecutionFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-executionfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExecutionFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the deterministic command-execution fingerprint Cephalon currently derives for the request result.
   - `string ExecutionFingerprint { get; set; }`
@@ -19538,6 +19547,9 @@ Browse the published API surface by public member.
 - [OwnedBehaviorRegistration](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ownedbehaviorregistration-ctor-system-string-system-string-system-type-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder): `Constructors` on `OwnedBehaviorRegistration` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnedBehaviorRegistration&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Initializes a new `OwnedBehaviorRegistration`.
   - `OwnedBehaviorRegistration(string sourceModuleId, string behaviorId, Type behaviorType, Action<IBehaviorTopologyBuilder> configureTopology)`
+- [OwnedBehaviorRegistration](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ownedbehaviorregistration-ctor-system-string-system-string-system-type-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder-system-func-system-object-system-object-cephalon-abstractions-behaviors-ibehaviorcontext-system-threading-cancellationtoken-system-threading-tasks-task-system-object): `Constructors` on `OwnedBehaviorRegistration` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnedBehaviorRegistration&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Initializes a new `OwnedBehaviorRegistration`.
+  - `OwnedBehaviorRegistration(string sourceModuleId, string behaviorId, Type behaviorType, Action<IBehaviorTopologyBuilder> configureTopology, Func<object, object, IBehaviorContext, CancellationToken, Task<object>> executionDelegate)`
 - [OwnerMatch](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationcategories-ownermatch): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OwnerMatch&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current host coordination owner matches the active reporter lease.
   - `const string OwnerMatch`

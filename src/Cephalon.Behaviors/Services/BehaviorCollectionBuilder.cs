@@ -60,10 +60,71 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
             ? null
             : builder => configureTopology((BehaviorTopologyBuilder)builder);
 
-        return Register(typeof(TBehavior), configureTopologyAdapter);
+        RegisterCore(typeof(TBehavior), configureTopologyAdapter);
+        return this;
+    }
+
+    /// <summary>
+    /// Registers a behavior of type <typeparamref name="TBehavior" /> with a closed generic execution slot.
+    /// </summary>
+    /// <typeparam name="TBehavior">
+    /// The concrete behavior type. Must be decorated with <see cref="AppBehaviorAttribute" />
+    /// and implement <see cref="IAppBehavior{TIn,TOut}" />.
+    /// </typeparam>
+    /// <typeparam name="TInput">The behavior input contract.</typeparam>
+    /// <typeparam name="TOutput">The behavior output contract.</typeparam>
+    /// <param name="configureTopology">
+    /// An optional callback that configures the behavior's transport topology at Layer 4 (highest priority).
+    /// When <see langword="null" />, topology is resolved from configuration layers only.
+    /// </param>
+    /// <returns>The same builder for fluent chaining.</returns>
+    public IBehaviorCollectionBuilder Register<TBehavior, TInput, TOutput>(
+        Action<BehaviorTopologyBuilder>? configureTopology = null)
+        where TBehavior : class, IAppBehavior<TInput, TOutput>
+        where TInput : notnull
+    {
+        Action<IBehaviorTopologyBuilder>? configureTopologyAdapter = configureTopology is null
+            ? null
+            : builder => configureTopology((BehaviorTopologyBuilder)builder);
+
+        var behaviorId = RegisterCore(typeof(TBehavior), configureTopologyAdapter);
+        RegisterExecutionSlot(
+            behaviorId,
+            typeof(TBehavior),
+            BehaviorExecutionSlot.For<TBehavior, TInput, TOutput>());
+        return this;
     }
 
     internal IBehaviorCollectionBuilder Register(
+        Type behaviorType,
+        Action<IBehaviorTopologyBuilder>? configureTopology = null,
+        string? sourceModuleId = null)
+    {
+        RegisterCore(behaviorType, configureTopology, sourceModuleId);
+        return this;
+    }
+
+    internal IBehaviorCollectionBuilder Register(OwnedBehaviorRegistration registration)
+    {
+        ArgumentNullException.ThrowIfNull(registration);
+
+        var behaviorId = RegisterCore(
+            registration.BehaviorType,
+            registration.ConfigureTopology,
+            registration.SourceModuleId);
+
+        if (registration.ExecutionDelegate is not null)
+        {
+            RegisterExecutionSlot(
+                behaviorId,
+                registration.BehaviorType,
+                BehaviorExecutionSlot.FromDelegate(registration.ExecutionDelegate));
+        }
+
+        return this;
+    }
+
+    private string RegisterCore(
         Type behaviorType,
         Action<IBehaviorTopologyBuilder>? configureTopology = null,
         string? sourceModuleId = null)
@@ -89,7 +150,7 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
                     $"Cannot register behavior id '{behaviorId}' for '{behaviorType.FullName}' because it is already registered by '{existingBehaviorType.FullName}'.");
             }
 
-            return this;
+            return behaviorId;
         }
 
         // 1. Register the type in DI as transient
@@ -118,7 +179,38 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
             Services.AddSingleton<IBehaviorContributor>(new FluentBehaviorContributor(descriptor));
         }
 
-        return this;
+        return behaviorId;
+    }
+
+    private void RegisterExecutionSlot(
+        string behaviorId,
+        Type behaviorType,
+        BehaviorExecutionSlot slot)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(behaviorId);
+        ArgumentNullException.ThrowIfNull(behaviorType);
+        ArgumentNullException.ThrowIfNull(slot);
+
+        ResolveOrCreateSlotRegistry(Services).Register(behaviorId, behaviorType, slot);
+    }
+
+    private static BehaviorExecutionSlotRegistry ResolveOrCreateSlotRegistry(IServiceCollection services)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        for (var index = services.Count - 1; index >= 0; index--)
+        {
+            var descriptor = services[index];
+            if (descriptor.ServiceType == typeof(BehaviorExecutionSlotRegistry) &&
+                descriptor.ImplementationInstance is BehaviorExecutionSlotRegistry registry)
+            {
+                return registry;
+            }
+        }
+
+        var createdRegistry = new BehaviorExecutionSlotRegistry();
+        services.TryAddSingleton(createdRegistry);
+        return createdRegistry;
     }
 
     private static BehaviorTopologyDescriptor ApplySourceModuleId(

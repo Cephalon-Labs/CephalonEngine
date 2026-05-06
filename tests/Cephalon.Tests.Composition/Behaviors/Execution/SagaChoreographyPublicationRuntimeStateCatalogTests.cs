@@ -5,6 +5,7 @@ using Cephalon.Behaviors.Hosting;
 using Cephalon.Behaviors.Modules;
 using Cephalon.Behaviors.Patterns.Abstractions;
 using Cephalon.Behaviors.Patterns.Hosting;
+using Cephalon.Behaviors.Patterns.Runtime;
 using Cephalon.Behaviors.Patterns.Strategies;
 using Cephalon.Behaviors.Services;
 using Cephalon.Engine.Composition;
@@ -32,6 +33,11 @@ public sealed class SagaChoreographyPublicationRuntimeStateCatalogTests
                 configure: behaviors => behaviors.AddBehaviorPatterns());
             engine.AddModule(new SagaChoreographyRuntimeStateModule());
         });
+        services.AddSingleton(
+            SagaChoreographyRuntimeSlot.For<ObservedApprovalSagaBehavior, ObservedApprovalSagaInput, SagaChoreographyStepResult<string?>>(
+                "behavior",
+                "typed-step-result",
+                typeof(string).FullName));
 
         using var provider = services.BuildServiceProvider();
         var strategy = provider.GetServices<IBehaviorExecutionStrategy>()
@@ -159,7 +165,7 @@ public sealed class SagaChoreographyPublicationRuntimeStateCatalogTests
             pattern: "saga-choreography",
             transportIds: ["in-memory", "rabbitmq"],
             sourceModuleId: "tests.saga-state-owner");
-        var slot = BehaviorExecutionSlot.ForType(typeof(TBehavior));
+        var slot = BehaviorExecutionTestSlots.For(behavior);
         return new BehaviorExecutionContext
         {
             Descriptor = descriptor,
@@ -182,7 +188,7 @@ public sealed class SagaChoreographyPublicationRuntimeStateCatalogTests
 
         public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
         {
-            behaviors.Add<ObservedApprovalSagaBehavior>(topology => topology
+            behaviors.Add<ObservedApprovalSagaBehavior, ObservedApprovalSagaInput, SagaChoreographyStepResult<string?>>(topology => topology
                 .AsSagaChoreography()
                 .ViaInMemory()
                 .ViaRabbitMq()

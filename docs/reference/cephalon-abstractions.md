@@ -7465,6 +7465,23 @@ Returns: The same builder for fluent ownership registration.
 Type parameters:
 - `TBehavior`: The concrete behavior type owned by the module.
 
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-3"></a>
+
+##### `Add`
+
+```csharp
+IBehaviorModuleBuilder Add<TBehavior, TInput, TOutput>()
+```
+
+Declares that the current module owns the specified behavior and supplies a closed execution slot.
+
+Returns: The same builder for fluent ownership registration.
+
+Type parameters:
+- `TBehavior`: The concrete behavior type owned by the module.
+- `TInput`: The behavior input contract.
+- `TOutput`: The behavior output contract.
+
 <a id="member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-system-type"></a>
 
 ##### `Add`
@@ -7494,6 +7511,26 @@ Returns: The same builder for fluent ownership registration.
 
 Type parameters:
 - `TBehavior`: The concrete behavior type owned by the module.
+
+Parameters:
+- `configureTopology`: The callback that selects the resolved behavior topology when attribute-only synthesis is not enough.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-3-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder"></a>
+
+##### `Add`
+
+```csharp
+IBehaviorModuleBuilder Add<TBehavior, TInput, TOutput>(Action<IBehaviorTopologyBuilder> configureTopology)
+```
+
+Declares that the current module owns the specified behavior, supplies a closed execution slot, and applies an explicit topology override.
+
+Returns: The same builder for fluent ownership registration.
+
+Type parameters:
+- `TBehavior`: The concrete behavior type owned by the module.
+- `TInput`: The behavior input contract.
+- `TOutput`: The behavior output contract.
 
 Parameters:
 - `configureTopology`: The callback that selects the resolved behavior topology when attribute-only synthesis is not enough.
@@ -7949,6 +7986,23 @@ Parameters:
 - `behaviorType`: The concrete behavior implementation type.
 - `configureTopology`: An optional topology callback used when the owning module needs to select an explicit behavior topology.
 
+<a id="member-m-cephalon-abstractions-behaviors-ownedbehaviorregistration-ctor-system-string-system-string-system-type-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder-system-func-system-object-system-object-cephalon-abstractions-behaviors-ibehaviorcontext-system-threading-cancellationtoken-system-threading-tasks-task-system-object"></a>
+
+##### `OwnedBehaviorRegistration`
+
+```csharp
+OwnedBehaviorRegistration(string sourceModuleId, string behaviorId, Type behaviorType, Action<IBehaviorTopologyBuilder> configureTopology, Func<object, object, IBehaviorContext, CancellationToken, Task<object>> executionDelegate)
+```
+
+Initializes a new `OwnedBehaviorRegistration`.
+
+Parameters:
+- `sourceModuleId`: The stable module identifier that owns the behavior.
+- `behaviorId`: The stable behavior identifier.
+- `behaviorType`: The concrete behavior implementation type.
+- `configureTopology`: An optional topology callback used when the owning module needs to select an explicit behavior topology.
+- `executionDelegate`: An optional closed execution delegate for trim- and AOT-friendly dispatch without runtime generic reflection.
+
 #### Properties
 
 <a id="member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-behaviorid"></a>
@@ -7980,6 +8034,16 @@ Action<IBehaviorTopologyBuilder> ConfigureTopology { get; }
 ```
 
 Gets the optional topology callback supplied by the owning module.
+
+<a id="member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-executiondelegate"></a>
+
+##### `ExecutionDelegate`
+
+```csharp
+Func<object, object, IBehaviorContext, CancellationToken, Task<object>> ExecutionDelegate { get; }
+```
+
+Gets the optional closed execution delegate used by dispatch when the owning module registered one explicitly.
 
 <a id="member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-sourcemoduleid"></a>
 

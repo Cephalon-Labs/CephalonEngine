@@ -3,6 +3,7 @@ using Cephalon.Behaviors.Patterns.Abstractions;
 using Cephalon.Behaviors.Patterns.Stores;
 using Cephalon.Behaviors.Patterns.Strategies;
 using Cephalon.Behaviors.Services;
+using Cephalon.Tests.Behaviors;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Cephalon.Tests.Behaviors.Execution;
@@ -37,7 +38,7 @@ public sealed class SagaExecutionStrategyTests
         where TBehavior : class
     {
         var descriptor = new BehaviorTopologyDescriptor(typeof(TBehavior).Name, "saga-step", ["in-memory"]);
-        var slot = BehaviorExecutionSlot.ForType(typeof(TBehavior));
+        var slot = BehaviorExecutionTestSlots.For(behavior);
         return new BehaviorExecutionContext
         {
             Descriptor = descriptor,

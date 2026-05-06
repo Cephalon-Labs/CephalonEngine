@@ -59,7 +59,7 @@ public sealed class BehaviorDispatcher
                     slotRegistry.TryGetSlot(descriptor.Id, behaviorType, out var generatedSlot) &&
                     generatedSlot is not null
                         ? generatedSlot
-                        : BehaviorExecutionSlot.ForType(behaviorType);
+                        : throw CreateMissingExecutionSlotException(descriptor.Id, behaviorType);
                 var pipeline = BuildExecutionPipeline(
                     descriptor.Id,
                     behaviorType,
@@ -126,6 +126,16 @@ public sealed class BehaviorDispatcher
         return middlewares.Length == 0
             ? terminal
             : BehaviorExecutionMiddlewarePipeline.Compose(middlewares, terminal);
+    }
+
+    private static InvalidOperationException CreateMissingExecutionSlotException(
+        string behaviorId,
+        Type behaviorType)
+    {
+        return new InvalidOperationException(
+            $"Behavior '{behaviorId}' ({behaviorType.FullName}) cannot be dispatched because no source-generated or explicitly registered BehaviorExecutionSlot was found. " +
+            "Reference the current Cephalon.Behaviors.SourceGen package and use generated auto-registration, " +
+            "or register the behavior through Register<TBehavior, TInput, TOutput>(...) / IBehaviorModuleBuilder.Add<TBehavior, TInput, TOutput>(...) so dispatch can use a closed generic execution slot.");
     }
 
     private BehaviorExecutionDelegate CreateTerminalDelegate(

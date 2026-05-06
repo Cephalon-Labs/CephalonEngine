@@ -93,10 +93,7 @@ internal sealed class BehaviorModule(
             var builder = new BehaviorCollectionBuilder(services, typeRegistry);
             foreach (var registration in ownedBehaviorRegistrations)
             {
-                builder.Register(
-                    registration.BehaviorType,
-                    registration.ConfigureTopology,
-                    registration.SourceModuleId);
+                builder.Register(registration);
             }
         }
 

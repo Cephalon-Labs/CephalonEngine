@@ -269,7 +269,7 @@ public sealed class DurableExecutionHostingTests
             transportIds: ["in-memory"],
             eventSourcingEnabled: true,
             sourceModuleId: "tests.durable-host");
-        var slot = BehaviorExecutionSlot.ForType(typeof(TBehavior));
+        var slot = BehaviorExecutionSlot.For<HostedApprovalWorkflowBehavior, HostedApprovalWorkflowInput, HostedApprovalWorkflowOutput>();
         return new BehaviorExecutionContext
         {
             Descriptor = descriptor,
@@ -292,7 +292,7 @@ public sealed class DurableExecutionHostingTests
 
         public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
         {
-            behaviors.Add<HostedApprovalWorkflowBehavior>(topology => topology
+            behaviors.Add<HostedApprovalWorkflowBehavior, HostedApprovalWorkflowInput, HostedApprovalWorkflowOutput>(topology => topology
                 .AsDurableExecution()
                 .ViaInMemory()
                 .RequireFeatureFlag("host.workflow-preview")

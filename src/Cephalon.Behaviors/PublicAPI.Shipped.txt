@@ -111,7 +111,6 @@ abstract Cephalon.Behaviors.Modules.BehaviorModuleBase.ConfigureBehaviors(Cephal
 static Cephalon.Behaviors.Hosting.BehaviorEngineBuilderExtensions.AddBehaviors(this Cephalon.Engine.Composition.EngineBuilder! engine, System.Action<Cephalon.Behaviors.Configuration.BehaviorOptions!>? configureOptions, System.Action<Cephalon.Behaviors.Services.IBehaviorCollectionBuilder!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!
 static Cephalon.Behaviors.Hosting.BehaviorEngineBuilderExtensions.AddBehaviors(this Cephalon.Engine.Composition.EngineBuilder! engine, System.Action<Cephalon.Behaviors.Services.IBehaviorCollectionBuilder!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!
 static Cephalon.Behaviors.Services.BehaviorExecutionSlot.For<TBehavior, TIn, TOut>() -> Cephalon.Behaviors.Services.BehaviorExecutionSlot!
-static Cephalon.Behaviors.Services.BehaviorExecutionSlot.ForType(System.Type! behaviorType) -> Cephalon.Behaviors.Services.BehaviorExecutionSlot!
 static Cephalon.Behaviors.Validation.BehaviorAllowlistValidator.Validate(Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor! descriptor, System.Type? behaviorType) -> void
 static readonly Cephalon.Behaviors.Diagnostics.BehaviorDiagnostics.AdvisoryRaised -> Microsoft.Extensions.Logging.EventId
 static readonly Cephalon.Behaviors.Diagnostics.BehaviorDiagnostics.BehaviorRegistered -> Microsoft.Extensions.Logging.EventId

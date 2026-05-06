@@ -279,14 +279,14 @@ public sealed class SagaChoreographyHostingTests
 
         public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
         {
-            behaviors.Add<HostedApprovalEscalationBehavior>(topology => topology
+            behaviors.Add<HostedApprovalEscalationBehavior, HostedApprovalEscalationInput, SagaChoreographyPublication[]>(topology => topology
                 .AsSagaChoreography()
                 .ViaInMemory()
                 .RequireFeatureFlag("host.workflow-preview")
                 .WithApiSurface("hosted-approvals", "escalate")
                 .WithMetadata("lane", "approval"));
 
-            behaviors.Add<HostedApprovalReviewReactor>(topology => topology
+            behaviors.Add<HostedApprovalReviewReactor, HostedApprovalReviewEvent, SagaChoreographyStepResult<string>>(topology => topology
                 .AsSagaChoreography()
                 .ViaInMemory()
                 .ViaRabbitMq()
@@ -329,7 +329,7 @@ public sealed class SagaChoreographyHostingTests
             pattern: "saga-choreography",
             transportIds: ["in-memory"],
             sourceModuleId: "tests.saga-runtime-host");
-        var slot = BehaviorExecutionSlot.ForType(typeof(TBehavior));
+        var slot = BehaviorExecutionSlot.For<HostedObservedApprovalSagaBehavior, HostedObservedApprovalSagaInput, SagaChoreographyStepResult<string?>>();
         return new BehaviorExecutionContext
         {
             Descriptor = descriptor,
@@ -397,7 +397,7 @@ public sealed class SagaChoreographyHostingTests
 
         public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
         {
-            behaviors.Add<HostedObservedApprovalSagaBehavior>(topology => topology
+            behaviors.Add<HostedObservedApprovalSagaBehavior, HostedObservedApprovalSagaInput, SagaChoreographyStepResult<string?>>(topology => topology
                 .AsSagaChoreography()
                 .ViaInMemory()
                 .RequireFeatureFlag("host.workflow-preview")

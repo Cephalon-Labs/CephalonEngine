@@ -10,6 +10,7 @@ using Cephalon.Behaviors.Services;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
 using Cephalon.Sample.Showcase.Domain.Cart.Behaviors;
+using Cephalon.Sample.Showcase.Domain.Cart.Models;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.Behaviors;
@@ -126,6 +127,25 @@ public sealed class BehaviorOwnerModuleTests
         Assert.Contains("tests.unsupported-topology", exception.Message, StringComparison.Ordinal);
         Assert.Contains("ConfigureTopology", exception.Message, StringComparison.Ordinal);
         Assert.Contains("source-generator-supported fluent chain", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void BehaviorModuleBaseUntypedOwnedBehaviorWithoutGeneratedSlotFailsFastAtDispatchStartup()
+    {
+        var services = new ServiceCollection();
+        var builder = new EngineBuilder(services);
+        builder.UseSettings(new EngineSettings(blueprint: "ModularMonolith"));
+        builder.AddBehaviors(options => options.AutoRegister = false);
+        builder.AddModule(new UntypedOwnedGreetingModule());
+
+        builder.Build();
+
+        using var provider = services.BuildServiceProvider();
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            provider.GetRequiredService<BehaviorDispatcher>());
+
+        Assert.Contains("tests.owned.untyped-greeting", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("IBehaviorModuleBuilder.Add<TBehavior, TInput, TOutput>", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -251,7 +271,25 @@ public sealed class BehaviorOwnerModuleTests
 
         public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
         {
-            behaviors.Add<OwnedGreetingBehavior>(topology => topology
+            behaviors.Add<OwnedGreetingBehavior, string, string>(topology => topology
+                .AsDirect()
+                .ViaHttpJsonRpc());
+        }
+    }
+
+    private sealed class UntypedOwnedGreetingModule : BehaviorModuleBase
+    {
+        private static readonly ModuleDescriptor DescriptorInstance = new(
+            id: "tests.behavior-owner-untyped",
+            displayName: "Untyped Behavior Owner",
+            description: "Test module that owns a behavior without an explicit execution slot.",
+            version: "1.0.0");
+
+        public override ModuleDescriptor Descriptor => DescriptorInstance;
+
+        public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
+        {
+            behaviors.Add<UntypedOwnedGreetingBehavior>(topology => topology
                 .AsDirect()
                 .ViaHttpJsonRpc());
         }
@@ -269,7 +307,7 @@ public sealed class BehaviorOwnerModuleTests
 
         public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
         {
-            behaviors.Add<OwnedGreetingBehavior>(topology => topology
+            behaviors.Add<OwnedGreetingBehavior, string, string>(topology => topology
                 .AsDirect()
                 .ViaHttpJsonRpc());
         }
@@ -287,7 +325,7 @@ public sealed class BehaviorOwnerModuleTests
 
         public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
         {
-            behaviors.Add<GetCartBehavior>(topology => topology
+            behaviors.Add<GetCartBehavior, GetCartInput, GetCartOutput>(topology => topology
                 .AsCqrs()
                 .ViaWebSocket());
         }
@@ -351,10 +389,22 @@ public sealed class BehaviorOwnerModuleTests
 
         public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
         {
-            behaviors.Add<FeatureFlaggedOwnedGreetingBehavior>(topology => topology
+            behaviors.Add<FeatureFlaggedOwnedGreetingBehavior, string, string>(topology => topology
                 .AsDirect()
                 .ViaInMemory()
                 .RequireFeatureFlag("host.owned-greeting-preview"));
         }
+    }
+
+    [AppBehavior("tests.owned.untyped-greeting")]
+    [BehaviorAllowedPatterns("direct")]
+    [BehaviorAllowedTransports("http.jsonrpc")]
+    private sealed class UntypedOwnedGreetingBehavior : IAppBehavior<string, string>
+    {
+        public Task<string> HandleAsync(
+            string input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+            => Task.FromResult($"Untyped hello, {input}!");
     }
 }

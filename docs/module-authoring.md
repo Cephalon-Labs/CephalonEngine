@@ -90,7 +90,8 @@ Cephalon now has a first-class module-owned behavior authoring model:
 - one module can own both internal/process-only behaviors and public REST-backed behaviors
 - generic `IRestModule` remains the right fit for REST modules that do not dispatch into Cephalon
   behaviors
-- `Engine:Behaviors:AutoRegister` is now an opt-in fallback rather than the default ownership path
+- `Engine:Behaviors:AutoRegister` is now an opt-in generated-hint lookup path rather than the
+  default ownership path
 
 Use `BehaviorModuleBase` when the module owns behaviors but does not need to expose a public REST
 surface:
@@ -102,8 +103,8 @@ public sealed class CartModule : BehaviorModuleBase
 
     public override void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)
     {
-        behaviors.Add<RepriceCartBehavior>();
-        behaviors.Add<CheckoutWorkflowBehavior>(topology => topology
+        behaviors.Add<RepriceCartBehavior, RepriceCartInput, RepriceCartOutput>();
+        behaviors.Add<CheckoutWorkflowBehavior, CheckoutWorkflowInput, CheckoutWorkflowOutput>(topology => topology
             .AsProcessManager()
             .ViaKafka());
     }
@@ -112,6 +113,11 @@ public sealed class CartModule : BehaviorModuleBase
 
 That shape keeps ownership explicit even when the behaviors only run through messaging, generic HTTP
 transports, or background orchestration.
+
+Use the typed `Add<TBehavior, TInput, TOutput>(...)` overload when a module-owned behavior should be
+dispatch-ready without source generation. The type-only `Add(Type)` / `Add<TBehavior>(...)` overloads
+remain useful for metadata-only ownership or source-generated registrations, but a behavior that is
+actually dispatched must have a source-generated or explicitly registered closed execution slot.
 
 ## Behavior-first REST authoring
 

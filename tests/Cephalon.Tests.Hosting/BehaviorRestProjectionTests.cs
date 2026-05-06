@@ -6435,6 +6435,14 @@ public sealed class BehaviorRestProjectionTests
             where TBehavior : class
             => Add(typeof(TBehavior));
 
+        public IBehaviorModuleBuilder Add<TBehavior, TInput, TOutput>()
+            where TBehavior : class, IAppBehavior<TInput, TOutput>
+            where TInput : notnull
+        {
+            Registrations.Add(new OwnedBehaviorRegistration(typeof(TBehavior), HasExplicitTopologyOverride: false, HasExplicitExecutionSlot: true));
+            return this;
+        }
+
         public IBehaviorModuleBuilder Add(Type behaviorType)
         {
             ArgumentNullException.ThrowIfNull(behaviorType);
@@ -6446,6 +6454,15 @@ public sealed class BehaviorRestProjectionTests
             where TBehavior : class
             => Add(typeof(TBehavior), configureTopology);
 
+        public IBehaviorModuleBuilder Add<TBehavior, TInput, TOutput>(Action<IBehaviorTopologyBuilder> configureTopology)
+            where TBehavior : class, IAppBehavior<TInput, TOutput>
+            where TInput : notnull
+        {
+            ArgumentNullException.ThrowIfNull(configureTopology);
+            Registrations.Add(new OwnedBehaviorRegistration(typeof(TBehavior), HasExplicitTopologyOverride: true, HasExplicitExecutionSlot: true));
+            return this;
+        }
+
         public IBehaviorModuleBuilder Add(Type behaviorType, Action<IBehaviorTopologyBuilder> configureTopology)
         {
             ArgumentNullException.ThrowIfNull(behaviorType);
@@ -6455,7 +6472,10 @@ public sealed class BehaviorRestProjectionTests
         }
     }
 
-    private sealed record OwnedBehaviorRegistration(Type BehaviorType, bool HasExplicitTopologyOverride);
+    private sealed record OwnedBehaviorRegistration(
+        Type BehaviorType,
+        bool HasExplicitTopologyOverride,
+        bool HasExplicitExecutionSlot = false);
 
     private sealed record ProfileProjectionBoundInput(
         string CartId,

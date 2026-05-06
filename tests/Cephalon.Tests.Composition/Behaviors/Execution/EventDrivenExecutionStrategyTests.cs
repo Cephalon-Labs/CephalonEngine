@@ -2,6 +2,7 @@ using Cephalon.Abstractions.Behaviors;
 using Cephalon.Behaviors.Patterns.Abstractions;
 using Cephalon.Behaviors.Patterns.Strategies;
 using Cephalon.Behaviors.Services;
+using Cephalon.Tests.Behaviors;
 using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Cephalon.Tests.Behaviors.Execution;
@@ -35,7 +36,7 @@ public sealed class EventDrivenExecutionStrategyTests
         where TBehavior : class
     {
         var descriptor = new BehaviorTopologyDescriptor(typeof(TBehavior).Name, "event-driven", ["in-memory"]);
-        var slot = BehaviorExecutionSlot.ForType(typeof(TBehavior));
+        var slot = BehaviorExecutionTestSlots.For(behavior);
         var ctx = new TestBehaviorContext(typeof(TBehavior).Name);
         return new BehaviorExecutionContext
         {

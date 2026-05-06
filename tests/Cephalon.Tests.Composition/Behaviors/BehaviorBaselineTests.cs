@@ -286,7 +286,7 @@ public sealed class BehaviorBaselineTests
     }
 
     [Fact]
-    public async Task BehaviorDispatcherFallsBackToRuntimeSlotWhenGeneratedSlotIsMissing()
+    public void BehaviorDispatcherThrowsWhenExecutionSlotIsMissing()
     {
         var services = new ServiceCollection();
         services.AddTransient<DirectGreetingBehavior>();
@@ -303,12 +303,12 @@ public sealed class BehaviorBaselineTests
 
         var provider = services.BuildServiceProvider();
         var catalog = provider.GetRequiredService<IBehaviorCatalog>();
-        var dispatcher = new BehaviorDispatcher(catalog, typeRegistry, provider);
 
-        var ctx = new TestBehaviorContext("greeting.direct", isDirect: true);
-        var result = await dispatcher.DispatchAsync("greeting.direct", "World", ctx);
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            new BehaviorDispatcher(catalog, typeRegistry, provider));
 
-        Assert.Equal("Hello, World!", result);
+        Assert.Contains("no source-generated or explicitly registered BehaviorExecutionSlot", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("Register<TBehavior, TInput, TOutput>", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -348,25 +348,18 @@ public sealed class BehaviorBaselineTests
     }
 
     // ─────────────────────────────────────────────────────────────────────────
-    // BehaviorExecutionSlot — ForType factory
+    // BehaviorExecutionSlot — closed generic factory
     // ─────────────────────────────────────────────────────────────────────────
 
     [Fact]
-    public async Task BehaviorExecutionSlotForTypeCompilesAndInvokes()
+    public async Task BehaviorExecutionSlotForCompilesAndInvokes()
     {
-        var slot = BehaviorExecutionSlot.ForType(typeof(DirectGreetingBehavior));
+        var slot = BehaviorExecutionSlot.For<DirectGreetingBehavior, string, string>();
         var behavior = new DirectGreetingBehavior();
         var ctx = new TestBehaviorContext("greeting.direct", isDirect: true);
 
         var result = await slot.InvokeAsync(behavior, "Claude", ctx);
         Assert.Equal("Hello, Claude!", result);
-    }
-
-    [Fact]
-    public void BehaviorExecutionSlotForTypeThrowsWhenTypeDoesNotImplementInterface()
-    {
-        Assert.Throws<InvalidOperationException>(() =>
-            BehaviorExecutionSlot.ForType(typeof(string)));
     }
 
     // ─────────────────────────────────────────────────────────────────────────
@@ -443,6 +436,31 @@ public sealed class BehaviorBaselineTests
         var provider = services.BuildServiceProvider();
         var resolved = provider.GetService<DirectGreetingBehavior>();
         Assert.NotNull(resolved);
+    }
+
+    [Fact]
+    public async Task BehaviorCollectionBuilderTypedRegisterWiresExecutionSlot()
+    {
+        var services = new ServiceCollection();
+        var typeRegistry = new BehaviorTypeRegistry();
+        var builder = new BehaviorCollectionBuilder(services, typeRegistry);
+
+        builder.Register<DirectGreetingBehavior, string, string>();
+
+        services.AddSingleton<IBehaviorTypeRegistry>(typeRegistry);
+        services.AddSingleton<IBehaviorCatalog>(sp =>
+            new BehaviorCatalog(sp.GetServices<IBehaviorContributor>()));
+
+        var provider = services.BuildServiceProvider();
+        var dispatcher = new BehaviorDispatcher(
+            provider.GetRequiredService<IBehaviorCatalog>(),
+            typeRegistry,
+            provider);
+        var ctx = new TestBehaviorContext("greeting.direct", isDirect: true);
+
+        var result = await dispatcher.DispatchAsync("greeting.direct", "Builder", ctx);
+
+        Assert.Equal("Hello, Builder!", result);
     }
 
     [Fact]

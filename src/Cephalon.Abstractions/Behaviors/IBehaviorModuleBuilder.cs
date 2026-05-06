@@ -37,6 +37,17 @@ public interface IBehaviorModuleBuilder
         where TBehavior : class;
 
     /// <summary>
+    /// Declares that the current module owns the specified behavior and supplies a closed execution slot.
+    /// </summary>
+    /// <typeparam name="TBehavior">The concrete behavior type owned by the module.</typeparam>
+    /// <typeparam name="TInput">The behavior input contract.</typeparam>
+    /// <typeparam name="TOutput">The behavior output contract.</typeparam>
+    /// <returns>The same builder for fluent ownership registration.</returns>
+    IBehaviorModuleBuilder Add<TBehavior, TInput, TOutput>()
+        where TBehavior : class, IAppBehavior<TInput, TOutput>
+        where TInput : notnull;
+
+    /// <summary>
     /// Declares that the current module owns the specified behavior and supplies an explicit topology override.
     /// </summary>
     /// <typeparam name="TBehavior">The concrete behavior type owned by the module.</typeparam>
@@ -46,4 +57,19 @@ public interface IBehaviorModuleBuilder
     /// <returns>The same builder for fluent ownership registration.</returns>
     IBehaviorModuleBuilder Add<TBehavior>(Action<IBehaviorTopologyBuilder> configureTopology)
         where TBehavior : class;
+
+    /// <summary>
+    /// Declares that the current module owns the specified behavior, supplies a closed execution slot,
+    /// and applies an explicit topology override.
+    /// </summary>
+    /// <typeparam name="TBehavior">The concrete behavior type owned by the module.</typeparam>
+    /// <typeparam name="TInput">The behavior input contract.</typeparam>
+    /// <typeparam name="TOutput">The behavior output contract.</typeparam>
+    /// <param name="configureTopology">
+    /// The callback that selects the resolved behavior topology when attribute-only synthesis is not enough.
+    /// </param>
+    /// <returns>The same builder for fluent ownership registration.</returns>
+    IBehaviorModuleBuilder Add<TBehavior, TInput, TOutput>(Action<IBehaviorTopologyBuilder> configureTopology)
+        where TBehavior : class, IAppBehavior<TInput, TOutput>
+        where TInput : notnull;
 }

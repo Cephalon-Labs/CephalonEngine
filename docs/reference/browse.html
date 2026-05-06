@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-05T23:50:14.4835173+00:00",
+  "GeneratedAtUtc": "2026-05-06T02:08:31.9855897+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -9850,7 +9850,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 0,
-        "Methods": 4
+        "Methods": 6
       }
     },
     {
@@ -14722,9 +14722,9 @@
       "Declaration": "public sealed class OwnedBehaviorRegistration",
       "Summary": "Describes one explicit module-owned behavior registration collected during engine composition.",
       "MemberCounts": {
-        "Constructors": 1,
+        "Constructors": 2,
         "Fields": 0,
-        "Properties": 4,
+        "Properties": 5,
         "Methods": 0
       }
     },
@@ -21578,6 +21578,17 @@
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-3",
+      "Signature": "IBehaviorModuleBuilder Add\u003CTBehavior, TInput, TOutput\u003E()",
+      "Summary": "Declares that the current module owns the specified behavior and supplies a closed execution slot."
+    },
+    {
+      "DisplayName": "Add",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBehaviorModuleBuilder",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-system-type",
       "Signature": "IBehaviorModuleBuilder Add(Type behaviorType)",
       "Summary": "Declares that the current module owns the specified behavior type."
@@ -21592,6 +21603,17 @@
       "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-1-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder",
       "Signature": "IBehaviorModuleBuilder Add\u003CTBehavior\u003E(Action\u003CIBehaviorTopologyBuilder\u003E configureTopology)",
       "Summary": "Declares that the current module owns the specified behavior and supplies an explicit topology override."
+    },
+    {
+      "DisplayName": "Add",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBehaviorModuleBuilder",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-3-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder",
+      "Signature": "IBehaviorModuleBuilder Add\u003CTBehavior, TInput, TOutput\u003E(Action\u003CIBehaviorTopologyBuilder\u003E configureTopology)",
+      "Summary": "Declares that the current module owns the specified behavior, supplies a closed execution slot, and applies an explicit topology override."
     },
     {
       "DisplayName": "Add",
@@ -53344,6 +53366,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasemigrationcommanddescriptor-executioncategory",
       "Signature": "string ExecutionCategory { get; }",
       "Summary": "Gets the execution category when the provider can distinguish deploy-time, manual, or other command paths."
+    },
+    {
+      "DisplayName": "ExecutionDelegate",
+      "Category": "Properties",
+      "DeclaringTypeName": "OwnedBehaviorRegistration",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-behaviors-ownedbehaviorregistration-executiondelegate",
+      "Signature": "Func\u003Cobject, object, IBehaviorContext, CancellationToken, Task\u003Cobject\u003E\u003E ExecutionDelegate { get; }",
+      "Summary": "Gets the optional closed execution delegate used by dispatch when the owning module registered one explicitly."
     },
     {
       "DisplayName": "ExecutionFingerprint",
@@ -90628,6 +90661,17 @@
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-m-cephalon-abstractions-behaviors-ownedbehaviorregistration-ctor-system-string-system-string-system-type-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder",
       "Signature": "OwnedBehaviorRegistration(string sourceModuleId, string behaviorId, Type behaviorType, Action\u003CIBehaviorTopologyBuilder\u003E configureTopology)",
+      "Summary": "Initializes a new \u0060OwnedBehaviorRegistration\u0060."
+    },
+    {
+      "DisplayName": "OwnedBehaviorRegistration",
+      "Category": "Constructors",
+      "DeclaringTypeName": "OwnedBehaviorRegistration",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-ownedbehaviorregistration-ctor-system-string-system-string-system-type-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder-system-func-system-object-system-object-cephalon-abstractions-behaviors-ibehaviorcontext-system-threading-cancellationtoken-system-threading-tasks-task-system-object",
+      "Signature": "OwnedBehaviorRegistration(string sourceModuleId, string behaviorId, Type behaviorType, Action\u003CIBehaviorTopologyBuilder\u003E configureTopology, Func\u003Cobject, object, IBehaviorContext, CancellationToken, Task\u003Cobject\u003E\u003E executionDelegate)",
       "Summary": "Initializes a new \u0060OwnedBehaviorRegistration\u0060."
     },
     {

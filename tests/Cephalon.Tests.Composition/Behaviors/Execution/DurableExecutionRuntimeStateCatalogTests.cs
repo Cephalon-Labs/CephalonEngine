@@ -253,7 +253,7 @@ public sealed class DurableExecutionRuntimeStateCatalogTests
             transportIds: ["in-memory", "rabbitmq"],
             eventSourcingEnabled: true,
             sourceModuleId: "tests.durable-state-owner");
-        var slot = BehaviorExecutionSlot.ForType(typeof(TBehavior));
+        var slot = BehaviorExecutionTestSlots.For(behavior);
         return new BehaviorExecutionContext
         {
             Descriptor = descriptor,

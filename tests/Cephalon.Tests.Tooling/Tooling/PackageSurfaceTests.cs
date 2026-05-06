@@ -1110,6 +1110,29 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void BehaviorsDispatchRequiresRegisteredSlotsWithoutOpenGenericReflection()
+    {
+        var slot = File.ReadAllText(RepositoryPaths.GetFile(
+            "src",
+            "Cephalon.Behaviors",
+            "Services",
+            "BehaviorExecutionSlot.cs"));
+        Assert.DoesNotContain("System.Reflection", slot, StringComparison.Ordinal);
+        Assert.DoesNotContain("ForType", slot, StringComparison.Ordinal);
+        Assert.DoesNotContain("GetInterfaces()", slot, StringComparison.Ordinal);
+        Assert.DoesNotContain("MakeGenericMethod", slot, StringComparison.Ordinal);
+        Assert.DoesNotContain(".Invoke(", slot, StringComparison.Ordinal);
+
+        var dispatcher = File.ReadAllText(RepositoryPaths.GetFile(
+            "src",
+            "Cephalon.Behaviors",
+            "Services",
+            "BehaviorDispatcher.cs"));
+        Assert.Contains("no source-generated or explicitly registered BehaviorExecutionSlot", dispatcher, StringComparison.Ordinal);
+        Assert.DoesNotContain("BehaviorExecutionSlot.ForType", dispatcher, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void BehaviorsPatternsSagaChoreographyRuntimeCatalogRequiresRegisteredSlotsWithoutRuntimeShapeReflection()
     {
         var slot = File.ReadAllText(RepositoryPaths.GetFile(

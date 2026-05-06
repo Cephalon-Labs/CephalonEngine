@@ -1,4 +1,3 @@
-using System.Reflection;
 using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
 
@@ -40,40 +39,11 @@ public sealed class BehaviorExecutionSlot
         });
     }
 
-    /// <summary>
-    /// Creates a <see cref="BehaviorExecutionSlot" /> for a behavior type discovered at runtime via reflection.
-    /// The <c>IAppBehavior&lt;TIn, TOut&gt;</c> interface is located on <paramref name="behaviorType" />
-    /// and the generic <see cref="For{TBehavior,TIn,TOut}" /> factory is invoked via reflection once
-    /// to build a closed delegate.
-    /// </summary>
-    /// <param name="behaviorType">The concrete behavior implementation type.</param>
-    /// <returns>A compiled execution slot for the behavior.</returns>
-    /// <exception cref="InvalidOperationException">
-    /// Thrown when <paramref name="behaviorType" /> does not implement <c>IAppBehavior&lt;TIn, TOut&gt;</c>.
-    /// </exception>
-    public static BehaviorExecutionSlot ForType(Type behaviorType)
+    internal static BehaviorExecutionSlot FromDelegate(
+        Func<object, object, IBehaviorContext, CancellationToken, Task<object?>> invoke)
     {
-        ArgumentNullException.ThrowIfNull(behaviorType);
-
-        var behaviorInterface = behaviorType.GetInterfaces()
-            .FirstOrDefault(static i => i.IsGenericType &&
-                i.GetGenericTypeDefinition() == typeof(IAppBehavior<,>));
-
-        if (behaviorInterface is null)
-        {
-            throw new InvalidOperationException(
-                $"Type '{behaviorType.Name}' does not implement IAppBehavior<TIn, TOut>.");
-        }
-
-        var typeArgs = behaviorInterface.GetGenericArguments();
-        var tIn = typeArgs[0];
-        var tOut = typeArgs[1];
-
-        var forMethod = typeof(BehaviorExecutionSlot)
-            .GetMethod(nameof(For), BindingFlags.Public | BindingFlags.Static)!
-            .MakeGenericMethod(behaviorType, tIn, tOut);
-
-        return (BehaviorExecutionSlot)forMethod.Invoke(null, null)!;
+        ArgumentNullException.ThrowIfNull(invoke);
+        return new BehaviorExecutionSlot(invoke);
     }
 
     /// <summary>
