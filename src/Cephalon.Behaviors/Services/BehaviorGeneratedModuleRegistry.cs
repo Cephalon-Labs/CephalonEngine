@@ -61,7 +61,9 @@ public sealed class BehaviorGeneratedModuleRegistration
     /// </param>
     /// <param name="executionSlots">The generated closed-generic execution slots for dispatch startup.</param>
     /// <param name="topologyDescriptors">The generated topology descriptors for behaviors with compile-time topology.</param>
-    /// <param name="runtimeTopologyBehaviors">The generated behavior types that still need runtime topology resolution.</param>
+    /// <param name="runtimeTopologyBehaviors">
+    /// The generated behavior types that declared topology but could not be reduced to generated descriptors.
+    /// </param>
     public BehaviorGeneratedModuleRegistration(
         Action<IServiceCollection, IBehaviorTypeRegistry> registerBehaviors,
         IReadOnlyList<BehaviorGeneratedExecutionSlotDescriptor> executionSlots,
@@ -90,7 +92,7 @@ public sealed class BehaviorGeneratedModuleRegistration
     public IReadOnlyList<BehaviorTopologyDescriptor> TopologyDescriptors { get; }
 
     /// <summary>
-    /// Gets the generated behavior types that still need runtime topology resolution.
+    /// Gets the generated behavior types that declared topology but could not be reduced to generated descriptors.
     /// </summary>
     public IReadOnlyList<BehaviorGeneratedRuntimeTopologyDescriptor> RuntimeTopologyBehaviors { get; }
 }
@@ -134,7 +136,8 @@ public sealed class BehaviorGeneratedExecutionSlotDescriptor
 }
 
 /// <summary>
-/// Describes a generated behavior type that still needs runtime topology resolution.
+/// Describes a generated behavior type whose topology declaration could not be represented
+/// by generated descriptors.
 /// </summary>
 public sealed class BehaviorGeneratedRuntimeTopologyDescriptor
 {

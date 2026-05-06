@@ -120,16 +120,17 @@ Cephalon keeps public REST module-owned:
 - if a behavior wants to describe the shipped low-ceremony REST projection paths, use
   `BehaviorRestProfileAttribute` only as metadata; it does not publish public REST by itself
 
-When a behavior declares exactly one allowed pattern plus one or more allowed transports, the
-runtime can synthesize that attribute-only baseline without `ConfigureTopology(...)`. That baseline
-applies to non-REST transports only. If multiple patterns are declared, startup fails fast until
-another topology source selects one explicitly. For authoring convenience,
+When a behavior declares unambiguous non-REST allowlist metadata, source generation can emit that
+attribute-only baseline without `ConfigureTopology(...)`. Zero or one allowed pattern is supported;
+transport-only declarations resolve to `direct`. That baseline applies to non-REST transports only.
+If multiple patterns are declared, startup fails fast until another topology source selects one
+explicitly. For authoring convenience,
 `[BehaviorAllowedTransports("http.grpc")]` is accepted and normalized to canonical `grpc`.
 
 ## Shared behavior API surface
 
 When the default `behavior-id -> group/operation` split is not the public contract you want,
-override it explicitly in `ConfigureTopology(...)`:
+override it explicitly in a source-generator-supported `ConfigureTopology(...)` fluent chain:
 
 ```csharp
 public static void ConfigureTopology(IBehaviorTopologyBuilder builder)

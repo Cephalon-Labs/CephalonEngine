@@ -284,13 +284,20 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
 
         var location = ctx.TargetNode.GetLocation();
 
-        // Extract topology from static ConfigureTopology method if present
+        // Extract topology from static ConfigureTopology method if present, otherwise
+        // synthesize attribute-only topology at generation time.
         TopologyInfo? topology = null;
+        var hasConfigureTopology = false;
+        var hasTopologyDeclarations = false;
         var hasConfigureTopologyRestTransport = false;
         if (implementsInterface && !isAbstract && !isStatic && ctx.TargetNode is ClassDeclarationSyntax classDecl)
         {
+            hasConfigureTopology = HasConfigureTopologyMethod(classDecl);
+            hasTopologyDeclarations = hasConfigureTopology || DeclaresTopologyAttributes(typeSymbol);
             hasConfigureTopologyRestTransport = DeclaresRestTransportInConfigureMethod(classDecl);
-            topology = ExtractTopologyFromConfigureMethod(classDecl);
+            topology = hasConfigureTopology
+                ? ExtractTopologyFromConfigureMethod(classDecl)
+                : ExtractTopologyFromAllowlistAttributes(typeSymbol);
         }
 
         var sagaChoreographyRuntime = ResolveSagaChoreographyRuntimeInfo(
@@ -312,6 +319,8 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             sagaChoreographyRuntime: sagaChoreographyRuntime,
             restProfile: restProfile,
             hasRestTransportAttribute: hasRestTransportAttribute,
+            hasConfigureTopology: hasConfigureTopology,
+            hasTopologyDeclarations: hasTopologyDeclarations,
             hasConfigureTopologyRestTransport: hasConfigureTopologyRestTransport);
     }
 
@@ -380,6 +389,27 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
                 {
                     return true;
                 }
+            }
+        }
+
+        return false;
+    }
+
+    private static bool DeclaresTopologyAttributes(INamedTypeSymbol typeSymbol)
+    {
+        foreach (var attribute in typeSymbol.GetAttributes())
+        {
+            var attributeName = attribute.AttributeClass?.ToDisplayString();
+            if (string.Equals(
+                    attributeName,
+                    "Cephalon.Abstractions.Behaviors.BehaviorAllowedPatternsAttribute",
+                    StringComparison.Ordinal) ||
+                string.Equals(
+                    attributeName,
+                    "Cephalon.Abstractions.Behaviors.BehaviorAllowedTransportsAttribute",
+                    StringComparison.Ordinal))
+            {
+                return true;
             }
         }
 
@@ -530,7 +560,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         }
 
         if (hasComplexLogic)
-            return null; // Fall back to runtime
+            return null;
 
         foreach (var invocation in invocations)
         {
@@ -598,6 +628,97 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             requiredFeatureFlagIds: requiredFeatureFlagIds
                 .Distinct(System.StringComparer.OrdinalIgnoreCase)
                 .ToArray());
+    }
+
+    private static bool HasConfigureTopologyMethod(ClassDeclarationSyntax classDecl)
+    {
+        return classDecl.Members
+            .OfType<MethodDeclarationSyntax>()
+            .Any(static m =>
+                m.Identifier.Text == "ConfigureTopology" &&
+                m.Modifiers.Any(SyntaxKind.StaticKeyword) &&
+                m.Modifiers.Any(SyntaxKind.PublicKeyword));
+    }
+
+    private static TopologyInfo? ExtractTopologyFromAllowlistAttributes(INamedTypeSymbol typeSymbol)
+    {
+        var patterns = ExtractAttributeStringValues(
+                typeSymbol,
+                "Cephalon.Abstractions.Behaviors.BehaviorAllowedPatternsAttribute")
+            .Where(static pattern => !string.IsNullOrWhiteSpace(pattern))
+            .Select(static pattern => pattern.Trim())
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static pattern => pattern, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var transports = ExtractAttributeStringValues(
+                typeSymbol,
+                "Cephalon.Abstractions.Behaviors.BehaviorAllowedTransportsAttribute")
+            .Where(static transport => !string.IsNullOrWhiteSpace(transport))
+            .Select(static transport => NormalizeTransportId(transport.Trim()))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .OrderBy(static transport => transport, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        if (patterns.Length > 1)
+        {
+            return null;
+        }
+
+        if (patterns.Length == 0 && transports.Length == 0)
+        {
+            return null;
+        }
+
+        return new TopologyInfo(
+            pattern: patterns.Length == 1 ? patterns[0] : "direct",
+            transports: transports,
+            outboxEnabled: false,
+            inboxEnabled: false,
+            eventSourcingEnabled: false,
+            apiSurfaceGroupPath: null,
+            apiSurfaceOperationPath: null,
+            requiredFeatureFlagIds: []);
+    }
+
+    private static IEnumerable<string> ExtractAttributeStringValues(
+        INamedTypeSymbol typeSymbol,
+        string metadataName)
+    {
+        foreach (var attribute in typeSymbol.GetAttributes())
+        {
+            if (!string.Equals(attribute.AttributeClass?.ToDisplayString(), metadataName, StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            foreach (var argument in attribute.ConstructorArguments)
+            {
+                if (argument.Kind == TypedConstantKind.Array)
+                {
+                    foreach (var value in argument.Values)
+                    {
+                        if (value.Value is string arrayValue)
+                        {
+                            yield return arrayValue;
+                        }
+                    }
+
+                    continue;
+                }
+
+                if (argument.Value is string scalarValue)
+                {
+                    yield return scalarValue;
+                }
+            }
+        }
+    }
+
+    private static string NormalizeTransportId(string transportId)
+    {
+        return string.Equals(transportId, "http.grpc", StringComparison.OrdinalIgnoreCase)
+            ? "grpc"
+            : transportId;
     }
 
     private static bool DeclaresRestTransportInConfigureMethod(ClassDeclarationSyntax classDecl)
@@ -1118,14 +1239,15 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         }
 
         // ── GetBehaviorIdsWithoutTopology method ──
-        // For behaviors that don't have ConfigureTopology or have complex logic,
-        // the runtime still needs to invoke their static method via reflection.
+        // Behaviors that declare topology but cannot be reduced to a generated descriptor
+        // are surfaced as fail-fast metadata. Runtime ConfigureTopology invocation is no
+        // longer used as a fallback path.
         var behaviorsWithoutTopology = infos
-            .Where(i => i is { IsValid: true, Topology: null })
+            .Where(i => i is { IsValid: true, Topology: null, HasTopologyDeclarations: true })
             .ToArray();
 
         sb.AppendLine();
-        sb.AppendLine("    /// <summary>Returns behavior IDs that need runtime topology resolution (no compile-time topology).</summary>");
+        sb.AppendLine("    /// <summary>Returns behavior IDs with topology declarations that were not reduced to generated descriptors.</summary>");
         sb.AppendLine("    internal static global::System.Collections.Generic.IReadOnlyList<global::Cephalon.Behaviors.Services.BehaviorGeneratedRuntimeTopologyDescriptor> GetBehaviorsNeedingRuntimeTopology()");
         sb.AppendLine("    {");
 
@@ -1614,6 +1736,8 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             SagaChoreographyRuntimeInfo? sagaChoreographyRuntime,
             RestProfileInfo? restProfile,
             bool hasRestTransportAttribute,
+            bool hasConfigureTopology,
+            bool hasTopologyDeclarations,
             bool hasConfigureTopologyRestTransport)
         {
             TypeName = typeName;
@@ -1629,6 +1753,8 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             SagaChoreographyRuntime = sagaChoreographyRuntime;
             RestProfile = restProfile;
             HasRestTransportAttribute = hasRestTransportAttribute;
+            HasConfigureTopology = hasConfigureTopology;
+            HasTopologyDeclarations = hasTopologyDeclarations;
             HasConfigureTopologyRestTransport = hasConfigureTopologyRestTransport;
         }
 
@@ -1645,6 +1771,8 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         public SagaChoreographyRuntimeInfo? SagaChoreographyRuntime { get; }
         public RestProfileInfo? RestProfile { get; }
         public bool HasRestTransportAttribute { get; }
+        public bool HasConfigureTopology { get; }
+        public bool HasTopologyDeclarations { get; }
         public bool HasConfigureTopologyRestTransport { get; }
 
         /// <summary>

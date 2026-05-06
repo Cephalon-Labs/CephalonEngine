@@ -1,3 +1,4 @@
+using System.Reflection;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Behaviors.Configuration;
@@ -97,6 +98,34 @@ public sealed class BehaviorOwnerModuleTests
         Assert.Contains("AutoRegisterAssemblies", exception.Message, StringComparison.Ordinal);
         Assert.Contains("source-generated behavior module hints", exception.Message, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Behaviors.SourceGen", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void BehaviorAutoRegisterUnsupportedGeneratedRuntimeTopologyFailsFast()
+    {
+        var assembly = typeof(BehaviorOwnerModuleTests).Assembly;
+        BehaviorGeneratedModuleRegistry.Register(
+            assembly,
+            new BehaviorGeneratedModuleRegistration(
+                static (_, _) => { },
+                [],
+                [],
+                [new BehaviorGeneratedRuntimeTopologyDescriptor("tests.unsupported-topology", typeof(OwnedGreetingBehavior))]));
+
+        var services = new ServiceCollection();
+        var builder = new EngineBuilder(services);
+        builder.UseSettings(new EngineSettings(blueprint: "ModularMonolith"));
+        builder.AddBehaviors(configureOptions: options =>
+        {
+            options.AutoRegister = true;
+            options.AutoRegisterAssemblies = [assembly.GetName().Name!];
+        });
+
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.Build());
+
+        Assert.Contains("tests.unsupported-topology", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("ConfigureTopology", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("source-generator-supported fluent chain", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]

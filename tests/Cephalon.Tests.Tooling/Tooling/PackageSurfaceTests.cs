@@ -1071,6 +1071,8 @@ public sealed class PackageSurfaceTests
         Assert.DoesNotContain("GetMethod(\"GetExecutionSlots\"", source, StringComparison.Ordinal);
         Assert.DoesNotContain("GetMethod(\"GetTopologyDescriptors\"", source, StringComparison.Ordinal);
         Assert.DoesNotContain("GetMethod(\"GetBehaviorsNeedingRuntimeTopology\"", source, StringComparison.Ordinal);
+        Assert.DoesNotContain("GetMethod(\"ConfigureTopology\"", source, StringComparison.Ordinal);
+        Assert.DoesNotContain("BuildTopologyDescriptorFromStaticMethod", source, StringComparison.Ordinal);
         Assert.DoesNotContain("GetCustomAttribute<ContainsBehaviorsAttribute>", source, StringComparison.Ordinal);
     }
 

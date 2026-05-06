@@ -50,6 +50,13 @@ public sealed class BehaviorSourceGeneratorTests
                 public string[] Transports { get; }
             }
 
+            [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+            public sealed class BehaviorAllowedPatternsAttribute : System.Attribute
+            {
+                public BehaviorAllowedPatternsAttribute(params string[] patterns) { Patterns = patterns; }
+                public string[] Patterns { get; }
+            }
+
             public interface IBehaviorTopologyBuilder
             {
                 IBehaviorTopologyBuilder AsDurableExecution();
@@ -252,8 +259,39 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.Contains("BehaviorGeneratedModuleRegistry.Register(", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("new global::Cephalon.Behaviors.Services.BehaviorGeneratedModuleRegistration(", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("new global::Cephalon.Behaviors.Services.BehaviorGeneratedExecutionSlotDescriptor(\"orders.create\"", autoRegistration, StringComparison.Ordinal);
-        Assert.Contains("new global::Cephalon.Behaviors.Services.BehaviorGeneratedRuntimeTopologyDescriptor(\"orders.create\"", autoRegistration, StringComparison.Ordinal);
+        Assert.DoesNotContain("new global::Cephalon.Behaviors.Services.BehaviorGeneratedRuntimeTopologyDescriptor(\"orders.create\"", autoRegistration, StringComparison.Ordinal);
         Assert.DoesNotContain("IReadOnlyList<(string Id, global::System.Type Type, global::Cephalon.Behaviors.Services.BehaviorExecutionSlot Slot)> GetExecutionSlots", autoRegistration, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AttributeOnlyBehaviorGeneratesCompileTimeTopologyDescriptor()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            [AppBehavior("orders.attribute")]
+            [BehaviorAllowedPatterns("cqrs")]
+            [BehaviorAllowedTransports("http.jsonrpc", "http.grpc")]
+            public sealed class AttributeOnlyOrderBehavior : IAppBehavior<string, string>
+            {
+                public Task<string> HandleAsync(string input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var (result, diagnostics) = RunGenerator(source);
+
+        Assert.Empty(diagnostics);
+
+        var autoRegistration = GetGeneratedAutoRegistrationSource(result);
+        Assert.NotNull(autoRegistration);
+        Assert.Contains("new global::Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor(\"orders.attribute\"", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("\"cqrs\"", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("\"http.jsonrpc\"", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("\"grpc\"", autoRegistration, StringComparison.Ordinal);
+        Assert.DoesNotContain("new global::Cephalon.Behaviors.Services.BehaviorGeneratedRuntimeTopologyDescriptor(\"orders.attribute\"", autoRegistration, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1105,6 +1143,41 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.NotNull(autoRegistration);
         Assert.Contains("new global::Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor(\"orders.lookup\"", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("\"http.jsonrpc\"", autoRegistration, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void ComplexConfigureTopologyEmitsUnsupportedRuntimeTopologyDescriptor()
+    {
+        const string source = """
+            using Cephalon.Abstractions.Behaviors;
+            using System;
+            using System.Threading;
+            using System.Threading.Tasks;
+
+            [AppBehavior("orders.complex")]
+            public sealed class ComplexOrderBehavior : IAppBehavior<string, string>
+            {
+                public static void ConfigureTopology(IBehaviorTopologyBuilder builder)
+                {
+                    if (DateTime.UtcNow.Ticks > 0)
+                    {
+                        builder.ViaHttpJsonRpc();
+                    }
+                }
+
+                public Task<string> HandleAsync(string input, IBehaviorContext ctx, CancellationToken ct = default)
+                    => Task.FromResult("ok");
+            }
+            """;
+
+        var (result, diagnostics) = RunGenerator(source);
+
+        Assert.Empty(diagnostics);
+
+        var autoRegistration = GetGeneratedAutoRegistrationSource(result);
+        Assert.NotNull(autoRegistration);
+        Assert.Contains("new global::Cephalon.Behaviors.Services.BehaviorGeneratedRuntimeTopologyDescriptor(\"orders.complex\"", autoRegistration, StringComparison.Ordinal);
+        Assert.DoesNotContain("new global::Cephalon.Abstractions.Behaviors.BehaviorTopologyDescriptor(\"orders.complex\"", autoRegistration, StringComparison.Ordinal);
     }
 
     [Fact]

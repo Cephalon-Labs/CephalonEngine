@@ -276,10 +276,11 @@ GraphQL and JSON-RPC keep their own protocol-native response shapes.
 `BehaviorResult<T>` remains available as a compatibility alias when older code has not migrated to
 the shorter `Result<T>` name yet.
 
-If a behavior declares multiple allowed patterns, keep the attributes as an allowlist and add
-`ConfigureTopology(...)` or fluent registration so the runtime does not need to guess which pattern
-should execute. For authoring convenience, `[BehaviorAllowedTransports("http.grpc")]` is accepted
-and normalized to canonical `grpc`.
+If a behavior declares multiple allowed patterns, keep the attributes as an allowlist and add a
+source-generator-supported `ConfigureTopology(...)` fluent chain or explicit module/fluent
+registration so the engine does not need to guess which pattern should execute. For authoring
+convenience, `[BehaviorAllowedTransports("http.grpc")]` is accepted and normalized to canonical
+`grpc`.
 
 If the generic route-shaped transports should expose a different logical public path than the default
 `behavior-id -> group/operation` split, override it in the same topology declaration:

@@ -398,48 +398,15 @@ internal sealed class BehaviorModule(
                 continue;
             }
 
-            TryRegisterResolvedTopology(services, runtimeBehavior.Type, runtimeBehavior.Id);
+            throw new InvalidOperationException(
+                "Source-generated behavior auto-registration can only use topology that Cephalon.Behaviors.SourceGen " +
+                "can reduce to generated descriptors. The behavior " +
+                $"'{runtimeBehavior.Id}' ({runtimeBehavior.Type.FullName}) still requires runtime ConfigureTopology(...) execution, " +
+                "which is no longer performed. Rewrite ConfigureTopology(...) as a source-generator-supported fluent chain, " +
+                "move the topology to [BehaviorAllowedPatterns]/[BehaviorAllowedTransports], or register the behavior explicitly with module/fluent topology.");
         }
 
         return true;
-    }
-
-    /// <summary>
-    /// Checks whether the concrete behavior type defines a static <c>ConfigureTopology</c>
-    /// method and, if so, invokes it to build and register a Layer-4 topology contributor.
-    /// </summary>
-    private static void TryRegisterResolvedTopology(
-        IServiceCollection services,
-        Type behaviorType,
-        string behaviorId)
-    {
-        var descriptor = BuildTopologyDescriptorFromStaticMethod(behaviorType, behaviorId);
-        descriptor = BehaviorAttributeTopologyResolver.Resolve(behaviorId, behaviorType, descriptor);
-        if (descriptor is null)
-        {
-            return;
-        }
-
-        services.AddSingleton<IBehaviorContributor>(new FluentBehaviorContributor(descriptor));
-    }
-
-    private static BehaviorTopologyDescriptor? BuildTopologyDescriptorFromStaticMethod(
-        Type behaviorType,
-        string behaviorId)
-    {
-        var configMethod = behaviorType.GetMethod(
-            "ConfigureTopology",
-            BindingFlags.Static | BindingFlags.Public | BindingFlags.FlattenHierarchy,
-            null,
-            [typeof(IBehaviorTopologyBuilder)],
-            null);
-
-        if (configMethod is null || configMethod.DeclaringType != behaviorType)
-            return null;
-
-        var builder = new BehaviorTopologyBuilder();
-        configMethod.Invoke(null, [builder]);
-        return builder.Build(behaviorId);
     }
 
     /// <summary>

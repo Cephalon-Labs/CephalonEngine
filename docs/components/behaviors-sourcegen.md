@@ -11,13 +11,13 @@ conventions at build time and produce a compile-time-known registration hint fil
 - **BehaviorSourceGenerator** — combined Roslyn `IIncrementalGenerator` + diagnostic analyzer
   - Uses `ForAttributeWithMetadataName` for efficient incremental processing
   - Emits `BehaviorRegistrationHints.g.cs` listing all discovered `[AppBehavior]` IDs
-  - Emits `BehaviorAutoRegistration.g.cs` for generated module registration, zero-reflection DI/type registration, execution-slot descriptors, and pre-built topology descriptors when compile-time extraction succeeds
+  - Emits `BehaviorAutoRegistration.g.cs` for generated module registration, zero-reflection DI/type registration, execution-slot descriptors, and pre-built topology descriptors when compile-time extraction succeeds or attribute-only topology can be synthesized
   - Emits a `RegisterGeneratedBehaviors()` module initializer that registers generated hints with `BehaviorGeneratedModuleRegistry` so `Cephalon.Behaviors` does not reflect over generated carrier methods
   - Emits `GetExecutionSlots()` with closed `BehaviorGeneratedExecutionSlotDescriptor` / `BehaviorExecutionSlot.For<TBehavior, TInput, TOutput>()` calls so `Cephalon.Behaviors` can prefer source-generated dispatch startup over open-generic slot reflection
   - Emits closed `DurableExecutionSlot.For<TBehavior, TInput, TState, TOutput>()` registrations when a behavior implements `IDurableExecution<TInput, TState, TOutput>` so `Cephalon.Behaviors.Patterns` can execute durable workflows and project durable metadata without runtime open-generic fallback
   - Emits closed `SagaChoreographyRuntimeSlot.For<TBehavior, TInput, TResult>(...)` registrations when a behavior declares `saga-choreography` topology and references the pattern runtime slot, so `Cephalon.Behaviors.Patterns` can project choreography authoring/result-shape metadata without runtime interface-shape inspection
   - Emits source-generated metadata-only REST profile hints through `GetRestProfiles()` when behaviors declare valid `BehaviorRestProfileAttribute` metadata, then registers those hints through a module initializer and `BehaviorRestGeneratedProfileRegistry` so runtime profile consumption does not reflectively find generated REST carrier methods
-  - Extracts compile-time topology from `ConfigureTopology(...)` for pattern, transports, feature flags, and literal `WithApiSurface(...)` overrides
+  - Extracts compile-time topology from supported `ConfigureTopology(...)` fluent chains for pattern, transports, feature flags, and literal `WithApiSurface(...)` overrides; when no static topology exists, it emits attribute-only descriptors from unambiguous `[BehaviorAllowedPatterns]` / `[BehaviorAllowedTransports]` metadata, with transport-only declarations resolving to `direct`
 - Reports ABT0010–ABT0027 diagnostics on invalid behavior declarations, metadata-only REST profile hints, malformed REST profile placeholder syntax, explicit REST binding metadata, and invalid preserved implicit query-fallback authoring before `GetRestProfiles()` is generated
 
 ## Diagnostic rules
@@ -63,8 +63,9 @@ internal static class BehaviorRegistrationHints
 }
 ```
 
-When the generator can statically understand `ConfigureTopology(...)`, it also emits zero-reflection
-registration and topology data, including literal `WithApiSurface(...)` overrides:
+When the generator can statically understand `ConfigureTopology(...)`, or when a behavior uses an
+unambiguous attribute-only topology declaration, it also emits zero-reflection registration and
+topology data, including literal `WithApiSurface(...)` overrides:
 
 ```csharp
 internal static class BehaviorAutoRegistration
@@ -187,8 +188,12 @@ behavior dispatch fallback, and HTTP fallback/manual-route reflection remain doc
 deployment-mode hazard inventory.
 
 Compile-time topology extraction intentionally stays conservative. Literal `WithApiSurface(...)`
-arguments are supported, while more complex expressions fall back to runtime topology resolution so
-the generated surface stays truthful. Public REST is module-owned and therefore sits outside the
+arguments are supported, while more complex expressions are emitted as unsupported generated
+topology declarations. `Cephalon.Behaviors` now fails fast for those declarations during generated
+auto-registration instead of invoking `ConfigureTopology(...)` reflectively at runtime; move the
+topology to a source-generator-supported fluent chain, unambiguous `[BehaviorAllowedPatterns]` /
+`[BehaviorAllowedTransports]` metadata, or explicit module/fluent registration. Public REST is
+module-owned and therefore sits outside the
 behavior source-generator topology model; `ABT0014` now rejects `http.rest` and `ViaHttpRest(...)`
 so authors map REST in a module with `RestBehaviorModuleBase.ConfigureRestBehaviors(...)`, or with
 manual `MapBehaviorRestGroup(...)` wiring when they intentionally stay on the low-level REST module
@@ -223,14 +228,15 @@ Likewise, explicit module ownership through `IBehaviorOwnerModule`, `BehaviorMod
 `RestBehaviorModuleBase` remains a runtime-composition concern rather than a source-generated
 topology concern: the generator still focuses on behavior shape and topology, while the engine owns
 which module claims each behavior.
-When a behavior has no compile-time topology but does declare exactly one allowed pattern plus one
-or more allowed transports, the runtime synthesizes the attribute-only baseline descriptor from
-those attributes. If multiple allowed patterns are declared, runtime resolution still fails fast
-until another topology source selects one explicitly.
+When a behavior has no `ConfigureTopology(...)` method but does declare unambiguous allowlist
+metadata, the generator now emits the attribute-only baseline descriptor from those attributes.
+Zero or one allowed pattern is supported; transport-only declarations resolve to `direct`. If
+multiple allowed patterns are declared, runtime resolution still fails fast until another topology
+source selects one explicitly.
 
 ## Status
 
-> Status: ✅ Shipped — targeted source-generator tests 34/34
+> Status: ✅ Shipped — targeted source-generator tests 37/37
 
 ## Related components
 

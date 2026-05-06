@@ -11,7 +11,7 @@
   attribute-only baseline when the pattern choice is unambiguous
 - **CompatibilityMatrix** — startup-time validation of resolved topologies against
   `IBehaviorCompatibilityRule` implementations
-- **BehaviorGeneratedModuleRegistry / BehaviorExecutionSlot** — source-generated module hints register once through a module initializer, and typed invocation delegates are built once at dispatcher construction; source-generated auto-registration can now supply closed generic slots, while runtime-discovered behaviors still fall back to `ForType(...)`
+- **BehaviorGeneratedModuleRegistry / BehaviorExecutionSlot** — source-generated module hints register once through a module initializer, source-generated topology descriptors cover supported fluent chains and attribute-only declarations, unsupported generated topology fails fast, and typed invocation delegates are built once at dispatcher construction; source-generated auto-registration can now supply closed generic slots, while runtime-discovered behaviors still fall back to `ForType(...)`
 - **IBehaviorCatalog / IBehaviorRegistry** — populated by `IBehaviorContributor` implementations
 - **Hosting** — `IEngineBuilder.AddBehaviors(configure?)` extension + `BehaviorModule`
 - **Configuration** — `Engine:Behaviors` auto-registration controls
@@ -37,7 +37,7 @@
 | `BehaviorTopologyDescriptor` | Resolved per-behavior config: pattern, transports, ordered required feature flags, shared API surface, and optional owning module id |
 | `BehaviorFeatureDisabledException` | Transport-neutral rejection raised when the active feature-toggle context does not satisfy a behavior-owned feature gate |
 | `[AppBehavior("id")]` | Declares a class as a named behavior |
-| `[BehaviorAllowedPatterns]` | Pattern allowlist; when no explicit topology exists, exactly one declared pattern also becomes the attribute-only runtime baseline |
+| `[BehaviorAllowedPatterns]` | Pattern allowlist; when no explicit topology exists, zero or one declared pattern can participate in the attribute-only baseline, with no declared pattern resolving to `direct` |
 | `[BehaviorAllowedTransports]` | Transport allowlist; when no explicit topology exists, declared transports also become the attribute-only runtime transport baseline. Public REST is module-owned and must not appear here; `http.grpc` is accepted as an alias for canonical `grpc` |
 | `IBehaviorCompatibilityRule` | Author extension point for custom topology validation |
 
@@ -220,10 +220,15 @@ ownership / `AddBehaviors(..., behaviors => ...)`.
 
 Resolved topology follows a small, explicit model:
 
-1. explicit topology from `static ConfigureTopology(...)` or `Register<T>(b => ...)`
-2. attribute-only baseline synthesis when no explicit topology exists and the behavior declares
-   exactly one allowed pattern plus one or more allowed transports
-3. fail fast when multiple patterns are declared and no topology source chooses one explicitly
+1. explicit topology from `Register<T>(b => ...)`, module ownership, or a source-generator-supported
+   `static ConfigureTopology(...)` fluent chain
+2. source-generated attribute-only descriptors when no explicit topology exists and the behavior
+   declares unambiguous allowlist metadata: zero or one allowed pattern, plus any declared allowed
+   transports; no pattern resolves to `direct`
+3. fail fast when generated auto-registration sees topology declarations that cannot be reduced to
+   generated descriptors, because `BehaviorModule` no longer invokes `ConfigureTopology(...)` at
+   runtime
+4. fail fast when multiple patterns are declared and no topology source chooses one explicitly
 
 ## Transport identifiers
 
@@ -237,13 +242,15 @@ For author-facing allowlists, `http.grpc` is accepted as an alias and normalizes
 Behavior metadata stays transport-neutral on purpose.
 
 - use `[BehaviorAllowedPatterns]` plus `[BehaviorAllowedTransports]` alone when the behavior should
-  use the attribute-only baseline and the pattern choice is unambiguous
+  use the attribute-only baseline and the pattern choice is unambiguous; transport-only metadata
+  resolves to the `direct` pattern
 - do not declare `http.rest` in behavior allowlists or topology; public REST is mapped by modules
   through `RestBehaviorModuleBase.ConfigureRestBehaviors(...)`
 - prefer `BehaviorModuleBase` or `RestBehaviorModuleBase` when a module should explicitly own the
   behaviors it ships instead of relying on generated auto-registration
-- if a behavior declares multiple allowed patterns, add `ConfigureTopology(...)` or fluent
-  registration so the runtime does not need to guess
+- if a behavior declares multiple allowed patterns, add a source-generator-supported
+  `ConfigureTopology(...)` fluent chain or explicit module/fluent registration so the engine does
+  not need to guess
 - use `WithApiSurface(groupPath, operationPath)` when route-shaped generic transports should project
   a public path that differs from the default `behavior-id -> group/operation` split
 - expect JSON-RPC, GraphQL, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket behavior bindings to reuse
@@ -260,7 +267,7 @@ Behavior metadata stays transport-neutral on purpose.
 ## Performance characteristics
 
 - Dispatch table built once at `EngineBuilder.Build()` into a `FrozenDictionary`
-- Zero reflection on the hot dispatch path — the dispatcher reuses typed execution delegates; source-generated module hints are read from `BehaviorGeneratedModuleRegistry`, source-generated behavior slots are materialized as closed generics, and `BehaviorExecutionSlot.ForType(...)` is kept as the startup fallback for runtime-discovered behaviors
+- Zero reflection on the hot dispatch path — the dispatcher reuses typed execution delegates; source-generated module hints are read from `BehaviorGeneratedModuleRegistry`, source-generated behavior slots and topology descriptors are materialized as closed generated metadata, unsupported generated topology declarations fail fast, and `BehaviorExecutionSlot.ForType(...)` is kept as the startup fallback for runtime-discovered behaviors
 - Transport bindings deferred to first request (`LazyTransportBinding`) — zero startup overhead per transport
 - Compatibility matrix runs at startup only — no runtime overhead
 
@@ -344,9 +351,13 @@ generic execution-slot hints. `BehaviorModule` consumes `BehaviorGeneratedModule
 instead of reflectively invoking generated carrier methods, and the dispatcher prefers generated
 slots when the behavior id and concrete type still match the runtime registry. The common
 source-generated path therefore avoids both generated-carrier method lookup and
-`BehaviorExecutionSlot.ForType(...)` open-generic method dispatch during startup. Assemblies without
-generated hints and behavior types found through runtime discovery continue to use the reflection
-fallback until the broader compile-time module-manifest remediation lands.
+`BehaviorExecutionSlot.ForType(...)` open-generic method dispatch during startup. Source-generated
+topology descriptors now also cover supported `ConfigureTopology(...)` fluent chains and
+attribute-only `[BehaviorAllowedPatterns]` / `[BehaviorAllowedTransports]` declarations; generated
+auto-registration fails fast when a behavior still needs runtime `ConfigureTopology(...)`
+execution, because `BehaviorModule` no longer invokes that method reflectively. Assemblies without
+generated hints and behavior types found through runtime discovery continue to use the execution-slot
+reflection fallback until the broader compile-time module-manifest remediation lands.
 
 ### BehaviorDiagnostics EventId constants (5100-5109)
 
