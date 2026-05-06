@@ -17,7 +17,7 @@ internal static class DoctorCommand
     private const string DotNetSdkDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/sdk:";
     private const string DotNetAspNetDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/aspnet:";
     private const string TemplatePackCustomHiveEnvironmentVariable = "CEPHALON_DOCTOR_TEMPLATE_HIVE";
-    private const string RequiredScorecardSchemaVersion = "1.5.0";
+    private const string RequiredScorecardSchemaVersion = "1.6.0";
 
     private static readonly string[] ExpectedTemplateShortNames =
     [
@@ -772,9 +772,15 @@ internal static class DoctorCommand
             return;
         }
 
+        var deploymentModeEvidence = scorecard["DeploymentModeEvidence"];
         var srePostureEvidence = scorecard["SrePostureEvidence"];
         var supplyChainEvidence = scorecard["SupplyChainEvidence"];
         var publicApiCompatibilityEvidence = scorecard["PublicApiCompatibilityEvidence"];
+
+        if (deploymentModeEvidence is null)
+        {
+            errors.Add("DeploymentModeEvidence");
+        }
 
         if (srePostureEvidence is null)
         {
@@ -801,6 +807,12 @@ internal static class DoctorCommand
         var partialPackageGAGates = GetRequiredScorecardInt(summary, "PartialPackageGAGates", errors);
         var notClaimedPackageGAGates = GetRequiredScorecardInt(summary, "NotClaimedPackageGAGates", errors);
         var needsRefreshPackageGAGates = GetRequiredScorecardInt(summary, "NeedsRefreshPackageGAGates", errors);
+        var deploymentModeGlobalClaimCount = GetRequiredScorecardInt(summary, "DeploymentModeGlobalClaimCount", errors);
+        var deploymentModeGlobalNotClaimedCount = GetRequiredScorecardInt(summary, "DeploymentModeGlobalNotClaimedCount", errors);
+        var deploymentModePackageScopedClaimPackageCount = GetRequiredScorecardInt(summary, "DeploymentModePackageScopedClaimPackageCount", errors);
+        var deploymentModeKnownHazardPackageCount = GetRequiredScorecardInt(summary, "DeploymentModeKnownHazardPackageCount", errors);
+        var deploymentModeKnownHazardEntryCount = GetRequiredScorecardInt(summary, "DeploymentModeKnownHazardEntryCount", errors);
+        var deploymentModeTransitiveAuditEntryCount = GetRequiredScorecardInt(summary, "DeploymentModeTransitiveAuditEntryCount", errors);
         var sreSliCount = GetRequiredScorecardInt(summary, "SreSliCount", errors);
         var sreTargetDeclaredCount = GetRequiredScorecardInt(summary, "SreTargetDeclaredCount", errors);
         var srePendingStableBaselineCount = GetRequiredScorecardInt(summary, "SrePendingStableBaselineCount", errors);
@@ -813,6 +825,13 @@ internal static class DoctorCommand
         var publicApiPendingPackageCount = GetRequiredScorecardInt(summary, "PublicApiPendingPackageCount", errors);
         var publicApiAdditiveEntryCount = GetRequiredScorecardInt(summary, "PublicApiAdditiveEntryCount", errors);
         var publicApiRemovalEntryCount = GetRequiredScorecardInt(summary, "PublicApiRemovalEntryCount", errors);
+        var evidenceDeploymentModeGlobalClaimCount = GetRequiredScorecardInt(deploymentModeEvidence, "GlobalClaimCount", errors, "DeploymentModeEvidence");
+        var evidenceDeploymentModeGlobalNotClaimedCount = GetRequiredScorecardInt(deploymentModeEvidence, "GlobalNotClaimedCount", errors, "DeploymentModeEvidence");
+        var evidenceDeploymentModePackageScopedClaimPackageCount = GetRequiredScorecardInt(deploymentModeEvidence, "PackageScopedClaimPackageCount", errors, "DeploymentModeEvidence");
+        var evidenceDeploymentModeKnownHazardPackageCount = GetRequiredScorecardInt(deploymentModeEvidence, "KnownHazardPackageCount", errors, "DeploymentModeEvidence");
+        var evidenceDeploymentModeKnownHazardEntryCount = GetRequiredScorecardInt(deploymentModeEvidence, "KnownHazardEntryCount", errors, "DeploymentModeEvidence");
+        var evidenceDeploymentModeTransitiveAuditEntryCount = GetRequiredScorecardInt(deploymentModeEvidence, "TransitiveAuditEntryCount", errors, "DeploymentModeEvidence");
+        var deploymentModePublishProbeReleaseValidationMode = GetRequiredScorecardString(deploymentModeEvidence, "PublishProbeReleaseValidationMode", errors, "DeploymentModeEvidence") ?? "unknown";
         var evidenceSreSliCount = GetRequiredScorecardInt(srePostureEvidence, "SliCount", errors, "SrePostureEvidence");
         var evidenceSreTargetDeclaredCount = GetRequiredScorecardInt(srePostureEvidence, "TargetDeclaredCount", errors, "SrePostureEvidence");
         var evidenceSrePendingStableBaselineCount = GetRequiredScorecardInt(srePostureEvidence, "PendingStableBaselineCount", errors, "SrePostureEvidence");
@@ -833,6 +852,21 @@ internal static class DoctorCommand
                 "Engine completion scorecard artifact",
                 $"Artifact '{resolvedScorecardPath}' is missing required scorecard fields: {string.Join(", ", errors)}.",
                 "Regenerate the scorecard artifact with the current `scripts/publish-engine-completion-scorecard.ps1` before using it with doctor."));
+            return;
+        }
+
+        if (deploymentModeGlobalClaimCount != evidenceDeploymentModeGlobalClaimCount ||
+            deploymentModeGlobalNotClaimedCount != evidenceDeploymentModeGlobalNotClaimedCount ||
+            deploymentModePackageScopedClaimPackageCount != evidenceDeploymentModePackageScopedClaimPackageCount ||
+            deploymentModeKnownHazardPackageCount != evidenceDeploymentModeKnownHazardPackageCount ||
+            deploymentModeKnownHazardEntryCount != evidenceDeploymentModeKnownHazardEntryCount ||
+            deploymentModeTransitiveAuditEntryCount != evidenceDeploymentModeTransitiveAuditEntryCount)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Engine completion scorecard deployment-mode evidence",
+                $"Artifact '{resolvedScorecardPath}' has deployment-mode summary counts that do not match DeploymentModeEvidence.",
+                "Regenerate the scorecard artifact with the current `scripts/publish-engine-completion-scorecard.ps1`."));
             return;
         }
 
@@ -916,6 +950,20 @@ internal static class DoctorCommand
                 ? null
                 : "Do not equate package maturity with GA; use this summary to find the source document and blocker class before release promotion."));
 
+        var deploymentModeSeverity =
+            deploymentModeGlobalNotClaimedCount > 0 ||
+            deploymentModeKnownHazardEntryCount > 0 ||
+            !string.Equals(deploymentModePublishProbeReleaseValidationMode, "gated", StringComparison.OrdinalIgnoreCase)
+                ? DoctorCheckSeverity.Warning
+                : DoctorCheckSeverity.Pass;
+        checks.Add(new DoctorCheck(
+            deploymentModeSeverity,
+            "Engine completion scorecard deployment-mode evidence",
+            $"{deploymentModeGlobalClaimCount} global claims; not-claimed {deploymentModeGlobalNotClaimedCount}, package-scoped claim packages {deploymentModePackageScopedClaimPackageCount}, known hazards {deploymentModeKnownHazardEntryCount} across {deploymentModeKnownHazardPackageCount} packages, transitive audit entries {deploymentModeTransitiveAuditEntryCount}, publish probes {deploymentModePublishProbeReleaseValidationMode}.",
+            deploymentModeSeverity == DoctorCheckSeverity.Pass
+                ? null
+                : "Treat deployment-mode posture as release-readiness evidence only; do not promote trim, Native AOT, single-file, or publish-probe support until the manifest, harness, workflow, docs, and package guidance agree."));
+
         var sreSeverity = srePendingStableBaselineCount > 0
             ? DoctorCheckSeverity.Warning
             : DoctorCheckSeverity.Pass;
@@ -952,24 +1000,34 @@ internal static class DoctorCommand
     }
 
     private static string? GetRequiredScorecardString(
-        JsonNode scorecard,
+        JsonNode? scorecard,
         string propertyName,
-        List<string> errors)
+        List<string> errors,
+        string ownerName = "")
     {
+        var errorName = string.IsNullOrWhiteSpace(ownerName)
+            ? propertyName
+            : $"{ownerName}.{propertyName}";
+
+        if (scorecard is null)
+        {
+            return null;
+        }
+
         try
         {
             var value = scorecard[propertyName]?.GetValue<string>();
 
             if (string.IsNullOrWhiteSpace(value))
             {
-                errors.Add(propertyName);
+                errors.Add(errorName);
             }
 
             return value;
         }
         catch
         {
-            errors.Add(propertyName);
+            errors.Add(errorName);
             return null;
         }
     }

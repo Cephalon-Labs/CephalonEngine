@@ -48,9 +48,10 @@ Describe "publish-engine-completion-scorecard.ps1" {
 
         $json = Get-Content -LiteralPath $result.Paths.JsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
 
-        $json.'$schemaVersion' | Should -Be "1.5.0"
+        $json.'$schemaVersion' | Should -Be "1.6.0"
         $json.SourceDocument | Should -Be "docs/engine-completion-scorecard.md"
         $json.ConformanceMatrix | Should -Be "docs/conformance-matrix.md"
+        $json.DeploymentModeManifest | Should -Be "scripts/deployment-mode-support.json"
         $json.AdoptionSmokeManifest | Should -Be "scripts/adoption-smoke-support.json"
         $json.SrePostureManifest | Should -Be "scripts/sre-posture-support.json"
         $json.SupplyChainManifest | Should -Be "scripts/supply-chain-release-support.json"
@@ -66,6 +67,15 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.QualityDimensionCount | Should -Be 12
         $json.Summary.PackageFamilyCount | Should -Be 9
         $json.Summary.PackageGAReadinessCount | Should -Be 90
+        $json.Summary.DeploymentModeGlobalClaimCount | Should -Be 3
+        $json.Summary.DeploymentModeGlobalNotClaimedCount | Should -Be 3
+        $json.Summary.DeploymentModePackageEntryCount | Should -Be 6
+        $json.Summary.DeploymentModePackageScopedClaimPackageCount | Should -Be 1
+        $json.Summary.DeploymentModePackageScopedClaimCount | Should -Be 1
+        $json.Summary.DeploymentModeKnownHazardPackageCount | Should -Be 2
+        $json.Summary.DeploymentModeKnownHazardEntryCount | Should -Be 14
+        $json.Summary.DeploymentModeTransitiveAuditEntryCount | Should -Be 7
+        $json.Summary.DeploymentModeRepresentativePublishTargetCount | Should -Be 5
         $json.Summary.AdoptionSmokeScenarioCount | Should -Be 1
         $json.Summary.AdoptionSmokeRuntimeProbeCount | Should -Be 6
         $json.Summary.AdoptionSmokeAssertionCount | Should -Be 7
@@ -101,6 +111,36 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.EvidenceSourceReferences.Reference | Should -Contain ".github/workflows/publish-release.yml"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/validate-out-of-tree-package-adoption.ps1"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/summarise-public-api-deltas.ps1"
+
+        $json.DeploymentModeEvidence.ManifestSchemaVersion | Should -Be "1.4.0"
+        $json.DeploymentModeEvidence.ShippingStableTargetFramework | Should -Be "net10.0"
+        $json.DeploymentModeEvidence.ReadinessLaneTargetFramework | Should -Be "net11.0"
+        $json.DeploymentModeEvidence.ReadinessLaneStatus | Should -Be "assessment-only"
+        $json.DeploymentModeEvidence.SourceDocuments | Should -Contain "docs/deployment-mode-support.md"
+        $json.DeploymentModeEvidence.ValidationScripts | Should -Contain "scripts/validate-deployment-mode-claims.ps1"
+        $json.DeploymentModeEvidence.ValidationScripts | Should -Contain "tests/Cephalon.Tests.Scripts/validate-deployment-mode-claims.Tests.ps1"
+        $json.DeploymentModeEvidence.GlobalClaimCount | Should -Be 3
+        $json.DeploymentModeEvidence.GlobalNotClaimedCount | Should -Be 3
+        $json.DeploymentModeEvidence.GlobalClaimStatuses.Mode | Should -Contain "trim"
+        $json.DeploymentModeEvidence.GlobalClaimStatuses.Mode | Should -Contain "nativeAot"
+        $json.DeploymentModeEvidence.GlobalClaimStatuses.Mode | Should -Contain "singleFile"
+        $json.DeploymentModeEvidence.PackageEntryCount | Should -Be 6
+        $json.DeploymentModeEvidence.PackageScopedClaimPackageCount | Should -Be 1
+        $json.DeploymentModeEvidence.PackageScopedClaimCount | Should -Be 1
+        $json.DeploymentModeEvidence.KnownHazardPackageCount | Should -Be 2
+        $json.DeploymentModeEvidence.KnownHazardEntryCount | Should -Be 14
+        $json.DeploymentModeEvidence.ClaimAuditTierCounts.high | Should -Be 2
+        $json.DeploymentModeEvidence.ClaimAuditTierCounts.'excluded-by-design' | Should -Be 3
+        $json.DeploymentModeEvidence.ClaimAuditTierCounts.'clean-baseline' | Should -Be 1
+        $json.DeploymentModeEvidence.TransitiveAuditEntryCount | Should -Be 7
+        $json.DeploymentModeEvidence.TransitiveAuditLockFileGlobCount | Should -Be 3
+        $json.DeploymentModeEvidence.RepresentativePublishTargetCount | Should -Be 5
+        $json.DeploymentModeEvidence.PublishProbeReleaseValidationMode | Should -Be "audit-only"
+        $json.DeploymentModeEvidence.PublishProbeReleaseValidationSkipsPublish | Should -BeTrue
+        $json.DeploymentModeEvidence.PublishProbeNonOptOutGate | Should -BeFalse
+        $json.DeploymentModeEvidence.PackageRows.PackageName | Should -Contain "Cephalon.Diagnostics"
+        $json.DeploymentModeEvidence.PackageRows.PackageName | Should -Contain "Cephalon.Data.MySql.SciSharpReplication"
+        $json.DeploymentModeEvidence.TransitiveAuditRows.PackagePattern | Should -Contain "Newtonsoft.Json"
 
         $json.AdoptionSmokeEvidence.ManifestSchemaVersion | Should -Be "1.0.0"
         $json.AdoptionSmokeEvidence.ScenarioId | Should -Be "out-of-tree-generated-app-package-stage"
@@ -176,6 +216,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "Engine Completion Scorecard Report"
         $markdown | Should -Match "Platform gates: 12"
         $markdown | Should -Match "Package families: 9"
+        $markdown | Should -Match "Deployment-Mode Evidence"
+        $markdown | Should -Match "Deployment-mode known hazards: 14"
+        $markdown | Should -Match "Publish-probe release validation mode: audit-only"
         $markdown | Should -Match "SRE Posture Evidence"
         $markdown | Should -Match "SRE SLIs: 11"
         $markdown | Should -Match "SRE pending stable baselines: 11"
@@ -206,6 +249,38 @@ Describe "publish-engine-completion-scorecard.ps1" {
                 -ResolvedPublicApiDeltaScriptPath (Join-Path $scriptsRoot "summarise-public-api-deltas.ps1") `
                 -ResolvedRepoRoot $fixtureRoot
         } | Should -Throw "*missing PublicAPI.Shipped.txt*"
+    }
+
+    It "fails when deployment-mode support manifest paths drift away from repo files" {
+        $fixtureRoot = Join-Path $script:tempRoot "deployment-mode-fixture"
+        $scriptsRoot = Join-Path $fixtureRoot "scripts"
+        New-Item -ItemType Directory -Path $scriptsRoot -Force | Out-Null
+
+        $manifestPath = Join-Path $scriptsRoot "deployment-mode-support.json"
+        Set-Content -LiteralPath $manifestPath -Value @'
+{
+  "$schemaVersion": "1.4.0",
+  "shippingBaseline": {
+    "stableTargetFramework": "net10.0",
+    "readinessLaneTargetFramework": "net11.0",
+    "readinessLaneStatus": "assessment-only"
+  },
+  "documentation": {
+    "guidePath": "docs/missing-deployment-mode-support.md",
+    "readinessGuidePath": "docs/dotnet11-readiness.md",
+    "compatibilityGuidePath": "docs/compatibility.md",
+    "packagePublishingGuidePath": "docs/package-publishing.md",
+    "validationHarnessPath": "scripts/validate-deployment-mode-claims.ps1",
+    "validationHarnessTestsPath": "tests/Cephalon.Tests.Scripts/validate-deployment-mode-claims.Tests.ps1"
+  }
+}
+'@ -Encoding UTF8
+
+        {
+            Convert-DeploymentModeEvidence `
+                -ResolvedManifestPath $manifestPath `
+                -ResolvedRepoRoot $fixtureRoot
+        } | Should -Throw "*documentation.guidePath*"
     }
 
     It "fails when adoption smoke runtime probes drift away from the replay script" {
@@ -477,7 +552,9 @@ jobs:
         $releaseValidation | Should -Match "publish-engine-completion-scorecard\.ps1"
         $releaseValidation | Should -Match "engine-completion-scorecard-release"
         $releaseValidation | Should -Match "Publish engine completion scorecard artifact"
-        $releaseValidation | Should -Match "Write-EngineCompletionScorecardSreSummary"
+        $releaseValidation | Should -Match "Write-EngineCompletionScorecardEvidenceSummary"
+        $releaseValidation | Should -Match "DeploymentModeEvidence"
+        $releaseValidation | Should -Match "Deployment-mode evidence"
         $releaseValidation | Should -Match "SrePostureEvidence"
         $releaseValidation | Should -Match "SupplyChainEvidence"
         $releaseValidation | Should -Match "Supply-chain release evidence"

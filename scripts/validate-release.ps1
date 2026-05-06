@@ -137,7 +137,7 @@ function Get-DeploymentModeReleaseValidationSkipsPublish {
     return [System.Convert]::ToBoolean([string]$policy.releaseValidationSkipsPublish, [System.Globalization.CultureInfo]::InvariantCulture)
 }
 
-function Write-EngineCompletionScorecardSreSummary {
+function Write-EngineCompletionScorecardEvidenceSummary {
     param([Parameter(Mandatory = $true)] [string]$ScorecardOutputPath)
 
     $scorecardJsonPath = [System.IO.Path]::Combine($ScorecardOutputPath, "engine-completion-scorecard.json")
@@ -146,6 +146,10 @@ function Write-EngineCompletionScorecardSreSummary {
     }
 
     $scorecard = Get-Content -LiteralPath $scorecardJsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
+    if ($null -eq $scorecard.DeploymentModeEvidence) {
+        throw "Engine completion scorecard JSON is missing DeploymentModeEvidence."
+    }
+
     if ($null -eq $scorecard.SrePostureEvidence) {
         throw "Engine completion scorecard JSON is missing SrePostureEvidence."
     }
@@ -153,6 +157,14 @@ function Write-EngineCompletionScorecardSreSummary {
     if ($null -eq $scorecard.SupplyChainEvidence) {
         throw "Engine completion scorecard JSON is missing SupplyChainEvidence."
     }
+
+    Write-Host ("Deployment-mode evidence: {0} global claims; not-claimed {1}; package-scoped claim packages {2}; known hazards {3}; transitive audit entries {4}; publish probes {5}." -f `
+        $scorecard.DeploymentModeEvidence.GlobalClaimCount,
+        $scorecard.DeploymentModeEvidence.GlobalNotClaimedCount,
+        $scorecard.DeploymentModeEvidence.PackageScopedClaimPackageCount,
+        $scorecard.DeploymentModeEvidence.KnownHazardEntryCount,
+        $scorecard.DeploymentModeEvidence.TransitiveAuditEntryCount,
+        $scorecard.DeploymentModeEvidence.PublishProbeReleaseValidationMode)
 
     Write-Host ("SRE posture: {0} SLIs; target-declared {1}; pending stable baselines {2}; stable baselines {3}; summary mode {4}." -f `
         $scorecard.SrePostureEvidence.SliCount,
@@ -251,7 +263,7 @@ try {
             Invoke-PowerShellScript -Path $engineCompletionScorecardScriptPath -Arguments @(
                 "-OutputPath", $engineCompletionScorecardOutputPath
             )
-            Write-EngineCompletionScorecardSreSummary -ScorecardOutputPath $engineCompletionScorecardOutputPath
+            Write-EngineCompletionScorecardEvidenceSummary -ScorecardOutputPath $engineCompletionScorecardOutputPath
         }
     }
 
