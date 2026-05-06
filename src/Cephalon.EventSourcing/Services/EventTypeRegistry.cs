@@ -62,10 +62,16 @@ public sealed class EventTypeRegistry : IEventTypeRegistry
         _descriptorsByType = descriptorsByType;
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Gets all event-type descriptors known to this registry.
+    /// </summary>
     public IReadOnlyList<EventTypeDescriptor> All { get; }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Gets the persisted event-type name for a domain-event instance.
+    /// </summary>
+    /// <param name="evt">The domain-event instance to resolve.</param>
+    /// <returns>The persisted event-type name.</returns>
     public string GetName(IDomainEvent evt)
     {
         ArgumentNullException.ThrowIfNull(evt);
@@ -78,7 +84,11 @@ public sealed class EventTypeRegistry : IEventTypeRegistry
         return descriptor.Name;
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Serializes a domain-event instance using its registered descriptor.
+    /// </summary>
+    /// <param name="evt">The domain-event instance to serialize.</param>
+    /// <returns>The serialized event payload.</returns>
     public string Serialize(IDomainEvent evt)
     {
         ArgumentNullException.ThrowIfNull(evt);
@@ -91,7 +101,12 @@ public sealed class EventTypeRegistry : IEventTypeRegistry
         return descriptor.Serialize(evt);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Deserializes a persisted event payload using the descriptor registered for the event-type name.
+    /// </summary>
+    /// <param name="eventTypeName">The persisted event-type name.</param>
+    /// <param name="payload">The serialized event payload.</param>
+    /// <returns>The deserialized domain-event instance.</returns>
     public IDomainEvent Deserialize(string eventTypeName, string payload)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(eventTypeName);
@@ -113,14 +128,24 @@ public sealed class EventTypeRegistry : IEventTypeRegistry
         return evt;
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Attempts to find a descriptor by persisted event-type name or alias.
+    /// </summary>
+    /// <param name="eventTypeName">The persisted event-type name or alias.</param>
+    /// <param name="descriptor">The matching descriptor when the name is registered.</param>
+    /// <returns><c>true</c> when the event-type name is registered; otherwise, <c>false</c>.</returns>
     public bool TryFindByName(string eventTypeName, out EventTypeDescriptor descriptor)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(eventTypeName);
         return _descriptorsByName.TryGetValue(eventTypeName.Trim(), out descriptor!);
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Attempts to find a descriptor by concrete domain-event type.
+    /// </summary>
+    /// <param name="eventType">The concrete domain-event type.</param>
+    /// <param name="descriptor">The matching descriptor when the type is registered.</param>
+    /// <returns><c>true</c> when the event type is registered; otherwise, <c>false</c>.</returns>
     public bool TryFindByType(Type eventType, out EventTypeDescriptor descriptor)
     {
         ArgumentNullException.ThrowIfNull(eventType);

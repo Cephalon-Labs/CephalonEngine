@@ -732,13 +732,13 @@ Parameters:
 EngineBuilder AddModulesFromAssemblies(IEnumerable<Assembly> assemblies, Func<Type, bool> filter)
 ```
 
-Discovers and adds modules from a sequence of assemblies.
+Discovers and adds modules from generated descriptors registered by a sequence of assemblies.
 
 Returns: The same builder instance.
 
 Parameters:
-- `assemblies`: The assemblies to scan for modules.
-- `filter`: An optional predicate that can opt specific candidate types in or out before they are instantiated.
+- `assemblies`: The assemblies that should have generated module descriptors.
+- `filter`: An optional predicate that can opt specific generated module types in or out before they are instantiated.
 
 <a id="member-m-cephalon-engine-composition-enginebuilder-addmodulesfromassembly-system-reflection-assembly-system-func-system-type-system-boolean"></a>
 
@@ -748,13 +748,13 @@ Parameters:
 EngineBuilder AddModulesFromAssembly(Assembly assembly, Func<Type, bool> filter)
 ```
 
-Discovers and adds modules from an assembly.
+Discovers and adds modules from generated descriptors registered by an assembly.
 
 Returns: The same builder instance.
 
 Parameters:
 - `assembly`: The assembly to scan.
-- `filter`: An optional predicate that can opt specific candidate types in or out before they are instantiated.
+- `filter`: An optional predicate that can opt specific generated module types in or out before they are instantiated.
 
 <a id="member-m-cephalon-engine-composition-enginebuilder-addmodulesfromassemblycontaining-1-system-func-system-type-system-boolean"></a>
 
@@ -764,7 +764,7 @@ Parameters:
 EngineBuilder AddModulesFromAssemblyContaining<TMarker>(Func<Type, bool> filter)
 ```
 
-Discovers and adds modules from the assembly that contains `TMarker`.
+Discovers and adds modules from generated descriptors registered by the assembly that contains `TMarker`.
 
 Returns: The same builder instance.
 
@@ -772,7 +772,7 @@ Type parameters:
 - `TMarker`: A type used only to identify the source assembly.
 
 Parameters:
-- `filter`: An optional predicate that can opt specific candidate types in or out before they are instantiated.
+- `filter`: An optional predicate that can opt specific generated module types in or out before they are instantiated.
 
 <a id="member-m-cephalon-engine-composition-enginebuilder-addpackage-cephalon-engine-configuration-modulepackagereference"></a>
 

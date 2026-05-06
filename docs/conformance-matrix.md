@@ -44,6 +44,7 @@ When this matrix conflicts with the maturity audit or a component doc, the audit
 | --- | --- | --- | --- | --- | --- | --- |
 | `Cephalon.Abstractions` | M4 | cephalon-managed | — | — | many (`IModule`, `IAppBehavior`, `IBehaviorContext`, `IAgentToolDispatcher`, `IKnowledgeIndexCatalog`, `IEventPublicationDispatcher`, `ITenantResolver`, ...) | host-agnostic contract layer; stable across every domain |
 | `Cephalon.Engine` | M4 | cephalon-managed | `/manifest`, `/snapshot`, `/app-model`, `/capabilities`, `/modules`, `/packages`, `/technologies`, `/patterns` | `Manifest`, `Status`, `OperationalStory`, `DiagnosticsConventions` plus composition for every snapshot key | `ICellBoundaryCatalog`, `ICellRouteCatalog`, `ICellHealthIsolationCatalog`, `ICellTrafficAutomationRuntimeCatalog`, `ITechnologyRuntimeCatalog`, `IFeatureFlagRuntimeCatalog` | composition center, manifest, runtime introspection, policy evaluation; `EngineRuntime` is one of the seven M1 redaction emission sites — module-phase activity tags (`runtime.{phase}` and `module.{phase}` spans during initialize/start/stop) route through the registered `RedactionPipeline` before exporter dispatch (`ENG-366`) |
+| `Cephalon.Engine.SourceGen` | M1 | cephalon-managed | — | — | — | compiler-only source generator for module discovery descriptors; keeps assembly/package/configuration discovery off runtime assembly scans |
 
 The core-runtime family is adoption-ready and stable. Priorities are compatibility hygiene, docs alignment, and absorbing new companion packs without core surgery.
 

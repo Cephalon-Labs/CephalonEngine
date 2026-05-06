@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using Cephalon.Abstractions.Modules;
 
 namespace Cephalon.Engine.Composition;
@@ -19,14 +20,14 @@ internal static class ModuleDiscovery
 
         foreach (var assembly in uniqueAssemblies)
         {
-            foreach (var moduleType in GetModuleTypes(assembly))
+            foreach (var descriptor in GetGeneratedModuleDescriptors(assembly))
             {
-                if (filter is not null && !filter(moduleType))
+                if (filter is not null && !filter(descriptor.ModuleType))
                 {
                     continue;
                 }
 
-                discovered.Add(CreateModule(assembly, moduleType));
+                discovered.Add(CreateModule(assembly, descriptor));
             }
         }
 
@@ -71,53 +72,39 @@ internal static class ModuleDiscovery
         }
     }
 
-    private static Type[] GetModuleTypes(Assembly assembly)
+    private static IReadOnlyList<ModuleDiscoveryDescriptor> GetGeneratedModuleDescriptors(Assembly assembly)
     {
         try
         {
-            return assembly.DefinedTypes
-                .Select(typeInfo => typeInfo.AsType())
-                .Where(IsCandidate)
-                .OrderBy(type => type.FullName, StringComparer.Ordinal)
-                .ToArray();
+            RuntimeHelpers.RunModuleConstructor(assembly.ManifestModule.ModuleHandle);
         }
-        catch (ReflectionTypeLoadException exception)
+        catch (Exception exception)
         {
-            var loaderMessages = exception.LoaderExceptions
-                .Where(loaderException => loaderException is not null)
-                .Select(loaderException => loaderException!.Message)
-                .Distinct(StringComparer.Ordinal)
-                .ToArray();
-            var suffix = loaderMessages.Length == 0
-                ? string.Empty
-                : $" Loader errors: {string.Join(" | ", loaderMessages)}";
-
             throw new InvalidOperationException(
-                $"Module discovery failed while scanning assembly '{GetAssemblyIdentity(assembly)}'.{suffix}",
+                $"Module discovery could not initialize generated descriptors for assembly '{GetAssemblyIdentity(assembly)}'.",
                 exception);
         }
+
+        var descriptors = ModuleDiscoveryRegistry.GetDescriptors(assembly);
+        if (descriptors.Count == 0)
+        {
+            throw new InvalidOperationException(
+                $"Module discovery could not find generated descriptors for assembly '{GetAssemblyIdentity(assembly)}'. Reference Cephalon.Engine.SourceGen as an analyzer, rebuild the module assembly, or register modules explicitly with AddModule(...).");
+        }
+
+        return descriptors;
     }
 
-    private static bool IsCandidate(Type type)
-    {
-        return type.IsClass &&
-            !type.IsAbstract &&
-            !type.ContainsGenericParameters &&
-            typeof(IModule).IsAssignableFrom(type);
-    }
-
-    private static IModule CreateModule(Assembly assembly, Type moduleType)
+    private static IModule CreateModule(Assembly assembly, ModuleDiscoveryDescriptor descriptor)
     {
         try
         {
-            return (IModule?)Activator.CreateInstance(moduleType, nonPublic: true)
-                ?? throw new InvalidOperationException(
-                    $"Module discovery could not create '{moduleType.FullName}' from assembly '{GetAssemblyIdentity(assembly)}'.");
+            return descriptor.CreateModule();
         }
-        catch (Exception exception) when (exception is not InvalidOperationException)
+        catch (Exception exception)
         {
             throw new InvalidOperationException(
-                $"Module discovery could not create '{moduleType.FullName}' from assembly '{GetAssemblyIdentity(assembly)}'. Modules must provide a parameterless constructor.",
+                $"Module discovery could not create '{descriptor.ModuleType.FullName}' from assembly '{GetAssemblyIdentity(assembly)}'. Generated descriptors require an accessible parameterless constructor; use explicit AddModule(...) registration for custom factories.",
                 exception);
         }
     }

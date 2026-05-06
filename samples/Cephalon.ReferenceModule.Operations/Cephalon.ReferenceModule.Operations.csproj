@@ -9,6 +9,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Cephalon.Abstractions\Cephalon.Abstractions.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.AspNetCore\Cephalon.AspNetCore.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Engine.SourceGen\Cephalon.Engine.SourceGen.csproj"
+                      OutputItemType="Analyzer"
+                      ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>

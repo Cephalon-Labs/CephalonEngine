@@ -1639,6 +1639,9 @@
           "Cephalon.Diagnostics": "[0.1.0-preview, )"
         }
       },
+      "cephalon.engine.sourcegen": {
+        "type": "Project"
+      },
       "cephalon.eventing": {
         "type": "Project",
         "dependencies": {

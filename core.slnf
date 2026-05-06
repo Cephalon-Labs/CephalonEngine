@@ -4,6 +4,7 @@
     "projects": [
       "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj",
       "src/Cephalon.Engine/Cephalon.Engine.csproj",
+      "src/Cephalon.Engine.SourceGen/Cephalon.Engine.SourceGen.csproj",
       "src/Cephalon.Data/Cephalon.Data.csproj",
       "src/Cephalon.EventSourcing/Cephalon.EventSourcing.csproj",
       "src/Cephalon.Eventing/Cephalon.Eventing.csproj",

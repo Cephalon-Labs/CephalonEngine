@@ -1165,13 +1165,13 @@ Browse the published API surface by public member.
   - Adds a concrete module instance to the runtime composition graph.
   - `EngineBuilder AddModule(IModule module)`
 - [AddModulesFromAssemblies](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addmodulesfromassemblies-system-collections-generic-ienumerable-system-reflection-assembly-system-func-system-type-system-boolean): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddModulesFromAssemblies&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
-  - Discovers and adds modules from a sequence of assemblies.
+  - Discovers and adds modules from generated descriptors registered by a sequence of assemblies.
   - `EngineBuilder AddModulesFromAssemblies(IEnumerable<Assembly> assemblies, Func<Type, bool> filter)`
 - [AddModulesFromAssembly](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addmodulesfromassembly-system-reflection-assembly-system-func-system-type-system-boolean): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddModulesFromAssembly&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
-  - Discovers and adds modules from an assembly.
+  - Discovers and adds modules from generated descriptors registered by an assembly.
   - `EngineBuilder AddModulesFromAssembly(Assembly assembly, Func<Type, bool> filter)`
 - [AddModulesFromAssemblyContaining](cephalon-engine.md#member-m-cephalon-engine-composition-enginebuilder-addmodulesfromassemblycontaining-1-system-func-system-type-system-boolean): `Methods` on `EngineBuilder` in `Cephalon.Engine.Composition` (`Cephalon.Engine`) [Browse](browse.html?q=AddModulesFromAssemblyContaining&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Composition&scope=members)
-  - Discovers and adds modules from the assembly that contains `TMarker`.
+  - Discovers and adds modules from generated descriptors registered by the assembly that contains `TMarker`.
   - `EngineBuilder AddModulesFromAssemblyContaining<TMarker>(Func<Type, bool> filter)`
 - [AddMultiTenancy](cephalon-multitenancy.md#member-m-cephalon-multitenancy-registration-multitenancyenginebuilderextensions-addmultitenancy-cephalon-engine-composition-enginebuilder-system-action-cephalon-multitenancy-configuration-multitenancyruntimeoptions): `Methods` on `MultiTenancyEngineBuilderExtensions` in `Cephalon.MultiTenancy.Registration` (`Cephalon.MultiTenancy`) [Browse](browse.html?q=AddMultiTenancy&assembly=Cephalon.MultiTenancy&namespace=Cephalon.MultiTenancy.Registration&scope=members)
   - Adds the Cephalon multi-tenancy companion pack to the engine.
@@ -1351,6 +1351,7 @@ Browse the published API surface by public member.
   - Gets all event-stream descriptors contributed to the current runtime.
   - `IReadOnlyList<EventStreamDescriptor> All { get; }`
 - [All](cephalon-eventsourcing.md#member-p-cephalon-eventsourcing-services-eventtyperegistry-all): `Properties` on `EventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=All&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets all event-type descriptors known to this registry.
   - `IReadOnlyList<EventTypeDescriptor> All { get; }`
 - [All](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-ibehavioradvisorycatalog-all): `Properties` on `IBehaviorAdvisoryCatalog` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=All&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets all active advisories.
@@ -1985,6 +1986,9 @@ Browse the published API surface by public member.
 - [Assemblies](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-referencedocsrequest-assemblies): `Properties` on `ReferenceDocsRequest` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=Assemblies&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the assemblies to document. When empty, the generator uses its curated defaults.
   - `IReadOnlyList<string> Assemblies { get; }`
+- [Assembly](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-modulediscoverydescriptor-assembly): `Properties` on `ModuleDiscoveryDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=Assembly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Gets the assembly that contains the module type.
+  - `Assembly Assembly { get; }`
 - [AssemblyName](cephalon-engine.md#member-p-cephalon-engine-manifest-modulemanifest-assemblyname): `Properties` on `ModuleManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=AssemblyName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the assembly name that contains the module implementation.
   - `string AssemblyName { get; }`
@@ -5675,6 +5679,9 @@ Browse the published API surface by public member.
 - [CreateInstance](cephalon-identity-aspnetcore.md#member-m-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-createinstance-system-iserviceprovider): `Methods` on `RequireCephalonAuthorizationAttribute` in `Cephalon.Identity.AspNetCore.Transports.Rest` (`Cephalon.Identity.AspNetCore`) [Browse](browse.html?q=CreateInstance&assembly=Cephalon.Identity.AspNetCore&namespace=Cephalon.Identity.AspNetCore.Transports.Rest&scope=members)
   - Creates the MVC authorization filter that evaluates the current request through the shared Cephalon boundary executor.
   - `IFilterMetadata CreateInstance(IServiceProvider serviceProvider)`
+- [CreateModule](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-modulediscoverydescriptor-createmodule): `Methods` on `ModuleDiscoveryDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=CreateModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Creates a module instance using the generated or explicitly registered factory.
+  - `IModule CreateModule()`
 - [CreatePlaybook](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idatabasemigrationoperationalplaybookprovider-createplaybook): `Methods` on `IDatabaseMigrationOperationalPlaybookProvider` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CreatePlaybook&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates the current database-migration playbook.
   - `DatabaseMigrationOperationalPlaybook CreatePlaybook()`
@@ -7035,6 +7042,7 @@ Browse the published API surface by public member.
   - Deserializes a payload using this descriptor.
   - `IDomainEvent Deserialize(string payload)`
 - [Deserialize](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventtyperegistry-deserialize-system-string-system-string): `Methods` on `EventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Deserialize&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Deserializes a persisted event payload using the descriptor registered for the event-type name.
   - `IDomainEvent Deserialize(string eventTypeName, string payload)`
 - [Deserialize](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-ieventtyperegistry-deserialize-system-string-system-string): `Methods` on `IEventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Deserialize&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Deserializes a persisted payload using the descriptor registered for the event-type name.
@@ -11479,6 +11487,9 @@ Browse the published API surface by public member.
 - [GetDependencyHealth](cephalon-abstractions.md#member-m-cephalon-abstractions-health-idependencyhealthcontributor-getdependencyhealth): `Methods` on `IDependencyHealthContributor` in `Cephalon.Abstractions.Health` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetDependencyHealth&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Health&scope=members)
   - Returns the dependency-health reports currently known to the contributor.
   - `IReadOnlyList<DependencyHealthReport> GetDependencyHealth()`
+- [GetDescriptors](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-modulediscoveryregistry-getdescriptors-system-reflection-assembly): `Methods` on `ModuleDiscoveryRegistry` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetDescriptors&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Gets registered module descriptors for an assembly.
+  - `IReadOnlyList<ModuleDiscoveryDescriptor> GetDescriptors(Assembly assembly)`
 - [GetDisabled](cephalon-abstractions.md#member-m-cephalon-abstractions-features-ifeatureflagruntimecatalog-getdisabled): `Methods` on `IFeatureFlagRuntimeCatalog` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetDisabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
   - Gets all feature flags that are disabled before targeting is applied.
   - `IReadOnlyList<FeatureFlagDescriptor> GetDisabled()`
@@ -11495,6 +11506,7 @@ Browse the published API surface by public member.
   - Gets the bounded managed-connector command-execution history currently recorded for one execution runtime.
   - `IReadOnlyList<CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult> GetManagedConnectorCommandExecutionHistory(string executionRuntimeId)`
 - [GetName](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventtyperegistry-getname-cephalon-abstractions-eventsourcing-idomainevent): `Methods` on `EventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=GetName&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Gets the persisted event-type name for a domain-event instance.
   - `string GetName(IDomainEvent evt)`
 - [GetName](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-ieventtyperegistry-getname-cephalon-abstractions-eventsourcing-idomainevent): `Methods` on `IEventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=GetName&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Gets the persisted event-type name for a domain-event instance.
@@ -17955,6 +17967,9 @@ Browse the published API surface by public member.
 - [ModuleDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-moduledescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ienumerable-system-type-system-collections-generic-ienumerable-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `ModuleDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=ModuleDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
   - Creates a module descriptor.
   - `ModuleDescriptor(string id, string displayName, string description, IEnumerable<Type> dependsOn, IEnumerable<string> tags, string version, IReadOnlyDictionary<string, string> metadata)`
+- [ModuleDiscoveryDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-modulediscoverydescriptor-ctor-system-type-system-func-cephalon-abstractions-modules-imodule): `Constructors` on `ModuleDiscoveryDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=ModuleDiscoveryDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Creates a module discovery descriptor.
+  - `ModuleDiscoveryDescriptor(Type moduleType, Func<IModule> moduleFactory)`
 - [ModuleDiscoverySettings](cephalon-engine.md#member-m-cephalon-engine-configuration-modulediscoverysettings-ctor-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-cephalon-engine-configuration-modulepackagereference-system-collections-generic-ireadonlylist-cephalon-engine-configuration-modulepackagedirectory): `Constructors` on `ModuleDiscoverySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=ModuleDiscoverySettings&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Initializes a new instance of the `ModuleDiscoverySettings` class.
   - `ModuleDiscoverySettings(IReadOnlyList<string> assemblies, IReadOnlyList<ModulePackageReference> packages, IReadOnlyList<ModulePackageDirectory> packageDirectories)`
@@ -18012,6 +18027,9 @@ Browse the published API surface by public member.
 - [ModuleTransitionCounterName](cephalon-engine.md#member-f-cephalon-engine-diagnostics-enginediagnostics-moduletransitioncountername): `Fields` on `EngineDiagnostics` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=ModuleTransitionCounterName&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - Gets the counter name for module lifecycle transitions.
   - `const string ModuleTransitionCounterName`
+- [ModuleType](cephalon-abstractions.md#member-p-cephalon-abstractions-modules-modulediscoverydescriptor-moduletype): `Properties` on `ModuleDiscoveryDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=ModuleType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Gets the concrete module type represented by the descriptor.
+  - `Type ModuleType { get; }`
 - [ModuleVersion](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimefailureinfo-moduleversion): `Properties` on `RuntimeFailureInfo` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=ModuleVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The module version that was active when the failure occurred, if known.
   - `string ModuleVersion { get; set; }`
@@ -22521,6 +22539,9 @@ Browse the published API surface by public member.
 - [Register](cephalon-abstractions.md#member-m-cephalon-abstractions-transports-irestendpointruntimeregistry-register-cephalon-abstractions-transports-restendpointruntimedescriptor): `Methods` on `IRestEndpointRuntimeRegistry` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Register&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Registers one resolved public REST endpoint with the runtime catalog.
   - `void Register(RestEndpointRuntimeDescriptor endpoint)`
+- [Register](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-modulediscoveryregistry-register-system-reflection-assembly-system-collections-generic-ienumerable-cephalon-abstractions-modules-modulediscoverydescriptor): `Methods` on `ModuleDiscoveryRegistry` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=Register&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Registers module descriptors for an assembly.
+  - `void Register(Assembly assembly, IEnumerable<ModuleDiscoveryDescriptor> descriptors)`
 - [RegisterAuditStores](cephalon-abstractions.md#member-m-cephalon-abstractions-audit-iauditstorecontributor-registerauditstores-cephalon-abstractions-audit-iauditstoreregistry): `Methods` on `IAuditStoreContributor` in `Cephalon.Abstractions.Audit` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegisterAuditStores&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Audit&scope=members)
   - Registers one or more audit-store descriptors with the supplied registry.
   - `void RegisterAuditStores(IAuditStoreRegistry auditStores)`
@@ -25246,6 +25267,7 @@ Browse the published API surface by public member.
   - Serializes a domain-event instance using this descriptor.
   - `string Serialize(IDomainEvent evt)`
 - [Serialize](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventtyperegistry-serialize-cephalon-abstractions-eventsourcing-idomainevent): `Methods` on `EventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Serialize&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Serializes a domain-event instance using its registered descriptor.
   - `string Serialize(IDomainEvent evt)`
 - [Serialize](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-ieventtyperegistry-serialize-cephalon-abstractions-eventsourcing-idomainevent): `Methods` on `IEventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Serialize&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Serializes a domain-event payload using the descriptor registered for its concrete event type.
@@ -28524,11 +28546,13 @@ Browse the published API surface by public member.
   - Captures the effective trust policy together with evaluated package and capability decisions.
   - `TrustSnapshot(TrustPolicy Policy, IReadOnlyList<PackageTrustDecision> Packages, IReadOnlyList<CapabilityPolicyDecision> Capabilities)`
 - [TryFindByName](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventtyperegistry-tryfindbyname-system-string-cephalon-eventsourcing-services-eventtypedescriptor): `Methods` on `EventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=TryFindByName&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Attempts to find a descriptor by persisted event-type name or alias.
   - `bool TryFindByName(string eventTypeName, out EventTypeDescriptor descriptor)`
 - [TryFindByName](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-ieventtyperegistry-tryfindbyname-system-string-cephalon-eventsourcing-services-eventtypedescriptor): `Methods` on `IEventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=TryFindByName&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Attempts to find a descriptor by its persisted event-type name or one of its aliases.
   - `bool TryFindByName(string eventTypeName, out EventTypeDescriptor descriptor)`
 - [TryFindByType](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventtyperegistry-tryfindbytype-system-type-cephalon-eventsourcing-services-eventtypedescriptor): `Methods` on `EventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=TryFindByType&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
+  - Attempts to find a descriptor by concrete domain-event type.
   - `bool TryFindByType(Type eventType, out EventTypeDescriptor descriptor)`
 - [TryFindByType](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-ieventtyperegistry-tryfindbytype-system-type-cephalon-eventsourcing-services-eventtypedescriptor): `Methods` on `IEventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=TryFindByType&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Attempts to find a descriptor by the concrete event CLR type.
@@ -28587,6 +28611,9 @@ Browse the published API surface by public member.
 - [TryGetDecision](cephalon-engine.md#member-m-cephalon-engine-trust-capabilitypolicyevaluator-trygetdecision-system-string-cephalon-engine-trust-capabilitypolicydecision): `Methods` on `CapabilityPolicyEvaluator` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=TryGetDecision&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - Attempts to resolve the trust decision for a capability.
   - `bool TryGetDecision(string capabilityKey, out CapabilityPolicyDecision decision)`
+- [TryGetDescriptors](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-modulediscoveryregistry-trygetdescriptors-system-reflection-assembly-system-collections-generic-ireadonlylist-cephalon-abstractions-modules-modulediscoverydescriptor): `Methods` on `ModuleDiscoveryRegistry` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=TryGetDescriptors&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
+  - Tries to get registered module descriptors for an assembly.
+  - `bool TryGetDescriptors(Assembly assembly, out IReadOnlyList<ModuleDiscoveryDescriptor> descriptors)`
 - [TryGetSelected](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-technologyselection-trygetselected-system-string-cephalon-abstractions-technologies-technologydescriptor): `Methods` on `TechnologySelection` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=TryGetSelected&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Attempts to resolve one selected technology.
   - `bool TryGetSelected(string value, out TechnologyDescriptor technology)`

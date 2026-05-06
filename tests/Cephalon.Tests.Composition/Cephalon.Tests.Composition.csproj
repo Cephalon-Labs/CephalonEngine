@@ -34,6 +34,7 @@
     <ProjectReference Include="..\..\src\Cephalon.Data.MySql\Cephalon.Data.MySql.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.Oracle\Cephalon.Data.Oracle.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.Postgres\Cephalon.Data.Postgres.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Engine.SourceGen\Cephalon.Engine.SourceGen.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore\Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.MultiTenancy.Governance.AmazonSesDelivery\Cephalon.MultiTenancy.Governance.AmazonSesDelivery.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.MultiTenancy.Governance.HttpDelivery\Cephalon.MultiTenancy.Governance.HttpDelivery.csproj" />

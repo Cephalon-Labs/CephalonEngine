@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-06T02:08:31.9855897+00:00",
+  "GeneratedAtUtc": "2026-05-06T08:21:29.4875785+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 21,
-      "TypeCount": 549
+      "TypeCount": 551
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -723,7 +723,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-modules",
-      "TypeCount": 5
+      "TypeCount": 7
     },
     {
       "NamespaceName": "Cephalon.Abstractions.Patterns",
@@ -13831,6 +13831,36 @@
       }
     },
     {
+      "DisplayName": "ModuleDiscoveryDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Modules",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-modules-modulediscoverydescriptor",
+      "Declaration": "public sealed class ModuleDiscoveryDescriptor",
+      "Summary": "Describes one compile-time discovered Cephalon module and the factory that creates it.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "ModuleDiscoveryRegistry",
+      "NamespaceName": "Cephalon.Abstractions.Modules",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-modules-modulediscoveryregistry",
+      "Declaration": "public static class ModuleDiscoveryRegistry",
+      "Summary": "Stores compile-time module discovery descriptors registered by generated code or explicit module packages.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 3
+      }
+    },
+    {
       "DisplayName": "ModuleDiscoverySettings",
       "NamespaceName": "Cephalon.Engine.Configuration",
       "AssemblyName": "Cephalon.Engine",
@@ -23292,7 +23322,7 @@
       "FileName": "cephalon-engine.md",
       "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-addmodulesfromassemblies-system-collections-generic-ienumerable-system-reflection-assembly-system-func-system-type-system-boolean",
       "Signature": "EngineBuilder AddModulesFromAssemblies(IEnumerable\u003CAssembly\u003E assemblies, Func\u003CType, bool\u003E filter)",
-      "Summary": "Discovers and adds modules from a sequence of assemblies."
+      "Summary": "Discovers and adds modules from generated descriptors registered by a sequence of assemblies."
     },
     {
       "DisplayName": "AddModulesFromAssembly",
@@ -23303,7 +23333,7 @@
       "FileName": "cephalon-engine.md",
       "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-addmodulesfromassembly-system-reflection-assembly-system-func-system-type-system-boolean",
       "Signature": "EngineBuilder AddModulesFromAssembly(Assembly assembly, Func\u003CType, bool\u003E filter)",
-      "Summary": "Discovers and adds modules from an assembly."
+      "Summary": "Discovers and adds modules from generated descriptors registered by an assembly."
     },
     {
       "DisplayName": "AddModulesFromAssemblyContaining",
@@ -23314,7 +23344,7 @@
       "FileName": "cephalon-engine.md",
       "AnchorId": "member-m-cephalon-engine-composition-enginebuilder-addmodulesfromassemblycontaining-1-system-func-system-type-system-boolean",
       "Signature": "EngineBuilder AddModulesFromAssemblyContaining\u003CTMarker\u003E(Func\u003CType, bool\u003E filter)",
-      "Summary": "Discovers and adds modules from the assembly that contains \u0060TMarker\u0060."
+      "Summary": "Discovers and adds modules from generated descriptors registered by the assembly that contains \u0060TMarker\u0060."
     },
     {
       "DisplayName": "AddMultiTenancy",
@@ -23973,7 +24003,8 @@
       "AssemblyName": "Cephalon.EventSourcing",
       "FileName": "cephalon-eventsourcing.md",
       "AnchorId": "member-p-cephalon-eventsourcing-services-eventtyperegistry-all",
-      "Signature": "IReadOnlyList\u003CEventTypeDescriptor\u003E All { get; }"
+      "Signature": "IReadOnlyList\u003CEventTypeDescriptor\u003E All { get; }",
+      "Summary": "Gets all event-type descriptors known to this registry."
     },
     {
       "DisplayName": "All",
@@ -26295,6 +26326,17 @@
       "AnchorId": "member-p-cephalon-referencedocs-generation-referencedocsrequest-assemblies",
       "Signature": "IReadOnlyList\u003Cstring\u003E Assemblies { get; }",
       "Summary": "Gets the assemblies to document. When empty, the generator uses its curated defaults."
+    },
+    {
+      "DisplayName": "Assembly",
+      "Category": "Properties",
+      "DeclaringTypeName": "ModuleDiscoveryDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Modules",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-modules-modulediscoverydescriptor-assembly",
+      "Signature": "Assembly Assembly { get; }",
+      "Summary": "Gets the assembly that contains the module type."
     },
     {
       "DisplayName": "AssemblyName",
@@ -39805,6 +39847,17 @@
       "Summary": "Creates the MVC authorization filter that evaluates the current request through the shared Cephalon boundary executor."
     },
     {
+      "DisplayName": "CreateModule",
+      "Category": "Methods",
+      "DeclaringTypeName": "ModuleDiscoveryDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Modules",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-modules-modulediscoverydescriptor-createmodule",
+      "Signature": "IModule CreateModule()",
+      "Summary": "Creates a module instance using the generated or explicitly registered factory."
+    },
+    {
       "DisplayName": "CreatePlaybook",
       "Category": "Methods",
       "DeclaringTypeName": "IDatabaseMigrationOperationalPlaybookProvider",
@@ -44792,7 +44845,8 @@
       "AssemblyName": "Cephalon.EventSourcing",
       "FileName": "cephalon-eventsourcing.md",
       "AnchorId": "member-m-cephalon-eventsourcing-services-eventtyperegistry-deserialize-system-string-system-string",
-      "Signature": "IDomainEvent Deserialize(string eventTypeName, string payload)"
+      "Signature": "IDomainEvent Deserialize(string eventTypeName, string payload)",
+      "Summary": "Deserializes a persisted event payload using the descriptor registered for the event-type name."
     },
     {
       "DisplayName": "Deserialize",
@@ -61053,6 +61107,17 @@
       "Summary": "Returns the dependency-health reports currently known to the contributor."
     },
     {
+      "DisplayName": "GetDescriptors",
+      "Category": "Methods",
+      "DeclaringTypeName": "ModuleDiscoveryRegistry",
+      "NamespaceName": "Cephalon.Abstractions.Modules",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-modules-modulediscoveryregistry-getdescriptors-system-reflection-assembly",
+      "Signature": "IReadOnlyList\u003CModuleDiscoveryDescriptor\u003E GetDescriptors(Assembly assembly)",
+      "Summary": "Gets registered module descriptors for an assembly."
+    },
+    {
       "DisplayName": "GetDisabled",
       "Category": "Methods",
       "DeclaringTypeName": "IFeatureFlagRuntimeCatalog",
@@ -61115,7 +61180,8 @@
       "AssemblyName": "Cephalon.EventSourcing",
       "FileName": "cephalon-eventsourcing.md",
       "AnchorId": "member-m-cephalon-eventsourcing-services-eventtyperegistry-getname-cephalon-abstractions-eventsourcing-idomainevent",
-      "Signature": "string GetName(IDomainEvent evt)"
+      "Signature": "string GetName(IDomainEvent evt)",
+      "Summary": "Gets the persisted event-type name for a domain-event instance."
     },
     {
       "DisplayName": "GetName",
@@ -84735,6 +84801,17 @@
       "Summary": "Creates a module descriptor."
     },
     {
+      "DisplayName": "ModuleDiscoveryDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "ModuleDiscoveryDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Modules",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-modules-modulediscoverydescriptor-ctor-system-type-system-func-cephalon-abstractions-modules-imodule",
+      "Signature": "ModuleDiscoveryDescriptor(Type moduleType, Func\u003CIModule\u003E moduleFactory)",
+      "Summary": "Creates a module discovery descriptor."
+    },
+    {
       "DisplayName": "ModuleDiscoverySettings",
       "Category": "Constructors",
       "DeclaringTypeName": "ModuleDiscoverySettings",
@@ -84942,6 +85019,17 @@
       "AnchorId": "member-f-cephalon-engine-diagnostics-enginediagnostics-moduletransitioncountername",
       "Signature": "const string ModuleTransitionCounterName",
       "Summary": "Gets the counter name for module lifecycle transitions."
+    },
+    {
+      "DisplayName": "ModuleType",
+      "Category": "Properties",
+      "DeclaringTypeName": "ModuleDiscoveryDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Modules",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-modules-modulediscoverydescriptor-moduletype",
+      "Signature": "Type ModuleType { get; }",
+      "Summary": "Gets the concrete module type represented by the descriptor."
     },
     {
       "DisplayName": "ModuleVersion",
@@ -101438,6 +101526,17 @@
       "Summary": "Registers one resolved public REST endpoint with the runtime catalog."
     },
     {
+      "DisplayName": "Register",
+      "Category": "Methods",
+      "DeclaringTypeName": "ModuleDiscoveryRegistry",
+      "NamespaceName": "Cephalon.Abstractions.Modules",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-modules-modulediscoveryregistry-register-system-reflection-assembly-system-collections-generic-ienumerable-cephalon-abstractions-modules-modulediscoverydescriptor",
+      "Signature": "void Register(Assembly assembly, IEnumerable\u003CModuleDiscoveryDescriptor\u003E descriptors)",
+      "Summary": "Registers module descriptors for an assembly."
+    },
+    {
       "DisplayName": "RegisterAuditStores",
       "Category": "Methods",
       "DeclaringTypeName": "IAuditStoreContributor",
@@ -111422,7 +111521,8 @@
       "AssemblyName": "Cephalon.EventSourcing",
       "FileName": "cephalon-eventsourcing.md",
       "AnchorId": "member-m-cephalon-eventsourcing-services-eventtyperegistry-serialize-cephalon-abstractions-eventsourcing-idomainevent",
-      "Signature": "string Serialize(IDomainEvent evt)"
+      "Signature": "string Serialize(IDomainEvent evt)",
+      "Summary": "Serializes a domain-event instance using its registered descriptor."
     },
     {
       "DisplayName": "Serialize",
@@ -123441,7 +123541,8 @@
       "AssemblyName": "Cephalon.EventSourcing",
       "FileName": "cephalon-eventsourcing.md",
       "AnchorId": "member-m-cephalon-eventsourcing-services-eventtyperegistry-tryfindbyname-system-string-cephalon-eventsourcing-services-eventtypedescriptor",
-      "Signature": "bool TryFindByName(string eventTypeName, out EventTypeDescriptor descriptor)"
+      "Signature": "bool TryFindByName(string eventTypeName, out EventTypeDescriptor descriptor)",
+      "Summary": "Attempts to find a descriptor by persisted event-type name or alias."
     },
     {
       "DisplayName": "TryFindByName",
@@ -123462,7 +123563,8 @@
       "AssemblyName": "Cephalon.EventSourcing",
       "FileName": "cephalon-eventsourcing.md",
       "AnchorId": "member-m-cephalon-eventsourcing-services-eventtyperegistry-tryfindbytype-system-type-cephalon-eventsourcing-services-eventtypedescriptor",
-      "Signature": "bool TryFindByType(Type eventType, out EventTypeDescriptor descriptor)"
+      "Signature": "bool TryFindByType(Type eventType, out EventTypeDescriptor descriptor)",
+      "Summary": "Attempts to find a descriptor by concrete domain-event type."
     },
     {
       "DisplayName": "TryFindByType",
@@ -123672,6 +123774,17 @@
       "AnchorId": "member-m-cephalon-engine-trust-capabilitypolicyevaluator-trygetdecision-system-string-cephalon-engine-trust-capabilitypolicydecision",
       "Signature": "bool TryGetDecision(string capabilityKey, out CapabilityPolicyDecision decision)",
       "Summary": "Attempts to resolve the trust decision for a capability."
+    },
+    {
+      "DisplayName": "TryGetDescriptors",
+      "Category": "Methods",
+      "DeclaringTypeName": "ModuleDiscoveryRegistry",
+      "NamespaceName": "Cephalon.Abstractions.Modules",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-modules-modulediscoveryregistry-trygetdescriptors-system-reflection-assembly-system-collections-generic-ireadonlylist-cephalon-abstractions-modules-modulediscoverydescriptor",
+      "Signature": "bool TryGetDescriptors(Assembly assembly, out IReadOnlyList\u003CModuleDiscoveryDescriptor\u003E descriptors)",
+      "Summary": "Tries to get registered module descriptors for an assembly."
     },
     {
       "DisplayName": "TryGetSelected",

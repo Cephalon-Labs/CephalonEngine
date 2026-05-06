@@ -22,7 +22,7 @@ The foundation is no longer hypothetical. The repository already ships:
 - configuration-driven engine composition in `Cephalon.Engine`
 - technology-profile modeling for future-facing workloads through `Engine:Technologies` and `AppProfile.Technologies`
 - baseline companion packages for `AgenticWorkloads`, `EventDrivenIntegration`, `KnowledgeRetrieval`, `MultiTenancy`, and `EdgeNativeDelivery`
-- assembly-based module discovery
+- generated-descriptor-backed assembly and package module discovery
 - module and capability policy toggles through `Engine:Options`
 - manifest v2 with engine version, module metadata, and capability source mapping
 - host adapters for ASP.NET Core and generic worker hosts

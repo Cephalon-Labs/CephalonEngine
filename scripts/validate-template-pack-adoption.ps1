@@ -25,6 +25,7 @@ $stderrLogPath = Join-Path $tempRoot "template-app.stderr.log"
 $initialPackageProjectPaths = @(
     "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj",
     "src/Cephalon.Engine/Cephalon.Engine.csproj",
+    "src/Cephalon.Engine.SourceGen/Cephalon.Engine.SourceGen.csproj",
     "src/Cephalon.AspNetCore/Cephalon.AspNetCore.csproj",
     "src/Cephalon.Audit/Cephalon.Audit.csproj",
     "src/Cephalon.Behaviors/Cephalon.Behaviors.csproj",
@@ -42,6 +43,7 @@ $initialPackageProjectPaths = @(
 $generatedPackageProjectPaths = @(
     "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj",
     "src/Cephalon.Engine/Cephalon.Engine.csproj",
+    "src/Cephalon.Engine.SourceGen/Cephalon.Engine.SourceGen.csproj",
     "src/Cephalon.AspNetCore/Cephalon.AspNetCore.csproj",
     "src/Cephalon.Audit/Cephalon.Audit.csproj",
     "src/Cephalon.Behaviors/Cephalon.Behaviors.csproj",

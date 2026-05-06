@@ -56750,6 +56750,131 @@ string Version { get; }
 
 Gets the declared module version, when one is available.
 
+<a id="type-cephalon-abstractions-modules-modulediscoverydescriptor"></a>
+
+### `ModuleDiscoveryDescriptor`
+
+Describes one compile-time discovered Cephalon module and the factory that creates it.
+
+Remarks: Source generators register these descriptors so runtime discovery can remain deterministic without scanning assembly types or invoking module constructors reflectively.
+
+#### Declaration
+```csharp
+public sealed class ModuleDiscoveryDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-modules-modulediscoverydescriptor-ctor-system-type-system-func-cephalon-abstractions-modules-imodule"></a>
+
+##### `ModuleDiscoveryDescriptor`
+
+```csharp
+ModuleDiscoveryDescriptor(Type moduleType, Func<IModule> moduleFactory)
+```
+
+Creates a module discovery descriptor.
+
+Parameters:
+- `moduleType`: The concrete module type represented by the descriptor.
+- `moduleFactory`: The closed factory that creates module instances.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-modules-modulediscoverydescriptor-assembly"></a>
+
+##### `Assembly`
+
+```csharp
+Assembly Assembly { get; }
+```
+
+Gets the assembly that contains the module type.
+
+<a id="member-p-cephalon-abstractions-modules-modulediscoverydescriptor-moduletype"></a>
+
+##### `ModuleType`
+
+```csharp
+Type ModuleType { get; }
+```
+
+Gets the concrete module type represented by the descriptor.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-modules-modulediscoverydescriptor-createmodule"></a>
+
+##### `CreateModule`
+
+```csharp
+IModule CreateModule()
+```
+
+Creates a module instance using the generated or explicitly registered factory.
+
+Returns: The module instance.
+
+<a id="type-cephalon-abstractions-modules-modulediscoveryregistry"></a>
+
+### `ModuleDiscoveryRegistry`
+
+Stores compile-time module discovery descriptors registered by generated code or explicit module packages.
+
+Remarks: The registry is assembly-scoped so hosts can keep using configuration-driven assembly discovery while the engine consumes a closed descriptor table instead of scanning every type in the assembly.
+
+#### Declaration
+```csharp
+public static class ModuleDiscoveryRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-modules-modulediscoveryregistry-getdescriptors-system-reflection-assembly"></a>
+
+##### `GetDescriptors`
+
+```csharp
+IReadOnlyList<ModuleDiscoveryDescriptor> GetDescriptors(Assembly assembly)
+```
+
+Gets registered module descriptors for an assembly.
+
+Returns: The registered descriptors, or an empty list when none were registered.
+
+Parameters:
+- `assembly`: The assembly whose descriptors should be returned.
+
+<a id="member-m-cephalon-abstractions-modules-modulediscoveryregistry-register-system-reflection-assembly-system-collections-generic-ienumerable-cephalon-abstractions-modules-modulediscoverydescriptor"></a>
+
+##### `Register`
+
+```csharp
+void Register(Assembly assembly, IEnumerable<ModuleDiscoveryDescriptor> descriptors)
+```
+
+Registers module descriptors for an assembly.
+
+Parameters:
+- `assembly`: The assembly that owns the module descriptors.
+- `descriptors`: The descriptors to register.
+
+<a id="member-m-cephalon-abstractions-modules-modulediscoveryregistry-trygetdescriptors-system-reflection-assembly-system-collections-generic-ireadonlylist-cephalon-abstractions-modules-modulediscoverydescriptor"></a>
+
+##### `TryGetDescriptors`
+
+```csharp
+bool TryGetDescriptors(Assembly assembly, out IReadOnlyList<ModuleDiscoveryDescriptor> descriptors)
+```
+
+Tries to get registered module descriptors for an assembly.
+
+Returns: `true` when descriptors are registered for the assembly; otherwise `false`.
+
+Parameters:
+- `assembly`: The assembly whose descriptors should be returned.
+- `descriptors`: The registered descriptors, or an empty list when none were registered.
+
 <a id="namespace-cephalon-abstractions-patterns"></a>
 
 ## Namespace Cephalon.Abstractions.Patterns

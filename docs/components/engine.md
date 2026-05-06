@@ -9,7 +9,7 @@ See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), 
 ## What it owns
 
 - module registration and dependency ordering
-- assembly and package-based module discovery
+- generated-descriptor-backed assembly and package-based module discovery
 - package compatibility, integrity, and detached-signature validation for manifest-driven module loading, including multi-signer package manifests
 - package-governance policy for manifest metadata and raw assembly-path rules
 - package publisher and signature provenance metadata carried through trust and manifest surfaces

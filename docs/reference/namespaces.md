@@ -62,7 +62,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.Modules`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-modules): 5 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-modules): 7 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules)
 
 ## `Cephalon.Abstractions.Patterns`
 

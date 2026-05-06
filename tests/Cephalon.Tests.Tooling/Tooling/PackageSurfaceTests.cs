@@ -464,6 +464,8 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Modules.ModuleBase),
             typeof(global::Cephalon.Abstractions.Modules.ModuleContext),
             typeof(global::Cephalon.Abstractions.Modules.ModuleDescriptor),
+            typeof(global::Cephalon.Abstractions.Modules.ModuleDiscoveryDescriptor),
+            typeof(global::Cephalon.Abstractions.Modules.ModuleDiscoveryRegistry),
             typeof(global::Cephalon.Abstractions.Patterns.BackendForFrontendBehaviorFilterDescriptor),
             typeof(global::Cephalon.Abstractions.Patterns.BackendForFrontendClientBindingDescriptor),
             typeof(global::Cephalon.Abstractions.Patterns.IBackendForFrontendClientBindingContributor),
@@ -1182,6 +1184,21 @@ public sealed class PackageSurfaceTests
             "Services",
             "BehaviorImplementationRegistration.cs"));
         Assert.Contains("TryRegister", registration, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void EngineModuleDiscoveryUsesGeneratedDescriptorsInsteadOfReflectionScan()
+    {
+        var discovery = File.ReadAllText(RepositoryPaths.GetFile(
+            "src",
+            "Cephalon.Engine",
+            "Composition",
+            "ModuleDiscovery.cs"));
+
+        Assert.Contains("ModuleDiscoveryRegistry.GetDescriptors", discovery, StringComparison.Ordinal);
+        Assert.DoesNotContain("Assembly.DefinedTypes", discovery, StringComparison.Ordinal);
+        Assert.DoesNotContain("Activator.CreateInstance", discovery, StringComparison.Ordinal);
+        Assert.DoesNotContain("ReflectionTypeLoadException", discovery, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -6654,6 +6671,14 @@ public sealed class PackageSurfaceTests
         var asm = typeof(Cephalon.Behaviors.SourceGen.BehaviorSourceGenerator).Assembly;
         AssertExportedTypes(asm,
             typeof(Cephalon.Behaviors.SourceGen.BehaviorSourceGenerator));
+    }
+
+    [Fact]
+    public void EngineSourceGenAssemblyExposesOnlyTheDocumentedContractSurface()
+    {
+        var asm = typeof(Cephalon.Engine.SourceGen.ModuleSourceGenerator).Assembly;
+        AssertExportedTypes(asm,
+            typeof(Cephalon.Engine.SourceGen.ModuleSourceGenerator));
     }
 
     private static void AssertExportedTypes(Assembly assembly, params Type[] expectedTypes)

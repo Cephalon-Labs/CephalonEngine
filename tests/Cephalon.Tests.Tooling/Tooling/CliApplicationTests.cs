@@ -660,7 +660,7 @@ public sealed class CliApplicationTests
             Assert.Equal(0, exitCode);
             Assert.Contains($"[ok] Generated app root: {appRootPath}", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Generated app solution: ./Acme.Store.slnx", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("[ok] Generated package baseline: Cephalon.AspNetCore 0.1.0-preview, Cephalon.Data 0.1.0-preview", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Generated package baseline: Cephalon.AspNetCore 0.1.0-preview, Cephalon.Data 0.1.0-preview, Cephalon.Engine.SourceGen 0.1.0-preview", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Cephalon package source: ./.cephalon/packages", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Cephalon local package feed:", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains(".cephalon/packages", stdout.ToString(), StringComparison.Ordinal);
@@ -2980,6 +2980,7 @@ public sealed class CliApplicationTests
               <ItemGroup>
                 <PackageVersion Include="Cephalon.AspNetCore" Version="0.1.0-preview" />
                 <PackageVersion Include="Cephalon.Data" Version="0.1.0-preview" />
+                <PackageVersion Include="Cephalon.Engine.SourceGen" Version="0.1.0-preview" />
               </ItemGroup>
             </Project>
             """);
@@ -3022,6 +3023,7 @@ public sealed class CliApplicationTests
 
               <ItemGroup>
                 <PackageReference Include="Cephalon.AspNetCore" Version="0.1.0-preview" />
+                <PackageReference Include="Cephalon.Engine.SourceGen" Version="0.1.0-preview" PrivateAssets="all" />
                 <PackageReference Include="Cephalon.Observability" Version="0.1.0-preview" />
                 <PackageReference Include="Cephalon.Observability.OpenTelemetry" Version="0.1.0-preview" />
                 <PackageReference Include="Cephalon.Observability.Serilog" Version="0.1.0-preview" />

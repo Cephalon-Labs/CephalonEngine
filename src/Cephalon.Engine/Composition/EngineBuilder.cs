@@ -749,11 +749,11 @@ public sealed class EngineBuilder
     }
 
     /// <summary>
-    /// Discovers and adds modules from an assembly.
+    /// Discovers and adds modules from generated descriptors registered by an assembly.
     /// </summary>
     /// <param name="assembly">The assembly to scan.</param>
     /// <param name="filter">
-    /// An optional predicate that can opt specific candidate types in or out before they are instantiated.
+    /// An optional predicate that can opt specific generated module types in or out before they are instantiated.
     /// </param>
     /// <returns>The same builder instance.</returns>
     public EngineBuilder AddModulesFromAssembly(
@@ -766,11 +766,11 @@ public sealed class EngineBuilder
     }
 
     /// <summary>
-    /// Discovers and adds modules from the assembly that contains <typeparamref name="TMarker" />.
+    /// Discovers and adds modules from generated descriptors registered by the assembly that contains <typeparamref name="TMarker" />.
     /// </summary>
     /// <typeparam name="TMarker">A type used only to identify the source assembly.</typeparam>
     /// <param name="filter">
-    /// An optional predicate that can opt specific candidate types in or out before they are instantiated.
+    /// An optional predicate that can opt specific generated module types in or out before they are instantiated.
     /// </param>
     /// <returns>The same builder instance.</returns>
     public EngineBuilder AddModulesFromAssemblyContaining<TMarker>(Func<Type, bool>? filter = null)
@@ -779,11 +779,11 @@ public sealed class EngineBuilder
     }
 
     /// <summary>
-    /// Discovers and adds modules from a sequence of assemblies.
+    /// Discovers and adds modules from generated descriptors registered by a sequence of assemblies.
     /// </summary>
-    /// <param name="assemblies">The assemblies to scan for modules.</param>
+    /// <param name="assemblies">The assemblies that should have generated module descriptors.</param>
     /// <param name="filter">
-    /// An optional predicate that can opt specific candidate types in or out before they are instantiated.
+    /// An optional predicate that can opt specific generated module types in or out before they are instantiated.
     /// </param>
     /// <returns>The same builder instance.</returns>
     public EngineBuilder AddModulesFromAssemblies(

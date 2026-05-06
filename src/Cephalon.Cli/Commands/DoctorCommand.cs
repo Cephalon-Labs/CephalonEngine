@@ -90,6 +90,7 @@ internal static class DoctorCommand
     private static readonly string[] RequiredGeneratedHostProjectPackageReferences =
     [
         "Cephalon.AspNetCore",
+        "Cephalon.Engine.SourceGen",
         "Cephalon.Observability",
         "Cephalon.Observability.OpenTelemetry",
         "Cephalon.Observability.Serilog",

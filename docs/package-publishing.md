@@ -96,6 +96,13 @@ dotnet run --project ./src/Cephalon.Cli -- package stage `
 
 That command stages the selected `lib/<tfm>` surface plus `cephalon.package.json` into a directory the engine can load through `Engine:Discovery:PackageDirectories` or `Engine:Discovery:Packages:ManifestPath`.
 
+Module packages that expect `Engine:Discovery:Packages`, `Engine:Discovery:PackageDirectories`, or
+`Engine:Discovery:Assemblies` to find their modules must build with `Cephalon.Engine.SourceGen`
+as an analyzer. The staged runtime assembly carries generated `ModuleDiscoveryDescriptor`
+metadata in a module initializer, so the engine can load modules without scanning assembly types
+or using reflective constructors. Packages that need custom factories should register modules
+explicitly through module/package registration code instead of relying on assembly discovery.
+
 For the full author -> publish -> trust -> load -> inspect walkthrough, see [External package lifecycle](external-package-lifecycle.md).
 
 For the scenario-driven external replay of that same staged-package path, use `pwsh ./scripts/validate-out-of-tree-package-adoption.ps1`. It scaffolds a fresh app outside the repository, stages `Cephalon.ReferenceModule.Operations` through `cephalon package stage`, patches `Engine:Discovery:PackageDirectories` plus `Engine:PackagePolicy` and `Engine:Trust`, reruns `cephalon doctor --app-root`, and validates `/engine/packages`, `/engine/package-policy`, `/engine/trust-policy`, `/engine/snapshot`, and `/api/operations/status`.

@@ -24,6 +24,49 @@ Current focus:
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
 - treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md) for release validation, and `cephalon doctor --scorecard <path>` provides a local CLI readback over that generated artifact without becoming source truth
 
+### ENG-476 Retire Engine module discovery reflection
+
+Status: done
+Estimate: 3
+Issue: #1077
+Iteration: Sprint 125
+
+Why:
+
+- `Cephalon.Engine` still carried the broader high-tier deployment-mode blocker after the
+  Behaviors and Behaviors.Http remediation wave: assembly-based module discovery scanned
+  `assembly.DefinedTypes` and constructed discovered `IModule` types reflectively
+- assembly/package/configuration-driven discovery is an adoption feature, so the replacement
+  needed to preserve low-ceremony module loading while moving runtime work onto compile-time
+  metadata
+- retiring this blocker returns `Cephalon.Engine` to clean-baseline absence from the active
+  first-party deployment-mode hazard table without widening global trim / Native AOT /
+  single-file support
+
+Delivered:
+
+- added `ModuleDiscoveryDescriptor` and `ModuleDiscoveryRegistry` in `Cephalon.Abstractions`
+  as the public descriptor/registry surface generated code can register
+- added `Cephalon.Engine.SourceGen` as a compiler-only `netstandard2.0` source-generator
+  package that emits module-initializer registrations for eligible `IModule` implementations
+- changed `ModuleDiscovery` to consume generated descriptors after running the target
+  assembly module initializer, with fail-fast guidance to reference `Cephalon.Engine.SourceGen`
+  or register modules explicitly through `AddModule(...)`
+- wired the new source generator into repo projects, scaffold plans, templates, reference
+  modules, adoption-validation package sets, and readiness exceptions
+- removed the `Cephalon.Engine` high-tier manifest row and added `Cephalon.Engine.SourceGen`
+  as `excluded-by-design`, leaving 6 package entries, 2 packages with known hazards, and
+  8 known hazard entries while global trim / Native AOT / single-file rows remain
+  `not-claimed`
+
+Validation:
+
+- focused Engine.SourceGen and Engine builds passed with `/p:UseSharedCompilation=false`
+- focused composition discovery/source-generator coverage passed at `5/5`
+- focused tooling package-surface and scaffold/package-version coverage passed at `4/4`
+- deployment-mode manifest, readiness script, component docs, planning docs, and reference-doc
+  publishing are refreshed in this slice
+
 ### ENG-475 Retire Behaviors.Http manual route-contract fallback
 
 Status: done
@@ -120,7 +163,9 @@ Follow-up later:
 - completed by `ENG-475`: manual/profile REST route contracts now consume generated or explicitly
   registered `BehaviorContractDescriptor` metadata instead of inspecting runtime behavior/output
   types
-- continue `Cephalon.Engine` high-tier remediation for source-generator-backed module discovery
+- completed by `ENG-476`: `Cephalon.Engine` module discovery now consumes generated
+  `ModuleDiscoveryDescriptor` metadata instead of scanning assembly types or using
+  `Activator.CreateInstance(...)`
 
 ### ENG-473 Retire Behaviors.Http profile attribute fallback
 
@@ -5756,7 +5801,7 @@ Estimate: 8
 
 Delivered:
 
-- assembly-based module discovery
+- generated-descriptor-backed assembly-based module discovery (upgraded by `ENG-476`)
 - opt-in discovery filters
 - duplicate module-id and module-type validation
 - deterministic ordering after discovery

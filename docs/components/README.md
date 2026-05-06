@@ -35,6 +35,7 @@ The convention is being rolled out incrementally; component pages without the ba
 
 - [Cephalon.Abstractions](abstractions.md)
 - [Cephalon.Engine](engine.md)
+- [Cephalon.Engine.SourceGen](engine-sourcegen.md)
 - [Cephalon.Resilience](resilience.md)
 - [Cephalon.AspNetCore](aspnetcore.md)
 - [Cephalon.AspNetCore.GraphQL](aspnetcore-graphql.md)

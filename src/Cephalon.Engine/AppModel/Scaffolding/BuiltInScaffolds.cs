@@ -36,7 +36,7 @@ public static class BuiltInScaffolds
                 scope: ScaffoldScopes.Solution,
                 role: ProjectRoles.Foundation,
                 template: "cephalon-foundation",
-                packages: ["Cephalon.Abstractions"]),
+                packages: ["Cephalon.Abstractions", "Cephalon.Engine.SourceGen"]),
             new ScaffoldProject(
                 id: "module",
                 nameTemplate: "{AppName}.Modules.{ModuleName}",
@@ -45,7 +45,7 @@ public static class BuiltInScaffolds
                 role: ProjectRoles.Module,
                 template: "cephalon-module",
                 dependsOn: ["foundation"],
-                packages: ["Cephalon.Abstractions"]),
+                packages: ["Cephalon.Abstractions", "Cephalon.Engine.SourceGen"]),
             new ScaffoldProject(
                 id: "tests",
                 nameTemplate: "{AppName}.Tests",
@@ -107,7 +107,7 @@ public static class BuiltInScaffolds
                 scope: ScaffoldScopes.Solution,
                 role: ProjectRoles.Foundation,
                 template: "cephalon-foundation",
-                packages: ["Cephalon.Abstractions"]),
+                packages: ["Cephalon.Abstractions", "Cephalon.Engine.SourceGen"]),
             new ScaffoldProject(
                 id: "module",
                 nameTemplate: "{AppName}.Modules.{ModuleName}",

@@ -531,6 +531,8 @@ Parameters:
 IReadOnlyList<EventTypeDescriptor> All { get; }
 ```
 
+Gets all event-type descriptors known to this registry.
+
 <a id="member-p-cephalon-eventsourcing-services-eventtyperegistry-empty"></a>
 
 ##### `Empty`
@@ -551,6 +553,14 @@ Gets an empty event-type registry for direct provider construction scenarios.
 IDomainEvent Deserialize(string eventTypeName, string payload)
 ```
 
+Deserializes a persisted event payload using the descriptor registered for the event-type name.
+
+Returns: The deserialized domain-event instance.
+
+Parameters:
+- `eventTypeName`: The persisted event-type name.
+- `payload`: The serialized event payload.
+
 <a id="member-m-cephalon-eventsourcing-services-eventtyperegistry-getname-cephalon-abstractions-eventsourcing-idomainevent"></a>
 
 ##### `GetName`
@@ -558,6 +568,13 @@ IDomainEvent Deserialize(string eventTypeName, string payload)
 ```csharp
 string GetName(IDomainEvent evt)
 ```
+
+Gets the persisted event-type name for a domain-event instance.
+
+Returns: The persisted event-type name.
+
+Parameters:
+- `evt`: The domain-event instance to resolve.
 
 <a id="member-m-cephalon-eventsourcing-services-eventtyperegistry-serialize-cephalon-abstractions-eventsourcing-idomainevent"></a>
 
@@ -567,6 +584,13 @@ string GetName(IDomainEvent evt)
 string Serialize(IDomainEvent evt)
 ```
 
+Serializes a domain-event instance using its registered descriptor.
+
+Returns: The serialized event payload.
+
+Parameters:
+- `evt`: The domain-event instance to serialize.
+
 <a id="member-m-cephalon-eventsourcing-services-eventtyperegistry-tryfindbyname-system-string-cephalon-eventsourcing-services-eventtypedescriptor"></a>
 
 ##### `TryFindByName`
@@ -575,6 +599,14 @@ string Serialize(IDomainEvent evt)
 bool TryFindByName(string eventTypeName, out EventTypeDescriptor descriptor)
 ```
 
+Attempts to find a descriptor by persisted event-type name or alias.
+
+Returns: `true` when the event-type name is registered; otherwise, `false`.
+
+Parameters:
+- `eventTypeName`: The persisted event-type name or alias.
+- `descriptor`: The matching descriptor when the name is registered.
+
 <a id="member-m-cephalon-eventsourcing-services-eventtyperegistry-tryfindbytype-system-type-cephalon-eventsourcing-services-eventtypedescriptor"></a>
 
 ##### `TryFindByType`
@@ -582,6 +614,14 @@ bool TryFindByName(string eventTypeName, out EventTypeDescriptor descriptor)
 ```csharp
 bool TryFindByType(Type eventType, out EventTypeDescriptor descriptor)
 ```
+
+Attempts to find a descriptor by concrete domain-event type.
+
+Returns: `true` when the event type is registered; otherwise, `false`.
+
+Parameters:
+- `eventType`: The concrete domain-event type.
+- `descriptor`: The matching descriptor when the type is registered.
 
 <a id="type-cephalon-eventsourcing-services-ieventtypecontributor"></a>
 

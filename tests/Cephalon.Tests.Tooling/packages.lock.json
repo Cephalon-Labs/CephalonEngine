@@ -1910,6 +1910,9 @@
           "Microsoft.Extensions.Logging.Abstractions": "[10.0.5, )"
         }
       },
+      "cephalon.engine.sourcegen": {
+        "type": "Project"
+      },
       "cephalon.eventing": {
         "type": "Project",
         "dependencies": {

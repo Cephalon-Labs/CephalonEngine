@@ -1,0 +1,163 @@
+using System.Collections.Immutable;
+using System.Text;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
+
+namespace Cephalon.Engine.SourceGen;
+
+/// <summary>
+/// Emits compile-time module discovery descriptors for concrete <c>IModule</c> implementations.
+/// </summary>
+[Generator]
+public sealed class ModuleSourceGenerator : IIncrementalGenerator
+{
+    private const string ModuleInterfaceMetadataName = "Cephalon.Abstractions.Modules.IModule";
+    private static readonly SymbolDisplayFormat FullyQualifiedTypeFormat = SymbolDisplayFormat.FullyQualifiedFormat;
+
+    /// <inheritdoc />
+    public void Initialize(IncrementalGeneratorInitializationContext context)
+    {
+        var candidateModules = context.SyntaxProvider
+            .CreateSyntaxProvider(
+                predicate: static (node, _) => node is ClassDeclarationSyntax,
+                transform: static (context, cancellationToken) => GetModuleInfo(context, cancellationToken))
+            .Where(static info => info is not null);
+        var generatedTypeName = context.CompilationProvider
+            .Select(static (compilation, _) => CreateGeneratedTypeName(compilation.AssemblyName));
+
+        context.RegisterSourceOutput(candidateModules.Collect().Combine(generatedTypeName), static (context, source) =>
+        {
+            var (modules, typeName) = source;
+            var validModules = NormalizeModules(modules);
+            if (!validModules.IsEmpty)
+            {
+                context.AddSource(
+                    $"{typeName}.g.cs",
+                    SourceText.From(BuildModuleDiscoverySource(validModules, typeName), Encoding.UTF8));
+            }
+        });
+    }
+
+    private static ModuleInfo? GetModuleInfo(GeneratorSyntaxContext context, CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (context.SemanticModel.GetDeclaredSymbol(context.Node, cancellationToken) is not INamedTypeSymbol symbol ||
+            symbol.TypeKind != TypeKind.Class ||
+            symbol.IsAbstract ||
+            symbol.IsStatic ||
+            symbol.IsGenericType)
+        {
+            return null;
+        }
+
+        var moduleInterface = context.SemanticModel.Compilation.GetTypeByMetadataName(ModuleInterfaceMetadataName);
+        if (moduleInterface is null ||
+            !symbol.AllInterfaces.Any(candidate => SymbolEqualityComparer.Default.Equals(candidate, moduleInterface)) ||
+            !IsVisibleFromGeneratedCode(symbol) ||
+            !HasAccessibleParameterlessConstructor(symbol))
+        {
+            return null;
+        }
+
+        return new ModuleInfo(symbol.ToDisplayString(FullyQualifiedTypeFormat));
+    }
+
+    private static bool IsVisibleFromGeneratedCode(INamedTypeSymbol symbol)
+    {
+        for (var current = symbol; current is not null; current = current.ContainingType)
+        {
+            if (current.DeclaredAccessibility is not (Accessibility.Public or Accessibility.Internal or Accessibility.ProtectedOrInternal))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool HasAccessibleParameterlessConstructor(INamedTypeSymbol symbol)
+    {
+        return symbol.InstanceConstructors.Any(static constructor =>
+            constructor.Parameters.Length == 0 &&
+            constructor.DeclaredAccessibility is Accessibility.Public or Accessibility.Internal or Accessibility.ProtectedOrInternal);
+    }
+
+    private static ImmutableArray<ModuleInfo> NormalizeModules(ImmutableArray<ModuleInfo?> modules)
+    {
+        return modules
+            .Where(static module => module is not null)
+            .Select(static module => module!)
+            .GroupBy(static module => module.FullyQualifiedName)
+            .Select(static group => group.First())
+            .OrderBy(static module => module.FullyQualifiedName, StringComparer.Ordinal)
+            .ToImmutableArray();
+    }
+
+    private static string CreateGeneratedTypeName(string? assemblyName)
+    {
+        var builder = new StringBuilder("CephalonGeneratedModuleDiscovery");
+        var normalizedAssemblyName = assemblyName;
+        if (!string.IsNullOrWhiteSpace(normalizedAssemblyName))
+        {
+            builder.Append('_');
+            foreach (var character in normalizedAssemblyName!)
+            {
+                builder.Append(IsAsciiIdentifierPart(character) ? character : '_');
+            }
+        }
+
+        return builder.ToString();
+    }
+
+    private static bool IsAsciiIdentifierPart(char character) =>
+        character is >= 'A' and <= 'Z' or >= 'a' and <= 'z' or >= '0' and <= '9' or '_';
+
+    private static string BuildModuleDiscoverySource(ImmutableArray<ModuleInfo> modules, string generatedTypeName)
+    {
+        var builder = new StringBuilder();
+        builder.AppendLine("#nullable enable");
+        builder.AppendLine("// Generated by Cephalon.Engine.SourceGen - do not edit.");
+        builder.AppendLine("namespace Cephalon.Engine.SourceGen.Generated;");
+        builder.AppendLine();
+        builder.AppendLine("[global::System.CodeDom.Compiler.GeneratedCodeAttribute(\"Cephalon.Engine.SourceGen\", \"0.1.0-preview\")]");
+        builder.Append("internal static class ");
+        builder.AppendLine(generatedTypeName);
+        builder.AppendLine("{");
+        builder.AppendLine("    [global::System.Runtime.CompilerServices.ModuleInitializerAttribute]");
+        builder.AppendLine("    internal static void RegisterModules()");
+        builder.AppendLine("    {");
+        builder.AppendLine("        global::Cephalon.Abstractions.Modules.ModuleDiscoveryRegistry.Register(");
+        builder.Append("            typeof(");
+        builder.Append(generatedTypeName);
+        builder.AppendLine(").Assembly,");
+        builder.AppendLine("            new global::Cephalon.Abstractions.Modules.ModuleDiscoveryDescriptor[]");
+        builder.AppendLine("            {");
+
+        foreach (var module in modules)
+        {
+            builder.Append("                new global::Cephalon.Abstractions.Modules.ModuleDiscoveryDescriptor(typeof(");
+            builder.Append(module.FullyQualifiedName);
+            builder.Append("), static () => new ");
+            builder.Append(module.FullyQualifiedName);
+            builder.AppendLine("()),");
+        }
+
+        builder.AppendLine("            });");
+        builder.AppendLine("    }");
+        builder.AppendLine("}");
+
+        return builder.ToString();
+    }
+
+    private sealed class ModuleInfo
+    {
+        public ModuleInfo(string fullyQualifiedName)
+        {
+            FullyQualifiedName = fullyQualifiedName;
+        }
+
+        public string FullyQualifiedName { get; }
+    }
+}

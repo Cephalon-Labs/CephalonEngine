@@ -8,7 +8,7 @@ See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), 
 
 ## What it owns
 
-- module contracts such as `IModule`, `IModuleLifecycle`, `ModuleBase`, `ModuleDescriptor`, and `ModuleContext`
+- module contracts such as `IModule`, `IModuleLifecycle`, `ModuleBase`, `ModuleDescriptor`, `ModuleContext`, `ModuleDiscoveryDescriptor`, and `ModuleDiscoveryRegistry`
 - behavior contracts such as `IAppBehavior<TIn, TOut>`, `IBehaviorContext`, `IBehaviorTopologyBuilder`, `BehaviorTopologyDescriptor`, `BehaviorFeatureDisabledException`, `IBehaviorOwnerModule`, `IBehaviorModuleBuilder`, and `OwnedBehaviorRegistration`
 - agentics read and operator-action contracts such as `AgentToolExecutionOutcomes`, `AgentToolExecutionRequest`, `AgentToolExecutionResult`, `AgentToolRunState`, `IAgentToolDispatcher`, and `IAgentToolRunCatalog`
 - retrieval read and operator-action contracts such as `KnowledgeIndexState`, `KnowledgeIndexFreshnessStates`, `KnowledgeIndexingOutcomes`, `IKnowledgeIndexCatalog`, `IKnowledgeIndexer`, `KnowledgeIndexingRequest`, `KnowledgeIndexingResult`, `IKnowledgeQueryEngine`, `KnowledgeQueryRequest`, `KnowledgeQueryResult`, and `KnowledgeQueryMatch`

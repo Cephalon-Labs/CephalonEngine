@@ -5,3 +5,12 @@ Cephalon.Abstractions.Behaviors.IBehaviorModuleBuilder.Add<TBehavior, TInput, TO
 Cephalon.Abstractions.Behaviors.IBehaviorModuleBuilder.Add<TBehavior, TInput, TOutput>(System.Action<Cephalon.Abstractions.Behaviors.IBehaviorTopologyBuilder!>! configureTopology) -> Cephalon.Abstractions.Behaviors.IBehaviorModuleBuilder!
 Cephalon.Abstractions.Behaviors.OwnedBehaviorRegistration.ExecutionDelegate.get -> System.Func<object!, object!, Cephalon.Abstractions.Behaviors.IBehaviorContext!, System.Threading.CancellationToken, System.Threading.Tasks.Task<object?>!>?
 Cephalon.Abstractions.Behaviors.OwnedBehaviorRegistration.OwnedBehaviorRegistration(string! sourceModuleId, string! behaviorId, System.Type! behaviorType, System.Action<Cephalon.Abstractions.Behaviors.IBehaviorTopologyBuilder!>? configureTopology, System.Func<object!, object!, Cephalon.Abstractions.Behaviors.IBehaviorContext!, System.Threading.CancellationToken, System.Threading.Tasks.Task<object?>!>? executionDelegate) -> void
+Cephalon.Abstractions.Modules.ModuleDiscoveryDescriptor
+Cephalon.Abstractions.Modules.ModuleDiscoveryDescriptor.Assembly.get -> System.Reflection.Assembly!
+Cephalon.Abstractions.Modules.ModuleDiscoveryDescriptor.CreateModule() -> Cephalon.Abstractions.Modules.IModule!
+Cephalon.Abstractions.Modules.ModuleDiscoveryDescriptor.ModuleDiscoveryDescriptor(System.Type! moduleType, System.Func<Cephalon.Abstractions.Modules.IModule!>! moduleFactory) -> void
+Cephalon.Abstractions.Modules.ModuleDiscoveryDescriptor.ModuleType.get -> System.Type!
+Cephalon.Abstractions.Modules.ModuleDiscoveryRegistry
+Cephalon.Abstractions.Modules.ModuleDiscoveryRegistry.GetDescriptors(System.Reflection.Assembly! assembly) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Modules.ModuleDiscoveryDescriptor!>!
+Cephalon.Abstractions.Modules.ModuleDiscoveryRegistry.Register(System.Reflection.Assembly! assembly, System.Collections.Generic.IEnumerable<Cephalon.Abstractions.Modules.ModuleDiscoveryDescriptor!>! descriptors) -> void
+Cephalon.Abstractions.Modules.ModuleDiscoveryRegistry.TryGetDescriptors(System.Reflection.Assembly! assembly, out System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Modules.ModuleDiscoveryDescriptor!>! descriptors) -> bool

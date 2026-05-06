@@ -29,6 +29,12 @@ For behavior-owning modules, add `Cephalon.Behaviors` or `Cephalon.Behaviors.Htt
 `BehaviorModuleBase` or `RestBehaviorModuleBase` instead of implementing
 `IBehaviorOwnerModule`/`IRestModule` directly in normal authoring code.
 
+For module packages that should be discoverable by assembly, package, or configuration-driven
+discovery, keep the generated starter's `Cephalon.Engine.SourceGen` analyzer reference. It emits
+module descriptors during build so the engine can discover modules without scanning assembly
+types at runtime. Modules that require custom construction should be registered explicitly through
+`AddModule(...)` or package registration code.
+
 For concrete reference implementations, use:
 
 - `samples/Cephalon.ReferenceModule.Operations`
@@ -57,26 +63,27 @@ That keeps the authoring path close to the same module-first ideas used by Cepha
 3. Register explicit capabilities in `RegisterCapabilities(...)`.
 4. Implement lifecycle hooks only when the package owns startup/runtime behavior.
 5. Use `ILocalizedResourceContributor` for package-owned text instead of hardcoding strings in hosts.
-6. Use `ITechnologyContributor` when the package introduces a future-tech profile, workload convention, or package hint that the host should be able to select through `Engine:Technologies`.
-7. Use `ITechnologyServiceContributor` or `ITechnologyCapabilityContributor` when package services or capabilities should only activate for specific technology profiles.
-8. If the package extends a shipped technology pack, register the pack-specific contributor service in `ConfigureServices(...)` such as `IAgentToolContributor`, `IKnowledgeCollectionContributor`, `IKnowledgeDocumentProvider`, `IEventChannelContributor`, or `IEdgeNodeContributor`; use abstraction-level catalogs and command seams such as `IAgentToolRunCatalog`, `Cephalon.Abstractions.Retrieval.IKnowledgeIndexCatalog`, and `Cephalon.Abstractions.Retrieval.IKnowledgeIndexer` when modules need runtime posture or bounded operator actions without depending on implementation packages.
-9. Use `ITechnologyRuntimeContributor` when the package or pack needs to expose an operator-facing runtime snapshot through `/engine/technology-surfaces`.
-10. Use `ICellBoundaryContributor`, `ICellRouteContributor`, and `ICellHealthIsolationContributor` when the package owns explicit cell topology, governed cell-to-cell paths, or cell health-isolation posture that operators should be able to inspect through `/engine/cells`, `/engine/cell-routes`, `/engine/cell-health-isolations`, `/engine/cell-traffic-automations`, `/engine/technology-surfaces/cell-based-architecture`, and `/engine/snapshot`; keep automation overlays in `Engine:Cells:TrafficAutomation` so route and module ownership stay authoritative.
-11. Use `IExecutionGraphContributor` when the package needs to publish operator-facing workflow or execution-graph descriptors through `/engine/execution-graphs` and `/engine/snapshot`.
-12. Use `IHostedExecutionContributor` when the package needs to publish operator-facing hosted or background execution descriptors through `/engine/hosted-executions`, `/engine/runtime-story`, and `/engine/snapshot`.
-13. Use `IDataProductContributor` when the package needs to publish operator-facing data product descriptors through `/engine/data-products` and `/engine/snapshot`.
-14. Use `ICdcCaptureContributor` when the package needs to publish operator-facing CDC capture descriptors through `/engine/cdc-captures` and `/engine/snapshot`.
-15. Use `IProjectionContributor` when the package needs to publish operator-facing projection descriptors through `/engine/projections` and `/engine/snapshot`.
-16. Use `IInboxContributor` when the package needs to publish operator-facing inbox descriptors through `/engine/inboxes` and `/engine/snapshot`.
-17. Use `IOutboxContributor` when the package needs to publish operator-facing outbox descriptors through `/engine/outboxes` and `/engine/snapshot`.
-18. Use `IAuthorizationPolicyContributor` when the package needs to publish operator-facing authorization-policy descriptors through `/engine/authorization-policies` and `/engine/snapshot`.
-19. Add transport contribution interfaces only when the package really owns an external surface.
-20. When a module explicitly owns Cephalon behaviors, prefer `BehaviorModuleBase` so ownership stays
+6. Keep `Cephalon.Engine.SourceGen` referenced as an analyzer when the module should be discovered from an assembly or package manifest; generated discovery supports non-abstract, non-generic module classes with an accessible parameterless constructor.
+7. Use `ITechnologyContributor` when the package introduces a future-tech profile, workload convention, or package hint that the host should be able to select through `Engine:Technologies`.
+8. Use `ITechnologyServiceContributor` or `ITechnologyCapabilityContributor` when package services or capabilities should only activate for specific technology profiles.
+9. If the package extends a shipped technology pack, register the pack-specific contributor service in `ConfigureServices(...)` such as `IAgentToolContributor`, `IKnowledgeCollectionContributor`, `IKnowledgeDocumentProvider`, `IEventChannelContributor`, or `IEdgeNodeContributor`; use abstraction-level catalogs and command seams such as `IAgentToolRunCatalog`, `Cephalon.Abstractions.Retrieval.IKnowledgeIndexCatalog`, and `Cephalon.Abstractions.Retrieval.IKnowledgeIndexer` when modules need runtime posture or bounded operator actions without depending on implementation packages.
+10. Use `ITechnologyRuntimeContributor` when the package or pack needs to expose an operator-facing runtime snapshot through `/engine/technology-surfaces`.
+11. Use `ICellBoundaryContributor`, `ICellRouteContributor`, and `ICellHealthIsolationContributor` when the package owns explicit cell topology, governed cell-to-cell paths, or cell health-isolation posture that operators should be able to inspect through `/engine/cells`, `/engine/cell-routes`, `/engine/cell-health-isolations`, `/engine/cell-traffic-automations`, `/engine/technology-surfaces/cell-based-architecture`, and `/engine/snapshot`; keep automation overlays in `Engine:Cells:TrafficAutomation` so route and module ownership stay authoritative.
+12. Use `IExecutionGraphContributor` when the package needs to publish operator-facing workflow or execution-graph descriptors through `/engine/execution-graphs` and `/engine/snapshot`.
+13. Use `IHostedExecutionContributor` when the package needs to publish operator-facing hosted or background execution descriptors through `/engine/hosted-executions`, `/engine/runtime-story`, and `/engine/snapshot`.
+14. Use `IDataProductContributor` when the package needs to publish operator-facing data product descriptors through `/engine/data-products` and `/engine/snapshot`.
+15. Use `ICdcCaptureContributor` when the package needs to publish operator-facing CDC capture descriptors through `/engine/cdc-captures` and `/engine/snapshot`.
+16. Use `IProjectionContributor` when the package needs to publish operator-facing projection descriptors through `/engine/projections` and `/engine/snapshot`.
+17. Use `IInboxContributor` when the package needs to publish operator-facing inbox descriptors through `/engine/inboxes` and `/engine/snapshot`.
+18. Use `IOutboxContributor` when the package needs to publish operator-facing outbox descriptors through `/engine/outboxes` and `/engine/snapshot`.
+19. Use `IAuthorizationPolicyContributor` when the package needs to publish operator-facing authorization-policy descriptors through `/engine/authorization-policies` and `/engine/snapshot`.
+20. Add transport contribution interfaces only when the package really owns an external surface.
+21. When a module explicitly owns Cephalon behaviors, prefer `BehaviorModuleBase` so ownership stays
     host-agnostic and deterministic.
-21. When a behavior-owning module exposes REST endpoints, prefer `RestBehaviorModuleBase` so the same
+22. When a behavior-owning module exposes REST endpoints, prefer `RestBehaviorModuleBase` so the same
     module can own internal-only behaviors and public REST-backed behaviors without splitting the
     bounded context across multiple module classes.
-22. When a module exposes REST endpoints backed by behaviors, author that REST surface in
+23. When a module exposes REST endpoints backed by behaviors, author that REST surface in
     `ConfigureRestBehaviors(IRestBehaviorModuleBuilder behaviors)` and keep REST out of behavior
     topology.
 

@@ -369,6 +369,7 @@ try {
     $shippingExceptions = @{
         "src/Cephalon.Analyzers/Cephalon.Analyzers.csproj" = "netstandard2.0"
         "src/Cephalon.Behaviors.SourceGen/Cephalon.Behaviors.SourceGen.csproj" = "netstandard2.0"
+        "src/Cephalon.Engine.SourceGen/Cephalon.Engine.SourceGen.csproj" = "netstandard2.0"
     }
 
     $shippedSourceProjects = @($projectMetadata | Where-Object { $_.RelativePath.StartsWith("src/", [System.StringComparison]::OrdinalIgnoreCase) })
@@ -510,7 +511,7 @@ try {
     $checks = [System.Collections.Generic.List[object]]::new()
 
     if ($unexpectedShippedSourceFrameworks.Count -eq 0) {
-        $checks.Add((New-CheckResult -Name "shipping-baseline" -Status "pass" -Detail "All shipped src/Cephalon.* projects keep the expected net10.0 baseline, with Cephalon.Analyzers and Cephalon.Behaviors.SourceGen remaining on netstandard2.0.")) | Out-Null
+        $checks.Add((New-CheckResult -Name "shipping-baseline" -Status "pass" -Detail "All shipped src/Cephalon.* projects keep the expected net10.0 baseline, with Cephalon.Analyzers plus Cephalon.Behaviors.SourceGen and Cephalon.Engine.SourceGen remaining on netstandard2.0.")) | Out-Null
     }
     else {
         $details = @($unexpectedShippedSourceFrameworks | ForEach-Object { "$($_.Project) expected '$($_.Expected)' but found '$(@($_.Actual) -join ', ')'" }) -join "; "
@@ -651,6 +652,7 @@ try {
             StableTargetFramework = "net10.0"
             AnalyzerMetaPackageException = "src/Cephalon.Analyzers/Cephalon.Analyzers.csproj -> netstandard2.0"
             SourceGeneratorException = "src/Cephalon.Behaviors.SourceGen/Cephalon.Behaviors.SourceGen.csproj -> netstandard2.0"
+            EngineSourceGeneratorException = "src/Cephalon.Engine.SourceGen/Cephalon.Engine.SourceGen.csproj -> netstandard2.0"
             TemplatePackException = "templates/Cephalon.TemplatePack/Cephalon.TemplatePack.csproj -> netstandard2.0"
             UnexpectedShippedSourceFrameworks = $unexpectedShippedSourceFrameworks
             UnexpectedStarterTemplateFrameworks = $unexpectedStarterTemplateFrameworks
@@ -766,7 +768,7 @@ try {
         "## Shipping baseline"
         ""
         '- Stable shipping floor remains `net10.0`.'
-        '- Allowed exceptions remain `Cephalon.Analyzers`, `Cephalon.Behaviors.SourceGen`, and `Cephalon.TemplatePack`, all on `netstandard2.0`.'
+        '- Allowed exceptions remain `Cephalon.Analyzers`, `Cephalon.Behaviors.SourceGen`, `Cephalon.Engine.SourceGen`, and `Cephalon.TemplatePack`, all on `netstandard2.0`.'
         '- Starter template project files remain expected to target `net10.0` until an intentional migration lane changes repo truth.'
         ""
         "## Deployment-mode support contract"
