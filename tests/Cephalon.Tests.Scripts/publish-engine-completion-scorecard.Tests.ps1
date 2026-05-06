@@ -562,6 +562,8 @@ jobs:
         $releaseValidation | Should -Match "Public API compatibility"
         $releaseValidation | Should -Match "summarise-public-api-deltas\.ps1"
         $releaseValidation | Should -Match "public-api-delta-release"
+        $releaseValidation | Should -Match "public-api-delta\.json"
+        $releaseValidation | Should -Match "JsonOutputPath"
         $releaseValidation | Should -Match "FailOnRemovals"
     }
 }

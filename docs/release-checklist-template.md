@@ -32,11 +32,11 @@ The durable rule book lives in [`release-checklist.md`](release-checklist.md). T
 ## 2. Public-API contract review
 
 - [ ] Reviewed every `PublicAPI.Unshipped.txt` entry that will graduate into `PublicAPI.Shipped.txt`
-- [ ] Ran [`scripts/summarise-public-api-deltas.ps1`](../scripts/summarise-public-api-deltas.ps1) (or read the `public-api-delta-*` workflow artefact); markdown report matches release-notes intent
+- [ ] Ran [`scripts/summarise-public-api-deltas.ps1`](../scripts/summarise-public-api-deltas.ps1) (or read the `public-api-delta-*` workflow artefact); markdown and JSON reports match release-notes intent
 - [ ] Removals follow `[Obsolete]` deprecation discipline from [`compatibility.md`](compatibility.md) and are resolved before the default `scripts/validate-release.ps1` run because it passes `-FailOnRemovals`
 - [ ] (At GA only) `<EnablePackageValidation>true</EnablePackageValidation>` + `<PackageValidationBaselineVersion>` are configured per stable package
 
-**Public-API delta summary:** _link to `public-api-delta-*` artefact or paste counts here (packages with changes / total additions / total removals)_
+**Public-API delta summary:** _link to `public-api-delta-*` Markdown + JSON artefacts or paste counts here (packages with changes / total additions / total removals)_
 
 ## 3. Validation pipeline
 
