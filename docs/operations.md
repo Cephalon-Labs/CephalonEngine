@@ -42,6 +42,8 @@ For a repo-native external-adoption replay that publishes a temporary package fe
 pwsh ./scripts/validate-out-of-tree-package-adoption.ps1
 ```
 
+The release-readiness scorecard validates the same replay path through `scripts/adoption-smoke-support.json` and emits it as `AdoptionSmokeEvidence` in the generated scorecard artifact. Keep that manifest aligned whenever this smoke path adds or removes script phases, staged packages, or runtime probes.
+
 See `docs/external-package-lifecycle.md` for the corresponding stage, trust, and inspect guidance.
 
 ## Signed package governance smoke

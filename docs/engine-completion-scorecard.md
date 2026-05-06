@@ -45,15 +45,16 @@ Do not use `M4`, "tests pass", or "docs exist" as a synonym for GA. Maturity, va
 | [`sre-posture.md`](sre-posture.md) + [`benchmarking.md`](benchmarking.md) | Engine SLIs, SLOs, benchmark guardrails, error-budget rules | Checks operational reliability and performance evidence. |
 | [`test-coverage-roadmap.md`](test-coverage-roadmap.md) | Known coverage gaps and direct-test priorities | Checks whether a package family still has known proof gaps. |
 | [`release-checklist.md`](release-checklist.md) | Release-manager proof sequence | Converts the scorecard into per-release execution. |
+| [`../scripts/adoption-smoke-support.json`](../scripts/adoption-smoke-support.json) + [`../scripts/validate-out-of-tree-package-adoption.ps1`](../scripts/validate-out-of-tree-package-adoption.ps1) | Out-of-repo generated-app, local-package, reference-module staging, host-run, and runtime-surface adoption replay | Checks that the developer-adoption gate points at a replayable external smoke path instead of prose-only adoption confidence. |
 
 ## Machine-readable report
 
-[`scripts/publish-engine-completion-scorecard.ps1`](../scripts/publish-engine-completion-scorecard.ps1) exports this page into a release artifact without becoming a new authority. The script parses the status vocabulary, evidence sources, platform gates, quality dimensions, and package-family roll-up from this Markdown document, validates every scorecard status token against the declared vocabulary, validates every repo-local evidence-source reference, and reads per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md).
+[`scripts/publish-engine-completion-scorecard.ps1`](../scripts/publish-engine-completion-scorecard.ps1) exports this page into a release artifact without becoming a new authority. The script parses the status vocabulary, evidence sources, platform gates, quality dimensions, and package-family roll-up from this Markdown document, validates every scorecard status token against the declared vocabulary, validates every repo-local evidence-source reference, reads per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md), and validates the adoption-smoke support manifest before emitting `AdoptionSmokeEvidence`.
 
 - `artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json`
 - `artifacts/engine-completion-scorecard-release/README.md`
 
-The JSON artifact uses schema version `1.1.0`. Release validation publishes it by default through `scripts/validate-release.ps1` unless `-SkipEngineCompletionScorecard` is passed for a deliberately narrower local run.
+The JSON artifact uses schema version `1.2.0`. Release validation publishes it by default through `scripts/validate-release.ps1` unless `-SkipEngineCompletionScorecard` is passed for a deliberately narrower local run.
 
 For a local release-manager readback, `cephalon doctor --scorecard <path-to-engine-completion-scorecard.json>` summarizes that generated artifact's schema/source documents, platform-gate posture, validated evidence-reference count, and per-package GA-readiness count. The CLI consumes the generated JSON read model only; it does not parse this Markdown page, replace source documents, or promote support/GA claims by itself.
 
@@ -138,7 +139,7 @@ The next completion-oriented slices should stay narrow and evidence-driven:
 2. Keep per-package GA readiness rows generated from maturity-audit and conformance-matrix truth; do not hand-maintain a second package table here.
 3. Keep the first clean-baseline package-scoped claim (`Cephalon.Diagnostics` single-file), the emitted publish-probe policy, and the emitted hazard inventory honest across manifest, project properties, harness output, workflow, docs, and package guidance while global deployment-mode rows remain `not-claimed`.
 4. Keep `cephalon doctor --scorecard <path>` aligned with the generated JSON schema so local summaries remain a readback of the scorecard artifact, not a second source of truth.
-5. Publish one out-of-repo generated-app adoption smoke path that consumes local packages, stages a reference module, runs the host, and validates the runtime operator surfaces.
+5. Keep the out-of-repo generated-app adoption smoke evidence manifest aligned with `validate-out-of-tree-package-adoption.ps1` so the generated scorecard artifact keeps naming the local-package, reference-module staging, host-run, and runtime operator-surface probes it validates.
 
 ## Refresh cadence
 

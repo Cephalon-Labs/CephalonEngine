@@ -1,6 +1,7 @@
 param(
     [string]$ScorecardPath = "docs/engine-completion-scorecard.md",
     [string]$ConformanceMatrixPath = "docs/conformance-matrix.md",
+    [string]$AdoptionSmokeManifestPath = "scripts/adoption-smoke-support.json",
     [string]$OutputPath = "artifacts/engine-completion-scorecard-release",
     [string]$RepoRoot
 )
@@ -8,7 +9,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$Script:SchemaVersion = "1.1.0"
+$Script:SchemaVersion = "1.2.0"
 $Script:AllowedStatuses = @(
     "ready-for-preview",
     "partial",
@@ -585,6 +586,209 @@ function Convert-ConformancePackageRows {
     return $rows.ToArray()
 }
 
+function Get-ManifestPropertyValue {
+    param(
+        $Object,
+        [Parameter(Mandatory = $true)]
+        [string]$PropertyName,
+        $DefaultValue = $null
+    )
+
+    if ($null -ne $Object -and $Object.PSObject.Properties.Match($PropertyName).Count -gt 0) {
+        return $Object.$PropertyName
+    }
+
+    return $DefaultValue
+}
+
+function ConvertTo-RequiredBoolean {
+    param(
+        $Value,
+        [Parameter(Mandatory = $true)]
+        [string]$Name
+    )
+
+    if ($Value -is [bool]) {
+        return $Value
+    }
+
+    $parsed = $false
+    if ([bool]::TryParse([string]$Value, [ref]$parsed)) {
+        return $parsed
+    }
+
+    throw "Adoption smoke assertion '$Name' must be a boolean value."
+}
+
+function Resolve-AdoptionSmokeManifestPath {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$DeclaredPath,
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedRepoRoot,
+        [Parameter(Mandatory = $true)]
+        [string]$Context,
+        [string]$PathType = "Any"
+    )
+
+    if ([string]::IsNullOrWhiteSpace($DeclaredPath)) {
+        throw "Adoption smoke manifest contains an empty path in $Context."
+    }
+
+    $resolvedPath = Resolve-FullPath -Path $DeclaredPath -BasePath $ResolvedRepoRoot
+    $exists = if ($PathType -eq "File") {
+        Test-Path -LiteralPath $resolvedPath -PathType Leaf
+    }
+    elseif ($PathType -eq "Directory") {
+        Test-Path -LiteralPath $resolvedPath -PathType Container
+    }
+    else {
+        Test-Path -LiteralPath $resolvedPath
+    }
+
+    if (-not $exists) {
+        throw "Adoption smoke manifest path '$DeclaredPath' in $Context was not found at '$resolvedPath'."
+    }
+
+    return [pscustomobject]([ordered]@{
+        Reference  = Get-RepoRelativePath -Path $resolvedPath -RepoRoot $ResolvedRepoRoot
+        DeclaredAs = $DeclaredPath
+        Kind       = Get-SourceReferenceKind -Reference $DeclaredPath
+    })
+}
+
+function Convert-AdoptionSmokeEvidence {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedManifestPath,
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedRepoRoot
+    )
+
+    if (-not (Test-Path -LiteralPath $ResolvedManifestPath -PathType Leaf)) {
+        throw "Adoption smoke support manifest '$ResolvedManifestPath' was not found."
+    }
+
+    $manifest = Get-Content -LiteralPath $ResolvedManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
+    $schemaVersion = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName '$schemaVersion' -DefaultValue "")
+    if ([string]::IsNullOrWhiteSpace($schemaVersion)) {
+        throw "Adoption smoke support manifest is missing '`$schemaVersion'."
+    }
+
+    $scenarioId = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "scenarioId" -DefaultValue "")
+    if ([string]::IsNullOrWhiteSpace($scenarioId)) {
+        throw "Adoption smoke support manifest is missing scenarioId."
+    }
+
+    $validationScriptPath = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "validationScript" -DefaultValue "")
+    $validationScriptReference = Resolve-AdoptionSmokeManifestPath -DeclaredPath $validationScriptPath -ResolvedRepoRoot $ResolvedRepoRoot -Context "validationScript" -PathType "File"
+    $validationScriptFullPath = Resolve-FullPath -Path $validationScriptPath -BasePath $ResolvedRepoRoot
+    $validationScript = Get-Content -LiteralPath $validationScriptFullPath -Raw -Encoding UTF8
+
+    $referenceModuleProjectPath = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "referenceModuleProject" -DefaultValue "")
+    $referenceModuleProjectReference = Resolve-AdoptionSmokeManifestPath -DeclaredPath $referenceModuleProjectPath -ResolvedRepoRoot $ResolvedRepoRoot -Context "referenceModuleProject" -PathType "File"
+
+    $supportingScriptReferences = @(
+        Get-ManifestPropertyValue -Object $manifest -PropertyName "supportingScripts" -DefaultValue @() |
+            ForEach-Object {
+                Resolve-AdoptionSmokeManifestPath -DeclaredPath ([string]$_) -ResolvedRepoRoot $ResolvedRepoRoot -Context "supportingScripts" -PathType "File"
+            }
+    )
+
+    $sourceDocumentReferences = @(
+        Get-ManifestPropertyValue -Object $manifest -PropertyName "sourceDocs" -DefaultValue @() |
+            ForEach-Object {
+                Resolve-AdoptionSmokeManifestPath -DeclaredPath ([string]$_) -ResolvedRepoRoot $ResolvedRepoRoot -Context "sourceDocs" -PathType "File"
+            }
+    )
+
+    $assertions = Get-ManifestPropertyValue -Object $manifest -PropertyName "assertions"
+    if ($null -eq $assertions) {
+        throw "Adoption smoke support manifest is missing assertions."
+    }
+
+    $requiredAssertionNames = @(
+        "runsOutsideRepository",
+        "publishesLocalPackages",
+        "installsCliFromTemporaryFeed",
+        "scaffoldsGeneratedApp",
+        "stagesReferenceModulePackage",
+        "patchesPackagePolicyAndTrust",
+        "runsGeneratedHost"
+    )
+
+    $assertionRows = @(
+        foreach ($assertionName in $requiredAssertionNames) {
+            $value = ConvertTo-RequiredBoolean -Value (Get-ManifestPropertyValue -Object $assertions -PropertyName $assertionName) -Name $assertionName
+            if (-not $value) {
+                throw "Adoption smoke assertion '$assertionName' must be true for the scorecard evidence read model."
+            }
+
+            [pscustomobject]([ordered]@{
+                Name  = $assertionName
+                Value = $value
+            })
+        }
+    )
+
+    $requiredScriptTokens = @(
+        Get-ManifestPropertyValue -Object $manifest -PropertyName "requiredScriptTokens" -DefaultValue @() |
+            ForEach-Object { [string]$_ } |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    )
+
+    foreach ($token in $requiredScriptTokens) {
+        if (-not $validationScript.Contains($token, [System.StringComparison]::OrdinalIgnoreCase)) {
+            throw "Adoption smoke validation script '$validationScriptPath' does not contain required token '$token'."
+        }
+    }
+
+    $runtimeProbes = @(
+        Get-ManifestPropertyValue -Object $manifest -PropertyName "runtimeProbes" -DefaultValue @() |
+            ForEach-Object {
+                $kind = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "kind" -DefaultValue "")
+                $path = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "path" -DefaultValue "")
+                if ([string]::IsNullOrWhiteSpace($kind) -or [string]::IsNullOrWhiteSpace($path)) {
+                    throw "Adoption smoke runtime probe entries must include kind and path."
+                }
+
+                if (-not $validationScript.Contains($path, [System.StringComparison]::Ordinal)) {
+                    throw "Adoption smoke validation script '$validationScriptPath' does not contain runtime probe '$path'."
+                }
+
+                [pscustomobject]([ordered]@{
+                    Kind = $kind
+                    Path = $path
+                })
+            }
+    )
+
+    if ($runtimeProbes.Count -eq 0) {
+        throw "Adoption smoke support manifest must declare at least one runtime probe."
+    }
+
+    return [pscustomobject]([ordered]@{
+        Manifest                  = Get-RepoRelativePath -Path $ResolvedManifestPath -RepoRoot $ResolvedRepoRoot
+        ManifestSchemaVersion     = $schemaVersion
+        ScenarioId                = $scenarioId
+        Status                    = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "status" -DefaultValue "unknown")
+        Summary                   = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "summary" -DefaultValue "")
+        ValidationScript          = $validationScriptReference.Reference
+        SupportingScripts         = @($supportingScriptReferences | ForEach-Object { $_.Reference })
+        SourceDocuments           = @($sourceDocumentReferences | ForEach-Object { $_.Reference })
+        ReferenceModuleProject    = $referenceModuleProjectReference.Reference
+        Assertions                = $assertionRows
+        RequiredScriptTokens      = $requiredScriptTokens
+        RuntimeProbes             = $runtimeProbes
+        ValidatedReferences       = @(
+            $validationScriptReference
+            $referenceModuleProjectReference
+            $supportingScriptReferences
+            $sourceDocumentReferences
+        ) | Sort-Object Reference -Unique
+    })
+}
+
 function Get-StatusCountObject {
     param(
         [Parameter(Mandatory = $true)]
@@ -612,6 +816,8 @@ function New-EngineCompletionScorecardReport {
         [Parameter(Mandatory = $true)]
         [string]$ResolvedConformanceMatrixPath,
         [Parameter(Mandatory = $true)]
+        [string]$ResolvedAdoptionSmokeManifestPath,
+        [Parameter(Mandatory = $true)]
         [string]$ResolvedRepoRoot
     )
 
@@ -628,6 +834,7 @@ function New-EngineCompletionScorecardReport {
     $qualityDimensions = Convert-QualityDimensions -Rows (Get-ScorecardTable -Lines $lines -Heading "Quality-dimension gates")
     $packageFamilies = Convert-PackageFamilies -Rows (Get-ScorecardTable -Lines $lines -Heading "Package-family readiness roll-up")
     $packageGAReadinessRows = Convert-ConformancePackageRows -ResolvedConformanceMatrixPath $ResolvedConformanceMatrixPath -ResolvedRepoRoot $ResolvedRepoRoot
+    $adoptionSmokeEvidence = Convert-AdoptionSmokeEvidence -ResolvedManifestPath $ResolvedAdoptionSmokeManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
     $promotionRules = @(Get-ScorecardListItems -Lines $lines -Heading "Promotion rules" | ForEach-Object { Remove-MarkdownInlineFormatting -Value $_ })
     $refreshCadence = @(Get-ScorecardListItems -Lines $lines -Heading "Refresh cadence" | ForEach-Object { Remove-MarkdownInlineFormatting -Value $_ })
 
@@ -653,6 +860,7 @@ function New-EngineCompletionScorecardReport {
         GeneratedAtUtc     = (Get-Date).ToUniversalTime().ToString("o")
         SourceDocument     = Get-RepoRelativePath -Path $ResolvedScorecardPath -RepoRoot $ResolvedRepoRoot
         ConformanceMatrix  = Get-RepoRelativePath -Path $ResolvedConformanceMatrixPath -RepoRoot $ResolvedRepoRoot
+        AdoptionSmokeManifest = Get-RepoRelativePath -Path $ResolvedAdoptionSmokeManifestPath -RepoRoot $ResolvedRepoRoot
         StatusVocabulary   = $statusVocabulary
         EvidenceSources    = $evidenceSources
         EvidenceSourceReferences = $evidenceSourceReferences
@@ -660,6 +868,7 @@ function New-EngineCompletionScorecardReport {
         QualityDimensions  = $qualityDimensions
         PackageFamilies    = $packageFamilies
         PackageGAReadiness = $packageGAReadinessRows
+        AdoptionSmokeEvidence = $adoptionSmokeEvidence
         PromotionRules     = $promotionRules
         RefreshCadence     = $refreshCadence
         Summary            = [pscustomobject]([ordered]@{
@@ -667,6 +876,9 @@ function New-EngineCompletionScorecardReport {
             QualityDimensionCount  = $qualityDimensions.Count
             PackageFamilyCount     = $packageFamilies.Count
             PackageGAReadinessCount = $packageGAReadinessRows.Count
+            AdoptionSmokeScenarioCount = if ($null -ne $adoptionSmokeEvidence) { 1 } else { 0 }
+            AdoptionSmokeRuntimeProbeCount = @($adoptionSmokeEvidence.RuntimeProbes).Count
+            AdoptionSmokeAssertionCount = @($adoptionSmokeEvidence.Assertions).Count
             EvidenceSourceCount    = $evidenceSources.Count
             EvidenceSourceReferenceCount = $evidenceSourceReferences.Count
             PlatformStatusCounts   = $platformStatusCounts
@@ -703,6 +915,7 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("")
     $markdown.Add("Source: ``$($Report.SourceDocument)``")
     $markdown.Add("Conformance matrix: ``$($Report.ConformanceMatrix)``")
+    $markdown.Add("Adoption smoke manifest: ``$($Report.AdoptionSmokeManifest)``")
     $markdown.Add("Generated at UTC: ``$($Report.GeneratedAtUtc)``")
     $markdown.Add("Schema version: ``$($Report.'$schemaVersion')``")
     $markdown.Add("")
@@ -712,6 +925,8 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- Quality dimensions: $($Report.Summary.QualityDimensionCount)")
     $markdown.Add("- Package families: $($Report.Summary.PackageFamilyCount)")
     $markdown.Add("- Package GA readiness rows: $($Report.Summary.PackageGAReadinessCount)")
+    $markdown.Add("- Adoption smoke scenarios: $($Report.Summary.AdoptionSmokeScenarioCount)")
+    $markdown.Add("- Adoption smoke runtime probes: $($Report.Summary.AdoptionSmokeRuntimeProbeCount)")
     $markdown.Add("- Evidence sources: $($Report.Summary.EvidenceSourceCount)")
     $markdown.Add("- Evidence source references: $($Report.Summary.EvidenceSourceReferenceCount)")
     $markdown.Add("- Blocked platform gates: $($Report.Summary.BlockedPlatformGates)")
@@ -734,6 +949,22 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("| --- | --- |")
     foreach ($reference in $Report.EvidenceSourceReferences) {
         $markdown.Add("| $($reference.Reference) | $($reference.Kind) |")
+    }
+
+    $markdown.Add("")
+    $markdown.Add("## Adoption Smoke Evidence")
+    $markdown.Add("")
+    $markdown.Add("- Scenario: $($Report.AdoptionSmokeEvidence.ScenarioId)")
+    $markdown.Add("- Status: $($Report.AdoptionSmokeEvidence.Status)")
+    $markdown.Add("- Validation script: ``$($Report.AdoptionSmokeEvidence.ValidationScript)``")
+    $markdown.Add("- Reference module project: ``$($Report.AdoptionSmokeEvidence.ReferenceModuleProject)``")
+    $markdown.Add("- Assertions: $(@($Report.AdoptionSmokeEvidence.Assertions).Count)")
+    $markdown.Add("- Runtime probes: $(@($Report.AdoptionSmokeEvidence.RuntimeProbes).Count)")
+    $markdown.Add("")
+    $markdown.Add("| Probe kind | Path |")
+    $markdown.Add("| --- | --- |")
+    foreach ($probe in $Report.AdoptionSmokeEvidence.RuntimeProbes) {
+        $markdown.Add("| $($probe.Kind) | ``$($probe.Path)`` |")
     }
 
     $markdown.Add("")
@@ -768,6 +999,7 @@ function Invoke-EngineCompletionScorecardPublish {
         [string]$ScorecardPath,
         [Parameter(Mandatory = $true)]
         [string]$ConformanceMatrixPath,
+        [string]$AdoptionSmokeManifestPath = "scripts/adoption-smoke-support.json",
         [Parameter(Mandatory = $true)]
         [string]$OutputPath,
         [Parameter(Mandatory = $true)]
@@ -777,9 +1009,10 @@ function Invoke-EngineCompletionScorecardPublish {
     $resolvedRepoRoot = [System.IO.Path]::GetFullPath($RepoRoot)
     $resolvedScorecardPath = Resolve-FullPath -Path $ScorecardPath -BasePath $resolvedRepoRoot
     $resolvedConformanceMatrixPath = Resolve-FullPath -Path $ConformanceMatrixPath -BasePath $resolvedRepoRoot
+    $resolvedAdoptionSmokeManifestPath = Resolve-FullPath -Path $AdoptionSmokeManifestPath -BasePath $resolvedRepoRoot
     $resolvedOutputPath = Resolve-FullPath -Path $OutputPath -BasePath $resolvedRepoRoot
 
-    $report = New-EngineCompletionScorecardReport -ResolvedScorecardPath $resolvedScorecardPath -ResolvedConformanceMatrixPath $resolvedConformanceMatrixPath -ResolvedRepoRoot $resolvedRepoRoot
+    $report = New-EngineCompletionScorecardReport -ResolvedScorecardPath $resolvedScorecardPath -ResolvedConformanceMatrixPath $resolvedConformanceMatrixPath -ResolvedAdoptionSmokeManifestPath $resolvedAdoptionSmokeManifestPath -ResolvedRepoRoot $resolvedRepoRoot
     $paths = Write-EngineCompletionScorecardReport -Report $report -ResolvedOutputPath $resolvedOutputPath
 
     Write-Host "Engine completion scorecard artifact written to $($paths.JsonPath)"
@@ -798,5 +1031,5 @@ if (-not $env:CEPHALON_ENGINE_COMPLETION_SCORECARD_NO_RUN) {
         $resolvedRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
     }
 
-    $null = Invoke-EngineCompletionScorecardPublish -ScorecardPath $ScorecardPath -ConformanceMatrixPath $ConformanceMatrixPath -OutputPath $OutputPath -RepoRoot $resolvedRoot
+    $null = Invoke-EngineCompletionScorecardPublish -ScorecardPath $ScorecardPath -ConformanceMatrixPath $ConformanceMatrixPath -AdoptionSmokeManifestPath $AdoptionSmokeManifestPath -OutputPath $OutputPath -RepoRoot $resolvedRoot
 }

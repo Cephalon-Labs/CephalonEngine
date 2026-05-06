@@ -4,7 +4,7 @@ This guide shows the operator-facing baseline for taking a Cephalon module packa
 
 Use it together with [Module authoring](module-authoring.md) when you are shipping independently distributed Cephalon packages.
 
-For the repo-native replay of this full out-of-tree path, use `pwsh ./scripts/validate-out-of-tree-package-adoption.ps1`.
+For the repo-native replay of this full out-of-tree path, use `pwsh ./scripts/validate-out-of-tree-package-adoption.ps1`. The scorecard read model validates that replay through `scripts/adoption-smoke-support.json` and emits the package-stage, trust-policy, host-run, and runtime-probe coverage as `AdoptionSmokeEvidence`.
 For the matching detached-signature and publisher or signer trust replay, use `pwsh ./scripts/validate-signed-package-governance.ps1`.
 For the matching certificate-chain trust replay, use `pwsh ./scripts/validate-signed-package-certificate-chain-governance.ps1`.
 

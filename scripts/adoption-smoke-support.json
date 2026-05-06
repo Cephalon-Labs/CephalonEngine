@@ -1,0 +1,67 @@
+{
+  "$schemaVersion": "1.0.0",
+  "scenarioId": "out-of-tree-generated-app-package-stage",
+  "status": "replay-available",
+  "summary": "Out-of-repo generated-app adoption replay that consumes repo-local packages, stages the reference operations module package, runs the generated host, and validates package/trust/runtime operator surfaces.",
+  "validationScript": "scripts/validate-out-of-tree-package-adoption.ps1",
+  "supportingScripts": [
+    "scripts/validate-generated-app-adoption.ps1",
+    "scripts/validate-template-pack-adoption.ps1"
+  ],
+  "sourceDocs": [
+    "docs/getting-started.md",
+    "docs/operations.md",
+    "docs/external-package-lifecycle.md",
+    "docs/package-publishing.md",
+    "docs/engine-completion-scorecard.md",
+    "docs/release-checklist.md"
+  ],
+  "referenceModuleProject": "samples/Cephalon.ReferenceModule.Operations/Cephalon.ReferenceModule.Operations.csproj",
+  "assertions": {
+    "runsOutsideRepository": true,
+    "publishesLocalPackages": true,
+    "installsCliFromTemporaryFeed": true,
+    "scaffoldsGeneratedApp": true,
+    "stagesReferenceModulePackage": true,
+    "patchesPackagePolicyAndTrust": true,
+    "runsGeneratedHost": true
+  },
+  "requiredScriptTokens": [
+    "Cephalon.Cli",
+    "cephalon package stage",
+    "Cephalon.ReferenceModule.Operations",
+    "PackageDirectories",
+    "PackagePolicy",
+    "Trust",
+    "RequireTrustedPackages",
+    "TrustedPublishers",
+    "Start-Process",
+    "\"run\""
+  ],
+  "runtimeProbes": [
+    {
+      "kind": "health",
+      "path": "/health/ready"
+    },
+    {
+      "kind": "package-runtime",
+      "path": "/engine/packages"
+    },
+    {
+      "kind": "package-policy",
+      "path": "/engine/package-policy"
+    },
+    {
+      "kind": "trust-policy",
+      "path": "/engine/trust-policy"
+    },
+    {
+      "kind": "snapshot",
+      "path": "/engine/snapshot"
+    },
+    {
+      "kind": "reference-module-route",
+      "path": "/api/operations/status"
+    }
+  ]
+}
