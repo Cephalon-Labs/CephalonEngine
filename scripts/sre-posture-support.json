@@ -1,5 +1,5 @@
 {
-  "$schemaVersion": "1.0.0",
+  "$schemaVersion": "1.1.0",
   "status": "target-declared",
   "summary": "Engine SLI and SLO targets are declared; stable SLI baselines remain pending until a dedicated baseline pass promotes them.",
   "releaseValidationSummaryMode": "release-validation-console-and-scorecard-artifact",
@@ -21,7 +21,14 @@
       "sloTarget": "p95 <= 50 us over the representative behavior set",
       "window": "30-day rolling against shipped main",
       "targetStatus": "target-declared",
-      "baselineStatus": "pending-stable-baseline"
+      "baselineStatus": "pending-stable-baseline",
+      "guardrailCoverageStatus": "guardrail-catalog-mapped",
+      "guardrailReferences": [
+        {
+          "reportFileName": "Cephalon.Benchmarks.HotPath.BehaviorDispatchBenchmarks-report.csv",
+          "benchmark": "DispatchBehavior"
+        }
+      ]
     },
     {
       "id": "engine.behavior.dispatch.latency.p99",
@@ -31,7 +38,14 @@
       "sloTarget": "p99 <= 200 us over the representative behavior set",
       "window": "30-day rolling against shipped main",
       "targetStatus": "target-declared",
-      "baselineStatus": "pending-stable-baseline"
+      "baselineStatus": "pending-stable-baseline",
+      "guardrailCoverageStatus": "guardrail-catalog-mapped",
+      "guardrailReferences": [
+        {
+          "reportFileName": "Cephalon.Benchmarks.HotPath.BehaviorDispatchBenchmarks-report.csv",
+          "benchmark": "DispatchBehavior"
+        }
+      ]
     },
     {
       "id": "engine.aspnetcore.minimal-api.cold-start.p95",
@@ -41,7 +55,9 @@
       "sloTarget": "p95 <= 800 ms on the JIT path",
       "window": "30-day rolling against shipped main",
       "targetStatus": "target-declared",
-      "baselineStatus": "pending-stable-baseline"
+      "baselineStatus": "pending-stable-baseline",
+      "guardrailCoverageStatus": "pending-stable-baseline",
+      "guardrailReferences": []
     },
     {
       "id": "engine.worker.cold-start.p95",
@@ -51,7 +67,9 @@
       "sloTarget": "p95 <= 500 ms on the JIT path",
       "window": "30-day rolling against shipped main",
       "targetStatus": "target-declared",
-      "baselineStatus": "pending-stable-baseline"
+      "baselineStatus": "pending-stable-baseline",
+      "guardrailCoverageStatus": "pending-stable-baseline",
+      "guardrailReferences": []
     },
     {
       "id": "engine.behavior.dispatch.alloc.bytes-per-op",
@@ -61,7 +79,14 @@
       "sloTarget": "no regression beyond the current BenchmarkInProcessShortRunConfig baseline",
       "window": "per-PR comparison",
       "targetStatus": "target-declared",
-      "baselineStatus": "pending-stable-baseline"
+      "baselineStatus": "pending-stable-baseline",
+      "guardrailCoverageStatus": "guardrail-catalog-mapped",
+      "guardrailReferences": [
+        {
+          "reportFileName": "Cephalon.Benchmarks.HotPath.BehaviorDispatchBenchmarks-report.csv",
+          "benchmark": "DispatchBehavior"
+        }
+      ]
     },
     {
       "id": "engine.aspnetcore.request.alloc.bytes-per-op",
@@ -71,7 +96,9 @@
       "sloTarget": "no regression beyond the current baseline",
       "window": "per-PR comparison",
       "targetStatus": "target-declared",
-      "baselineStatus": "pending-stable-baseline"
+      "baselineStatus": "pending-stable-baseline",
+      "guardrailCoverageStatus": "pending-stable-baseline",
+      "guardrailReferences": []
     },
     {
       "id": "engine.dotnet.restore.wall-time.lock-mode",
@@ -81,7 +108,9 @@
       "sloTarget": "<= 90 s on the canonical reference-build agent",
       "window": "30-day rolling",
       "targetStatus": "target-declared",
-      "baselineStatus": "pending-stable-baseline"
+      "baselineStatus": "pending-stable-baseline",
+      "guardrailCoverageStatus": "not-applicable",
+      "guardrailReferences": []
     },
     {
       "id": "engine.validate-release.wall-time",
@@ -91,7 +120,9 @@
       "sloTarget": "<= 25 minutes on the canonical reference-build agent",
       "window": "30-day rolling",
       "targetStatus": "target-declared",
-      "baselineStatus": "pending-stable-baseline"
+      "baselineStatus": "pending-stable-baseline",
+      "guardrailCoverageStatus": "not-applicable",
+      "guardrailReferences": []
     },
     {
       "id": "engine.reference-docs.wall-time",
@@ -101,7 +132,9 @@
       "sloTarget": "<= 5 minutes on the canonical reference-build agent",
       "window": "30-day rolling",
       "targetStatus": "target-declared",
-      "baselineStatus": "pending-stable-baseline"
+      "baselineStatus": "pending-stable-baseline",
+      "guardrailCoverageStatus": "not-applicable",
+      "guardrailReferences": []
     },
     {
       "id": "engine.tests.flake-rate.7d",
@@ -111,7 +144,9 @@
       "sloTarget": "<= 0.5%",
       "window": "7-day rolling",
       "targetStatus": "target-declared",
-      "baselineStatus": "pending-stable-baseline"
+      "baselineStatus": "pending-stable-baseline",
+      "guardrailCoverageStatus": "not-applicable",
+      "guardrailReferences": []
     },
     {
       "id": "engine.deployment-mode-claims.truthful-fraction",
@@ -121,7 +156,9 @@
       "sloTarget": "100% of declared claims are claim-truthful; not-claimed rows never count against this SLI",
       "window": "per release",
       "targetStatus": "target-declared",
-      "baselineStatus": "pending-stable-baseline"
+      "baselineStatus": "pending-stable-baseline",
+      "guardrailCoverageStatus": "not-applicable",
+      "guardrailReferences": []
     }
   ]
 }

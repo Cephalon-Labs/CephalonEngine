@@ -48,7 +48,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
 
         $json = Get-Content -LiteralPath $result.Paths.JsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
 
-        $json.'$schemaVersion' | Should -Be "1.6.0"
+        $json.'$schemaVersion' | Should -Be "1.7.0"
         $json.SourceDocument | Should -Be "docs/engine-completion-scorecard.md"
         $json.ConformanceMatrix | Should -Be "docs/conformance-matrix.md"
         $json.DeploymentModeManifest | Should -Be "scripts/deployment-mode-support.json"
@@ -83,6 +83,10 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.SreTargetDeclaredCount | Should -Be 11
         $json.Summary.SrePendingStableBaselineCount | Should -Be 11
         $json.Summary.SreStableBaselineCount | Should -Be 0
+        $json.Summary.SreGuardrailMappedSliCount | Should -Be 3
+        $json.Summary.SreGuardrailPendingSliCount | Should -Be 3
+        $json.Summary.SreGuardrailNotApplicableSliCount | Should -Be 5
+        $json.Summary.SreGuardrailReferenceCount | Should -Be 3
         $json.Summary.SupplyChainEvidenceItemCount | Should -Be 10
         $json.Summary.SupplyChainWorkflowReadyCount | Should -Be 7
         $json.Summary.SupplyChainExternalPolicyPendingCount | Should -Be 3
@@ -153,7 +157,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.AdoptionSmokeEvidence.RuntimeProbes.Path | Should -Contain "/engine/trust-policy"
         $json.AdoptionSmokeEvidence.RuntimeProbes.Path | Should -Contain "/api/operations/status"
 
-        $json.SrePostureEvidence.ManifestSchemaVersion | Should -Be "1.0.0"
+        $json.SrePostureEvidence.ManifestSchemaVersion | Should -Be "1.1.0"
         $json.SrePostureEvidence.Status | Should -Be "target-declared"
         $json.SrePostureEvidence.ReleaseValidationSummaryMode | Should -Be "release-validation-console-and-scorecard-artifact"
         $json.SrePostureEvidence.StableBaselinesPublished | Should -BeFalse
@@ -163,11 +167,21 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.SrePostureEvidence.TargetDeclaredCount | Should -Be 11
         $json.SrePostureEvidence.PendingStableBaselineCount | Should -Be 11
         $json.SrePostureEvidence.StableBaselineCount | Should -Be 0
+        $json.SrePostureEvidence.GuardrailMappedSliCount | Should -Be 3
+        $json.SrePostureEvidence.GuardrailPendingSliCount | Should -Be 3
+        $json.SrePostureEvidence.GuardrailNotApplicableSliCount | Should -Be 5
+        $json.SrePostureEvidence.GuardrailReferenceCount | Should -Be 3
         $json.SrePostureEvidence.SourceDocuments | Should -Contain "docs/sre-posture.md"
         $json.SrePostureEvidence.SourceDocuments | Should -Contain "docs/benchmarking.md"
         $json.SrePostureEvidence.ValidationScripts | Should -Contain "scripts/validate-release.ps1"
         $json.SrePostureEvidence.SliRows.Id | Should -Contain "engine.behavior.dispatch.latency.p95"
         $json.SrePostureEvidence.SliRows.BaselineStatus | Select-Object -Unique | Should -Be "pending-stable-baseline"
+        $json.SrePostureEvidence.SliRows.GuardrailCoverageStatus | Should -Contain "guardrail-catalog-mapped"
+        $json.SrePostureEvidence.SliRows.GuardrailCoverageStatus | Should -Contain "pending-stable-baseline"
+        $json.SrePostureEvidence.SliRows.GuardrailCoverageStatus | Should -Contain "not-applicable"
+        $behaviorLatencySli = $json.SrePostureEvidence.SliRows | Where-Object { $_.Id -eq "engine.behavior.dispatch.latency.p95" }
+        $behaviorLatencySli.GuardrailReferences.ReportFileName | Should -Contain "Cephalon.Benchmarks.HotPath.BehaviorDispatchBenchmarks-report.csv"
+        $behaviorLatencySli.GuardrailReferences.Benchmark | Should -Contain "DispatchBehavior"
 
         $json.SupplyChainEvidence.ManifestSchemaVersion | Should -Be "1.0.0"
         $json.SupplyChainEvidence.Status | Should -Be "workflow-ready-external-policy-pending"
@@ -222,6 +236,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "SRE Posture Evidence"
         $markdown | Should -Match "SRE SLIs: 11"
         $markdown | Should -Match "SRE pending stable baselines: 11"
+        $markdown | Should -Match "SRE guardrail-mapped SLIs: 3"
+        $markdown | Should -Match "Guardrail coverage"
         $markdown | Should -Match "Supply-Chain Release Evidence"
         $markdown | Should -Match "Supply-chain evidence items: 10"
         $markdown | Should -Match "external-policy-pending"
@@ -406,6 +422,13 @@ Start-Process
                     window = "fixture"
                     targetStatus = "target-declared"
                     baselineStatus = "pending-stable-baseline"
+                    guardrailCoverageStatus = "guardrail-catalog-mapped"
+                    guardrailReferences = @(
+                        @{
+                            reportFileName = "fixture.csv"
+                            benchmark = "Fixture"
+                        }
+                    )
                 }
             )
         } | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $manifestPath -Encoding UTF8
@@ -415,6 +438,71 @@ Start-Process
                 -ResolvedManifestPath $manifestPath `
                 -ResolvedRepoRoot $fixtureRoot
         } | Should -Throw "*does not contain SLI 'engine.fixture.missing'*"
+    }
+
+    It "fails when SRE guardrail references drift away from the guardrail catalog" {
+        $fixtureRoot = Join-Path $script:tempRoot "sre-guardrail-fixture"
+        $scriptsRoot = Join-Path $fixtureRoot "scripts"
+        $docsRoot = Join-Path $fixtureRoot "docs"
+        $guardrailRoot = Join-Path $fixtureRoot "benchmarks\Cephalon.Benchmarks\guardrails"
+        New-Item -ItemType Directory -Path $scriptsRoot -Force | Out-Null
+        New-Item -ItemType Directory -Path $docsRoot -Force | Out-Null
+        New-Item -ItemType Directory -Path $guardrailRoot -Force | Out-Null
+
+        Set-Content -LiteralPath (Join-Path $docsRoot "sre-posture.md") -Value "# SRE posture fixture`nengine.fixture.present" -Encoding UTF8
+        Set-Content -LiteralPath (Join-Path $docsRoot "benchmarking.md") -Value "# Benchmarking fixture" -Encoding UTF8
+        Set-Content -LiteralPath (Join-Path $scriptsRoot "validate-release.ps1") -Value "# release validation fixture" -Encoding UTF8
+        @{
+            version = "1.0"
+            entries = @(
+                @{
+                    reportFileName = "fixture.csv"
+                    benchmark = "Fixture"
+                    maxMeanNanoseconds = 1
+                    maxAllocatedBytes = 1
+                }
+            )
+        } | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $guardrailRoot "performance-guardrails.json") -Encoding UTF8
+
+        $manifestPath = Join-Path $scriptsRoot "sre-posture-support.json"
+        @{
+            '$schemaVersion' = "1.1.0"
+            status = "target-declared"
+            summary = "fixture"
+            releaseValidationSummaryMode = "scorecard-artifact"
+            stableBaselinesPublished = $false
+            sourceDocs = @(
+                "docs/sre-posture.md",
+                "docs/benchmarking.md"
+            )
+            validationScripts = @("scripts/validate-release.ps1")
+            guardrailCatalog = "benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json"
+            slis = @(
+                @{
+                    id = "engine.fixture.present"
+                    category = "fixture"
+                    measurementSurface = "benchmark"
+                    sourceDocument = "docs/sre-posture.md"
+                    sloTarget = "fixture"
+                    window = "fixture"
+                    targetStatus = "target-declared"
+                    baselineStatus = "pending-stable-baseline"
+                    guardrailCoverageStatus = "guardrail-catalog-mapped"
+                    guardrailReferences = @(
+                        @{
+                            reportFileName = "missing.csv"
+                            benchmark = "Missing"
+                        }
+                    )
+                }
+            )
+        } | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $manifestPath -Encoding UTF8
+
+        {
+            Convert-SrePostureEvidence `
+                -ResolvedManifestPath $manifestPath `
+                -ResolvedRepoRoot $fixtureRoot
+        } | Should -Throw "*references guardrail 'missing.csv' / 'Missing'*"
     }
 
     It "fails when supply-chain release evidence drifts away from the release workflow" {
@@ -556,6 +644,7 @@ jobs:
         $releaseValidation | Should -Match "DeploymentModeEvidence"
         $releaseValidation | Should -Match "Deployment-mode evidence"
         $releaseValidation | Should -Match "SrePostureEvidence"
+        $releaseValidation | Should -Match "guardrail-mapped"
         $releaseValidation | Should -Match "SupplyChainEvidence"
         $releaseValidation | Should -Match "Supply-chain release evidence"
         $releaseValidation | Should -Match "PublicApiCompatibilityEvidence"

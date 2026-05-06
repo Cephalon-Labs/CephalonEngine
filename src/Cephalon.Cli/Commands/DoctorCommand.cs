@@ -17,7 +17,7 @@ internal static class DoctorCommand
     private const string DotNetSdkDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/sdk:";
     private const string DotNetAspNetDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/aspnet:";
     private const string TemplatePackCustomHiveEnvironmentVariable = "CEPHALON_DOCTOR_TEMPLATE_HIVE";
-    private const string RequiredScorecardSchemaVersion = "1.6.0";
+    private const string RequiredScorecardSchemaVersion = "1.7.0";
 
     private static readonly string[] ExpectedTemplateShortNames =
     [
@@ -817,6 +817,10 @@ internal static class DoctorCommand
         var sreTargetDeclaredCount = GetRequiredScorecardInt(summary, "SreTargetDeclaredCount", errors);
         var srePendingStableBaselineCount = GetRequiredScorecardInt(summary, "SrePendingStableBaselineCount", errors);
         var sreStableBaselineCount = GetRequiredScorecardInt(summary, "SreStableBaselineCount", errors);
+        var sreGuardrailMappedSliCount = GetRequiredScorecardInt(summary, "SreGuardrailMappedSliCount", errors);
+        var sreGuardrailPendingSliCount = GetRequiredScorecardInt(summary, "SreGuardrailPendingSliCount", errors);
+        var sreGuardrailNotApplicableSliCount = GetRequiredScorecardInt(summary, "SreGuardrailNotApplicableSliCount", errors);
+        var sreGuardrailReferenceCount = GetRequiredScorecardInt(summary, "SreGuardrailReferenceCount", errors);
         var supplyChainEvidenceItemCount = GetRequiredScorecardInt(summary, "SupplyChainEvidenceItemCount", errors);
         var supplyChainWorkflowReadyCount = GetRequiredScorecardInt(summary, "SupplyChainWorkflowReadyCount", errors);
         var supplyChainExternalPolicyPendingCount = GetRequiredScorecardInt(summary, "SupplyChainExternalPolicyPendingCount", errors);
@@ -836,6 +840,10 @@ internal static class DoctorCommand
         var evidenceSreTargetDeclaredCount = GetRequiredScorecardInt(srePostureEvidence, "TargetDeclaredCount", errors, "SrePostureEvidence");
         var evidenceSrePendingStableBaselineCount = GetRequiredScorecardInt(srePostureEvidence, "PendingStableBaselineCount", errors, "SrePostureEvidence");
         var evidenceSreStableBaselineCount = GetRequiredScorecardInt(srePostureEvidence, "StableBaselineCount", errors, "SrePostureEvidence");
+        var evidenceSreGuardrailMappedSliCount = GetRequiredScorecardInt(srePostureEvidence, "GuardrailMappedSliCount", errors, "SrePostureEvidence");
+        var evidenceSreGuardrailPendingSliCount = GetRequiredScorecardInt(srePostureEvidence, "GuardrailPendingSliCount", errors, "SrePostureEvidence");
+        var evidenceSreGuardrailNotApplicableSliCount = GetRequiredScorecardInt(srePostureEvidence, "GuardrailNotApplicableSliCount", errors, "SrePostureEvidence");
+        var evidenceSreGuardrailReferenceCount = GetRequiredScorecardInt(srePostureEvidence, "GuardrailReferenceCount", errors, "SrePostureEvidence");
         var evidenceSupplyChainEvidenceItemCount = GetRequiredScorecardInt(supplyChainEvidence, "EvidenceItemCount", errors, "SupplyChainEvidence");
         var evidenceSupplyChainWorkflowReadyCount = GetRequiredScorecardInt(supplyChainEvidence, "WorkflowReadyCount", errors, "SupplyChainEvidence");
         var evidenceSupplyChainExternalPolicyPendingCount = GetRequiredScorecardInt(supplyChainEvidence, "ExternalPolicyPendingCount", errors, "SupplyChainEvidence");
@@ -873,7 +881,11 @@ internal static class DoctorCommand
         if (sreSliCount != evidenceSreSliCount ||
             sreTargetDeclaredCount != evidenceSreTargetDeclaredCount ||
             srePendingStableBaselineCount != evidenceSrePendingStableBaselineCount ||
-            sreStableBaselineCount != evidenceSreStableBaselineCount)
+            sreStableBaselineCount != evidenceSreStableBaselineCount ||
+            sreGuardrailMappedSliCount != evidenceSreGuardrailMappedSliCount ||
+            sreGuardrailPendingSliCount != evidenceSreGuardrailPendingSliCount ||
+            sreGuardrailNotApplicableSliCount != evidenceSreGuardrailNotApplicableSliCount ||
+            sreGuardrailReferenceCount != evidenceSreGuardrailReferenceCount)
         {
             checks.Add(new DoctorCheck(
                 DoctorCheckSeverity.Failure,
@@ -970,10 +982,10 @@ internal static class DoctorCommand
         checks.Add(new DoctorCheck(
             sreSeverity,
             "Engine completion scorecard SRE posture",
-            $"{sreSliCount} SLIs; target-declared {sreTargetDeclaredCount}, pending stable baselines {srePendingStableBaselineCount}, stable baselines {sreStableBaselineCount}.",
+            $"{sreSliCount} SLIs; target-declared {sreTargetDeclaredCount}, pending stable baselines {srePendingStableBaselineCount}, stable baselines {sreStableBaselineCount}, guardrail-mapped {sreGuardrailMappedSliCount}, pending guardrail coverage {sreGuardrailPendingSliCount}, guardrail not-applicable {sreGuardrailNotApplicableSliCount}, guardrail references {sreGuardrailReferenceCount}.",
             sreSeverity == DoctorCheckSeverity.Pass
                 ? null
-                : "Treat SRE posture as release-readiness evidence, not a stable SLO claim, until baselineStatus entries move out of pending-stable-baseline."));
+                : "Treat SRE posture as release-readiness evidence, not a stable SLO claim; guardrail mappings are evidence links and do not promote pending stable baselines."));
 
         var supplyChainSeverity = supplyChainBlockedCount > 0 ||
             supplyChainExternalPolicyPendingCount > 0
