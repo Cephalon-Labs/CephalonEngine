@@ -171,11 +171,14 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         $scorecard.DeploymentModeEvidence.TransitiveAuditEntryCount,
         $scorecard.DeploymentModeEvidence.PublishProbeReleaseValidationMode)
 
-    Write-Host ("SRE posture: {0} SLIs; target-declared {1}; pending stable baselines {2}; stable baselines {3}; summary mode {4}." -f `
+    Write-Host ("SRE posture: {0} SLIs; target-declared {1}; pending stable baselines {2}; stable baselines {3}; guardrail-mapped {4}; pending guardrail coverage {5}; guardrail not-applicable {6}; summary mode {7}." -f `
         $scorecard.SrePostureEvidence.SliCount,
         $scorecard.SrePostureEvidence.TargetDeclaredCount,
         $scorecard.SrePostureEvidence.PendingStableBaselineCount,
         $scorecard.SrePostureEvidence.StableBaselineCount,
+        $scorecard.SrePostureEvidence.GuardrailMappedSliCount,
+        $scorecard.SrePostureEvidence.GuardrailPendingSliCount,
+        $scorecard.SrePostureEvidence.GuardrailNotApplicableSliCount,
         $scorecard.SrePostureEvidence.ReleaseValidationSummaryMode)
 
     Write-Host ("Supply-chain release evidence: {0} items; workflow-ready {1}; external policy pending {2}; blocked {3}; status {4}." -f `

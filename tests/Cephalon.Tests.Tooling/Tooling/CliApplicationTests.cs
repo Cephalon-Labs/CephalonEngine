@@ -384,7 +384,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.6.0",
+              "$schemaVersion": "1.7.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -400,7 +400,11 @@ public sealed class CliApplicationTests
                 "SliCount": 11,
                 "TargetDeclaredCount": 11,
                 "PendingStableBaselineCount": 11,
-                "StableBaselineCount": 0
+                "StableBaselineCount": 0,
+                "GuardrailMappedSliCount": 3,
+                "GuardrailPendingSliCount": 3,
+                "GuardrailNotApplicableSliCount": 5,
+                "GuardrailReferenceCount": 3
               },
               "SupplyChainEvidence": {
                 "EvidenceItemCount": 10,
@@ -436,6 +440,10 @@ public sealed class CliApplicationTests
                 "SreTargetDeclaredCount": 11,
                 "SrePendingStableBaselineCount": 11,
                 "SreStableBaselineCount": 0,
+                "SreGuardrailMappedSliCount": 3,
+                "SreGuardrailPendingSliCount": 3,
+                "SreGuardrailNotApplicableSliCount": 5,
+                "SreGuardrailReferenceCount": 3,
                 "SupplyChainEvidenceItemCount": 10,
                 "SupplyChainWorkflowReadyCount": 7,
                 "SupplyChainExternalPolicyPendingCount": 3,
@@ -462,12 +470,12 @@ public sealed class CliApplicationTests
                 stderr);
 
             Assert.Equal(0, exitCode);
-            Assert.Contains("[ok] Engine completion scorecard artifact: schema 1.6.0 from docs/engine-completion-scorecard.md; conformance matrix docs/conformance-matrix.md.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Engine completion scorecard artifact: schema 1.7.0 from docs/engine-completion-scorecard.md; conformance matrix docs/conformance-matrix.md.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard platform gates: 12 gates; blocked 0, needs-refresh 1, partial 7, not-claimed 1.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Engine completion scorecard evidence references: 19 repo-local references validated by the published artifact.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard package GA readiness: 90 package rows; partial 88, not-claimed 2, needs-refresh 0.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard deployment-mode evidence: 3 global claims; not-claimed 3, package-scoped claim packages 1, known hazards 14 across 2 packages, transitive audit entries 7, publish probes audit-only.", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("[warn] Engine completion scorecard SRE posture: 11 SLIs; target-declared 11, pending stable baselines 11, stable baselines 0.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[warn] Engine completion scorecard SRE posture: 11 SLIs; target-declared 11, pending stable baselines 11, stable baselines 0, guardrail-mapped 3, pending guardrail coverage 3, guardrail not-applicable 5, guardrail references 3.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard supply-chain release evidence: 10 items; workflow-ready 7, external-policy-pending 3, blocked 0.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Engine completion scorecard public API compatibility: 104 package baselines; pending packages 21, additions 288, removals 0.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Equal(string.Empty, stderr.ToString());
@@ -556,7 +564,7 @@ public sealed class CliApplicationTests
                 stderr);
 
             Assert.Equal(1, exitCode);
-            Assert.Contains("[error] Engine completion scorecard artifact: Unsupported schema '1.0.0'. Doctor expects scorecard schema '1.6.0'.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Engine completion scorecard artifact: Unsupported schema '1.0.0'. Doctor expects scorecard schema '1.7.0'.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("scorecard artifact blockers", stderr.ToString(), StringComparison.Ordinal);
         }
         finally
@@ -579,7 +587,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.6.0",
+              "$schemaVersion": "1.7.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -595,7 +603,11 @@ public sealed class CliApplicationTests
                 "SliCount": 11,
                 "TargetDeclaredCount": 11,
                 "PendingStableBaselineCount": 11,
-                "StableBaselineCount": 0
+                "StableBaselineCount": 0,
+                "GuardrailMappedSliCount": 3,
+                "GuardrailPendingSliCount": 3,
+                "GuardrailNotApplicableSliCount": 5,
+                "GuardrailReferenceCount": 3
               },
               "SupplyChainEvidence": {
                 "EvidenceItemCount": 10,
@@ -631,6 +643,10 @@ public sealed class CliApplicationTests
                 "SreTargetDeclaredCount": 11,
                 "SrePendingStableBaselineCount": 11,
                 "SreStableBaselineCount": 0,
+                "SreGuardrailMappedSliCount": 3,
+                "SreGuardrailPendingSliCount": 3,
+                "SreGuardrailNotApplicableSliCount": 5,
+                "SreGuardrailReferenceCount": 3,
                 "SupplyChainEvidenceItemCount": 10,
                 "SupplyChainWorkflowReadyCount": 7,
                 "SupplyChainExternalPolicyPendingCount": 3,
@@ -681,7 +697,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.6.0",
+              "$schemaVersion": "1.7.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -697,7 +713,11 @@ public sealed class CliApplicationTests
                 "SliCount": 11,
                 "TargetDeclaredCount": 11,
                 "PendingStableBaselineCount": 11,
-                "StableBaselineCount": 0
+                "StableBaselineCount": 0,
+                "GuardrailMappedSliCount": 3,
+                "GuardrailPendingSliCount": 3,
+                "GuardrailNotApplicableSliCount": 5,
+                "GuardrailReferenceCount": 3
               },
               "SupplyChainEvidence": {
                 "EvidenceItemCount": 10,
@@ -733,6 +753,10 @@ public sealed class CliApplicationTests
                 "SreTargetDeclaredCount": 11,
                 "SrePendingStableBaselineCount": 11,
                 "SreStableBaselineCount": 0,
+                "SreGuardrailMappedSliCount": 3,
+                "SreGuardrailPendingSliCount": 3,
+                "SreGuardrailNotApplicableSliCount": 5,
+                "SreGuardrailReferenceCount": 3,
                 "SupplyChainEvidenceItemCount": 10,
                 "SupplyChainWorkflowReadyCount": 7,
                 "SupplyChainExternalPolicyPendingCount": 3,
@@ -783,7 +807,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.6.0",
+              "$schemaVersion": "1.7.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -799,7 +823,11 @@ public sealed class CliApplicationTests
                 "SliCount": 10,
                 "TargetDeclaredCount": 10,
                 "PendingStableBaselineCount": 10,
-                "StableBaselineCount": 0
+                "StableBaselineCount": 0,
+                "GuardrailMappedSliCount": 3,
+                "GuardrailPendingSliCount": 3,
+                "GuardrailNotApplicableSliCount": 5,
+                "GuardrailReferenceCount": 3
               },
               "SupplyChainEvidence": {
                 "EvidenceItemCount": 10,
@@ -835,6 +863,10 @@ public sealed class CliApplicationTests
                 "SreTargetDeclaredCount": 11,
                 "SrePendingStableBaselineCount": 11,
                 "SreStableBaselineCount": 0,
+                "SreGuardrailMappedSliCount": 3,
+                "SreGuardrailPendingSliCount": 3,
+                "SreGuardrailNotApplicableSliCount": 5,
+                "SreGuardrailReferenceCount": 3,
                 "SupplyChainEvidenceItemCount": 10,
                 "SupplyChainWorkflowReadyCount": 7,
                 "SupplyChainExternalPolicyPendingCount": 3,
@@ -885,7 +917,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.6.0",
+              "$schemaVersion": "1.7.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -901,7 +933,11 @@ public sealed class CliApplicationTests
                 "SliCount": 11,
                 "TargetDeclaredCount": 11,
                 "PendingStableBaselineCount": 11,
-                "StableBaselineCount": 0
+                "StableBaselineCount": 0,
+                "GuardrailMappedSliCount": 3,
+                "GuardrailPendingSliCount": 3,
+                "GuardrailNotApplicableSliCount": 5,
+                "GuardrailReferenceCount": 3
               },
               "SupplyChainEvidence": {
                 "EvidenceItemCount": 9,
@@ -937,6 +973,10 @@ public sealed class CliApplicationTests
                 "SreTargetDeclaredCount": 11,
                 "SrePendingStableBaselineCount": 11,
                 "SreStableBaselineCount": 0,
+                "SreGuardrailMappedSliCount": 3,
+                "SreGuardrailPendingSliCount": 3,
+                "SreGuardrailNotApplicableSliCount": 5,
+                "SreGuardrailReferenceCount": 3,
                 "SupplyChainEvidenceItemCount": 10,
                 "SupplyChainWorkflowReadyCount": 7,
                 "SupplyChainExternalPolicyPendingCount": 3,

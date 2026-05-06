@@ -13,7 +13,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$Script:SchemaVersion = "1.6.0"
+$Script:SchemaVersion = "1.7.0"
 $Script:AllowedStatuses = @(
     "ready-for-preview",
     "partial",
@@ -1216,6 +1216,28 @@ function Convert-SrePostureEvidence {
         throw "SRE posture guardrail catalog '$($guardrailCatalogReference.Reference)' must contain at least one entry."
     }
 
+    $guardrailEntryLookup = @{}
+    foreach ($guardrailEntry in $guardrailEntries) {
+        $reportFileName = [string](Get-ManifestPropertyValue -Object $guardrailEntry -PropertyName "reportFileName" -DefaultValue "")
+        $benchmark = [string](Get-ManifestPropertyValue -Object $guardrailEntry -PropertyName "benchmark" -DefaultValue "")
+        if ([string]::IsNullOrWhiteSpace($reportFileName) -or [string]::IsNullOrWhiteSpace($benchmark)) {
+            throw "SRE posture guardrail catalog '$($guardrailCatalogReference.Reference)' contains an entry without reportFileName and benchmark."
+        }
+
+        $guardrailKey = "$reportFileName`n$benchmark"
+        if ($guardrailEntryLookup.ContainsKey($guardrailKey)) {
+            throw "SRE posture guardrail catalog '$($guardrailCatalogReference.Reference)' contains duplicate guardrail entry '$reportFileName' / '$benchmark'."
+        }
+
+        $guardrailEntryLookup[$guardrailKey] = $guardrailEntry
+    }
+
+    $allowedGuardrailCoverageStatuses = @(
+        "guardrail-catalog-mapped",
+        "pending-stable-baseline",
+        "not-applicable"
+    )
+
     $sliRows = @(
         Get-ManifestPropertyValue -Object $manifest -PropertyName "slis" -DefaultValue @() |
             ForEach-Object {
@@ -1227,6 +1249,7 @@ function Convert-SrePostureEvidence {
                 $window = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "window" -DefaultValue "")
                 $targetStatus = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "targetStatus" -DefaultValue "")
                 $baselineStatus = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "baselineStatus" -DefaultValue "")
+                $guardrailCoverageStatus = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "guardrailCoverageStatus" -DefaultValue "")
 
                 foreach ($field in @(
                     @{ Name = "id"; Value = $id },
@@ -1236,11 +1259,16 @@ function Convert-SrePostureEvidence {
                     @{ Name = "sloTarget"; Value = $sloTarget },
                     @{ Name = "window"; Value = $window },
                     @{ Name = "targetStatus"; Value = $targetStatus },
-                    @{ Name = "baselineStatus"; Value = $baselineStatus }
+                    @{ Name = "baselineStatus"; Value = $baselineStatus },
+                    @{ Name = "guardrailCoverageStatus"; Value = $guardrailCoverageStatus }
                 )) {
                     if ([string]::IsNullOrWhiteSpace([string]$field.Value)) {
                         throw "SRE posture SLI entry must include $($field.Name)."
                     }
+                }
+
+                if ($allowedGuardrailCoverageStatuses -notcontains $guardrailCoverageStatus) {
+                    throw "Unsupported SRE posture guardrail coverage status '$guardrailCoverageStatus' for SLI '$id'."
                 }
 
                 $sourceDocumentReference = Resolve-SrePostureManifestPath -DeclaredPath $sourceDocumentPath -ResolvedRepoRoot $ResolvedRepoRoot -Context "SLI '$id' sourceDocument" -PathType "File"
@@ -1249,15 +1277,46 @@ function Convert-SrePostureEvidence {
                     throw "SRE posture source document '$($sourceDocumentReference.Reference)' does not contain SLI '$id'."
                 }
 
+                $guardrailReferences = @(
+                    Get-ManifestPropertyValue -Object $_ -PropertyName "guardrailReferences" -DefaultValue @() |
+                        ForEach-Object {
+                            $referenceReportFileName = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "reportFileName" -DefaultValue "")
+                            $referenceBenchmark = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "benchmark" -DefaultValue "")
+                            if ([string]::IsNullOrWhiteSpace($referenceReportFileName) -or [string]::IsNullOrWhiteSpace($referenceBenchmark)) {
+                                throw "SRE posture SLI '$id' guardrail reference must include reportFileName and benchmark."
+                            }
+
+                            $referenceKey = "$referenceReportFileName`n$referenceBenchmark"
+                            if (-not $guardrailEntryLookup.ContainsKey($referenceKey)) {
+                                throw "SRE posture SLI '$id' references guardrail '$referenceReportFileName' / '$referenceBenchmark', but that entry is missing from '$($guardrailCatalogReference.Reference)'."
+                            }
+
+                            [pscustomobject]([ordered]@{
+                                ReportFileName = $referenceReportFileName
+                                Benchmark      = $referenceBenchmark
+                            })
+                        }
+                )
+
+                if ($guardrailCoverageStatus -eq "guardrail-catalog-mapped" -and $guardrailReferences.Count -eq 0) {
+                    throw "SRE posture SLI '$id' is guardrail-catalog-mapped but does not declare any guardrailReferences."
+                }
+
+                if ($guardrailCoverageStatus -ne "guardrail-catalog-mapped" -and $guardrailReferences.Count -gt 0) {
+                    throw "SRE posture SLI '$id' declares guardrailReferences while guardrailCoverageStatus is '$guardrailCoverageStatus'."
+                }
+
                 [pscustomobject]([ordered]@{
-                    Id                 = $id
-                    Category           = $category
-                    MeasurementSurface = $measurementSurface
-                    SourceDocument     = $sourceDocumentReference.Reference
-                    SloTarget          = $sloTarget
-                    Window             = $window
-                    TargetStatus       = $targetStatus
-                    BaselineStatus     = $baselineStatus
+                    Id                      = $id
+                    Category                = $category
+                    MeasurementSurface      = $measurementSurface
+                    SourceDocument          = $sourceDocumentReference.Reference
+                    SloTarget               = $sloTarget
+                    Window                  = $window
+                    TargetStatus            = $targetStatus
+                    BaselineStatus          = $baselineStatus
+                    GuardrailCoverageStatus = $guardrailCoverageStatus
+                    GuardrailReferences     = $guardrailReferences
                 })
             }
     )
@@ -1269,6 +1328,10 @@ function Convert-SrePostureEvidence {
     $targetDeclaredCount = @($sliRows | Where-Object { $_.TargetStatus -eq "target-declared" }).Count
     $pendingStableBaselineCount = @($sliRows | Where-Object { $_.BaselineStatus -eq "pending-stable-baseline" }).Count
     $stableBaselineCount = @($sliRows | Where-Object { $_.BaselineStatus -eq "stable-baseline" }).Count
+    $guardrailMappedSliCount = @($sliRows | Where-Object { $_.GuardrailCoverageStatus -eq "guardrail-catalog-mapped" }).Count
+    $guardrailPendingSliCount = @($sliRows | Where-Object { $_.GuardrailCoverageStatus -eq "pending-stable-baseline" }).Count
+    $guardrailNotApplicableSliCount = @($sliRows | Where-Object { $_.GuardrailCoverageStatus -eq "not-applicable" }).Count
+    $guardrailReferenceCount = @($sliRows | ForEach-Object { $_.GuardrailReferences }).Count
 
     return [pscustomobject]([ordered]@{
         Manifest                   = Get-RepoRelativePath -Path $ResolvedManifestPath -RepoRoot $ResolvedRepoRoot
@@ -1285,6 +1348,10 @@ function Convert-SrePostureEvidence {
         TargetDeclaredCount        = $targetDeclaredCount
         PendingStableBaselineCount = $pendingStableBaselineCount
         StableBaselineCount        = $stableBaselineCount
+        GuardrailMappedSliCount    = $guardrailMappedSliCount
+        GuardrailPendingSliCount   = $guardrailPendingSliCount
+        GuardrailNotApplicableSliCount = $guardrailNotApplicableSliCount
+        GuardrailReferenceCount    = $guardrailReferenceCount
         SliRows                    = $sliRows
         ValidatedReferences        = @(
             $sourceDocumentReferences
@@ -1662,6 +1729,10 @@ function New-EngineCompletionScorecardReport {
             SreTargetDeclaredCount = $srePostureEvidence.TargetDeclaredCount
             SrePendingStableBaselineCount = $srePostureEvidence.PendingStableBaselineCount
             SreStableBaselineCount = $srePostureEvidence.StableBaselineCount
+            SreGuardrailMappedSliCount = $srePostureEvidence.GuardrailMappedSliCount
+            SreGuardrailPendingSliCount = $srePostureEvidence.GuardrailPendingSliCount
+            SreGuardrailNotApplicableSliCount = $srePostureEvidence.GuardrailNotApplicableSliCount
+            SreGuardrailReferenceCount = $srePostureEvidence.GuardrailReferenceCount
             SupplyChainEvidenceItemCount = $supplyChainEvidence.EvidenceItemCount
             SupplyChainWorkflowReadyCount = $supplyChainEvidence.WorkflowReadyCount
             SupplyChainExternalPolicyPendingCount = $supplyChainEvidence.ExternalPolicyPendingCount
@@ -1733,6 +1804,8 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- SRE target-declared SLIs: $($Report.Summary.SreTargetDeclaredCount)")
     $markdown.Add("- SRE pending stable baselines: $($Report.Summary.SrePendingStableBaselineCount)")
     $markdown.Add("- SRE stable baselines: $($Report.Summary.SreStableBaselineCount)")
+    $markdown.Add("- SRE guardrail-mapped SLIs: $($Report.Summary.SreGuardrailMappedSliCount)")
+    $markdown.Add("- SRE pending guardrail coverage SLIs: $($Report.Summary.SreGuardrailPendingSliCount)")
     $markdown.Add("- Supply-chain evidence items: $($Report.Summary.SupplyChainEvidenceItemCount)")
     $markdown.Add("- Supply-chain workflow-ready items: $($Report.Summary.SupplyChainWorkflowReadyCount)")
     $markdown.Add("- Supply-chain external-policy-pending items: $($Report.Summary.SupplyChainExternalPolicyPendingCount)")
@@ -1803,11 +1876,22 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- Stable baselines published: $($Report.SrePostureEvidence.StableBaselinesPublished)")
     $markdown.Add("- Guardrail catalog: ``$($Report.SrePostureEvidence.GuardrailCatalog)``")
     $markdown.Add("- Guardrail catalog entries: $($Report.SrePostureEvidence.GuardrailCatalogEntryCount)")
+    $markdown.Add("- Guardrail-mapped SLIs: $($Report.SrePostureEvidence.GuardrailMappedSliCount)")
+    $markdown.Add("- Pending guardrail coverage SLIs: $($Report.SrePostureEvidence.GuardrailPendingSliCount)")
+    $markdown.Add("- Not-applicable guardrail coverage SLIs: $($Report.SrePostureEvidence.GuardrailNotApplicableSliCount)")
+    $markdown.Add("- Guardrail references: $($Report.SrePostureEvidence.GuardrailReferenceCount)")
     $markdown.Add("")
-    $markdown.Add("| SLI | Category | Target status | Baseline status |")
-    $markdown.Add("| --- | --- | --- | --- |")
+    $markdown.Add("| SLI | Category | Target status | Baseline status | Guardrail coverage | Guardrail references |")
+    $markdown.Add("| --- | --- | --- | --- | --- | --- |")
     foreach ($sli in $Report.SrePostureEvidence.SliRows) {
-        $markdown.Add("| ``$($sli.Id)`` | $($sli.Category) | $($sli.TargetStatus) | $($sli.BaselineStatus) |")
+        $guardrailReferences = if (@($sli.GuardrailReferences).Count -eq 0) {
+            ""
+        }
+        else {
+            (@($sli.GuardrailReferences) | ForEach-Object { "``$($_.ReportFileName)`` / ``$($_.Benchmark)``" }) -join "<br>"
+        }
+
+        $markdown.Add("| ``$($sli.Id)`` | $($sli.Category) | $($sli.TargetStatus) | $($sli.BaselineStatus) | $($sli.GuardrailCoverageStatus) | $guardrailReferences |")
     }
 
     $markdown.Add("")
