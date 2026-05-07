@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Cephalon.Abstractions.Health;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Diagnostics;
@@ -46,27 +47,42 @@ namespace Cephalon.Tests.Hosting;
 
 public sealed class ObservabilityDependencyHealthProviderInvariantTests
 {
-    private static readonly ProviderExpectation[] ProviderExpectations =
+    private static readonly ProviderManifest Manifest = LoadProviderManifest();
+
+    private static readonly string[] RegisteredExtensionMethods =
     [
-        new("Cassandra", "Cephalon.Observability.CassandraDependencies", "required-cassandra", "Required Cassandra"),
-        new("ClickHouse", "Cephalon.Observability.ClickHouseDependencies", "required-clickhouse", "Required ClickHouse"),
-        new("Consul", "Cephalon.Observability.ConsulDependencies", "required-consul", "Required Consul"),
-        new("Elasticsearch", "Cephalon.Observability.ElasticsearchDependencies", "required-elasticsearch", "Required Elasticsearch"),
-        new("HTTP", "Cephalon.Observability.HttpDependencies", "required-http", "Required HTTP"),
-        new("Kafka", "Cephalon.Observability.KafkaDependencies", "required-kafka", "Required Kafka"),
-        new("Memcached", "Cephalon.Observability.MemcachedDependencies", "required-memcached", "Required Memcached"),
-        new("MongoDB", "Cephalon.Observability.MongoDbDependencies", "required-mongodb", "Required MongoDB"),
-        new("MQTT", "Cephalon.Observability.MqttDependencies", "required-mqtt", "Required MQTT"),
-        new("MySQL", "Cephalon.Observability.MySqlDependencies", "required-mysql", "Required MySQL"),
-        new("NATS", "Cephalon.Observability.NatsDependencies", "required-nats", "Required NATS"),
-        new("Neo4j", "Cephalon.Observability.Neo4jDependencies", "required-neo4j", "Required Neo4j"),
-        new("OpenSearch", "Cephalon.Observability.OpenSearchDependencies", "required-opensearch", "Required OpenSearch"),
-        new("Oracle", "Cephalon.Observability.OracleDependencies", "required-oracle", "Required Oracle"),
-        new("Postgres", "Cephalon.Observability.PostgresDependencies", "required-postgres", "Required Postgres"),
-        new("RabbitMQ", "Cephalon.Observability.RabbitMqDependencies", "required-rabbitmq", "Required RabbitMQ"),
-        new("Redis", "Cephalon.Observability.RedisDependencies", "required-redis", "Required Redis"),
-        new("SQL Server", "Cephalon.Observability.SqlServerDependencies", "required-sqlserver", "Required SQL Server")
+        "AddCephalonCassandraDependencyHealth",
+        "AddCephalonClickHouseDependencyHealth",
+        "AddCephalonConsulDependencyHealth",
+        "AddCephalonElasticsearchDependencyHealth",
+        "AddCephalonHttpDependencyHealth",
+        "AddCephalonKafkaDependencyHealth",
+        "AddCephalonMemcachedDependencyHealth",
+        "AddCephalonMongoDbDependencyHealth",
+        "AddCephalonMqttDependencyHealth",
+        "AddCephalonMySqlDependencyHealth",
+        "AddCephalonNatsDependencyHealth",
+        "AddCephalonNeo4jDependencyHealth",
+        "AddCephalonOpenSearchDependencyHealth",
+        "AddCephalonOracleDependencyHealth",
+        "AddCephalonPostgresDependencyHealth",
+        "AddCephalonRabbitMqDependencyHealth",
+        "AddCephalonRedisDependencyHealth",
+        "AddCephalonSqlServerDependencyHealth"
     ];
+
+    private static ProviderExpectation[] ProviderExpectations => Manifest.Providers;
+
+    [Fact]
+    public void DependencyHealthProviderManifestMatchesRegisteredInvariantProviders()
+    {
+        Assert.Equal("1.0.0", Manifest.SchemaVersion);
+        Assert.Equal(Manifest.ProviderCount, ProviderExpectations.Length);
+        Assert.Equal(RegisteredExtensionMethods, ProviderExpectations.Select(static provider => provider.ExtensionMethod));
+        Assert.Equal(
+            ProviderExpectations.Length,
+            ProviderExpectations.Select(static provider => provider.Source).Distinct(StringComparer.Ordinal).Count());
+    }
 
     [Fact]
     public async Task DependencyHealthProvidersShareRuntimeHealthAndDiagnosticsInvariants()
@@ -155,5 +171,52 @@ public sealed class ObservabilityDependencyHealthProviderInvariantTests
             options.Dependencies = [new SqlServerDependencyDefinition { Id = " required-sqlserver ", DisplayName = " Required SQL Server ", Required = true, TimeoutSeconds = 1 }]);
     }
 
-    private sealed record ProviderExpectation(string Provider, string Source, string Id, string DisplayName);
+    private static ProviderManifest LoadProviderManifest()
+    {
+        var manifestPath = Path.Combine(GetRepositoryRoot(), "scripts", "observability-dependency-health-providers.json");
+        using var manifest = JsonDocument.Parse(File.ReadAllText(manifestPath));
+        var root = manifest.RootElement;
+        var providers = root.GetProperty("providers").EnumerateArray()
+            .Select(provider => new ProviderExpectation(
+                ReadRequiredString(provider, "provider"),
+                ReadRequiredString(provider, "source"),
+                ReadRequiredString(provider, "id"),
+                ReadRequiredString(provider, "displayName"),
+                ReadRequiredString(provider, "extensionMethod")))
+            .ToArray();
+
+        return new ProviderManifest(
+            ReadRequiredString(root, "schemaVersion"),
+            root.GetProperty("providerCount").GetInt32(),
+            providers);
+    }
+
+    private static string ReadRequiredString(JsonElement element, string propertyName)
+    {
+        var value = element.GetProperty(propertyName).GetString();
+        return string.IsNullOrWhiteSpace(value)
+            ? throw new InvalidOperationException(
+                $"Dependency-health provider manifest property '{propertyName}' must be populated.")
+            : value;
+    }
+
+    private static string GetRepositoryRoot()
+    {
+        return Path.GetFullPath(Path.Combine(
+            AppContext.BaseDirectory,
+            "..",
+            "..",
+            "..",
+            "..",
+            ".."));
+    }
+
+    private sealed record ProviderManifest(string SchemaVersion, int ProviderCount, ProviderExpectation[] Providers);
+
+    private sealed record ProviderExpectation(
+        string Provider,
+        string Source,
+        string Id,
+        string DisplayName,
+        string ExtensionMethod);
 }

@@ -1,12 +1,13 @@
 {
   "$schemaVersion": "1.0.0",
   "status": "partial-live-provider-evidence",
-  "summary": "Provider integration evidence is machine-readable. Redis data/event-sourcing and CDC database providers have opt-in live proof lanes; non-relational data providers and observability dependency-health providers have no-external-service composition/runtime invariant proof until provider-owned live lanes are promoted.",
+  "summary": "Provider integration evidence is machine-readable. Redis data/event-sourcing and CDC database providers have opt-in live proof lanes; non-relational data providers and observability dependency-health providers have no-external-service composition/runtime invariant proof until provider-owned live lanes are promoted. The dependency-health provider family shape is source-derived through scripts/observability-dependency-health-providers.json.",
   "sourceDocs": [
     "docs/engine-completion-scorecard.md",
     "docs/release-checklist.md",
     "docs/test-coverage-roadmap.md",
-    "docs/components/observability.md"
+    "docs/components/observability.md",
+    "scripts/observability-dependency-health-providers.json"
   ],
   "validationProjects": [
     "tests/Cephalon.Tests.ProviderIntegration/Cephalon.Tests.ProviderIntegration.csproj",
