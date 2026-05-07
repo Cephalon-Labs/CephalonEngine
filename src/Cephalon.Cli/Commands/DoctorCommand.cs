@@ -17,7 +17,7 @@ internal static class DoctorCommand
     private const string DotNetSdkDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/sdk:";
     private const string DotNetAspNetDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/aspnet:";
     private const string TemplatePackCustomHiveEnvironmentVariable = "CEPHALON_DOCTOR_TEMPLATE_HIVE";
-    private const string RequiredScorecardSchemaVersion = "1.7.0";
+    private const string RequiredScorecardSchemaVersion = "1.8.0";
 
     private static readonly string[] ExpectedTemplateShortNames =
     [
@@ -773,6 +773,7 @@ internal static class DoctorCommand
         }
 
         var deploymentModeEvidence = scorecard["DeploymentModeEvidence"];
+        var providerIntegrationEvidence = scorecard["ProviderIntegrationEvidence"];
         var srePostureEvidence = scorecard["SrePostureEvidence"];
         var supplyChainEvidence = scorecard["SupplyChainEvidence"];
         var publicApiCompatibilityEvidence = scorecard["PublicApiCompatibilityEvidence"];
@@ -780,6 +781,11 @@ internal static class DoctorCommand
         if (deploymentModeEvidence is null)
         {
             errors.Add("DeploymentModeEvidence");
+        }
+
+        if (providerIntegrationEvidence is null)
+        {
+            errors.Add("ProviderIntegrationEvidence");
         }
 
         if (srePostureEvidence is null)
@@ -813,6 +819,12 @@ internal static class DoctorCommand
         var deploymentModeKnownHazardPackageCount = GetRequiredScorecardInt(summary, "DeploymentModeKnownHazardPackageCount", errors);
         var deploymentModeKnownHazardEntryCount = GetRequiredScorecardInt(summary, "DeploymentModeKnownHazardEntryCount", errors);
         var deploymentModeTransitiveAuditEntryCount = GetRequiredScorecardInt(summary, "DeploymentModeTransitiveAuditEntryCount", errors);
+        var providerIntegrationEvidenceRowCount = GetRequiredScorecardInt(summary, "ProviderIntegrationEvidenceRowCount", errors);
+        var providerIntegrationLiveProofCount = GetRequiredScorecardInt(summary, "ProviderIntegrationLiveProofCount", errors);
+        var providerIntegrationCompositionOnlyCount = GetRequiredScorecardInt(summary, "ProviderIntegrationCompositionOnlyCount", errors);
+        var providerIntegrationExternalServiceGateCount = GetRequiredScorecardInt(summary, "ProviderIntegrationExternalServiceGateCount", errors);
+        var providerIntegrationDefaultSkippedCount = GetRequiredScorecardInt(summary, "ProviderIntegrationDefaultSkippedCount", errors);
+        var providerIntegrationRuntimeContractCount = GetRequiredScorecardInt(summary, "ProviderIntegrationRuntimeContractCount", errors);
         var sreSliCount = GetRequiredScorecardInt(summary, "SreSliCount", errors);
         var sreTargetDeclaredCount = GetRequiredScorecardInt(summary, "SreTargetDeclaredCount", errors);
         var srePendingStableBaselineCount = GetRequiredScorecardInt(summary, "SrePendingStableBaselineCount", errors);
@@ -836,6 +848,12 @@ internal static class DoctorCommand
         var evidenceDeploymentModeKnownHazardEntryCount = GetRequiredScorecardInt(deploymentModeEvidence, "KnownHazardEntryCount", errors, "DeploymentModeEvidence");
         var evidenceDeploymentModeTransitiveAuditEntryCount = GetRequiredScorecardInt(deploymentModeEvidence, "TransitiveAuditEntryCount", errors, "DeploymentModeEvidence");
         var deploymentModePublishProbeReleaseValidationMode = GetRequiredScorecardString(deploymentModeEvidence, "PublishProbeReleaseValidationMode", errors, "DeploymentModeEvidence") ?? "unknown";
+        var evidenceProviderIntegrationEvidenceRowCount = GetRequiredScorecardInt(providerIntegrationEvidence, "EvidenceRowCount", errors, "ProviderIntegrationEvidence");
+        var evidenceProviderIntegrationLiveProofCount = GetRequiredScorecardInt(providerIntegrationEvidence, "LiveProofCount", errors, "ProviderIntegrationEvidence");
+        var evidenceProviderIntegrationCompositionOnlyCount = GetRequiredScorecardInt(providerIntegrationEvidence, "CompositionOnlyCount", errors, "ProviderIntegrationEvidence");
+        var evidenceProviderIntegrationExternalServiceGateCount = GetRequiredScorecardInt(providerIntegrationEvidence, "ExternalServiceGateCount", errors, "ProviderIntegrationEvidence");
+        var evidenceProviderIntegrationDefaultSkippedCount = GetRequiredScorecardInt(providerIntegrationEvidence, "DefaultSkippedCount", errors, "ProviderIntegrationEvidence");
+        var evidenceProviderIntegrationRuntimeContractCount = GetRequiredScorecardInt(providerIntegrationEvidence, "RuntimeContractCount", errors, "ProviderIntegrationEvidence");
         var evidenceSreSliCount = GetRequiredScorecardInt(srePostureEvidence, "SliCount", errors, "SrePostureEvidence");
         var evidenceSreTargetDeclaredCount = GetRequiredScorecardInt(srePostureEvidence, "TargetDeclaredCount", errors, "SrePostureEvidence");
         var evidenceSrePendingStableBaselineCount = GetRequiredScorecardInt(srePostureEvidence, "PendingStableBaselineCount", errors, "SrePostureEvidence");
@@ -874,6 +892,21 @@ internal static class DoctorCommand
                 DoctorCheckSeverity.Failure,
                 "Engine completion scorecard deployment-mode evidence",
                 $"Artifact '{resolvedScorecardPath}' has deployment-mode summary counts that do not match DeploymentModeEvidence.",
+                "Regenerate the scorecard artifact with the current `scripts/publish-engine-completion-scorecard.ps1`."));
+            return;
+        }
+
+        if (providerIntegrationEvidenceRowCount != evidenceProviderIntegrationEvidenceRowCount ||
+            providerIntegrationLiveProofCount != evidenceProviderIntegrationLiveProofCount ||
+            providerIntegrationCompositionOnlyCount != evidenceProviderIntegrationCompositionOnlyCount ||
+            providerIntegrationExternalServiceGateCount != evidenceProviderIntegrationExternalServiceGateCount ||
+            providerIntegrationDefaultSkippedCount != evidenceProviderIntegrationDefaultSkippedCount ||
+            providerIntegrationRuntimeContractCount != evidenceProviderIntegrationRuntimeContractCount)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Engine completion scorecard provider integration evidence",
+                $"Artifact '{resolvedScorecardPath}' has provider integration summary counts that do not match ProviderIntegrationEvidence.",
                 "Regenerate the scorecard artifact with the current `scripts/publish-engine-completion-scorecard.ps1`."));
             return;
         }
@@ -975,6 +1008,19 @@ internal static class DoctorCommand
             deploymentModeSeverity == DoctorCheckSeverity.Pass
                 ? null
                 : "Treat deployment-mode posture as release-readiness evidence only; do not promote trim, Native AOT, single-file, or publish-probe support until the manifest, harness, workflow, docs, and package guidance agree."));
+
+        var providerIntegrationSeverity =
+            providerIntegrationCompositionOnlyCount > 0 ||
+            providerIntegrationDefaultSkippedCount > 0
+                ? DoctorCheckSeverity.Warning
+                : DoctorCheckSeverity.Pass;
+        checks.Add(new DoctorCheck(
+            providerIntegrationSeverity,
+            "Engine completion scorecard provider integration evidence",
+            $"{providerIntegrationEvidenceRowCount} rows; live proofs {providerIntegrationLiveProofCount}, composition-only {providerIntegrationCompositionOnlyCount}, external-service gates {providerIntegrationExternalServiceGateCount}, default-skipped {providerIntegrationDefaultSkippedCount}, runtime contracts {providerIntegrationRuntimeContractCount}.",
+            providerIntegrationSeverity == DoctorCheckSeverity.Pass
+                ? null
+                : "Treat provider integration posture as release-readiness evidence; enable external gates on capable runners before promoting live-provider claims and keep composition-only rows truthful."));
 
         var sreSeverity = srePendingStableBaselineCount > 0
             ? DoctorCheckSeverity.Warning

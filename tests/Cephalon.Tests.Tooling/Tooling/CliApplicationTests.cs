@@ -385,7 +385,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.7.0",
+              "$schemaVersion": "1.8.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -396,6 +396,14 @@ public sealed class CliApplicationTests
                 "KnownHazardEntryCount": 14,
                 "TransitiveAuditEntryCount": 7,
                 "PublishProbeReleaseValidationMode": "audit-only"
+              },
+              "ProviderIntegrationEvidence": {
+                "EvidenceRowCount": 32,
+                "LiveProofCount": 6,
+                "CompositionOnlyCount": 26,
+                "ExternalServiceGateCount": 6,
+                "DefaultSkippedCount": 6,
+                "RuntimeContractCount": 61
               },
               "SrePostureEvidence": {
                 "SliCount": 11,
@@ -415,9 +423,9 @@ public sealed class CliApplicationTests
               },
               "PublicApiCompatibilityEvidence": {
                 "PackageCount": 104,
-                "PendingPackageCount": 21,
-                "HeaderOnlyPackageCount": 83,
-                "AdditiveEntryCount": 288,
+                "PendingPackageCount": 22,
+                "HeaderOnlyPackageCount": 82,
+                "AdditiveEntryCount": 293,
                 "RemovalEntryCount": 0
               },
               "Summary": {
@@ -426,10 +434,10 @@ public sealed class CliApplicationTests
                 "NeedsRefreshGates": 1,
                 "PartialPlatformGates": 7,
                 "NotClaimedPlatformGates": 1,
-                "EvidenceSourceReferenceCount": 19,
+                "EvidenceSourceReferenceCount": 20,
                 "PackageGAReadinessCount": 90,
-                "PartialPackageGAGates": 88,
-                "NotClaimedPackageGAGates": 2,
+                "PartialPackageGAGates": 89,
+                "NotClaimedPackageGAGates": 1,
                 "NeedsRefreshPackageGAGates": 0,
                 "DeploymentModeGlobalClaimCount": 3,
                 "DeploymentModeGlobalNotClaimedCount": 3,
@@ -437,6 +445,12 @@ public sealed class CliApplicationTests
                 "DeploymentModeKnownHazardPackageCount": 2,
                 "DeploymentModeKnownHazardEntryCount": 14,
                 "DeploymentModeTransitiveAuditEntryCount": 7,
+                "ProviderIntegrationEvidenceRowCount": 32,
+                "ProviderIntegrationLiveProofCount": 6,
+                "ProviderIntegrationCompositionOnlyCount": 26,
+                "ProviderIntegrationExternalServiceGateCount": 6,
+                "ProviderIntegrationDefaultSkippedCount": 6,
+                "ProviderIntegrationRuntimeContractCount": 61,
                 "SreSliCount": 11,
                 "SreTargetDeclaredCount": 11,
                 "SrePendingStableBaselineCount": 11,
@@ -450,8 +464,8 @@ public sealed class CliApplicationTests
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainBlockedCount": 0,
                 "PublicApiPackageCount": 104,
-                "PublicApiPendingPackageCount": 21,
-                "PublicApiAdditiveEntryCount": 288,
+                "PublicApiPendingPackageCount": 22,
+                "PublicApiAdditiveEntryCount": 293,
                 "PublicApiRemovalEntryCount": 0
               }
             }
@@ -471,14 +485,15 @@ public sealed class CliApplicationTests
                 stderr);
 
             Assert.Equal(0, exitCode);
-            Assert.Contains("[ok] Engine completion scorecard artifact: schema 1.7.0 from docs/engine-completion-scorecard.md; conformance matrix docs/conformance-matrix.md.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Engine completion scorecard artifact: schema 1.8.0 from docs/engine-completion-scorecard.md; conformance matrix docs/conformance-matrix.md.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard platform gates: 12 gates; blocked 0, needs-refresh 1, partial 7, not-claimed 1.", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("[ok] Engine completion scorecard evidence references: 19 repo-local references validated by the published artifact.", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("[warn] Engine completion scorecard package GA readiness: 90 package rows; partial 88, not-claimed 2, needs-refresh 0.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Engine completion scorecard evidence references: 20 repo-local references validated by the published artifact.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[warn] Engine completion scorecard package GA readiness: 90 package rows; partial 89, not-claimed 1, needs-refresh 0.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard deployment-mode evidence: 3 global claims; not-claimed 3, package-scoped claim packages 1, known hazards 14 across 2 packages, transitive audit entries 7, publish probes audit-only.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[warn] Engine completion scorecard provider integration evidence: 32 rows; live proofs 6, composition-only 26, external-service gates 6, default-skipped 6, runtime contracts 61.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard SRE posture: 11 SLIs; target-declared 11, pending stable baselines 11, stable baselines 0, guardrail-mapped 3, pending guardrail coverage 3, guardrail not-applicable 5, guardrail references 3.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard supply-chain release evidence: 10 items; workflow-ready 7, external-policy-pending 3, blocked 0.", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("[ok] Engine completion scorecard public API compatibility: 104 package baselines; pending packages 21, additions 288, removals 0.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Engine completion scorecard public API compatibility: 104 package baselines; pending packages 22, additions 293, removals 0.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Equal(string.Empty, stderr.ToString());
         }
         finally
@@ -565,7 +580,7 @@ public sealed class CliApplicationTests
                 stderr);
 
             Assert.Equal(1, exitCode);
-            Assert.Contains("[error] Engine completion scorecard artifact: Unsupported schema '1.0.0'. Doctor expects scorecard schema '1.7.0'.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Engine completion scorecard artifact: Unsupported schema '1.0.0'. Doctor expects scorecard schema '1.8.0'.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("scorecard artifact blockers", stderr.ToString(), StringComparison.Ordinal);
         }
         finally
@@ -588,7 +603,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.7.0",
+              "$schemaVersion": "1.8.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -599,6 +614,14 @@ public sealed class CliApplicationTests
                 "KnownHazardEntryCount": 13,
                 "TransitiveAuditEntryCount": 7,
                 "PublishProbeReleaseValidationMode": "audit-only"
+              },
+              "ProviderIntegrationEvidence": {
+                "EvidenceRowCount": 32,
+                "LiveProofCount": 6,
+                "CompositionOnlyCount": 26,
+                "ExternalServiceGateCount": 6,
+                "DefaultSkippedCount": 6,
+                "RuntimeContractCount": 61
               },
               "SrePostureEvidence": {
                 "SliCount": 11,
@@ -618,9 +641,9 @@ public sealed class CliApplicationTests
               },
               "PublicApiCompatibilityEvidence": {
                 "PackageCount": 104,
-                "PendingPackageCount": 21,
-                "HeaderOnlyPackageCount": 83,
-                "AdditiveEntryCount": 288,
+                "PendingPackageCount": 22,
+                "HeaderOnlyPackageCount": 82,
+                "AdditiveEntryCount": 293,
                 "RemovalEntryCount": 0
               },
               "Summary": {
@@ -629,10 +652,10 @@ public sealed class CliApplicationTests
                 "NeedsRefreshGates": 1,
                 "PartialPlatformGates": 7,
                 "NotClaimedPlatformGates": 1,
-                "EvidenceSourceReferenceCount": 19,
+                "EvidenceSourceReferenceCount": 20,
                 "PackageGAReadinessCount": 90,
-                "PartialPackageGAGates": 88,
-                "NotClaimedPackageGAGates": 2,
+                "PartialPackageGAGates": 89,
+                "NotClaimedPackageGAGates": 1,
                 "NeedsRefreshPackageGAGates": 0,
                 "DeploymentModeGlobalClaimCount": 3,
                 "DeploymentModeGlobalNotClaimedCount": 3,
@@ -640,6 +663,12 @@ public sealed class CliApplicationTests
                 "DeploymentModeKnownHazardPackageCount": 2,
                 "DeploymentModeKnownHazardEntryCount": 14,
                 "DeploymentModeTransitiveAuditEntryCount": 7,
+                "ProviderIntegrationEvidenceRowCount": 32,
+                "ProviderIntegrationLiveProofCount": 6,
+                "ProviderIntegrationCompositionOnlyCount": 26,
+                "ProviderIntegrationExternalServiceGateCount": 6,
+                "ProviderIntegrationDefaultSkippedCount": 6,
+                "ProviderIntegrationRuntimeContractCount": 61,
                 "SreSliCount": 11,
                 "SreTargetDeclaredCount": 11,
                 "SrePendingStableBaselineCount": 11,
@@ -653,8 +682,8 @@ public sealed class CliApplicationTests
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainBlockedCount": 0,
                 "PublicApiPackageCount": 104,
-                "PublicApiPendingPackageCount": 21,
-                "PublicApiAdditiveEntryCount": 288,
+                "PublicApiPendingPackageCount": 22,
+                "PublicApiAdditiveEntryCount": 293,
                 "PublicApiRemovalEntryCount": 0
               }
             }
@@ -690,15 +719,15 @@ public sealed class CliApplicationTests
     }
 
     [Fact]
-    public async Task RunAsyncDoctorFailsWhenScorecardPublicApiEvidenceDriftsFromSummary()
+    public async Task RunAsyncDoctorFailsWhenScorecardProviderIntegrationEvidenceDriftsFromSummary()
     {
-        var scorecardPath = Path.Combine(Path.GetTempPath(), $"cephalon-scorecard-public-api-{Guid.NewGuid():N}.json");
+        var scorecardPath = Path.Combine(Path.GetTempPath(), $"cephalon-scorecard-provider-integration-{Guid.NewGuid():N}.json");
         var stdout = new StringWriter();
         var stderr = new StringWriter();
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.7.0",
+              "$schemaVersion": "1.8.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -709,6 +738,138 @@ public sealed class CliApplicationTests
                 "KnownHazardEntryCount": 14,
                 "TransitiveAuditEntryCount": 7,
                 "PublishProbeReleaseValidationMode": "audit-only"
+              },
+              "ProviderIntegrationEvidence": {
+                "EvidenceRowCount": 31,
+                "LiveProofCount": 6,
+                "CompositionOnlyCount": 26,
+                "ExternalServiceGateCount": 6,
+                "DefaultSkippedCount": 6,
+                "RuntimeContractCount": 61
+              },
+              "SrePostureEvidence": {
+                "SliCount": 11,
+                "TargetDeclaredCount": 11,
+                "PendingStableBaselineCount": 11,
+                "StableBaselineCount": 0,
+                "GuardrailMappedSliCount": 3,
+                "GuardrailPendingSliCount": 3,
+                "GuardrailNotApplicableSliCount": 5,
+                "GuardrailReferenceCount": 3
+              },
+              "SupplyChainEvidence": {
+                "EvidenceItemCount": 10,
+                "WorkflowReadyCount": 7,
+                "ExternalPolicyPendingCount": 3,
+                "BlockedCount": 0
+              },
+              "PublicApiCompatibilityEvidence": {
+                "PackageCount": 104,
+                "PendingPackageCount": 22,
+                "HeaderOnlyPackageCount": 82,
+                "AdditiveEntryCount": 293,
+                "RemovalEntryCount": 0
+              },
+              "Summary": {
+                "PlatformGateCount": 12,
+                "BlockedPlatformGates": 0,
+                "NeedsRefreshGates": 1,
+                "PartialPlatformGates": 7,
+                "NotClaimedPlatformGates": 1,
+                "EvidenceSourceReferenceCount": 20,
+                "PackageGAReadinessCount": 90,
+                "PartialPackageGAGates": 89,
+                "NotClaimedPackageGAGates": 1,
+                "NeedsRefreshPackageGAGates": 0,
+                "DeploymentModeGlobalClaimCount": 3,
+                "DeploymentModeGlobalNotClaimedCount": 3,
+                "DeploymentModePackageScopedClaimPackageCount": 1,
+                "DeploymentModeKnownHazardPackageCount": 2,
+                "DeploymentModeKnownHazardEntryCount": 14,
+                "DeploymentModeTransitiveAuditEntryCount": 7,
+                "ProviderIntegrationEvidenceRowCount": 32,
+                "ProviderIntegrationLiveProofCount": 6,
+                "ProviderIntegrationCompositionOnlyCount": 26,
+                "ProviderIntegrationExternalServiceGateCount": 6,
+                "ProviderIntegrationDefaultSkippedCount": 6,
+                "ProviderIntegrationRuntimeContractCount": 61,
+                "SreSliCount": 11,
+                "SreTargetDeclaredCount": 11,
+                "SrePendingStableBaselineCount": 11,
+                "SreStableBaselineCount": 0,
+                "SreGuardrailMappedSliCount": 3,
+                "SreGuardrailPendingSliCount": 3,
+                "SreGuardrailNotApplicableSliCount": 5,
+                "SreGuardrailReferenceCount": 3,
+                "SupplyChainEvidenceItemCount": 10,
+                "SupplyChainWorkflowReadyCount": 7,
+                "SupplyChainExternalPolicyPendingCount": 3,
+                "SupplyChainBlockedCount": 0,
+                "PublicApiPackageCount": 104,
+                "PublicApiPendingPackageCount": 22,
+                "PublicApiAdditiveEntryCount": 293,
+                "PublicApiRemovalEntryCount": 0
+              }
+            }
+            """);
+
+        UseReadyDoctorProcessRunner();
+
+        try
+        {
+            var exitCode = await CliApplication.RunAsync(
+                [
+                    "doctor",
+                    "--scorecard",
+                    scorecardPath
+                ],
+                stdout,
+                stderr);
+
+            Assert.Equal(1, exitCode);
+            Assert.Contains("[error] Engine completion scorecard provider integration evidence: Artifact", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("provider integration summary counts that do not match ProviderIntegrationEvidence", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("scorecard artifact blockers", stderr.ToString(), StringComparison.Ordinal);
+        }
+        finally
+        {
+            CommandProcessRunner.RunOverride = null;
+
+            if (File.Exists(scorecardPath))
+            {
+                File.Delete(scorecardPath);
+            }
+        }
+    }
+
+    [Fact]
+    public async Task RunAsyncDoctorFailsWhenScorecardPublicApiEvidenceDriftsFromSummary()
+    {
+        var scorecardPath = Path.Combine(Path.GetTempPath(), $"cephalon-scorecard-public-api-{Guid.NewGuid():N}.json");
+        var stdout = new StringWriter();
+        var stderr = new StringWriter();
+
+        await File.WriteAllTextAsync(scorecardPath, """
+            {
+              "$schemaVersion": "1.8.0",
+              "SourceDocument": "docs/engine-completion-scorecard.md",
+              "ConformanceMatrix": "docs/conformance-matrix.md",
+              "DeploymentModeEvidence": {
+                "GlobalClaimCount": 3,
+                "GlobalNotClaimedCount": 3,
+                "PackageScopedClaimPackageCount": 1,
+                "KnownHazardPackageCount": 2,
+                "KnownHazardEntryCount": 14,
+                "TransitiveAuditEntryCount": 7,
+                "PublishProbeReleaseValidationMode": "audit-only"
+              },
+              "ProviderIntegrationEvidence": {
+                "EvidenceRowCount": 32,
+                "LiveProofCount": 6,
+                "CompositionOnlyCount": 26,
+                "ExternalServiceGateCount": 6,
+                "DefaultSkippedCount": 6,
+                "RuntimeContractCount": 61
               },
               "SrePostureEvidence": {
                 "SliCount": 11,
@@ -728,9 +889,9 @@ public sealed class CliApplicationTests
               },
               "PublicApiCompatibilityEvidence": {
                 "PackageCount": 103,
-                "PendingPackageCount": 21,
-                "HeaderOnlyPackageCount": 82,
-                "AdditiveEntryCount": 288,
+                "PendingPackageCount": 22,
+                "HeaderOnlyPackageCount": 81,
+                "AdditiveEntryCount": 293,
                 "RemovalEntryCount": 0
               },
               "Summary": {
@@ -739,10 +900,10 @@ public sealed class CliApplicationTests
                 "NeedsRefreshGates": 1,
                 "PartialPlatformGates": 7,
                 "NotClaimedPlatformGates": 1,
-                "EvidenceSourceReferenceCount": 19,
+                "EvidenceSourceReferenceCount": 20,
                 "PackageGAReadinessCount": 90,
-                "PartialPackageGAGates": 88,
-                "NotClaimedPackageGAGates": 2,
+                "PartialPackageGAGates": 89,
+                "NotClaimedPackageGAGates": 1,
                 "NeedsRefreshPackageGAGates": 0,
                 "DeploymentModeGlobalClaimCount": 3,
                 "DeploymentModeGlobalNotClaimedCount": 3,
@@ -750,6 +911,12 @@ public sealed class CliApplicationTests
                 "DeploymentModeKnownHazardPackageCount": 2,
                 "DeploymentModeKnownHazardEntryCount": 14,
                 "DeploymentModeTransitiveAuditEntryCount": 7,
+                "ProviderIntegrationEvidenceRowCount": 32,
+                "ProviderIntegrationLiveProofCount": 6,
+                "ProviderIntegrationCompositionOnlyCount": 26,
+                "ProviderIntegrationExternalServiceGateCount": 6,
+                "ProviderIntegrationDefaultSkippedCount": 6,
+                "ProviderIntegrationRuntimeContractCount": 61,
                 "SreSliCount": 11,
                 "SreTargetDeclaredCount": 11,
                 "SrePendingStableBaselineCount": 11,
@@ -763,8 +930,8 @@ public sealed class CliApplicationTests
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainBlockedCount": 0,
                 "PublicApiPackageCount": 104,
-                "PublicApiPendingPackageCount": 21,
-                "PublicApiAdditiveEntryCount": 288,
+                "PublicApiPendingPackageCount": 22,
+                "PublicApiAdditiveEntryCount": 293,
                 "PublicApiRemovalEntryCount": 0
               }
             }
@@ -808,7 +975,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.7.0",
+              "$schemaVersion": "1.8.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -819,6 +986,14 @@ public sealed class CliApplicationTests
                 "KnownHazardEntryCount": 14,
                 "TransitiveAuditEntryCount": 7,
                 "PublishProbeReleaseValidationMode": "audit-only"
+              },
+              "ProviderIntegrationEvidence": {
+                "EvidenceRowCount": 32,
+                "LiveProofCount": 6,
+                "CompositionOnlyCount": 26,
+                "ExternalServiceGateCount": 6,
+                "DefaultSkippedCount": 6,
+                "RuntimeContractCount": 61
               },
               "SrePostureEvidence": {
                 "SliCount": 10,
@@ -838,9 +1013,9 @@ public sealed class CliApplicationTests
               },
               "PublicApiCompatibilityEvidence": {
                 "PackageCount": 104,
-                "PendingPackageCount": 21,
-                "HeaderOnlyPackageCount": 83,
-                "AdditiveEntryCount": 288,
+                "PendingPackageCount": 22,
+                "HeaderOnlyPackageCount": 82,
+                "AdditiveEntryCount": 293,
                 "RemovalEntryCount": 0
               },
               "Summary": {
@@ -849,10 +1024,10 @@ public sealed class CliApplicationTests
                 "NeedsRefreshGates": 1,
                 "PartialPlatformGates": 7,
                 "NotClaimedPlatformGates": 1,
-                "EvidenceSourceReferenceCount": 19,
+                "EvidenceSourceReferenceCount": 20,
                 "PackageGAReadinessCount": 90,
-                "PartialPackageGAGates": 88,
-                "NotClaimedPackageGAGates": 2,
+                "PartialPackageGAGates": 89,
+                "NotClaimedPackageGAGates": 1,
                 "NeedsRefreshPackageGAGates": 0,
                 "DeploymentModeGlobalClaimCount": 3,
                 "DeploymentModeGlobalNotClaimedCount": 3,
@@ -860,6 +1035,12 @@ public sealed class CliApplicationTests
                 "DeploymentModeKnownHazardPackageCount": 2,
                 "DeploymentModeKnownHazardEntryCount": 14,
                 "DeploymentModeTransitiveAuditEntryCount": 7,
+                "ProviderIntegrationEvidenceRowCount": 32,
+                "ProviderIntegrationLiveProofCount": 6,
+                "ProviderIntegrationCompositionOnlyCount": 26,
+                "ProviderIntegrationExternalServiceGateCount": 6,
+                "ProviderIntegrationDefaultSkippedCount": 6,
+                "ProviderIntegrationRuntimeContractCount": 61,
                 "SreSliCount": 11,
                 "SreTargetDeclaredCount": 11,
                 "SrePendingStableBaselineCount": 11,
@@ -873,8 +1054,8 @@ public sealed class CliApplicationTests
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainBlockedCount": 0,
                 "PublicApiPackageCount": 104,
-                "PublicApiPendingPackageCount": 21,
-                "PublicApiAdditiveEntryCount": 288,
+                "PublicApiPendingPackageCount": 22,
+                "PublicApiAdditiveEntryCount": 293,
                 "PublicApiRemovalEntryCount": 0
               }
             }
@@ -918,7 +1099,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.7.0",
+              "$schemaVersion": "1.8.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -929,6 +1110,14 @@ public sealed class CliApplicationTests
                 "KnownHazardEntryCount": 14,
                 "TransitiveAuditEntryCount": 7,
                 "PublishProbeReleaseValidationMode": "audit-only"
+              },
+              "ProviderIntegrationEvidence": {
+                "EvidenceRowCount": 32,
+                "LiveProofCount": 6,
+                "CompositionOnlyCount": 26,
+                "ExternalServiceGateCount": 6,
+                "DefaultSkippedCount": 6,
+                "RuntimeContractCount": 61
               },
               "SrePostureEvidence": {
                 "SliCount": 11,
@@ -948,9 +1137,9 @@ public sealed class CliApplicationTests
               },
               "PublicApiCompatibilityEvidence": {
                 "PackageCount": 104,
-                "PendingPackageCount": 21,
-                "HeaderOnlyPackageCount": 83,
-                "AdditiveEntryCount": 288,
+                "PendingPackageCount": 22,
+                "HeaderOnlyPackageCount": 82,
+                "AdditiveEntryCount": 293,
                 "RemovalEntryCount": 0
               },
               "Summary": {
@@ -959,10 +1148,10 @@ public sealed class CliApplicationTests
                 "NeedsRefreshGates": 1,
                 "PartialPlatformGates": 7,
                 "NotClaimedPlatformGates": 1,
-                "EvidenceSourceReferenceCount": 19,
+                "EvidenceSourceReferenceCount": 20,
                 "PackageGAReadinessCount": 90,
-                "PartialPackageGAGates": 88,
-                "NotClaimedPackageGAGates": 2,
+                "PartialPackageGAGates": 89,
+                "NotClaimedPackageGAGates": 1,
                 "NeedsRefreshPackageGAGates": 0,
                 "DeploymentModeGlobalClaimCount": 3,
                 "DeploymentModeGlobalNotClaimedCount": 3,
@@ -970,6 +1159,12 @@ public sealed class CliApplicationTests
                 "DeploymentModeKnownHazardPackageCount": 2,
                 "DeploymentModeKnownHazardEntryCount": 14,
                 "DeploymentModeTransitiveAuditEntryCount": 7,
+                "ProviderIntegrationEvidenceRowCount": 32,
+                "ProviderIntegrationLiveProofCount": 6,
+                "ProviderIntegrationCompositionOnlyCount": 26,
+                "ProviderIntegrationExternalServiceGateCount": 6,
+                "ProviderIntegrationDefaultSkippedCount": 6,
+                "ProviderIntegrationRuntimeContractCount": 61,
                 "SreSliCount": 11,
                 "SreTargetDeclaredCount": 11,
                 "SrePendingStableBaselineCount": 11,
@@ -983,8 +1178,8 @@ public sealed class CliApplicationTests
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainBlockedCount": 0,
                 "PublicApiPackageCount": 104,
-                "PublicApiPendingPackageCount": 21,
-                "PublicApiAdditiveEntryCount": 288,
+                "PublicApiPendingPackageCount": 22,
+                "PublicApiAdditiveEntryCount": 293,
                 "PublicApiRemovalEntryCount": 0
               }
             }
