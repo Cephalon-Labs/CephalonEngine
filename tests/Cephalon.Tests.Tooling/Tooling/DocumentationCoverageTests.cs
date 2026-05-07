@@ -446,7 +446,9 @@ public sealed class DocumentationCoverageTests
     public void CompletionScorecardDocsStayAlignedWithDoctorSummary()
     {
         var repositoryRoot = GetRepositoryRoot();
+        var expectedSchemaVersion = ReadScorecardSchemaVersion(repositoryRoot);
         var scorecard = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "engine-completion-scorecard.md"));
+        var projectMemory = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "project-memory.md"));
         var planningGovernance = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "planning-governance.md"));
         var releaseChecklist = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "release-checklist.md"));
         var releaseChecklistTemplate = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "release-checklist-template.md"));
@@ -454,9 +456,14 @@ public sealed class DocumentationCoverageTests
         var cliPackageReadme = File.ReadAllText(Path.Combine(repositoryRoot, "src", "Cephalon.Cli", "PACKAGE.md"));
 
         Assert.Contains("cephalon doctor --scorecard <path>", scorecard, StringComparison.Ordinal);
-        Assert.Contains("schema version `1.8.0`", scorecard, StringComparison.Ordinal);
+        Assert.Contains($"schema version `{expectedSchemaVersion}`", scorecard, StringComparison.Ordinal);
         Assert.Contains("provider integration counts from `ProviderIntegrationEvidence`", scorecard, StringComparison.Ordinal);
         Assert.Contains("SRE posture counts from `SrePostureEvidence`", scorecard, StringComparison.Ordinal);
+        Assert.Contains($"generated artifact is now schema `{expectedSchemaVersion}`", projectMemory, StringComparison.Ordinal);
+        Assert.Contains($"currently requires scorecard schema `{expectedSchemaVersion}`", projectMemory, StringComparison.Ordinal);
+        Assert.Contains("validates provider-integration evidence from `scripts/provider-integration-support.json`", projectMemory, StringComparison.Ordinal);
+        Assert.Contains("ProviderIntegrationEvidence", projectMemory, StringComparison.Ordinal);
+        Assert.Contains("provider live/composition/gate/runtime-contract posture", projectMemory, StringComparison.Ordinal);
         Assert.Contains("provider integration counts from `ProviderIntegrationEvidence`", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("provider integration row/live/composition counts", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("SRE posture plus guardrail-coverage counts", cliComponentDoc, StringComparison.Ordinal);
@@ -940,6 +947,22 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("deploy/azure-container-apps", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("deploy/kubernetes", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("deploy/linux/systemd", templatePackReadme, StringComparison.Ordinal);
+    }
+
+    private static string ReadScorecardSchemaVersion(string repositoryRoot)
+    {
+        var script = File.ReadAllText(Path.Combine(repositoryRoot, "scripts", "publish-engine-completion-scorecard.ps1"));
+        const string marker = "$Script:SchemaVersion = \"";
+        var markerIndex = script.IndexOf(marker, StringComparison.Ordinal);
+
+        Assert.True(markerIndex >= 0, "Expected publish-engine-completion-scorecard.ps1 to declare $Script:SchemaVersion.");
+
+        var startIndex = markerIndex + marker.Length;
+        var endIndex = script.IndexOf('"', startIndex);
+
+        Assert.True(endIndex > startIndex, "Expected publish-engine-completion-scorecard.ps1 schema version to be quoted.");
+
+        return script[startIndex..endIndex];
     }
 
     private static string GetRepositoryRoot()

@@ -138,6 +138,100 @@ function Get-DeploymentModeReleaseValidationSkipsPublish {
     return [System.Convert]::ToBoolean([string]$policy.releaseValidationSkipsPublish, [System.Globalization.CultureInfo]::InvariantCulture)
 }
 
+function Get-ScorecardIntegerProperty {
+    param(
+        [Parameter(Mandatory = $true)]
+        [object]$Object,
+        [Parameter(Mandatory = $true)]
+        [string]$PropertyName
+    )
+
+    if ($null -eq $Object) {
+        return 0
+    }
+
+    $property = $Object.PSObject.Properties[$PropertyName]
+    if ($null -eq $property -or $null -eq $property.Value) {
+        return 0
+    }
+
+    return [System.Convert]::ToInt32($property.Value, [System.Globalization.CultureInfo]::InvariantCulture)
+}
+
+function Get-ScorecardBooleanProperty {
+    param(
+        [Parameter(Mandatory = $true)]
+        [object]$Object,
+        [Parameter(Mandatory = $true)]
+        [string]$PropertyName
+    )
+
+    if ($null -eq $Object) {
+        return $false
+    }
+
+    $property = $Object.PSObject.Properties[$PropertyName]
+    if ($null -eq $property -or $null -eq $property.Value) {
+        return $false
+    }
+
+    return [System.Convert]::ToBoolean($property.Value, [System.Globalization.CultureInfo]::InvariantCulture)
+}
+
+function Assert-EngineCompletionScorecardHardBlockers {
+    param([Parameter(Mandatory = $true)] [object]$Scorecard)
+
+    $hardBlockers = [System.Collections.Generic.List[string]]::new()
+    $summary = $Scorecard.Summary
+
+    $blockedPlatformGates = Get-ScorecardIntegerProperty -Object $summary -PropertyName "BlockedPlatformGates"
+    if ($blockedPlatformGates -gt 0) {
+        $blockedGateNames = @(
+            $Scorecard.PlatformGates |
+                Where-Object { @($_.Statuses) -contains "blocked" } |
+                ForEach-Object { $_.Gate }
+        )
+        $detail = "blocked platform gates: $blockedPlatformGates"
+        if ($blockedGateNames.Count -gt 0) {
+            $detail = "$detail ($($blockedGateNames -join ', '))"
+        }
+
+        $hardBlockers.Add($detail)
+    }
+
+    $supplyChainBlockedCount = Get-ScorecardIntegerProperty -Object $Scorecard.SupplyChainEvidence -PropertyName "BlockedCount"
+    if ($supplyChainBlockedCount -gt 0) {
+        $blockedEvidenceIds = @(
+            $Scorecard.SupplyChainEvidence.EvidenceItems |
+                Where-Object { $_.Status -eq "blocked" } |
+                ForEach-Object { $_.Id }
+        )
+        $detail = "supply-chain blocked items: $supplyChainBlockedCount"
+        if ($blockedEvidenceIds.Count -gt 0) {
+            $detail = "$detail ($($blockedEvidenceIds -join ', '))"
+        }
+
+        $hardBlockers.Add($detail)
+    }
+
+    $publicApiRemovalCount = Get-ScorecardIntegerProperty -Object $Scorecard.PublicApiCompatibilityEvidence -PropertyName "RemovalEntryCount"
+    $summaryPublicApiRemovalCount = Get-ScorecardIntegerProperty -Object $summary -PropertyName "PublicApiRemovalEntryCount"
+    if ($summaryPublicApiRemovalCount -gt $publicApiRemovalCount) {
+        $publicApiRemovalCount = $summaryPublicApiRemovalCount
+    }
+
+    $hasPublicApiRemovals = Get-ScorecardBooleanProperty -Object $Scorecard.PublicApiCompatibilityEvidence -PropertyName "HasRemovalEntries"
+    if ($publicApiRemovalCount -gt 0 -or $hasPublicApiRemovals) {
+        $hardBlockers.Add("public API removal entries: $publicApiRemovalCount")
+    }
+
+    if ($hardBlockers.Count -gt 0) {
+        throw "Engine completion scorecard has hard release blocker(s): $($hardBlockers -join '; ')."
+    }
+
+    Write-Host "Engine completion scorecard hard-blocker gate: no blocked platform gates, no supply-chain blocked items, and no public API removals."
+}
+
 function Write-EngineCompletionScorecardEvidenceSummary {
     param([Parameter(Mandatory = $true)] [string]$ScorecardOutputPath)
 
@@ -205,6 +299,8 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         $scorecard.PublicApiCompatibilityEvidence.PendingPackageCount,
         $scorecard.PublicApiCompatibilityEvidence.AdditiveEntryCount,
         $scorecard.PublicApiCompatibilityEvidence.RemovalEntryCount)
+
+    Assert-EngineCompletionScorecardHardBlockers -Scorecard $scorecard
 }
 
 Push-Location $repoRoot
