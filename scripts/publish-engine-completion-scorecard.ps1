@@ -3,6 +3,7 @@ param(
     [string]$ConformanceMatrixPath = "docs/conformance-matrix.md",
     [string]$DeploymentModeManifestPath = "scripts/deployment-mode-support.json",
     [string]$AdoptionSmokeManifestPath = "scripts/adoption-smoke-support.json",
+    [string]$ProviderIntegrationManifestPath = "scripts/provider-integration-support.json",
     [string]$SrePostureManifestPath = "scripts/sre-posture-support.json",
     [string]$SupplyChainManifestPath = "scripts/supply-chain-release-support.json",
     [string]$PublicApiDeltaScriptPath = "scripts/summarise-public-api-deltas.ps1",
@@ -13,7 +14,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$Script:SchemaVersion = "1.7.0"
+$Script:SchemaVersion = "1.8.0"
 $Script:AllowedStatuses = @(
     "ready-for-preview",
     "partial",
@@ -624,6 +625,43 @@ function ConvertTo-RequiredBoolean {
     throw "Adoption smoke assertion '$Name' must be a boolean value."
 }
 
+function Resolve-ProviderIntegrationManifestPath {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$DeclaredPath,
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedRepoRoot,
+        [Parameter(Mandatory = $true)]
+        [string]$Context,
+        [string]$PathType = "Any"
+    )
+
+    if ([string]::IsNullOrWhiteSpace($DeclaredPath)) {
+        throw "Provider integration support manifest contains an empty path in $Context."
+    }
+
+    $resolvedPath = Resolve-FullPath -Path $DeclaredPath -BasePath $ResolvedRepoRoot
+    $exists = if ($PathType -eq "File") {
+        Test-Path -LiteralPath $resolvedPath -PathType Leaf
+    }
+    elseif ($PathType -eq "Directory") {
+        Test-Path -LiteralPath $resolvedPath -PathType Container
+    }
+    else {
+        Test-Path -LiteralPath $resolvedPath
+    }
+
+    if (-not $exists) {
+        throw "Provider integration support manifest path '$DeclaredPath' in $Context was not found at '$resolvedPath'."
+    }
+
+    return [pscustomobject]([ordered]@{
+        Reference  = Get-RepoRelativePath -Path $resolvedPath -RepoRoot $ResolvedRepoRoot
+        DeclaredAs = $DeclaredPath
+        Kind       = Get-SourceReferenceKind -Reference $DeclaredPath
+    })
+}
+
 function Resolve-AdoptionSmokeManifestPath {
     param(
         [Parameter(Mandatory = $true)]
@@ -1155,6 +1193,182 @@ function Convert-AdoptionSmokeEvidence {
     })
 }
 
+function Convert-ProviderIntegrationEvidence {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedManifestPath,
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedRepoRoot
+    )
+
+    if (-not (Test-Path -LiteralPath $ResolvedManifestPath -PathType Leaf)) {
+        throw "Provider integration support manifest '$ResolvedManifestPath' was not found."
+    }
+
+    $manifest = Get-Content -LiteralPath $ResolvedManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 32
+    $schemaVersion = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName '$schemaVersion' -DefaultValue "")
+    if ([string]::IsNullOrWhiteSpace($schemaVersion)) {
+        throw "Provider integration support manifest is missing '`$schemaVersion'."
+    }
+
+    $status = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "status" -DefaultValue "")
+    if ([string]::IsNullOrWhiteSpace($status)) {
+        throw "Provider integration support manifest is missing status."
+    }
+
+    $sourceDocumentReferences = @(
+        Get-ManifestPropertyValue -Object $manifest -PropertyName "sourceDocs" -DefaultValue @() |
+            ForEach-Object {
+                Resolve-ProviderIntegrationManifestPath -DeclaredPath ([string]$_) -ResolvedRepoRoot $ResolvedRepoRoot -Context "sourceDocs" -PathType "File"
+            }
+    )
+    if ($sourceDocumentReferences.Count -eq 0) {
+        throw "Provider integration support manifest must declare at least one source document."
+    }
+
+    $validationProjectReferences = @(
+        Get-ManifestPropertyValue -Object $manifest -PropertyName "validationProjects" -DefaultValue @() |
+            ForEach-Object {
+                Resolve-ProviderIntegrationManifestPath -DeclaredPath ([string]$_) -ResolvedRepoRoot $ResolvedRepoRoot -Context "validationProjects" -PathType "File"
+            }
+    )
+    if ($validationProjectReferences.Count -eq 0) {
+        throw "Provider integration support manifest must declare at least one validation project."
+    }
+
+    $allowedStatuses = @(
+        "live-proof-available",
+        "composition-only",
+        "planned",
+        "not-claimed"
+    )
+    $providerRows = [System.Collections.Generic.List[object]]::new()
+
+    foreach ($row in @(Get-ManifestPropertyValue -Object $manifest -PropertyName "providerRows" -DefaultValue @())) {
+        $id = [string](Get-ManifestPropertyValue -Object $row -PropertyName "id" -DefaultValue "")
+        $provider = [string](Get-ManifestPropertyValue -Object $row -PropertyName "provider" -DefaultValue "")
+        $family = [string](Get-ManifestPropertyValue -Object $row -PropertyName "family" -DefaultValue "")
+        $rowStatus = [string](Get-ManifestPropertyValue -Object $row -PropertyName "status" -DefaultValue "")
+        $defaultRunBehavior = [string](Get-ManifestPropertyValue -Object $row -PropertyName "defaultRunBehavior" -DefaultValue "")
+        $testProjectPath = [string](Get-ManifestPropertyValue -Object $row -PropertyName "testProject" -DefaultValue "")
+
+        foreach ($field in @(
+            [pscustomobject]@{ Name = "id"; Value = $id },
+            [pscustomobject]@{ Name = "provider"; Value = $provider },
+            [pscustomobject]@{ Name = "family"; Value = $family },
+            [pscustomobject]@{ Name = "status"; Value = $rowStatus },
+            [pscustomobject]@{ Name = "defaultRunBehavior"; Value = $defaultRunBehavior },
+            [pscustomobject]@{ Name = "testProject"; Value = $testProjectPath }
+        )) {
+            if ([string]::IsNullOrWhiteSpace($field.Value)) {
+                throw "Provider integration evidence row must include $($field.Name)."
+            }
+        }
+
+        if ($allowedStatuses -notcontains $rowStatus) {
+            throw "Unsupported provider integration evidence status '$rowStatus' for row '$id'."
+        }
+
+        $testProjectReference = Resolve-ProviderIntegrationManifestPath -DeclaredPath $testProjectPath -ResolvedRepoRoot $ResolvedRepoRoot -Context "provider row '$id' testProject" -PathType "File"
+        $testFileReferences = @(
+            Get-ManifestPropertyValue -Object $row -PropertyName "testFiles" -DefaultValue @() |
+                ForEach-Object {
+                    Resolve-ProviderIntegrationManifestPath -DeclaredPath ([string]$_) -ResolvedRepoRoot $ResolvedRepoRoot -Context "provider row '$id' testFiles" -PathType "File"
+                }
+        )
+        if ($testFileReferences.Count -eq 0) {
+            throw "Provider integration evidence row '$id' must declare at least one test file."
+        }
+
+        $rowSourceDocumentReferences = @(
+            Get-ManifestPropertyValue -Object $row -PropertyName "sourceDocuments" -DefaultValue @() |
+                ForEach-Object {
+                    Resolve-ProviderIntegrationManifestPath -DeclaredPath ([string]$_) -ResolvedRepoRoot $ResolvedRepoRoot -Context "provider row '$id' sourceDocuments" -PathType "File"
+                }
+        )
+        if ($rowSourceDocumentReferences.Count -eq 0) {
+            throw "Provider integration evidence row '$id' must declare at least one source document."
+        }
+
+        $runtimeContracts = @(
+            Get-ManifestPropertyValue -Object $row -PropertyName "runtimeContracts" -DefaultValue @() |
+                ForEach-Object { [string]$_ } |
+                Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+        )
+        if ($runtimeContracts.Count -eq 0) {
+            throw "Provider integration evidence row '$id' must declare at least one runtime contract."
+        }
+
+        $environmentVariables = @(
+            Get-ManifestPropertyValue -Object $row -PropertyName "environmentVariables" -DefaultValue @() |
+                ForEach-Object { [string]$_ } |
+                Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+        )
+        $externalServiceGate = [string](Get-ManifestPropertyValue -Object $row -PropertyName "externalServiceGate" -DefaultValue "")
+        if ($rowStatus -eq "live-proof-available" -and [string]::IsNullOrWhiteSpace($externalServiceGate)) {
+            throw "Provider integration live-proof row '$id' must declare externalServiceGate."
+        }
+
+        $providerRows.Add([pscustomobject]([ordered]@{
+            Id                   = $id
+            Provider             = $provider
+            Family               = $family
+            Status               = $rowStatus
+            DefaultRunBehavior   = $defaultRunBehavior
+            ExternalServiceGate  = $externalServiceGate
+            TestProject          = $testProjectReference.Reference
+            TestFiles            = @($testFileReferences | ForEach-Object { $_.Reference })
+            SourceDocuments      = @($rowSourceDocumentReferences | ForEach-Object { $_.Reference })
+            RuntimeContracts     = $runtimeContracts
+            EnvironmentVariables = $environmentVariables
+            ValidatedReferences  = @(
+                $testProjectReference
+                $testFileReferences
+                $rowSourceDocumentReferences
+            ) | Sort-Object Reference -Unique
+        }))
+    }
+
+    if ($providerRows.Count -eq 0) {
+        throw "Provider integration support manifest must declare at least one provider row."
+    }
+
+    $liveProofRows = @($providerRows | Where-Object { $_.Status -eq "live-proof-available" })
+    $compositionOnlyRows = @($providerRows | Where-Object { $_.Status -eq "composition-only" })
+    $plannedRows = @($providerRows | Where-Object { $_.Status -eq "planned" })
+    $notClaimedRows = @($providerRows | Where-Object { $_.Status -eq "not-claimed" })
+    $externalServiceGateRows = @($providerRows | Where-Object { -not [string]::IsNullOrWhiteSpace($_.ExternalServiceGate) })
+    $defaultSkippedRows = @($providerRows | Where-Object { $_.DefaultRunBehavior -eq "skipped-unless-enabled" })
+    $runtimeContracts = @($providerRows | ForEach-Object { $_.RuntimeContracts } | Sort-Object -Unique)
+    $environmentVariables = @($providerRows | ForEach-Object { $_.EnvironmentVariables } | Sort-Object -Unique)
+
+    return [pscustomobject]([ordered]@{
+        Manifest                 = Get-RepoRelativePath -Path $ResolvedManifestPath -RepoRoot $ResolvedRepoRoot
+        ManifestSchemaVersion    = $schemaVersion
+        Status                   = $status
+        Summary                  = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "summary" -DefaultValue "")
+        SourceDocuments          = @($sourceDocumentReferences | ForEach-Object { $_.Reference })
+        ValidationProjects       = @($validationProjectReferences | ForEach-Object { $_.Reference })
+        EvidenceRowCount         = $providerRows.Count
+        LiveProofCount           = $liveProofRows.Count
+        CompositionOnlyCount     = $compositionOnlyRows.Count
+        PlannedCount             = $plannedRows.Count
+        NotClaimedCount          = $notClaimedRows.Count
+        ExternalServiceGateCount = $externalServiceGateRows.Count
+        DefaultSkippedCount      = $defaultSkippedRows.Count
+        RuntimeContractCount     = $runtimeContracts.Count
+        EnvironmentVariableCount = $environmentVariables.Count
+        RuntimeContracts         = $runtimeContracts
+        EnvironmentVariables     = $environmentVariables
+        ProviderRows             = $providerRows.ToArray()
+        ValidatedReferences      = @(
+            $sourceDocumentReferences
+            $validationProjectReferences
+            $providerRows | ForEach-Object { $_.ValidatedReferences }
+        ) | Sort-Object Reference -Unique
+    })
+}
+
 function Convert-SrePostureEvidence {
     param(
         [Parameter(Mandatory = $true)]
@@ -1637,6 +1851,8 @@ function New-EngineCompletionScorecardReport {
         [Parameter(Mandatory = $true)]
         [string]$ResolvedAdoptionSmokeManifestPath,
         [Parameter(Mandatory = $true)]
+        [string]$ResolvedProviderIntegrationManifestPath,
+        [Parameter(Mandatory = $true)]
         [string]$ResolvedSrePostureManifestPath,
         [Parameter(Mandatory = $true)]
         [string]$ResolvedSupplyChainManifestPath,
@@ -1661,6 +1877,7 @@ function New-EngineCompletionScorecardReport {
     $packageGAReadinessRows = Convert-ConformancePackageRows -ResolvedConformanceMatrixPath $ResolvedConformanceMatrixPath -ResolvedRepoRoot $ResolvedRepoRoot
     $deploymentModeEvidence = Convert-DeploymentModeEvidence -ResolvedManifestPath $ResolvedDeploymentModeManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
     $adoptionSmokeEvidence = Convert-AdoptionSmokeEvidence -ResolvedManifestPath $ResolvedAdoptionSmokeManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
+    $providerIntegrationEvidence = Convert-ProviderIntegrationEvidence -ResolvedManifestPath $ResolvedProviderIntegrationManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
     $srePostureEvidence = Convert-SrePostureEvidence -ResolvedManifestPath $ResolvedSrePostureManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
     $supplyChainEvidence = Convert-SupplyChainEvidence -ResolvedManifestPath $ResolvedSupplyChainManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
     $publicApiCompatibilityEvidence = Convert-PublicApiCompatibilityEvidence -ResolvedPublicApiDeltaScriptPath $ResolvedPublicApiDeltaScriptPath -ResolvedRepoRoot $ResolvedRepoRoot
@@ -1691,6 +1908,7 @@ function New-EngineCompletionScorecardReport {
         ConformanceMatrix  = Get-RepoRelativePath -Path $ResolvedConformanceMatrixPath -RepoRoot $ResolvedRepoRoot
         DeploymentModeManifest = Get-RepoRelativePath -Path $ResolvedDeploymentModeManifestPath -RepoRoot $ResolvedRepoRoot
         AdoptionSmokeManifest = Get-RepoRelativePath -Path $ResolvedAdoptionSmokeManifestPath -RepoRoot $ResolvedRepoRoot
+        ProviderIntegrationManifest = Get-RepoRelativePath -Path $ResolvedProviderIntegrationManifestPath -RepoRoot $ResolvedRepoRoot
         SrePostureManifest = Get-RepoRelativePath -Path $ResolvedSrePostureManifestPath -RepoRoot $ResolvedRepoRoot
         SupplyChainManifest = Get-RepoRelativePath -Path $ResolvedSupplyChainManifestPath -RepoRoot $ResolvedRepoRoot
         PublicApiDeltaScript = Get-RepoRelativePath -Path $ResolvedPublicApiDeltaScriptPath -RepoRoot $ResolvedRepoRoot
@@ -1703,6 +1921,7 @@ function New-EngineCompletionScorecardReport {
         PackageGAReadiness = $packageGAReadinessRows
         DeploymentModeEvidence = $deploymentModeEvidence
         AdoptionSmokeEvidence = $adoptionSmokeEvidence
+        ProviderIntegrationEvidence = $providerIntegrationEvidence
         SrePostureEvidence = $srePostureEvidence
         SupplyChainEvidence = $supplyChainEvidence
         PublicApiCompatibilityEvidence = $publicApiCompatibilityEvidence
@@ -1725,6 +1944,12 @@ function New-EngineCompletionScorecardReport {
             AdoptionSmokeScenarioCount = if ($null -ne $adoptionSmokeEvidence) { 1 } else { 0 }
             AdoptionSmokeRuntimeProbeCount = @($adoptionSmokeEvidence.RuntimeProbes).Count
             AdoptionSmokeAssertionCount = @($adoptionSmokeEvidence.Assertions).Count
+            ProviderIntegrationEvidenceRowCount = $providerIntegrationEvidence.EvidenceRowCount
+            ProviderIntegrationLiveProofCount = $providerIntegrationEvidence.LiveProofCount
+            ProviderIntegrationCompositionOnlyCount = $providerIntegrationEvidence.CompositionOnlyCount
+            ProviderIntegrationExternalServiceGateCount = $providerIntegrationEvidence.ExternalServiceGateCount
+            ProviderIntegrationDefaultSkippedCount = $providerIntegrationEvidence.DefaultSkippedCount
+            ProviderIntegrationRuntimeContractCount = $providerIntegrationEvidence.RuntimeContractCount
             SreSliCount = $srePostureEvidence.SliCount
             SreTargetDeclaredCount = $srePostureEvidence.TargetDeclaredCount
             SrePendingStableBaselineCount = $srePostureEvidence.PendingStableBaselineCount
@@ -1779,6 +2004,7 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("Conformance matrix: ``$($Report.ConformanceMatrix)``")
     $markdown.Add("Deployment-mode manifest: ``$($Report.DeploymentModeManifest)``")
     $markdown.Add("Adoption smoke manifest: ``$($Report.AdoptionSmokeManifest)``")
+    $markdown.Add("Provider integration manifest: ``$($Report.ProviderIntegrationManifest)``")
     $markdown.Add("SRE posture manifest: ``$($Report.SrePostureManifest)``")
     $markdown.Add("Supply-chain release manifest: ``$($Report.SupplyChainManifest)``")
     $markdown.Add("Public API delta script: ``$($Report.PublicApiDeltaScript)``")
@@ -1800,6 +2026,12 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- Deployment-mode publish probes: $($Report.DeploymentModeEvidence.PublishProbeReleaseValidationMode)")
     $markdown.Add("- Adoption smoke scenarios: $($Report.Summary.AdoptionSmokeScenarioCount)")
     $markdown.Add("- Adoption smoke runtime probes: $($Report.Summary.AdoptionSmokeRuntimeProbeCount)")
+    $markdown.Add("- Provider integration evidence rows: $($Report.Summary.ProviderIntegrationEvidenceRowCount)")
+    $markdown.Add("- Provider integration live proofs: $($Report.Summary.ProviderIntegrationLiveProofCount)")
+    $markdown.Add("- Provider integration composition-only rows: $($Report.Summary.ProviderIntegrationCompositionOnlyCount)")
+    $markdown.Add("- Provider integration external-service gates: $($Report.Summary.ProviderIntegrationExternalServiceGateCount)")
+    $markdown.Add("- Provider integration default-skipped rows: $($Report.Summary.ProviderIntegrationDefaultSkippedCount)")
+    $markdown.Add("- Provider integration runtime contracts: $($Report.Summary.ProviderIntegrationRuntimeContractCount)")
     $markdown.Add("- SRE SLIs: $($Report.Summary.SreSliCount)")
     $markdown.Add("- SRE target-declared SLIs: $($Report.Summary.SreTargetDeclaredCount)")
     $markdown.Add("- SRE pending stable baselines: $($Report.Summary.SrePendingStableBaselineCount)")
@@ -1944,6 +2176,26 @@ function Write-EngineCompletionScorecardReport {
     }
 
     $markdown.Add("")
+    $markdown.Add("## Provider Integration Evidence")
+    $markdown.Add("")
+    $markdown.Add("- Manifest: ``$($Report.ProviderIntegrationEvidence.Manifest)``")
+    $markdown.Add("- Status: $($Report.ProviderIntegrationEvidence.Status)")
+    $markdown.Add("- Evidence rows: $($Report.ProviderIntegrationEvidence.EvidenceRowCount)")
+    $markdown.Add("- Live proofs: $($Report.ProviderIntegrationEvidence.LiveProofCount)")
+    $markdown.Add("- Composition-only rows: $($Report.ProviderIntegrationEvidence.CompositionOnlyCount)")
+    $markdown.Add("- External-service gates: $($Report.ProviderIntegrationEvidence.ExternalServiceGateCount)")
+    $markdown.Add("- Default-skipped rows: $($Report.ProviderIntegrationEvidence.DefaultSkippedCount)")
+    $markdown.Add("- Runtime contracts: $($Report.ProviderIntegrationEvidence.RuntimeContractCount)")
+    $markdown.Add("- Environment variables: $($Report.ProviderIntegrationEvidence.EnvironmentVariableCount)")
+    $markdown.Add("")
+    $markdown.Add("| Provider | Family | Status | Default run behavior | Runtime contracts |")
+    $markdown.Add("| --- | --- | --- | --- | --- |")
+    foreach ($provider in $Report.ProviderIntegrationEvidence.ProviderRows) {
+        $runtimeContracts = if (@($provider.RuntimeContracts).Count -eq 0) { "" } else { [string]::Join(", ", @($provider.RuntimeContracts)) }
+        $markdown.Add("| $($provider.Provider) | $($provider.Family) | $($provider.Status) | $($provider.DefaultRunBehavior) | $runtimeContracts |")
+    }
+
+    $markdown.Add("")
     $markdown.Add("## Package Families")
     $markdown.Add("")
     $markdown.Add("| Family | Current posture | Statuses |")
@@ -1977,6 +2229,7 @@ function Invoke-EngineCompletionScorecardPublish {
         [string]$ConformanceMatrixPath,
         [string]$DeploymentModeManifestPath = "scripts/deployment-mode-support.json",
         [string]$AdoptionSmokeManifestPath = "scripts/adoption-smoke-support.json",
+        [string]$ProviderIntegrationManifestPath = "scripts/provider-integration-support.json",
         [string]$SrePostureManifestPath = "scripts/sre-posture-support.json",
         [string]$SupplyChainManifestPath = "scripts/supply-chain-release-support.json",
         [string]$PublicApiDeltaScriptPath = "scripts/summarise-public-api-deltas.ps1",
@@ -1991,12 +2244,13 @@ function Invoke-EngineCompletionScorecardPublish {
     $resolvedConformanceMatrixPath = Resolve-FullPath -Path $ConformanceMatrixPath -BasePath $resolvedRepoRoot
     $resolvedDeploymentModeManifestPath = Resolve-FullPath -Path $DeploymentModeManifestPath -BasePath $resolvedRepoRoot
     $resolvedAdoptionSmokeManifestPath = Resolve-FullPath -Path $AdoptionSmokeManifestPath -BasePath $resolvedRepoRoot
+    $resolvedProviderIntegrationManifestPath = Resolve-FullPath -Path $ProviderIntegrationManifestPath -BasePath $resolvedRepoRoot
     $resolvedSrePostureManifestPath = Resolve-FullPath -Path $SrePostureManifestPath -BasePath $resolvedRepoRoot
     $resolvedSupplyChainManifestPath = Resolve-FullPath -Path $SupplyChainManifestPath -BasePath $resolvedRepoRoot
     $resolvedPublicApiDeltaScriptPath = Resolve-FullPath -Path $PublicApiDeltaScriptPath -BasePath $resolvedRepoRoot
     $resolvedOutputPath = Resolve-FullPath -Path $OutputPath -BasePath $resolvedRepoRoot
 
-    $report = New-EngineCompletionScorecardReport -ResolvedScorecardPath $resolvedScorecardPath -ResolvedConformanceMatrixPath $resolvedConformanceMatrixPath -ResolvedDeploymentModeManifestPath $resolvedDeploymentModeManifestPath -ResolvedAdoptionSmokeManifestPath $resolvedAdoptionSmokeManifestPath -ResolvedSrePostureManifestPath $resolvedSrePostureManifestPath -ResolvedSupplyChainManifestPath $resolvedSupplyChainManifestPath -ResolvedPublicApiDeltaScriptPath $resolvedPublicApiDeltaScriptPath -ResolvedRepoRoot $resolvedRepoRoot
+    $report = New-EngineCompletionScorecardReport -ResolvedScorecardPath $resolvedScorecardPath -ResolvedConformanceMatrixPath $resolvedConformanceMatrixPath -ResolvedDeploymentModeManifestPath $resolvedDeploymentModeManifestPath -ResolvedAdoptionSmokeManifestPath $resolvedAdoptionSmokeManifestPath -ResolvedProviderIntegrationManifestPath $resolvedProviderIntegrationManifestPath -ResolvedSrePostureManifestPath $resolvedSrePostureManifestPath -ResolvedSupplyChainManifestPath $resolvedSupplyChainManifestPath -ResolvedPublicApiDeltaScriptPath $resolvedPublicApiDeltaScriptPath -ResolvedRepoRoot $resolvedRepoRoot
     $paths = Write-EngineCompletionScorecardReport -Report $report -ResolvedOutputPath $resolvedOutputPath
 
     Write-Host "Engine completion scorecard artifact written to $($paths.JsonPath)"
@@ -2015,5 +2269,5 @@ if (-not $env:CEPHALON_ENGINE_COMPLETION_SCORECARD_NO_RUN) {
         $resolvedRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
     }
 
-    $null = Invoke-EngineCompletionScorecardPublish -ScorecardPath $ScorecardPath -ConformanceMatrixPath $ConformanceMatrixPath -DeploymentModeManifestPath $DeploymentModeManifestPath -AdoptionSmokeManifestPath $AdoptionSmokeManifestPath -SrePostureManifestPath $SrePostureManifestPath -SupplyChainManifestPath $SupplyChainManifestPath -PublicApiDeltaScriptPath $PublicApiDeltaScriptPath -OutputPath $OutputPath -RepoRoot $resolvedRoot
+    $null = Invoke-EngineCompletionScorecardPublish -ScorecardPath $ScorecardPath -ConformanceMatrixPath $ConformanceMatrixPath -DeploymentModeManifestPath $DeploymentModeManifestPath -AdoptionSmokeManifestPath $AdoptionSmokeManifestPath -ProviderIntegrationManifestPath $ProviderIntegrationManifestPath -SrePostureManifestPath $SrePostureManifestPath -SupplyChainManifestPath $SupplyChainManifestPath -PublicApiDeltaScriptPath $PublicApiDeltaScriptPath -OutputPath $OutputPath -RepoRoot $resolvedRoot
 }

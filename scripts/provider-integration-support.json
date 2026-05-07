@@ -1,0 +1,810 @@
+{
+  "$schemaVersion": "1.0.0",
+  "status": "partial-live-provider-evidence",
+  "summary": "Provider integration evidence is machine-readable. Redis data/event-sourcing and CDC database providers have opt-in live proof lanes; non-relational data providers and observability dependency-health providers have no-external-service composition/runtime invariant proof until provider-owned live lanes are promoted.",
+  "sourceDocs": [
+    "docs/engine-completion-scorecard.md",
+    "docs/release-checklist.md",
+    "docs/test-coverage-roadmap.md",
+    "docs/components/observability.md"
+  ],
+  "validationProjects": [
+    "tests/Cephalon.Tests.ProviderIntegration/Cephalon.Tests.ProviderIntegration.csproj",
+    "tests/Cephalon.Tests.CdcIntegration/Cephalon.Tests.CdcIntegration.csproj",
+    "tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj",
+    "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj"
+  ],
+  "providerRows": [
+    {
+      "id": "redis-data-event-sourcing-live",
+      "provider": "Redis",
+      "family": "data-event-sourcing",
+      "status": "live-proof-available",
+      "defaultRunBehavior": "skipped-unless-enabled",
+      "externalServiceGate": "provider-integration",
+      "testProject": "tests/Cephalon.Tests.ProviderIntegration/Cephalon.Tests.ProviderIntegration.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.ProviderIntegration/RedisProviderIntegrationTests.cs",
+        "tests/Cephalon.Tests.ProviderIntegration/ExternalServices/ExternalProviderServiceGate.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/data-redis.md",
+        "docs/components/event-sourcing-redis.md",
+        "docs/test-coverage-roadmap.md"
+      ],
+      "runtimeContracts": [
+        "data.redis",
+        "data.outbox.redis",
+        "data.inbox.redis",
+        "redis-outbox",
+        "redis-inbox",
+        "redis-event-store",
+        "outbox-producers",
+        "inbox-stores",
+        "event-sourcing"
+      ],
+      "environmentVariables": [
+        "CEPHALON_PROVIDER_EXTERNAL_SERVICES",
+        "CEPHALON_PROVIDER_INTEGRATION",
+        "CEPHALON_PROVIDER_TESTCONTAINERS",
+        "CEPHALON_PROVIDER_REDIS_CONNECTION_STRING",
+        "CEPHALON_REDIS_CONNECTION_STRING"
+      ]
+    },
+    {
+      "id": "mongodb-cdc-live",
+      "provider": "MongoDB",
+      "family": "cdc",
+      "status": "live-proof-available",
+      "defaultRunBehavior": "skipped-unless-enabled",
+      "externalServiceGate": "cdc-integration",
+      "testProject": "tests/Cephalon.Tests.CdcIntegration/Cephalon.Tests.CdcIntegration.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.CdcIntegration/MongoDbChangeStreamCdcIntegrationTests.cs",
+        "tests/Cephalon.Tests.CdcIntegration/ExternalServices/ExternalCdcServiceGate.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/data-mongodb.md",
+        "docs/test-coverage-roadmap.md"
+      ],
+      "runtimeContracts": [
+        "data-management",
+        "cdc-captures",
+        "cdc-capture-runtimes",
+        "provider-native-cdc",
+        "outbox-staging",
+        "checkpoint-commit"
+      ],
+      "environmentVariables": [
+        "CEPHALON_CDC_EXTERNAL_SERVICES",
+        "CEPHALON_CDC_TESTCONTAINERS"
+      ]
+    },
+    {
+      "id": "sqlserver-cdc-live",
+      "provider": "SQL Server",
+      "family": "cdc",
+      "status": "live-proof-available",
+      "defaultRunBehavior": "skipped-unless-enabled",
+      "externalServiceGate": "cdc-integration",
+      "testProject": "tests/Cephalon.Tests.CdcIntegration/Cephalon.Tests.CdcIntegration.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.CdcIntegration/SqlServerCdcIntegrationTests.cs",
+        "tests/Cephalon.Tests.CdcIntegration/ExternalServices/ExternalCdcServiceGate.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/data-sqlserver.md",
+        "docs/test-coverage-roadmap.md"
+      ],
+      "runtimeContracts": [
+        "data-management",
+        "cdc-captures",
+        "cdc-capture-runtimes",
+        "provider-native-cdc",
+        "outbox-staging",
+        "checkpoint-commit"
+      ],
+      "environmentVariables": [
+        "CEPHALON_CDC_EXTERNAL_SERVICES",
+        "CEPHALON_CDC_TESTCONTAINERS",
+        "CEPHALON_CDC_SQLSERVER_CONNECTION_STRING"
+      ]
+    },
+    {
+      "id": "postgres-cdc-live",
+      "provider": "PostgreSQL",
+      "family": "cdc",
+      "status": "live-proof-available",
+      "defaultRunBehavior": "skipped-unless-enabled",
+      "externalServiceGate": "cdc-integration",
+      "testProject": "tests/Cephalon.Tests.CdcIntegration/Cephalon.Tests.CdcIntegration.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.CdcIntegration/PostgresCdcIntegrationTests.cs",
+        "tests/Cephalon.Tests.CdcIntegration/ExternalServices/ExternalCdcServiceGate.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/data-postgres.md",
+        "docs/test-coverage-roadmap.md"
+      ],
+      "runtimeContracts": [
+        "data-management",
+        "cdc-captures",
+        "cdc-capture-runtimes",
+        "provider-native-cdc",
+        "outbox-staging",
+        "checkpoint-commit"
+      ],
+      "environmentVariables": [
+        "CEPHALON_CDC_EXTERNAL_SERVICES",
+        "CEPHALON_CDC_TESTCONTAINERS",
+        "CEPHALON_CDC_POSTGRES_CONNECTION_STRING"
+      ]
+    },
+    {
+      "id": "mysql-cdc-live",
+      "provider": "MySQL",
+      "family": "cdc",
+      "status": "live-proof-available",
+      "defaultRunBehavior": "skipped-unless-enabled",
+      "externalServiceGate": "cdc-integration",
+      "testProject": "tests/Cephalon.Tests.CdcIntegration/Cephalon.Tests.CdcIntegration.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.CdcIntegration/MySqlCdcIntegrationTests.cs",
+        "tests/Cephalon.Tests.CdcIntegration/ExternalServices/ExternalCdcServiceGate.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/data-mysql.md",
+        "docs/test-coverage-roadmap.md"
+      ],
+      "runtimeContracts": [
+        "data-management",
+        "cdc-captures",
+        "cdc-capture-runtimes",
+        "provider-native-cdc",
+        "outbox-staging",
+        "checkpoint-commit"
+      ],
+      "environmentVariables": [
+        "CEPHALON_CDC_EXTERNAL_SERVICES",
+        "CEPHALON_CDC_TESTCONTAINERS",
+        "CEPHALON_CDC_MYSQL_CONNECTION_STRING"
+      ]
+    },
+    {
+      "id": "oracle-cdc-live",
+      "provider": "Oracle",
+      "family": "cdc",
+      "status": "live-proof-available",
+      "defaultRunBehavior": "skipped-unless-enabled",
+      "externalServiceGate": "cdc-integration",
+      "testProject": "tests/Cephalon.Tests.CdcIntegration/Cephalon.Tests.CdcIntegration.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.CdcIntegration/OracleCdcIntegrationTests.cs",
+        "tests/Cephalon.Tests.CdcIntegration/ExternalServices/ExternalCdcServiceGate.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/data-oracle.md",
+        "docs/test-coverage-roadmap.md"
+      ],
+      "runtimeContracts": [
+        "data-management",
+        "cdc-captures",
+        "cdc-capture-runtimes",
+        "provider-native-cdc",
+        "outbox-staging",
+        "checkpoint-commit"
+      ],
+      "environmentVariables": [
+        "CEPHALON_CDC_EXTERNAL_SERVICES",
+        "CEPHALON_CDC_TESTCONTAINERS",
+        "CEPHALON_CDC_ORACLE_CONNECTION_STRING"
+      ]
+    },
+    {
+      "id": "cassandra-data-runtime-surface",
+      "provider": "Cassandra",
+      "family": "data",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Composition/Composition/DataProviderRuntimeSurfaceTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/data-cassandra.md",
+        "docs/test-coverage-roadmap.md"
+      ],
+      "runtimeContracts": [
+        "data.cassandra",
+        "cassandra-outbox",
+        "cassandra-inbox",
+        "outbox-producers",
+        "inbox-stores",
+        "sanitized-capability-metadata"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "clickhouse-data-runtime-surface",
+      "provider": "ClickHouse",
+      "family": "data",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Composition/Composition/DataProviderRuntimeSurfaceTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/data-clickhouse.md",
+        "docs/test-coverage-roadmap.md"
+      ],
+      "runtimeContracts": [
+        "data.clickhouse",
+        "clickhouse-outbox",
+        "clickhouse-inbox",
+        "outbox-producers",
+        "inbox-stores",
+        "sanitized-capability-metadata"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "elasticsearch-data-runtime-surface",
+      "provider": "Elasticsearch",
+      "family": "data",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Composition/Composition/DataProviderRuntimeSurfaceTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/data-elasticsearch.md",
+        "docs/test-coverage-roadmap.md"
+      ],
+      "runtimeContracts": [
+        "data.search-store",
+        "elasticsearch-outbox",
+        "elasticsearch-inbox",
+        "outbox-producers",
+        "inbox-stores",
+        "sanitized-capability-metadata"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "mongodb-data-runtime-surface",
+      "provider": "MongoDB",
+      "family": "data",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Composition/Composition/DataProviderRuntimeSurfaceTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/data-mongodb.md",
+        "docs/test-coverage-roadmap.md"
+      ],
+      "runtimeContracts": [
+        "data.mongodb",
+        "mongodb-outbox",
+        "mongodb-inbox",
+        "outbox-producers",
+        "inbox-stores",
+        "sanitized-capability-metadata"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "nats-data-runtime-surface",
+      "provider": "NATS",
+      "family": "data",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Composition/Composition/DataProviderRuntimeSurfaceTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/data-nats.md",
+        "docs/test-coverage-roadmap.md"
+      ],
+      "runtimeContracts": [
+        "data.nats",
+        "nats-outbox",
+        "nats-inbox",
+        "outbox-producers",
+        "inbox-stores",
+        "sanitized-capability-metadata"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "neo4j-data-runtime-surface",
+      "provider": "Neo4j",
+      "family": "data",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Composition/Composition/DataProviderRuntimeSurfaceTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/data-neo4j.md",
+        "docs/test-coverage-roadmap.md"
+      ],
+      "runtimeContracts": [
+        "data.neo4j",
+        "neo4j-outbox",
+        "neo4j-inbox",
+        "outbox-producers",
+        "inbox-stores",
+        "sanitized-capability-metadata"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "opensearch-data-runtime-surface",
+      "provider": "OpenSearch",
+      "family": "data",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Composition/Composition/DataProviderRuntimeSurfaceTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/data-opensearch.md",
+        "docs/test-coverage-roadmap.md"
+      ],
+      "runtimeContracts": [
+        "data.search-store",
+        "opensearch-outbox",
+        "opensearch-inbox",
+        "outbox-producers",
+        "inbox-stores",
+        "sanitized-capability-metadata"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "qdrant-data-runtime-surface",
+      "provider": "Qdrant",
+      "family": "data",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Composition/Composition/DataProviderRuntimeSurfaceTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/data-qdrant.md",
+        "docs/test-coverage-roadmap.md"
+      ],
+      "runtimeContracts": [
+        "data.qdrant",
+        "qdrant-outbox",
+        "qdrant-inbox",
+        "outbox-producers",
+        "inbox-stores",
+        "sanitized-capability-metadata"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "cassandra-dependency-health-invariant",
+      "provider": "Cassandra",
+      "family": "dependency-health",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Hosting/ObservabilityDependencyHealthProviderInvariantTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/observability-cassandra-dependencies.md",
+        "docs/components/observability.md"
+      ],
+      "runtimeContracts": [
+        "dependency-health",
+        "dependency-health.cassandra",
+        "RuntimeHealthEvaluator.EvaluateDependencies",
+        "IRuntimeDiagnosticsCatalog",
+        "IRuntimeIntrospectionSnapshot.DiagnosticsConventions"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "clickhouse-dependency-health-invariant",
+      "provider": "ClickHouse",
+      "family": "dependency-health",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Hosting/ObservabilityDependencyHealthProviderInvariantTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/observability-clickhouse-dependencies.md",
+        "docs/components/observability.md"
+      ],
+      "runtimeContracts": [
+        "dependency-health",
+        "dependency-health.clickhouse",
+        "RuntimeHealthEvaluator.EvaluateDependencies",
+        "IRuntimeDiagnosticsCatalog",
+        "IRuntimeIntrospectionSnapshot.DiagnosticsConventions"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "consul-dependency-health-invariant",
+      "provider": "Consul",
+      "family": "dependency-health",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Hosting/ObservabilityDependencyHealthProviderInvariantTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/observability-consul-dependencies.md",
+        "docs/components/observability.md"
+      ],
+      "runtimeContracts": [
+        "dependency-health",
+        "dependency-health.consul",
+        "RuntimeHealthEvaluator.EvaluateDependencies",
+        "IRuntimeDiagnosticsCatalog",
+        "IRuntimeIntrospectionSnapshot.DiagnosticsConventions"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "elasticsearch-dependency-health-invariant",
+      "provider": "Elasticsearch",
+      "family": "dependency-health",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Hosting/ObservabilityDependencyHealthProviderInvariantTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/observability-elasticsearch-dependencies.md",
+        "docs/components/observability.md"
+      ],
+      "runtimeContracts": [
+        "dependency-health",
+        "dependency-health.elasticsearch",
+        "RuntimeHealthEvaluator.EvaluateDependencies",
+        "IRuntimeDiagnosticsCatalog",
+        "IRuntimeIntrospectionSnapshot.DiagnosticsConventions"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "http-dependency-health-invariant",
+      "provider": "HTTP",
+      "family": "dependency-health",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Hosting/ObservabilityDependencyHealthProviderInvariantTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/observability-http-dependencies.md",
+        "docs/components/observability.md"
+      ],
+      "runtimeContracts": [
+        "dependency-health",
+        "dependency-health.http",
+        "RuntimeHealthEvaluator.EvaluateDependencies",
+        "IRuntimeDiagnosticsCatalog",
+        "IRuntimeIntrospectionSnapshot.DiagnosticsConventions"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "kafka-dependency-health-invariant",
+      "provider": "Kafka",
+      "family": "dependency-health",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Hosting/ObservabilityDependencyHealthProviderInvariantTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/observability-kafka-dependencies.md",
+        "docs/components/observability.md"
+      ],
+      "runtimeContracts": [
+        "dependency-health",
+        "dependency-health.kafka",
+        "RuntimeHealthEvaluator.EvaluateDependencies",
+        "IRuntimeDiagnosticsCatalog",
+        "IRuntimeIntrospectionSnapshot.DiagnosticsConventions"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "memcached-dependency-health-invariant",
+      "provider": "Memcached",
+      "family": "dependency-health",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Hosting/ObservabilityDependencyHealthProviderInvariantTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/observability-memcached-dependencies.md",
+        "docs/components/observability.md"
+      ],
+      "runtimeContracts": [
+        "dependency-health",
+        "dependency-health.memcached",
+        "RuntimeHealthEvaluator.EvaluateDependencies",
+        "IRuntimeDiagnosticsCatalog",
+        "IRuntimeIntrospectionSnapshot.DiagnosticsConventions"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "mongodb-dependency-health-invariant",
+      "provider": "MongoDB",
+      "family": "dependency-health",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Hosting/ObservabilityDependencyHealthProviderInvariantTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/observability-mongodb-dependencies.md",
+        "docs/components/observability.md"
+      ],
+      "runtimeContracts": [
+        "dependency-health",
+        "dependency-health.mongodb",
+        "RuntimeHealthEvaluator.EvaluateDependencies",
+        "IRuntimeDiagnosticsCatalog",
+        "IRuntimeIntrospectionSnapshot.DiagnosticsConventions"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "mqtt-dependency-health-invariant",
+      "provider": "MQTT",
+      "family": "dependency-health",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Hosting/ObservabilityDependencyHealthProviderInvariantTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/observability-mqtt-dependencies.md",
+        "docs/components/observability.md"
+      ],
+      "runtimeContracts": [
+        "dependency-health",
+        "dependency-health.mqtt",
+        "RuntimeHealthEvaluator.EvaluateDependencies",
+        "IRuntimeDiagnosticsCatalog",
+        "IRuntimeIntrospectionSnapshot.DiagnosticsConventions"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "mysql-dependency-health-invariant",
+      "provider": "MySQL",
+      "family": "dependency-health",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Hosting/ObservabilityDependencyHealthProviderInvariantTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/observability-mysql-dependencies.md",
+        "docs/components/observability.md"
+      ],
+      "runtimeContracts": [
+        "dependency-health",
+        "dependency-health.mysql",
+        "RuntimeHealthEvaluator.EvaluateDependencies",
+        "IRuntimeDiagnosticsCatalog",
+        "IRuntimeIntrospectionSnapshot.DiagnosticsConventions"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "nats-dependency-health-invariant",
+      "provider": "NATS",
+      "family": "dependency-health",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Hosting/ObservabilityDependencyHealthProviderInvariantTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/observability-nats-dependencies.md",
+        "docs/components/observability.md"
+      ],
+      "runtimeContracts": [
+        "dependency-health",
+        "dependency-health.nats",
+        "RuntimeHealthEvaluator.EvaluateDependencies",
+        "IRuntimeDiagnosticsCatalog",
+        "IRuntimeIntrospectionSnapshot.DiagnosticsConventions"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "neo4j-dependency-health-invariant",
+      "provider": "Neo4j",
+      "family": "dependency-health",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Hosting/ObservabilityDependencyHealthProviderInvariantTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/observability-neo4j-dependencies.md",
+        "docs/components/observability.md"
+      ],
+      "runtimeContracts": [
+        "dependency-health",
+        "dependency-health.neo4j",
+        "RuntimeHealthEvaluator.EvaluateDependencies",
+        "IRuntimeDiagnosticsCatalog",
+        "IRuntimeIntrospectionSnapshot.DiagnosticsConventions"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "opensearch-dependency-health-invariant",
+      "provider": "OpenSearch",
+      "family": "dependency-health",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Hosting/ObservabilityDependencyHealthProviderInvariantTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/observability-opensearch-dependencies.md",
+        "docs/components/observability.md"
+      ],
+      "runtimeContracts": [
+        "dependency-health",
+        "dependency-health.opensearch",
+        "RuntimeHealthEvaluator.EvaluateDependencies",
+        "IRuntimeDiagnosticsCatalog",
+        "IRuntimeIntrospectionSnapshot.DiagnosticsConventions"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "oracle-dependency-health-invariant",
+      "provider": "Oracle",
+      "family": "dependency-health",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Hosting/ObservabilityDependencyHealthProviderInvariantTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/observability-oracle-dependencies.md",
+        "docs/components/observability.md"
+      ],
+      "runtimeContracts": [
+        "dependency-health",
+        "dependency-health.oracle",
+        "RuntimeHealthEvaluator.EvaluateDependencies",
+        "IRuntimeDiagnosticsCatalog",
+        "IRuntimeIntrospectionSnapshot.DiagnosticsConventions"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "postgres-dependency-health-invariant",
+      "provider": "Postgres",
+      "family": "dependency-health",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Hosting/ObservabilityDependencyHealthProviderInvariantTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/observability-postgres-dependencies.md",
+        "docs/components/observability.md"
+      ],
+      "runtimeContracts": [
+        "dependency-health",
+        "dependency-health.postgres",
+        "RuntimeHealthEvaluator.EvaluateDependencies",
+        "IRuntimeDiagnosticsCatalog",
+        "IRuntimeIntrospectionSnapshot.DiagnosticsConventions"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "rabbitmq-dependency-health-invariant",
+      "provider": "RabbitMQ",
+      "family": "dependency-health",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Hosting/ObservabilityDependencyHealthProviderInvariantTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/observability-rabbitmq-dependencies.md",
+        "docs/components/observability.md"
+      ],
+      "runtimeContracts": [
+        "dependency-health",
+        "dependency-health.rabbitmq",
+        "RuntimeHealthEvaluator.EvaluateDependencies",
+        "IRuntimeDiagnosticsCatalog",
+        "IRuntimeIntrospectionSnapshot.DiagnosticsConventions"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "redis-dependency-health-invariant",
+      "provider": "Redis",
+      "family": "dependency-health",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Hosting/ObservabilityDependencyHealthProviderInvariantTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/observability-redis-dependencies.md",
+        "docs/components/observability.md"
+      ],
+      "runtimeContracts": [
+        "dependency-health",
+        "dependency-health.redis",
+        "RuntimeHealthEvaluator.EvaluateDependencies",
+        "IRuntimeDiagnosticsCatalog",
+        "IRuntimeIntrospectionSnapshot.DiagnosticsConventions"
+      ],
+      "environmentVariables": []
+    },
+    {
+      "id": "sqlserver-dependency-health-invariant",
+      "provider": "SQL Server",
+      "family": "dependency-health",
+      "status": "composition-only",
+      "defaultRunBehavior": "runs-without-external-services",
+      "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.Hosting/ObservabilityDependencyHealthProviderInvariantTests.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/observability-sqlserver-dependencies.md",
+        "docs/components/observability.md"
+      ],
+      "runtimeContracts": [
+        "dependency-health",
+        "dependency-health.sqlserver",
+        "RuntimeHealthEvaluator.EvaluateDependencies",
+        "IRuntimeDiagnosticsCatalog",
+        "IRuntimeIntrospectionSnapshot.DiagnosticsConventions"
+      ],
+      "environmentVariables": []
+    }
+  ]
+}

@@ -48,17 +48,18 @@ Describe "publish-engine-completion-scorecard.ps1" {
 
         $json = Get-Content -LiteralPath $result.Paths.JsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
 
-        $json.'$schemaVersion' | Should -Be "1.7.0"
+        $json.'$schemaVersion' | Should -Be "1.8.0"
         $json.SourceDocument | Should -Be "docs/engine-completion-scorecard.md"
         $json.ConformanceMatrix | Should -Be "docs/conformance-matrix.md"
         $json.DeploymentModeManifest | Should -Be "scripts/deployment-mode-support.json"
         $json.AdoptionSmokeManifest | Should -Be "scripts/adoption-smoke-support.json"
+        $json.ProviderIntegrationManifest | Should -Be "scripts/provider-integration-support.json"
         $json.SrePostureManifest | Should -Be "scripts/sre-posture-support.json"
         $json.SupplyChainManifest | Should -Be "scripts/supply-chain-release-support.json"
         $json.PublicApiDeltaScript | Should -Be "scripts/summarise-public-api-deltas.ps1"
         $json.StatusVocabulary.Count | Should -Be 6
-        $json.EvidenceSources.Count | Should -Be 12
-        $json.EvidenceSourceReferences.Count | Should -Be 19
+        $json.EvidenceSources.Count | Should -Be 13
+        $json.EvidenceSourceReferences.Count | Should -Be 20
         $json.PlatformGates.Count | Should -Be 12
         $json.QualityDimensions.Count | Should -Be 12
         $json.PackageFamilies.Count | Should -Be 9
@@ -79,6 +80,12 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.AdoptionSmokeScenarioCount | Should -Be 1
         $json.Summary.AdoptionSmokeRuntimeProbeCount | Should -Be 6
         $json.Summary.AdoptionSmokeAssertionCount | Should -Be 7
+        $json.Summary.ProviderIntegrationEvidenceRowCount | Should -Be 32
+        $json.Summary.ProviderIntegrationLiveProofCount | Should -Be 6
+        $json.Summary.ProviderIntegrationCompositionOnlyCount | Should -Be 26
+        $json.Summary.ProviderIntegrationExternalServiceGateCount | Should -Be 6
+        $json.Summary.ProviderIntegrationDefaultSkippedCount | Should -Be 6
+        $json.Summary.ProviderIntegrationRuntimeContractCount | Should -Be 61
         $json.Summary.SreSliCount | Should -Be 11
         $json.Summary.SreTargetDeclaredCount | Should -Be 11
         $json.Summary.SrePendingStableBaselineCount | Should -Be 11
@@ -92,24 +99,25 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.SupplyChainExternalPolicyPendingCount | Should -Be 3
         $json.Summary.SupplyChainBlockedCount | Should -Be 0
         $json.Summary.PublicApiPackageCount | Should -Be 104
-        $json.Summary.PublicApiPendingPackageCount | Should -Be 21
-        $json.Summary.PublicApiAdditiveEntryCount | Should -Be 288
+        $json.Summary.PublicApiPendingPackageCount | Should -Be 22
+        $json.Summary.PublicApiAdditiveEntryCount | Should -Be 293
         $json.Summary.PublicApiRemovalEntryCount | Should -Be 0
-        $json.Summary.EvidenceSourceCount | Should -Be 12
-        $json.Summary.EvidenceSourceReferenceCount | Should -Be 19
+        $json.Summary.EvidenceSourceCount | Should -Be 13
+        $json.Summary.EvidenceSourceReferenceCount | Should -Be 20
         $json.Summary.PlatformStatusCounts.'ready-for-preview' | Should -Be 3
         $json.Summary.PlatformStatusCounts.partial | Should -Be 7
         $json.Summary.PlatformStatusCounts.'not-claimed' | Should -Be 1
         $json.Summary.PlatformStatusCounts.'needs-refresh' | Should -Be 1
         $json.Summary.PackageStatusCounts.'ready-for-preview' | Should -Be 4
         $json.Summary.PackageStatusCounts.partial | Should -Be 5
-        $json.Summary.PackageGAStatusCounts.partial | Should -Be 88
-        $json.Summary.PackageGAStatusCounts.'not-claimed' | Should -Be 2
+        $json.Summary.PackageGAStatusCounts.partial | Should -Be 89
+        $json.Summary.PackageGAStatusCounts.'not-claimed' | Should -Be 1
         $json.Summary.PackageGAStatusCounts.'needs-refresh' | Should -Be 0
 
         $json.EvidenceSourceReferences.Reference | Should -Contain "docs/engine-surface-maturity-audit.md"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/deployment-mode-support.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/adoption-smoke-support.json"
+        $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/provider-integration-support.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/sre-posture-support.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/supply-chain-release-support.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain ".github/workflows/publish-release.yml"
@@ -157,6 +165,27 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.AdoptionSmokeEvidence.RuntimeProbes.Path | Should -Contain "/engine/trust-policy"
         $json.AdoptionSmokeEvidence.RuntimeProbes.Path | Should -Contain "/api/operations/status"
 
+        $json.ProviderIntegrationEvidence.ManifestSchemaVersion | Should -Be "1.0.0"
+        $json.ProviderIntegrationEvidence.Status | Should -Be "partial-live-provider-evidence"
+        $json.ProviderIntegrationEvidence.SourceDocuments | Should -Contain "docs/components/observability.md"
+        $json.ProviderIntegrationEvidence.ValidationProjects | Should -Contain "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj"
+        $json.ProviderIntegrationEvidence.EvidenceRowCount | Should -Be 32
+        $json.ProviderIntegrationEvidence.LiveProofCount | Should -Be 6
+        $json.ProviderIntegrationEvidence.CompositionOnlyCount | Should -Be 26
+        $json.ProviderIntegrationEvidence.ExternalServiceGateCount | Should -Be 6
+        $json.ProviderIntegrationEvidence.DefaultSkippedCount | Should -Be 6
+        $json.ProviderIntegrationEvidence.RuntimeContractCount | Should -Be 61
+        $json.ProviderIntegrationEvidence.EnvironmentVariableCount | Should -Be 11
+        $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "redis-data-event-sourcing-live"
+        $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "postgres-cdc-live"
+        $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "sqlserver-dependency-health-invariant"
+        $json.ProviderIntegrationEvidence.ProviderRows.ExternalServiceGate | Should -Contain "provider-integration"
+        $json.ProviderIntegrationEvidence.ProviderRows.ExternalServiceGate | Should -Contain "cdc-integration"
+        $json.ProviderIntegrationEvidence.ProviderRows.RuntimeContracts | Should -Contain "dependency-health.sqlserver"
+        $json.ProviderIntegrationEvidence.ProviderRows.TestFiles | Should -Contain "tests/Cephalon.Tests.Hosting/ObservabilityDependencyHealthProviderInvariantTests.cs"
+        $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_REDIS_CONNECTION_STRING"
+        $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_CDC_POSTGRES_CONNECTION_STRING"
+
         $json.SrePostureEvidence.ManifestSchemaVersion | Should -Be "1.1.0"
         $json.SrePostureEvidence.Status | Should -Be "target-declared"
         $json.SrePostureEvidence.ReleaseValidationSummaryMode | Should -Be "release-validation-console-and-scorecard-artifact"
@@ -201,9 +230,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
 
         $json.PublicApiCompatibilityEvidence.DeltaScript | Should -Be "scripts/summarise-public-api-deltas.ps1"
         $json.PublicApiCompatibilityEvidence.PackageCount | Should -Be 104
-        $json.PublicApiCompatibilityEvidence.PendingPackageCount | Should -Be 21
-        $json.PublicApiCompatibilityEvidence.HeaderOnlyPackageCount | Should -Be 83
-        $json.PublicApiCompatibilityEvidence.AdditiveEntryCount | Should -Be 288
+        $json.PublicApiCompatibilityEvidence.PendingPackageCount | Should -Be 22
+        $json.PublicApiCompatibilityEvidence.HeaderOnlyPackageCount | Should -Be 82
+        $json.PublicApiCompatibilityEvidence.AdditiveEntryCount | Should -Be 293
         $json.PublicApiCompatibilityEvidence.RemovalEntryCount | Should -Be 0
         $json.PublicApiCompatibilityEvidence.HasRemovalEntries | Should -BeFalse
         $json.PublicApiCompatibilityEvidence.PackageDeltas.Count | Should -Be 104
@@ -223,7 +252,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
 
         $notClaimedPackages = @($json.PackageGAReadiness | Where-Object { $_.GAGateStatus -eq "not-claimed" })
         $notClaimedPackages.Package | Should -Contain "Cephalon.Data.MySql.SciSharpReplication"
-        @($notClaimedPackages.Package | Where-Object { $_ -match "Cephalon\.Observability\.\*Dependencies" }).Count | Should -Be 1
+        @($notClaimedPackages.Package | Where-Object { $_ -match "Cephalon\.Observability\.\*Dependencies" }).Count | Should -Be 0
         $notClaimedPackages.GABlockerClass | Select-Object -Unique | Should -Be "runtime-support-not-claimed"
 
         $markdown = Get-Content -LiteralPath $result.Paths.MarkdownPath -Raw -Encoding UTF8
@@ -242,10 +271,13 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "Supply-chain evidence items: 10"
         $markdown | Should -Match "external-policy-pending"
         $markdown | Should -Match "Public API Compatibility Evidence"
-        $markdown | Should -Match "Public API packages with pending changes: 21"
+        $markdown | Should -Match "Public API packages with pending changes: 22"
         $markdown | Should -Match "Cephalon.Abstractions"
         $markdown | Should -Match "Adoption Smoke Evidence"
         $markdown | Should -Match "out-of-tree-generated-app-package-stage"
+        $markdown | Should -Match "Provider Integration Evidence"
+        $markdown | Should -Match "Provider integration evidence rows: 32"
+        $markdown | Should -Match "dependency-health"
         $markdown | Should -Match "Evidence Source References"
         $markdown | Should -Match "Package GA Readiness"
     }
@@ -643,6 +675,8 @@ jobs:
         $releaseValidation | Should -Match "Write-EngineCompletionScorecardEvidenceSummary"
         $releaseValidation | Should -Match "DeploymentModeEvidence"
         $releaseValidation | Should -Match "Deployment-mode evidence"
+        $releaseValidation | Should -Match "ProviderIntegrationEvidence"
+        $releaseValidation | Should -Match "Provider integration evidence"
         $releaseValidation | Should -Match "SrePostureEvidence"
         $releaseValidation | Should -Match "guardrail-mapped"
         $releaseValidation | Should -Match "SupplyChainEvidence"

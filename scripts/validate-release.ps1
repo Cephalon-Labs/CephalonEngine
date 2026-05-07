@@ -155,6 +155,10 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         throw "Engine completion scorecard JSON is missing SrePostureEvidence."
     }
 
+    if ($null -eq $scorecard.ProviderIntegrationEvidence) {
+        throw "Engine completion scorecard JSON is missing ProviderIntegrationEvidence."
+    }
+
     if ($null -eq $scorecard.SupplyChainEvidence) {
         throw "Engine completion scorecard JSON is missing SupplyChainEvidence."
     }
@@ -170,6 +174,14 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         $scorecard.DeploymentModeEvidence.KnownHazardEntryCount,
         $scorecard.DeploymentModeEvidence.TransitiveAuditEntryCount,
         $scorecard.DeploymentModeEvidence.PublishProbeReleaseValidationMode)
+
+    Write-Host ("Provider integration evidence: {0} rows; live proofs {1}; composition-only {2}; external-service gates {3}; default-skipped {4}; runtime contracts {5}." -f `
+        $scorecard.ProviderIntegrationEvidence.EvidenceRowCount,
+        $scorecard.ProviderIntegrationEvidence.LiveProofCount,
+        $scorecard.ProviderIntegrationEvidence.CompositionOnlyCount,
+        $scorecard.ProviderIntegrationEvidence.ExternalServiceGateCount,
+        $scorecard.ProviderIntegrationEvidence.DefaultSkippedCount,
+        $scorecard.ProviderIntegrationEvidence.RuntimeContractCount)
 
     Write-Host ("SRE posture: {0} SLIs; target-declared {1}; pending stable baselines {2}; stable baselines {3}; guardrail-mapped {4}; pending guardrail coverage {5}; guardrail not-applicable {6}; summary mode {7}." -f `
         $scorecard.SrePostureEvidence.SliCount,

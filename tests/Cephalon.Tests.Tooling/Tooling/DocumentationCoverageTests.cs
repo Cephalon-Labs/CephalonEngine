@@ -454,8 +454,11 @@ public sealed class DocumentationCoverageTests
         var cliPackageReadme = File.ReadAllText(Path.Combine(repositoryRoot, "src", "Cephalon.Cli", "PACKAGE.md"));
 
         Assert.Contains("cephalon doctor --scorecard <path>", scorecard, StringComparison.Ordinal);
-        Assert.Contains("schema version `1.7.0`", scorecard, StringComparison.Ordinal);
+        Assert.Contains("schema version `1.8.0`", scorecard, StringComparison.Ordinal);
+        Assert.Contains("provider integration counts from `ProviderIntegrationEvidence`", scorecard, StringComparison.Ordinal);
         Assert.Contains("SRE posture counts from `SrePostureEvidence`", scorecard, StringComparison.Ordinal);
+        Assert.Contains("provider integration counts from `ProviderIntegrationEvidence`", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("provider integration row/live/composition counts", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("SRE posture plus guardrail-coverage counts", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("SRE SLI/target/baseline/guardrail-coverage counts", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --scorecard <path>", planningGovernance, StringComparison.Ordinal);
