@@ -33,11 +33,37 @@ Current focus:
 - treat scorecard hard blockers as release-validation failures even when a later narrow step is skipped: `scripts/validate-release.ps1` fails during the scorecard step when generated evidence reports blocked platform gates, supply-chain blocked items, or public API removals; `partial`, `not-claimed`, provider composition-only, SRE pending baselines, and external-policy-pending items remain explicit readback/exception posture
 - treat the CDC integration-test lane as additive evidence over the runtime catalog truth: `tests/Cephalon.Tests.CdcIntegration` now proves MongoDB change streams against a real disposable replica set, SQL Server CDC against an opt-in live service, Postgres logical replication against an opt-in live service, MySQL binlog streaming against an opt-in live service, and Oracle LogMiner against an opt-in live service while keeping default CI Docker-free through the shared external-service gate, instead of implying those provider paths through fake transport harnesses
 - treat the provider integration-test lane as additive evidence over non-CDC provider truth: `tests/Cephalon.Tests.ProviderIntegration` now proves Redis data outbox/inbox/dispatch-store behavior plus Redis Streams event sourcing against an opt-in live Redis runtime while keeping default CI Docker-free through the shared external-provider gate
-- treat `scripts/provider-integration-support.json` as the release-readiness manifest for provider claims across live-provider tests, composition-only data/provider runtime contracts, CDC integration lanes, and the eighteen dependency-health companion packs; the scorecard, release validation, and CLI doctor must read provider-integration counts from that manifest instead of hand-authored prose, and the scorecard publisher must fail if dependency-health provider rows drift from the source-derived provider manifest
+- treat `scripts/provider-integration-support.json` as the release-readiness manifest for provider claims across live-provider tests, composition-only data/provider runtime contracts, CDC integration lanes, and the eighteen dependency-health companion packs; the scorecard, release validation, and CLI doctor must read provider-integration counts and dependency-health provider-manifest readback from that manifest instead of hand-authored prose, and the scorecard publisher must fail if dependency-health provider rows drift from the source-derived provider manifest
 - treat `scripts/observability-dependency-health-providers.json` as the source-derived dependency-health provider-family manifest: runtime invariant tests, provider-integration scorecard row validation, and Tooling documentation coverage must derive the eighteen `Cephalon.Observability.*Dependencies` expectations from that file so the next provider cannot ship with source/docs/planning counts drifting apart
 - treat the Debezium test-flake quarantine as resolved by shared catalog hardening: CDC execution-runtime filters now reuse versioned snapshots over indexed capture ownership instead of re-enriching every runtime for every state/category selector
 - treat the `ENG-500` regression closeout as the current suite-stability baseline: provider-native CDC hosting tests now run through a dedicated non-parallel collection, long-running package-publishing process output drains stdout/stderr concurrently, sample REST behavior hosts align with source-generated `/api/v1` behavior endpoints, and the full solution test lane is again green on the current worktree
 - treat the CDC execution-runtime catalog hot path as benchmark-governed: `CdcExecutionRuntimeCatalogBenchmarks` now covers Debezium-managed external runtimes, external observations, repeated managed-connector drift/dry-run/command-issuance filters, and compact multi-selector operator flows against the shared versioned snapshot
+
+### ENG-506 Add doctor dependency-health manifest readback
+
+Status: done
+Estimate: 1
+Issue: #1125
+Iteration: Sprint 125
+Area: CLI / release-readiness / provider integration
+Quality dimensions: Usability, Auditability, Reliability, Maintainability, Compatibility
+
+Why:
+
+- `ENG-505` made the generated scorecard artifact expose `ProviderIntegrationEvidence.DependencyHealthProviderManifest`, but `cephalon doctor --scorecard <path>` still summarized provider-integration counts without requiring or displaying that manifest readback
+- release managers use doctor as the local artifact reader, so it should fail stale schema `1.8.0` artifacts that omit the dependency-health provider manifest node instead of silently accepting a partial provider-integration evidence shape
+- provider-readiness posture is easier to audit when the CLI shows which source-derived manifest guarded the dependency-health provider family
+
+Delivered:
+
+- made `DoctorCommand` require `ProviderIntegrationEvidence.DependencyHealthProviderManifest` for schema `1.8.0` scorecard artifacts
+- extended the provider-integration doctor summary to include dependency-health provider count, manifest reference, manifest schema, and manifest status
+- updated CLI scorecard tests so the happy path includes the manifest readback and a new failure path rejects artifacts missing that node
+- updated CLI component docs, package docs, scorecard docs, release checklist, backlog, roadmap, and project memory so doctor remains a readback of the generated artifact rather than a parallel source of truth
+
+Validation:
+
+- `dotnet test .\tests\Cephalon.Tests.Tooling\Cephalon.Tests.Tooling.csproj --no-restore --filter "FullyQualifiedName~RunAsyncDoctorReportsEngineCompletionScorecardSummary|FullyQualifiedName~RunAsyncDoctorFailsWhenScorecardProviderIntegrationEvidenceDriftsFromSummary|FullyQualifiedName~RunAsyncDoctorFailsWhenScorecardProviderIntegrationDependencyHealthManifestIsMissing"` passed `3/3`
 
 ### ENG-505 Guard provider-integration dependency-health row drift
 

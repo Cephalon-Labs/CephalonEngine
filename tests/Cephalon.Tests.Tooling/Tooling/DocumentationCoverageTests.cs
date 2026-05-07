@@ -501,19 +501,25 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("cephalon doctor --scorecard <path>", scorecard, StringComparison.Ordinal);
         Assert.Contains($"schema version `{expectedSchemaVersion}`", scorecard, StringComparison.Ordinal);
         Assert.Contains("provider integration counts from `ProviderIntegrationEvidence`", scorecard, StringComparison.Ordinal);
+        Assert.Contains("ProviderIntegrationEvidence.DependencyHealthProviderManifest", scorecard, StringComparison.Ordinal);
         Assert.Contains("SRE posture counts from `SrePostureEvidence`", scorecard, StringComparison.Ordinal);
         Assert.Contains($"generated artifact is now schema `{expectedSchemaVersion}`", projectMemory, StringComparison.Ordinal);
         Assert.Contains($"currently requires scorecard schema `{expectedSchemaVersion}`", projectMemory, StringComparison.Ordinal);
         Assert.Contains("validates provider-integration evidence from `scripts/provider-integration-support.json`", projectMemory, StringComparison.Ordinal);
         Assert.Contains("ProviderIntegrationEvidence", projectMemory, StringComparison.Ordinal);
+        Assert.Contains("ProviderIntegrationEvidence.DependencyHealthProviderManifest", projectMemory, StringComparison.Ordinal);
         Assert.Contains("provider live/composition/gate/runtime-contract posture", projectMemory, StringComparison.Ordinal);
         Assert.Contains("provider integration counts from `ProviderIntegrationEvidence`", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("dependency-health provider-manifest readback", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("provider integration row/live/composition counts", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("dependency-health provider-manifest readback", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("SRE posture plus guardrail-coverage counts", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("SRE SLI/target/baseline/guardrail-coverage counts", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --scorecard <path>", planningGovernance, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --scorecard artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json", releaseChecklist, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --scorecard artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json", releaseChecklistTemplate, StringComparison.Ordinal);
+        Assert.Contains("dependency-health provider-manifest", releaseChecklist, StringComparison.Ordinal);
+        Assert.Contains("dependency-health provider-manifest", releaseChecklistTemplate, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --scorecard <path>", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --scorecard <path>", cliPackageReadme, StringComparison.Ordinal);
     }
