@@ -117,6 +117,7 @@ When `engine.tests.flake-rate.7d` exceeds the target, the affected test enters a
 
 | Test | Project | First observed | Quarantine action | Deadline |
 | --- | --- | --- | --- | --- |
+| Provider-native CDC hosting tests plus startup-failure health window | `Cephalon.Tests.Hosting` | `May 7, 2026` full-suite validation | Resolved through `ENG-500`: provider-native CDC hosting tests now share a dedicated non-parallel collection, CDC runtime waits use deterministic suite-level windows, and the startup-failure policy test uses a 30-second restart-backoff assertion window instead of racing a two-second window | Closed in the same regression-closeout slice |
 | `DebeziumDataCdcPackTests` (4 failures) | `Cephalon.Tests.Composition` | Pre-`v0.1.0-preview` | Resolved through `ENG-488`: shared execution-runtime filters now reuse a versioned snapshot over indexed capture ownership, and the Debezium regression refreshes after later reports | Closed before the GA release that follows `v0.1.0-preview` |
 
 The queue is empty.

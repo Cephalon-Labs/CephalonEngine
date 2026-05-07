@@ -37,7 +37,7 @@ public sealed class BehaviorFeatureFlagTests
                 includedTransportIds: ["in-memory"])));
         builder.AddBehaviors(
             configureOptions: options => options.AutoRegister = false,
-            configure: behaviors => behaviors.Register<FeatureFlaggedBehavior>(topology => topology
+            configure: behaviors => behaviors.Register<FeatureFlaggedBehavior, string, string>(topology => topology
                 .AsDirect()
                 .ViaInMemory()
                 .RequireFeatureFlag("host.behavior-preview")));
@@ -79,7 +79,7 @@ public sealed class BehaviorFeatureFlagTests
                 includedTransportIds: ["rest-api"])));
         builder.AddBehaviors(
             configureOptions: options => options.AutoRegister = false,
-            configure: behaviors => behaviors.Register<FeatureFlaggedBehavior>(topology => topology
+            configure: behaviors => behaviors.Register<FeatureFlaggedBehavior, string, string>(topology => topology
                 .AsDirect()
                 .ViaInMemory()
                 .RequireFeatureFlag("host.rest-only-preview")));

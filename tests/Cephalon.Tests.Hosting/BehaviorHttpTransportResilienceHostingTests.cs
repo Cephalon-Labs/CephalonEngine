@@ -244,7 +244,7 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
             engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
             {
                 behaviors.AddHttpBehaviorBindings();
-                behaviors.Register<RateLimitedBehavior>(topology =>
+                behaviors.Register<RateLimitedBehavior, RateLimitedInput, RateLimitedOutput>(topology =>
                 {
                     topology.AsDirect();
                     ConfigureTransport(topology, transportId);
@@ -295,7 +295,7 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
             engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
             {
                 behaviors.AddHttpBehaviorBindings();
-                behaviors.Register<TimeoutBehavior>(topology =>
+                behaviors.Register<TimeoutBehavior, SlowInput, SlowOutput>(topology =>
                 {
                     topology.AsDirect();
                     ConfigureTransport(topology, transportId);
@@ -327,7 +327,7 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
             engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
             {
                 behaviors.AddHttpBehaviorBindings();
-                behaviors.Register<CircuitBreakerBehavior>(topology =>
+                behaviors.Register<CircuitBreakerBehavior, SlowInput, SlowOutput>(topology =>
                 {
                     topology.AsDirect();
                     ConfigureTransport(topology, transportId);

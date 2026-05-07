@@ -122,7 +122,7 @@ try {
     Wait-ForHttpSuccess -Uri "$HostUrl/health/ready" -TimeoutSeconds $TimeoutSeconds
     Wait-ForHttpSuccess -Uri "$HostUrl/engine" -TimeoutSeconds $TimeoutSeconds
     Wait-ForHttpSuccess -Uri "$HostUrl/engine/snapshot" -TimeoutSeconds $TimeoutSeconds
-    Wait-ForHttpSuccess -Uri "$HostUrl/api/catalog/overview" -TimeoutSeconds $TimeoutSeconds
+    Wait-ForHttpSuccess -Uri "$HostUrl/api/v1/catalog/overview" -TimeoutSeconds $TimeoutSeconds
 
     if ($UsePackages) {
         Wait-ForHttpContent -Uri "$HostUrl/engine/packages" -ExpectedContent "reference-operations" -TimeoutSeconds $TimeoutSeconds

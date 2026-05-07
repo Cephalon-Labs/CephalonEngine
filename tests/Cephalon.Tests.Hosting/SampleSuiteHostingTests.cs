@@ -29,7 +29,7 @@ public sealed class SampleSuiteHostingTests
         var client = app.GetTestClient();
 
         var profile = await client.GetFromJsonAsync<AppProfile>("/engine/app-model");
-        var overview = await client.GetStringAsync("/api/catalog/overview");
+        var overview = await client.GetStringAsync("/api/v1/catalog/overview");
 
         Assert.NotNull(profile);
         Assert.Equal("modular-monolith", profile.BlueprintId);
@@ -81,7 +81,7 @@ public sealed class SampleSuiteHostingTests
         var client = app.GetTestClient();
 
         var profile = await client.GetFromJsonAsync<AppProfile>("/engine/app-model");
-        var preview = await client.GetStringAsync("/api/orders/checkout/preview/vip-42");
+        var preview = await client.GetStringAsync("/api/v1/orders/checkout/preview/vip-42");
 
         Assert.NotNull(profile);
         Assert.Equal("modular-vertical-slice", profile.BlueprintId);
@@ -101,7 +101,7 @@ public sealed class SampleSuiteHostingTests
         var client = app.GetTestClient();
 
         var profile = await client.GetFromJsonAsync<AppProfile>("/engine/app-model");
-        var welcome = await client.GetStringAsync("/api/customers/welcome/Ada?tenant=enterprise");
+        var welcome = await client.GetStringAsync("/api/v1/customers/welcome/Ada?tenant=enterprise");
 
         Assert.NotNull(profile);
         Assert.Equal("microservice", profile.BlueprintId);
@@ -127,8 +127,8 @@ public sealed class SampleSuiteHostingTests
 
         var catalogProfile = await catalogClient.GetFromJsonAsync<AppProfile>("/engine/app-model");
         var ordersProfile = await ordersClient.GetFromJsonAsync<AppProfile>("/engine/app-model");
-        var catalogSummary = await catalogClient.GetFromJsonAsync<SuiteServiceSummaryContract>("/api/catalog/overview");
-        var ordersSummary = await ordersClient.GetFromJsonAsync<SuiteServiceSummaryContract>("/api/orders/coordination/PO-42?fulfillmentRegion=apac");
+        var catalogSummary = await catalogClient.GetFromJsonAsync<SuiteServiceSummaryContract>("/api/v1/catalog/overview");
+        var ordersSummary = await ordersClient.GetFromJsonAsync<SuiteServiceSummaryContract>("/api/v1/orders/coordination/PO-42?fulfillmentRegion=apac");
 
         Assert.NotNull(catalogProfile);
         Assert.NotNull(ordersProfile);
@@ -163,8 +163,8 @@ public sealed class SampleSuiteHostingTests
         var catalogClient = catalogApp.GetTestClient();
         var ordersClient = ordersApp.GetTestClient();
 
-        var catalogGovernance = await catalogClient.GetFromJsonAsync<SuiteGovernanceSnapshotContract>("/api/catalog/governance");
-        var ordersGovernance = await ordersClient.GetFromJsonAsync<SuiteGovernanceSnapshotContract>("/api/orders/governance");
+        var catalogGovernance = await catalogClient.GetFromJsonAsync<SuiteGovernanceSnapshotContract>("/api/v1/catalog/governance");
+        var ordersGovernance = await ordersClient.GetFromJsonAsync<SuiteGovernanceSnapshotContract>("/api/v1/orders/governance");
 
         Assert.NotNull(catalogGovernance);
         Assert.NotNull(ordersGovernance);

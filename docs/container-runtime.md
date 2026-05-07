@@ -45,7 +45,7 @@ Once the app is running, inspect:
 - `http://localhost:8080/engine/packages`
 - `http://localhost:8080/health`
 - `http://localhost:8080/health/ready`
-- `http://localhost:8080/api/catalog/overview`
+- `http://localhost:8080/api/v1/catalog/overview`
 
 To inspect collector output:
 
@@ -108,7 +108,7 @@ pwsh ./scripts/validate-container-runtime.ps1
 That script:
 
 - starts the compose stack
-- waits for collector health plus `/health/ready`, `/engine`, `/engine/snapshot`, and `/api/catalog/overview`
+- waits for collector health plus `/health/ready`, `/engine`, `/engine/snapshot`, and `/api/v1/catalog/overview`
 - when `-UsePackages` is enabled, also verifies that `/engine/packages` contains `reference-operations` and that `/api/operations/status` responds from the staged package
 - tears the stack down afterward
 

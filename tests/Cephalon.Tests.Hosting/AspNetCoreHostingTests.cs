@@ -3226,7 +3226,7 @@ note: visible
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
         builder.Configuration[$"{EngineSettings.SectionName}:FailurePolicy:StartupFailureBehavior"] = "CaptureOnly";
         builder.Configuration[$"{EngineSettings.SectionName}:FailurePolicy:AllowManualRestart"] = "true";
-        builder.Configuration[$"{EngineSettings.SectionName}:FailurePolicy:ManualRestartBackoff"] = "00:00:02";
+        builder.Configuration[$"{EngineSettings.SectionName}:FailurePolicy:ManualRestartBackoff"] = "00:00:30";
         builder.Services.AddSingleton<FailurePolicyRecorder>();
         builder.AddCephalon(engine =>
         {
@@ -3280,7 +3280,7 @@ note: visible
 
         Assert.NotNull(failurePolicy);
         Assert.Equal(StartupFailureBehavior.CaptureOnly, failurePolicy.StartupFailureBehavior);
-        Assert.Equal(TimeSpan.FromSeconds(2), failurePolicy.ManualRestartBackoff);
+        Assert.Equal(TimeSpan.FromSeconds(30), failurePolicy.ManualRestartBackoff);
 
         Assert.Equal(HttpStatusCode.ServiceUnavailable, livenessResponse.StatusCode);
         using var livenessDocument = JsonDocument.Parse(livenessPayload);

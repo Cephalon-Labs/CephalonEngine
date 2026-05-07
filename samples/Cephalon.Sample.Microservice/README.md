@@ -3,7 +3,7 @@
 This sample is the single-service microservice blueprint baseline for Cephalon.
 
 It carries the same narrow phase-8 starter contract as the other shipped blueprint samples: canonical `Engine` ids, structured `Engine:Data`, `Engine:Identity`, `Engine:Tenancy`, `Engine:Audit`, and `Engine:Messaging` sections, plus low-ceremony `Sfid` id generation and `Cephalon.Audit` wiring.
-Its public REST boundary is also behavior-backed: the starter module owns routes through `RestBehaviorModuleBase.ConfigureRestBehaviors(...)` and `MapProfile<TBehavior>()`, matching the shipped `cephalon-microservice` starter baseline.
+Its public REST boundary is also behavior-backed: the starter module owns routes through `RestBehaviorModuleBase.ConfigureRestBehaviors(...)` and `MapProfile<TBehavior>()`, with `Cephalon.Behaviors.SourceGen` referenced as the local analyzer that emits the generated REST profile hints expected by that low-ceremony path.
 
 The sample settings live in `microservice.settings.json`.
 

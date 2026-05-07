@@ -168,16 +168,25 @@ internal sealed class MongoDbChangeStreamCaptureHostedService(
 
         var changeStreamOptions = CreateChangeStreamOptions(captureOptions, checkpointEntry);
 
+        using var cursor = await collection.WatchAsync(changeStreamOptions, cancellationToken).ConfigureAwait(false);
         await reporter.ReportAsync(
                 new CdcCaptureExecutionReport(
                     cdcCaptureId: descriptor.Id,
                     outcome: CdcCaptureRuntimeOutcomes.Started,
                     observedAtUtc: DateTimeOffset.UtcNow,
-                    metadata: CreateExecutionMetadata(descriptor, captureOptions, outbox, null, null)),
+                    metadata: CreateExecutionMetadata(
+                        descriptor,
+                        captureOptions,
+                        outbox,
+                        new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                        {
+                            ["acknowledgement"] = "provider-native",
+                            ["cursorState"] = "opened"
+                        },
+                        null)),
                 cancellationToken)
             .ConfigureAwait(false);
 
-        using var cursor = await collection.WatchAsync(changeStreamOptions, cancellationToken).ConfigureAwait(false);
         while (await cursor.MoveNextAsync(cancellationToken).ConfigureAwait(false))
         {
             var batch = cursor.Current.ToArray();

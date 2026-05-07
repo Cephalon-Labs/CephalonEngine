@@ -3,7 +3,7 @@
 This sample is the operator-ready local runtime baseline for Cephalon.
 
 The sample now also carries the narrow phase-8 starter baseline: canonical `Engine` ids, structured `Engine:Data`, `Engine:Identity`, `Engine:Tenancy`, `Engine:Audit`, and `Engine:Messaging` sections, plus low-ceremony `Sfid` id generation and `Cephalon.Audit` wiring in the host.
-Its public REST boundary is now behavior-backed: the starter module owns routes through `RestBehaviorModuleBase.ConfigureRestBehaviors(...)` and `MapProfile<TBehavior>()`, matching the shipped `cephalon-monolith` starter baseline.
+Its public REST boundary is now behavior-backed: the starter module owns routes through `RestBehaviorModuleBase.ConfigureRestBehaviors(...)` and `MapProfile<TBehavior>()`, with `Cephalon.Behaviors.SourceGen` referenced as the local analyzer that emits the generated REST profile hints expected by that low-ceremony path.
 
 ## Run from source
 
@@ -26,7 +26,7 @@ Inspect:
 - `http://localhost:8080/engine/packages`
 - `http://localhost:8080/health`
 - `http://localhost:8080/health/ready`
-- `http://localhost:8080/api/catalog/overview`
+- `http://localhost:8080/api/v1/catalog/overview`
 
 The compose stack also starts an `otel-collector` sidecar. Collector health is exposed at `http://localhost:13133/`.
 

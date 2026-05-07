@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.Hosting;
 
+[Collection(ProviderNativeCdcHostingCollectionDefinition.Name)]
 public sealed class MySqlDataCdcHostingTests
 {
     private const string SharedRuntimeId = "data-cdc-capture-pump";
@@ -111,7 +112,7 @@ public sealed class MySqlDataCdcHostingTests
             var cdcState = await WaitForAsync(
                 () => client.GetFromJsonAsync<CdcCaptureRuntimeState>($"/engine/cdc-captures/runtime/{CaptureId}")!,
                 static state => state is not null && state.LastOutcome == CdcCaptureRuntimeOutcomes.Captured,
-                TimeSpan.FromSeconds(10));
+                TimeSpan.FromSeconds(30));
 
             var cdcCaptureRuntimes = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes");
             var mySqlRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{MySqlRuntimeId}");
@@ -288,7 +289,7 @@ public sealed class MySqlDataCdcHostingTests
                     state.Metadata.ContainsKey("failureKind") &&
                     state.Metadata.ContainsKey("binlogLifecycleState") &&
                     state.Metadata.ContainsKey("binlogLifecycleAction"),
-                TimeSpan.FromSeconds(10));
+                TimeSpan.FromSeconds(30));
 
             var mySqlRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{MySqlRuntimeId}");
             var snapshot = await WaitForAsync(

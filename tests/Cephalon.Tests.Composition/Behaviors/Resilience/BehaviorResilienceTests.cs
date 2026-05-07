@@ -52,7 +52,7 @@ public sealed class BehaviorResilienceTests
                         windowSeconds: 30))));
             engine.AddBehaviors(
                 configureOptions: options => options.AutoRegister = false,
-                configure: behaviors => behaviors.Register<FastGreetingBehavior>(topology => topology
+                configure: behaviors => behaviors.Register<FastGreetingBehavior, string, string>(topology => topology
                     .AsDirect()
                     .ViaInMemory()));
         });
@@ -133,7 +133,7 @@ public sealed class BehaviorResilienceTests
                         totalTimeoutSeconds: 1))));
             engine.AddBehaviors(
                 configureOptions: options => options.AutoRegister = false,
-                configure: behaviors => behaviors.Register<SlowBehavior>(topology => topology
+                configure: behaviors => behaviors.Register<SlowBehavior, SlowInput, string>(topology => topology
                     .AsDirect()
                     .ViaInMemory()));
         });
@@ -170,7 +170,7 @@ public sealed class BehaviorResilienceTests
                         breakDurationSeconds: 15))));
             engine.AddBehaviors(
                 configureOptions: options => options.AutoRegister = false,
-                configure: behaviors => behaviors.Register<SlowBehavior>(topology => topology
+                configure: behaviors => behaviors.Register<SlowBehavior, SlowInput, string>(topology => topology
                     .AsDirect()
                     .ViaInMemory()));
         });
@@ -182,19 +182,19 @@ public sealed class BehaviorResilienceTests
         await Assert.ThrowsAsync<TimeoutRejectedException>(() =>
             dispatcher.DispatchAsync(
                 "tests.resilience.slow",
-                new SlowInput(1500),
+                new SlowInput(5000),
                 new TestBehaviorContext("tests.resilience.slow", isDirect: true)));
 
         await Assert.ThrowsAsync<TimeoutRejectedException>(() =>
             dispatcher.DispatchAsync(
                 "tests.resilience.slow",
-                new SlowInput(1500),
+                new SlowInput(5000),
                 new TestBehaviorContext("tests.resilience.slow", isDirect: true)));
 
         var openCircuitException = await Assert.ThrowsAsync<BrokenCircuitException>(() =>
             dispatcher.DispatchAsync(
                 "tests.resilience.slow",
-                new SlowInput(1500),
+                new SlowInput(5000),
                 new TestBehaviorContext("tests.resilience.slow", isDirect: true)));
 
         var policy = catalog.Resolve("tests.resilience.slow");
@@ -227,13 +227,13 @@ public sealed class BehaviorResilienceTests
                 configureOptions: options => options.AutoRegister = false,
                 configure: behaviors =>
                 {
-                    behaviors.Register<IdempotentRetryBehavior>(topology => topology
+                    behaviors.Register<IdempotentRetryBehavior, string, string>(topology => topology
                         .AsDirect()
                         .ViaInMemory());
-                    behaviors.Register<NonIdempotentRetryBehavior>(topology => topology
+                    behaviors.Register<NonIdempotentRetryBehavior, string, string>(topology => topology
                         .AsDirect()
                         .ViaInMemory());
-                    behaviors.Register<UnknownRetryBehavior>(topology => topology
+                    behaviors.Register<UnknownRetryBehavior, string, string>(topology => topology
                         .AsDirect()
                         .ViaInMemory());
                 });
@@ -266,7 +266,7 @@ public sealed class BehaviorResilienceTests
             engine.UseSettings(new EngineSettings(blueprint: "ModularMonolith"));
             engine.AddBehaviors(
                 configureOptions: options => options.AutoRegister = false,
-                configure: behaviors => behaviors.Register<FastGreetingBehavior>(topology => topology
+                configure: behaviors => behaviors.Register<FastGreetingBehavior, string, string>(topology => topology
                     .AsDirect()
                     .ViaInMemory()));
         });
@@ -322,7 +322,7 @@ public sealed class BehaviorResilienceTests
                         useJitter: false))));
             engine.AddBehaviors(
                 configureOptions: options => options.AutoRegister = false,
-                configure: behaviors => behaviors.Register<IdempotentRetryProbeBehavior>(topology => topology
+                configure: behaviors => behaviors.Register<IdempotentRetryProbeBehavior, string, string>(topology => topology
                     .AsDirect()
                     .ViaInMemory()));
         });
@@ -358,7 +358,7 @@ public sealed class BehaviorResilienceTests
                         useJitter: false))));
             engine.AddBehaviors(
                 configureOptions: options => options.AutoRegister = false,
-                configure: behaviors => behaviors.Register<NonIdempotentRetryProbeBehavior>(topology => topology
+                configure: behaviors => behaviors.Register<NonIdempotentRetryProbeBehavior, string, string>(topology => topology
                     .AsDirect()
                     .ViaInMemory()));
         });
@@ -394,7 +394,7 @@ public sealed class BehaviorResilienceTests
                         useJitter: false))));
             engine.AddBehaviors(
                 configureOptions: options => options.AutoRegister = false,
-                configure: behaviors => behaviors.Register<UnknownRetryProbeBehavior>(topology => topology
+                configure: behaviors => behaviors.Register<UnknownRetryProbeBehavior, string, string>(topology => topology
                     .AsDirect()
                     .ViaInMemory()));
         });
@@ -437,7 +437,7 @@ public sealed class BehaviorResilienceTests
                     ])));
             engine.AddBehaviors(
                 configureOptions: options => options.AutoRegister = false,
-                configure: behaviors => behaviors.Register<IdempotentRetryProbeBehavior>(topology => topology
+                configure: behaviors => behaviors.Register<IdempotentRetryProbeBehavior, string, string>(topology => topology
                     .AsDirect()
                     .ViaInMemory()));
         });
@@ -477,7 +477,7 @@ public sealed class BehaviorResilienceTests
                         maxQueuedActions: 0))));
             engine.AddBehaviors(
                 configureOptions: options => options.AutoRegister = false,
-                configure: behaviors => behaviors.Register<BlockingBehavior>(topology => topology
+                configure: behaviors => behaviors.Register<BlockingBehavior, BlockingInput, string>(topology => topology
                     .AsDirect()
                     .ViaInMemory()));
         });
@@ -528,7 +528,7 @@ public sealed class BehaviorResilienceTests
                         windowSeconds: 60))));
             engine.AddBehaviors(
                 configureOptions: options => options.AutoRegister = false,
-                configure: behaviors => behaviors.Register<FastGreetingBehavior>(topology => topology
+                configure: behaviors => behaviors.Register<FastGreetingBehavior, string, string>(topology => topology
                     .AsDirect()
                     .ViaInMemory()));
         });
@@ -573,7 +573,7 @@ public sealed class BehaviorResilienceTests
                     bulkhead: new BulkheadSettings(enabled: false))));
             engine.AddBehaviors(
                 configureOptions: options => options.AutoRegister = false,
-                configure: behaviors => behaviors.Register<FastGreetingBehavior>(topology => topology
+                configure: behaviors => behaviors.Register<FastGreetingBehavior, string, string>(topology => topology
                     .AsDirect()
                     .ViaInMemory()));
         });
@@ -619,10 +619,10 @@ public sealed class BehaviorResilienceTests
                 configureOptions: options => options.AutoRegister = false,
                 configure: behaviors =>
                 {
-                    behaviors.Register<FastGreetingBehavior>(topology => topology
+                    behaviors.Register<FastGreetingBehavior, string, string>(topology => topology
                         .AsDirect()
                         .ViaInMemory());
-                    behaviors.Register<SlowBehavior>(topology => topology
+                    behaviors.Register<SlowBehavior, SlowInput, string>(topology => topology
                         .AsDirect()
                         .ViaInMemory());
                 });
@@ -685,7 +685,7 @@ public sealed class BehaviorResilienceTests
                     })));
             engine.AddBehaviors(
                 configureOptions: options => options.AutoRegister = false,
-                configure: behaviors => behaviors.Register<SlowBehavior>(topology => topology
+                configure: behaviors => behaviors.Register<SlowBehavior, SlowInput, string>(topology => topology
                     .AsDirect()
                     .ViaInMemory()));
         });
@@ -723,7 +723,7 @@ public sealed class BehaviorResilienceTests
                     })));
             engine.AddBehaviors(
                 configureOptions: options => options.AutoRegister = false,
-                configure: behaviors => behaviors.Register<SlowBehavior>(topology => topology
+                configure: behaviors => behaviors.Register<SlowBehavior, SlowInput, string>(topology => topology
                     .AsDirect()
                     .ViaInMemory()));
         });
@@ -775,7 +775,7 @@ public sealed class BehaviorResilienceTests
                     ])));
             engine.AddBehaviors(
                 configureOptions: options => options.AutoRegister = false,
-                configure: behaviors => behaviors.Register<FastGreetingBehavior>(topology => topology
+                configure: behaviors => behaviors.Register<FastGreetingBehavior, string, string>(topology => topology
                     .AsDirect()
                     .ViaInMemory()));
         });

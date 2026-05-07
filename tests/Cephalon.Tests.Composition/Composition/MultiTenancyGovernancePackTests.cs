@@ -3972,6 +3972,8 @@ public sealed class MultiTenancyGovernancePackTests
                 dispatched: true,
                 providerMessageId: "provider-message-background-retry",
                 reason: "Provider accepted the scheduled retry."));
+        services.AddSingleton<TimeProvider>(
+            new FixedUtcTimeProvider(new DateTimeOffset(2026, 04, 29, 4, 21, 0, TimeSpan.Zero)));
         services.AddSingleton<ITenantInvitationDeliverySender>(sender);
         services.AddCephalon(engine =>
         {
@@ -4022,7 +4024,10 @@ public sealed class MultiTenancyGovernancePackTests
         try
         {
             await hostedService.StartAsync(CancellationToken.None);
-            await WaitUntilAsync(() => retryRuntimeCatalog.Current.RunCount > 0);
+            await WaitUntilAsync(() =>
+                retryRuntimeCatalog.Current.RunCount > 0 &&
+                retryRuntimeCatalog.Current.LastCompletedAtUtc is not null &&
+                retryRuntimeCatalog.Current.LastRemainingPendingCount == 0);
 
             var retryRuntime = retryRuntimeCatalog.Current;
             var backgroundCapability = Assert.Single(runtime.Manifest.Capabilities, capability =>
@@ -4660,6 +4665,11 @@ public sealed class MultiTenancyGovernancePackTests
                     ["provider"] = "test-provider"
                 }));
         }
+    }
+
+    private sealed class FixedUtcTimeProvider(DateTimeOffset utcNow) : TimeProvider
+    {
+        public override DateTimeOffset GetUtcNow() => utcNow;
     }
 
     private sealed class ScriptedTenantInvitationDeliverySender(

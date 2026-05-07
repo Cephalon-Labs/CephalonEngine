@@ -679,13 +679,14 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
-    public void ObservabilityAssemblyExposesOnlyTheDocumentedConfigurationAndRegistrationSurface()
+    public void ObservabilityAssemblyExposesOnlyTheDocumentedConfigurationRegistrationAndRuntimeSurface()
     {
         AssertExportedTypes(
             typeof(global::Cephalon.Observability.Hosting.ObservabilityServiceCollectionExtensions).Assembly,
             typeof(global::Cephalon.Observability.Configuration.ObservabilityOptions),
             typeof(global::Cephalon.Observability.Configuration.TelemetryExportOptions),
-            typeof(global::Cephalon.Observability.Hosting.ObservabilityServiceCollectionExtensions));
+            typeof(global::Cephalon.Observability.Hosting.ObservabilityServiceCollectionExtensions),
+            typeof(global::Cephalon.Observability.Runtime.TelemetryExportRuntimeSurfaceFactory));
     }
 
     [Fact]

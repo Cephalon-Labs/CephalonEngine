@@ -3387,7 +3387,7 @@ It executes a curated suite that validates:
 `.\scripts\validate-release.ps1` now also runs that focused phase-8 suite by default.
 Use `-SkipPhase8Conventions` only when you intentionally want the wider release flow without the named phase-8 replay.
 
-For the Docker Desktop / WSL-friendly operator smoke path, `.\scripts\validate-container-runtime.ps1` runs `samples/Cephalon.Sample.ModularMonolith/compose.yaml`, waits for collector health plus `/health/ready`, `/engine`, `/engine/snapshot`, and `/api/catalog/overview`, and then tears the stack down. That containerized validation stays optional on purpose, so Docker is not a hard dependency of `.\scripts\validate-release.ps1`.
+For the Docker Desktop / WSL-friendly operator smoke path, `.\scripts\validate-container-runtime.ps1` runs `samples/Cephalon.Sample.ModularMonolith/compose.yaml`, waits for collector health plus `/health/ready`, `/engine`, `/engine/snapshot`, and `/api/v1/catalog/overview`, and then tears the stack down. That containerized validation stays optional on purpose, so Docker is not a hard dependency of `.\scripts\validate-release.ps1`.
 
 ## Worker hosts
 

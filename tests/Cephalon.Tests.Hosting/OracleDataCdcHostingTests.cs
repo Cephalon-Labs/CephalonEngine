@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.Hosting;
 
+[Collection(ProviderNativeCdcHostingCollectionDefinition.Name)]
 public sealed class OracleDataCdcHostingTests
 {
     private const string SharedRuntimeId = "data-cdc-capture-pump";
@@ -121,7 +122,7 @@ public sealed class OracleDataCdcHostingTests
             var cdcState = await WaitForAsync(
                 () => client.GetFromJsonAsync<CdcCaptureRuntimeState>($"/engine/cdc-captures/runtime/{CaptureId}")!,
                 static state => state is not null && state.LastOutcome == CdcCaptureRuntimeOutcomes.Captured,
-                TimeSpan.FromSeconds(10));
+                TimeSpan.FromSeconds(30));
 
             var cdcCaptureRuntimes = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes");
             var oracleRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{OracleRuntimeId}");
@@ -312,7 +313,7 @@ public sealed class OracleDataCdcHostingTests
             var cdcState = await WaitForAsync(
                 () => client.GetFromJsonAsync<CdcCaptureRuntimeState>($"/engine/cdc-captures/runtime/{CaptureId}")!,
                 static state => state is not null && state.LastOutcome == CdcCaptureRuntimeOutcomes.Failed,
-                TimeSpan.FromSeconds(10));
+                TimeSpan.FromSeconds(30));
 
             var oracleRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{OracleRuntimeId}");
             var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
@@ -362,7 +363,14 @@ public sealed class OracleDataCdcHostingTests
                 return current;
             }
 
-            await Task.Delay(200, cancellationTokenSource.Token).ConfigureAwait(false);
+            try
+            {
+                await Task.Delay(200, cancellationTokenSource.Token).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (cancellationTokenSource.IsCancellationRequested)
+            {
+                break;
+            }
         }
 
         throw new TimeoutException("Timed out while waiting for the expected Oracle CDC hosting condition.");

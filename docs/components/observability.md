@@ -22,6 +22,11 @@
 - `Runtime/TelemetryExportRuntimeSurfaceFactory.cs`
 - `Runtime/TelemetryExportRuntimeContributor.cs`
 
+`TelemetryExportRuntimeSurfaceFactory` is intentionally public because the optional
+observability exporter and cloud companion packs reuse it to project the same sanitized
+`observability` runtime-surface shape without duplicating secret-redaction and shared
+telemetry metadata rules.
+
 ## Source structure
 
 - `Configuration`

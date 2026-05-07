@@ -31,7 +31,42 @@ Current focus:
 - treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md), validates the deployment-mode, adoption-smoke, SRE, and supply-chain release support manifests, scans public API delta files into `PublicApiCompatibilityEvidence`, and `cephalon doctor --scorecard <path>` provides a schema `1.7.0` local CLI readback over that generated artifact including deployment-mode global/package-scoped/hazard/publish-probe counts, SRE target/baseline/guardrail-coverage counts, supply-chain workflow/external-policy counts, and public API package/pending/addition/removal counts without becoming source truth; `scripts/validate-release.ps1` now also prints public API counts from the scorecard artifact and runs the public-API delta summary with Markdown + JSON output and `-FailOnRemovals`
 - treat the CDC integration-test lane as additive evidence over the runtime catalog truth: `tests/Cephalon.Tests.CdcIntegration` now proves MongoDB change streams against a real disposable replica set, SQL Server CDC against an opt-in live service, Postgres logical replication against an opt-in live service, MySQL binlog streaming against an opt-in live service, and Oracle LogMiner against an opt-in live service while keeping default CI Docker-free through the shared external-service gate, instead of implying those provider paths through fake transport harnesses
 - treat the Debezium test-flake quarantine as resolved by shared catalog hardening: CDC execution-runtime filters now reuse versioned snapshots over indexed capture ownership instead of re-enriching every runtime for every state/category selector
+- treat the `ENG-500` regression closeout as the current suite-stability baseline: provider-native CDC hosting tests now run through a dedicated non-parallel collection, long-running package-publishing process output drains stdout/stderr concurrently, sample REST behavior hosts align with source-generated `/api/v1` behavior endpoints, and the full solution test lane is again green on the current worktree
 - treat the CDC execution-runtime catalog hot path as benchmark-governed: `CdcExecutionRuntimeCatalogBenchmarks` now covers Debezium-managed external runtimes, external observations, repeated managed-connector drift/dry-run/command-issuance filters, and compact multi-selector operator flows against the shared versioned snapshot
+
+### ENG-500 Restore regression suite stability across provider/runtime surfaces
+
+Status: done
+Estimate: 2
+Issue: #1115
+Iteration: Sprint 125
+Area: test-coverage / suite stability / provider runtime
+Quality dimensions: Reliability, Compatibility, Maintainability, Auditability, Usability
+
+Why:
+
+- the full Hosting regression suite exposed resource and timing contention when provider-native CDC hosting tests ran concurrently with each other and the rest of the suite
+- a two-second startup-failure restart-backoff assertion could expire before health and diagnostics assertions under heavy suite load even though the runtime policy was working
+- shipped blueprint samples had drifted from the source-generated REST behavior route/version and dispatcher contract, so sample-host tests could return 404 or 500 while focused package tests still passed
+- the tooling package-publishing regression could deadlock when a child `dotnet` process filled stdout/stderr buffers before process exit
+
+Delivered:
+
+- added a dedicated non-parallel provider-native CDC hosting collection for MongoDB, SQL Server, Postgres, MySQL, and Oracle runtime tests, plus deterministic wait windows and timeout reporting
+- made the startup-failure health/diagnostics test assert a deterministic 30-second manual restart-backoff window
+- aligned the ModularMonolith, ModularVerticalSlice, Microservice, and MicroserviceSuite samples with `Cephalon.Behaviors`, `Cephalon.Behaviors.Http`, and `Cephalon.Behaviors.SourceGen` so generated REST behavior endpoints materialize through the dispatcher at `/api/v1/*`
+- updated sample, operations, and container-runtime docs/scripts that still referenced the retired unversioned `/api/*` sample routes
+- hardened `PackagePublishingTests` so spawned package-publishing processes drain stdout and stderr concurrently, enforce a bounded timeout, and kill the process tree on timeout instead of hanging the tooling suite
+- repaired composition regressions around typed behavior registration, benchmark guardrail count truth, config-relative sample lookup, and deterministic multi-tenancy governance retry timing
+- moved MongoDB CDC `Started` runtime reporting to the point where the provider-native change-stream cursor has actually opened, with `cursorState = "opened"` metadata
+
+Validation:
+
+- focused provider/runtime regression coverage passed
+- `dotnet test .\tests\Cephalon.Tests.Composition\Cephalon.Tests.Composition.csproj --no-restore` passed `807/807`
+- `dotnet test .\tests\Cephalon.Tests.Tooling\Cephalon.Tests.Tooling.csproj --no-build` passed `357/357`
+- `dotnet test .\tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-build` passed `750/750`
+- `dotnet test .\CephalonEngine.slnx --no-restore` passed: Composition `807/807`, Hosting `750/750`, Tooling `357/357`, CdcIntegration `11` passed / `8` skipped by the external-service gate
 
 ### ENG-499 Add Oracle live CDC integration evidence
 

@@ -1,5 +1,7 @@
 using System.Text.RegularExpressions;
 using Cephalon.AspNetCore.Hosting;
+using Cephalon.Behaviors.Hosting;
+using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Diagnostics.Redaction;
 using Cephalon.Diagnostics.Redaction.Defaults;
 using Cephalon.Observability.Hosting;
@@ -46,7 +48,10 @@ public static class OrdersServiceSampleApp
         configureBuilder?.Invoke(builder);
         builder.Configuration.AddJsonFile("orders-service.settings.json", optional: false, reloadOnChange: false);
 
-        builder.AddCephalon();
+        builder.AddCephalon(engine =>
+        {
+            engine.AddBehaviors(behaviors => behaviors.AddHttpBehaviorBindings());
+        });
 
         // Canonical redaction recipe — see docs/components/diagnostics.md "Redaction quick start".
         builder.Services.AddSingleton<IRedactionFilter>(new KeyMatchRedactionFilter(

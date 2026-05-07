@@ -14,7 +14,7 @@ public sealed class GuardrailValidatorTests
             "performance-guardrails.json"));
 
         Assert.Equal("1.0", catalog.Version);
-        Assert.Equal(23, catalog.Entries.Count);
+        Assert.Equal(29, catalog.Entries.Count);
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildRuntimeManifest");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildRuntimeManifestWithStrictTrustPolicy");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildPhase8RuntimeManifest");
@@ -23,11 +23,17 @@ public sealed class GuardrailValidatorTests
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "HandleLoggedJsonRequest");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "HandleTruncatedJsonRequest");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "HandleConcurrentLoggedJsonRequest");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildMapGovernedRestCatalogs");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "GenerateBlueprintScaffold");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "GeneratePhase8BlueprintScaffold");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "DispatchQuery");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "DispatchCommand");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "DispatchCommandWithResult");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "EnumerateRuntimes");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "FilterManagedConnectorDriftState");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "FilterManagedConnectorDryRunState");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "FilterManagedConnectorCommandIssuanceState");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "FilterManagedConnectorOperatorSelectors");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "DispatchBehavior");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "EvaluateRbacAllow");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "EvaluateRbacDeny");

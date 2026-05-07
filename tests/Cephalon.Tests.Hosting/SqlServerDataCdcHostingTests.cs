@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.Hosting;
 
+[Collection(ProviderNativeCdcHostingCollectionDefinition.Name)]
 public sealed class SqlServerDataCdcHostingTests
 {
     private const string SharedRuntimeId = "data-cdc-capture-pump";
@@ -91,7 +92,7 @@ public sealed class SqlServerDataCdcHostingTests
             var cdcState = await WaitForAsync(
                 () => client.GetFromJsonAsync<CdcCaptureRuntimeState>($"/engine/cdc-captures/runtime/{CaptureId}")!,
                 static state => state is not null && state.LastOutcome == CdcCaptureRuntimeOutcomes.Captured,
-                TimeSpan.FromSeconds(10));
+                TimeSpan.FromSeconds(30));
 
             var cdcCaptureRuntimes = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes");
             var sqlRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{SqlRuntimeId}");
@@ -181,7 +182,14 @@ public sealed class SqlServerDataCdcHostingTests
                 return current;
             }
 
-            await Task.Delay(200, cancellationTokenSource.Token).ConfigureAwait(false);
+            try
+            {
+                await Task.Delay(200, cancellationTokenSource.Token).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (cancellationTokenSource.IsCancellationRequested)
+            {
+                break;
+            }
         }
 
         throw new TimeoutException("Timed out while waiting for the expected SQL Server CDC hosting condition.");

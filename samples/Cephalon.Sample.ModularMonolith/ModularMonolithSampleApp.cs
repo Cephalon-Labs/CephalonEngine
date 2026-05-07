@@ -1,6 +1,8 @@
 using System.Text.RegularExpressions;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.Audit.Registration;
+using Cephalon.Behaviors.Hosting;
+using Cephalon.Behaviors.Http.Hosting;
 using Cephalon.Diagnostics.Redaction;
 using Cephalon.Diagnostics.Redaction.Defaults;
 using Cephalon.Ids.Sfid.Registration;
@@ -54,6 +56,7 @@ public static class ModularMonolithSampleApp
 
         builder.AddCephalon(engine =>
         {
+            engine.AddBehaviors(behaviors => behaviors.AddHttpBehaviorBindings());
             engine.AddSfidIds();
             engine.AddAudit();
         });

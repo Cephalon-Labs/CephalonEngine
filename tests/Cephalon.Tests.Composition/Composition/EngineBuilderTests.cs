@@ -3693,13 +3693,64 @@ public sealed class EngineBuilderTests
 
     private static string GetAdditionalPackageAssemblyPath()
     {
-        return RepositoryPaths.GetFile(
+        var candidates = EnumerateAdditionalPackageAssemblyCandidates()
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        var candidate = candidates.FirstOrDefault(File.Exists);
+        if (candidate is not null)
+        {
+            return candidate;
+        }
+
+        throw new FileNotFoundException(
+            "Could not find the additional package sample assembly. Tried: " +
+            string.Join("; ", candidates));
+    }
+
+    private static IEnumerable<string> EnumerateAdditionalPackageAssemblyCandidates()
+    {
+        var repositoryRoot = RepositoryPaths.GetRepositoryRoot();
+        var currentConfiguration = GetCurrentTestConfiguration();
+
+        if (!string.IsNullOrWhiteSpace(currentConfiguration))
+        {
+            yield return GetAdditionalPackageAssemblyPath(repositoryRoot, currentConfiguration);
+        }
+
+        yield return GetAdditionalPackageAssemblyPath(repositoryRoot, "Debug");
+        yield return GetAdditionalPackageAssemblyPath(repositoryRoot, "Release");
+    }
+
+    private static string GetAdditionalPackageAssemblyPath(string repositoryRoot, string configuration)
+    {
+        return Path.Combine(
+            repositoryRoot,
             "samples",
             "Cephalon.Sample.ModularMonolith",
             "bin",
-            "Release",
+            configuration,
             "net10.0",
             "Cephalon.Sample.ModularMonolith.dll");
+    }
+
+    private static string? GetCurrentTestConfiguration()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+
+        while (directory is not null)
+        {
+            var parent = directory.Parent;
+            if (parent?.Parent is not null &&
+                string.Equals(parent.Parent.Name, "bin", StringComparison.OrdinalIgnoreCase))
+            {
+                return parent.Name;
+            }
+
+            directory = parent;
+        }
+
+        return null;
     }
 
     private static string GetReferenceModulePackageDirectory()

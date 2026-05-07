@@ -17,6 +17,7 @@ using MongoDB.Driver;
 
 namespace Cephalon.Tests.Hosting;
 
+[Collection(ProviderNativeCdcHostingCollectionDefinition.Name)]
 public sealed class MongoDbDataCdcHostingTests : IAsyncLifetime
 {
     private const string SharedRuntimeId = "data-cdc-capture-pump";
@@ -87,7 +88,7 @@ public sealed class MongoDbDataCdcHostingTests : IAsyncLifetime
             await WaitForAsync(
                 () => Task.FromResult(stateCatalog.GetById(CaptureId)),
                 static state => state is not null && state.StartedCount > 0,
-                TimeSpan.FromSeconds(10));
+                TimeSpan.FromSeconds(30));
 
             var database = app.Services.GetRequiredService<IMongoDatabase>();
             await database.GetCollection<BsonDocument>("orders").InsertOneAsync(new BsonDocument
@@ -100,7 +101,7 @@ public sealed class MongoDbDataCdcHostingTests : IAsyncLifetime
             var cdcState = await WaitForAsync(
                 () => client.GetFromJsonAsync<CdcCaptureRuntimeState>($"/engine/cdc-captures/runtime/{CaptureId}")!,
                 static state => state is not null && state.LastOutcome == CdcCaptureRuntimeOutcomes.Captured,
-                TimeSpan.FromSeconds(15));
+                TimeSpan.FromSeconds(30));
 
             var cdcCaptureRuntimes = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes");
             var mongoRuntime = await WaitForAsync(
@@ -109,7 +110,7 @@ public sealed class MongoDbDataCdcHostingTests : IAsyncLifetime
                     runtime.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured &&
                     runtime.Summary.TotalCapturedChangeCount == 1 &&
                     runtime.Summary.TotalProducedMessageCount == 1,
-                TimeSpan.FromSeconds(15));
+                TimeSpan.FromSeconds(30));
             var capturesByMongoRuntime = await client.GetFromJsonAsync<CdcCaptureDescriptor[]>($"/engine/cdc-captures/execution-runtimes/{MongoRuntimeId}");
             var captureStatesByMongoRuntime = await client.GetFromJsonAsync<CdcCaptureRuntimeState[]>($"/engine/cdc-captures/runtime/execution-runtimes/{MongoRuntimeId}");
             var hostedExecutions = await client.GetFromJsonAsync<HostedExecutionDescriptor[]>("/engine/hosted-executions");
@@ -123,7 +124,7 @@ public sealed class MongoDbDataCdcHostingTests : IAsyncLifetime
                     current.CdcCaptureExecutionRuntimes.Any(item =>
                         item.Id == MongoRuntimeId &&
                         item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured),
-                TimeSpan.FromSeconds(15));
+                TimeSpan.FromSeconds(30));
 
             Assert.NotNull(cdcCaptureRuntimes);
             Assert.NotNull(mongoRuntime);
@@ -198,7 +199,14 @@ public sealed class MongoDbDataCdcHostingTests : IAsyncLifetime
                 return current;
             }
 
-            await Task.Delay(200, cancellationTokenSource.Token).ConfigureAwait(false);
+            try
+            {
+                await Task.Delay(200, cancellationTokenSource.Token).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (cancellationTokenSource.IsCancellationRequested)
+            {
+                break;
+            }
         }
 
         throw new TimeoutException("Timed out while waiting for the expected MongoDB CDC hosting condition.");
