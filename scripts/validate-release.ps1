@@ -178,6 +178,28 @@ function Get-ScorecardBooleanProperty {
     return [System.Convert]::ToBoolean($property.Value, [System.Globalization.CultureInfo]::InvariantCulture)
 }
 
+function Get-ScorecardRequiredPropertyValue {
+    param(
+        [Parameter(Mandatory = $true)]
+        [object]$Object,
+        [Parameter(Mandatory = $true)]
+        [string]$PropertyName,
+        [Parameter(Mandatory = $true)]
+        [string]$OwnerName
+    )
+
+    if ($null -eq $Object) {
+        throw "Engine completion scorecard JSON is missing $OwnerName."
+    }
+
+    $property = $Object.PSObject.Properties[$PropertyName]
+    if ($null -eq $property -or $null -eq $property.Value) {
+        throw "Engine completion scorecard JSON is missing $OwnerName.$PropertyName."
+    }
+
+    return $property.Value
+}
+
 function Assert-EngineCompletionScorecardHardBlockers {
     param([Parameter(Mandatory = $true)] [object]$Scorecard)
 
@@ -253,6 +275,29 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         throw "Engine completion scorecard JSON is missing ProviderIntegrationEvidence."
     }
 
+    $dependencyHealthProviderManifest = Get-ScorecardRequiredPropertyValue `
+        -Object $scorecard.ProviderIntegrationEvidence `
+        -PropertyName "DependencyHealthProviderManifest" `
+        -OwnerName "ProviderIntegrationEvidence"
+    $dependencyHealthProviderManifestReference = Get-ScorecardRequiredPropertyValue `
+        -Object $dependencyHealthProviderManifest `
+        -PropertyName "Reference" `
+        -OwnerName "ProviderIntegrationEvidence.DependencyHealthProviderManifest"
+    $dependencyHealthProviderManifestSchemaVersion = Get-ScorecardRequiredPropertyValue `
+        -Object $dependencyHealthProviderManifest `
+        -PropertyName "ManifestSchemaVersion" `
+        -OwnerName "ProviderIntegrationEvidence.DependencyHealthProviderManifest"
+    $dependencyHealthProviderManifestStatus = Get-ScorecardRequiredPropertyValue `
+        -Object $dependencyHealthProviderManifest `
+        -PropertyName "Status" `
+        -OwnerName "ProviderIntegrationEvidence.DependencyHealthProviderManifest"
+    $dependencyHealthProviderCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $dependencyHealthProviderManifest `
+            -PropertyName "ProviderCount" `
+            -OwnerName "ProviderIntegrationEvidence.DependencyHealthProviderManifest"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+
     if ($null -eq $scorecard.SupplyChainEvidence) {
         throw "Engine completion scorecard JSON is missing SupplyChainEvidence."
     }
@@ -269,13 +314,17 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         $scorecard.DeploymentModeEvidence.TransitiveAuditEntryCount,
         $scorecard.DeploymentModeEvidence.PublishProbeReleaseValidationMode)
 
-    Write-Host ("Provider integration evidence: {0} rows; live proofs {1}; composition-only {2}; external-service gates {3}; default-skipped {4}; runtime contracts {5}." -f `
+    Write-Host ("Provider integration evidence: {0} rows; live proofs {1}; composition-only {2}; external-service gates {3}; default-skipped {4}; runtime contracts {5}; dependency-health providers {6} from {7} schema {8} ({9})." -f `
         $scorecard.ProviderIntegrationEvidence.EvidenceRowCount,
         $scorecard.ProviderIntegrationEvidence.LiveProofCount,
         $scorecard.ProviderIntegrationEvidence.CompositionOnlyCount,
         $scorecard.ProviderIntegrationEvidence.ExternalServiceGateCount,
         $scorecard.ProviderIntegrationEvidence.DefaultSkippedCount,
-        $scorecard.ProviderIntegrationEvidence.RuntimeContractCount)
+        $scorecard.ProviderIntegrationEvidence.RuntimeContractCount,
+        $dependencyHealthProviderCount,
+        $dependencyHealthProviderManifestReference,
+        $dependencyHealthProviderManifestSchemaVersion,
+        $dependencyHealthProviderManifestStatus)
 
     Write-Host ("SRE posture: {0} SLIs; target-declared {1}; pending stable baselines {2}; stable baselines {3}; guardrail-mapped {4}; pending guardrail coverage {5}; guardrail not-applicable {6}; summary mode {7}." -f `
         $scorecard.SrePostureEvidence.SliCount,
