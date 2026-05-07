@@ -520,6 +520,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("cephalon doctor --scorecard artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json", releaseChecklistTemplate, StringComparison.Ordinal);
         Assert.Contains("dependency-health provider-manifest", releaseChecklist, StringComparison.Ordinal);
         Assert.Contains("dependency-health provider-manifest", releaseChecklistTemplate, StringComparison.Ordinal);
+        Assert.Contains("release-validation and optional `cephalon doctor --scorecard", releaseChecklist, StringComparison.Ordinal);
+        Assert.Contains("release-validation and optional `cephalon doctor --scorecard", releaseChecklistTemplate, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --scorecard <path>", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --scorecard <path>", cliPackageReadme, StringComparison.Ordinal);
     }
