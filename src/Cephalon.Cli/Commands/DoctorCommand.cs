@@ -854,6 +854,32 @@ internal static class DoctorCommand
         var evidenceProviderIntegrationExternalServiceGateCount = GetRequiredScorecardInt(providerIntegrationEvidence, "ExternalServiceGateCount", errors, "ProviderIntegrationEvidence");
         var evidenceProviderIntegrationDefaultSkippedCount = GetRequiredScorecardInt(providerIntegrationEvidence, "DefaultSkippedCount", errors, "ProviderIntegrationEvidence");
         var evidenceProviderIntegrationRuntimeContractCount = GetRequiredScorecardInt(providerIntegrationEvidence, "RuntimeContractCount", errors, "ProviderIntegrationEvidence");
+        var dependencyHealthProviderManifest = providerIntegrationEvidence?["DependencyHealthProviderManifest"];
+        if (providerIntegrationEvidence is not null && dependencyHealthProviderManifest is null)
+        {
+            errors.Add("ProviderIntegrationEvidence.DependencyHealthProviderManifest");
+        }
+
+        var dependencyHealthProviderManifestReference = GetRequiredScorecardString(
+            dependencyHealthProviderManifest,
+            "Reference",
+            errors,
+            "ProviderIntegrationEvidence.DependencyHealthProviderManifest") ?? "unknown";
+        var dependencyHealthProviderManifestSchemaVersion = GetRequiredScorecardString(
+            dependencyHealthProviderManifest,
+            "ManifestSchemaVersion",
+            errors,
+            "ProviderIntegrationEvidence.DependencyHealthProviderManifest") ?? "unknown";
+        var dependencyHealthProviderManifestStatus = GetRequiredScorecardString(
+            dependencyHealthProviderManifest,
+            "Status",
+            errors,
+            "ProviderIntegrationEvidence.DependencyHealthProviderManifest") ?? "unknown";
+        var dependencyHealthProviderCount = GetRequiredScorecardInt(
+            dependencyHealthProviderManifest,
+            "ProviderCount",
+            errors,
+            "ProviderIntegrationEvidence.DependencyHealthProviderManifest");
         var evidenceSreSliCount = GetRequiredScorecardInt(srePostureEvidence, "SliCount", errors, "SrePostureEvidence");
         var evidenceSreTargetDeclaredCount = GetRequiredScorecardInt(srePostureEvidence, "TargetDeclaredCount", errors, "SrePostureEvidence");
         var evidenceSrePendingStableBaselineCount = GetRequiredScorecardInt(srePostureEvidence, "PendingStableBaselineCount", errors, "SrePostureEvidence");
@@ -1017,7 +1043,7 @@ internal static class DoctorCommand
         checks.Add(new DoctorCheck(
             providerIntegrationSeverity,
             "Engine completion scorecard provider integration evidence",
-            $"{providerIntegrationEvidenceRowCount} rows; live proofs {providerIntegrationLiveProofCount}, composition-only {providerIntegrationCompositionOnlyCount}, external-service gates {providerIntegrationExternalServiceGateCount}, default-skipped {providerIntegrationDefaultSkippedCount}, runtime contracts {providerIntegrationRuntimeContractCount}.",
+            $"{providerIntegrationEvidenceRowCount} rows; live proofs {providerIntegrationLiveProofCount}, composition-only {providerIntegrationCompositionOnlyCount}, external-service gates {providerIntegrationExternalServiceGateCount}, default-skipped {providerIntegrationDefaultSkippedCount}, runtime contracts {providerIntegrationRuntimeContractCount}; dependency-health providers {dependencyHealthProviderCount} from {dependencyHealthProviderManifestReference} schema {dependencyHealthProviderManifestSchemaVersion} ({dependencyHealthProviderManifestStatus}).",
             providerIntegrationSeverity == DoctorCheckSeverity.Pass
                 ? null
                 : "Treat provider integration posture as release-readiness evidence; enable external gates on capable runners before promoting live-provider claims and keep composition-only rows truthful."));
