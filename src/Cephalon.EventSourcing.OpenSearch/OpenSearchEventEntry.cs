@@ -7,9 +7,9 @@ public sealed class OpenSearchEventEntry
 {
     /// <summary>Gets or sets the logical stream identifier.</summary>
     [JsonPropertyName("stream_id")] public string StreamId { get; set; } = string.Empty;
-    /// <summary>Gets or sets the per-stream monotonic version number.</summary>
+    /// <summary>Gets or sets the zero-based per-stream monotonic version number.</summary>
     [JsonPropertyName("stream_version")] public long StreamVersion { get; set; }
-    /// <summary>Gets or sets the fully-qualified CLR event type name.</summary>
+    /// <summary>Gets or sets the stable Cephalon event-type registry name.</summary>
     [JsonPropertyName("event_type")] public string EventType { get; set; } = string.Empty;
     /// <summary>Gets or sets the JSON-serialized event payload.</summary>
     [JsonPropertyName("payload")] public string Payload { get; set; } = string.Empty;

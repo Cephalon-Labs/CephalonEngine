@@ -15,10 +15,10 @@ public sealed class MongoDbEventEntry
     /// <summary>Gets or sets the stable logical stream identifier.</summary>
     public string StreamId { get; set; } = string.Empty;
 
-    /// <summary>Gets or sets the optimistic stream version for the event.</summary>
+    /// <summary>Gets or sets the zero-based optimistic stream version for the event.</summary>
     public long StreamVersion { get; set; }
 
-    /// <summary>Gets or sets the assembly-qualified CLR event type.</summary>
+    /// <summary>Gets or sets the stable Cephalon event-type registry name.</summary>
     public string EventType { get; set; } = string.Empty;
 
     /// <summary>Gets or sets the serialized event payload.</summary>

@@ -9082,7 +9082,7 @@ Browse the published API surface by public member.
   - Describes the latest operator-facing runtime state reported for one declared event subscription.
   - `EventSubscriptionRuntimeState(string SubscriptionId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastMessageId, int LastAttempt, int StartedCount, int SucceededCount, int FailedCount, int RetryScheduledCount, int SkippedCount, string LastError, IReadOnlyDictionary<string, string> Metadata)`
 - [EventType](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-eventtype): `Properties` on `EntityFrameworkEventEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=EventType&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
-  - Gets or sets the assembly-qualified CLR event type.
+  - Gets or sets the stable Cephalon event-type registry name.
   - `string EventType { get; set; }`
 - [EventType](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchitem-eventtype): `Properties` on `EventDispatchItem` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventType&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the logical event type identifier.
@@ -26803,7 +26803,7 @@ Browse the published API surface by public member.
   - Gets the optimistic stream version assigned to the event.
   - `long StreamVersion { get; set; }`
 - [StreamVersion](cephalon-eventsourcing-entityframework.md#member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-streamversion): `Properties` on `EntityFrameworkEventEntry` in `Cephalon.EventSourcing.EntityFramework` (`Cephalon.EventSourcing.EntityFramework`) [Browse](browse.html?q=StreamVersion&assembly=Cephalon.EventSourcing.EntityFramework&namespace=Cephalon.EventSourcing.EntityFramework&scope=members)
-  - Gets or sets the optimistic stream version for the event.
+  - Gets or sets the zero-based optimistic stream version for the event.
   - `long StreamVersion { get; set; }`
 - [StreamVersion](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-idomainevent-streamversion): `Properties` on `IDomainEvent` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=StreamVersion&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the optimistic stream version assigned to the event.

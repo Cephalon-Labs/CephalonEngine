@@ -297,6 +297,48 @@ public sealed class DocumentationCoverageTests
     }
 
     [Fact]
+    public void EventSourcingProviderDocsMatchZeroBasedStreamVersionContract()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var componentDocsRoot = Path.Combine(repositoryRoot, "docs", "components");
+
+        var eventSourcingDocs = Directory
+            .GetFiles(componentDocsRoot, "event-sourcing*.md", SearchOption.TopDirectoryOnly)
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.NotEmpty(eventSourcingDocs);
+
+        foreach (var docPath in eventSourcingDocs)
+        {
+            var contents = File.ReadAllText(docPath);
+
+            Assert.DoesNotContain("1-based", contents, StringComparison.OrdinalIgnoreCase);
+            Assert.DoesNotContain("stream starts at version 1", contents, StringComparison.OrdinalIgnoreCase);
+            Assert.DoesNotContain("starting at `1`", contents, StringComparison.OrdinalIgnoreCase);
+        }
+
+        var sourceRoot = Path.Combine(repositoryRoot, "src");
+        var eventEntryFiles = Directory
+            .GetDirectories(sourceRoot, "Cephalon.EventSourcing*", SearchOption.TopDirectoryOnly)
+            .SelectMany(projectRoot => Directory.GetFiles(projectRoot, "*EventEntry.cs", SearchOption.AllDirectories))
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.NotEmpty(eventEntryFiles);
+
+        foreach (var eventEntryFile in eventEntryFiles)
+        {
+            var contents = File.ReadAllText(eventEntryFile);
+
+            Assert.DoesNotContain("1-based", contents, StringComparison.OrdinalIgnoreCase);
+            Assert.DoesNotContain("stream starts at version 1", contents, StringComparison.OrdinalIgnoreCase);
+            Assert.DoesNotContain("assembly-qualified CLR event type", contents, StringComparison.OrdinalIgnoreCase);
+            Assert.DoesNotContain("fully-qualified CLR event type", contents, StringComparison.OrdinalIgnoreCase);
+        }
+    }
+
+    [Fact]
     public void DataProviderRuntimeDocsMatchOutboxInboxSurfaceTruth()
     {
         var repositoryRoot = GetRepositoryRoot();

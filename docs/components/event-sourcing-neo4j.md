@@ -58,7 +58,7 @@ The method registers `IDriver` using `TryAdd` semantics — a host that already 
 | Property | Type | Notes |
 |----------|------|-------|
 | `streamId` | string | Logical aggregate / stream identifier |
-| `streamVersion` | long | Per-stream monotonic version (1-based; stream starts at version 1) |
+| `streamVersion` | long | Per-stream monotonic version (zero-based; stream starts at version 0) |
 | `eventType` | string | Stable Cephalon event-type registry name |
 | `payload` | string | Serialized event body produced by the registered event-type descriptor |
 | `occurredAtUtc` | string | ISO 8601 UTC representation of `IDomainEvent.OccurredAtUtc` |
@@ -71,7 +71,7 @@ The method registers `IDriver` using `TryAdd` semantics — a host that already 
 | Scenario | Behaviour |
 |----------|-----------|
 | `GetVersionAsync` on empty stream | Returns `-1` (via `coalesce(max(e.streamVersion), -1)`) |
-| `AppendAsync(..., expectedVersion: -1)` on empty stream | Succeeds — assigns versions starting at `1` |
+| `AppendAsync(..., expectedVersion: -1)` on empty stream | Succeeds — assigns versions starting at `0` |
 | `AppendAsync(..., expectedVersion: N)` when stream is at `N` | Succeeds — appends events at versions `N+1, N+2, ...` |
 | `AppendAsync` with wrong `expectedVersion` | `EventStreamConcurrencyException` thrown before insert |
 | Concurrent writer commits same version (race after version read) | `CREATE` raises `Neo.ClientError.Schema.ConstraintValidationFailed`; provider re-reads actual version and throws `EventStreamConcurrencyException` |

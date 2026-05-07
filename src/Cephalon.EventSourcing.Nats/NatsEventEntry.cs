@@ -8,10 +8,10 @@ public sealed class NatsEventEntry
     /// <summary>The stream identifier this event belongs to.</summary>
     public string StreamId { get; init; } = string.Empty;
 
-    /// <summary>The monotonically increasing version of this event within its stream.</summary>
+    /// <summary>The zero-based, monotonically increasing version of this event within its stream.</summary>
     public long StreamVersion { get; init; }
 
-    /// <summary>The assembly-qualified CLR type name of the serialized event.</summary>
+    /// <summary>The stable Cephalon event-type registry name of the serialized event.</summary>
     public string EventType { get; init; } = string.Empty;
 
     /// <summary>The JSON-serialized event payload.</summary>

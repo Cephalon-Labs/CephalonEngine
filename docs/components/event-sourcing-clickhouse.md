@@ -75,7 +75,7 @@ The `ORDER BY (stream_id, stream_version)` clause makes per-stream range queries
 | Scenario | Behaviour |
 |----------|-----------|
 | `GetVersionAsync` on empty stream | Returns `-1` |
-| `AppendAsync(..., expectedVersion: -1)` on empty stream | Succeeds — assigns versions starting at `1` |
+| `AppendAsync(..., expectedVersion: -1)` on empty stream | Succeeds — assigns versions starting at `0` |
 | `AppendAsync(..., expectedVersion: N)` when stream is at `N` | Succeeds — appends events at versions `N+1, N+2, ...` |
 | `AppendAsync` with wrong `expectedVersion` | `EventStreamConcurrencyException` thrown before any insert |
 | Concurrent writer commits same version (race after version read) | Both INSERTs succeed at the database level — MergeTree does not reject duplicates. The pre-read check catches the conflict only if observed before the race window closes. |

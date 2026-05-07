@@ -66,7 +66,7 @@ Gets or sets the correlation identifier associated with the event when known.
 string EventType { get; set; }
 ```
 
-Gets or sets the assembly-qualified CLR event type.
+Gets or sets the stable Cephalon event-type registry name.
 
 <a id="member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-id"></a>
 
@@ -116,7 +116,7 @@ Gets or sets the stable logical stream identifier.
 long StreamVersion { get; set; }
 ```
 
-Gets or sets the optimistic stream version for the event.
+Gets or sets the zero-based optimistic stream version for the event.
 
 <a id="member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-tenantid"></a>
 

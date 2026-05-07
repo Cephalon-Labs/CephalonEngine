@@ -72,7 +72,7 @@ This key structure means:
 | Scenario | Behaviour |
 |----------|-----------|
 | `GetVersionAsync` on empty stream | Returns `-1` |
-| `AppendAsync(..., expectedVersion: -1)` on empty stream | Succeeds — assigns versions starting at `1` |
+| `AppendAsync(..., expectedVersion: -1)` on empty stream | Succeeds — assigns versions starting at `0` |
 | `AppendAsync(..., expectedVersion: N)` when stream is at `N` | Succeeds — appends events at versions `N+1, N+2, ...` |
 | `AppendAsync` with wrong `expectedVersion` | `EventStreamConcurrencyException` thrown before any insert |
 | Concurrent writer commits same version (race after version read) | LWT `INSERT IF NOT EXISTS` returns `[applied]=false`; provider re-reads actual version and throws `EventStreamConcurrencyException` |

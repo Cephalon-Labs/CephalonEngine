@@ -45,7 +45,7 @@ Documents are stored with `_id = {streamId}#{streamVersion}`.
 | Field | JSON name | Type | Notes |
 |-------|-----------|------|-------|
 | `StreamId` | `stream_id` | string | Logical aggregate / stream identifier |
-| `StreamVersion` | `stream_version` | long | Per-stream monotonic version (1-based; stream starts at version 1) |
+| `StreamVersion` | `stream_version` | long | Per-stream monotonic version (zero-based; stream starts at version 0) |
 | `EventType` | `event_type` | string | Stable Cephalon event-type registry name |
 | `Payload` | `payload` | string | Serialized event body produced by the registered event-type descriptor |
 | `OccurredAtUtc` | `occurred_at_utc` | DateTime | UTC timestamp when the domain event occurred |
@@ -58,7 +58,7 @@ Documents are stored with `_id = {streamId}#{streamVersion}`.
 | Scenario | Behaviour |
 |----------|-----------|
 | `GetVersionAsync` on empty stream | Returns `-1` (no hits for `term: stream_id`) |
-| `AppendAsync(..., expectedVersion: -1)` on empty stream | Succeeds — assigns versions starting at `1` |
+| `AppendAsync(..., expectedVersion: -1)` on empty stream | Succeeds — assigns versions starting at `0` |
 | `AppendAsync(..., expectedVersion: N)` when stream is at `N` | Succeeds — appends events at versions `N+1, N+2, ...` |
 | `AppendAsync` with wrong `expectedVersion` | `EventStreamConcurrencyException` thrown before insert |
 | Concurrent writer commits same version (race after version read) | `op_type=create` returns HTTP 409; provider re-reads actual version and throws `EventStreamConcurrencyException` |
