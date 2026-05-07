@@ -54,6 +54,8 @@ services.AddCephalon(configuration, engine =>
 
 The split is deliberate. The NuGet release currently available for `SciSharp.MySQL.Replication` does not expose Cephalon's required start-position overload, while upstream source has started moving in that direction. Keeping the adapter optional lets the main MySQL package remain clean for deployment-mode governance without pretending the current SciSharp reflection path is broadly trim, AOT, or single-file friendly.
 
+The adapter is now covered by the dedicated opt-in CDC integration lane. `tests/Cephalon.Tests.CdcIntegration` can run `MySqlCdcIntegrationTests.MySqlCdc_StagesOutboxAndCommitsCheckpointAgainstLiveBinlog` against either `CEPHALON_CDC_MYSQL_CONNECTION_STRING` or a disposable `mysql:8.4` Testcontainers service with row-based binary logging enabled. The test verifies real binlog streaming through this adapter, outbox staging, shared runtime-state and execution-runtime reporting, and durable `binlogFile|position` checkpoint persistence while remaining skipped in default CI unless the external-service gate is enabled.
+
 ## Deployment-mode posture
 
 This package is a permanent package-level `not-claimed` posture for trim, native AOT, and single-file publishing until the transport no longer depends on the current SciSharp reflective path. The project file explicitly declares `IsTrimmable=false`, `IsAotCompatible=false`, `PublishTrimmed=false`, `PublishAot=false`, and `PublishSingleFile=false`; `scripts/deployment-mode-support.json` records those same values in this package's `requiredProjectProperties`; and the manifest Pester suite verifies the values do not drift from the project file.

@@ -4,12 +4,14 @@ internal sealed record ExternalCdcServiceGate(
     bool ExternalServicesEnabled,
     bool TestcontainersEnabled,
     string? SqlServerConnectionString,
-    string? PostgresConnectionString)
+    string? PostgresConnectionString,
+    string? MySqlConnectionString)
 {
     internal const string ExternalServicesVariable = "CEPHALON_CDC_EXTERNAL_SERVICES";
     internal const string TestcontainersVariable = "CEPHALON_CDC_TESTCONTAINERS";
     internal const string SqlServerConnectionStringVariable = "CEPHALON_CDC_SQLSERVER_CONNECTION_STRING";
     internal const string PostgresConnectionStringVariable = "CEPHALON_CDC_POSTGRES_CONNECTION_STRING";
+    internal const string MySqlConnectionStringVariable = "CEPHALON_CDC_MYSQL_CONNECTION_STRING";
 
     internal static string SkipReason =>
         $"External CDC service tests are disabled. Set {ExternalServicesVariable}=1 and either {TestcontainersVariable}=1 or a provider connection string to run this lane.";
@@ -36,6 +38,11 @@ internal sealed record ExternalCdcServiceGate(
         return ResolveProviderMode(PostgresConnectionString);
     }
 
+    internal ExternalCdcServiceMode ResolveMySqlMode()
+    {
+        return ResolveProviderMode(MySqlConnectionString);
+    }
+
     internal string? GetSkipReason(ExternalCdcServiceProvider provider)
     {
         if (!ExternalServicesEnabled)
@@ -50,7 +57,9 @@ internal sealed record ExternalCdcServiceGate(
                 $"SQL Server CDC external-service tests are disabled. Set {SqlServerConnectionStringVariable} or set {TestcontainersVariable}=1 with {ExternalServicesVariable}=1.",
             ExternalCdcServiceProvider.Postgres when ResolvePostgresMode() == ExternalCdcServiceMode.Disabled =>
                 $"PostgreSQL CDC external-service tests are disabled. Set {PostgresConnectionStringVariable} or set {TestcontainersVariable}=1 with {ExternalServicesVariable}=1.",
-            ExternalCdcServiceProvider.SqlServer or ExternalCdcServiceProvider.Postgres => null,
+            ExternalCdcServiceProvider.MySql when ResolveMySqlMode() == ExternalCdcServiceMode.Disabled =>
+                $"MySQL CDC external-service tests are disabled. Set {MySqlConnectionStringVariable} or set {TestcontainersVariable}=1 with {ExternalServicesVariable}=1.",
+            ExternalCdcServiceProvider.SqlServer or ExternalCdcServiceProvider.Postgres or ExternalCdcServiceProvider.MySql => null,
             _ => throw new ArgumentOutOfRangeException(nameof(provider), provider, "Unknown external CDC service provider.")
         };
     }
@@ -66,7 +75,8 @@ internal sealed record ExternalCdcServiceGate(
             externalServicesEnabled,
             testcontainersEnabled,
             NormalizeConnectionString(resolver(SqlServerConnectionStringVariable)),
-            NormalizeConnectionString(resolver(PostgresConnectionStringVariable)));
+            NormalizeConnectionString(resolver(PostgresConnectionStringVariable)),
+            NormalizeConnectionString(resolver(MySqlConnectionStringVariable)));
     }
 
     private ExternalCdcServiceMode ResolveProviderMode(string? connectionString)

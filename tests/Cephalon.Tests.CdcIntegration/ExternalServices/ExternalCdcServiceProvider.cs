@@ -4,5 +4,6 @@ public enum ExternalCdcServiceProvider
 {
     Any,
     SqlServer,
-    Postgres
+    Postgres,
+    MySql
 }
