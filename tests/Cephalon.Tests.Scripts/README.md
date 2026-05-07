@@ -51,7 +51,8 @@ The PowerShell scripts under `scripts/` follow these patterns so they are testab
 
 - functions are defined at the top of the file with no top-level side effects
 - the main entry block at the bottom is guarded by an environment variable
-  (for example `$env:CEPHALON_VALIDATE_DEPLOYMENT_MODE_NO_RUN`) so tests can dot-source
+  (for example `$env:CEPHALON_VALIDATE_DEPLOYMENT_MODE_NO_RUN` or
+  `$env:CEPHALON_VALIDATE_RELEASE_NO_RUN`) so tests can dot-source
   the script without triggering the entry block
 - external commands (such as `dotnet`) are accepted through an injectable parameter
   (for example `-DotnetCommand`) so tests can substitute deterministic stubs
@@ -71,6 +72,7 @@ Each test file should:
 | Script | Test file | Cases |
 | --- | --- | --- |
 | `scripts/publish-engine-completion-scorecard.ps1` | `publish-engine-completion-scorecard.Tests.ps1` | scorecard JSON/Markdown artifact shape + evidence-source reference validation + per-package GA readiness rows + provider integration evidence manifest validation + SRE guardrail-reference validation + unsupported status guard + release-validation wiring |
+| `scripts/validate-release.ps1` | `validate-release.Tests.ps1` | scorecard evidence readback behavior + dependency-health provider manifest readback + missing manifest failure |
 | `scripts/summarise-public-api-deltas.ps1` | `summarise-public-api-deltas.Tests.ps1` | markdown/JSON report shape + optional removal gate + release-validation removal-gate wiring |
 | `scripts/validate-deployment-mode-claims.ps1` | `validate-deployment-mode-claims.Tests.ps1` | 57 cases across 12 describe groups |
 | `scripts/deployment-mode-support.json` | `deployment-mode-support-manifest.Tests.ps1` | manifest schema 1.1.0 shape + per-mode field assertions |

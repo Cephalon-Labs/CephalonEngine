@@ -352,6 +352,10 @@ function Write-EngineCompletionScorecardEvidenceSummary {
     Assert-EngineCompletionScorecardHardBlockers -Scorecard $scorecard
 }
 
+if ($env:CEPHALON_VALIDATE_RELEASE_NO_RUN -eq "1") {
+    return
+}
+
 Push-Location $repoRoot
 try {
     foreach ($testProjectPath in $testProjectPaths) {
