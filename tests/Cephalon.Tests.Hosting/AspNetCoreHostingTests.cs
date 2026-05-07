@@ -5219,8 +5219,10 @@ note: visible
     [Fact]
     public async Task MapCephalonTracksExternalCdcRuntimeRemediationAcrossResolvedCaptureBindings()
     {
+        var timeProvider = new MutableTimeProvider(DateTimeOffset.Parse("2026-04-23T08:30:45Z", CultureInfo.InvariantCulture));
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseTestServer();
+        builder.Services.AddSingleton<TimeProvider>(timeProvider);
         builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
         builder.Configuration[$"{EngineSettings.SectionName}:Patterns:0"] = "CQRS";
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";

@@ -153,6 +153,7 @@ When `CdcCaptures` are configured:
 
 - each capture is published through `/engine/cdc-captures*` with `provider = "sqlserver"`, `mode = "change-table"`, and an `executionBinding` whose authored and requested runtime id is `sqlserver-cdc-capture-pump`
 - the execution runtime is published through `/engine/cdc-capture-runtimes*` and `snapshot.CdcCaptureExecutionRuntimes` with `executionOwnership = host-managed`, `executionTopology = provider-native`, and `acknowledgementMode = provider-native`
+- when `Cephalon.Data` is active, the same capture and execution-runtime truth also appears under the `data-management` technology surfaces `cdc-captures` and `cdc-capture-runtimes` with sanitized metadata so connection-string or token-shaped values are not projected to operators
 - the same runtime publishes through `/engine/execution-graphs`, `/engine/hosted-executions`, `/engine/runtime-story`, and `snapshot` under `sqlserver-cdc-capture-flow` plus `sqlserver-cdc-capture-pump`
 - the hosted runner polls one SQL Server CDC change table per configured capture, stages one outbox message per captured row, and only persists the latest SQL checkpoint after the linked outbox accepted the batch
 - each staged outbox message uses deterministic id `{cdcCaptureId}:{startLsn}-{sequenceValue}-{operation}`, content type `application/vnd.cephalon.sqlserver.cdc+json`, headers for `provider`, `cdcCaptureId`, `databaseName`, `schemaName`, `tableName`, `captureInstance`, and `operation`, plus metadata for `sourceId`, `eventFormat`, and `checkpointToken`

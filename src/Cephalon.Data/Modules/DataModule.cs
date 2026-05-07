@@ -1,6 +1,7 @@
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Modules;
+using Cephalon.Abstractions.Technologies;
 using Cephalon.Data.Configuration;
 using Cephalon.Data.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -61,6 +62,8 @@ internal sealed class DataModule(DataRuntimeOptions options) : ModuleBase, IExec
         services.TryAddSingleton<CdcCaptureExecutionRuntimeCatalog>();
         services.TryAddSingleton<Abstractions.Data.ICdcCaptureExecutionRuntimeCatalog>(static serviceProvider =>
             serviceProvider.GetRequiredService<CdcCaptureExecutionRuntimeCatalog>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, DataCdcCaptureRuntimeSurfaceContributor>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, DataCdcExecutionRuntimeSurfaceContributor>());
         services.TryAddSingleton<ManagedConnectorCommandExecutor>();
         services.TryAddSingleton<Abstractions.Data.ICdcCaptureExecutionRuntimeManagedConnectorCommandExecutor>(static serviceProvider =>
             serviceProvider.GetRequiredService<ManagedConnectorCommandExecutor>());

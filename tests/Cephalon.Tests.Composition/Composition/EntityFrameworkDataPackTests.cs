@@ -1033,6 +1033,53 @@ public sealed class EntityFrameworkDataPackTests
     }
 
     [Fact]
+    public void AddEntityFrameworkDataProjectsItsProjectionsThroughDataManagementTechnologySurfaces()
+    {
+        var databaseName = $"cephalon-data-ef-projection-surface-{Guid.NewGuid():N}";
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS"],
+                transports: ["RestApi"],
+                data: new DataSettings(provider: "EntityFramework")));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddModule(new EntityFrameworkSingleContextTestModule());
+            engine.AddEntityFrameworkData<SingleCatalogDbContext>(
+                options => options.UseInMemoryDatabase(databaseName),
+                configure: options => options.RegisterProjections = true);
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var projectionCatalog = provider.GetRequiredService<IProjectionCatalog>();
+        var technologyCatalog = provider.GetRequiredService<global::Cephalon.Abstractions.Technologies.ITechnologyRuntimeCatalog>();
+        var runtime = provider.GetRequiredService<Cephalon.Engine.Runtime.IRuntime>();
+        var dataManagementSurfaces = technologyCatalog.GetByTechnology("data-management");
+
+        var projection = Assert.Single(projectionCatalog.GetBySourceModule("entity-framework-data"));
+        Assert.Equal("entity-framework-projections", projection.Id);
+        Assert.Equal("entity-framework-read-store", projection.TargetStoreId);
+        Assert.Equal("application-managed", projection.Mode);
+        Assert.Equal("application-managed", projection.Metadata["projectionRuntime"]);
+
+        var projectionsSurface = Assert.Single(dataManagementSurfaces, surface => surface.SurfaceId == "projections");
+        var projectionEntry = Assert.Single(projectionsSurface.Entries);
+        Assert.Equal(projection.Id, projectionEntry.Id);
+        Assert.Equal("entity-framework-read-store", projectionEntry.Metadata["targetStoreId"]);
+        Assert.Equal("entity-framework-data", projectionEntry.Metadata["sourceModuleId"]);
+        Assert.Equal("application-managed", projectionEntry.Metadata["mode"]);
+        Assert.Equal("application-managed", projectionEntry.Metadata["projectionRuntime"]);
+        Assert.Equal("entity-framework", projectionEntry.Metadata["provider"]);
+        Assert.Equal("Cephalon.Data.EntityFramework", projectionEntry.Metadata["pack"]);
+        Assert.Contains("cqrs", projectionEntry.Metadata["tags"], StringComparison.Ordinal);
+        Assert.Contains(
+            runtime.Manifest.Capabilities,
+            capability => capability.Key == "data.projections.entity-framework" &&
+                capability.Metadata["projectionRuntime"] == "application-managed");
+    }
+
+    [Fact]
     public async Task AddEventingCanStagePublicationsThroughOutboxBackedPublisher()
     {
         var databaseName = $"cephalon-data-ef-event-publisher-{Guid.NewGuid():N}";

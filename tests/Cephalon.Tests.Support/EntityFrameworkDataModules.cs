@@ -2,6 +2,7 @@ using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Data.EntityFramework.Modeling;
+using Cephalon.Data.Registration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SfidNet;
@@ -21,6 +22,8 @@ internal sealed class EntityFrameworkSingleContextTestModule : ModuleBase
 
     public override void ConfigureServices(IServiceCollection services)
     {
+        services.AddCephalonDataCommand<CreateSingleCatalogItemCommand>();
+        services.AddCephalonDataQuery<CountSingleCatalogItemsQuery, int>();
         services.AddScoped<ICommandHandler<CreateSingleCatalogItemCommand>, CreateSingleCatalogItemCommandHandler>();
         services.AddScoped<IQueryHandler<CountSingleCatalogItemsQuery, int>, CountSingleCatalogItemsQueryHandler>();
     }
@@ -43,6 +46,8 @@ internal sealed class EntityFrameworkSplitContextTestModule : ModuleBase
 
     public override void ConfigureServices(IServiceCollection services)
     {
+        services.AddCephalonDataCommand<CreateSplitWriteCatalogItemCommand>();
+        services.AddCephalonDataQuery<CountSplitReadCatalogItemsQuery, int>();
         services.AddScoped<ICommandHandler<CreateSplitWriteCatalogItemCommand>, CreateSplitWriteCatalogItemCommandHandler>();
         services.AddScoped<IQueryHandler<CountSplitReadCatalogItemsQuery, int>, CountSplitReadCatalogItemsQueryHandler>();
     }
@@ -65,6 +70,7 @@ internal sealed class EntityFrameworkOutboxTestModule : ModuleBase
 
     public override void ConfigureServices(IServiceCollection services)
     {
+        services.AddCephalonDataCommand<CreateOutboxCatalogItemCommand>();
         services.AddScoped<ICommandHandler<CreateOutboxCatalogItemCommand>, CreateOutboxCatalogItemCommandHandler>();
     }
 
@@ -86,6 +92,7 @@ internal sealed class EntityFrameworkSfidTestModule : ModuleBase
 
     public override void ConfigureServices(IServiceCollection services)
     {
+        services.AddCephalonDataCommand<CreateSfidCatalogItemCommand, Sfid>();
         services.AddScoped<ICommandHandler<CreateSfidCatalogItemCommand, Sfid>, CreateSfidCatalogItemCommandHandler>();
     }
 

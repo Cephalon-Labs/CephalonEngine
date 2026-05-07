@@ -26,6 +26,9 @@
 - `Services/CdcCaptureHostedService.cs`
 - `Services/CdcCaptureRuntimeStateCatalog.cs`
 - `Services/ConfiguredCdcCaptureExecutionRuntimeContributor.cs`
+- `Services/DataCdcCaptureRuntimeSurfaceContributor.cs`
+- `Services/DataCdcExecutionRuntimeSurfaceContributor.cs`
+- `Services/DataCdcRuntimeSurfaceMetadata.cs`
 - `Services/DataRuntimeIds.cs`
 - `Services/HandlerDispatchingReadStore.cs`
 - `Services/HandlerDispatchingWriteStore.cs`
@@ -87,6 +90,17 @@ publish. That same ownership/topology answer now flows through `/engine/cdc-capt
 `snapshot.CdcCaptureExecutionRuntimes`, so additional provider-native or out-of-process runners can
 project on the same truth instead of inventing a second host-only runner registry beside
 `/engine/cdc-captures*`.
+
+The same shared CDC truth now also projects through the active technology runtime catalog. When
+CDC captures or execution runtimes are active, `Cephalon.Data` contributes `data-management`
+technology surfaces named `cdc-captures` and `cdc-capture-runtimes`. Those entries mirror
+provider, source module, outbox, execution-topology, execution-ownership, resource, and tag truth
+from the shared catalogs, while sanitizing sensitive metadata keys and URI user-info before the
+operator-facing surface is emitted. This is intentionally a shared data-pack projection: provider
+packs such as SQL Server, PostgreSQL, MySQL, Oracle, MongoDB, and Debezium keep owning their
+source-specific capture semantics, while the shared `ITechnologyRuntimeCatalog` answer lets an
+operator or AI agent compare every active CDC provider through one stable `data-management`
+surface.
 
 When `DataRuntimeOptions.EnableExternalCdcRuntimeReporting` is enabled, the same package now also
 registers `ICdcCaptureExecutionRuntimeReportSink` on top of the shared

@@ -26,6 +26,7 @@
 - provides the role-resolution and migration-registration primitives consumed by `Cephalon.Audit.EntityFramework` for the first durable `history` role follow-through
 - publishes an operator-facing inbox descriptor through `/engine/inboxes` and `/engine/snapshot` when the inbox path is enabled
 - publishes an operator-facing outbox descriptor through `/engine/outboxes` and `/engine/snapshot` when the outbox path is enabled, including the effective dispatch policy that currently owns or does not own staged-event execution
+- projects database roles, migration policy, outbox routing, inbox stores, outbox producers, and projection persistence through technology runtime surfaces so host/operator code can inspect the EF-backed data-management and event-driven-integration posture without parsing local `DbContext` registrations
 - projects that same inbox through the `event-driven-integration` technology surface as `inbox-stores` when the eventing technology is active
 - projects that same outbox through the `event-driven-integration` technology surface as `outbox-producers` when the eventing technology is active
 - enables an outbox-backed `IEventPublisher` handoff path when the eventing technology is active and a truthful staged-publication path is available
@@ -39,9 +40,12 @@
 - `Modeling/IEntityFrameworkOutboxContext.cs`
 - `Modeling/EntityFrameworkModelBuilderExtensions.cs`
 - `Registration/EntityFrameworkDataEngineBuilderExtensions.cs`
+- `Services/EntityFrameworkDatabaseRuntimeRegistration.cs`
+- `Services/EntityFrameworkDatabaseTopologyRuntimeSurfaceContributor.cs`
 - `Services/EntityFrameworkInboxRuntimeSurfaceContributor.cs`
 - `Services/EntityFrameworkEventDispatchStore.cs`
 - `Services/EntityFrameworkOutboxRuntimeSurfaceContributor.cs`
+- `Services/EntityFrameworkProjectionRuntimeSurfaceContributor.cs`
 
 ## How it fits
 
