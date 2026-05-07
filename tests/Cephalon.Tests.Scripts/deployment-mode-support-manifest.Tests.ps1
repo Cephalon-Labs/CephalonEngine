@@ -167,17 +167,31 @@ Describe "deployment-mode-support.json — top-level schema" {
 }
 
 Describe "publishProbePolicy" {
-    It "keeps release validation audit-only until a deliberate non-opt-out gate promotion" {
+    It "promotes the single-file publish probe as a non-opt-out release gate without widening global support claims" {
         $script:manifest.publishProbePolicy.PSObject.Properties.Name | Should -Contain 'comment'
         $script:manifest.publishProbePolicy.PSObject.Properties.Name | Should -Contain 'releaseValidationMode'
+        $script:manifest.publishProbePolicy.PSObject.Properties.Name | Should -Contain 'releaseValidationDeploymentModes'
         $script:manifest.publishProbePolicy.PSObject.Properties.Name | Should -Contain 'releaseValidationSkipsPublish'
         $script:manifest.publishProbePolicy.PSObject.Properties.Name | Should -Contain 'nonOptOutGate'
+        $script:manifest.publishProbePolicy.PSObject.Properties.Name | Should -Contain 'gatedModes'
+        $script:manifest.publishProbePolicy.PSObject.Properties.Name | Should -Contain 'auditOnlyModes'
+        $script:manifest.publishProbePolicy.PSObject.Properties.Name | Should -Contain 'failureBlocksRelease'
+        $script:manifest.publishProbePolicy.PSObject.Properties.Name | Should -Contain 'failOnWarnings'
         $script:manifest.publishProbePolicy.PSObject.Properties.Name | Should -Contain 'gatePromotion'
         $script:manifest.publishProbePolicy.PSObject.Properties.Name | Should -Contain 'promotionRequirements'
-        $script:manifest.publishProbePolicy.releaseValidationMode | Should -BeIn @('audit-only', 'publish-required', 'full-flow')
-        $script:manifest.publishProbePolicy.releaseValidationSkipsPublish | Should -BeTrue
-        $script:manifest.publishProbePolicy.nonOptOutGate | Should -BeFalse
-        $script:manifest.publishProbePolicy.gatePromotion | Should -Be 'requires-deliberate-release-manager-decision'
+        $script:manifest.publishProbePolicy.releaseValidationMode | Should -Be 'single-file-publish-gate'
+        $script:manifest.publishProbePolicy.releaseValidationDeploymentModes | Should -Contain 'singleFile'
+        $script:manifest.publishProbePolicy.releaseValidationSkipsPublish | Should -BeFalse
+        $script:manifest.publishProbePolicy.nonOptOutGate | Should -BeTrue
+        $script:manifest.publishProbePolicy.gatedModes | Should -Contain 'singleFile'
+        $script:manifest.publishProbePolicy.auditOnlyModes | Should -Contain 'trim'
+        $script:manifest.publishProbePolicy.auditOnlyModes | Should -Contain 'nativeAot'
+        $script:manifest.publishProbePolicy.failureBlocksRelease | Should -BeTrue
+        $script:manifest.publishProbePolicy.failOnWarnings | Should -BeTrue
+        $script:manifest.publishProbePolicy.gatePromotion | Should -Be 'eng-510-single-file-publish-probe-release-gate'
+        $script:manifest.deploymentModes.trim.status | Should -Be 'not-claimed'
+        $script:manifest.deploymentModes.nativeAot.status | Should -Be 'not-claimed'
+        $script:manifest.deploymentModes.singleFile.status | Should -Be 'not-claimed'
         @($script:manifest.publishProbePolicy.promotionRequirements).Count | Should -BeGreaterThan 0
     }
 
@@ -191,10 +205,12 @@ Describe "publishProbePolicy" {
         $requirements | Should -Match 'docs/project-memory\.md'
     }
 
-    It "keeps validate-release wired to the manifest-backed release-validation skip flag" {
-        $script:validateReleaseRaw | Should -Match 'Get-DeploymentModeReleaseValidationSkipsPublish'
+    It "keeps validate-release wired to the manifest-backed release-validation policy" {
+        $script:validateReleaseRaw | Should -Match 'Get-DeploymentModeReleaseValidationPolicy'
         $script:validateReleaseRaw | Should -Match 'publishProbePolicy'
+        $script:validateReleaseRaw | Should -Match 'releaseValidationDeploymentModes'
         $script:validateReleaseRaw | Should -Match 'releaseValidationSkipsPublish'
+        $script:validateReleaseRaw | Should -Match '-DeploymentMode", \$releaseValidationDeploymentMode'
         $script:validateReleaseRaw | Should -Match '-SkipPublish'
     }
 }

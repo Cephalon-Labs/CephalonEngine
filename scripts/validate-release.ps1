@@ -114,7 +114,7 @@ function Invoke-PowerShellScript {
     }
 }
 
-function Get-DeploymentModeReleaseValidationSkipsPublish {
+function Get-DeploymentModeReleaseValidationPolicy {
     param([Parameter(Mandatory = $true)] [string]$ManifestPath)
 
     if (-not (Test-Path -LiteralPath $ManifestPath)) {
@@ -123,19 +123,47 @@ function Get-DeploymentModeReleaseValidationSkipsPublish {
 
     $manifest = Get-Content -LiteralPath $ManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
     if ($manifest.PSObject.Properties.Match("publishProbePolicy").Count -eq 0) {
-        return $true
+        return [pscustomobject]@{
+            ReleaseValidationMode            = "audit-only"
+            ReleaseValidationDeploymentModes = @("all")
+            ReleaseValidationSkipsPublish    = $true
+        }
     }
 
     $policy = $manifest.publishProbePolicy
-    if ($policy.PSObject.Properties.Match("releaseValidationSkipsPublish").Count -eq 0) {
-        return $true
+    $releaseValidationMode = "audit-only"
+    if ($policy.PSObject.Properties.Match("releaseValidationMode").Count -gt 0 -and
+        -not [string]::IsNullOrWhiteSpace([string]$policy.releaseValidationMode)) {
+        $releaseValidationMode = [string]$policy.releaseValidationMode
     }
 
-    if ($policy.releaseValidationSkipsPublish -is [bool]) {
-        return $policy.releaseValidationSkipsPublish
+    $releaseValidationSkipsPublish = $true
+    if ($policy.PSObject.Properties.Match("releaseValidationSkipsPublish").Count -gt 0) {
+        if ($policy.releaseValidationSkipsPublish -is [bool]) {
+            $releaseValidationSkipsPublish = $policy.releaseValidationSkipsPublish
+        }
+        else {
+            $releaseValidationSkipsPublish = [System.Convert]::ToBoolean([string]$policy.releaseValidationSkipsPublish, [System.Globalization.CultureInfo]::InvariantCulture)
+        }
     }
 
-    return [System.Convert]::ToBoolean([string]$policy.releaseValidationSkipsPublish, [System.Globalization.CultureInfo]::InvariantCulture)
+    $releaseValidationDeploymentModes = @()
+    if ($policy.PSObject.Properties.Match("releaseValidationDeploymentModes").Count -gt 0) {
+        $releaseValidationDeploymentModes = @(
+            $policy.releaseValidationDeploymentModes |
+                ForEach-Object { [string]$_ } |
+                Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+        )
+    }
+    if ($releaseValidationDeploymentModes.Count -eq 0) {
+        $releaseValidationDeploymentModes = @("all")
+    }
+
+    return [pscustomobject]@{
+        ReleaseValidationMode            = $releaseValidationMode
+        ReleaseValidationDeploymentModes = $releaseValidationDeploymentModes
+        ReleaseValidationSkipsPublish    = $releaseValidationSkipsPublish
+    }
 }
 
 function Get-ScorecardIntegerProperty {
@@ -411,25 +439,37 @@ try {
     }
 
     if (-not $SkipDeploymentModeClaims) {
-        $releaseValidationSkipsPublish = Get-DeploymentModeReleaseValidationSkipsPublish -ManifestPath $deploymentModeSupportManifestPath
+        $releaseValidationPolicy = Get-DeploymentModeReleaseValidationPolicy -ManifestPath $deploymentModeSupportManifestPath
+        $releaseValidationDeploymentModes = @($releaseValidationPolicy.ReleaseValidationDeploymentModes)
+        $releaseValidationSkipsPublish = $releaseValidationPolicy.ReleaseValidationSkipsPublish
         $deploymentModeStepName = if ($releaseValidationSkipsPublish) {
             "Validate deployment-mode claim truthfulness (audit-only)"
         }
         else {
             "Validate deployment-mode claim truthfulness (publish-required)"
         }
+        $deploymentModeStepName = "$deploymentModeStepName [$($releaseValidationDeploymentModes -join ', ')]"
 
         Invoke-Step $deploymentModeStepName {
-            $deploymentModeClaimArguments = @(
-                "-DeploymentMode", "all",
-                "-Configuration", "Release",
-                "-OutputPath", $deploymentModeClaimsOutputPath
-            )
-            if ($releaseValidationSkipsPublish) {
-                $deploymentModeClaimArguments += "-SkipPublish"
-            }
+            foreach ($releaseValidationDeploymentMode in $releaseValidationDeploymentModes) {
+                $modeOutputPath = if ($releaseValidationDeploymentModes.Count -eq 1) {
+                    $deploymentModeClaimsOutputPath
+                }
+                else {
+                    Join-Path $deploymentModeClaimsOutputPath $releaseValidationDeploymentMode
+                }
 
-            Invoke-PowerShellScript -Path $deploymentModeClaimsScriptPath -Arguments $deploymentModeClaimArguments
+                $deploymentModeClaimArguments = @(
+                    "-DeploymentMode", $releaseValidationDeploymentMode,
+                    "-Configuration", "Release",
+                    "-OutputPath", $modeOutputPath
+                )
+                if ($releaseValidationSkipsPublish) {
+                    $deploymentModeClaimArguments += "-SkipPublish"
+                }
+
+                Invoke-PowerShellScript -Path $deploymentModeClaimsScriptPath -Arguments $deploymentModeClaimArguments
+            }
         }
     }
 
