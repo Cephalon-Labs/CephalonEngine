@@ -1,3 +1,5 @@
+using System.Text.Json;
+
 namespace Cephalon.Tests.Tooling;
 
 public sealed class DocumentationCoverageTests
@@ -133,6 +135,8 @@ public sealed class DocumentationCoverageTests
         var repositoryRoot = GetRepositoryRoot();
         var sourceRoot = Path.Combine(repositoryRoot, "src");
         var componentDocsRoot = Path.Combine(repositoryRoot, "docs", "components");
+        var componentsReadme = File.ReadAllText(Path.Combine(componentDocsRoot, "README.md"));
+        var providers = ReadDependencyHealthProviderManifest(repositoryRoot);
 
         var providerProjects = Directory
             .GetDirectories(sourceRoot, "Cephalon.Observability.*Dependencies", SearchOption.TopDirectoryOnly)
@@ -141,31 +145,70 @@ public sealed class DocumentationCoverageTests
             .OrderBy(name => name, StringComparer.Ordinal)
             .ToArray();
 
-        Assert.Equal(18, providerProjects.Length);
+        Assert.Equal(18, providers.Length);
+        Assert.Equal(
+            providers.Select(static provider => provider.Source).OrderBy(source => source, StringComparer.Ordinal),
+            providerProjects);
 
-        foreach (var projectName in providerProjects)
+        foreach (var provider in providers)
         {
-            var projectRoot = Path.Combine(sourceRoot, projectName!);
-            var probeFiles = Directory.GetFiles(
-                Path.Combine(projectRoot, "Services"),
-                "*DependencyHealthProbeHostedService.cs",
-                SearchOption.TopDirectoryOnly);
-            Assert.Single(probeFiles);
+            var projectRoot = Path.Combine(sourceRoot, provider.Source);
+            Assert.True(
+                File.Exists(Path.Combine(projectRoot, $"{provider.Source}.csproj")),
+                $"Expected provider project '{provider.Source}' to exist.");
 
-            var componentDocPath = Path.Combine(componentDocsRoot, DeriveComponentDocFileName(projectName!));
+            var componentDocPath = Path.Combine(repositoryRoot, NormalizeRepositoryPath(provider.ComponentDoc));
+            var hostedServicePath = Path.Combine(repositoryRoot, NormalizeRepositoryPath(provider.HostedServiceFile));
+            var diagnosticsContributorPath = Path.Combine(repositoryRoot, NormalizeRepositoryPath(provider.DiagnosticsContributorFile));
+            var configurationOptionsPath = Path.Combine(repositoryRoot, NormalizeRepositoryPath(provider.ConfigurationOptionsFile));
+            var hostingExtensionPath = Path.Combine(repositoryRoot, NormalizeRepositoryPath(provider.HostingExtensionFile));
+
+            Assert.True(File.Exists(componentDocPath), $"Missing component doc '{provider.ComponentDoc}'.");
+            Assert.True(File.Exists(hostedServicePath), $"Missing hosted service '{provider.HostedServiceFile}'.");
+            Assert.True(File.Exists(diagnosticsContributorPath), $"Missing diagnostics contributor '{provider.DiagnosticsContributorFile}'.");
+            Assert.True(File.Exists(configurationOptionsPath), $"Missing configuration options '{provider.ConfigurationOptionsFile}'.");
+            Assert.True(File.Exists(hostingExtensionPath), $"Missing hosting extension '{provider.HostingExtensionFile}'.");
+
             var componentDoc = File.ReadAllText(componentDocPath);
-            Assert.Contains("**Maturity:** `M2`", componentDoc, StringComparison.Ordinal);
-            Assert.Contains("**Ownership:** `provider-managed`", componentDoc, StringComparison.Ordinal);
+            Assert.Equal(DeriveComponentDocFileName(provider.Source), Path.GetFileName(provider.ComponentDoc));
+            Assert.Contains($"[{provider.Source}]({Path.GetFileName(provider.ComponentDoc)})", componentsReadme, StringComparison.Ordinal);
+            Assert.Contains($"**Maturity:** `{provider.Maturity}`", componentDoc, StringComparison.Ordinal);
+            Assert.Contains($"**Ownership:** `{provider.Ownership}`", componentDoc, StringComparison.Ordinal);
             Assert.DoesNotContain("**Maturity:** `M0`", componentDoc, StringComparison.Ordinal);
             Assert.DoesNotContain("**Ownership:** `taxonomy-only`", componentDoc, StringComparison.Ordinal);
+
+            var optionsSource = File.ReadAllText(configurationOptionsPath);
+            Assert.Contains(provider.OptionsType, optionsSource, StringComparison.Ordinal);
+            Assert.Contains(".GetSection(\"DependencyHealth\")", optionsSource, StringComparison.Ordinal);
+            Assert.Contains($".GetSection(\"{provider.ConfigurationSectionName}\")", optionsSource, StringComparison.Ordinal);
+
+            var hostingSource = File.ReadAllText(hostingExtensionPath);
+            Assert.Contains(provider.ExtensionMethod, hostingSource, StringComparison.Ordinal);
+            Assert.Contains(provider.DefinitionType, hostingSource, StringComparison.Ordinal);
+            Assert.Contains(provider.OptionsType, hostingSource, StringComparison.Ordinal);
+
+            var hostedServiceSource = File.ReadAllText(hostedServicePath);
+            Assert.Contains(provider.DefinitionType, hostedServiceSource, StringComparison.Ordinal);
+
+            var diagnosticsContributorSource = File.ReadAllText(diagnosticsContributorPath);
+            Assert.Contains($"Source: \"{provider.Source}\"", diagnosticsContributorSource, StringComparison.Ordinal);
+            Assert.Contains("ProbeTimedOut", diagnosticsContributorSource, StringComparison.Ordinal);
+            Assert.Contains("ProbeFailed", diagnosticsContributorSource, StringComparison.Ordinal);
         }
 
         var maturityAudit = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "engine-surface-maturity-audit.md"));
         var conformanceMatrix = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "conformance-matrix.md"));
+        var scorecard = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "engine-completion-scorecard.md"));
+        var backlog = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "engine-backlog.md"));
+        var projectMemory = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "project-memory.md"));
 
         Assert.Contains("the eighteen per-provider dependency-health probe packs at `M2`", maturityAudit, StringComparison.Ordinal);
         Assert.Contains("`Cephalon.Observability.*Dependencies`", conformanceMatrix, StringComparison.Ordinal);
         Assert.Contains("| M2 | provider-managed | `/engine/dependencies`", conformanceMatrix, StringComparison.Ordinal);
+        Assert.Contains("observability-dependency-health-providers.json", componentsReadme, StringComparison.Ordinal);
+        Assert.Contains("observability-dependency-health-providers.json", scorecard, StringComparison.Ordinal);
+        Assert.Contains("observability-dependency-health-providers.json", backlog, StringComparison.Ordinal);
+        Assert.Contains("observability-dependency-health-providers.json", projectMemory, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -965,6 +1008,48 @@ public sealed class DocumentationCoverageTests
         return script[startIndex..endIndex];
     }
 
+    private static DependencyHealthProviderManifestRow[] ReadDependencyHealthProviderManifest(string repositoryRoot)
+    {
+        using var manifest = JsonDocument.Parse(File.ReadAllText(Path.Combine(
+            repositoryRoot,
+            "scripts",
+            "observability-dependency-health-providers.json")));
+        var root = manifest.RootElement;
+        Assert.Equal("1.0.0", ReadRequiredString(root, "schemaVersion"));
+
+        var providers = root.GetProperty("providers").EnumerateArray()
+            .Select(provider => new DependencyHealthProviderManifestRow(
+                ReadRequiredString(provider, "provider"),
+                ReadRequiredString(provider, "source"),
+                ReadRequiredString(provider, "id"),
+                ReadRequiredString(provider, "displayName"),
+                ReadRequiredString(provider, "configurationSection"),
+                ReadRequiredString(provider, "extensionMethod"),
+                ReadRequiredString(provider, "definitionType"),
+                ReadRequiredString(provider, "optionsType"),
+                ReadRequiredString(provider, "componentDoc"),
+                ReadRequiredString(provider, "hostedServiceFile"),
+                ReadRequiredString(provider, "diagnosticsContributorFile"),
+                ReadRequiredString(provider, "configurationOptionsFile"),
+                ReadRequiredString(provider, "hostingExtensionFile"),
+                ReadRequiredString(provider, "maturity"),
+                ReadRequiredString(provider, "ownership")))
+            .ToArray();
+
+        Assert.Equal(root.GetProperty("providerCount").GetInt32(), providers.Length);
+
+        return providers;
+    }
+
+    private static string NormalizeRepositoryPath(string path) => path.Replace('/', Path.DirectorySeparatorChar);
+
+    private static string ReadRequiredString(JsonElement element, string propertyName)
+    {
+        var value = element.GetProperty(propertyName).GetString();
+        Assert.False(string.IsNullOrWhiteSpace(value), $"Expected manifest property '{propertyName}' to be populated.");
+        return value!;
+    }
+
     private static string GetRepositoryRoot()
     {
         return Path.GetFullPath(Path.Combine(
@@ -974,5 +1059,25 @@ public sealed class DocumentationCoverageTests
             "..",
             "..",
             ".."));
+    }
+
+    private sealed record DependencyHealthProviderManifestRow(
+        string Provider,
+        string Source,
+        string Id,
+        string DisplayName,
+        string ConfigurationSection,
+        string ExtensionMethod,
+        string DefinitionType,
+        string OptionsType,
+        string ComponentDoc,
+        string HostedServiceFile,
+        string DiagnosticsContributorFile,
+        string ConfigurationOptionsFile,
+        string HostingExtensionFile,
+        string Maturity,
+        string Ownership)
+    {
+        public string ConfigurationSectionName => ConfigurationSection.Split(':')[^1];
     }
 }

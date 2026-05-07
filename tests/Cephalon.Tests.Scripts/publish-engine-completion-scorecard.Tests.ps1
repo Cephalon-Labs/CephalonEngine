@@ -59,7 +59,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.PublicApiDeltaScript | Should -Be "scripts/summarise-public-api-deltas.ps1"
         $json.StatusVocabulary.Count | Should -Be 6
         $json.EvidenceSources.Count | Should -Be 13
-        $json.EvidenceSourceReferences.Count | Should -Be 20
+        $json.EvidenceSourceReferences.Count | Should -Be 21
         $json.PlatformGates.Count | Should -Be 12
         $json.QualityDimensions.Count | Should -Be 12
         $json.PackageFamilies.Count | Should -Be 9
@@ -103,7 +103,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.PublicApiAdditiveEntryCount | Should -Be 293
         $json.Summary.PublicApiRemovalEntryCount | Should -Be 0
         $json.Summary.EvidenceSourceCount | Should -Be 13
-        $json.Summary.EvidenceSourceReferenceCount | Should -Be 20
+        $json.Summary.EvidenceSourceReferenceCount | Should -Be 21
         $json.Summary.PlatformStatusCounts.'ready-for-preview' | Should -Be 3
         $json.Summary.PlatformStatusCounts.partial | Should -Be 7
         $json.Summary.PlatformStatusCounts.'not-claimed' | Should -Be 1
@@ -118,6 +118,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/deployment-mode-support.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/adoption-smoke-support.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/provider-integration-support.json"
+        $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/observability-dependency-health-providers.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/sre-posture-support.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/supply-chain-release-support.json"
         $json.EvidenceSourceReferences.Reference | Should -Contain ".github/workflows/publish-release.yml"
@@ -168,6 +169,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.ProviderIntegrationEvidence.ManifestSchemaVersion | Should -Be "1.0.0"
         $json.ProviderIntegrationEvidence.Status | Should -Be "partial-live-provider-evidence"
         $json.ProviderIntegrationEvidence.SourceDocuments | Should -Contain "docs/components/observability.md"
+        $json.ProviderIntegrationEvidence.SourceDocuments | Should -Contain "scripts/observability-dependency-health-providers.json"
         $json.ProviderIntegrationEvidence.ValidationProjects | Should -Contain "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj"
         $json.ProviderIntegrationEvidence.EvidenceRowCount | Should -Be 32
         $json.ProviderIntegrationEvidence.LiveProofCount | Should -Be 6

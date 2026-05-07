@@ -34,9 +34,37 @@ Current focus:
 - treat the CDC integration-test lane as additive evidence over the runtime catalog truth: `tests/Cephalon.Tests.CdcIntegration` now proves MongoDB change streams against a real disposable replica set, SQL Server CDC against an opt-in live service, Postgres logical replication against an opt-in live service, MySQL binlog streaming against an opt-in live service, and Oracle LogMiner against an opt-in live service while keeping default CI Docker-free through the shared external-service gate, instead of implying those provider paths through fake transport harnesses
 - treat the provider integration-test lane as additive evidence over non-CDC provider truth: `tests/Cephalon.Tests.ProviderIntegration` now proves Redis data outbox/inbox/dispatch-store behavior plus Redis Streams event sourcing against an opt-in live Redis runtime while keeping default CI Docker-free through the shared external-provider gate
 - treat `scripts/provider-integration-support.json` as the release-readiness manifest for provider claims across live-provider tests, composition-only data/provider runtime contracts, CDC integration lanes, and the eighteen dependency-health companion packs; the scorecard, release validation, and CLI doctor must read provider-integration counts from that manifest instead of hand-authored prose
+- treat `scripts/observability-dependency-health-providers.json` as the source-derived dependency-health provider-family manifest: runtime invariant tests and Tooling documentation coverage must derive the eighteen `Cephalon.Observability.*Dependencies` expectations from that file so the next provider cannot ship with source/docs/planning counts drifting apart
 - treat the Debezium test-flake quarantine as resolved by shared catalog hardening: CDC execution-runtime filters now reuse versioned snapshots over indexed capture ownership instead of re-enriching every runtime for every state/category selector
 - treat the `ENG-500` regression closeout as the current suite-stability baseline: provider-native CDC hosting tests now run through a dedicated non-parallel collection, long-running package-publishing process output drains stdout/stderr concurrently, sample REST behavior hosts align with source-generated `/api/v1` behavior endpoints, and the full solution test lane is again green on the current worktree
 - treat the CDC execution-runtime catalog hot path as benchmark-governed: `CdcExecutionRuntimeCatalogBenchmarks` now covers Debezium-managed external runtimes, external observations, repeated managed-connector drift/dry-run/command-issuance filters, and compact multi-selector operator flows against the shared versioned snapshot
+
+### ENG-504 Add dependency-health provider manifest guard
+
+Status: done
+Estimate: 1
+Issue: #1121
+Iteration: Sprint 125
+Area: observability / dependency-health / docs-contract
+Quality dimensions: Reliability, Maintainability, Auditability, Compatibility, Usability
+
+Why:
+
+- the dependency-health provider invariant was correctly proving all eighteen companion packs, but the provider family list lived as hand-authored rows in the test while docs and scorecard planning repeated the same count separately
+- adding a nineteenth provider would have required humans to remember every source/doc/planning surface instead of letting a manifest and guard tests expose the missing rows
+- provider claims should stay source-derived: component docs, configuration sections, hosted probe files, hosting extensions, diagnostics conventions, runtime invariant expectations, and release-readiness prose must all describe the same family
+
+Delivered:
+
+- added `scripts/observability-dependency-health-providers.json` with the eighteen provider rows, excluded non-packable core helper, ids/display names, configuration sections, extension methods, definition/options types, component docs, hosted probes, hosting extensions, and diagnostics convention files
+- changed `ObservabilityDependencyHealthProviderInvariantTests` to load runtime expectations from the manifest while keeping real provider service registrations explicit, plus added a guard that the registered extension-method list matches the manifest order
+- extended `DocumentationCoverageTests.ObservabilityDependencyProbeDocsMatchRuntimeOwnership` so the manifest must match provider project directories, component-doc catalog entries, component maturity/ownership badges, configuration binding sections, hosting extension methods, hosted probe definition types, and diagnostics `Source` / `ProbeTimedOut` / `ProbeFailed` conventions
+- updated provider-integration manifest source docs, scorecard, component docs map, backlog, roadmap, and project memory so the dependency-health provider family now has one source-derived shape contract
+
+Validation:
+
+- `dotnet test .\tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-restore --filter "FullyQualifiedName~ObservabilityDependencyHealthProviderInvariantTests"` passed `2/2`
+- `dotnet test .\tests\Cephalon.Tests.Tooling\Cephalon.Tests.Tooling.csproj --no-restore --filter "FullyQualifiedName~ObservabilityDependencyProbeDocsMatchRuntimeOwnership"` passed `1/1`
 
 ### ENG-503 Lock scorecard hard blockers and project-memory schema drift
 

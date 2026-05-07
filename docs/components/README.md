@@ -162,6 +162,8 @@ The convention is being rolled out incrementally; component pages without the ba
 - [Cephalon.Cli](cli.md)
 - [Cephalon.ReferenceDocs](reference-docs.md)
 
+The dependency-health provider family is guarded by [`scripts/observability-dependency-health-providers.json`](../../scripts/observability-dependency-health-providers.json). Tooling coverage checks that the eighteen `Cephalon.Observability.*Dependencies` rows still match the source project, component doc, configuration section, hosting extension, hosted probe, and diagnostics convention before the family can claim coherent `M2` / `provider-managed` coverage.
+
 ## Additional repo surfaces
 
 - benchmark suite: [Benchmarking](../benchmarking.md)
