@@ -19,6 +19,15 @@ public interface IBehaviorModuleBuilder
     IBehaviorModuleBuilder Add(Type behaviorType);
 
     /// <summary>
+    /// Declares that the current module owns the specified behavior and supplies the closed input/output contract.
+    /// </summary>
+    /// <param name="behaviorType">The concrete behavior type owned by the module.</param>
+    /// <param name="inputType">The closed behavior input contract type.</param>
+    /// <param name="outputType">The closed behavior output contract type.</param>
+    /// <returns>The same builder for fluent ownership registration.</returns>
+    IBehaviorModuleBuilder Add(Type behaviorType, Type inputType, Type outputType);
+
+    /// <summary>
     /// Declares that the current module owns the specified behavior type and supplies an explicit topology override.
     /// </summary>
     /// <param name="behaviorType">The concrete behavior type owned by the module.</param>
@@ -27,6 +36,23 @@ public interface IBehaviorModuleBuilder
     /// </param>
     /// <returns>The same builder for fluent ownership registration.</returns>
     IBehaviorModuleBuilder Add(Type behaviorType, Action<IBehaviorTopologyBuilder> configureTopology);
+
+    /// <summary>
+    /// Declares that the current module owns the specified behavior, supplies the closed input/output contract,
+    /// and applies an explicit topology override.
+    /// </summary>
+    /// <param name="behaviorType">The concrete behavior type owned by the module.</param>
+    /// <param name="inputType">The closed behavior input contract type.</param>
+    /// <param name="outputType">The closed behavior output contract type.</param>
+    /// <param name="configureTopology">
+    /// The callback that selects the resolved behavior topology when attribute-only synthesis is not enough.
+    /// </param>
+    /// <returns>The same builder for fluent ownership registration.</returns>
+    IBehaviorModuleBuilder Add(
+        Type behaviorType,
+        Type inputType,
+        Type outputType,
+        Action<IBehaviorTopologyBuilder> configureTopology);
 
     /// <summary>
     /// Declares that the current module owns the specified behavior.

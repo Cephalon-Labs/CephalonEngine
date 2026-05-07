@@ -1,3 +1,4 @@
+using Cephalon.Abstractions.Technologies;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.MultiTenancy.Governance.SendGridDelivery.Configuration;
 using Cephalon.MultiTenancy.Governance.SendGridDelivery.Services;
@@ -89,6 +90,7 @@ public static class SendGridInvitationDeliveryServiceCollectionExtensions
 
         services.TryAddSingleton(options);
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, SendGridInvitationDeliveryDiagnosticsConventionContributor>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, SendGridInvitationDeliveryRuntimeSurfaceContributor>());
         services.TryAddSingleton<ISendGridInvitationDeliveryClient, SendGridInvitationDeliveryClient>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITenantInvitationDeliverySender, SendGridInvitationDeliverySender>());
 

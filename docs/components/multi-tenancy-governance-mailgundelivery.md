@@ -1,6 +1,6 @@
 # Cephalon.MultiTenancy.Governance.MailgunDelivery
 
-> **Maturity:** `M2` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+> **Maturity:** `M2` · **Ownership:** `provider-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
 
 `Cephalon.MultiTenancy.Governance.MailgunDelivery` is the optional Mailgun Messages API sender companion for tenant-invitation delivery.
 
@@ -16,6 +16,7 @@
 - deterministic Cephalon message ids carried through Mailgun user variables and safe context headers
 - provider message id capture from the Mailgun JSON `id` response property by default
 - safe sender metadata such as endpoint host, domain, Mailgun status code, test-mode posture, Cephalon message id, sender id, recipient email, tag count, variable count, header count, and client outcome reason
+- sanitized runtime truth through the `tenant-invitation-delivery-mailgun` technology surface, including Mailgun endpoint host, sending domain, API-key configured flag, accepted status contract, tag names, variable keys, header names, and redacted secret posture
 - stable diagnostics for accepted and failed Mailgun invitation dispatch attempts
 
 ## Main surfaces
@@ -25,6 +26,7 @@
 - `Services/IMailgunInvitationDeliveryClient.cs`
 - `Services/MailgunInvitationDeliveryClientResult.cs`
 - `Services/MailgunInvitationDeliveryMessage.cs`
+- `Services/MailgunInvitationDeliveryRuntimeSurfaceContributor.cs`
 - `Services/MailgunInvitationDeliverySender.cs`
 - `Services/MailgunInvitationDeliveryDiagnosticsConventionContributor.cs`
 

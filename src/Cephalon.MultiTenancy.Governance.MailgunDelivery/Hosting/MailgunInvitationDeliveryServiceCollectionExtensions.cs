@@ -1,3 +1,4 @@
+using Cephalon.Abstractions.Technologies;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.MultiTenancy.Governance.MailgunDelivery.Configuration;
 using Cephalon.MultiTenancy.Governance.MailgunDelivery.Services;
@@ -94,6 +95,7 @@ public static class MailgunInvitationDeliveryServiceCollectionExtensions
 
         services.TryAddSingleton(options);
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, MailgunInvitationDeliveryDiagnosticsConventionContributor>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MailgunInvitationDeliveryRuntimeSurfaceContributor>());
         services.TryAddSingleton<IMailgunInvitationDeliveryClient, MailgunInvitationDeliveryClient>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITenantInvitationDeliverySender, MailgunInvitationDeliverySender>());
 

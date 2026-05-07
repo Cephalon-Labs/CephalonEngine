@@ -7,6 +7,7 @@
 ## What it owns
 
 - implements `IEventStore` backed by a Qdrant vector collection
+- contributes a sanitized `IEventStoreContributor` entry projected through `IEventStoreCatalog` and the `event-sourcing` runtime surface
 - stores each domain event as a point with a 1-dimensional dummy vector (`[0.0f]`) and all event metadata in payload fields — vector capabilities remain available for future semantic search scenarios
 - derives compound point IDs from `{streamId}:{streamVersion}` via SHA-256 hash (first 16 bytes) for structural uniqueness
 - enforces optimistic concurrency via a pre-append `GetVersionAsync` check followed by `UpsertAsync`
@@ -20,6 +21,7 @@
 - `QdrantEventEntry.cs` — plain-object representation of a single event stored in a Qdrant point
 - `QdrantEventStore.cs` — `IEventStore` implementation
 - `Hosting/QdrantEventSourcingServiceCollectionExtensions.cs` — `AddCephalonQdrantEventSourcing` registration
+- `Services/QdrantEventStoreContributor.cs` — sanitized runtime catalog contribution
 
 ## How it fits
 

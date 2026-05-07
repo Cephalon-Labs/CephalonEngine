@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Net.Http.Json;
+using System.Reflection;
 using Cephalon.Abstractions.Data;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.Data.Configuration;
@@ -463,6 +464,9 @@ public sealed class DebeziumDataCdcHostingTests
                         reporterId: "connect-worker-b")
                 });
             driftedResponse.EnsureSuccessStatusCode();
+            var driftedRuntimeResponse = await driftedResponse.Content.ReadFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>();
+            Assert.NotNull(driftedRuntimeResponse);
+            AssertManagedConnectorDescriptionsAreBounded(driftedRuntimeResponse);
 
             var inSync = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/drift/in-sync");
             var drifted = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes/drift/drifted");
@@ -4669,6 +4673,26 @@ public sealed class DebeziumDataCdcHostingTests
         finally
         {
             await app.StopAsync();
+        }
+    }
+
+    private static void AssertManagedConnectorDescriptionsAreBounded(CdcCaptureExecutionRuntimeDescriptor runtime)
+    {
+        const int maxDescriptionLength = 4096;
+
+        var managedConnectorStatuses = typeof(CdcCaptureExecutionRuntimeDescriptor)
+            .GetProperties(BindingFlags.Instance | BindingFlags.Public)
+            .Where(static property => property.Name.StartsWith("ManagedConnector", StringComparison.Ordinal))
+            .Select(property => property.GetValue(runtime))
+            .OfType<object>();
+
+        foreach (var status in managedConnectorStatuses)
+        {
+            var description = status.GetType().GetProperty("Description")?.GetValue(status) as string;
+            if (description is not null)
+            {
+                Assert.InRange(description.Length, 1, maxDescriptionLength);
+            }
         }
     }
 

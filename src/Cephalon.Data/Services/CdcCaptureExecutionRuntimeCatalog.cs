@@ -7,6 +7,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
 {
     private const string ExecutionRuntimeMetadataPrefix = "executionRuntime.";
     private const int ManagedConnectorCommandRetryCooldownSeconds = 30;
+    private const int ManagedConnectorDescriptionMaxLength = 4096;
     private const string ManagedConnectorManagementModeMetadataKey = "managedConnectorManagementMode";
     private const string ConnectClusterIdMetadataKey = "connectClusterId";
     private const string ConnectorClassMetadataKey = "connectorClass";
@@ -17749,8 +17750,8 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
         string? primary,
         string? secondary)
     {
-        var normalizedPrimary = string.IsNullOrWhiteSpace(primary) ? null : primary.Trim();
-        var normalizedSecondary = string.IsNullOrWhiteSpace(secondary) ? null : secondary.Trim();
+        var normalizedPrimary = NormalizeManagedConnectorDescription(primary);
+        var normalizedSecondary = NormalizeManagedConnectorDescription(secondary);
 
         if (normalizedPrimary is null)
         {
@@ -17763,7 +17764,7 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
             return normalizedPrimary;
         }
 
-        return $"{normalizedPrimary} {normalizedSecondary}";
+        return NormalizeManagedConnectorDescription($"{normalizedPrimary} {normalizedSecondary}");
     }
 
     private static string? CombineManagedConnectorCommandEnvelopeDetail(
@@ -17782,9 +17783,25 @@ internal sealed class CdcCaptureExecutionRuntimeCatalog : ICdcCaptureExecutionRu
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(summary);
 
-        return string.IsNullOrWhiteSpace(detail)
-            ? summary.Trim()
-            : $"{summary.Trim()} {detail.Trim()}";
+        var normalizedSummary = NormalizeManagedConnectorDescription(summary)!;
+        var normalizedDetail = NormalizeManagedConnectorDescription(detail);
+
+        return normalizedDetail is null
+            ? normalizedSummary
+            : NormalizeManagedConnectorDescription($"{normalizedSummary} {normalizedDetail}")!;
+    }
+
+    private static string? NormalizeManagedConnectorDescription(string? value)
+    {
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return null;
+        }
+
+        var normalized = value.Trim();
+        return normalized.Length <= ManagedConnectorDescriptionMaxLength
+            ? normalized
+            : string.Concat(normalized.AsSpan(0, ManagedConnectorDescriptionMaxLength - 3), "...");
     }
 
     private static ManagedConnectorMetadataSnapshot ResolveManagedConnectorMetadata(

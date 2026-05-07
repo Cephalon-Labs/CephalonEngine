@@ -75,6 +75,63 @@ public sealed class CapabilityPolicyEvaluatorTests
     }
 
     [Fact]
+    public void CreateSnapshotEvaluatesAggregatedCapabilitySourceModulesTogether()
+    {
+        var policy = new TrustPolicy(defaultCapabilityAccess: CapabilityAccess.TrustedOnly);
+        var modules = new[]
+        {
+            new ModuleManifest(
+                id: "alpha-provider",
+                displayName: "Alpha Provider",
+                description: "Trusted provider.",
+                version: "1.0.0",
+                assemblyName: "Trusted.Modules",
+                typeName: "Trusted.Modules.AlphaProvider",
+                dependsOn: [],
+                tags: ["data"],
+                packageId: "pkg.alpha",
+                isTrusted: true),
+            new ModuleManifest(
+                id: "beta-provider",
+                displayName: "Beta Provider",
+                description: "Untrusted provider.",
+                version: "1.0.0",
+                assemblyName: "Untrusted.Modules",
+                typeName: "Untrusted.Modules.BetaProvider",
+                dependsOn: [],
+                tags: ["data"],
+                packageId: "pkg.beta",
+                isTrusted: false)
+        };
+        var capabilities = new[]
+        {
+            new CapabilityManifest(
+                key: "data.shared-family",
+                displayName: "Shared Data Family",
+                description: "Aggregated provider capability.",
+                sourceModuleId: "alpha-provider",
+                metadata: new Dictionary<string, string>
+                {
+                    ["sourceModuleIds"] = "alpha-provider,beta-provider"
+                })
+        };
+
+        var snapshot = CapabilityPolicyEvaluator.CreateSnapshot(
+            policy,
+            packages: [],
+            modules,
+            capabilities);
+
+        var decision = Assert.Single(snapshot.Capabilities);
+
+        Assert.Equal("data.shared-family", decision.CapabilityKey);
+        Assert.Equal("alpha-provider,beta-provider", decision.SourceModuleId);
+        Assert.Equal("pkg.alpha,pkg.beta", decision.SourcePackageId);
+        Assert.False(decision.SourceTrusted);
+        Assert.False(decision.IsAllowed);
+    }
+
+    [Fact]
     public void TryGetDecisionReturnsFallbackDeniedDecisionForUnknownCapability()
     {
         var evaluator = new CapabilityPolicyEvaluator(new TrustSnapshot(

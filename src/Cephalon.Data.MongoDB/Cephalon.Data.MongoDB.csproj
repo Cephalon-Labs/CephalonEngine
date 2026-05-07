@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MongoDB.Driver" />
+    <PackageReference Include="Snappier" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Cephalon.Data\Cephalon.Data.csproj" />

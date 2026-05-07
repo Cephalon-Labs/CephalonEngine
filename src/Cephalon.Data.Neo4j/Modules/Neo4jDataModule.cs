@@ -208,7 +208,7 @@ internal sealed class Neo4jDataModule(Neo4jDataOptions options) : ModuleBase, II
 
         if (!string.IsNullOrWhiteSpace(options.Uri))
         {
-            metadata["uri"] = options.Uri.Trim();
+            AddSanitizedUriMetadata(metadata, options.Uri);
         }
         else if (!string.IsNullOrWhiteSpace(options.UriName))
         {
@@ -216,5 +216,37 @@ internal sealed class Neo4jDataModule(Neo4jDataOptions options) : ModuleBase, II
         }
 
         return metadata;
+    }
+
+    private static void AddSanitizedUriMetadata(Dictionary<string, string> metadata, string uri)
+    {
+        var trimmedUri = uri.Trim();
+        metadata["uri"] = SanitizeUri(trimmedUri);
+        metadata["uriCredentialsConfigured"] = Uri.TryCreate(trimmedUri, UriKind.Absolute, out var parsed) &&
+            !string.IsNullOrWhiteSpace(parsed.UserInfo)
+                ? "true"
+                : "false";
+        metadata["secretProjection"] = "redacted";
+    }
+
+    private static string SanitizeUri(string uri)
+    {
+        if (!Uri.TryCreate(uri, UriKind.Absolute, out var parsed))
+        {
+            return "redacted";
+        }
+
+        var host = parsed.Host.Contains(':', StringComparison.Ordinal) &&
+            !parsed.Host.StartsWith('[')
+                ? $"[{parsed.Host}]"
+                : parsed.Host;
+        var authority = parsed.IsDefaultPort
+            ? host
+            : $"{host}:{parsed.Port}";
+        var path = parsed.AbsolutePath == "/"
+            ? string.Empty
+            : parsed.AbsolutePath;
+
+        return $"{parsed.Scheme}://{authority}{path}";
     }
 }

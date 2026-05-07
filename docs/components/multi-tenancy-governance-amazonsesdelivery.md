@@ -1,6 +1,6 @@
 # Cephalon.MultiTenancy.Governance.AmazonSesDelivery
 
-> **Maturity:** `M2` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+> **Maturity:** `M2` · **Ownership:** `provider-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
 
 `Cephalon.MultiTenancy.Governance.AmazonSesDelivery` is the optional Amazon SES v2 sender companion for tenant-invitation delivery.
 
@@ -17,6 +17,7 @@
 - deterministic Cephalon message ids carried through safe Amazon SES message tags
 - safe sender metadata such as region, configuration set, SES status code, SES message id, request id, Cephalon message id, sender id, recipient email, body content type, reply-to count, tag count, and client outcome reason
 - safe Cephalon context tags that `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore` can later translate from SNS-wrapped SES event publishing payloads
+- sanitized runtime truth through the `tenant-invitation-delivery-amazon-ses` technology surface, including region resolution posture, configuration-set flag, accepted status contract, tag keys, reply-to count, and redacted credential posture
 - stable diagnostics for accepted and failed Amazon SES invitation dispatch attempts
 
 ## Main surfaces
@@ -26,6 +27,7 @@
 - `Services/IAmazonSesInvitationDeliveryClient.cs`
 - `Services/AmazonSesInvitationDeliveryClientResult.cs`
 - `Services/AmazonSesInvitationDeliveryMessage.cs`
+- `Services/AmazonSesInvitationDeliveryRuntimeSurfaceContributor.cs`
 - `Services/AmazonSesInvitationDeliverySender.cs`
 - `Services/AmazonSesInvitationDeliveryDiagnosticsConventionContributor.cs`
 

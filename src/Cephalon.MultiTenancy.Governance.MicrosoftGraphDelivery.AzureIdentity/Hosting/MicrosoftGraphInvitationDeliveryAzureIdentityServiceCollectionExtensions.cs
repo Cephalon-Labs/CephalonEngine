@@ -1,5 +1,6 @@
 using Azure.Core;
 using Azure.Identity;
+using Cephalon.Abstractions.Technologies;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Configuration;
 using Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity.Services;
@@ -108,6 +109,7 @@ public static class MicrosoftGraphInvitationDeliveryAzureIdentityServiceCollecti
         }));
         services.Replace(ServiceDescriptor.Singleton<IMicrosoftGraphInvitationDeliveryAccessTokenProvider, MicrosoftGraphInvitationDeliveryAzureIdentityAccessTokenProvider>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, MicrosoftGraphInvitationDeliveryAzureIdentityDiagnosticsConventionContributor>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MicrosoftGraphInvitationDeliveryAzureIdentityRuntimeSurfaceContributor>());
 
         return services;
     }

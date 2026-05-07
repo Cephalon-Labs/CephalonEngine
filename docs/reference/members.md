@@ -684,6 +684,12 @@ Browse the published API surface by public member.
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-system-type-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder): `Methods` on `IBehaviorModuleBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Declares that the current module owns the specified behavior type and supplies an explicit topology override.
   - `IBehaviorModuleBuilder Add(Type behaviorType, Action<IBehaviorTopologyBuilder> configureTopology)`
+- [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-system-type-system-type-system-type): `Methods` on `IBehaviorModuleBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Declares that the current module owns the specified behavior and supplies the closed input/output contract.
+  - `IBehaviorModuleBuilder Add(Type behaviorType, Type inputType, Type outputType)`
+- [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-system-type-system-type-system-type-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder): `Methods` on `IBehaviorModuleBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Declares that the current module owns the specified behavior, supplies the closed input/output contract, and applies an explicit topology override.
+  - `IBehaviorModuleBuilder Add(Type behaviorType, Type inputType, Type outputType, Action<IBehaviorTopologyBuilder> configureTopology)`
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviorregistry-add-cephalon-abstractions-behaviors-behaviortopologydescriptor): `Methods` on `IBehaviorRegistry` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Adds a behavior topology descriptor to the registry.
   - `void Add(BehaviorTopologyDescriptor descriptor)`

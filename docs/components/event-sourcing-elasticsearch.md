@@ -7,6 +7,7 @@
 ## What it owns
 
 - an Elasticsearch-backed implementation of `IEventStore` registered through `AddCephalonElasticsearchEventSourcing()`
+- a sanitized `IEventStoreContributor` entry projected through `IEventStoreCatalog` and the `event-sourcing` runtime surface
 - the `ElasticsearchEventEntry` POCO representing the fields stored in each event document
 - compound document id `{streamId}#{streamVersion}` — ensures document uniqueness at the Elasticsearch level via `op_type=create`
 - optimistic-version append semantics: reads the current stream version before every `AppendAsync`, compares against `expectedVersion`, and throws `EventStreamConcurrencyException` before writing if they differ
@@ -21,6 +22,7 @@
 - `ElasticsearchEventEntry.cs`
 - `ElasticsearchEventStore.cs`
 - `Hosting/ElasticsearchEventSourcingServiceCollectionExtensions.cs`
+- `Services/ElasticsearchEventStoreContributor.cs`
 
 ## How it fits
 

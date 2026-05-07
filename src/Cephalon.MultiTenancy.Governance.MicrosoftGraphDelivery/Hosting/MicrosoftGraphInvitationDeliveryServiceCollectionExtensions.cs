@@ -1,3 +1,4 @@
+using Cephalon.Abstractions.Technologies;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Configuration;
 using Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services;
@@ -83,6 +84,7 @@ public static class MicrosoftGraphInvitationDeliveryServiceCollectionExtensions
 
         services.TryAddSingleton(options);
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, MicrosoftGraphInvitationDeliveryDiagnosticsConventionContributor>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, MicrosoftGraphInvitationDeliveryRuntimeSurfaceContributor>());
         services.TryAddSingleton<IMicrosoftGraphInvitationDeliveryAccessTokenProvider, MicrosoftGraphInvitationDeliveryStaticAccessTokenProvider>();
         services.TryAddSingleton<IMicrosoftGraphInvitationDeliveryClient, MicrosoftGraphInvitationDeliveryClient>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITenantInvitationDeliverySender, MicrosoftGraphInvitationDeliverySender>());

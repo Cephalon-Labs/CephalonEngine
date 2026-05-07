@@ -1,3 +1,4 @@
+using Cephalon.Abstractions.Technologies;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration;
 using Cephalon.MultiTenancy.Governance.HttpDelivery.Services;
@@ -78,6 +79,7 @@ public static class HttpInvitationDeliveryServiceCollectionExtensions
 
         services.TryAddSingleton(options);
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, HttpInvitationDeliveryDiagnosticsConventionContributor>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, HttpInvitationDeliveryRuntimeSurfaceContributor>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITenantInvitationDeliverySender, HttpInvitationDeliverySender>());
 
         services.AddHttpClient(HttpClientName)

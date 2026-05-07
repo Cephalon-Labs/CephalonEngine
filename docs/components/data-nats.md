@@ -17,6 +17,7 @@
 - projects the outbox descriptor through the `event-driven-integration` technology surface as outbox producers when that technology is active
 - projects the inbox descriptor through the same technology surface as inbox stores when the technology is active
 - publishes capability metadata `data.nats`, `data.ledger-store`, and optionally `data.outbox.nats` and `data.inbox.nats` introspectable at runtime through the manifest
+- redacts inline URI user-info and query secrets in capability metadata; `uri` contains only scheme, host, port, and path, while `uriCredentialsConfigured` and `secretProjection = redacted` preserve operator posture without leaking credentials
 
 ## Main surfaces
 
@@ -115,6 +116,11 @@ When `NatsDataModule` is active, the following capability keys appear in the run
 | `data.ledger-store` | Always |
 | `data.outbox.nats` | `RegisterOutbox = true` |
 | `data.inbox.nats` | `RegisterInbox = true` |
+
+The provider capability sanitizes inline URI metadata. A URI such as
+`nats://user:password@localhost:4222?token=secret` is reported as
+`nats://localhost:4222` with `uriCredentialsConfigured = true` and
+`secretProjection = redacted`.
 
 ## Runtime surface entries
 

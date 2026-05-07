@@ -17,6 +17,7 @@
 - projects the outbox descriptor through the `event-driven-integration` technology surface as outbox producers when that technology is active
 - projects the inbox descriptor through the same technology surface as inbox stores when the technology is active
 - publishes capability metadata `data.neo4j`, `data.graph-store`, and optionally `data.outbox.neo4j` and `data.inbox.neo4j` introspectable at runtime through the manifest
+- redacts inline URI user-info and query secrets in capability metadata; `uri` contains only scheme, host, port, and path, while `uriCredentialsConfigured` and `secretProjection = redacted` preserve operator posture without leaking credentials
 
 ## Main surfaces
 
@@ -161,6 +162,11 @@ When `Neo4jDataModule` is active, the following capability keys appear in the ru
 | `data.graph-store` | Always |
 | `data.outbox.neo4j` | `RegisterOutbox = true` |
 | `data.inbox.neo4j` | `RegisterInbox = true` |
+
+The provider capability sanitizes inline URI metadata. A URI such as
+`bolt://user:password@localhost:7687/db?token=secret` is reported as
+`bolt://localhost:7687/db` with `uriCredentialsConfigured = true` and
+`secretProjection = redacted`.
 
 ## Runtime surface entries
 

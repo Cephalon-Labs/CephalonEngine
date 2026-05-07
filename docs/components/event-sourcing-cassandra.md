@@ -7,6 +7,7 @@
 ## What it owns
 
 - a Cassandra-backed implementation of `IEventStore` registered through `AddCephalonCassandraEventSourcing()`
+- a sanitized `IEventStoreContributor` entry projected through `IEventStoreCatalog` and the `event-sourcing` runtime surface
 - the `CassandraEventEntry` record model for persisted domain event rows
 - `CassandraEventSourcingConfiguration` that holds the CQL DDL template for the event-streams table with composite primary key and clustering order
 - optimistic-version append semantics: reads the current stream version before every `AppendAsync`, compares against `expectedVersion`, and throws `EventStreamConcurrencyException` before writing if they differ
@@ -23,6 +24,7 @@
 - `CassandraEventStore.cs`
 - `CassandraEventSourcingConfiguration.cs`
 - `Hosting/CassandraEventSourcingServiceCollectionExtensions.cs`
+- `Services/CassandraEventStoreContributor.cs`
 
 ## How it fits
 

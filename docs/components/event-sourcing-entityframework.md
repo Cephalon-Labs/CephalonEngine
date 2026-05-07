@@ -11,7 +11,7 @@
 - model configuration for the `CephalonEvents` table and its indexes
 - optimistic-version append semantics on top of `IEventStore`
 - stream replay reads ordered by `StreamVersion`
-- a truthful event-stream contribution that identifies the active provider as `entity-framework`
+- a truthful event-stream contribution that identifies the active provider as `entity-framework` through `IEventStoreCatalog` and the `event-sourcing` runtime surface
 
 ## Main surfaces
 
@@ -21,6 +21,7 @@
 - `Hosting/EntityFrameworkEventSourcingServiceCollectionExtensions.cs`
 - `Registration/EntityFrameworkEventSourcingEngineBuilderExtensions.cs`
 - `Services/EntityFrameworkEventStore.cs`
+- `Services/EntityFrameworkEventStoreContributor.cs`
 
 ## Provider usage
 

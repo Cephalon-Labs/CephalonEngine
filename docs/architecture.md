@@ -68,7 +68,7 @@ Source structure:
 - lets modules register services
 - merges built-in and project-supplied language resources
 - merges package-provided language packs from modules before project overrides
-- collects capabilities into a manifest with source-module tracing
+- collects capabilities into a manifest with source-module tracing, including aggregate metadata (`sourceModuleIds`, `providers`, `packs`, and `contributorCount`) when different provider modules expose the same shared capability family key
 - executes module lifecycle hooks deterministically
 - aggregates host-agnostic dependency health contributions
 - exposes a runtime object that any host can consume

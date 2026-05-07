@@ -1,6 +1,6 @@
 # Cephalon.MultiTenancy.Governance.SmtpDelivery
 
-> **Maturity:** `M2` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+> **Maturity:** `M2` · **Ownership:** `provider-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
 
 `Cephalon.MultiTenancy.Governance.SmtpDelivery` is the optional SMTP relay sender companion for tenant-invitation delivery.
 
@@ -15,6 +15,7 @@
 - plain-text and optional HTML message templates with bounded Cephalon placeholders
 - safe SMTP headers for tenant, invitation, channel, sender, and correlation context
 - safe sender metadata such as relay host, port, TLS posture, message id, sender id, recipient address, and client outcome reason
+- sanitized runtime truth through the `tenant-invitation-delivery-smtp` technology surface, including relay host, port, TLS posture, channel support, credential-configured flags, header names, and redacted secret posture
 - stable diagnostics for accepted and failed SMTP invitation dispatch attempts
 
 ## Main surfaces
@@ -24,6 +25,7 @@
 - `Services/ISmtpInvitationDeliveryClient.cs`
 - `Services/SmtpInvitationDeliveryClientResult.cs`
 - `Services/SmtpInvitationDeliveryMessage.cs`
+- `Services/SmtpInvitationDeliveryRuntimeSurfaceContributor.cs`
 - `Services/SmtpInvitationDeliverySender.cs`
 - `Services/SmtpInvitationDeliveryDiagnosticsConventionContributor.cs`
 

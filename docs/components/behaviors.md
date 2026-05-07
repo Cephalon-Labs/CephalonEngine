@@ -29,7 +29,7 @@
 | `IAppBehavior<TIn, TOut>` | Single behavior interface — `HandleAsync` + optional `static virtual ConfigureTopology` |
 | `IBehaviorContext` | Transport-neutral ambient API: `BehaviorId`, `CorrelationId`, `Metadata`, optional `EventStore`, and `ReplyAsync(...)` |
 | `IBehaviorTopologyBuilder` | Fluent builder: `AsCqrs()`, `AsEventDriven()`, `AsSagaChoreography()`, `AsDurableExecution()`, `ViaHttpJsonRpc()`, `ViaRabbitMq()`, `RequireFeatureFlag(...)`, etc. |
-| `IBehaviorModuleBuilder` | Host-agnostic builder that lets a module declare which behaviors it owns |
+| `IBehaviorModuleBuilder` | Host-agnostic builder that lets a module declare which behaviors it owns, including closed input/output contract overloads for dispatch-ready descriptor-driven ownership |
 | `IBehaviorOwnerModule` | Module contract for explicit behavior ownership through `ConfigureBehaviors(...)` |
 | `OwnedBehaviorRegistration` | Runtime composition record describing one module-owned behavior registration |
 | `BehaviorApiSurfaceDescriptor` | Shared logical route surface for route-shaped generic HTTP transports; defaulted from the behavior id and overrideable through `WithApiSurface(...)` |
@@ -88,6 +88,13 @@ public sealed class CartModule : BehaviorModuleBase
 
 Use that contract when ownership must be explicit even if the behavior still runs through generic
 HTTP transports, messaging, or background orchestration rather than a module-owned REST API.
+
+Descriptor-driven module authors such as the REST behavior DSL should use
+`IBehaviorModuleBuilder.Add(Type behaviorType, Type inputType, Type outputType, ...)` when source
+generation or registry metadata has already resolved the closed behavior contract. That keeps
+module ownership host-agnostic while still creating the same closed execution slot as the generic
+`Add<TBehavior, TInput, TOutput>(...)` path. The type-only overload remains metadata/topology-only
+unless source generation contributes the dispatch slot.
 
 Owned registrations now also preserve the owning module id on the resolved
 `BehaviorTopologyDescriptor`, which means runtime catalogs and transport faults can report both the

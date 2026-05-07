@@ -1,5 +1,6 @@
 using Cephalon.Abstractions.EventSourcing;
 using Cephalon.EventSourcing.Hosting;
+using Cephalon.EventSourcing.Neo4j.Services;
 using Cephalon.EventSourcing.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -40,6 +41,8 @@ public static class Neo4jEventSourcingServiceCollectionExtensions
             GraphDatabase.Driver(uri, AuthTokens.Basic(username, password)));
 
         services.AddCephalonEventTypeRegistry();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreContributor>(
+            new Neo4jEventStoreContributor(uri, username, password, eventLabel)));
         services.TryAddScoped<IEventStore>(serviceProvider =>
         {
             var driver = serviceProvider.GetRequiredService<IDriver>();

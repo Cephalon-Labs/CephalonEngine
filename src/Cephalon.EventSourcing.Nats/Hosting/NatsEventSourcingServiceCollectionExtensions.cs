@@ -1,5 +1,6 @@
 using Cephalon.Abstractions.EventSourcing;
 using Cephalon.EventSourcing.Hosting;
+using Cephalon.EventSourcing.Nats.Services;
 using Cephalon.EventSourcing.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -37,6 +38,8 @@ public static class NatsEventSourcingServiceCollectionExtensions
         services.TryAddSingleton<INatsConnection>(_ => new NatsConnection(new NatsOpts { Url = url }));
 
         services.AddCephalonEventTypeRegistry();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreContributor>(
+            new NatsEventStoreContributor(url, bucketName)));
         services.TryAddSingleton<IEventStore>(serviceProvider =>
         {
             var nats = serviceProvider.GetRequiredService<INatsConnection>();

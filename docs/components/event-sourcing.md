@@ -12,7 +12,7 @@
 - a merged `IEventStoreCatalog` built from `IEventStoreContributor` registrations
 - a merged `IEventTypeRegistry` that maps stable persisted event names to serializer/deserializer descriptors
 - aggregate hydration through `AggregateHydrator<TAggregate, TState>` on top of `IEventStore`
-- a truthful `event-sourcing` runtime surface that reports active stream count, default provider, and snapshot toggle state
+- a truthful `event-sourcing` runtime surface that reports active provider/store count, active provider ids, default provider, snapshot toggle state, and one sanitized runtime entry per contributed provider store
 
 ## Main surfaces
 
@@ -26,6 +26,7 @@
 - `Services/EventStreamRegistry.cs`
 - `Services/IEventTypeContributor.cs`
 - `Services/IEventTypeRegistry.cs`
+- `Runtime/EventSourcingRuntimeContributor.cs`
 
 ## Contracts overview
 

@@ -1,5 +1,6 @@
 using Cephalon.Abstractions.EventSourcing;
 using Cephalon.EventSourcing.Hosting;
+using Cephalon.EventSourcing.Qdrant.Services;
 using Cephalon.EventSourcing.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -35,6 +36,8 @@ public static class QdrantEventSourcingServiceCollectionExtensions
         services.TryAddSingleton<QdrantClient>(_ => new QdrantClient(host, port));
 
         services.AddCephalonEventTypeRegistry();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreContributor>(
+            new QdrantEventStoreContributor(host, port, collectionName)));
         services.TryAddSingleton<IEventStore>(serviceProvider =>
         {
             var client = serviceProvider.GetRequiredService<QdrantClient>();

@@ -125,6 +125,11 @@ Use the typed `Add<TBehavior, TInput, TOutput>(...)` overload when a module-owne
 dispatch-ready without source generation. The type-only `Add(Type)` / `Add<TBehavior>(...)` overloads
 remain useful for metadata-only ownership or source-generated registrations, but a behavior that is
 actually dispatched must have a source-generated or explicitly registered closed execution slot.
+Descriptor-backed authors can use `Add(Type behaviorType, Type inputType, Type outputType, ...)`
+when generated metadata has already resolved the closed contract; this is the path used by the REST
+behavior-module DSL so `MapProfile(...)`, `MapGeneratedProfiles(...)`, and grouped generated
+shorthand endpoints dispatch through closed slots without asking project code to repeat generic
+type arguments.
 
 ## Behavior-first REST authoring
 

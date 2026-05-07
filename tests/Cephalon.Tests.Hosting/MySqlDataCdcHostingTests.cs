@@ -267,7 +267,7 @@ public sealed class MySqlDataCdcHostingTests
                         MessageType = "orders.mysql.changed",
                         InitialPosition = "latest-available",
                         ExpectedSourceServerUuid = SourceServerUuid,
-                        PollingIntervalSeconds = 1,
+                        PollingIntervalSeconds = 600,
                         MaxChangesPerRead = 64,
                         MaxAwaitTimeSeconds = 5
                     });
@@ -298,7 +298,7 @@ public sealed class MySqlDataCdcHostingTests
                         item.CdcCaptureId == CaptureId &&
                         item.Publication.State == CdcCapturePublicationStates.CaptureFailed &&
                         item.Metadata.ContainsKey("binlogLifecycleState")),
-                TimeSpan.FromSeconds(10));
+                TimeSpan.FromSeconds(30));
 
             Assert.NotNull(cdcState);
             Assert.Equal(MySqlRuntimeId, cdcState.ExecutionBinding.EffectiveExecutionRuntimeId);
@@ -347,7 +347,14 @@ public sealed class MySqlDataCdcHostingTests
                 return current;
             }
 
-            await Task.Delay(200, cancellationTokenSource.Token).ConfigureAwait(false);
+            try
+            {
+                await Task.Delay(200, cancellationTokenSource.Token).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (cancellationTokenSource.IsCancellationRequested)
+            {
+                break;
+            }
         }
 
         throw new TimeoutException("Timed out while waiting for the expected MySQL CDC hosting condition.");

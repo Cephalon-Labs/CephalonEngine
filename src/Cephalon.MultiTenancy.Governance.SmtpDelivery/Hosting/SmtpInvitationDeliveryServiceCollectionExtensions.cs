@@ -1,3 +1,4 @@
+using Cephalon.Abstractions.Technologies;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.MultiTenancy.Governance.Services;
 using Cephalon.MultiTenancy.Governance.SmtpDelivery.Configuration;
@@ -79,6 +80,7 @@ public static class SmtpInvitationDeliveryServiceCollectionExtensions
 
         services.TryAddSingleton(options);
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, SmtpInvitationDeliveryDiagnosticsConventionContributor>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, SmtpInvitationDeliveryRuntimeSurfaceContributor>());
         services.TryAddSingleton<ISmtpInvitationDeliveryClient, SmtpInvitationDeliveryClient>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITenantInvitationDeliverySender, SmtpInvitationDeliverySender>());
 

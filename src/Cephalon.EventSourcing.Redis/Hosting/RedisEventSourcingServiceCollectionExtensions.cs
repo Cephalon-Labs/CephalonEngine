@@ -1,5 +1,6 @@
 using Cephalon.Abstractions.EventSourcing;
 using Cephalon.EventSourcing.Hosting;
+using Cephalon.EventSourcing.Redis.Services;
 using Cephalon.EventSourcing.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -37,6 +38,8 @@ public static class RedisEventSourcingServiceCollectionExtensions
             ConnectionMultiplexer.Connect(configuration));
 
         services.AddCephalonEventTypeRegistry();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreContributor>(
+            new RedisEventStoreContributor(configuration, keyPrefix)));
         services.TryAddSingleton<IEventStore>(serviceProvider =>
         {
             var multiplexer = serviceProvider.GetRequiredService<IConnectionMultiplexer>();

@@ -1,6 +1,6 @@
 # Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery
 
-> **Maturity:** `M2` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+> **Maturity:** `M2` · **Ownership:** `provider-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
 
 `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery` is the optional Microsoft Graph `sendMail` sender companion for tenant-invitation delivery.
 
@@ -17,6 +17,7 @@
 - Microsoft Graph JSON `sendMail` payload construction for subject, body, recipients, optional categories, optional custom `x-*` internet message headers, and `saveToSentItems`
 - deterministic Cephalon message ids carried through `client-request-id` and safe custom message headers
 - safe sender metadata such as endpoint host, API version, sender mailbox scope, Graph status code, request id, Cephalon message id, sender id, recipient email, body content type, category count, header count, token-provider posture, and client outcome reason
+- sanitized runtime truth through the `tenant-invitation-delivery-microsoft-graph` technology surface, including Graph endpoint host, API version, mailbox scope kind, static-token configured flag, accepted status contract, header names, and redacted token posture
 - stable diagnostics for accepted and failed Microsoft Graph invitation dispatch attempts
 
 ## Main surfaces
@@ -27,6 +28,7 @@
 - `Services/IMicrosoftGraphInvitationDeliveryClient.cs`
 - `Services/MicrosoftGraphInvitationDeliveryClientResult.cs`
 - `Services/MicrosoftGraphInvitationDeliveryMessage.cs`
+- `Services/MicrosoftGraphInvitationDeliveryRuntimeSurfaceContributor.cs`
 - `Services/MicrosoftGraphInvitationDeliverySender.cs`
 - `Services/MicrosoftGraphInvitationDeliveryDiagnosticsConventionContributor.cs`
 

@@ -24,8 +24,8 @@ internal static class EventSourcingServiceRegistration
         services.TryAddSingleton<EventStreamRegistry>();
         services.TryAddSingleton<IEventStoreRegistry>(static serviceProvider =>
             serviceProvider.GetRequiredService<EventStreamRegistry>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreContributor>(static serviceProvider =>
-            serviceProvider.GetRequiredService<EventStreamRegistry>()));
+        services.AddSingleton<IEventStoreContributor>(static serviceProvider =>
+            serviceProvider.GetRequiredService<EventStreamRegistry>());
         services.TryAddSingleton<IEventStoreCatalog>(static serviceProvider =>
             new EventStreamCatalog(serviceProvider.GetServices<IEventStoreContributor>()));
         services.TryAddSingleton(typeof(AggregateHydrator<,>));

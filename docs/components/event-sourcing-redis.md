@@ -7,6 +7,7 @@
 ## What it owns
 
 - a Redis Streams-backed implementation of `IEventStore` registered through `AddCephalonRedisEventSourcing()`
+- a sanitized `IEventStoreContributor` entry projected through `IEventStoreCatalog` and the `event-sourcing` runtime surface
 - stream key naming via `RedisEventSourcingConfiguration.StreamKey(keyPrefix, streamId)` → `{keyPrefix}stream:{streamId}`
 - optimistic-version append semantics: reads the current stream version before every `AppendAsync`, compares against `expectedVersion`, and throws `EventStreamConcurrencyException` before writing if they differ
 - `AppendAsync` validates that each event's `StreamId` matches the target stream and that declared `StreamVersion` values are sequential from the expected version before issuing any `XADD` commands
@@ -20,6 +21,7 @@
 - `RedisEventStore.cs`
 - `RedisEventSourcingConfiguration.cs`
 - `Hosting/RedisEventSourcingServiceCollectionExtensions.cs`
+- `Services/RedisEventStoreContributor.cs`
 
 ## How it fits
 

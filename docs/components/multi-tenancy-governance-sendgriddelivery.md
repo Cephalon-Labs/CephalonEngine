@@ -1,6 +1,6 @@
 # Cephalon.MultiTenancy.Governance.SendGridDelivery
 
-> **Maturity:** `M2` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+> **Maturity:** `M2` · **Ownership:** `provider-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
 
 `Cephalon.MultiTenancy.Governance.SendGridDelivery` is the optional SendGrid Mail Send API sender companion for tenant-invitation delivery.
 
@@ -16,6 +16,7 @@
 - deterministic Cephalon message ids carried through SendGrid custom arguments and safe context headers
 - provider message id capture from the SendGrid `X-Message-ID` response header by default
 - safe sender metadata such as endpoint host, SendGrid status code, sandbox posture, Cephalon message id, sender id, recipient email, category count, custom-argument count, and client outcome reason
+- sanitized runtime truth through the `tenant-invitation-delivery-sendgrid` technology surface, including SendGrid endpoint host, API-key configured flag, accepted status contract, categories, custom-argument keys, header names, and redacted secret posture
 - stable diagnostics for accepted and failed SendGrid invitation dispatch attempts
 
 ## Main surfaces
@@ -25,6 +26,7 @@
 - `Services/ISendGridInvitationDeliveryClient.cs`
 - `Services/SendGridInvitationDeliveryClientResult.cs`
 - `Services/SendGridInvitationDeliveryMessage.cs`
+- `Services/SendGridInvitationDeliveryRuntimeSurfaceContributor.cs`
 - `Services/SendGridInvitationDeliverySender.cs`
 - `Services/SendGridInvitationDeliveryDiagnosticsConventionContributor.cs`
 

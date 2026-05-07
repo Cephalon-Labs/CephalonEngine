@@ -8,6 +8,7 @@
       "src/Cephalon.Observability.CassandraDependencies/Cephalon.Observability.CassandraDependencies.csproj",
       "src/Cephalon.Observability.ClickHouseDependencies/Cephalon.Observability.ClickHouseDependencies.csproj",
       "src/Cephalon.Observability.ConsulDependencies/Cephalon.Observability.ConsulDependencies.csproj",
+      "src/Cephalon.Observability.DependencyHealth.Core/Cephalon.Observability.DependencyHealth.Core.csproj",
       "src/Cephalon.Observability.ElasticsearchDependencies/Cephalon.Observability.ElasticsearchDependencies.csproj",
       "src/Cephalon.Observability.HttpDependencies/Cephalon.Observability.HttpDependencies.csproj",
       "src/Cephalon.Observability.KafkaDependencies/Cephalon.Observability.KafkaDependencies.csproj",
@@ -37,7 +38,8 @@
       "src/Cephalon.Observability.OpenShift/Cephalon.Observability.OpenShift.csproj",
       "src/Cephalon.Observability.Tanzu/Cephalon.Observability.Tanzu.csproj",
       "src/Cephalon.Observability.Serilog/Cephalon.Observability.Serilog.csproj",
-      "tests/Cephalon.Tests/Cephalon.Tests.csproj"
+      "tests/Cephalon.Tests.Support/Cephalon.Tests.Support.csproj",
+      "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj"
     ]
   }
 }

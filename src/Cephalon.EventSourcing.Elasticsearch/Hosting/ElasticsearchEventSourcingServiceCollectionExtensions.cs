@@ -1,5 +1,6 @@
 using Cephalon.Abstractions.EventSourcing;
 using Cephalon.EventSourcing.Hosting;
+using Cephalon.EventSourcing.Elasticsearch.Services;
 using Cephalon.EventSourcing.Services;
 using Elastic.Clients.Elasticsearch;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +28,8 @@ public static class ElasticsearchEventSourcingServiceCollectionExtensions
         services.TryAddSingleton<ElasticsearchClient>(_ =>
             new ElasticsearchClient(new ElasticsearchClientSettings(new Uri(uri))));
         services.AddCephalonEventTypeRegistry();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreContributor>(
+            new ElasticsearchEventStoreContributor(uri, indexName)));
         services.TryAddSingleton<IEventStore>(sp =>
             new ElasticsearchEventStore(
                 sp.GetRequiredService<ElasticsearchClient>(),

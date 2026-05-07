@@ -1,6 +1,6 @@
 # Cephalon.MultiTenancy.Governance.HttpDelivery
 
-> **Maturity:** `M2` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+> **Maturity:** `M2` · **Ownership:** `provider-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
 
 `Cephalon.MultiTenancy.Governance.HttpDelivery` is the optional HTTP webhook sender companion for tenant-invitation delivery.
 
@@ -15,6 +15,7 @@
 - optional HMAC-SHA256 webhook signing over the exact JSON body plus dispatch timestamp
 - provider-message id capture from a configurable response header
 - safe sender metadata such as HTTP endpoint host, status code, reason, idempotency posture/key source, signing enablement/key id, attempt count, retry posture/reason, optional bounded response body excerpt, and exception type
+- sanitized runtime truth through the `tenant-invitation-delivery-http` technology surface, including endpoint host, method, retry/idempotency/signing posture, configured header names, and redacted secret posture
 - stable diagnostics for accepted and failed HTTP invitation dispatch attempts
 
 ## Main surfaces
@@ -22,6 +23,7 @@
 - `Configuration/HttpInvitationDeliveryOptions.cs`
 - `Hosting/HttpInvitationDeliveryServiceCollectionExtensions.cs`
 - `Services/HttpInvitationDeliveryPayload.cs`
+- `Services/HttpInvitationDeliveryRuntimeSurfaceContributor.cs`
 - `Services/HttpInvitationDeliverySender.cs`
 - `Services/HttpInvitationDeliveryDiagnosticsConventionContributor.cs`
 

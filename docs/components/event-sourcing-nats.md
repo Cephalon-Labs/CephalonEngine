@@ -7,6 +7,7 @@
 ## What it owns
 
 - implements `IEventStore` backed by a NATS JetStream KV bucket
+- contributes a sanitized `IEventStoreContributor` entry projected through `IEventStoreCatalog` and the `event-sourcing` runtime surface
 - stores each domain event as a KV entry with key format `{streamId}/{streamVersion:D20}` — zero-padded 20-digit version numbers ensure lexicographic ordering matches numeric ordering, enabling correct key-sorted replay without separate index queries
 - enforces optimistic concurrency via a pre-append `GetVersionAsync` check and `CreateAsync` which throws `NatsKVCreateException` if the key already exists (caught and rethrown as `EventStreamConcurrencyException`)
 - creates or updates the KV bucket on first operation via `CreateOrUpdateStoreAsync`
@@ -20,6 +21,7 @@
 - `NatsEventEntry.cs` — plain-object representation of a single event stored as a KV entry
 - `NatsEventStore.cs` — `IEventStore` implementation
 - `Hosting/NatsEventSourcingServiceCollectionExtensions.cs` — `AddCephalonNatsEventSourcing` registration
+- `Services/NatsEventStoreContributor.cs` — sanitized runtime catalog contribution
 
 ## How it fits
 

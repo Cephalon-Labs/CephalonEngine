@@ -203,11 +203,11 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
         {
             if (configureTopology is null)
             {
-                AddOwnedBehavior(builder, behaviorContract.BehaviorType);
+                AddOwnedBehavior(builder, behaviorContract);
             }
             else
             {
-                AddOwnedBehavior(builder, behaviorContract.BehaviorType, configureTopology);
+                AddOwnedBehavior(builder, behaviorContract, configureTopology);
             }
         });
 
@@ -216,19 +216,23 @@ internal sealed class RestBehaviorModuleBuilder : IRestBehaviorModuleBuilder
 
     private static void AddOwnedBehavior(
         IBehaviorModuleBuilder builder,
-        Type behaviorType,
+        BehaviorContractDescriptor behaviorContract,
         Action<IBehaviorTopologyBuilder>? configureTopology = null)
     {
         ArgumentNullException.ThrowIfNull(builder);
-        ArgumentNullException.ThrowIfNull(behaviorType);
+        ArgumentNullException.ThrowIfNull(behaviorContract);
 
         if (configureTopology is null)
         {
-            builder.Add(behaviorType);
+            builder.Add(behaviorContract.BehaviorType, behaviorContract.InputType, behaviorContract.OutputType);
             return;
         }
 
-        builder.Add(behaviorType, configureTopology);
+        builder.Add(
+            behaviorContract.BehaviorType,
+            behaviorContract.InputType,
+            behaviorContract.OutputType,
+            configureTopology);
     }
 
     private sealed class RestBehaviorEndpointGroupBuilder(

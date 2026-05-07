@@ -1,6 +1,6 @@
 # Cephalon.Observability.RabbitMqDependencies
 
-> **Maturity:** `M0` · **Ownership:** `taxonomy-only` (family-covered by maturity audit) — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+> **Maturity:** `M2` · **Ownership:** `provider-managed` (family-covered by maturity audit) — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
 
 `Cephalon.Observability.RabbitMqDependencies` adds a supported RabbitMQ dependency-health path for Cephalon hosts.
 

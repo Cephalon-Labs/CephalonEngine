@@ -162,7 +162,7 @@ public static class RestEndpointConventionBuilderExtensions
                 return TypedResults.Problem(
                     statusCode: StatusCodes.Status403Forbidden,
                     title: "Capability access denied",
-                    detail: decision.Reason,
+                    detail: FormatCapabilityDeniedDetail(decision),
                     extensions: new Dictionary<string, object?>
                     {
                         ["capabilityKey"] = decision.CapabilityKey,
@@ -176,6 +176,18 @@ public static class RestEndpointConventionBuilderExtensions
         });
 
         return builder;
+    }
+
+    private static string FormatCapabilityDeniedDetail(CapabilityPolicyDecision decision)
+    {
+        ArgumentNullException.ThrowIfNull(decision);
+
+        var reason = string.IsNullOrWhiteSpace(decision.Reason)
+            ? "Capability access denied."
+            : decision.Reason.Trim();
+        return reason.Contains(decision.CapabilityKey, StringComparison.OrdinalIgnoreCase)
+            ? reason
+            : $"{reason} Capability '{decision.CapabilityKey}' was denied.";
     }
 
     /// <summary>

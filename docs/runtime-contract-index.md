@@ -54,7 +54,7 @@ The route prefix `/engine` is reserved for Cephalon engine introspection. App-ow
 | `GET /behavior-resilience` | `Cephalon.AspNetCore` | effective behavior-execution resilience policies | optional |
 | `GET /behavior-resilience/{policyId}` | `Cephalon.AspNetCore` | single resilience policy | optional |
 | `GET /rate-limiting` | `Cephalon.AspNetCore` | rate-limiting policies | optional |
-| `GET /capabilities` | `Cephalon.AspNetCore` | module capability manifests | base |
+| `GET /capabilities` | `Cephalon.AspNetCore` | module capability manifests; shared provider-family keys aggregate `sourceModuleIds`, `providers`, `packs`, and `contributorCount` metadata | base |
 | `GET /modules` | `Cephalon.AspNetCore` | module descriptors from manifest | base |
 | `GET /packages` | `Cephalon.AspNetCore` | loaded package manifests | base |
 | `GET /technologies` | `Cephalon.AspNetCore` | technology selections from manifest | base |

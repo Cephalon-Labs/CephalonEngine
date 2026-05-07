@@ -14,7 +14,7 @@ internal sealed class Neo4jOutboxRuntimeSurfaceContributor(IOutboxCatalog catalo
     {
         return new TechnologyRuntimeSurface(
             technologyId: "event-driven-integration",
-            surfaceId: "neo4j-outbox-surface",
+            surfaceId: "outbox-producers",
             displayName: "Outbox Producers",
             description: "Durable outbox producers that stage integration events for later delivery through the active runtime.",
             entries: catalog.GetByProvider(Neo4jDataOptions.ProviderId)

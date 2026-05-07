@@ -4,6 +4,7 @@ using Cephalon.Behaviors.Http.Abstractions;
 using Cephalon.Behaviors.Services;
 using Cephalon.Engine.Runtime;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Cephalon.Behaviors.Http.Hosting;
@@ -17,19 +18,19 @@ namespace Cephalon.Behaviors.Http.Hosting;
 internal sealed partial class BehaviorHttpTransportRouteMapper : ITransportRouteMapper
 {
     private readonly IBehaviorCatalog _catalog;
-    private readonly BehaviorDispatcher _dispatcher;
     private readonly IHttpBehaviorBindingRegistry _bindingRegistry;
+    private readonly IServiceProvider _services;
     private readonly ILogger<BehaviorHttpTransportRouteMapper>? _logger;
 
     public BehaviorHttpTransportRouteMapper(
         IBehaviorCatalog catalog,
-        BehaviorDispatcher dispatcher,
         IHttpBehaviorBindingRegistry bindingRegistry,
+        IServiceProvider services,
         ILogger<BehaviorHttpTransportRouteMapper>? logger = null)
     {
         _catalog = catalog ?? throw new ArgumentNullException(nameof(catalog));
-        _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
         _bindingRegistry = bindingRegistry ?? throw new ArgumentNullException(nameof(bindingRegistry));
+        _services = services ?? throw new ArgumentNullException(nameof(services));
         _logger = logger;
     }
 
@@ -51,6 +52,7 @@ internal sealed partial class BehaviorHttpTransportRouteMapper : ITransportRoute
 
         var needsWebSockets = false;
         var mappedCount = 0;
+        var dispatcher = _services.GetRequiredService<BehaviorDispatcher>();
 
         foreach (var descriptor in descriptors)
         {
@@ -71,7 +73,7 @@ internal sealed partial class BehaviorHttpTransportRouteMapper : ITransportRoute
 
                 // All current binding MapAsync implementations are synchronous
                 // (they only call app.MapGet/MapPost), so blocking is safe here.
-                binding.MapAsync(app, descriptor, _dispatcher).GetAwaiter().GetResult();
+                binding.MapAsync(app, descriptor, dispatcher).GetAwaiter().GetResult();
                 mappedCount++;
             }
         }

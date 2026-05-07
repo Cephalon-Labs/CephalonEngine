@@ -8,7 +8,8 @@
       "src/Cephalon.AspNetCore.GraphQL/Cephalon.AspNetCore.GraphQL.csproj",
       "src/Cephalon.AspNetCore.Grpc/Cephalon.AspNetCore.Grpc.csproj",
       "src/Cephalon.AspNetCore.JsonRpc/Cephalon.AspNetCore.JsonRpc.csproj",
-      "tests/Cephalon.Tests/Cephalon.Tests.csproj"
+      "tests/Cephalon.Tests.Support/Cephalon.Tests.Support.csproj",
+      "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj"
     ]
   }
 }

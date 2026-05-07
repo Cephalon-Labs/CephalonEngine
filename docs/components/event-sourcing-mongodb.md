@@ -7,6 +7,7 @@
 ## What it owns
 
 - a MongoDB-backed implementation of `IEventStore` registered through `AddCephalonMongoDbEventSourcing()`
+- a sanitized `IEventStoreContributor` entry projected through `IEventStoreCatalog` and the `event-sourcing` runtime surface
 - the `MongoDbEventEntry` document model for append-only event stream documents
 - `MongoDbEventSourcingConfiguration` that creates the compound unique index on `(StreamId, StreamVersion)` using lazy double-check semantics so indexes are created on first use, not at startup
 - optimistic-version append semantics: reads the current stream version before every `AppendAsync`, compares against `expectedVersion`, and throws `EventStreamConcurrencyException` before writing if they differ
@@ -22,6 +23,7 @@
 - `MongoDbEventStore.cs`
 - `MongoDbEventSourcingConfiguration.cs`
 - `Hosting/MongoDbEventSourcingServiceCollectionExtensions.cs`
+- `Services/MongoDbEventStoreContributor.cs`
 
 ## How it fits
 

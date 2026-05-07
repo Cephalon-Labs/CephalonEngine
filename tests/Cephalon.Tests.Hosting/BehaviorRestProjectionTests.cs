@@ -6529,6 +6529,15 @@ public sealed class BehaviorRestProjectionTests
             return this;
         }
 
+        public IBehaviorModuleBuilder Add(Type behaviorType, Type inputType, Type outputType)
+        {
+            ArgumentNullException.ThrowIfNull(behaviorType);
+            ArgumentNullException.ThrowIfNull(inputType);
+            ArgumentNullException.ThrowIfNull(outputType);
+            Registrations.Add(new OwnedBehaviorRegistration(behaviorType, HasExplicitTopologyOverride: false, HasExplicitExecutionSlot: true));
+            return this;
+        }
+
         public IBehaviorModuleBuilder Add<TBehavior>(Action<IBehaviorTopologyBuilder> configureTopology)
             where TBehavior : class
             => Add(typeof(TBehavior), configureTopology);
@@ -6547,6 +6556,20 @@ public sealed class BehaviorRestProjectionTests
             ArgumentNullException.ThrowIfNull(behaviorType);
             ArgumentNullException.ThrowIfNull(configureTopology);
             Registrations.Add(new OwnedBehaviorRegistration(behaviorType, HasExplicitTopologyOverride: true));
+            return this;
+        }
+
+        public IBehaviorModuleBuilder Add(
+            Type behaviorType,
+            Type inputType,
+            Type outputType,
+            Action<IBehaviorTopologyBuilder> configureTopology)
+        {
+            ArgumentNullException.ThrowIfNull(behaviorType);
+            ArgumentNullException.ThrowIfNull(inputType);
+            ArgumentNullException.ThrowIfNull(outputType);
+            ArgumentNullException.ThrowIfNull(configureTopology);
+            Registrations.Add(new OwnedBehaviorRegistration(behaviorType, HasExplicitTopologyOverride: true, HasExplicitExecutionSlot: true));
             return this;
         }
     }

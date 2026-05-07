@@ -1,5 +1,6 @@
 using Amazon;
 using Amazon.SimpleEmailV2;
+using Cephalon.Abstractions.Technologies;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Configuration;
 using Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services;
@@ -75,6 +76,7 @@ public static class AmazonSesInvitationDeliveryServiceCollectionExtensions
 
         services.TryAddSingleton(options);
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, AmazonSesInvitationDeliveryDiagnosticsConventionContributor>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, AmazonSesInvitationDeliveryRuntimeSurfaceContributor>());
         services.TryAddSingleton<IAmazonSimpleEmailServiceV2>(_ =>
         {
             var region = options.GetRegionSystemName();

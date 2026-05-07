@@ -7,6 +7,7 @@
 ## What it owns
 
 - a ClickHouse-backed implementation of `IEventStore` registered through `AddCephalonClickHouseEventSourcing()`
+- a sanitized `IEventStoreContributor` entry projected through `IEventStoreCatalog` and the `event-sourcing` runtime surface
 - the `ClickHouseEventEntry` record model for persisted domain event rows
 - `ClickHouseEventSourcingConfiguration` that holds the DDL template for the event-streams table using `MergeTree()` ordered by `(stream_id, stream_version)`
 - optimistic-version append semantics: reads the current stream version before every `AppendAsync`, compares against `expectedVersion`, and throws `EventStreamConcurrencyException` before writing if they differ
@@ -23,6 +24,7 @@
 - `ClickHouseEventStore.cs`
 - `ClickHouseEventSourcingConfiguration.cs`
 - `Hosting/ClickHouseEventSourcingServiceCollectionExtensions.cs`
+- `Services/ClickHouseEventStoreContributor.cs`
 
 ## How it fits
 

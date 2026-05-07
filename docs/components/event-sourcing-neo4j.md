@@ -7,6 +7,7 @@
 ## What it owns
 
 - a Neo4j-backed implementation of `IEventStore` registered through `AddCephalonNeo4jEventSourcing()`
+- a sanitized `IEventStoreContributor` entry projected through `IEventStoreCatalog` and the `event-sourcing` runtime surface
 - the `Neo4jEventEntry` POCO representing the fields stored on each `:Event` node
 - `Neo4jEventSourcingConfiguration` that holds the constraint name constant and the `CREATE CONSTRAINT` Cypher statement
 - a node key constraint on `(streamId, streamVersion)` bootstrapped lazily on first use via `volatile bool _constraintCreated` — `IS NODE KEY` enforces both uniqueness and existence
@@ -23,6 +24,7 @@
 - `Neo4jEventStore.cs`
 - `Neo4jEventSourcingConfiguration.cs`
 - `Hosting/Neo4jEventSourcingServiceCollectionExtensions.cs`
+- `Services/Neo4jEventStoreContributor.cs`
 
 ## How it fits
 

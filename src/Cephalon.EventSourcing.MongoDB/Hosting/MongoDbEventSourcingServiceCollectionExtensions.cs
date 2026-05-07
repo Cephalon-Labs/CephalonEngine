@@ -1,5 +1,6 @@
 using Cephalon.Abstractions.EventSourcing;
 using Cephalon.EventSourcing.Hosting;
+using Cephalon.EventSourcing.MongoDB.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using MongoDB.Driver;
@@ -40,6 +41,8 @@ public static class MongoDbEventSourcingServiceCollectionExtensions
             serviceProvider.GetRequiredService<IMongoDatabase>().GetCollection<MongoDbEventEntry>(collectionName));
 
         services.AddCephalonEventTypeRegistry();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreContributor>(
+            new MongoDbEventStoreContributor(connectionString, databaseName, collectionName)));
         services.TryAddSingleton<IEventStore, MongoDbEventStore>();
 
         return services;

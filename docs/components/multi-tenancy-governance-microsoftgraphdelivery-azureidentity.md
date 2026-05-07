@@ -1,6 +1,6 @@
 # Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity
 
-> **Maturity:** `M2` · **Ownership:** `cephalon-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+> **Maturity:** `M2` · **Ownership:** `provider-managed` — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
 
 `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity` is the optional Azure Identity token-provider companion for the Microsoft Graph invitation sender.
 
@@ -15,6 +15,7 @@
 - optional tenant id, user-assigned managed identity client id, authority-host alias, and browser/managed-identity exclusion settings
 - order-insensitive replacement of the Microsoft Graph sender's default static-token provider
 - safe token-acquisition diagnostics that record credential type, scope count, expiry, and failure reason without logging token values
+- sanitized runtime truth through the `tenant-invitation-delivery-microsoft-graph-azure-identity` technology surface, including scope count, authority host, credential exclusion posture, configured identity flags, and redacted token/credential posture
 
 ## Main surfaces
 
@@ -22,6 +23,7 @@
 - `Hosting/MicrosoftGraphInvitationDeliveryAzureIdentityServiceCollectionExtensions.cs`
 - `Services/MicrosoftGraphInvitationDeliveryAzureIdentityAccessTokenProvider.cs`
 - `Services/MicrosoftGraphInvitationDeliveryAzureIdentityDiagnosticsConventionContributor.cs`
+- `Services/MicrosoftGraphInvitationDeliveryAzureIdentityRuntimeSurfaceContributor.cs`
 
 ## Source structure
 

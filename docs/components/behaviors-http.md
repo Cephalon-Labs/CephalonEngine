@@ -32,8 +32,9 @@ module-owned REST endpoints.
 - **REST behavior-module DSL** — `IRestBehaviorModuleBuilder` plus
   `IRestBehaviorEndpointGroupBuilder` for one-place public REST and internal behavior ownership,
   compiled internally into a normalized REST projection contract before Minimal API materialization;
-  generated-profile ownership and route materialization use type-based contracts instead of
-  runtime `MethodInfo.MakeGenericMethod` / `Invoke` dispatch
+  generated-profile ownership and route materialization use descriptor-backed closed behavior
+  contracts and `IBehaviorModuleBuilder.Add(Type, Type, Type, ...)` instead of runtime
+  `MethodInfo.MakeGenericMethod` / `Invoke` dispatch
 - **Metadata-only REST profile contract** — `BehaviorRestProfileAttribute`,
   `BehaviorRestBindingAttribute`, `BehaviorRestMethod`, `BehaviorRestMethodExtensions`,
   `BehaviorRestProfileDescriptor`, `BehaviorRestBindingDescriptor`,
@@ -76,7 +77,9 @@ module-owned REST endpoints.
   while leaving GraphQL,
   JSON-RPC, SSE, and WebSocket bindings on their native protocol envelopes
 - **Hosting** — `IBehaviorCollectionBuilder.AddHttpBehaviorBindings()` extension registering the
-  generic HTTP bindings in DI
+  generic HTTP bindings in DI; the `behavior-http` route mapper resolves `BehaviorDispatcher` only
+  when the `behavior-http` transport is actually selected, so REST-only hosts do not pay unrelated
+  dispatch-slot validation during `MapCephalon()`
 
 ## Transport bindings
 

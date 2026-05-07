@@ -14,6 +14,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="EphemeralMongo7" />
+    <PackageReference Include="Snappier" />
     <PackageReference Include="Grpc.Net.Client" />
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />

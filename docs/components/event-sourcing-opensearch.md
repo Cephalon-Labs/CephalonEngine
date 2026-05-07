@@ -7,6 +7,7 @@
 ## What it owns
 
 - an OpenSearch-backed implementation of `IEventStore` registered through `AddCephalonOpenSearchEventSourcing()`
+- a sanitized `IEventStoreContributor` entry projected through `IEventStoreCatalog` and the `event-sourcing` runtime surface
 - the `OpenSearchEventEntry` POCO representing the fields stored in each event document
 - compound document id `{streamId}#{streamVersion}` — ensures document uniqueness at the OpenSearch level via `OpType.Create`
 - optimistic-version append semantics: reads the current stream version before every `AppendAsync`, compares against `expectedVersion`, and throws `EventStreamConcurrencyException` before writing if they differ
@@ -21,6 +22,7 @@
 - `OpenSearchEventEntry.cs`
 - `OpenSearchEventStore.cs`
 - `Hosting/OpenSearchEventSourcingServiceCollectionExtensions.cs`
+- `Services/OpenSearchEventStoreContributor.cs`
 
 ## How it fits
 

@@ -1,6 +1,6 @@
 # Cephalon.Observability.ConsulDependencies
 
-> **Maturity:** `M0` · **Ownership:** `taxonomy-only` (family-covered by maturity audit) — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
+> **Maturity:** `M2` · **Ownership:** `provider-managed` (family-covered by maturity audit) — authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)
 
 `Cephalon.Observability.ConsulDependencies` adds a supported Consul dependency-health path for Cephalon hosts.
 

@@ -14,7 +14,7 @@ internal sealed class Neo4jInboxRuntimeSurfaceContributor(IInboxCatalog catalog)
     {
         return new TechnologyRuntimeSurface(
             technologyId: "event-driven-integration",
-            surfaceId: "neo4j-inbox-surface",
+            surfaceId: "inbox-stores",
             displayName: "Inbox Stores",
             description: "Processed-message stores that record handled inbound messages for idempotent follow-through.",
             entries: catalog.GetByProvider(Neo4jDataOptions.ProviderId)

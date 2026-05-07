@@ -297,7 +297,7 @@ public sealed class ShowcaseSystemModule : ModuleBase, IEndpointModule
         return TypedResults.Problem(
             statusCode: StatusCodes.Status403Forbidden,
             title: "Capability access denied",
-            detail: decision.Reason,
+            detail: FormatCapabilityDeniedDetail(decision),
             extensions: new Dictionary<string, object?>
             {
                 ["capabilityKey"] = decision.CapabilityKey,
@@ -305,5 +305,15 @@ public sealed class ShowcaseSystemModule : ModuleBase, IEndpointModule
                 ["sourceModuleId"] = decision.SourceModuleId,
                 ["sourcePackageId"] = decision.SourcePackageId
             });
+    }
+
+    private static string FormatCapabilityDeniedDetail(CapabilityPolicyDecision decision)
+    {
+        var reason = string.IsNullOrWhiteSpace(decision.Reason)
+            ? "Capability access denied."
+            : decision.Reason.Trim();
+        return reason.Contains(decision.CapabilityKey, StringComparison.OrdinalIgnoreCase)
+            ? reason
+            : $"{reason} Capability '{decision.CapabilityKey}' was denied.";
     }
 }

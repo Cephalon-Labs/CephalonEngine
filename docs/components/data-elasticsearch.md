@@ -14,6 +14,7 @@
 - exposes operator-facing outbox and inbox descriptors through the engine runtime surfaces
 - projects outbox and inbox descriptors through the `event-driven-integration` technology surface when that technology is active
 - publishes capability metadata `data.elasticsearch`, `data.search-store`, and optionally `data.outbox.elasticsearch` and `data.inbox.elasticsearch` introspectable at runtime through the manifest
+- redacts inline URI user-info and query secrets in capability metadata; `uri` contains only scheme, host, port, and path, while `uriCredentialsConfigured` and `secretProjection = redacted` preserve operator posture without leaking credentials
 
 ## Main surfaces
 
@@ -149,6 +150,20 @@ When `ElasticsearchDataModule` is active, the following capability keys appear i
 | `data.search-store` | Always |
 | `data.outbox.elasticsearch` | `RegisterOutbox = true` |
 | `data.inbox.elasticsearch` | `RegisterInbox = true` |
+
+The provider capability sanitizes inline URI metadata. A URI such as
+`http://user:password@localhost:9200/search?apikey=secret` is reported as
+`http://localhost:9200/search` with `uriCredentialsConfigured = true` and
+`secretProjection = redacted`.
+
+## Runtime surface entries
+
+When the `event-driven-integration` technology is active, the following entries appear under `/engine/snapshot`:
+
+| Surface | Entry id | `provider` metadata |
+|---------|----------|---------------------|
+| `outbox-producers` | `elasticsearch-outbox` | `elasticsearch` |
+| `inbox-stores` | `elasticsearch-inbox` | `elasticsearch` |
 
 ## Event store
 

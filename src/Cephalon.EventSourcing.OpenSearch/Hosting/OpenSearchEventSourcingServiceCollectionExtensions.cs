@@ -1,5 +1,6 @@
 using Cephalon.Abstractions.EventSourcing;
 using Cephalon.EventSourcing.Hosting;
+using Cephalon.EventSourcing.OpenSearch.Services;
 using Cephalon.EventSourcing.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -27,6 +28,8 @@ public static class OpenSearchEventSourcingServiceCollectionExtensions
         services.TryAddSingleton<OpenSearchClient>(_ =>
             new OpenSearchClient(new ConnectionSettings(new Uri(uri))));
         services.AddCephalonEventTypeRegistry();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventStoreContributor>(
+            new OpenSearchEventStoreContributor(uri, indexName)));
         services.TryAddSingleton<IEventStore>(sp =>
             new OpenSearchEventStore(
                 sp.GetRequiredService<OpenSearchClient>(),

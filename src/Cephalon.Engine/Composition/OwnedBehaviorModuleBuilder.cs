@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
 
@@ -44,10 +45,29 @@ internal sealed class OwnedBehaviorModuleBuilder(string sourceModuleId) : IBehav
     public IBehaviorModuleBuilder Add(Type behaviorType)
         => AddCore(behaviorType, configureTopology: null);
 
+    public IBehaviorModuleBuilder Add(Type behaviorType, Type inputType, Type outputType)
+        => AddCore(
+            behaviorType,
+            configureTopology: null,
+            CreateExecutionDelegate(behaviorType, inputType, outputType));
+
     public IBehaviorModuleBuilder Add(Type behaviorType, Action<IBehaviorTopologyBuilder> configureTopology)
     {
         ArgumentNullException.ThrowIfNull(configureTopology);
         return AddCore(behaviorType, configureTopology);
+    }
+
+    public IBehaviorModuleBuilder Add(
+        Type behaviorType,
+        Type inputType,
+        Type outputType,
+        Action<IBehaviorTopologyBuilder> configureTopology)
+    {
+        ArgumentNullException.ThrowIfNull(configureTopology);
+        return AddCore(
+            behaviorType,
+            configureTopology,
+            CreateExecutionDelegate(behaviorType, inputType, outputType));
     }
 
     internal IReadOnlyList<OwnedBehaviorRegistration> Build()
@@ -106,6 +126,34 @@ internal sealed class OwnedBehaviorModuleBuilder(string sourceModuleId) : IBehav
             return result;
         };
     }
+
+    private static Func<object, object, IBehaviorContext, CancellationToken, Task<object?>> CreateExecutionDelegate(
+        Type behaviorType,
+        Type inputType,
+        Type outputType)
+    {
+        ArgumentNullException.ThrowIfNull(behaviorType);
+        ArgumentNullException.ThrowIfNull(inputType);
+        ArgumentNullException.ThrowIfNull(outputType);
+
+        var closedBehaviorContract = AppBehaviorOpenGeneric.MakeGenericType(inputType, outputType);
+        if (!closedBehaviorContract.IsAssignableFrom(behaviorType))
+        {
+            throw new InvalidOperationException(
+                $"Cannot declare '{behaviorType.FullName}' as a module-owned behavior with input '{inputType.FullName}' and output '{outputType.FullName}' because it does not implement IAppBehavior<TInput, TOutput> for that closed contract.");
+        }
+
+        var factory = typeof(OwnedBehaviorModuleBuilder)
+            .GetMethod(nameof(CreateExecutionDelegateCore), BindingFlags.NonPublic | BindingFlags.Static)
+            ?? throw new InvalidOperationException("The behavior execution delegate factory could not be found.");
+        var closedFactory = factory.MakeGenericMethod(behaviorType, inputType, outputType);
+        return (Func<object, object, IBehaviorContext, CancellationToken, Task<object?>>)closedFactory.Invoke(null, null)!;
+    }
+
+    private static Func<object, object, IBehaviorContext, CancellationToken, Task<object?>> CreateExecutionDelegateCore<TBehavior, TInput, TOutput>()
+        where TBehavior : class, IAppBehavior<TInput, TOutput>
+        where TInput : notnull
+        => CreateExecutionDelegate<TBehavior, TInput, TOutput>();
 
     private static string NormalizeRequired(string value)
     {

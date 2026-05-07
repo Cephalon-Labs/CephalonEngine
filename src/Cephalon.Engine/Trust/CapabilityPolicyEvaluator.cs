@@ -72,14 +72,13 @@ public sealed class CapabilityPolicyEvaluator
         ArgumentNullException.ThrowIfNull(capabilities);
 
         var moduleLookup = modules.ToDictionary(static module => module.Id, StringComparer.OrdinalIgnoreCase);
-        var packageLookup = packages.ToDictionary(static package => package.Id, StringComparer.OrdinalIgnoreCase);
 
         var capabilityDecisions = capabilities
             .Select(capability =>
             {
-                var module = moduleLookup[capability.SourceModuleId];
+                var sourceModules = ResolveSourceModules(capability, moduleLookup);
                 var access = policy.ResolveCapabilityAccess(capability.Key);
-                var sourceTrusted = module.IsTrusted;
+                var sourceTrusted = sourceModules.All(static module => module.IsTrusted);
                 var isAllowed = access switch
                 {
                     CapabilityAccess.Allowed => true,
@@ -94,10 +93,19 @@ public sealed class CapabilityPolicyEvaluator
                     _ => "Capability is denied by trust policy."
                 };
 
+                var sourcePackageIds = sourceModules
+                    .Select(static module => module.PackageId)
+                    .Where(static packageId => !string.IsNullOrWhiteSpace(packageId))
+                    .Distinct(StringComparer.OrdinalIgnoreCase)
+                    .OrderBy(static packageId => packageId, StringComparer.OrdinalIgnoreCase)
+                    .ToArray();
+
                 return new CapabilityPolicyDecision(
                     CapabilityKey: capability.Key,
-                    SourceModuleId: capability.SourceModuleId,
-                    SourcePackageId: module.PackageId,
+                    SourceModuleId: string.Join(",", sourceModules.Select(static module => module.Id)),
+                    SourcePackageId: sourcePackageIds.Length == 0
+                        ? null
+                        : string.Join(",", sourcePackageIds),
                     Access: access,
                     SourceTrusted: sourceTrusted,
                     IsAllowed: isAllowed,
@@ -151,5 +159,22 @@ public sealed class CapabilityPolicyEvaluator
             SourceTrusted: false,
             IsAllowed: isAllowed,
             Reason: reason);
+    }
+
+    private static ModuleManifest[] ResolveSourceModules(
+        CapabilityManifest capability,
+        Dictionary<string, ModuleManifest> moduleLookup)
+    {
+        var sourceModuleIds = capability.Metadata.TryGetValue("sourceModuleIds", out var rawSourceModuleIds)
+            ? rawSourceModuleIds.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            : [capability.SourceModuleId];
+
+        return sourceModuleIds
+            .Select(sourceModuleId => moduleLookup.TryGetValue(sourceModuleId, out var module)
+                ? module
+                : throw new InvalidOperationException(
+                    $"Capability '{capability.Key}' references source module '{sourceModuleId}', but that module is not registered in the runtime manifest."))
+            .OrderBy(static module => module.Id, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
     }
 }

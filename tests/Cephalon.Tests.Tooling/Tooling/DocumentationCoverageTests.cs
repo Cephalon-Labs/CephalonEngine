@@ -128,6 +128,223 @@ public sealed class DocumentationCoverageTests
     }
 
     [Fact]
+    public void ObservabilityDependencyProbeDocsMatchRuntimeOwnership()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var sourceRoot = Path.Combine(repositoryRoot, "src");
+        var componentDocsRoot = Path.Combine(repositoryRoot, "docs", "components");
+
+        var providerProjects = Directory
+            .GetDirectories(sourceRoot, "Cephalon.Observability.*Dependencies", SearchOption.TopDirectoryOnly)
+            .Select(Path.GetFileName)
+            .Where(name => !string.Equals(name, "Cephalon.Observability.DependencyHealth.Core", StringComparison.Ordinal))
+            .OrderBy(name => name, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.Equal(18, providerProjects.Length);
+
+        foreach (var projectName in providerProjects)
+        {
+            var projectRoot = Path.Combine(sourceRoot, projectName!);
+            var probeFiles = Directory.GetFiles(
+                Path.Combine(projectRoot, "Services"),
+                "*DependencyHealthProbeHostedService.cs",
+                SearchOption.TopDirectoryOnly);
+            Assert.Single(probeFiles);
+
+            var componentDocPath = Path.Combine(componentDocsRoot, DeriveComponentDocFileName(projectName!));
+            var componentDoc = File.ReadAllText(componentDocPath);
+            Assert.Contains("**Maturity:** `M2`", componentDoc, StringComparison.Ordinal);
+            Assert.Contains("**Ownership:** `provider-managed`", componentDoc, StringComparison.Ordinal);
+            Assert.DoesNotContain("**Maturity:** `M0`", componentDoc, StringComparison.Ordinal);
+            Assert.DoesNotContain("**Ownership:** `taxonomy-only`", componentDoc, StringComparison.Ordinal);
+        }
+
+        var maturityAudit = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "engine-surface-maturity-audit.md"));
+        var conformanceMatrix = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "conformance-matrix.md"));
+
+        Assert.Contains("the eighteen per-provider dependency-health probe packs at `M2`", maturityAudit, StringComparison.Ordinal);
+        Assert.Contains("`Cephalon.Observability.*Dependencies`", conformanceMatrix, StringComparison.Ordinal);
+        Assert.Contains("| M2 | provider-managed | `/engine/dependencies`", conformanceMatrix, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void MultiTenancyInvitationDeliveryProviderDocsMatchRuntimeSurfaces()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var sourceRoot = Path.Combine(repositoryRoot, "src");
+        var componentDocsRoot = Path.Combine(repositoryRoot, "docs", "components");
+
+        var providers = new Dictionary<string, (string Doc, string SurfaceId, string Contributor)>(StringComparer.Ordinal)
+        {
+            ["Cephalon.MultiTenancy.Governance.HttpDelivery"] = (
+                "multi-tenancy-governance-httpdelivery.md",
+                "tenant-invitation-delivery-http",
+                "HttpInvitationDeliveryRuntimeSurfaceContributor.cs"),
+            ["Cephalon.MultiTenancy.Governance.SmtpDelivery"] = (
+                "multi-tenancy-governance-smtpdelivery.md",
+                "tenant-invitation-delivery-smtp",
+                "SmtpInvitationDeliveryRuntimeSurfaceContributor.cs"),
+            ["Cephalon.MultiTenancy.Governance.SendGridDelivery"] = (
+                "multi-tenancy-governance-sendgriddelivery.md",
+                "tenant-invitation-delivery-sendgrid",
+                "SendGridInvitationDeliveryRuntimeSurfaceContributor.cs"),
+            ["Cephalon.MultiTenancy.Governance.MailgunDelivery"] = (
+                "multi-tenancy-governance-mailgundelivery.md",
+                "tenant-invitation-delivery-mailgun",
+                "MailgunInvitationDeliveryRuntimeSurfaceContributor.cs"),
+            ["Cephalon.MultiTenancy.Governance.AmazonSesDelivery"] = (
+                "multi-tenancy-governance-amazonsesdelivery.md",
+                "tenant-invitation-delivery-amazon-ses",
+                "AmazonSesInvitationDeliveryRuntimeSurfaceContributor.cs"),
+            ["Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery"] = (
+                "multi-tenancy-governance-microsoftgraphdelivery.md",
+                "tenant-invitation-delivery-microsoft-graph",
+                "MicrosoftGraphInvitationDeliveryRuntimeSurfaceContributor.cs"),
+            ["Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.AzureIdentity"] = (
+                "multi-tenancy-governance-microsoftgraphdelivery-azureidentity.md",
+                "tenant-invitation-delivery-microsoft-graph-azure-identity",
+                "MicrosoftGraphInvitationDeliveryAzureIdentityRuntimeSurfaceContributor.cs"),
+        };
+
+        foreach (var (projectName, expected) in providers)
+        {
+            var contributorPath = Path.Combine(sourceRoot, projectName, "Services", expected.Contributor);
+            Assert.True(File.Exists(contributorPath), $"Expected runtime surface contributor at '{contributorPath}'.");
+
+            var componentDoc = File.ReadAllText(Path.Combine(componentDocsRoot, expected.Doc));
+            Assert.Contains("**Maturity:** `M2`", componentDoc, StringComparison.Ordinal);
+            Assert.Contains("**Ownership:** `provider-managed`", componentDoc, StringComparison.Ordinal);
+            Assert.Contains(expected.SurfaceId, componentDoc, StringComparison.Ordinal);
+            Assert.Contains(expected.Contributor, componentDoc, StringComparison.Ordinal);
+        }
+
+        var maturityAudit = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "engine-surface-maturity-audit.md"));
+        var conformanceMatrix = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "conformance-matrix.md"));
+
+        Assert.Contains("seven outbound sender/token-provider packs now have sanitized provider runtime surfaces", maturityAudit, StringComparison.Ordinal);
+        Assert.Contains("seven independent outbound sender/token-provider integrations", conformanceMatrix, StringComparison.Ordinal);
+
+        foreach (var surfaceId in providers.Values.Select(provider => provider.SurfaceId))
+        {
+            Assert.Contains(surfaceId, maturityAudit, StringComparison.Ordinal);
+            Assert.Contains(surfaceId, conformanceMatrix, StringComparison.Ordinal);
+        }
+    }
+
+    [Fact]
+    public void EventSourcingProviderDocsMatchRuntimeCatalogContributors()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var sourceRoot = Path.Combine(repositoryRoot, "src");
+        var componentDocsRoot = Path.Combine(repositoryRoot, "docs", "components");
+
+        var providers = new Dictionary<string, (string Doc, string Contributor)>(StringComparer.Ordinal)
+        {
+            ["Cephalon.EventSourcing.Cassandra"] = (
+                "event-sourcing-cassandra.md",
+                "CassandraEventStoreContributor.cs"),
+            ["Cephalon.EventSourcing.ClickHouse"] = (
+                "event-sourcing-clickhouse.md",
+                "ClickHouseEventStoreContributor.cs"),
+            ["Cephalon.EventSourcing.Elasticsearch"] = (
+                "event-sourcing-elasticsearch.md",
+                "ElasticsearchEventStoreContributor.cs"),
+            ["Cephalon.EventSourcing.EntityFramework"] = (
+                "event-sourcing-entityframework.md",
+                "EntityFrameworkEventStoreContributor.cs"),
+            ["Cephalon.EventSourcing.MongoDB"] = (
+                "event-sourcing-mongodb.md",
+                "MongoDbEventStoreContributor.cs"),
+            ["Cephalon.EventSourcing.Nats"] = (
+                "event-sourcing-nats.md",
+                "NatsEventStoreContributor.cs"),
+            ["Cephalon.EventSourcing.Neo4j"] = (
+                "event-sourcing-neo4j.md",
+                "Neo4jEventStoreContributor.cs"),
+            ["Cephalon.EventSourcing.OpenSearch"] = (
+                "event-sourcing-opensearch.md",
+                "OpenSearchEventStoreContributor.cs"),
+            ["Cephalon.EventSourcing.Qdrant"] = (
+                "event-sourcing-qdrant.md",
+                "QdrantEventStoreContributor.cs"),
+            ["Cephalon.EventSourcing.Redis"] = (
+                "event-sourcing-redis.md",
+                "RedisEventStoreContributor.cs"),
+        };
+
+        foreach (var (projectName, expected) in providers)
+        {
+            var contributorPath = Path.Combine(sourceRoot, projectName, "Services", expected.Contributor);
+            Assert.True(File.Exists(contributorPath), $"Expected event-store contributor at '{contributorPath}'.");
+
+            var componentDoc = File.ReadAllText(Path.Combine(componentDocsRoot, expected.Doc));
+            Assert.Contains("**Maturity:** `M1`", componentDoc, StringComparison.Ordinal);
+            Assert.Contains("**Ownership:** `provider-managed`", componentDoc, StringComparison.Ordinal);
+            Assert.Contains(expected.Contributor, componentDoc, StringComparison.Ordinal);
+            Assert.Contains("`event-sourcing` runtime surface", componentDoc, StringComparison.Ordinal);
+        }
+
+        var coreDoc = File.ReadAllText(Path.Combine(componentDocsRoot, "event-sourcing.md"));
+        Assert.Contains("one sanitized runtime entry per contributed provider store", coreDoc, StringComparison.Ordinal);
+        Assert.Contains("Runtime/EventSourcingRuntimeContributor.cs", coreDoc, StringComparison.Ordinal);
+
+        var maturityAudit = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "engine-surface-maturity-audit.md"));
+        var conformanceMatrix = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "conformance-matrix.md"));
+
+        Assert.Contains("sanitized `event-sourcing` runtime-surface entries for all ten provider stores", maturityAudit, StringComparison.Ordinal);
+        Assert.Contains("all ten provider packs contribute sanitized append/read store descriptors", conformanceMatrix, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void DataProviderRuntimeDocsMatchOutboxInboxSurfaceTruth()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var componentDocsRoot = Path.Combine(repositoryRoot, "docs", "components");
+
+        var storeProviderDocs = new[]
+        {
+            "data-cassandra.md",
+            "data-clickhouse.md",
+            "data-elasticsearch.md",
+            "data-mongodb.md",
+            "data-nats.md",
+            "data-neo4j.md",
+            "data-opensearch.md",
+            "data-qdrant.md",
+            "data-redis.md"
+        };
+
+        foreach (var docFile in storeProviderDocs)
+        {
+            var componentDoc = File.ReadAllText(Path.Combine(componentDocsRoot, docFile));
+
+            Assert.Contains("`outbox-producers`", componentDoc, StringComparison.Ordinal);
+            Assert.Contains("`inbox-stores`", componentDoc, StringComparison.Ordinal);
+        }
+
+        foreach (var docFile in new[] { "data-elasticsearch.md", "data-nats.md", "data-neo4j.md", "data-opensearch.md" })
+        {
+            var componentDoc = File.ReadAllText(Path.Combine(componentDocsRoot, docFile));
+
+            Assert.Contains("uriCredentialsConfigured", componentDoc, StringComparison.Ordinal);
+            Assert.Contains("secretProjection = redacted", componentDoc, StringComparison.Ordinal);
+        }
+
+        var conformanceMatrix = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "conformance-matrix.md"));
+        var maturityAudit = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "engine-surface-maturity-audit.md"));
+        var engineComponentDoc = File.ReadAllText(Path.Combine(componentDocsRoot, "engine.md"));
+        var runtimeContractIndex = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "runtime-contract-index.md"));
+
+        Assert.Contains("Provider-visible data catalog/runtime truth", conformanceMatrix, StringComparison.Ordinal);
+        Assert.Contains("`IOutboxCatalog`, `IInboxCatalog`, `ITechnologyRuntimeCatalog`", conformanceMatrix, StringComparison.Ordinal);
+        Assert.DoesNotContain("non-relational data providers (Redis, Neo4j, Cassandra, ClickHouse, Elasticsearch, OpenSearch, Qdrant, Nats, Debezium)", conformanceMatrix, StringComparison.Ordinal);
+        Assert.DoesNotContain("from `M1` catalog-only to `M2`", maturityAudit, StringComparison.Ordinal);
+        Assert.Contains("shared provider-family keys are additive", engineComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("sourceModuleIds", runtimeContractIndex, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void DocsHubLinksToCoreDocumentationSurfaces()
     {
         var docsReadme = File.ReadAllText(Path.Combine(GetRepositoryRoot(), "docs", "README.md"));
