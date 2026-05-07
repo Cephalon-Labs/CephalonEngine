@@ -97,8 +97,21 @@
       "window": "per-PR comparison",
       "targetStatus": "target-declared",
       "baselineStatus": "pending-stable-baseline",
-      "guardrailCoverageStatus": "pending-stable-baseline",
-      "guardrailReferences": []
+      "guardrailCoverageStatus": "guardrail-catalog-mapped",
+      "guardrailReferences": [
+        {
+          "reportFileName": "Cephalon.Benchmarks.Runtime.AspNetCoreRequestLoggingBenchmarks-report.csv",
+          "benchmark": "HandleLoggedJsonRequest"
+        },
+        {
+          "reportFileName": "Cephalon.Benchmarks.Runtime.AspNetCoreRequestLoggingBenchmarks-report.csv",
+          "benchmark": "HandleTruncatedJsonRequest"
+        },
+        {
+          "reportFileName": "Cephalon.Benchmarks.Runtime.AspNetCoreRequestLoggingBenchmarks-report.csv",
+          "benchmark": "HandleConcurrentLoggedJsonRequest"
+        }
+      ]
     },
     {
       "id": "engine.dotnet.restore.wall-time.lock-mode",

@@ -84,7 +84,7 @@ The signed release pipeline at [`.github/workflows/publish-release.yml`](../.git
 ## SRE follow-through
 
 - [ ] Compare the release pass against the SLI catalogue in [`sre-posture.md`](sre-posture.md); any SLI that burned its budget enters the architecture-review-YYYY-MM follow-through tracker per the error-budget freeze policy
-- [ ] `SrePostureEvidence` reports expected guardrail coverage: benchmark-backed SLIs list `guardrail-catalog-mapped` references that exist in `benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json`, while cold-start/request-allocation gaps and non-benchmark SLIs remain pending or not-applicable until a stable-baseline slice lands
+- [ ] `SrePostureEvidence` reports expected guardrail coverage: benchmark-backed SLIs list `guardrail-catalog-mapped` references that exist in `benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json`, the ASP.NET Core request-allocation SLI maps to the three `AspNetCoreRequestLoggingBenchmarks` entries, and the remaining cold-start gaps plus non-benchmark SLIs remain pending or not-applicable until a stable-baseline slice lands
 - [ ] If a hot-path latency or allocation SLI burned more than 25% of its monthly budget within a 7-day window, freeze new feature merges on the affected family until the budget recovers
 - [ ] Test flake rate (`engine.tests.flake-rate.7d`) is within target; quarantine any newly-introduced flaky test within 24 hours
 

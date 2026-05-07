@@ -54,8 +54,8 @@ BeforeAll {
                 TargetDeclaredCount = 11
                 PendingStableBaselineCount = 11
                 StableBaselineCount = 0
-                GuardrailMappedSliCount = 3
-                GuardrailPendingSliCount = 3
+                GuardrailMappedSliCount = 4
+                GuardrailPendingSliCount = 2
                 GuardrailNotApplicableSliCount = 5
                 ReleaseValidationSummaryMode = "release-validation-console-and-scorecard-artifact"
             }
