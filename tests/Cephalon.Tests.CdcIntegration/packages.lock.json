@@ -71,6 +71,17 @@
           "Microsoft.Extensions.Logging.Abstractions": "10.0.0"
         }
       },
+      "Oracle.ManagedDataAccess.Core": {
+        "type": "Direct",
+        "requested": "[23.26.100, )",
+        "resolved": "23.26.100",
+        "contentHash": "ObLgWXTEm1oy40uCVw6eBXSXbQHgpY+BNQN0lzO2GibSpIiCdvVi85DPmNLndprBC4fv2L+YV/xepzLXmv23eA==",
+        "dependencies": {
+          "System.Diagnostics.PerformanceCounter": "8.0.0",
+          "System.DirectoryServices.Protocols": "8.0.2",
+          "System.Security.Cryptography.Pkcs": "8.0.1"
+        }
+      },
       "Snappier": {
         "type": "Direct",
         "requested": "[1.3.1, )",
@@ -91,6 +102,15 @@
         "requested": "[4.11.0, )",
         "resolved": "4.11.0",
         "contentHash": "O3UjdzI42pSpeOV+4IUoy1K+CcR4eUfJ2w5i7B4AG+aamczT2PGsMLpmU3wY5JFLNnfOOgjuyRc9Y5GPqOJZtQ==",
+        "dependencies": {
+          "Testcontainers": "4.11.0"
+        }
+      },
+      "Testcontainers.Oracle": {
+        "type": "Direct",
+        "requested": "[4.11.0, )",
+        "resolved": "4.11.0",
+        "contentHash": "xOZx/+qyfS5PO8DtrZvgOkwqCuJon/Tq8evJ8BXFErO0pwFS5o0YdKBtyrufDSb2xEQQ44lAxG06t1WGIRXk6w==",
         "dependencies": {
           "Testcontainers": "4.11.0"
         }
@@ -3285,17 +3305,6 @@
         "contentHash": "V+i3n8UWMIyC6x6WlhujBQdLNG3KUcIct5m0/s0EN3ahdm9+gP94iQLnkw7NXhGwB97U/s4HISaOjlMXq9LC4Q==",
         "dependencies": {
           "OpenTelemetry": "[1.15.3, 2.0.0)"
-        }
-      },
-      "Oracle.ManagedDataAccess.Core": {
-        "type": "CentralTransitive",
-        "requested": "[23.26.100, )",
-        "resolved": "23.26.100",
-        "contentHash": "ObLgWXTEm1oy40uCVw6eBXSXbQHgpY+BNQN0lzO2GibSpIiCdvVi85DPmNLndprBC4fv2L+YV/xepzLXmv23eA==",
-        "dependencies": {
-          "System.Diagnostics.PerformanceCounter": "8.0.0",
-          "System.DirectoryServices.Protocols": "8.0.2",
-          "System.Security.Cryptography.Pkcs": "8.0.1"
         }
       },
       "Qdrant.Client": {

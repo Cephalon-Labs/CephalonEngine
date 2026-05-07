@@ -12,6 +12,7 @@
 - runs a provider-native hosted service that resolves the starting SCN from the Cephalon-managed checkpoint row or the configured initial posture, validates Oracle database identity plus archive-log posture before LogMiner starts, opens one bounded Oracle LogMiner session over the current SCN range, stages outbox publications for committed table changes, persists the next durable checkpoint only after outbox stage success, and reports runtime posture through the shared `ICdcCaptureRuntimeReporter` surface
 - stores durable Oracle LogMiner checkpoints in a Cephalon-managed checkpoint table, defaulting to `CEPHALON_CDC_CHECKPOINTS`, while preserving additive checkpoint provenance such as `DatabaseId`, `DatabaseUniqueName`, `ResetLogsChangeNumber`, `ArchiveLogMode`, and `SupplementalLogDataMin`
 - preserves authored capture ownership through `CdcCaptureDescriptor.SourceModuleId` while surfacing `metadata.contributorModuleId = "oracle-data"` when the provider pack contributes the descriptor on behalf of another module
+- carries opt-in live integration evidence through `tests/Cephalon.Tests.CdcIntegration`, where `OracleCdc_StagesOutboxAndCommitsCheckpointAgainstLiveLogMiner` runs the provider against a real Oracle LogMiner source rather than a fake transport
 
 ## Main surfaces
 
@@ -184,6 +185,12 @@ The default table name is `CheckpointTableName`.
 | `ArchiveLogMode` | `VARCHAR2(32)` | Archive-log posture observed when the checkpoint was committed |
 | `SupplementalLogDataMin` | `VARCHAR2(32)` | Additive supplemental-log metadata observed when the checkpoint was committed |
 | `UpdatedAtUtc` | `TIMESTAMP WITH TIME ZONE` | UTC timestamp of the last durable checkpoint write |
+
+## Live integration evidence
+
+The dedicated CDC integration lane now includes `OracleCdcIntegrationTests.OracleCdc_StagesOutboxAndCommitsCheckpointAgainstLiveLogMiner`. The test is skipped by default through the shared external-service gate, then runs when `CEPHALON_CDC_EXTERNAL_SERVICES=1` and either `CEPHALON_CDC_ORACLE_CONNECTION_STRING` or `CEPHALON_CDC_TESTCONTAINERS=1` is present.
+
+The pre-provisioned mode expects a database user that can create/drop the test table, add table-level supplemental logging, read `V$DATABASE`, `V$ARCHIVED_LOG`, `V$LOG`, `V$LOGFILE`, and `V$LOGMNR_CONTENTS`, and execute `DBMS_LOGMNR`. The Testcontainers mode uses `gvenzl/oracle-xe:21.3.0-slim-faststart`, enables `ARCHIVELOG`, opens the pluggable database, enables supplemental logging, grants the LogMiner privileges to the app user, inserts a real `ORDERS` row, waits for an outbox message, and verifies shared runtime-state, execution-runtime aggregation, staged LogMiner payload metadata, and durable `commitScn|changeScn|rsId|ssn` checkpoint persistence.
 
 ## Not shipped in this slice
 

@@ -1,7 +1,7 @@
 namespace Cephalon.Tests.CdcIntegration.ExternalServices;
 
 /// <summary>
-/// Marks CDC integration tests that require an external SQL Server/Postgres runtime.
+/// Marks CDC integration tests that require an external provider runtime.
 /// </summary>
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
 public sealed class ExternalCdcServiceFactAttribute : FactAttribute

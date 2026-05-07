@@ -15,8 +15,10 @@
     <PackageReference Include="Microsoft.Data.SqlClient" />
     <PackageReference Include="MySql.Data" />
     <PackageReference Include="Npgsql" />
+    <PackageReference Include="Oracle.ManagedDataAccess.Core" />
     <PackageReference Include="Testcontainers.MsSql" />
     <PackageReference Include="Testcontainers.MySql" />
+    <PackageReference Include="Testcontainers.Oracle" />
     <PackageReference Include="Testcontainers.PostgreSql" />
     <PackageReference Include="coverlet.collector">
       <PrivateAssets>all</PrivateAssets>
@@ -33,6 +35,7 @@
     <ProjectReference Include="..\..\src\Cephalon.Data.MongoDB\Cephalon.Data.MongoDB.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.MySql.SciSharpReplication\Cephalon.Data.MySql.SciSharpReplication.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.MySql\Cephalon.Data.MySql.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Data.Oracle\Cephalon.Data.Oracle.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.Postgres\Cephalon.Data.Postgres.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.SqlServer\Cephalon.Data.SqlServer.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data\Cephalon.Data.csproj" />

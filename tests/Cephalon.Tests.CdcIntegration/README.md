@@ -9,10 +9,11 @@ This project is the focused integration-test lane for provider-backed CDC behavi
 - SQL Server live CDC now runs on the shared external-service gate below. The test creates an isolated SQL Server database, enables native CDC on a real `dbo.orders` table, verifies outbox staging and runtime-state reporting through `Cephalon.Data.SqlServer`, and stays skipped unless a developer or CI job opts into a provider mode.
 - Postgres live CDC now runs on the same external-service gate. The test creates an isolated PostgreSQL schema, table, publication, and logical replication slot, verifies provider-native outbox staging and runtime-state reporting through `Cephalon.Data.Postgres`, confirms slot-backed checkpoint truth, and stays skipped unless a developer or CI job opts into a provider mode.
 - MySQL live CDC now runs on the same external-service gate. The test enables a real row-based binlog source, runs `Cephalon.Data.MySql` with the `Cephalon.Data.MySql.SciSharpReplication` adapter, verifies provider-native outbox staging and runtime-state reporting, confirms durable `binlogFile|position` checkpoint truth, and stays skipped unless a developer or CI job opts into a provider mode.
+- Oracle live CDC now runs on the same external-service gate. The test runs `Cephalon.Data.Oracle` against a real LogMiner source with `ARCHIVELOG` and supplemental logging, verifies provider-native outbox staging and runtime-state reporting, confirms durable `commitScn|changeScn|rsId|ssn` checkpoint truth, and stays skipped unless a developer or CI job opts into a provider mode.
 
 ## External-service gate
 
-The default test command must stay deterministic and must not require Docker, Testcontainers, SQL Server, Postgres, or MySQL. Tests that need external relational runtimes should use `ExternalCdcServiceFactAttribute` from `ExternalServices/` so the lane is discovered but skipped until a developer or CI job opts in. Provider-specific tests should use `ExternalCdcServiceFactAttribute(ExternalCdcServiceProvider.SqlServer)`, `ExternalCdcServiceFactAttribute(ExternalCdcServiceProvider.Postgres)`, or `ExternalCdcServiceFactAttribute(ExternalCdcServiceProvider.MySql)` so enabling the general external lane still skips a provider until that provider has a connection string or Testcontainers mode.
+The default test command must stay deterministic and must not require Docker, Testcontainers, SQL Server, Postgres, MySQL, or Oracle. Tests that need external relational runtimes should use `ExternalCdcServiceFactAttribute` from `ExternalServices/` so the lane is discovered but skipped until a developer or CI job opts in. Provider-specific tests should use `ExternalCdcServiceFactAttribute(ExternalCdcServiceProvider.SqlServer)`, `ExternalCdcServiceFactAttribute(ExternalCdcServiceProvider.Postgres)`, `ExternalCdcServiceFactAttribute(ExternalCdcServiceProvider.MySql)`, or `ExternalCdcServiceFactAttribute(ExternalCdcServiceProvider.Oracle)` so enabling the general external lane still skips a provider until that provider has a connection string or Testcontainers mode.
 
 The shared gate uses these environment variables:
 
@@ -23,6 +24,7 @@ The shared gate uses these environment variables:
 | `CEPHALON_CDC_SQLSERVER_CONNECTION_STRING` | Optional pre-provisioned SQL Server connection string. When present, SQL Server live tests should use it instead of Testcontainers. |
 | `CEPHALON_CDC_POSTGRES_CONNECTION_STRING` | Optional pre-provisioned Postgres connection string. When present, Postgres live tests should use it instead of Testcontainers. |
 | `CEPHALON_CDC_MYSQL_CONNECTION_STRING` | Optional pre-provisioned MySQL connection string. When present, MySQL live tests should use it instead of Testcontainers. |
+| `CEPHALON_CDC_ORACLE_CONNECTION_STRING` | Optional pre-provisioned Oracle connection string. When present, Oracle live tests should use it instead of Testcontainers. The database must already allow LogMiner execution with `ARCHIVELOG`, supplemental logging, catalog reads, and `DBMS_LOGMNR` privileges for that user. |
 
 Provider-specific live tests should prefer a pre-provisioned connection string when present, otherwise use Testcontainers only when both `CEPHALON_CDC_EXTERNAL_SERVICES` and `CEPHALON_CDC_TESTCONTAINERS` are enabled. If neither provider mode resolves, the test should remain skipped rather than silently passing with fake transport coverage.
 
@@ -86,6 +88,26 @@ $env:CEPHALON_CDC_MYSQL_CONNECTION_STRING = 'Server=localhost;Port=3306;Database
 dotnet test .\tests\Cephalon.Tests.CdcIntegration\Cephalon.Tests.CdcIntegration.csproj --no-restore --filter FullyQualifiedName~MySqlCdc_StagesOutboxAndCommitsCheckpointAgainstLiveBinlog --logger "console;verbosity=normal"
 ```
 
+## Oracle live lane
+
+`OracleCdcIntegrationTests.OracleCdc_StagesOutboxAndCommitsCheckpointAgainstLiveLogMiner` proves the Oracle LogMiner runner against a live service. It needs an Oracle database where the login can create and drop an isolated table, add table-level supplemental logging, read `V$DATABASE`, `V$ARCHIVED_LOG`, `V$LOG`, `V$LOGFILE`, and `V$LOGMNR_CONTENTS`, and execute `DBMS_LOGMNR`. In Testcontainers mode the test uses `gvenzl/oracle-xe:21.3.0-slim-faststart`, enables `ARCHIVELOG`, opens the pluggable database, enables supplemental logging, and grants the LogMiner privileges to the app user. In pre-provisioned mode the supplied connection string is used directly and the database must already satisfy those Oracle prerequisites.
+
+To run only the Oracle live lane through Testcontainers:
+
+```powershell
+$env:CEPHALON_CDC_EXTERNAL_SERVICES = '1'
+$env:CEPHALON_CDC_TESTCONTAINERS = '1'
+dotnet test .\tests\Cephalon.Tests.CdcIntegration\Cephalon.Tests.CdcIntegration.csproj --no-restore --filter FullyQualifiedName~OracleCdc_StagesOutboxAndCommitsCheckpointAgainstLiveLogMiner --logger "console;verbosity=normal"
+```
+
+To run only the Oracle live lane against a pre-provisioned service:
+
+```powershell
+$env:CEPHALON_CDC_EXTERNAL_SERVICES = '1'
+$env:CEPHALON_CDC_ORACLE_CONNECTION_STRING = 'User Id=cephalon_cdc;Password=<password>;Data Source=localhost/XEPDB1'
+dotnet test .\tests\Cephalon.Tests.CdcIntegration\Cephalon.Tests.CdcIntegration.csproj --no-restore --filter FullyQualifiedName~OracleCdc_StagesOutboxAndCommitsCheckpointAgainstLiveLogMiner --logger "console;verbosity=normal"
+```
+
 ## Run
 
 ```powershell
@@ -107,5 +129,6 @@ $env:CEPHALON_CDC_EXTERNAL_SERVICES = '1'
 $env:CEPHALON_CDC_SQLSERVER_CONNECTION_STRING = 'Server=localhost;Database=cephalon_cdc;User Id=sa;Password=<password>;TrustServerCertificate=true'
 $env:CEPHALON_CDC_POSTGRES_CONNECTION_STRING = 'Host=localhost;Port=5432;Database=cephalon_cdc;Username=postgres;Password=<password>'
 $env:CEPHALON_CDC_MYSQL_CONNECTION_STRING = 'Server=localhost;Port=3306;Database=cephalon_cdc;User ID=replica;Password=<password>;AllowPublicKeyRetrieval=True;SslMode=Preferred'
+$env:CEPHALON_CDC_ORACLE_CONNECTION_STRING = 'User Id=cephalon_cdc;Password=<password>;Data Source=localhost/XEPDB1'
 dotnet test .\tests\Cephalon.Tests.CdcIntegration\Cephalon.Tests.CdcIntegration.csproj --no-restore --logger "console;verbosity=normal"
 ```

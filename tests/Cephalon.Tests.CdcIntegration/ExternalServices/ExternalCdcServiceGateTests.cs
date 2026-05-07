@@ -12,6 +12,7 @@ public sealed class ExternalCdcServiceGateTests
         Assert.Equal(ExternalCdcServiceMode.Disabled, gate.ResolveSqlServerMode());
         Assert.Equal(ExternalCdcServiceMode.Disabled, gate.ResolvePostgresMode());
         Assert.Equal(ExternalCdcServiceMode.Disabled, gate.ResolveMySqlMode());
+        Assert.Equal(ExternalCdcServiceMode.Disabled, gate.ResolveOracleMode());
         Assert.Contains(ExternalCdcServiceGate.ExternalServicesVariable, ExternalCdcServiceGate.SkipReason, StringComparison.Ordinal);
     }
 
@@ -32,6 +33,7 @@ public sealed class ExternalCdcServiceGateTests
         Assert.Equal(ExternalCdcServiceMode.Disabled, gate.ResolveSqlServerMode());
         Assert.Equal(ExternalCdcServiceMode.Disabled, gate.ResolvePostgresMode());
         Assert.Equal(ExternalCdcServiceMode.Disabled, gate.ResolveMySqlMode());
+        Assert.Equal(ExternalCdcServiceMode.Disabled, gate.ResolveOracleMode());
     }
 
     [Fact]
@@ -47,6 +49,7 @@ public sealed class ExternalCdcServiceGateTests
         Assert.Equal(ExternalCdcServiceMode.Disabled, gate.ResolveSqlServerMode());
         Assert.Equal(ExternalCdcServiceMode.Disabled, gate.ResolvePostgresMode());
         Assert.Equal(ExternalCdcServiceMode.Disabled, gate.ResolveMySqlMode());
+        Assert.Equal(ExternalCdcServiceMode.Disabled, gate.ResolveOracleMode());
     }
 
     [Fact]
@@ -63,6 +66,7 @@ public sealed class ExternalCdcServiceGateTests
         Assert.Equal(ExternalCdcServiceMode.Testcontainers, gate.ResolveSqlServerMode());
         Assert.Equal(ExternalCdcServiceMode.Testcontainers, gate.ResolvePostgresMode());
         Assert.Equal(ExternalCdcServiceMode.Testcontainers, gate.ResolveMySqlMode());
+        Assert.Equal(ExternalCdcServiceMode.Testcontainers, gate.ResolveOracleMode());
     }
 
     [Fact]
@@ -86,6 +90,10 @@ public sealed class ExternalCdcServiceGateTests
             ExternalCdcServiceGate.MySqlConnectionStringVariable,
             gate.GetSkipReason(ExternalCdcServiceProvider.MySql)!,
             StringComparison.Ordinal);
+        Assert.Contains(
+            ExternalCdcServiceGate.OracleConnectionStringVariable,
+            gate.GetSkipReason(ExternalCdcServiceProvider.Oracle)!,
+            StringComparison.Ordinal);
     }
 
     [Fact]
@@ -100,9 +108,11 @@ public sealed class ExternalCdcServiceGateTests
         Assert.Null(gate.GetSkipReason(ExternalCdcServiceProvider.SqlServer));
         Assert.NotNull(gate.GetSkipReason(ExternalCdcServiceProvider.Postgres));
         Assert.NotNull(gate.GetSkipReason(ExternalCdcServiceProvider.MySql));
+        Assert.NotNull(gate.GetSkipReason(ExternalCdcServiceProvider.Oracle));
         Assert.Equal(ExternalCdcServiceMode.PreProvisionedConnectionString, gate.ResolveSqlServerMode());
         Assert.Equal(ExternalCdcServiceMode.Disabled, gate.ResolvePostgresMode());
         Assert.Equal(ExternalCdcServiceMode.Disabled, gate.ResolveMySqlMode());
+        Assert.Equal(ExternalCdcServiceMode.Disabled, gate.ResolveOracleMode());
     }
 
     [Fact]
@@ -114,15 +124,18 @@ public sealed class ExternalCdcServiceGateTests
             [ExternalCdcServiceGate.TestcontainersVariable] = "1",
             [ExternalCdcServiceGate.SqlServerConnectionStringVariable] = " Server=.;Database=cephalon; ",
             [ExternalCdcServiceGate.PostgresConnectionStringVariable] = " Host=localhost;Database=cephalon; ",
-            [ExternalCdcServiceGate.MySqlConnectionStringVariable] = " Server=localhost;Database=cephalon;User ID=root; "
+            [ExternalCdcServiceGate.MySqlConnectionStringVariable] = " Server=localhost;Database=cephalon;User ID=root; ",
+            [ExternalCdcServiceGate.OracleConnectionStringVariable] = " User Id=cephalon;Password=secret;Data Source=localhost/XEPDB1; "
         });
 
         Assert.Equal("Server=.;Database=cephalon;", gate.SqlServerConnectionString);
         Assert.Equal("Host=localhost;Database=cephalon;", gate.PostgresConnectionString);
         Assert.Equal("Server=localhost;Database=cephalon;User ID=root;", gate.MySqlConnectionString);
+        Assert.Equal("User Id=cephalon;Password=secret;Data Source=localhost/XEPDB1;", gate.OracleConnectionString);
         Assert.Equal(ExternalCdcServiceMode.PreProvisionedConnectionString, gate.ResolveSqlServerMode());
         Assert.Equal(ExternalCdcServiceMode.PreProvisionedConnectionString, gate.ResolvePostgresMode());
         Assert.Equal(ExternalCdcServiceMode.PreProvisionedConnectionString, gate.ResolveMySqlMode());
+        Assert.Equal(ExternalCdcServiceMode.PreProvisionedConnectionString, gate.ResolveOracleMode());
     }
 
     [ExternalCdcServiceFact]
@@ -141,5 +154,11 @@ public sealed class ExternalCdcServiceGateTests
     public void MySqlExternalCdcServiceFact_RemainsDiscoverableWhenAProviderModeIsEnabled()
     {
         Assert.NotEqual(ExternalCdcServiceMode.Disabled, ExternalCdcServiceGate.FromEnvironment().ResolveMySqlMode());
+    }
+
+    [ExternalCdcServiceFact(ExternalCdcServiceProvider.Oracle)]
+    public void OracleExternalCdcServiceFact_RemainsDiscoverableWhenAProviderModeIsEnabled()
+    {
+        Assert.NotEqual(ExternalCdcServiceMode.Disabled, ExternalCdcServiceGate.FromEnvironment().ResolveOracleMode());
     }
 }

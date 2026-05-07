@@ -5,5 +5,6 @@ public enum ExternalCdcServiceProvider
     Any,
     SqlServer,
     Postgres,
-    MySql
+    MySql,
+    Oracle
 }
