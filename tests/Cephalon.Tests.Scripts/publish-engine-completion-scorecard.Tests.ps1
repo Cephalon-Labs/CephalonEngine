@@ -90,10 +90,10 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.SreTargetDeclaredCount | Should -Be 11
         $json.Summary.SrePendingStableBaselineCount | Should -Be 11
         $json.Summary.SreStableBaselineCount | Should -Be 0
-        $json.Summary.SreGuardrailMappedSliCount | Should -Be 3
-        $json.Summary.SreGuardrailPendingSliCount | Should -Be 3
+        $json.Summary.SreGuardrailMappedSliCount | Should -Be 4
+        $json.Summary.SreGuardrailPendingSliCount | Should -Be 2
         $json.Summary.SreGuardrailNotApplicableSliCount | Should -Be 5
-        $json.Summary.SreGuardrailReferenceCount | Should -Be 3
+        $json.Summary.SreGuardrailReferenceCount | Should -Be 6
         $json.Summary.SupplyChainEvidenceItemCount | Should -Be 10
         $json.Summary.SupplyChainWorkflowReadyCount | Should -Be 7
         $json.Summary.SupplyChainExternalPolicyPendingCount | Should -Be 3
@@ -202,10 +202,10 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.SrePostureEvidence.TargetDeclaredCount | Should -Be 11
         $json.SrePostureEvidence.PendingStableBaselineCount | Should -Be 11
         $json.SrePostureEvidence.StableBaselineCount | Should -Be 0
-        $json.SrePostureEvidence.GuardrailMappedSliCount | Should -Be 3
-        $json.SrePostureEvidence.GuardrailPendingSliCount | Should -Be 3
+        $json.SrePostureEvidence.GuardrailMappedSliCount | Should -Be 4
+        $json.SrePostureEvidence.GuardrailPendingSliCount | Should -Be 2
         $json.SrePostureEvidence.GuardrailNotApplicableSliCount | Should -Be 5
-        $json.SrePostureEvidence.GuardrailReferenceCount | Should -Be 3
+        $json.SrePostureEvidence.GuardrailReferenceCount | Should -Be 6
         $json.SrePostureEvidence.SourceDocuments | Should -Contain "docs/sre-posture.md"
         $json.SrePostureEvidence.SourceDocuments | Should -Contain "docs/benchmarking.md"
         $json.SrePostureEvidence.ValidationScripts | Should -Contain "scripts/validate-release.ps1"
@@ -217,6 +217,12 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $behaviorLatencySli = $json.SrePostureEvidence.SliRows | Where-Object { $_.Id -eq "engine.behavior.dispatch.latency.p95" }
         $behaviorLatencySli.GuardrailReferences.ReportFileName | Should -Contain "Cephalon.Benchmarks.HotPath.BehaviorDispatchBenchmarks-report.csv"
         $behaviorLatencySli.GuardrailReferences.Benchmark | Should -Contain "DispatchBehavior"
+        $requestAllocationSli = $json.SrePostureEvidence.SliRows | Where-Object { $_.Id -eq "engine.aspnetcore.request.alloc.bytes-per-op" }
+        $requestAllocationSli.GuardrailCoverageStatus | Should -Be "guardrail-catalog-mapped"
+        $requestAllocationSli.GuardrailReferences.ReportFileName | Should -Contain "Cephalon.Benchmarks.Runtime.AspNetCoreRequestLoggingBenchmarks-report.csv"
+        $requestAllocationSli.GuardrailReferences.Benchmark | Should -Contain "HandleLoggedJsonRequest"
+        $requestAllocationSli.GuardrailReferences.Benchmark | Should -Contain "HandleTruncatedJsonRequest"
+        $requestAllocationSli.GuardrailReferences.Benchmark | Should -Contain "HandleConcurrentLoggedJsonRequest"
 
         $json.SupplyChainEvidence.ManifestSchemaVersion | Should -Be "1.0.0"
         $json.SupplyChainEvidence.Status | Should -Be "workflow-ready-external-policy-pending"
@@ -271,7 +277,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "SRE Posture Evidence"
         $markdown | Should -Match "SRE SLIs: 11"
         $markdown | Should -Match "SRE pending stable baselines: 11"
-        $markdown | Should -Match "SRE guardrail-mapped SLIs: 3"
+        $markdown | Should -Match "SRE guardrail-mapped SLIs: 4"
+        $markdown | Should -Match "SRE pending guardrail coverage SLIs: 2"
         $markdown | Should -Match "Guardrail coverage"
         $markdown | Should -Match "Supply-Chain Release Evidence"
         $markdown | Should -Match "Supply-chain evidence items: 10"

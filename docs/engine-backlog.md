@@ -39,6 +39,36 @@ Current focus:
 - treat the `ENG-500` regression closeout as the current suite-stability baseline: provider-native CDC hosting tests now run through a dedicated non-parallel collection, long-running package-publishing process output drains stdout/stderr concurrently, sample REST behavior hosts align with source-generated `/api/v1` behavior endpoints, and the full solution test lane is again green on the current worktree
 - treat the CDC execution-runtime catalog hot path as benchmark-governed: `CdcExecutionRuntimeCatalogBenchmarks` now covers Debezium-managed external runtimes, external observations, repeated managed-connector drift/dry-run/command-issuance filters, and compact multi-selector operator flows against the shared versioned snapshot
 
+### ENG-509 Map ASP.NET Core request allocation SLI to guardrail catalog
+
+Status: done
+Estimate: 1
+Issue: #1131
+Iteration: Sprint 125
+Area: release-readiness / SRE / performance guardrails
+Quality dimensions: Performance, Reliability, Auditability, Maintainability
+
+Why:
+
+- the ASP.NET Core request logging benchmark guardrail catalog already carries allocation caps for logged, truncated, and concurrent request paths
+- `scripts/sre-posture-support.json` still treated `engine.aspnetcore.request.alloc.bytes-per-op` as pending guardrail coverage, so release readback understated the existing benchmark proof
+- release managers need the SRE scorecard to distinguish true cold-start guardrail gaps from allocation guardrails that are already mapped
+
+Delivered:
+
+- mapped `engine.aspnetcore.request.alloc.bytes-per-op` to the three `AspNetCoreRequestLoggingBenchmarks` guardrail catalog entries without promoting any stable SLO baseline
+- updated the generated scorecard/readback expectations to report 4 guardrail-mapped SLIs, 2 pending guardrail-coverage SLIs, 5 not-applicable SLIs, and 6 guardrail references
+- refreshed SRE posture, benchmarking, release checklist, completion scorecard, roadmap, architecture follow-up tracker, and project-memory truth so docs and planning do not drift from the machine-readable manifest
+
+Validation:
+
+- scorecard Pester coverage for SRE guardrail counts and request-allocation references
+- focused release-validation scorecard readback Pester coverage
+- focused Tooling doctor scorecard readback coverage
+- direct engine-completion scorecard artifact publishing
+- release-validation skip-heavy scorecard + public-API gate path
+- `git diff --check`
+
 ### ENG-508 Add validate-release scorecard readback behavior tests
 
 Status: done
