@@ -1,8 +1,10 @@
 using System.Reflection;
+using Cephalon.Abstractions.Technologies;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.Observability.Configuration;
 using Cephalon.Observability.OpenShift.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Exporter;
@@ -69,6 +71,7 @@ public static class OpenShiftHostApplicationBuilderExtensions
         builder.Services.AddSingleton(options);
         builder.Services.AddSingleton<IDiagnosticsConventionContributor, OpenShiftDiagnosticsConventionContributor>();
         builder.Services.AddHostedService<OpenShiftSummaryHostedService>();
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, OpenShiftTelemetryRuntimeContributor>());
 
         var openTelemetry = builder.Services
             .AddOpenTelemetry()

@@ -7,6 +7,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 
 - `Cephalon.Observability.Configuration`
 - `Cephalon.Observability.Hosting`
+- `Cephalon.Observability.Runtime`
 
 <a id="namespace-cephalon-observability-configuration"></a>
 
@@ -243,3 +244,86 @@ Parameters:
 - `services`: The target service collection.
 - `configuration`: The application configuration root.
 - `configure`: An optional callback that can extend or override the configuration-driven observability setup.
+
+<a id="namespace-cephalon-observability-runtime"></a>
+
+## Namespace Cephalon.Observability.Runtime
+
+<a id="type-cephalon-observability-runtime-telemetryexportruntimesurfacefactory"></a>
+
+### `TelemetryExportRuntimeSurfaceFactory`
+
+Creates sanitized runtime-surface projections for Cephalon observability exporter companion packages.
+
+Remarks: The generated metadata intentionally describes configured telemetry intent without exposing raw endpoints, headers, tokens, connection strings, or other deployment secrets.
+
+#### Declaration
+```csharp
+public static class TelemetryExportRuntimeSurfaceFactory
+```
+
+#### Fields
+
+<a id="member-f-cephalon-observability-runtime-telemetryexportruntimesurfacefactory-technologyid"></a>
+
+##### `TechnologyId`
+
+```csharp
+const string TechnologyId
+```
+
+Gets the technology identifier used by Cephalon observability runtime surfaces.
+
+#### Methods
+
+<a id="member-m-cephalon-observability-runtime-telemetryexportruntimesurfacefactory-createbasemetadata-cephalon-observability-configuration-telemetryexportoptions"></a>
+
+##### `CreateBaseMetadata`
+
+```csharp
+Dictionary<string, string> CreateBaseMetadata(TelemetryExportOptions telemetry)
+```
+
+Creates sanitized metadata from shared telemetry export options.
+
+Returns: A mutable metadata dictionary with stable, non-secret telemetry intent values.
+
+Parameters:
+- `telemetry`: The shared telemetry export options to project.
+
+<a id="member-m-cephalon-observability-runtime-telemetryexportruntimesurfacefactory-createsurface-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-observability-configuration-telemetryexportoptions-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `CreateSurface`
+
+```csharp
+TechnologyRuntimeSurface CreateSurface(string surfaceId, string displayName, string description, string entryId, string entryDisplayName, string entryDescription, TelemetryExportOptions telemetry, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a telemetry-export runtime surface from shared telemetry export options.
+
+Returns: A runtime surface that can be exposed through the technology runtime catalog.
+
+Parameters:
+- `surfaceId`: The stable surface identifier within the observability technology profile.
+- `displayName`: The operator-facing display name for the surface.
+- `description`: A human-readable description of the surface.
+- `entryId`: The stable entry identifier for the active exporter or provider.
+- `entryDisplayName`: The operator-facing display name for the entry.
+- `entryDescription`: A human-readable description of the entry.
+- `telemetry`: The shared telemetry export options to project.
+- `metadata`: Additional sanitized metadata to merge into the entry.
+
+<a id="member-m-cephalon-observability-runtime-telemetryexportruntimesurfacefactory-resolvesharedendpointmode-cephalon-observability-configuration-telemetryexportoptions"></a>
+
+##### `ResolveSharedEndpointMode`
+
+```csharp
+string ResolveSharedEndpointMode(TelemetryExportOptions telemetry)
+```
+
+Resolves the shared telemetry endpoint mode without returning the configured endpoint value.
+
+Returns: A stable mode string describing whether a shared endpoint or self-hosted defaults are active.
+
+Parameters:
+- `telemetry`: The shared telemetry export options to inspect.

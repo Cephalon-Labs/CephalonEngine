@@ -1,8 +1,10 @@
 using System.Reflection;
+using Cephalon.Abstractions.Technologies;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.Observability.AlibabaCloud.Configuration;
 using Cephalon.Observability.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Exporter;
@@ -71,6 +73,7 @@ public static class AlibabaCloudHostApplicationBuilderExtensions
         builder.Services.AddSingleton(options);
         builder.Services.AddSingleton<IDiagnosticsConventionContributor, AlibabaCloudDiagnosticsConventionContributor>();
         builder.Services.AddHostedService<AlibabaCloudSummaryHostedService>();
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, AlibabaCloudTelemetryRuntimeContributor>());
 
         var openTelemetry = builder.Services
             .AddOpenTelemetry()

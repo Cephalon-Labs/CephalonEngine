@@ -5649,6 +5649,9 @@ Browse the published API surface by public member.
 - [Create](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventtypedescriptor-create-1-system-string-system-collections-generic-ienumerable-system-string): `Methods` on `EventTypeDescriptor` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Create&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Creates a descriptor for an event type using the default `System.Text.Json` generic serializer.
   - `EventTypeDescriptor Create<TEvent>(string name, IEnumerable<string> aliases)`
+- [CreateBaseMetadata](cephalon-observability.md#member-m-cephalon-observability-runtime-telemetryexportruntimesurfacefactory-createbasemetadata-cephalon-observability-configuration-telemetryexportoptions): `Methods` on `TelemetryExportRuntimeSurfaceFactory` in `Cephalon.Observability.Runtime` (`Cephalon.Observability`) [Browse](browse.html?q=CreateBaseMetadata&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Runtime&scope=members)
+  - Creates sanitized metadata from shared telemetry export options.
+  - `Dictionary<string, string> CreateBaseMetadata(TelemetryExportOptions telemetry)`
 - [Created](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorresult-created-1-0-system-string-system-string): `Methods` on `BehaviorResult` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Created&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates a created result with a payload value.
   - `BehaviorResult<T> Created<T>(T value, string message, string code)`
@@ -5712,6 +5715,9 @@ Browse the published API surface by public member.
 - [CreateSnapshot](cephalon-engine.md#member-m-cephalon-engine-localization-localizedtextcatalog-createsnapshot-system-string): `Methods` on `LocalizedTextCatalog` in `Cephalon.Engine.Localization` (`Cephalon.Engine`) [Browse](browse.html?q=CreateSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Localization&scope=members)
   - Creates a serialization-friendly snapshot of the merged localized resources.
   - `LocalizedResourcesSnapshot CreateSnapshot(string culture)`
+- [CreateSurface](cephalon-observability.md#member-m-cephalon-observability-runtime-telemetryexportruntimesurfacefactory-createsurface-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-observability-configuration-telemetryexportoptions-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `TelemetryExportRuntimeSurfaceFactory` in `Cephalon.Observability.Runtime` (`Cephalon.Observability`) [Browse](browse.html?q=CreateSurface&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Runtime&scope=members)
+  - Creates a telemetry-export runtime surface from shared telemetry export options.
+  - `TechnologyRuntimeSurface CreateSurface(string surfaceId, string displayName, string description, string entryId, string entryDisplayName, string entryDescription, TelemetryExportOptions telemetry, IReadOnlyDictionary<string, string> metadata)`
 - [CreateWithJsonTypeInfo](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventtypedescriptor-createwithjsontypeinfo-1-system-text-json-serialization-metadata-jsontypeinfo-0-system-string-system-collections-generic-ienumerable-system-string): `Methods` on `EventTypeDescriptor` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=CreateWithJsonTypeInfo&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Creates a descriptor for an event type using source-generated `JsonTypeInfo<T>` metadata.
   - `EventTypeDescriptor CreateWithJsonTypeInfo<TEvent>(JsonTypeInfo<TEvent> jsonTypeInfo, string name, IEnumerable<string> aliases)`
@@ -23691,6 +23697,9 @@ Browse the published API surface by public member.
 - [ResolverUri](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantdomainownershipdnstxtproofcollectionresult-resolveruri): `Properties` on `TenantDomainOwnershipDnsTxtProofCollectionResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ResolverUri&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the resolver URI used to collect the DNS TXT proof.
   - `Uri ResolverUri { get; }`
+- [ResolveSharedEndpointMode](cephalon-observability.md#member-m-cephalon-observability-runtime-telemetryexportruntimesurfacefactory-resolvesharedendpointmode-cephalon-observability-configuration-telemetryexportoptions): `Methods` on `TelemetryExportRuntimeSurfaceFactory` in `Cephalon.Observability.Runtime` (`Cephalon.Observability`) [Browse](browse.html?q=ResolveSharedEndpointMode&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Runtime&scope=members)
+  - Resolves the shared telemetry endpoint mode without returning the configured endpoint value.
+  - `string ResolveSharedEndpointMode(TelemetryExportOptions telemetry)`
 - [ResolveSharedWrite](cephalon-data-entityframework.md#member-m-cephalon-data-entityframework-configuration-entityframeworkdatabaseroleresolver-resolvesharedwrite-system-iserviceprovider): `Methods` on `EntityFrameworkDatabaseRoleResolver` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=ResolveSharedWrite&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Resolves the shared write role used when one `DbContext` type serves both reads and writes.
   - `EntityFrameworkDatabaseRoleContext ResolveSharedWrite(IServiceProvider serviceProvider)`
@@ -27507,6 +27516,9 @@ Browse the published API surface by public member.
 - [TechnologyId](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-technologyruntimesurface-technologyid): `Properties` on `TechnologyRuntimeSurface` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=TechnologyId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the identifier of the technology profile that owns this surface.
   - `string TechnologyId { get; }`
+- [TechnologyId](cephalon-observability.md#member-f-cephalon-observability-runtime-telemetryexportruntimesurfacefactory-technologyid): `Fields` on `TelemetryExportRuntimeSurfaceFactory` in `Cephalon.Observability.Runtime` (`Cephalon.Observability`) [Browse](browse.html?q=TechnologyId&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Runtime&scope=members)
+  - Gets the technology identifier used by Cephalon observability runtime surfaces.
+  - `const string TechnologyId`
 - [TechnologyRuntimeCatalogSnapshot](cephalon-engine.md#member-m-cephalon-engine-technologies-technologyruntimecatalogsnapshot-ctor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologyruntimesurface): `Constructors` on `TechnologyRuntimeCatalogSnapshot` in `Cephalon.Engine.Technologies` (`Cephalon.Engine`) [Browse](browse.html?q=TechnologyRuntimeCatalogSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Technologies&scope=members)
   - Initializes a new instance of the `TechnologyRuntimeCatalogSnapshot` class.
   - `TechnologyRuntimeCatalogSnapshot(IReadOnlyList<TechnologyRuntimeSurface> surfaces)`

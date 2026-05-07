@@ -1,8 +1,10 @@
 using System.Reflection;
+using Cephalon.Abstractions.Technologies;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.Observability.Configuration;
 using Cephalon.Observability.Tanzu.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Exporter;
@@ -71,6 +73,7 @@ public static class TanzuHostApplicationBuilderExtensions
         builder.Services.AddSingleton(options);
         builder.Services.AddSingleton<IDiagnosticsConventionContributor, TanzuDiagnosticsConventionContributor>();
         builder.Services.AddHostedService<TanzuSummaryHostedService>();
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, TanzuTelemetryRuntimeContributor>());
 
         var openTelemetry = builder.Services
             .AddOpenTelemetry()

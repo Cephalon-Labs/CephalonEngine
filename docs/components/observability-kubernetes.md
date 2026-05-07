@@ -10,12 +10,14 @@
 - Kubernetes resource defaults such as cluster, namespace, pod, node, and container attributes
 - optional in-cluster collector service discovery when no shared endpoint is configured
 - optional HTTPS trusted-CA bundle handling for OTLP/HTTP traces and metrics against shared or in-cluster collectors
+- a sanitized `telemetry-export-kubernetes` runtime surface for `/engine/technology-surfaces` and `/engine/snapshot`
 
 ## Main surfaces
 
 - `Configuration/KubernetesTelemetryExportOptions.cs`
 - `Hosting/KubernetesHostApplicationBuilderExtensions.cs`
 - `Hosting/KubernetesSummaryHostedService.cs`
+- `Hosting/KubernetesTelemetryRuntimeContributor.cs`
 
 ## Source structure
 
@@ -25,6 +27,8 @@
 ## How it fits
 
 This companion package stays outside `Cephalon.Engine` and `Cephalon.Observability` on purpose. It keeps generic Kubernetes collector discovery, service-DNS assumptions, and cluster-local trust handling in a reusable package that hosts can opt into without pulling vendor-specific cloud logic back into the engine core.
+
+When the package is activated, it contributes the `telemetry-export-kubernetes` runtime surface so operators can see the Kubernetes collector pack is active without exposing service endpoints, headers, or trust material.
 
 Use this package when a deployment targets a platform-neutral Kubernetes environment or a self-managed cluster and wants an explicit in-cluster collector path on top of the shared `Engine:Observability:Telemetry` contract. When a deployment needs vendor-specific propagation, hosted resource defaults, or managed-ingestion semantics, pair that same shared contract with a more specific companion such as `Cephalon.Observability.Aws`, `Cephalon.Observability.Gcp`, `Cephalon.Observability.AzureMonitor`, `Cephalon.Observability.OpenShift`, `Cephalon.Observability.DigitalOcean`, or `Cephalon.Observability.Tanzu` instead of overloading this generic Kubernetes baseline.
 

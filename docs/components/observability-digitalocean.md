@@ -12,6 +12,7 @@
 - optional OTLP headers and optional HTTPS trusted-CA bundle handling for OTLP/HTTP traces and metrics
 - best-effort Droplet metadata detection for `host.id`, `host.name`, and `cloud.region` when teams enable it explicitly
 - startup diagnostics that summarize the active DigitalOcean export mode without logging secrets
+- a sanitized `telemetry-export-digitalocean` runtime surface for `/engine/technology-surfaces` and `/engine/snapshot`
 
 ## Main surfaces
 
@@ -19,6 +20,7 @@
 - `Hosting/DigitalOceanHostApplicationBuilderExtensions.cs`
 - `Hosting/DigitalOceanSummaryHostedService.cs`
 - `Hosting/DigitalOceanDropletResourceDetector.cs`
+- `Hosting/DigitalOceanTelemetryRuntimeContributor.cs`
 
 ## Source structure
 
@@ -26,6 +28,8 @@
 - `Hosting`
 
 ## How it fits
+
+When the package is activated, it contributes the `telemetry-export-digitalocean` runtime surface so operators can see the DigitalOcean observability pack is active without exposing collector endpoints, headers, or trusted-CA paths.
 
 This package stays outside `Cephalon.Engine` and `Cephalon.Observability` on purpose. The engine still owns diagnostics names and lifecycle signals, `Cephalon.Observability` still owns the shared telemetry contract, and this companion package layers DigitalOcean-specific collector discovery, best-effort metadata defaults, and hosted resource defaults on top of that same OTLP baseline.
 

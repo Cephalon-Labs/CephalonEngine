@@ -1,9 +1,11 @@
 using System.Reflection;
+using Cephalon.Abstractions.Technologies;
 using System.Text;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.Observability.Configuration;
 using Cephalon.Observability.GrafanaCloud.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Exporter;
@@ -71,6 +73,7 @@ public static class GrafanaCloudHostApplicationBuilderExtensions
         builder.Services.AddSingleton(options);
         builder.Services.AddSingleton<IDiagnosticsConventionContributor, GrafanaCloudDiagnosticsConventionContributor>();
         builder.Services.AddHostedService<GrafanaCloudSummaryHostedService>();
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, GrafanaCloudTelemetryRuntimeContributor>());
 
         var openTelemetry = builder.Services
             .AddOpenTelemetry()

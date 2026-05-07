@@ -788,6 +788,10 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Observability.RedisDependencies](cephalon-observability-redisdependencies.md#namespace-cephalon-observability-redisdependencies-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.RedisDependencies&namespace=Cephalon.Observability.RedisDependencies.Hosting)
 
+## `Cephalon.Observability.Runtime`
+
+- [Cephalon.Observability](cephalon-observability.md#namespace-cephalon-observability-runtime): 1 public types [Browse](browse.html?assembly=Cephalon.Observability&namespace=Cephalon.Observability.Runtime)
+
 ## `Cephalon.Observability.Serilog.Hosting`
 
 - [Cephalon.Observability.Serilog](cephalon-observability-serilog.md#namespace-cephalon-observability-serilog-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Observability.Serilog&namespace=Cephalon.Observability.Serilog.Hosting)

@@ -1,8 +1,10 @@
 using System.Reflection;
+using Cephalon.Abstractions.Technologies;
 using Cephalon.Diagnostics;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.Observability.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Exporter;
@@ -61,6 +63,9 @@ public static class OpenTelemetryHostApplicationBuilderExtensions
         var serviceName = ResolveServiceName(builder.Environment.ApplicationName);
         var serviceVersion = ResolveServiceVersion();
         var exporterProtocol = ResolveExporterProtocol(telemetry.Protocol);
+
+        builder.Services.AddSingleton(telemetry);
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, OpenTelemetryTelemetryRuntimeContributor>());
 
         var openTelemetry = builder.Services
             .AddOpenTelemetry()

@@ -59,7 +59,7 @@ The route prefix `/engine` is reserved for Cephalon engine introspection. App-ow
 | `GET /packages` | `Cephalon.AspNetCore` | loaded package manifests | base |
 | `GET /technologies` | `Cephalon.AspNetCore` | technology selections from manifest | base |
 | `GET /technology-catalog` | `Cephalon.AspNetCore` | registered technology catalog | optional |
-| `GET /technology-surfaces` | `Cephalon.AspNetCore` | runtime technology capability surfaces (companion governance surfaces such as `tenant-memberships`, `tenant-invitations`, `tenant-domain-ownership`, `tenant-governance-actions`, and `tenant-administration` are projected here as `surfaceId` drill-downs rather than top-level `/engine/*` routes; data providers also project `data-management` CDC surfaces such as `cdc-captures` and `cdc-capture-runtimes` here) | optional |
+| `GET /technology-surfaces` | `Cephalon.AspNetCore` | runtime technology capability surfaces (companion governance surfaces such as `tenant-memberships`, `tenant-invitations`, `tenant-domain-ownership`, `tenant-governance-actions`, and `tenant-administration` are projected here as `surfaceId` drill-downs rather than top-level `/engine/*` routes; data providers also project `data-management` CDC surfaces such as `cdc-captures` and `cdc-capture-runtimes` here; observability exporter and logging packs project sanitized `telemetry-export-*` and `logging-provider-serilog` active-pack surfaces here) | optional |
 | `GET /patterns` | `Cephalon.AspNetCore` | pattern definitions (cell-based, strangler-fig, BFF, ...) | base |
 | `GET /databases` | `Cephalon.AspNetCore` | configured databases | base |
 | `GET /database-topology` | `Cephalon.AspNetCore` | operational database topology | base |

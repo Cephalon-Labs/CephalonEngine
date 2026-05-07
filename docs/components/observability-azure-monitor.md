@@ -11,12 +11,14 @@
 - optional `DefaultAzureCredential` authentication on top of the configured connection string
 - explicit hosted Azure resource defaults for `cloud.provider`, `cloud.platform`, and `deployment.environment.name`
 - startup diagnostics that summarize the active Azure Monitor export mode without logging secrets
+- a sanitized `telemetry-export-azure-monitor` runtime surface for `/engine/technology-surfaces` and `/engine/snapshot`
 
 ## Main surfaces
 
 - `Configuration/AzureMonitorExportOptions.cs`
 - `Hosting/AzureMonitorHostApplicationBuilderExtensions.cs`
 - `Hosting/AzureMonitorSummaryHostedService.cs`
+- `Hosting/AzureMonitorTelemetryRuntimeContributor.cs`
 
 ## Source structure
 
@@ -26,6 +28,8 @@
 ## How it fits
 
 This package stays outside `Cephalon.Engine` and `Cephalon.Observability` on purpose. The engine still owns the diagnostics names and lifecycle signals, `Cephalon.Observability` still owns the shared telemetry contract, and this companion package turns that shared contract into a reusable Azure Monitor / Application Insights export path for ASP.NET Core or worker hosts.
+
+When the package is activated, it contributes the `telemetry-export-azure-monitor` runtime surface so operators can see the Azure Monitor export pack is active without exposing the Application Insights connection string.
 
 The Azure slice keeps vendor-specific auth and hosted-platform defaults separate from the cloud-neutral OTLP package. Hosts that want a generic collector path can keep using `Cephalon.Observability.OpenTelemetry`, while hosts that want Azure-native exporter wiring can opt into this package and configure `Engine:Observability:Telemetry:AzureMonitor`.
 

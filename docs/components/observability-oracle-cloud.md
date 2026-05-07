@@ -10,12 +10,14 @@
 - explicit hosted Oracle Cloud resource defaults for Compute, OKE, and Functions deployments
 - an opt-in Oracle Cloud APM managed-ingestion path for traces and metrics over OTLP/HTTP by using the documented data-upload endpoint and data-key headers
 - startup diagnostics that summarize the active Oracle Cloud export mode without logging secrets
+- a sanitized `telemetry-export-oracle-cloud` runtime surface for `/engine/technology-surfaces` and `/engine/snapshot`
 
 ## Main surfaces
 
 - `Configuration/OracleCloudTelemetryExportOptions.cs`
 - `Hosting/OracleCloudHostApplicationBuilderExtensions.cs`
 - `Hosting/OracleCloudSummaryHostedService.cs`
+- `Hosting/OracleCloudTelemetryRuntimeContributor.cs`
 
 ## Source structure
 
@@ -25,6 +27,8 @@
 ## How it fits
 
 This package stays outside `Cephalon.Engine` and `Cephalon.Observability` on purpose. The engine still owns diagnostics names and lifecycle signals, `Cephalon.Observability` still owns the shared telemetry contract, and this companion package layers Oracle Cloud-specific hosted defaults and Oracle Cloud APM managed-ingestion wiring on top of the same OTLP baseline.
+
+When the package is activated, it contributes the `telemetry-export-oracle-cloud` runtime surface so operators can see the Oracle Cloud observability pack is active without exposing upload endpoints, headers, or data keys.
 
 The Oracle Cloud slice is intentionally explicit about its two modes. If a host already has a shared OTLP collector or gateway path, the package keeps using the shared `Endpoint` or `UseSelfHostedDefaults` flow and only adds hosted Oracle Cloud resource defaults. If the host wants Oracle Cloud APM direct managed ingestion instead, it can enable `Engine:Observability:Telemetry:OracleCloud:UseManagedOpenTelemetryIngestion`, keep the protocol on `otlp/http`, and configure the APM `DataUploadEndpoint` plus signal-specific data keys. That direct managed path covers traces and metrics only; logs stay on the collector path, Oracle Log Analytics, or another runtime-specific route.
 

@@ -1,4 +1,7 @@
+using Cephalon.Abstractions.Technologies;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
@@ -54,6 +57,7 @@ public static class SerilogHostApplicationBuilderExtensions
             loggerConfiguration.Enrich.FromLogContext();
             configure?.Invoke(services, loggerConfiguration);
         });
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, SerilogLoggingRuntimeContributor>());
 
         return builder;
     }

@@ -10,12 +10,14 @@
 - explicit hosted Huawei Cloud resource defaults for ECS, CCE, and FunctionGraph deployments
 - an opt-in Huawei Cloud APM managed trace-ingestion path over OTLP/gRPC plus the required `Authentication` header
 - startup diagnostics that summarize the active Huawei Cloud export mode without logging secrets
+- a sanitized `telemetry-export-huawei-cloud` runtime surface for `/engine/technology-surfaces` and `/engine/snapshot`
 
 ## Main surfaces
 
 - `Configuration/HuaweiCloudTelemetryExportOptions.cs`
 - `Hosting/HuaweiCloudHostApplicationBuilderExtensions.cs`
 - `Hosting/HuaweiCloudSummaryHostedService.cs`
+- `Hosting/HuaweiCloudTelemetryRuntimeContributor.cs`
 
 ## Source structure
 
@@ -25,6 +27,8 @@
 ## How it fits
 
 This package stays outside `Cephalon.Engine` and `Cephalon.Observability` on purpose. The engine still owns diagnostics names and lifecycle signals, `Cephalon.Observability` still owns the shared telemetry contract, and this companion package layers Huawei Cloud-specific hosted defaults and managed APM trace-ingestion wiring on top of the same OTLP baseline.
+
+When the package is activated, it contributes the `telemetry-export-huawei-cloud` runtime surface so operators can see the Huawei Cloud observability pack is active without exposing collector endpoints or authentication headers.
 
 The Huawei Cloud slice is intentionally explicit about its two modes. If a host already has a shared OTLP collector or gateway path, the package keeps using the shared `Endpoint` or `UseSelfHostedDefaults` flow and only adds hosted Huawei Cloud resource defaults. If the host wants Huawei Cloud APM direct trace ingestion instead, it can enable `Engine:Observability:Telemetry:HuaweiCloud:UseApmManagedTraceIngestion`, keep the protocol on `otlp` or `otlp/grpc`, and configure both `ApmEndpoint` and `AuthenticationToken`. That direct managed path is trace-only for now; logs and metrics stay on the collector or another runtime-specific route.
 

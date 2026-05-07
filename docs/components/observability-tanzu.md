@@ -11,12 +11,14 @@
 - an opt-in in-cluster proxy-service path for trace-focused handoff when no shared endpoint is configured
 - optional OTLP headers and optional HTTPS trusted-CA bundle handling for OTLP/HTTP traces and metrics
 - startup diagnostics that summarize the active Tanzu export mode without logging secrets
+- a sanitized `telemetry-export-tanzu` runtime surface for `/engine/technology-surfaces` and `/engine/snapshot`
 
 ## Main surfaces
 
 - `Configuration/TanzuTelemetryExportOptions.cs`
 - `Hosting/TanzuHostApplicationBuilderExtensions.cs`
 - `Hosting/TanzuSummaryHostedService.cs`
+- `Hosting/TanzuTelemetryRuntimeContributor.cs`
 
 ## Source structure
 
@@ -26,6 +28,8 @@
 ## How it fits
 
 This package stays outside `Cephalon.Engine` and `Cephalon.Observability` on purpose. The engine still owns diagnostics names and lifecycle signals, `Cephalon.Observability` still owns the shared telemetry contract, and this companion package layers Tanzu-specific proxy inputs and hosted resource defaults on top of that same OTLP baseline.
+
+When the package is activated, it contributes the `telemetry-export-tanzu` runtime surface so operators can see the Tanzu observability pack is active without exposing proxy endpoints, headers, or trust material.
 
 The Tanzu slice is intentionally explicit about its modes. If a host already has a shared OTLP collector, gateway, or route, the package keeps using the shared `Endpoint` or `UseSelfHostedDefaults` flow and only adds Tanzu resource defaults such as cluster name, namespace, pod name, deployment environment, and the chosen hosted-platform stamp for `tkg`, `tkgi`, or `tap`.
 

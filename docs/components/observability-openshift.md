@@ -11,12 +11,14 @@
 - an opt-in in-cluster collector-service path for operator-managed OpenShift collectors when no shared endpoint is configured
 - optional OTLP headers and optional HTTPS trusted-CA bundle handling for OTLP/HTTP traces and metrics
 - startup diagnostics that summarize the active OpenShift export mode without logging secrets
+- a sanitized `telemetry-export-openshift` runtime surface for `/engine/technology-surfaces` and `/engine/snapshot`
 
 ## Main surfaces
 
 - `Configuration/OpenShiftTelemetryExportOptions.cs`
 - `Hosting/OpenShiftHostApplicationBuilderExtensions.cs`
 - `Hosting/OpenShiftSummaryHostedService.cs`
+- `Hosting/OpenShiftTelemetryRuntimeContributor.cs`
 
 ## Source structure
 
@@ -26,6 +28,8 @@
 ## How it fits
 
 This package stays outside `Cephalon.Engine` and `Cephalon.Observability` on purpose. The engine still owns diagnostics names and lifecycle signals, `Cephalon.Observability` still owns the shared telemetry contract, and this companion package layers OpenShift-specific collector discovery, trust material, and hosted resource defaults on top of that same OTLP baseline.
+
+When the package is activated, it contributes the `telemetry-export-openshift` runtime surface so operators can see the OpenShift observability pack is active without exposing collector service endpoints, headers, or trust material.
 
 The OpenShift slice is intentionally explicit about its modes. If a host already has a shared OTLP collector, route, or gateway path, the package keeps using the shared `Endpoint` or `UseSelfHostedDefaults` flow and only adds OpenShift resource defaults such as cluster name, namespace, pod name, and deployment environment. If the host instead wants a cluster-local collector-service path, it can enable `Engine:Observability:Telemetry:OpenShift:UseInClusterCollectorService`, configure `CollectorServiceName`, and let the package build the in-cluster `svc.cluster.local` endpoint by using either the explicit collector namespace or the workload namespace.
 

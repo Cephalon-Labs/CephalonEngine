@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using Cephalon.Abstractions.Technologies;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.Observability.Serilog.Hosting;
 using Microsoft.AspNetCore.Builder;
@@ -118,6 +119,29 @@ public sealed class SerilogHostingTests
         var entry = Assert.Single(sink.Events);
         var transport = Assert.IsType<ScalarValue>(entry.Properties["Transport"]);
         Assert.Equal("RestApi", transport.Value);
+    }
+
+    [Fact]
+    public void AddCephalonSerilogProjectsLoggingProviderRuntimeSurface()
+    {
+        var sink = new TestSerilogSink();
+        var builder = Host.CreateApplicationBuilder();
+        builder.AddCephalonSerilog((_, loggerConfiguration) => loggerConfiguration
+            .MinimumLevel.Information()
+            .WriteTo.Sink(sink));
+
+        using var host = builder.Build();
+        var surface = Assert.Single(
+            host.Services.GetServices<ITechnologyRuntimeContributor>()
+                .Select(contributor => contributor.DescribeRuntimeSurface()),
+            surface => surface.SurfaceId == "logging-provider-serilog");
+        var entry = Assert.Single(surface.Entries);
+
+        Assert.Equal("observability", surface.TechnologyId);
+        Assert.Equal("serilog", entry.Id);
+        Assert.Equal("Cephalon.Observability.Serilog", entry.Metadata["pack"]);
+        Assert.Equal("logging-provider", entry.Metadata["integrationKind"]);
+        Assert.Equal("redacted", entry.Metadata["secretProjection"]);
     }
 
     [Fact]

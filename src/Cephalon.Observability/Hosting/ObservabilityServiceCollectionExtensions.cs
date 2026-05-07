@@ -1,4 +1,6 @@
+using Cephalon.Abstractions.Technologies;
 using Cephalon.Observability.Configuration;
+using Cephalon.Observability.Runtime;
 using Cephalon.Engine.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -59,6 +61,7 @@ public static class ObservabilityServiceCollectionExtensions
     {
         services.TryAddSingleton(options);
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, ObservabilityDiagnosticsConventionContributor>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, TelemetryExportRuntimeContributor>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, ManifestSummaryHostedService>());
 
         return services;

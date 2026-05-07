@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-07T03:01:10.9350505+00:00",
+  "GeneratedAtUtc": "2026-05-07T03:27:43.5177916+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -335,8 +335,8 @@
       "Category": "Hosts",
       "Description": "Operational diagnostics and telemetry conventions for hosts.",
       "FileName": "cephalon-observability.md",
-      "NamespaceCount": 2,
-      "TypeCount": 3
+      "NamespaceCount": 3,
+      "TypeCount": 4
     },
     {
       "AssemblyName": "Cephalon.Observability.AlibabaCloud",
@@ -1998,6 +1998,13 @@
       "AssemblyName": "Cephalon.Observability.RedisDependencies",
       "FileName": "cephalon-observability-redisdependencies.md",
       "AnchorId": "namespace-cephalon-observability-redisdependencies-hosting",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Observability.Runtime",
+      "AssemblyName": "Cephalon.Observability",
+      "FileName": "cephalon-observability.md",
+      "AnchorId": "namespace-cephalon-observability-runtime",
       "TypeCount": 1
     },
     {
@@ -17233,6 +17240,21 @@
         "Fields": 0,
         "Properties": 7,
         "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "TelemetryExportRuntimeSurfaceFactory",
+      "NamespaceName": "Cephalon.Observability.Runtime",
+      "AssemblyName": "Cephalon.Observability",
+      "FileName": "cephalon-observability.md",
+      "AnchorId": "type-cephalon-observability-runtime-telemetryexportruntimesurfacefactory",
+      "Declaration": "public static class TelemetryExportRuntimeSurfaceFactory",
+      "Summary": "Creates sanitized runtime-surface projections for Cephalon observability exporter companion packages.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 1,
+        "Properties": 0,
+        "Methods": 3
       }
     },
     {
@@ -39767,6 +39789,17 @@
       "Summary": "Creates a descriptor for an event type using the default \u0060System.Text.Json\u0060 generic serializer."
     },
     {
+      "DisplayName": "CreateBaseMetadata",
+      "Category": "Methods",
+      "DeclaringTypeName": "TelemetryExportRuntimeSurfaceFactory",
+      "NamespaceName": "Cephalon.Observability.Runtime",
+      "AssemblyName": "Cephalon.Observability",
+      "FileName": "cephalon-observability.md",
+      "AnchorId": "member-m-cephalon-observability-runtime-telemetryexportruntimesurfacefactory-createbasemetadata-cephalon-observability-configuration-telemetryexportoptions",
+      "Signature": "Dictionary\u003Cstring, string\u003E CreateBaseMetadata(TelemetryExportOptions telemetry)",
+      "Summary": "Creates sanitized metadata from shared telemetry export options."
+    },
+    {
       "DisplayName": "Created",
       "Category": "Methods",
       "DeclaringTypeName": "BehaviorResult",
@@ -39996,6 +40029,17 @@
       "AnchorId": "member-m-cephalon-engine-localization-localizedtextcatalog-createsnapshot-system-string",
       "Signature": "LocalizedResourcesSnapshot CreateSnapshot(string culture)",
       "Summary": "Creates a serialization-friendly snapshot of the merged localized resources."
+    },
+    {
+      "DisplayName": "CreateSurface",
+      "Category": "Methods",
+      "DeclaringTypeName": "TelemetryExportRuntimeSurfaceFactory",
+      "NamespaceName": "Cephalon.Observability.Runtime",
+      "AssemblyName": "Cephalon.Observability",
+      "FileName": "cephalon-observability.md",
+      "AnchorId": "member-m-cephalon-observability-runtime-telemetryexportruntimesurfacefactory-createsurface-system-string-system-string-system-string-system-string-system-string-system-string-cephalon-observability-configuration-telemetryexportoptions-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "TechnologyRuntimeSurface CreateSurface(string surfaceId, string displayName, string description, string entryId, string entryDisplayName, string entryDescription, TelemetryExportOptions telemetry, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a telemetry-export runtime surface from shared telemetry export options."
     },
     {
       "DisplayName": "CreateWithJsonTypeInfo",
@@ -105780,6 +105824,17 @@
       "Summary": "Gets the resolver URI used to collect the DNS TXT proof."
     },
     {
+      "DisplayName": "ResolveSharedEndpointMode",
+      "Category": "Methods",
+      "DeclaringTypeName": "TelemetryExportRuntimeSurfaceFactory",
+      "NamespaceName": "Cephalon.Observability.Runtime",
+      "AssemblyName": "Cephalon.Observability",
+      "FileName": "cephalon-observability.md",
+      "AnchorId": "member-m-cephalon-observability-runtime-telemetryexportruntimesurfacefactory-resolvesharedendpointmode-cephalon-observability-configuration-telemetryexportoptions",
+      "Signature": "string ResolveSharedEndpointMode(TelemetryExportOptions telemetry)",
+      "Summary": "Resolves the shared telemetry endpoint mode without returning the configured endpoint value."
+    },
+    {
       "DisplayName": "ResolveSharedWrite",
       "Category": "Methods",
       "DeclaringTypeName": "EntityFrameworkDatabaseRoleResolver",
@@ -119756,6 +119811,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-technologyruntimesurface-technologyid",
       "Signature": "string TechnologyId { get; }",
       "Summary": "Gets the identifier of the technology profile that owns this surface."
+    },
+    {
+      "DisplayName": "TechnologyId",
+      "Category": "Fields",
+      "DeclaringTypeName": "TelemetryExportRuntimeSurfaceFactory",
+      "NamespaceName": "Cephalon.Observability.Runtime",
+      "AssemblyName": "Cephalon.Observability",
+      "FileName": "cephalon-observability.md",
+      "AnchorId": "member-f-cephalon-observability-runtime-telemetryexportruntimesurfacefactory-technologyid",
+      "Signature": "const string TechnologyId",
+      "Summary": "Gets the technology identifier used by Cephalon observability runtime surfaces."
     },
     {
       "DisplayName": "TechnologyRuntimeCatalogSnapshot",

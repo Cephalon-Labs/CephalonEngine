@@ -10,10 +10,12 @@
 - configuration-driven Serilog activation from the standard top-level `Serilog` section
 - code-based sink and enricher extension points for hosts that need more than configuration alone
 - correlation-friendly request scopes from Cephalon ASP.NET Core HTTP logging so Serilog sinks can follow request and trace context without a separate logging abstraction
+- a sanitized `logging-provider-serilog` runtime surface for `/engine/technology-surfaces` and `/engine/snapshot`
 
 ## Main surfaces
 
 - `Hosting/SerilogHostApplicationBuilderExtensions.cs`
+- `Hosting/SerilogLoggingRuntimeContributor.cs`
 
 ## Source structure
 
@@ -24,6 +26,8 @@
 This package stays outside `Cephalon.Engine` and `Cephalon.Observability` on purpose. The engine and baseline observability package still log through `ILogger`, while this companion package gives ASP.NET Core and worker hosts one explicit way to swap in Serilog sinks, enrichers, and formatting without inventing a Cephalon-specific logging abstraction.
 
 When ASP.NET Core hosts enable Cephalon's request/response logging, the resulting request scope flows through `LogContext` via the same shared `ILogger` pipeline. That keeps `RequestId`, `TraceId`, and `TraceParent` available to Serilog sinks and enrichers without creating a Cephalon-specific logger API.
+
+When the package is activated, it contributes the `logging-provider-serilog` runtime surface so operators can see that Serilog owns the active `ILogger` provider path without exposing sink secrets.
 
 ## Related docs
 

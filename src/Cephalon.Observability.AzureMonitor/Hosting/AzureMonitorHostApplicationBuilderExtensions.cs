@@ -1,10 +1,12 @@
 using System.Reflection;
 using Azure.Identity;
+using Cephalon.Abstractions.Technologies;
 using Azure.Monitor.OpenTelemetry.Exporter;
 using Cephalon.Engine.Diagnostics;
 using Cephalon.Observability.AzureMonitor.Configuration;
 using Cephalon.Observability.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using OpenTelemetry.Logs;
@@ -63,6 +65,7 @@ public static class AzureMonitorHostApplicationBuilderExtensions
         builder.Services.AddSingleton(options);
         builder.Services.AddSingleton<IDiagnosticsConventionContributor, AzureMonitorDiagnosticsConventionContributor>();
         builder.Services.AddHostedService<AzureMonitorSummaryHostedService>();
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, AzureMonitorTelemetryRuntimeContributor>());
 
         var serviceName = ResolveServiceName(builder.Environment.ApplicationName);
         var serviceVersion = ResolveServiceVersion();

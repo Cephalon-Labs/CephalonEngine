@@ -31,6 +31,7 @@ src/YourCompany.Cephalon.Observability.Cloudflare/
     CloudflareHostApplicationBuilderExtensions.cs
     CloudflareDiagnosticsConventionContributor.cs
     CloudflareSummaryHostedService.cs
+    CloudflareTelemetryRuntimeContributor.cs
 ```
 
 Recommended responsibilities:
@@ -49,6 +50,9 @@ Recommended responsibilities:
   - publish package-specific event ids through `IDiagnosticsConventionContributor`
 - `Hosting/*SummaryHostedService.cs`
   - emit a one-time startup summary that describes the active provider mode without logging secrets
+- `Hosting/*TelemetryRuntimeContributor.cs`
+  - publish sanitized active-pack runtime truth through `ITechnologyRuntimeContributor`, using `TelemetryExportRuntimeSurfaceFactory` when the shared telemetry contract is enough
+  - never project raw endpoints, headers, tokens, connection strings, sink secrets, or credential material
 
 ## Shared contract pattern
 
@@ -109,6 +113,7 @@ public static class CloudflareHostApplicationBuilderExtensions
         builder.Services.AddSingleton(options);
         builder.Services.AddSingleton<IDiagnosticsConventionContributor, CloudflareDiagnosticsConventionContributor>();
         builder.Services.AddHostedService<CloudflareSummaryHostedService>();
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, CloudflareTelemetryRuntimeContributor>());
 
         // Add provider-specific OTLP/export/auth/resource wiring here.
 
@@ -124,6 +129,7 @@ public static class CloudflareHostApplicationBuilderExtensions
 - do not create a second Cephalon logging abstraction; continue to use the existing `ILogger` pipeline
 - publish a startup summary so operators can see the effective provider mode, signal selection, and trust/auth mode without leaking secrets
 - publish diagnostics conventions so `/engine/diagnostics` and `/engine/snapshot` can stay introspectable when the package is active
+- publish a sanitized runtime surface so `/engine/technology-surfaces` and `/engine/snapshot` can show that the package is active without exposing deployment secrets
 - reject unsupported protocol or signal combinations with explicit exceptions instead of silently degrading behavior
 - keep hosted defaults, auth rules, trust bundles, and resource attributes inside the provider package instead of pushing them into `Cephalon.Engine`
 - document whether the package supports logs, metrics, traces, or only a subset of signals
