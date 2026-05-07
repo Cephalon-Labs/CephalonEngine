@@ -14,6 +14,7 @@ using Cephalon.Tests.Support;
 
 namespace Cephalon.Tests.Hosting;
 
+[Collection(SerilogHostingCollectionDefinition.Name)]
 public sealed class SerilogHostingTests
 {
     private static readonly Action<ILogger, string, Exception?> LogBlueprintMessage =
@@ -177,13 +178,45 @@ public sealed class SerilogHostingTests
         var response = await client.SendAsync(request);
 
         Assert.True(response.IsSuccessStatusCode);
-        var entry = Assert.Single(sink.Events, item => item.MessageTemplate.Text == "Endpoint detail emitted");
+        var entry = await WaitForLogEventAsync(sink, static item => item.MessageTemplate.Text == "Endpoint detail emitted");
         var requestId = Assert.IsType<ScalarValue>(entry.Properties["RequestId"]);
         Assert.False(string.IsNullOrWhiteSpace(requestId.Value?.ToString()));
         var traceParent = Assert.IsType<ScalarValue>(entry.Properties["TraceParent"]);
         Assert.Equal("00-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-bbbbbbbbbbbbbbbb-01", traceParent.Value);
         var traceId = Assert.IsType<ScalarValue>(entry.Properties["TraceId"]);
         Assert.Equal("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", traceId.Value);
+    }
+
+    private static async Task<LogEvent> WaitForLogEventAsync(
+        TestSerilogSink sink,
+        Func<LogEvent, bool> predicate)
+    {
+        using var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        while (!cancellationTokenSource.IsCancellationRequested)
+        {
+            var matches = sink.Events.Where(predicate).ToArray();
+            if (matches.Length == 1)
+            {
+                return matches[0];
+            }
+
+            if (matches.Length > 1)
+            {
+                throw new Xunit.Sdk.XunitException(
+                    $"Expected one Serilog event matching the predicate, but found {matches.Length}.");
+            }
+
+            try
+            {
+                await Task.Delay(50, cancellationTokenSource.Token).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (cancellationTokenSource.IsCancellationRequested)
+            {
+                break;
+            }
+        }
+
+        throw new TimeoutException("Timed out while waiting for the expected Serilog event.");
     }
 
     private sealed class TestSerilogSink : ILogEventSink

@@ -15,6 +15,7 @@
 - projects the outbox descriptor through the `event-driven-integration` technology surface as `outbox-producers` with `provider: "redis"` and `mode: "sorted-set"` when that technology is active
 - projects the inbox descriptor through the same technology surface as `inbox-stores` when the technology is active
 - publishes capability metadata `data.redis`, `data.key-value-store`, and optionally `data.outbox.redis` and `data.inbox.redis` introspectable at runtime through the manifest
+- is covered by the opt-in Redis live-provider canary in `tests/Cephalon.Tests.ProviderIntegration`, which runs against a real Redis runtime through either Testcontainers or `CEPHALON_PROVIDER_REDIS_CONNECTION_STRING`
 
 ## Main surfaces
 
@@ -148,6 +149,12 @@ When the `event-driven-integration` technology is active, the following entries 
 |---------|----------|---------------------|
 | `outbox-producers` | `redis-outbox` | `redis` |
 | `inbox-stores` | `redis-inbox` | `redis` |
+
+## Live provider validation
+
+`tests/Cephalon.Tests.ProviderIntegration` contains `RedisProviderIntegrationTests.RedisProvider_StagesOutboxInboxDispatchAndEventStreamAgainstLiveRedis`. The test is discovered by default but skipped unless `CEPHALON_PROVIDER_EXTERNAL_SERVICES=1` is set and either `CEPHALON_PROVIDER_TESTCONTAINERS=1` or `CEPHALON_PROVIDER_REDIS_CONNECTION_STRING` is provided.
+
+When enabled, the canary proves the Redis data pack against a live Redis runtime: engine registration, `data.redis` / `data.outbox.redis` / `data.inbox.redis` capability publication, outbox and inbox descriptor metadata, Hash + Sorted Set outbox persistence, idempotent duplicate `EnqueueAsync`, dispatch-store `ReadPendingAsync` / `ApplyReportAsync`, Set-backed inbox idempotency, and shared use of the active `IConnectionMultiplexer`.
 
 ## Not shipped in this slice
 

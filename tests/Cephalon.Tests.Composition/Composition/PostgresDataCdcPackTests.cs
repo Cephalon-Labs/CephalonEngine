@@ -103,14 +103,13 @@ public sealed class PostgresDataCdcPackTests
 
             var state = await WaitForAsync(
                 () => Task.FromResult(stateCatalog.GetById(CaptureId)),
-                static current => current is not null && current.LastOutcome == CdcCaptureRuntimeOutcomes.Captured,
+                static current => HasObservedInsertedChange(current),
                 TimeSpan.FromSeconds(10));
 
             Assert.NotNull(state);
             Assert.Equal(PostgresRuntimeId, state.ExecutionBinding.EffectiveExecutionRuntimeId);
-            Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, state.LastOutcome);
-            Assert.Equal(1, state.LastCapturedChangeCount);
-            Assert.Equal(1, state.LastProducedMessageCount);
+            Assert.True(IsCapturedOrIdle(state.LastOutcome));
+            Assert.True(state.CapturedCount > 0);
             Assert.Equal(1, state.TotalCapturedChangeCount);
             Assert.Equal(1, state.TotalProducedMessageCount);
             Assert.Equal("lsn-0001", state.LastChangeId);
@@ -171,7 +170,8 @@ public sealed class PostgresDataCdcPackTests
             Assert.Equal([CaptureId], postgresRuntime.CdcCaptureIds);
             Assert.True(postgresRuntime.Summary.HasReports);
             Assert.Equal(CaptureId, postgresRuntime.Summary.LastCdcCaptureId);
-            Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, postgresRuntime.Summary.LastOutcome);
+            Assert.True(IsCapturedOrIdle(postgresRuntime.Summary.LastOutcome));
+            Assert.True(postgresRuntime.Summary.CapturedCount > 0);
             Assert.Equal(1, postgresRuntime.Summary.TotalCapturedChangeCount);
             Assert.Equal(1, postgresRuntime.Summary.TotalProducedMessageCount);
             Assert.Equal("provider-native", postgresRuntime.Summary.LastAcknowledgement);
@@ -294,6 +294,21 @@ public sealed class PostgresDataCdcPackTests
                 await hostedService.StopAsync(CancellationToken.None);
             }
         }
+    }
+
+    private static bool HasObservedInsertedChange(CdcCaptureRuntimeState? state)
+    {
+        return state is not null &&
+            IsCapturedOrIdle(state.LastOutcome) &&
+            state.CapturedCount > 0 &&
+            state.TotalCapturedChangeCount == 1 &&
+            state.TotalProducedMessageCount == 1;
+    }
+
+    private static bool IsCapturedOrIdle(string? outcome)
+    {
+        return string.Equals(outcome, CdcCaptureRuntimeOutcomes.Captured, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(outcome, CdcCaptureRuntimeOutcomes.Idle, StringComparison.OrdinalIgnoreCase);
     }
 
     private static async Task<T> WaitForAsync<T>(

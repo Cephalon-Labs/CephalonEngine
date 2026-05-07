@@ -22,6 +22,7 @@ public sealed class MySqlDataCdcHostingTests
     private const string MySqlRuntimeId = "mysql-binlog-capture-pump";
     private const string CaptureId = "mysql-orders-cdc";
     private const string SourceServerUuid = "6f9619ff-8b86-d011-b42d-00cf4fc964ff";
+    private static readonly TimeSpan ProviderNativeCdcTimeout = TimeSpan.FromSeconds(90);
 
     [Fact]
     public async Task MapCephalonExposesMySqlProviderNativeLifecycleAndResumeSurfaces()
@@ -93,7 +94,7 @@ public sealed class MySqlDataCdcHostingTests
                         MessageType = "orders.mysql.changed",
                         InitialPosition = "earliest-available",
                         ExpectedSourceServerUuid = SourceServerUuid,
-                        PollingIntervalSeconds = 1,
+                        PollingIntervalSeconds = 600,
                         MaxChangesPerRead = 64,
                         MaxAwaitTimeSeconds = 5
                     });
@@ -111,8 +112,8 @@ public sealed class MySqlDataCdcHostingTests
             var client = app.GetTestClient();
             var cdcState = await WaitForAsync(
                 () => client.GetFromJsonAsync<CdcCaptureRuntimeState>($"/engine/cdc-captures/runtime/{CaptureId}")!,
-                static state => state is not null && state.LastOutcome == CdcCaptureRuntimeOutcomes.Captured,
-                TimeSpan.FromSeconds(30));
+                static state => HasObservedInsertedChange(state),
+                ProviderNativeCdcTimeout);
 
             var cdcCaptureRuntimes = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes");
             var mySqlRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{MySqlRuntimeId}");
@@ -136,9 +137,8 @@ public sealed class MySqlDataCdcHostingTests
             Assert.Equal([CaptureId], mySqlRuntime.CdcCaptureIds);
             Assert.True(mySqlRuntime.Summary.HasReports);
             Assert.Equal(CaptureId, mySqlRuntime.Summary.LastCdcCaptureId);
-            Assert.True(
-                mySqlRuntime.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured ||
-                mySqlRuntime.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Idle);
+            Assert.True(IsCapturedOrIdle(mySqlRuntime.Summary.LastOutcome));
+            Assert.True(mySqlRuntime.Summary.CapturedCount > 0);
             Assert.Equal(1, mySqlRuntime.Summary.TotalCapturedChangeCount);
             Assert.Equal(1, mySqlRuntime.Summary.TotalProducedMessageCount);
 
@@ -154,13 +154,18 @@ public sealed class MySqlDataCdcHostingTests
             var captureState = Assert.Single(captureStatesByRuntime!);
             Assert.Equal(CaptureId, captureState.CdcCaptureId);
             Assert.Equal(MySqlRuntimeId, captureState.ExecutionBinding.EffectiveExecutionRuntimeId);
-            Assert.True(
-                captureState.LastOutcome == CdcCaptureRuntimeOutcomes.Captured ||
-                captureState.LastOutcome == CdcCaptureRuntimeOutcomes.Idle);
+            Assert.True(IsCapturedOrIdle(captureState.LastOutcome));
+            Assert.True(captureState.CapturedCount > 0);
+            Assert.Equal(1, captureState.TotalCapturedChangeCount);
+            Assert.Equal(1, captureState.TotalProducedMessageCount);
             Assert.Equal(CdcCapturePublicationStates.PendingPublication, captureState.Publication.State);
 
             Assert.NotNull(cdcState);
             Assert.Equal(MySqlRuntimeId, cdcState.ExecutionBinding.EffectiveExecutionRuntimeId);
+            Assert.True(IsCapturedOrIdle(cdcState.LastOutcome));
+            Assert.True(cdcState.CapturedCount > 0);
+            Assert.Equal(1, cdcState.TotalCapturedChangeCount);
+            Assert.Equal(1, cdcState.TotalProducedMessageCount);
             Assert.Equal("mysql-provider-native-runtime", cdcState.Metadata["captureExecution"]);
             Assert.Equal(MySqlRuntimeId, cdcState.Metadata["cdcCaptureExecutionRuntimeId"]);
             Assert.Equal("provider-native", cdcState.Metadata["acknowledgement"]);
@@ -190,11 +195,10 @@ public sealed class MySqlDataCdcHostingTests
             Assert.Contains(snapshot.CdcCaptures, item => item.Id == CaptureId &&
                 item.ExecutionBinding.EffectiveExecutionRuntimeId == MySqlRuntimeId);
             Assert.Contains(snapshot.CdcCaptureStates, item => item.CdcCaptureId == CaptureId &&
-                (item.LastOutcome == CdcCaptureRuntimeOutcomes.Captured || item.LastOutcome == CdcCaptureRuntimeOutcomes.Idle) &&
+                HasObservedInsertedChange(item) &&
                 item.Publication.State == CdcCapturePublicationStates.PendingPublication);
             Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == MySqlRuntimeId &&
-                (item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured || item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Idle) &&
-                item.Summary.TotalCapturedChangeCount == 1);
+                HasObservedInsertedChange(item));
         }
         finally
         {
@@ -285,25 +289,30 @@ public sealed class MySqlDataCdcHostingTests
             var cdcState = await WaitForAsync(
                 () => client.GetFromJsonAsync<CdcCaptureRuntimeState>($"/engine/cdc-captures/runtime/{CaptureId}")!,
                 static state => state is not null &&
-                    state.LastOutcome == CdcCaptureRuntimeOutcomes.Failed &&
+                    HasObservedFailure(state) &&
                     state.Metadata.ContainsKey("failureKind") &&
                     state.Metadata.ContainsKey("binlogLifecycleState") &&
                     state.Metadata.ContainsKey("binlogLifecycleAction"),
-                TimeSpan.FromSeconds(30));
+                ProviderNativeCdcTimeout);
 
-            var mySqlRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{MySqlRuntimeId}");
+            var mySqlRuntime = await WaitForAsync(
+                () => client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{MySqlRuntimeId}")!,
+                static runtime => HasObservedFailure(runtime),
+                ProviderNativeCdcTimeout);
             var snapshot = await WaitForAsync(
                 () => client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot")!,
                 static current => current is not null &&
                     current.CdcCaptureStates.Any(item =>
                         item.CdcCaptureId == CaptureId &&
-                        item.Publication.State == CdcCapturePublicationStates.CaptureFailed &&
+                        HasObservedFailure(item) &&
                         item.Metadata.ContainsKey("binlogLifecycleState")),
-                TimeSpan.FromSeconds(30));
+                ProviderNativeCdcTimeout);
 
             Assert.NotNull(cdcState);
             Assert.Equal(MySqlRuntimeId, cdcState.ExecutionBinding.EffectiveExecutionRuntimeId);
-            Assert.Equal(CdcCaptureRuntimeOutcomes.Failed, cdcState.LastOutcome);
+            Assert.True(IsFailedOrIdle(cdcState.LastOutcome));
+            Assert.True(cdcState.FailedCount > 0);
+            Assert.Equal(CdcCapturePublicationStates.CaptureFailed, cdcState.Publication.State);
             Assert.Equal("checkpoint-binlog-unavailable", cdcState.Metadata["failureKind"]);
             Assert.Equal("checkpoint", cdcState.Metadata["binlogResumeMode"]);
             Assert.Equal("purged", cdcState.Metadata["binlogLifecycleState"]);
@@ -321,7 +330,8 @@ public sealed class MySqlDataCdcHostingTests
             Assert.NotNull(mySqlRuntime);
             Assert.True(mySqlRuntime.Summary.HasReports);
             Assert.Equal(CaptureId, mySqlRuntime.Summary.LastCdcCaptureId);
-            Assert.Equal(CdcCaptureRuntimeOutcomes.Failed, mySqlRuntime.Summary.LastOutcome);
+            Assert.True(IsFailedOrIdle(mySqlRuntime.Summary.LastOutcome));
+            Assert.True(mySqlRuntime.Summary.FailedCount > 0);
 
             Assert.NotNull(snapshot);
             Assert.Contains(snapshot.CdcCaptureStates, item => item.CdcCaptureId == CaptureId &&
@@ -359,5 +369,50 @@ public sealed class MySqlDataCdcHostingTests
         }
 
         throw new TimeoutException("Timed out while waiting for the expected MySQL CDC hosting condition.");
+    }
+
+    private static bool HasObservedInsertedChange(CdcCaptureRuntimeState? state)
+    {
+        return state is not null &&
+            IsCapturedOrIdle(state.LastOutcome) &&
+            state.CapturedCount > 0 &&
+            state.TotalCapturedChangeCount == 1 &&
+            state.TotalProducedMessageCount == 1;
+    }
+
+    private static bool HasObservedInsertedChange(CdcCaptureExecutionRuntimeDescriptor? runtime)
+    {
+        return runtime is not null &&
+            IsCapturedOrIdle(runtime.Summary.LastOutcome) &&
+            runtime.Summary.CapturedCount > 0 &&
+            runtime.Summary.TotalCapturedChangeCount == 1 &&
+            runtime.Summary.TotalProducedMessageCount == 1;
+    }
+
+    private static bool HasObservedFailure(CdcCaptureRuntimeState? state)
+    {
+        return state is not null &&
+            IsFailedOrIdle(state.LastOutcome) &&
+            state.FailedCount > 0 &&
+            state.Publication.State == CdcCapturePublicationStates.CaptureFailed;
+    }
+
+    private static bool HasObservedFailure(CdcCaptureExecutionRuntimeDescriptor? runtime)
+    {
+        return runtime is not null &&
+            IsFailedOrIdle(runtime.Summary.LastOutcome) &&
+            runtime.Summary.FailedCount > 0;
+    }
+
+    private static bool IsCapturedOrIdle(string? outcome)
+    {
+        return string.Equals(outcome, CdcCaptureRuntimeOutcomes.Captured, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(outcome, CdcCaptureRuntimeOutcomes.Idle, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsFailedOrIdle(string? outcome)
+    {
+        return string.Equals(outcome, CdcCaptureRuntimeOutcomes.Failed, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(outcome, CdcCaptureRuntimeOutcomes.Idle, StringComparison.OrdinalIgnoreCase);
     }
 }

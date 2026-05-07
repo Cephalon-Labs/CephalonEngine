@@ -22,6 +22,11 @@ public sealed class TestHarnessSurfaceTests
                 return;
             }
 
+            if (type.IsDefined(typeof(CollectionDefinitionAttribute), inherit: true))
+            {
+                return;
+            }
+
             Assert.DoesNotContain(".Support", type.Namespace ?? string.Empty, StringComparison.Ordinal);
             Assert.EndsWith("Tests", type.Name, StringComparison.Ordinal);
             Assert.Contains(

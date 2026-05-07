@@ -17,13 +17,15 @@ This roadmap exists so the framework can answer four questions consistently:
 
 ## Layered test posture
 
-The repository ships five test projects under `tests/` plus one benchmark project under `benchmarks/`. Each layer answers a different question:
+The repository ships six .NET test projects under `tests/`, one Pester-based scripts suite under `tests/Cephalon.Tests.Scripts`, and one benchmark project under `benchmarks/`. Each layer answers a different question:
 
 | Project | Layer | What it proves |
 | --- | --- | --- |
 | [`tests/Cephalon.Tests.Composition`](../tests/Cephalon.Tests.Composition) | Composition | The engine builder, module registries, runtime catalogs, and source-generator literals compose correctly under the public DI seams without booting a host. |
 | [`tests/Cephalon.Tests.Hosting`](../tests/Cephalon.Tests.Hosting) | Hosting integration | A real `WebApplicationBuilder` / `HostApplicationBuilder` boots and the engine's published HTTP / hosted-service / runtime-catalog surfaces match the documented contract. |
 | [`tests/Cephalon.Tests.Tooling`](../tests/Cephalon.Tests.Tooling) | Tooling and contract | The shipped tooling (reference-docs generator, package-surface assertions, manifest validators, public-API delta helpers) produces deterministic output on the current `src/` tree. |
+| [`tests/Cephalon.Tests.CdcIntegration`](../tests/Cephalon.Tests.CdcIntegration) | CDC provider integration | Provider-native CDC paths run against real data-system runtimes while the default lane remains deterministic through explicit external-service gates. |
+| [`tests/Cephalon.Tests.ProviderIntegration`](../tests/Cephalon.Tests.ProviderIntegration) | Provider integration | Provider-backed data, eventing, event-sourcing, and companion-pack surfaces that need a real infrastructure runtime are discovered by default but run only when an explicit provider gate is enabled. |
 | [`tests/Cephalon.Tests.Scripts`](../tests/Cephalon.Tests.Scripts) | Scripts | The PowerShell / bash scripts under `scripts/` are testable units rather than opaque automation; behavior changes flow through real assertions. |
 | [`tests/Cephalon.Tests.Support`](../tests/Cephalon.Tests.Support) | Shared support | Reusable test modules (e.g. `IdentityAuthorizationTestModule`, `IdentityDecisionMatrixTestModule`) consumed across the four execution layers above. Not an execution layer itself. |
 | [`benchmarks/Cephalon.Benchmarks`](../benchmarks/Cephalon.Benchmarks) | Performance | Per-package guardrail benchmarks tracked by the SLI catalog in [`sre-posture.md`](sre-posture.md). |
@@ -111,13 +113,23 @@ Quality dimension: **Reliability + Availability + Data Integrity** (the resilien
 
 Quality dimension: **Performance + Reliability + Maintainability + Auditability** (benchmark guardrail over the CDC operator hot path).
 
+### #11 — Redis provider-backed data + event-sourcing live canary (medium priority, **shipped through `ENG-501`**)
+
+`ENG-501` adds `tests/Cephalon.Tests.ProviderIntegration` as the dedicated opt-in provider-integration lane for non-CDC provider behavior that must execute against real infrastructure. The first canary, `RedisProviderIntegrationTests.RedisProvider_StagesOutboxInboxDispatchAndEventStreamAgainstLiveRedis`, proves `Cephalon.Data.Redis` and `Cephalon.EventSourcing.Redis` against one live Redis runtime: engine registration, manifest capabilities, outbox and inbox descriptors, event-stream descriptor projection, Redis Hash / Sorted Set / Set / Stream persistence, idempotent outbox and inbox writes, dispatch-store success reporting, ordered event replay, and optimistic-concurrency rejection.
+
+The default project run remains deterministic and Docker-free. Live execution is gated by `CEPHALON_PROVIDER_EXTERNAL_SERVICES=1` plus either `CEPHALON_PROVIDER_TESTCONTAINERS=1` or `CEPHALON_PROVIDER_REDIS_CONNECTION_STRING`; the `CEPHALON_PROVIDER_INTEGRATION` and `CEPHALON_REDIS_CONNECTION_STRING` aliases are accepted for developer ergonomics.
+
+The closeout validation also hardened the surrounding provider/runtime suite: relational provider-native CDC composition and hosting tests assert capture totals and checkpoints while tolerating the legitimate captured-to-idle transition, Tooling child-process tests run process-spawning cases non-parallel and drain stdout/stderr with bounded timeouts, and the solution-level lane now passes with ProviderIntegration `11` passed / `3` skipped, CdcIntegration `11` passed / `8` skipped, Composition `807/807`, Hosting `750/750`, and Tooling `357/357`.
+
+Quality dimension: **Reliability + Compatibility + Auditability + Data Integrity** (provider contract).
+
 ## Test-flake quarantine queue
 
 When `engine.tests.flake-rate.7d` exceeds the target, the affected test enters a quarantine queue per the *Test flake budget* rule in [`sre-posture.md`](sre-posture.md): `[Skip]`-attribute the failing test with a tracking comment within 24 hours, then either fix or delete within 7 days.
 
 | Test | Project | First observed | Quarantine action | Deadline |
 | --- | --- | --- | --- | --- |
-| Provider-native CDC hosting tests plus startup-failure health window | `Cephalon.Tests.Hosting` | `May 7, 2026` full-suite validation | Resolved through `ENG-500`: provider-native CDC hosting tests now share a dedicated non-parallel collection, CDC runtime waits use deterministic suite-level windows, and the startup-failure policy test uses a 30-second restart-backoff assertion window instead of racing a two-second window | Closed in the same regression-closeout slice |
+| Provider-native CDC hosting/composition timing plus Tooling child-process lanes | `Cephalon.Tests.Hosting`, `Cephalon.Tests.Composition`, `Cephalon.Tests.Tooling` | `May 7, 2026` full-suite validation | Resolved through `ENG-500` / `ENG-501`: provider-native CDC tests now assert observed totals/checkpoints across captured-to-idle transitions, CDC runtime waits use deterministic suite-level windows, the startup-failure policy test uses a 30-second restart-backoff assertion window, and Tooling child-process tests drain stdout/stderr with bounded timeouts while process-spawning cases run non-parallel | Closed in the same regression-closeout slice |
 | `DebeziumDataCdcPackTests` (4 failures) | `Cephalon.Tests.Composition` | Pre-`v0.1.0-preview` | Resolved through `ENG-488`: shared execution-runtime filters now reuse a versioned snapshot over indexed capture ownership, and the Debezium regression refreshes after later reports | Closed before the GA release that follows `v0.1.0-preview` |
 
 The queue is empty.

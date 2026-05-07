@@ -47,7 +47,6 @@ using Cephalon.Engine.Trust;
 using Cephalon.Eventing.Registration;
 using Cephalon.Eventing.Services;
 using Cephalon.Abstractions.Capabilities;
-using Cephalon.Cli;
 using Cephalon.ReferenceModule.Operations.Registration;
 using Cephalon.ReferenceDocs.Generation;
 using Cephalon.ReferenceDocs.IO;
@@ -5876,47 +5875,30 @@ note: visible
     private static StagedPackageResult CreateStagedReferenceModulePackage()
     {
         var workspacePath = Path.Combine(Path.GetTempPath(), $"cephalon-staged-package-{Guid.NewGuid():N}");
-        var packageOutputPath = Path.Combine(workspacePath, "packages");
         var pluginsRootPath = Path.Combine(workspacePath, "plugins");
         var packageDirectoryPath = Path.Combine(pluginsRootPath, "reference-operations");
 
-        Directory.CreateDirectory(packageOutputPath);
-        Directory.CreateDirectory(pluginsRootPath);
+        Directory.CreateDirectory(packageDirectoryPath);
 
-        var projectPath = Path.Combine(
+        var manifestSourcePath = Path.Combine(
             GetRepositoryRoot(),
             "samples",
             "Cephalon.ReferenceModule.Operations",
-            "Cephalon.ReferenceModule.Operations.csproj");
-        var packResult = RunProcess(
-            "dotnet",
-            $"pack \"{projectPath}\" -c {GetCurrentBuildConfiguration()} -o \"{packageOutputPath}\" --no-build",
-            GetRepositoryRoot());
+            "cephalon.package.json");
+        var assemblyPath = GetReferenceModuleAssemblyPath();
+        var assemblyDirectory = Path.GetDirectoryName(assemblyPath)
+            ?? throw new InvalidOperationException("Reference module assembly directory was not available.");
 
-        if (packResult.ExitCode != 0)
+        File.Copy(
+            manifestSourcePath,
+            Path.Combine(packageDirectoryPath, "cephalon.package.json"),
+            overwrite: true);
+        foreach (var sourcePath in Directory.EnumerateFiles(assemblyDirectory, "Cephalon.ReferenceModule.Operations.*", SearchOption.TopDirectoryOnly))
         {
-            throw new InvalidOperationException(
-                $"dotnet pack failed with exit code {packResult.ExitCode}.{Environment.NewLine}Output:{Environment.NewLine}{packResult.Output}{Environment.NewLine}Error:{Environment.NewLine}{packResult.Error}");
-        }
-
-        var packagePath = Directory.GetFiles(packageOutputPath, "Cephalon.ReferenceModule.Operations.*.nupkg", SearchOption.TopDirectoryOnly)
-            .Single(path => !path.EndsWith(".symbols.nupkg", StringComparison.OrdinalIgnoreCase));
-        var stdout = new StringWriter();
-        var stderr = new StringWriter();
-        var exitCode = CliApplication.RunAsync(
-            [
-                "package",
-                "stage",
-                "--package", packagePath,
-                "--output", packageDirectoryPath
-            ],
-            stdout,
-            stderr).GetAwaiter().GetResult();
-
-        if (exitCode != 0)
-        {
-            throw new InvalidOperationException(
-                $"cephalon package stage failed with exit code {exitCode}.{Environment.NewLine}Output:{Environment.NewLine}{stdout}{Environment.NewLine}Error:{Environment.NewLine}{stderr}");
+            File.Copy(
+                sourcePath,
+                Path.Combine(packageDirectoryPath, Path.GetFileName(sourcePath)),
+                overwrite: true);
         }
 
         return new StagedPackageResult(workspacePath, pluginsRootPath, packageDirectoryPath);
@@ -5940,28 +5922,6 @@ note: visible
             StringComparison.OrdinalIgnoreCase)
             ? "Release"
             : "Debug";
-    }
-
-    private static ProcessResult RunProcess(string fileName, string arguments, string workingDirectory)
-    {
-        var startInfo = new System.Diagnostics.ProcessStartInfo
-        {
-            FileName = fileName,
-            Arguments = arguments,
-            WorkingDirectory = workingDirectory,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false
-        };
-
-        using var process = System.Diagnostics.Process.Start(startInfo)
-            ?? throw new InvalidOperationException($"Could not start '{fileName}'.");
-
-        var output = process.StandardOutput.ReadToEnd();
-        var error = process.StandardError.ReadToEnd();
-        process.WaitForExit();
-
-        return new ProcessResult(process.ExitCode, output, error);
     }
 
     private static void TryDeleteDirectory(string path)
@@ -6139,8 +6099,6 @@ note: visible
                 provider: "relational"));
         }
     }
-
-    private sealed record ProcessResult(int ExitCode, string Output, string Error);
 
     private sealed record StagedPackageResult(
         string WorkspacePath,

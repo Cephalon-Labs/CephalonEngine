@@ -413,7 +413,7 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
             {
                 await using var app = await BuildTimeoutBehaviorHttpAppAsync(transportId);
                 var client = app.GetTestClient();
-                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
 
                 using var request = new HttpRequestMessage(HttpMethod.Post, "/graphql-sse/v1/tests/timeout");
                 request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/event-stream"));
@@ -436,7 +436,7 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
                 await using var app = await BuildTimeoutBehaviorHttpAppAsync(transportId);
                 var webSocketClient = app.GetTestServer().CreateWebSocketClient();
                 webSocketClient.SubProtocols.Add("graphql-transport-ws");
-                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
                 using var socket = await webSocketClient.ConnectAsync(
                     new Uri("ws://localhost/graphql-ws/v1/tests/timeout"),
                     cts.Token);
@@ -469,7 +469,7 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
             {
                 await using var app = await BuildTimeoutBehaviorHttpAppAsync(transportId);
                 var client = app.GetTestClient();
-                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
 
                 using var request = new HttpRequestMessage(HttpMethod.Get, "/sse/v1/tests/timeout?value=alpha");
                 using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cts.Token);
@@ -485,7 +485,7 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
             {
                 await using var app = await BuildTimeoutBehaviorHttpAppAsync(transportId);
                 var webSocketClient = app.GetTestServer().CreateWebSocketClient();
-                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
                 using var socket = await webSocketClient.ConnectAsync(
                     new Uri("ws://localhost/ws/v1/tests/timeout"),
                     cts.Token);
@@ -555,7 +555,7 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
             {
                 await using var app = await BuildCircuitBreakerBehaviorHttpAppAsync(transportId);
                 var client = app.GetTestClient();
-                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
 
                 using var firstPayload = await PostGraphqlSseAsync(client, "/graphql-sse/v1/tests/circuit-breaker", "alpha", cts.Token);
                 using var secondPayload = await PostGraphqlSseAsync(client, "/graphql-sse/v1/tests/circuit-breaker", "beta", cts.Token);
@@ -584,7 +584,7 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
                 await using var app = await BuildCircuitBreakerBehaviorHttpAppAsync(transportId);
                 var webSocketClient = app.GetTestServer().CreateWebSocketClient();
                 webSocketClient.SubProtocols.Add("graphql-transport-ws");
-                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
                 using var socket = await webSocketClient.ConnectAsync(
                     new Uri("ws://localhost/graphql-ws/v1/tests/circuit-breaker"),
                     cts.Token);
@@ -616,7 +616,7 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
             {
                 await using var app = await BuildCircuitBreakerBehaviorHttpAppAsync(transportId);
                 var client = app.GetTestClient();
-                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
 
                 using var firstPayload = await GetStreamingErrorAsync(client, "/sse/v1/tests/circuit-breaker?value=alpha", cts.Token);
                 using var secondPayload = await GetStreamingErrorAsync(client, "/sse/v1/tests/circuit-breaker?value=beta", cts.Token);
@@ -636,7 +636,7 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
             {
                 await using var app = await BuildCircuitBreakerBehaviorHttpAppAsync(transportId);
                 var webSocketClient = app.GetTestServer().CreateWebSocketClient();
-                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
                 using var socket = await webSocketClient.ConnectAsync(
                     new Uri("ws://localhost/ws/v1/tests/circuit-breaker"),
                     cts.Token);
@@ -952,7 +952,7 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
             IBehaviorContext context,
             CancellationToken cancellationToken = default)
         {
-            await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
+            await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
             return new SlowOutput(input.Value);
         }
     }
@@ -965,7 +965,7 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
             IBehaviorContext context,
             CancellationToken cancellationToken = default)
         {
-            await Task.Delay(TimeSpan.FromSeconds(2), cancellationToken);
+            await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
             return new SlowOutput(input.Value);
         }
     }

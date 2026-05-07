@@ -333,6 +333,7 @@ Shipped baseline:
 - build-time validation that rejects missing source-module ownership or missing outbox references before broken operator metadata can ship
 - provider-native CDC runners for MongoDB change streams, SQL Server CDC, PostgreSQL logical replication, MySQL binlog streaming, and Oracle LogMiner, each reporting through the same descriptor, runtime-state, execution-runtime, checkpoint, and runtime-story surfaces instead of provider-local registries
 - dedicated live-provider evidence in `tests/Cephalon.Tests.CdcIntegration`: MongoDB runs against a disposable replica set by default, while SQL Server, Postgres, MySQL, and Oracle run behind the explicit external-service/Testcontainers gate so default CI remains Docker-free
+- dedicated non-CDC provider evidence in `tests/Cephalon.Tests.ProviderIntegration`: Redis outbox/inbox/dispatch-store plus Redis Streams event sourcing run behind an explicit external-provider/Testcontainers gate so default CI remains Docker-free while a live Redis lane can prove the real provider path
 
 Later follow-through:
 - additional provider-specific capture implementations beyond the shipped MongoDB, SQL Server, PostgreSQL, MySQL, and Oracle baselines

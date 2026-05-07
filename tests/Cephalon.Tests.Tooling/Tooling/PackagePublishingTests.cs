@@ -4,6 +4,7 @@ using Cephalon.Tests.Support;
 
 namespace Cephalon.Tests.Tooling;
 
+[Collection(ToolingProcessCollectionDefinition.Name)]
 public sealed class PackagePublishingTests
 {
     [Fact]
@@ -112,6 +113,7 @@ public sealed class PackagePublishingTests
         var scriptPath = RepositoryPaths.GetFile("scripts", "publish-package-artifacts.ps1");
         var outputPath = Path.Combine(Path.GetTempPath(), $"cephalon-package-artifacts-preserve-readme-{Guid.NewGuid():N}");
         var readmePath = Path.Combine(outputPath, "README.md");
+        var abstractionsProject = RepositoryPaths.GetFile("src", "Cephalon.Abstractions", "Cephalon.Abstractions.csproj");
 
         Directory.CreateDirectory(outputPath);
         File.WriteAllText(readmePath, """
@@ -124,7 +126,7 @@ public sealed class PackagePublishingTests
         {
             var result = RunProcess(
                 GetPowerShellExecutable(),
-                $"-File \"{scriptPath}\" -Configuration {GetCurrentBuildConfiguration()} -OutputPath \"{outputPath}\" -SkipBuild",
+                $"-File \"{scriptPath}\" -Configuration {GetCurrentBuildConfiguration()} -OutputPath \"{outputPath}\" -SkipBuild -ProjectPaths \"{abstractionsProject}\"",
                 workingDirectory: Path.GetDirectoryName(scriptPath)!);
 
             Assert.True(

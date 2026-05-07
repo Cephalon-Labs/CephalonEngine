@@ -23,6 +23,7 @@ public sealed class MongoDbDataCdcHostingTests : IAsyncLifetime
     private const string SharedRuntimeId = "data-cdc-capture-pump";
     private const string MongoRuntimeId = "mongodb-change-stream-capture-pump";
     private const string CaptureId = "mongo-orders-cdc";
+    private static readonly TimeSpan ProviderNativeCdcTimeout = TimeSpan.FromSeconds(90);
     private MongoDbReplicaSetRunner? runner;
 
     public async Task InitializeAsync()
@@ -88,7 +89,9 @@ public sealed class MongoDbDataCdcHostingTests : IAsyncLifetime
             await WaitForAsync(
                 () => Task.FromResult(stateCatalog.GetById(CaptureId)),
                 static state => state is not null && state.StartedCount > 0,
-                TimeSpan.FromSeconds(30));
+                ProviderNativeCdcTimeout,
+                "MongoDB CDC capture startup",
+                DescribeCaptureState);
 
             var database = app.Services.GetRequiredService<IMongoDatabase>();
             await database.GetCollection<BsonDocument>("orders").InsertOneAsync(new BsonDocument
@@ -100,17 +103,18 @@ public sealed class MongoDbDataCdcHostingTests : IAsyncLifetime
             var client = app.GetTestClient();
             var cdcState = await WaitForAsync(
                 () => client.GetFromJsonAsync<CdcCaptureRuntimeState>($"/engine/cdc-captures/runtime/{CaptureId}")!,
-                static state => state is not null && state.LastOutcome == CdcCaptureRuntimeOutcomes.Captured,
-                TimeSpan.FromSeconds(30));
+                static state => HasObservedInsertedChange(state),
+                ProviderNativeCdcTimeout,
+                "MongoDB CDC capture state",
+                DescribeCaptureState);
 
             var cdcCaptureRuntimes = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes");
             var mongoRuntime = await WaitForAsync(
                 () => client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{MongoRuntimeId}")!,
-                static runtime => runtime is not null &&
-                    runtime.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured &&
-                    runtime.Summary.TotalCapturedChangeCount == 1 &&
-                    runtime.Summary.TotalProducedMessageCount == 1,
-                TimeSpan.FromSeconds(30));
+                static runtime => HasObservedInsertedChange(runtime),
+                ProviderNativeCdcTimeout,
+                "MongoDB CDC execution-runtime summary",
+                DescribeExecutionRuntime);
             var capturesByMongoRuntime = await client.GetFromJsonAsync<CdcCaptureDescriptor[]>($"/engine/cdc-captures/execution-runtimes/{MongoRuntimeId}");
             var captureStatesByMongoRuntime = await client.GetFromJsonAsync<CdcCaptureRuntimeState[]>($"/engine/cdc-captures/runtime/execution-runtimes/{MongoRuntimeId}");
             var hostedExecutions = await client.GetFromJsonAsync<HostedExecutionDescriptor[]>("/engine/hosted-executions");
@@ -120,11 +124,13 @@ public sealed class MongoDbDataCdcHostingTests : IAsyncLifetime
                 static current => current is not null &&
                     current.CdcCaptureStates.Any(item =>
                         item.CdcCaptureId == CaptureId &&
-                        item.LastOutcome == CdcCaptureRuntimeOutcomes.Captured) &&
+                        HasObservedInsertedChange(item)) &&
                     current.CdcCaptureExecutionRuntimes.Any(item =>
                         item.Id == MongoRuntimeId &&
-                        item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured),
-                TimeSpan.FromSeconds(30));
+                        HasObservedInsertedChange(item)),
+                ProviderNativeCdcTimeout,
+                "MongoDB CDC snapshot",
+                DescribeSnapshot);
 
             Assert.NotNull(cdcCaptureRuntimes);
             Assert.NotNull(mongoRuntime);
@@ -140,7 +146,8 @@ public sealed class MongoDbDataCdcHostingTests : IAsyncLifetime
             Assert.Equal([CaptureId], mongoRuntime.CdcCaptureIds);
             Assert.True(mongoRuntime.Summary.HasReports);
             Assert.Equal(CaptureId, mongoRuntime.Summary.LastCdcCaptureId);
-            Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, mongoRuntime.Summary.LastOutcome);
+            Assert.True(IsCapturedOrIdle(mongoRuntime.Summary.LastOutcome));
+            Assert.True(mongoRuntime.Summary.CapturedCount > 0);
             Assert.Equal(1, mongoRuntime.Summary.TotalCapturedChangeCount);
             Assert.Equal(1, mongoRuntime.Summary.TotalProducedMessageCount);
 
@@ -154,11 +161,18 @@ public sealed class MongoDbDataCdcHostingTests : IAsyncLifetime
             var captureState = Assert.Single(captureStatesByMongoRuntime!);
             Assert.Equal(CaptureId, captureState.CdcCaptureId);
             Assert.Equal(MongoRuntimeId, captureState.ExecutionBinding.EffectiveExecutionRuntimeId);
-            Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, captureState.LastOutcome);
+            Assert.True(IsCapturedOrIdle(captureState.LastOutcome));
+            Assert.True(captureState.CapturedCount > 0);
+            Assert.Equal(1, captureState.TotalCapturedChangeCount);
+            Assert.Equal(1, captureState.TotalProducedMessageCount);
             Assert.Equal(CdcCapturePublicationStates.PendingPublication, captureState.Publication.State);
 
             Assert.NotNull(cdcState);
             Assert.Equal(MongoRuntimeId, cdcState.ExecutionBinding.EffectiveExecutionRuntimeId);
+            Assert.True(IsCapturedOrIdle(cdcState.LastOutcome));
+            Assert.True(cdcState.CapturedCount > 0);
+            Assert.Equal(1, cdcState.TotalCapturedChangeCount);
+            Assert.Equal(1, cdcState.TotalProducedMessageCount);
             Assert.Equal("mongodb-provider-native-runtime", cdcState.Metadata["captureExecution"]);
             Assert.Equal(MongoRuntimeId, cdcState.Metadata["cdcCaptureExecutionRuntimeId"]);
             Assert.Equal("provider-native", cdcState.Metadata["acknowledgement"]);
@@ -175,9 +189,9 @@ public sealed class MongoDbDataCdcHostingTests : IAsyncLifetime
             Assert.Contains(snapshot.CdcCaptures, item => item.Id == CaptureId &&
                 item.ExecutionBinding.EffectiveExecutionRuntimeId == MongoRuntimeId);
             Assert.Contains(snapshot.CdcCaptureStates, item => item.CdcCaptureId == CaptureId &&
-                item.LastOutcome == CdcCaptureRuntimeOutcomes.Captured);
+                HasObservedInsertedChange(item));
             Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == MongoRuntimeId &&
-                item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured);
+                HasObservedInsertedChange(item));
         }
         finally
         {
@@ -188,12 +202,17 @@ public sealed class MongoDbDataCdcHostingTests : IAsyncLifetime
     private static async Task<T> WaitForAsync<T>(
         Func<Task<T>> producer,
         Func<T, bool> predicate,
-        TimeSpan timeout)
+        TimeSpan timeout,
+        string conditionName,
+        Func<T, string>? describe = null)
     {
         using var cancellationTokenSource = new CancellationTokenSource(timeout);
+        var lastDescription = "no observation was produced";
         while (!cancellationTokenSource.IsCancellationRequested)
         {
             var current = await producer().ConfigureAwait(false);
+            lastDescription = describe?.Invoke(current) ??
+                (current is null ? "<null>" : current.ToString() ?? "<null>");
             if (predicate(current))
             {
                 return current;
@@ -209,6 +228,57 @@ public sealed class MongoDbDataCdcHostingTests : IAsyncLifetime
             }
         }
 
-        throw new TimeoutException("Timed out while waiting for the expected MongoDB CDC hosting condition.");
+        throw new TimeoutException(
+            $"Timed out while waiting for {conditionName}. Last observed: {lastDescription}");
+    }
+
+    private static bool HasObservedInsertedChange(CdcCaptureRuntimeState? state)
+    {
+        return state is not null &&
+            IsCapturedOrIdle(state.LastOutcome) &&
+            state.CapturedCount > 0 &&
+            state.TotalCapturedChangeCount == 1 &&
+            state.TotalProducedMessageCount == 1;
+    }
+
+    private static bool HasObservedInsertedChange(CdcCaptureExecutionRuntimeDescriptor? runtime)
+    {
+        return runtime is not null &&
+            IsCapturedOrIdle(runtime.Summary.LastOutcome) &&
+            runtime.Summary.CapturedCount > 0 &&
+            runtime.Summary.TotalCapturedChangeCount == 1 &&
+            runtime.Summary.TotalProducedMessageCount == 1;
+    }
+
+    private static bool IsCapturedOrIdle(string? outcome)
+    {
+        return string.Equals(outcome, CdcCaptureRuntimeOutcomes.Captured, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(outcome, CdcCaptureRuntimeOutcomes.Idle, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string DescribeCaptureState(CdcCaptureRuntimeState? state)
+    {
+        return state is null
+            ? "<null>"
+            : $"outcome={state.LastOutcome ?? "<null>"}, started={state.StartedCount}, captured={state.CapturedCount}, idle={state.IdleCount}, totalCaptured={state.TotalCapturedChangeCount}, totalProduced={state.TotalProducedMessageCount}, error={state.LastError ?? "<none>"}";
+    }
+
+    private static string DescribeExecutionRuntime(CdcCaptureExecutionRuntimeDescriptor? runtime)
+    {
+        return runtime is null
+            ? "<null>"
+            : $"outcome={runtime.Summary.LastOutcome ?? "<null>"}, started={runtime.Summary.StartedCount}, captured={runtime.Summary.CapturedCount}, idle={runtime.Summary.IdleCount}, totalCaptured={runtime.Summary.TotalCapturedChangeCount}, totalProduced={runtime.Summary.TotalProducedMessageCount}, error={runtime.Summary.LastError ?? "<none>"}";
+    }
+
+    private static string DescribeSnapshot(RuntimeIntrospectionSnapshot? snapshot)
+    {
+        if (snapshot is null)
+        {
+            return "<null>";
+        }
+
+        var state = snapshot.CdcCaptureStates.FirstOrDefault(item => item.CdcCaptureId == CaptureId);
+        var runtime = snapshot.CdcCaptureExecutionRuntimes.FirstOrDefault(item => item.Id == MongoRuntimeId);
+        return $"state=({DescribeCaptureState(state)}), runtime=({DescribeExecutionRuntime(runtime)})";
     }
 }

@@ -424,10 +424,11 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Pending, initial.ProviderMaterializationState);
         Assert.Equal("missing-httproute", initial.RuntimeMetadata["providerMaterialization.resourceState"]);
 
-        await Task.Delay(TimeSpan.FromMilliseconds(1400));
-
-        var refreshed = catalog.GetByRouteId("orders-to-public-ingress");
-        Assert.NotNull(refreshed);
+        var refreshed = await WaitForAutomationAsync(
+            catalog,
+            "orders-to-public-ingress",
+            static automation => automation.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Applied &&
+                automation.MaterializationState == CellTrafficAutomationMaterializationStates.Applied);
         Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Applied, refreshed.ProviderMaterializationState);
         Assert.Equal(CellTrafficAutomationMaterializationStates.Applied, refreshed.MaterializationState);
         Assert.Equal("available", refreshed.RuntimeMetadata["providerMaterialization.resourceState"]);
@@ -478,10 +479,13 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         Assert.Equal("apply-and-reconcile", initial.RuntimeMetadata["providerMaterialization.providerAction"]);
         Assert.Equal("created", initial.RuntimeMetadata["providerMaterialization.httpRouteWriteAction"]);
 
-        await Task.Delay(TimeSpan.FromMilliseconds(1400));
-
-        var refreshed = catalog.GetByRouteId("orders-to-public-ingress");
-        Assert.NotNull(refreshed);
+        var refreshed = await WaitForAutomationAsync(
+            catalog,
+            "orders-to-public-ingress",
+            static automation => automation.ProviderMaterializationState == CellTrafficAutomationProviderMaterializationStates.Applied &&
+                automation.MaterializationState == CellTrafficAutomationMaterializationStates.Applied &&
+                automation.RuntimeMetadata.TryGetValue("providerMaterialization.httpRouteWriteAction", out var writeAction) &&
+                writeAction == "replaced");
         Assert.Equal(CellTrafficAutomationProviderMaterializationStates.Applied, refreshed.ProviderMaterializationState);
         Assert.Equal(CellTrafficAutomationMaterializationStates.Applied, refreshed.MaterializationState);
         Assert.Equal("apply-and-reconcile", refreshed.RuntimeMetadata["providerMaterialization.providerAction"]);
@@ -522,10 +526,11 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         Assert.Equal("true", initial.RuntimeMetadata["providerMaterialization.cleanupSweepEnabled"]);
         Assert.Equal("pending", initial.RuntimeMetadata["providerMaterialization.cleanupState"]);
 
-        await Task.Delay(TimeSpan.FromMilliseconds(1400));
-
-        var refreshed = catalog.GetByRouteId("orders-to-public-ingress");
-        Assert.NotNull(refreshed);
+        var refreshed = await WaitForAutomationAsync(
+            catalog,
+            "orders-to-public-ingress",
+            static automation => automation.RuntimeMetadata.TryGetValue("providerMaterialization.cleanupState", out var cleanupState) &&
+                cleanupState == "applied");
         Assert.Equal("primary-only", refreshed.RuntimeMetadata["providerMaterialization.cleanup.cleanupStrategy"]);
         Assert.Equal("true", refreshed.RuntimeMetadata["providerMaterialization.cleanupSweepEnabled"]);
         Assert.Equal("applied", refreshed.RuntimeMetadata["providerMaterialization.cleanupState"]);
@@ -553,6 +558,33 @@ public sealed class KubernetesGatewayTrafficMaterializerTests
         configureServices?.Invoke(services);
         services.AddCephalon(engine => ConfigureEngine(engine, includeAdminProjection, controlPlaneMode, pollingIntervalSeconds, enableCleanupSweep));
         return services;
+    }
+
+    private static async Task<CellTrafficAutomationRuntimeDescriptor> WaitForAutomationAsync(
+        ICellTrafficAutomationRuntimeCatalog catalog,
+        string routeId,
+        Func<CellTrafficAutomationRuntimeDescriptor, bool> predicate)
+    {
+        using var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+        while (!cancellationTokenSource.IsCancellationRequested)
+        {
+            var automation = catalog.GetByRouteId(routeId);
+            if (automation is not null && predicate(automation))
+            {
+                return automation;
+            }
+
+            try
+            {
+                await Task.Delay(100, cancellationTokenSource.Token).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (cancellationTokenSource.IsCancellationRequested)
+            {
+                break;
+            }
+        }
+
+        throw new TimeoutException($"Timed out while waiting for traffic automation '{routeId}'.");
     }
 
     private static void ConfigureEngine(

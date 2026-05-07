@@ -30,9 +30,44 @@ Current focus:
 - treat the ASP.NET Core invitation delivery dispatch endpoint as a bounded action seam over the host-agnostic dispatcher, and treat the delivery-status observation read endpoint plus filtered rollup summaries, attention-category drill-downs, provider-message drill-down filters, remediation-action filters, and remediation hints as a bounded operator/audit projection over the host-agnostic observation store, not provider-specific sender ownership, distributed retry queues, provider-specific callback inboxes, provider polling loops, distributed remediation execution, distributed replay ledgers, or exactly-once delivery claims
 - treat [Engine completion scorecard](engine-completion-scorecard.md) as the release-readiness roll-up: maturity and conformance remain the package truth, while the scorecard records whether cross-cutting public API, deployment, `.NET 11`, SRE, supply-chain, package-publishing, adoption, and compliance evidence is ready, partial, blocked, or intentionally not claimed; `scripts/publish-engine-completion-scorecard.ps1` now emits a JSON/README artifact, validates scorecard evidence-source references, reads conservative per-package GA readiness rows from [`conformance-matrix.md`](conformance-matrix.md), validates the deployment-mode, adoption-smoke, SRE, and supply-chain release support manifests, scans public API delta files into `PublicApiCompatibilityEvidence`, and `cephalon doctor --scorecard <path>` provides a schema `1.7.0` local CLI readback over that generated artifact including deployment-mode global/package-scoped/hazard/publish-probe counts, SRE target/baseline/guardrail-coverage counts, supply-chain workflow/external-policy counts, and public API package/pending/addition/removal counts without becoming source truth; `scripts/validate-release.ps1` now also prints public API counts from the scorecard artifact and runs the public-API delta summary with Markdown + JSON output and `-FailOnRemovals`
 - treat the CDC integration-test lane as additive evidence over the runtime catalog truth: `tests/Cephalon.Tests.CdcIntegration` now proves MongoDB change streams against a real disposable replica set, SQL Server CDC against an opt-in live service, Postgres logical replication against an opt-in live service, MySQL binlog streaming against an opt-in live service, and Oracle LogMiner against an opt-in live service while keeping default CI Docker-free through the shared external-service gate, instead of implying those provider paths through fake transport harnesses
+- treat the provider integration-test lane as additive evidence over non-CDC provider truth: `tests/Cephalon.Tests.ProviderIntegration` now proves Redis data outbox/inbox/dispatch-store behavior plus Redis Streams event sourcing against an opt-in live Redis runtime while keeping default CI Docker-free through the shared external-provider gate
 - treat the Debezium test-flake quarantine as resolved by shared catalog hardening: CDC execution-runtime filters now reuse versioned snapshots over indexed capture ownership instead of re-enriching every runtime for every state/category selector
 - treat the `ENG-500` regression closeout as the current suite-stability baseline: provider-native CDC hosting tests now run through a dedicated non-parallel collection, long-running package-publishing process output drains stdout/stderr concurrently, sample REST behavior hosts align with source-generated `/api/v1` behavior endpoints, and the full solution test lane is again green on the current worktree
 - treat the CDC execution-runtime catalog hot path as benchmark-governed: `CdcExecutionRuntimeCatalogBenchmarks` now covers Debezium-managed external runtimes, external observations, repeated managed-connector drift/dry-run/command-issuance filters, and compact multi-selector operator flows against the shared versioned snapshot
+
+### ENG-501 Add Redis provider integration canary evidence
+
+Status: done
+Estimate: 2
+Issue: #1116
+Iteration: Sprint 125
+Area: test-coverage / provider integration / Redis
+Quality dimensions: Reliability, Compatibility, Auditability, Data Integrity, Maintainability
+
+Why:
+
+- Redis data and Redis event-sourcing provider packs already had composition/catalog coverage, but no dedicated live-provider lane proved the Hash, Sorted Set, Set, and Stream persistence path against a real Redis runtime
+- CDC already has a purpose-built external-service lane; non-CDC provider behavior needs the same opt-in discipline without overloading the CDC project name or semantics
+- default developer and CI runs must remain deterministic and Docker-free while provider-specific live runs can opt into Testcontainers or pre-provisioned services
+
+Delivered:
+
+- added `tests/Cephalon.Tests.ProviderIntegration` as a dedicated `net10.0` provider-integration test project with its own README, package lock file, solution entry, and explicit external-provider gate
+- added `ExternalProviderServiceGate`, `ExternalProviderServiceFactAttribute`, Redis provider-mode parsing, and default-skip tests for `CEPHALON_PROVIDER_EXTERNAL_SERVICES`, `CEPHALON_PROVIDER_TESTCONTAINERS`, `CEPHALON_PROVIDER_REDIS_CONNECTION_STRING`, `CEPHALON_PROVIDER_INTEGRATION`, and `CEPHALON_REDIS_CONNECTION_STRING`
+- added `RedisProviderIntegrationTests.RedisProvider_StagesOutboxInboxDispatchAndEventStreamAgainstLiveRedis`, which composes `Cephalon.Data.Redis`, `Cephalon.EventSourcing.Redis`, `Cephalon.Eventing`, and `Cephalon.Engine` together and proves manifest capabilities, outbox/inbox descriptors, event-stream descriptor projection, Redis outbox/inbox persistence, dispatch-store success reporting, ordered event replay, raw Redis Stream length, and optimistic-concurrency rejection against a live Redis runtime when the gate is enabled
+- added `Testcontainers.Redis` to the central package catalog so the live lane can spin up a disposable Redis service when Docker is available
+- hardened provider/runtime regression coverage discovered during the ENG-501 closeout: relational provider-native CDC composition and hosting tests now assert observed capture totals rather than a transient latest `captured` state, Tooling child-process tests drain stdout/stderr with bounded timeouts, process-spawning Tooling tests share a non-parallel collection, Serilog request-log scope assertions wait for the expected event, behavior HTTP streaming timeout tests use a real timeout margin, and Kubernetes Gateway polling tests wait for the expected automation state instead of sleeping a fixed interval
+- updated Redis component docs, conformance/maturity notes, roadmap, release checklist, test-coverage roadmap, and project memory so source and docs describe the same provider-integration truth
+
+Validation:
+
+- `dotnet restore .\tests\Cephalon.Tests.ProviderIntegration\Cephalon.Tests.ProviderIntegration.csproj`
+- `dotnet test .\tests\Cephalon.Tests.ProviderIntegration\Cephalon.Tests.ProviderIntegration.csproj --no-restore --logger "console;verbosity=normal"` passed: `11` passed / `3` skipped by the external-provider gate
+- focused provider/runtime and Tooling child-process regression coverage passed after hardening
+- `dotnet test .\tests\Cephalon.Tests.Composition\Cephalon.Tests.Composition.csproj --no-build` passed `807/807`
+- `dotnet test .\tests\Cephalon.Tests.Tooling\Cephalon.Tests.Tooling.csproj --no-restore` passed `357/357`
+- `dotnet test .\CephalonEngine.slnx --no-build --logger "console;verbosity=minimal"` passed: ProviderIntegration `11` passed / `3` skipped, CdcIntegration `11` passed / `8` skipped, Composition `807/807`, Hosting `750/750`, Tooling `357/357`
+- local Docker daemon was unavailable, so the opt-in Testcontainers Redis live path compiled but was not executed locally
 
 ### ENG-500 Restore regression suite stability across provider/runtime surfaces
 

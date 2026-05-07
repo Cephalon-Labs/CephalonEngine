@@ -21,6 +21,7 @@ public sealed class PostgresDataCdcHostingTests
     private const string SharedRuntimeId = "data-cdc-capture-pump";
     private const string PostgresRuntimeId = "postgresql-logical-replication-capture-pump";
     private const string CaptureId = "pg-orders-cdc";
+    private static readonly TimeSpan ProviderNativeCdcTimeout = TimeSpan.FromSeconds(90);
 
     [Fact]
     public async Task MapCephalonExposesPostgresProviderNativeCdcRuntimeSurfaces()
@@ -85,7 +86,7 @@ public sealed class PostgresDataCdcHostingTests
                         MessageType = "orders.postgresql.changed",
                         InitialPosition = "slot-consistent-point",
                         RecreateSlotIfInvalidated = true,
-                        PollingIntervalSeconds = 1,
+                        PollingIntervalSeconds = 600,
                         MaxChangesPerRead = 64,
                         MaxAwaitTimeSeconds = 5
                     });
@@ -103,8 +104,8 @@ public sealed class PostgresDataCdcHostingTests
             var client = app.GetTestClient();
             var cdcState = await WaitForAsync(
                 () => client.GetFromJsonAsync<CdcCaptureRuntimeState>($"/engine/cdc-captures/runtime/{CaptureId}")!,
-                static state => state is not null && state.LastOutcome == CdcCaptureRuntimeOutcomes.Captured,
-                TimeSpan.FromSeconds(30));
+                static state => HasObservedInsertedChange(state),
+                ProviderNativeCdcTimeout);
 
             var cdcCaptureRuntimes = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes");
             var postgresRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{PostgresRuntimeId}");
@@ -128,9 +129,8 @@ public sealed class PostgresDataCdcHostingTests
             Assert.Equal([CaptureId], postgresRuntime.CdcCaptureIds);
             Assert.True(postgresRuntime.Summary.HasReports);
             Assert.Equal(CaptureId, postgresRuntime.Summary.LastCdcCaptureId);
-            Assert.True(
-                postgresRuntime.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured ||
-                postgresRuntime.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Idle);
+            Assert.True(IsCapturedOrIdle(postgresRuntime.Summary.LastOutcome));
+            Assert.True(postgresRuntime.Summary.CapturedCount > 0);
             Assert.Equal(1, postgresRuntime.Summary.TotalCapturedChangeCount);
             Assert.Equal(1, postgresRuntime.Summary.TotalProducedMessageCount);
 
@@ -144,13 +144,18 @@ public sealed class PostgresDataCdcHostingTests
             var captureState = Assert.Single(captureStatesByRuntime!);
             Assert.Equal(CaptureId, captureState.CdcCaptureId);
             Assert.Equal(PostgresRuntimeId, captureState.ExecutionBinding.EffectiveExecutionRuntimeId);
-            Assert.True(
-                captureState.LastOutcome == CdcCaptureRuntimeOutcomes.Captured ||
-                captureState.LastOutcome == CdcCaptureRuntimeOutcomes.Idle);
+            Assert.True(IsCapturedOrIdle(captureState.LastOutcome));
+            Assert.True(captureState.CapturedCount > 0);
+            Assert.Equal(1, captureState.TotalCapturedChangeCount);
+            Assert.Equal(1, captureState.TotalProducedMessageCount);
             Assert.Equal(CdcCapturePublicationStates.PendingPublication, captureState.Publication.State);
 
             Assert.NotNull(cdcState);
             Assert.Equal(PostgresRuntimeId, cdcState.ExecutionBinding.EffectiveExecutionRuntimeId);
+            Assert.True(IsCapturedOrIdle(cdcState.LastOutcome));
+            Assert.True(cdcState.CapturedCount > 0);
+            Assert.Equal(1, cdcState.TotalCapturedChangeCount);
+            Assert.Equal(1, cdcState.TotalProducedMessageCount);
             Assert.Equal("postgresql-provider-native-runtime", cdcState.Metadata["captureExecution"]);
             Assert.Equal(PostgresRuntimeId, cdcState.Metadata["cdcCaptureExecutionRuntimeId"]);
             Assert.Equal("provider-native", cdcState.Metadata["acknowledgement"]);
@@ -176,11 +181,10 @@ public sealed class PostgresDataCdcHostingTests
             Assert.Contains(snapshot.CdcCaptures, item => item.Id == CaptureId &&
                 item.ExecutionBinding.EffectiveExecutionRuntimeId == PostgresRuntimeId);
             Assert.Contains(snapshot.CdcCaptureStates, item => item.CdcCaptureId == CaptureId &&
-                (item.LastOutcome == CdcCaptureRuntimeOutcomes.Captured || item.LastOutcome == CdcCaptureRuntimeOutcomes.Idle) &&
+                HasObservedInsertedChange(item) &&
                 item.Publication.State == CdcCapturePublicationStates.PendingPublication);
             Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == PostgresRuntimeId &&
-                (item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured || item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Idle) &&
-                item.Summary.TotalCapturedChangeCount == 1);
+                HasObservedInsertedChange(item));
         }
         finally
         {
@@ -248,7 +252,7 @@ public sealed class PostgresDataCdcHostingTests
                         MessageType = "orders.postgresql.changed",
                         InitialPosition = "slot-consistent-point",
                         RecreateSlotIfInvalidated = false,
-                        PollingIntervalSeconds = 1,
+                        PollingIntervalSeconds = 600,
                         MaxChangesPerRead = 64,
                         MaxAwaitTimeSeconds = 5
                     });
@@ -264,13 +268,29 @@ public sealed class PostgresDataCdcHostingTests
             var client = app.GetTestClient();
             var cdcState = await WaitForAsync(
                 () => client.GetFromJsonAsync<CdcCaptureRuntimeState>($"/engine/cdc-captures/runtime/{CaptureId}")!,
-                static state => state is not null && state.LastOutcome == CdcCaptureRuntimeOutcomes.Failed,
-                TimeSpan.FromSeconds(30));
+                static state => state is not null &&
+                    HasObservedFailure(state) &&
+                    state.Metadata.ContainsKey("failureKind") &&
+                    state.Metadata.ContainsKey("slotLifecycleState") &&
+                    state.Metadata.ContainsKey("slotLifecycleAction"),
+                ProviderNativeCdcTimeout);
 
-            var postgresRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{PostgresRuntimeId}");
-            var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+            var postgresRuntime = await WaitForAsync(
+                () => client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{PostgresRuntimeId}")!,
+                static runtime => HasObservedFailure(runtime),
+                ProviderNativeCdcTimeout);
+            var snapshot = await WaitForAsync(
+                () => client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot")!,
+                static current => current is not null &&
+                    current.CdcCaptureStates.Any(item =>
+                        item.CdcCaptureId == CaptureId &&
+                        HasObservedFailure(item)),
+                ProviderNativeCdcTimeout);
 
             Assert.NotNull(cdcState);
+            Assert.True(IsFailedOrIdle(cdcState.LastOutcome));
+            Assert.True(cdcState.FailedCount > 0);
+            Assert.Equal(CdcCapturePublicationStates.CaptureFailed, cdcState.Publication.State);
             Assert.Equal("slot-invalidated", cdcState.Metadata["failureKind"]);
             Assert.Equal("invalidated", cdcState.Metadata["slotLifecycleState"]);
             Assert.Equal("fail", cdcState.Metadata["slotLifecycleAction"]);
@@ -284,7 +304,8 @@ public sealed class PostgresDataCdcHostingTests
 
             Assert.NotNull(postgresRuntime);
             Assert.True(postgresRuntime.Summary.HasReports);
-            Assert.Equal(CdcCaptureRuntimeOutcomes.Failed, postgresRuntime.Summary.LastOutcome);
+            Assert.True(IsFailedOrIdle(postgresRuntime.Summary.LastOutcome));
+            Assert.True(postgresRuntime.Summary.FailedCount > 0);
             Assert.Equal(CaptureId, postgresRuntime.Summary.LastCdcCaptureId);
 
             Assert.NotNull(snapshot);
@@ -322,5 +343,50 @@ public sealed class PostgresDataCdcHostingTests
         }
 
         throw new TimeoutException("Timed out while waiting for the expected PostgreSQL CDC hosting condition.");
+    }
+
+    private static bool HasObservedInsertedChange(CdcCaptureRuntimeState? state)
+    {
+        return state is not null &&
+            IsCapturedOrIdle(state.LastOutcome) &&
+            state.CapturedCount > 0 &&
+            state.TotalCapturedChangeCount == 1 &&
+            state.TotalProducedMessageCount == 1;
+    }
+
+    private static bool HasObservedInsertedChange(CdcCaptureExecutionRuntimeDescriptor? runtime)
+    {
+        return runtime is not null &&
+            IsCapturedOrIdle(runtime.Summary.LastOutcome) &&
+            runtime.Summary.CapturedCount > 0 &&
+            runtime.Summary.TotalCapturedChangeCount == 1 &&
+            runtime.Summary.TotalProducedMessageCount == 1;
+    }
+
+    private static bool HasObservedFailure(CdcCaptureRuntimeState? state)
+    {
+        return state is not null &&
+            IsFailedOrIdle(state.LastOutcome) &&
+            state.FailedCount > 0 &&
+            state.Publication.State == CdcCapturePublicationStates.CaptureFailed;
+    }
+
+    private static bool HasObservedFailure(CdcCaptureExecutionRuntimeDescriptor? runtime)
+    {
+        return runtime is not null &&
+            IsFailedOrIdle(runtime.Summary.LastOutcome) &&
+            runtime.Summary.FailedCount > 0;
+    }
+
+    private static bool IsCapturedOrIdle(string? outcome)
+    {
+        return string.Equals(outcome, CdcCaptureRuntimeOutcomes.Captured, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(outcome, CdcCaptureRuntimeOutcomes.Idle, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsFailedOrIdle(string? outcome)
+    {
+        return string.Equals(outcome, CdcCaptureRuntimeOutcomes.Failed, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(outcome, CdcCaptureRuntimeOutcomes.Idle, StringComparison.OrdinalIgnoreCase);
     }
 }

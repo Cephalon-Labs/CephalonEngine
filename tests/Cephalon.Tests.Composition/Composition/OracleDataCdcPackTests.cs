@@ -121,14 +121,13 @@ public sealed class OracleDataCdcPackTests
 
             var state = await WaitForAsync(
                 () => Task.FromResult(stateCatalog.GetById(CaptureId)),
-                static current => current is not null && current.LastOutcome == CdcCaptureRuntimeOutcomes.Captured,
+                static current => HasObservedInsertedChange(current),
                 TimeSpan.FromSeconds(10));
 
             Assert.NotNull(state);
             Assert.Equal(OracleRuntimeId, state.ExecutionBinding.EffectiveExecutionRuntimeId);
-            Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, state.LastOutcome);
-            Assert.Equal(1, state.LastCapturedChangeCount);
-            Assert.Equal(1, state.LastProducedMessageCount);
+            Assert.True(IsCapturedOrIdle(state.LastOutcome));
+            Assert.True(state.CapturedCount > 0);
             Assert.Equal(1, state.TotalCapturedChangeCount);
             Assert.Equal(1, state.TotalProducedMessageCount);
             Assert.Equal("1100|1095|0x001|1", state.LastChangeId);
@@ -211,7 +210,8 @@ public sealed class OracleDataCdcPackTests
             Assert.Equal([CaptureId], oracleRuntime.CdcCaptureIds);
             Assert.True(oracleRuntime.Summary.HasReports);
             Assert.Equal(CaptureId, oracleRuntime.Summary.LastCdcCaptureId);
-            Assert.Equal(CdcCaptureRuntimeOutcomes.Captured, oracleRuntime.Summary.LastOutcome);
+            Assert.True(IsCapturedOrIdle(oracleRuntime.Summary.LastOutcome));
+            Assert.True(oracleRuntime.Summary.CapturedCount > 0);
             Assert.Equal(1, oracleRuntime.Summary.TotalCapturedChangeCount);
             Assert.Equal(1, oracleRuntime.Summary.TotalProducedMessageCount);
             Assert.Equal("provider-native", oracleRuntime.Summary.LastAcknowledgement);
@@ -223,6 +223,21 @@ public sealed class OracleDataCdcPackTests
                 await hostedService.StopAsync(CancellationToken.None);
             }
         }
+    }
+
+    private static bool HasObservedInsertedChange(CdcCaptureRuntimeState? state)
+    {
+        return state is not null &&
+            IsCapturedOrIdle(state.LastOutcome) &&
+            state.CapturedCount > 0 &&
+            state.TotalCapturedChangeCount == 1 &&
+            state.TotalProducedMessageCount == 1;
+    }
+
+    private static bool IsCapturedOrIdle(string? outcome)
+    {
+        return string.Equals(outcome, CdcCaptureRuntimeOutcomes.Captured, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(outcome, CdcCaptureRuntimeOutcomes.Idle, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

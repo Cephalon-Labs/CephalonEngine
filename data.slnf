@@ -37,6 +37,7 @@
       "tests/Cephalon.Tests.Support/Cephalon.Tests.Support.csproj",
       "tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj",
       "tests/Cephalon.Tests.CdcIntegration/Cephalon.Tests.CdcIntegration.csproj",
+      "tests/Cephalon.Tests.ProviderIntegration/Cephalon.Tests.ProviderIntegration.csproj",
       "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj"
     ]
   }

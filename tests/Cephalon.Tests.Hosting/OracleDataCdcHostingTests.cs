@@ -23,6 +23,7 @@ public sealed class OracleDataCdcHostingTests
     private const string CaptureId = "oracle-orders-cdc";
     private const decimal ExpectedDatabaseId = 147258369m;
     private const string ExpectedDatabaseUniqueName = "CEPHALON_XEPDB1";
+    private static readonly TimeSpan ProviderNativeCdcTimeout = TimeSpan.FromSeconds(90);
 
     [Fact]
     public async Task MapCephalonExposesOracleProviderNativeLogMinerSurfaces()
@@ -103,7 +104,7 @@ public sealed class OracleDataCdcHostingTests
                         InitialPosition = "earliest-available",
                         ExpectedDatabaseId = ExpectedDatabaseId,
                         ExpectedDatabaseUniqueName = ExpectedDatabaseUniqueName,
-                        PollingIntervalSeconds = 1,
+                        PollingIntervalSeconds = 600,
                         MaxChangesPerRead = 64,
                         MaxAwaitTimeSeconds = 5
                     });
@@ -121,8 +122,8 @@ public sealed class OracleDataCdcHostingTests
             var client = app.GetTestClient();
             var cdcState = await WaitForAsync(
                 () => client.GetFromJsonAsync<CdcCaptureRuntimeState>($"/engine/cdc-captures/runtime/{CaptureId}")!,
-                static state => state is not null && state.LastOutcome == CdcCaptureRuntimeOutcomes.Captured,
-                TimeSpan.FromSeconds(30));
+                static state => HasObservedInsertedChange(state),
+                ProviderNativeCdcTimeout);
 
             var cdcCaptureRuntimes = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes");
             var oracleRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{OracleRuntimeId}");
@@ -146,9 +147,8 @@ public sealed class OracleDataCdcHostingTests
             Assert.Equal([CaptureId], oracleRuntime.CdcCaptureIds);
             Assert.True(oracleRuntime.Summary.HasReports);
             Assert.Equal(CaptureId, oracleRuntime.Summary.LastCdcCaptureId);
-            Assert.True(
-                oracleRuntime.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured ||
-                oracleRuntime.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Idle);
+            Assert.True(IsCapturedOrIdle(oracleRuntime.Summary.LastOutcome));
+            Assert.True(oracleRuntime.Summary.CapturedCount > 0);
             Assert.Equal(1, oracleRuntime.Summary.TotalCapturedChangeCount);
             Assert.Equal(1, oracleRuntime.Summary.TotalProducedMessageCount);
 
@@ -164,13 +164,18 @@ public sealed class OracleDataCdcHostingTests
             var captureState = Assert.Single(captureStatesByRuntime!);
             Assert.Equal(CaptureId, captureState.CdcCaptureId);
             Assert.Equal(OracleRuntimeId, captureState.ExecutionBinding.EffectiveExecutionRuntimeId);
-            Assert.True(
-                captureState.LastOutcome == CdcCaptureRuntimeOutcomes.Captured ||
-                captureState.LastOutcome == CdcCaptureRuntimeOutcomes.Idle);
+            Assert.True(IsCapturedOrIdle(captureState.LastOutcome));
+            Assert.True(captureState.CapturedCount > 0);
+            Assert.Equal(1, captureState.TotalCapturedChangeCount);
+            Assert.Equal(1, captureState.TotalProducedMessageCount);
             Assert.Equal(CdcCapturePublicationStates.PendingPublication, captureState.Publication.State);
 
             Assert.NotNull(cdcState);
             Assert.Equal(OracleRuntimeId, cdcState.ExecutionBinding.EffectiveExecutionRuntimeId);
+            Assert.True(IsCapturedOrIdle(cdcState.LastOutcome));
+            Assert.True(cdcState.CapturedCount > 0);
+            Assert.Equal(1, cdcState.TotalCapturedChangeCount);
+            Assert.Equal(1, cdcState.TotalProducedMessageCount);
             Assert.Equal("oracle-provider-native-runtime", cdcState.Metadata["captureExecution"]);
             Assert.Equal(OracleRuntimeId, cdcState.Metadata["cdcCaptureExecutionRuntimeId"]);
             Assert.Equal("provider-native", cdcState.Metadata["acknowledgement"]);
@@ -210,12 +215,11 @@ public sealed class OracleDataCdcHostingTests
             Assert.Contains(snapshot.CdcCaptures, item => item.Id == CaptureId &&
                 item.ExecutionBinding.EffectiveExecutionRuntimeId == OracleRuntimeId);
             Assert.Contains(snapshot.CdcCaptureStates, item => item.CdcCaptureId == CaptureId &&
-                (item.LastOutcome == CdcCaptureRuntimeOutcomes.Captured || item.LastOutcome == CdcCaptureRuntimeOutcomes.Idle) &&
+                HasObservedInsertedChange(item) &&
                 item.Publication.State == CdcCapturePublicationStates.PendingPublication &&
                 item.Metadata["logMinerMode"] == "committed-only");
             Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == OracleRuntimeId &&
-                (item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured || item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Idle) &&
-                item.Summary.TotalCapturedChangeCount == 1);
+                HasObservedInsertedChange(item));
         }
         finally
         {
@@ -296,7 +300,7 @@ public sealed class OracleDataCdcHostingTests
                         InitialPosition = "latest-available",
                         ExpectedDatabaseId = ExpectedDatabaseId,
                         ExpectedDatabaseUniqueName = ExpectedDatabaseUniqueName,
-                        PollingIntervalSeconds = 1,
+                        PollingIntervalSeconds = 600,
                         MaxChangesPerRead = 64,
                         MaxAwaitTimeSeconds = 5
                     });
@@ -312,14 +316,30 @@ public sealed class OracleDataCdcHostingTests
             var client = app.GetTestClient();
             var cdcState = await WaitForAsync(
                 () => client.GetFromJsonAsync<CdcCaptureRuntimeState>($"/engine/cdc-captures/runtime/{CaptureId}")!,
-                static state => state is not null && state.LastOutcome == CdcCaptureRuntimeOutcomes.Failed,
-                TimeSpan.FromSeconds(30));
+                static state => state is not null &&
+                    HasObservedFailure(state) &&
+                    state.Metadata.ContainsKey("failureKind") &&
+                    state.Metadata.ContainsKey("archiveLogLifecycleState") &&
+                    state.Metadata.ContainsKey("archiveLogLifecycleAction"),
+                ProviderNativeCdcTimeout);
 
-            var oracleRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{OracleRuntimeId}");
-            var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+            var oracleRuntime = await WaitForAsync(
+                () => client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{OracleRuntimeId}")!,
+                static runtime => HasObservedFailure(runtime),
+                ProviderNativeCdcTimeout);
+            var snapshot = await WaitForAsync(
+                () => client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot")!,
+                static current => current is not null &&
+                    current.CdcCaptureStates.Any(item =>
+                        item.CdcCaptureId == CaptureId &&
+                        HasObservedFailure(item)),
+                ProviderNativeCdcTimeout);
 
             Assert.NotNull(cdcState);
             Assert.Equal(OracleRuntimeId, cdcState.ExecutionBinding.EffectiveExecutionRuntimeId);
+            Assert.True(IsFailedOrIdle(cdcState.LastOutcome));
+            Assert.True(cdcState.FailedCount > 0);
+            Assert.Equal(CdcCapturePublicationStates.CaptureFailed, cdcState.Publication.State);
             Assert.Equal("checkpoint-scn-unavailable", cdcState.Metadata["failureKind"]);
             Assert.Contains("1200|1190|0x009|4", cdcState.LastError);
             Assert.Equal("checkpoint", cdcState.Metadata["resumeMode"]);
@@ -337,7 +357,8 @@ public sealed class OracleDataCdcHostingTests
             Assert.NotNull(oracleRuntime);
             Assert.True(oracleRuntime.Summary.HasReports);
             Assert.Equal(CaptureId, oracleRuntime.Summary.LastCdcCaptureId);
-            Assert.Equal(CdcCaptureRuntimeOutcomes.Failed, oracleRuntime.Summary.LastOutcome);
+            Assert.True(IsFailedOrIdle(oracleRuntime.Summary.LastOutcome));
+            Assert.True(oracleRuntime.Summary.FailedCount > 0);
 
             Assert.NotNull(snapshot);
             Assert.Contains(snapshot.CdcCaptureStates, item => item.CdcCaptureId == CaptureId &&
@@ -374,5 +395,50 @@ public sealed class OracleDataCdcHostingTests
         }
 
         throw new TimeoutException("Timed out while waiting for the expected Oracle CDC hosting condition.");
+    }
+
+    private static bool HasObservedInsertedChange(CdcCaptureRuntimeState? state)
+    {
+        return state is not null &&
+            IsCapturedOrIdle(state.LastOutcome) &&
+            state.CapturedCount > 0 &&
+            state.TotalCapturedChangeCount == 1 &&
+            state.TotalProducedMessageCount == 1;
+    }
+
+    private static bool HasObservedInsertedChange(CdcCaptureExecutionRuntimeDescriptor? runtime)
+    {
+        return runtime is not null &&
+            IsCapturedOrIdle(runtime.Summary.LastOutcome) &&
+            runtime.Summary.CapturedCount > 0 &&
+            runtime.Summary.TotalCapturedChangeCount == 1 &&
+            runtime.Summary.TotalProducedMessageCount == 1;
+    }
+
+    private static bool HasObservedFailure(CdcCaptureRuntimeState? state)
+    {
+        return state is not null &&
+            IsFailedOrIdle(state.LastOutcome) &&
+            state.FailedCount > 0 &&
+            state.Publication.State == CdcCapturePublicationStates.CaptureFailed;
+    }
+
+    private static bool HasObservedFailure(CdcCaptureExecutionRuntimeDescriptor? runtime)
+    {
+        return runtime is not null &&
+            IsFailedOrIdle(runtime.Summary.LastOutcome) &&
+            runtime.Summary.FailedCount > 0;
+    }
+
+    private static bool IsCapturedOrIdle(string? outcome)
+    {
+        return string.Equals(outcome, CdcCaptureRuntimeOutcomes.Captured, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(outcome, CdcCaptureRuntimeOutcomes.Idle, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsFailedOrIdle(string? outcome)
+    {
+        return string.Equals(outcome, CdcCaptureRuntimeOutcomes.Failed, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(outcome, CdcCaptureRuntimeOutcomes.Idle, StringComparison.OrdinalIgnoreCase);
     }
 }

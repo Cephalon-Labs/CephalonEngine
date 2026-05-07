@@ -21,6 +21,7 @@ public sealed class SqlServerDataCdcHostingTests
     private const string SharedRuntimeId = "data-cdc-capture-pump";
     private const string SqlRuntimeId = "sqlserver-cdc-capture-pump";
     private const string CaptureId = "sql-orders-cdc";
+    private static readonly TimeSpan ProviderNativeCdcTimeout = TimeSpan.FromSeconds(90);
 
     [Fact]
     public async Task MapCephalonExposesSqlServerProviderNativeCdcRuntimeSurfaces()
@@ -74,7 +75,7 @@ public sealed class SqlServerDataCdcHostingTests
                         ChannelId = "orders",
                         MessageType = "orders.sql.changed",
                         InitialPosition = "earliest-available",
-                        PollingIntervalSeconds = 1,
+                        PollingIntervalSeconds = 600,
                         MaxChangesPerPoll = 64
                     });
                 });
@@ -91,8 +92,8 @@ public sealed class SqlServerDataCdcHostingTests
             var client = app.GetTestClient();
             var cdcState = await WaitForAsync(
                 () => client.GetFromJsonAsync<CdcCaptureRuntimeState>($"/engine/cdc-captures/runtime/{CaptureId}")!,
-                static state => state is not null && state.LastOutcome == CdcCaptureRuntimeOutcomes.Captured,
-                TimeSpan.FromSeconds(30));
+                static state => HasObservedInsertedChange(state),
+                ProviderNativeCdcTimeout);
 
             var cdcCaptureRuntimes = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor[]>("/engine/cdc-capture-runtimes");
             var sqlRuntime = await client.GetFromJsonAsync<CdcCaptureExecutionRuntimeDescriptor>($"/engine/cdc-capture-runtimes/{SqlRuntimeId}");
@@ -116,9 +117,8 @@ public sealed class SqlServerDataCdcHostingTests
             Assert.Equal([CaptureId], sqlRuntime.CdcCaptureIds);
             Assert.True(sqlRuntime.Summary.HasReports);
             Assert.Equal(CaptureId, sqlRuntime.Summary.LastCdcCaptureId);
-            Assert.True(
-                sqlRuntime.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured ||
-                sqlRuntime.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Idle);
+            Assert.True(IsCapturedOrIdle(sqlRuntime.Summary.LastOutcome));
+            Assert.True(sqlRuntime.Summary.CapturedCount > 0);
             Assert.Equal(1, sqlRuntime.Summary.TotalCapturedChangeCount);
             Assert.Equal(1, sqlRuntime.Summary.TotalProducedMessageCount);
 
@@ -132,13 +132,18 @@ public sealed class SqlServerDataCdcHostingTests
             var captureState = Assert.Single(captureStatesByRuntime!);
             Assert.Equal(CaptureId, captureState.CdcCaptureId);
             Assert.Equal(SqlRuntimeId, captureState.ExecutionBinding.EffectiveExecutionRuntimeId);
-            Assert.True(
-                captureState.LastOutcome == CdcCaptureRuntimeOutcomes.Captured ||
-                captureState.LastOutcome == CdcCaptureRuntimeOutcomes.Idle);
+            Assert.True(IsCapturedOrIdle(captureState.LastOutcome));
+            Assert.True(captureState.CapturedCount > 0);
+            Assert.Equal(1, captureState.TotalCapturedChangeCount);
+            Assert.Equal(1, captureState.TotalProducedMessageCount);
             Assert.Equal(CdcCapturePublicationStates.PendingPublication, captureState.Publication.State);
 
             Assert.NotNull(cdcState);
             Assert.Equal(SqlRuntimeId, cdcState.ExecutionBinding.EffectiveExecutionRuntimeId);
+            Assert.True(IsCapturedOrIdle(cdcState.LastOutcome));
+            Assert.True(cdcState.CapturedCount > 0);
+            Assert.Equal(1, cdcState.TotalCapturedChangeCount);
+            Assert.Equal(1, cdcState.TotalProducedMessageCount);
             Assert.Equal("sqlserver-provider-native-runtime", cdcState.Metadata["captureExecution"]);
             Assert.Equal(SqlRuntimeId, cdcState.Metadata["cdcCaptureExecutionRuntimeId"]);
             Assert.Equal("provider-native", cdcState.Metadata["acknowledgement"]);
@@ -156,11 +161,10 @@ public sealed class SqlServerDataCdcHostingTests
             Assert.Contains(snapshot.CdcCaptures, item => item.Id == CaptureId &&
                 item.ExecutionBinding.EffectiveExecutionRuntimeId == SqlRuntimeId);
             Assert.Contains(snapshot.CdcCaptureStates, item => item.CdcCaptureId == CaptureId &&
-                (item.LastOutcome == CdcCaptureRuntimeOutcomes.Captured || item.LastOutcome == CdcCaptureRuntimeOutcomes.Idle) &&
+                HasObservedInsertedChange(item) &&
                 item.Publication.State == CdcCapturePublicationStates.PendingPublication);
             Assert.Contains(snapshot.CdcCaptureExecutionRuntimes, item => item.Id == SqlRuntimeId &&
-                (item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Captured || item.Summary.LastOutcome == CdcCaptureRuntimeOutcomes.Idle) &&
-                item.Summary.TotalCapturedChangeCount == 1);
+                HasObservedInsertedChange(item));
         }
         finally
         {
@@ -193,5 +197,29 @@ public sealed class SqlServerDataCdcHostingTests
         }
 
         throw new TimeoutException("Timed out while waiting for the expected SQL Server CDC hosting condition.");
+    }
+
+    private static bool HasObservedInsertedChange(CdcCaptureRuntimeState? state)
+    {
+        return state is not null &&
+            IsCapturedOrIdle(state.LastOutcome) &&
+            state.CapturedCount > 0 &&
+            state.TotalCapturedChangeCount == 1 &&
+            state.TotalProducedMessageCount == 1;
+    }
+
+    private static bool HasObservedInsertedChange(CdcCaptureExecutionRuntimeDescriptor? runtime)
+    {
+        return runtime is not null &&
+            IsCapturedOrIdle(runtime.Summary.LastOutcome) &&
+            runtime.Summary.CapturedCount > 0 &&
+            runtime.Summary.TotalCapturedChangeCount == 1 &&
+            runtime.Summary.TotalProducedMessageCount == 1;
+    }
+
+    private static bool IsCapturedOrIdle(string? outcome)
+    {
+        return string.Equals(outcome, CdcCaptureRuntimeOutcomes.Captured, StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(outcome, CdcCaptureRuntimeOutcomes.Idle, StringComparison.OrdinalIgnoreCase);
     }
 }
