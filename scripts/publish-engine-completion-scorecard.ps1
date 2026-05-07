@@ -245,7 +245,7 @@ function Get-StatusTokens {
     $statusTokens = @($backtickTokens | Where-Object { $Script:AllowedStatuses -contains $_ })
     $unknownStatusTokens = @(
         $backtickTokens |
-            Where-Object { $_ -match '^[a-z]+(?:-[a-z]+)*$' -and $Script:AllowedStatuses -notcontains $_ }
+            Where-Object { $_ -cmatch '^[a-z]+(?:-[a-z]+)*$' -and $Script:AllowedStatuses -notcontains $_ }
     )
 
     if ($unknownStatusTokens.Count -gt 0) {
@@ -1102,6 +1102,27 @@ function Convert-DeploymentModeEvidence {
     $nonOptOutGate = ConvertTo-RequiredDeploymentModeBoolean `
         -Value (Get-ManifestPropertyValue -Object $publishProbePolicy -PropertyName "nonOptOutGate") `
         -Name "publishProbePolicy.nonOptOutGate"
+    $releaseValidationDeploymentModes = @(
+        Get-ManifestPropertyValue -Object $publishProbePolicy -PropertyName "releaseValidationDeploymentModes" -DefaultValue @() |
+            ForEach-Object { [string]$_ } |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    )
+    $gatedModes = @(
+        Get-ManifestPropertyValue -Object $publishProbePolicy -PropertyName "gatedModes" -DefaultValue @() |
+            ForEach-Object { [string]$_ } |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    )
+    $auditOnlyModes = @(
+        Get-ManifestPropertyValue -Object $publishProbePolicy -PropertyName "auditOnlyModes" -DefaultValue @() |
+            ForEach-Object { [string]$_ } |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    )
+    $failureBlocksRelease = ConvertTo-RequiredDeploymentModeBoolean `
+        -Value (Get-ManifestPropertyValue -Object $publishProbePolicy -PropertyName "failureBlocksRelease" -DefaultValue $nonOptOutGate) `
+        -Name "publishProbePolicy.failureBlocksRelease"
+    $failOnWarnings = ConvertTo-RequiredDeploymentModeBoolean `
+        -Value (Get-ManifestPropertyValue -Object $publishProbePolicy -PropertyName "failOnWarnings" -DefaultValue $true) `
+        -Name "publishProbePolicy.failOnWarnings"
 
     $representativePublishTargets = Get-ManifestPropertyValue -Object $manifest -PropertyName "representativePublishTargets"
     if ($null -eq $representativePublishTargets) {
@@ -1214,8 +1235,13 @@ function Convert-DeploymentModeEvidence {
         RepresentativePublishTargetCount     = $publishTargetReferences.Count
         RepresentativePublishTargets         = @($publishTargetReferences | ForEach-Object { $_.Reference })
         PublishProbeReleaseValidationMode    = $releaseValidationMode
+        PublishProbeReleaseValidationDeploymentModes = $releaseValidationDeploymentModes
         PublishProbeReleaseValidationSkipsPublish = $releaseValidationSkipsPublish
         PublishProbeNonOptOutGate            = $nonOptOutGate
+        PublishProbeGatedModes               = $gatedModes
+        PublishProbeAuditOnlyModes           = $auditOnlyModes
+        PublishProbeFailureBlocksRelease     = $failureBlocksRelease
+        PublishProbeFailOnWarnings           = $failOnWarnings
         PublishProbeGatePromotion            = [string](Get-ManifestPropertyValue -Object $publishProbePolicy -PropertyName "gatePromotion" -DefaultValue "")
         PublishProbePromotionRequirements    = @(Get-ManifestPropertyValue -Object $publishProbePolicy -PropertyName "promotionRequirements" -DefaultValue @() | ForEach-Object { [string]$_ })
     })
@@ -2259,8 +2285,13 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- Known hazard entries: $($Report.DeploymentModeEvidence.KnownHazardEntryCount)")
     $markdown.Add("- Transitive audit entries: $($Report.DeploymentModeEvidence.TransitiveAuditEntryCount)")
     $markdown.Add("- Publish-probe release validation mode: $($Report.DeploymentModeEvidence.PublishProbeReleaseValidationMode)")
+    $markdown.Add("- Publish-probe release validation deployment modes: $([string]::Join(', ', @($Report.DeploymentModeEvidence.PublishProbeReleaseValidationDeploymentModes)))")
     $markdown.Add("- Publish-probe skips publish in release validation: $($Report.DeploymentModeEvidence.PublishProbeReleaseValidationSkipsPublish)")
     $markdown.Add("- Publish-probe non-opt-out gate: $($Report.DeploymentModeEvidence.PublishProbeNonOptOutGate)")
+    $markdown.Add("- Publish-probe gated modes: $([string]::Join(', ', @($Report.DeploymentModeEvidence.PublishProbeGatedModes)))")
+    $markdown.Add("- Publish-probe audit-only modes: $([string]::Join(', ', @($Report.DeploymentModeEvidence.PublishProbeAuditOnlyModes)))")
+    $markdown.Add("- Publish-probe failure blocks release: $($Report.DeploymentModeEvidence.PublishProbeFailureBlocksRelease)")
+    $markdown.Add("- Publish-probe fails on warnings: $($Report.DeploymentModeEvidence.PublishProbeFailOnWarnings)")
     $markdown.Add("")
     $markdown.Add("| Mode | Status | Summary |")
     $markdown.Add("| --- | --- | --- |")

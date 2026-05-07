@@ -200,6 +200,21 @@ function ConvertTo-BooleanValue {
     return $DefaultValue
 }
 
+function ConvertTo-StringArray {
+    [CmdletBinding()]
+    param($Value)
+
+    if ($null -eq $Value) {
+        return @()
+    }
+
+    return @(
+        $Value |
+            ForEach-Object { [string]$_ } |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    )
+}
+
 function Get-ObjectPropertyValue {
     [CmdletBinding()]
     param(
@@ -265,6 +280,14 @@ function Get-PublishProbePolicySnapshot {
         $releaseValidationMode = "audit-only"
     }
 
+    $releaseValidationDeploymentModes = @(ConvertTo-StringArray -Value (Get-ObjectPropertyValue -Object $policy -PropertyName "releaseValidationDeploymentModes" -DefaultValue @()))
+    if ($releaseValidationDeploymentModes.Count -eq 0) {
+        $releaseValidationDeploymentModes = @("all")
+    }
+
+    $gatedModes = @(ConvertTo-StringArray -Value (Get-ObjectPropertyValue -Object $policy -PropertyName "gatedModes" -DefaultValue @()))
+    $auditOnlyModes = @(ConvertTo-StringArray -Value (Get-ObjectPropertyValue -Object $policy -PropertyName "auditOnlyModes" -DefaultValue @()))
+
     $gatePromotion = [string](Get-ObjectPropertyValue -Object $policy -PropertyName "gatePromotion" -DefaultValue "requires-deliberate-release-manager-decision")
     if ([string]::IsNullOrWhiteSpace($gatePromotion)) {
         $gatePromotion = "requires-deliberate-release-manager-decision"
@@ -279,15 +302,23 @@ function Get-PublishProbePolicySnapshot {
         )
     }
 
+    $releaseValidationSkipsPublish = ConvertTo-BooleanValue -Value (Get-ObjectPropertyValue -Object $policy -PropertyName "releaseValidationSkipsPublish" -DefaultValue $true) -DefaultValue $true
+    $nonOptOutGate = ConvertTo-BooleanValue -Value (Get-ObjectPropertyValue -Object $policy -PropertyName "nonOptOutGate" -DefaultValue $false) -DefaultValue $false
+
     return [pscustomobject]@{
-        Source                       = $source
-        ReleaseValidationMode        = $releaseValidationMode
-        ReleaseValidationSkipsPublish = ConvertTo-BooleanValue -Value (Get-ObjectPropertyValue -Object $policy -PropertyName "releaseValidationSkipsPublish" -DefaultValue $true) -DefaultValue $true
-        CurrentRunSkipsPublish       = $CurrentRunSkipsPublish
-        NonOptOutGate                = ConvertTo-BooleanValue -Value (Get-ObjectPropertyValue -Object $policy -PropertyName "nonOptOutGate" -DefaultValue $false) -DefaultValue $false
-        GatePromotion                = $gatePromotion
-        RepresentativePublishTargets = $RepresentativePublishTargetCount
-        PromotionRequirements        = $promotionRequirements
+        Source                        = $source
+        ReleaseValidationMode         = $releaseValidationMode
+        ReleaseValidationDeploymentModes = $releaseValidationDeploymentModes
+        ReleaseValidationSkipsPublish = $releaseValidationSkipsPublish
+        CurrentRunSkipsPublish        = $CurrentRunSkipsPublish
+        NonOptOutGate                 = $nonOptOutGate
+        GatedModes                    = $gatedModes
+        AuditOnlyModes                = $auditOnlyModes
+        FailureBlocksRelease          = ConvertTo-BooleanValue -Value (Get-ObjectPropertyValue -Object $policy -PropertyName "failureBlocksRelease" -DefaultValue $nonOptOutGate) -DefaultValue $nonOptOutGate
+        FailOnWarnings                = ConvertTo-BooleanValue -Value (Get-ObjectPropertyValue -Object $policy -PropertyName "failOnWarnings" -DefaultValue $true) -DefaultValue $true
+        GatePromotion                 = $gatePromotion
+        RepresentativePublishTargets  = $RepresentativePublishTargetCount
+        PromotionRequirements         = $promotionRequirements
     }
 }
 
@@ -1277,6 +1308,105 @@ function Compute-AggregateVerdict {
     return "mixed"
 }
 
+function Compute-PublishProbeGateResult {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)] $ModeReports,
+        $PublishProbePolicy
+    )
+
+    $gatedModes = @()
+    if ($null -ne $PublishProbePolicy -and $PublishProbePolicy.PSObject.Properties.Match("GatedModes").Count -gt 0) {
+        $gatedModes = @(ConvertTo-StringArray -Value $PublishProbePolicy.GatedModes)
+    }
+
+    $nonOptOutGate = $false
+    if ($null -ne $PublishProbePolicy -and $PublishProbePolicy.PSObject.Properties.Match("NonOptOutGate").Count -gt 0) {
+        $nonOptOutGate = ConvertTo-BooleanValue -Value $PublishProbePolicy.NonOptOutGate -DefaultValue $false
+    }
+
+    $failureBlocksRelease = $nonOptOutGate
+    if ($null -ne $PublishProbePolicy -and $PublishProbePolicy.PSObject.Properties.Match("FailureBlocksRelease").Count -gt 0) {
+        $failureBlocksRelease = ConvertTo-BooleanValue -Value $PublishProbePolicy.FailureBlocksRelease -DefaultValue $nonOptOutGate
+    }
+
+    $failOnWarnings = $true
+    if ($null -ne $PublishProbePolicy -and $PublishProbePolicy.PSObject.Properties.Match("FailOnWarnings").Count -gt 0) {
+        $failOnWarnings = ConvertTo-BooleanValue -Value $PublishProbePolicy.FailOnWarnings -DefaultValue $true
+    }
+
+    if (-not $nonOptOutGate -or -not $failureBlocksRelease -or $gatedModes.Count -eq 0) {
+        return [pscustomobject]@{
+            Status               = "not-enabled"
+            Enabled              = $false
+            FailureBlocksRelease = $failureBlocksRelease
+            FailOnWarnings       = $failOnWarnings
+            GatedModes           = $gatedModes
+            FailureCount         = 0
+            Reasons              = @("publish-probe release gate is not enabled by publishProbePolicy")
+        }
+    }
+
+    $reasons = @()
+    foreach ($mode in $gatedModes) {
+        $modeReport = @($ModeReports | Where-Object { $null -ne $_ -and $_.Mode -eq $mode }) | Select-Object -First 1
+        if ($null -eq $modeReport) {
+            $reasons += "gated mode '$mode' was not evaluated"
+            continue
+        }
+
+        $publishProbe = $modeReport.PublishProbe
+        if ($null -eq $publishProbe -or $publishProbe.Skipped) {
+            $reason = if ($null -ne $publishProbe -and -not [string]::IsNullOrWhiteSpace([string]$publishProbe.Reason)) {
+                [string]$publishProbe.Reason
+            }
+            else {
+                "publish probe did not run"
+            }
+            $reasons += "gated mode '$mode' did not run a publish probe: $reason"
+            continue
+        }
+
+        $targets = @($publishProbe.Targets)
+        if ($targets.Count -eq 0) {
+            $reasons += "gated mode '$mode' did not evaluate any publish target"
+            continue
+        }
+
+        $failedTargets = @($targets | Where-Object { -not $_.Success })
+        if ($failedTargets.Count -gt 0) {
+            $reasons += "gated mode '$mode' failed $($failedTargets.Count) of $($targets.Count) publish target(s)"
+        }
+
+        $totalWarnings = ($targets | Measure-Object -Property WarningCount -Sum).Sum
+        if ($failOnWarnings -and $totalWarnings -and $totalWarnings -gt 0) {
+            $reasons += "gated mode '$mode' emitted $totalWarnings publish warning(s)"
+        }
+    }
+
+    if ($reasons.Count -gt 0) {
+        return [pscustomobject]@{
+            Status               = "failed"
+            Enabled              = $true
+            FailureBlocksRelease = $failureBlocksRelease
+            FailOnWarnings       = $failOnWarnings
+            GatedModes           = $gatedModes
+            FailureCount         = $reasons.Count
+            Reasons              = $reasons
+        }
+    }
+
+    return [pscustomobject]@{
+        Status               = "passed"
+        Enabled              = $true
+        FailureBlocksRelease = $failureBlocksRelease
+        FailOnWarnings       = $failOnWarnings
+        GatedModes           = $gatedModes
+        FailureCount         = 0
+        Reasons              = @("all gated publish probes passed")
+    }
+}
+
 function Write-ValidationReport {
     [CmdletBinding()]
     param(
@@ -1350,9 +1480,14 @@ function Write-ValidationReport {
     else {
         [void]$sb.AppendLine("- Source: $($publishProbePolicy.Source)")
         [void]$sb.AppendLine("- Release-validation mode: $($publishProbePolicy.ReleaseValidationMode)")
+        [void]$sb.AppendLine("- Release-validation deployment modes: $(@($publishProbePolicy.ReleaseValidationDeploymentModes) -join ', ')")
         [void]$sb.AppendLine("- Release validation skips publish: $($publishProbePolicy.ReleaseValidationSkipsPublish)")
         [void]$sb.AppendLine("- Current run skipped publish: $($publishProbePolicy.CurrentRunSkipsPublish)")
         [void]$sb.AppendLine("- Non-opt-out gate: $($publishProbePolicy.NonOptOutGate)")
+        [void]$sb.AppendLine("- Gated modes: $(@($publishProbePolicy.GatedModes) -join ', ')")
+        [void]$sb.AppendLine("- Audit-only modes: $(@($publishProbePolicy.AuditOnlyModes) -join ', ')")
+        [void]$sb.AppendLine("- Failure blocks release: $($publishProbePolicy.FailureBlocksRelease)")
+        [void]$sb.AppendLine("- Fail on warnings: $($publishProbePolicy.FailOnWarnings)")
         [void]$sb.AppendLine("- Gate promotion: $($publishProbePolicy.GatePromotion)")
         [void]$sb.AppendLine("- Representative publish targets: $($publishProbePolicy.RepresentativePublishTargets)")
         $requirements = @($publishProbePolicy.PromotionRequirements)
@@ -1362,6 +1497,22 @@ function Write-ValidationReport {
             foreach ($requirement in $requirements) {
                 [void]$sb.AppendLine("- $requirement")
             }
+        }
+    }
+    [void]$sb.AppendLine("")
+    [void]$sb.AppendLine("## Publish-probe release gate")
+    [void]$sb.AppendLine("")
+    if ($Report.PSObject.Properties.Match("PublishProbeGate").Count -eq 0 -or $null -eq $Report.PublishProbeGate) {
+        [void]$sb.AppendLine("No publish-probe release gate was emitted for this report.")
+    }
+    else {
+        [void]$sb.AppendLine("- Status: $($Report.PublishProbeGate.Status)")
+        [void]$sb.AppendLine("- Enabled: $($Report.PublishProbeGate.Enabled)")
+        [void]$sb.AppendLine("- Failure blocks release: $($Report.PublishProbeGate.FailureBlocksRelease)")
+        [void]$sb.AppendLine("- Fail on warnings: $($Report.PublishProbeGate.FailOnWarnings)")
+        [void]$sb.AppendLine("- Gated modes: $(@($Report.PublishProbeGate.GatedModes) -join ', ')")
+        foreach ($reason in @($Report.PublishProbeGate.Reasons)) {
+            [void]$sb.AppendLine("  - $reason")
         }
     }
     [void]$sb.AppendLine("")
@@ -1527,6 +1678,7 @@ function Invoke-DeploymentModeClaimValidation {
     }
 
     $aggregateVerdict = Compute-AggregateVerdict -ModeVerdicts $modeReports
+    $publishProbeGate = Compute-PublishProbeGateResult -ModeReports $modeReports -PublishProbePolicy $publishProbePolicy
 
     $report = [ordered]@{
         GeneratedAtUtc      = (Get-Date).ToUniversalTime().ToString("o")
@@ -1539,6 +1691,7 @@ function Invoke-DeploymentModeClaimValidation {
         Verdicts            = @($modeReports | ForEach-Object { [pscustomobject]@{ Mode = $_.Mode; Verdict = $_.Verdict; Reasons = $_.Reasons } })
         HazardInventory     = $hazardInventory
         PublishProbePolicy  = $publishProbePolicy
+        PublishProbeGate    = $publishProbeGate
         AggregateVerdict    = $aggregateVerdict
         ValidVerdicts       = $Script:ValidVerdicts
         ValidationStrategy  = if ($SkipPublish) { "audit-only" } else { "publish-required" }
@@ -1549,9 +1702,13 @@ function Invoke-DeploymentModeClaimValidation {
     $paths = Write-ValidationReport -OutputDir $OutputPath -Report $reportObj
 
     Invoke-Step -Title "Aggregate verdict" -Detail $aggregateVerdict
+    Invoke-Step -Title "Publish-probe release gate" -Detail $publishProbeGate.Status
 
     if ($aggregateVerdict -eq "claim-overstated") {
         throw "claim-overstated: see $($paths.JsonPath) for details"
+    }
+    if ($publishProbeGate.Status -eq "failed") {
+        throw "publish-probe-gate-failed: see $($paths.JsonPath) for details"
     }
 
     return [pscustomobject]@{

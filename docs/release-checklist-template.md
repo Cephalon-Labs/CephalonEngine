@@ -45,7 +45,7 @@ The durable rule book lives in [`release-checklist.md`](release-checklist.md). T
 - [ ] Build (Release) ✅
 - [ ] Tests (Composition + Hosting + Tooling) ✅
 - [ ] `.NET 11` readiness contract ✅
-- [ ] Deployment-mode claim audit ✅
+- [ ] Deployment-mode claim audit + gated `singleFile` publish probe ✅
 - [ ] Engine completion scorecard artifact + source references + per-package GA rows + deployment-mode evidence + adoption-smoke evidence + provider-integration evidence including dependency-health provider-manifest release-validation/doctor readback + SRE posture evidence including guardrail coverage counts + supply-chain release evidence + public API compatibility evidence + optional `cephalon doctor --scorecard artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json` readback with deployment-mode, provider integration, dependency-health provider-manifest, SRE, supply-chain, and public API counts ✅
 - [ ] Operational health + export conventions ✅
 - [ ] Phase-8 architecture / runtime / starter conventions ✅
@@ -68,7 +68,7 @@ The durable rule book lives in [`release-checklist.md`](release-checklist.md). T
 ## 5. Deployment-mode claim truthfulness
 
 - [ ] [`scripts/deployment-mode-support.json`](../scripts/deployment-mode-support.json) claim states accurately reflect engine reality
-- [ ] Harness publish-probe reports expected verdict for the manifest-declared `representativePublishTargets.projects`
+- [ ] Harness publish-probe reports expected verdict and `PublishProbeGate` for the manifest-declared `representativePublishTargets.projects`
 - [ ] `engine.deployment-mode-claims.truthful-fraction` SLI in expected state
 - [ ] [`docs/dotnet11-readiness.md`](dotnet11-readiness.md) reflects current `.NET 11` preview window observation
 

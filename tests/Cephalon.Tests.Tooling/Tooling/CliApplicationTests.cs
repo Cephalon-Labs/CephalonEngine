@@ -395,7 +395,7 @@ public sealed class CliApplicationTests
                 "KnownHazardPackageCount": 2,
                 "KnownHazardEntryCount": 14,
                 "TransitiveAuditEntryCount": 7,
-                "PublishProbeReleaseValidationMode": "audit-only"
+                "PublishProbeReleaseValidationMode": "single-file-publish-gate"
               },
               "ProviderIntegrationEvidence": {
                 "EvidenceRowCount": 32,
@@ -495,7 +495,7 @@ public sealed class CliApplicationTests
             Assert.Contains("[warn] Engine completion scorecard platform gates: 12 gates; blocked 0, needs-refresh 1, partial 7, not-claimed 1.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Engine completion scorecard evidence references: 20 repo-local references validated by the published artifact.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard package GA readiness: 90 package rows; partial 89, not-claimed 1, needs-refresh 0.", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("[warn] Engine completion scorecard deployment-mode evidence: 3 global claims; not-claimed 3, package-scoped claim packages 1, known hazards 14 across 2 packages, transitive audit entries 7, publish probes audit-only.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[warn] Engine completion scorecard deployment-mode evidence: 3 global claims; not-claimed 3, package-scoped claim packages 1, known hazards 14 across 2 packages, transitive audit entries 7, publish probes single-file-publish-gate.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard provider integration evidence: 32 rows; live proofs 6, composition-only 26, external-service gates 6, default-skipped 6, runtime contracts 61; dependency-health providers 18 from scripts/observability-dependency-health-providers.json schema 1.0.0 (source-derived-provider-family-contract).", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard SRE posture: 11 SLIs; target-declared 11, pending stable baselines 11, stable baselines 0, guardrail-mapped 4, pending guardrail coverage 2, guardrail not-applicable 5, guardrail references 6.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard supply-chain release evidence: 10 items; workflow-ready 7, external-policy-pending 3, blocked 0.", stdout.ToString(), StringComparison.Ordinal);
@@ -619,7 +619,7 @@ public sealed class CliApplicationTests
                 "KnownHazardPackageCount": 2,
                 "KnownHazardEntryCount": 13,
                 "TransitiveAuditEntryCount": 7,
-                "PublishProbeReleaseValidationMode": "audit-only"
+                "PublishProbeReleaseValidationMode": "single-file-publish-gate"
               },
               "ProviderIntegrationEvidence": {
                 "EvidenceRowCount": 32,
@@ -749,7 +749,7 @@ public sealed class CliApplicationTests
                 "KnownHazardPackageCount": 2,
                 "KnownHazardEntryCount": 14,
                 "TransitiveAuditEntryCount": 7,
-                "PublishProbeReleaseValidationMode": "audit-only"
+                "PublishProbeReleaseValidationMode": "single-file-publish-gate"
               },
               "ProviderIntegrationEvidence": {
                 "EvidenceRowCount": 31,
@@ -879,7 +879,7 @@ public sealed class CliApplicationTests
                 "KnownHazardPackageCount": 2,
                 "KnownHazardEntryCount": 14,
                 "TransitiveAuditEntryCount": 7,
-                "PublishProbeReleaseValidationMode": "audit-only"
+                "PublishProbeReleaseValidationMode": "single-file-publish-gate"
               },
               "ProviderIntegrationEvidence": {
                 "EvidenceRowCount": 32,
@@ -1003,7 +1003,7 @@ public sealed class CliApplicationTests
                 "KnownHazardPackageCount": 2,
                 "KnownHazardEntryCount": 14,
                 "TransitiveAuditEntryCount": 7,
-                "PublishProbeReleaseValidationMode": "audit-only"
+                "PublishProbeReleaseValidationMode": "single-file-publish-gate"
               },
               "ProviderIntegrationEvidence": {
                 "EvidenceRowCount": 32,
@@ -1133,7 +1133,7 @@ public sealed class CliApplicationTests
                 "KnownHazardPackageCount": 2,
                 "KnownHazardEntryCount": 14,
                 "TransitiveAuditEntryCount": 7,
-                "PublishProbeReleaseValidationMode": "audit-only"
+                "PublishProbeReleaseValidationMode": "single-file-publish-gate"
               },
               "ProviderIntegrationEvidence": {
                 "EvidenceRowCount": 32,
@@ -1263,7 +1263,7 @@ public sealed class CliApplicationTests
                 "KnownHazardPackageCount": 2,
                 "KnownHazardEntryCount": 14,
                 "TransitiveAuditEntryCount": 7,
-                "PublishProbeReleaseValidationMode": "audit-only"
+                "PublishProbeReleaseValidationMode": "single-file-publish-gate"
               },
               "ProviderIntegrationEvidence": {
                 "EvidenceRowCount": 32,

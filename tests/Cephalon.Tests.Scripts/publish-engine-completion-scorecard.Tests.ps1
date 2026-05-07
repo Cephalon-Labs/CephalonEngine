@@ -125,7 +125,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/validate-out-of-tree-package-adoption.ps1"
         $json.EvidenceSourceReferences.Reference | Should -Contain "scripts/summarise-public-api-deltas.ps1"
 
-        $json.DeploymentModeEvidence.ManifestSchemaVersion | Should -Be "1.4.0"
+        $json.DeploymentModeEvidence.ManifestSchemaVersion | Should -Be "1.5.0"
         $json.DeploymentModeEvidence.ShippingStableTargetFramework | Should -Be "net10.0"
         $json.DeploymentModeEvidence.ReadinessLaneTargetFramework | Should -Be "net11.0"
         $json.DeploymentModeEvidence.ReadinessLaneStatus | Should -Be "assessment-only"
@@ -148,9 +148,15 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.DeploymentModeEvidence.TransitiveAuditEntryCount | Should -Be 7
         $json.DeploymentModeEvidence.TransitiveAuditLockFileGlobCount | Should -Be 3
         $json.DeploymentModeEvidence.RepresentativePublishTargetCount | Should -Be 5
-        $json.DeploymentModeEvidence.PublishProbeReleaseValidationMode | Should -Be "audit-only"
-        $json.DeploymentModeEvidence.PublishProbeReleaseValidationSkipsPublish | Should -BeTrue
-        $json.DeploymentModeEvidence.PublishProbeNonOptOutGate | Should -BeFalse
+        $json.DeploymentModeEvidence.PublishProbeReleaseValidationMode | Should -Be "single-file-publish-gate"
+        $json.DeploymentModeEvidence.PublishProbeReleaseValidationDeploymentModes | Should -Contain "singleFile"
+        $json.DeploymentModeEvidence.PublishProbeReleaseValidationSkipsPublish | Should -BeFalse
+        $json.DeploymentModeEvidence.PublishProbeNonOptOutGate | Should -BeTrue
+        $json.DeploymentModeEvidence.PublishProbeGatedModes | Should -Contain "singleFile"
+        $json.DeploymentModeEvidence.PublishProbeAuditOnlyModes | Should -Contain "trim"
+        $json.DeploymentModeEvidence.PublishProbeAuditOnlyModes | Should -Contain "nativeAot"
+        $json.DeploymentModeEvidence.PublishProbeFailureBlocksRelease | Should -BeTrue
+        $json.DeploymentModeEvidence.PublishProbeFailOnWarnings | Should -BeTrue
         $json.DeploymentModeEvidence.PackageRows.PackageName | Should -Contain "Cephalon.Diagnostics"
         $json.DeploymentModeEvidence.PackageRows.PackageName | Should -Contain "Cephalon.Data.MySql.SciSharpReplication"
         $json.DeploymentModeEvidence.TransitiveAuditRows.PackagePattern | Should -Contain "Newtonsoft.Json"
@@ -273,7 +279,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "Package families: 9"
         $markdown | Should -Match "Deployment-Mode Evidence"
         $markdown | Should -Match "Deployment-mode known hazards: 14"
-        $markdown | Should -Match "Publish-probe release validation mode: audit-only"
+        $markdown | Should -Match "Publish-probe release validation mode: single-file-publish-gate"
+        $markdown | Should -Match "Publish-probe release validation deployment modes: singleFile"
+        $markdown | Should -Match "Publish-probe gated modes: singleFile"
         $markdown | Should -Match "SRE Posture Evidence"
         $markdown | Should -Match "SRE SLIs: 11"
         $markdown | Should -Match "SRE pending stable baselines: 11"

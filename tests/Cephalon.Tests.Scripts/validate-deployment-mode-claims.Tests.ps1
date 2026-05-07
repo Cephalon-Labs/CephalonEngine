@@ -783,30 +783,110 @@ Describe "Compute-AggregateVerdict" {
     }
 }
 
+Describe "Compute-PublishProbeGateResult" {
+    BeforeAll {
+        function script:New-GatePublishProbe {
+            param([int]$Failures = 0, [int]$Warnings = 0, [int]$Total = 1, [bool]$Skipped = $false)
+            $targets = @()
+            for ($i = 0; $i -lt $Total; $i++) {
+                $targets += [pscustomobject]@{
+                    Target = "T$i.csproj"
+                    ExitCode = if ($i -lt $Failures) { 1 } else { 0 }
+                    WarningCount = if ($i -lt $Warnings) { 1 } else { 0 }
+                    ErrorCount = if ($i -lt $Failures) { 1 } else { 0 }
+                    Success = (($i -ge $Failures))
+                }
+            }
+            [pscustomobject]@{
+                Mode = "singleFile"
+                Skipped = $Skipped
+                Reason = if ($Skipped) { "unit-test skip" } else { $null }
+                Targets = $targets
+            }
+        }
+    }
+
+    It "does not enable a gate when publishProbePolicy is audit-only" {
+        $result = Compute-PublishProbeGateResult `
+            -ModeReports @([pscustomobject]@{ Mode = "singleFile"; PublishProbe = (New-GatePublishProbe) }) `
+            -PublishProbePolicy ([pscustomobject]@{ NonOptOutGate = $false; FailureBlocksRelease = $false; GatedModes = @("singleFile") })
+
+        $result.Status | Should -Be "not-enabled"
+        $result.Enabled | Should -BeFalse
+    }
+
+    It "passes when every gated single-file publish target succeeds without warnings" {
+        $result = Compute-PublishProbeGateResult `
+            -ModeReports @([pscustomobject]@{ Mode = "singleFile"; PublishProbe = (New-GatePublishProbe -Total 2) }) `
+            -PublishProbePolicy ([pscustomobject]@{ NonOptOutGate = $true; FailureBlocksRelease = $true; FailOnWarnings = $true; GatedModes = @("singleFile") })
+
+        $result.Status | Should -Be "passed"
+        $result.FailureCount | Should -Be 0
+    }
+
+    It "fails when the gated mode was not evaluated" {
+        $result = Compute-PublishProbeGateResult `
+            -ModeReports @([pscustomobject]@{ Mode = "trim"; PublishProbe = (New-GatePublishProbe) }) `
+            -PublishProbePolicy ([pscustomobject]@{ NonOptOutGate = $true; FailureBlocksRelease = $true; FailOnWarnings = $true; GatedModes = @("singleFile") })
+
+        $result.Status | Should -Be "failed"
+        ($result.Reasons -join " ") | Should -Match "not evaluated"
+    }
+
+    It "fails when the gated publish probe is skipped" {
+        $result = Compute-PublishProbeGateResult `
+            -ModeReports @([pscustomobject]@{ Mode = "singleFile"; PublishProbe = (New-GatePublishProbe -Skipped $true) }) `
+            -PublishProbePolicy ([pscustomobject]@{ NonOptOutGate = $true; FailureBlocksRelease = $true; FailOnWarnings = $true; GatedModes = @("singleFile") })
+
+        $result.Status | Should -Be "failed"
+        ($result.Reasons -join " ") | Should -Match "did not run"
+    }
+
+    It "fails on gated publish failures and warnings" {
+        $result = Compute-PublishProbeGateResult `
+            -ModeReports @([pscustomobject]@{ Mode = "singleFile"; PublishProbe = (New-GatePublishProbe -Total 2 -Failures 1 -Warnings 1) }) `
+            -PublishProbePolicy ([pscustomobject]@{ NonOptOutGate = $true; FailureBlocksRelease = $true; FailOnWarnings = $true; GatedModes = @("singleFile") })
+
+        $result.Status | Should -Be "failed"
+        ($result.Reasons -join " ") | Should -Match "failed 1 of 2"
+        ($result.Reasons -join " ") | Should -Match "warning"
+    }
+}
+
 Describe "Get-PublishProbePolicySnapshot" {
-    It "reads the manifest-backed audit-only release-validation policy" {
+    It "reads the manifest-backed single-file release gate policy" {
         $manifest = [pscustomobject]@{
             publishProbePolicy = [pscustomobject]@{
-                releaseValidationMode = "audit-only"
-                releaseValidationSkipsPublish = $true
-                nonOptOutGate = $false
-                gatePromotion = "requires-deliberate-release-manager-decision"
-                promotionRequirements = @("publish probes pass without -SkipPublish")
+                releaseValidationMode = "single-file-publish-gate"
+                releaseValidationDeploymentModes = @("singleFile")
+                releaseValidationSkipsPublish = $false
+                nonOptOutGate = $true
+                gatedModes = @("singleFile")
+                auditOnlyModes = @("trim", "nativeAot")
+                failureBlocksRelease = $true
+                failOnWarnings = $true
+                gatePromotion = "eng-510-single-file-publish-probe-release-gate"
+                promotionRequirements = @("single-file publish probes pass without -SkipPublish")
             }
         }
 
         $policy = Get-PublishProbePolicySnapshot `
             -Manifest $manifest `
-            -CurrentRunSkipsPublish $true `
+            -CurrentRunSkipsPublish $false `
             -RepresentativePublishTargetCount 5
 
         $policy.Source | Should -Be "manifest"
-        $policy.ReleaseValidationMode | Should -Be "audit-only"
-        $policy.ReleaseValidationSkipsPublish | Should -BeTrue
-        $policy.CurrentRunSkipsPublish | Should -BeTrue
-        $policy.NonOptOutGate | Should -BeFalse
+        $policy.ReleaseValidationMode | Should -Be "single-file-publish-gate"
+        $policy.ReleaseValidationDeploymentModes | Should -Contain "singleFile"
+        $policy.ReleaseValidationSkipsPublish | Should -BeFalse
+        $policy.CurrentRunSkipsPublish | Should -BeFalse
+        $policy.NonOptOutGate | Should -BeTrue
+        $policy.GatedModes | Should -Contain "singleFile"
+        $policy.AuditOnlyModes | Should -Contain "trim"
+        $policy.FailureBlocksRelease | Should -BeTrue
+        $policy.FailOnWarnings | Should -BeTrue
         $policy.RepresentativePublishTargets | Should -Be 5
-        $policy.PromotionRequirements | Should -Contain "publish probes pass without -SkipPublish"
+        $policy.PromotionRequirements | Should -Contain "single-file publish probes pass without -SkipPublish"
     }
 
     It "defaults to audit-only when older manifests omit publishProbePolicy" {
@@ -820,6 +900,8 @@ Describe "Get-PublishProbePolicySnapshot" {
         $policy.ReleaseValidationSkipsPublish | Should -BeTrue
         $policy.CurrentRunSkipsPublish | Should -BeFalse
         $policy.NonOptOutGate | Should -BeFalse
+        $policy.ReleaseValidationDeploymentModes | Should -Contain "all"
+        $policy.GatedModes.Count | Should -Be 0
         $policy.GatePromotion | Should -Be "requires-deliberate-release-manager-decision"
     }
 }
@@ -869,13 +951,27 @@ Describe "Write-ValidationReport" {
             }
             PublishProbePolicy = [pscustomobject]@{
                 Source = "manifest"
-                ReleaseValidationMode = "audit-only"
-                ReleaseValidationSkipsPublish = $true
-                CurrentRunSkipsPublish = $true
-                NonOptOutGate = $false
-                GatePromotion = "requires-deliberate-release-manager-decision"
+                ReleaseValidationMode = "single-file-publish-gate"
+                ReleaseValidationDeploymentModes = @("singleFile")
+                ReleaseValidationSkipsPublish = $false
+                CurrentRunSkipsPublish = $false
+                NonOptOutGate = $true
+                GatedModes = @("singleFile")
+                AuditOnlyModes = @("trim", "nativeAot")
+                FailureBlocksRelease = $true
+                FailOnWarnings = $true
+                GatePromotion = "eng-510-single-file-publish-probe-release-gate"
                 RepresentativePublishTargets = 5
-                PromotionRequirements = @("remove -SkipPublish in the support-promotion slice")
+                PromotionRequirements = @("single-file publish probes pass without -SkipPublish")
+            }
+            PublishProbeGate = [pscustomobject]@{
+                Status = "passed"
+                Enabled = $true
+                FailureBlocksRelease = $true
+                FailOnWarnings = $true
+                GatedModes = @("singleFile")
+                FailureCount = 0
+                Reasons = @("all gated publish probes passed")
             }
             AggregateVerdict = "not-claimed"
         }
@@ -891,8 +987,11 @@ Describe "Write-ValidationReport" {
         $md | Should -Match "# Deployment-mode claim validation report"
         $md | Should -Match "Aggregate verdict"
         $md | Should -Match "Publish-probe policy"
-        $md | Should -Match "Release validation skips publish: True"
-        $md | Should -Match "remove -SkipPublish"
+        $md | Should -Match "Release validation skips publish: False"
+        $md | Should -Match "Gated modes: singleFile"
+        $md | Should -Match "Publish-probe release gate"
+        $md | Should -Match "Status: passed"
+        $md | Should -Match "single-file publish probes pass without -SkipPublish"
         $md | Should -Match "Hazard inventory"
         $md | Should -Match "Known transitive hazard lock-file audit"
         $md | Should -Match "Newtonsoft.Json"
@@ -1129,6 +1228,49 @@ Describe "Invoke-DeploymentModeClaimValidation (integration)" {
                 -OutputPath $outDir `
                 -RepoRoot $repo.Root `
                 -SkipPublish } | Should -Throw "*claim-overstated*"
+    }
+
+    It "throws when the non-opt-out single-file publish gate fails even though global single-file stays not-claimed" {
+        $repo = New-TempRepoRoot -Projects @(
+            @{ Name = "Cephalon.AlphaPack"; Properties = @{ TargetFramework = "net10.0" } }
+        )
+        $manifestPath = Join-Path $repo.Root "deployment-mode-support.json"
+        @{
+            publishProbePolicy = @{
+                releaseValidationMode = "single-file-publish-gate"
+                releaseValidationDeploymentModes = @("singleFile")
+                releaseValidationSkipsPublish = $false
+                nonOptOutGate = $true
+                gatedModes = @("singleFile")
+                failureBlocksRelease = $true
+                failOnWarnings = $true
+                gatePromotion = "unit-test"
+                promotionRequirements = @("single-file publish probes pass")
+            }
+            representativePublishTargets = @{
+                projects = @("samples/alpha/Alpha.csproj")
+            }
+            deploymentModes = @{
+                trim       = @{ status = "not-claimed" }
+                nativeAot  = @{ status = "not-claimed" }
+                singleFile = @{ status = "not-claimed" }
+            }
+        } | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $manifestPath -Encoding UTF8
+
+        $failingStub = Join-Path $repo.Root "failing-publish.ps1"
+        @"
+param([Parameter(ValueFromRemainingArguments)] `$rest)
+Write-Output 'error: publish failed in unit test'
+exit 1
+"@ | Set-Content -LiteralPath $failingStub -Encoding UTF8
+
+        $outDir = Join-Path $repo.Root "out"
+        { Invoke-DeploymentModeClaimValidation `
+                -DeploymentMode "singleFile" `
+                -ManifestPath $manifestPath `
+                -OutputPath $outDir `
+                -RepoRoot $repo.Root `
+                -DotnetCommand $failingStub } | Should -Throw "*publish-probe-gate-failed*"
     }
 
     It "validates a single mode when -DeploymentMode trim is requested" {

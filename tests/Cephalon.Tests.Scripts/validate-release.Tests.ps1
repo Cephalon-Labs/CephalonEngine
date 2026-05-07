@@ -46,7 +46,7 @@ BeforeAll {
                 PackageScopedClaimPackageCount = 1
                 KnownHazardEntryCount = 14
                 TransitiveAuditEntryCount = 7
-                PublishProbeReleaseValidationMode = "audit-only"
+                PublishProbeReleaseValidationMode = "single-file-publish-gate"
             }
             ProviderIntegrationEvidence = $providerIntegrationEvidence
             SrePostureEvidence = [ordered]@{
@@ -98,6 +98,49 @@ BeforeAll {
 
 AfterAll {
     Remove-Item Env:\CEPHALON_VALIDATE_RELEASE_NO_RUN -ErrorAction SilentlyContinue
+}
+
+Describe "validate-release.ps1 deployment-mode policy" {
+    BeforeEach {
+        $script:tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) "cephalon-validate-release-policy-$([System.Guid]::NewGuid().ToString('N'))"
+        New-Item -ItemType Directory -Path $script:tempRoot -Force | Out-Null
+    }
+
+    AfterEach {
+        if (Test-Path -LiteralPath $script:tempRoot) {
+            Remove-Item -LiteralPath $script:tempRoot -Recurse -Force
+        }
+    }
+
+    It "reads the manifest-backed single-file publish gate policy" {
+        $manifestPath = Join-Path $script:tempRoot "deployment-mode-support.json"
+        @{
+            publishProbePolicy = @{
+                releaseValidationMode = "single-file-publish-gate"
+                releaseValidationDeploymentModes = @("singleFile")
+                releaseValidationSkipsPublish = $false
+            }
+        } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $manifestPath -Encoding UTF8
+
+        $policy = Get-DeploymentModeReleaseValidationPolicy -ManifestPath $manifestPath
+
+        $policy.ReleaseValidationMode | Should -Be "single-file-publish-gate"
+        $policy.ReleaseValidationDeploymentModes | Should -Contain "singleFile"
+        $policy.ReleaseValidationSkipsPublish | Should -BeFalse
+    }
+
+    It "defaults older manifests to all-mode audit-only validation" {
+        $manifestPath = Join-Path $script:tempRoot "deployment-mode-support.json"
+        @{
+            deploymentModes = @{}
+        } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $manifestPath -Encoding UTF8
+
+        $policy = Get-DeploymentModeReleaseValidationPolicy -ManifestPath $manifestPath
+
+        $policy.ReleaseValidationMode | Should -Be "audit-only"
+        $policy.ReleaseValidationDeploymentModes | Should -Contain "all"
+        $policy.ReleaseValidationSkipsPublish | Should -BeTrue
+    }
 }
 
 Describe "validate-release.ps1 scorecard readback" {

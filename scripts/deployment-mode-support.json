@@ -1,5 +1,5 @@
 {
-  "$schemaVersion": "1.4.0",
+  "$schemaVersion": "1.5.0",
   "shippingBaseline": {
     "stableTargetFramework": "net10.0",
     "readinessLaneTargetFramework": "net11.0",
@@ -16,16 +16,29 @@
   "analyzerOnlySignalsDoNotCount": true,
   "validationStrategy": "publish-required",
   "publishProbePolicy": {
-    "comment": "Release validation deliberately keeps publish probes audit-only until Cephalon promotes trim, Native AOT, or single-file from global not-claimed to an actual support claim. Direct harness runs may omit -SkipPublish to exercise the representative publish targets, but scripts/validate-release.ps1 must keep passing -SkipPublish while nonOptOutGate is false.",
-    "releaseValidationMode": "audit-only",
-    "releaseValidationSkipsPublish": true,
-    "nonOptOutGate": false,
-    "gatePromotion": "requires-deliberate-release-manager-decision",
+    "comment": "Release validation now treats the representative single-file publish probe as a non-opt-out release gate while keeping trim, Native AOT, and the global single-file support claim not-claimed. Direct harness runs may still audit trim or Native AOT deliberately, but scripts/validate-release.ps1 must invoke validate-deployment-mode-claims.ps1 for singleFile without -SkipPublish.",
+    "releaseValidationMode": "single-file-publish-gate",
+    "releaseValidationDeploymentModes": [
+      "singleFile"
+    ],
+    "releaseValidationSkipsPublish": false,
+    "nonOptOutGate": true,
+    "gatedModes": [
+      "singleFile"
+    ],
+    "auditOnlyModes": [
+      "trim",
+      "nativeAot"
+    ],
+    "failureBlocksRelease": true,
+    "failOnWarnings": true,
+    "gatePromotion": "eng-510-single-file-publish-probe-release-gate",
     "promotionRequirements": [
-      "all global deploymentModes entries that will be claimed move from not-claimed to claimed in this manifest",
-      "scripts/validate-deployment-mode-claims.ps1 reports claim-truthful without -SkipPublish for the claimed mode set",
-      "scripts/validate-release.ps1 removes -SkipPublish only in the same slice that documents the support promotion",
-      "release-validation workflow evidence includes publish-probe output for the representativePublishTargets set",
+      "deploymentModes.singleFile remains not-claimed globally until the whole engine support story is deliberately promoted",
+      "scripts/validate-deployment-mode-claims.ps1 reports a passed PublishProbeGate for singleFile without -SkipPublish",
+      "scripts/validate-release.ps1 invokes validate-deployment-mode-claims.ps1 -DeploymentMode singleFile without -SkipPublish",
+      "release-validation workflow evidence includes singleFile publish-probe output for the representativePublishTargets set",
+      "trim and nativeAot remain audit-only until their own global support-promotion slices",
       "docs/deployment-mode-support.md, docs/compatibility.md, docs/package-publishing.md, docs/dotnet11-readiness.md, docs/engine-completion-scorecard.md, docs/engine-roadmap.md, docs/engine-backlog.md, and docs/project-memory.md all name the promotion"
     ]
   },
@@ -101,7 +114,7 @@
     }
   },
   "representativePublishTargets": {
-    "comment": "List the smallest set of csproj paths the harness should publish to honestly prove a claim. The harness defaults to this list when -PublishTargets is not passed and -SkipPublish is not set; pass -SkipPublish to force audit-only mode. Each target is published once per deployment mode (trim / nativeAot / singleFile); the audit-only verdict reports warnings but does not fail the build because the manifest still declares all three modes as not-claimed.",
+    "comment": "List the smallest set of csproj paths the harness should publish to honestly prove a claim or release gate. The harness defaults to this list when -PublishTargets is not passed and -SkipPublish is not set. Release validation currently publishes these targets for singleFile only; trim and Native AOT remain audit-only until their own support promotions.",
     "projects": [
       "samples/Cephalon.Sample.ModularMonolith/Cephalon.Sample.ModularMonolith.csproj",
       "samples/Cephalon.Sample.ModularVerticalSlice/Cephalon.Sample.ModularVerticalSlice.csproj",

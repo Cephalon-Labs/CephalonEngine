@@ -42,11 +42,11 @@ These are the SLIs the engine commits to measure. SLO targets are listed below; 
 
 ### Deployment-mode claim truth SLI
 
-- **`engine.deployment-mode-claims.truthful-fraction`** — fraction of declared deployment-mode claims (`net10.0` published smoke, Windows Service, IIS, Azure App Service, container image, Azure Container Apps, Kubernetes, Linux `systemd`) for which `scripts/validate-deployment-mode-claims.ps1` returns a `claim-truthful` verdict. While `publishProbePolicy.releaseValidationMode` remains `audit-only`, release validation still invokes the harness with `-SkipPublish`, or no deployment mode is intentionally claimed, this SLI reports `audit-only` rather than a numeric value even though `representativePublishTargets.projects` is populated
+- **`engine.deployment-mode-claims.truthful-fraction`** — fraction of declared deployment-mode support claims (`net10.0` published smoke, Windows Service, IIS, Azure App Service, container image, Azure Container Apps, Kubernetes, Linux `systemd`) for which `scripts/validate-deployment-mode-claims.ps1` returns a `claim-truthful` verdict. The representative `singleFile` publish probe is now a release-blocking `PublishProbeGate`, but global trim / Native AOT / single-file support rows remain `not-claimed`; while no deployment mode is intentionally claimed globally, this SLI reports nonnumeric support-claim posture rather than counting the gated publish probe as a support claim
 
 ## SLO targets (initial draft)
 
-These are starting targets, not load-bearing budgets. They will be revised after the next benchmark guardrail run produces a clean baseline and after `publishProbePolicy` is promoted from release-validation audit mode to a gated publish-probe lane.
+These are starting targets, not load-bearing budgets. They will be revised after the next benchmark guardrail run produces a clean baseline and after the deployment-mode support-claim lane moves from explicit `not-claimed` rows to real `claim-truthful` support statements.
 
 | SLI | Initial SLO target | Window |
 | --- | --- | --- |
