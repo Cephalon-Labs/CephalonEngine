@@ -171,6 +171,10 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.ProviderIntegrationEvidence.SourceDocuments | Should -Contain "docs/components/observability.md"
         $json.ProviderIntegrationEvidence.SourceDocuments | Should -Contain "scripts/observability-dependency-health-providers.json"
         $json.ProviderIntegrationEvidence.ValidationProjects | Should -Contain "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj"
+        $json.ProviderIntegrationEvidence.DependencyHealthProviderManifest.Reference | Should -Be "scripts/observability-dependency-health-providers.json"
+        $json.ProviderIntegrationEvidence.DependencyHealthProviderManifest.ManifestSchemaVersion | Should -Be "1.0.0"
+        $json.ProviderIntegrationEvidence.DependencyHealthProviderManifest.Status | Should -Be "source-derived-provider-family-contract"
+        $json.ProviderIntegrationEvidence.DependencyHealthProviderManifest.ProviderCount | Should -Be 18
         $json.ProviderIntegrationEvidence.EvidenceRowCount | Should -Be 32
         $json.ProviderIntegrationEvidence.LiveProofCount | Should -Be 6
         $json.ProviderIntegrationEvidence.CompositionOnlyCount | Should -Be 26
@@ -665,6 +669,36 @@ jobs:
                 -OutputPath (Join-Path $fixtureRoot "artifacts") `
                 -RepoRoot $fixtureRoot
         } | Should -Throw "*Scorecard evidence source reference 'missing-scorecard-source.md'*"
+    }
+
+    It "fails when dependency-health provider rows omit their source-derived manifest" {
+        $manifestPath = Join-Path $script:tempRoot "provider-integration-support.json"
+        $manifestContents = Get-Content -LiteralPath (Join-Path $script:repoRoot "scripts\provider-integration-support.json") -Raw -Encoding UTF8
+        $manifestContents = [regex]::Replace(
+            $manifestContents,
+            '(?m)^\s+"dependencyHealthProviderManifest": "scripts/observability-dependency-health-providers\.json",\r?\n',
+            "")
+
+        $manifestContents | Should -Not -Match "dependencyHealthProviderManifest"
+        Set-Content -LiteralPath $manifestPath -Value $manifestContents -Encoding UTF8
+
+        {
+            Convert-ProviderIntegrationEvidence -ResolvedManifestPath $manifestPath -ResolvedRepoRoot $script:repoRoot
+        } | Should -Throw "*Provider integration support manifest must declare dependencyHealthProviderManifest when dependency-health provider rows are present.*"
+    }
+
+    It "fails when dependency-health provider rows drift from the source-derived manifest" {
+        $manifestPath = Join-Path $script:tempRoot "provider-integration-support.json"
+        $manifestContents = Get-Content -LiteralPath (Join-Path $script:repoRoot "scripts\provider-integration-support.json") -Raw -Encoding UTF8
+        $driftRegex = [regex]::new('("id": "sqlserver-dependency-health-invariant",\s+"provider": )"SQL Server"')
+        $manifestContents = $driftRegex.Replace($manifestContents, '$1"SQL Server Drift"', 1)
+
+        $manifestContents | Should -Match "SQL Server Drift"
+        Set-Content -LiteralPath $manifestPath -Value $manifestContents -Encoding UTF8
+
+        {
+            Convert-ProviderIntegrationEvidence -ResolvedManifestPath $manifestPath -ResolvedRepoRoot $script:repoRoot
+        } | Should -Throw "*Provider integration dependency-health row 'sqlserver-dependency-health-invariant' provider must match source-derived manifest value 'SQL Server' but found 'SQL Server Drift'.*"
     }
 
     It "keeps release validation wired to the scorecard artifact" {

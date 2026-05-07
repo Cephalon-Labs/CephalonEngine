@@ -662,6 +662,166 @@ function Resolve-ProviderIntegrationManifestPath {
     })
 }
 
+function Get-ProviderIntegrationDependencyHealthProviderKey {
+    param(
+        [Parameter(Mandatory = $true)]
+        $ProviderManifestRow
+    )
+
+    $source = [string](Get-ManifestPropertyValue -Object $ProviderManifestRow -PropertyName "source" -DefaultValue "")
+    if ([string]::IsNullOrWhiteSpace($source)) {
+        throw "Dependency-health provider manifest row must declare source."
+    }
+
+    $match = [regex]::Match($source, '^Cephalon\.Observability\.(?<provider>[A-Za-z0-9]+)Dependencies$')
+    if (-not $match.Success) {
+        throw "Dependency-health provider manifest source '$source' must use the Cephalon.Observability.*Dependencies package convention."
+    }
+
+    return $match.Groups["provider"].Value.ToLowerInvariant()
+}
+
+function Convert-ProviderIntegrationDependencyHealthManifest {
+    param(
+        [Parameter(Mandatory = $true)]
+        $ProviderIntegrationManifest,
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedRepoRoot
+    )
+
+    $declaredPath = [string](Get-ManifestPropertyValue -Object $ProviderIntegrationManifest -PropertyName "dependencyHealthProviderManifest" -DefaultValue "")
+    if ([string]::IsNullOrWhiteSpace($declaredPath)) {
+        return $null
+    }
+
+    $manifestReference = Resolve-ProviderIntegrationManifestPath -DeclaredPath $declaredPath -ResolvedRepoRoot $ResolvedRepoRoot -Context "dependencyHealthProviderManifest" -PathType "File"
+    $resolvedManifestPath = Resolve-FullPath -Path $declaredPath -BasePath $ResolvedRepoRoot
+    $manifest = Get-Content -LiteralPath $resolvedManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 32
+
+    $schemaVersion = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "schemaVersion" -DefaultValue "")
+    if ([string]::IsNullOrWhiteSpace($schemaVersion)) {
+        throw "Dependency-health provider manifest '$declaredPath' is missing schemaVersion."
+    }
+
+    $status = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "status" -DefaultValue "")
+    if ([string]::IsNullOrWhiteSpace($status)) {
+        throw "Dependency-health provider manifest '$declaredPath' is missing status."
+    }
+
+    $providers = @(Get-ManifestPropertyValue -Object $manifest -PropertyName "providers" -DefaultValue @())
+    if ($providers.Count -eq 0) {
+        throw "Dependency-health provider manifest '$declaredPath' must declare at least one provider."
+    }
+
+    $declaredProviderCount = [int](Get-ManifestPropertyValue -Object $manifest -PropertyName "providerCount" -DefaultValue 0)
+    if ($declaredProviderCount -ne $providers.Count) {
+        throw "Dependency-health provider manifest '$declaredPath' declares providerCount '$declaredProviderCount' but contains '$($providers.Count)' providers."
+    }
+
+    $expectedRows = foreach ($providerRow in $providers) {
+        $provider = [string](Get-ManifestPropertyValue -Object $providerRow -PropertyName "provider" -DefaultValue "")
+        $componentDoc = [string](Get-ManifestPropertyValue -Object $providerRow -PropertyName "componentDoc" -DefaultValue "")
+        foreach ($field in @(
+            [pscustomobject]@{ Name = "provider"; Value = $provider },
+            [pscustomobject]@{ Name = "componentDoc"; Value = $componentDoc }
+        )) {
+            if ([string]::IsNullOrWhiteSpace($field.Value)) {
+                throw "Dependency-health provider manifest row must declare $($field.Name)."
+            }
+        }
+
+        $providerKey = Get-ProviderIntegrationDependencyHealthProviderKey -ProviderManifestRow $providerRow
+        [pscustomobject]([ordered]@{
+            Id                 = "$providerKey-dependency-health-invariant"
+            Provider           = $provider
+            ComponentDoc       = $componentDoc
+            RuntimeContract    = "dependency-health.$providerKey"
+            TestProject        = "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj"
+            TestFile           = "tests/Cephalon.Tests.Hosting/ObservabilityDependencyHealthProviderInvariantTests.cs"
+            SharedComponentDoc = "docs/components/observability.md"
+        })
+    }
+
+    return [pscustomobject]([ordered]@{
+        Reference             = $manifestReference.Reference
+        ManifestSchemaVersion = $schemaVersion
+        Status                = $status
+        ProviderCount         = $declaredProviderCount
+        ExpectedRows          = @($expectedRows)
+        ValidatedReferences   = @($manifestReference)
+    })
+}
+
+function Assert-ProviderIntegrationDependencyHealthRows {
+    param(
+        [Parameter(Mandatory = $true)]
+        [object[]]$ProviderRows,
+        $DependencyHealthProviderManifest
+    )
+
+    $dependencyHealthRows = @($ProviderRows | Where-Object { $_.Family -eq "dependency-health" })
+    if ($null -eq $DependencyHealthProviderManifest) {
+        if ($dependencyHealthRows.Count -gt 0) {
+            throw "Provider integration support manifest must declare dependencyHealthProviderManifest when dependency-health provider rows are present."
+        }
+
+        return
+    }
+
+    if ($dependencyHealthRows.Count -ne $DependencyHealthProviderManifest.ProviderCount) {
+        throw "Provider integration dependency-health rows must match source-derived manifest count '$($DependencyHealthProviderManifest.ProviderCount)' but found '$($dependencyHealthRows.Count)'."
+    }
+
+    foreach ($expectedRow in @($DependencyHealthProviderManifest.ExpectedRows)) {
+        $matches = @($dependencyHealthRows | Where-Object { $_.Id -eq $expectedRow.Id })
+        if ($matches.Count -eq 0) {
+            throw "Provider integration dependency-health row '$($expectedRow.Id)' is missing from source-derived manifest coverage."
+        }
+
+        if ($matches.Count -gt 1) {
+            throw "Provider integration dependency-health row '$($expectedRow.Id)' is duplicated."
+        }
+
+        $actualRow = $matches[0]
+        foreach ($field in @(
+            [pscustomobject]@{ Name = "provider"; Actual = $actualRow.Provider; Expected = $expectedRow.Provider },
+            [pscustomobject]@{ Name = "status"; Actual = $actualRow.Status; Expected = "composition-only" },
+            [pscustomobject]@{ Name = "defaultRunBehavior"; Actual = $actualRow.DefaultRunBehavior; Expected = "runs-without-external-services" },
+            [pscustomobject]@{ Name = "testProject"; Actual = $actualRow.TestProject; Expected = $expectedRow.TestProject }
+        )) {
+            if ($field.Actual -ne $field.Expected) {
+                throw "Provider integration dependency-health row '$($expectedRow.Id)' $($field.Name) must match source-derived manifest value '$($field.Expected)' but found '$($field.Actual)'."
+            }
+        }
+
+        if (-not [string]::IsNullOrWhiteSpace($actualRow.ExternalServiceGate)) {
+            throw "Provider integration dependency-health row '$($expectedRow.Id)' must not declare an external service gate."
+        }
+
+        foreach ($expectedTestFile in @($expectedRow.TestFile)) {
+            if (@($actualRow.TestFiles) -notcontains $expectedTestFile) {
+                throw "Provider integration dependency-health row '$($expectedRow.Id)' must include test file '$expectedTestFile'."
+            }
+        }
+
+        foreach ($expectedSourceDocument in @($expectedRow.ComponentDoc, $expectedRow.SharedComponentDoc)) {
+            if (@($actualRow.SourceDocuments) -notcontains $expectedSourceDocument) {
+                throw "Provider integration dependency-health row '$($expectedRow.Id)' must include source document '$expectedSourceDocument'."
+            }
+        }
+
+        foreach ($expectedRuntimeContract in @("dependency-health", $expectedRow.RuntimeContract, "RuntimeHealthEvaluator.EvaluateDependencies", "IRuntimeDiagnosticsCatalog", "IRuntimeIntrospectionSnapshot.DiagnosticsConventions")) {
+            if (@($actualRow.RuntimeContracts) -notcontains $expectedRuntimeContract) {
+                throw "Provider integration dependency-health row '$($expectedRow.Id)' must include runtime contract '$expectedRuntimeContract'."
+            }
+        }
+
+        if (@($actualRow.EnvironmentVariables).Count -ne 0) {
+            throw "Provider integration dependency-health row '$($expectedRow.Id)' must keep environment variables empty for deterministic no-external-service proof."
+        }
+    }
+}
+
 function Resolve-AdoptionSmokeManifestPath {
     param(
         [Parameter(Mandatory = $true)]
@@ -1236,6 +1396,8 @@ function Convert-ProviderIntegrationEvidence {
         throw "Provider integration support manifest must declare at least one validation project."
     }
 
+    $dependencyHealthProviderManifest = Convert-ProviderIntegrationDependencyHealthManifest -ProviderIntegrationManifest $manifest -ResolvedRepoRoot $ResolvedRepoRoot
+
     $allowedStatuses = @(
         "live-proof-available",
         "composition-only",
@@ -1333,6 +1495,8 @@ function Convert-ProviderIntegrationEvidence {
         throw "Provider integration support manifest must declare at least one provider row."
     }
 
+    Assert-ProviderIntegrationDependencyHealthRows -ProviderRows $providerRows.ToArray() -DependencyHealthProviderManifest $dependencyHealthProviderManifest
+
     $liveProofRows = @($providerRows | Where-Object { $_.Status -eq "live-proof-available" })
     $compositionOnlyRows = @($providerRows | Where-Object { $_.Status -eq "composition-only" })
     $plannedRows = @($providerRows | Where-Object { $_.Status -eq "planned" })
@@ -1349,6 +1513,16 @@ function Convert-ProviderIntegrationEvidence {
         Summary                  = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "summary" -DefaultValue "")
         SourceDocuments          = @($sourceDocumentReferences | ForEach-Object { $_.Reference })
         ValidationProjects       = @($validationProjectReferences | ForEach-Object { $_.Reference })
+        DependencyHealthProviderManifest = if ($null -eq $dependencyHealthProviderManifest) {
+            $null
+        } else {
+            [pscustomobject]([ordered]@{
+                Reference             = $dependencyHealthProviderManifest.Reference
+                ManifestSchemaVersion = $dependencyHealthProviderManifest.ManifestSchemaVersion
+                Status                = $dependencyHealthProviderManifest.Status
+                ProviderCount         = $dependencyHealthProviderManifest.ProviderCount
+            })
+        }
         EvidenceRowCount         = $providerRows.Count
         LiveProofCount           = $liveProofRows.Count
         CompositionOnlyCount     = $compositionOnlyRows.Count
@@ -1364,6 +1538,9 @@ function Convert-ProviderIntegrationEvidence {
         ValidatedReferences      = @(
             $sourceDocumentReferences
             $validationProjectReferences
+            if ($null -ne $dependencyHealthProviderManifest) {
+                $dependencyHealthProviderManifest.ValidatedReferences
+            }
             $providerRows | ForEach-Object { $_.ValidatedReferences }
         ) | Sort-Object Reference -Unique
     })
