@@ -33,11 +33,38 @@ Current focus:
 - treat scorecard hard blockers as release-validation failures even when a later narrow step is skipped: `scripts/validate-release.ps1` fails during the scorecard step when generated evidence reports blocked platform gates, supply-chain blocked items, or public API removals; `partial`, `not-claimed`, provider composition-only, SRE pending baselines, and external-policy-pending items remain explicit readback/exception posture
 - treat the CDC integration-test lane as additive evidence over the runtime catalog truth: `tests/Cephalon.Tests.CdcIntegration` now proves MongoDB change streams against a real disposable replica set, SQL Server CDC against an opt-in live service, Postgres logical replication against an opt-in live service, MySQL binlog streaming against an opt-in live service, and Oracle LogMiner against an opt-in live service while keeping default CI Docker-free through the shared external-service gate, instead of implying those provider paths through fake transport harnesses
 - treat the provider integration-test lane as additive evidence over non-CDC provider truth: `tests/Cephalon.Tests.ProviderIntegration` now proves Redis data outbox/inbox/dispatch-store behavior plus Redis Streams event sourcing against an opt-in live Redis runtime while keeping default CI Docker-free through the shared external-provider gate
-- treat `scripts/provider-integration-support.json` as the release-readiness manifest for provider claims across live-provider tests, composition-only data/provider runtime contracts, CDC integration lanes, and the eighteen dependency-health companion packs; the scorecard, release validation, and CLI doctor must read provider-integration counts from that manifest instead of hand-authored prose
-- treat `scripts/observability-dependency-health-providers.json` as the source-derived dependency-health provider-family manifest: runtime invariant tests and Tooling documentation coverage must derive the eighteen `Cephalon.Observability.*Dependencies` expectations from that file so the next provider cannot ship with source/docs/planning counts drifting apart
+- treat `scripts/provider-integration-support.json` as the release-readiness manifest for provider claims across live-provider tests, composition-only data/provider runtime contracts, CDC integration lanes, and the eighteen dependency-health companion packs; the scorecard, release validation, and CLI doctor must read provider-integration counts from that manifest instead of hand-authored prose, and the scorecard publisher must fail if dependency-health provider rows drift from the source-derived provider manifest
+- treat `scripts/observability-dependency-health-providers.json` as the source-derived dependency-health provider-family manifest: runtime invariant tests, provider-integration scorecard row validation, and Tooling documentation coverage must derive the eighteen `Cephalon.Observability.*Dependencies` expectations from that file so the next provider cannot ship with source/docs/planning counts drifting apart
 - treat the Debezium test-flake quarantine as resolved by shared catalog hardening: CDC execution-runtime filters now reuse versioned snapshots over indexed capture ownership instead of re-enriching every runtime for every state/category selector
 - treat the `ENG-500` regression closeout as the current suite-stability baseline: provider-native CDC hosting tests now run through a dedicated non-parallel collection, long-running package-publishing process output drains stdout/stderr concurrently, sample REST behavior hosts align with source-generated `/api/v1` behavior endpoints, and the full solution test lane is again green on the current worktree
 - treat the CDC execution-runtime catalog hot path as benchmark-governed: `CdcExecutionRuntimeCatalogBenchmarks` now covers Debezium-managed external runtimes, external observations, repeated managed-connector drift/dry-run/command-issuance filters, and compact multi-selector operator flows against the shared versioned snapshot
+
+### ENG-505 Guard provider-integration dependency-health row drift
+
+Status: done
+Estimate: 1
+Issue: #1123
+Iteration: Sprint 125
+Area: release-readiness / provider integration / dependency-health
+Quality dimensions: Reliability, Maintainability, Auditability, Compatibility, Data Integrity
+
+Why:
+
+- `ENG-504` made the dependency-health provider-family shape source-derived, but `scripts/provider-integration-support.json` still carried eighteen provider-integration rows that could drift in provider names, component docs, tests, or runtime contracts without the scorecard publisher rejecting the artifact
+- the release-readiness scorecard is the read model that release validation and `cephalon doctor --scorecard` consume, so it must prove the dependency-health row set is tied to the manifest instead of trusting matching prose
+- adding a future dependency-health provider should fail closed until the provider integration evidence row, runtime invariant test, component doc, and source-derived manifest all agree
+
+Delivered:
+
+- added `dependencyHealthProviderManifest` to `scripts/provider-integration-support.json` and made `scripts/publish-engine-completion-scorecard.ps1` resolve the manifest before emitting `ProviderIntegrationEvidence`
+- added scorecard publisher validation that dependency-health provider rows match the source-derived manifest count, generated row ids, provider display names, deterministic no-external-service behavior, shared invariant test file, component docs, and required runtime contracts
+- exposed `ProviderIntegrationEvidence.DependencyHealthProviderManifest` in the generated scorecard JSON so release managers can see which dependency-health manifest guarded the row set
+- added Pester regression coverage that mutates the SQL Server dependency-health row and proves the publisher fails when a provider row drifts from `scripts/observability-dependency-health-providers.json`
+- updated scorecard, release checklist, component docs map, backlog, roadmap, and project memory so the provider integration read model now names the manifest-backed row guard explicitly
+
+Validation:
+
+- `pwsh -NoLogo -NoProfile -Command "Invoke-Pester -Path .\tests\Cephalon.Tests.Scripts\publish-engine-completion-scorecard.Tests.ps1 -Output Detailed"` passed `12/12`
 
 ### ENG-504 Add dependency-health provider manifest guard
 

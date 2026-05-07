@@ -15,6 +15,7 @@
     "tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj",
     "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj"
   ],
+  "dependencyHealthProviderManifest": "scripts/observability-dependency-health-providers.json",
   "providerRows": [
     {
       "id": "redis-data-event-sourcing-live",
