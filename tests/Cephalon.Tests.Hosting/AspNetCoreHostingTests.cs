@@ -829,6 +829,96 @@ public sealed class AspNetCoreHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonDefaultsToFullOperatorSurface()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new DiscoveryTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var coreStatusResponse = await client.GetAsync("/engine/status");
+        var optionalBehaviorSurfaceResponse = await client.GetAsync("/engine/behavior-resilience");
+        var optionalCdcSurfaceResponse = await client.GetAsync("/engine/cdc-capture-runtimes");
+
+        Assert.True(coreStatusResponse.IsSuccessStatusCode);
+        Assert.True(optionalBehaviorSurfaceResponse.IsSuccessStatusCode);
+        Assert.True(optionalCdcSurfaceResponse.IsSuccessStatusCode);
+    }
+
+    [Fact]
+    public async Task MapCephalonCoreOperatorSurfaceKeepsCoreAndTransportRoutes()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration["Engine:AspNetCore:OperatorSurface:Mode"] = "core";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new DiscoveryTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var manifest = await client.GetFromJsonAsync<RuntimeManifest>("/engine");
+        var snapshot = await client.GetFromJsonAsync<RuntimeIntrospectionSnapshot>("/engine/snapshot");
+        var statusResponse = await client.GetAsync("/engine/status");
+        var diagnosticsResponse = await client.GetAsync("/engine/diagnostics");
+        var packagesResponse = await client.GetAsync("/engine/packages");
+        var transportResponse = await client.GetAsync("/api/discovery/hello/Codex");
+        var openApiResponse = await client.GetAsync("/openapi/v1.json");
+        var omittedBehaviorSurfaceResponse = await client.GetAsync("/engine/behavior-resilience");
+        var omittedCdcSurfaceResponse = await client.GetAsync("/engine/cdc-capture-runtimes");
+
+        Assert.NotNull(manifest);
+        Assert.NotNull(snapshot);
+        Assert.True(statusResponse.IsSuccessStatusCode);
+        Assert.True(diagnosticsResponse.IsSuccessStatusCode);
+        Assert.True(packagesResponse.IsSuccessStatusCode);
+        Assert.True(transportResponse.IsSuccessStatusCode);
+        Assert.True(openApiResponse.IsSuccessStatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, omittedBehaviorSurfaceResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, omittedCdcSurfaceResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task MapCephalonRejectsUnsupportedOperatorSurfaceMode()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration["Engine:AspNetCore:OperatorSurface:Mode"] = "wide-open";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new DiscoveryTestModule());
+        });
+
+        await using var app = builder.Build();
+
+        var exception = Assert.Throws<InvalidOperationException>(() => app.MapCephalon());
+
+        Assert.Contains("operator surface mode", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task MapCephalonExposesRuntimeAndModuleRoutes()
     {
         var builder = WebApplication.CreateSlimBuilder();

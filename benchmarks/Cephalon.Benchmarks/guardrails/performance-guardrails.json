@@ -60,9 +60,9 @@
     {
       "reportFileName": "Cephalon.Benchmarks.Runtime.ColdStartBenchmarks-report.csv",
       "benchmark": "BuildStartHandleFirstRequestAspNetCore",
-      "maxMeanNanoseconds": 2000000000,
+      "maxMeanNanoseconds": 800000000,
       "maxAllocatedBytes": 30000000,
-      "notes": "Representative Cephalon ASP.NET Core cold start currently includes TestServer start, first ready request, and host teardown. This guardrail is a regression cap over the observed JIT baseline; the stricter SLO target remains pending until the cold-start lane is optimized."
+      "notes": "Representative Cephalon ASP.NET Core cold start uses the opt-in core operator surface, TestServer start, first ready request, and host teardown. The guardrail now enforces the 800 ms JIT SLO target while preserving the full operator surface as the default runtime contract."
     },
     {
       "reportFileName": "Cephalon.Benchmarks.Runtime.ColdStartBenchmarks-report.csv",
