@@ -46,7 +46,7 @@ The durable rule book lives in [`release-checklist.md`](release-checklist.md). T
 - [ ] Tests (Composition + Hosting + Tooling) ✅
 - [ ] `.NET 11` readiness contract ✅
 - [ ] Deployment-mode claim audit + gated `singleFile` publish probe ✅
-- [ ] Engine completion scorecard artifact + source references + per-package GA rows + deployment-mode evidence + adoption-smoke evidence + provider-integration evidence including dependency-health provider-manifest release-validation/doctor readback + SRE posture evidence including guardrail coverage counts + supply-chain release evidence + public API compatibility evidence + optional `cephalon doctor --scorecard artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json` readback with deployment-mode, provider integration, dependency-health provider-manifest, SRE, supply-chain, and public API counts ✅
+- [ ] Engine completion scorecard artifact + source references + per-package GA rows + deployment-mode evidence + adoption-smoke evidence + provider-integration evidence including dependency-health provider-manifest release-validation/doctor readback + SRE posture evidence including guardrail coverage counts and stable-baseline manifest readback + supply-chain release evidence + public API compatibility evidence + optional `cephalon doctor --scorecard artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json` readback with deployment-mode, provider integration, dependency-health provider-manifest, SRE, supply-chain, and public API counts ✅
 - [ ] Operational health + export conventions ✅
 - [ ] Phase-8 architecture / runtime / starter conventions ✅
 - [ ] Benchmark smoke + guardrails ✅
@@ -62,7 +62,7 @@ The durable rule book lives in [`release-checklist.md`](release-checklist.md). T
 
 ## 4. Conformance and maturity truth
 
-- [ ] [`docs/engine-completion-scorecard.md`](engine-completion-scorecard.md) reviewed; generated scorecard artifact, source references, per-package GA rows, deployment-mode evidence, adoption-smoke evidence, provider-integration evidence with dependency-health provider-manifest release-validation/doctor readback, SRE posture evidence including benchmark guardrail coverage mappings, supply-chain release evidence, public API compatibility evidence, release-validation and optional `cephalon doctor --scorecard` summaries with deployment-mode, provider integration, dependency-health provider-manifest, SRE, supply-chain, and public API counts, and gate posture match the owning source docs
+- [ ] [`docs/engine-completion-scorecard.md`](engine-completion-scorecard.md) reviewed; generated scorecard artifact, source references, per-package GA rows, deployment-mode evidence, adoption-smoke evidence, provider-integration evidence with dependency-health provider-manifest release-validation/doctor readback, SRE posture evidence including benchmark guardrail coverage mappings plus stable-baseline manifest rows/measurements/pending ids, supply-chain release evidence, public API compatibility evidence, release-validation and optional `cephalon doctor --scorecard` summaries with deployment-mode, provider integration, dependency-health provider-manifest, SRE, supply-chain, and public API counts, and gate posture match the owning source docs
 - [ ] [`docs/engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md) Current-audit table reflects shipped state
 - [ ] [`docs/conformance-matrix.md`](conformance-matrix.md) per-family tables + Family summary at a glance match the audit
 - [ ] [`docs/runtime-contract-index.md`](runtime-contract-index.md) `/engine/*` route catalog reflects every shipped route
@@ -110,7 +110,7 @@ The durable rule book lives in [`release-checklist.md`](release-checklist.md). T
 ## 9. SRE follow-through
 
 - [ ] Compared release pass against SLI catalogue in [`sre-posture.md`](sre-posture.md)
-- [ ] Confirmed SRE guardrail coverage counts and guardrail references in generated `SrePostureEvidence`
+- [ ] Confirmed SRE guardrail coverage counts, stable-baseline row/measurement counts, pending baseline ids, and guardrail references in generated `SrePostureEvidence`
 - [ ] No SLI burned more than 25% of monthly budget in 7-day window (or freeze in place on affected family)
 - [ ] Test flake rate within target; new flaky tests quarantined within 24 hours
 

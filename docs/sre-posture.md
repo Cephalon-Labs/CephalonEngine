@@ -2,7 +2,7 @@
 
 This document is the engine-level Site Reliability Engineering (SRE) posture for the Cephalon engine itself. It is *not* a prescription for consumer applications that adopt Cephalon — those teams own their own SLOs against their own user journeys. Instead, this page declares the reliability semantics the engine commits to as a framework: cold-start time, dispatch latency, allocation discipline, build/restore/release-validation wall time, and test-suite flake rate.
 
-Cross-references: [`engineering-standards.md`](engineering-standards.md), [`benchmarking.md`](benchmarking.md), [`runtime-failure-policy.md`](runtime-failure-policy.md), [`operational-hardening-gap-inventory.md`](operational-hardening-gap-inventory.md), [`test-coverage-roadmap.md`](test-coverage-roadmap.md), [`engine-completion-scorecard.md`](engine-completion-scorecard.md), [`../scripts/sre-posture-support.json`](../scripts/sre-posture-support.json), [`project-memory.md`](project-memory.md), [`planning-governance.md`](planning-governance.md).
+Cross-references: [`engineering-standards.md`](engineering-standards.md), [`benchmarking.md`](benchmarking.md), [`runtime-failure-policy.md`](runtime-failure-policy.md), [`operational-hardening-gap-inventory.md`](operational-hardening-gap-inventory.md), [`test-coverage-roadmap.md`](test-coverage-roadmap.md), [`engine-completion-scorecard.md`](engine-completion-scorecard.md), [`../scripts/sre-posture-support.json`](../scripts/sre-posture-support.json), [`../scripts/sre-stable-baselines.json`](../scripts/sre-stable-baselines.json), [`project-memory.md`](project-memory.md), [`planning-governance.md`](planning-governance.md).
 
 ## Why the engine itself has SLOs
 
@@ -62,7 +62,7 @@ These are starting targets, not load-bearing budgets. They will be revised after
 | `engine.tests.flake-rate.7d` | ≤ 0.5% | 7-day rolling |
 | `engine.deployment-mode-claims.truthful-fraction` | 100% of declared claims are `claim-truthful`; `not-claimed` rows never count against this SLI | per release |
 
-The SLO targets above are *initial* — the first benchmark guardrail run that publishes a stable baseline closes the gap between target and reality. Until that run lands, the targets should be treated as orientation, not as a freeze line. `scripts/sre-posture-support.json` now separates this stable-baseline posture from guardrail coverage: an SLI may be `guardrail-catalog-mapped` because it points at an existing entry in `benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json`, while still remaining `pending-stable-baseline` until a dedicated baseline promotion slice lands. Current guardrail coverage maps four SLIs: the three BehaviorDispatcher latency/allocation SLIs and the ASP.NET Core request-allocation SLI backed by `AspNetCoreRequestLoggingBenchmarks`; the ASP.NET Core and Worker cold-start SLIs remain pending stable guardrail coverage.
+The SLO targets above are still engine-owned orientation, not consumer-application SLOs. `scripts/sre-posture-support.json` now separates stable-baseline posture from guardrail coverage: an SLI may be `guardrail-catalog-mapped` because it points at an existing entry in `benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json`, and it becomes `stable-baseline-published` only when `scripts/sre-stable-baselines.json` carries a matching benchmark row. The current stable-baseline subset is deliberately narrow: the three BehaviorDispatcher latency/allocation SLIs and the ASP.NET Core request-allocation SLI are published from the May 8, 2026 focused BenchmarkDotNet run, while the ASP.NET Core and Worker cold-start SLIs, restore/release/reference-docs wall-time SLIs, test flake-rate SLI, and deployment-mode claim-truth SLI remain `pending-stable-baseline`.
 
 ## Error-budget policy
 
@@ -91,8 +91,9 @@ The SLI catalogue above is meant to be reachable from three operator-facing surf
 
 - **`cephalon doctor`** — surfaces the latest local benchmark and validation wall-time signals so a contributor can see SLI health on the local box before pushing
 - **`/engine/snapshot`** — projects relevant runtime SLI metadata (counters, latest dispatch outcomes, latest cold-start posture) so a deployed Cephalon instance can answer "is the engine itself behaving" without log archaeology
-- **`scripts/validate-release.ps1`** output — publishes the engine-completion scorecard artifact and prints the `SrePostureEvidence` target-declared, pending-baseline, stable-baseline, and guardrail-coverage counts so release reviewers can see whether the SRE posture is still target-only and which benchmark SLIs are already tied to guardrail catalog entries
-- **`scripts/sre-posture-support.json`** — keeps the SLI target list, source-document links, release-validation summary mode, baseline-status posture, guardrail-coverage status, and guardrail references machine-readable for the scorecard without promoting initial draft SLO targets into stable baselines
+- **`scripts/validate-release.ps1`** output — publishes the engine-completion scorecard artifact and prints the `SrePostureEvidence` target-declared, pending-baseline, stable-baseline, stable-baseline manifest, and guardrail-coverage counts so release reviewers can see which benchmark SLIs have stable evidence and which rows remain pending
+- **`scripts/sre-posture-support.json`** — keeps the SLI target list, source-document links, release-validation summary mode, baseline-status posture, guardrail-coverage status, stable-baseline manifest reference, and guardrail references machine-readable for the scorecard
+- **`scripts/sre-stable-baselines.json`** — records the benchmark-backed stable-baseline rows for the four promoted SLIs, the source report filenames, the captured commit/time/tooling metadata, and the seven SLI ids that intentionally remain pending
 
 The intent is that SLI signal flows through the existing engine introspection surface rather than through a parallel dashboard. Consumer SRE teams can compose engine SLI signal into their own SLO targets through OTLP export, without the engine forcing a dashboard topology on them.
 
@@ -113,6 +114,7 @@ Refresh this document in place when:
 
 - a new SLI is introduced through a benchmark, validation harness, or runtime-introspection surface
 - an existing SLO target is tightened or relaxed after a baseline pass produces new evidence
+- an SLI's `baselineStatus` or the `scripts/sre-stable-baselines.json` manifest changes
 - an SLI's `guardrailCoverageStatus` or `guardrailReferences` changes in `scripts/sre-posture-support.json`
 - the freeze threshold or recovery-proof rule changes (record the change as an in-place edit; the durable record of the change lives in commits, planning cards, and the matching architecture-review snapshot)
 - a related framework reference (OpenTelemetry semantic conventions, Google SRE Workbook, the EU regulatory framework) publishes a new revision that materially affects the alignment

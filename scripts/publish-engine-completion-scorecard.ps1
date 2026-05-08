@@ -14,7 +14,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$Script:SchemaVersion = "1.8.0"
+$Script:SchemaVersion = "1.9.0"
 $Script:AllowedStatuses = @(
     "ready-for-preview",
     "partial",
@@ -896,6 +896,26 @@ function Resolve-SrePostureManifestPath {
     })
 }
 
+function Assert-SreStringSetEquals {
+    param(
+        [Parameter(Mandatory = $true)]
+        [AllowEmptyCollection()]
+        [string[]]$Expected,
+        [Parameter(Mandatory = $true)]
+        [AllowEmptyCollection()]
+        [string[]]$Actual,
+        [Parameter(Mandatory = $true)]
+        [string]$Message
+    )
+
+    $expectedSorted = @($Expected | Sort-Object)
+    $actualSorted = @($Actual | Sort-Object)
+    $differences = @(Compare-Object -ReferenceObject $expectedSorted -DifferenceObject $actualSorted)
+    if ($differences.Count -gt 0) {
+        throw $Message
+    }
+}
+
 function Resolve-SupplyChainManifestPath {
     param(
         [Parameter(Mandatory = $true)]
@@ -1609,6 +1629,11 @@ function Convert-SrePostureEvidence {
         throw "SRE posture support manifest stableBaselinesPublished must be a boolean value."
     }
 
+    $stableBaselineManifestPath = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "stableBaselineManifest" -DefaultValue "")
+    if ($stableBaselinesPublishedValue -and [string]::IsNullOrWhiteSpace($stableBaselineManifestPath)) {
+        throw "SRE posture support manifest stableBaselineManifest is required when stableBaselinesPublished is true."
+    }
+
     $sourceDocumentReferences = @(
         Get-ManifestPropertyValue -Object $manifest -PropertyName "sourceDocs" -DefaultValue @() |
             ForEach-Object {
@@ -1659,6 +1684,11 @@ function Convert-SrePostureEvidence {
         "not-applicable"
     )
 
+    $allowedBaselineStatuses = @(
+        "pending-stable-baseline",
+        "stable-baseline-published"
+    )
+
     $sliRows = @(
         Get-ManifestPropertyValue -Object $manifest -PropertyName "slis" -DefaultValue @() |
             ForEach-Object {
@@ -1690,6 +1720,10 @@ function Convert-SrePostureEvidence {
 
                 if ($allowedGuardrailCoverageStatuses -notcontains $guardrailCoverageStatus) {
                     throw "Unsupported SRE posture guardrail coverage status '$guardrailCoverageStatus' for SLI '$id'."
+                }
+
+                if ($allowedBaselineStatuses -notcontains $baselineStatus) {
+                    throw "Unsupported SRE posture baseline status '$baselineStatus' for SLI '$id'."
                 }
 
                 $sourceDocumentReference = Resolve-SrePostureManifestPath -DeclaredPath $sourceDocumentPath -ResolvedRepoRoot $ResolvedRepoRoot -Context "SLI '$id' sourceDocument" -PathType "File"
@@ -1748,11 +1782,200 @@ function Convert-SrePostureEvidence {
 
     $targetDeclaredCount = @($sliRows | Where-Object { $_.TargetStatus -eq "target-declared" }).Count
     $pendingStableBaselineCount = @($sliRows | Where-Object { $_.BaselineStatus -eq "pending-stable-baseline" }).Count
-    $stableBaselineCount = @($sliRows | Where-Object { $_.BaselineStatus -eq "stable-baseline" }).Count
+    $stableBaselineCount = @($sliRows | Where-Object { $_.BaselineStatus -eq "stable-baseline-published" }).Count
     $guardrailMappedSliCount = @($sliRows | Where-Object { $_.GuardrailCoverageStatus -eq "guardrail-catalog-mapped" }).Count
     $guardrailPendingSliCount = @($sliRows | Where-Object { $_.GuardrailCoverageStatus -eq "pending-stable-baseline" }).Count
     $guardrailNotApplicableSliCount = @($sliRows | Where-Object { $_.GuardrailCoverageStatus -eq "not-applicable" }).Count
     $guardrailReferenceCount = @($sliRows | ForEach-Object { $_.GuardrailReferences }).Count
+    $sliRowLookup = @{}
+    foreach ($sliRow in $sliRows) {
+        $sliRowLookup[$sliRow.Id] = $sliRow
+    }
+
+    if (-not $stableBaselinesPublishedValue -and $stableBaselineCount -gt 0) {
+        throw "SRE posture support manifest has stable-baseline-published SLI rows while stableBaselinesPublished is false."
+    }
+
+    if ($stableBaselinesPublishedValue -and $stableBaselineCount -eq 0) {
+        throw "SRE posture support manifest stableBaselinesPublished is true but no SLI has baselineStatus stable-baseline-published."
+    }
+
+    $stableBaselineManifestReference = $null
+    $stableBaselineManifestSchemaVersion = $null
+    $stableBaselineManifestStatus = $null
+    $stableBaselineManifestCapturedAtUtc = $null
+    $stableBaselineManifestCapturedFromCommit = $null
+    $stableBaselineRows = @()
+    $stableBaselineMeasurementCount = 0
+    $stableBaselinePublishedSliIds = @()
+    $pendingBaselineSliIds = @($sliRows | Where-Object { $_.BaselineStatus -eq "pending-stable-baseline" } | ForEach-Object { $_.Id })
+
+    if (-not [string]::IsNullOrWhiteSpace($stableBaselineManifestPath)) {
+        $stableBaselineManifestReference = Resolve-SrePostureManifestPath -DeclaredPath $stableBaselineManifestPath -ResolvedRepoRoot $ResolvedRepoRoot -Context "stableBaselineManifest" -PathType "File"
+        $stableBaselineManifest = Get-Content -LiteralPath (Resolve-FullPath -Path $stableBaselineManifestPath -BasePath $ResolvedRepoRoot) -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
+        $stableBaselineManifestSchemaVersion = [string](Get-ManifestPropertyValue -Object $stableBaselineManifest -PropertyName '$schemaVersion' -DefaultValue "")
+        if ([string]::IsNullOrWhiteSpace($stableBaselineManifestSchemaVersion)) {
+            throw "SRE stable baseline manifest is missing '`$schemaVersion'."
+        }
+
+        $stableBaselineManifestStatus = [string](Get-ManifestPropertyValue -Object $stableBaselineManifest -PropertyName "status" -DefaultValue "")
+        if ([string]::IsNullOrWhiteSpace($stableBaselineManifestStatus)) {
+            throw "SRE stable baseline manifest is missing status."
+        }
+
+        $stableBaselineManifestCapturedAtUtcValue = Get-ManifestPropertyValue -Object $stableBaselineManifest -PropertyName "capturedAtUtc" -DefaultValue ""
+        $stableBaselineManifestCapturedAtUtc = if ($stableBaselineManifestCapturedAtUtcValue -is [datetime]) {
+            $stableBaselineManifestCapturedAtUtcValue.ToUniversalTime().ToString("o")
+        }
+        else {
+            [string]$stableBaselineManifestCapturedAtUtcValue
+        }
+        if ([string]::IsNullOrWhiteSpace($stableBaselineManifestCapturedAtUtc)) {
+            throw "SRE stable baseline manifest is missing capturedAtUtc."
+        }
+
+        $stableBaselineManifestCapturedFromCommit = [string](Get-ManifestPropertyValue -Object $stableBaselineManifest -PropertyName "capturedFromCommit" -DefaultValue "")
+        if ([string]::IsNullOrWhiteSpace($stableBaselineManifestCapturedFromCommit)) {
+            throw "SRE stable baseline manifest is missing capturedFromCommit."
+        }
+
+        $stableBaselineManifestPublishedSliIds = @(
+            Get-ManifestPropertyValue -Object $stableBaselineManifest -PropertyName "publishedBaselineSliIds" -DefaultValue @() |
+                ForEach-Object { [string]$_ }
+        )
+        if ($stableBaselineManifestPublishedSliIds.Count -eq 0) {
+            throw "SRE stable baseline manifest must declare at least one publishedBaselineSliIds entry."
+        }
+
+        $stableBaselineManifestPendingSliIds = @(
+            Get-ManifestPropertyValue -Object $stableBaselineManifest -PropertyName "pendingBaselineSliIds" -DefaultValue @() |
+                ForEach-Object { [string]$_ }
+        )
+
+        $stableBaselineRows = @(
+            Get-ManifestPropertyValue -Object $stableBaselineManifest -PropertyName "baselineRows" -DefaultValue @() |
+                ForEach-Object {
+                    $sliId = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "sliId" -DefaultValue "")
+                    $rowStatus = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "status" -DefaultValue "")
+                    $measurementKind = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "measurementKind" -DefaultValue "")
+                    $notes = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "notes" -DefaultValue "")
+
+                    foreach ($field in @(
+                        @{ Name = "sliId"; Value = $sliId },
+                        @{ Name = "status"; Value = $rowStatus },
+                        @{ Name = "measurementKind"; Value = $measurementKind }
+                    )) {
+                        if ([string]::IsNullOrWhiteSpace([string]$field.Value)) {
+                            throw "SRE stable baseline row must include $($field.Name)."
+                        }
+                    }
+
+                    if ($rowStatus -ne "stable-baseline-published") {
+                        throw "SRE stable baseline row for SLI '$sliId' must use status stable-baseline-published."
+                    }
+
+                    if (-not $sliRowLookup.ContainsKey($sliId)) {
+                        throw "SRE stable baseline row references SLI '$sliId', but that SLI is missing from the SRE posture support manifest."
+                    }
+
+                    if ($sliRowLookup[$sliId].BaselineStatus -ne "stable-baseline-published") {
+                        throw "SRE stable baseline row references SLI '$sliId', but its SRE posture baselineStatus is '$($sliRowLookup[$sliId].BaselineStatus)'."
+                    }
+
+                    $measurements = @(
+                        Get-ManifestPropertyValue -Object $_ -PropertyName "measurements" -DefaultValue @() |
+                            ForEach-Object {
+                                $reportFileName = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "reportFileName" -DefaultValue "")
+                                $benchmark = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "benchmark" -DefaultValue "")
+                                $meanNanosecondsValue = Get-ManifestPropertyValue -Object $_ -PropertyName "meanNanoseconds" -DefaultValue $null
+                                $errorNanosecondsValue = Get-ManifestPropertyValue -Object $_ -PropertyName "errorNanoseconds" -DefaultValue $null
+                                $stdDevNanosecondsValue = Get-ManifestPropertyValue -Object $_ -PropertyName "stdDevNanoseconds" -DefaultValue $null
+                                $allocatedBytesValue = Get-ManifestPropertyValue -Object $_ -PropertyName "allocatedBytes" -DefaultValue $null
+                                $guardrailMaxMeanNanosecondsValue = Get-ManifestPropertyValue -Object $_ -PropertyName "guardrailMaxMeanNanoseconds" -DefaultValue $null
+                                $guardrailMaxAllocatedBytesValue = Get-ManifestPropertyValue -Object $_ -PropertyName "guardrailMaxAllocatedBytes" -DefaultValue $null
+
+                                foreach ($field in @(
+                                    @{ Name = "reportFileName"; Value = $reportFileName },
+                                    @{ Name = "benchmark"; Value = $benchmark }
+                                )) {
+                                    if ([string]::IsNullOrWhiteSpace([string]$field.Value)) {
+                                        throw "SRE stable baseline measurement for SLI '$sliId' must include $($field.Name)."
+                                    }
+                                }
+
+                                foreach ($field in @(
+                                    @{ Name = "meanNanoseconds"; Value = $meanNanosecondsValue },
+                                    @{ Name = "errorNanoseconds"; Value = $errorNanosecondsValue },
+                                    @{ Name = "stdDevNanoseconds"; Value = $stdDevNanosecondsValue },
+                                    @{ Name = "allocatedBytes"; Value = $allocatedBytesValue },
+                                    @{ Name = "guardrailMaxMeanNanoseconds"; Value = $guardrailMaxMeanNanosecondsValue },
+                                    @{ Name = "guardrailMaxAllocatedBytes"; Value = $guardrailMaxAllocatedBytesValue }
+                                )) {
+                                    if ($null -eq $field.Value) {
+                                        throw "SRE stable baseline measurement for SLI '$sliId' must include $($field.Name)."
+                                    }
+                                }
+
+                                $guardrailKey = "$reportFileName`n$benchmark"
+                                if (-not $guardrailEntryLookup.ContainsKey($guardrailKey)) {
+                                    throw "SRE stable baseline row for SLI '$sliId' references guardrail '$reportFileName' / '$benchmark', but that entry is missing from '$($guardrailCatalogReference.Reference)'."
+                                }
+
+                                $guardrailEntry = $guardrailEntryLookup[$guardrailKey]
+                                $catalogMaxMeanNanoseconds = [decimal](Get-ManifestPropertyValue -Object $guardrailEntry -PropertyName "maxMeanNanoseconds" -DefaultValue 0)
+                                $catalogMaxAllocatedBytes = [decimal](Get-ManifestPropertyValue -Object $guardrailEntry -PropertyName "maxAllocatedBytes" -DefaultValue 0)
+                                $declaredMaxMeanNanoseconds = [decimal]$guardrailMaxMeanNanosecondsValue
+                                $declaredMaxAllocatedBytes = [decimal]$guardrailMaxAllocatedBytesValue
+                                if ($declaredMaxMeanNanoseconds -ne $catalogMaxMeanNanoseconds -or $declaredMaxAllocatedBytes -ne $catalogMaxAllocatedBytes) {
+                                    throw "SRE stable baseline row for SLI '$sliId' has guardrail limits that do not match '$($guardrailCatalogReference.Reference)' for '$reportFileName' / '$benchmark'."
+                                }
+
+                                [pscustomobject]([ordered]@{
+                                    ReportFileName                 = $reportFileName
+                                    Benchmark                      = $benchmark
+                                    MeanNanoseconds                = [decimal]$meanNanosecondsValue
+                                    ErrorNanoseconds               = [decimal]$errorNanosecondsValue
+                                    StdDevNanoseconds              = [decimal]$stdDevNanosecondsValue
+                                    AllocatedBytes                 = [decimal]$allocatedBytesValue
+                                    GuardrailMaxMeanNanoseconds    = $declaredMaxMeanNanoseconds
+                                    GuardrailMaxAllocatedBytes     = $declaredMaxAllocatedBytes
+                                })
+                            }
+                    )
+
+                    if ($measurements.Count -eq 0) {
+                        throw "SRE stable baseline row for SLI '$sliId' must declare at least one measurement."
+                    }
+
+                    [pscustomobject]([ordered]@{
+                        SliId           = $sliId
+                        Status          = $rowStatus
+                        MeasurementKind = $measurementKind
+                        Notes           = $notes
+                        Measurements    = $measurements
+                    })
+                }
+        )
+
+        if ($stableBaselineRows.Count -eq 0) {
+            throw "SRE stable baseline manifest must declare at least one baselineRows entry."
+        }
+
+        $stableBaselinePublishedSliIds = @($stableBaselineRows | ForEach-Object { $_.SliId })
+        $actualStableBaselineSliIds = @($sliRows | Where-Object { $_.BaselineStatus -eq "stable-baseline-published" } | ForEach-Object { $_.Id })
+        Assert-SreStringSetEquals -Expected $actualStableBaselineSliIds -Actual $stableBaselinePublishedSliIds -Message "SRE stable baseline rows do not match SLI rows with baselineStatus stable-baseline-published."
+        Assert-SreStringSetEquals -Expected $actualStableBaselineSliIds -Actual $stableBaselineManifestPublishedSliIds -Message "SRE stable baseline manifest publishedBaselineSliIds do not match SLI rows with baselineStatus stable-baseline-published."
+        Assert-SreStringSetEquals -Expected $pendingBaselineSliIds -Actual $stableBaselineManifestPendingSliIds -Message "SRE stable baseline manifest pendingBaselineSliIds do not match SLI rows with baselineStatus pending-stable-baseline."
+        $stableBaselineMeasurementCount = @($stableBaselineRows | ForEach-Object { $_.Measurements }).Count
+    }
+    elseif ($stableBaselinesPublishedValue -or $stableBaselineCount -gt 0) {
+        throw "SRE posture support manifest stableBaselineManifest is required when stable baselines are published."
+    }
+
+    $stableBaselineManifestReferenceName = $null
+    if ($null -ne $stableBaselineManifestReference) {
+        $stableBaselineManifestReferenceName = $stableBaselineManifestReference.Reference
+    }
 
     return [pscustomobject]([ordered]@{
         Manifest                   = Get-RepoRelativePath -Path $ResolvedManifestPath -RepoRoot $ResolvedRepoRoot
@@ -1761,6 +1984,11 @@ function Convert-SrePostureEvidence {
         Summary                    = [string](Get-ManifestPropertyValue -Object $manifest -PropertyName "summary" -DefaultValue "")
         ReleaseValidationSummaryMode = $releaseValidationSummaryMode
         StableBaselinesPublished   = [bool]$stableBaselinesPublishedValue
+        StableBaselineManifest     = $stableBaselineManifestReferenceName
+        StableBaselineManifestSchemaVersion = $stableBaselineManifestSchemaVersion
+        StableBaselineManifestStatus = $stableBaselineManifestStatus
+        StableBaselineManifestCapturedAtUtc = $stableBaselineManifestCapturedAtUtc
+        StableBaselineManifestCapturedFromCommit = $stableBaselineManifestCapturedFromCommit
         SourceDocuments            = @($sourceDocumentReferences | ForEach-Object { $_.Reference })
         ValidationScripts          = @($validationScriptReferences | ForEach-Object { $_.Reference })
         GuardrailCatalog           = $guardrailCatalogReference.Reference
@@ -1773,11 +2001,19 @@ function Convert-SrePostureEvidence {
         GuardrailPendingSliCount   = $guardrailPendingSliCount
         GuardrailNotApplicableSliCount = $guardrailNotApplicableSliCount
         GuardrailReferenceCount    = $guardrailReferenceCount
+        StableBaselineRowCount     = $stableBaselineRows.Count
+        StableBaselineMeasurementCount = $stableBaselineMeasurementCount
+        StableBaselinePublishedSliIds = $stableBaselinePublishedSliIds
+        PendingBaselineSliIds      = $pendingBaselineSliIds
+        StableBaselineRows         = $stableBaselineRows
         SliRows                    = $sliRows
         ValidatedReferences        = @(
             $sourceDocumentReferences
             $validationScriptReferences
             $guardrailCatalogReference
+            if ($null -ne $stableBaselineManifestReference) {
+                $stableBaselineManifestReference
+            }
         ) | Sort-Object Reference -Unique
     })
 }
@@ -2243,6 +2479,8 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- SRE target-declared SLIs: $($Report.Summary.SreTargetDeclaredCount)")
     $markdown.Add("- SRE pending stable baselines: $($Report.Summary.SrePendingStableBaselineCount)")
     $markdown.Add("- SRE stable baselines: $($Report.Summary.SreStableBaselineCount)")
+    $markdown.Add("- SRE stable baseline rows: $($Report.SrePostureEvidence.StableBaselineRowCount)")
+    $markdown.Add("- SRE stable baseline measurements: $($Report.SrePostureEvidence.StableBaselineMeasurementCount)")
     $markdown.Add("- SRE guardrail-mapped SLIs: $($Report.Summary.SreGuardrailMappedSliCount)")
     $markdown.Add("- SRE pending guardrail coverage SLIs: $($Report.Summary.SreGuardrailPendingSliCount)")
     $markdown.Add("- Supply-chain evidence items: $($Report.Summary.SupplyChainEvidenceItemCount)")
@@ -2318,6 +2556,9 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- Status: $($Report.SrePostureEvidence.Status)")
     $markdown.Add("- Release validation summary mode: $($Report.SrePostureEvidence.ReleaseValidationSummaryMode)")
     $markdown.Add("- Stable baselines published: $($Report.SrePostureEvidence.StableBaselinesPublished)")
+    $markdown.Add("- Stable baseline manifest: ``$($Report.SrePostureEvidence.StableBaselineManifest)``")
+    $markdown.Add("- Stable baseline rows: $($Report.SrePostureEvidence.StableBaselineRowCount)")
+    $markdown.Add("- Stable baseline measurements: $($Report.SrePostureEvidence.StableBaselineMeasurementCount)")
     $markdown.Add("- Guardrail catalog: ``$($Report.SrePostureEvidence.GuardrailCatalog)``")
     $markdown.Add("- Guardrail catalog entries: $($Report.SrePostureEvidence.GuardrailCatalogEntryCount)")
     $markdown.Add("- Guardrail-mapped SLIs: $($Report.SrePostureEvidence.GuardrailMappedSliCount)")
@@ -2336,6 +2577,14 @@ function Write-EngineCompletionScorecardReport {
         }
 
         $markdown.Add("| ``$($sli.Id)`` | $($sli.Category) | $($sli.TargetStatus) | $($sli.BaselineStatus) | $($sli.GuardrailCoverageStatus) | $guardrailReferences |")
+    }
+
+    $markdown.Add("")
+    $markdown.Add("| Stable baseline SLI | Measurement kind | Measurements |")
+    $markdown.Add("| --- | --- | --- |")
+    foreach ($row in $Report.SrePostureEvidence.StableBaselineRows) {
+        $measurements = (@($row.Measurements) | ForEach-Object { "``$($_.ReportFileName)`` / ``$($_.Benchmark)`` mean $($_.MeanNanoseconds) ns, allocated $($_.AllocatedBytes) B" }) -join "<br>"
+        $markdown.Add("| ``$($row.SliId)`` | $($row.MeasurementKind) | $measurements |")
     }
 
     $markdown.Add("")

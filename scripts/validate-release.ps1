@@ -334,6 +334,23 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         throw "Engine completion scorecard JSON is missing PublicApiCompatibilityEvidence."
     }
 
+    $sreStableBaselineManifest = Get-ScorecardRequiredPropertyValue `
+        -Object $scorecard.SrePostureEvidence `
+        -PropertyName "StableBaselineManifest" `
+        -OwnerName "SrePostureEvidence"
+    $sreStableBaselineRowCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $scorecard.SrePostureEvidence `
+            -PropertyName "StableBaselineRowCount" `
+            -OwnerName "SrePostureEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $sreStableBaselineMeasurementCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $scorecard.SrePostureEvidence `
+            -PropertyName "StableBaselineMeasurementCount" `
+            -OwnerName "SrePostureEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+
     Write-Host ("Deployment-mode evidence: {0} global claims; not-claimed {1}; package-scoped claim packages {2}; known hazards {3}; transitive audit entries {4}; publish probes {5}." -f `
         $scorecard.DeploymentModeEvidence.GlobalClaimCount,
         $scorecard.DeploymentModeEvidence.GlobalNotClaimedCount,
@@ -354,15 +371,18 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         $dependencyHealthProviderManifestSchemaVersion,
         $dependencyHealthProviderManifestStatus)
 
-    Write-Host ("SRE posture: {0} SLIs; target-declared {1}; pending stable baselines {2}; stable baselines {3}; guardrail-mapped {4}; pending guardrail coverage {5}; guardrail not-applicable {6}; summary mode {7}." -f `
+    Write-Host ("SRE posture: {0} SLIs; target-declared {1}; pending stable baselines {2}; stable baselines {3}; stable baseline rows {4}; stable baseline measurements {5}; guardrail-mapped {6}; pending guardrail coverage {7}; guardrail not-applicable {8}; summary mode {9}; stable baseline manifest {10}." -f `
         $scorecard.SrePostureEvidence.SliCount,
         $scorecard.SrePostureEvidence.TargetDeclaredCount,
         $scorecard.SrePostureEvidence.PendingStableBaselineCount,
         $scorecard.SrePostureEvidence.StableBaselineCount,
+        $sreStableBaselineRowCount,
+        $sreStableBaselineMeasurementCount,
         $scorecard.SrePostureEvidence.GuardrailMappedSliCount,
         $scorecard.SrePostureEvidence.GuardrailPendingSliCount,
         $scorecard.SrePostureEvidence.GuardrailNotApplicableSliCount,
-        $scorecard.SrePostureEvidence.ReleaseValidationSummaryMode)
+        $scorecard.SrePostureEvidence.ReleaseValidationSummaryMode,
+        $sreStableBaselineManifest)
 
     Write-Host ("Supply-chain release evidence: {0} items; workflow-ready {1}; external policy pending {2}; blocked {3}; status {4}." -f `
         $scorecard.SupplyChainEvidence.EvidenceItemCount,

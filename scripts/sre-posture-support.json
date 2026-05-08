@@ -1,9 +1,10 @@
 {
-  "$schemaVersion": "1.1.0",
-  "status": "target-declared",
-  "summary": "Engine SLI and SLO targets are declared; stable SLI baselines remain pending until a dedicated baseline pass promotes them.",
+  "$schemaVersion": "1.2.0",
+  "status": "partial-stable-baseline-published",
+  "summary": "Engine SLI and SLO targets are declared; benchmark-backed stable baselines are published for the guardrail-mapped subset while non-evidenced SLI rows remain pending.",
   "releaseValidationSummaryMode": "release-validation-console-and-scorecard-artifact",
-  "stableBaselinesPublished": false,
+  "stableBaselinesPublished": true,
+  "stableBaselineManifest": "scripts/sre-stable-baselines.json",
   "sourceDocs": [
     "docs/sre-posture.md",
     "docs/benchmarking.md"
@@ -21,7 +22,7 @@
       "sloTarget": "p95 <= 50 us over the representative behavior set",
       "window": "30-day rolling against shipped main",
       "targetStatus": "target-declared",
-      "baselineStatus": "pending-stable-baseline",
+      "baselineStatus": "stable-baseline-published",
       "guardrailCoverageStatus": "guardrail-catalog-mapped",
       "guardrailReferences": [
         {
@@ -38,7 +39,7 @@
       "sloTarget": "p99 <= 200 us over the representative behavior set",
       "window": "30-day rolling against shipped main",
       "targetStatus": "target-declared",
-      "baselineStatus": "pending-stable-baseline",
+      "baselineStatus": "stable-baseline-published",
       "guardrailCoverageStatus": "guardrail-catalog-mapped",
       "guardrailReferences": [
         {
@@ -79,7 +80,7 @@
       "sloTarget": "no regression beyond the current BenchmarkInProcessShortRunConfig baseline",
       "window": "per-PR comparison",
       "targetStatus": "target-declared",
-      "baselineStatus": "pending-stable-baseline",
+      "baselineStatus": "stable-baseline-published",
       "guardrailCoverageStatus": "guardrail-catalog-mapped",
       "guardrailReferences": [
         {
@@ -96,7 +97,7 @@
       "sloTarget": "no regression beyond the current baseline",
       "window": "per-PR comparison",
       "targetStatus": "target-declared",
-      "baselineStatus": "pending-stable-baseline",
+      "baselineStatus": "stable-baseline-published",
       "guardrailCoverageStatus": "guardrail-catalog-mapped",
       "guardrailReferences": [
         {

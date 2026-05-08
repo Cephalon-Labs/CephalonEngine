@@ -38,7 +38,7 @@ BeforeAll {
         }
 
         return [ordered]@{
-            '$schemaVersion' = "1.8.0"
+            '$schemaVersion' = "1.9.0"
             SourceDocument = "docs/engine-completion-scorecard.md"
             DeploymentModeEvidence = [ordered]@{
                 GlobalClaimCount = 3
@@ -52,8 +52,11 @@ BeforeAll {
             SrePostureEvidence = [ordered]@{
                 SliCount = 11
                 TargetDeclaredCount = 11
-                PendingStableBaselineCount = 11
-                StableBaselineCount = 0
+                PendingStableBaselineCount = 7
+                StableBaselineCount = 4
+                StableBaselineManifest = "scripts/sre-stable-baselines.json"
+                StableBaselineRowCount = 4
+                StableBaselineMeasurementCount = 6
                 GuardrailMappedSliCount = 4
                 GuardrailPendingSliCount = 2
                 GuardrailNotApplicableSliCount = 5
@@ -163,6 +166,7 @@ Describe "validate-release.ps1 scorecard readback" {
         } 6>&1 | Out-String
 
         $output | Should -Match "Provider integration evidence: 32 rows; live proofs 14; composition-only 18; external-service gates 13; default-skipped 13; runtime contracts 94; dependency-health providers 18 from scripts/observability-dependency-health-providers\.json schema 1\.0\.0 \(source-derived-provider-family-contract\)\."
+        $output | Should -Match "SRE posture: 11 SLIs; target-declared 11; pending stable baselines 7; stable baselines 4; stable baseline rows 4; stable baseline measurements 6; guardrail-mapped 4; pending guardrail coverage 2; guardrail not-applicable 5; summary mode release-validation-console-and-scorecard-artifact; stable baseline manifest scripts/sre-stable-baselines\.json\."
         $output | Should -Match "Engine completion scorecard hard-blocker gate: no blocked platform gates"
     }
 
