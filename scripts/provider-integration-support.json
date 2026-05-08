@@ -1,7 +1,7 @@
 {
   "$schemaVersion": "1.0.0",
   "status": "expanded-live-provider-evidence",
-  "summary": "Provider integration evidence is machine-readable. Redis data/event-sourcing, MongoDB data, Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant data providers have live proof lanes with pre-provisioned or disposable Testcontainers runtime modes; CDC database providers have live proof lanes; the remaining composition-only rows are observability dependency-health invariants. The dependency-health provider family shape is source-derived through scripts/observability-dependency-health-providers.json.",
+  "summary": "Provider integration evidence is machine-readable. Redis data/event-sourcing, MongoDB data, Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant data providers have live proof lanes with pre-provisioned or disposable Testcontainers runtime modes; CDC database providers have live proof lanes; observability dependency-health providers now have deterministic managed-probe live runtime proof across all eighteen provider packs. The dependency-health provider family shape is source-derived through scripts/observability-dependency-health-providers.json.",
   "sourceDocs": [
     "docs/engine-completion-scorecard.md",
     "docs/release-checklist.md",
@@ -519,10 +519,10 @@
       "externalServiceGate": "provider-integration"
     },
     {
-      "id": "cassandra-dependency-health-invariant",
+      "id": "cassandra-dependency-health-live",
       "provider": "Cassandra",
       "family": "dependency-health",
-      "status": "composition-only",
+      "status": "live-proof-available",
       "defaultRunBehavior": "runs-without-external-services",
       "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
       "testFiles": [
@@ -542,10 +542,10 @@
       "environmentVariables": []
     },
     {
-      "id": "clickhouse-dependency-health-invariant",
+      "id": "clickhouse-dependency-health-live",
       "provider": "ClickHouse",
       "family": "dependency-health",
-      "status": "composition-only",
+      "status": "live-proof-available",
       "defaultRunBehavior": "runs-without-external-services",
       "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
       "testFiles": [
@@ -565,10 +565,10 @@
       "environmentVariables": []
     },
     {
-      "id": "consul-dependency-health-invariant",
+      "id": "consul-dependency-health-live",
       "provider": "Consul",
       "family": "dependency-health",
-      "status": "composition-only",
+      "status": "live-proof-available",
       "defaultRunBehavior": "runs-without-external-services",
       "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
       "testFiles": [
@@ -588,10 +588,10 @@
       "environmentVariables": []
     },
     {
-      "id": "elasticsearch-dependency-health-invariant",
+      "id": "elasticsearch-dependency-health-live",
       "provider": "Elasticsearch",
       "family": "dependency-health",
-      "status": "composition-only",
+      "status": "live-proof-available",
       "defaultRunBehavior": "runs-without-external-services",
       "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
       "testFiles": [
@@ -611,10 +611,10 @@
       "environmentVariables": []
     },
     {
-      "id": "http-dependency-health-invariant",
+      "id": "http-dependency-health-live",
       "provider": "HTTP",
       "family": "dependency-health",
-      "status": "composition-only",
+      "status": "live-proof-available",
       "defaultRunBehavior": "runs-without-external-services",
       "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
       "testFiles": [
@@ -634,10 +634,10 @@
       "environmentVariables": []
     },
     {
-      "id": "kafka-dependency-health-invariant",
+      "id": "kafka-dependency-health-live",
       "provider": "Kafka",
       "family": "dependency-health",
-      "status": "composition-only",
+      "status": "live-proof-available",
       "defaultRunBehavior": "runs-without-external-services",
       "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
       "testFiles": [
@@ -657,10 +657,10 @@
       "environmentVariables": []
     },
     {
-      "id": "memcached-dependency-health-invariant",
+      "id": "memcached-dependency-health-live",
       "provider": "Memcached",
       "family": "dependency-health",
-      "status": "composition-only",
+      "status": "live-proof-available",
       "defaultRunBehavior": "runs-without-external-services",
       "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
       "testFiles": [
@@ -680,10 +680,10 @@
       "environmentVariables": []
     },
     {
-      "id": "mongodb-dependency-health-invariant",
+      "id": "mongodb-dependency-health-live",
       "provider": "MongoDB",
       "family": "dependency-health",
-      "status": "composition-only",
+      "status": "live-proof-available",
       "defaultRunBehavior": "runs-without-external-services",
       "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
       "testFiles": [
@@ -703,10 +703,10 @@
       "environmentVariables": []
     },
     {
-      "id": "mqtt-dependency-health-invariant",
+      "id": "mqtt-dependency-health-live",
       "provider": "MQTT",
       "family": "dependency-health",
-      "status": "composition-only",
+      "status": "live-proof-available",
       "defaultRunBehavior": "runs-without-external-services",
       "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
       "testFiles": [
@@ -726,10 +726,10 @@
       "environmentVariables": []
     },
     {
-      "id": "mysql-dependency-health-invariant",
+      "id": "mysql-dependency-health-live",
       "provider": "MySQL",
       "family": "dependency-health",
-      "status": "composition-only",
+      "status": "live-proof-available",
       "defaultRunBehavior": "runs-without-external-services",
       "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
       "testFiles": [
@@ -749,10 +749,10 @@
       "environmentVariables": []
     },
     {
-      "id": "nats-dependency-health-invariant",
+      "id": "nats-dependency-health-live",
       "provider": "NATS",
       "family": "dependency-health",
-      "status": "composition-only",
+      "status": "live-proof-available",
       "defaultRunBehavior": "runs-without-external-services",
       "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
       "testFiles": [
@@ -772,10 +772,10 @@
       "environmentVariables": []
     },
     {
-      "id": "neo4j-dependency-health-invariant",
+      "id": "neo4j-dependency-health-live",
       "provider": "Neo4j",
       "family": "dependency-health",
-      "status": "composition-only",
+      "status": "live-proof-available",
       "defaultRunBehavior": "runs-without-external-services",
       "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
       "testFiles": [
@@ -795,10 +795,10 @@
       "environmentVariables": []
     },
     {
-      "id": "opensearch-dependency-health-invariant",
+      "id": "opensearch-dependency-health-live",
       "provider": "OpenSearch",
       "family": "dependency-health",
-      "status": "composition-only",
+      "status": "live-proof-available",
       "defaultRunBehavior": "runs-without-external-services",
       "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
       "testFiles": [
@@ -818,10 +818,10 @@
       "environmentVariables": []
     },
     {
-      "id": "oracle-dependency-health-invariant",
+      "id": "oracle-dependency-health-live",
       "provider": "Oracle",
       "family": "dependency-health",
-      "status": "composition-only",
+      "status": "live-proof-available",
       "defaultRunBehavior": "runs-without-external-services",
       "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
       "testFiles": [
@@ -841,10 +841,10 @@
       "environmentVariables": []
     },
     {
-      "id": "postgres-dependency-health-invariant",
+      "id": "postgres-dependency-health-live",
       "provider": "Postgres",
       "family": "dependency-health",
-      "status": "composition-only",
+      "status": "live-proof-available",
       "defaultRunBehavior": "runs-without-external-services",
       "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
       "testFiles": [
@@ -864,10 +864,10 @@
       "environmentVariables": []
     },
     {
-      "id": "rabbitmq-dependency-health-invariant",
+      "id": "rabbitmq-dependency-health-live",
       "provider": "RabbitMQ",
       "family": "dependency-health",
-      "status": "composition-only",
+      "status": "live-proof-available",
       "defaultRunBehavior": "runs-without-external-services",
       "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
       "testFiles": [
@@ -887,10 +887,10 @@
       "environmentVariables": []
     },
     {
-      "id": "redis-dependency-health-invariant",
+      "id": "redis-dependency-health-live",
       "provider": "Redis",
       "family": "dependency-health",
-      "status": "composition-only",
+      "status": "live-proof-available",
       "defaultRunBehavior": "runs-without-external-services",
       "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
       "testFiles": [
@@ -910,10 +910,10 @@
       "environmentVariables": []
     },
     {
-      "id": "sqlserver-dependency-health-invariant",
+      "id": "sqlserver-dependency-health-live",
       "provider": "SQL Server",
       "family": "dependency-health",
-      "status": "composition-only",
+      "status": "live-proof-available",
       "defaultRunBehavior": "runs-without-external-services",
       "testProject": "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj",
       "testFiles": [

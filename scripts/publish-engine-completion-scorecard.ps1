@@ -733,7 +733,7 @@ function Convert-ProviderIntegrationDependencyHealthManifest {
 
         $providerKey = Get-ProviderIntegrationDependencyHealthProviderKey -ProviderManifestRow $providerRow
         [pscustomobject]([ordered]@{
-            Id                 = "$providerKey-dependency-health-invariant"
+            Id                 = "$providerKey-dependency-health-live"
             Provider           = $provider
             ComponentDoc       = $componentDoc
             RuntimeContract    = "dependency-health.$providerKey"
@@ -786,7 +786,7 @@ function Assert-ProviderIntegrationDependencyHealthRows {
         $actualRow = $matches[0]
         foreach ($field in @(
             [pscustomobject]@{ Name = "provider"; Actual = $actualRow.Provider; Expected = $expectedRow.Provider },
-            [pscustomobject]@{ Name = "status"; Actual = $actualRow.Status; Expected = "composition-only" },
+            [pscustomobject]@{ Name = "status"; Actual = $actualRow.Status; Expected = "live-proof-available" },
             [pscustomobject]@{ Name = "defaultRunBehavior"; Actual = $actualRow.DefaultRunBehavior; Expected = "runs-without-external-services" },
             [pscustomobject]@{ Name = "testProject"; Actual = $actualRow.TestProject; Expected = $expectedRow.TestProject }
         )) {
@@ -818,7 +818,7 @@ function Assert-ProviderIntegrationDependencyHealthRows {
         }
 
         if (@($actualRow.EnvironmentVariables).Count -ne 0) {
-            throw "Provider integration dependency-health row '$($expectedRow.Id)' must keep environment variables empty for deterministic no-external-service proof."
+            throw "Provider integration dependency-health row '$($expectedRow.Id)' must keep environment variables empty for deterministic managed-probe live proof."
         }
     }
 }

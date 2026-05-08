@@ -17,7 +17,6 @@ BeforeAll {
     $script:scriptPath = Join-Path $script:repoRoot "scripts\publish-engine-completion-scorecard.ps1"
     . $script:scriptPath
 }
-
 AfterAll {
     Remove-Item Env:\CEPHALON_ENGINE_COMPLETION_SCORECARD_NO_RUN -ErrorAction SilentlyContinue
 }
@@ -167,8 +166,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.AdoptionSmokeRuntimeProbeCount | Should -Be 6
         $json.Summary.AdoptionSmokeAssertionCount | Should -Be 7
         $json.Summary.ProviderIntegrationEvidenceRowCount | Should -Be 32
-        $json.Summary.ProviderIntegrationLiveProofCount | Should -Be 14
-        $json.Summary.ProviderIntegrationCompositionOnlyCount | Should -Be 18
+        $json.Summary.ProviderIntegrationLiveProofCount | Should -Be 32
+        $json.Summary.ProviderIntegrationCompositionOnlyCount | Should -Be 0
         $json.Summary.ProviderIntegrationExternalServiceGateCount | Should -Be 13
         $json.Summary.ProviderIntegrationDefaultSkippedCount | Should -Be 13
         $json.Summary.ProviderIntegrationRuntimeContractCount | Should -Be 94
@@ -279,8 +278,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.ProviderIntegrationEvidence.DependencyHealthProviderManifest.Status | Should -Be "source-derived-provider-family-contract"
         $json.ProviderIntegrationEvidence.DependencyHealthProviderManifest.ProviderCount | Should -Be 18
         $json.ProviderIntegrationEvidence.EvidenceRowCount | Should -Be 32
-        $json.ProviderIntegrationEvidence.LiveProofCount | Should -Be 14
-        $json.ProviderIntegrationEvidence.CompositionOnlyCount | Should -Be 18
+        $json.ProviderIntegrationEvidence.LiveProofCount | Should -Be 32
+        $json.ProviderIntegrationEvidence.CompositionOnlyCount | Should -Be 0
         $json.ProviderIntegrationEvidence.ExternalServiceGateCount | Should -Be 13
         $json.ProviderIntegrationEvidence.DefaultSkippedCount | Should -Be 13
         $json.ProviderIntegrationEvidence.RuntimeContractCount | Should -Be 94
@@ -295,7 +294,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "opensearch-data-runtime-surface"
         $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "qdrant-data-runtime-surface"
         $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "postgres-cdc-live"
-        $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "sqlserver-dependency-health-invariant"
+        $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "sqlserver-dependency-health-live"
         $json.ProviderIntegrationEvidence.ProviderRows.ExternalServiceGate | Should -Contain "provider-integration"
         $json.ProviderIntegrationEvidence.ProviderRows.ExternalServiceGate | Should -Contain "cdc-integration"
         $json.ProviderIntegrationEvidence.ProviderRows.RuntimeContracts | Should -Contain "dependency-health.sqlserver"
@@ -432,7 +431,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "out-of-tree-generated-app-package-stage"
         $markdown | Should -Match "Provider Integration Evidence"
         $markdown | Should -Match "Provider integration evidence rows: 32"
-        $markdown | Should -Match "live proofs: 14"
+        $markdown | Should -Match "live proofs: 32"
+        $markdown | Should -Match "composition-only rows: 0"
         $markdown | Should -Match "dependency-health"
         $markdown | Should -Match "Evidence Source References"
         $markdown | Should -Match "Package GA Readiness"
@@ -998,7 +998,7 @@ jobs:
     It "fails when dependency-health provider rows drift from the source-derived manifest" {
         $manifestPath = Join-Path $script:tempRoot "provider-integration-support.json"
         $manifestContents = Get-Content -LiteralPath (Join-Path $script:repoRoot "scripts\provider-integration-support.json") -Raw -Encoding UTF8
-        $driftRegex = [regex]::new('("id": "sqlserver-dependency-health-invariant",\s+"provider": )"SQL Server"')
+        $driftRegex = [regex]::new('("id": "sqlserver-dependency-health-live",\s+"provider": )"SQL Server"')
         $manifestContents = $driftRegex.Replace($manifestContents, '$1"SQL Server Drift"', 1)
 
         $manifestContents | Should -Match "SQL Server Drift"
@@ -1006,7 +1006,7 @@ jobs:
 
         {
             Convert-ProviderIntegrationEvidence -ResolvedManifestPath $manifestPath -ResolvedRepoRoot $script:repoRoot
-        } | Should -Throw "*Provider integration dependency-health row 'sqlserver-dependency-health-invariant' provider must match source-derived manifest value 'SQL Server' but found 'SQL Server Drift'.*"
+        } | Should -Throw "*Provider integration dependency-health row 'sqlserver-dependency-health-live' provider must match source-derived manifest value 'SQL Server' but found 'SQL Server Drift'.*"
     }
 
     It "keeps release validation wired to the scorecard artifact" {
