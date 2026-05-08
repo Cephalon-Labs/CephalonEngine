@@ -2,6 +2,7 @@ param(
     [string]$ScorecardPath = "docs/engine-completion-scorecard.md",
     [string]$ConformanceMatrixPath = "docs/conformance-matrix.md",
     [string]$DeploymentModeManifestPath = "scripts/deployment-mode-support.json",
+    [string]$DeploymentModeClaimsReportPath = "artifacts/deployment-mode-claims-release/claim-validation-report.json",
     [string]$AdoptionSmokeManifestPath = "scripts/adoption-smoke-support.json",
     [string]$ProviderIntegrationManifestPath = "scripts/provider-integration-support.json",
     [string]$SrePostureManifestPath = "scripts/sre-posture-support.json",
@@ -14,7 +15,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$Script:SchemaVersion = "1.9.0"
+$Script:SchemaVersion = "1.10.0"
 $Script:AllowedStatuses = @(
     "ready-for-preview",
     "partial",
@@ -1028,10 +1029,252 @@ function ConvertTo-RequiredDeploymentModeBoolean {
     throw "Deployment-mode support '$Name' must be a boolean value."
 }
 
+function Convert-DeploymentModeClaimsReportEvidence {
+    param(
+        [AllowNull()]
+        [string]$ResolvedClaimsReportPath,
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedManifestPath,
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedRepoRoot,
+        [Parameter(Mandatory = $true)]
+        [string]$ExpectedReleaseValidationMode,
+        [Parameter(Mandatory = $true)]
+        [AllowEmptyCollection()]
+        [string[]]$ExpectedReleaseValidationDeploymentModes,
+        [Parameter(Mandatory = $true)]
+        [AllowEmptyCollection()]
+        [string[]]$ExpectedGatedModes,
+        [Parameter(Mandatory = $true)]
+        [AllowEmptyCollection()]
+        [string[]]$ExpectedAuditOnlyModes,
+        [Parameter(Mandatory = $true)]
+        [bool]$ExpectedReleaseValidationSkipsPublish,
+        [Parameter(Mandatory = $true)]
+        [bool]$ExpectedNonOptOutGate,
+        [Parameter(Mandatory = $true)]
+        [bool]$ExpectedFailureBlocksRelease,
+        [Parameter(Mandatory = $true)]
+        [bool]$ExpectedFailOnWarnings,
+        [Parameter(Mandatory = $true)]
+        [int]$ExpectedPublishTargetCount,
+        [Parameter(Mandatory = $true)]
+        [int]$ExpectedPackageEntryCount,
+        [Parameter(Mandatory = $true)]
+        [int]$ExpectedPackageScopedClaimPackageCount,
+        [Parameter(Mandatory = $true)]
+        [int]$ExpectedKnownHazardEntryCount
+    )
+
+    $reportReference = if ([string]::IsNullOrWhiteSpace($ResolvedClaimsReportPath)) {
+        ""
+    }
+    else {
+        Get-RepoRelativePath -Path $ResolvedClaimsReportPath -RepoRoot $ResolvedRepoRoot
+    }
+
+    if ([string]::IsNullOrWhiteSpace($ResolvedClaimsReportPath) -or -not (Test-Path -LiteralPath $ResolvedClaimsReportPath -PathType Leaf)) {
+        return [pscustomobject]([ordered]@{
+            Report                              = $reportReference
+            Present                             = $false
+            AggregateVerdict                    = "not-found"
+            DeploymentMode                      = ""
+            PublishProbeGateStatus              = "not-found"
+            PublishProbeGateEnabled             = $false
+            PublishProbeGateFailureBlocksRelease = $false
+            PublishProbeGateFailOnWarnings      = $false
+            PublishProbeGateFailureCount        = 0
+            PublishProbeTargetCount             = 0
+            PublishProbeWarningCount            = 0
+            PublishProbeErrorCount              = 0
+            PackageClaimCount                   = 0
+            PackageClaimTruthfulCount           = 0
+            PackageClaimOverstatedCount         = 0
+            HazardInventoryTotalPackages        = 0
+            HazardInventoryKnownHazardEntries   = 0
+            HazardInventoryScopedClaimPackages  = 0
+            HazardInventoryTransitiveAuditStatus = ""
+            HazardInventoryTransitiveAuditMissingEntries = 0
+            HazardInventoryTransitiveAuditLockFileCount = 0
+        })
+    }
+
+    $report = Get-Content -LiteralPath $ResolvedClaimsReportPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 32
+    $manifestPath = [string](Get-ManifestPropertyValue -Object $report -PropertyName "ManifestPath" -DefaultValue "")
+    if ([string]::IsNullOrWhiteSpace($manifestPath)) {
+        throw "Deployment-mode claims report '$reportReference' is missing ManifestPath."
+    }
+
+    if (-not [string]::Equals(
+            [System.IO.Path]::GetFullPath($manifestPath),
+            [System.IO.Path]::GetFullPath($ResolvedManifestPath),
+            [System.StringComparison]::OrdinalIgnoreCase)) {
+        throw "Deployment-mode claims report '$reportReference' ManifestPath does not match the deployment-mode support manifest."
+    }
+
+    $policy = Get-ManifestPropertyValue -Object $report -PropertyName "PublishProbePolicy"
+    if ($null -eq $policy) {
+        throw "Deployment-mode claims report '$reportReference' is missing PublishProbePolicy."
+    }
+
+    $reportReleaseValidationMode = [string](Get-ManifestPropertyValue -Object $policy -PropertyName "ReleaseValidationMode" -DefaultValue "")
+    if ($reportReleaseValidationMode -ne $ExpectedReleaseValidationMode) {
+        throw "Deployment-mode claims report '$reportReference' release-validation mode '$reportReleaseValidationMode' does not match manifest '$ExpectedReleaseValidationMode'."
+    }
+
+    $reportReleaseValidationDeploymentModes = @(
+        Get-ManifestPropertyValue -Object $policy -PropertyName "ReleaseValidationDeploymentModes" -DefaultValue @() |
+            ForEach-Object { [string]$_ } |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    )
+    Assert-SreStringSetEquals -Expected $ExpectedReleaseValidationDeploymentModes -Actual $reportReleaseValidationDeploymentModes -Message "Deployment-mode claims report release-validation deployment modes drift from manifest."
+
+    $reportGatedModes = @(
+        Get-ManifestPropertyValue -Object $policy -PropertyName "GatedModes" -DefaultValue @() |
+            ForEach-Object { [string]$_ } |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    )
+    Assert-SreStringSetEquals -Expected $ExpectedGatedModes -Actual $reportGatedModes -Message "Deployment-mode claims report gated modes drift from manifest."
+
+    $reportAuditOnlyModes = @(
+        Get-ManifestPropertyValue -Object $policy -PropertyName "AuditOnlyModes" -DefaultValue @() |
+            ForEach-Object { [string]$_ } |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    )
+    Assert-SreStringSetEquals -Expected $ExpectedAuditOnlyModes -Actual $reportAuditOnlyModes -Message "Deployment-mode claims report audit-only modes drift from manifest."
+
+    $reportReleaseValidationSkipsPublish = ConvertTo-RequiredDeploymentModeBoolean -Value (Get-ManifestPropertyValue -Object $policy -PropertyName "ReleaseValidationSkipsPublish") -Name "claimsReport.PublishProbePolicy.ReleaseValidationSkipsPublish"
+    $reportCurrentRunSkipsPublish = ConvertTo-RequiredDeploymentModeBoolean -Value (Get-ManifestPropertyValue -Object $policy -PropertyName "CurrentRunSkipsPublish") -Name "claimsReport.PublishProbePolicy.CurrentRunSkipsPublish"
+    $reportNonOptOutGate = ConvertTo-RequiredDeploymentModeBoolean -Value (Get-ManifestPropertyValue -Object $policy -PropertyName "NonOptOutGate") -Name "claimsReport.PublishProbePolicy.NonOptOutGate"
+    $reportFailureBlocksRelease = ConvertTo-RequiredDeploymentModeBoolean -Value (Get-ManifestPropertyValue -Object $policy -PropertyName "FailureBlocksRelease") -Name "claimsReport.PublishProbePolicy.FailureBlocksRelease"
+    $reportFailOnWarnings = ConvertTo-RequiredDeploymentModeBoolean -Value (Get-ManifestPropertyValue -Object $policy -PropertyName "FailOnWarnings") -Name "claimsReport.PublishProbePolicy.FailOnWarnings"
+
+    if ($reportReleaseValidationSkipsPublish -ne $ExpectedReleaseValidationSkipsPublish -or
+        $reportCurrentRunSkipsPublish -ne $ExpectedReleaseValidationSkipsPublish -or
+        $reportNonOptOutGate -ne $ExpectedNonOptOutGate -or
+        $reportFailureBlocksRelease -ne $ExpectedFailureBlocksRelease -or
+        $reportFailOnWarnings -ne $ExpectedFailOnWarnings) {
+        throw "Deployment-mode claims report '$reportReference' publish-probe policy booleans drift from manifest."
+    }
+
+    $gate = Get-ManifestPropertyValue -Object $report -PropertyName "PublishProbeGate"
+    if ($null -eq $gate) {
+        throw "Deployment-mode claims report '$reportReference' is missing PublishProbeGate."
+    }
+
+    $gateStatus = [string](Get-ManifestPropertyValue -Object $gate -PropertyName "Status" -DefaultValue "")
+    $gateEnabled = ConvertTo-RequiredDeploymentModeBoolean -Value (Get-ManifestPropertyValue -Object $gate -PropertyName "Enabled") -Name "claimsReport.PublishProbeGate.Enabled"
+    $gateFailureBlocksRelease = ConvertTo-RequiredDeploymentModeBoolean -Value (Get-ManifestPropertyValue -Object $gate -PropertyName "FailureBlocksRelease") -Name "claimsReport.PublishProbeGate.FailureBlocksRelease"
+    $gateFailOnWarnings = ConvertTo-RequiredDeploymentModeBoolean -Value (Get-ManifestPropertyValue -Object $gate -PropertyName "FailOnWarnings") -Name "claimsReport.PublishProbeGate.FailOnWarnings"
+    $gateFailureCount = [int](Get-ManifestPropertyValue -Object $gate -PropertyName "FailureCount" -DefaultValue 0)
+
+    if ($ExpectedNonOptOutGate -and ($gateStatus -ne "passed" -or -not $gateEnabled -or $gateFailureCount -ne 0)) {
+        throw "Deployment-mode claims report '$reportReference' publish-probe gate must be passed for the non-opt-out release gate."
+    }
+
+    if ($gateFailureBlocksRelease -ne $ExpectedFailureBlocksRelease -or $gateFailOnWarnings -ne $ExpectedFailOnWarnings) {
+        throw "Deployment-mode claims report '$reportReference' publish-probe gate booleans drift from manifest."
+    }
+
+    $modes = @(Get-ManifestPropertyValue -Object $report -PropertyName "Modes" -DefaultValue @())
+    $publishProbeTargets = @(
+        foreach ($modeReport in $modes) {
+            $publishProbe = Get-ManifestPropertyValue -Object $modeReport -PropertyName "PublishProbe"
+            if ($null -ne $publishProbe) {
+                Get-ManifestPropertyValue -Object $publishProbe -PropertyName "Targets" -DefaultValue @()
+            }
+        }
+    )
+
+    $publishProbeWarningCount = 0
+    $publishProbeErrorCount = 0
+    $failedTargets = @()
+    foreach ($target in $publishProbeTargets) {
+        $publishProbeWarningCount += [int](Get-ManifestPropertyValue -Object $target -PropertyName "WarningCount" -DefaultValue 0)
+        $publishProbeErrorCount += [int](Get-ManifestPropertyValue -Object $target -PropertyName "ErrorCount" -DefaultValue 0)
+        $success = ConvertTo-RequiredDeploymentModeBoolean -Value (Get-ManifestPropertyValue -Object $target -PropertyName "Success" -DefaultValue $false) -Name "claimsReport.PublishProbe.Target.Success"
+        if (-not $success) {
+            $failedTargets += [string](Get-ManifestPropertyValue -Object $target -PropertyName "Target" -DefaultValue "unknown")
+        }
+    }
+
+    if ($publishProbeTargets.Count -ne $ExpectedPublishTargetCount) {
+        throw "Deployment-mode claims report '$reportReference' publish target count $($publishProbeTargets.Count) does not match manifest count $ExpectedPublishTargetCount."
+    }
+
+    if ($failedTargets.Count -gt 0 -or $publishProbeErrorCount -gt 0 -or ($ExpectedFailOnWarnings -and $publishProbeWarningCount -gt 0)) {
+        throw "Deployment-mode claims report '$reportReference' contains failed publish targets, errors, or gated warnings."
+    }
+
+    $packageClaimAudits = @(
+        foreach ($modeReport in $modes) {
+            Get-ManifestPropertyValue -Object $modeReport -PropertyName "PackageClaimAudits" -DefaultValue @()
+        }
+    )
+    $truthfulPackageClaims = @($packageClaimAudits | Where-Object { [string](Get-ManifestPropertyValue -Object $_ -PropertyName "Verdict" -DefaultValue "") -eq "claim-truthful" })
+    $overstatedPackageClaims = @($packageClaimAudits | Where-Object { [string](Get-ManifestPropertyValue -Object $_ -PropertyName "Verdict" -DefaultValue "") -eq "claim-overstated" })
+
+    if ($packageClaimAudits.Count -ne $ExpectedPackageScopedClaimPackageCount -or $overstatedPackageClaims.Count -gt 0) {
+        throw "Deployment-mode claims report '$reportReference' package-claim verdicts drift from manifest truth."
+    }
+
+    $hazardInventory = Get-ManifestPropertyValue -Object $report -PropertyName "HazardInventory"
+    if ($null -eq $hazardInventory) {
+        throw "Deployment-mode claims report '$reportReference' is missing HazardInventory."
+    }
+
+    $hazardInventoryTotalPackages = [int](Get-ManifestPropertyValue -Object $hazardInventory -PropertyName "TotalPackages" -DefaultValue 0)
+    $hazardInventoryKnownHazardEntries = [int](Get-ManifestPropertyValue -Object $hazardInventory -PropertyName "TotalKnownHazards" -DefaultValue 0)
+    $hazardInventoryScopedClaimPackages = [int](Get-ManifestPropertyValue -Object $hazardInventory -PropertyName "PackagesWithScopedClaims" -DefaultValue 0)
+    if ($hazardInventoryTotalPackages -ne $ExpectedPackageEntryCount -or
+        $hazardInventoryKnownHazardEntries -ne $ExpectedKnownHazardEntryCount -or
+        $hazardInventoryScopedClaimPackages -ne $ExpectedPackageScopedClaimPackageCount) {
+        throw "Deployment-mode claims report '$reportReference' hazard inventory counts drift from manifest truth."
+    }
+
+    $knownTransitiveAudit = Get-ManifestPropertyValue -Object $hazardInventory -PropertyName "KnownTransitiveHazardAudit"
+    if ($null -eq $knownTransitiveAudit) {
+        throw "Deployment-mode claims report '$reportReference' hazard inventory is missing KnownTransitiveHazardAudit."
+    }
+
+    $knownTransitiveAuditStatus = [string](Get-ManifestPropertyValue -Object $knownTransitiveAudit -PropertyName "Status" -DefaultValue "")
+    $knownTransitiveAuditMissingEntries = [int](Get-ManifestPropertyValue -Object $knownTransitiveAudit -PropertyName "MissingEntries" -DefaultValue 0)
+    $knownTransitiveAuditLockFileCount = [int](Get-ManifestPropertyValue -Object $knownTransitiveAudit -PropertyName "LockFileCount" -DefaultValue 0)
+    if ($knownTransitiveAuditStatus -ne "matched" -or $knownTransitiveAuditMissingEntries -ne 0) {
+        throw "Deployment-mode claims report '$reportReference' transitive hazard lock-file audit is not matched."
+    }
+
+    return [pscustomobject]([ordered]@{
+        Report                              = $reportReference
+        Present                             = $true
+        AggregateVerdict                    = [string](Get-ManifestPropertyValue -Object $report -PropertyName "AggregateVerdict" -DefaultValue "")
+        DeploymentMode                      = [string](Get-ManifestPropertyValue -Object $report -PropertyName "DeploymentMode" -DefaultValue "")
+        PublishProbeGateStatus              = $gateStatus
+        PublishProbeGateEnabled             = $gateEnabled
+        PublishProbeGateFailureBlocksRelease = $gateFailureBlocksRelease
+        PublishProbeGateFailOnWarnings      = $gateFailOnWarnings
+        PublishProbeGateFailureCount        = $gateFailureCount
+        PublishProbeTargetCount             = $publishProbeTargets.Count
+        PublishProbeWarningCount            = $publishProbeWarningCount
+        PublishProbeErrorCount              = $publishProbeErrorCount
+        PackageClaimCount                   = $packageClaimAudits.Count
+        PackageClaimTruthfulCount           = $truthfulPackageClaims.Count
+        PackageClaimOverstatedCount         = $overstatedPackageClaims.Count
+        HazardInventoryTotalPackages        = $hazardInventoryTotalPackages
+        HazardInventoryKnownHazardEntries   = $hazardInventoryKnownHazardEntries
+        HazardInventoryScopedClaimPackages  = $hazardInventoryScopedClaimPackages
+        HazardInventoryTransitiveAuditStatus = $knownTransitiveAuditStatus
+        HazardInventoryTransitiveAuditMissingEntries = $knownTransitiveAuditMissingEntries
+        HazardInventoryTransitiveAuditLockFileCount = $knownTransitiveAuditLockFileCount
+    })
+}
+
 function Convert-DeploymentModeEvidence {
     param(
         [Parameter(Mandatory = $true)]
         [string]$ResolvedManifestPath,
+        [AllowNull()]
+        [string]$ResolvedClaimsReportPath,
         [Parameter(Mandatory = $true)]
         [string]$ResolvedRepoRoot
     )
@@ -1230,6 +1473,22 @@ function Convert-DeploymentModeEvidence {
     $knownHazardPackages = @($packageRows | Where-Object { $_.KnownHazardCount -gt 0 })
     $packageScopedClaimPackages = @($packageRows | Where-Object { $_.SupportedModeCount -gt 0 })
     $globalNotClaimedRows = @($modeRows | Where-Object { $_.Status -eq "not-claimed" })
+    $claimsReportEvidence = Convert-DeploymentModeClaimsReportEvidence `
+        -ResolvedClaimsReportPath $ResolvedClaimsReportPath `
+        -ResolvedManifestPath $ResolvedManifestPath `
+        -ResolvedRepoRoot $ResolvedRepoRoot `
+        -ExpectedReleaseValidationMode $releaseValidationMode `
+        -ExpectedReleaseValidationDeploymentModes $releaseValidationDeploymentModes `
+        -ExpectedGatedModes $gatedModes `
+        -ExpectedAuditOnlyModes $auditOnlyModes `
+        -ExpectedReleaseValidationSkipsPublish $releaseValidationSkipsPublish `
+        -ExpectedNonOptOutGate $nonOptOutGate `
+        -ExpectedFailureBlocksRelease $failureBlocksRelease `
+        -ExpectedFailOnWarnings $failOnWarnings `
+        -ExpectedPublishTargetCount $publishTargetReferences.Count `
+        -ExpectedPackageEntryCount $packageRows.Count `
+        -ExpectedPackageScopedClaimPackageCount $packageScopedClaimPackages.Count `
+        -ExpectedKnownHazardEntryCount $knownHazardEntryCount
 
     return [pscustomobject]([ordered]@{
         Manifest                             = Get-RepoRelativePath -Path $ResolvedManifestPath -RepoRoot $ResolvedRepoRoot
@@ -1264,6 +1523,27 @@ function Convert-DeploymentModeEvidence {
         PublishProbeFailOnWarnings           = $failOnWarnings
         PublishProbeGatePromotion            = [string](Get-ManifestPropertyValue -Object $publishProbePolicy -PropertyName "gatePromotion" -DefaultValue "")
         PublishProbePromotionRequirements    = @(Get-ManifestPropertyValue -Object $publishProbePolicy -PropertyName "promotionRequirements" -DefaultValue @() | ForEach-Object { [string]$_ })
+        ClaimsReport                         = $claimsReportEvidence.Report
+        ClaimsReportPresent                  = $claimsReportEvidence.Present
+        ClaimsReportAggregateVerdict         = $claimsReportEvidence.AggregateVerdict
+        ClaimsReportDeploymentMode           = $claimsReportEvidence.DeploymentMode
+        ClaimsReportPublishProbeGateStatus   = $claimsReportEvidence.PublishProbeGateStatus
+        ClaimsReportPublishProbeGateEnabled  = $claimsReportEvidence.PublishProbeGateEnabled
+        ClaimsReportPublishProbeGateFailureBlocksRelease = $claimsReportEvidence.PublishProbeGateFailureBlocksRelease
+        ClaimsReportPublishProbeGateFailOnWarnings = $claimsReportEvidence.PublishProbeGateFailOnWarnings
+        ClaimsReportPublishProbeGateFailureCount = $claimsReportEvidence.PublishProbeGateFailureCount
+        ClaimsReportPublishProbeTargetCount  = $claimsReportEvidence.PublishProbeTargetCount
+        ClaimsReportPublishProbeWarningCount = $claimsReportEvidence.PublishProbeWarningCount
+        ClaimsReportPublishProbeErrorCount   = $claimsReportEvidence.PublishProbeErrorCount
+        ClaimsReportPackageClaimCount        = $claimsReportEvidence.PackageClaimCount
+        ClaimsReportPackageClaimTruthfulCount = $claimsReportEvidence.PackageClaimTruthfulCount
+        ClaimsReportPackageClaimOverstatedCount = $claimsReportEvidence.PackageClaimOverstatedCount
+        ClaimsReportHazardInventoryTotalPackages = $claimsReportEvidence.HazardInventoryTotalPackages
+        ClaimsReportHazardInventoryKnownHazardEntries = $claimsReportEvidence.HazardInventoryKnownHazardEntries
+        ClaimsReportHazardInventoryScopedClaimPackages = $claimsReportEvidence.HazardInventoryScopedClaimPackages
+        ClaimsReportHazardInventoryTransitiveAuditStatus = $claimsReportEvidence.HazardInventoryTransitiveAuditStatus
+        ClaimsReportHazardInventoryTransitiveAuditMissingEntries = $claimsReportEvidence.HazardInventoryTransitiveAuditMissingEntries
+        ClaimsReportHazardInventoryTransitiveAuditLockFileCount = $claimsReportEvidence.HazardInventoryTransitiveAuditLockFileCount
     })
 }
 
@@ -2291,6 +2571,8 @@ function New-EngineCompletionScorecardReport {
         [string]$ResolvedConformanceMatrixPath,
         [Parameter(Mandatory = $true)]
         [string]$ResolvedDeploymentModeManifestPath,
+        [AllowNull()]
+        [string]$ResolvedDeploymentModeClaimsReportPath,
         [Parameter(Mandatory = $true)]
         [string]$ResolvedAdoptionSmokeManifestPath,
         [Parameter(Mandatory = $true)]
@@ -2318,7 +2600,7 @@ function New-EngineCompletionScorecardReport {
     $qualityDimensions = Convert-QualityDimensions -Rows (Get-ScorecardTable -Lines $lines -Heading "Quality-dimension gates")
     $packageFamilies = Convert-PackageFamilies -Rows (Get-ScorecardTable -Lines $lines -Heading "Package-family readiness roll-up")
     $packageGAReadinessRows = Convert-ConformancePackageRows -ResolvedConformanceMatrixPath $ResolvedConformanceMatrixPath -ResolvedRepoRoot $ResolvedRepoRoot
-    $deploymentModeEvidence = Convert-DeploymentModeEvidence -ResolvedManifestPath $ResolvedDeploymentModeManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
+    $deploymentModeEvidence = Convert-DeploymentModeEvidence -ResolvedManifestPath $ResolvedDeploymentModeManifestPath -ResolvedClaimsReportPath $ResolvedDeploymentModeClaimsReportPath -ResolvedRepoRoot $ResolvedRepoRoot
     $adoptionSmokeEvidence = Convert-AdoptionSmokeEvidence -ResolvedManifestPath $ResolvedAdoptionSmokeManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
     $providerIntegrationEvidence = Convert-ProviderIntegrationEvidence -ResolvedManifestPath $ResolvedProviderIntegrationManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
     $srePostureEvidence = Convert-SrePostureEvidence -ResolvedManifestPath $ResolvedSrePostureManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
@@ -2350,6 +2632,7 @@ function New-EngineCompletionScorecardReport {
         SourceDocument     = Get-RepoRelativePath -Path $ResolvedScorecardPath -RepoRoot $ResolvedRepoRoot
         ConformanceMatrix  = Get-RepoRelativePath -Path $ResolvedConformanceMatrixPath -RepoRoot $ResolvedRepoRoot
         DeploymentModeManifest = Get-RepoRelativePath -Path $ResolvedDeploymentModeManifestPath -RepoRoot $ResolvedRepoRoot
+        DeploymentModeClaimsReport = if ([string]::IsNullOrWhiteSpace($ResolvedDeploymentModeClaimsReportPath)) { "" } else { Get-RepoRelativePath -Path $ResolvedDeploymentModeClaimsReportPath -RepoRoot $ResolvedRepoRoot }
         AdoptionSmokeManifest = Get-RepoRelativePath -Path $ResolvedAdoptionSmokeManifestPath -RepoRoot $ResolvedRepoRoot
         ProviderIntegrationManifest = Get-RepoRelativePath -Path $ResolvedProviderIntegrationManifestPath -RepoRoot $ResolvedRepoRoot
         SrePostureManifest = Get-RepoRelativePath -Path $ResolvedSrePostureManifestPath -RepoRoot $ResolvedRepoRoot
@@ -2384,6 +2667,12 @@ function New-EngineCompletionScorecardReport {
             DeploymentModeKnownHazardEntryCount = $deploymentModeEvidence.KnownHazardEntryCount
             DeploymentModeTransitiveAuditEntryCount = $deploymentModeEvidence.TransitiveAuditEntryCount
             DeploymentModeRepresentativePublishTargetCount = $deploymentModeEvidence.RepresentativePublishTargetCount
+            DeploymentModeClaimsReportPresent = $deploymentModeEvidence.ClaimsReportPresent
+            DeploymentModeClaimsReportPublishProbeTargetCount = $deploymentModeEvidence.ClaimsReportPublishProbeTargetCount
+            DeploymentModeClaimsReportPublishProbeWarningCount = $deploymentModeEvidence.ClaimsReportPublishProbeWarningCount
+            DeploymentModeClaimsReportPublishProbeErrorCount = $deploymentModeEvidence.ClaimsReportPublishProbeErrorCount
+            DeploymentModeClaimsReportPackageClaimTruthfulCount = $deploymentModeEvidence.ClaimsReportPackageClaimTruthfulCount
+            DeploymentModeClaimsReportPackageClaimOverstatedCount = $deploymentModeEvidence.ClaimsReportPackageClaimOverstatedCount
             AdoptionSmokeScenarioCount = if ($null -ne $adoptionSmokeEvidence) { 1 } else { 0 }
             AdoptionSmokeRuntimeProbeCount = @($adoptionSmokeEvidence.RuntimeProbes).Count
             AdoptionSmokeAssertionCount = @($adoptionSmokeEvidence.Assertions).Count
@@ -2534,6 +2823,9 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- Publish-probe audit-only modes: $([string]::Join(', ', @($Report.DeploymentModeEvidence.PublishProbeAuditOnlyModes)))")
     $markdown.Add("- Publish-probe failure blocks release: $($Report.DeploymentModeEvidence.PublishProbeFailureBlocksRelease)")
     $markdown.Add("- Publish-probe fails on warnings: $($Report.DeploymentModeEvidence.PublishProbeFailOnWarnings)")
+    $markdown.Add("- Claims report: ``$($Report.DeploymentModeEvidence.ClaimsReport)`` (present: $($Report.DeploymentModeEvidence.ClaimsReportPresent))")
+    $markdown.Add("- Claims-report gate: $($Report.DeploymentModeEvidence.ClaimsReportPublishProbeGateStatus); targets $($Report.DeploymentModeEvidence.ClaimsReportPublishProbeTargetCount); warnings $($Report.DeploymentModeEvidence.ClaimsReportPublishProbeWarningCount); errors $($Report.DeploymentModeEvidence.ClaimsReportPublishProbeErrorCount)")
+    $markdown.Add("- Claims-report package claims: truthful $($Report.DeploymentModeEvidence.ClaimsReportPackageClaimTruthfulCount); overstated $($Report.DeploymentModeEvidence.ClaimsReportPackageClaimOverstatedCount)")
     $markdown.Add("")
     $markdown.Add("| Mode | Status | Summary |")
     $markdown.Add("| --- | --- | --- |")
@@ -2689,6 +2981,7 @@ function Invoke-EngineCompletionScorecardPublish {
         [Parameter(Mandatory = $true)]
         [string]$ConformanceMatrixPath,
         [string]$DeploymentModeManifestPath = "scripts/deployment-mode-support.json",
+        [string]$DeploymentModeClaimsReportPath = "artifacts/deployment-mode-claims-release/claim-validation-report.json",
         [string]$AdoptionSmokeManifestPath = "scripts/adoption-smoke-support.json",
         [string]$ProviderIntegrationManifestPath = "scripts/provider-integration-support.json",
         [string]$SrePostureManifestPath = "scripts/sre-posture-support.json",
@@ -2704,6 +2997,7 @@ function Invoke-EngineCompletionScorecardPublish {
     $resolvedScorecardPath = Resolve-FullPath -Path $ScorecardPath -BasePath $resolvedRepoRoot
     $resolvedConformanceMatrixPath = Resolve-FullPath -Path $ConformanceMatrixPath -BasePath $resolvedRepoRoot
     $resolvedDeploymentModeManifestPath = Resolve-FullPath -Path $DeploymentModeManifestPath -BasePath $resolvedRepoRoot
+    $resolvedDeploymentModeClaimsReportPath = Resolve-FullPath -Path $DeploymentModeClaimsReportPath -BasePath $resolvedRepoRoot
     $resolvedAdoptionSmokeManifestPath = Resolve-FullPath -Path $AdoptionSmokeManifestPath -BasePath $resolvedRepoRoot
     $resolvedProviderIntegrationManifestPath = Resolve-FullPath -Path $ProviderIntegrationManifestPath -BasePath $resolvedRepoRoot
     $resolvedSrePostureManifestPath = Resolve-FullPath -Path $SrePostureManifestPath -BasePath $resolvedRepoRoot
@@ -2711,7 +3005,7 @@ function Invoke-EngineCompletionScorecardPublish {
     $resolvedPublicApiDeltaScriptPath = Resolve-FullPath -Path $PublicApiDeltaScriptPath -BasePath $resolvedRepoRoot
     $resolvedOutputPath = Resolve-FullPath -Path $OutputPath -BasePath $resolvedRepoRoot
 
-    $report = New-EngineCompletionScorecardReport -ResolvedScorecardPath $resolvedScorecardPath -ResolvedConformanceMatrixPath $resolvedConformanceMatrixPath -ResolvedDeploymentModeManifestPath $resolvedDeploymentModeManifestPath -ResolvedAdoptionSmokeManifestPath $resolvedAdoptionSmokeManifestPath -ResolvedProviderIntegrationManifestPath $resolvedProviderIntegrationManifestPath -ResolvedSrePostureManifestPath $resolvedSrePostureManifestPath -ResolvedSupplyChainManifestPath $resolvedSupplyChainManifestPath -ResolvedPublicApiDeltaScriptPath $resolvedPublicApiDeltaScriptPath -ResolvedRepoRoot $resolvedRepoRoot
+    $report = New-EngineCompletionScorecardReport -ResolvedScorecardPath $resolvedScorecardPath -ResolvedConformanceMatrixPath $resolvedConformanceMatrixPath -ResolvedDeploymentModeManifestPath $resolvedDeploymentModeManifestPath -ResolvedDeploymentModeClaimsReportPath $resolvedDeploymentModeClaimsReportPath -ResolvedAdoptionSmokeManifestPath $resolvedAdoptionSmokeManifestPath -ResolvedProviderIntegrationManifestPath $resolvedProviderIntegrationManifestPath -ResolvedSrePostureManifestPath $resolvedSrePostureManifestPath -ResolvedSupplyChainManifestPath $resolvedSupplyChainManifestPath -ResolvedPublicApiDeltaScriptPath $resolvedPublicApiDeltaScriptPath -ResolvedRepoRoot $resolvedRepoRoot
     $paths = Write-EngineCompletionScorecardReport -Report $report -ResolvedOutputPath $resolvedOutputPath
 
     Write-Host "Engine completion scorecard artifact written to $($paths.JsonPath)"
@@ -2730,5 +3024,5 @@ if (-not $env:CEPHALON_ENGINE_COMPLETION_SCORECARD_NO_RUN) {
         $resolvedRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
     }
 
-    $null = Invoke-EngineCompletionScorecardPublish -ScorecardPath $ScorecardPath -ConformanceMatrixPath $ConformanceMatrixPath -DeploymentModeManifestPath $DeploymentModeManifestPath -AdoptionSmokeManifestPath $AdoptionSmokeManifestPath -ProviderIntegrationManifestPath $ProviderIntegrationManifestPath -SrePostureManifestPath $SrePostureManifestPath -SupplyChainManifestPath $SupplyChainManifestPath -PublicApiDeltaScriptPath $PublicApiDeltaScriptPath -OutputPath $OutputPath -RepoRoot $resolvedRoot
+    $null = Invoke-EngineCompletionScorecardPublish -ScorecardPath $ScorecardPath -ConformanceMatrixPath $ConformanceMatrixPath -DeploymentModeManifestPath $DeploymentModeManifestPath -DeploymentModeClaimsReportPath $DeploymentModeClaimsReportPath -AdoptionSmokeManifestPath $AdoptionSmokeManifestPath -ProviderIntegrationManifestPath $ProviderIntegrationManifestPath -SrePostureManifestPath $SrePostureManifestPath -SupplyChainManifestPath $SupplyChainManifestPath -PublicApiDeltaScriptPath $PublicApiDeltaScriptPath -OutputPath $OutputPath -RepoRoot $resolvedRoot
 }

@@ -303,6 +303,59 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         throw "Engine completion scorecard JSON is missing ProviderIntegrationEvidence."
     }
 
+    $deploymentModeClaimsReport = Get-ScorecardRequiredPropertyValue `
+        -Object $scorecard.DeploymentModeEvidence `
+        -PropertyName "ClaimsReport" `
+        -OwnerName "DeploymentModeEvidence"
+    $deploymentModeClaimsReportPresent = [System.Convert]::ToBoolean(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $scorecard.DeploymentModeEvidence `
+            -PropertyName "ClaimsReportPresent" `
+            -OwnerName "DeploymentModeEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $deploymentModeClaimsReportGateStatus = Get-ScorecardRequiredPropertyValue `
+        -Object $scorecard.DeploymentModeEvidence `
+        -PropertyName "ClaimsReportPublishProbeGateStatus" `
+        -OwnerName "DeploymentModeEvidence"
+    $deploymentModeClaimsReportTargetCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $scorecard.DeploymentModeEvidence `
+            -PropertyName "ClaimsReportPublishProbeTargetCount" `
+            -OwnerName "DeploymentModeEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $deploymentModeClaimsReportWarningCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $scorecard.DeploymentModeEvidence `
+            -PropertyName "ClaimsReportPublishProbeWarningCount" `
+            -OwnerName "DeploymentModeEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $deploymentModeClaimsReportErrorCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $scorecard.DeploymentModeEvidence `
+            -PropertyName "ClaimsReportPublishProbeErrorCount" `
+            -OwnerName "DeploymentModeEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $deploymentModeClaimsReportTruthfulClaimCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $scorecard.DeploymentModeEvidence `
+            -PropertyName "ClaimsReportPackageClaimTruthfulCount" `
+            -OwnerName "DeploymentModeEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $deploymentModeClaimsReportOverstatedClaimCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $scorecard.DeploymentModeEvidence `
+            -PropertyName "ClaimsReportPackageClaimOverstatedCount" `
+            -OwnerName "DeploymentModeEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+
+    if (-not $deploymentModeClaimsReportPresent -or
+        $deploymentModeClaimsReportGateStatus -ne "passed" -or
+        $deploymentModeClaimsReportWarningCount -ne 0 -or
+        $deploymentModeClaimsReportErrorCount -ne 0 -or
+        $deploymentModeClaimsReportOverstatedClaimCount -ne 0) {
+        throw "Engine completion scorecard deployment-mode claims report readback is not release-ready: report '$deploymentModeClaimsReport', present=$deploymentModeClaimsReportPresent, gate=$deploymentModeClaimsReportGateStatus, warnings=$deploymentModeClaimsReportWarningCount, errors=$deploymentModeClaimsReportErrorCount, overstatedPackageClaims=$deploymentModeClaimsReportOverstatedClaimCount."
+    }
+
     $dependencyHealthProviderManifest = Get-ScorecardRequiredPropertyValue `
         -Object $scorecard.ProviderIntegrationEvidence `
         -PropertyName "DependencyHealthProviderManifest" `
@@ -351,13 +404,20 @@ function Write-EngineCompletionScorecardEvidenceSummary {
             -OwnerName "SrePostureEvidence"),
         [System.Globalization.CultureInfo]::InvariantCulture)
 
-    Write-Host ("Deployment-mode evidence: {0} global claims; not-claimed {1}; package-scoped claim packages {2}; known hazards {3}; transitive audit entries {4}; publish probes {5}." -f `
+    Write-Host ("Deployment-mode evidence: {0} global claims; not-claimed {1}; package-scoped claim packages {2}; known hazards {3}; transitive audit entries {4}; publish probes {5}; claims report {6}; gate {7}; targets {8}; warnings {9}; errors {10}; truthful package claims {11}; overstated package claims {12}." -f `
         $scorecard.DeploymentModeEvidence.GlobalClaimCount,
         $scorecard.DeploymentModeEvidence.GlobalNotClaimedCount,
         $scorecard.DeploymentModeEvidence.PackageScopedClaimPackageCount,
         $scorecard.DeploymentModeEvidence.KnownHazardEntryCount,
         $scorecard.DeploymentModeEvidence.TransitiveAuditEntryCount,
-        $scorecard.DeploymentModeEvidence.PublishProbeReleaseValidationMode)
+        $scorecard.DeploymentModeEvidence.PublishProbeReleaseValidationMode,
+        $deploymentModeClaimsReport,
+        $deploymentModeClaimsReportGateStatus,
+        $deploymentModeClaimsReportTargetCount,
+        $deploymentModeClaimsReportWarningCount,
+        $deploymentModeClaimsReportErrorCount,
+        $deploymentModeClaimsReportTruthfulClaimCount,
+        $deploymentModeClaimsReportOverstatedClaimCount)
 
     Write-Host ("Provider integration evidence: {0} rows; live proofs {1}; composition-only {2}; external-service gates {3}; default-skipped {4}; runtime contracts {5}; dependency-health providers {6} from {7} schema {8} ({9})." -f `
         $scorecard.ProviderIntegrationEvidence.EvidenceRowCount,
