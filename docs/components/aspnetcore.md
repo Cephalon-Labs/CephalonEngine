@@ -12,6 +12,7 @@ See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), 
 - project-level split-configuration loading through `AddCephalonProjectConfigurations()` and `AddCephalon(...)`
 - runtime startup and shutdown integration through hosted services
 - `/engine/*` metadata, status, diagnostics, and policy endpoints
+- opt-in core operator surface selection through `Engine:AspNetCore:OperatorSurface:Mode=core`, keeping manifest, snapshot, app-model, resilience, scaffold, capabilities, modules, packages, patterns, technologies, transports, dependency health, localization, reference-doc metadata, options, package/failure/trust policy, status, runtime story, diagnostics, health checks, hosted reference docs, OpenAPI/Scalar, and selected public transport routes while omitting broad optional `/engine/*` drill-down families for cold-start-sensitive minimal API hosts
 - `/engine/resilience` when the engine-owned resilience contract is active
 - `/engine/strangler-fig`, `/engine/strangler-fig/runtime`, `/engine/strangler-fig/ingress`, `/engine/strangler-fig/resolve`, and `/engine/strangler-fig/cutover` when the engine-owned strangler-fig route, migration-policy, ingress, and ASP.NET Core cutover catalogs are active
 - `/engine/backend-for-frontend` when the engine-owned backend-for-frontend client-binding catalog is active
@@ -88,6 +89,8 @@ See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), 
 ## How it fits
 
 This package keeps the HTTP host thin. Most behavior stays in the engine or modules, while the host package maps runtime state and selected transports into ASP.NET Core primitives.
+
+The default `MapCephalon()` surface remains the full operator route catalog so existing hosts keep every `/engine/*` route family they already depend on. Cold-start-sensitive hosts can set `Engine:AspNetCore:OperatorSurface:Mode=core` before `AddCephalon(...)` / `MapCephalon()` to keep the core introspection, diagnostics, health, documentation, and selected public transport routes without paying to map optional drill-down families such as behavior-resilience, CDC runtime, eventing, agent-tool, retrieval, BFF, strangler-fig, cell, and data-product routes. That mode is additive and host-adapter-local: it does not change the engine manifest, module composition, selected transports, or package runtime catalogs.
 
 When teams choose to publish XML-comment-driven reference output, this host can also serve those static assets directly. That hosting surface is optional and sits beside the hand-authored `.md` guides instead of replacing them.
 

@@ -79,6 +79,7 @@ public class ColdStartBenchmarks
 
         builder.WebHost.UseTestServer();
         builder.Logging.ClearProviders();
+        builder.Configuration["Engine:AspNetCore:OperatorSurface:Mode"] = "core";
         builder.AddCephalon(BenchmarkScenarioFactory.ConfigureAspNetCoreEngine);
 
         var app = builder.Build();

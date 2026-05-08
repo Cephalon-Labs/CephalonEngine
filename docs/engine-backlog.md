@@ -39,6 +39,36 @@ Current focus:
 - treat the `ENG-500` regression closeout as the current suite-stability baseline: provider-native CDC hosting tests now run through a dedicated non-parallel collection, long-running package-publishing process output drains stdout/stderr concurrently, sample REST behavior hosts align with source-generated `/api/v1` behavior endpoints, and the full solution test lane is again green on the current worktree
 - treat the CDC execution-runtime catalog hot path as benchmark-governed: `CdcExecutionRuntimeCatalogBenchmarks` now covers Debezium-managed external runtimes, external observations, repeated managed-connector drift/dry-run/command-issuance filters, and compact multi-selector operator flows against the shared versioned snapshot
 
+### ASP.NET Core core operator surface cold-start promotion
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: release-readiness / SRE / cold-start evidence
+Quality dimensions: Reliability, Performance, Auditability, Maintainability, Usability
+
+Why:
+
+- `engine.aspnetcore.minimal-api.cold-start.p95` was still pending after the full operator surface exceeded the 800 ms SLO target
+- cold-start-sensitive minimal API hosts need a supported host-adapter path that keeps core introspection and selected transports without mapping every optional `/engine/*` drill-down family
+- the default full operator surface must remain unchanged for existing operators and compatibility
+
+Delivered:
+
+- added `Engine:AspNetCore:OperatorSurface:Mode=core` as an opt-in `MapCephalon()` mode that keeps manifest, snapshot, app-model, resilience, scaffold, capabilities, modules, packages, patterns, technologies, transports, dependency health, localization, reference-doc metadata, options, package/failure/trust policy, status, runtime story, diagnostics, health checks, hosted docs, OpenAPI/Scalar, and selected public transport routes
+- kept default `MapCephalon()` behavior on the full route catalog and added hosting tests that prove full mode still serves optional operator route families while core mode omits them
+- updated `ColdStartBenchmarks.BuildStartHandleFirstRequestAspNetCore` to measure the core operator surface and captured about `46.949 ms` mean / `2.52 MB` allocated, well under the 800 ms SLO and 30 MB allocation cap
+- promoted `engine.aspnetcore.minimal-api.cold-start.p95` to `stable-baseline-published` in `scripts/sre-posture-support.json` and `scripts/sre-stable-baselines.json`
+- tightened the cold-start guardrail entry to the 800 ms SLO cap
+- updated SRE posture, benchmarking, ASP.NET Core component docs, scorecard, release checklist, architecture follow-ups, and project memory so readback is 11 SLIs / 1 pending / 10 stable / 10 rows / 12 measurements / 6 guardrail-mapped / 0 pending guardrail / 8 references
+
+Validation:
+
+- `dotnet test tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj -c Release --no-restore --filter "FullyQualifiedName~AspNetCoreHostingTests"`
+- `dotnet run -c Release --project benchmarks\Cephalon.Benchmarks -- --filter "*ColdStartBenchmarks*"`
+- `dotnet run -c Release --project benchmarks\Cephalon.Benchmarks -- --validate-guardrails`
+- `pwsh ./scripts/publish-engine-completion-scorecard.ps1 -OutputPath artifacts\engine-completion-scorecard-cold-start`
+
 ### ENG-522 Publish Worker cold-start SRE baseline
 
 Status: done
