@@ -43,7 +43,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$testsProjectPath = [System.IO.Path]::Combine($repoRoot, "tests", "Cephalon.Tests", "Cephalon.Tests.csproj")
+$testsProjectPath = [System.IO.Path]::Combine($repoRoot, "tests", "Cephalon.Tests.Hosting", "Cephalon.Tests.Hosting.csproj")
 
 function Invoke-DotNet {
     param(
@@ -64,6 +64,10 @@ Write-Host "Focused suite covers ASP.NET Core health routes, worker-host health 
 
 Push-Location $repoRoot
 try {
+    if (-not [System.IO.File]::Exists($testsProjectPath)) {
+        throw "Operational convention test project was not found: $testsProjectPath"
+    }
+
     $arguments = @(
         "test",
         $testsProjectPath,
