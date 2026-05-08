@@ -15,7 +15,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$Script:SchemaVersion = "1.10.0"
+$Script:SchemaVersion = "1.11.0"
 $Script:AllowedStatuses = @(
     "ready-for-preview",
     "partial",
@@ -2089,6 +2089,9 @@ function Convert-SrePostureEvidence {
     $stableBaselineMeasurementCount = 0
     $stableBaselinePublishedSliIds = @()
     $pendingBaselineSliIds = @($sliRows | Where-Object { $_.BaselineStatus -eq "pending-stable-baseline" } | ForEach-Object { $_.Id })
+    $pendingBaselineRows = @()
+    $pendingBaselineBlockerCount = 0
+    $pendingBaselineEvidenceCount = 0
 
     if (-not [string]::IsNullOrWhiteSpace($stableBaselineManifestPath)) {
         $stableBaselineManifestReference = Resolve-SrePostureManifestPath -DeclaredPath $stableBaselineManifestPath -ResolvedRepoRoot $ResolvedRepoRoot -Context "stableBaselineManifest" -PathType "File"
@@ -2365,16 +2368,119 @@ function Convert-SrePostureEvidence {
                 }
         )
 
+        $pendingBaselineRows = @(
+            Get-ManifestPropertyValue -Object $stableBaselineManifest -PropertyName "pendingBaselineRows" -DefaultValue @() |
+                ForEach-Object {
+                    $sliId = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "sliId" -DefaultValue "")
+                    $rowStatus = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "status" -DefaultValue "")
+                    $blockerClass = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "blockerClass" -DefaultValue "")
+                    $blockerSummary = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "blockerSummary" -DefaultValue "")
+                    $nextEvidenceNeeded = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "nextEvidenceNeeded" -DefaultValue "")
+
+                    foreach ($field in @(
+                        @{ Name = "sliId"; Value = $sliId },
+                        @{ Name = "status"; Value = $rowStatus },
+                        @{ Name = "blockerClass"; Value = $blockerClass },
+                        @{ Name = "blockerSummary"; Value = $blockerSummary },
+                        @{ Name = "nextEvidenceNeeded"; Value = $nextEvidenceNeeded }
+                    )) {
+                        if ([string]::IsNullOrWhiteSpace([string]$field.Value)) {
+                            throw "SRE pending baseline row must include $($field.Name)."
+                        }
+                    }
+
+                    if ($rowStatus -ne "pending-stable-baseline") {
+                        throw "SRE pending baseline row for SLI '$sliId' must use status pending-stable-baseline."
+                    }
+
+                    if (-not $sliRowLookup.ContainsKey($sliId)) {
+                        throw "SRE pending baseline row references SLI '$sliId', but that SLI is missing from the SRE posture support manifest."
+                    }
+
+                    if ($sliRowLookup[$sliId].BaselineStatus -ne "pending-stable-baseline") {
+                        throw "SRE pending baseline row references SLI '$sliId', but its SRE posture baselineStatus is '$($sliRowLookup[$sliId].BaselineStatus)'."
+                    }
+
+                    $evidenceRows = @(
+                        Get-ManifestPropertyValue -Object $_ -PropertyName "evidence" -DefaultValue @() |
+                            ForEach-Object {
+                                $kind = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "kind" -DefaultValue "")
+                                $promotionAllowedValue = Get-ManifestPropertyValue -Object $_ -PropertyName "promotionAllowed" -DefaultValue $null
+                                if ([string]::IsNullOrWhiteSpace($kind)) {
+                                    throw "SRE pending baseline evidence for SLI '$sliId' must include kind."
+                                }
+
+                                if ($promotionAllowedValue -isnot [bool]) {
+                                    throw "SRE pending baseline evidence for SLI '$sliId' must include boolean promotionAllowed."
+                                }
+
+                                if ([bool]$promotionAllowedValue) {
+                                    throw "SRE pending baseline evidence for SLI '$sliId' cannot set promotionAllowed to true."
+                                }
+
+                                $evidence = [ordered]@{
+                                    Kind             = $kind
+                                    PromotionAllowed = [bool]$promotionAllowedValue
+                                }
+
+                                foreach ($optionalField in @(
+                                    @{ Source = "reportFileName"; Target = "ReportFileName" },
+                                    @{ Source = "benchmark"; Target = "Benchmark" },
+                                    @{ Source = "meanNanoseconds"; Target = "MeanNanoseconds" },
+                                    @{ Source = "errorNanoseconds"; Target = "ErrorNanoseconds" },
+                                    @{ Source = "stdDevNanoseconds"; Target = "StdDevNanoseconds" },
+                                    @{ Source = "allocatedBytes"; Target = "AllocatedBytes" },
+                                    @{ Source = "sloTargetNanoseconds"; Target = "SloTargetNanoseconds" },
+                                    @{ Source = "targetMilliseconds"; Target = "TargetMilliseconds" },
+                                    @{ Source = "guardrailMaxMeanNanoseconds"; Target = "GuardrailMaxMeanNanoseconds" },
+                                    @{ Source = "guardrailMaxAllocatedBytes"; Target = "GuardrailMaxAllocatedBytes" },
+                                    @{ Source = "provider"; Target = "Provider" },
+                                    @{ Source = "repository"; Target = "Repository" },
+                                    @{ Source = "query"; Target = "Query" },
+                                    @{ Source = "requiredWindowDays"; Target = "RequiredWindowDays" },
+                                    @{ Source = "availabilityStatus"; Target = "AvailabilityStatus" },
+                                    @{ Source = "totalRunCount"; Target = "TotalRunCount" },
+                                    @{ Source = "targetFlakeRatePercent"; Target = "TargetFlakeRatePercent" }
+                                )) {
+                                    $optionalValue = Get-ManifestPropertyValue -Object $_ -PropertyName $optionalField.Source -DefaultValue $null
+                                    if ($null -ne $optionalValue) {
+                                        $evidence[$optionalField.Target] = $optionalValue
+                                    }
+                                }
+
+                                [pscustomobject]$evidence
+                            }
+                    )
+
+                    if ($evidenceRows.Count -eq 0) {
+                        throw "SRE pending baseline row for SLI '$sliId' must declare at least one evidence item."
+                    }
+
+                    [pscustomobject]([ordered]@{
+                        SliId              = $sliId
+                        Status             = $rowStatus
+                        BlockerClass       = $blockerClass
+                        BlockerSummary     = $blockerSummary
+                        NextEvidenceNeeded = $nextEvidenceNeeded
+                        Evidence           = $evidenceRows
+                    })
+                }
+        )
+
         if ($stableBaselineRows.Count -eq 0) {
             throw "SRE stable baseline manifest must declare at least one baselineRows entry."
         }
 
         $stableBaselinePublishedSliIds = @($stableBaselineRows | ForEach-Object { $_.SliId })
+        $pendingBaselineRowSliIds = @($pendingBaselineRows | ForEach-Object { $_.SliId })
         $actualStableBaselineSliIds = @($sliRows | Where-Object { $_.BaselineStatus -eq "stable-baseline-published" } | ForEach-Object { $_.Id })
         Assert-SreStringSetEquals -Expected $actualStableBaselineSliIds -Actual $stableBaselinePublishedSliIds -Message "SRE stable baseline rows do not match SLI rows with baselineStatus stable-baseline-published."
         Assert-SreStringSetEquals -Expected $actualStableBaselineSliIds -Actual $stableBaselineManifestPublishedSliIds -Message "SRE stable baseline manifest publishedBaselineSliIds do not match SLI rows with baselineStatus stable-baseline-published."
         Assert-SreStringSetEquals -Expected $pendingBaselineSliIds -Actual $stableBaselineManifestPendingSliIds -Message "SRE stable baseline manifest pendingBaselineSliIds do not match SLI rows with baselineStatus pending-stable-baseline."
+        Assert-SreStringSetEquals -Expected $pendingBaselineSliIds -Actual $pendingBaselineRowSliIds -Message "SRE stable baseline manifest pendingBaselineRows do not match SLI rows with baselineStatus pending-stable-baseline."
         $stableBaselineMeasurementCount = @($stableBaselineRows | ForEach-Object { $_.Measurements }).Count
+        $pendingBaselineBlockerCount = @($pendingBaselineRows | ForEach-Object { $_.BlockerClass } | Sort-Object -Unique).Count
+        $pendingBaselineEvidenceCount = @($pendingBaselineRows | ForEach-Object { $_.Evidence }).Count
     }
     elseif ($stableBaselinesPublishedValue -or $stableBaselineCount -gt 0) {
         throw "SRE posture support manifest stableBaselineManifest is required when stable baselines are published."
@@ -2411,9 +2517,13 @@ function Convert-SrePostureEvidence {
         GuardrailReferenceCount    = $guardrailReferenceCount
         StableBaselineRowCount     = $stableBaselineRows.Count
         StableBaselineMeasurementCount = $stableBaselineMeasurementCount
+        PendingBaselineRowCount    = $pendingBaselineRows.Count
+        PendingBaselineBlockerCount = $pendingBaselineBlockerCount
+        PendingBaselineEvidenceCount = $pendingBaselineEvidenceCount
         StableBaselinePublishedSliIds = $stableBaselinePublishedSliIds
         PendingBaselineSliIds      = $pendingBaselineSliIds
         StableBaselineRows         = $stableBaselineRows
+        PendingBaselineRows        = $pendingBaselineRows
         SliRows                    = $sliRows
         ValidatedReferences        = @(
             $sourceDocumentReferences
@@ -2818,6 +2928,9 @@ function New-EngineCompletionScorecardReport {
             SreGuardrailPendingSliCount = $srePostureEvidence.GuardrailPendingSliCount
             SreGuardrailNotApplicableSliCount = $srePostureEvidence.GuardrailNotApplicableSliCount
             SreGuardrailReferenceCount = $srePostureEvidence.GuardrailReferenceCount
+            SrePendingBaselineRowCount = $srePostureEvidence.PendingBaselineRowCount
+            SrePendingBaselineBlockerCount = $srePostureEvidence.PendingBaselineBlockerCount
+            SrePendingBaselineEvidenceCount = $srePostureEvidence.PendingBaselineEvidenceCount
             SupplyChainEvidenceItemCount = $supplyChainEvidence.EvidenceItemCount
             SupplyChainWorkflowReadyCount = $supplyChainEvidence.WorkflowReadyCount
             SupplyChainExternalPolicyPendingCount = $supplyChainEvidence.ExternalPolicyPendingCount
@@ -2997,6 +3110,25 @@ function Write-EngineCompletionScorecardReport {
         }
 
         $markdown.Add("| ``$($sli.Id)`` | $($sli.Category) | $($sli.TargetStatus) | $($sli.BaselineStatus) | $($sli.GuardrailCoverageStatus) | $guardrailReferences |")
+    }
+
+    $markdown.Add("")
+    $markdown.Add("| Pending baseline SLI | Blocker class | Evidence | Next evidence needed |")
+    $markdown.Add("| --- | --- | --- | --- |")
+    foreach ($row in $Report.SrePostureEvidence.PendingBaselineRows) {
+        $evidence = (@($row.Evidence) | ForEach-Object {
+            if ($_.PSObject.Properties.Name -contains "ReportFileName") {
+                "``$($_.Kind)`` from ``$($_.ReportFileName)`` / ``$($_.Benchmark)``"
+            }
+            elseif ($_.PSObject.Properties.Name -contains "AvailabilityStatus") {
+                "``$($_.Kind)`` $($_.AvailabilityStatus)"
+            }
+            else {
+                "``$($_.Kind)``"
+            }
+        }) -join "<br>"
+
+        $markdown.Add("| ``$($row.SliId)`` | $($row.BlockerClass) | $evidence | $($row.NextEvidenceNeeded) |")
     }
 
     $markdown.Add("")

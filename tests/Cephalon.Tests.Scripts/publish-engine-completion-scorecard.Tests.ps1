@@ -126,7 +126,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
 
         $json = Get-Content -LiteralPath $result.Paths.JsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
 
-        $json.'$schemaVersion' | Should -Be "1.10.0"
+        $json.'$schemaVersion' | Should -Be "1.11.0"
         $json.SourceDocument | Should -Be "docs/engine-completion-scorecard.md"
         $json.ConformanceMatrix | Should -Be "docs/conformance-matrix.md"
         $json.DeploymentModeManifest | Should -Be "scripts/deployment-mode-support.json"
@@ -179,6 +179,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.SreGuardrailPendingSliCount | Should -Be 0
         $json.Summary.SreGuardrailNotApplicableSliCount | Should -Be 5
         $json.Summary.SreGuardrailReferenceCount | Should -Be 8
+        $json.Summary.SrePendingBaselineRowCount | Should -Be 2
+        $json.Summary.SrePendingBaselineBlockerCount | Should -Be 2
+        $json.Summary.SrePendingBaselineEvidenceCount | Should -Be 2
         $json.Summary.SupplyChainEvidenceItemCount | Should -Be 10
         $json.Summary.SupplyChainWorkflowReadyCount | Should -Be 7
         $json.Summary.SupplyChainExternalPolicyPendingCount | Should -Be 3
@@ -313,13 +316,13 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_QDRANT_HOST"
         $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_CDC_POSTGRES_CONNECTION_STRING"
 
-        $json.SrePostureEvidence.ManifestSchemaVersion | Should -Be "1.7.0"
+        $json.SrePostureEvidence.ManifestSchemaVersion | Should -Be "1.8.0"
         $json.SrePostureEvidence.Status | Should -Be "partial-stable-baseline-published"
         $json.SrePostureEvidence.ReleaseValidationSummaryMode | Should -Be "release-validation-console-and-scorecard-artifact"
         $json.SrePostureEvidence.StableBaselinesPublished | Should -BeTrue
         $json.SrePostureEvidence.StableBaselineManifest | Should -Be "scripts/sre-stable-baselines.json"
-        $json.SrePostureEvidence.StableBaselineManifestSchemaVersion | Should -Be "1.5.0"
-        $json.SrePostureEvidence.StableBaselineManifestStatus | Should -Be "benchmark-worker-cold-start-baseline-published"
+        $json.SrePostureEvidence.StableBaselineManifestSchemaVersion | Should -Be "1.6.0"
+        $json.SrePostureEvidence.StableBaselineManifestStatus | Should -Be "pending-baseline-evidence-published"
         $json.SrePostureEvidence.GuardrailCatalog | Should -Be "benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json"
         $json.SrePostureEvidence.GuardrailCatalogEntryCount | Should -Be 31
         $json.SrePostureEvidence.SliCount | Should -Be 11
@@ -332,6 +335,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.SrePostureEvidence.GuardrailReferenceCount | Should -Be 8
         $json.SrePostureEvidence.StableBaselineRowCount | Should -Be 9
         $json.SrePostureEvidence.StableBaselineMeasurementCount | Should -Be 11
+        $json.SrePostureEvidence.PendingBaselineRowCount | Should -Be 2
+        $json.SrePostureEvidence.PendingBaselineBlockerCount | Should -Be 2
+        $json.SrePostureEvidence.PendingBaselineEvidenceCount | Should -Be 2
         $json.SrePostureEvidence.StableBaselinePublishedSliIds | Should -Contain "engine.behavior.dispatch.latency.p95"
         $json.SrePostureEvidence.StableBaselinePublishedSliIds | Should -Contain "engine.behavior.dispatch.latency.p99"
         $json.SrePostureEvidence.StableBaselinePublishedSliIds | Should -Contain "engine.behavior.dispatch.alloc.bytes-per-op"
@@ -346,6 +352,16 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.SrePostureEvidence.PendingBaselineSliIds | Should -Not -Contain "engine.worker.cold-start.p95"
         $json.SrePostureEvidence.PendingBaselineSliIds | Should -Not -Contain "engine.reference-docs.wall-time"
         $json.SrePostureEvidence.PendingBaselineSliIds | Should -Not -Contain "engine.validate-release.wall-time"
+        $json.SrePostureEvidence.PendingBaselineRows.SliId | Should -Contain "engine.aspnetcore.minimal-api.cold-start.p95"
+        $json.SrePostureEvidence.PendingBaselineRows.SliId | Should -Contain "engine.tests.flake-rate.7d"
+        $aspNetCorePendingBaseline = $json.SrePostureEvidence.PendingBaselineRows | Where-Object { $_.SliId -eq "engine.aspnetcore.minimal-api.cold-start.p95" }
+        $aspNetCorePendingBaseline.BlockerClass | Should -Be "slo-target-miss"
+        $aspNetCorePendingBaseline.Evidence.Kind | Should -Be "benchmark-target-miss"
+        $aspNetCorePendingBaseline.Evidence.PromotionAllowed | Should -BeFalse
+        $flakeRatePendingBaseline = $json.SrePostureEvidence.PendingBaselineRows | Where-Object { $_.SliId -eq "engine.tests.flake-rate.7d" }
+        $flakeRatePendingBaseline.BlockerClass | Should -Be "ci-metadata-unavailable"
+        $flakeRatePendingBaseline.Evidence.Kind | Should -Be "ci-history-required"
+        $flakeRatePendingBaseline.Evidence.PromotionAllowed | Should -BeFalse
         $json.SrePostureEvidence.SourceDocuments | Should -Contain "docs/sre-posture.md"
         $json.SrePostureEvidence.SourceDocuments | Should -Contain "docs/benchmarking.md"
         $json.SrePostureEvidence.ValidationScripts | Should -Contain "scripts/validate-release.ps1"
@@ -466,6 +482,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "SRE pending stable baselines: 2"
         $markdown | Should -Match "SRE stable baselines: 9"
         $markdown | Should -Match "SRE stable baseline rows: 9"
+        $markdown | Should -Match "Pending baseline SLI"
+        $markdown | Should -Match "slo-target-miss"
+        $markdown | Should -Match "ci-metadata-unavailable"
         $markdown | Should -Match "deployment-mode-claims-report-baseline"
         $markdown | Should -Match "release-validation-step-wall-time-baseline"
         $markdown | Should -Match "package claims 1/1 truthful"
@@ -888,6 +907,127 @@ Start-Process
                 -ResolvedManifestPath $manifestPath `
                 -ResolvedRepoRoot $fixtureRoot
         } | Should -Throw "*stable baseline row references SLI 'engine.fixture.other'*"
+    }
+
+    It "fails when SRE pending baseline rows reference stable SLI rows" {
+        $fixtureRoot = Join-Path $script:tempRoot "sre-pending-baseline-fixture"
+        $scriptsRoot = Join-Path $fixtureRoot "scripts"
+        $docsRoot = Join-Path $fixtureRoot "docs"
+        $guardrailRoot = Join-Path $fixtureRoot "benchmarks\Cephalon.Benchmarks\guardrails"
+        New-Item -ItemType Directory -Path $scriptsRoot -Force | Out-Null
+        New-Item -ItemType Directory -Path $docsRoot -Force | Out-Null
+        New-Item -ItemType Directory -Path $guardrailRoot -Force | Out-Null
+
+        Set-Content -LiteralPath (Join-Path $docsRoot "sre-posture.md") -Value "# SRE posture fixture`nengine.fixture.stable`nengine.fixture.pending" -Encoding UTF8
+        Set-Content -LiteralPath (Join-Path $docsRoot "benchmarking.md") -Value "# Benchmarking fixture" -Encoding UTF8
+        Set-Content -LiteralPath (Join-Path $scriptsRoot "validate-release.ps1") -Value "# release validation fixture" -Encoding UTF8
+        @{
+            version = "1.0"
+            entries = @(
+                @{
+                    reportFileName = "fixture.csv"
+                    benchmark = "Fixture"
+                    maxMeanNanoseconds = 10
+                    maxAllocatedBytes = 20
+                }
+            )
+        } | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $guardrailRoot "performance-guardrails.json") -Encoding UTF8
+
+        @{
+            '$schemaVersion' = "1.6.0"
+            status = "pending-baseline-evidence-published"
+            capturedAtUtc = "2026-05-08T16:51:22.2560222Z"
+            capturedFromCommit = "fixture"
+            publishedBaselineSliIds = @("engine.fixture.stable")
+            pendingBaselineSliIds = @("engine.fixture.pending")
+            pendingBaselineRows = @(
+                @{
+                    sliId = "engine.fixture.stable"
+                    status = "pending-stable-baseline"
+                    blockerClass = "fixture-blocker"
+                    blockerSummary = "fixture"
+                    nextEvidenceNeeded = "fixture"
+                    evidence = @(
+                        @{
+                            kind = "fixture"
+                            promotionAllowed = $false
+                        }
+                    )
+                }
+            )
+            baselineRows = @(
+                @{
+                    sliId = "engine.fixture.stable"
+                    status = "stable-baseline-published"
+                    measurementKind = "benchmark-mean-baseline-proxy"
+                    measurements = @(
+                        @{
+                            reportFileName = "fixture.csv"
+                            benchmark = "Fixture"
+                            meanNanoseconds = 1
+                            errorNanoseconds = 1
+                            stdDevNanoseconds = 1
+                            allocatedBytes = 1
+                            guardrailMaxMeanNanoseconds = 10
+                            guardrailMaxAllocatedBytes = 20
+                        }
+                    )
+                }
+            )
+        } | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath (Join-Path $scriptsRoot "sre-stable-baselines.json") -Encoding UTF8
+
+        $manifestPath = Join-Path $scriptsRoot "sre-posture-support.json"
+        @{
+            '$schemaVersion' = "1.8.0"
+            status = "partial-stable-baseline-published"
+            summary = "fixture"
+            releaseValidationSummaryMode = "scorecard-artifact"
+            stableBaselinesPublished = $true
+            stableBaselineManifest = "scripts/sre-stable-baselines.json"
+            sourceDocs = @(
+                "docs/sre-posture.md",
+                "docs/benchmarking.md"
+            )
+            validationScripts = @("scripts/validate-release.ps1")
+            guardrailCatalog = "benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json"
+            slis = @(
+                @{
+                    id = "engine.fixture.stable"
+                    category = "fixture"
+                    measurementSurface = "benchmark"
+                    sourceDocument = "docs/sre-posture.md"
+                    sloTarget = "fixture"
+                    window = "fixture"
+                    targetStatus = "target-declared"
+                    baselineStatus = "stable-baseline-published"
+                    guardrailCoverageStatus = "guardrail-catalog-mapped"
+                    guardrailReferences = @(
+                        @{
+                            reportFileName = "fixture.csv"
+                            benchmark = "Fixture"
+                        }
+                    )
+                },
+                @{
+                    id = "engine.fixture.pending"
+                    category = "fixture"
+                    measurementSurface = "benchmark"
+                    sourceDocument = "docs/sre-posture.md"
+                    sloTarget = "fixture"
+                    window = "fixture"
+                    targetStatus = "target-declared"
+                    baselineStatus = "pending-stable-baseline"
+                    guardrailCoverageStatus = "not-applicable"
+                    guardrailReferences = @()
+                }
+            )
+        } | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $manifestPath -Encoding UTF8
+
+        {
+            Convert-SrePostureEvidence `
+                -ResolvedManifestPath $manifestPath `
+                -ResolvedRepoRoot $fixtureRoot
+        } | Should -Throw "*pending baseline row references SLI 'engine.fixture.stable', but its SRE posture baselineStatus is 'stable-baseline-published'*"
     }
 
     It "fails when supply-chain release evidence drifts away from the release workflow" {

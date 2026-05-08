@@ -505,6 +505,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("claims-report path, gate status, target count, warning count, error count, and package-claim verdict counts", scorecard, StringComparison.Ordinal);
         Assert.Contains("SRE posture counts from `SrePostureEvidence`", scorecard, StringComparison.Ordinal);
         Assert.Contains("stable-baseline manifest rows/measurements", scorecard, StringComparison.Ordinal);
+        Assert.Contains("pending-baseline blocker evidence rows", scorecard, StringComparison.Ordinal);
         Assert.Contains($"generated artifact is now schema `{expectedSchemaVersion}`", projectMemory, StringComparison.Ordinal);
         Assert.Contains($"currently requires scorecard schema `{expectedSchemaVersion}`", projectMemory, StringComparison.Ordinal);
         Assert.Contains("deployment-mode claims-report gate/target/warning/error/package-claim verdict counts", projectMemory, StringComparison.Ordinal);
@@ -519,8 +520,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("dependency-health provider-manifest readback", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("provider integration row/live/composition counts", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("dependency-health provider-manifest readback", cliPackageReadme, StringComparison.Ordinal);
-        Assert.Contains("SRE posture plus stable-baseline manifest and guardrail-coverage counts", cliComponentDoc, StringComparison.Ordinal);
-        Assert.Contains("SRE SLI/target/baseline/stable-baseline-manifest/guardrail-coverage counts", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("SRE posture plus stable-baseline manifest, pending-baseline blocker, and guardrail-coverage counts", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("SRE SLI/target/baseline/stable-baseline-manifest/pending-baseline-blocker/guardrail-coverage counts", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --scorecard <path>", planningGovernance, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --scorecard artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json", releaseChecklist, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --scorecard artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json", releaseChecklistTemplate, StringComparison.Ordinal);

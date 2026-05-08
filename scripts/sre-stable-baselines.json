@@ -1,9 +1,9 @@
 {
-  "$schemaVersion": "1.5.0",
-  "status": "benchmark-worker-cold-start-baseline-published",
-  "summary": "Stable baselines are published for the benchmark-backed guardrail-mapped hot-path subset plus the Worker cold-start SLI, the deployment-mode claim-truth SLI backed by the release-validation claims report, and the dotnet restore locked-mode, reference-docs, and full validate-release wall-time SLIs backed by release-validation timing evidence. ASP.NET Core cold-start remains pending until its optimization lane meets the tighter SLO; flake-rate remains pending until its own CI metadata lane runs.",
-  "capturedAtUtc": "2026-05-08T16:00:55.1757539+00:00",
-  "capturedFromCommit": "11bbe007e0d01e5fd8273c71269a4a28cfa2fd6b",
+  "$schemaVersion": "1.6.0",
+  "status": "pending-baseline-evidence-published",
+  "summary": "Stable baselines are published for the benchmark-backed guardrail-mapped hot-path subset plus the Worker cold-start SLI, the deployment-mode claim-truth SLI backed by the release-validation claims report, and the dotnet restore locked-mode, reference-docs, and full validate-release wall-time SLIs backed by release-validation timing evidence. ASP.NET Core cold-start and CI flake-rate still remain pending, but both rows now have machine-readable blocker evidence instead of prose-only gaps.",
+  "capturedAtUtc": "2026-05-08T16:51:22.2560222Z",
+  "capturedFromCommit": "5c8312bddedf481f75eebbe99cafecc2fd8b8566",
   "runCommand": "pwsh ./scripts/validate-release.ps1",
   "tooling": {
     "benchmarkDotNetVersion": "0.15.8",
@@ -31,6 +31,51 @@
   "pendingBaselineSliIds": [
     "engine.aspnetcore.minimal-api.cold-start.p95",
     "engine.tests.flake-rate.7d"
+  ],
+  "pendingBaselineRows": [
+    {
+      "sliId": "engine.aspnetcore.minimal-api.cold-start.p95",
+      "status": "pending-stable-baseline",
+      "blockerClass": "slo-target-miss",
+      "blockerSummary": "Current ASP.NET Core TestServer cold-start evidence exceeds the 800 ms SLO target, so the guardrail row is only a regression cap.",
+      "nextEvidenceNeeded": "Optimize the ASP.NET Core cold-start lane and capture a canonical run at or below the 800 ms target before promotion.",
+      "evidence": [
+        {
+          "kind": "benchmark-target-miss",
+          "reportFileName": "Cephalon.Benchmarks.Runtime.ColdStartBenchmarks-report.csv",
+          "benchmark": "BuildStartHandleFirstRequestAspNetCore",
+          "meanNanoseconds": 953630100,
+          "errorNanoseconds": 47978530,
+          "stdDevNanoseconds": 2629870,
+          "allocatedBytes": 27288760.32,
+          "sloTargetNanoseconds": 800000000,
+          "targetMilliseconds": 800,
+          "guardrailMaxMeanNanoseconds": 2000000000,
+          "guardrailMaxAllocatedBytes": 30000000,
+          "promotionAllowed": false
+        }
+      ]
+    },
+    {
+      "sliId": "engine.tests.flake-rate.7d",
+      "status": "pending-stable-baseline",
+      "blockerClass": "ci-metadata-unavailable",
+      "blockerSummary": "A live 7-day CI run/rerun history is required before flake-rate can be baselined.",
+      "nextEvidenceNeeded": "Collect GitHub Actions metadata that correlates failing tests/Cephalon.Tests.* runs with successful reruns on the same commit.",
+      "evidence": [
+        {
+          "kind": "ci-history-required",
+          "provider": "GitHub Actions",
+          "repository": "Cephalon-Labs/CephalonEngine",
+          "query": "gh api repos/Cephalon-Labs/CephalonEngine/actions/runs?per_page=1",
+          "requiredWindowDays": 7,
+          "availabilityStatus": "unavailable-no-actions-history",
+          "totalRunCount": 0,
+          "targetFlakeRatePercent": 0.5,
+          "promotionAllowed": false
+        }
+      ]
+    }
   ],
   "baselineRows": [
     {
