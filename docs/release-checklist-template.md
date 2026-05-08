@@ -114,7 +114,7 @@ The durable rule book lives in [`release-checklist.md`](release-checklist.md). T
 - [ ] Compared release pass against SLI catalogue in [`sre-posture.md`](sre-posture.md)
 - [ ] Confirmed SRE guardrail coverage counts, stable-baseline row/measurement counts, pending baseline ids, pending-baseline blocker rows, and guardrail references in generated `SrePostureEvidence`
 - [ ] No SLI burned more than 25% of monthly budget in 7-day window (or freeze in place on affected family)
-- [ ] Test flake rate within target; new flaky tests quarantined within 24 hours
+- [ ] Test flake rate within target from `artifacts/sre-ci-flake-rate/ci-flake-rate.json`; new flaky tests quarantined within 24 hours
 
 **SLI status snapshot:** _paste relevant SLI readings or link to dashboard_
 

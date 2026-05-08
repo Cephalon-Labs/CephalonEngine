@@ -138,7 +138,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.PublicApiDeltaScript | Should -Be "scripts/summarise-public-api-deltas.ps1"
         $json.StatusVocabulary.Count | Should -Be 6
         $json.EvidenceSources.Count | Should -Be 13
-        $json.EvidenceSourceReferences.Count | Should -Be 25
+        $json.EvidenceSourceReferences.Count | Should -Be 26
         $json.PlatformGates.Count | Should -Be 12
         $json.QualityDimensions.Count | Should -Be 12
         $json.PackageFamilies.Count | Should -Be 9
@@ -192,7 +192,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.PublicApiAdditiveEntryCount | Should -Be 0
         $json.Summary.PublicApiRemovalEntryCount | Should -Be 0
         $json.Summary.EvidenceSourceCount | Should -Be 13
-        $json.Summary.EvidenceSourceReferenceCount | Should -Be 25
+        $json.Summary.EvidenceSourceReferenceCount | Should -Be 26
         $json.Summary.PlatformStatusCounts.'ready-for-preview' | Should -Be 3
         $json.Summary.PlatformStatusCounts.partial | Should -Be 7
         $json.Summary.PlatformStatusCounts.'not-claimed' | Should -Be 1
@@ -317,12 +317,12 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_QDRANT_HOST"
         $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_CDC_POSTGRES_CONNECTION_STRING"
 
-        $json.SrePostureEvidence.ManifestSchemaVersion | Should -Be "1.8.0"
+        $json.SrePostureEvidence.ManifestSchemaVersion | Should -Be "1.9.0"
         $json.SrePostureEvidence.Status | Should -Be "partial-stable-baseline-published"
         $json.SrePostureEvidence.ReleaseValidationSummaryMode | Should -Be "release-validation-console-and-scorecard-artifact"
         $json.SrePostureEvidence.StableBaselinesPublished | Should -BeTrue
         $json.SrePostureEvidence.StableBaselineManifest | Should -Be "scripts/sre-stable-baselines.json"
-        $json.SrePostureEvidence.StableBaselineManifestSchemaVersion | Should -Be "1.6.0"
+        $json.SrePostureEvidence.StableBaselineManifestSchemaVersion | Should -Be "1.7.0"
         $json.SrePostureEvidence.StableBaselineManifestStatus | Should -Be "partial-stable-baseline-published"
         $json.SrePostureEvidence.GuardrailCatalog | Should -Be "benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json"
         $json.SrePostureEvidence.GuardrailCatalogEntryCount | Should -Be 31
@@ -357,11 +357,14 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.SrePostureEvidence.PendingBaselineRows.SliId | Should -Contain "engine.tests.flake-rate.7d"
         $flakeRatePendingBaseline = $json.SrePostureEvidence.PendingBaselineRows | Where-Object { $_.SliId -eq "engine.tests.flake-rate.7d" }
         $flakeRatePendingBaseline.BlockerClass | Should -Be "ci-metadata-unavailable"
-        $flakeRatePendingBaseline.Evidence.Kind | Should -Be "ci-history-required"
+        $flakeRatePendingBaseline.Evidence.Kind | Should -Be "ci-flake-rate-report"
+        $flakeRatePendingBaseline.Evidence.EvidenceScript | Should -Be "scripts/measure-ci-flake-rate.ps1"
+        $flakeRatePendingBaseline.Evidence.ReportPath | Should -Be "artifacts/sre-ci-flake-rate/ci-flake-rate.json"
         $flakeRatePendingBaseline.Evidence.PromotionAllowed | Should -BeFalse
         $json.SrePostureEvidence.SourceDocuments | Should -Contain "docs/sre-posture.md"
         $json.SrePostureEvidence.SourceDocuments | Should -Contain "docs/benchmarking.md"
         $json.SrePostureEvidence.ValidationScripts | Should -Contain "scripts/validate-release.ps1"
+        $json.SrePostureEvidence.ValidationScripts | Should -Contain "scripts/measure-ci-flake-rate.ps1"
         $json.SrePostureEvidence.SliRows.Id | Should -Contain "engine.behavior.dispatch.latency.p95"
         $json.SrePostureEvidence.SliRows.BaselineStatus | Should -Contain "pending-stable-baseline"
         $json.SrePostureEvidence.SliRows.BaselineStatus | Should -Contain "stable-baseline-published"
@@ -501,6 +504,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "SRE stable baseline rows: 10"
         $markdown | Should -Match "Pending baseline SLI"
         $markdown | Should -Match "ci-metadata-unavailable"
+        $markdown | Should -Match "ci-flake-rate-report"
         $markdown | Should -Match "BuildStartHandleFirstRequestAspNetCore"
         $markdown | Should -Match "deployment-mode-claims-report-baseline"
         $markdown | Should -Match "release-validation-step-wall-time-baseline"

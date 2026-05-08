@@ -72,6 +72,7 @@ Each test file should:
 | Script | Test file | Cases |
 | --- | --- | --- |
 | `scripts/run-provider-live-testcontainers.ps1` | `run-provider-live-testcontainers.Tests.ps1` | provider Testcontainers matrix + filter tokens + locked restore + workflow dispatch/schedule/matrix wiring |
+| `scripts/measure-ci-flake-rate.ps1` | `measure-ci-flake-rate.Tests.ps1` | GitHub Actions fixture parsing + no-history pending report + rerun flake detection + clean-window promotion candidate + fail-closed promotion gate |
 | `scripts/publish-engine-completion-scorecard.ps1` | `publish-engine-completion-scorecard.Tests.ps1` | scorecard JSON/Markdown artifact shape + evidence-source reference validation + per-package GA readiness rows + provider integration evidence manifest validation + SRE guardrail-reference validation + unsupported status guard + release-validation wiring |
 | `scripts/validate-supply-chain-external-policy-preflight.ps1` | `validate-supply-chain-external-policy-preflight.Tests.ps1` | pending/pass/fail-closed external policy checks + release-manager confirmation parsing |
 | `scripts/validate-release.ps1` | `validate-release.Tests.ps1` | scorecard evidence readback behavior + dependency-health provider manifest readback + missing manifest failure |

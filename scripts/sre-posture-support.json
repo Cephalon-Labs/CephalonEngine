@@ -1,7 +1,7 @@
 {
-  "$schemaVersion": "1.8.0",
+  "$schemaVersion": "1.9.0",
   "status": "partial-stable-baseline-published",
-  "summary": "Engine SLI and SLO targets are declared; benchmark-backed stable baselines are published for the guardrail-mapped subset including ASP.NET Core core-operator-surface cold-start and Worker cold-start, the deployment-mode claim-truth SLI has a release-validation claims-report stable baseline, restore locked-mode wall time, reference-docs wall time, and full validate-release wall time have release-validation timing baselines. CI flake-rate remains pending because it needs live GitHub Actions history, but its blocker evidence is machine-readable through the stable-baseline manifest.",
+  "summary": "Engine SLI and SLO targets are declared; benchmark-backed stable baselines are published for the guardrail-mapped subset including ASP.NET Core core-operator-surface cold-start and Worker cold-start, the deployment-mode claim-truth SLI has a release-validation claims-report stable baseline, restore locked-mode wall time, reference-docs wall time, and full validate-release wall time have release-validation timing baselines. CI flake-rate remains pending because it needs live GitHub Actions history, but its blocker evidence now points at a release-workflow collector and machine-readable flake-rate report.",
   "releaseValidationSummaryMode": "release-validation-console-and-scorecard-artifact",
   "stableBaselinesPublished": true,
   "stableBaselineManifest": "scripts/sre-stable-baselines.json",
@@ -10,7 +10,8 @@
     "docs/benchmarking.md"
   ],
   "validationScripts": [
-    "scripts/validate-release.ps1"
+    "scripts/validate-release.ps1",
+    "scripts/measure-ci-flake-rate.ps1"
   ],
   "guardrailCatalog": "benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json",
   "slis": [
