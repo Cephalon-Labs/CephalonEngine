@@ -7561,6 +7561,8 @@ IBehaviorModuleBuilder Add(Type behaviorType, Type inputType, Type outputType)
 
 Declares that the current module owns the specified behavior and supplies the closed input/output contract.
 
+Remarks: This overload is intended for compatibility with descriptor-driven callers that only have `Type` values. Trim-ready hosts should prefer the generic overload or generated descriptors so the behavior contract can be preserved statically.
+
 Returns: The same builder for fluent ownership registration.
 
 Parameters:
@@ -7577,6 +7579,8 @@ IBehaviorModuleBuilder Add(Type behaviorType, Type inputType, Type outputType, A
 ```
 
 Declares that the current module owns the specified behavior, supplies the closed input/output contract, and applies an explicit topology override.
+
+Remarks: This overload is intended for compatibility with descriptor-driven callers that only have `Type` values. Trim-ready hosts should prefer the generic overload or generated descriptors so the behavior contract can be preserved statically.
 
 Returns: The same builder for fluent ownership registration.
 

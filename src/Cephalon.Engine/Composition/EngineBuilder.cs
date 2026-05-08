@@ -31,6 +31,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Diagnostics.Metrics;
 using System.Reflection;
 using Cephalon.Abstractions.Localization;
@@ -414,7 +415,9 @@ public sealed class EngineBuilder
     /// </summary>
     /// <typeparam name="TProvider">The provider implementation type.</typeparam>
     /// <returns>The same builder instance.</returns>
-    public EngineBuilder AddFeatureFlagProvider<TProvider>()
+    public EngineBuilder AddFeatureFlagProvider<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+        TProvider>()
         where TProvider : class, IFeatureFlagProvider
     {
         Services.TryAddEnumerable(ServiceDescriptor.Singleton<IFeatureFlagProvider, TProvider>());
