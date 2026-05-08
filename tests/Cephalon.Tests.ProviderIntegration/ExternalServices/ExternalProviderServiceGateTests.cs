@@ -12,6 +12,7 @@ public sealed class ExternalProviderServiceGateTests
         Assert.Equal(ExternalProviderServiceMode.Disabled, gate.ResolveRedisMode());
         Assert.Equal(ExternalProviderServiceMode.Disabled, gate.ResolveCassandraMode());
         Assert.Equal(ExternalProviderServiceMode.Disabled, gate.ResolveNatsMode());
+        Assert.Equal(ExternalProviderServiceMode.Disabled, gate.ResolveSmtpMode());
         Assert.Contains(ExternalProviderServiceGate.ExternalServicesVariable, ExternalProviderServiceGate.SkipReason, StringComparison.Ordinal);
     }
 
@@ -31,6 +32,7 @@ public sealed class ExternalProviderServiceGateTests
         Assert.False(gate.TestcontainersEnabled);
         Assert.Equal(ExternalProviderServiceMode.Disabled, gate.ResolveRedisMode());
         Assert.Equal(ExternalProviderServiceMode.Disabled, gate.ResolveCassandraMode());
+        Assert.Equal(ExternalProviderServiceMode.Disabled, gate.ResolveSmtpMode());
     }
 
     [Fact]
@@ -76,6 +78,7 @@ public sealed class ExternalProviderServiceGateTests
         Assert.Equal(ExternalProviderServiceMode.Testcontainers, gate.ResolveNeo4jMode());
         Assert.Equal(ExternalProviderServiceMode.Testcontainers, gate.ResolveOpenSearchMode());
         Assert.Equal(ExternalProviderServiceMode.Testcontainers, gate.ResolveQdrantMode());
+        Assert.Equal(ExternalProviderServiceMode.Testcontainers, gate.ResolveSmtpMode());
     }
 
     [Fact]
@@ -116,6 +119,10 @@ public sealed class ExternalProviderServiceGateTests
             gate.GetSkipReason(ExternalProviderServiceProvider.Qdrant)!,
             StringComparison.Ordinal);
         Assert.Contains(
+            ExternalProviderServiceGate.SmtpHostVariable,
+            gate.GetSkipReason(ExternalProviderServiceProvider.Smtp)!,
+            StringComparison.Ordinal);
+        Assert.Contains(
             ExternalProviderServiceGate.RedisConnectionStringVariable,
             gate.GetSkipReason(ExternalProviderServiceProvider.Redis)!,
             StringComparison.Ordinal);
@@ -147,7 +154,10 @@ public sealed class ExternalProviderServiceGateTests
             [ExternalProviderServiceGate.OpenSearchPasswordVariable] = " open-secret ",
             [ExternalProviderServiceGate.QdrantHostVariable] = " qdrant.local ",
             [ExternalProviderServiceGate.QdrantPortVariable] = "6335",
-            [ExternalProviderServiceGate.QdrantApiKeyVariable] = " qdrant-secret "
+            [ExternalProviderServiceGate.QdrantApiKeyVariable] = " qdrant-secret ",
+            [ExternalProviderServiceGate.SmtpHostVariable] = " smtp.local ",
+            [ExternalProviderServiceGate.SmtpPortVariable] = "2525",
+            [ExternalProviderServiceGate.SmtpApiUriVariable] = " http://smtp.local:8025 "
         });
 
         Assert.Equal(ExternalProviderServiceMode.PreProvisionedConnectionString, gate.ResolveCassandraMode());
@@ -157,6 +167,7 @@ public sealed class ExternalProviderServiceGateTests
         Assert.Equal(ExternalProviderServiceMode.PreProvisionedConnectionString, gate.ResolveNeo4jMode());
         Assert.Equal(ExternalProviderServiceMode.PreProvisionedConnectionString, gate.ResolveOpenSearchMode());
         Assert.Equal(ExternalProviderServiceMode.PreProvisionedConnectionString, gate.ResolveQdrantMode());
+        Assert.Equal(ExternalProviderServiceMode.PreProvisionedConnectionString, gate.ResolveSmtpMode());
         Assert.Equal("cassandra.local", gate.CassandraContactPoints);
         Assert.Equal(9043, gate.CassandraPortOrDefault);
         Assert.Equal("cephalon_test", gate.CassandraKeyspace);
@@ -178,6 +189,9 @@ public sealed class ExternalProviderServiceGateTests
         Assert.Equal("qdrant.local", gate.QdrantHost);
         Assert.Equal(6335, gate.QdrantPortOrDefault);
         Assert.Equal("qdrant-secret", gate.QdrantApiKey);
+        Assert.Equal("smtp.local", gate.SmtpHost);
+        Assert.Equal(2525, gate.SmtpPortOrDefault);
+        Assert.Equal("http://smtp.local:8025", gate.SmtpApiUri);
         Assert.Null(gate.GetSkipReason(ExternalProviderServiceProvider.Cassandra));
         Assert.Null(gate.GetSkipReason(ExternalProviderServiceProvider.ClickHouse));
         Assert.Null(gate.GetSkipReason(ExternalProviderServiceProvider.Elasticsearch));
@@ -185,6 +199,7 @@ public sealed class ExternalProviderServiceGateTests
         Assert.Null(gate.GetSkipReason(ExternalProviderServiceProvider.Neo4j));
         Assert.Null(gate.GetSkipReason(ExternalProviderServiceProvider.OpenSearch));
         Assert.Null(gate.GetSkipReason(ExternalProviderServiceProvider.Qdrant));
+        Assert.Null(gate.GetSkipReason(ExternalProviderServiceProvider.Smtp));
     }
 
     [Fact]
@@ -198,18 +213,22 @@ public sealed class ExternalProviderServiceGateTests
             [ExternalProviderServiceGate.CassandraKeyspaceVariable] = "cephalon_test",
             [ExternalProviderServiceGate.ClickHouseHostVariable] = "clickhouse.local",
             [ExternalProviderServiceGate.ClickHouseDatabaseVariable] = "cephalon",
-            [ExternalProviderServiceGate.QdrantHostVariable] = "qdrant.local"
+            [ExternalProviderServiceGate.QdrantHostVariable] = "qdrant.local",
+            [ExternalProviderServiceGate.SmtpHostVariable] = "smtp.local",
+            [ExternalProviderServiceGate.SmtpApiUriVariable] = "http://smtp.local:8025"
         });
 
         Assert.Equal(ExternalProviderServiceMode.PreProvisionedConnectionString, gate.ResolveCassandraMode());
         Assert.Equal(ExternalProviderServiceMode.PreProvisionedConnectionString, gate.ResolveClickHouseMode());
         Assert.Equal(ExternalProviderServiceMode.PreProvisionedConnectionString, gate.ResolveQdrantMode());
+        Assert.Equal(ExternalProviderServiceMode.PreProvisionedConnectionString, gate.ResolveSmtpMode());
         Assert.Equal(ExternalProviderServiceMode.Testcontainers, gate.ResolveNatsMode());
         Assert.Equal(9042, gate.CassandraPortOrDefault);
         Assert.Equal(8123, gate.ClickHousePortOrDefault);
         Assert.Equal("default", gate.ClickHouseUsernameOrDefault);
         Assert.Equal(string.Empty, gate.ClickHousePasswordOrDefault);
         Assert.Equal(6334, gate.QdrantPortOrDefault);
+        Assert.Equal(1025, gate.SmtpPortOrDefault);
     }
 
     [Fact]

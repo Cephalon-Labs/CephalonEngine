@@ -8,6 +8,7 @@ This project is the focused integration-test lane for provider-backed behavior t
 - The Redis test verifies service registration, runtime capabilities, outbox and inbox descriptors, event-stream descriptors, Redis Hash/Sorted Set/Set/Stream persistence, idempotent outbox and inbox behavior, dispatch-store success reporting, ordered event replay, and optimistic-concurrency rejection.
 - MongoDB data-provider coverage starts a repo-owned disposable replica set and proves `Cephalon.Data.MongoDB` outbox/inbox/dispatch-store behavior in the default lane.
 - Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant now have opt-in live data-provider proof lanes. Each lane can run against either pre-provisioned provider services or disposable Testcontainers-backed runtimes, composes `Cephalon.Engine`, `Cephalon.Eventing`, and the real provider pack, then proves manifest capabilities, outbox/inbox descriptors, `event-driven-integration` technology surfaces, idempotent outbox/inbox writes, and real provider persistence. All except ClickHouse also prove `IEventDispatchStore` pending/success transitions; ClickHouse deliberately proves the truthful `unsupported` dispatch policy.
+- SMTP invitation delivery now has an opt-in live relay proof lane. It composes `Cephalon.MultiTenancy.Governance.SmtpDelivery`, dispatches through the real governance delivery dispatcher, hands the message to a real SMTP relay, reads the accepted message back through the relay API, and verifies message id, recipients, context headers, provider metadata, and sanitized runtime-surface truth.
 
 ## External-provider gate
 
@@ -43,6 +44,9 @@ The shared gate uses these environment variables:
 | `CEPHALON_PROVIDER_QDRANT_HOST` | Optional pre-provisioned Qdrant gRPC host. Testcontainers mode uses a disposable `qdrant/qdrant:v1.12.5` service. |
 | `CEPHALON_PROVIDER_QDRANT_PORT` | Optional Qdrant gRPC port; defaults to `6334`. |
 | `CEPHALON_PROVIDER_QDRANT_API_KEY` | Optional Qdrant API key. |
+| `CEPHALON_PROVIDER_SMTP_HOST` | Optional pre-provisioned SMTP relay host for the invitation-delivery live proof. Testcontainers mode uses a disposable `mailhog/mailhog:v1.0.1` service. |
+| `CEPHALON_PROVIDER_SMTP_PORT` | Optional SMTP relay port; defaults to `1025`. |
+| `CEPHALON_PROVIDER_SMTP_API_URI` | Required with `CEPHALON_PROVIDER_SMTP_HOST`; points at a MailHog-compatible HTTP API root used to verify accepted messages. |
 
 Provider-specific live tests prefer pre-provisioned service settings when present, otherwise use Testcontainers only when both `CEPHALON_PROVIDER_EXTERNAL_SERVICES` and `CEPHALON_PROVIDER_TESTCONTAINERS` are enabled. If neither mode resolves, the provider test remains skipped rather than silently passing with fake transport coverage.
 
@@ -59,6 +63,7 @@ Provider-specific live tests prefer pre-provisioned service settings when presen
 | Neo4j | `Neo4jProvider_StagesOutboxInboxAndDispatchAgainstLiveService` | Bolt auth must allow label/constraint creation and node writes. |
 | OpenSearch | `OpenSearchProvider_StagesOutboxInboxAndDispatchAgainstLiveService` | Index creation and refresh must be allowed; the test polls eventually visible search rows. |
 | Qdrant | `QdrantProvider_StagesOutboxInboxAndDispatchAgainstLiveService` | gRPC endpoint must be reachable and collection creation allowed. |
+| SMTP | `SmtpDelivery_DispatchesInvitationThroughLiveRelay` | SMTP relay must accept unauthenticated mail, and a MailHog-compatible API must expose accepted messages. |
 
 To run one provider lane, enable external services and filter by the provider method name:
 
@@ -81,9 +86,10 @@ For release-manager or CI execution, prefer the shared script so the provider ma
 ```powershell
 .\scripts\run-provider-live-testcontainers.ps1 -Providers All -Configuration Release
 .\scripts\run-provider-live-testcontainers.ps1 -Providers Nats -Configuration Release
+.\scripts\run-provider-live-testcontainers.ps1 -Providers Smtp -Configuration Release
 ```
 
-The scheduled/manual GitHub Actions lane, `.github/workflows/provider-live-testcontainers.yml`, runs the same script on `ubuntu-latest` with one matrix job per provider. It is intentionally separate from release validation so default CI remains deterministic and Docker-free, while Docker-capable runners can still prove Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant against real disposable provider services.
+The scheduled/manual GitHub Actions lane, `.github/workflows/provider-live-testcontainers.yml`, runs the same script on `ubuntu-latest` with one matrix job per provider. It is intentionally separate from release validation so default CI remains deterministic and Docker-free, while Docker-capable runners can still prove Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, Qdrant, and SMTP delivery against real disposable provider services.
 
 ## Redis live lane
 

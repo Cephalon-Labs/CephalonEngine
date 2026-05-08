@@ -1,7 +1,7 @@
 {
   "$schemaVersion": "1.0.0",
   "status": "expanded-live-provider-evidence",
-  "summary": "Provider integration evidence is machine-readable. Redis data/event-sourcing, MongoDB data, Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant data providers have live proof lanes with pre-provisioned or disposable Testcontainers runtime modes; CDC database providers have live proof lanes; observability dependency-health providers now have deterministic managed-probe live runtime proof across all eighteen provider packs. The dependency-health provider family shape is source-derived through scripts/observability-dependency-health-providers.json.",
+  "summary": "Provider integration evidence is machine-readable. Redis data/event-sourcing, MongoDB data, Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant data providers have live proof lanes with pre-provisioned or disposable Testcontainers runtime modes; SMTP invitation delivery has a live relay handoff proof lane; CDC database providers have live proof lanes; observability dependency-health providers now have deterministic managed-probe live runtime proof across all eighteen provider packs. The dependency-health provider family shape is source-derived through scripts/observability-dependency-health-providers.json.",
   "sourceDocs": [
     "docs/engine-completion-scorecard.md",
     "docs/release-checklist.md",
@@ -51,6 +51,38 @@
         "CEPHALON_PROVIDER_TESTCONTAINERS",
         "CEPHALON_PROVIDER_REDIS_CONNECTION_STRING",
         "CEPHALON_REDIS_CONNECTION_STRING"
+      ]
+    },
+    {
+      "id": "smtp-invitation-delivery-live",
+      "provider": "SMTP",
+      "family": "multi-tenancy-invitation-delivery",
+      "status": "live-proof-available",
+      "defaultRunBehavior": "skipped-unless-enabled",
+      "externalServiceGate": "provider-integration",
+      "testProject": "tests/Cephalon.Tests.ProviderIntegration/Cephalon.Tests.ProviderIntegration.csproj",
+      "testFiles": [
+        "tests/Cephalon.Tests.ProviderIntegration/SmtpDeliveryProviderIntegrationTests.cs",
+        "tests/Cephalon.Tests.ProviderIntegration/ExternalServices/ExternalProviderServiceGate.cs"
+      ],
+      "sourceDocuments": [
+        "docs/components/multi-tenancy-governance-smtpdelivery.md",
+        "docs/test-coverage-roadmap.md"
+      ],
+      "runtimeContracts": [
+        "tenant-invitation-delivery-smtp",
+        "tenant-invitation-delivery-dispatch",
+        "smtp-relay-handoff",
+        "provider-message-id",
+        "secret-free-runtime-surface"
+      ],
+      "environmentVariables": [
+        "CEPHALON_PROVIDER_EXTERNAL_SERVICES",
+        "CEPHALON_PROVIDER_INTEGRATION",
+        "CEPHALON_PROVIDER_TESTCONTAINERS",
+        "CEPHALON_PROVIDER_SMTP_HOST",
+        "CEPHALON_PROVIDER_SMTP_PORT",
+        "CEPHALON_PROVIDER_SMTP_API_URI"
       ]
     },
     {

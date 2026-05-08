@@ -33,7 +33,7 @@ Current focus:
 - treat scorecard hard blockers as release-validation failures even when a later narrow step is skipped: `scripts/validate-release.ps1` fails during the scorecard step when generated evidence reports blocked platform gates, supply-chain blocked items, or public API removals; `partial`, `not-claimed`, externally gated provider lanes, SRE pending baselines, and external-policy-pending items remain explicit readback/exception posture
 - treat supply-chain external-policy-pending evidence as truthful pre-release posture: real tag pushes now fail closed before NuGet login unless `NUGET_USER` is present and the release manager has set protected confirmation variables for the nuget.org trusted-publishing policy and `Cephalon.*` prefix reservation; the preflight verifies those workflow inputs only and does not claim independent nuget.org inspection
 - treat the CDC integration-test lane as additive evidence over the runtime catalog truth: `tests/Cephalon.Tests.CdcIntegration` now proves MongoDB change streams against a real disposable replica set, SQL Server CDC against an opt-in live service, Postgres logical replication against an opt-in live service, MySQL binlog streaming against an opt-in live service, and Oracle LogMiner against an opt-in live service while keeping default CI Docker-free through the shared external-service gate, instead of implying those provider paths through fake transport harnesses
-- treat the provider integration-test lane as additive evidence over non-CDC provider truth: `tests/Cephalon.Tests.ProviderIntegration` now proves Redis data outbox/inbox/dispatch-store behavior plus Redis Streams event sourcing against an opt-in live Redis runtime, MongoDB data outbox/inbox/dispatch-store behavior against a disposable replica-set runtime without a permanent external service, and Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant data outbox/inbox runtime behavior against either pre-provisioned provider services or disposable Testcontainers-backed runtimes
+- treat the provider integration-test lane as additive evidence over non-CDC provider truth: `tests/Cephalon.Tests.ProviderIntegration` now proves Redis data outbox/inbox/dispatch-store behavior plus Redis Streams event sourcing against an opt-in live Redis runtime, MongoDB data outbox/inbox/dispatch-store behavior against a disposable replica-set runtime without a permanent external service, Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant data outbox/inbox runtime behavior against either pre-provisioned provider services or disposable Testcontainers-backed runtimes, and SMTP invitation delivery handoff against a live relay/API pair
 - treat `scripts/provider-integration-support.json` as the release-readiness manifest for provider claims across live-provider tests, CDC integration lanes, and the eighteen dependency-health companion-pack live managed-probe proofs; the scorecard, release validation, CLI doctor, and script-level Pester tests must read provider-integration counts and dependency-health provider-manifest readback from that manifest instead of hand-authored prose, and the scorecard publisher must fail if dependency-health provider rows drift from the source-derived provider manifest
 - treat `scripts/observability-dependency-health-providers.json` as the source-derived dependency-health provider-family manifest: runtime invariant tests, managed-probe live runtime tests, provider-integration scorecard row validation, and Tooling documentation coverage must derive the eighteen `Cephalon.Observability.*Dependencies` expectations from that file so the next provider cannot ship with source/docs/planning counts drifting apart
 - treat the Debezium test-flake quarantine as resolved by shared catalog hardening: CDC execution-runtime filters now reuse versioned snapshots over indexed capture ownership instead of re-enriching every runtime for every state/category selector
@@ -91,6 +91,33 @@ Validation:
 
 - `pwsh ./scripts/validate-supply-chain-external-policy-preflight.ps1`
 - `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/validate-supply-chain-external-policy-preflight.Tests.ps1 -Output Detailed`
+
+### SMTP invitation delivery live provider proof
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: provider-integration / multi-tenancy governance / invitation delivery
+Quality dimensions: Reliability, Compatibility, Auditability, Security, Maintainability, Usability
+
+Why:
+
+- outbound invitation delivery providers had implementation/runtime-surface proof, but SMTP still needed a live provider-handoff lane that used the real sender instead of a recording client
+- release managers need the provider-integration scorecard to distinguish simulated delivery tests from a real relay-accepted message
+- the lane must stay skipped in default CI and run only when a developer/CI job opts into external services or disposable Testcontainers
+
+Delivered:
+
+- added `SmtpDeliveryProviderIntegrationTests.SmtpDelivery_DispatchesInvitationThroughLiveRelay`, which composes `Cephalon.MultiTenancy.Governance.SmtpDelivery`, dispatches through the real governance dispatcher, sends through a live MailHog-compatible SMTP relay, and reads the accepted message back through the relay API
+- extended `ExternalProviderServiceGate` with SMTP pre-provisioned variables (`CEPHALON_PROVIDER_SMTP_HOST`, optional `CEPHALON_PROVIDER_SMTP_PORT`, and `CEPHALON_PROVIDER_SMTP_API_URI`) plus the existing `CEPHALON_PROVIDER_TESTCONTAINERS=1` disposable-runtime path
+- added `Smtp` to `scripts/run-provider-live-testcontainers.ps1` and `.github/workflows/provider-live-testcontainers.yml` so Docker-capable runners can execute the lane with the same locked restore, result directories, and matrix discipline as the existing provider tests
+- added `smtp-invitation-delivery-live` to `scripts/provider-integration-support.json`, raising generated provider readback to `33` rows / `33` live proofs / `0` composition-only / `14` external-service gates / `14` default-skipped / `99` runtime contracts / `35` environment variables
+- refreshed SMTP component docs, provider-integration README, test-coverage roadmap, scorecard follow-through text, roadmap, backlog, and project memory so docs/source/planning agree on the new provider proof
+
+Validation:
+
+- `pwsh ./scripts/publish-engine-completion-scorecard.ps1 -OutputPath artifacts\engine-completion-scorecard-smtp-live -SkipMarkdownOpen`
+- focused ProviderIntegration build/test and script/tooling validation cover the new skipped-by-default lane, matrix contract, and scorecard readback
 
 ### SRE CI flake-rate collector
 

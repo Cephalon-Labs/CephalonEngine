@@ -24,7 +24,10 @@ internal sealed record ExternalProviderServiceGate(
     string? OpenSearchPassword,
     string? QdrantHost,
     int? QdrantPort,
-    string? QdrantApiKey)
+    string? QdrantApiKey,
+    string? SmtpHost,
+    int? SmtpPort,
+    string? SmtpApiUri)
 {
     internal const string ExternalServicesVariable = "CEPHALON_PROVIDER_EXTERNAL_SERVICES";
     internal const string ExternalServicesAliasVariable = "CEPHALON_PROVIDER_INTEGRATION";
@@ -50,6 +53,9 @@ internal sealed record ExternalProviderServiceGate(
     internal const string QdrantHostVariable = "CEPHALON_PROVIDER_QDRANT_HOST";
     internal const string QdrantPortVariable = "CEPHALON_PROVIDER_QDRANT_PORT";
     internal const string QdrantApiKeyVariable = "CEPHALON_PROVIDER_QDRANT_API_KEY";
+    internal const string SmtpHostVariable = "CEPHALON_PROVIDER_SMTP_HOST";
+    internal const string SmtpPortVariable = "CEPHALON_PROVIDER_SMTP_PORT";
+    internal const string SmtpApiUriVariable = "CEPHALON_PROVIDER_SMTP_API_URI";
     internal const string RedisConnectionStringVariable = "CEPHALON_PROVIDER_REDIS_CONNECTION_STRING";
     internal const string RedisConnectionStringAliasVariable = "CEPHALON_REDIS_CONNECTION_STRING";
 
@@ -65,6 +71,8 @@ internal sealed record ExternalProviderServiceGate(
     internal string ClickHousePasswordOrDefault => ClickHousePassword ?? string.Empty;
 
     internal int QdrantPortOrDefault => QdrantPort ?? 6334;
+
+    internal int SmtpPortOrDefault => SmtpPort ?? 1025;
 
     internal static ExternalProviderServiceGate FromEnvironment()
     {
@@ -128,6 +136,14 @@ internal sealed record ExternalProviderServiceGate(
         return ResolveProviderMode(!string.IsNullOrWhiteSpace(QdrantHost), allowTestcontainers: true);
     }
 
+    internal ExternalProviderServiceMode ResolveSmtpMode()
+    {
+        return ResolveProviderMode(
+            !string.IsNullOrWhiteSpace(SmtpHost) &&
+            !string.IsNullOrWhiteSpace(SmtpApiUri),
+            allowTestcontainers: true);
+    }
+
     internal string? GetSkipReason(ExternalProviderServiceProvider provider)
     {
         if (!ExternalServicesEnabled)
@@ -159,6 +175,9 @@ internal sealed record ExternalProviderServiceGate(
             ExternalProviderServiceProvider.Qdrant when ResolveQdrantMode() == ExternalProviderServiceMode.Disabled =>
                 $"{ProviderName(provider)} external-provider tests are disabled. Set {QdrantHostVariable}, or set {TestcontainersVariable}=1, with {ExternalServicesVariable}=1.",
             ExternalProviderServiceProvider.Qdrant => null,
+            ExternalProviderServiceProvider.Smtp when ResolveSmtpMode() == ExternalProviderServiceMode.Disabled =>
+                $"{ProviderName(provider)} external-provider tests are disabled. Set {SmtpHostVariable} and {SmtpApiUriVariable}, or set {TestcontainersVariable}=1, with {ExternalServicesVariable}=1.",
+            ExternalProviderServiceProvider.Smtp => null,
             ExternalProviderServiceProvider.Redis when ResolveRedisMode() == ExternalProviderServiceMode.Disabled =>
                 $"Redis external-provider tests are disabled. Set {RedisConnectionStringVariable} or set {TestcontainersVariable}=1 with {ExternalServicesVariable}=1.",
             ExternalProviderServiceProvider.Redis => null,
@@ -202,7 +221,10 @@ internal sealed record ExternalProviderServiceGate(
             FirstNonEmpty(resolver(OpenSearchPasswordVariable)),
             FirstNonEmpty(resolver(QdrantHostVariable)),
             ParsePositiveInt(resolver(QdrantPortVariable)),
-            FirstNonEmpty(resolver(QdrantApiKeyVariable)));
+            FirstNonEmpty(resolver(QdrantApiKeyVariable)),
+            FirstNonEmpty(resolver(SmtpHostVariable)),
+            ParsePositiveInt(resolver(SmtpPortVariable)),
+            FirstNonEmpty(resolver(SmtpApiUriVariable)));
     }
 
     private ExternalProviderServiceMode ResolveProviderMode(
@@ -262,6 +284,7 @@ internal sealed record ExternalProviderServiceGate(
             ExternalProviderServiceProvider.Neo4j => "Neo4j",
             ExternalProviderServiceProvider.OpenSearch => "OpenSearch",
             ExternalProviderServiceProvider.Qdrant => "Qdrant",
+            ExternalProviderServiceProvider.Smtp => "SMTP",
             ExternalProviderServiceProvider.Redis => "Redis",
             ExternalProviderServiceProvider.Any => "Provider",
             _ => throw new ArgumentOutOfRangeException(nameof(provider), provider, "Unknown external provider service provider.")

@@ -17,6 +17,7 @@
 - safe sender metadata such as relay host, port, TLS posture, message id, sender id, recipient address, and client outcome reason
 - sanitized runtime truth through the `tenant-invitation-delivery-smtp` technology surface, including relay host, port, TLS posture, channel support, credential-configured flags, header names, and redacted secret posture
 - stable diagnostics for accepted and failed SMTP invitation dispatch attempts
+- an opt-in provider-integration live proof that sends through a real SMTP relay (`mailhog/mailhog:v1.0.1` in Testcontainers mode) and reads the accepted message back through the relay API before counting the row as live-provider evidence
 
 ## Main surfaces
 
@@ -84,6 +85,8 @@ Configuration example:
 ```
 
 The sender returns `dispatched` only when the SMTP client reports that the relay accepted the message. Unsupported channels are reported as `suppressed`; invalid recipient resolution, relay errors, and timeouts are reported as `sender-failed`. The governance dispatcher persists those outcomes through the invitation store, queues retryable sender failures when the retry queue is enabled, and keeps `externalDeliveryOwnership = provider-managed` when this sender handled the attempt.
+
+The live provider proof lives in `tests/Cephalon.Tests.ProviderIntegration/SmtpDeliveryProviderIntegrationTests.cs` and is gated by the shared provider-integration environment variables. It can run against a pre-provisioned MailHog-compatible relay/API pair (`CEPHALON_PROVIDER_SMTP_HOST`, optional `CEPHALON_PROVIDER_SMTP_PORT`, and `CEPHALON_PROVIDER_SMTP_API_URI`) or through `CEPHALON_PROVIDER_TESTCONTAINERS=1`, where the shared `scripts/run-provider-live-testcontainers.ps1 -Providers Smtp` lane starts the disposable relay.
 
 This package intentionally owns SMTP relay handoff only. It does not own SendGrid Mail Send API handoff, Mailgun Messages API handoff, Amazon SES v2 handoff, Microsoft Graph `sendMail` handoff, SMS, chat, CRM, identity-provider onboarding, bounce/webhook translation, provider polling, distributed retry queues, cross-node leases, public onboarding, or tenant-admin UI. Mailgun Messages API handoff lives in `Cephalon.MultiTenancy.Governance.MailgunDelivery`, SendGrid Mail Send handoff lives in `Cephalon.MultiTenancy.Governance.SendGridDelivery`, Amazon SES v2 handoff lives in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery`, and Microsoft Graph `sendMail` handoff lives in `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery`; additional provider-specific email API senders beyond the shipped SMTP/SendGrid/Mailgun/Amazon SES/Microsoft Graph set should remain application-managed or future provider-specific companion packs until a package owns them explicitly.
 
