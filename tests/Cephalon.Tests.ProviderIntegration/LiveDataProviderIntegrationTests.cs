@@ -25,50 +25,77 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.ProviderIntegration;
 
-public sealed class LiveDataProviderIntegrationTests
+public sealed class LiveDataProviderIntegrationTests : IAsyncLifetime, IDisposable
 {
     private static readonly TimeSpan RetryDelay = TimeSpan.FromMilliseconds(250);
+    private readonly ExternalProviderTestcontainerRuntime _testcontainerRuntime = new();
+
+    public Task InitializeAsync() => Task.CompletedTask;
+
+    public async Task DisposeAsync()
+    {
+        await _testcontainerRuntime.DisposeAsync().ConfigureAwait(false);
+    }
+
+    public void Dispose()
+    {
+        _testcontainerRuntime.DisposeAsync().AsTask().GetAwaiter().GetResult();
+    }
 
     [ExternalProviderServiceFact(ExternalProviderServiceProvider.Cassandra)]
-    public Task CassandraProvider_StagesOutboxInboxAndDispatchAgainstLiveService()
+    public async Task CassandraProvider_StagesOutboxInboxAndDispatchAgainstLiveService()
     {
-        return RunProviderProofAsync(CreateCassandraScenario(ExternalProviderServiceGate.FromEnvironment(), NewUniqueId()));
+        var uniqueId = NewUniqueId();
+        var service = await _testcontainerRuntime.ResolveCassandraAsync(ExternalProviderServiceGate.FromEnvironment(), uniqueId).ConfigureAwait(false);
+        await RunProviderProofAsync(CreateCassandraScenario(service, uniqueId)).ConfigureAwait(false);
     }
 
     [ExternalProviderServiceFact(ExternalProviderServiceProvider.ClickHouse)]
-    public Task ClickHouseProvider_StagesOutboxAndInboxAgainstLiveService()
+    public async Task ClickHouseProvider_StagesOutboxAndInboxAgainstLiveService()
     {
-        return RunProviderProofAsync(CreateClickHouseScenario(ExternalProviderServiceGate.FromEnvironment(), NewUniqueId()));
+        var uniqueId = NewUniqueId();
+        var service = await _testcontainerRuntime.ResolveClickHouseAsync(ExternalProviderServiceGate.FromEnvironment(), uniqueId).ConfigureAwait(false);
+        await RunProviderProofAsync(CreateClickHouseScenario(service, uniqueId)).ConfigureAwait(false);
     }
 
     [ExternalProviderServiceFact(ExternalProviderServiceProvider.Elasticsearch)]
-    public Task ElasticsearchProvider_StagesOutboxInboxAndDispatchAgainstLiveService()
+    public async Task ElasticsearchProvider_StagesOutboxInboxAndDispatchAgainstLiveService()
     {
-        return RunProviderProofAsync(CreateElasticsearchScenario(ExternalProviderServiceGate.FromEnvironment(), NewUniqueId()));
+        var uniqueId = NewUniqueId();
+        var service = await _testcontainerRuntime.ResolveElasticsearchAsync(ExternalProviderServiceGate.FromEnvironment()).ConfigureAwait(false);
+        await RunProviderProofAsync(CreateElasticsearchScenario(service, uniqueId)).ConfigureAwait(false);
     }
 
     [ExternalProviderServiceFact(ExternalProviderServiceProvider.Nats)]
-    public Task NatsProvider_StagesOutboxInboxAndDispatchAgainstLiveJetStream()
+    public async Task NatsProvider_StagesOutboxInboxAndDispatchAgainstLiveJetStream()
     {
-        return RunProviderProofAsync(CreateNatsScenario(ExternalProviderServiceGate.FromEnvironment(), NewUniqueId()));
+        var uniqueId = NewUniqueId();
+        var service = await _testcontainerRuntime.ResolveNatsAsync(ExternalProviderServiceGate.FromEnvironment()).ConfigureAwait(false);
+        await RunProviderProofAsync(CreateNatsScenario(service, uniqueId)).ConfigureAwait(false);
     }
 
     [ExternalProviderServiceFact(ExternalProviderServiceProvider.Neo4j)]
-    public Task Neo4jProvider_StagesOutboxInboxAndDispatchAgainstLiveService()
+    public async Task Neo4jProvider_StagesOutboxInboxAndDispatchAgainstLiveService()
     {
-        return RunProviderProofAsync(CreateNeo4jScenario(ExternalProviderServiceGate.FromEnvironment(), NewUniqueId()));
+        var uniqueId = NewUniqueId();
+        var service = await _testcontainerRuntime.ResolveNeo4jAsync(ExternalProviderServiceGate.FromEnvironment()).ConfigureAwait(false);
+        await RunProviderProofAsync(CreateNeo4jScenario(service, uniqueId)).ConfigureAwait(false);
     }
 
     [ExternalProviderServiceFact(ExternalProviderServiceProvider.OpenSearch)]
-    public Task OpenSearchProvider_StagesOutboxInboxAndDispatchAgainstLiveService()
+    public async Task OpenSearchProvider_StagesOutboxInboxAndDispatchAgainstLiveService()
     {
-        return RunProviderProofAsync(CreateOpenSearchScenario(ExternalProviderServiceGate.FromEnvironment(), NewUniqueId()));
+        var uniqueId = NewUniqueId();
+        var service = await _testcontainerRuntime.ResolveOpenSearchAsync(ExternalProviderServiceGate.FromEnvironment()).ConfigureAwait(false);
+        await RunProviderProofAsync(CreateOpenSearchScenario(service, uniqueId)).ConfigureAwait(false);
     }
 
     [ExternalProviderServiceFact(ExternalProviderServiceProvider.Qdrant)]
-    public Task QdrantProvider_StagesOutboxInboxAndDispatchAgainstLiveService()
+    public async Task QdrantProvider_StagesOutboxInboxAndDispatchAgainstLiveService()
     {
-        return RunProviderProofAsync(CreateQdrantScenario(ExternalProviderServiceGate.FromEnvironment(), NewUniqueId()));
+        var uniqueId = NewUniqueId();
+        var service = await _testcontainerRuntime.ResolveQdrantAsync(ExternalProviderServiceGate.FromEnvironment()).ConfigureAwait(false);
+        await RunProviderProofAsync(CreateQdrantScenario(service, uniqueId)).ConfigureAwait(false);
     }
 
     private static async Task RunProviderProofAsync(LiveDataProviderScenario scenario)
@@ -230,7 +257,7 @@ public sealed class LiveDataProviderIntegrationTests
         Assert.DoesNotContain(pending, item => string.Equals(item.MessageId, messageId, StringComparison.OrdinalIgnoreCase));
     }
 
-    private static LiveDataProviderScenario CreateCassandraScenario(ExternalProviderServiceGate gate, string uniqueId)
+    private static LiveDataProviderScenario CreateCassandraScenario(CassandraProviderService service, string uniqueId)
     {
         var tablePrefix = $"it_{uniqueId}_";
         return new LiveDataProviderScenario(
@@ -252,16 +279,16 @@ public sealed class LiveDataProviderIntegrationTests
             InboxMetadataValue: $"{tablePrefix}inbox_receipts",
             SupportsDispatchStore: true,
             ExpectedDispatchPolicyId: "disabled",
-            RegisterProvider: engine => engine.AddCassandraData(gate.CassandraContactPoints!, gate.CassandraKeyspace!, options =>
+            RegisterProvider: engine => engine.AddCassandraData(service.ContactPoints, service.Keyspace, options =>
             {
-                options.Port = gate.CassandraPortOrDefault;
+                options.Port = service.Port;
                 options.TablePrefix = tablePrefix;
                 options.RegisterOutbox = true;
                 options.RegisterInbox = true;
             }));
     }
 
-    private static LiveDataProviderScenario CreateClickHouseScenario(ExternalProviderServiceGate gate, string uniqueId)
+    private static LiveDataProviderScenario CreateClickHouseScenario(ClickHouseProviderService service, string uniqueId)
     {
         var tablePrefix = $"it_{uniqueId}_";
         return new LiveDataProviderScenario(
@@ -283,18 +310,18 @@ public sealed class LiveDataProviderIntegrationTests
             InboxMetadataValue: $"{tablePrefix}inbox_receipts",
             SupportsDispatchStore: false,
             ExpectedDispatchPolicyId: "unsupported",
-            RegisterProvider: engine => engine.AddClickHouseData(gate.ClickHouseHost!, gate.ClickHouseDatabase!, options =>
+            RegisterProvider: engine => engine.AddClickHouseData(service.Host, service.Database, options =>
             {
-                options.Port = gate.ClickHousePortOrDefault;
-                options.Username = gate.ClickHouseUsernameOrDefault;
-                options.Password = gate.ClickHousePasswordOrDefault;
+                options.Port = service.Port;
+                options.Username = service.Username;
+                options.Password = service.Password;
                 options.TablePrefix = tablePrefix;
                 options.RegisterOutbox = true;
                 options.RegisterInbox = true;
             }));
     }
 
-    private static LiveDataProviderScenario CreateElasticsearchScenario(ExternalProviderServiceGate gate, string uniqueId)
+    private static LiveDataProviderScenario CreateElasticsearchScenario(ElasticsearchProviderService service, string uniqueId)
     {
         var indexPrefix = $"it-{uniqueId}-";
         return new LiveDataProviderScenario(
@@ -316,17 +343,17 @@ public sealed class LiveDataProviderIntegrationTests
             InboxMetadataValue: $"{indexPrefix}inbox-receipts",
             SupportsDispatchStore: true,
             ExpectedDispatchPolicyId: "disabled",
-            RegisterProvider: engine => engine.AddElasticsearchData(gate.ElasticsearchUri!, options =>
+            RegisterProvider: engine => engine.AddElasticsearchData(service.Uri, options =>
             {
-                options.Username = gate.ElasticsearchUsername;
-                options.Password = gate.ElasticsearchPassword;
+                options.Username = service.Username;
+                options.Password = service.Password;
                 options.IndexPrefix = indexPrefix;
                 options.RegisterOutbox = true;
                 options.RegisterInbox = true;
             }));
     }
 
-    private static LiveDataProviderScenario CreateNatsScenario(ExternalProviderServiceGate gate, string uniqueId)
+    private static LiveDataProviderScenario CreateNatsScenario(NatsProviderService service, string uniqueId)
     {
         var bucketPrefix = $"cephalon-it-{uniqueId}";
         return new LiveDataProviderScenario(
@@ -348,7 +375,7 @@ public sealed class LiveDataProviderIntegrationTests
             InboxMetadataValue: $"{bucketPrefix}-inbox",
             SupportsDispatchStore: true,
             ExpectedDispatchPolicyId: "disabled",
-            RegisterProvider: engine => engine.AddNatsData(gate.NatsUri!, options =>
+            RegisterProvider: engine => engine.AddNatsData(service.Uri, options =>
             {
                 options.BucketPrefix = bucketPrefix;
                 options.RegisterOutbox = true;
@@ -356,7 +383,7 @@ public sealed class LiveDataProviderIntegrationTests
             }));
     }
 
-    private static LiveDataProviderScenario CreateNeo4jScenario(ExternalProviderServiceGate gate, string uniqueId)
+    private static LiveDataProviderScenario CreateNeo4jScenario(Neo4jProviderService service, string uniqueId)
     {
         var labelPrefix = $"CephalonIt{uniqueId}";
         return new LiveDataProviderScenario(
@@ -378,7 +405,7 @@ public sealed class LiveDataProviderIntegrationTests
             InboxMetadataValue: $"{labelPrefix}InboxReceipt",
             SupportsDispatchStore: true,
             ExpectedDispatchPolicyId: "disabled",
-            RegisterProvider: engine => engine.AddNeo4jData(gate.Neo4jUri!, gate.Neo4jUsername!, gate.Neo4jPassword!, options =>
+            RegisterProvider: engine => engine.AddNeo4jData(service.Uri, service.Username, service.Password, options =>
             {
                 options.LabelPrefix = labelPrefix;
                 options.RegisterOutbox = true;
@@ -386,7 +413,7 @@ public sealed class LiveDataProviderIntegrationTests
             }));
     }
 
-    private static LiveDataProviderScenario CreateOpenSearchScenario(ExternalProviderServiceGate gate, string uniqueId)
+    private static LiveDataProviderScenario CreateOpenSearchScenario(OpenSearchProviderService service, string uniqueId)
     {
         var indexPrefix = $"it-{uniqueId}-";
         return new LiveDataProviderScenario(
@@ -408,17 +435,17 @@ public sealed class LiveDataProviderIntegrationTests
             InboxMetadataValue: $"{indexPrefix}inbox-receipts",
             SupportsDispatchStore: true,
             ExpectedDispatchPolicyId: "disabled",
-            RegisterProvider: engine => engine.AddOpenSearchData(gate.OpenSearchUri!, options =>
+            RegisterProvider: engine => engine.AddOpenSearchData(service.Uri, options =>
             {
-                options.Username = gate.OpenSearchUsername;
-                options.Password = gate.OpenSearchPassword;
+                options.Username = service.Username;
+                options.Password = service.Password;
                 options.IndexPrefix = indexPrefix;
                 options.RegisterOutbox = true;
                 options.RegisterInbox = true;
             }));
     }
 
-    private static LiveDataProviderScenario CreateQdrantScenario(ExternalProviderServiceGate gate, string uniqueId)
+    private static LiveDataProviderScenario CreateQdrantScenario(QdrantProviderService service, string uniqueId)
     {
         var collectionPrefix = $"it_{uniqueId}_";
         return new LiveDataProviderScenario(
@@ -440,9 +467,9 @@ public sealed class LiveDataProviderIntegrationTests
             InboxMetadataValue: $"{collectionPrefix}inbox_receipts",
             SupportsDispatchStore: true,
             ExpectedDispatchPolicyId: "disabled",
-            RegisterProvider: engine => engine.AddQdrantData(gate.QdrantHost!, gate.QdrantPortOrDefault, options =>
+            RegisterProvider: engine => engine.AddQdrantData(service.Host, service.Port, options =>
             {
-                options.ApiKey = gate.QdrantApiKey;
+                options.ApiKey = service.ApiKey;
                 options.CollectionPrefix = collectionPrefix;
                 options.RegisterOutbox = true;
                 options.RegisterInbox = true;

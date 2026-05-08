@@ -179,7 +179,7 @@ When the `event-driven-integration` technology is active, the following entries 
 
 ## Provider integration proof
 
-`LiveDataProviderIntegrationTests.Neo4jProvider_StagesOutboxInboxAndDispatchAgainstLiveService` runs behind `ExternalProviderServiceFact(ExternalProviderServiceProvider.Neo4j)`. The lane is skipped unless `CEPHALON_PROVIDER_EXTERNAL_SERVICES` or `CEPHALON_PROVIDER_INTEGRATION` is enabled and `CEPHALON_PROVIDER_NEO4J_URI`, `CEPHALON_PROVIDER_NEO4J_USERNAME`, and `CEPHALON_PROVIDER_NEO4J_PASSWORD` are supplied. The test composes `Cephalon.Engine`, `Cephalon.Eventing`, and this pack, then proves real outbox/inbox writes, `IEventDispatchStore` pending/success transitions, runtime manifest capabilities, and `event-driven-integration` runtime surfaces against a live Neo4j service.
+`LiveDataProviderIntegrationTests.Neo4jProvider_StagesOutboxInboxAndDispatchAgainstLiveService` runs behind `ExternalProviderServiceFact(ExternalProviderServiceProvider.Neo4j)`. The lane is skipped unless `CEPHALON_PROVIDER_EXTERNAL_SERVICES` or `CEPHALON_PROVIDER_INTEGRATION` is enabled and either `CEPHALON_PROVIDER_TESTCONTAINERS=1` or `CEPHALON_PROVIDER_NEO4J_URI`, `CEPHALON_PROVIDER_NEO4J_USERNAME`, and `CEPHALON_PROVIDER_NEO4J_PASSWORD` are supplied. Testcontainers mode starts a disposable `neo4j:5-community` service with a test password; pre-provisioned services must allow label, constraint, and node writes. The test composes `Cephalon.Engine`, `Cephalon.Eventing`, and this pack, then proves real outbox/inbox writes, `IEventDispatchStore` pending/success transitions, runtime manifest capabilities, and `event-driven-integration` runtime surfaces against a live Neo4j service.
 
 ## Not shipped in this slice
 

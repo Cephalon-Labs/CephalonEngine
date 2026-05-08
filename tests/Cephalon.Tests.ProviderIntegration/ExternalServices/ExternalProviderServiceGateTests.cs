@@ -69,6 +69,13 @@ public sealed class ExternalProviderServiceGateTests
         Assert.True(gate.ExternalServicesEnabled);
         Assert.True(gate.TestcontainersEnabled);
         Assert.Equal(ExternalProviderServiceMode.Testcontainers, gate.ResolveRedisMode());
+        Assert.Equal(ExternalProviderServiceMode.Testcontainers, gate.ResolveCassandraMode());
+        Assert.Equal(ExternalProviderServiceMode.Testcontainers, gate.ResolveClickHouseMode());
+        Assert.Equal(ExternalProviderServiceMode.Testcontainers, gate.ResolveElasticsearchMode());
+        Assert.Equal(ExternalProviderServiceMode.Testcontainers, gate.ResolveNatsMode());
+        Assert.Equal(ExternalProviderServiceMode.Testcontainers, gate.ResolveNeo4jMode());
+        Assert.Equal(ExternalProviderServiceMode.Testcontainers, gate.ResolveOpenSearchMode());
+        Assert.Equal(ExternalProviderServiceMode.Testcontainers, gate.ResolveQdrantMode());
     }
 
     [Fact]
@@ -181,7 +188,7 @@ public sealed class ExternalProviderServiceGateTests
     }
 
     [Fact]
-    public void FromValues_UsesProviderDefaultPortsAndDoesNotTestcontainerFallbackForDataProviders()
+    public void FromValues_PrefersPreProvisionedDataProviderSettingsOverTestcontainersAndKeepsDefaultPorts()
     {
         var gate = ExternalProviderServiceGate.FromValues(new Dictionary<string, string?>
         {
@@ -197,7 +204,7 @@ public sealed class ExternalProviderServiceGateTests
         Assert.Equal(ExternalProviderServiceMode.PreProvisionedConnectionString, gate.ResolveCassandraMode());
         Assert.Equal(ExternalProviderServiceMode.PreProvisionedConnectionString, gate.ResolveClickHouseMode());
         Assert.Equal(ExternalProviderServiceMode.PreProvisionedConnectionString, gate.ResolveQdrantMode());
-        Assert.Equal(ExternalProviderServiceMode.Disabled, gate.ResolveNatsMode());
+        Assert.Equal(ExternalProviderServiceMode.Testcontainers, gate.ResolveNatsMode());
         Assert.Equal(9042, gate.CassandraPortOrDefault);
         Assert.Equal(8123, gate.ClickHousePortOrDefault);
         Assert.Equal("default", gate.ClickHouseUsernameOrDefault);

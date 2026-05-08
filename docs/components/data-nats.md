@@ -135,7 +135,7 @@ When an eventing runtime asks for `IEventDispatchStore`, the `nats-outbox` descr
 
 ## Provider integration proof
 
-`LiveDataProviderIntegrationTests.NatsProvider_StagesOutboxInboxAndDispatchAgainstLiveJetStream` runs behind `ExternalProviderServiceFact(ExternalProviderServiceProvider.Nats)`. The lane is skipped unless `CEPHALON_PROVIDER_EXTERNAL_SERVICES` or `CEPHALON_PROVIDER_INTEGRATION` is enabled and `CEPHALON_PROVIDER_NATS_URI` is supplied. The test composes `Cephalon.Engine`, `Cephalon.Eventing`, and this pack, then proves real outbox/inbox writes, `IEventDispatchStore` pending/success transitions, runtime manifest capabilities, and `event-driven-integration` runtime surfaces against a live NATS service with JetStream KV enabled.
+`LiveDataProviderIntegrationTests.NatsProvider_StagesOutboxInboxAndDispatchAgainstLiveJetStream` runs behind `ExternalProviderServiceFact(ExternalProviderServiceProvider.Nats)`. The lane is skipped unless `CEPHALON_PROVIDER_EXTERNAL_SERVICES` or `CEPHALON_PROVIDER_INTEGRATION` is enabled and either `CEPHALON_PROVIDER_TESTCONTAINERS=1` or `CEPHALON_PROVIDER_NATS_URI` is supplied. Testcontainers mode starts a disposable `nats:2.10-alpine` service with `-js`; pre-provisioned services must also have JetStream KV enabled. The test composes `Cephalon.Engine`, `Cephalon.Eventing`, and this pack, then proves real outbox/inbox writes, `IEventDispatchStore` pending/success transitions, runtime manifest capabilities, and `event-driven-integration` runtime surfaces against a live NATS service with JetStream KV enabled.
 
 ## Not shipped in this slice
 
