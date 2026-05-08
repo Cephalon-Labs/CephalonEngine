@@ -153,6 +153,59 @@ Describe "validate-release.ps1 deployment-mode policy" {
     }
 }
 
+Describe "validate-release.ps1 SRE timing output" {
+    BeforeEach {
+        $script:tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) "cephalon-validate-release-timing-$([System.Guid]::NewGuid().ToString('N'))"
+        New-Item -ItemType Directory -Path $script:tempRoot -Force | Out-Null
+    }
+
+    AfterEach {
+        if (Test-Path -LiteralPath $script:tempRoot) {
+            Remove-Item -LiteralPath $script:tempRoot -Recurse -Force
+        }
+    }
+
+    It "recognizes the default invocation as the canonical full release-validation lane" {
+        Test-IsCanonicalReleaseValidationRun | Should -BeTrue
+    }
+
+    It "writes a passed timing report when elapsed time is within target" {
+        Write-SreReleaseValidationStepTiming `
+            -FileName "validate-release-wall-time.json" `
+            -SliId "engine.validate-release.wall-time" `
+            -StepName "Validate release (canonical full run)" `
+            -Command "pwsh scripts/validate-release.ps1" `
+            -ElapsedMilliseconds 1234.5678 `
+            -TargetMilliseconds 1500000 `
+            -OutputPath $script:tempRoot
+
+        $report = Get-Content -LiteralPath (Join-Path $script:tempRoot "validate-release-wall-time.json") -Raw | ConvertFrom-Json -Depth 8
+
+        $report.sliId | Should -Be "engine.validate-release.wall-time"
+        $report.stepName | Should -Be "Validate release (canonical full run)"
+        $report.command | Should -Be "pwsh scripts/validate-release.ps1"
+        $report.status | Should -Be "passed"
+        $report.elapsedMilliseconds | Should -Be 1234.5678
+        $report.targetMilliseconds | Should -Be 1500000
+        $report.capturedFromCommit | Should -Not -BeNullOrEmpty
+    }
+
+    It "fails before writing a passed timing report when elapsed time exceeds target" {
+        {
+            Write-SreReleaseValidationStepTiming `
+                -FileName "validate-release-wall-time.json" `
+                -SliId "engine.validate-release.wall-time" `
+                -StepName "Validate release (canonical full run)" `
+                -Command "pwsh scripts/validate-release.ps1" `
+                -ElapsedMilliseconds 1500000.1 `
+                -TargetMilliseconds 1500000 `
+                -OutputPath $script:tempRoot
+        } | Should -Throw "*exceeded target*"
+
+        Test-Path -LiteralPath (Join-Path $script:tempRoot "validate-release-wall-time.json") | Should -BeFalse
+    }
+}
+
 Describe "validate-release.ps1 scorecard readback" {
     BeforeEach {
         $script:tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) "cephalon-validate-release-$([System.Guid]::NewGuid().ToString('N'))"
