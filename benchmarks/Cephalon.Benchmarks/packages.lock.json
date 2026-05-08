@@ -466,6 +466,13 @@
           "Cephalon.Abstractions": "[0.1.0-preview, )"
         }
       },
+      "cephalon.worker": {
+        "type": "Project",
+        "dependencies": {
+          "Cephalon.Diagnostics": "[0.1.0-preview, )",
+          "Cephalon.Engine": "[0.1.0-preview, )"
+        }
+      },
       "Microsoft.AspNetCore.OpenApi": {
         "type": "CentralTransitive",
         "requested": "[10.0.5, )",

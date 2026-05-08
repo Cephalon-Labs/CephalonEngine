@@ -32,6 +32,7 @@
     <ProjectReference Include="..\..\src\Cephalon.Ids.Sfid\Cephalon.Ids.Sfid.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.MultiTenancy\Cephalon.MultiTenancy.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Scaffolding\Cephalon.Scaffolding.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Worker\Cephalon.Worker.csproj" />
   </ItemGroup>
 
   <ItemGroup>

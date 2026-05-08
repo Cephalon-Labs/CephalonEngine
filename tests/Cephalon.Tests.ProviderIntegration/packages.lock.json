@@ -1724,6 +1724,7 @@
           "Cephalon.Ids.Sfid": "[0.1.0-preview, )",
           "Cephalon.MultiTenancy": "[0.1.0-preview, )",
           "Cephalon.Scaffolding": "[0.1.0-preview, )",
+          "Cephalon.Worker": "[0.1.0-preview, )",
           "Microsoft.AspNetCore.TestHost": "[10.0.5, )"
         }
       },
