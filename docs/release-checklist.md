@@ -39,6 +39,7 @@ Cross-references: [`package-publishing.md`](package-publishing.md), [`supply-cha
     12. **Public-API delta summary** through `scripts/summarise-public-api-deltas.ps1 -JsonOutputPath <path> -FailOnRemovals` (per `ENG-352` / `ENG-495` / `ENG-496`)
 - [ ] Every step finishes with `0 Warning(s), 0 Error(s)`; benchmark guardrails report no regression beyond the configured allowance
 - [ ] The release-validation GitHub Actions workflow ([`release-validation.yml`](../.github/workflows/release-validation.yml)) passes on both `windows-latest` and `ubuntu-latest`; the `dotnet11-readiness` job passes against the `.NET 11` SDK preview
+- [ ] The provider live Testcontainers workflow ([`provider-live-testcontainers.yml`](../.github/workflows/provider-live-testcontainers.yml)) is green for the release branch or has an explicit release-manager exception recorded. This workflow runs [`scripts/run-provider-live-testcontainers.ps1`](../scripts/run-provider-live-testcontainers.ps1) on Docker-capable `ubuntu-latest` matrix jobs for Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant; it is separate from release validation so the default lane remains Docker-free.
 
 ## Conformance and maturity truth
 

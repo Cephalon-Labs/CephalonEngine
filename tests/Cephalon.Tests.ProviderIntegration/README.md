@@ -76,6 +76,15 @@ $env:CEPHALON_PROVIDER_TESTCONTAINERS = '1'
 dotnet test .\tests\Cephalon.Tests.ProviderIntegration\Cephalon.Tests.ProviderIntegration.csproj --no-restore --filter FullyQualifiedName~LiveDataProviderIntegrationTests --logger "console;verbosity=normal"
 ```
 
+For release-manager or CI execution, prefer the shared script so the provider matrix, Docker preflight, locked restore, test filters, and result directories stay consistent:
+
+```powershell
+.\scripts\run-provider-live-testcontainers.ps1 -Providers All -Configuration Release
+.\scripts\run-provider-live-testcontainers.ps1 -Providers Nats -Configuration Release
+```
+
+The scheduled/manual GitHub Actions lane, `.github/workflows/provider-live-testcontainers.yml`, runs the same script on `ubuntu-latest` with one matrix job per provider. It is intentionally separate from release validation so default CI remains deterministic and Docker-free, while Docker-capable runners can still prove Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant against real disposable provider services.
+
 ## Redis live lane
 
 `RedisProviderIntegrationTests.RedisProvider_StagesOutboxInboxDispatchAndEventStreamAgainstLiveRedis` proves the Redis data companion and Redis event-sourcing companion against a live Redis service.

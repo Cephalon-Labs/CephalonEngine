@@ -54,8 +54,11 @@ The durable rule book lives in [`release-checklist.md`](release-checklist.md). T
 - [ ] Package artefact publishing ✅
 - [ ] Public-API delta summary with removal gate ✅
 - [ ] GitHub Actions [`release-validation.yml`](../.github/workflows/release-validation.yml) green on `windows-latest` + `ubuntu-latest` + `dotnet11-readiness`
+- [ ] GitHub Actions [`provider-live-testcontainers.yml`](../.github/workflows/provider-live-testcontainers.yml) green for Cassandra / ClickHouse / Elasticsearch / NATS / Neo4j / OpenSearch / Qdrant, or release-manager exception recorded
 
 **Workflow run URL:** _link to the green CI run_
+
+**Provider live workflow run URL:** _link to the green provider Testcontainers run or exception note_
 
 ## 4. Conformance and maturity truth
 
