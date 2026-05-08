@@ -60,11 +60,11 @@ BeforeAll {
             SrePostureEvidence = [ordered]@{
                 SliCount = 11
                 TargetDeclaredCount = 11
-                PendingStableBaselineCount = 5
-                StableBaselineCount = 6
+                PendingStableBaselineCount = 4
+                StableBaselineCount = 7
                 StableBaselineManifest = "scripts/sre-stable-baselines.json"
-                StableBaselineRowCount = 6
-                StableBaselineMeasurementCount = 8
+                StableBaselineRowCount = 7
+                StableBaselineMeasurementCount = 9
                 GuardrailMappedSliCount = 6
                 GuardrailPendingSliCount = 0
                 GuardrailNotApplicableSliCount = 5
@@ -174,7 +174,7 @@ Describe "validate-release.ps1 scorecard readback" {
 
         $output | Should -Match "Deployment-mode evidence: 3 global claims; not-claimed 3; package-scoped claim packages 1; known hazards 14; transitive audit entries 7; publish probes single-file-publish-gate; claims report artifacts/deployment-mode-claims-release/claim-validation-report\.json; gate passed; targets 5; warnings 0; errors 0; truthful package claims 1; overstated package claims 0\."
         $output | Should -Match "Provider integration evidence: 32 rows; live proofs 32; composition-only 0; external-service gates 13; default-skipped 13; runtime contracts 94; dependency-health providers 18 from scripts/observability-dependency-health-providers\.json schema 1\.0\.0 \(source-derived-provider-family-contract\)\."
-        $output | Should -Match "SRE posture: 11 SLIs; target-declared 11; pending stable baselines 5; stable baselines 6; stable baseline rows 6; stable baseline measurements 8; guardrail-mapped 6; pending guardrail coverage 0; guardrail not-applicable 5; summary mode release-validation-console-and-scorecard-artifact; stable baseline manifest scripts/sre-stable-baselines\.json\."
+        $output | Should -Match "SRE posture: 11 SLIs; target-declared 11; pending stable baselines 4; stable baselines 7; stable baseline rows 7; stable baseline measurements 9; guardrail-mapped 6; pending guardrail coverage 0; guardrail not-applicable 5; summary mode release-validation-console-and-scorecard-artifact; stable baseline manifest scripts/sre-stable-baselines\.json\."
         $output | Should -Match "Engine completion scorecard hard-blocker gate: no blocked platform gates"
     }
 

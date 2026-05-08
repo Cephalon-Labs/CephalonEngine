@@ -1,7 +1,7 @@
 {
-  "$schemaVersion": "1.4.0",
+  "$schemaVersion": "1.5.0",
   "status": "partial-stable-baseline-published",
-  "summary": "Engine SLI and SLO targets are declared; benchmark-backed stable baselines are published for the guardrail-mapped subset, the deployment-mode claim-truth SLI has a release-validation claims-report stable baseline, restore locked-mode wall time now has a release-validation timing baseline, and cold-start SLIs are guardrail-mapped but remain pending stable baselines until their optimization lane meets the tighter SLO.",
+  "summary": "Engine SLI and SLO targets are declared; benchmark-backed stable baselines are published for the guardrail-mapped subset, the deployment-mode claim-truth SLI has a release-validation claims-report stable baseline, restore locked-mode wall time and reference-docs wall time have release-validation timing baselines, and cold-start SLIs are guardrail-mapped but remain pending stable baselines until their optimization lane meets the tighter SLO.",
   "releaseValidationSummaryMode": "release-validation-console-and-scorecard-artifact",
   "stableBaselinesPublished": true,
   "stableBaselineManifest": "scripts/sre-stable-baselines.json",
@@ -156,7 +156,7 @@
       "sloTarget": "<= 5 minutes on the canonical reference-build agent",
       "window": "30-day rolling",
       "targetStatus": "target-declared",
-      "baselineStatus": "pending-stable-baseline",
+      "baselineStatus": "stable-baseline-published",
       "guardrailCoverageStatus": "not-applicable",
       "guardrailReferences": []
     },
