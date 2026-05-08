@@ -24,6 +24,10 @@ name: Publish Release
 #     repository, this workflow file, and the v*.*.* tag pattern
 #   - reserve the Cephalon.* prefix on nuget.org once a stable GA cut is
 #     coming so prefix protection lines up with the first 1.0.0 release
+#   - set the NUGET_USER repository secret and the
+#     CEPHALON_NUGET_TRUSTED_PUBLISHING_POLICY_CONFIRMED /
+#     CEPHALON_NUGET_PREFIX_RESERVATION_CONFIRMED repository variables after
+#     the external nuget.org policy is actually configured
 #
 # This workflow is intentionally additive over release-validation.yml. It
 # does not replace the per-PR validation gate; it publishes only on a tag.
@@ -81,6 +85,29 @@ jobs:
         shell: pwsh
         run: |
           Install-Module -Name Pester -MinimumVersion 5.0.0 -Scope CurrentUser -Force -SkipPublisherCheck
+
+      - name: Determine push mode
+        id: push-mode
+        shell: pwsh
+        run: |
+          $isTag = $env:GITHUB_REF -like 'refs/tags/v*'
+          $dispatchDryRun = '${{ github.event.inputs.dry_run }}'
+          if ($isTag -and ($dispatchDryRun -ne 'true')) {
+            'push=true' | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+            Write-Host '==> Tag push detected; will push packages to nuget.org via trusted publishing.'
+          } else {
+            'push=false' | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+            Write-Host '==> Dry-run mode; skipping nuget.org push.'
+          }
+
+      - name: Validate supply-chain external policy preflight
+        if: steps.push-mode.outputs.push == 'true'
+        shell: pwsh
+        env:
+          NUGET_USER: ${{ secrets.NUGET_USER }}
+          CEPHALON_NUGET_TRUSTED_PUBLISHING_POLICY_CONFIRMED: ${{ vars.CEPHALON_NUGET_TRUSTED_PUBLISHING_POLICY_CONFIRMED }}
+          CEPHALON_NUGET_PREFIX_RESERVATION_CONFIRMED: ${{ vars.CEPHALON_NUGET_PREFIX_RESERVATION_CONFIRMED }}
+        run: ./scripts/validate-supply-chain-external-policy-preflight.ps1 -RequireAll
 
       - name: Run release validation (build + tests + benchmarks + reference docs + packages)
         shell: pwsh
@@ -166,7 +193,8 @@ jobs:
           $artifactRoots = @(
             'artifacts/packages-release',
             'artifacts/sboms-release',
-            'artifacts/signatures-release'
+            'artifacts/signatures-release',
+            'artifacts/supply-chain-external-policy'
           )
           foreach ($root in $artifactRoots) {
             if (-not (Test-Path -LiteralPath $root)) { continue }
@@ -209,19 +237,13 @@ jobs:
           path: artifacts/release-bundle
           if-no-files-found: error
 
-      - name: Determine push mode
-        id: push-mode
-        shell: pwsh
-        run: |
-          $isTag = $env:GITHUB_REF -like 'refs/tags/v*'
-          $dispatchDryRun = '${{ github.event.inputs.dry_run }}'
-          if ($isTag -and ($dispatchDryRun -ne 'true')) {
-            'push=true' | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-            Write-Host '==> Tag push detected; will push packages to nuget.org via trusted publishing.'
-          } else {
-            'push=false' | Out-File -FilePath $env:GITHUB_OUTPUT -Append
-            Write-Host '==> Dry-run mode; skipping nuget.org push.'
-          }
+      - name: Upload supply-chain external policy preflight
+        if: steps.push-mode.outputs.push == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: supply-chain-external-policy
+          path: artifacts/supply-chain-external-policy
+          if-no-files-found: error
 
       - name: NuGet trusted publishing (login)
         if: steps.push-mode.outputs.push == 'true'

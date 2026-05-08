@@ -17,7 +17,7 @@ internal static class DoctorCommand
     private const string DotNetSdkDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/sdk:";
     private const string DotNetAspNetDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/aspnet:";
     private const string TemplatePackCustomHiveEnvironmentVariable = "CEPHALON_DOCTOR_TEMPLATE_HIVE";
-    private const string RequiredScorecardSchemaVersion = "1.11.0";
+    private const string RequiredScorecardSchemaVersion = "1.12.0";
 
     private static readonly string[] ExpectedTemplateShortNames =
     [
@@ -845,6 +845,7 @@ internal static class DoctorCommand
         var supplyChainEvidenceItemCount = GetRequiredScorecardInt(summary, "SupplyChainEvidenceItemCount", errors);
         var supplyChainWorkflowReadyCount = GetRequiredScorecardInt(summary, "SupplyChainWorkflowReadyCount", errors);
         var supplyChainExternalPolicyPendingCount = GetRequiredScorecardInt(summary, "SupplyChainExternalPolicyPendingCount", errors);
+        var supplyChainExternalPolicyPreflightCheckCount = GetRequiredScorecardInt(summary, "SupplyChainExternalPolicyPreflightCheckCount", errors);
         var supplyChainBlockedCount = GetRequiredScorecardInt(summary, "SupplyChainBlockedCount", errors);
         var publicApiPackageCount = GetRequiredScorecardInt(summary, "PublicApiPackageCount", errors);
         var publicApiPendingPackageCount = GetRequiredScorecardInt(summary, "PublicApiPendingPackageCount", errors);
@@ -914,6 +915,20 @@ internal static class DoctorCommand
         var evidenceSupplyChainEvidenceItemCount = GetRequiredScorecardInt(supplyChainEvidence, "EvidenceItemCount", errors, "SupplyChainEvidence");
         var evidenceSupplyChainWorkflowReadyCount = GetRequiredScorecardInt(supplyChainEvidence, "WorkflowReadyCount", errors, "SupplyChainEvidence");
         var evidenceSupplyChainExternalPolicyPendingCount = GetRequiredScorecardInt(supplyChainEvidence, "ExternalPolicyPendingCount", errors, "SupplyChainEvidence");
+        var evidenceSupplyChainExternalPolicyPreflightCheckCount = GetRequiredScorecardInt(supplyChainEvidence, "ExternalPolicyPreflightCheckCount", errors, "SupplyChainEvidence");
+        var supplyChainExternalPolicyPreflight = supplyChainEvidence?["ExternalPolicyPreflight"];
+        if (supplyChainExternalPolicyPendingCount > 0 && supplyChainExternalPolicyPreflight is null)
+        {
+            errors.Add("SupplyChainEvidence.ExternalPolicyPreflight");
+        }
+
+        var evidenceSupplyChainExternalPolicyPreflightStatus = supplyChainExternalPolicyPreflight is null
+            ? "not-required"
+            : GetRequiredScorecardString(
+                supplyChainExternalPolicyPreflight,
+                "Status",
+                errors,
+                "SupplyChainEvidence.ExternalPolicyPreflight") ?? "unknown";
         var evidenceSupplyChainBlockedCount = GetRequiredScorecardInt(supplyChainEvidence, "BlockedCount", errors, "SupplyChainEvidence");
         var evidencePublicApiPackageCount = GetRequiredScorecardInt(publicApiCompatibilityEvidence, "PackageCount", errors, "PublicApiCompatibilityEvidence");
         var evidencePublicApiPendingPackageCount = GetRequiredScorecardInt(publicApiCompatibilityEvidence, "PendingPackageCount", errors, "PublicApiCompatibilityEvidence");
@@ -1003,6 +1018,7 @@ internal static class DoctorCommand
         if (supplyChainEvidenceItemCount != evidenceSupplyChainEvidenceItemCount ||
             supplyChainWorkflowReadyCount != evidenceSupplyChainWorkflowReadyCount ||
             supplyChainExternalPolicyPendingCount != evidenceSupplyChainExternalPolicyPendingCount ||
+            supplyChainExternalPolicyPreflightCheckCount != evidenceSupplyChainExternalPolicyPreflightCheckCount ||
             supplyChainBlockedCount != evidenceSupplyChainBlockedCount)
         {
             checks.Add(new DoctorCheck(
@@ -1112,10 +1128,10 @@ internal static class DoctorCommand
         checks.Add(new DoctorCheck(
             supplyChainSeverity,
             "Engine completion scorecard supply-chain release evidence",
-            $"{supplyChainEvidenceItemCount} items; workflow-ready {supplyChainWorkflowReadyCount}, external-policy-pending {supplyChainExternalPolicyPendingCount}, blocked {supplyChainBlockedCount}.",
+            $"{supplyChainEvidenceItemCount} items; workflow-ready {supplyChainWorkflowReadyCount}, external-policy-pending {supplyChainExternalPolicyPendingCount}, preflight checks {supplyChainExternalPolicyPreflightCheckCount}, preflight status {evidenceSupplyChainExternalPolicyPreflightStatus}, blocked {supplyChainBlockedCount}.",
             supplyChainSeverity == DoctorCheckSeverity.Pass
                 ? null
-                : "Treat workflow-ready evidence as release-readiness posture only; complete nuget.org-side trusted publishing, prefix reservation, and repository secret policy before a real tag push."));
+                : "Treat workflow-ready evidence as release-readiness posture only; complete nuget.org-side trusted publishing, prefix reservation, repository secret policy, and the fail-closed publish-workflow preflight before a real tag push."));
 
         var publicApiSeverity = publicApiRemovalEntryCount > 0
             ? DoctorCheckSeverity.Warning

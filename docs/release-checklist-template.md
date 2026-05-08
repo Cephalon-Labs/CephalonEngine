@@ -46,7 +46,7 @@ The durable rule book lives in [`release-checklist.md`](release-checklist.md). T
 - [ ] Tests (Composition + Hosting + Tooling) ✅
 - [ ] `.NET 11` readiness contract ✅
 - [ ] Deployment-mode claim audit + gated `singleFile` publish probe ✅
-- [ ] Engine completion scorecard artifact + source references + per-package GA rows + deployment-mode evidence including generated claims-report gate/target/warning/error/package-claim readback + adoption-smoke evidence + provider-integration evidence including dependency-health provider-manifest release-validation/doctor readback + SRE posture evidence including guardrail coverage counts, stable-baseline manifest readback, and pending-baseline blocker rows + supply-chain release evidence + public API compatibility evidence + optional `cephalon doctor --scorecard artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json` readback with deployment-mode claims-report, provider integration, dependency-health provider-manifest, SRE, supply-chain, and public API counts ✅
+- [ ] Engine completion scorecard artifact + source references + per-package GA rows + deployment-mode evidence including generated claims-report gate/target/warning/error/package-claim readback + adoption-smoke evidence + provider-integration evidence including dependency-health provider-manifest release-validation/doctor readback + SRE posture evidence including guardrail coverage counts, stable-baseline manifest readback, and pending-baseline blocker rows + supply-chain release evidence including external-policy preflight count/status + public API compatibility evidence + optional `cephalon doctor --scorecard artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json` readback with deployment-mode claims-report, provider integration, dependency-health provider-manifest, SRE, supply-chain preflight, and public API counts ✅
 - [ ] Operational health + export conventions ✅
 - [ ] Phase-8 architecture / runtime / starter conventions ✅
 - [ ] Benchmark smoke + guardrails ✅
@@ -62,7 +62,7 @@ The durable rule book lives in [`release-checklist.md`](release-checklist.md). T
 
 ## 4. Conformance and maturity truth
 
-- [ ] [`docs/engine-completion-scorecard.md`](engine-completion-scorecard.md) reviewed; generated scorecard artifact, source references, per-package GA rows, deployment-mode evidence plus generated claims-report gate/target/warning/error/package-claim readback, adoption-smoke evidence, provider-integration evidence with dependency-health provider-manifest release-validation/doctor readback, SRE posture evidence including benchmark guardrail coverage mappings plus stable-baseline manifest rows/measurements/pending ids and pending-baseline blocker rows, supply-chain release evidence, public API compatibility evidence, release-validation and optional `cephalon doctor --scorecard` summaries with deployment-mode claims-report, provider integration, dependency-health provider-manifest, SRE, supply-chain, and public API counts, and gate posture match the owning source docs
+- [ ] [`docs/engine-completion-scorecard.md`](engine-completion-scorecard.md) reviewed; generated scorecard artifact, source references, per-package GA rows, deployment-mode evidence plus generated claims-report gate/target/warning/error/package-claim readback, adoption-smoke evidence, provider-integration evidence with dependency-health provider-manifest release-validation/doctor readback, SRE posture evidence including benchmark guardrail coverage mappings plus stable-baseline manifest rows/measurements/pending ids and pending-baseline blocker rows, supply-chain release evidence including external-policy preflight count/status, public API compatibility evidence, release-validation and optional `cephalon doctor --scorecard` summaries with deployment-mode claims-report, provider integration, dependency-health provider-manifest, SRE, supply-chain preflight, and public API counts, and gate posture match the owning source docs
 - [ ] [`docs/engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md) Current-audit table reflects shipped state
 - [ ] [`docs/conformance-matrix.md`](conformance-matrix.md) per-family tables + Family summary at a glance match the audit
 - [ ] [`docs/runtime-contract-index.md`](runtime-contract-index.md) `/engine/*` route catalog reflects every shipped route
@@ -80,8 +80,10 @@ The durable rule book lives in [`release-checklist.md`](release-checklist.md). T
 - [ ] nuget.org trusted-publishing policy in place (repo + workflow + tag pattern)
 - [ ] (At GA only) `Cephalon.*` prefix reserved on nuget.org
 - [ ] `NUGET_USER` repository secret configured
+- [ ] `CEPHALON_NUGET_TRUSTED_PUBLISHING_POLICY_CONFIRMED=true` and `CEPHALON_NUGET_PREFIX_RESERVATION_CONFIRMED=true` protected repository variables configured after the release manager confirms nuget.org policy state
 - [ ] **Dry-run pass** via [`publish-release.yml`](../.github/workflows/publish-release.yml) `workflow_dispatch` with `dry_run: true`
 - [ ] **Tag pushed** (`git tag v?.?.?` + `git push origin v?.?.?`); workflow runs end-to-end
+- [ ] External-policy preflight report (`artifacts/supply-chain-external-policy/external-policy-preflight.json`) reports `passed` before NuGet login ✅
 - [ ] SLSA v1.1 build provenance attestation generated per `.nupkg` ✅
 - [ ] Sigstore Cosign keyless signature + Rekor entry per `.nupkg` ✅
 - [ ] CycloneDX SBOM per `Cephalon.*` project ✅

@@ -126,7 +126,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
 
         $json = Get-Content -LiteralPath $result.Paths.JsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
 
-        $json.'$schemaVersion' | Should -Be "1.11.0"
+        $json.'$schemaVersion' | Should -Be "1.12.0"
         $json.SourceDocument | Should -Be "docs/engine-completion-scorecard.md"
         $json.ConformanceMatrix | Should -Be "docs/conformance-matrix.md"
         $json.DeploymentModeManifest | Should -Be "scripts/deployment-mode-support.json"
@@ -138,7 +138,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.PublicApiDeltaScript | Should -Be "scripts/summarise-public-api-deltas.ps1"
         $json.StatusVocabulary.Count | Should -Be 6
         $json.EvidenceSources.Count | Should -Be 13
-        $json.EvidenceSourceReferences.Count | Should -Be 24
+        $json.EvidenceSourceReferences.Count | Should -Be 25
         $json.PlatformGates.Count | Should -Be 12
         $json.QualityDimensions.Count | Should -Be 12
         $json.PackageFamilies.Count | Should -Be 9
@@ -185,13 +185,14 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.SupplyChainEvidenceItemCount | Should -Be 10
         $json.Summary.SupplyChainWorkflowReadyCount | Should -Be 7
         $json.Summary.SupplyChainExternalPolicyPendingCount | Should -Be 3
+        $json.Summary.SupplyChainExternalPolicyPreflightCheckCount | Should -Be 3
         $json.Summary.SupplyChainBlockedCount | Should -Be 0
         $json.Summary.PublicApiPackageCount | Should -Be 104
         $json.Summary.PublicApiPendingPackageCount | Should -Be 0
         $json.Summary.PublicApiAdditiveEntryCount | Should -Be 0
         $json.Summary.PublicApiRemovalEntryCount | Should -Be 0
         $json.Summary.EvidenceSourceCount | Should -Be 13
-        $json.Summary.EvidenceSourceReferenceCount | Should -Be 24
+        $json.Summary.EvidenceSourceReferenceCount | Should -Be 25
         $json.Summary.PlatformStatusCounts.'ready-for-preview' | Should -Be 3
         $json.Summary.PlatformStatusCounts.partial | Should -Be 7
         $json.Summary.PlatformStatusCounts.'not-claimed' | Should -Be 1
@@ -428,17 +429,30 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $aspNetCoreColdStartBaseline.Measurements.GuardrailMaxAllocatedBytes | Should -Be 30000000
         $requestAllocationBaseline.Measurements.AllocatedBytes | Should -Contain 27914.24
 
-        $json.SupplyChainEvidence.ManifestSchemaVersion | Should -Be "1.0.0"
+        $json.SupplyChainEvidence.ManifestSchemaVersion | Should -Be "1.1.0"
         $json.SupplyChainEvidence.Status | Should -Be "workflow-ready-external-policy-pending"
         $json.SupplyChainEvidence.ReleaseWorkflow | Should -Be ".github/workflows/publish-release.yml"
         $json.SupplyChainEvidence.SourceDocuments | Should -Contain "docs/package-publishing.md"
         $json.SupplyChainEvidence.SourceDocuments | Should -Contain "docs/supply-chain-uplift-plan.md"
         $json.SupplyChainEvidence.ValidationScripts | Should -Contain "scripts/validate-release.ps1"
+        $json.SupplyChainEvidence.ValidationScripts | Should -Contain "scripts/validate-supply-chain-external-policy-preflight.ps1"
         $json.SupplyChainEvidence.RequiredWorkflowTokens | Should -Contain "actions/attest-build-provenance"
         $json.SupplyChainEvidence.RequiredWorkflowTokens | Should -Contain "NuGet/login"
+        $json.SupplyChainEvidence.RequiredWorkflowTokens | Should -Contain "Validate supply-chain external policy preflight"
+        $json.SupplyChainEvidence.RequiredWorkflowTokens | Should -Contain "CEPHALON_NUGET_TRUSTED_PUBLISHING_POLICY_CONFIRMED"
+        $json.SupplyChainEvidence.RequiredWorkflowTokens | Should -Contain "CEPHALON_NUGET_PREFIX_RESERVATION_CONFIRMED"
         $json.SupplyChainEvidence.EvidenceItemCount | Should -Be 10
         $json.SupplyChainEvidence.WorkflowReadyCount | Should -Be 7
         $json.SupplyChainEvidence.ExternalPolicyPendingCount | Should -Be 3
+        $json.SupplyChainEvidence.ExternalPolicyPreflightCheckCount | Should -Be 3
+        $json.SupplyChainEvidence.ExternalPolicyPreflight.Status | Should -Be "required-before-real-tag-push"
+        $json.SupplyChainEvidence.ExternalPolicyPreflight.ValidationScript | Should -Be "scripts/validate-supply-chain-external-policy-preflight.ps1"
+        $json.SupplyChainEvidence.ExternalPolicyPreflight.OutputPath | Should -Be "artifacts/supply-chain-external-policy/external-policy-preflight.json"
+        $json.SupplyChainEvidence.ExternalPolicyPreflight.RequiredCheckCount | Should -Be 3
+        $json.SupplyChainEvidence.ExternalPolicyPreflight.RequiredChecks.EvidenceItemId | Should -Contain "nuget-trusted-publishing-policy"
+        $json.SupplyChainEvidence.ExternalPolicyPreflight.RequiredChecks.EvidenceItemId | Should -Contain "nuget-prefix-reservation"
+        $json.SupplyChainEvidence.ExternalPolicyPreflight.RequiredChecks.EvidenceItemId | Should -Contain "nuget-user-secret"
+        $json.SupplyChainEvidence.ExternalPolicyPreflight.ReleaseWorkflowTokens | Should -Contain "-RequireAll"
         $json.SupplyChainEvidence.BlockedCount | Should -Be 0
         $json.SupplyChainEvidence.EvidenceItems.Id | Should -Contain "cyclonedx-sbom-per-package"
         $json.SupplyChainEvidence.EvidenceItems.Id | Should -Contain "nuget-trusted-publishing-policy"
@@ -501,6 +515,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "Guardrail coverage"
         $markdown | Should -Match "Supply-Chain Release Evidence"
         $markdown | Should -Match "Supply-chain evidence items: 10"
+        $markdown | Should -Match "External-Policy Preflight"
+        $markdown | Should -Match "External-policy preflight checks: 3"
         $markdown | Should -Match "external-policy-pending"
         $markdown | Should -Match "Public API Compatibility Evidence"
         $markdown | Should -Match "Public API packages with pending changes: 0"
@@ -1096,6 +1112,59 @@ jobs:
         } | Should -Throw "*does not contain required token 'CycloneDX'*"
     }
 
+    It "fails when external-policy-pending supply-chain evidence lacks a preflight contract" {
+        $fixtureRoot = Join-Path $script:tempRoot "supply-chain-preflight-fixture"
+        $scriptsRoot = Join-Path $fixtureRoot "scripts"
+        $docsRoot = Join-Path $fixtureRoot "docs"
+        $workflowRoot = Join-Path $fixtureRoot ".github\workflows"
+        New-Item -ItemType Directory -Path $scriptsRoot -Force | Out-Null
+        New-Item -ItemType Directory -Path $docsRoot -Force | Out-Null
+        New-Item -ItemType Directory -Path $workflowRoot -Force | Out-Null
+
+        Set-Content -LiteralPath (Join-Path $workflowRoot "publish-release.yml") -Value @'
+name: Publish Release
+permissions:
+  id-token: write
+jobs:
+  publish:
+    steps:
+      - name: NuGet trusted publishing (login)
+        uses: NuGet/login@v1
+'@ -Encoding UTF8
+
+        Set-Content -LiteralPath (Join-Path $docsRoot "package-publishing.md") -Value "# Package publishing fixture`nNuGet trusted-publishing login" -Encoding UTF8
+        Set-Content -LiteralPath (Join-Path $scriptsRoot "validate-release.ps1") -Value "# release validation fixture" -Encoding UTF8
+
+        $manifestPath = Join-Path $scriptsRoot "supply-chain-release-support.json"
+        @{
+            '$schemaVersion' = "1.1.0"
+            status = "workflow-ready-external-policy-pending"
+            summary = "fixture"
+            releaseWorkflow = ".github/workflows/publish-release.yml"
+            sourceDocs = @("docs/package-publishing.md")
+            validationScripts = @("scripts/validate-release.ps1")
+            requiredWorkflowTokens = @("NuGet/login")
+            evidenceItems = @(
+                @{
+                    id = "nuget-trusted-publishing-policy"
+                    category = "publisher-identity"
+                    status = "external-policy-pending"
+                    summary = "fixture"
+                    sourceDocument = "docs/package-publishing.md"
+                    sourceToken = "NuGet trusted-publishing login"
+                    workflowTokens = @("NuGet/login")
+                    externalPolicyRequired = $true
+                }
+            )
+        } | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $manifestPath -Encoding UTF8
+
+        {
+            Convert-SupplyChainEvidence `
+                -ResolvedManifestPath $manifestPath `
+                -ResolvedRepoRoot $fixtureRoot
+        } | Should -Throw "*must declare externalPolicyPreflight when external-policy-pending evidence items exist*"
+    }
+
     It "fails when the status vocabulary contains an unsupported status" {
         $fixtureRoot = Join-Path $script:tempRoot "fixture"
         $docsRoot = Join-Path $fixtureRoot "docs"
@@ -1229,6 +1298,8 @@ jobs:
         $releaseValidation | Should -Match "guardrail-mapped"
         $releaseValidation | Should -Match "SupplyChainEvidence"
         $releaseValidation | Should -Match "Supply-chain release evidence"
+        $releaseValidation | Should -Match "external policy preflight checks"
+        $releaseValidation | Should -Match "SupplyChainEvidence\.ExternalPolicyPreflight"
         $releaseValidation | Should -Match "PublicApiCompatibilityEvidence"
         $releaseValidation | Should -Match "Public API compatibility"
         $releaseValidation | Should -Match "Assert-EngineCompletionScorecardHardBlockers"
