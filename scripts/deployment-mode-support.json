@@ -281,27 +281,27 @@
         "knownHazards": [
           {
             "kind": "reflection-by-design-type-introspection",
-            "site": "src/Cephalon.ReferenceDocs/Generation/ReferenceDocsGenerator.cs:295",
+            "site": "src/Cephalon.ReferenceDocs/Generation/ReferenceDocsGenerator.cs:297",
             "pattern": "type.GetConstructors(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly) over an arbitrary runtime Type parameter — by-design enumeration of the public-and-static constructors of any type the generator is asked to document, used to emit per-constructor MemberPage entries",
             "remediation": "Permanent not-claimed posture for the package (the high-tier remediation alternative). The package's purpose is type-introspection of arbitrary referenced assemblies, so a source-generator-emitted descriptor table cannot replace this reflection without removing the package's reason to exist. The csproj already declares IsTrimmable=false; IsAotCompatible=false; PublishTrimmed=false; PublishAot=false; PublishSingleFile=false, and the manifest Pester suite verifies those requiredProjectProperties against the project file."
           },
           {
             "kind": "reflection-by-design-type-introspection",
-            "site": "src/Cephalon.ReferenceDocs/Generation/ReferenceDocsGenerator.cs:301",
+            "site": "src/Cephalon.ReferenceDocs/Generation/ReferenceDocsGenerator.cs:303",
             "pattern": "type.GetFields(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly) over an arbitrary runtime Type parameter — by-design enumeration of the public-and-static fields, used to emit per-field MemberPage entries",
-            "remediation": "Same permanent not-claimed posture as the line-295 entry."
+            "remediation": "Same permanent not-claimed posture as the line-297 entry."
           },
           {
             "kind": "reflection-by-design-type-introspection",
-            "site": "src/Cephalon.ReferenceDocs/Generation/ReferenceDocsGenerator.cs:308",
+            "site": "src/Cephalon.ReferenceDocs/Generation/ReferenceDocsGenerator.cs:310",
             "pattern": "type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly) over an arbitrary runtime Type parameter — by-design enumeration of the public-and-static properties, used to emit per-property MemberPage entries",
-            "remediation": "Same permanent not-claimed posture as the line-295 entry."
+            "remediation": "Same permanent not-claimed posture as the line-297 entry."
           },
           {
             "kind": "reflection-by-design-type-introspection",
-            "site": "src/Cephalon.ReferenceDocs/Generation/ReferenceDocsGenerator.cs:313",
+            "site": "src/Cephalon.ReferenceDocs/Generation/ReferenceDocsGenerator.cs:315",
             "pattern": "type.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly) over an arbitrary runtime Type parameter — by-design enumeration of the public-and-static methods, used to emit per-method MemberPage entries",
-            "remediation": "Same permanent not-claimed posture as the line-295 entry."
+            "remediation": "Same permanent not-claimed posture as the line-297 entry."
           }
         ],
         "evidence": "docs/trim-aot-hazard-inventory.md (high tier — by-design type-introspection in the published documentation generator; permanent not-claimed posture is the intended durable answer rather than a structural rewrite; csproj posture properties declared via ENG-439; ENG-494 confirms this is a resolved package-level support boundary, not an open global remediation blocker)",

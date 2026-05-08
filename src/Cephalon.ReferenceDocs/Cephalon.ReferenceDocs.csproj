@@ -10,7 +10,7 @@
       enumerate the public API surface of arbitrary referenced Cephalon.* runtime
       assemblies through type.GetConstructors / GetFields / GetProperties / GetMethods
       over arbitrary runtime Type parameters
-      (Generation/ReferenceDocsGenerator.cs:295/301/308/313). That reflection is
+      (Generation/ReferenceDocsGenerator.cs:297/303/310/315). That reflection is
       by-design and cannot be replaced by a source generator without removing the
       package's reason to exist, so the high-tier remediation alternative ("document a
       permanent not-claimed posture for that package") is the durable answer rather
