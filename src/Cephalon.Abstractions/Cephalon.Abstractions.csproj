@@ -2,6 +2,14 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <Description>Contracts for Cephalon modules and capabilities.</Description>
+    <!--
+      ENG-525: package-scoped single-file claim. This host-agnostic contract
+      assembly has no active first-party deployment-mode hazards after the
+      REST wire-name helper cleanup, so the manifest can validate its
+      single-file analyzer posture without widening the global support claim.
+    -->
+    <PublishSingleFile>true</PublishSingleFile>
+    <EnableSingleFileAnalyzer>true</EnableSingleFileAnalyzer>
   </PropertyGroup>
 
   <ItemGroup>

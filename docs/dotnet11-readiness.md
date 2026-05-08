@@ -121,7 +121,7 @@ For those claims to become real support statements, Cephalon must update all of 
 
 Analyzer-only settings are useful readiness signals, but they are not support claims by themselves.
 
-Package-scoped claims follow the same rule at a narrower boundary: the package must be listed in `deploymentModeEligibility.packages`, the scoped `supportedModes` entry must match explicit project properties, and the validation harness must report the package claim separately from global support posture.
+Package-scoped claims follow the same rule at a narrower boundary: the package must be listed in `deploymentModeEligibility.packages`, the scoped `supportedModes` entry must match explicit project properties, and the validation harness must report the package claim separately from global support posture. The current scoped `singleFile` set is `Cephalon.Diagnostics`, `Cephalon.Abstractions`, and `Cephalon.Scaffolding`; that set still does not change the global trim, Native AOT, or single-file support rows.
 
 The machine-readable contract exists so future support claims cannot drift away from what the readiness report and the human-facing docs say.
 
