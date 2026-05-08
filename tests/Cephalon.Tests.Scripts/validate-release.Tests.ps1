@@ -21,11 +21,11 @@ BeforeAll {
 
         $providerIntegrationEvidence = [ordered]@{
             EvidenceRowCount = 32
-            LiveProofCount = 6
-            CompositionOnlyCount = 26
-            ExternalServiceGateCount = 6
-            DefaultSkippedCount = 6
-            RuntimeContractCount = 61
+            LiveProofCount = 14
+            CompositionOnlyCount = 18
+            ExternalServiceGateCount = 13
+            DefaultSkippedCount = 13
+            RuntimeContractCount = 94
         }
 
         if (-not $OmitDependencyHealthProviderManifest) {
@@ -162,7 +162,7 @@ Describe "validate-release.ps1 scorecard readback" {
             Write-EngineCompletionScorecardEvidenceSummary -ScorecardOutputPath $script:tempRoot
         } 6>&1 | Out-String
 
-        $output | Should -Match "Provider integration evidence: 32 rows; live proofs 6; composition-only 26; external-service gates 6; default-skipped 6; runtime contracts 61; dependency-health providers 18 from scripts/observability-dependency-health-providers\.json schema 1\.0\.0 \(source-derived-provider-family-contract\)\."
+        $output | Should -Match "Provider integration evidence: 32 rows; live proofs 14; composition-only 18; external-service gates 13; default-skipped 13; runtime contracts 94; dependency-health providers 18 from scripts/observability-dependency-health-providers\.json schema 1\.0\.0 \(source-derived-provider-family-contract\)\."
         $output | Should -Match "Engine completion scorecard hard-blocker gate: no blocked platform gates"
     }
 

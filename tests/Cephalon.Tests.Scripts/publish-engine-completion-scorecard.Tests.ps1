@@ -81,11 +81,11 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.AdoptionSmokeRuntimeProbeCount | Should -Be 6
         $json.Summary.AdoptionSmokeAssertionCount | Should -Be 7
         $json.Summary.ProviderIntegrationEvidenceRowCount | Should -Be 32
-        $json.Summary.ProviderIntegrationLiveProofCount | Should -Be 7
-        $json.Summary.ProviderIntegrationCompositionOnlyCount | Should -Be 25
-        $json.Summary.ProviderIntegrationExternalServiceGateCount | Should -Be 6
-        $json.Summary.ProviderIntegrationDefaultSkippedCount | Should -Be 6
-        $json.Summary.ProviderIntegrationRuntimeContractCount | Should -Be 64
+        $json.Summary.ProviderIntegrationLiveProofCount | Should -Be 14
+        $json.Summary.ProviderIntegrationCompositionOnlyCount | Should -Be 18
+        $json.Summary.ProviderIntegrationExternalServiceGateCount | Should -Be 13
+        $json.Summary.ProviderIntegrationDefaultSkippedCount | Should -Be 13
+        $json.Summary.ProviderIntegrationRuntimeContractCount | Should -Be 94
         $json.Summary.SreSliCount | Should -Be 11
         $json.Summary.SreTargetDeclaredCount | Should -Be 11
         $json.Summary.SrePendingStableBaselineCount | Should -Be 11
@@ -173,7 +173,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.AdoptionSmokeEvidence.RuntimeProbes.Path | Should -Contain "/api/operations/status"
 
         $json.ProviderIntegrationEvidence.ManifestSchemaVersion | Should -Be "1.0.0"
-        $json.ProviderIntegrationEvidence.Status | Should -Be "partial-live-provider-evidence"
+        $json.ProviderIntegrationEvidence.Status | Should -Be "expanded-live-provider-evidence"
         $json.ProviderIntegrationEvidence.SourceDocuments | Should -Contain "docs/components/observability.md"
         $json.ProviderIntegrationEvidence.SourceDocuments | Should -Contain "scripts/observability-dependency-health-providers.json"
         $json.ProviderIntegrationEvidence.ValidationProjects | Should -Contain "tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj"
@@ -182,21 +182,39 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.ProviderIntegrationEvidence.DependencyHealthProviderManifest.Status | Should -Be "source-derived-provider-family-contract"
         $json.ProviderIntegrationEvidence.DependencyHealthProviderManifest.ProviderCount | Should -Be 18
         $json.ProviderIntegrationEvidence.EvidenceRowCount | Should -Be 32
-        $json.ProviderIntegrationEvidence.LiveProofCount | Should -Be 7
-        $json.ProviderIntegrationEvidence.CompositionOnlyCount | Should -Be 25
-        $json.ProviderIntegrationEvidence.ExternalServiceGateCount | Should -Be 6
-        $json.ProviderIntegrationEvidence.DefaultSkippedCount | Should -Be 6
-        $json.ProviderIntegrationEvidence.RuntimeContractCount | Should -Be 64
-        $json.ProviderIntegrationEvidence.EnvironmentVariableCount | Should -Be 11
+        $json.ProviderIntegrationEvidence.LiveProofCount | Should -Be 14
+        $json.ProviderIntegrationEvidence.CompositionOnlyCount | Should -Be 18
+        $json.ProviderIntegrationEvidence.ExternalServiceGateCount | Should -Be 13
+        $json.ProviderIntegrationEvidence.DefaultSkippedCount | Should -Be 13
+        $json.ProviderIntegrationEvidence.RuntimeContractCount | Should -Be 94
+        $json.ProviderIntegrationEvidence.EnvironmentVariableCount | Should -Be 32
         $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "redis-data-event-sourcing-live"
         $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "mongodb-data-runtime-surface"
+        $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "cassandra-data-runtime-surface"
+        $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "clickhouse-data-runtime-surface"
+        $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "elasticsearch-data-runtime-surface"
+        $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "nats-data-runtime-surface"
+        $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "neo4j-data-runtime-surface"
+        $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "opensearch-data-runtime-surface"
+        $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "qdrant-data-runtime-surface"
         $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "postgres-cdc-live"
         $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "sqlserver-dependency-health-invariant"
         $json.ProviderIntegrationEvidence.ProviderRows.ExternalServiceGate | Should -Contain "provider-integration"
         $json.ProviderIntegrationEvidence.ProviderRows.ExternalServiceGate | Should -Contain "cdc-integration"
         $json.ProviderIntegrationEvidence.ProviderRows.RuntimeContracts | Should -Contain "dependency-health.sqlserver"
+        $json.ProviderIntegrationEvidence.ProviderRows.RuntimeContracts | Should -Contain "IOutbox.EnqueueAsync"
+        $json.ProviderIntegrationEvidence.ProviderRows.RuntimeContracts | Should -Contain "IInbox.HasProcessedAsync"
+        $json.ProviderIntegrationEvidence.ProviderRows.RuntimeContracts | Should -Contain "dispatch-policy.unsupported"
         $json.ProviderIntegrationEvidence.ProviderRows.TestFiles | Should -Contain "tests/Cephalon.Tests.Hosting/ObservabilityDependencyHealthProviderInvariantTests.cs"
+        $json.ProviderIntegrationEvidence.ProviderRows.TestFiles | Should -Contain "tests/Cephalon.Tests.ProviderIntegration/LiveDataProviderIntegrationTests.cs"
         $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_REDIS_CONNECTION_STRING"
+        $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_CASSANDRA_CONTACT_POINTS"
+        $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_CLICKHOUSE_HOST"
+        $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_ELASTICSEARCH_URI"
+        $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_NATS_URI"
+        $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_NEO4J_URI"
+        $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_OPENSEARCH_URI"
+        $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_QDRANT_HOST"
         $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_CDC_POSTGRES_CONNECTION_STRING"
 
         $json.SrePostureEvidence.ManifestSchemaVersion | Should -Be "1.1.0"
@@ -299,7 +317,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "out-of-tree-generated-app-package-stage"
         $markdown | Should -Match "Provider Integration Evidence"
         $markdown | Should -Match "Provider integration evidence rows: 32"
-        $markdown | Should -Match "live proofs: 7"
+        $markdown | Should -Match "live proofs: 14"
         $markdown | Should -Match "dependency-health"
         $markdown | Should -Match "Evidence Source References"
         $markdown | Should -Match "Package GA Readiness"

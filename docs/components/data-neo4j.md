@@ -177,6 +177,10 @@ When the `event-driven-integration` technology is active, the following entries 
 | `outbox-producers` | `neo4j-outbox` | `neo4j` |
 | `inbox-stores` | `neo4j-inbox` | `neo4j` |
 
+## Provider integration proof
+
+`LiveDataProviderIntegrationTests.Neo4jProvider_StagesOutboxInboxAndDispatchAgainstLiveService` runs behind `ExternalProviderServiceFact(ExternalProviderServiceProvider.Neo4j)`. The lane is skipped unless `CEPHALON_PROVIDER_EXTERNAL_SERVICES` or `CEPHALON_PROVIDER_INTEGRATION` is enabled and `CEPHALON_PROVIDER_NEO4J_URI`, `CEPHALON_PROVIDER_NEO4J_USERNAME`, and `CEPHALON_PROVIDER_NEO4J_PASSWORD` are supplied. The test composes `Cephalon.Engine`, `Cephalon.Eventing`, and this pack, then proves real outbox/inbox writes, `IEventDispatchStore` pending/success transitions, runtime manifest capabilities, and `event-driven-integration` runtime surfaces against a live Neo4j service.
+
 ## Not shipped in this slice
 
 This pack intentionally does not claim:

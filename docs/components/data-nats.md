@@ -133,6 +133,10 @@ When the `event-driven-integration` technology is active, the following entries 
 
 When an eventing runtime asks for `IEventDispatchStore`, the `nats-outbox` descriptor can now resolve to `consumer-managed` and the runtime can read/write durable dispatch state directly from the same KV bucket.
 
+## Provider integration proof
+
+`LiveDataProviderIntegrationTests.NatsProvider_StagesOutboxInboxAndDispatchAgainstLiveJetStream` runs behind `ExternalProviderServiceFact(ExternalProviderServiceProvider.Nats)`. The lane is skipped unless `CEPHALON_PROVIDER_EXTERNAL_SERVICES` or `CEPHALON_PROVIDER_INTEGRATION` is enabled and `CEPHALON_PROVIDER_NATS_URI` is supplied. The test composes `Cephalon.Engine`, `Cephalon.Eventing`, and this pack, then proves real outbox/inbox writes, `IEventDispatchStore` pending/success transitions, runtime manifest capabilities, and `event-driven-integration` runtime surfaces against a live NATS service with JetStream KV enabled.
+
 ## Not shipped in this slice
 
 This pack intentionally does not claim:

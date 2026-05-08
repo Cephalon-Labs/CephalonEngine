@@ -10,6 +10,7 @@
 - registers a scoped `IOutbox` backed by the `{TablePrefix}outbox_messages` Cassandra table when `RegisterOutbox` is enabled; the session is opened lazily on first use
 - registers a scoped `IEventDispatchStore` backed by the same durable outbox row plus a sharded `{TablePrefix}outbox_pending_dispatch` eligibility table when `RegisterOutbox` is enabled
 - registers a scoped `IInbox` backed by the `{TablePrefix}inbox_receipts` Cassandra table when `RegisterInbox` is enabled; the session is opened lazily on first use
+- creates the configured keyspace on first provider operation when the connected account has permission, then creates the Cephalon-managed outbox, pending-dispatch, and inbox tables
 - ensures outbox and inbox staging are idempotent through Cassandra Lightweight Transaction (LWT) `INSERT IF NOT EXISTS`; an `[applied]=false` result means the row already exists and is silently treated as success
 - keeps dispatch ownership truthful through a consumer-managed/provider-native pending-dispatch index instead of claiming broker-owned retries or a globally ordered queue
 - exposes operator-facing outbox and inbox descriptors when the respective path is enabled
@@ -24,6 +25,7 @@
 - `Registration/CassandraDataEngineBuilderExtensions.cs`
 - `Services/CassandraOutbox.cs`
 - `Services/CassandraEventDispatchStore.cs`
+- `Services/CassandraKeyspaceSchema.cs`
 - `Services/CassandraOutboxRecord.cs`
 - `Services/CassandraOutboxStorageSchema.cs`
 - `Services/CassandraOutboxRuntimeSurfaceContributor.cs`
@@ -171,7 +173,7 @@ When Cassandra executes an LWT statement it returns a result row containing a bo
 
 ## Lazy session note
 
-`ICluster` is created by `Cluster.Builder()...Build()` during DI registration. **No socket is opened at this point.** The underlying TCP connection to the Cassandra node(s) is deferred until the first call to `cluster.ConnectAsync(keyspace)`, which happens inside `CassandraOutbox` or `CassandraInbox` on first use. This means `ICluster`, `IOutbox`, and `IInbox` can all be resolved from the DI container in tests or at startup without requiring a live Cassandra cluster.
+`ICluster` is created by `Cluster.Builder()...Build()` during DI registration. **No socket is opened at this point.** The underlying TCP connection to the Cassandra node(s) is deferred until the first provider operation. That first operation creates the configured keyspace with `CREATE KEYSPACE IF NOT EXISTS` when the service account has permission, then connects with `cluster.ConnectAsync(keyspace)` inside the outbox, inbox, or dispatch-store path. This means `ICluster`, `IOutbox`, `IInbox`, and the dispatch store can all be resolved from the DI container in tests or at startup without requiring a live Cassandra cluster.
 
 A `SemaphoreSlim(1,1)` guards the lazy session initialization so that concurrent first-calls do not race to open multiple sessions.
 
@@ -194,6 +196,10 @@ When the `event-driven-integration` technology is active, the following entries 
 |---------|----------|---------------------|
 | `outbox-producers` | `cassandra-outbox` | `cassandra` |
 | `inbox-stores` | `cassandra-inbox` | `cassandra` |
+
+## Provider integration proof
+
+`LiveDataProviderIntegrationTests.CassandraProvider_StagesOutboxInboxAndDispatchAgainstLiveService` runs behind `ExternalProviderServiceFact(ExternalProviderServiceProvider.Cassandra)`. The lane is skipped unless `CEPHALON_PROVIDER_EXTERNAL_SERVICES` or `CEPHALON_PROVIDER_INTEGRATION` is enabled and `CEPHALON_PROVIDER_CASSANDRA_CONTACT_POINTS` plus `CEPHALON_PROVIDER_CASSANDRA_KEYSPACE` are supplied; `CEPHALON_PROVIDER_CASSANDRA_PORT` overrides the default native port. The test composes `Cephalon.Engine`, `Cephalon.Eventing`, and this pack, then proves real outbox/inbox writes, `IEventDispatchStore` pending/success transitions, runtime manifest capabilities, and `event-driven-integration` runtime surfaces against a live Cassandra service.
 
 ## Not shipped in this slice
 
