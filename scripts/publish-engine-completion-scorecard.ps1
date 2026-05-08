@@ -2437,7 +2437,10 @@ function Convert-SrePostureEvidence {
                                     @{ Source = "provider"; Target = "Provider" },
                                     @{ Source = "repository"; Target = "Repository" },
                                     @{ Source = "query"; Target = "Query" },
+                                    @{ Source = "evidenceScript"; Target = "EvidenceScript" },
+                                    @{ Source = "reportPath"; Target = "ReportPath" },
                                     @{ Source = "requiredWindowDays"; Target = "RequiredWindowDays" },
+                                    @{ Source = "minimumCompletedRunCount"; Target = "MinimumCompletedRunCount" },
                                     @{ Source = "availabilityStatus"; Target = "AvailabilityStatus" },
                                     @{ Source = "totalRunCount"; Target = "TotalRunCount" },
                                     @{ Source = "targetFlakeRatePercent"; Target = "TargetFlakeRatePercent" }

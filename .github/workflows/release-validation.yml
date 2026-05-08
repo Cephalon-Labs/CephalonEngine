@@ -18,6 +18,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read
+      actions: read
     strategy:
       fail-fast: false
       matrix:
@@ -67,6 +68,13 @@ jobs:
       - name: Run release validation
         shell: pwsh
         run: ./scripts/validate-release.ps1 ${{ matrix.validate_args }}
+
+      - name: Record SRE CI flake-rate evidence
+        if: always()
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ./scripts/measure-ci-flake-rate.ps1 -Repository ${{ github.repository }} -AllowUnavailable
 
       - name: Upload benchmark results
         if: always() && matrix.validate_args == ''
@@ -122,6 +130,14 @@ jobs:
         with:
           name: public-api-delta-${{ matrix.benchmark_artifact_suffix }}
           path: artifacts/public-api-delta-release
+          if-no-files-found: warn
+
+      - name: Upload SRE CI flake-rate evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sre-ci-flake-rate-${{ matrix.benchmark_artifact_suffix }}
+          path: artifacts/sre-ci-flake-rate
           if-no-files-found: warn
 
   dotnet11-readiness:
