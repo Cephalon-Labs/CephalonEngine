@@ -1,0 +1,82 @@
+name: Provider Live Testcontainers
+
+on:
+  workflow_dispatch:
+    inputs:
+      provider:
+        description: Provider live proof to run
+        required: true
+        default: All
+        type: choice
+        options:
+          - All
+          - Cassandra
+          - ClickHouse
+          - Elasticsearch
+          - Nats
+          - Neo4j
+          - OpenSearch
+          - Qdrant
+  schedule:
+    - cron: "0 19 * * 0"
+
+concurrency:
+  group: provider-live-testcontainers-${{ github.workflow }}-${{ github.ref }}-${{ github.event.inputs.provider || 'scheduled' }}
+  cancel-in-progress: false
+
+jobs:
+  provider-live:
+    name: Provider Live (${{ matrix.provider }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        provider:
+          - Cassandra
+          - ClickHouse
+          - Elasticsearch
+          - Nats
+          - Neo4j
+          - OpenSearch
+          - Qdrant
+
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+
+    steps:
+      - name: Checkout repository
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.provider == 'All' || github.event.inputs.provider == matrix.provider }}
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.provider == 'All' || github.event.inputs.provider == matrix.provider }}
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+          cache: true
+
+      - name: Docker preflight
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.provider == 'All' || github.event.inputs.provider == matrix.provider }}
+        shell: pwsh
+        run: docker info
+
+      - name: Run provider Testcontainers proof
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.provider == 'All' || github.event.inputs.provider == matrix.provider }}
+        shell: pwsh
+        run: |
+          ./scripts/run-provider-live-testcontainers.ps1 `
+            -Providers "${{ matrix.provider }}" `
+            -Configuration Release `
+            -Logger @("console;verbosity=normal", "trx;LogFileName=provider-${{ matrix.provider }}.trx")
+
+      - name: Upload provider test results
+        if: ${{ always() && (github.event_name != 'workflow_dispatch' || github.event.inputs.provider == 'All' || github.event.inputs.provider == matrix.provider) }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: provider-live-testcontainers-${{ matrix.provider }}
+          path: artifacts/provider-live-testcontainers/${{ matrix.provider }}
+          if-no-files-found: warn

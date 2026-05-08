@@ -71,6 +71,7 @@ Each test file should:
 
 | Script | Test file | Cases |
 | --- | --- | --- |
+| `scripts/run-provider-live-testcontainers.ps1` | `run-provider-live-testcontainers.Tests.ps1` | provider Testcontainers matrix + filter tokens + locked restore + workflow dispatch/schedule/matrix wiring |
 | `scripts/publish-engine-completion-scorecard.ps1` | `publish-engine-completion-scorecard.Tests.ps1` | scorecard JSON/Markdown artifact shape + evidence-source reference validation + per-package GA readiness rows + provider integration evidence manifest validation + SRE guardrail-reference validation + unsupported status guard + release-validation wiring |
 | `scripts/validate-release.ps1` | `validate-release.Tests.ps1` | scorecard evidence readback behavior + dependency-health provider manifest readback + missing manifest failure |
 | `scripts/summarise-public-api-deltas.ps1` | `summarise-public-api-deltas.Tests.ps1` | markdown/JSON report shape + optional removal gate + release-validation removal-gate wiring |

@@ -39,6 +39,34 @@ Current focus:
 - treat the `ENG-500` regression closeout as the current suite-stability baseline: provider-native CDC hosting tests now run through a dedicated non-parallel collection, long-running package-publishing process output drains stdout/stderr concurrently, sample REST behavior hosts align with source-generated `/api/v1` behavior endpoints, and the full solution test lane is again green on the current worktree
 - treat the CDC execution-runtime catalog hot path as benchmark-governed: `CdcExecutionRuntimeCatalogBenchmarks` now covers Debezium-managed external runtimes, external observations, repeated managed-connector drift/dry-run/command-issuance filters, and compact multi-selector operator flows against the shared versioned snapshot
 
+### ENG-514 Add provider Testcontainers live CI proof
+
+Status: done
+Estimate: 1
+Issue: #1144
+Iteration: Sprint 125
+Area: test-coverage / provider integration / CI
+Quality dimensions: Reliability, Compatibility, Auditability, Data Integrity, Maintainability
+
+Why:
+
+- ENG-513 made Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant runnable through disposable Testcontainers services, but the repo still needed a Docker-capable CI lane that actually invokes those provider tests
+- the default release-validation workflow must stay deterministic and Docker-free so ordinary PR validation does not become infrastructure-heavy or flaky
+- release managers need one script that can run the same provider matrix locally or in GitHub Actions without duplicating provider filters in workflow YAML
+
+Delivered:
+
+- added `scripts/run-provider-live-testcontainers.ps1` as the shared entry point for Docker preflight, locked provider-integration restore, provider selection, per-provider test filters, result directories, and `CEPHALON_PROVIDER_EXTERNAL_SERVICES=1` plus `CEPHALON_PROVIDER_TESTCONTAINERS=1` child-test environment
+- added `.github/workflows/provider-live-testcontainers.yml` as a scheduled/manual `ubuntu-latest` matrix over Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant, with TRX artifacts uploaded per provider
+- kept `.github/workflows/release-validation.yml` Docker-free; the provider live CI proof is a separate heavy lane that release managers can dispatch when they need full provider proof
+- added `tests/Cephalon.Tests.Scripts/run-provider-live-testcontainers.Tests.ps1` so the script matrix, filter tokens, locked restore posture, and workflow schedule/manual/provider matrix cannot drift silently
+- updated provider-integration README, scripts-test README, coverage roadmap, roadmap, release checklist, completion scorecard, and project memory so source, docs, and planning truth agree
+
+Validation:
+
+- `pwsh -NoLogo -NoProfile -Command "Invoke-Pester -Path .\tests\Cephalon.Tests.Scripts\run-provider-live-testcontainers.Tests.ps1 -Output Detailed"` passed `7/7`
+- local Docker daemon is still unavailable on this workstation, so the heavy container starts are delegated to the new GitHub Actions lane
+
 ### ENG-513 Add disposable Testcontainers provider runtime mode
 
 Status: done
