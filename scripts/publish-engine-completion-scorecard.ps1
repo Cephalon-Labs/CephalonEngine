@@ -2165,61 +2165,127 @@ function Convert-SrePostureEvidence {
                     $measurements = @(
                         Get-ManifestPropertyValue -Object $_ -PropertyName "measurements" -DefaultValue @() |
                             ForEach-Object {
-                                $reportFileName = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "reportFileName" -DefaultValue "")
-                                $benchmark = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "benchmark" -DefaultValue "")
-                                $meanNanosecondsValue = Get-ManifestPropertyValue -Object $_ -PropertyName "meanNanoseconds" -DefaultValue $null
-                                $errorNanosecondsValue = Get-ManifestPropertyValue -Object $_ -PropertyName "errorNanoseconds" -DefaultValue $null
-                                $stdDevNanosecondsValue = Get-ManifestPropertyValue -Object $_ -PropertyName "stdDevNanoseconds" -DefaultValue $null
-                                $allocatedBytesValue = Get-ManifestPropertyValue -Object $_ -PropertyName "allocatedBytes" -DefaultValue $null
-                                $guardrailMaxMeanNanosecondsValue = Get-ManifestPropertyValue -Object $_ -PropertyName "guardrailMaxMeanNanoseconds" -DefaultValue $null
-                                $guardrailMaxAllocatedBytesValue = Get-ManifestPropertyValue -Object $_ -PropertyName "guardrailMaxAllocatedBytes" -DefaultValue $null
+                                if ($measurementKind -eq "benchmark-mean-baseline-proxy" -or $measurementKind -eq "benchmark-allocation-baseline") {
+                                    $reportFileName = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "reportFileName" -DefaultValue "")
+                                    $benchmark = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "benchmark" -DefaultValue "")
+                                    $meanNanosecondsValue = Get-ManifestPropertyValue -Object $_ -PropertyName "meanNanoseconds" -DefaultValue $null
+                                    $errorNanosecondsValue = Get-ManifestPropertyValue -Object $_ -PropertyName "errorNanoseconds" -DefaultValue $null
+                                    $stdDevNanosecondsValue = Get-ManifestPropertyValue -Object $_ -PropertyName "stdDevNanoseconds" -DefaultValue $null
+                                    $allocatedBytesValue = Get-ManifestPropertyValue -Object $_ -PropertyName "allocatedBytes" -DefaultValue $null
+                                    $guardrailMaxMeanNanosecondsValue = Get-ManifestPropertyValue -Object $_ -PropertyName "guardrailMaxMeanNanoseconds" -DefaultValue $null
+                                    $guardrailMaxAllocatedBytesValue = Get-ManifestPropertyValue -Object $_ -PropertyName "guardrailMaxAllocatedBytes" -DefaultValue $null
 
-                                foreach ($field in @(
-                                    @{ Name = "reportFileName"; Value = $reportFileName },
-                                    @{ Name = "benchmark"; Value = $benchmark }
-                                )) {
-                                    if ([string]::IsNullOrWhiteSpace([string]$field.Value)) {
-                                        throw "SRE stable baseline measurement for SLI '$sliId' must include $($field.Name)."
+                                    foreach ($field in @(
+                                        @{ Name = "reportFileName"; Value = $reportFileName },
+                                        @{ Name = "benchmark"; Value = $benchmark }
+                                    )) {
+                                        if ([string]::IsNullOrWhiteSpace([string]$field.Value)) {
+                                            throw "SRE stable baseline measurement for SLI '$sliId' must include $($field.Name)."
+                                        }
                                     }
-                                }
 
-                                foreach ($field in @(
-                                    @{ Name = "meanNanoseconds"; Value = $meanNanosecondsValue },
-                                    @{ Name = "errorNanoseconds"; Value = $errorNanosecondsValue },
-                                    @{ Name = "stdDevNanoseconds"; Value = $stdDevNanosecondsValue },
-                                    @{ Name = "allocatedBytes"; Value = $allocatedBytesValue },
-                                    @{ Name = "guardrailMaxMeanNanoseconds"; Value = $guardrailMaxMeanNanosecondsValue },
-                                    @{ Name = "guardrailMaxAllocatedBytes"; Value = $guardrailMaxAllocatedBytesValue }
-                                )) {
-                                    if ($null -eq $field.Value) {
-                                        throw "SRE stable baseline measurement for SLI '$sliId' must include $($field.Name)."
+                                    foreach ($field in @(
+                                        @{ Name = "meanNanoseconds"; Value = $meanNanosecondsValue },
+                                        @{ Name = "errorNanoseconds"; Value = $errorNanosecondsValue },
+                                        @{ Name = "stdDevNanoseconds"; Value = $stdDevNanosecondsValue },
+                                        @{ Name = "allocatedBytes"; Value = $allocatedBytesValue },
+                                        @{ Name = "guardrailMaxMeanNanoseconds"; Value = $guardrailMaxMeanNanosecondsValue },
+                                        @{ Name = "guardrailMaxAllocatedBytes"; Value = $guardrailMaxAllocatedBytesValue }
+                                    )) {
+                                        if ($null -eq $field.Value) {
+                                            throw "SRE stable baseline measurement for SLI '$sliId' must include $($field.Name)."
+                                        }
                                     }
-                                }
 
-                                $guardrailKey = "$reportFileName`n$benchmark"
-                                if (-not $guardrailEntryLookup.ContainsKey($guardrailKey)) {
-                                    throw "SRE stable baseline row for SLI '$sliId' references guardrail '$reportFileName' / '$benchmark', but that entry is missing from '$($guardrailCatalogReference.Reference)'."
-                                }
+                                    $guardrailKey = "$reportFileName`n$benchmark"
+                                    if (-not $guardrailEntryLookup.ContainsKey($guardrailKey)) {
+                                        throw "SRE stable baseline row for SLI '$sliId' references guardrail '$reportFileName' / '$benchmark', but that entry is missing from '$($guardrailCatalogReference.Reference)'."
+                                    }
 
-                                $guardrailEntry = $guardrailEntryLookup[$guardrailKey]
-                                $catalogMaxMeanNanoseconds = [decimal](Get-ManifestPropertyValue -Object $guardrailEntry -PropertyName "maxMeanNanoseconds" -DefaultValue 0)
-                                $catalogMaxAllocatedBytes = [decimal](Get-ManifestPropertyValue -Object $guardrailEntry -PropertyName "maxAllocatedBytes" -DefaultValue 0)
-                                $declaredMaxMeanNanoseconds = [decimal]$guardrailMaxMeanNanosecondsValue
-                                $declaredMaxAllocatedBytes = [decimal]$guardrailMaxAllocatedBytesValue
-                                if ($declaredMaxMeanNanoseconds -ne $catalogMaxMeanNanoseconds -or $declaredMaxAllocatedBytes -ne $catalogMaxAllocatedBytes) {
-                                    throw "SRE stable baseline row for SLI '$sliId' has guardrail limits that do not match '$($guardrailCatalogReference.Reference)' for '$reportFileName' / '$benchmark'."
-                                }
+                                    $guardrailEntry = $guardrailEntryLookup[$guardrailKey]
+                                    $catalogMaxMeanNanoseconds = [decimal](Get-ManifestPropertyValue -Object $guardrailEntry -PropertyName "maxMeanNanoseconds" -DefaultValue 0)
+                                    $catalogMaxAllocatedBytes = [decimal](Get-ManifestPropertyValue -Object $guardrailEntry -PropertyName "maxAllocatedBytes" -DefaultValue 0)
+                                    $declaredMaxMeanNanoseconds = [decimal]$guardrailMaxMeanNanosecondsValue
+                                    $declaredMaxAllocatedBytes = [decimal]$guardrailMaxAllocatedBytesValue
+                                    if ($declaredMaxMeanNanoseconds -ne $catalogMaxMeanNanoseconds -or $declaredMaxAllocatedBytes -ne $catalogMaxAllocatedBytes) {
+                                        throw "SRE stable baseline row for SLI '$sliId' has guardrail limits that do not match '$($guardrailCatalogReference.Reference)' for '$reportFileName' / '$benchmark'."
+                                    }
 
-                                [pscustomobject]([ordered]@{
-                                    ReportFileName                 = $reportFileName
-                                    Benchmark                      = $benchmark
-                                    MeanNanoseconds                = [decimal]$meanNanosecondsValue
-                                    ErrorNanoseconds               = [decimal]$errorNanosecondsValue
-                                    StdDevNanoseconds              = [decimal]$stdDevNanosecondsValue
-                                    AllocatedBytes                 = [decimal]$allocatedBytesValue
-                                    GuardrailMaxMeanNanoseconds    = $declaredMaxMeanNanoseconds
-                                    GuardrailMaxAllocatedBytes     = $declaredMaxAllocatedBytes
-                                })
+                                    [pscustomobject]([ordered]@{
+                                        ReportFileName                 = $reportFileName
+                                        Benchmark                      = $benchmark
+                                        MeanNanoseconds                = [decimal]$meanNanosecondsValue
+                                        ErrorNanoseconds               = [decimal]$errorNanosecondsValue
+                                        StdDevNanoseconds              = [decimal]$stdDevNanosecondsValue
+                                        AllocatedBytes                 = [decimal]$allocatedBytesValue
+                                        GuardrailMaxMeanNanoseconds    = $declaredMaxMeanNanoseconds
+                                        GuardrailMaxAllocatedBytes     = $declaredMaxAllocatedBytes
+                                    })
+                                }
+                                elseif ($measurementKind -eq "deployment-mode-claims-report-baseline") {
+                                    $claimsReportPath = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "claimsReportPath" -DefaultValue "")
+                                    $deploymentMode = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "deploymentMode" -DefaultValue "")
+                                    $aggregateVerdict = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "aggregateVerdict" -DefaultValue "")
+                                    $publishProbeGateStatus = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "publishProbeGateStatus" -DefaultValue "")
+                                    $publishProbeTargetCountValue = Get-ManifestPropertyValue -Object $_ -PropertyName "publishProbeTargetCount" -DefaultValue $null
+                                    $publishProbeWarningCountValue = Get-ManifestPropertyValue -Object $_ -PropertyName "publishProbeWarningCount" -DefaultValue $null
+                                    $publishProbeErrorCountValue = Get-ManifestPropertyValue -Object $_ -PropertyName "publishProbeErrorCount" -DefaultValue $null
+                                    $packageClaimCountValue = Get-ManifestPropertyValue -Object $_ -PropertyName "packageClaimCount" -DefaultValue $null
+                                    $packageClaimTruthfulCountValue = Get-ManifestPropertyValue -Object $_ -PropertyName "packageClaimTruthfulCount" -DefaultValue $null
+                                    $packageClaimOverstatedCountValue = Get-ManifestPropertyValue -Object $_ -PropertyName "packageClaimOverstatedCount" -DefaultValue $null
+                                    $truthfulFractionValue = Get-ManifestPropertyValue -Object $_ -PropertyName "truthfulFraction" -DefaultValue $null
+
+                                    foreach ($field in @(
+                                        @{ Name = "claimsReportPath"; Value = $claimsReportPath },
+                                        @{ Name = "deploymentMode"; Value = $deploymentMode },
+                                        @{ Name = "aggregateVerdict"; Value = $aggregateVerdict },
+                                        @{ Name = "publishProbeGateStatus"; Value = $publishProbeGateStatus }
+                                    )) {
+                                        if ([string]::IsNullOrWhiteSpace([string]$field.Value)) {
+                                            throw "SRE stable baseline deployment-mode claims measurement for SLI '$sliId' must include $($field.Name)."
+                                        }
+                                    }
+
+                                    foreach ($field in @(
+                                        @{ Name = "publishProbeTargetCount"; Value = $publishProbeTargetCountValue },
+                                        @{ Name = "publishProbeWarningCount"; Value = $publishProbeWarningCountValue },
+                                        @{ Name = "publishProbeErrorCount"; Value = $publishProbeErrorCountValue },
+                                        @{ Name = "packageClaimCount"; Value = $packageClaimCountValue },
+                                        @{ Name = "packageClaimTruthfulCount"; Value = $packageClaimTruthfulCountValue },
+                                        @{ Name = "packageClaimOverstatedCount"; Value = $packageClaimOverstatedCountValue },
+                                        @{ Name = "truthfulFraction"; Value = $truthfulFractionValue }
+                                    )) {
+                                        if ($null -eq $field.Value) {
+                                            throw "SRE stable baseline deployment-mode claims measurement for SLI '$sliId' must include $($field.Name)."
+                                        }
+                                    }
+
+                                    $packageClaimCount = [int]$packageClaimCountValue
+                                    $packageClaimTruthfulCount = [int]$packageClaimTruthfulCountValue
+                                    $packageClaimOverstatedCount = [int]$packageClaimOverstatedCountValue
+                                    $truthfulFraction = [decimal]$truthfulFractionValue
+                                    $expectedTruthfulFraction = if ($packageClaimCount -eq 0) { [decimal]1 } else { [decimal]$packageClaimTruthfulCount / [decimal]$packageClaimCount }
+                                    if ([int]$publishProbeTargetCountValue -le 0 -or $publishProbeGateStatus -ne "passed" -or [int]$publishProbeWarningCountValue -ne 0 -or [int]$publishProbeErrorCountValue -ne 0 -or $packageClaimOverstatedCount -ne 0 -or $packageClaimTruthfulCount -ne $packageClaimCount -or $truthfulFraction -ne $expectedTruthfulFraction) {
+                                        throw "SRE stable baseline deployment-mode claims measurement for SLI '$sliId' must represent a fully truthful passed claims-report baseline."
+                                    }
+
+                                    [pscustomobject]([ordered]@{
+                                        ClaimsReportPath                 = $claimsReportPath
+                                        DeploymentMode                   = $deploymentMode
+                                        AggregateVerdict                 = $aggregateVerdict
+                                        PublishProbeGateStatus           = $publishProbeGateStatus
+                                        PublishProbeTargetCount          = [int]$publishProbeTargetCountValue
+                                        PublishProbeWarningCount         = [int]$publishProbeWarningCountValue
+                                        PublishProbeErrorCount           = [int]$publishProbeErrorCountValue
+                                        PackageClaimCount                = $packageClaimCount
+                                        PackageClaimTruthfulCount        = $packageClaimTruthfulCount
+                                        PackageClaimOverstatedCount      = $packageClaimOverstatedCount
+                                        TruthfulFraction                 = $truthfulFraction
+                                    })
+                                }
+                                else {
+                                    throw "Unsupported SRE stable baseline measurement kind '$measurementKind' for SLI '$sliId'."
+                                }
                             }
                     )
 
@@ -2875,7 +2941,17 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("| Stable baseline SLI | Measurement kind | Measurements |")
     $markdown.Add("| --- | --- | --- |")
     foreach ($row in $Report.SrePostureEvidence.StableBaselineRows) {
-        $measurements = (@($row.Measurements) | ForEach-Object { "``$($_.ReportFileName)`` / ``$($_.Benchmark)`` mean $($_.MeanNanoseconds) ns, allocated $($_.AllocatedBytes) B" }) -join "<br>"
+        $measurements = (@($row.Measurements) | ForEach-Object {
+            if ($_.PSObject.Properties.Name -contains "ReportFileName") {
+                "``$($_.ReportFileName)`` / ``$($_.Benchmark)`` mean $($_.MeanNanoseconds) ns, allocated $($_.AllocatedBytes) B"
+            }
+            elseif ($_.PSObject.Properties.Name -contains "ClaimsReportPath") {
+                "``$($_.ClaimsReportPath)`` $($_.DeploymentMode), gate $($_.PublishProbeGateStatus), package claims $($_.PackageClaimTruthfulCount)/$($_.PackageClaimCount) truthful, fraction $($_.TruthfulFraction)"
+            }
+            else {
+                "unsupported measurement shape"
+            }
+        }) -join "<br>"
         $markdown.Add("| ``$($row.SliId)`` | $($row.MeasurementKind) | $measurements |")
     }
 

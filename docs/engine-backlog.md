@@ -96,6 +96,33 @@ Validation:
 - release-validation Pester coverage for deployment-mode claims-report summary and fail-closed behavior
 - focused Tooling doctor/scorecard readback coverage
 
+### ENG-518 Publish deployment-mode claim-truth SRE baseline
+
+Status: done
+Estimate: 1
+Issue: #1152
+Iteration: Sprint 125
+Area: release-readiness / SRE / deployment-mode evidence
+Quality dimensions: Reliability, Auditability, Maintainability, Compliance, Usability
+
+Why:
+
+- `engine.deployment-mode-claims.truthful-fraction` already had release-validation evidence through the generated deployment-mode claims report, but still read as `pending-stable-baseline`
+- release managers need the SRE stable-baseline manifest to distinguish benchmark-backed baselines from release-validation baselines without forcing non-benchmark rows into benchmark guardrail shape
+- the remaining cold-start, wall-time, and flake-rate SLIs should stay pending until their own evidence lanes exist
+
+Delivered:
+
+- promoted `engine.deployment-mode-claims.truthful-fraction` to `stable-baseline-published` in `scripts/sre-posture-support.json` schema `1.3.0`
+- extended `scripts/sre-stable-baselines.json` to schema `1.1.0` with a `deployment-mode-claims-report-baseline` row for the release-validation claims report
+- taught `scripts/publish-engine-completion-scorecard.ps1` to validate typed non-benchmark SRE stable-baseline measurements while preserving guardrail validation for benchmark rows
+- updated scorecard, release validation, doctor fixtures, SRE docs, benchmarking docs, release checklist, roadmap, architecture follow-up tracker, and project memory so SRE readback is 11 SLIs / 6 pending stable baselines / 5 stable baselines / 5 rows / 7 measurements
+
+Validation:
+
+- scorecard publisher validates the new SRE stable-baseline manifest shape and renders the deployment-mode claims-report baseline
+- Pester and Tooling coverage assert the new SRE counts and doctor/release-validation readback
+
 ### ENG-515 Publish benchmark-backed SRE stable baselines
 
 Status: done
@@ -15319,6 +15346,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-486 Make deployment-mode evidence scorecard-backed: `scripts/publish-engine-completion-scorecard.ps1` schema `1.6.0` now emits `DeploymentModeEvidence` from `scripts/deployment-mode-support.json`, validating deployment docs/scripts, global trim / Native AOT / single-file `not-claimed` rows, package-scoped claims, known hazard counts, transitive audit entries, representative publish targets, and publish-probe policy before artifact publishing; `scripts/validate-release.ps1` prints the generated deployment-mode evidence summary; and `cephalon doctor --scorecard <path>` reports global/package-scoped/hazard/transitive-audit/publish-probe counts while failing if summary counts drift from the detailed deployment-mode evidence node. Quality dimensions: Compatibility + Auditability + Maintainability + Reliability + Usability (shipped)
 - ENG-497 Add SRE guardrail coverage evidence: `scripts/publish-engine-completion-scorecard.ps1` schema `1.7.0` now emits SRE guardrail coverage counts from `scripts/sre-posture-support.json` schema `1.1.0`, validates `guardrailReferences` against `benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json`, distinguishes guardrail-catalog-mapped / pending-stable-baseline / not-applicable SLIs, and keeps `cephalon doctor --scorecard <path>` plus release validation aligned with the same `SrePostureEvidence` counts without promoting stable SLO baselines. Quality dimensions: Reliability + Performance + Auditability + Maintainability + Usability (shipped)
 - ENG-515 Publish benchmark-backed SRE stable baselines: `scripts/publish-engine-completion-scorecard.ps1` schema `1.9.0` now validates `scripts/sre-stable-baselines.json`, publishes four benchmark-backed stable SRE baselines, leaves seven SLI rows pending, and keeps release validation plus `cephalon doctor --scorecard <path>` aligned with the same stable-baseline rows and measurements without promoting cold-start, wall-time, flake-rate, or deployment-mode truth SLIs. Quality dimensions: Reliability + Performance + Auditability + Maintainability + Usability (shipped)
+- ENG-518 Publish deployment-mode claim-truth SRE baseline: `scripts/sre-posture-support.json` schema `1.3.0` and `scripts/sre-stable-baselines.json` schema `1.1.0` now promote `engine.deployment-mode-claims.truthful-fraction` through a release-validation claims-report baseline, and the scorecard publisher validates typed non-benchmark SRE stable-baseline measurements while readback moves to 11 SLIs / 6 pending / 5 stable / 5 rows / 7 measurements. Quality dimensions: Reliability + Auditability + Maintainability + Compliance + Usability (shipped)
 - ENG-516 Read deployment-mode publish-gate proof into scorecard: `scripts/publish-engine-completion-scorecard.ps1` schema `1.10.0` now validates the generated `artifacts/deployment-mode-claims-release/claim-validation-report.json` beside `scripts/deployment-mode-support.json`, reports the gated `singleFile` publish proof across 5 targets with 0 warnings, 0 errors, 1 truthful package-scoped claim, and 0 overstated claims, and keeps release validation plus `cephalon doctor --scorecard <path>` aligned with that report-backed proof without widening global trim / Native AOT / single-file support claims. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability (shipped)
 - ENG-487 Add opt-in CDC integration baseline: `tests/Cephalon.Tests.CdcIntegration` now carries the first dedicated live CDC integration lane, proving MongoDB change streams against a disposable `EphemeralMongo7` replica set with real outbox staging, provider-native runtime binding, runtime-state reporting, execution-runtime aggregation, and checkpoint persistence; `data.slnf` now points at the split data-relevant test projects instead of the retired monolithic test project, and SQL Server/Postgres live CDC coverage stays explicitly later until an external-service/Testcontainers gate exists. Quality dimensions: Reliability + Compatibility + Auditability + Maintainability (shipped)
 - ENG-488 Fix CDC execution-runtime filter projection recursion: `CdcCaptureExecutionRuntimeCatalog` now indexes capture ids by effective execution runtime and reuses a versioned snapshot for repeated managed-connector filter projections; runtime-state reports, rejected reporter conflicts, managed-connector command-history changes, persistence/recovery changes, and freshness time buckets invalidate that snapshot, and `DebeziumDataCdcPackTests` now carry a regression proving repeated drift filters refresh after later reports. Quality dimensions: Reliability + Performance + Maintainability + Auditability (shipped)

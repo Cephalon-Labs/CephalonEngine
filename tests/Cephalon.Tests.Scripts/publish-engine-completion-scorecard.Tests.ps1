@@ -173,8 +173,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.ProviderIntegrationRuntimeContractCount | Should -Be 94
         $json.Summary.SreSliCount | Should -Be 11
         $json.Summary.SreTargetDeclaredCount | Should -Be 11
-        $json.Summary.SrePendingStableBaselineCount | Should -Be 7
-        $json.Summary.SreStableBaselineCount | Should -Be 4
+        $json.Summary.SrePendingStableBaselineCount | Should -Be 6
+        $json.Summary.SreStableBaselineCount | Should -Be 5
         $json.Summary.SreGuardrailMappedSliCount | Should -Be 4
         $json.Summary.SreGuardrailPendingSliCount | Should -Be 2
         $json.Summary.SreGuardrailNotApplicableSliCount | Should -Be 5
@@ -313,29 +313,30 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_QDRANT_HOST"
         $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_CDC_POSTGRES_CONNECTION_STRING"
 
-        $json.SrePostureEvidence.ManifestSchemaVersion | Should -Be "1.2.0"
+        $json.SrePostureEvidence.ManifestSchemaVersion | Should -Be "1.3.0"
         $json.SrePostureEvidence.Status | Should -Be "partial-stable-baseline-published"
         $json.SrePostureEvidence.ReleaseValidationSummaryMode | Should -Be "release-validation-console-and-scorecard-artifact"
         $json.SrePostureEvidence.StableBaselinesPublished | Should -BeTrue
         $json.SrePostureEvidence.StableBaselineManifest | Should -Be "scripts/sre-stable-baselines.json"
-        $json.SrePostureEvidence.StableBaselineManifestSchemaVersion | Should -Be "1.0.0"
-        $json.SrePostureEvidence.StableBaselineManifestStatus | Should -Be "benchmark-baseline-published"
+        $json.SrePostureEvidence.StableBaselineManifestSchemaVersion | Should -Be "1.1.0"
+        $json.SrePostureEvidence.StableBaselineManifestStatus | Should -Be "benchmark-and-release-baseline-published"
         $json.SrePostureEvidence.GuardrailCatalog | Should -Be "benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json"
         $json.SrePostureEvidence.GuardrailCatalogEntryCount | Should -Be 29
         $json.SrePostureEvidence.SliCount | Should -Be 11
         $json.SrePostureEvidence.TargetDeclaredCount | Should -Be 11
-        $json.SrePostureEvidence.PendingStableBaselineCount | Should -Be 7
-        $json.SrePostureEvidence.StableBaselineCount | Should -Be 4
+        $json.SrePostureEvidence.PendingStableBaselineCount | Should -Be 6
+        $json.SrePostureEvidence.StableBaselineCount | Should -Be 5
         $json.SrePostureEvidence.GuardrailMappedSliCount | Should -Be 4
         $json.SrePostureEvidence.GuardrailPendingSliCount | Should -Be 2
         $json.SrePostureEvidence.GuardrailNotApplicableSliCount | Should -Be 5
         $json.SrePostureEvidence.GuardrailReferenceCount | Should -Be 6
-        $json.SrePostureEvidence.StableBaselineRowCount | Should -Be 4
-        $json.SrePostureEvidence.StableBaselineMeasurementCount | Should -Be 6
+        $json.SrePostureEvidence.StableBaselineRowCount | Should -Be 5
+        $json.SrePostureEvidence.StableBaselineMeasurementCount | Should -Be 7
         $json.SrePostureEvidence.StableBaselinePublishedSliIds | Should -Contain "engine.behavior.dispatch.latency.p95"
         $json.SrePostureEvidence.StableBaselinePublishedSliIds | Should -Contain "engine.behavior.dispatch.latency.p99"
         $json.SrePostureEvidence.StableBaselinePublishedSliIds | Should -Contain "engine.behavior.dispatch.alloc.bytes-per-op"
         $json.SrePostureEvidence.StableBaselinePublishedSliIds | Should -Contain "engine.aspnetcore.request.alloc.bytes-per-op"
+        $json.SrePostureEvidence.StableBaselinePublishedSliIds | Should -Contain "engine.deployment-mode-claims.truthful-fraction"
         $json.SrePostureEvidence.PendingBaselineSliIds | Should -Contain "engine.worker.cold-start.p95"
         $json.SrePostureEvidence.SourceDocuments | Should -Contain "docs/sre-posture.md"
         $json.SrePostureEvidence.SourceDocuments | Should -Contain "docs/benchmarking.md"
@@ -358,6 +359,12 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $requestAllocationBaseline = $json.SrePostureEvidence.StableBaselineRows | Where-Object { $_.SliId -eq "engine.aspnetcore.request.alloc.bytes-per-op" }
         $requestAllocationBaseline.Measurements.Count | Should -Be 3
         $requestAllocationBaseline.Measurements.Benchmark | Should -Contain "HandleLoggedJsonRequest"
+        $claimTruthBaseline = $json.SrePostureEvidence.StableBaselineRows | Where-Object { $_.SliId -eq "engine.deployment-mode-claims.truthful-fraction" }
+        $claimTruthBaseline.MeasurementKind | Should -Be "deployment-mode-claims-report-baseline"
+        $claimTruthBaseline.Measurements.ClaimsReportPath | Should -Be "artifacts/deployment-mode-claims-release/claim-validation-report.json"
+        $claimTruthBaseline.Measurements.PublishProbeGateStatus | Should -Be "passed"
+        $claimTruthBaseline.Measurements.PackageClaimTruthfulCount | Should -Be 1
+        $claimTruthBaseline.Measurements.PackageClaimOverstatedCount | Should -Be 0
         $requestAllocationBaseline.Measurements.AllocatedBytes | Should -Contain 27914.24
 
         $json.SupplyChainEvidence.ManifestSchemaVersion | Should -Be "1.0.0"
@@ -414,9 +421,11 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "Publish-probe gated modes: singleFile"
         $markdown | Should -Match "SRE Posture Evidence"
         $markdown | Should -Match "SRE SLIs: 11"
-        $markdown | Should -Match "SRE pending stable baselines: 7"
-        $markdown | Should -Match "SRE stable baselines: 4"
-        $markdown | Should -Match "SRE stable baseline rows: 4"
+        $markdown | Should -Match "SRE pending stable baselines: 6"
+        $markdown | Should -Match "SRE stable baselines: 5"
+        $markdown | Should -Match "SRE stable baseline rows: 5"
+        $markdown | Should -Match "deployment-mode-claims-report-baseline"
+        $markdown | Should -Match "package claims 1/1 truthful"
         $markdown | Should -Match "Stable baseline manifest"
         $markdown | Should -Match "SRE guardrail-mapped SLIs: 4"
         $markdown | Should -Match "SRE pending guardrail coverage SLIs: 2"
@@ -775,7 +784,7 @@ Start-Process
                 @{
                     sliId = "engine.fixture.other"
                     status = "stable-baseline-published"
-                    measurementKind = "fixture"
+                    measurementKind = "benchmark-mean-baseline-proxy"
                     measurements = @(
                         @{
                             reportFileName = "fixture.csv"

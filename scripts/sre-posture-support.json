@@ -1,7 +1,7 @@
 {
-  "$schemaVersion": "1.2.0",
+  "$schemaVersion": "1.3.0",
   "status": "partial-stable-baseline-published",
-  "summary": "Engine SLI and SLO targets are declared; benchmark-backed stable baselines are published for the guardrail-mapped subset while non-evidenced SLI rows remain pending.",
+  "summary": "Engine SLI and SLO targets are declared; benchmark-backed stable baselines are published for the guardrail-mapped subset, and the deployment-mode claim-truth SLI now has a release-validation claims-report stable baseline while the remaining non-evidenced SLI rows stay pending.",
   "releaseValidationSummaryMode": "release-validation-console-and-scorecard-artifact",
   "stableBaselinesPublished": true,
   "stableBaselineManifest": "scripts/sre-stable-baselines.json",
@@ -170,7 +170,7 @@
       "sloTarget": "100% of declared claims are claim-truthful; not-claimed rows never count against this SLI",
       "window": "per release",
       "targetStatus": "target-declared",
-      "baselineStatus": "pending-stable-baseline",
+      "baselineStatus": "stable-baseline-published",
       "guardrailCoverageStatus": "not-applicable",
       "guardrailReferences": []
     }
