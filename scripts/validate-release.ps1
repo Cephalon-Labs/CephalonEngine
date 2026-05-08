@@ -23,7 +23,8 @@ param(
         "*AuthorizationEvaluationBenchmarks*",
         "*TenantResolutionBenchmarks*",
         "*EventSourcingBenchmarks*",
-        "*OutboxStagingBenchmarks*"
+        "*OutboxStagingBenchmarks*",
+        "*CdcExecutionRuntimeCatalogBenchmarks*"
     )
 )
 
@@ -68,7 +69,8 @@ $canonicalBenchmarkFilters = @(
     "*AuthorizationEvaluationBenchmarks*",
     "*TenantResolutionBenchmarks*",
     "*EventSourcingBenchmarks*",
-    "*OutboxStagingBenchmarks*"
+    "*OutboxStagingBenchmarks*",
+    "*CdcExecutionRuntimeCatalogBenchmarks*"
 )
 
 function Invoke-Step {

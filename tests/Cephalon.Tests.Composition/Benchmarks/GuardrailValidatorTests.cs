@@ -1,4 +1,5 @@
 using Cephalon.Benchmarks.Validation;
+using Cephalon.Benchmarks.HotPath;
 
 namespace Cephalon.Tests.Benchmarks;
 
@@ -83,6 +84,24 @@ ComposeEngine,11.50 μs,24.00 KB
         finally
         {
             Directory.Delete(directory, recursive: true);
+        }
+    }
+
+    [Fact]
+    public async Task DataDispatchBenchmarksRegisterDispatchDescriptorsUsedByGuardrailSmokeRun()
+    {
+        var benchmark = new DataDispatchBenchmarks();
+        await benchmark.Setup();
+
+        try
+        {
+            Assert.Equal(688_128, await benchmark.DispatchQuery());
+            await benchmark.DispatchCommand();
+            Assert.Equal(352_256, await benchmark.DispatchCommandWithResult());
+        }
+        finally
+        {
+            benchmark.Cleanup();
         }
     }
 
