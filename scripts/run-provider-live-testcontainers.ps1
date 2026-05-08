@@ -1,7 +1,7 @@
 #requires -Version 7.0
 
 param(
-    [ValidateSet("All", "Cassandra", "ClickHouse", "Elasticsearch", "Nats", "Neo4j", "OpenSearch", "Qdrant")]
+    [ValidateSet("All", "Cassandra", "ClickHouse", "Elasticsearch", "Nats", "Neo4j", "OpenSearch", "Qdrant", "Smtp")]
     [string[]]$Providers = @("All"),
     [ValidateSet("Debug", "Release")]
     [string]$Configuration = "Release",
@@ -62,6 +62,11 @@ function Get-ProviderLiveTestMatrix {
             FilterToken = "QdrantProvider_StagesOutboxInboxAndDispatchAgainstLiveService"
             Runtime = "qdrant/qdrant:v1.12.5"
         }
+        Smtp = [pscustomobject]@{
+            Provider = "Smtp"
+            FilterToken = "SmtpDelivery_DispatchesInvitationThroughLiveRelay"
+            Runtime = "mailhog/mailhog:v1.0.1 smtp:1025 api:8025"
+        }
     }
 }
 
@@ -109,16 +114,34 @@ function Invoke-ExternalCommand {
     }
 }
 
+function Resolve-ProviderLiveDockerCommandPath {
+    [CmdletBinding()]
+    param(
+        [string]$CommandName = "docker"
+    )
+
+    $dockerCommands = @(Get-Command -Name $CommandName -CommandType Application -ErrorAction SilentlyContinue)
+    if ($dockerCommands.Count -eq 0) {
+        throw "Docker CLI was not found. Install Docker on this runner before using the provider Testcontainers lane."
+    }
+
+    $dockerCommand = @($dockerCommands | Where-Object {
+            [System.IO.Path]::GetExtension($_.Source).Equals(".exe", [System.StringComparison]::OrdinalIgnoreCase)
+        } | Select-Object -First 1)
+
+    if ($dockerCommand.Count -eq 0) {
+        $dockerCommand = @($dockerCommands | Select-Object -First 1)
+    }
+
+    return [string]$dockerCommand[0].Source
+}
+
 function Test-ProviderLiveDockerDaemon {
     [CmdletBinding()]
     param()
 
-    $dockerCommand = Get-Command -Name "docker" -CommandType Application -ErrorAction SilentlyContinue
-    if ($null -eq $dockerCommand) {
-        throw "Docker CLI was not found. Install Docker on this runner before using the provider Testcontainers lane."
-    }
-
-    $dockerInfoOutput = & $dockerCommand.Source "info" "--format" "{{.ServerVersion}}" 2>&1
+    $dockerCommandPath = Resolve-ProviderLiveDockerCommandPath
+    $dockerInfoOutput = & $dockerCommandPath "info" "--format" "{{.ServerVersion}}" 2>&1
     if ($LASTEXITCODE -ne 0) {
         throw "Docker daemon is not reachable. Start Docker before using the provider Testcontainers lane. docker info output: $dockerInfoOutput"
     }

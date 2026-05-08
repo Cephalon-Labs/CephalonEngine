@@ -22,7 +22,7 @@ AfterAll {
 }
 
 Describe "run-provider-live-testcontainers.ps1 provider matrix" {
-    It "tracks the seven non-relational provider live proof lanes" {
+    It "tracks the eight Docker-backed provider live proof lanes" {
         $matrix = Get-ProviderLiveTestMatrix
 
         $matrix.Keys | Should -Be @(
@@ -32,7 +32,8 @@ Describe "run-provider-live-testcontainers.ps1 provider matrix" {
             "Nats",
             "Neo4j",
             "OpenSearch",
-            "Qdrant"
+            "Qdrant",
+            "Smtp"
         )
 
         $matrix.Cassandra.FilterToken | Should -Be "CassandraProvider_StagesOutboxInboxAndDispatchAgainstLiveService"
@@ -42,6 +43,7 @@ Describe "run-provider-live-testcontainers.ps1 provider matrix" {
         $matrix.Neo4j.FilterToken | Should -Be "Neo4jProvider_StagesOutboxInboxAndDispatchAgainstLiveService"
         $matrix.OpenSearch.FilterToken | Should -Be "OpenSearchProvider_StagesOutboxInboxAndDispatchAgainstLiveService"
         $matrix.Qdrant.FilterToken | Should -Be "QdrantProvider_StagesOutboxInboxAndDispatchAgainstLiveService"
+        $matrix.Smtp.FilterToken | Should -Be "SmtpDelivery_DispatchesInvitationThroughLiveRelay"
     }
 
     It "expands All into every provider" {
@@ -54,7 +56,8 @@ Describe "run-provider-live-testcontainers.ps1 provider matrix" {
             "Nats",
             "Neo4j",
             "OpenSearch",
-            "Qdrant"
+            "Qdrant",
+            "Smtp"
         )
     }
 
@@ -78,6 +81,17 @@ Describe "run-provider-live-testcontainers.ps1 provider matrix" {
         $scriptText | Should -Match "CEPHALON_PROVIDER_EXTERNAL_SERVICES"
         $scriptText | Should -Match "CEPHALON_PROVIDER_TESTCONTAINERS"
     }
+
+    It "resolves the Windows docker executable when both docker.exe and docker shims are on PATH" {
+        Mock Get-Command {
+            @(
+                [pscustomobject]@{ Source = "C:\Program Files\Docker\Docker\resources\bin\docker.exe" },
+                [pscustomobject]@{ Source = "C:\Program Files\Docker\Docker\resources\bin\docker" }
+            )
+        } -ParameterFilter { $Name -eq "docker" -and $CommandType -eq "Application" }
+
+        Resolve-ProviderLiveDockerCommandPath | Should -Be "C:\Program Files\Docker\Docker\resources\bin\docker.exe"
+    }
 }
 
 Describe "provider-live-testcontainers workflow" {
@@ -91,7 +105,7 @@ Describe "provider-live-testcontainers workflow" {
         $script:workflowText | Should -Match "cron:"
     }
 
-    It "runs the same seven-provider matrix as the script" {
+    It "runs the same provider matrix as the script" {
         foreach ($provider in (Get-ProviderLiveTestMatrix).Keys) {
             $script:workflowText | Should -Match "- $provider"
         }

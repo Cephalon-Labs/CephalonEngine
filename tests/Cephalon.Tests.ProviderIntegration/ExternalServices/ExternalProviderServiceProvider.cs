@@ -10,5 +10,6 @@ public enum ExternalProviderServiceProvider
     Neo4j,
     OpenSearch,
     Qdrant,
+    Smtp,
     Redis
 }

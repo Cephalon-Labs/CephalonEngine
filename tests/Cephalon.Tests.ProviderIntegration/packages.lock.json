@@ -2070,6 +2070,26 @@
           "Cephalon.Engine": "[0.1.0-preview, )"
         }
       },
+      "cephalon.multitenancy.governance": {
+        "type": "Project",
+        "dependencies": {
+          "Cephalon.Abstractions": "[0.1.0-preview, )",
+          "Cephalon.Diagnostics": "[0.1.0-preview, )",
+          "Cephalon.Engine": "[0.1.0-preview, )",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.5, )",
+          "Microsoft.Extensions.Hosting": "[10.0.5, )"
+        }
+      },
+      "cephalon.multitenancy.governance.smtpdelivery": {
+        "type": "Project",
+        "dependencies": {
+          "Cephalon.Engine": "[0.1.0-preview, )",
+          "Cephalon.MultiTenancy.Governance": "[0.1.0-preview, )",
+          "Microsoft.Extensions.Configuration.Abstractions": "[10.0.5, )",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.5, )",
+          "Microsoft.Extensions.Logging.Abstractions": "[10.0.5, )"
+        }
+      },
       "cephalon.observability": {
         "type": "Project",
         "dependencies": {

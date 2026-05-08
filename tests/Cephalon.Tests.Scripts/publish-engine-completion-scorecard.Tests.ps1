@@ -165,12 +165,12 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.AdoptionSmokeScenarioCount | Should -Be 1
         $json.Summary.AdoptionSmokeRuntimeProbeCount | Should -Be 6
         $json.Summary.AdoptionSmokeAssertionCount | Should -Be 7
-        $json.Summary.ProviderIntegrationEvidenceRowCount | Should -Be 32
-        $json.Summary.ProviderIntegrationLiveProofCount | Should -Be 32
+        $json.Summary.ProviderIntegrationEvidenceRowCount | Should -Be 33
+        $json.Summary.ProviderIntegrationLiveProofCount | Should -Be 33
         $json.Summary.ProviderIntegrationCompositionOnlyCount | Should -Be 0
-        $json.Summary.ProviderIntegrationExternalServiceGateCount | Should -Be 13
-        $json.Summary.ProviderIntegrationDefaultSkippedCount | Should -Be 13
-        $json.Summary.ProviderIntegrationRuntimeContractCount | Should -Be 94
+        $json.Summary.ProviderIntegrationExternalServiceGateCount | Should -Be 14
+        $json.Summary.ProviderIntegrationDefaultSkippedCount | Should -Be 14
+        $json.Summary.ProviderIntegrationRuntimeContractCount | Should -Be 99
         $json.Summary.SreSliCount | Should -Be 11
         $json.Summary.SreTargetDeclaredCount | Should -Be 11
         $json.Summary.SrePendingStableBaselineCount | Should -Be 1
@@ -281,13 +281,13 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.ProviderIntegrationEvidence.DependencyHealthProviderManifest.ManifestSchemaVersion | Should -Be "1.0.0"
         $json.ProviderIntegrationEvidence.DependencyHealthProviderManifest.Status | Should -Be "source-derived-provider-family-contract"
         $json.ProviderIntegrationEvidence.DependencyHealthProviderManifest.ProviderCount | Should -Be 18
-        $json.ProviderIntegrationEvidence.EvidenceRowCount | Should -Be 32
-        $json.ProviderIntegrationEvidence.LiveProofCount | Should -Be 32
+        $json.ProviderIntegrationEvidence.EvidenceRowCount | Should -Be 33
+        $json.ProviderIntegrationEvidence.LiveProofCount | Should -Be 33
         $json.ProviderIntegrationEvidence.CompositionOnlyCount | Should -Be 0
-        $json.ProviderIntegrationEvidence.ExternalServiceGateCount | Should -Be 13
-        $json.ProviderIntegrationEvidence.DefaultSkippedCount | Should -Be 13
-        $json.ProviderIntegrationEvidence.RuntimeContractCount | Should -Be 94
-        $json.ProviderIntegrationEvidence.EnvironmentVariableCount | Should -Be 32
+        $json.ProviderIntegrationEvidence.ExternalServiceGateCount | Should -Be 14
+        $json.ProviderIntegrationEvidence.DefaultSkippedCount | Should -Be 14
+        $json.ProviderIntegrationEvidence.RuntimeContractCount | Should -Be 99
+        $json.ProviderIntegrationEvidence.EnvironmentVariableCount | Should -Be 35
         $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "redis-data-event-sourcing-live"
         $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "mongodb-data-runtime-surface"
         $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "cassandra-data-runtime-surface"
@@ -297,6 +297,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "neo4j-data-runtime-surface"
         $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "opensearch-data-runtime-surface"
         $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "qdrant-data-runtime-surface"
+        $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "smtp-invitation-delivery-live"
         $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "postgres-cdc-live"
         $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "sqlserver-dependency-health-live"
         $json.ProviderIntegrationEvidence.ProviderRows.ExternalServiceGate | Should -Contain "provider-integration"
@@ -305,8 +306,10 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.ProviderIntegrationEvidence.ProviderRows.RuntimeContracts | Should -Contain "IOutbox.EnqueueAsync"
         $json.ProviderIntegrationEvidence.ProviderRows.RuntimeContracts | Should -Contain "IInbox.HasProcessedAsync"
         $json.ProviderIntegrationEvidence.ProviderRows.RuntimeContracts | Should -Contain "dispatch-policy.unsupported"
+        $json.ProviderIntegrationEvidence.ProviderRows.RuntimeContracts | Should -Contain "smtp-relay-handoff"
         $json.ProviderIntegrationEvidence.ProviderRows.TestFiles | Should -Contain "tests/Cephalon.Tests.Hosting/ObservabilityDependencyHealthProviderInvariantTests.cs"
         $json.ProviderIntegrationEvidence.ProviderRows.TestFiles | Should -Contain "tests/Cephalon.Tests.ProviderIntegration/LiveDataProviderIntegrationTests.cs"
+        $json.ProviderIntegrationEvidence.ProviderRows.TestFiles | Should -Contain "tests/Cephalon.Tests.ProviderIntegration/SmtpDeliveryProviderIntegrationTests.cs"
         $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_REDIS_CONNECTION_STRING"
         $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_CASSANDRA_CONTACT_POINTS"
         $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_CLICKHOUSE_HOST"
@@ -315,6 +318,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_NEO4J_URI"
         $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_OPENSEARCH_URI"
         $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_QDRANT_HOST"
+        $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_SMTP_HOST"
+        $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_SMTP_API_URI"
         $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_CDC_POSTGRES_CONNECTION_STRING"
 
         $json.SrePostureEvidence.ManifestSchemaVersion | Should -Be "1.9.0"
@@ -530,8 +535,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "Adoption Smoke Evidence"
         $markdown | Should -Match "out-of-tree-generated-app-package-stage"
         $markdown | Should -Match "Provider Integration Evidence"
-        $markdown | Should -Match "Provider integration evidence rows: 32"
-        $markdown | Should -Match "live proofs: 32"
+        $markdown | Should -Match "Provider integration evidence rows: 33"
+        $markdown | Should -Match "live proofs: 33"
         $markdown | Should -Match "composition-only rows: 0"
         $markdown | Should -Match "dependency-health"
         $markdown | Should -Match "Evidence Source References"
@@ -1261,7 +1266,10 @@ jobs:
             '$1',
             1)
 
-        $manifestContents | Should -Not -Match '"externalServiceGate": "provider-integration",'
+        $redisRow = ($manifestContents | ConvertFrom-Json -Depth 32).providerRows |
+            Where-Object { $_.id -eq "redis-data-event-sourcing-live" } |
+            Select-Object -First 1
+        $redisRow.PSObject.Properties.Name | Should -Not -Contain "externalServiceGate"
         Set-Content -LiteralPath $manifestPath -Value $manifestContents -Encoding UTF8
 
         {
