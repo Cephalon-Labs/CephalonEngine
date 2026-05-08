@@ -39,6 +39,35 @@ Current focus:
 - treat the `ENG-500` regression closeout as the current suite-stability baseline: provider-native CDC hosting tests now run through a dedicated non-parallel collection, long-running package-publishing process output drains stdout/stderr concurrently, sample REST behavior hosts align with source-generated `/api/v1` behavior endpoints, and the full solution test lane is again green on the current worktree
 - treat the CDC execution-runtime catalog hot path as benchmark-governed: `CdcExecutionRuntimeCatalogBenchmarks` now covers Debezium-managed external runtimes, external observations, repeated managed-connector drift/dry-run/command-issuance filters, and compact multi-selector operator flows against the shared versioned snapshot
 
+### ENG-522 Publish Worker cold-start SRE baseline
+
+Status: done
+Estimate: 1
+Issue: #1160
+Iteration: Sprint 125
+Area: release-readiness / SRE / cold-start evidence
+Quality dimensions: Reliability, Performance, Auditability, Maintainability, Usability
+
+Why:
+
+- `engine.worker.cold-start.p95` was declared and guardrail-mapped but still read as `pending-stable-baseline`
+- the latest `ColdStartBenchmarks` export shows the Worker host path comfortably below the 500 ms SLO target and below the benchmark guardrail cap
+- ASP.NET Core cold-start and flake-rate still need separate lanes, so the scorecard should promote only the Worker evidence instead of treating all cold-start rows as one claim
+
+Delivered:
+
+- promoted `engine.worker.cold-start.p95` to `stable-baseline-published` in `scripts/sre-posture-support.json`
+- added a `benchmark-mean-baseline-proxy` row for `BuildStartWorkerHost` in `scripts/sre-stable-baselines.json` using `Cephalon.Benchmarks.Runtime.ColdStartBenchmarks-report.csv`
+- kept `engine.aspnetcore.minimal-api.cold-start.p95` pending because the current ASP.NET Core TestServer cold-start report remains above the 800 ms SLO target
+- kept `engine.tests.flake-rate.7d` pending because the repository has no GitHub Actions run history to compute a truthful 7-day flake-rate baseline
+- updated scorecard fixtures, doctor/readback expectations, SRE docs, release checklist, roadmap, architecture follow-ups, and project memory to read back 11 SLIs / 2 pending / 9 stable / 9 rows / 11 measurements / 6 guardrail-mapped / 0 pending guardrail / 8 references
+
+Validation:
+
+- generated scorecard readback proves the new SRE stable-baseline manifest counts
+- focused Pester and CLI doctor tests cover the scorecard, release-validation summary, and local doctor readback
+- release validation replays the reduced scorecard/readback lane without overwriting canonical full-run wall-time evidence
+
 ### ENG-521 Publish validate-release wall-time SRE evidence
 
 Status: done
@@ -15435,6 +15464,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-497 Add SRE guardrail coverage evidence: `scripts/publish-engine-completion-scorecard.ps1` schema `1.7.0` now emits SRE guardrail coverage counts from `scripts/sre-posture-support.json` schema `1.1.0`, validates `guardrailReferences` against `benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json`, distinguishes guardrail-catalog-mapped / pending-stable-baseline / not-applicable SLIs, and keeps `cephalon doctor --scorecard <path>` plus release validation aligned with the same `SrePostureEvidence` counts without promoting stable SLO baselines. Quality dimensions: Reliability + Performance + Auditability + Maintainability + Usability (shipped)
 - ENG-515 Publish benchmark-backed SRE stable baselines: `scripts/publish-engine-completion-scorecard.ps1` schema `1.9.0` now validates `scripts/sre-stable-baselines.json`, publishes four benchmark-backed stable SRE baselines, leaves seven SLI rows pending, and keeps release validation plus `cephalon doctor --scorecard <path>` aligned with the same stable-baseline rows and measurements without promoting cold-start, wall-time, flake-rate, or deployment-mode truth SLIs. Quality dimensions: Reliability + Performance + Auditability + Maintainability + Usability (shipped)
 - ENG-518 Publish deployment-mode claim-truth SRE baseline: `scripts/sre-posture-support.json` schema `1.3.0` and `scripts/sre-stable-baselines.json` schema `1.1.0` now promote `engine.deployment-mode-claims.truthful-fraction` through a release-validation claims-report baseline, and the scorecard publisher validates typed non-benchmark SRE stable-baseline measurements while readback moves to 11 SLIs / 6 pending / 5 stable / 5 rows / 7 measurements. Quality dimensions: Reliability + Auditability + Maintainability + Compliance + Usability (shipped)
+- ENG-522 Publish Worker cold-start SRE baseline: `scripts/sre-stable-baselines.json` now promotes `engine.worker.cold-start.p95` through a `benchmark-mean-baseline-proxy` over `BuildStartWorkerHost`, while ASP.NET Core cold-start and flake-rate remain pending; scorecard/readback moves to 11 SLIs / 2 pending / 9 stable / 9 rows / 11 measurements / 6 guardrail-mapped / 0 pending guardrail / 8 references. Quality dimensions: Reliability + Performance + Auditability + Maintainability + Usability (shipped)
 - ENG-521 Publish validate-release wall-time SRE evidence: canonical full `scripts/validate-release.ps1` runs now record `artifacts/sre-release-validation/validate-release-wall-time.json` only after all default release gates complete, reduced runs cannot overwrite that report, `engine.validate-release.wall-time` is promoted through a `release-validation-step-wall-time-baseline` row, and SRE readback moves to 11 SLIs / 3 pending / 8 stable / 8 rows / 10 measurements / 6 guardrail-mapped / 0 pending guardrail / 8 references while cold-start stable baselines and flake-rate remain pending. Quality dimensions: Reliability + Performance + Auditability + Maintainability + Usability (shipped)
 - ENG-520 Publish reference-docs wall-time SRE evidence: `scripts/validate-release.ps1` now records `artifacts/sre-release-validation/reference-docs-wall-time.json` before scorecard publication, `engine.reference-docs.wall-time` is promoted through a `release-validation-step-wall-time-baseline` row, and SRE readback moves to 11 SLIs / 4 pending / 7 stable / 7 rows / 9 measurements / 6 guardrail-mapped / 0 pending guardrail / 8 references while cold-start, full release-validation wall-time, and flake-rate remain pending. Quality dimensions: Reliability + Performance + Auditability + Maintainability + Usability (shipped)
 - ENG-519 Publish restore wall-time and cold-start guardrail SRE evidence: `ColdStartBenchmarks` now gives ASP.NET Core and Worker cold-start SLIs executable guardrail rows without promoting their pending stable SLO baselines, `scripts/validate-release.ps1` records restore locked-mode timing evidence, and `engine.dotnet.restore.wall-time.lock-mode` is promoted through a `release-validation-step-wall-time-baseline` row while readback moves to 11 SLIs / 5 pending / 6 stable / 6 rows / 8 measurements / 6 guardrail-mapped / 0 pending guardrail / 8 references. Quality dimensions: Reliability + Performance + Auditability + Maintainability + Usability (shipped)
