@@ -1,7 +1,7 @@
 {
   "$schemaVersion": "1.0.0",
   "status": "expanded-live-provider-evidence",
-  "summary": "Provider integration evidence is machine-readable. Redis data/event-sourcing, MongoDB data, Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant data providers have live proof lanes; CDC database providers have live proof lanes; the remaining composition-only rows are observability dependency-health invariants. The dependency-health provider family shape is source-derived through scripts/observability-dependency-health-providers.json.",
+  "summary": "Provider integration evidence is machine-readable. Redis data/event-sourcing, MongoDB data, Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant data providers have live proof lanes with pre-provisioned or disposable Testcontainers runtime modes; CDC database providers have live proof lanes; the remaining composition-only rows are observability dependency-health invariants. The dependency-health provider family shape is source-derived through scripts/observability-dependency-health-providers.json.",
   "sourceDocs": [
     "docs/engine-completion-scorecard.md",
     "docs/release-checklist.md",
@@ -237,6 +237,7 @@
       "environmentVariables": [
         "CEPHALON_PROVIDER_EXTERNAL_SERVICES",
         "CEPHALON_PROVIDER_INTEGRATION",
+        "CEPHALON_PROVIDER_TESTCONTAINERS",
         "CEPHALON_PROVIDER_CASSANDRA_CONTACT_POINTS",
         "CEPHALON_PROVIDER_CASSANDRA_PORT",
         "CEPHALON_PROVIDER_CASSANDRA_KEYSPACE"
@@ -276,6 +277,7 @@
       "environmentVariables": [
         "CEPHALON_PROVIDER_EXTERNAL_SERVICES",
         "CEPHALON_PROVIDER_INTEGRATION",
+        "CEPHALON_PROVIDER_TESTCONTAINERS",
         "CEPHALON_PROVIDER_CLICKHOUSE_HOST",
         "CEPHALON_PROVIDER_CLICKHOUSE_PORT",
         "CEPHALON_PROVIDER_CLICKHOUSE_DATABASE",
@@ -318,6 +320,7 @@
       "environmentVariables": [
         "CEPHALON_PROVIDER_EXTERNAL_SERVICES",
         "CEPHALON_PROVIDER_INTEGRATION",
+        "CEPHALON_PROVIDER_TESTCONTAINERS",
         "CEPHALON_PROVIDER_ELASTICSEARCH_URI",
         "CEPHALON_PROVIDER_ELASTICSEARCH_USERNAME",
         "CEPHALON_PROVIDER_ELASTICSEARCH_PASSWORD"
@@ -386,6 +389,7 @@
       "environmentVariables": [
         "CEPHALON_PROVIDER_EXTERNAL_SERVICES",
         "CEPHALON_PROVIDER_INTEGRATION",
+        "CEPHALON_PROVIDER_TESTCONTAINERS",
         "CEPHALON_PROVIDER_NATS_URI"
       ],
       "externalServiceGate": "provider-integration"
@@ -424,6 +428,7 @@
       "environmentVariables": [
         "CEPHALON_PROVIDER_EXTERNAL_SERVICES",
         "CEPHALON_PROVIDER_INTEGRATION",
+        "CEPHALON_PROVIDER_TESTCONTAINERS",
         "CEPHALON_PROVIDER_NEO4J_URI",
         "CEPHALON_PROVIDER_NEO4J_USERNAME",
         "CEPHALON_PROVIDER_NEO4J_PASSWORD"
@@ -464,6 +469,7 @@
       "environmentVariables": [
         "CEPHALON_PROVIDER_EXTERNAL_SERVICES",
         "CEPHALON_PROVIDER_INTEGRATION",
+        "CEPHALON_PROVIDER_TESTCONTAINERS",
         "CEPHALON_PROVIDER_OPENSEARCH_URI",
         "CEPHALON_PROVIDER_OPENSEARCH_USERNAME",
         "CEPHALON_PROVIDER_OPENSEARCH_PASSWORD"
@@ -505,6 +511,7 @@
       "environmentVariables": [
         "CEPHALON_PROVIDER_EXTERNAL_SERVICES",
         "CEPHALON_PROVIDER_INTEGRATION",
+        "CEPHALON_PROVIDER_TESTCONTAINERS",
         "CEPHALON_PROVIDER_QDRANT_HOST",
         "CEPHALON_PROVIDER_QDRANT_PORT",
         "CEPHALON_PROVIDER_QDRANT_API_KEY"

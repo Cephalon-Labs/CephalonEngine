@@ -32,12 +32,42 @@ Current focus:
 - treat the long-term release-readiness notes in [`project-memory.md`](project-memory.md) as guarded scorecard contract, not loose historical prose: Tooling documentation coverage now reads `$Script:SchemaVersion` from `scripts/publish-engine-completion-scorecard.ps1` and requires project memory, scorecard docs, CLI docs, release checklists, and package docs to stay aligned with the generated schema plus provider-integration doctor/release-validation readback
 - treat scorecard hard blockers as release-validation failures even when a later narrow step is skipped: `scripts/validate-release.ps1` fails during the scorecard step when generated evidence reports blocked platform gates, supply-chain blocked items, or public API removals; `partial`, `not-claimed`, provider composition-only, SRE pending baselines, and external-policy-pending items remain explicit readback/exception posture
 - treat the CDC integration-test lane as additive evidence over the runtime catalog truth: `tests/Cephalon.Tests.CdcIntegration` now proves MongoDB change streams against a real disposable replica set, SQL Server CDC against an opt-in live service, Postgres logical replication against an opt-in live service, MySQL binlog streaming against an opt-in live service, and Oracle LogMiner against an opt-in live service while keeping default CI Docker-free through the shared external-service gate, instead of implying those provider paths through fake transport harnesses
-- treat the provider integration-test lane as additive evidence over non-CDC provider truth: `tests/Cephalon.Tests.ProviderIntegration` now proves Redis data outbox/inbox/dispatch-store behavior plus Redis Streams event sourcing against an opt-in live Redis runtime, MongoDB data outbox/inbox/dispatch-store behavior against a disposable replica-set runtime without a permanent external service, and Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant data outbox/inbox runtime behavior against opt-in live provider services
+- treat the provider integration-test lane as additive evidence over non-CDC provider truth: `tests/Cephalon.Tests.ProviderIntegration` now proves Redis data outbox/inbox/dispatch-store behavior plus Redis Streams event sourcing against an opt-in live Redis runtime, MongoDB data outbox/inbox/dispatch-store behavior against a disposable replica-set runtime without a permanent external service, and Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant data outbox/inbox runtime behavior against either pre-provisioned provider services or disposable Testcontainers-backed runtimes
 - treat `scripts/provider-integration-support.json` as the release-readiness manifest for provider claims across live-provider tests, composition-only data/provider runtime contracts, CDC integration lanes, and the eighteen dependency-health companion packs; the scorecard, release validation, CLI doctor, and script-level Pester tests must read provider-integration counts and dependency-health provider-manifest readback from that manifest instead of hand-authored prose, and the scorecard publisher must fail if dependency-health provider rows drift from the source-derived provider manifest
 - treat `scripts/observability-dependency-health-providers.json` as the source-derived dependency-health provider-family manifest: runtime invariant tests, provider-integration scorecard row validation, and Tooling documentation coverage must derive the eighteen `Cephalon.Observability.*Dependencies` expectations from that file so the next provider cannot ship with source/docs/planning counts drifting apart
 - treat the Debezium test-flake quarantine as resolved by shared catalog hardening: CDC execution-runtime filters now reuse versioned snapshots over indexed capture ownership instead of re-enriching every runtime for every state/category selector
 - treat the `ENG-500` regression closeout as the current suite-stability baseline: provider-native CDC hosting tests now run through a dedicated non-parallel collection, long-running package-publishing process output drains stdout/stderr concurrently, sample REST behavior hosts align with source-generated `/api/v1` behavior endpoints, and the full solution test lane is again green on the current worktree
 - treat the CDC execution-runtime catalog hot path as benchmark-governed: `CdcExecutionRuntimeCatalogBenchmarks` now covers Debezium-managed external runtimes, external observations, repeated managed-connector drift/dry-run/command-issuance filters, and compact multi-selector operator flows against the shared versioned snapshot
+
+### ENG-513 Add disposable Testcontainers provider runtime mode
+
+Status: done
+Estimate: 1
+Issue: #1142
+Iteration: Sprint 125
+Area: test-coverage / provider integration / data providers
+Quality dimensions: Reliability, Compatibility, Auditability, Data Integrity, Maintainability
+
+Why:
+
+- ENG-512 promoted Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant to real live-proof lanes, but the seven lanes still needed pre-provisioned provider services
+- provider live proof should be runnable on a Docker-capable CI/dev runner without requiring long-lived infrastructure for every provider
+- the provider gate must keep default runs deterministic and Docker-free while still opening a real runtime lane when explicitly requested
+
+Delivered:
+
+- added `ExternalProviderTestcontainerRuntime` to resolve Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant provider settings from either pre-provisioned variables or disposable Testcontainers-backed services
+- expanded `ExternalProviderServiceGate` so `CEPHALON_PROVIDER_TESTCONTAINERS=1` enables Testcontainers mode for all seven ENG-512 data-provider live lanes, while pre-provisioned variables still win when supplied
+- kept the live proof behavior on the same `LiveDataProviderIntegrationTests` runtime contracts: real provider pack composition, manifest capability truth, outbox/inbox descriptors, idempotent writes, provider persistence, and dispatch-store transitions where the provider supports dispatch
+- updated the provider integration support manifest, provider integration README, test-coverage roadmap, roadmap/backlog/project memory, and scorecard docs so the provider claim is now "pre-provisioned or disposable Testcontainers runtime", not pre-provisioned-only
+
+Validation:
+
+- `dotnet restore .\tests\Cephalon.Tests.ProviderIntegration\Cephalon.Tests.ProviderIntegration.csproj` passed
+- `dotnet build .\tests\Cephalon.Tests.ProviderIntegration\Cephalon.Tests.ProviderIntegration.csproj --no-restore` passed
+- `dotnet test .\tests\Cephalon.Tests.ProviderIntegration\Cephalon.Tests.ProviderIntegration.csproj --no-build --logger "console;verbosity=normal"` passed `14` tests and skipped `10` gated provider tests
+- focused gate smoke with `CEPHALON_PROVIDER_EXTERNAL_SERVICES=1` plus `CEPHALON_PROVIDER_TESTCONTAINERS=1` passed `2` discoverability tests without starting provider containers
+- this workstation's Docker daemon is not running (`//./pipe/docker_engine` missing), so the heavy provider container starts were compiled and gated but not executed locally
 
 ### ENG-512 Promote remaining non-relational data provider live proofs
 

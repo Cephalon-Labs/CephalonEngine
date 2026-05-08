@@ -54,7 +54,7 @@ internal sealed record ExternalProviderServiceGate(
     internal const string RedisConnectionStringAliasVariable = "CEPHALON_REDIS_CONNECTION_STRING";
 
     internal static string SkipReason =>
-        $"External provider service tests are disabled. Set {ExternalServicesVariable}=1 and the provider-specific service variables to run this lane.";
+        $"External provider service tests are disabled. Set {ExternalServicesVariable}=1 and either {TestcontainersVariable}=1 or the provider-specific service variables to run this lane.";
 
     internal int CassandraPortOrDefault => CassandraPort ?? 9042;
 
@@ -87,24 +87,26 @@ internal sealed record ExternalProviderServiceGate(
     {
         return ResolveProviderMode(
             !string.IsNullOrWhiteSpace(CassandraContactPoints) &&
-            !string.IsNullOrWhiteSpace(CassandraKeyspace));
+            !string.IsNullOrWhiteSpace(CassandraKeyspace),
+            allowTestcontainers: true);
     }
 
     internal ExternalProviderServiceMode ResolveClickHouseMode()
     {
         return ResolveProviderMode(
             !string.IsNullOrWhiteSpace(ClickHouseHost) &&
-            !string.IsNullOrWhiteSpace(ClickHouseDatabase));
+            !string.IsNullOrWhiteSpace(ClickHouseDatabase),
+            allowTestcontainers: true);
     }
 
     internal ExternalProviderServiceMode ResolveElasticsearchMode()
     {
-        return ResolveProviderMode(!string.IsNullOrWhiteSpace(ElasticsearchUri));
+        return ResolveProviderMode(!string.IsNullOrWhiteSpace(ElasticsearchUri), allowTestcontainers: true);
     }
 
     internal ExternalProviderServiceMode ResolveNatsMode()
     {
-        return ResolveProviderMode(!string.IsNullOrWhiteSpace(NatsUri));
+        return ResolveProviderMode(!string.IsNullOrWhiteSpace(NatsUri), allowTestcontainers: true);
     }
 
     internal ExternalProviderServiceMode ResolveNeo4jMode()
@@ -112,17 +114,18 @@ internal sealed record ExternalProviderServiceGate(
         return ResolveProviderMode(
             !string.IsNullOrWhiteSpace(Neo4jUri) &&
             !string.IsNullOrWhiteSpace(Neo4jUsername) &&
-            !string.IsNullOrWhiteSpace(Neo4jPassword));
+            !string.IsNullOrWhiteSpace(Neo4jPassword),
+            allowTestcontainers: true);
     }
 
     internal ExternalProviderServiceMode ResolveOpenSearchMode()
     {
-        return ResolveProviderMode(!string.IsNullOrWhiteSpace(OpenSearchUri));
+        return ResolveProviderMode(!string.IsNullOrWhiteSpace(OpenSearchUri), allowTestcontainers: true);
     }
 
     internal ExternalProviderServiceMode ResolveQdrantMode()
     {
-        return ResolveProviderMode(!string.IsNullOrWhiteSpace(QdrantHost));
+        return ResolveProviderMode(!string.IsNullOrWhiteSpace(QdrantHost), allowTestcontainers: true);
     }
 
     internal string? GetSkipReason(ExternalProviderServiceProvider provider)
@@ -136,25 +139,25 @@ internal sealed record ExternalProviderServiceGate(
         {
             ExternalProviderServiceProvider.Any => null,
             ExternalProviderServiceProvider.Cassandra when ResolveCassandraMode() == ExternalProviderServiceMode.Disabled =>
-                $"{ProviderName(provider)} external-provider tests are disabled. Set {CassandraContactPointsVariable} and {CassandraKeyspaceVariable} with {ExternalServicesVariable}=1.",
+                $"{ProviderName(provider)} external-provider tests are disabled. Set {CassandraContactPointsVariable} and {CassandraKeyspaceVariable}, or set {TestcontainersVariable}=1, with {ExternalServicesVariable}=1.",
             ExternalProviderServiceProvider.Cassandra => null,
             ExternalProviderServiceProvider.ClickHouse when ResolveClickHouseMode() == ExternalProviderServiceMode.Disabled =>
-                $"{ProviderName(provider)} external-provider tests are disabled. Set {ClickHouseHostVariable} and {ClickHouseDatabaseVariable} with {ExternalServicesVariable}=1.",
+                $"{ProviderName(provider)} external-provider tests are disabled. Set {ClickHouseHostVariable} and {ClickHouseDatabaseVariable}, or set {TestcontainersVariable}=1, with {ExternalServicesVariable}=1.",
             ExternalProviderServiceProvider.ClickHouse => null,
             ExternalProviderServiceProvider.Elasticsearch when ResolveElasticsearchMode() == ExternalProviderServiceMode.Disabled =>
-                $"{ProviderName(provider)} external-provider tests are disabled. Set {ElasticsearchUriVariable} with {ExternalServicesVariable}=1.",
+                $"{ProviderName(provider)} external-provider tests are disabled. Set {ElasticsearchUriVariable}, or set {TestcontainersVariable}=1, with {ExternalServicesVariable}=1.",
             ExternalProviderServiceProvider.Elasticsearch => null,
             ExternalProviderServiceProvider.Nats when ResolveNatsMode() == ExternalProviderServiceMode.Disabled =>
-                $"{ProviderName(provider)} external-provider tests are disabled. Set {NatsUriVariable} with {ExternalServicesVariable}=1.",
+                $"{ProviderName(provider)} external-provider tests are disabled. Set {NatsUriVariable}, or set {TestcontainersVariable}=1, with {ExternalServicesVariable}=1.",
             ExternalProviderServiceProvider.Nats => null,
             ExternalProviderServiceProvider.Neo4j when ResolveNeo4jMode() == ExternalProviderServiceMode.Disabled =>
-                $"{ProviderName(provider)} external-provider tests are disabled. Set {Neo4jUriVariable}, {Neo4jUsernameVariable}, and {Neo4jPasswordVariable} with {ExternalServicesVariable}=1.",
+                $"{ProviderName(provider)} external-provider tests are disabled. Set {Neo4jUriVariable}, {Neo4jUsernameVariable}, and {Neo4jPasswordVariable}, or set {TestcontainersVariable}=1, with {ExternalServicesVariable}=1.",
             ExternalProviderServiceProvider.Neo4j => null,
             ExternalProviderServiceProvider.OpenSearch when ResolveOpenSearchMode() == ExternalProviderServiceMode.Disabled =>
-                $"{ProviderName(provider)} external-provider tests are disabled. Set {OpenSearchUriVariable} with {ExternalServicesVariable}=1.",
+                $"{ProviderName(provider)} external-provider tests are disabled. Set {OpenSearchUriVariable}, or set {TestcontainersVariable}=1, with {ExternalServicesVariable}=1.",
             ExternalProviderServiceProvider.OpenSearch => null,
             ExternalProviderServiceProvider.Qdrant when ResolveQdrantMode() == ExternalProviderServiceMode.Disabled =>
-                $"{ProviderName(provider)} external-provider tests are disabled. Set {QdrantHostVariable} with {ExternalServicesVariable}=1.",
+                $"{ProviderName(provider)} external-provider tests are disabled. Set {QdrantHostVariable}, or set {TestcontainersVariable}=1, with {ExternalServicesVariable}=1.",
             ExternalProviderServiceProvider.Qdrant => null,
             ExternalProviderServiceProvider.Redis when ResolveRedisMode() == ExternalProviderServiceMode.Disabled =>
                 $"Redis external-provider tests are disabled. Set {RedisConnectionStringVariable} or set {TestcontainersVariable}=1 with {ExternalServicesVariable}=1.",
