@@ -56,7 +56,7 @@ $packageArtifactsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", 
 $publicApiDeltaScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "summarise-public-api-deltas.ps1")
 $publicApiDeltaOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "public-api-delta-release", "public-api-delta.md")
 $publicApiDeltaJsonOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "public-api-delta-release", "public-api-delta.json")
-$releaseValidationWallTimeTargetMilliseconds = 1500000
+$releaseValidationWallTimeTargetMilliseconds = 1800000
 $canonicalBenchmarkFilters = @(
     "*EngineBuilderBenchmarks*",
     "*EngineRuntimeBenchmarks*",

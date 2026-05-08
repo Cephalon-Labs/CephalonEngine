@@ -22,6 +22,8 @@
 
 `Cephalon.Analyzers` is a *consumer-facing* meta-package. The Cephalon engine itself does not depend on it; engine projects continue to inherit analyzer settings through `Directory.Build.props` and the central package management in `Directory.Packages.props`. The point of the meta-package is that consumers writing modules, behavior implementations, host adapters, or applications on top of Cephalon can adopt the engine's quality posture by adding one `<PackageReference>` and (optionally) including the bundled `.editorconfig`.
 
+Inside the repo, projects that consume `Cephalon.Analyzers` as a compiler-only `ProjectReference` remove host publish-mode globals through `CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove`. The analyzer project also declares `TreatAsLocalProperty` for `PublishTrimmed`, `PublishAot`, `PublishSingleFile`, `SelfContained`, `RuntimeIdentifier`, and `RuntimeIdentifiers` so representative trim/AOT/single-file publish probes do not accidentally apply app publish settings to this `netstandard2.0` compiler-only project.
+
 The bundled analyzer severities tune a small set of high-leverage rules:
 
 - `CA2007` / `RCS1090` / `MA0004` (`ConfigureAwait(false)` discipline) → error

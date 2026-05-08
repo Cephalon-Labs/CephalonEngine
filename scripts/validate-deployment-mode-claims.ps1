@@ -1086,6 +1086,20 @@ function Restore-PackagesLockSnapshot {
     }
 }
 
+function Get-PublishProbeAdditionalArgs {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)] $ModeConfig
+    )
+
+    if ($ModeConfig.Mode -ne "nativeAot") {
+        return @()
+    }
+
+    $architecture = [System.Runtime.InteropServices.RuntimeInformation]::OSArchitecture.ToString().ToLowerInvariant()
+    return @("/p:_targetArchitecture=$architecture")
+}
+
 function Invoke-PublishProbe {
     [CmdletBinding()]
     param(
@@ -1115,7 +1129,7 @@ function Invoke-PublishProbe {
                 "-c",
                 $Configuration,
                 $ModeConfig.PublishArg
-            )
+            ) + @(Get-PublishProbeAdditionalArgs -ModeConfig $ModeConfig)
             $output = & $DotnetCommand @publishArgs 2>&1
             $exitCode = $LASTEXITCODE
             $lines = @($output | ForEach-Object { [string]$_ })
@@ -1344,6 +1358,33 @@ function Compute-PublishProbeGateResult {
             GatedModes           = $gatedModes
             FailureCount         = 0
             Reasons              = @("publish-probe release gate is not enabled by publishProbePolicy")
+        }
+    }
+
+    $auditOnlyModes = @()
+    if ($null -ne $PublishProbePolicy -and $PublishProbePolicy.PSObject.Properties.Match("AuditOnlyModes").Count -gt 0) {
+        $auditOnlyModes = @(ConvertTo-StringArray -Value $PublishProbePolicy.AuditOnlyModes)
+    }
+
+    $evaluatedModes = @(
+        $ModeReports |
+            Where-Object { $null -ne $_ -and -not [string]::IsNullOrWhiteSpace([string]$_.Mode) } |
+            ForEach-Object { [string]$_.Mode } |
+            Select-Object -Unique
+    )
+    $evaluatedGatedModes = @($evaluatedModes | Where-Object { $gatedModes -contains $_ })
+    if ($evaluatedModes.Count -gt 0 -and $evaluatedGatedModes.Count -eq 0 -and $auditOnlyModes.Count -gt 0) {
+        $nonAuditOnlyModes = @($evaluatedModes | Where-Object { $auditOnlyModes -notcontains $_ })
+        if ($nonAuditOnlyModes.Count -eq 0) {
+            return [pscustomobject]@{
+                Status               = "not-applicable"
+                Enabled              = $false
+                FailureBlocksRelease = $failureBlocksRelease
+                FailOnWarnings       = $failOnWarnings
+                GatedModes           = $gatedModes
+                FailureCount         = 0
+                Reasons              = @("current run evaluated only audit-only deployment modes: $($evaluatedModes -join ', ')")
+            }
         }
     }
 

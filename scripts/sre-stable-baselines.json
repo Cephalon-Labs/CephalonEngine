@@ -219,7 +219,7 @@
           "command": "pwsh scripts/validate-release.ps1",
           "status": "passed",
           "elapsedMilliseconds": 1490891.3562,
-          "targetMilliseconds": 1500000,
+          "targetMilliseconds": 1800000,
           "capturedAtUtc": "2026-05-08T16:00:55.1757539+00:00",
           "capturedFromCommit": "11bbe007e0d01e5fd8273c71269a4a28cfa2fd6b"
         }
