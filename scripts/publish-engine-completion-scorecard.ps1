@@ -1493,8 +1493,12 @@ function Convert-ProviderIntegrationEvidence {
                 Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
         )
         $externalServiceGate = [string](Get-ManifestPropertyValue -Object $row -PropertyName "externalServiceGate" -DefaultValue "")
-        if ($rowStatus -eq "live-proof-available" -and [string]::IsNullOrWhiteSpace($externalServiceGate)) {
-            throw "Provider integration live-proof row '$id' must declare externalServiceGate."
+        if (
+            $rowStatus -eq "live-proof-available" -and
+            [string]::IsNullOrWhiteSpace($externalServiceGate) -and
+            $defaultRunBehavior -ne "runs-without-external-services"
+        ) {
+            throw "Provider integration live-proof row '$id' must declare externalServiceGate unless defaultRunBehavior is runs-without-external-services."
         }
 
         $providerRows.Add([pscustomobject]([ordered]@{

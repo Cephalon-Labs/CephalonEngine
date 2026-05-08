@@ -1,7 +1,7 @@
 {
   "$schemaVersion": "1.0.0",
   "status": "partial-live-provider-evidence",
-  "summary": "Provider integration evidence is machine-readable. Redis data/event-sourcing and CDC database providers have opt-in live proof lanes; non-relational data providers and observability dependency-health providers have no-external-service composition/runtime invariant proof until provider-owned live lanes are promoted. The dependency-health provider family shape is source-derived through scripts/observability-dependency-health-providers.json.",
+  "summary": "Provider integration evidence is machine-readable. Redis data/event-sourcing, MongoDB data, and CDC database providers have live proof lanes; the remaining non-relational data providers and observability dependency-health providers have no-external-service composition/runtime invariant proof until provider-owned live lanes are promoted. The dependency-health provider family shape is source-derived through scripts/observability-dependency-health-providers.json.",
   "sourceDocs": [
     "docs/engine-completion-scorecard.md",
     "docs/release-checklist.md",
@@ -278,11 +278,11 @@
       "id": "mongodb-data-runtime-surface",
       "provider": "MongoDB",
       "family": "data",
-      "status": "composition-only",
+      "status": "live-proof-available",
       "defaultRunBehavior": "runs-without-external-services",
-      "testProject": "tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj",
+      "testProject": "tests/Cephalon.Tests.ProviderIntegration/Cephalon.Tests.ProviderIntegration.csproj",
       "testFiles": [
-        "tests/Cephalon.Tests.Composition/Composition/DataProviderRuntimeSurfaceTests.cs"
+        "tests/Cephalon.Tests.ProviderIntegration/MongoDbProviderIntegrationTests.cs"
       ],
       "sourceDocuments": [
         "docs/components/data-mongodb.md",
@@ -290,6 +290,9 @@
       ],
       "runtimeContracts": [
         "data.mongodb",
+        "data.document-store",
+        "data.outbox.mongodb",
+        "data.inbox.mongodb",
         "mongodb-outbox",
         "mongodb-inbox",
         "outbox-producers",

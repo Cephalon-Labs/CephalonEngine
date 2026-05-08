@@ -218,6 +218,8 @@ When `ChangeStreamCaptures` are configured:
 
 The dedicated CDC integration lane under `tests/Cephalon.Tests.CdcIntegration` now proves this MongoDB change-stream path against a real disposable replica set using `EphemeralMongo7`. That lane validates outbox staging, provider-native runtime binding, runtime-state reporting, execution-runtime aggregation, and checkpoint persistence without requiring Docker or a developer-managed MongoDB instance.
 
+The dedicated provider integration lane under `tests/Cephalon.Tests.ProviderIntegration` also proves the non-CDC MongoDB data-provider runtime path through `MongoDbProviderIntegrationTests.MongoDbProvider_StagesOutboxInboxAndDispatchAgainstDisposableReplicaSet`. The test starts a disposable single-node replica set, composes `Cephalon.Engine`, `Cephalon.Data.MongoDB`, and `Cephalon.Eventing`, and validates manifest capabilities, outbox and inbox descriptors, `event-driven-integration` runtime surfaces, idempotent outbox/inbox writes, dispatch-store success reporting, and durable dispatched/processed document state without requiring Docker or a developer-managed MongoDB instance.
+
 ### Checkpoint collection schema (`cdc_change_stream_checkpoints`)
 
 The collection name is `{CollectionPrefix}cdc_change_stream_checkpoints`.
