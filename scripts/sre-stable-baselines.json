@@ -1,10 +1,10 @@
 {
-  "$schemaVersion": "1.3.0",
-  "status": "benchmark-release-and-reference-docs-wall-time-baseline-published",
-  "summary": "Stable baselines are published for the benchmark-backed guardrail-mapped hot-path subset, the deployment-mode claim-truth SLI backed by the release-validation claims report, and the dotnet restore locked-mode plus reference-docs wall-time SLIs backed by release-validation timing evidence. Cold-start SLIs are guardrail-mapped but remain pending stable baselines until their optimization lane meets the tighter SLO; release-validation wall-time and flake-rate SLIs remain pending until their own evidence lanes run.",
-  "capturedAtUtc": "2026-05-08T14:11:16.1008055Z",
-  "capturedFromCommit": "15dc4371542076129236be283810528e52d591f5",
-  "runCommand": "pwsh ./scripts/validate-release.ps1 -SkipTests -SkipDotNetReadiness -SkipOperationalConventions -SkipPhase8Conventions -SkipBenchmarks -SkipPackages -SkipPublicApiDeltaSummary",
+  "$schemaVersion": "1.4.0",
+  "status": "benchmark-release-validation-wall-time-baseline-published",
+  "summary": "Stable baselines are published for the benchmark-backed guardrail-mapped hot-path subset, the deployment-mode claim-truth SLI backed by the release-validation claims report, and the dotnet restore locked-mode, reference-docs, and full validate-release wall-time SLIs backed by release-validation timing evidence. Cold-start SLIs are guardrail-mapped but remain pending stable baselines until their optimization lane meets the tighter SLO; flake-rate remains pending until its own CI metadata lane runs.",
+  "capturedAtUtc": "2026-05-08T16:00:55.1757539+00:00",
+  "capturedFromCommit": "11bbe007e0d01e5fd8273c71269a4a28cfa2fd6b",
+  "runCommand": "pwsh ./scripts/validate-release.ps1",
   "tooling": {
     "benchmarkDotNetVersion": "0.15.8",
     "dotnetSdk": "10.0.201",
@@ -23,12 +23,12 @@
     "engine.aspnetcore.request.alloc.bytes-per-op",
     "engine.deployment-mode-claims.truthful-fraction",
     "engine.dotnet.restore.wall-time.lock-mode",
-    "engine.reference-docs.wall-time"
+    "engine.reference-docs.wall-time",
+    "engine.validate-release.wall-time"
   ],
   "pendingBaselineSliIds": [
     "engine.aspnetcore.minimal-api.cold-start.p95",
     "engine.worker.cold-start.p95",
-    "engine.validate-release.wall-time",
     "engine.tests.flake-rate.7d"
   ],
   "baselineRows": [
@@ -178,6 +178,24 @@
           "targetMilliseconds": 300000,
           "capturedAtUtc": "2026-05-08T14:11:16.1008055Z",
           "capturedFromCommit": "15dc4371542076129236be283810528e52d591f5"
+        }
+      ]
+    },
+    {
+      "sliId": "engine.validate-release.wall-time",
+      "status": "stable-baseline-published",
+      "measurementKind": "release-validation-step-wall-time-baseline",
+      "notes": "Baseline is captured from the canonical full release-validation run after all default release gates complete. Reduced validation runs do not overwrite this timing report.",
+      "measurements": [
+        {
+          "timingReportPath": "artifacts/sre-release-validation/validate-release-wall-time.json",
+          "stepName": "Validate release (canonical full run)",
+          "command": "pwsh scripts/validate-release.ps1",
+          "status": "passed",
+          "elapsedMilliseconds": 1490891.3562,
+          "targetMilliseconds": 1500000,
+          "capturedAtUtc": "2026-05-08T16:00:55.1757539+00:00",
+          "capturedFromCommit": "11bbe007e0d01e5fd8273c71269a4a28cfa2fd6b"
         }
       ]
     }

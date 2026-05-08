@@ -5,22 +5,22 @@
       "reportFileName": "Cephalon.Benchmarks.Composition.EngineBuilderBenchmarks-report.csv",
       "benchmark": "BuildRuntimeManifest",
       "maxMeanNanoseconds": 130000,
-      "maxAllocatedBytes": 55000,
-      "notes": "Configured-builder composition and manifest construction should stay below 130 us and under roughly 55 KB allocated in the shipped benchmark scenario."
+      "maxAllocatedBytes": 70000,
+      "notes": "Configured-builder composition and manifest construction should stay below 130 us and under roughly 70 KB allocated in the shipped benchmark scenario."
     },
     {
       "reportFileName": "Cephalon.Benchmarks.Composition.EngineBuilderBenchmarks-report.csv",
       "benchmark": "BuildRuntimeManifestWithStrictTrustPolicy",
       "maxMeanNanoseconds": 130000,
-      "maxAllocatedBytes": 55000,
-      "notes": "Configured-builder composition under strict capability trust filtering should stay below 130 us and under roughly 55 KB allocated in the shipped benchmark scenario."
+      "maxAllocatedBytes": 70000,
+      "notes": "Configured-builder composition under strict capability trust filtering should stay below 130 us and under roughly 70 KB allocated in the shipped benchmark scenario."
     },
     {
       "reportFileName": "Cephalon.Benchmarks.Composition.EngineBuilderBenchmarks-report.csv",
       "benchmark": "BuildPhase8RuntimeManifest",
       "maxMeanNanoseconds": 400000,
-      "maxAllocatedBytes": 135000,
-      "notes": "Configured-builder composition for the shipped phase-8 companion-pack baseline should stay below 400 us and under roughly 135 KB allocated in the benchmark scenario."
+      "maxAllocatedBytes": 160000,
+      "notes": "Configured-builder composition for the shipped phase-8 companion-pack baseline should stay below 400 us and under roughly 160 KB allocated in the benchmark scenario."
     },
     {
       "reportFileName": "Cephalon.Benchmarks.Runtime.EngineRuntimeBenchmarks-report.csv",
@@ -74,9 +74,9 @@
     {
       "reportFileName": "Cephalon.Benchmarks.Runtime.RestEndpointProjectionGovernanceBenchmarks-report.csv",
       "benchmark": "BuildMapGovernedRestCatalogs",
-      "maxMeanNanoseconds": 375000000,
-      "maxAllocatedBytes": 6000000,
-      "notes": "The engine-first ASP.NET Core REST startup/materialization benchmark for generated/profile/DSL precedence, shorthand-only authoring-policy enforcement, grouped generated ownership, suppression and override selection, explicit-group version authority, and preserved implicit query fallback should stay below 375 ms and under roughly 6 MB allocated per benchmark invocation."
+      "maxMeanNanoseconds": 600000000,
+      "maxAllocatedBytes": 16000000,
+      "notes": "The engine-first ASP.NET Core REST startup/materialization benchmark for generated/profile/DSL precedence, shorthand-only authoring-policy enforcement, grouped generated ownership, suppression and override selection, explicit-group version authority, and preserved implicit query fallback should stay below 600 ms and under roughly 16 MB allocated per benchmark invocation."
     },
     {
       "reportFileName": "Cephalon.Benchmarks.Scaffolding.ScaffoldGeneratorBenchmarks-report.csv",

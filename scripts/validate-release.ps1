@@ -23,7 +23,8 @@ param(
         "*AuthorizationEvaluationBenchmarks*",
         "*TenantResolutionBenchmarks*",
         "*EventSourcingBenchmarks*",
-        "*OutboxStagingBenchmarks*"
+        "*OutboxStagingBenchmarks*",
+        "*CdcExecutionRuntimeCatalogBenchmarks*"
     )
 )
 
@@ -55,6 +56,22 @@ $packageArtifactsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", 
 $publicApiDeltaScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "summarise-public-api-deltas.ps1")
 $publicApiDeltaOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "public-api-delta-release", "public-api-delta.md")
 $publicApiDeltaJsonOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "public-api-delta-release", "public-api-delta.json")
+$releaseValidationWallTimeTargetMilliseconds = 1500000
+$canonicalBenchmarkFilters = @(
+    "*EngineBuilderBenchmarks*",
+    "*EngineRuntimeBenchmarks*",
+    "*ColdStartBenchmarks*",
+    "*AspNetCoreRequestLoggingBenchmarks*",
+    "*RestEndpointProjectionGovernanceBenchmarks*",
+    "*ScaffoldGeneratorBenchmarks*",
+    "*DataDispatchBenchmarks*",
+    "*BehaviorDispatchBenchmarks*",
+    "*AuthorizationEvaluationBenchmarks*",
+    "*TenantResolutionBenchmarks*",
+    "*EventSourcingBenchmarks*",
+    "*OutboxStagingBenchmarks*",
+    "*CdcExecutionRuntimeCatalogBenchmarks*"
+)
 
 function Invoke-Step {
     param(
@@ -190,10 +207,19 @@ function Write-SreReleaseValidationStepTiming {
         [Parameter(Mandatory = $true)]
         [double]$ElapsedMilliseconds,
         [Parameter(Mandatory = $true)]
-        [int]$TargetMilliseconds
+        [int]$TargetMilliseconds,
+        [string]$OutputPath = $sreReleaseValidationOutputPath
     )
 
-    New-Item -ItemType Directory -Path $sreReleaseValidationOutputPath -Force | Out-Null
+    New-Item -ItemType Directory -Path $OutputPath -Force | Out-Null
+
+    if ($ElapsedMilliseconds -le 0) {
+        throw "SRE timing for '$SliId' must be greater than zero milliseconds."
+    }
+
+    if ($ElapsedMilliseconds -gt $TargetMilliseconds) {
+        throw "SRE timing for '$SliId' exceeded target: $([math]::Round($ElapsedMilliseconds, 4))ms > ${TargetMilliseconds}ms."
+    }
 
     [ordered]@{
         '$schemaVersion' = "1.0.0"
@@ -205,7 +231,36 @@ function Write-SreReleaseValidationStepTiming {
         targetMilliseconds = $TargetMilliseconds
         capturedAtUtc = [DateTimeOffset]::UtcNow.ToString("o")
         capturedFromCommit = Get-RepositoryCommit
-    } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $sreReleaseValidationOutputPath $FileName) -Encoding UTF8
+    } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $OutputPath $FileName) -Encoding UTF8
+}
+
+function Test-IsCanonicalReleaseValidationRun {
+    if ($SkipRestore -or
+        $SkipBuild -or
+        $SkipTests -or
+        $SkipDotNetReadiness -or
+        $SkipDeploymentModeClaims -or
+        $SkipEngineCompletionScorecard -or
+        $SkipOperationalConventions -or
+        $SkipPhase8Conventions -or
+        $SkipBenchmarks -or
+        $SkipPackages -or
+        $SkipPublicApiDeltaSummary -or
+        $SkipReferenceDocs) {
+        return $false
+    }
+
+    if ($BenchmarkFilters.Count -ne $canonicalBenchmarkFilters.Count) {
+        return $false
+    }
+
+    for ($index = 0; $index -lt $canonicalBenchmarkFilters.Count; $index++) {
+        if ($BenchmarkFilters[$index] -ne $canonicalBenchmarkFilters[$index]) {
+            return $false
+        }
+    }
+
+    return $true
 }
 
 function Get-ScorecardIntegerProperty {
@@ -507,6 +562,7 @@ if ($env:CEPHALON_VALIDATE_RELEASE_NO_RUN -eq "1") {
 }
 
 Push-Location $repoRoot
+$releaseValidationStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
 try {
     foreach ($testProjectPath in $testProjectPaths) {
         if (-not (Test-Path -LiteralPath $testProjectPath)) {
@@ -704,9 +760,24 @@ try {
         }
     }
 
+    if (Test-IsCanonicalReleaseValidationRun) {
+        $releaseValidationStopwatch.Stop()
+        Write-SreReleaseValidationStepTiming `
+            -FileName "validate-release-wall-time.json" `
+            -SliId "engine.validate-release.wall-time" `
+            -StepName "Validate release (canonical full run)" `
+            -Command "pwsh scripts/validate-release.ps1" `
+            -ElapsedMilliseconds $releaseValidationStopwatch.Elapsed.TotalMilliseconds `
+            -TargetMilliseconds $releaseValidationWallTimeTargetMilliseconds
+    }
+
     Write-Host ""
     Write-Host "Release validation completed successfully." -ForegroundColor Green
 }
 finally {
+    if ($releaseValidationStopwatch.IsRunning) {
+        $releaseValidationStopwatch.Stop()
+    }
+
     Pop-Location
 }

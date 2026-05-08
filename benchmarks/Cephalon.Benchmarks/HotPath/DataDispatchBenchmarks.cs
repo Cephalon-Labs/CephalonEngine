@@ -36,6 +36,9 @@ public class DataDispatchBenchmarks
     public async Task Setup()
     {
         var services = new ServiceCollection();
+        services.AddCephalonDataQuery<BenchmarkQuery, int>();
+        services.AddCephalonDataCommand<BenchmarkCommand>();
+        services.AddCephalonDataCommand<BenchmarkResultCommand, int>();
         services.AddSingleton<IQueryHandler<BenchmarkQuery, int>, BenchmarkQueryHandler>();
         services.AddSingleton<ICommandHandler<BenchmarkCommand>, BenchmarkCommandHandler>();
         services.AddSingleton<ICommandHandler<BenchmarkResultCommand, int>, BenchmarkResultCommandHandler>();
