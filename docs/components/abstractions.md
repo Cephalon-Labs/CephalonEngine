@@ -211,7 +211,7 @@ The engine should depend on this package for contracts only. New runtime behavio
 The behavior ownership contracts now follow that rule directly:
 
 - `IBehaviorOwnerModule` and `IBehaviorModuleBuilder` let one module declare the behaviors it owns without leaking ASP.NET Core or other host APIs into `Cephalon.Abstractions`
-- `IBehaviorModuleBuilder` exposes both generic `Add<TBehavior>()` overloads and type-based `Add(Type, ...)` overloads so adapter packages can register module-owned behaviors discovered from generated metadata without reflecting over the generic authoring methods
+- `IBehaviorModuleBuilder` exposes both generic `Add<TBehavior>()` overloads and type-based `Add(Type, ...)` overloads so adapter packages can register module-owned behaviors discovered from generated metadata without reflecting over the generic authoring methods; the public contract also carries trim/AOT annotations so generic behavior types preserve interface metadata while type-based closed input/output registration remains an explicit compatibility boundary for trim-ready hosts
 - `OwnedBehaviorRegistration` is the normalized ownership record the engine composes at build time
 - public REST exposure still belongs in adapter packages such as `Cephalon.Behaviors.Http`, so module ownership and HTTP route mapping stay separate concerns
 

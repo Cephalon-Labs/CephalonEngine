@@ -8,7 +8,6 @@ namespace Cephalon.Engine.Composition.Packages;
 
 internal static class ModulePackageLoader
 {
-    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
     private static readonly string CurrentEngineVersion = GetCurrentEngineVersion();
     private static readonly string CurrentTargetFramework = GetCurrentTargetFramework();
 
@@ -211,7 +210,7 @@ internal static class ModulePackageLoader
         try
         {
             var json = File.ReadAllText(manifestPath);
-            return JsonSerializer.Deserialize<PackageDefinitionFile>(json, JsonOptions)
+            return JsonSerializer.Deserialize(json, PackageDefinitionFileJsonContext.Default.PackageDefinitionFile)
                 ?? throw new InvalidOperationException(
                     $"Package manifest '{manifestPath}' could not be parsed.");
         }

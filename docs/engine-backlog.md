@@ -373,6 +373,31 @@ Validation:
 
 - `scripts/validate-deployment-mode-claims.ps1 -DeploymentMode singleFile -Configuration Release` passed with `packages=8`, `hazards=14`, `PublishProbeGate=passed`, and 3 truthful package-scoped claims
 
+### ENG-526 Reduce Cephalon.Engine trim blockers
+
+Status: done
+Iteration: Sprint 125
+Area: release-readiness / deployment-mode / engine
+Quality dimensions: Compatibility, Maintainability, Auditability
+
+Why:
+
+- `ENG-524` made trim and Native AOT probes reach real `Cephalon.Engine` blockers; the next safe step is to retire bounded analyzer findings without claiming global support
+- package manifest JSON parsing, feature-flag provider DI construction, and typed module-owned behavior registration can be hardened independently from the larger dynamic package-loading boundary
+
+Delivered:
+
+- added source-generated package manifest JSON parsing through `PackageDefinitionFileJsonContext`
+- annotated `AddFeatureFlagProvider<TProvider>()` for provider public-constructor preservation
+- annotated `IBehaviorModuleBuilder` and `OwnedBehaviorModuleBuilder` so behavior interface preservation, typed input JSON preservation, and type-based registration boundaries are explicit to trim/AOT analyzers and IntelliSense
+- documented the remaining global support blockers as dynamic package loading plus Native AOT behavior-input JSON materialization, not package manifest JSON parsing or missing DI preservation
+
+Validation:
+
+- `dotnet build src/Cephalon.Engine/Cephalon.Engine.csproj -c Release`
+- focused trim publish probe for `samples/Cephalon.Sample.ModularMonolith` reduced from 7 analyzer errors to 2 dynamic package-loading errors
+- focused Native AOT publish probe reports the same 2 package-loading errors plus 1 behavior-input JSON fallback error
+
 ### ENG-523 Publish pending-baseline blocker evidence
 
 Status: shipped

@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text.Json;
 using Cephalon.Abstractions.Behaviors;
@@ -6,16 +7,25 @@ namespace Cephalon.Engine.Composition;
 
 internal sealed class OwnedBehaviorModuleBuilder(string sourceModuleId) : IBehaviorModuleBuilder
 {
+    private const string TypeBasedBehaviorRegistrationMessage =
+        "Type-based behavior ownership registration closes generic execution delegates at runtime. Prefer Add<TBehavior, TInput, TOutput>() or source-generated behavior descriptors for trim-ready hosts.";
     private static readonly Type AppBehaviorOpenGeneric = typeof(IAppBehavior<,>);
     private static readonly JsonSerializerOptions WebJsonSerializerOptions = new(JsonSerializerDefaults.Web);
     private readonly string sourceModuleId = NormalizeRequired(sourceModuleId);
     private readonly List<OwnedBehaviorRegistration> registrations = [];
 
-    public IBehaviorModuleBuilder Add<TBehavior>()
+    public IBehaviorModuleBuilder Add<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
+        TBehavior>()
         where TBehavior : class
         => Add(typeof(TBehavior));
 
-    public IBehaviorModuleBuilder Add<TBehavior, TInput, TOutput>()
+    public IBehaviorModuleBuilder Add<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
+        TBehavior,
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicProperties)]
+        TInput,
+        TOutput>()
         where TBehavior : class, IAppBehavior<TInput, TOutput>
         where TInput : notnull
         => AddCore(
@@ -23,14 +33,21 @@ internal sealed class OwnedBehaviorModuleBuilder(string sourceModuleId) : IBehav
             configureTopology: null,
             CreateExecutionDelegate<TBehavior, TInput, TOutput>());
 
-    public IBehaviorModuleBuilder Add<TBehavior>(Action<IBehaviorTopologyBuilder> configureTopology)
+    public IBehaviorModuleBuilder Add<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
+        TBehavior>(Action<IBehaviorTopologyBuilder> configureTopology)
         where TBehavior : class
     {
         ArgumentNullException.ThrowIfNull(configureTopology);
         return Add(typeof(TBehavior), configureTopology);
     }
 
-    public IBehaviorModuleBuilder Add<TBehavior, TInput, TOutput>(
+    public IBehaviorModuleBuilder Add<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
+        TBehavior,
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicProperties)]
+        TInput,
+        TOutput>(
         Action<IBehaviorTopologyBuilder> configureTopology)
         where TBehavior : class, IAppBehavior<TInput, TOutput>
         where TInput : notnull
@@ -42,22 +59,36 @@ internal sealed class OwnedBehaviorModuleBuilder(string sourceModuleId) : IBehav
             CreateExecutionDelegate<TBehavior, TInput, TOutput>());
     }
 
-    public IBehaviorModuleBuilder Add(Type behaviorType)
+    public IBehaviorModuleBuilder Add(
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
+        Type behaviorType)
         => AddCore(behaviorType, configureTopology: null);
 
-    public IBehaviorModuleBuilder Add(Type behaviorType, Type inputType, Type outputType)
+    [RequiresDynamicCode(TypeBasedBehaviorRegistrationMessage)]
+    [RequiresUnreferencedCode(TypeBasedBehaviorRegistrationMessage)]
+    public IBehaviorModuleBuilder Add(
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
+        Type behaviorType,
+        Type inputType,
+        Type outputType)
         => AddCore(
             behaviorType,
             configureTopology: null,
             CreateExecutionDelegate(behaviorType, inputType, outputType));
 
-    public IBehaviorModuleBuilder Add(Type behaviorType, Action<IBehaviorTopologyBuilder> configureTopology)
+    public IBehaviorModuleBuilder Add(
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
+        Type behaviorType,
+        Action<IBehaviorTopologyBuilder> configureTopology)
     {
         ArgumentNullException.ThrowIfNull(configureTopology);
         return AddCore(behaviorType, configureTopology);
     }
 
+    [RequiresDynamicCode(TypeBasedBehaviorRegistrationMessage)]
+    [RequiresUnreferencedCode(TypeBasedBehaviorRegistrationMessage)]
     public IBehaviorModuleBuilder Add(
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
         Type behaviorType,
         Type inputType,
         Type outputType,
@@ -74,6 +105,7 @@ internal sealed class OwnedBehaviorModuleBuilder(string sourceModuleId) : IBehav
         => registrations.ToArray();
 
     private OwnedBehaviorModuleBuilder AddCore(
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
         Type behaviorType,
         Action<IBehaviorTopologyBuilder>? configureTopology,
         Func<object, object, IBehaviorContext, CancellationToken, Task<object?>>? executionDelegate = null)
@@ -111,7 +143,12 @@ internal sealed class OwnedBehaviorModuleBuilder(string sourceModuleId) : IBehav
         return this;
     }
 
-    private static Func<object, object, IBehaviorContext, CancellationToken, Task<object?>> CreateExecutionDelegate<TBehavior, TInput, TOutput>()
+    [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "TInput is a closed behavior contract annotated for public JSON members by the module-owned behavior registration API.")]
+    private static Func<object, object, IBehaviorContext, CancellationToken, Task<object?>> CreateExecutionDelegate<
+        TBehavior,
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicProperties)]
+        TInput,
+        TOutput>()
         where TBehavior : class, IAppBehavior<TInput, TOutput>
         where TInput : notnull
     {
@@ -127,6 +164,8 @@ internal sealed class OwnedBehaviorModuleBuilder(string sourceModuleId) : IBehav
         };
     }
 
+    [RequiresDynamicCode(TypeBasedBehaviorRegistrationMessage)]
+    [RequiresUnreferencedCode(TypeBasedBehaviorRegistrationMessage)]
     private static Func<object, object, IBehaviorContext, CancellationToken, Task<object?>> CreateExecutionDelegate(
         Type behaviorType,
         Type inputType,
@@ -150,7 +189,11 @@ internal sealed class OwnedBehaviorModuleBuilder(string sourceModuleId) : IBehav
         return (Func<object, object, IBehaviorContext, CancellationToken, Task<object?>>)closedFactory.Invoke(null, null)!;
     }
 
-    private static Func<object, object, IBehaviorContext, CancellationToken, Task<object?>> CreateExecutionDelegateCore<TBehavior, TInput, TOutput>()
+    private static Func<object, object, IBehaviorContext, CancellationToken, Task<object?>> CreateExecutionDelegateCore<
+        TBehavior,
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicProperties)]
+        TInput,
+        TOutput>()
         where TBehavior : class, IAppBehavior<TInput, TOutput>
         where TInput : notnull
         => CreateExecutionDelegate<TBehavior, TInput, TOutput>();
