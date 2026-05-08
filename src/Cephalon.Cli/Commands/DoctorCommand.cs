@@ -1083,7 +1083,7 @@ internal static class DoctorCommand
             $"{providerIntegrationEvidenceRowCount} rows; live proofs {providerIntegrationLiveProofCount}, composition-only {providerIntegrationCompositionOnlyCount}, external-service gates {providerIntegrationExternalServiceGateCount}, default-skipped {providerIntegrationDefaultSkippedCount}, runtime contracts {providerIntegrationRuntimeContractCount}; dependency-health providers {dependencyHealthProviderCount} from {dependencyHealthProviderManifestReference} schema {dependencyHealthProviderManifestSchemaVersion} ({dependencyHealthProviderManifestStatus}).",
             providerIntegrationSeverity == DoctorCheckSeverity.Pass
                 ? null
-                : "Treat provider integration posture as release-readiness evidence; enable external gates on capable runners before promoting live-provider claims and keep composition-only rows truthful."));
+                : "Treat provider integration posture as release-readiness evidence; enable external gates on capable runners before release promotion and keep live-proof rows backed by executable provider tests."));
 
         var sreSeverity = srePendingStableBaselineCount > 0
             ? DoctorCheckSeverity.Warning
