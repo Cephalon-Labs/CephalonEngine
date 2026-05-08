@@ -1,6 +1,1 @@
 #nullable enable
-Cephalon.Observability.Runtime.TelemetryExportRuntimeSurfaceFactory
-const Cephalon.Observability.Runtime.TelemetryExportRuntimeSurfaceFactory.TechnologyId = "observability" -> string!
-static Cephalon.Observability.Runtime.TelemetryExportRuntimeSurfaceFactory.CreateBaseMetadata(Cephalon.Observability.Configuration.TelemetryExportOptions! telemetry) -> System.Collections.Generic.Dictionary<string!, string!>!
-static Cephalon.Observability.Runtime.TelemetryExportRuntimeSurfaceFactory.CreateSurface(string! surfaceId, string! displayName, string! description, string! entryId, string! entryDisplayName, string! entryDescription, Cephalon.Observability.Configuration.TelemetryExportOptions! telemetry, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> Cephalon.Abstractions.Technologies.TechnologyRuntimeSurface!
-static Cephalon.Observability.Runtime.TelemetryExportRuntimeSurfaceFactory.ResolveSharedEndpointMode(Cephalon.Observability.Configuration.TelemetryExportOptions! telemetry) -> string!

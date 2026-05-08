@@ -80,3 +80,7 @@ const Cephalon.Data.Services.CdcCaptureRuntimeOutcomes.Failed = "failed" -> stri
 const Cephalon.Data.Services.CdcCaptureRuntimeOutcomes.Idle = "idle" -> string!
 const Cephalon.Data.Services.CdcCaptureRuntimeOutcomes.Started = "started" -> string!
 static Cephalon.Data.Registration.DataEngineBuilderExtensions.AddData(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Data.Configuration.DataRuntimeOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!
+Cephalon.Data.Registration.DataDispatchServiceCollectionExtensions
+static Cephalon.Data.Registration.DataDispatchServiceCollectionExtensions.AddCephalonDataCommand<TCommand, TResult>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Data.Registration.DataDispatchServiceCollectionExtensions.AddCephalonDataCommand<TCommand>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Data.Registration.DataDispatchServiceCollectionExtensions.AddCephalonDataQuery<TQuery, TResult>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

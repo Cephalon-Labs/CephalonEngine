@@ -1,12 +1,1 @@
 #nullable enable
-const Cephalon.Eventing.Services.EventingDiagnostics.ActivitySourceName = "Cephalon.Eventing" -> string!
-const Cephalon.Eventing.Services.EventingDiagnostics.ChannelIdTag = "cephalon.eventing.channel.id" -> string!
-const Cephalon.Eventing.Services.EventingDiagnostics.EventTypeTag = "cephalon.eventing.event.type" -> string!
-const Cephalon.Eventing.Services.EventingDiagnostics.MatchedSubscriptionCountTag = "cephalon.eventing.matched_subscription.count" -> string!
-const Cephalon.Eventing.Services.EventingDiagnostics.MeterName = "Cephalon.Eventing" -> string!
-const Cephalon.Eventing.Services.EventingDiagnostics.PublicationDispatchActivityName = "eventing.publication.dispatch" -> string!
-const Cephalon.Eventing.Services.EventingDiagnostics.PublicationDispatchCounterName = "cephalon.eventing.publications" -> string!
-const Cephalon.Eventing.Services.EventingDiagnostics.PublicationIdTag = "cephalon.eventing.publication.id" -> string!
-const Cephalon.Eventing.Services.EventingDiagnostics.PublicationOutcomeTag = "cephalon.eventing.publication.outcome" -> string!
-const Cephalon.Eventing.Services.EventingDiagnostics.PublisherIdTag = "cephalon.eventing.publisher.id" -> string!
-Cephalon.Eventing.Services.EventingDiagnostics

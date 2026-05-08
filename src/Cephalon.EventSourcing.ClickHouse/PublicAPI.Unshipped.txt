@@ -1,2 +1,1 @@
 #nullable enable
-Cephalon.EventSourcing.ClickHouse.ClickHouseEventStore.ClickHouseEventStore(string! connectionString, string! tableName, Cephalon.EventSourcing.Services.IEventTypeRegistry! eventTypes) -> void

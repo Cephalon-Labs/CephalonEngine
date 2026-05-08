@@ -56,3 +56,23 @@ Cephalon.Retrieval.Services.KnowledgeDocumentProviderContext.Metadata.get -> Sys
 Cephalon.Retrieval.Services.KnowledgeDocumentProviderContext.RequestedAtUtc.get -> System.DateTimeOffset
 Cephalon.Retrieval.Services.KnowledgeDocumentProviderContext.RunId.get -> string!
 static Cephalon.Retrieval.Registration.RetrievalEngineBuilderExtensions.AddRetrieval(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.Retrieval.Configuration.RetrievalOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!
+const Cephalon.Retrieval.Services.RetrievalDiagnostics.ActivitySourceName = "Cephalon.Retrieval" -> string!
+const Cephalon.Retrieval.Services.RetrievalDiagnostics.ActorIdTag = "cephalon.retrieval.actor.id" -> string!
+const Cephalon.Retrieval.Services.RetrievalDiagnostics.CollectionIdTag = "cephalon.retrieval.collection.id" -> string!
+const Cephalon.Retrieval.Services.RetrievalDiagnostics.CorrelationIdTag = "cephalon.retrieval.correlation.id" -> string!
+const Cephalon.Retrieval.Services.RetrievalDiagnostics.DocumentCountTag = "cephalon.retrieval.document.count" -> string!
+const Cephalon.Retrieval.Services.RetrievalDiagnostics.IndexerIdTag = "cephalon.retrieval.indexer.id" -> string!
+const Cephalon.Retrieval.Services.RetrievalDiagnostics.IndexingOutcomeTag = "cephalon.retrieval.index.outcome" -> string!
+const Cephalon.Retrieval.Services.RetrievalDiagnostics.KnowledgeIndexActivityName = "retrieval.knowledge.index" -> string!
+const Cephalon.Retrieval.Services.RetrievalDiagnostics.KnowledgeIndexCounterName = "cephalon.retrieval.index_runs" -> string!
+const Cephalon.Retrieval.Services.RetrievalDiagnostics.KnowledgeQueryActivityName = "retrieval.knowledge.query" -> string!
+const Cephalon.Retrieval.Services.RetrievalDiagnostics.KnowledgeQueryCounterName = "cephalon.retrieval.queries" -> string!
+const Cephalon.Retrieval.Services.RetrievalDiagnostics.MatchCountTag = "cephalon.retrieval.match.count" -> string!
+const Cephalon.Retrieval.Services.RetrievalDiagnostics.MeterName = "Cephalon.Retrieval" -> string!
+const Cephalon.Retrieval.Services.RetrievalDiagnostics.ProviderCountTag = "cephalon.retrieval.provider.count" -> string!
+const Cephalon.Retrieval.Services.RetrievalDiagnostics.QueryEngineIdTag = "cephalon.retrieval.query_engine.id" -> string!
+const Cephalon.Retrieval.Services.RetrievalDiagnostics.QueryLengthTag = "cephalon.retrieval.query.length" -> string!
+const Cephalon.Retrieval.Services.RetrievalDiagnostics.QueryLimitTag = "cephalon.retrieval.query.limit" -> string!
+const Cephalon.Retrieval.Services.RetrievalDiagnostics.QueryOutcomeTag = "cephalon.retrieval.query.outcome" -> string!
+const Cephalon.Retrieval.Services.RetrievalDiagnostics.RunIdTag = "cephalon.retrieval.run.id" -> string!
+Cephalon.Retrieval.Services.RetrievalDiagnostics

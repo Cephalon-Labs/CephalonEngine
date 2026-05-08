@@ -39,6 +39,32 @@ Current focus:
 - treat the `ENG-500` regression closeout as the current suite-stability baseline: provider-native CDC hosting tests now run through a dedicated non-parallel collection, long-running package-publishing process output drains stdout/stderr concurrently, sample REST behavior hosts align with source-generated `/api/v1` behavior endpoints, and the full solution test lane is again green on the current worktree
 - treat the CDC execution-runtime catalog hot path as benchmark-governed: `CdcExecutionRuntimeCatalogBenchmarks` now covers Debezium-managed external runtimes, external observations, repeated managed-connector drift/dry-run/command-issuance filters, and compact multi-selector operator flows against the shared versioned snapshot
 
+### Public API additive baseline promotion
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: release-readiness / compatibility / public API baseline
+Quality dimensions: Compatibility, Auditability, Maintainability, Usability
+
+Why:
+
+- public API compatibility evidence still reported `22` packages with `293` additive entries after the runtime/provider proof work landed
+- those entries were additive and had already been reviewed by source/docs lanes, so leaving them in `PublicAPI.Unshipped.txt` made release-readiness read as unfinished compatibility work
+- release validation should continue failing closed on removals while current additive API baselines read clean
+
+Delivered:
+
+- promoted all `293` additive public API entries from per-package `PublicAPI.Unshipped.txt` files into the matching `PublicAPI.Shipped.txt` baselines
+- left every `PublicAPI.Unshipped.txt` file header-only and kept removal entries at `0`
+- refreshed scorecard, doctor, release-validation, and public-API delta test snapshots so `PublicApiCompatibilityEvidence` now reads `104` package baselines / `0` pending packages / `0` additions / `0` removals
+- updated scorecard/planning docs to keep public API baseline truth separate from future stable package-validation baseline work
+
+Validation:
+
+- `pwsh ./scripts/summarise-public-api-deltas.ps1 -JsonOutputPath artifacts\public-api-delta-after-promotion.json -OutputPath artifacts\public-api-delta-after-promotion.md -FailOnRemovals`
+- `pwsh ./scripts/publish-engine-completion-scorecard.ps1 -OutputPath artifacts\engine-completion-scorecard-public-api-baseline`
+
 ### ASP.NET Core core operator surface cold-start promotion
 
 Status: done
