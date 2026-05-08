@@ -604,6 +604,32 @@ try {
         }
     }
 
+    if (-not $SkipReferenceDocs) {
+        Invoke-Step "Publish reference docs (Release)" {
+            $arguments = @(
+                "-Configuration", "Release",
+                "-OutputPath", $referenceDocsOutputPath
+            )
+            $referenceDocsCommand = "pwsh scripts/publish-reference-docs.ps1 -Configuration Release -OutputPath artifacts/reference-docs-release"
+
+            if (-not $SkipBuild) {
+                $arguments += "-SkipBuild"
+                $referenceDocsCommand = "$referenceDocsCommand -SkipBuild"
+            }
+
+            $referenceDocsStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
+            Invoke-PowerShellScript -Path $referenceDocsScriptPath -Arguments $arguments
+            $referenceDocsStopwatch.Stop()
+            Write-SreReleaseValidationStepTiming `
+                -FileName "reference-docs-wall-time.json" `
+                -SliId "engine.reference-docs.wall-time" `
+                -StepName "Publish reference docs (Release)" `
+                -Command $referenceDocsCommand `
+                -ElapsedMilliseconds $referenceDocsStopwatch.Elapsed.TotalMilliseconds `
+                -TargetMilliseconds 300000
+        }
+    }
+
     if (-not $SkipEngineCompletionScorecard) {
         Invoke-Step "Publish engine completion scorecard artifact" {
             Invoke-PowerShellScript -Path $engineCompletionScorecardScriptPath -Arguments @(
@@ -650,21 +676,6 @@ try {
 
         Invoke-Step "Validate benchmark guardrails" {
             Invoke-DotNet @("run", "-c", "Release", "--project", $benchmarkProjectPath, "--", "--validate-guardrails")
-        }
-    }
-
-    if (-not $SkipReferenceDocs) {
-        Invoke-Step "Publish reference docs (Release)" {
-            $arguments = @(
-                "-Configuration", "Release",
-                "-OutputPath", $referenceDocsOutputPath
-            )
-
-            if (-not $SkipBuild) {
-                $arguments += "-SkipBuild"
-            }
-
-            Invoke-PowerShellScript -Path $referenceDocsScriptPath -Arguments $arguments
         }
     }
 
