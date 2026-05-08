@@ -1,5 +1,5 @@
 {
-  "$schemaVersion": "1.0.0",
+  "$schemaVersion": "1.1.0",
   "status": "workflow-ready-external-policy-pending",
   "summary": "Tag-triggered package release provenance is wired in GitHub Actions, while nuget.org-side trusted-publishing policy, prefix reservation, and the publishing account secret remain external release-manager prerequisites before the first real tag push.",
   "releaseWorkflow": ".github/workflows/publish-release.yml",
@@ -13,7 +13,8 @@
   ],
   "validationScripts": [
     "scripts/validate-release.ps1",
-    "scripts/publish-package-artifacts.ps1"
+    "scripts/publish-package-artifacts.ps1",
+    "scripts/validate-supply-chain-external-policy-preflight.ps1"
   ],
   "requiredWorkflowTokens": [
     "workflow_dispatch",
@@ -27,9 +28,44 @@
     "NuGet/login",
     "dotnet nuget push",
     "NUGET_USER",
+    "Validate supply-chain external policy preflight",
+    "CEPHALON_NUGET_TRUSTED_PUBLISHING_POLICY_CONFIRMED",
+    "CEPHALON_NUGET_PREFIX_RESERVATION_CONFIRMED",
+    "validate-supply-chain-external-policy-preflight.ps1",
     "artifacts/release-bundle",
     "release-manifest.json"
   ],
+  "externalPolicyPreflight": {
+    "status": "required-before-real-tag-push",
+    "validationScript": "scripts/validate-supply-chain-external-policy-preflight.ps1",
+    "outputPath": "artifacts/supply-chain-external-policy/external-policy-preflight.json",
+    "summary": "Real tag pushes must run a fail-closed preflight before NuGet trusted publishing login. The preflight verifies the NUGET_USER secret is present and requires explicit release-manager confirmations for the nuget.org trusted-publishing policy and Cephalon.* prefix reservation without claiming the repo can independently inspect nuget.org policy state.",
+    "requiredChecks": [
+      {
+        "evidenceItemId": "nuget-trusted-publishing-policy",
+        "verificationMode": "release-manager-confirmation",
+        "requiredInput": "CEPHALON_NUGET_TRUSTED_PUBLISHING_POLICY_CONFIRMED=true"
+      },
+      {
+        "evidenceItemId": "nuget-prefix-reservation",
+        "verificationMode": "release-manager-confirmation",
+        "requiredInput": "CEPHALON_NUGET_PREFIX_RESERVATION_CONFIRMED=true"
+      },
+      {
+        "evidenceItemId": "nuget-user-secret",
+        "verificationMode": "secret-present",
+        "requiredInput": "NUGET_USER secret or NUGET_USER environment value"
+      }
+    ],
+    "releaseWorkflowTokens": [
+      "Validate supply-chain external policy preflight",
+      "NUGET_USER",
+      "CEPHALON_NUGET_TRUSTED_PUBLISHING_POLICY_CONFIRMED",
+      "CEPHALON_NUGET_PREFIX_RESERVATION_CONFIRMED",
+      "validate-supply-chain-external-policy-preflight.ps1",
+      "-RequireAll"
+    ]
+  },
   "evidenceItems": [
     {
       "id": "locked-restore-release-validation",

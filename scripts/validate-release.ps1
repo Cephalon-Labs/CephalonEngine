@@ -562,10 +562,26 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         $scorecard.SrePostureEvidence.ReleaseValidationSummaryMode,
         $sreStableBaselineManifest)
 
-    Write-Host ("Supply-chain release evidence: {0} items; workflow-ready {1}; external policy pending {2}; blocked {3}; status {4}." -f `
+    $supplyChainExternalPolicyPendingCount = Get-ScorecardIntegerProperty -Object $scorecard.SupplyChainEvidence -PropertyName "ExternalPolicyPendingCount"
+    $supplyChainExternalPolicyPreflightCheckCount = Get-ScorecardIntegerProperty -Object $scorecard.SupplyChainEvidence -PropertyName "ExternalPolicyPreflightCheckCount"
+    $supplyChainExternalPolicyPreflightStatus = "not-required"
+    if ($supplyChainExternalPolicyPendingCount -gt 0) {
+        $supplyChainExternalPolicyPreflight = Get-ScorecardRequiredPropertyValue `
+            -Object $scorecard.SupplyChainEvidence `
+            -PropertyName "ExternalPolicyPreflight" `
+            -OwnerName "SupplyChainEvidence"
+        $supplyChainExternalPolicyPreflightStatus = Get-ScorecardRequiredPropertyValue `
+            -Object $supplyChainExternalPolicyPreflight `
+            -PropertyName "Status" `
+            -OwnerName "SupplyChainEvidence.ExternalPolicyPreflight"
+    }
+
+    Write-Host ("Supply-chain release evidence: {0} items; workflow-ready {1}; external policy pending {2}; external policy preflight checks {3}; preflight status {4}; blocked {5}; status {6}." -f `
         $scorecard.SupplyChainEvidence.EvidenceItemCount,
         $scorecard.SupplyChainEvidence.WorkflowReadyCount,
-        $scorecard.SupplyChainEvidence.ExternalPolicyPendingCount,
+        $supplyChainExternalPolicyPendingCount,
+        $supplyChainExternalPolicyPreflightCheckCount,
+        $supplyChainExternalPolicyPreflightStatus,
         $scorecard.SupplyChainEvidence.BlockedCount,
         $scorecard.SupplyChainEvidence.Status)
 

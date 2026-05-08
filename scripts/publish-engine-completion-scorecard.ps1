@@ -15,7 +15,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$Script:SchemaVersion = "1.11.0"
+$Script:SchemaVersion = "1.12.0"
 $Script:AllowedStatuses = @(
     "ready-for-preview",
     "partial",
@@ -2661,6 +2661,94 @@ function Convert-SupplyChainEvidence {
     $workflowReadyCount = @($evidenceItems | Where-Object { $_.Status -eq "workflow-ready" }).Count
     $externalPolicyPendingCount = @($evidenceItems | Where-Object { $_.Status -eq "external-policy-pending" }).Count
     $blockedCount = @($evidenceItems | Where-Object { $_.Status -eq "blocked" }).Count
+    $externalPolicyPreflight = $null
+
+    if ($externalPolicyPendingCount -gt 0) {
+        $preflightManifest = Get-ManifestPropertyValue -Object $manifest -PropertyName "externalPolicyPreflight" -DefaultValue $null
+        if ($null -eq $preflightManifest) {
+            throw "Supply-chain release support manifest must declare externalPolicyPreflight when external-policy-pending evidence items exist."
+        }
+
+        $preflightStatus = [string](Get-ManifestPropertyValue -Object $preflightManifest -PropertyName "status" -DefaultValue "")
+        $preflightValidationScriptPath = [string](Get-ManifestPropertyValue -Object $preflightManifest -PropertyName "validationScript" -DefaultValue "")
+        $preflightOutputPath = [string](Get-ManifestPropertyValue -Object $preflightManifest -PropertyName "outputPath" -DefaultValue "")
+        $preflightSummary = [string](Get-ManifestPropertyValue -Object $preflightManifest -PropertyName "summary" -DefaultValue "")
+
+        foreach ($field in @(
+            @{ Name = "status"; Value = $preflightStatus },
+            @{ Name = "validationScript"; Value = $preflightValidationScriptPath },
+            @{ Name = "outputPath"; Value = $preflightOutputPath },
+            @{ Name = "summary"; Value = $preflightSummary }
+        )) {
+            if ([string]::IsNullOrWhiteSpace([string]$field.Value)) {
+                throw "Supply-chain externalPolicyPreflight must include $($field.Name)."
+            }
+        }
+
+        $preflightValidationScriptReference = Resolve-SupplyChainManifestPath -DeclaredPath $preflightValidationScriptPath -ResolvedRepoRoot $ResolvedRepoRoot -Context "externalPolicyPreflight.validationScript" -PathType "File"
+        if (@($validationScriptReferences | ForEach-Object { $_.Reference }) -notcontains $preflightValidationScriptReference.Reference) {
+            throw "Supply-chain externalPolicyPreflight validationScript '$($preflightValidationScriptReference.Reference)' must also be listed in validationScripts."
+        }
+
+        $requiredChecks = @(
+            Get-ManifestPropertyValue -Object $preflightManifest -PropertyName "requiredChecks" -DefaultValue @() |
+                ForEach-Object {
+                    $checkEvidenceItemId = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "evidenceItemId" -DefaultValue "")
+                    $verificationMode = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "verificationMode" -DefaultValue "")
+                    $requiredInput = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "requiredInput" -DefaultValue "")
+                    foreach ($field in @(
+                        @{ Name = "evidenceItemId"; Value = $checkEvidenceItemId },
+                        @{ Name = "verificationMode"; Value = $verificationMode },
+                        @{ Name = "requiredInput"; Value = $requiredInput }
+                    )) {
+                        if ([string]::IsNullOrWhiteSpace([string]$field.Value)) {
+                            throw "Supply-chain externalPolicyPreflight required check must include $($field.Name)."
+                        }
+                    }
+
+                    [pscustomobject]([ordered]@{
+                        EvidenceItemId   = $checkEvidenceItemId
+                        VerificationMode = $verificationMode
+                        RequiredInput    = $requiredInput
+                    })
+                }
+        )
+        if ($requiredChecks.Count -eq 0) {
+            throw "Supply-chain externalPolicyPreflight must declare at least one requiredChecks entry."
+        }
+
+        $externalPolicyEvidenceIds = @($evidenceItems | Where-Object { $_.Status -eq "external-policy-pending" } | ForEach-Object { $_.Id } | Sort-Object -Unique)
+        $requiredCheckEvidenceIds = @($requiredChecks | ForEach-Object { $_.EvidenceItemId } | Sort-Object -Unique)
+        $missingPreflightChecks = @($externalPolicyEvidenceIds | Where-Object { $requiredCheckEvidenceIds -notcontains $_ })
+        if ($missingPreflightChecks.Count -gt 0) {
+            throw "Supply-chain externalPolicyPreflight is missing checks for evidence items: $($missingPreflightChecks -join ', ')."
+        }
+
+        $preflightWorkflowTokens = @(
+            Get-ManifestPropertyValue -Object $preflightManifest -PropertyName "releaseWorkflowTokens" -DefaultValue @() |
+                ForEach-Object { [string]$_ } |
+                Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+        )
+        if ($preflightWorkflowTokens.Count -eq 0) {
+            throw "Supply-chain externalPolicyPreflight must declare releaseWorkflowTokens."
+        }
+
+        foreach ($preflightWorkflowToken in $preflightWorkflowTokens) {
+            if (-not $releaseWorkflow.Contains($preflightWorkflowToken, [System.StringComparison]::OrdinalIgnoreCase)) {
+                throw "Supply-chain release workflow '$releaseWorkflowPath' does not contain external-policy preflight token '$preflightWorkflowToken'."
+            }
+        }
+
+        $externalPolicyPreflight = [pscustomobject]([ordered]@{
+            Status                = $preflightStatus
+            ValidationScript      = $preflightValidationScriptReference.Reference
+            OutputPath            = $preflightOutputPath
+            Summary               = $preflightSummary
+            RequiredCheckCount    = $requiredChecks.Count
+            RequiredChecks        = $requiredChecks
+            ReleaseWorkflowTokens = $preflightWorkflowTokens
+        })
+    }
 
     return [pscustomobject]([ordered]@{
         Manifest                   = Get-RepoRelativePath -Path $ResolvedManifestPath -RepoRoot $ResolvedRepoRoot
@@ -2674,6 +2762,8 @@ function Convert-SupplyChainEvidence {
         EvidenceItemCount          = $evidenceItems.Count
         WorkflowReadyCount         = $workflowReadyCount
         ExternalPolicyPendingCount = $externalPolicyPendingCount
+        ExternalPolicyPreflight    = $externalPolicyPreflight
+        ExternalPolicyPreflightCheckCount = if ($null -eq $externalPolicyPreflight) { 0 } else { $externalPolicyPreflight.RequiredCheckCount }
         BlockedCount               = $blockedCount
         EvidenceItems              = $evidenceItems
         ValidatedReferences        = @(
@@ -2934,6 +3024,7 @@ function New-EngineCompletionScorecardReport {
             SupplyChainEvidenceItemCount = $supplyChainEvidence.EvidenceItemCount
             SupplyChainWorkflowReadyCount = $supplyChainEvidence.WorkflowReadyCount
             SupplyChainExternalPolicyPendingCount = $supplyChainEvidence.ExternalPolicyPendingCount
+            SupplyChainExternalPolicyPreflightCheckCount = $supplyChainEvidence.ExternalPolicyPreflightCheckCount
             SupplyChainBlockedCount = $supplyChainEvidence.BlockedCount
             PublicApiPackageCount = $publicApiCompatibilityEvidence.PackageCount
             PublicApiPendingPackageCount = $publicApiCompatibilityEvidence.PendingPackageCount
@@ -3016,6 +3107,7 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- Supply-chain evidence items: $($Report.Summary.SupplyChainEvidenceItemCount)")
     $markdown.Add("- Supply-chain workflow-ready items: $($Report.Summary.SupplyChainWorkflowReadyCount)")
     $markdown.Add("- Supply-chain external-policy-pending items: $($Report.Summary.SupplyChainExternalPolicyPendingCount)")
+    $markdown.Add("- Supply-chain external-policy preflight checks: $($Report.Summary.SupplyChainExternalPolicyPreflightCheckCount)")
     $markdown.Add("- Supply-chain blocked items: $($Report.Summary.SupplyChainBlockedCount)")
     $markdown.Add("- Public API packages: $($Report.Summary.PublicApiPackageCount)")
     $markdown.Add("- Public API packages with pending changes: $($Report.Summary.PublicApiPendingPackageCount)")
@@ -3161,8 +3253,27 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- Evidence items: $($Report.SupplyChainEvidence.EvidenceItemCount)")
     $markdown.Add("- Workflow-ready items: $($Report.SupplyChainEvidence.WorkflowReadyCount)")
     $markdown.Add("- External-policy-pending items: $($Report.SupplyChainEvidence.ExternalPolicyPendingCount)")
+    $markdown.Add("- External-policy preflight checks: $($Report.SupplyChainEvidence.ExternalPolicyPreflightCheckCount)")
     $markdown.Add("- Blocked items: $($Report.SupplyChainEvidence.BlockedCount)")
     $markdown.Add("")
+
+    if ($null -ne $Report.SupplyChainEvidence.ExternalPolicyPreflight) {
+        $markdown.Add("### External-Policy Preflight")
+        $markdown.Add("")
+        $markdown.Add("- Status: $($Report.SupplyChainEvidence.ExternalPolicyPreflight.Status)")
+        $markdown.Add("- Validation script: ``$($Report.SupplyChainEvidence.ExternalPolicyPreflight.ValidationScript)``")
+        $markdown.Add("- Output path: ``$($Report.SupplyChainEvidence.ExternalPolicyPreflight.OutputPath)``")
+        $markdown.Add("- Required checks: $($Report.SupplyChainEvidence.ExternalPolicyPreflight.RequiredCheckCount)")
+        $markdown.Add("")
+        $markdown.Add("| Evidence item | Verification mode | Required input |")
+        $markdown.Add("| --- | --- | --- |")
+        foreach ($check in $Report.SupplyChainEvidence.ExternalPolicyPreflight.RequiredChecks) {
+            $markdown.Add("| ``$($check.EvidenceItemId)`` | $($check.VerificationMode) | ``$($check.RequiredInput)`` |")
+        }
+
+        $markdown.Add("")
+    }
+
     $markdown.Add("| Evidence item | Category | Status | Source document |")
     $markdown.Add("| --- | --- | --- | --- |")
     foreach ($item in $Report.SupplyChainEvidence.EvidenceItems) {

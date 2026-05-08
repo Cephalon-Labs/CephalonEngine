@@ -38,7 +38,7 @@ BeforeAll {
         }
 
         return [ordered]@{
-            '$schemaVersion' = "1.11.0"
+            '$schemaVersion' = "1.12.0"
             SourceDocument = "docs/engine-completion-scorecard.md"
             DeploymentModeEvidence = [ordered]@{
                 GlobalClaimCount = 3
@@ -77,6 +77,11 @@ BeforeAll {
                 EvidenceItemCount = 10
                 WorkflowReadyCount = 7
                 ExternalPolicyPendingCount = 3
+                ExternalPolicyPreflightCheckCount = 3
+                ExternalPolicyPreflight = [ordered]@{
+                    Status = "required-before-real-tag-push"
+                    RequiredCheckCount = 3
+                }
                 BlockedCount = 0
                 Status = "workflow-ready-external-policy-pending"
             }
@@ -231,6 +236,7 @@ Describe "validate-release.ps1 scorecard readback" {
         $output | Should -Match "Deployment-mode evidence: 3 global claims; not-claimed 3; package-scoped claim packages 1; known hazards 14; transitive audit entries 7; publish probes single-file-publish-gate; claims report artifacts/deployment-mode-claims-release/claim-validation-report\.json; gate passed; targets 5; warnings 0; errors 0; truthful package claims 1; overstated package claims 0\."
         $output | Should -Match "Provider integration evidence: 32 rows; live proofs 32; composition-only 0; external-service gates 13; default-skipped 13; runtime contracts 94; dependency-health providers 18 from scripts/observability-dependency-health-providers\.json schema 1\.0\.0 \(source-derived-provider-family-contract\)\."
         $output | Should -Match "SRE posture: 11 SLIs; target-declared 11; pending stable baselines 1; stable baselines 10; stable baseline rows 10; stable baseline measurements 12; pending baseline rows 1; blockers 1; pending evidence 1; guardrail-mapped 6; pending guardrail coverage 0; guardrail not-applicable 5; summary mode release-validation-console-and-scorecard-artifact; stable baseline manifest scripts/sre-stable-baselines\.json\."
+        $output | Should -Match "Supply-chain release evidence: 10 items; workflow-ready 7; external policy pending 3; external policy preflight checks 3; preflight status required-before-real-tag-push; blocked 0; status workflow-ready-external-policy-pending\."
         $output | Should -Match "Engine completion scorecard hard-blocker gate: no blocked platform gates"
     }
 
@@ -240,5 +246,15 @@ Describe "validate-release.ps1 scorecard readback" {
         {
             Write-EngineCompletionScorecardEvidenceSummary -ScorecardOutputPath $script:tempRoot
         } | Should -Throw "*Engine completion scorecard JSON is missing ProviderIntegrationEvidence.DependencyHealthProviderManifest.*"
+    }
+
+    It "fails when external-policy pending supply-chain evidence omits preflight readback" {
+        $scorecard = New-ScorecardFixture
+        $scorecard.SupplyChainEvidence.Remove("ExternalPolicyPreflight")
+        Write-ScorecardFixture -Scorecard $scorecard -OutputPath $script:tempRoot | Out-Null
+
+        {
+            Write-EngineCompletionScorecardEvidenceSummary -ScorecardOutputPath $script:tempRoot
+        } | Should -Throw "*Engine completion scorecard JSON is missing SupplyChainEvidence.ExternalPolicyPreflight.*"
     }
 }
