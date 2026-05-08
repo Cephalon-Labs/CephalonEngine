@@ -32,12 +32,44 @@ Current focus:
 - treat the long-term release-readiness notes in [`project-memory.md`](project-memory.md) as guarded scorecard contract, not loose historical prose: Tooling documentation coverage now reads `$Script:SchemaVersion` from `scripts/publish-engine-completion-scorecard.ps1` and requires project memory, scorecard docs, CLI docs, release checklists, and package docs to stay aligned with the generated schema plus provider-integration doctor/release-validation readback
 - treat scorecard hard blockers as release-validation failures even when a later narrow step is skipped: `scripts/validate-release.ps1` fails during the scorecard step when generated evidence reports blocked platform gates, supply-chain blocked items, or public API removals; `partial`, `not-claimed`, provider composition-only, SRE pending baselines, and external-policy-pending items remain explicit readback/exception posture
 - treat the CDC integration-test lane as additive evidence over the runtime catalog truth: `tests/Cephalon.Tests.CdcIntegration` now proves MongoDB change streams against a real disposable replica set, SQL Server CDC against an opt-in live service, Postgres logical replication against an opt-in live service, MySQL binlog streaming against an opt-in live service, and Oracle LogMiner against an opt-in live service while keeping default CI Docker-free through the shared external-service gate, instead of implying those provider paths through fake transport harnesses
-- treat the provider integration-test lane as additive evidence over non-CDC provider truth: `tests/Cephalon.Tests.ProviderIntegration` now proves Redis data outbox/inbox/dispatch-store behavior plus Redis Streams event sourcing against an opt-in live Redis runtime while keeping default CI Docker-free through the shared external-provider gate
+- treat the provider integration-test lane as additive evidence over non-CDC provider truth: `tests/Cephalon.Tests.ProviderIntegration` now proves Redis data outbox/inbox/dispatch-store behavior plus Redis Streams event sourcing against an opt-in live Redis runtime, and MongoDB data outbox/inbox/dispatch-store behavior against a disposable replica-set runtime without a permanent external service
 - treat `scripts/provider-integration-support.json` as the release-readiness manifest for provider claims across live-provider tests, composition-only data/provider runtime contracts, CDC integration lanes, and the eighteen dependency-health companion packs; the scorecard, release validation, CLI doctor, and script-level Pester tests must read provider-integration counts and dependency-health provider-manifest readback from that manifest instead of hand-authored prose, and the scorecard publisher must fail if dependency-health provider rows drift from the source-derived provider manifest
 - treat `scripts/observability-dependency-health-providers.json` as the source-derived dependency-health provider-family manifest: runtime invariant tests, provider-integration scorecard row validation, and Tooling documentation coverage must derive the eighteen `Cephalon.Observability.*Dependencies` expectations from that file so the next provider cannot ship with source/docs/planning counts drifting apart
 - treat the Debezium test-flake quarantine as resolved by shared catalog hardening: CDC execution-runtime filters now reuse versioned snapshots over indexed capture ownership instead of re-enriching every runtime for every state/category selector
 - treat the `ENG-500` regression closeout as the current suite-stability baseline: provider-native CDC hosting tests now run through a dedicated non-parallel collection, long-running package-publishing process output drains stdout/stderr concurrently, sample REST behavior hosts align with source-generated `/api/v1` behavior endpoints, and the full solution test lane is again green on the current worktree
 - treat the CDC execution-runtime catalog hot path as benchmark-governed: `CdcExecutionRuntimeCatalogBenchmarks` now covers Debezium-managed external runtimes, external observations, repeated managed-connector drift/dry-run/command-issuance filters, and compact multi-selector operator flows against the shared versioned snapshot
+
+### ENG-511 Promote MongoDB data provider live proof
+
+Status: done
+Estimate: 1
+Issue: #1138
+Iteration: Sprint 125
+Area: test-coverage / provider integration / MongoDB
+Quality dimensions: Reliability, Compatibility, Auditability, Data Integrity, Maintainability
+
+Why:
+
+- `mongodb-data-runtime-surface` had composition-only evidence even though the MongoDB data pack owns real outbox, inbox, and event-dispatch persistence behavior
+- the CDC lane already proves MongoDB change streams against a disposable replica set, so the non-CDC data provider could use the same repo-owned disposable-runtime posture without requiring Docker or a developer-managed service
+- release managers need the provider-integration scorecard to distinguish default-running disposable live proofs from externally gated live providers such as Redis
+
+Delivered:
+
+- added `MongoDbProviderIntegrationTests.MongoDbProvider_StagesOutboxInboxAndDispatchAgainstDisposableReplicaSet` under `tests/Cephalon.Tests.ProviderIntegration`
+- registered `Cephalon.Data.MongoDB` with `Cephalon.Eventing` against a disposable replica set and asserted manifest capabilities, outbox/inbox descriptors, `event-driven-integration` runtime surfaces, idempotent outbox/inbox writes, dispatch-store success reporting, and durable dispatched/processed MongoDB document state
+- promoted `mongodb-data-runtime-surface` in `scripts/provider-integration-support.json` to `live-proof-available` with `defaultRunBehavior: runs-without-external-services`
+- taught the scorecard publisher to allow default-running disposable live proofs while still failing externally gated live-provider rows that omit `externalServiceGate`
+- updated scorecard, doctor/readback fixtures, MongoDB component docs, provider integration roadmap/backlog docs, and project memory so provider evidence now reads `7` live proofs / `25` composition-only rows / `64` runtime contracts
+
+Validation:
+
+- `dotnet restore .\tests\Cephalon.Tests.ProviderIntegration\Cephalon.Tests.ProviderIntegration.csproj --locked-mode` passed
+- `dotnet test .\tests\Cephalon.Tests.ProviderIntegration\Cephalon.Tests.ProviderIntegration.csproj --no-restore --logger "console;verbosity=normal"` passed `12/12`, skipped `3` gated Redis/external-provider tests
+- `pwsh -NoLogo -NoProfile -Command "Invoke-Pester -Path .\tests\Cephalon.Tests.Scripts\publish-engine-completion-scorecard.Tests.ps1 -Output Detailed"` passed `13/13`
+- `pwsh -NoLogo -NoProfile -Command "Invoke-Pester -Path .\tests\Cephalon.Tests.Scripts\validate-release.Tests.ps1 -Output Detailed"` passed `4/4`
+- `dotnet test .\tests\Cephalon.Tests.Tooling\Cephalon.Tests.Tooling.csproj --no-restore --filter "FullyQualifiedName~Scorecard|FullyQualifiedName~Doctor|FullyQualifiedName~DocumentationCoverage" --logger "console;verbosity=normal"` passed `50/50`
+- `pwsh -NoLogo -NoProfile -File .\scripts\validate-release.ps1 -SkipRestore -SkipBuild -SkipTests -SkipDotNetReadiness -SkipOperationalConventions -SkipPhase8Conventions -SkipBenchmarks -SkipPackages -SkipReferenceDocs` passed with provider integration readback `32` rows / `7` live proofs / `25` composition-only / `64` runtime contracts
 
 ### ENG-510 Promote single-file publish-probe release gate
 

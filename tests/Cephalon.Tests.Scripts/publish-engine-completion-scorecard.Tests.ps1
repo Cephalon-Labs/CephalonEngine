@@ -81,11 +81,11 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.AdoptionSmokeRuntimeProbeCount | Should -Be 6
         $json.Summary.AdoptionSmokeAssertionCount | Should -Be 7
         $json.Summary.ProviderIntegrationEvidenceRowCount | Should -Be 32
-        $json.Summary.ProviderIntegrationLiveProofCount | Should -Be 6
-        $json.Summary.ProviderIntegrationCompositionOnlyCount | Should -Be 26
+        $json.Summary.ProviderIntegrationLiveProofCount | Should -Be 7
+        $json.Summary.ProviderIntegrationCompositionOnlyCount | Should -Be 25
         $json.Summary.ProviderIntegrationExternalServiceGateCount | Should -Be 6
         $json.Summary.ProviderIntegrationDefaultSkippedCount | Should -Be 6
-        $json.Summary.ProviderIntegrationRuntimeContractCount | Should -Be 61
+        $json.Summary.ProviderIntegrationRuntimeContractCount | Should -Be 64
         $json.Summary.SreSliCount | Should -Be 11
         $json.Summary.SreTargetDeclaredCount | Should -Be 11
         $json.Summary.SrePendingStableBaselineCount | Should -Be 11
@@ -182,13 +182,14 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.ProviderIntegrationEvidence.DependencyHealthProviderManifest.Status | Should -Be "source-derived-provider-family-contract"
         $json.ProviderIntegrationEvidence.DependencyHealthProviderManifest.ProviderCount | Should -Be 18
         $json.ProviderIntegrationEvidence.EvidenceRowCount | Should -Be 32
-        $json.ProviderIntegrationEvidence.LiveProofCount | Should -Be 6
-        $json.ProviderIntegrationEvidence.CompositionOnlyCount | Should -Be 26
+        $json.ProviderIntegrationEvidence.LiveProofCount | Should -Be 7
+        $json.ProviderIntegrationEvidence.CompositionOnlyCount | Should -Be 25
         $json.ProviderIntegrationEvidence.ExternalServiceGateCount | Should -Be 6
         $json.ProviderIntegrationEvidence.DefaultSkippedCount | Should -Be 6
-        $json.ProviderIntegrationEvidence.RuntimeContractCount | Should -Be 61
+        $json.ProviderIntegrationEvidence.RuntimeContractCount | Should -Be 64
         $json.ProviderIntegrationEvidence.EnvironmentVariableCount | Should -Be 11
         $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "redis-data-event-sourcing-live"
+        $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "mongodb-data-runtime-surface"
         $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "postgres-cdc-live"
         $json.ProviderIntegrationEvidence.ProviderRows.Id | Should -Contain "sqlserver-dependency-health-invariant"
         $json.ProviderIntegrationEvidence.ProviderRows.ExternalServiceGate | Should -Contain "provider-integration"
@@ -298,6 +299,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "out-of-tree-generated-app-package-stage"
         $markdown | Should -Match "Provider Integration Evidence"
         $markdown | Should -Match "Provider integration evidence rows: 32"
+        $markdown | Should -Match "live proofs: 7"
         $markdown | Should -Match "dependency-health"
         $markdown | Should -Match "Evidence Source References"
         $markdown | Should -Match "Package GA Readiness"
@@ -700,6 +702,23 @@ jobs:
         {
             Convert-ProviderIntegrationEvidence -ResolvedManifestPath $manifestPath -ResolvedRepoRoot $script:repoRoot
         } | Should -Throw "*Provider integration support manifest must declare dependencyHealthProviderManifest when dependency-health provider rows are present.*"
+    }
+
+    It "fails when an externally gated live-provider row omits its gate" {
+        $manifestPath = Join-Path $script:tempRoot "provider-integration-support.json"
+        $manifestContents = Get-Content -LiteralPath (Join-Path $script:repoRoot "scripts\provider-integration-support.json") -Raw -Encoding UTF8
+        $manifestContents = [regex]::Replace(
+            $manifestContents,
+            '(?s)("id": "redis-data-event-sourcing-live".*?)\r?\n\s+"externalServiceGate": "provider-integration",',
+            '$1',
+            1)
+
+        $manifestContents | Should -Not -Match '"externalServiceGate": "provider-integration",'
+        Set-Content -LiteralPath $manifestPath -Value $manifestContents -Encoding UTF8
+
+        {
+            Convert-ProviderIntegrationEvidence -ResolvedManifestPath $manifestPath -ResolvedRepoRoot $script:repoRoot
+        } | Should -Throw "*Provider integration live-proof row 'redis-data-event-sourcing-live' must declare externalServiceGate unless defaultRunBehavior is runs-without-external-services.*"
     }
 
     It "fails when dependency-health provider rows drift from the source-derived manifest" {
