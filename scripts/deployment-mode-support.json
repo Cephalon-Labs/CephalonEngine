@@ -159,6 +159,36 @@
         "introducedBy": "ENG-454"
       },
       {
+        "packageName": "Cephalon.Abstractions",
+        "nugetId": "Cephalon.Abstractions",
+        "claimAuditTier": "clean-baseline",
+        "supportedModes": [
+          "singleFile"
+        ],
+        "requiredProjectProperties": [
+          "PublishSingleFile=true",
+          "EnableSingleFileAnalyzer=true"
+        ],
+        "knownHazards": [],
+        "evidence": "docs/trim-aot-hazard-inventory.md (clean-baseline tier — no observed first-party reflection / dynamic-code hazards after ENG-456 retired REST wire-name enum-field reflection; package-scoped single-file claim added via ENG-525)",
+        "introducedBy": "ENG-525"
+      },
+      {
+        "packageName": "Cephalon.Scaffolding",
+        "nugetId": "Cephalon.Scaffolding",
+        "claimAuditTier": "clean-baseline",
+        "supportedModes": [
+          "singleFile"
+        ],
+        "requiredProjectProperties": [
+          "PublishSingleFile=true",
+          "EnableSingleFileAnalyzer=true"
+        ],
+        "knownHazards": [],
+        "evidence": "docs/trim-aot-hazard-inventory.md (clean-baseline tier — no observed first-party reflection / dynamic-code hazards; package-scoped single-file claim added via ENG-525)",
+        "introducedBy": "ENG-525"
+      },
+      {
         "packageName": "Cephalon.Data.MySql.SciSharpReplication",
         "nugetId": "Cephalon.Data.MySql.SciSharpReplication",
         "claimAuditTier": "high",

@@ -4,6 +4,10 @@
 
 `Cephalon.Scaffolding` turns the app-model scaffold contract into concrete files and folders.
 
+## Deployment-mode posture
+
+`Cephalon.Scaffolding` carries a package-scoped `singleFile` claim through `scripts/deployment-mode-support.json`. The project declares `PublishSingleFile=true` and `EnableSingleFileAnalyzer=true`, and the harness reports the package claim separately from the global trim / Native AOT / single-file rows, which remain `not-claimed`.
+
 ## What it owns
 
 - scaffold request parsing for generation-time decisions

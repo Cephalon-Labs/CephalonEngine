@@ -154,7 +154,7 @@
       "sliId": "engine.deployment-mode-claims.truthful-fraction",
       "status": "stable-baseline-published",
       "measurementKind": "deployment-mode-claims-report-baseline",
-      "notes": "Baseline is captured from the release-validation deployment-mode claims report. It proves the current scoped single-file package claim is truthful, the non-opt-out single-file publish probe gate passed, and no package-scoped deployment-mode claim is overstated.",
+      "notes": "Baseline is captured from the release-validation deployment-mode claims report. It proves the current scoped single-file package claims are truthful, the non-opt-out single-file publish probe gate passed, and no package-scoped deployment-mode claim is overstated.",
       "measurements": [
         {
           "claimsReportPath": "artifacts/deployment-mode-claims-release/claim-validation-report.json",
@@ -164,8 +164,8 @@
           "publishProbeTargetCount": 5,
           "publishProbeWarningCount": 0,
           "publishProbeErrorCount": 0,
-          "packageClaimCount": 1,
-          "packageClaimTruthfulCount": 1,
+          "packageClaimCount": 3,
+          "packageClaimTruthfulCount": 3,
           "packageClaimOverstatedCount": 0,
           "truthfulFraction": 1.0
         }

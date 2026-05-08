@@ -97,13 +97,23 @@ Describe "publish-engine-completion-scorecard.ps1" {
                             Mode = "singleFile"
                             PackageName = "Cephalon.Diagnostics"
                             Verdict = "claim-truthful"
+                        },
+                        [ordered]@{
+                            Mode = "singleFile"
+                            PackageName = "Cephalon.Abstractions"
+                            Verdict = "claim-truthful"
+                        },
+                        [ordered]@{
+                            Mode = "singleFile"
+                            PackageName = "Cephalon.Scaffolding"
+                            Verdict = "claim-truthful"
                         }
                     )
                 }
             )
             HazardInventory = [ordered]@{
-                TotalPackages = 6
-                PackagesWithScopedClaims = 1
+                TotalPackages = 8
+                PackagesWithScopedClaims = 3
                 TotalKnownHazards = 14
                 KnownTransitiveHazardAudit = [ordered]@{
                     Status = "matched"
@@ -149,9 +159,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.PackageGAReadinessCount | Should -Be 90
         $json.Summary.DeploymentModeGlobalClaimCount | Should -Be 3
         $json.Summary.DeploymentModeGlobalNotClaimedCount | Should -Be 3
-        $json.Summary.DeploymentModePackageEntryCount | Should -Be 6
-        $json.Summary.DeploymentModePackageScopedClaimPackageCount | Should -Be 1
-        $json.Summary.DeploymentModePackageScopedClaimCount | Should -Be 1
+        $json.Summary.DeploymentModePackageEntryCount | Should -Be 8
+        $json.Summary.DeploymentModePackageScopedClaimPackageCount | Should -Be 3
+        $json.Summary.DeploymentModePackageScopedClaimCount | Should -Be 3
         $json.Summary.DeploymentModeKnownHazardPackageCount | Should -Be 2
         $json.Summary.DeploymentModeKnownHazardEntryCount | Should -Be 14
         $json.Summary.DeploymentModeTransitiveAuditEntryCount | Should -Be 7
@@ -160,7 +170,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.DeploymentModeClaimsReportPublishProbeTargetCount | Should -Be 5
         $json.Summary.DeploymentModeClaimsReportPublishProbeWarningCount | Should -Be 0
         $json.Summary.DeploymentModeClaimsReportPublishProbeErrorCount | Should -Be 0
-        $json.Summary.DeploymentModeClaimsReportPackageClaimTruthfulCount | Should -Be 1
+        $json.Summary.DeploymentModeClaimsReportPackageClaimTruthfulCount | Should -Be 3
         $json.Summary.DeploymentModeClaimsReportPackageClaimOverstatedCount | Should -Be 0
         $json.Summary.AdoptionSmokeScenarioCount | Should -Be 1
         $json.Summary.AdoptionSmokeRuntimeProbeCount | Should -Be 6
@@ -227,14 +237,14 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.DeploymentModeEvidence.GlobalClaimStatuses.Mode | Should -Contain "trim"
         $json.DeploymentModeEvidence.GlobalClaimStatuses.Mode | Should -Contain "nativeAot"
         $json.DeploymentModeEvidence.GlobalClaimStatuses.Mode | Should -Contain "singleFile"
-        $json.DeploymentModeEvidence.PackageEntryCount | Should -Be 6
-        $json.DeploymentModeEvidence.PackageScopedClaimPackageCount | Should -Be 1
-        $json.DeploymentModeEvidence.PackageScopedClaimCount | Should -Be 1
+        $json.DeploymentModeEvidence.PackageEntryCount | Should -Be 8
+        $json.DeploymentModeEvidence.PackageScopedClaimPackageCount | Should -Be 3
+        $json.DeploymentModeEvidence.PackageScopedClaimCount | Should -Be 3
         $json.DeploymentModeEvidence.KnownHazardPackageCount | Should -Be 2
         $json.DeploymentModeEvidence.KnownHazardEntryCount | Should -Be 14
         $json.DeploymentModeEvidence.ClaimAuditTierCounts.high | Should -Be 2
         $json.DeploymentModeEvidence.ClaimAuditTierCounts.'excluded-by-design' | Should -Be 3
-        $json.DeploymentModeEvidence.ClaimAuditTierCounts.'clean-baseline' | Should -Be 1
+        $json.DeploymentModeEvidence.ClaimAuditTierCounts.'clean-baseline' | Should -Be 3
         $json.DeploymentModeEvidence.TransitiveAuditEntryCount | Should -Be 7
         $json.DeploymentModeEvidence.TransitiveAuditLockFileGlobCount | Should -Be 3
         $json.DeploymentModeEvidence.RepresentativePublishTargetCount | Should -Be 5
@@ -254,10 +264,12 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.DeploymentModeEvidence.ClaimsReportPublishProbeTargetCount | Should -Be 5
         $json.DeploymentModeEvidence.ClaimsReportPublishProbeWarningCount | Should -Be 0
         $json.DeploymentModeEvidence.ClaimsReportPublishProbeErrorCount | Should -Be 0
-        $json.DeploymentModeEvidence.ClaimsReportPackageClaimTruthfulCount | Should -Be 1
+        $json.DeploymentModeEvidence.ClaimsReportPackageClaimTruthfulCount | Should -Be 3
         $json.DeploymentModeEvidence.ClaimsReportPackageClaimOverstatedCount | Should -Be 0
         $json.DeploymentModeEvidence.ClaimsReportHazardInventoryTransitiveAuditStatus | Should -Be "matched"
         $json.DeploymentModeEvidence.PackageRows.PackageName | Should -Contain "Cephalon.Diagnostics"
+        $json.DeploymentModeEvidence.PackageRows.PackageName | Should -Contain "Cephalon.Abstractions"
+        $json.DeploymentModeEvidence.PackageRows.PackageName | Should -Contain "Cephalon.Scaffolding"
         $json.DeploymentModeEvidence.PackageRows.PackageName | Should -Contain "Cephalon.Data.MySql.SciSharpReplication"
         $json.DeploymentModeEvidence.TransitiveAuditRows.PackagePattern | Should -Contain "Newtonsoft.Json"
 
@@ -399,7 +411,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $claimTruthBaseline.MeasurementKind | Should -Be "deployment-mode-claims-report-baseline"
         $claimTruthBaseline.Measurements.ClaimsReportPath | Should -Be "artifacts/deployment-mode-claims-release/claim-validation-report.json"
         $claimTruthBaseline.Measurements.PublishProbeGateStatus | Should -Be "passed"
-        $claimTruthBaseline.Measurements.PackageClaimTruthfulCount | Should -Be 1
+        $claimTruthBaseline.Measurements.PackageClaimTruthfulCount | Should -Be 3
         $claimTruthBaseline.Measurements.PackageClaimOverstatedCount | Should -Be 0
         $restoreWallTimeBaseline = $json.SrePostureEvidence.StableBaselineRows | Where-Object { $_.SliId -eq "engine.dotnet.restore.wall-time.lock-mode" }
         $restoreWallTimeBaseline.MeasurementKind | Should -Be "release-validation-step-wall-time-baseline"
@@ -513,7 +525,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "BuildStartHandleFirstRequestAspNetCore"
         $markdown | Should -Match "deployment-mode-claims-report-baseline"
         $markdown | Should -Match "release-validation-step-wall-time-baseline"
-        $markdown | Should -Match "package claims 1/1 truthful"
+        $markdown | Should -Match "package claims 3/3 truthful"
         $markdown | Should -Match "Restore solution \(locked mode\)"
         $markdown | Should -Match "Publish reference docs \(Release\)"
         $markdown | Should -Match "Validate release \(canonical full run\)"
@@ -619,8 +631,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
             }
             Modes = @()
             HazardInventory = [ordered]@{
-                TotalPackages = 6
-                PackagesWithScopedClaims = 1
+                TotalPackages = 8
+                PackagesWithScopedClaims = 3
                 TotalKnownHazards = 14
                 KnownTransitiveHazardAudit = [ordered]@{
                     Status = "matched"

@@ -24,6 +24,10 @@ See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), 
 - pattern, migration-routing, technology, and transport contracts shared by the whole stack
 - REST endpoint wire-name helper extensions for transport/governance enums; these use closed switch mappings so JSON/runtime wire names stay stable without enum-field reflection in trim/AOT analysis
 
+## Deployment-mode posture
+
+`Cephalon.Abstractions` carries a package-scoped `singleFile` claim through `scripts/deployment-mode-support.json`. The project declares `PublishSingleFile=true` and `EnableSingleFileAnalyzer=true`, and the harness reports the package claim separately from the global trim / Native AOT / single-file rows, which remain `not-claimed`.
+
 ## Main surfaces
 
 - `Modules/IModule.cs`

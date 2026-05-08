@@ -350,6 +350,29 @@ Validation:
 - release-validation Pester coverage for deployment-mode claims-report summary and fail-closed behavior
 - focused Tooling doctor/scorecard readback coverage
 
+### ENG-525 Expand package-scoped single-file claims
+
+Status: done
+Iteration: Sprint 125
+Area: release-readiness / deployment-mode / package support
+Quality dimensions: Compatibility, Maintainability, Auditability, Usability
+
+Why:
+
+- `Cephalon.Diagnostics` proved the scoped `singleFile` claim pattern, but the core contract and scaffolding packages were still clean-baseline but unclaimed
+- global trim, Native AOT, and single-file rows must remain `not-claimed` while individual packages can move only when their project properties, manifest rows, docs, and harness verdicts agree
+
+Delivered:
+
+- added `PublishSingleFile=true` and `EnableSingleFileAnalyzer=true` to `Cephalon.Abstractions` and `Cephalon.Scaffolding`
+- added both packages to `scripts/deployment-mode-support.json` as `clean-baseline` package-scoped `singleFile` claims
+- refreshed deployment-mode support, trim/AOT hazard inventory, package publishing, `.NET 11` readiness, scorecard, component docs, roadmap, backlog, and project memory to read back three scoped claims without widening global support
+- updated scorecard and release-validation fixtures plus the deployment-mode claim-truth SRE baseline measurement to expect 3 truthful package claims
+
+Validation:
+
+- `scripts/validate-deployment-mode-claims.ps1 -DeploymentMode singleFile -Configuration Release` passed with `packages=8`, `hazards=14`, `PublishProbeGate=passed`, and 3 truthful package-scoped claims
+
 ### ENG-523 Publish pending-baseline blocker evidence
 
 Status: shipped
