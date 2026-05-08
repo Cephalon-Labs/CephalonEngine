@@ -1,2 +1,1 @@
 #nullable enable
-Cephalon.EventSourcing.Nats.NatsEventStore.NatsEventStore(NATS.Client.Core.INatsConnection! nats, string! bucketName, Cephalon.EventSourcing.Services.IEventTypeRegistry! eventTypes) -> void

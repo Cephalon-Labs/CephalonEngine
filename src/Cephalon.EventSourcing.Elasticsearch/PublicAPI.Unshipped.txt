@@ -1,2 +1,1 @@
 #nullable enable
-Cephalon.EventSourcing.Elasticsearch.ElasticsearchEventStore.ElasticsearchEventStore(Elastic.Clients.Elasticsearch.ElasticsearchClient! client, Cephalon.EventSourcing.Services.IEventTypeRegistry! eventTypes, string! indexName) -> void

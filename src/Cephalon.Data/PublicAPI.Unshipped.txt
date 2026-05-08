@@ -1,5 +1,1 @@
 #nullable enable
-Cephalon.Data.Registration.DataDispatchServiceCollectionExtensions
-static Cephalon.Data.Registration.DataDispatchServiceCollectionExtensions.AddCephalonDataCommand<TCommand, TResult>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
-static Cephalon.Data.Registration.DataDispatchServiceCollectionExtensions.AddCephalonDataCommand<TCommand>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
-static Cephalon.Data.Registration.DataDispatchServiceCollectionExtensions.AddCephalonDataQuery<TQuery, TResult>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

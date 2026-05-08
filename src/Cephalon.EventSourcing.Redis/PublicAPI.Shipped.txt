@@ -8,3 +8,4 @@ Cephalon.EventSourcing.Redis.RedisEventStore.ReadStreamAsync(string! streamId, l
 Cephalon.EventSourcing.Redis.RedisEventStore.RedisEventStore(StackExchange.Redis.IConnectionMultiplexer! multiplexer, string! keyPrefix = "cephalon:") -> void
 static Cephalon.EventSourcing.Redis.Hosting.RedisEventSourcingServiceCollectionExtensions.AddCephalonRedisEventSourcing(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services, string! configuration, string! keyPrefix = "cephalon:") -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static Cephalon.EventSourcing.Redis.RedisEventSourcingConfiguration.StreamKey(string! keyPrefix, string! streamId) -> string!
+static Cephalon.EventSourcing.Redis.RedisEventStore.Create(StackExchange.Redis.IConnectionMultiplexer! multiplexer, Cephalon.EventSourcing.Services.IEventTypeRegistry! eventTypes, string! keyPrefix = "cephalon:") -> Cephalon.EventSourcing.Redis.RedisEventStore!

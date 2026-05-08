@@ -1,2 +1,1 @@
 #nullable enable
-Cephalon.EventSourcing.Qdrant.QdrantEventStore.QdrantEventStore(Qdrant.Client.QdrantClient! client, string! collectionName, Cephalon.EventSourcing.Services.IEventTypeRegistry! eventTypes) -> void

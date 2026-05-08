@@ -173,22 +173,22 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.ProviderIntegrationRuntimeContractCount | Should -Be 94
         $json.Summary.SreSliCount | Should -Be 11
         $json.Summary.SreTargetDeclaredCount | Should -Be 11
-        $json.Summary.SrePendingStableBaselineCount | Should -Be 2
-        $json.Summary.SreStableBaselineCount | Should -Be 9
+        $json.Summary.SrePendingStableBaselineCount | Should -Be 1
+        $json.Summary.SreStableBaselineCount | Should -Be 10
         $json.Summary.SreGuardrailMappedSliCount | Should -Be 6
         $json.Summary.SreGuardrailPendingSliCount | Should -Be 0
         $json.Summary.SreGuardrailNotApplicableSliCount | Should -Be 5
         $json.Summary.SreGuardrailReferenceCount | Should -Be 8
-        $json.Summary.SrePendingBaselineRowCount | Should -Be 2
-        $json.Summary.SrePendingBaselineBlockerCount | Should -Be 2
-        $json.Summary.SrePendingBaselineEvidenceCount | Should -Be 2
+        $json.Summary.SrePendingBaselineRowCount | Should -Be 1
+        $json.Summary.SrePendingBaselineBlockerCount | Should -Be 1
+        $json.Summary.SrePendingBaselineEvidenceCount | Should -Be 1
         $json.Summary.SupplyChainEvidenceItemCount | Should -Be 10
         $json.Summary.SupplyChainWorkflowReadyCount | Should -Be 7
         $json.Summary.SupplyChainExternalPolicyPendingCount | Should -Be 3
         $json.Summary.SupplyChainBlockedCount | Should -Be 0
         $json.Summary.PublicApiPackageCount | Should -Be 104
-        $json.Summary.PublicApiPendingPackageCount | Should -Be 22
-        $json.Summary.PublicApiAdditiveEntryCount | Should -Be 293
+        $json.Summary.PublicApiPendingPackageCount | Should -Be 0
+        $json.Summary.PublicApiAdditiveEntryCount | Should -Be 0
         $json.Summary.PublicApiRemovalEntryCount | Should -Be 0
         $json.Summary.EvidenceSourceCount | Should -Be 13
         $json.Summary.EvidenceSourceReferenceCount | Should -Be 24
@@ -322,22 +322,22 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.SrePostureEvidence.StableBaselinesPublished | Should -BeTrue
         $json.SrePostureEvidence.StableBaselineManifest | Should -Be "scripts/sre-stable-baselines.json"
         $json.SrePostureEvidence.StableBaselineManifestSchemaVersion | Should -Be "1.6.0"
-        $json.SrePostureEvidence.StableBaselineManifestStatus | Should -Be "pending-baseline-evidence-published"
+        $json.SrePostureEvidence.StableBaselineManifestStatus | Should -Be "partial-stable-baseline-published"
         $json.SrePostureEvidence.GuardrailCatalog | Should -Be "benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json"
         $json.SrePostureEvidence.GuardrailCatalogEntryCount | Should -Be 31
         $json.SrePostureEvidence.SliCount | Should -Be 11
         $json.SrePostureEvidence.TargetDeclaredCount | Should -Be 11
-        $json.SrePostureEvidence.PendingStableBaselineCount | Should -Be 2
-        $json.SrePostureEvidence.StableBaselineCount | Should -Be 9
+        $json.SrePostureEvidence.PendingStableBaselineCount | Should -Be 1
+        $json.SrePostureEvidence.StableBaselineCount | Should -Be 10
         $json.SrePostureEvidence.GuardrailMappedSliCount | Should -Be 6
         $json.SrePostureEvidence.GuardrailPendingSliCount | Should -Be 0
         $json.SrePostureEvidence.GuardrailNotApplicableSliCount | Should -Be 5
         $json.SrePostureEvidence.GuardrailReferenceCount | Should -Be 8
-        $json.SrePostureEvidence.StableBaselineRowCount | Should -Be 9
-        $json.SrePostureEvidence.StableBaselineMeasurementCount | Should -Be 11
-        $json.SrePostureEvidence.PendingBaselineRowCount | Should -Be 2
-        $json.SrePostureEvidence.PendingBaselineBlockerCount | Should -Be 2
-        $json.SrePostureEvidence.PendingBaselineEvidenceCount | Should -Be 2
+        $json.SrePostureEvidence.StableBaselineRowCount | Should -Be 10
+        $json.SrePostureEvidence.StableBaselineMeasurementCount | Should -Be 12
+        $json.SrePostureEvidence.PendingBaselineRowCount | Should -Be 1
+        $json.SrePostureEvidence.PendingBaselineBlockerCount | Should -Be 1
+        $json.SrePostureEvidence.PendingBaselineEvidenceCount | Should -Be 1
         $json.SrePostureEvidence.StableBaselinePublishedSliIds | Should -Contain "engine.behavior.dispatch.latency.p95"
         $json.SrePostureEvidence.StableBaselinePublishedSliIds | Should -Contain "engine.behavior.dispatch.latency.p99"
         $json.SrePostureEvidence.StableBaselinePublishedSliIds | Should -Contain "engine.behavior.dispatch.alloc.bytes-per-op"
@@ -347,17 +347,13 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.SrePostureEvidence.StableBaselinePublishedSliIds | Should -Contain "engine.reference-docs.wall-time"
         $json.SrePostureEvidence.StableBaselinePublishedSliIds | Should -Contain "engine.validate-release.wall-time"
         $json.SrePostureEvidence.StableBaselinePublishedSliIds | Should -Contain "engine.worker.cold-start.p95"
-        $json.SrePostureEvidence.PendingBaselineSliIds | Should -Contain "engine.aspnetcore.minimal-api.cold-start.p95"
+        $json.SrePostureEvidence.StableBaselinePublishedSliIds | Should -Contain "engine.aspnetcore.minimal-api.cold-start.p95"
         $json.SrePostureEvidence.PendingBaselineSliIds | Should -Contain "engine.tests.flake-rate.7d"
+        $json.SrePostureEvidence.PendingBaselineSliIds | Should -Not -Contain "engine.aspnetcore.minimal-api.cold-start.p95"
         $json.SrePostureEvidence.PendingBaselineSliIds | Should -Not -Contain "engine.worker.cold-start.p95"
         $json.SrePostureEvidence.PendingBaselineSliIds | Should -Not -Contain "engine.reference-docs.wall-time"
         $json.SrePostureEvidence.PendingBaselineSliIds | Should -Not -Contain "engine.validate-release.wall-time"
-        $json.SrePostureEvidence.PendingBaselineRows.SliId | Should -Contain "engine.aspnetcore.minimal-api.cold-start.p95"
         $json.SrePostureEvidence.PendingBaselineRows.SliId | Should -Contain "engine.tests.flake-rate.7d"
-        $aspNetCorePendingBaseline = $json.SrePostureEvidence.PendingBaselineRows | Where-Object { $_.SliId -eq "engine.aspnetcore.minimal-api.cold-start.p95" }
-        $aspNetCorePendingBaseline.BlockerClass | Should -Be "slo-target-miss"
-        $aspNetCorePendingBaseline.Evidence.Kind | Should -Be "benchmark-target-miss"
-        $aspNetCorePendingBaseline.Evidence.PromotionAllowed | Should -BeFalse
         $flakeRatePendingBaseline = $json.SrePostureEvidence.PendingBaselineRows | Where-Object { $_.SliId -eq "engine.tests.flake-rate.7d" }
         $flakeRatePendingBaseline.BlockerClass | Should -Be "ci-metadata-unavailable"
         $flakeRatePendingBaseline.Evidence.Kind | Should -Be "ci-history-required"
@@ -380,7 +376,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $requestAllocationSli.GuardrailReferences.Benchmark | Should -Contain "HandleTruncatedJsonRequest"
         $requestAllocationSli.GuardrailReferences.Benchmark | Should -Contain "HandleConcurrentLoggedJsonRequest"
         $aspNetCoreColdStartSli = $json.SrePostureEvidence.SliRows | Where-Object { $_.Id -eq "engine.aspnetcore.minimal-api.cold-start.p95" }
-        $aspNetCoreColdStartSli.BaselineStatus | Should -Be "pending-stable-baseline"
+        $aspNetCoreColdStartSli.BaselineStatus | Should -Be "stable-baseline-published"
         $aspNetCoreColdStartSli.GuardrailCoverageStatus | Should -Be "guardrail-catalog-mapped"
         $aspNetCoreColdStartSli.GuardrailReferences.Benchmark | Should -Contain "BuildStartHandleFirstRequestAspNetCore"
         $workerColdStartSli = $json.SrePostureEvidence.SliRows | Where-Object { $_.Id -eq "engine.worker.cold-start.p95" }
@@ -423,6 +419,13 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $workerColdStartBaseline.Measurements.MeanNanoseconds | Should -BeLessOrEqual 500000000
         $workerColdStartBaseline.Measurements.GuardrailMaxMeanNanoseconds | Should -Be 5000000
         $workerColdStartBaseline.Measurements.GuardrailMaxAllocatedBytes | Should -Be 500000
+        $aspNetCoreColdStartBaseline = $json.SrePostureEvidence.StableBaselineRows | Where-Object { $_.SliId -eq "engine.aspnetcore.minimal-api.cold-start.p95" }
+        $aspNetCoreColdStartBaseline.MeasurementKind | Should -Be "benchmark-mean-baseline-proxy"
+        $aspNetCoreColdStartBaseline.Measurements.ReportFileName | Should -Be "Cephalon.Benchmarks.Runtime.ColdStartBenchmarks-report.csv"
+        $aspNetCoreColdStartBaseline.Measurements.Benchmark | Should -Be "BuildStartHandleFirstRequestAspNetCore"
+        $aspNetCoreColdStartBaseline.Measurements.MeanNanoseconds | Should -BeLessOrEqual 800000000
+        $aspNetCoreColdStartBaseline.Measurements.GuardrailMaxMeanNanoseconds | Should -Be 800000000
+        $aspNetCoreColdStartBaseline.Measurements.GuardrailMaxAllocatedBytes | Should -Be 30000000
         $requestAllocationBaseline.Measurements.AllocatedBytes | Should -Contain 27914.24
 
         $json.SupplyChainEvidence.ManifestSchemaVersion | Should -Be "1.0.0"
@@ -443,9 +446,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
 
         $json.PublicApiCompatibilityEvidence.DeltaScript | Should -Be "scripts/summarise-public-api-deltas.ps1"
         $json.PublicApiCompatibilityEvidence.PackageCount | Should -Be 104
-        $json.PublicApiCompatibilityEvidence.PendingPackageCount | Should -Be 22
-        $json.PublicApiCompatibilityEvidence.HeaderOnlyPackageCount | Should -Be 82
-        $json.PublicApiCompatibilityEvidence.AdditiveEntryCount | Should -Be 293
+        $json.PublicApiCompatibilityEvidence.PendingPackageCount | Should -Be 0
+        $json.PublicApiCompatibilityEvidence.HeaderOnlyPackageCount | Should -Be 104
+        $json.PublicApiCompatibilityEvidence.AdditiveEntryCount | Should -Be 0
         $json.PublicApiCompatibilityEvidence.RemovalEntryCount | Should -Be 0
         $json.PublicApiCompatibilityEvidence.HasRemovalEntries | Should -BeFalse
         $json.PublicApiCompatibilityEvidence.PackageDeltas.Count | Should -Be 104
@@ -453,9 +456,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $abstractionsDelta.Project | Should -Be "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj"
         $abstractionsDelta.Unshipped | Should -Be "src/Cephalon.Abstractions/PublicAPI.Unshipped.txt"
         $abstractionsDelta.Shipped | Should -Be "src/Cephalon.Abstractions/PublicAPI.Shipped.txt"
-        $abstractionsDelta.AdditiveEntryCount | Should -Be 15
+        $abstractionsDelta.AdditiveEntryCount | Should -Be 0
         $abstractionsDelta.RemovalEntryCount | Should -Be 0
-        $abstractionsDelta.HasPendingChanges | Should -BeTrue
+        $abstractionsDelta.HasPendingChanges | Should -BeFalse
 
         $corePackage = $json.PackageGAReadiness | Where-Object { $_.Package -eq "Cephalon.Abstractions" }
         $corePackage.Family | Should -Be "Core runtime"
@@ -479,12 +482,12 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "Publish-probe gated modes: singleFile"
         $markdown | Should -Match "SRE Posture Evidence"
         $markdown | Should -Match "SRE SLIs: 11"
-        $markdown | Should -Match "SRE pending stable baselines: 2"
-        $markdown | Should -Match "SRE stable baselines: 9"
-        $markdown | Should -Match "SRE stable baseline rows: 9"
+        $markdown | Should -Match "SRE pending stable baselines: 1"
+        $markdown | Should -Match "SRE stable baselines: 10"
+        $markdown | Should -Match "SRE stable baseline rows: 10"
         $markdown | Should -Match "Pending baseline SLI"
-        $markdown | Should -Match "slo-target-miss"
         $markdown | Should -Match "ci-metadata-unavailable"
+        $markdown | Should -Match "BuildStartHandleFirstRequestAspNetCore"
         $markdown | Should -Match "deployment-mode-claims-report-baseline"
         $markdown | Should -Match "release-validation-step-wall-time-baseline"
         $markdown | Should -Match "package claims 1/1 truthful"
@@ -500,7 +503,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "Supply-chain evidence items: 10"
         $markdown | Should -Match "external-policy-pending"
         $markdown | Should -Match "Public API Compatibility Evidence"
-        $markdown | Should -Match "Public API packages with pending changes: 22"
+        $markdown | Should -Match "Public API packages with pending changes: 0"
+        $markdown | Should -Match "Public API additive entries: 0"
+        $markdown | Should -Match "Header-only packages: 104"
         $markdown | Should -Match "Cephalon.Abstractions"
         $markdown | Should -Match "Adoption Smoke Evidence"
         $markdown | Should -Match "out-of-tree-generated-app-package-stage"

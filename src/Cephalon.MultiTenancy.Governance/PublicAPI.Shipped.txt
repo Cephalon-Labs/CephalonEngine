@@ -1373,3 +1373,12 @@ const Cephalon.MultiTenancy.Governance.Services.TenantMembershipStatuses.Active 
 const Cephalon.MultiTenancy.Governance.Services.TenantMembershipStatuses.Expired = "expired" -> string!
 const Cephalon.MultiTenancy.Governance.Services.TenantMembershipStatuses.Suspended = "suspended" -> string!
 static Cephalon.MultiTenancy.Governance.Registration.MultiTenancyGovernanceEngineBuilderExtensions.AddMultiTenancyGovernance(this Cephalon.Engine.Composition.EngineBuilder! builder, System.Action<Cephalon.MultiTenancy.Governance.Configuration.MultiTenancyGovernanceOptions!>? configure = null) -> Cephalon.Engine.Composition.EngineBuilder!
+const Cephalon.MultiTenancy.Governance.Services.GovernanceDiagnostics.ActivitySourceName = "Cephalon.MultiTenancy.Governance" -> string!
+const Cephalon.MultiTenancy.Governance.Services.GovernanceDiagnostics.DeliveryChannelTag = "cephalon.multitenancy_governance.delivery.channel" -> string!
+const Cephalon.MultiTenancy.Governance.Services.GovernanceDiagnostics.DeliveryOutcomeTag = "cephalon.multitenancy_governance.delivery.outcome" -> string!
+const Cephalon.MultiTenancy.Governance.Services.GovernanceDiagnostics.DeliverySenderIdTag = "cephalon.multitenancy_governance.delivery.sender.id" -> string!
+const Cephalon.MultiTenancy.Governance.Services.GovernanceDiagnostics.InvitationDispatchActivityName = "multitenancy.governance.invitation.delivery.dispatch" -> string!
+const Cephalon.MultiTenancy.Governance.Services.GovernanceDiagnostics.InvitationDispatchCounterName = "cephalon.multitenancy_governance.invitation_dispatches" -> string!
+const Cephalon.MultiTenancy.Governance.Services.GovernanceDiagnostics.InvitationIdTag = "cephalon.multitenancy_governance.invitation.id" -> string!
+const Cephalon.MultiTenancy.Governance.Services.GovernanceDiagnostics.MeterName = "Cephalon.MultiTenancy.Governance" -> string!
+Cephalon.MultiTenancy.Governance.Services.GovernanceDiagnostics

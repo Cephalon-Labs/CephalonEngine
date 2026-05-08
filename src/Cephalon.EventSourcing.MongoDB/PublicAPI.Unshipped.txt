@@ -1,2 +1,1 @@
 #nullable enable
-Cephalon.EventSourcing.MongoDB.MongoDbEventStore.MongoDbEventStore(MongoDB.Driver.IMongoCollection<Cephalon.EventSourcing.MongoDB.MongoDbEventEntry!>! collection, Cephalon.EventSourcing.Services.IEventTypeRegistry! eventTypes) -> void
