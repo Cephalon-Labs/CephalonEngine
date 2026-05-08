@@ -189,6 +189,11 @@ as the stable wire-name contracts stay intact.
 The generator is automatically applied when `Cephalon.Behaviors` is referenced. No additional setup required.
 The `Cephalon.Behaviors` package references `Cephalon.Behaviors.SourceGen` as an analyzer, so the generator
 and diagnostics activate for any project that references `Cephalon.Behaviors`.
+Those compiler-only project references remove host publish-mode globals through
+`CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove`, and the source-generator project declares
+`TreatAsLocalProperty` for trim, Native AOT, single-file, self-contained, and RID globals. This keeps
+representative publish probes focused on runtime behavior instead of letting app publish settings leak into
+the `netstandard2.0` compiler-only generator project.
 
 At runtime, `Cephalon.Behaviors` consumes `BehaviorGeneratedModuleRegistry` entries populated by the
 generated module initializer instead of reflectively locating generated carrier methods through

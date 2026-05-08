@@ -31,6 +31,14 @@ BeforeAll {
     $script:manifestRaw = Get-Content -LiteralPath $script:manifestPath -Raw -Encoding UTF8
     $script:manifest = $script:manifestRaw | ConvertFrom-Json -Depth 16
     $script:validateReleaseRaw = Get-Content -LiteralPath (Join-Path $script:repoRoot "scripts\validate-release.ps1") -Raw -Encoding UTF8
+    $script:directoryBuildPropsRaw = Get-Content -LiteralPath (Join-Path $script:repoRoot "Directory.Build.props") -Raw -Encoding UTF8
+    [xml]$script:directoryBuildPropsXml = $script:directoryBuildPropsRaw
+    $script:compilerOnlyGlobalPropertiesToRemove = [string](
+        $script:directoryBuildPropsXml.Project.PropertyGroup |
+            ForEach-Object { $_.CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove } |
+            Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_) } |
+            Select-Object -First 1
+    )
 
     function Test-CsprojPropertyExpectation {
         param(
@@ -68,6 +76,45 @@ BeforeAll {
             ActualValue   = $actualValue
             Matched       = $null -ne $actualValue -and [string]::Equals($actualValue, $expectedValue, [System.StringComparison]::OrdinalIgnoreCase)
         }
+    }
+
+    function Test-CsprojTreatAsLocalPropertyExpectation {
+        param(
+            [Parameter(Mandatory = $true)][string]$CsprojPath,
+            [Parameter(Mandatory = $true)][string[]]$ExpectedProperties
+        )
+
+        [xml]$projectXml = Get-Content -LiteralPath $CsprojPath -Raw -Encoding UTF8
+        $declared = [string]$projectXml.Project.TreatAsLocalProperty
+        $tokens = @(
+            $declared -split ";" |
+                ForEach-Object { $_.Trim() } |
+                Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+        )
+
+        $missing = @($ExpectedProperties | Where-Object { $tokens -notcontains $_ })
+        return [pscustomobject]@{
+            Declared = $declared
+            Missing  = $missing
+            Matched  = $missing.Count -eq 0
+        }
+    }
+
+    function ConvertTo-CompilerOnlyGlobalPropertiesToRemoveTokens {
+        param(
+            [AllowNull()][string]$Value
+        )
+
+        $resolved = [string]$Value
+        if ($resolved -eq '$(CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove)') {
+            $resolved = $script:compilerOnlyGlobalPropertiesToRemove
+        }
+
+        return @(
+            $resolved -split ";" |
+                ForEach-Object { $_.Trim() } |
+                Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+        )
     }
 
     function Get-LockFilePackageRows {
@@ -212,6 +259,55 @@ Describe "publishProbePolicy" {
         $script:validateReleaseRaw | Should -Match 'releaseValidationSkipsPublish'
         $script:validateReleaseRaw | Should -Match '-DeploymentMode", \$releaseValidationDeploymentMode'
         $script:validateReleaseRaw | Should -Match '-SkipPublish'
+    }
+
+    It "keeps compiler-only analyzer references isolated from host publish-mode global properties" {
+        $expectedGlobalPropertiesToRemove = @(
+            "PublishTrimmed",
+            "PublishAot",
+            "PublishSingleFile",
+            "SelfContained",
+            "RuntimeIdentifier",
+            "RuntimeIdentifiers"
+        )
+
+        $script:directoryBuildPropsRaw | Should -Match 'CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove'
+        $centralTokens = ConvertTo-CompilerOnlyGlobalPropertiesToRemoveTokens -Value $script:compilerOnlyGlobalPropertiesToRemove
+        foreach ($propertyName in $expectedGlobalPropertiesToRemove) {
+            $centralTokens | Should -Contain $propertyName
+        }
+
+        $projectFiles = @(
+            Get-ChildItem -LiteralPath $script:repoRoot -Recurse -Include "*.csproj", "*.props" -File |
+                Where-Object { $_.FullName -notmatch '\\(bin|obj)\\' }
+        )
+        $compilerOnlyReferences = @()
+        foreach ($file in $projectFiles) {
+            [xml]$projectXml = Get-Content -LiteralPath $file.FullName -Raw -Encoding UTF8
+            $compilerOnlyReferences += @(
+                $projectXml.Project.ItemGroup.ProjectReference |
+                    Where-Object {
+                        $_.OutputItemType -eq "Analyzer" -and
+                        $_.ReferenceOutputAssembly -eq "false"
+                    } |
+                    ForEach-Object {
+                        [pscustomobject]@{
+                            File = [System.IO.Path]::GetRelativePath($script:repoRoot, $file.FullName)
+                            Include = $_.Include
+                            GlobalPropertiesToRemove = $_.GlobalPropertiesToRemove
+                        }
+                    }
+            )
+        }
+
+        $compilerOnlyReferences.Count | Should -BeGreaterThan 0
+        foreach ($reference in $compilerOnlyReferences) {
+            $reference.GlobalPropertiesToRemove | Should -Not -BeNullOrEmpty -Because "$($reference.File) -> $($reference.Include)"
+            $referenceTokens = ConvertTo-CompilerOnlyGlobalPropertiesToRemoveTokens -Value $reference.GlobalPropertiesToRemove
+            foreach ($propertyName in $expectedGlobalPropertiesToRemove) {
+                $referenceTokens | Should -Contain $propertyName -Because "$($reference.File) -> $($reference.Include)"
+            }
+        }
     }
 }
 
@@ -451,6 +547,28 @@ Describe "deploymentModeEligibility" {
                 $result = Test-CsprojPropertyExpectation -CsprojPath $resolved -Entry $entry
                 $result.Matched | Should -BeTrue -Because "deploymentModeEligibility.packages entry '$($pkg.packageName)' requires '$entry', but '$($result.Property)' in '$relativePath' was '$($result.ActualValue)'"
             }
+        }
+    }
+
+    It "excluded-by-design compiler-only projects localize publish-mode globals before project properties apply" {
+        $expectedLocalProperties = @(
+            "PublishTrimmed",
+            "PublishAot",
+            "PublishSingleFile",
+            "SelfContained",
+            "RuntimeIdentifier",
+            "RuntimeIdentifiers"
+        )
+
+        $compilerOnlyPackages = @($script:manifest.deploymentModeEligibility.packages | Where-Object { $_.claimAuditTier -eq "excluded-by-design" })
+        $compilerOnlyPackages.Count | Should -BeGreaterThan 0
+
+        foreach ($package in $compilerOnlyPackages) {
+            $packageName = [string]$package.packageName
+            $csprojPath = Join-Path $script:repoRoot "src\$packageName\$packageName.csproj"
+            $result = Test-CsprojTreatAsLocalPropertyExpectation -CsprojPath $csprojPath -ExpectedProperties $expectedLocalProperties
+
+            $result.Matched | Should -BeTrue -Because "$packageName must be able to force publish-mode properties back to false even when a host publish probe passes them globally; missing: $($result.Missing -join ', ')"
         }
     }
 

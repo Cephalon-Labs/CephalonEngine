@@ -22,7 +22,8 @@
     <!-- Source generator for zero-reflection behavior registration -->
     <ProjectReference Include="..\..\src\Cephalon.Behaviors.SourceGen\Cephalon.Behaviors.SourceGen.csproj"
                       OutputItemType="Analyzer"
-                      ReferenceOutputAssembly="false" />
+                      ReferenceOutputAssembly="false"
+                      GlobalPropertiesToRemove="$(CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove)" />
 
     <!-- Data and event sourcing -->
     <ProjectReference Include="..\..\src\Cephalon.Agentics\Cephalon.Agentics.csproj" />

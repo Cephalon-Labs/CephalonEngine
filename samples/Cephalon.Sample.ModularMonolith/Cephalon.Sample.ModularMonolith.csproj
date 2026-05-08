@@ -10,7 +10,8 @@
     <ProjectReference Include="..\..\src\Cephalon.Behaviors.Http\Cephalon.Behaviors.Http.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Behaviors.SourceGen\Cephalon.Behaviors.SourceGen.csproj"
                       OutputItemType="Analyzer"
-                      ReferenceOutputAssembly="false" />
+                      ReferenceOutputAssembly="false"
+                      GlobalPropertiesToRemove="$(CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove)" />
     <ProjectReference Include="..\..\src\Cephalon.Ids.Sfid\Cephalon.Ids.Sfid.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability\Cephalon.Observability.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Observability.OpenTelemetry\Cephalon.Observability.OpenTelemetry.csproj" />

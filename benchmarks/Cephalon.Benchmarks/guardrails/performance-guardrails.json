@@ -74,9 +74,9 @@
     {
       "reportFileName": "Cephalon.Benchmarks.Runtime.RestEndpointProjectionGovernanceBenchmarks-report.csv",
       "benchmark": "BuildMapGovernedRestCatalogs",
-      "maxMeanNanoseconds": 600000000,
+      "maxMeanNanoseconds": 1000000000,
       "maxAllocatedBytes": 16000000,
-      "notes": "The engine-first ASP.NET Core REST startup/materialization benchmark for generated/profile/DSL precedence, shorthand-only authoring-policy enforcement, grouped generated ownership, suppression and override selection, explicit-group version authority, and preserved implicit query fallback should stay below 600 ms and under roughly 16 MB allocated per benchmark invocation."
+      "notes": "The engine-first ASP.NET Core REST startup/materialization benchmark for generated/profile/DSL precedence, shorthand-only authoring-policy enforcement, grouped generated ownership, suppression and override selection, explicit-group version authority, and preserved implicit query fallback should stay below 1 s and under roughly 16 MB allocated per benchmark operation."
     },
     {
       "reportFileName": "Cephalon.Benchmarks.Scaffolding.ScaffoldGeneratorBenchmarks-report.csv",

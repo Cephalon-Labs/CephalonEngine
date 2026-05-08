@@ -465,6 +465,7 @@ Describe "Get-AnalyzerAudit" {
 Describe "Invoke-PublishProbe" {
     BeforeAll {
         $script:cfgTrim = Get-DeploymentModeConfig -Mode "trim"
+        $script:cfgNativeAot = Get-DeploymentModeConfig -Mode "nativeAot"
 
         $script:successStub = Join-Path $script:tempRoot "stub-success.ps1"
         @"
@@ -495,6 +496,13 @@ param([Parameter(ValueFromRemainingArguments)] `$rest)
 Set-Content -LiteralPath `$env:CEPHALON_TEST_LOCK_FILE -Value 'mutated by publish probe' -Encoding UTF8
 exit 0
 "@ | Set-Content -LiteralPath $script:lockMutatingStub -Encoding UTF8
+
+        $script:argsCaptureStub = Join-Path $script:tempRoot "stub-args-capture.ps1"
+        @"
+param([Parameter(ValueFromRemainingArguments)] `$rest)
+Set-Content -LiteralPath `$env:CEPHALON_TEST_ARGS_FILE -Value (`$rest -join [Environment]::NewLine) -Encoding UTF8
+exit 0
+"@ | Set-Content -LiteralPath $script:argsCaptureStub -Encoding UTF8
     }
 
     It "returns Skipped=true when no targets are supplied" {
@@ -529,6 +537,22 @@ exit 0
         $r = Invoke-PublishProbe -ModeConfig $script:cfgTrim -Targets @("A.csproj", "B.csproj") -DotnetCommand $script:successStub -RepoRoot $script:tempRoot
         $r.Targets.Count | Should -Be 2
         ($r.Targets | Where-Object { $_.Success }).Count | Should -Be 2
+    }
+
+    It "passes the Native AOT target-architecture bootstrap hint" {
+        $argsFile = Join-Path $script:tempRoot "native-aot-publish-args.txt"
+        $env:CEPHALON_TEST_ARGS_FILE = $argsFile
+        try {
+            $r = Invoke-PublishProbe -ModeConfig $script:cfgNativeAot -Targets @("Cephalon.Engine.csproj") -DotnetCommand $script:argsCaptureStub -RepoRoot $script:tempRoot
+            $r.Targets[0].Success | Should -BeTrue
+
+            $args = @(Get-Content -LiteralPath $argsFile)
+            $args | Should -Contain "/p:PublishAot=true"
+            @($args | Where-Object { $_ -like "/p:_targetArchitecture=*" }).Count | Should -Be 1
+        }
+        finally {
+            Remove-Item Env:\CEPHALON_TEST_ARGS_FILE -ErrorAction SilentlyContinue
+        }
     }
 
     It "restores packages.lock.json files after publish probes" {
@@ -831,6 +855,25 @@ Describe "Compute-PublishProbeGateResult" {
 
         $result.Status | Should -Be "failed"
         ($result.Reasons -join " ") | Should -Match "not evaluated"
+    }
+
+    It "does not apply the release gate to direct audit-only trim or Native AOT runs" {
+        $result = Compute-PublishProbeGateResult `
+            -ModeReports @(
+                [pscustomobject]@{ Mode = "trim"; PublishProbe = (New-GatePublishProbe) },
+                [pscustomobject]@{ Mode = "nativeAot"; PublishProbe = (New-GatePublishProbe) }
+            ) `
+            -PublishProbePolicy ([pscustomobject]@{
+                NonOptOutGate = $true
+                FailureBlocksRelease = $true
+                FailOnWarnings = $true
+                GatedModes = @("singleFile")
+                AuditOnlyModes = @("trim", "nativeAot")
+            })
+
+        $result.Status | Should -Be "not-applicable"
+        $result.Enabled | Should -BeFalse
+        ($result.Reasons -join " ") | Should -Match "audit-only"
     }
 
     It "fails when the gated publish probe is skipped" {

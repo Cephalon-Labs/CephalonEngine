@@ -3406,7 +3406,7 @@ note: visible
         builder.WebHost.UseTestServer();
         builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
-        builder.Configuration[$"{EngineSettings.SectionName}:FailurePolicy:StartupReadinessDelay"] = "00:00:02";
+        builder.Configuration[$"{EngineSettings.SectionName}:FailurePolicy:StartupReadinessDelay"] = "00:00:05";
         builder.Services.AddSingleton<FailurePolicyRecorder>();
         builder.AddCephalon(engine =>
         {
@@ -3419,14 +3419,14 @@ note: visible
         await app.StartAsync();
         var client = app.GetTestClient();
 
+        var readinessResponse = await client.GetAsync("/health/ready");
+        var readinessPayload = await readinessResponse.Content.ReadAsStringAsync();
         var failurePolicy = await client.GetFromJsonAsync<FailurePolicy>("/engine/failure-policy");
         var diagnosticsResponse = await client.GetAsync("/engine/diagnostics");
         var diagnosticsPayload = await diagnosticsResponse.Content.ReadAsStringAsync();
-        var readinessResponse = await client.GetAsync("/health/ready");
-        var readinessPayload = await readinessResponse.Content.ReadAsStringAsync();
 
         Assert.NotNull(failurePolicy);
-        Assert.Equal(TimeSpan.FromSeconds(2), failurePolicy.StartupReadinessDelay);
+        Assert.Equal(TimeSpan.FromSeconds(5), failurePolicy.StartupReadinessDelay);
 
         Assert.Equal(HttpStatusCode.ServiceUnavailable, readinessResponse.StatusCode);
         using var readinessDocument = JsonDocument.Parse(readinessPayload);
@@ -3444,7 +3444,7 @@ note: visible
         using var diagnosticsDocument = JsonDocument.Parse(diagnosticsPayload);
         Assert.Equal("startup-warmup", diagnosticsDocument.RootElement.GetProperty("readiness").GetProperty("activeWindow").GetString());
 
-        await Task.Delay(TimeSpan.FromMilliseconds(2250));
+        await Task.Delay(TimeSpan.FromMilliseconds(5250));
 
         var readyResponse = await client.GetAsync("/health/ready");
         var readyPayload = await readyResponse.Content.ReadAsStringAsync();

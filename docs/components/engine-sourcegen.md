@@ -12,6 +12,7 @@ See also: [Cephalon.Engine](engine.md), [Cephalon.Abstractions](abstractions.md)
 - generated `ModuleDiscoveryDescriptor` registrations into `ModuleDiscoveryRegistry`
 - keeping `AddModulesFromAssembly(...)`, package discovery, and `Engine:Discovery:Assemblies` usable without runtime assembly-type scans
 - compiler-only deployment-mode posture: `IsTrimmable=false`, `IsAotCompatible=false`, `PublishTrimmed=false`, `PublishAot=false`, and `PublishSingleFile=false`
+- publish-probe isolation through `TreatAsLocalProperty` on the project and `CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove` on compiler-only analyzer references, covering trim, Native AOT, single-file, self-contained, and RID globals
 
 ## Main surfaces
 

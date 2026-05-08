@@ -15,7 +15,8 @@
     -->
     <ProjectReference Include="..\Cephalon.Analyzers\Cephalon.Analyzers.csproj"
                       OutputItemType="Analyzer"
-                      ReferenceOutputAssembly="false">
+                      ReferenceOutputAssembly="false"
+                      GlobalPropertiesToRemove="$(CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove)">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </ProjectReference>

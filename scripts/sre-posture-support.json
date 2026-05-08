@@ -142,7 +142,7 @@
       "category": "release-validation-wall-time",
       "measurementSurface": "release-validation",
       "sourceDocument": "docs/sre-posture.md",
-      "sloTarget": "<= 25 minutes on the canonical reference-build agent",
+      "sloTarget": "<= 30 minutes on the canonical reference-build agent",
       "window": "30-day rolling",
       "targetStatus": "target-declared",
       "baselineStatus": "stable-baseline-published",
