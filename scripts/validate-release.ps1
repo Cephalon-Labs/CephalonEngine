@@ -500,6 +500,24 @@ function Write-EngineCompletionScorecardEvidenceSummary {
             -PropertyName "StableBaselineMeasurementCount" `
             -OwnerName "SrePostureEvidence"),
         [System.Globalization.CultureInfo]::InvariantCulture)
+    $srePendingBaselineRowCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $scorecard.SrePostureEvidence `
+            -PropertyName "PendingBaselineRowCount" `
+            -OwnerName "SrePostureEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $srePendingBaselineBlockerCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $scorecard.SrePostureEvidence `
+            -PropertyName "PendingBaselineBlockerCount" `
+            -OwnerName "SrePostureEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $srePendingBaselineEvidenceCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $scorecard.SrePostureEvidence `
+            -PropertyName "PendingBaselineEvidenceCount" `
+            -OwnerName "SrePostureEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
 
     Write-Host ("Deployment-mode evidence: {0} global claims; not-claimed {1}; package-scoped claim packages {2}; known hazards {3}; transitive audit entries {4}; publish probes {5}; claims report {6}; gate {7}; targets {8}; warnings {9}; errors {10}; truthful package claims {11}; overstated package claims {12}." -f `
         $scorecard.DeploymentModeEvidence.GlobalClaimCount,
@@ -528,13 +546,16 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         $dependencyHealthProviderManifestSchemaVersion,
         $dependencyHealthProviderManifestStatus)
 
-    Write-Host ("SRE posture: {0} SLIs; target-declared {1}; pending stable baselines {2}; stable baselines {3}; stable baseline rows {4}; stable baseline measurements {5}; guardrail-mapped {6}; pending guardrail coverage {7}; guardrail not-applicable {8}; summary mode {9}; stable baseline manifest {10}." -f `
+    Write-Host ("SRE posture: {0} SLIs; target-declared {1}; pending stable baselines {2}; stable baselines {3}; stable baseline rows {4}; stable baseline measurements {5}; pending baseline rows {6}; blockers {7}; pending evidence {8}; guardrail-mapped {9}; pending guardrail coverage {10}; guardrail not-applicable {11}; summary mode {12}; stable baseline manifest {13}." -f `
         $scorecard.SrePostureEvidence.SliCount,
         $scorecard.SrePostureEvidence.TargetDeclaredCount,
         $scorecard.SrePostureEvidence.PendingStableBaselineCount,
         $scorecard.SrePostureEvidence.StableBaselineCount,
         $sreStableBaselineRowCount,
         $sreStableBaselineMeasurementCount,
+        $srePendingBaselineRowCount,
+        $srePendingBaselineBlockerCount,
+        $srePendingBaselineEvidenceCount,
         $scorecard.SrePostureEvidence.GuardrailMappedSliCount,
         $scorecard.SrePostureEvidence.GuardrailPendingSliCount,
         $scorecard.SrePostureEvidence.GuardrailNotApplicableSliCount,
