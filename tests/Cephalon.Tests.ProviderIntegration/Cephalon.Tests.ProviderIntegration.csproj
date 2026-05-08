@@ -26,7 +26,14 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Cephalon.Abstractions\Cephalon.Abstractions.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Data.Cassandra\Cephalon.Data.Cassandra.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Data.ClickHouse\Cephalon.Data.ClickHouse.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Data.Elasticsearch\Cephalon.Data.Elasticsearch.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.MongoDB\Cephalon.Data.MongoDB.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Data.Nats\Cephalon.Data.Nats.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Data.Neo4j\Cephalon.Data.Neo4j.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Data.OpenSearch\Cephalon.Data.OpenSearch.csproj" />
+    <ProjectReference Include="..\..\src\Cephalon.Data.Qdrant\Cephalon.Data.Qdrant.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Data.Redis\Cephalon.Data.Redis.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Engine\Cephalon.Engine.csproj" />
     <ProjectReference Include="..\..\src\Cephalon.Eventing\Cephalon.Eventing.csproj" />

@@ -1,7 +1,7 @@
 {
   "$schemaVersion": "1.0.0",
-  "status": "partial-live-provider-evidence",
-  "summary": "Provider integration evidence is machine-readable. Redis data/event-sourcing, MongoDB data, and CDC database providers have live proof lanes; the remaining non-relational data providers and observability dependency-health providers have no-external-service composition/runtime invariant proof until provider-owned live lanes are promoted. The dependency-health provider family shape is source-derived through scripts/observability-dependency-health-providers.json.",
+  "status": "expanded-live-provider-evidence",
+  "summary": "Provider integration evidence is machine-readable. Redis data/event-sourcing, MongoDB data, Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant data providers have live proof lanes; CDC database providers have live proof lanes; the remaining composition-only rows are observability dependency-health invariants. The dependency-health provider family shape is source-derived through scripts/observability-dependency-health-providers.json.",
   "sourceDocs": [
     "docs/engine-completion-scorecard.md",
     "docs/release-checklist.md",
@@ -206,11 +206,12 @@
       "id": "cassandra-data-runtime-surface",
       "provider": "Cassandra",
       "family": "data",
-      "status": "composition-only",
-      "defaultRunBehavior": "runs-without-external-services",
-      "testProject": "tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj",
+      "status": "live-proof-available",
+      "defaultRunBehavior": "skipped-unless-enabled",
+      "testProject": "tests/Cephalon.Tests.ProviderIntegration/Cephalon.Tests.ProviderIntegration.csproj",
       "testFiles": [
-        "tests/Cephalon.Tests.Composition/Composition/DataProviderRuntimeSurfaceTests.cs"
+        "tests/Cephalon.Tests.ProviderIntegration/LiveDataProviderIntegrationTests.cs",
+        "tests/Cephalon.Tests.ProviderIntegration/ExternalServices/ExternalProviderServiceGate.cs"
       ],
       "sourceDocuments": [
         "docs/components/data-cassandra.md",
@@ -218,23 +219,40 @@
       ],
       "runtimeContracts": [
         "data.cassandra",
+        "data.wide-column-store",
+        "data.outbox.cassandra",
+        "data.inbox.cassandra",
         "cassandra-outbox",
         "cassandra-inbox",
         "outbox-producers",
         "inbox-stores",
+        "IOutbox.EnqueueAsync",
+        "IInbox.MarkProcessedAsync",
+        "IInbox.HasProcessedAsync",
+        "IEventDispatchStore.ReadPendingAsync",
+        "IEventDispatchStore.ApplyReportAsync",
+        "cassandra-keyspace-bootstrap",
         "sanitized-capability-metadata"
       ],
-      "environmentVariables": []
+      "environmentVariables": [
+        "CEPHALON_PROVIDER_EXTERNAL_SERVICES",
+        "CEPHALON_PROVIDER_INTEGRATION",
+        "CEPHALON_PROVIDER_CASSANDRA_CONTACT_POINTS",
+        "CEPHALON_PROVIDER_CASSANDRA_PORT",
+        "CEPHALON_PROVIDER_CASSANDRA_KEYSPACE"
+      ],
+      "externalServiceGate": "provider-integration"
     },
     {
       "id": "clickhouse-data-runtime-surface",
       "provider": "ClickHouse",
       "family": "data",
-      "status": "composition-only",
-      "defaultRunBehavior": "runs-without-external-services",
-      "testProject": "tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj",
+      "status": "live-proof-available",
+      "defaultRunBehavior": "skipped-unless-enabled",
+      "testProject": "tests/Cephalon.Tests.ProviderIntegration/Cephalon.Tests.ProviderIntegration.csproj",
       "testFiles": [
-        "tests/Cephalon.Tests.Composition/Composition/DataProviderRuntimeSurfaceTests.cs"
+        "tests/Cephalon.Tests.ProviderIntegration/LiveDataProviderIntegrationTests.cs",
+        "tests/Cephalon.Tests.ProviderIntegration/ExternalServices/ExternalProviderServiceGate.cs"
       ],
       "sourceDocuments": [
         "docs/components/data-clickhouse.md",
@@ -242,23 +260,40 @@
       ],
       "runtimeContracts": [
         "data.clickhouse",
+        "data.analytics-store",
+        "data.outbox.clickhouse",
+        "data.inbox.clickhouse",
         "clickhouse-outbox",
         "clickhouse-inbox",
         "outbox-producers",
         "inbox-stores",
+        "IOutbox.EnqueueAsync",
+        "IInbox.MarkProcessedAsync",
+        "IInbox.HasProcessedAsync",
+        "dispatch-policy.unsupported",
         "sanitized-capability-metadata"
       ],
-      "environmentVariables": []
+      "environmentVariables": [
+        "CEPHALON_PROVIDER_EXTERNAL_SERVICES",
+        "CEPHALON_PROVIDER_INTEGRATION",
+        "CEPHALON_PROVIDER_CLICKHOUSE_HOST",
+        "CEPHALON_PROVIDER_CLICKHOUSE_PORT",
+        "CEPHALON_PROVIDER_CLICKHOUSE_DATABASE",
+        "CEPHALON_PROVIDER_CLICKHOUSE_USERNAME",
+        "CEPHALON_PROVIDER_CLICKHOUSE_PASSWORD"
+      ],
+      "externalServiceGate": "provider-integration"
     },
     {
       "id": "elasticsearch-data-runtime-surface",
       "provider": "Elasticsearch",
       "family": "data",
-      "status": "composition-only",
-      "defaultRunBehavior": "runs-without-external-services",
-      "testProject": "tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj",
+      "status": "live-proof-available",
+      "defaultRunBehavior": "skipped-unless-enabled",
+      "testProject": "tests/Cephalon.Tests.ProviderIntegration/Cephalon.Tests.ProviderIntegration.csproj",
       "testFiles": [
-        "tests/Cephalon.Tests.Composition/Composition/DataProviderRuntimeSurfaceTests.cs"
+        "tests/Cephalon.Tests.ProviderIntegration/LiveDataProviderIntegrationTests.cs",
+        "tests/Cephalon.Tests.ProviderIntegration/ExternalServices/ExternalProviderServiceGate.cs"
       ],
       "sourceDocuments": [
         "docs/components/data-elasticsearch.md",
@@ -266,13 +301,28 @@
       ],
       "runtimeContracts": [
         "data.search-store",
+        "data.elasticsearch",
+        "data.outbox.elasticsearch",
+        "data.inbox.elasticsearch",
         "elasticsearch-outbox",
         "elasticsearch-inbox",
         "outbox-producers",
         "inbox-stores",
+        "IOutbox.EnqueueAsync",
+        "IInbox.MarkProcessedAsync",
+        "IInbox.HasProcessedAsync",
+        "IEventDispatchStore.ReadPendingAsync",
+        "IEventDispatchStore.ApplyReportAsync",
         "sanitized-capability-metadata"
       ],
-      "environmentVariables": []
+      "environmentVariables": [
+        "CEPHALON_PROVIDER_EXTERNAL_SERVICES",
+        "CEPHALON_PROVIDER_INTEGRATION",
+        "CEPHALON_PROVIDER_ELASTICSEARCH_URI",
+        "CEPHALON_PROVIDER_ELASTICSEARCH_USERNAME",
+        "CEPHALON_PROVIDER_ELASTICSEARCH_PASSWORD"
+      ],
+      "externalServiceGate": "provider-integration"
     },
     {
       "id": "mongodb-data-runtime-surface",
@@ -305,11 +355,12 @@
       "id": "nats-data-runtime-surface",
       "provider": "NATS",
       "family": "data",
-      "status": "composition-only",
-      "defaultRunBehavior": "runs-without-external-services",
-      "testProject": "tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj",
+      "status": "live-proof-available",
+      "defaultRunBehavior": "skipped-unless-enabled",
+      "testProject": "tests/Cephalon.Tests.ProviderIntegration/Cephalon.Tests.ProviderIntegration.csproj",
       "testFiles": [
-        "tests/Cephalon.Tests.Composition/Composition/DataProviderRuntimeSurfaceTests.cs"
+        "tests/Cephalon.Tests.ProviderIntegration/LiveDataProviderIntegrationTests.cs",
+        "tests/Cephalon.Tests.ProviderIntegration/ExternalServices/ExternalProviderServiceGate.cs"
       ],
       "sourceDocuments": [
         "docs/components/data-nats.md",
@@ -317,23 +368,38 @@
       ],
       "runtimeContracts": [
         "data.nats",
+        "data.ledger-store",
+        "data.outbox.nats",
+        "data.inbox.nats",
         "nats-outbox",
         "nats-inbox",
         "outbox-producers",
         "inbox-stores",
+        "IOutbox.EnqueueAsync",
+        "IInbox.MarkProcessedAsync",
+        "IInbox.HasProcessedAsync",
+        "IEventDispatchStore.ReadPendingAsync",
+        "IEventDispatchStore.ApplyReportAsync",
+        "nats-jetstream-kv",
         "sanitized-capability-metadata"
       ],
-      "environmentVariables": []
+      "environmentVariables": [
+        "CEPHALON_PROVIDER_EXTERNAL_SERVICES",
+        "CEPHALON_PROVIDER_INTEGRATION",
+        "CEPHALON_PROVIDER_NATS_URI"
+      ],
+      "externalServiceGate": "provider-integration"
     },
     {
       "id": "neo4j-data-runtime-surface",
       "provider": "Neo4j",
       "family": "data",
-      "status": "composition-only",
-      "defaultRunBehavior": "runs-without-external-services",
-      "testProject": "tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj",
+      "status": "live-proof-available",
+      "defaultRunBehavior": "skipped-unless-enabled",
+      "testProject": "tests/Cephalon.Tests.ProviderIntegration/Cephalon.Tests.ProviderIntegration.csproj",
       "testFiles": [
-        "tests/Cephalon.Tests.Composition/Composition/DataProviderRuntimeSurfaceTests.cs"
+        "tests/Cephalon.Tests.ProviderIntegration/LiveDataProviderIntegrationTests.cs",
+        "tests/Cephalon.Tests.ProviderIntegration/ExternalServices/ExternalProviderServiceGate.cs"
       ],
       "sourceDocuments": [
         "docs/components/data-neo4j.md",
@@ -341,23 +407,39 @@
       ],
       "runtimeContracts": [
         "data.neo4j",
+        "data.graph-store",
+        "data.outbox.neo4j",
+        "data.inbox.neo4j",
         "neo4j-outbox",
         "neo4j-inbox",
         "outbox-producers",
         "inbox-stores",
+        "IOutbox.EnqueueAsync",
+        "IInbox.MarkProcessedAsync",
+        "IInbox.HasProcessedAsync",
+        "IEventDispatchStore.ReadPendingAsync",
+        "IEventDispatchStore.ApplyReportAsync",
         "sanitized-capability-metadata"
       ],
-      "environmentVariables": []
+      "environmentVariables": [
+        "CEPHALON_PROVIDER_EXTERNAL_SERVICES",
+        "CEPHALON_PROVIDER_INTEGRATION",
+        "CEPHALON_PROVIDER_NEO4J_URI",
+        "CEPHALON_PROVIDER_NEO4J_USERNAME",
+        "CEPHALON_PROVIDER_NEO4J_PASSWORD"
+      ],
+      "externalServiceGate": "provider-integration"
     },
     {
       "id": "opensearch-data-runtime-surface",
       "provider": "OpenSearch",
       "family": "data",
-      "status": "composition-only",
-      "defaultRunBehavior": "runs-without-external-services",
-      "testProject": "tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj",
+      "status": "live-proof-available",
+      "defaultRunBehavior": "skipped-unless-enabled",
+      "testProject": "tests/Cephalon.Tests.ProviderIntegration/Cephalon.Tests.ProviderIntegration.csproj",
       "testFiles": [
-        "tests/Cephalon.Tests.Composition/Composition/DataProviderRuntimeSurfaceTests.cs"
+        "tests/Cephalon.Tests.ProviderIntegration/LiveDataProviderIntegrationTests.cs",
+        "tests/Cephalon.Tests.ProviderIntegration/ExternalServices/ExternalProviderServiceGate.cs"
       ],
       "sourceDocuments": [
         "docs/components/data-opensearch.md",
@@ -365,23 +447,39 @@
       ],
       "runtimeContracts": [
         "data.search-store",
+        "data.opensearch",
+        "data.outbox.opensearch",
+        "data.inbox.opensearch",
         "opensearch-outbox",
         "opensearch-inbox",
         "outbox-producers",
         "inbox-stores",
+        "IOutbox.EnqueueAsync",
+        "IInbox.MarkProcessedAsync",
+        "IInbox.HasProcessedAsync",
+        "IEventDispatchStore.ReadPendingAsync",
+        "IEventDispatchStore.ApplyReportAsync",
         "sanitized-capability-metadata"
       ],
-      "environmentVariables": []
+      "environmentVariables": [
+        "CEPHALON_PROVIDER_EXTERNAL_SERVICES",
+        "CEPHALON_PROVIDER_INTEGRATION",
+        "CEPHALON_PROVIDER_OPENSEARCH_URI",
+        "CEPHALON_PROVIDER_OPENSEARCH_USERNAME",
+        "CEPHALON_PROVIDER_OPENSEARCH_PASSWORD"
+      ],
+      "externalServiceGate": "provider-integration"
     },
     {
       "id": "qdrant-data-runtime-surface",
       "provider": "Qdrant",
       "family": "data",
-      "status": "composition-only",
-      "defaultRunBehavior": "runs-without-external-services",
-      "testProject": "tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj",
+      "status": "live-proof-available",
+      "defaultRunBehavior": "skipped-unless-enabled",
+      "testProject": "tests/Cephalon.Tests.ProviderIntegration/Cephalon.Tests.ProviderIntegration.csproj",
       "testFiles": [
-        "tests/Cephalon.Tests.Composition/Composition/DataProviderRuntimeSurfaceTests.cs"
+        "tests/Cephalon.Tests.ProviderIntegration/LiveDataProviderIntegrationTests.cs",
+        "tests/Cephalon.Tests.ProviderIntegration/ExternalServices/ExternalProviderServiceGate.cs"
       ],
       "sourceDocuments": [
         "docs/components/data-qdrant.md",
@@ -389,13 +487,29 @@
       ],
       "runtimeContracts": [
         "data.qdrant",
+        "data.vector-store",
+        "data.outbox.qdrant",
+        "data.inbox.qdrant",
         "qdrant-outbox",
         "qdrant-inbox",
         "outbox-producers",
         "inbox-stores",
+        "IOutbox.EnqueueAsync",
+        "IInbox.MarkProcessedAsync",
+        "IInbox.HasProcessedAsync",
+        "IEventDispatchStore.ReadPendingAsync",
+        "IEventDispatchStore.ApplyReportAsync",
+        "qdrant-vector-collection",
         "sanitized-capability-metadata"
       ],
-      "environmentVariables": []
+      "environmentVariables": [
+        "CEPHALON_PROVIDER_EXTERNAL_SERVICES",
+        "CEPHALON_PROVIDER_INTEGRATION",
+        "CEPHALON_PROVIDER_QDRANT_HOST",
+        "CEPHALON_PROVIDER_QDRANT_PORT",
+        "CEPHALON_PROVIDER_QDRANT_API_KEY"
+      ],
+      "externalServiceGate": "provider-integration"
     },
     {
       "id": "cassandra-dependency-health-invariant",

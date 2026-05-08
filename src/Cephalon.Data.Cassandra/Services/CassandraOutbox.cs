@@ -87,7 +87,11 @@ internal sealed class CassandraOutbox : IOutbox, IDisposable, IAsyncDisposable
         await _initLock.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            _session ??= await _cluster.ConnectAsync(_options.Keyspace).ConfigureAwait(false);
+            if (_session is null)
+            {
+                await CassandraKeyspaceSchema.EnsureKeyspaceAsync(_cluster, _options, cancellationToken).ConfigureAwait(false);
+                _session = await _cluster.ConnectAsync(_options.Keyspace).ConfigureAwait(false);
+            }
         }
         finally
         {

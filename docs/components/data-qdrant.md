@@ -117,6 +117,10 @@ When the `event-driven-integration` technology is active, the following entries 
 | `outbox-producers` | `qdrant-outbox` | `qdrant` |
 | `inbox-stores` | `qdrant-inbox` | `qdrant` |
 
+## Provider integration proof
+
+`LiveDataProviderIntegrationTests.QdrantProvider_StagesOutboxInboxAndDispatchAgainstLiveService` runs behind `ExternalProviderServiceFact(ExternalProviderServiceProvider.Qdrant)`. The lane is skipped unless `CEPHALON_PROVIDER_EXTERNAL_SERVICES` or `CEPHALON_PROVIDER_INTEGRATION` is enabled and `CEPHALON_PROVIDER_QDRANT_HOST` is supplied; port and API key can be supplied through the matching variables. The test composes `Cephalon.Engine`, `Cephalon.Eventing`, and this pack, then proves real outbox/inbox writes, `IEventDispatchStore` pending/success transitions, runtime manifest capabilities, and `event-driven-integration` runtime surfaces against a live Qdrant gRPC service.
+
 ## Not shipped in this slice
 
 This pack intentionally does not claim:

@@ -215,7 +215,11 @@ internal sealed class CassandraEventDispatchStore : IEventDispatchStore, IDispos
         await initLock.WaitAsync(cancellationToken).ConfigureAwait(false);
         try
         {
-            session ??= await cluster.ConnectAsync(options.Keyspace).ConfigureAwait(false);
+            if (session is null)
+            {
+                await CassandraKeyspaceSchema.EnsureKeyspaceAsync(cluster, options, cancellationToken).ConfigureAwait(false);
+                session = await cluster.ConnectAsync(options.Keyspace).ConfigureAwait(false);
+            }
         }
         finally
         {

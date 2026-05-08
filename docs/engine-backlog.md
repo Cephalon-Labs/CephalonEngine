@@ -32,12 +32,43 @@ Current focus:
 - treat the long-term release-readiness notes in [`project-memory.md`](project-memory.md) as guarded scorecard contract, not loose historical prose: Tooling documentation coverage now reads `$Script:SchemaVersion` from `scripts/publish-engine-completion-scorecard.ps1` and requires project memory, scorecard docs, CLI docs, release checklists, and package docs to stay aligned with the generated schema plus provider-integration doctor/release-validation readback
 - treat scorecard hard blockers as release-validation failures even when a later narrow step is skipped: `scripts/validate-release.ps1` fails during the scorecard step when generated evidence reports blocked platform gates, supply-chain blocked items, or public API removals; `partial`, `not-claimed`, provider composition-only, SRE pending baselines, and external-policy-pending items remain explicit readback/exception posture
 - treat the CDC integration-test lane as additive evidence over the runtime catalog truth: `tests/Cephalon.Tests.CdcIntegration` now proves MongoDB change streams against a real disposable replica set, SQL Server CDC against an opt-in live service, Postgres logical replication against an opt-in live service, MySQL binlog streaming against an opt-in live service, and Oracle LogMiner against an opt-in live service while keeping default CI Docker-free through the shared external-service gate, instead of implying those provider paths through fake transport harnesses
-- treat the provider integration-test lane as additive evidence over non-CDC provider truth: `tests/Cephalon.Tests.ProviderIntegration` now proves Redis data outbox/inbox/dispatch-store behavior plus Redis Streams event sourcing against an opt-in live Redis runtime, and MongoDB data outbox/inbox/dispatch-store behavior against a disposable replica-set runtime without a permanent external service
+- treat the provider integration-test lane as additive evidence over non-CDC provider truth: `tests/Cephalon.Tests.ProviderIntegration` now proves Redis data outbox/inbox/dispatch-store behavior plus Redis Streams event sourcing against an opt-in live Redis runtime, MongoDB data outbox/inbox/dispatch-store behavior against a disposable replica-set runtime without a permanent external service, and Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant data outbox/inbox runtime behavior against opt-in live provider services
 - treat `scripts/provider-integration-support.json` as the release-readiness manifest for provider claims across live-provider tests, composition-only data/provider runtime contracts, CDC integration lanes, and the eighteen dependency-health companion packs; the scorecard, release validation, CLI doctor, and script-level Pester tests must read provider-integration counts and dependency-health provider-manifest readback from that manifest instead of hand-authored prose, and the scorecard publisher must fail if dependency-health provider rows drift from the source-derived provider manifest
 - treat `scripts/observability-dependency-health-providers.json` as the source-derived dependency-health provider-family manifest: runtime invariant tests, provider-integration scorecard row validation, and Tooling documentation coverage must derive the eighteen `Cephalon.Observability.*Dependencies` expectations from that file so the next provider cannot ship with source/docs/planning counts drifting apart
 - treat the Debezium test-flake quarantine as resolved by shared catalog hardening: CDC execution-runtime filters now reuse versioned snapshots over indexed capture ownership instead of re-enriching every runtime for every state/category selector
 - treat the `ENG-500` regression closeout as the current suite-stability baseline: provider-native CDC hosting tests now run through a dedicated non-parallel collection, long-running package-publishing process output drains stdout/stderr concurrently, sample REST behavior hosts align with source-generated `/api/v1` behavior endpoints, and the full solution test lane is again green on the current worktree
 - treat the CDC execution-runtime catalog hot path as benchmark-governed: `CdcExecutionRuntimeCatalogBenchmarks` now covers Debezium-managed external runtimes, external observations, repeated managed-connector drift/dry-run/command-issuance filters, and compact multi-selector operator flows against the shared versioned snapshot
+
+### ENG-512 Promote remaining non-relational data provider live proofs
+
+Status: done
+Estimate: 2
+Issue: #1140
+Iteration: Sprint 125
+Area: test-coverage / provider integration / data providers
+Quality dimensions: Reliability, Compatibility, Auditability, Data Integrity, Maintainability
+
+Why:
+
+- Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant had provider-visible outbox/inbox/runtime surfaces but still read as composition-only evidence in the provider-integration scorecard
+- release managers need to distinguish provider packs that have a real opt-in live proof from rows that only prove composition or dependency-health invariants
+- ClickHouse needs a live proof that preserves its truthful unsupported dispatch-store posture instead of implying the same dispatch ownership as queue-like or mutable-store providers
+
+Delivered:
+
+- added `LiveDataProviderIntegrationTests` under `tests/Cephalon.Tests.ProviderIntegration` for Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant
+- expanded `ExternalProviderServiceGate` with provider-specific opt-in settings for Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant while keeping default runs deterministic and skipped without external services
+- proved each provider's real manifest capabilities, outbox/inbox descriptors, `event-driven-integration` runtime surfaces, idempotent outbox/inbox writes, and live provider persistence through `IOutbox` / `IInbox`
+- proved `IEventDispatchStore` pending/success transitions for Cassandra, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant, and proved ClickHouse reports `DispatchPolicy.PolicyId = unsupported`
+- hardened `Cephalon.Data.Cassandra` so the first provider operation creates the configured keyspace before connecting when the service account has permission
+- promoted the seven provider rows in `scripts/provider-integration-support.json` to `live-proof-available` with `externalServiceGate: provider-integration`, raising provider readback to `32` rows / `14` live proofs / `18` composition-only rows / `94` runtime contracts
+- updated scorecard, doctor/readback fixtures, provider integration docs, component docs, roadmap, backlog, and project memory so source and planning truth match the new live-proof surface
+
+Validation:
+
+- `dotnet restore .\tests\Cephalon.Tests.ProviderIntegration\Cephalon.Tests.ProviderIntegration.csproj --locked-mode` passed
+- `dotnet test .\tests\Cephalon.Tests.ProviderIntegration\Cephalon.Tests.ProviderIntegration.csproj --no-restore --logger "console;verbosity=normal"` passed `14` tests and skipped `10` gated provider tests
+- `pwsh -NoLogo -NoProfile -File .\scripts\publish-engine-completion-scorecard.ps1 -OutputPath .\artifacts\engine-completion-scorecard-provider-live-wave` passed with provider readback `32` rows / `14` live proofs / `18` composition-only / `94` runtime contracts
 
 ### ENG-511 Promote MongoDB data provider live proof
 

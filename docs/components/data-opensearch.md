@@ -175,6 +175,10 @@ builder.Services.AddCephalonOpenSearchEventSourcing(
     indexName: "event-streams");
 ```
 
+## Provider integration proof
+
+`LiveDataProviderIntegrationTests.OpenSearchProvider_StagesOutboxInboxAndDispatchAgainstLiveService` runs behind `ExternalProviderServiceFact(ExternalProviderServiceProvider.OpenSearch)`. The lane is skipped unless `CEPHALON_PROVIDER_EXTERNAL_SERVICES` or `CEPHALON_PROVIDER_INTEGRATION` is enabled and `CEPHALON_PROVIDER_OPENSEARCH_URI` is supplied; username and password can be supplied through the matching variables. The test composes `Cephalon.Engine`, `Cephalon.Eventing`, and this pack, then proves real outbox/inbox writes, `IEventDispatchStore` pending/success transitions, runtime manifest capabilities, and `event-driven-integration` runtime surfaces against a live OpenSearch service with polling for eventually visible indexed rows.
+
 ## Not shipped in this slice
 
 This pack intentionally does not claim:

@@ -158,6 +158,10 @@ When `RegisterOutbox = true`, the outbox descriptor stays visible through `/engi
 
 That answer is deliberate. The current ClickHouse `ReplacingMergeTree` baseline is good for durable staging/history and analytics-style replay, but it is not yet the truthful owner for mutable pending-dispatch state in the same way as the current Entity Framework, MongoDB, Redis, Elasticsearch, OpenSearch, Neo4j, Qdrant, NATS, or Cassandra follow-through slices.
 
+## Provider integration proof
+
+`LiveDataProviderIntegrationTests.ClickHouseProvider_StagesOutboxAndInboxAgainstLiveService` runs behind `ExternalProviderServiceFact(ExternalProviderServiceProvider.ClickHouse)`. The lane is skipped unless `CEPHALON_PROVIDER_EXTERNAL_SERVICES` or `CEPHALON_PROVIDER_INTEGRATION` is enabled and `CEPHALON_PROVIDER_CLICKHOUSE_HOST` plus `CEPHALON_PROVIDER_CLICKHOUSE_DATABASE` are supplied; port, username, and password can be supplied through the matching `CEPHALON_PROVIDER_CLICKHOUSE_*` variables. The test composes `Cephalon.Engine`, `Cephalon.Eventing`, and this pack, then proves real outbox/inbox writes, runtime manifest capabilities, and `event-driven-integration` runtime surfaces against a live ClickHouse service while preserving `DispatchPolicy.PolicyId = unsupported`.
+
 ## Not shipped in this slice
 
 This pack intentionally does not claim:
