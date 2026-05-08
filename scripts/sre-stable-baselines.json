@@ -1,0 +1,128 @@
+{
+  "$schemaVersion": "1.0.0",
+  "status": "benchmark-baseline-published",
+  "summary": "Stable baselines are published for the benchmark-backed guardrail-mapped SLI subset only. Cold-start, release-validation wall-time, reference-docs wall-time, flake-rate, and deployment-mode truth SLIs remain pending until their own evidence lanes run.",
+  "capturedAtUtc": "2026-05-08T09:08:04.9633564Z",
+  "capturedFromCommit": "e577354e2dda596a2acd49be2bb7281e874c0343",
+  "runCommand": "dotnet run -c Release --project ./benchmarks/Cephalon.Benchmarks/Cephalon.Benchmarks.csproj -- --filter \"*BehaviorDispatchBenchmarks*\" \"*AspNetCoreRequestLoggingBenchmarks*\"",
+  "tooling": {
+    "benchmarkDotNetVersion": "0.15.8",
+    "dotnetSdk": "10.0.201",
+    "runtime": ".NET 10.0.5",
+    "operatingSystem": "Windows 11 25H2",
+    "cpu": "13th Gen Intel Core i5-13500"
+  },
+  "sourceReports": [
+    "BenchmarkDotNet.Artifacts/results/Cephalon.Benchmarks.HotPath.BehaviorDispatchBenchmarks-report.csv",
+    "BenchmarkDotNet.Artifacts/results/Cephalon.Benchmarks.Runtime.AspNetCoreRequestLoggingBenchmarks-report.csv"
+  ],
+  "publishedBaselineSliIds": [
+    "engine.behavior.dispatch.latency.p95",
+    "engine.behavior.dispatch.latency.p99",
+    "engine.behavior.dispatch.alloc.bytes-per-op",
+    "engine.aspnetcore.request.alloc.bytes-per-op"
+  ],
+  "pendingBaselineSliIds": [
+    "engine.aspnetcore.minimal-api.cold-start.p95",
+    "engine.worker.cold-start.p95",
+    "engine.dotnet.restore.wall-time.lock-mode",
+    "engine.validate-release.wall-time",
+    "engine.reference-docs.wall-time",
+    "engine.tests.flake-rate.7d",
+    "engine.deployment-mode-claims.truthful-fraction"
+  ],
+  "baselineRows": [
+    {
+      "sliId": "engine.behavior.dispatch.latency.p95",
+      "status": "stable-baseline-published",
+      "measurementKind": "benchmark-mean-baseline-proxy",
+      "notes": "The current short-run BenchmarkDotNet export does not emit percentile columns. The BehaviorDispatch mean is the stable guardrail baseline proxy for this SLI until a percentile-exporting benchmark lane lands.",
+      "measurements": [
+        {
+          "reportFileName": "Cephalon.Benchmarks.HotPath.BehaviorDispatchBenchmarks-report.csv",
+          "benchmark": "DispatchBehavior",
+          "meanNanoseconds": 63.27,
+          "errorNanoseconds": 46.26,
+          "stdDevNanoseconds": 2.536,
+          "allocatedBytes": 296,
+          "guardrailMaxMeanNanoseconds": 10000,
+          "guardrailMaxAllocatedBytes": 10000
+        }
+      ]
+    },
+    {
+      "sliId": "engine.behavior.dispatch.latency.p99",
+      "status": "stable-baseline-published",
+      "measurementKind": "benchmark-mean-baseline-proxy",
+      "notes": "The current short-run BenchmarkDotNet export does not emit percentile columns. The BehaviorDispatch mean is the stable guardrail baseline proxy for this SLI until a percentile-exporting benchmark lane lands.",
+      "measurements": [
+        {
+          "reportFileName": "Cephalon.Benchmarks.HotPath.BehaviorDispatchBenchmarks-report.csv",
+          "benchmark": "DispatchBehavior",
+          "meanNanoseconds": 63.27,
+          "errorNanoseconds": 46.26,
+          "stdDevNanoseconds": 2.536,
+          "allocatedBytes": 296,
+          "guardrailMaxMeanNanoseconds": 10000,
+          "guardrailMaxAllocatedBytes": 10000
+        }
+      ]
+    },
+    {
+      "sliId": "engine.behavior.dispatch.alloc.bytes-per-op",
+      "status": "stable-baseline-published",
+      "measurementKind": "benchmark-allocation-baseline",
+      "notes": "Allocation baseline is captured from the same BehaviorDispatch guardrail row used by the latency proxy rows.",
+      "measurements": [
+        {
+          "reportFileName": "Cephalon.Benchmarks.HotPath.BehaviorDispatchBenchmarks-report.csv",
+          "benchmark": "DispatchBehavior",
+          "meanNanoseconds": 63.27,
+          "errorNanoseconds": 46.26,
+          "stdDevNanoseconds": 2.536,
+          "allocatedBytes": 296,
+          "guardrailMaxMeanNanoseconds": 10000,
+          "guardrailMaxAllocatedBytes": 10000
+        }
+      ]
+    },
+    {
+      "sliId": "engine.aspnetcore.request.alloc.bytes-per-op",
+      "status": "stable-baseline-published",
+      "measurementKind": "benchmark-allocation-baseline",
+      "notes": "ASP.NET Core request allocation baseline spans the logged, truncated, and concurrent request logging guardrail rows.",
+      "measurements": [
+        {
+          "reportFileName": "Cephalon.Benchmarks.Runtime.AspNetCoreRequestLoggingBenchmarks-report.csv",
+          "benchmark": "HandleLoggedJsonRequest",
+          "meanNanoseconds": 19209,
+          "errorNanoseconds": 3375,
+          "stdDevNanoseconds": 185,
+          "allocatedBytes": 27914.24,
+          "guardrailMaxMeanNanoseconds": 150000,
+          "guardrailMaxAllocatedBytes": 40000
+        },
+        {
+          "reportFileName": "Cephalon.Benchmarks.Runtime.AspNetCoreRequestLoggingBenchmarks-report.csv",
+          "benchmark": "HandleTruncatedJsonRequest",
+          "meanNanoseconds": 56427,
+          "errorNanoseconds": 59326,
+          "stdDevNanoseconds": 3251.9,
+          "allocatedBytes": 126361.6,
+          "guardrailMaxMeanNanoseconds": 170000,
+          "guardrailMaxAllocatedBytes": 150000
+        },
+        {
+          "reportFileName": "Cephalon.Benchmarks.Runtime.AspNetCoreRequestLoggingBenchmarks-report.csv",
+          "benchmark": "HandleConcurrentLoggedJsonRequest",
+          "meanNanoseconds": 7614,
+          "errorNanoseconds": 7884,
+          "stdDevNanoseconds": 432.1,
+          "allocatedBytes": 27811.84,
+          "guardrailMaxMeanNanoseconds": 30000,
+          "guardrailMaxAllocatedBytes": 40000
+        }
+      ]
+    }
+  ]
+}

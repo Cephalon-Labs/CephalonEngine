@@ -35,7 +35,9 @@ That catalog is the repository baseline for the currently shipped benchmark meth
 - `CdcExecutionRuntimeCatalogBenchmarks`: `EnumerateRuntimes`, `FilterManagedConnectorDriftState`, `FilterManagedConnectorDryRunState`, `FilterManagedConnectorCommandIssuanceState`, `FilterManagedConnectorOperatorSelectors`
 
 The composition and runtime baselines prepare configured builders, runtimes, and service providers outside the measured loop so the guardrails track `Build()` and lifecycle transition costs rather than one-time benchmark harness setup.
-That baseline now also includes the stricter trust-policy composition path, the shipped phase-8 low-ceremony companion-pack path, the bounded-truncation HTTP logging path, the engine-first REST projection/governance startup path, and a concurrent logging throughput path so security hardening work stays measurable under both single-request and multi-request pressure. The SRE manifest maps the ASP.NET Core request-allocation SLI to the three `AspNetCoreRequestLoggingBenchmarks` guardrail entries, so request logging allocation regressions are scorecard-visible even while the stable SLI baseline pass remains pending.
+That baseline now also includes the stricter trust-policy composition path, the shipped phase-8 low-ceremony companion-pack path, the bounded-truncation HTTP logging path, the engine-first REST projection/governance startup path, and a concurrent logging throughput path so security hardening work stays measurable under both single-request and multi-request pressure. The SRE manifest maps the ASP.NET Core request-allocation SLI to the three `AspNetCoreRequestLoggingBenchmarks` guardrail entries, so request logging allocation regressions are scorecard-visible.
+
+The stable SRE baseline manifest lives at `scripts/sre-stable-baselines.json`. It records the May 8, 2026 focused BenchmarkDotNet run for the four benchmark-backed SLI rows that have enough evidence to promote to `stable-baseline-published`: `engine.behavior.dispatch.latency.p95`, `engine.behavior.dispatch.latency.p99`, `engine.behavior.dispatch.alloc.bytes-per-op`, and `engine.aspnetcore.request.alloc.bytes-per-op`. The same manifest keeps the seven non-evidenced SLIs pending so scorecard readback stays honest.
 The hot-path data baseline now also includes the CDC execution-runtime catalog path that powers filter-heavy managed-connector operator surfaces, so the versioned snapshot and capture-ownership indexes remain benchmark-governed after the ENG-488 runtime fix.
 The shipped local smoke suite now uses a shared in-process short-run BenchmarkDotNet config across every benchmark class so mirrored worktree artifacts such as repo-local `.build/*` copies do not break benchmark project resolution during `validate-release`.
 
@@ -55,6 +57,7 @@ dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*Res
 dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*ScaffoldGeneratorBenchmarks*"
 dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*DataDispatchBenchmarks*"
 dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*BehaviorDispatchBenchmarks*"
+dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*BehaviorDispatchBenchmarks*" "*AspNetCoreRequestLoggingBenchmarks*"
 dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*AuthorizationEvaluationBenchmarks*"
 dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*TenantResolutionBenchmarks*"
 dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*EventSourcingBenchmarks*"
