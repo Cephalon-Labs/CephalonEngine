@@ -58,6 +58,20 @@
       "notes": "Correlated ASP.NET Core request logging under the shipped 32-request concurrent batch should stay below 30 us of throughput-oriented per-request cost and under roughly 40 KB allocated per request."
     },
     {
+      "reportFileName": "Cephalon.Benchmarks.Runtime.ColdStartBenchmarks-report.csv",
+      "benchmark": "BuildStartHandleFirstRequestAspNetCore",
+      "maxMeanNanoseconds": 2000000000,
+      "maxAllocatedBytes": 30000000,
+      "notes": "Representative Cephalon ASP.NET Core cold start currently includes TestServer start, first ready request, and host teardown. This guardrail is a regression cap over the observed JIT baseline; the stricter SLO target remains pending until the cold-start lane is optimized."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.Runtime.ColdStartBenchmarks-report.csv",
+      "benchmark": "BuildStartWorkerHost",
+      "maxMeanNanoseconds": 5000000,
+      "maxAllocatedBytes": 500000,
+      "notes": "Representative Cephalon worker cold start should build the generic host, start the engine hosted service, and tear down below 5 ms and under roughly 500 KB allocated per cold-start cycle."
+    },
+    {
       "reportFileName": "Cephalon.Benchmarks.Runtime.RestEndpointProjectionGovernanceBenchmarks-report.csv",
       "benchmark": "BuildMapGovernedRestCatalogs",
       "maxMeanNanoseconds": 375000000,

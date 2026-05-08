@@ -173,12 +173,12 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.ProviderIntegrationRuntimeContractCount | Should -Be 94
         $json.Summary.SreSliCount | Should -Be 11
         $json.Summary.SreTargetDeclaredCount | Should -Be 11
-        $json.Summary.SrePendingStableBaselineCount | Should -Be 6
-        $json.Summary.SreStableBaselineCount | Should -Be 5
-        $json.Summary.SreGuardrailMappedSliCount | Should -Be 4
-        $json.Summary.SreGuardrailPendingSliCount | Should -Be 2
+        $json.Summary.SrePendingStableBaselineCount | Should -Be 5
+        $json.Summary.SreStableBaselineCount | Should -Be 6
+        $json.Summary.SreGuardrailMappedSliCount | Should -Be 6
+        $json.Summary.SreGuardrailPendingSliCount | Should -Be 0
         $json.Summary.SreGuardrailNotApplicableSliCount | Should -Be 5
-        $json.Summary.SreGuardrailReferenceCount | Should -Be 6
+        $json.Summary.SreGuardrailReferenceCount | Should -Be 8
         $json.Summary.SupplyChainEvidenceItemCount | Should -Be 10
         $json.Summary.SupplyChainWorkflowReadyCount | Should -Be 7
         $json.Summary.SupplyChainExternalPolicyPendingCount | Should -Be 3
@@ -313,30 +313,31 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_QDRANT_HOST"
         $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_CDC_POSTGRES_CONNECTION_STRING"
 
-        $json.SrePostureEvidence.ManifestSchemaVersion | Should -Be "1.3.0"
+        $json.SrePostureEvidence.ManifestSchemaVersion | Should -Be "1.4.0"
         $json.SrePostureEvidence.Status | Should -Be "partial-stable-baseline-published"
         $json.SrePostureEvidence.ReleaseValidationSummaryMode | Should -Be "release-validation-console-and-scorecard-artifact"
         $json.SrePostureEvidence.StableBaselinesPublished | Should -BeTrue
         $json.SrePostureEvidence.StableBaselineManifest | Should -Be "scripts/sre-stable-baselines.json"
-        $json.SrePostureEvidence.StableBaselineManifestSchemaVersion | Should -Be "1.1.0"
-        $json.SrePostureEvidence.StableBaselineManifestStatus | Should -Be "benchmark-and-release-baseline-published"
+        $json.SrePostureEvidence.StableBaselineManifestSchemaVersion | Should -Be "1.2.0"
+        $json.SrePostureEvidence.StableBaselineManifestStatus | Should -Be "benchmark-release-and-wall-time-baseline-published"
         $json.SrePostureEvidence.GuardrailCatalog | Should -Be "benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json"
-        $json.SrePostureEvidence.GuardrailCatalogEntryCount | Should -Be 29
+        $json.SrePostureEvidence.GuardrailCatalogEntryCount | Should -Be 31
         $json.SrePostureEvidence.SliCount | Should -Be 11
         $json.SrePostureEvidence.TargetDeclaredCount | Should -Be 11
-        $json.SrePostureEvidence.PendingStableBaselineCount | Should -Be 6
-        $json.SrePostureEvidence.StableBaselineCount | Should -Be 5
-        $json.SrePostureEvidence.GuardrailMappedSliCount | Should -Be 4
-        $json.SrePostureEvidence.GuardrailPendingSliCount | Should -Be 2
+        $json.SrePostureEvidence.PendingStableBaselineCount | Should -Be 5
+        $json.SrePostureEvidence.StableBaselineCount | Should -Be 6
+        $json.SrePostureEvidence.GuardrailMappedSliCount | Should -Be 6
+        $json.SrePostureEvidence.GuardrailPendingSliCount | Should -Be 0
         $json.SrePostureEvidence.GuardrailNotApplicableSliCount | Should -Be 5
-        $json.SrePostureEvidence.GuardrailReferenceCount | Should -Be 6
-        $json.SrePostureEvidence.StableBaselineRowCount | Should -Be 5
-        $json.SrePostureEvidence.StableBaselineMeasurementCount | Should -Be 7
+        $json.SrePostureEvidence.GuardrailReferenceCount | Should -Be 8
+        $json.SrePostureEvidence.StableBaselineRowCount | Should -Be 6
+        $json.SrePostureEvidence.StableBaselineMeasurementCount | Should -Be 8
         $json.SrePostureEvidence.StableBaselinePublishedSliIds | Should -Contain "engine.behavior.dispatch.latency.p95"
         $json.SrePostureEvidence.StableBaselinePublishedSliIds | Should -Contain "engine.behavior.dispatch.latency.p99"
         $json.SrePostureEvidence.StableBaselinePublishedSliIds | Should -Contain "engine.behavior.dispatch.alloc.bytes-per-op"
         $json.SrePostureEvidence.StableBaselinePublishedSliIds | Should -Contain "engine.aspnetcore.request.alloc.bytes-per-op"
         $json.SrePostureEvidence.StableBaselinePublishedSliIds | Should -Contain "engine.deployment-mode-claims.truthful-fraction"
+        $json.SrePostureEvidence.StableBaselinePublishedSliIds | Should -Contain "engine.dotnet.restore.wall-time.lock-mode"
         $json.SrePostureEvidence.PendingBaselineSliIds | Should -Contain "engine.worker.cold-start.p95"
         $json.SrePostureEvidence.SourceDocuments | Should -Contain "docs/sre-posture.md"
         $json.SrePostureEvidence.SourceDocuments | Should -Contain "docs/benchmarking.md"
@@ -345,7 +346,6 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.SrePostureEvidence.SliRows.BaselineStatus | Should -Contain "pending-stable-baseline"
         $json.SrePostureEvidence.SliRows.BaselineStatus | Should -Contain "stable-baseline-published"
         $json.SrePostureEvidence.SliRows.GuardrailCoverageStatus | Should -Contain "guardrail-catalog-mapped"
-        $json.SrePostureEvidence.SliRows.GuardrailCoverageStatus | Should -Contain "pending-stable-baseline"
         $json.SrePostureEvidence.SliRows.GuardrailCoverageStatus | Should -Contain "not-applicable"
         $behaviorLatencySli = $json.SrePostureEvidence.SliRows | Where-Object { $_.Id -eq "engine.behavior.dispatch.latency.p95" }
         $behaviorLatencySli.GuardrailReferences.ReportFileName | Should -Contain "Cephalon.Benchmarks.HotPath.BehaviorDispatchBenchmarks-report.csv"
@@ -356,6 +356,14 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $requestAllocationSli.GuardrailReferences.Benchmark | Should -Contain "HandleLoggedJsonRequest"
         $requestAllocationSli.GuardrailReferences.Benchmark | Should -Contain "HandleTruncatedJsonRequest"
         $requestAllocationSli.GuardrailReferences.Benchmark | Should -Contain "HandleConcurrentLoggedJsonRequest"
+        $aspNetCoreColdStartSli = $json.SrePostureEvidence.SliRows | Where-Object { $_.Id -eq "engine.aspnetcore.minimal-api.cold-start.p95" }
+        $aspNetCoreColdStartSli.BaselineStatus | Should -Be "pending-stable-baseline"
+        $aspNetCoreColdStartSli.GuardrailCoverageStatus | Should -Be "guardrail-catalog-mapped"
+        $aspNetCoreColdStartSli.GuardrailReferences.Benchmark | Should -Contain "BuildStartHandleFirstRequestAspNetCore"
+        $workerColdStartSli = $json.SrePostureEvidence.SliRows | Where-Object { $_.Id -eq "engine.worker.cold-start.p95" }
+        $workerColdStartSli.BaselineStatus | Should -Be "pending-stable-baseline"
+        $workerColdStartSli.GuardrailCoverageStatus | Should -Be "guardrail-catalog-mapped"
+        $workerColdStartSli.GuardrailReferences.Benchmark | Should -Contain "BuildStartWorkerHost"
         $requestAllocationBaseline = $json.SrePostureEvidence.StableBaselineRows | Where-Object { $_.SliId -eq "engine.aspnetcore.request.alloc.bytes-per-op" }
         $requestAllocationBaseline.Measurements.Count | Should -Be 3
         $requestAllocationBaseline.Measurements.Benchmark | Should -Contain "HandleLoggedJsonRequest"
@@ -365,6 +373,12 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $claimTruthBaseline.Measurements.PublishProbeGateStatus | Should -Be "passed"
         $claimTruthBaseline.Measurements.PackageClaimTruthfulCount | Should -Be 1
         $claimTruthBaseline.Measurements.PackageClaimOverstatedCount | Should -Be 0
+        $restoreWallTimeBaseline = $json.SrePostureEvidence.StableBaselineRows | Where-Object { $_.SliId -eq "engine.dotnet.restore.wall-time.lock-mode" }
+        $restoreWallTimeBaseline.MeasurementKind | Should -Be "release-validation-step-wall-time-baseline"
+        $restoreWallTimeBaseline.Measurements.TimingReportPath | Should -Be "artifacts/sre-release-validation/restore-wall-time.json"
+        $restoreWallTimeBaseline.Measurements.StepName | Should -Be "Restore solution (locked mode)"
+        $restoreWallTimeBaseline.Measurements.Status | Should -Be "passed"
+        $restoreWallTimeBaseline.Measurements.ElapsedMilliseconds | Should -BeLessOrEqual 90000
         $requestAllocationBaseline.Measurements.AllocatedBytes | Should -Contain 27914.24
 
         $json.SupplyChainEvidence.ManifestSchemaVersion | Should -Be "1.0.0"
@@ -421,14 +435,16 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "Publish-probe gated modes: singleFile"
         $markdown | Should -Match "SRE Posture Evidence"
         $markdown | Should -Match "SRE SLIs: 11"
-        $markdown | Should -Match "SRE pending stable baselines: 6"
-        $markdown | Should -Match "SRE stable baselines: 5"
-        $markdown | Should -Match "SRE stable baseline rows: 5"
+        $markdown | Should -Match "SRE pending stable baselines: 5"
+        $markdown | Should -Match "SRE stable baselines: 6"
+        $markdown | Should -Match "SRE stable baseline rows: 6"
         $markdown | Should -Match "deployment-mode-claims-report-baseline"
+        $markdown | Should -Match "release-validation-step-wall-time-baseline"
         $markdown | Should -Match "package claims 1/1 truthful"
+        $markdown | Should -Match "Restore solution \(locked mode\)"
         $markdown | Should -Match "Stable baseline manifest"
-        $markdown | Should -Match "SRE guardrail-mapped SLIs: 4"
-        $markdown | Should -Match "SRE pending guardrail coverage SLIs: 2"
+        $markdown | Should -Match "SRE guardrail-mapped SLIs: 6"
+        $markdown | Should -Match "SRE pending guardrail coverage SLIs: 0"
         $markdown | Should -Match "Guardrail coverage"
         $markdown | Should -Match "Supply-Chain Release Evidence"
         $markdown | Should -Match "Supply-chain evidence items: 10"

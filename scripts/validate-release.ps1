@@ -14,6 +14,7 @@ param(
     [string[]]$BenchmarkFilters = @(
         "*EngineBuilderBenchmarks*",
         "*EngineRuntimeBenchmarks*",
+        "*ColdStartBenchmarks*",
         "*AspNetCoreRequestLoggingBenchmarks*",
         "*RestEndpointProjectionGovernanceBenchmarks*",
         "*ScaffoldGeneratorBenchmarks*",
@@ -48,6 +49,7 @@ $phase8ConventionsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "
 $dotNetReadinessOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "dotnet-readiness-release")
 $deploymentModeClaimsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "deployment-mode-claims-release")
 $engineCompletionScorecardOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "engine-completion-scorecard-release")
+$sreReleaseValidationOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "sre-release-validation")
 $referenceDocsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "reference-docs-release")
 $packageArtifactsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "packages-release")
 $publicApiDeltaScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "summarise-public-api-deltas.ps1")
@@ -164,6 +166,46 @@ function Get-DeploymentModeReleaseValidationPolicy {
         ReleaseValidationDeploymentModes = $releaseValidationDeploymentModes
         ReleaseValidationSkipsPublish    = $releaseValidationSkipsPublish
     }
+}
+
+function Get-RepositoryCommit {
+    $commit = (& git -C $repoRoot rev-parse HEAD 2>$null)
+    if ($LASTEXITCODE -ne 0 -or [string]::IsNullOrWhiteSpace([string]$commit)) {
+        return "unknown"
+    }
+
+    return [string]$commit
+}
+
+function Write-SreReleaseValidationStepTiming {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$FileName,
+        [Parameter(Mandatory = $true)]
+        [string]$SliId,
+        [Parameter(Mandatory = $true)]
+        [string]$StepName,
+        [Parameter(Mandatory = $true)]
+        [string]$Command,
+        [Parameter(Mandatory = $true)]
+        [double]$ElapsedMilliseconds,
+        [Parameter(Mandatory = $true)]
+        [int]$TargetMilliseconds
+    )
+
+    New-Item -ItemType Directory -Path $sreReleaseValidationOutputPath -Force | Out-Null
+
+    [ordered]@{
+        '$schemaVersion' = "1.0.0"
+        sliId = $SliId
+        stepName = $StepName
+        command = $Command
+        status = "passed"
+        elapsedMilliseconds = [math]::Round($ElapsedMilliseconds, 4)
+        targetMilliseconds = $TargetMilliseconds
+        capturedAtUtc = [DateTimeOffset]::UtcNow.ToString("o")
+        capturedFromCommit = Get-RepositoryCommit
+    } | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $sreReleaseValidationOutputPath $FileName) -Encoding UTF8
 }
 
 function Get-ScorecardIntegerProperty {
@@ -474,7 +516,16 @@ try {
 
     if (-not $SkipRestore) {
         Invoke-Step "Restore solution (locked mode)" {
+            $restoreStopwatch = [System.Diagnostics.Stopwatch]::StartNew()
             Invoke-DotNet @("restore", $solutionPath, "--locked-mode")
+            $restoreStopwatch.Stop()
+            Write-SreReleaseValidationStepTiming `
+                -FileName "restore-wall-time.json" `
+                -SliId "engine.dotnet.restore.wall-time.lock-mode" `
+                -StepName "Restore solution (locked mode)" `
+                -Command "dotnet restore CephalonEngine.slnx --locked-mode" `
+                -ElapsedMilliseconds $restoreStopwatch.Elapsed.TotalMilliseconds `
+                -TargetMilliseconds 90000
         }
     }
 

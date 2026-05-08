@@ -1,10 +1,10 @@
 {
-  "$schemaVersion": "1.1.0",
-  "status": "benchmark-and-release-baseline-published",
-  "summary": "Stable baselines are published for the benchmark-backed guardrail-mapped SLI subset plus the deployment-mode claim-truth SLI backed by the release-validation claims report. Cold-start, release-validation wall-time, reference-docs wall-time, and flake-rate SLIs remain pending until their own evidence lanes run.",
-  "capturedAtUtc": "2026-05-08T11:45:55.8815224Z",
-  "capturedFromCommit": "93742a7c13523c9348f7f9e3903201f830b8b0af",
-  "runCommand": "dotnet run -c Release --project ./benchmarks/Cephalon.Benchmarks/Cephalon.Benchmarks.csproj -- --filter \"*BehaviorDispatchBenchmarks*\" \"*AspNetCoreRequestLoggingBenchmarks*\"; pwsh ./scripts/validate-release.ps1",
+  "$schemaVersion": "1.2.0",
+  "status": "benchmark-release-and-wall-time-baseline-published",
+  "summary": "Stable baselines are published for the benchmark-backed guardrail-mapped hot-path subset, the deployment-mode claim-truth SLI backed by the release-validation claims report, and the dotnet restore locked-mode wall-time SLI backed by release-validation timing evidence. Cold-start SLIs are now guardrail-mapped but remain pending stable baselines until their optimization lane meets the tighter SLO; release-validation wall-time, reference-docs wall-time, and flake-rate SLIs remain pending until their own evidence lanes run.",
+  "capturedAtUtc": "2026-05-08T13:43:14.1838604Z",
+  "capturedFromCommit": "8373146469a993d631efbfaaac969c746006a557",
+  "runCommand": "dotnet run -c Release --project ./benchmarks/Cephalon.Benchmarks/Cephalon.Benchmarks.csproj -- --filter \"*BehaviorDispatchBenchmarks*\" \"*AspNetCoreRequestLoggingBenchmarks*\" \"*ColdStartBenchmarks*\"; dotnet restore ./CephalonEngine.slnx --locked-mode; pwsh ./scripts/validate-release.ps1",
   "tooling": {
     "benchmarkDotNetVersion": "0.15.8",
     "dotnetSdk": "10.0.201",
@@ -21,12 +21,12 @@
     "engine.behavior.dispatch.latency.p99",
     "engine.behavior.dispatch.alloc.bytes-per-op",
     "engine.aspnetcore.request.alloc.bytes-per-op",
-    "engine.deployment-mode-claims.truthful-fraction"
+    "engine.deployment-mode-claims.truthful-fraction",
+    "engine.dotnet.restore.wall-time.lock-mode"
   ],
   "pendingBaselineSliIds": [
     "engine.aspnetcore.minimal-api.cold-start.p95",
     "engine.worker.cold-start.p95",
-    "engine.dotnet.restore.wall-time.lock-mode",
     "engine.validate-release.wall-time",
     "engine.reference-docs.wall-time",
     "engine.tests.flake-rate.7d"
@@ -142,6 +142,24 @@
           "packageClaimTruthfulCount": 1,
           "packageClaimOverstatedCount": 0,
           "truthfulFraction": 1.0
+        }
+      ]
+    },
+    {
+      "sliId": "engine.dotnet.restore.wall-time.lock-mode",
+      "status": "stable-baseline-published",
+      "measurementKind": "release-validation-step-wall-time-baseline",
+      "notes": "Baseline is captured from the release-validation restore step after package-lock refresh for the cold-start benchmark reference. The target remains the SRE posture target of 90 seconds on the canonical reference-build agent.",
+      "measurements": [
+        {
+          "timingReportPath": "artifacts/sre-release-validation/restore-wall-time.json",
+          "stepName": "Restore solution (locked mode)",
+          "command": "dotnet restore CephalonEngine.slnx --locked-mode",
+          "status": "passed",
+          "elapsedMilliseconds": 6138.2765,
+          "targetMilliseconds": 90000,
+          "capturedAtUtc": "2026-05-08T13:43:14.1838604Z",
+          "capturedFromCommit": "8373146469a993d631efbfaaac969c746006a557"
         }
       ]
     }

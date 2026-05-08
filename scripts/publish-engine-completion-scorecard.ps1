@@ -2283,6 +2283,68 @@ function Convert-SrePostureEvidence {
                                         TruthfulFraction                 = $truthfulFraction
                                     })
                                 }
+                                elseif ($measurementKind -eq "release-validation-step-wall-time-baseline") {
+                                    $timingReportPath = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "timingReportPath" -DefaultValue "")
+                                    $stepName = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "stepName" -DefaultValue "")
+                                    $command = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "command" -DefaultValue "")
+                                    $wallTimeStatus = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "status" -DefaultValue "")
+                                    $elapsedMillisecondsValue = Get-ManifestPropertyValue -Object $_ -PropertyName "elapsedMilliseconds" -DefaultValue $null
+                                    $targetMillisecondsValue = Get-ManifestPropertyValue -Object $_ -PropertyName "targetMilliseconds" -DefaultValue $null
+                                    $capturedAtUtc = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "capturedAtUtc" -DefaultValue "")
+                                    $capturedFromCommit = [string](Get-ManifestPropertyValue -Object $_ -PropertyName "capturedFromCommit" -DefaultValue "")
+
+                                    foreach ($field in @(
+                                        @{ Name = "timingReportPath"; Value = $timingReportPath },
+                                        @{ Name = "stepName"; Value = $stepName },
+                                        @{ Name = "command"; Value = $command },
+                                        @{ Name = "status"; Value = $wallTimeStatus },
+                                        @{ Name = "capturedAtUtc"; Value = $capturedAtUtc },
+                                        @{ Name = "capturedFromCommit"; Value = $capturedFromCommit }
+                                    )) {
+                                        if ([string]::IsNullOrWhiteSpace([string]$field.Value)) {
+                                            throw "SRE stable baseline release-validation wall-time measurement for SLI '$sliId' must include $($field.Name)."
+                                        }
+                                    }
+
+                                    foreach ($field in @(
+                                        @{ Name = "elapsedMilliseconds"; Value = $elapsedMillisecondsValue },
+                                        @{ Name = "targetMilliseconds"; Value = $targetMillisecondsValue }
+                                    )) {
+                                        if ($null -eq $field.Value) {
+                                            throw "SRE stable baseline release-validation wall-time measurement for SLI '$sliId' must include $($field.Name)."
+                                        }
+                                    }
+
+                                    $elapsedMilliseconds = [decimal]$elapsedMillisecondsValue
+                                    $targetMilliseconds = [decimal]$targetMillisecondsValue
+                                    if ($wallTimeStatus -ne "passed" -or $elapsedMilliseconds -le 0 -or $targetMilliseconds -le 0 -or $elapsedMilliseconds -gt $targetMilliseconds) {
+                                        throw "SRE stable baseline release-validation wall-time measurement for SLI '$sliId' must be a passed timing below its target."
+                                    }
+
+                                    $resolvedTimingReportPath = Resolve-FullPath -Path $timingReportPath -BasePath $ResolvedRepoRoot
+                                    if (Test-Path -LiteralPath $resolvedTimingReportPath -PathType Leaf) {
+                                        $timingReport = Get-Content -LiteralPath $resolvedTimingReportPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 8
+                                        $timingReportSliId = [string](Get-ManifestPropertyValue -Object $timingReport -PropertyName "sliId" -DefaultValue "")
+                                        $timingReportStepName = [string](Get-ManifestPropertyValue -Object $timingReport -PropertyName "stepName" -DefaultValue "")
+                                        $timingReportStatus = [string](Get-ManifestPropertyValue -Object $timingReport -PropertyName "status" -DefaultValue "")
+                                        $timingReportElapsedMilliseconds = [decimal](Get-ManifestPropertyValue -Object $timingReport -PropertyName "elapsedMilliseconds" -DefaultValue 0)
+                                        $timingReportTargetMilliseconds = [decimal](Get-ManifestPropertyValue -Object $timingReport -PropertyName "targetMilliseconds" -DefaultValue 0)
+                                        if ($timingReportSliId -ne $sliId -or $timingReportStepName -ne $stepName -or $timingReportStatus -ne "passed" -or $timingReportElapsedMilliseconds -le 0 -or $timingReportTargetMilliseconds -ne $targetMilliseconds -or $timingReportElapsedMilliseconds -gt $targetMilliseconds) {
+                                            throw "SRE stable baseline release-validation wall-time timing report '$timingReportPath' does not match a passed timing below target for SLI '$sliId'."
+                                        }
+                                    }
+
+                                    [pscustomobject]([ordered]@{
+                                        TimingReportPath    = $timingReportPath
+                                        StepName            = $stepName
+                                        Command             = $command
+                                        Status              = $wallTimeStatus
+                                        ElapsedMilliseconds = $elapsedMilliseconds
+                                        TargetMilliseconds  = $targetMilliseconds
+                                        CapturedAtUtc       = $capturedAtUtc
+                                        CapturedFromCommit  = $capturedFromCommit
+                                    })
+                                }
                                 else {
                                     throw "Unsupported SRE stable baseline measurement kind '$measurementKind' for SLI '$sliId'."
                                 }
@@ -2947,6 +3009,9 @@ function Write-EngineCompletionScorecardReport {
             }
             elseif ($_.PSObject.Properties.Name -contains "ClaimsReportPath") {
                 "``$($_.ClaimsReportPath)`` $($_.DeploymentMode), gate $($_.PublishProbeGateStatus), package claims $($_.PackageClaimTruthfulCount)/$($_.PackageClaimCount) truthful, fraction $($_.TruthfulFraction)"
+            }
+            elseif ($_.PSObject.Properties.Name -contains "TimingReportPath") {
+                "``$($_.TimingReportPath)`` $($_.StepName), elapsed $($_.ElapsedMilliseconds) ms / target $($_.TargetMilliseconds) ms, status $($_.Status)"
             }
             else {
                 "unsupported measurement shape"
