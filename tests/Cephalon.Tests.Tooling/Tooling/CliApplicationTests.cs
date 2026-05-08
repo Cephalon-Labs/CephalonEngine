@@ -385,7 +385,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.9.0",
+              "$schemaVersion": "1.10.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -395,7 +395,15 @@ public sealed class CliApplicationTests
                 "KnownHazardPackageCount": 2,
                 "KnownHazardEntryCount": 14,
                 "TransitiveAuditEntryCount": 7,
-                "PublishProbeReleaseValidationMode": "single-file-publish-gate"
+                "PublishProbeReleaseValidationMode": "single-file-publish-gate",
+                "ClaimsReport": "artifacts/deployment-mode-claims-release/claim-validation-report.json",
+                "ClaimsReportPresent": true,
+                "ClaimsReportPublishProbeGateStatus": "passed",
+                "ClaimsReportPublishProbeTargetCount": 5,
+                "ClaimsReportPublishProbeWarningCount": 0,
+                "ClaimsReportPublishProbeErrorCount": 0,
+                "ClaimsReportPackageClaimTruthfulCount": 1,
+                "ClaimsReportPackageClaimOverstatedCount": 0
               },
               "ProviderIntegrationEvidence": {
                 "EvidenceRowCount": 32,
@@ -454,6 +462,12 @@ public sealed class CliApplicationTests
                 "DeploymentModeKnownHazardPackageCount": 2,
                 "DeploymentModeKnownHazardEntryCount": 14,
                 "DeploymentModeTransitiveAuditEntryCount": 7,
+                "DeploymentModeClaimsReportPresent": true,
+                "DeploymentModeClaimsReportPublishProbeTargetCount": 5,
+                "DeploymentModeClaimsReportPublishProbeWarningCount": 0,
+                "DeploymentModeClaimsReportPublishProbeErrorCount": 0,
+                "DeploymentModeClaimsReportPackageClaimTruthfulCount": 1,
+                "DeploymentModeClaimsReportPackageClaimOverstatedCount": 0,
                 "ProviderIntegrationEvidenceRowCount": 32,
                 "ProviderIntegrationLiveProofCount": 14,
                 "ProviderIntegrationCompositionOnlyCount": 18,
@@ -494,11 +508,11 @@ public sealed class CliApplicationTests
                 stderr);
 
             Assert.Equal(0, exitCode);
-            Assert.Contains("[ok] Engine completion scorecard artifact: schema 1.9.0 from docs/engine-completion-scorecard.md; conformance matrix docs/conformance-matrix.md.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Engine completion scorecard artifact: schema 1.10.0 from docs/engine-completion-scorecard.md; conformance matrix docs/conformance-matrix.md.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard platform gates: 12 gates; blocked 0, needs-refresh 1, partial 7, not-claimed 1.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Engine completion scorecard evidence references: 20 repo-local references validated by the published artifact.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard package GA readiness: 90 package rows; partial 89, not-claimed 1, needs-refresh 0.", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("[warn] Engine completion scorecard deployment-mode evidence: 3 global claims; not-claimed 3, package-scoped claim packages 1, known hazards 14 across 2 packages, transitive audit entries 7, publish probes single-file-publish-gate.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[warn] Engine completion scorecard deployment-mode evidence: 3 global claims; not-claimed 3, package-scoped claim packages 1, known hazards 14 across 2 packages, transitive audit entries 7, publish probes single-file-publish-gate; claims report artifacts/deployment-mode-claims-release/claim-validation-report.json, gate passed, targets 5, warnings 0, errors 0, truthful package claims 1.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard provider integration evidence: 32 rows; live proofs 14, composition-only 18, external-service gates 13, default-skipped 13, runtime contracts 94; dependency-health providers 18 from scripts/observability-dependency-health-providers.json schema 1.0.0 (source-derived-provider-family-contract).", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard SRE posture: 11 SLIs; target-declared 11, pending stable baselines 7, stable baselines 4, stable baseline rows 4, stable baseline measurements 6, guardrail-mapped 4, pending guardrail coverage 2, guardrail not-applicable 5, guardrail references 6; stable baseline manifest scripts/sre-stable-baselines.json.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard supply-chain release evidence: 10 items; workflow-ready 7, external-policy-pending 3, blocked 0.", stdout.ToString(), StringComparison.Ordinal);
@@ -589,7 +603,7 @@ public sealed class CliApplicationTests
                 stderr);
 
             Assert.Equal(1, exitCode);
-            Assert.Contains("[error] Engine completion scorecard artifact: Unsupported schema '1.0.0'. Doctor expects scorecard schema '1.9.0'.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Engine completion scorecard artifact: Unsupported schema '1.0.0'. Doctor expects scorecard schema '1.10.0'.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("scorecard artifact blockers", stderr.ToString(), StringComparison.Ordinal);
         }
         finally
@@ -612,7 +626,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.9.0",
+              "$schemaVersion": "1.10.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -622,7 +636,15 @@ public sealed class CliApplicationTests
                 "KnownHazardPackageCount": 2,
                 "KnownHazardEntryCount": 13,
                 "TransitiveAuditEntryCount": 7,
-                "PublishProbeReleaseValidationMode": "single-file-publish-gate"
+                "PublishProbeReleaseValidationMode": "single-file-publish-gate",
+                "ClaimsReport": "artifacts/deployment-mode-claims-release/claim-validation-report.json",
+                "ClaimsReportPresent": true,
+                "ClaimsReportPublishProbeGateStatus": "passed",
+                "ClaimsReportPublishProbeTargetCount": 5,
+                "ClaimsReportPublishProbeWarningCount": 0,
+                "ClaimsReportPublishProbeErrorCount": 0,
+                "ClaimsReportPackageClaimTruthfulCount": 1,
+                "ClaimsReportPackageClaimOverstatedCount": 0
               },
               "ProviderIntegrationEvidence": {
                 "EvidenceRowCount": 32,
@@ -681,6 +703,12 @@ public sealed class CliApplicationTests
                 "DeploymentModeKnownHazardPackageCount": 2,
                 "DeploymentModeKnownHazardEntryCount": 14,
                 "DeploymentModeTransitiveAuditEntryCount": 7,
+                "DeploymentModeClaimsReportPresent": true,
+                "DeploymentModeClaimsReportPublishProbeTargetCount": 5,
+                "DeploymentModeClaimsReportPublishProbeWarningCount": 0,
+                "DeploymentModeClaimsReportPublishProbeErrorCount": 0,
+                "DeploymentModeClaimsReportPackageClaimTruthfulCount": 1,
+                "DeploymentModeClaimsReportPackageClaimOverstatedCount": 0,
                 "ProviderIntegrationEvidenceRowCount": 32,
                 "ProviderIntegrationLiveProofCount": 14,
                 "ProviderIntegrationCompositionOnlyCount": 18,
@@ -745,7 +773,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.9.0",
+              "$schemaVersion": "1.10.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -755,7 +783,15 @@ public sealed class CliApplicationTests
                 "KnownHazardPackageCount": 2,
                 "KnownHazardEntryCount": 14,
                 "TransitiveAuditEntryCount": 7,
-                "PublishProbeReleaseValidationMode": "single-file-publish-gate"
+                "PublishProbeReleaseValidationMode": "single-file-publish-gate",
+                "ClaimsReport": "artifacts/deployment-mode-claims-release/claim-validation-report.json",
+                "ClaimsReportPresent": true,
+                "ClaimsReportPublishProbeGateStatus": "passed",
+                "ClaimsReportPublishProbeTargetCount": 5,
+                "ClaimsReportPublishProbeWarningCount": 0,
+                "ClaimsReportPublishProbeErrorCount": 0,
+                "ClaimsReportPackageClaimTruthfulCount": 1,
+                "ClaimsReportPackageClaimOverstatedCount": 0
               },
               "ProviderIntegrationEvidence": {
                 "EvidenceRowCount": 31,
@@ -814,6 +850,12 @@ public sealed class CliApplicationTests
                 "DeploymentModeKnownHazardPackageCount": 2,
                 "DeploymentModeKnownHazardEntryCount": 14,
                 "DeploymentModeTransitiveAuditEntryCount": 7,
+                "DeploymentModeClaimsReportPresent": true,
+                "DeploymentModeClaimsReportPublishProbeTargetCount": 5,
+                "DeploymentModeClaimsReportPublishProbeWarningCount": 0,
+                "DeploymentModeClaimsReportPublishProbeErrorCount": 0,
+                "DeploymentModeClaimsReportPackageClaimTruthfulCount": 1,
+                "DeploymentModeClaimsReportPackageClaimOverstatedCount": 0,
                 "ProviderIntegrationEvidenceRowCount": 32,
                 "ProviderIntegrationLiveProofCount": 14,
                 "ProviderIntegrationCompositionOnlyCount": 18,
@@ -878,7 +920,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.9.0",
+              "$schemaVersion": "1.10.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -888,7 +930,15 @@ public sealed class CliApplicationTests
                 "KnownHazardPackageCount": 2,
                 "KnownHazardEntryCount": 14,
                 "TransitiveAuditEntryCount": 7,
-                "PublishProbeReleaseValidationMode": "single-file-publish-gate"
+                "PublishProbeReleaseValidationMode": "single-file-publish-gate",
+                "ClaimsReport": "artifacts/deployment-mode-claims-release/claim-validation-report.json",
+                "ClaimsReportPresent": true,
+                "ClaimsReportPublishProbeGateStatus": "passed",
+                "ClaimsReportPublishProbeTargetCount": 5,
+                "ClaimsReportPublishProbeWarningCount": 0,
+                "ClaimsReportPublishProbeErrorCount": 0,
+                "ClaimsReportPackageClaimTruthfulCount": 1,
+                "ClaimsReportPackageClaimOverstatedCount": 0
               },
               "ProviderIntegrationEvidence": {
                 "EvidenceRowCount": 32,
@@ -941,6 +991,12 @@ public sealed class CliApplicationTests
                 "DeploymentModeKnownHazardPackageCount": 2,
                 "DeploymentModeKnownHazardEntryCount": 14,
                 "DeploymentModeTransitiveAuditEntryCount": 7,
+                "DeploymentModeClaimsReportPresent": true,
+                "DeploymentModeClaimsReportPublishProbeTargetCount": 5,
+                "DeploymentModeClaimsReportPublishProbeWarningCount": 0,
+                "DeploymentModeClaimsReportPublishProbeErrorCount": 0,
+                "DeploymentModeClaimsReportPackageClaimTruthfulCount": 1,
+                "DeploymentModeClaimsReportPackageClaimOverstatedCount": 0,
                 "ProviderIntegrationEvidenceRowCount": 32,
                 "ProviderIntegrationLiveProofCount": 14,
                 "ProviderIntegrationCompositionOnlyCount": 18,
@@ -1005,7 +1061,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.9.0",
+              "$schemaVersion": "1.10.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -1015,7 +1071,15 @@ public sealed class CliApplicationTests
                 "KnownHazardPackageCount": 2,
                 "KnownHazardEntryCount": 14,
                 "TransitiveAuditEntryCount": 7,
-                "PublishProbeReleaseValidationMode": "single-file-publish-gate"
+                "PublishProbeReleaseValidationMode": "single-file-publish-gate",
+                "ClaimsReport": "artifacts/deployment-mode-claims-release/claim-validation-report.json",
+                "ClaimsReportPresent": true,
+                "ClaimsReportPublishProbeGateStatus": "passed",
+                "ClaimsReportPublishProbeTargetCount": 5,
+                "ClaimsReportPublishProbeWarningCount": 0,
+                "ClaimsReportPublishProbeErrorCount": 0,
+                "ClaimsReportPackageClaimTruthfulCount": 1,
+                "ClaimsReportPackageClaimOverstatedCount": 0
               },
               "ProviderIntegrationEvidence": {
                 "EvidenceRowCount": 32,
@@ -1074,6 +1138,12 @@ public sealed class CliApplicationTests
                 "DeploymentModeKnownHazardPackageCount": 2,
                 "DeploymentModeKnownHazardEntryCount": 14,
                 "DeploymentModeTransitiveAuditEntryCount": 7,
+                "DeploymentModeClaimsReportPresent": true,
+                "DeploymentModeClaimsReportPublishProbeTargetCount": 5,
+                "DeploymentModeClaimsReportPublishProbeWarningCount": 0,
+                "DeploymentModeClaimsReportPublishProbeErrorCount": 0,
+                "DeploymentModeClaimsReportPackageClaimTruthfulCount": 1,
+                "DeploymentModeClaimsReportPackageClaimOverstatedCount": 0,
                 "ProviderIntegrationEvidenceRowCount": 32,
                 "ProviderIntegrationLiveProofCount": 14,
                 "ProviderIntegrationCompositionOnlyCount": 18,
@@ -1138,7 +1208,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.9.0",
+              "$schemaVersion": "1.10.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -1148,7 +1218,15 @@ public sealed class CliApplicationTests
                 "KnownHazardPackageCount": 2,
                 "KnownHazardEntryCount": 14,
                 "TransitiveAuditEntryCount": 7,
-                "PublishProbeReleaseValidationMode": "single-file-publish-gate"
+                "PublishProbeReleaseValidationMode": "single-file-publish-gate",
+                "ClaimsReport": "artifacts/deployment-mode-claims-release/claim-validation-report.json",
+                "ClaimsReportPresent": true,
+                "ClaimsReportPublishProbeGateStatus": "passed",
+                "ClaimsReportPublishProbeTargetCount": 5,
+                "ClaimsReportPublishProbeWarningCount": 0,
+                "ClaimsReportPublishProbeErrorCount": 0,
+                "ClaimsReportPackageClaimTruthfulCount": 1,
+                "ClaimsReportPackageClaimOverstatedCount": 0
               },
               "ProviderIntegrationEvidence": {
                 "EvidenceRowCount": 32,
@@ -1207,6 +1285,12 @@ public sealed class CliApplicationTests
                 "DeploymentModeKnownHazardPackageCount": 2,
                 "DeploymentModeKnownHazardEntryCount": 14,
                 "DeploymentModeTransitiveAuditEntryCount": 7,
+                "DeploymentModeClaimsReportPresent": true,
+                "DeploymentModeClaimsReportPublishProbeTargetCount": 5,
+                "DeploymentModeClaimsReportPublishProbeWarningCount": 0,
+                "DeploymentModeClaimsReportPublishProbeErrorCount": 0,
+                "DeploymentModeClaimsReportPackageClaimTruthfulCount": 1,
+                "DeploymentModeClaimsReportPackageClaimOverstatedCount": 0,
                 "ProviderIntegrationEvidenceRowCount": 32,
                 "ProviderIntegrationLiveProofCount": 14,
                 "ProviderIntegrationCompositionOnlyCount": 18,
@@ -1271,7 +1355,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.9.0",
+              "$schemaVersion": "1.10.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -1281,7 +1365,15 @@ public sealed class CliApplicationTests
                 "KnownHazardPackageCount": 2,
                 "KnownHazardEntryCount": 14,
                 "TransitiveAuditEntryCount": 7,
-                "PublishProbeReleaseValidationMode": "single-file-publish-gate"
+                "PublishProbeReleaseValidationMode": "single-file-publish-gate",
+                "ClaimsReport": "artifacts/deployment-mode-claims-release/claim-validation-report.json",
+                "ClaimsReportPresent": true,
+                "ClaimsReportPublishProbeGateStatus": "passed",
+                "ClaimsReportPublishProbeTargetCount": 5,
+                "ClaimsReportPublishProbeWarningCount": 0,
+                "ClaimsReportPublishProbeErrorCount": 0,
+                "ClaimsReportPackageClaimTruthfulCount": 1,
+                "ClaimsReportPackageClaimOverstatedCount": 0
               },
               "ProviderIntegrationEvidence": {
                 "EvidenceRowCount": 32,
@@ -1340,6 +1432,12 @@ public sealed class CliApplicationTests
                 "DeploymentModeKnownHazardPackageCount": 2,
                 "DeploymentModeKnownHazardEntryCount": 14,
                 "DeploymentModeTransitiveAuditEntryCount": 7,
+                "DeploymentModeClaimsReportPresent": true,
+                "DeploymentModeClaimsReportPublishProbeTargetCount": 5,
+                "DeploymentModeClaimsReportPublishProbeWarningCount": 0,
+                "DeploymentModeClaimsReportPublishProbeErrorCount": 0,
+                "DeploymentModeClaimsReportPackageClaimTruthfulCount": 1,
+                "DeploymentModeClaimsReportPackageClaimOverstatedCount": 0,
                 "ProviderIntegrationEvidenceRowCount": 32,
                 "ProviderIntegrationLiveProofCount": 14,
                 "ProviderIntegrationCompositionOnlyCount": 18,
