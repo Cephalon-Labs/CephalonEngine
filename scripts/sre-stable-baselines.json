@@ -1,7 +1,7 @@
 {
-  "$schemaVersion": "1.4.0",
-  "status": "benchmark-release-validation-wall-time-baseline-published",
-  "summary": "Stable baselines are published for the benchmark-backed guardrail-mapped hot-path subset, the deployment-mode claim-truth SLI backed by the release-validation claims report, and the dotnet restore locked-mode, reference-docs, and full validate-release wall-time SLIs backed by release-validation timing evidence. Cold-start SLIs are guardrail-mapped but remain pending stable baselines until their optimization lane meets the tighter SLO; flake-rate remains pending until its own CI metadata lane runs.",
+  "$schemaVersion": "1.5.0",
+  "status": "benchmark-worker-cold-start-baseline-published",
+  "summary": "Stable baselines are published for the benchmark-backed guardrail-mapped hot-path subset plus the Worker cold-start SLI, the deployment-mode claim-truth SLI backed by the release-validation claims report, and the dotnet restore locked-mode, reference-docs, and full validate-release wall-time SLIs backed by release-validation timing evidence. ASP.NET Core cold-start remains pending until its optimization lane meets the tighter SLO; flake-rate remains pending until its own CI metadata lane runs.",
   "capturedAtUtc": "2026-05-08T16:00:55.1757539+00:00",
   "capturedFromCommit": "11bbe007e0d01e5fd8273c71269a4a28cfa2fd6b",
   "runCommand": "pwsh ./scripts/validate-release.ps1",
@@ -14,7 +14,8 @@
   },
   "sourceReports": [
     "BenchmarkDotNet.Artifacts/results/Cephalon.Benchmarks.HotPath.BehaviorDispatchBenchmarks-report.csv",
-    "BenchmarkDotNet.Artifacts/results/Cephalon.Benchmarks.Runtime.AspNetCoreRequestLoggingBenchmarks-report.csv"
+    "BenchmarkDotNet.Artifacts/results/Cephalon.Benchmarks.Runtime.AspNetCoreRequestLoggingBenchmarks-report.csv",
+    "BenchmarkDotNet.Artifacts/results/Cephalon.Benchmarks.Runtime.ColdStartBenchmarks-report.csv"
   ],
   "publishedBaselineSliIds": [
     "engine.behavior.dispatch.latency.p95",
@@ -24,11 +25,11 @@
     "engine.deployment-mode-claims.truthful-fraction",
     "engine.dotnet.restore.wall-time.lock-mode",
     "engine.reference-docs.wall-time",
-    "engine.validate-release.wall-time"
+    "engine.validate-release.wall-time",
+    "engine.worker.cold-start.p95"
   ],
   "pendingBaselineSliIds": [
     "engine.aspnetcore.minimal-api.cold-start.p95",
-    "engine.worker.cold-start.p95",
     "engine.tests.flake-rate.7d"
   ],
   "baselineRows": [
@@ -196,6 +197,24 @@
           "targetMilliseconds": 1500000,
           "capturedAtUtc": "2026-05-08T16:00:55.1757539+00:00",
           "capturedFromCommit": "11bbe007e0d01e5fd8273c71269a4a28cfa2fd6b"
+        }
+      ]
+    },
+    {
+      "sliId": "engine.worker.cold-start.p95",
+      "status": "stable-baseline-published",
+      "measurementKind": "benchmark-mean-baseline-proxy",
+      "notes": "The current short-run BenchmarkDotNet export does not emit percentile columns. The Worker cold-start mean is used as the stable guardrail baseline proxy because the measured run is far below the 500 ms SLO target; ASP.NET Core cold-start remains pending because its current measurement still exceeds the 800 ms target.",
+      "measurements": [
+        {
+          "reportFileName": "Cephalon.Benchmarks.Runtime.ColdStartBenchmarks-report.csv",
+          "benchmark": "BuildStartWorkerHost",
+          "meanNanoseconds": 483100,
+          "errorNanoseconds": 128500,
+          "stdDevNanoseconds": 7040,
+          "allocatedBytes": 317388.8,
+          "guardrailMaxMeanNanoseconds": 5000000,
+          "guardrailMaxAllocatedBytes": 500000
         }
       ]
     }
