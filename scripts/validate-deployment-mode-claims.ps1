@@ -1632,14 +1632,8 @@ function Get-DeploymentModeNonOperatorEndpointAudits {
                 if ($selfOwnedRequestDelegateEndpointCount -ne 10) {
                     $failures += "self-owned-request-delegate-endpoint-count-drift:$selfOwnedRequestDelegateEndpointCount"
                 }
-                if ($frameworkEndpointCount -ne 6) {
-                    $failures += "framework-endpoint-count-drift:$frameworkEndpointCount"
-                }
                 if ($useWhenBranchCount -ne 3) {
                     $failures += "host-documentation-usewhen-count-drift:$useWhenBranchCount"
-                }
-                foreach ($missingMarker in $missingFrameworkEndpointMarkers) {
-                    $failures += "framework-endpoint-marker-missing:$missingMarker"
                 }
                 if (-not $helperFound) {
                     $failures += "app-get-request-delegate-helper-missing"
@@ -1668,6 +1662,117 @@ function Get-DeploymentModeNonOperatorEndpointAudits {
                 MissingFrameworkEndpointMarkers        = @($missingFrameworkEndpointMarkers)
                 Status                                 = if ($failures.Count -eq 0) { "matched" } else { "failed" }
                 Failures                               = @($failures)
+            }
+        }
+    }
+
+    return @($rows)
+}
+
+function Get-DeploymentModeFrameworkEndpointBoundaryAudits {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)] $Manifest,
+        [string]$RepoRoot = ""
+    )
+
+    $rows = @()
+    if ($null -eq $Manifest -or
+        -not $Manifest.PSObject.Properties.Match("deploymentModeEligibility").Count -or
+        $null -eq $Manifest.deploymentModeEligibility -or
+        -not $Manifest.deploymentModeEligibility.PSObject.Properties.Match("packages").Count) {
+        return @()
+    }
+
+    foreach ($pkg in @($Manifest.deploymentModeEligibility.packages)) {
+        if ($null -eq $pkg -or $pkg.PSObject.Properties.Match("knownHazards").Count -eq 0) { continue }
+
+        $packageName = if ($pkg.PSObject.Properties.Match("packageName").Count -gt 0) { [string]$pkg.packageName } else { "" }
+        if (-not [string]::Equals($packageName, "Cephalon.AspNetCore", [System.StringComparison]::OrdinalIgnoreCase)) {
+            continue
+        }
+
+        foreach ($hazard in @($pkg.knownHazards)) {
+            if ($null -eq $hazard -or $hazard.PSObject.Properties.Match("kind").Count -eq 0) { continue }
+
+            $kind = [string]$hazard.kind
+            if (-not [string]::Equals($kind, "dynamic-minimal-api-operator-route-binding", [System.StringComparison]::OrdinalIgnoreCase)) {
+                continue
+            }
+
+            $sourceRelativePath = "src/Cephalon.AspNetCore/Hosting/EngineWebApplicationExtensions.cs"
+            $sourcePath = $sourceRelativePath
+            if (-not [string]::IsNullOrWhiteSpace($RepoRoot)) {
+                $sourcePath = Join-Path $RepoRoot ($sourceRelativePath -replace '/', [System.IO.Path]::DirectorySeparatorChar)
+            }
+
+            $sourceExists = Test-Path -LiteralPath $sourcePath -PathType Leaf
+            $healthEndpointCount = 0
+            $openApiEndpointCount = 0
+            $scalarEndpointCount = 0
+            $frameworkEndpointCount = 0
+            $frameworkEndpointMarkers = @()
+            $missingFrameworkEndpointMarkers = @()
+            $failures = @()
+
+            $expectedFrameworkMarkers = @(
+                [pscustomobject]@{ Id = "health"; Marker = 'app.MapHealthChecks("/health"' },
+                [pscustomobject]@{ Id = "health-live"; Marker = 'app.MapHealthChecks("/health/live"' },
+                [pscustomobject]@{ Id = "health-ready"; Marker = 'app.MapHealthChecks("/health/ready"' },
+                [pscustomobject]@{ Id = "openapi"; Marker = 'app.MapOpenApi(openApiEndpointOptions.RoutePattern)' },
+                [pscustomobject]@{ Id = "scalar-default"; Marker = 'app.MapScalarApiReference(openApiEndpointOptions.ScalarRoutePrefix' },
+                [pscustomobject]@{ Id = "scalar-bff-scoped"; Marker = 'app.MapScalarApiReference(scalarRoutePrefix' }
+            )
+
+            if (-not $sourceExists) {
+                $failures += "source-missing"
+            }
+            else {
+                $source = Get-Content -LiteralPath $sourcePath -Raw -Encoding UTF8
+                $healthEndpointCount = ([regex]::Matches($source, 'app\.MapHealthChecks\s*\(')).Count
+                $openApiEndpointCount = ([regex]::Matches($source, 'app\.MapOpenApi\s*\(')).Count
+                $scalarEndpointCount = ([regex]::Matches($source, 'app\.MapScalarApiReference\s*\(')).Count
+                $frameworkEndpointCount = $healthEndpointCount + $openApiEndpointCount + $scalarEndpointCount
+
+                foreach ($expectedMarker in $expectedFrameworkMarkers) {
+                    if ($source.Contains([string]$expectedMarker.Marker, [System.StringComparison]::Ordinal)) {
+                        $frameworkEndpointMarkers += [string]$expectedMarker.Id
+                    }
+                    else {
+                        $missingFrameworkEndpointMarkers += [string]$expectedMarker.Id
+                    }
+                }
+
+                if ($healthEndpointCount -ne 3) {
+                    $failures += "framework-health-endpoint-count-drift:$healthEndpointCount"
+                }
+                if ($openApiEndpointCount -ne 1) {
+                    $failures += "framework-openapi-endpoint-count-drift:$openApiEndpointCount"
+                }
+                if ($scalarEndpointCount -ne 2) {
+                    $failures += "framework-scalar-endpoint-count-drift:$scalarEndpointCount"
+                }
+                if ($frameworkEndpointCount -ne 6) {
+                    $failures += "framework-endpoint-count-drift:$frameworkEndpointCount"
+                }
+                foreach ($missingMarker in $missingFrameworkEndpointMarkers) {
+                    $failures += "framework-endpoint-marker-missing:$missingMarker"
+                }
+            }
+
+            $rows += [pscustomobject]@{
+                PackageName                     = $packageName
+                HazardKind                      = $kind
+                SourcePath                      = $sourceRelativePath
+                SourceExists                    = $sourceExists
+                HealthEndpointCount             = $healthEndpointCount
+                OpenApiEndpointCount            = $openApiEndpointCount
+                ScalarEndpointCount             = $scalarEndpointCount
+                FrameworkEndpointCount          = $frameworkEndpointCount
+                FrameworkEndpointMarkers        = @($frameworkEndpointMarkers)
+                MissingFrameworkEndpointMarkers = @($missingFrameworkEndpointMarkers)
+                Status                          = if ($failures.Count -eq 0) { "matched" } else { "failed" }
+                Failures                        = @($failures)
             }
         }
     }
@@ -1852,6 +1957,18 @@ function Get-DeploymentModeHazardInventory {
         "failed"
     }
 
+    $frameworkEndpointBoundaryAudits = @(Get-DeploymentModeFrameworkEndpointBoundaryAudits -Manifest $Manifest -RepoRoot $RepoRoot)
+    $frameworkEndpointBoundaryAuditFailures = @($frameworkEndpointBoundaryAudits | Where-Object { $_.Status -ne "matched" })
+    $frameworkEndpointBoundaryAuditStatus = if ($frameworkEndpointBoundaryAudits.Count -eq 0) {
+        "not-applicable"
+    }
+    elseif ($frameworkEndpointBoundaryAuditFailures.Count -eq 0) {
+        "matched"
+    }
+    else {
+        "failed"
+    }
+
     $tierRows = foreach ($tierName in $tierCounts.Keys) {
         [pscustomobject]@{
             Tier  = $tierName
@@ -1930,6 +2047,11 @@ function Get-DeploymentModeHazardInventory {
         NonOperatorEndpointAuditFailureCount  = $nonOperatorEndpointAuditFailures.Count
         NonOperatorEndpointAuditFailures      = @($nonOperatorEndpointAuditFailures)
         NonOperatorEndpointAudits             = @($nonOperatorEndpointAudits)
+        FrameworkEndpointBoundaryAuditStatus        = $frameworkEndpointBoundaryAuditStatus
+        FrameworkEndpointBoundaryAuditCount         = $frameworkEndpointBoundaryAudits.Count
+        FrameworkEndpointBoundaryAuditFailureCount  = $frameworkEndpointBoundaryAuditFailures.Count
+        FrameworkEndpointBoundaryAuditFailures      = @($frameworkEndpointBoundaryAuditFailures)
+        FrameworkEndpointBoundaryAudits             = @($frameworkEndpointBoundaryAudits)
         Packages                  = @($packages)
     }
 }
@@ -2525,6 +2647,11 @@ function Write-ValidationReport {
             [void]$sb.AppendLine("- Non-operator endpoint audit entries: $($hazardInventory.NonOperatorEndpointAuditCount)")
             [void]$sb.AppendLine("- Non-operator endpoint audit failures: $($hazardInventory.NonOperatorEndpointAuditFailureCount)")
         }
+        if ($hazardInventory.PSObject.Properties.Match("FrameworkEndpointBoundaryAuditStatus").Count -gt 0) {
+            [void]$sb.AppendLine("- Framework endpoint boundary audit: $($hazardInventory.FrameworkEndpointBoundaryAuditStatus)")
+            [void]$sb.AppendLine("- Framework endpoint boundary audit entries: $($hazardInventory.FrameworkEndpointBoundaryAuditCount)")
+            [void]$sb.AppendLine("- Framework endpoint boundary audit failures: $($hazardInventory.FrameworkEndpointBoundaryAuditFailureCount)")
+        }
         [void]$sb.AppendLine("")
         [void]$sb.AppendLine("Tier counts:")
         foreach ($tier in @($hazardInventory.TierCounts)) {
@@ -2611,6 +2738,16 @@ function Write-ValidationReport {
                 $failures = if (@($audit.Failures).Count -gt 0) { @($audit.Failures) -join ", " } else { "none" }
                 $markers = if (@($audit.FrameworkEndpointMarkers).Count -gt 0) { @($audit.FrameworkEndpointMarkers) -join ", " } else { "none" }
                 [void]$sb.AppendLine("- **$($audit.PackageName)** at ``$($audit.SourcePath)``: $($audit.Status), directAppMapGet=$($audit.DirectAppMapGetCount), selfOwnedRequestDelegateEndpoints=$($audit.SelfOwnedRequestDelegateEndpointCount), frameworkEndpoints=$($audit.FrameworkEndpointCount), useWhenBranches=$($audit.UseWhenBranchCount), frameworkMarkers=$markers, failures=$failures")
+            }
+        }
+        if ($hazardInventory.PSObject.Properties.Match("FrameworkEndpointBoundaryAudits").Count -gt 0 -and
+            @($hazardInventory.FrameworkEndpointBoundaryAudits).Count -gt 0) {
+            [void]$sb.AppendLine("")
+            [void]$sb.AppendLine("Framework endpoint boundary audit:")
+            foreach ($audit in @($hazardInventory.FrameworkEndpointBoundaryAudits)) {
+                $failures = if (@($audit.Failures).Count -gt 0) { @($audit.Failures) -join ", " } else { "none" }
+                $markers = if (@($audit.FrameworkEndpointMarkers).Count -gt 0) { @($audit.FrameworkEndpointMarkers) -join ", " } else { "none" }
+                [void]$sb.AppendLine("- **$($audit.PackageName)** at ``$($audit.SourcePath)``: $($audit.Status), healthEndpoints=$($audit.HealthEndpointCount), openApiEndpoints=$($audit.OpenApiEndpointCount), scalarEndpoints=$($audit.ScalarEndpointCount), frameworkEndpoints=$($audit.FrameworkEndpointCount), frameworkMarkers=$markers, failures=$failures")
             }
         }
     }
@@ -2776,6 +2913,9 @@ function Invoke-DeploymentModeClaimValidation {
     if ($hazardInventory.PSObject.Properties.Match("NonOperatorEndpointAuditStatus").Count -gt 0) {
         Invoke-Step -Title "Non-operator endpoint audit" -Detail $hazardInventory.NonOperatorEndpointAuditStatus
     }
+    if ($hazardInventory.PSObject.Properties.Match("FrameworkEndpointBoundaryAuditStatus").Count -gt 0) {
+        Invoke-Step -Title "Framework endpoint boundary audit" -Detail $hazardInventory.FrameworkEndpointBoundaryAuditStatus
+    }
 
     if ($aggregateVerdict -eq "claim-overstated") {
         throw "claim-overstated: see $($paths.JsonPath) for details"
@@ -2812,6 +2952,11 @@ function Invoke-DeploymentModeClaimValidation {
         $hazardInventory.NonOperatorEndpointAuditStatus -eq "failed") {
         $detailsPath = if ($paths.HazardInventoryPath) { $paths.HazardInventoryPath } else { $paths.JsonPath }
         throw "non-operator-endpoint-audit-failed: see $detailsPath for details"
+    }
+    if ($hazardInventory.PSObject.Properties.Match("FrameworkEndpointBoundaryAuditStatus").Count -gt 0 -and
+        $hazardInventory.FrameworkEndpointBoundaryAuditStatus -eq "failed") {
+        $detailsPath = if ($paths.HazardInventoryPath) { $paths.HazardInventoryPath } else { $paths.JsonPath }
+        throw "framework-endpoint-boundary-audit-failed: see $detailsPath for details"
     }
 
     return [pscustomobject]@{

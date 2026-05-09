@@ -109,10 +109,11 @@ application-authored Minimal API route handlers trim/AOT-friendly, but a reusabl
 that owns dynamic, catalog-driven route projection still has a real boundary. The current
 remediation lane moves operator routes to explicit request delegates and source-generated request
 body metadata first, with generated hazard-inventory and scorecard readback now covering the
-boundary/core/full-common/full-operator route proof, common operator response JSON contracts, and
-Cephalon-owned non-operator host/documentation endpoints. Support promotion stays for a later
-slice that can prove or explicitly exclude the remaining framework-owned health/OpenAPI/Scalar
-endpoint extensions and widen project properties, workflows, docs, and package guidance together.
+boundary/core/full-common/full-operator route proof, common operator response JSON contracts,
+Cephalon-owned non-operator host/documentation endpoints, and framework endpoint boundaries.
+Support promotion stays for a later slice that widens project properties, workflows, docs, and
+package guidance together; framework-owned health/OpenAPI/Scalar endpoint extensions are now
+counted by generated readback but remain an unclaimed adapter boundary.
 
 The current answer is explicit rather than silent. `MapCephalon()` carries
 `RequiresUnreferencedCode` and `RequiresDynamicCode`, and package-local trim/AOT analyzer builds now
@@ -140,7 +141,9 @@ making that response-contract proof fail-closed through `OperatorResponseJsonCon
 `ENG-549` maps Cephalon-owned non-operator host/documentation GET endpoints through app-level
 request-delegate helpers, leaves framework-owned `MapHealthChecks`, `MapOpenApi`, and
 `MapScalarApiReference` endpoint extensions as explicit support-boundary markers, and makes that
-proof fail-closed through `NonOperatorEndpointAuditStatus`.
+proof fail-closed through `NonOperatorEndpointAuditStatus`. `ENG-550` separately counts those
+framework-owned endpoint extensions through `FrameworkEndpointBoundaryAuditStatus` so the boundary
+remains visible without promoting support.
 When hosts set `Engine:AspNetCore:OperatorSurface:Mode=core`, the bounded core `/engine/*`
 route subset now maps through prebuilt `RequestDelegate` handlers and `MapMethods(...)`
 instead of Minimal API delegate binding. In full mode, `/`, `/manifest`, `/snapshot`, `/app-model`,
@@ -151,14 +154,14 @@ use POST request delegates and source-generated request-body JSON metadata. Mani
 and `OperatorResponseJsonContractAuditStatus` check that those route subsets do not reintroduce direct Minimal API
 delegate binding, that the helper still accepts `RequestDelegate` and calls `MapMethods(...)`, and that common
 operator response contracts stay in `AspNetCoreJsonSerializerContext` plus the HTTP/MVC JSON resolver chain.
-`NonOperatorEndpointAuditStatus` also rejects direct `app.MapGet(...)` drift for Cephalon-owned host/docs endpoints
-while preserving framework-owned endpoint extension markers. The remaining default/full `MapCephalon()` support
-boundary still stays high-tier until the framework endpoint extension boundary and support-promotion workflow can
-be addressed deliberately.
+`NonOperatorEndpointAuditStatus` also rejects direct `app.MapGet(...)` drift for Cephalon-owned host/docs endpoints,
+and `FrameworkEndpointBoundaryAuditStatus` rejects framework-owned endpoint extension count/marker drift. The
+remaining default/full `MapCephalon()` support boundary still stays high-tier until a deliberate support-promotion
+workflow can widen project properties, docs, workflows, and package guidance together.
 
 | Package | File | Line | Pattern | Notes |
 | --- | --- | --- | --- | --- |
-| `Cephalon.AspNetCore` | `Hosting/EngineWebApplicationExtensions.cs` | 101 | `MapCephalon()` still carries the full adapter surface as an explicit deployment-mode boundary | Public `RequiresUnreferencedCode` / `RequiresDynamicCode` annotations make the package-local analyzer path clean while preserving the truthful not-claimed AOT support posture; the `core`, full/common, and full/default operator catalog now has generated request-delegate proof, POST action request-body metadata, common operator responses through source-generated JSON metadata, and Cephalon-owned non-operator host/docs endpoint proof, but framework-owned health/OpenAPI/Scalar endpoint extensions keep the full/default adapter surface unclaimed. |
+| `Cephalon.AspNetCore` | `Hosting/EngineWebApplicationExtensions.cs` | 101 | `MapCephalon()` still carries the full adapter surface as an explicit deployment-mode boundary | Public `RequiresUnreferencedCode` / `RequiresDynamicCode` annotations make the package-local analyzer path clean while preserving the truthful not-claimed AOT support posture; the `core`, full/common, and full/default operator catalog now has generated request-delegate proof, POST action request-body metadata, common operator responses through source-generated JSON metadata, Cephalon-owned non-operator host/docs endpoint proof, and framework endpoint boundary proof, but framework-owned health/OpenAPI/Scalar endpoint extensions keep the full/default adapter surface unclaimed. |
 
 ### `high` — non-public reflective access on a third-party transport type in `Cephalon.Data.MySql.SciSharpReplication` (added via `ENG-434`, isolated via `ENG-477`)
 
@@ -460,6 +463,8 @@ A future slice may add explicit `IsTrimmable=false; IsAotCompatible=false; Publi
 **Update May 9, 2026 (`ENG-548`):** common ASP.NET Core operator response contracts now have generated readback. `AspNetCoreJsonSerializerContext` lists the core/full-common operator response shapes, `AddCephalon(...)` registers that context in HTTP and MVC JSON options, and `scripts/validate-deployment-mode-claims.ps1` emits `OperatorResponseJsonContractAuditStatus` with fail-closed behavior. At that checkpoint, global trim, Native AOT, single-file, and full-adapter support remained `not-claimed` until non-operator host/documentation endpoints were promoted deliberately.
 
 **Update May 9, 2026 (`ENG-549`):** Cephalon-owned non-operator host/documentation GET endpoints now have generated readback. The OpenAPI toggle script, embedded docs favicon routes, hosted reference-doc routes, backend-for-frontend scoped documents, and scoped Scalar helper routes use app-level request-delegate helpers instead of direct `app.MapGet(...)`; `scripts/validate-deployment-mode-claims.ps1` emits `NonOperatorEndpointAuditStatus` with fail-closed behavior and preserves framework-owned `MapHealthChecks`, `MapOpenApi`, and `MapScalarApiReference` endpoint extensions as explicit support-boundary markers. Global trim, Native AOT, single-file, and full-adapter support remain `not-claimed` until that framework endpoint extension boundary and the project-property/workflow/doc support-promotion slice are handled deliberately.
+
+**Update May 10, 2026 (`ENG-550`):** framework-owned ASP.NET Core endpoint boundaries now have generated readback. `scripts/validate-deployment-mode-claims.ps1` emits `FrameworkEndpointBoundaryAuditStatus`, counts, failures, and rows for `MapHealthChecks`, `MapOpenApi`, and `MapScalarApiReference`; the harness fails closed if health/OpenAPI/Scalar endpoint counts or expected boundary markers drift. Global trim, Native AOT, single-file, and full-adapter support remain `not-claimed` until a later support-promotion slice widens project properties, workflow, docs, and package guidance deliberately.
 
 ## Refresh discipline
 

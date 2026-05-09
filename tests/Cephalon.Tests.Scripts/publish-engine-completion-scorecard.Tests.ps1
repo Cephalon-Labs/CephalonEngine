@@ -125,6 +125,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
                 OperatorResponseJsonContractAuditFailureCount = 0
                 NonOperatorEndpointAuditStatus = "matched"
                 NonOperatorEndpointAuditFailureCount = 0
+                FrameworkEndpointBoundaryAuditStatus = "matched"
+                FrameworkEndpointBoundaryAuditFailureCount = 0
             }
         }
 
@@ -235,6 +237,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
                 OperatorResponseJsonContractAuditFailureCount = 0
                 NonOperatorEndpointAuditStatus = "matched"
                 NonOperatorEndpointAuditFailureCount = 0
+                FrameworkEndpointBoundaryAuditStatus = "matched"
+                FrameworkEndpointBoundaryAuditFailureCount = 0
             }
         }
         $claimsReport | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath $claimsReportPath -Encoding UTF8
@@ -251,7 +255,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
 
         $json = Get-Content -LiteralPath $result.Paths.JsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
 
-        $json.'$schemaVersion' | Should -Be "1.19.0"
+        $json.'$schemaVersion' | Should -Be "1.20.0"
         $json.SourceDocument | Should -Be "docs/engine-completion-scorecard.md"
         $json.ConformanceMatrix | Should -Be "docs/conformance-matrix.md"
         $json.DeploymentModeManifest | Should -Be "scripts/deployment-mode-support.json"
@@ -294,6 +298,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.DeploymentModeClaimsReportFullOperatorRouteDelegateAuditFailures | Should -Be 0
         $json.Summary.DeploymentModeClaimsReportOperatorResponseJsonContractAuditFailures | Should -Be 0
         $json.Summary.DeploymentModeClaimsReportNonOperatorEndpointAuditFailures | Should -Be 0
+        $json.Summary.DeploymentModeClaimsReportFrameworkEndpointBoundaryAuditFailures | Should -Be 0
         $json.Summary.AdoptionSmokeScenarioCount | Should -Be 1
         $json.Summary.AdoptionSmokeRuntimeProbeCount | Should -Be 6
         $json.Summary.AdoptionSmokeAssertionCount | Should -Be 7
@@ -410,6 +415,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.DeploymentModeEvidence.ClaimsReportHazardInventoryOperatorResponseJsonContractAuditFailureCount | Should -Be 0
         $json.DeploymentModeEvidence.ClaimsReportHazardInventoryNonOperatorEndpointAuditStatus | Should -Be "matched"
         $json.DeploymentModeEvidence.ClaimsReportHazardInventoryNonOperatorEndpointAuditFailureCount | Should -Be 0
+        $json.DeploymentModeEvidence.ClaimsReportHazardInventoryFrameworkEndpointBoundaryAuditStatus | Should -Be "matched"
+        $json.DeploymentModeEvidence.ClaimsReportHazardInventoryFrameworkEndpointBoundaryAuditFailureCount | Should -Be 0
         $json.DeploymentModeEvidence.PackageRows.PackageName | Should -Contain "Cephalon.Diagnostics"
         $json.DeploymentModeEvidence.PackageRows.PackageName | Should -Contain "Cephalon.Abstractions"
         $json.DeploymentModeEvidence.PackageRows.PackageName | Should -Contain "Cephalon.Scaffolding"

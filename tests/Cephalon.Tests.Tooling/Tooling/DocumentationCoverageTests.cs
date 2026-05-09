@@ -505,7 +505,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("execution-report default path/schema", scorecard, StringComparison.Ordinal);
         Assert.Contains("ProviderIntegrationEvidence.DependencyHealthProviderManifest", scorecard, StringComparison.Ordinal);
         Assert.Contains("claims-report path, gate status, target count, warning count, error count, and package-claim verdict counts", scorecard, StringComparison.Ordinal);
-        Assert.Contains("boundary/core/full-common/full-operator route-delegate, operator response JSON contract, and non-operator endpoint audit status/failure counts", scorecard, StringComparison.Ordinal);
+        Assert.Contains("boundary/core/full-common/full-operator route-delegate, operator response JSON contract, non-operator endpoint, and framework endpoint boundary audit status/failure counts", scorecard, StringComparison.Ordinal);
         Assert.Contains("SRE posture counts from `SrePostureEvidence`", scorecard, StringComparison.Ordinal);
         Assert.Contains("stable-baseline manifest rows/measurements", scorecard, StringComparison.Ordinal);
         Assert.Contains("pending-baseline blocker evidence rows", scorecard, StringComparison.Ordinal);
@@ -513,7 +513,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains($"generated artifact is now schema `{expectedSchemaVersion}`", projectMemory, StringComparison.Ordinal);
         Assert.Contains($"currently requires scorecard schema `{expectedSchemaVersion}`", projectMemory, StringComparison.Ordinal);
         Assert.Contains("deployment-mode claims-report gate/target/warning/error/package-claim verdict counts", projectMemory, StringComparison.Ordinal);
-        Assert.Contains("boundary/core/full-common/full-operator-route-delegate/operator-response-JSON/non-operator-endpoint audit counts", projectMemory, StringComparison.Ordinal);
+        Assert.Contains("boundary/core/full-common/full-operator-route-delegate/operator-response-JSON/non-operator-endpoint/framework-endpoint-boundary audit counts", projectMemory, StringComparison.Ordinal);
         Assert.Contains("adoption-smoke execution-report counts/path", projectMemory, StringComparison.Ordinal);
         Assert.Contains("AdoptionSmokeEvidence.ExecutionReport", projectMemory, StringComparison.Ordinal);
         Assert.Contains("validates provider-integration evidence from `scripts/provider-integration-support.json`", projectMemory, StringComparison.Ordinal);

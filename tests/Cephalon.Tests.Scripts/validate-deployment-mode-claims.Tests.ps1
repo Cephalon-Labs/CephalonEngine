@@ -127,6 +127,7 @@ BeforeAll {
             [bool]$UseFullOperatorMinimalApiMapPost = $false,
             [bool]$UseMapMethods = $true,
             [bool]$UseNonOperatorMinimalApiMapGet = $false,
+            [bool]$MissingFrameworkEndpointBoundary = $false,
             [string[]]$MissingResponseJsonContracts = @(),
             [bool]$RegisterHttpJsonResolver = $true,
             [bool]$RegisterMvcJsonResolver = $true
@@ -184,6 +185,12 @@ BeforeAll {
         }
         else {
             ''
+        }
+        $frameworkEndpointBoundaryScalarBffLine = if ($MissingFrameworkEndpointBoundary) {
+            ''
+        }
+        else {
+            '        app.MapScalarApiReference(scalarRoutePrefix, default!);'
         }
 
         @(
@@ -280,7 +287,7 @@ BeforeAll {
             '        MapGetResultRequestDelegate(app, openApiToggleScriptRoute, static context => Results.Ok());',
             '        MapGetResultRequestDelegate(app, scalarFaviconRoute, static context => Results.Ok());',
             '        app.UseWhen(default!, default!);',
-            '        app.MapScalarApiReference(scalarRoutePrefix, default!);',
+            $frameworkEndpointBoundaryScalarBffLine,
             '    }',
             '    private static Task<(TValue? Value, IResult? Error)> ReadOptionalJsonBodyAsync<TValue>(HttpContext context, object jsonTypeInfo) => throw new System.NotImplementedException();',
             '}'
@@ -1509,6 +1516,14 @@ Describe "Get-DeploymentModeHazardInventory" {
         $inventory.NonOperatorEndpointAudits[0].FrameworkEndpointCount | Should -Be 6
         $inventory.NonOperatorEndpointAudits[0].UseWhenBranchCount | Should -Be 3
         @($inventory.NonOperatorEndpointAudits[0].FrameworkEndpointMarkers).Count | Should -Be 6
+        $inventory.FrameworkEndpointBoundaryAuditStatus | Should -Be "matched"
+        $inventory.FrameworkEndpointBoundaryAuditCount | Should -Be 1
+        $inventory.FrameworkEndpointBoundaryAuditFailureCount | Should -Be 0
+        $inventory.FrameworkEndpointBoundaryAudits[0].HealthEndpointCount | Should -Be 3
+        $inventory.FrameworkEndpointBoundaryAudits[0].OpenApiEndpointCount | Should -Be 1
+        $inventory.FrameworkEndpointBoundaryAudits[0].ScalarEndpointCount | Should -Be 2
+        $inventory.FrameworkEndpointBoundaryAudits[0].FrameworkEndpointCount | Should -Be 6
+        @($inventory.FrameworkEndpointBoundaryAudits[0].FrameworkEndpointMarkers).Count | Should -Be 6
     }
 
     It "marks dynamic Minimal API boundary hazards as failed when either required annotation is missing" {
@@ -1773,6 +1788,7 @@ Describe "Get-DeploymentModeHazardInventory" {
         $inventory.FullOperatorRouteDelegateAuditStatus | Should -Be "not-applicable"
         $inventory.OperatorResponseJsonContractAuditStatus | Should -Be "not-applicable"
         $inventory.NonOperatorEndpointAuditStatus | Should -Be "not-applicable"
+        $inventory.FrameworkEndpointBoundaryAuditStatus | Should -Be "not-applicable"
     }
 }
 
@@ -2128,6 +2144,63 @@ Describe "Invoke-DeploymentModeClaimValidation (integration)" {
         $inventory.NonOperatorEndpointAuditStatus | Should -Be "failed"
         $inventory.NonOperatorEndpointAuditFailureCount | Should -Be 1
         $inventory.NonOperatorEndpointAuditFailures[0].Failures | Should -Contain "direct-app-mapget-still-present:1"
+    }
+
+    It "throws after writing reports when the framework endpoint boundary audit fails" {
+        $repo = New-TempRepoRoot -Projects @()
+        Set-TempAspNetCoreOperatorSource -RepoRoot $repo.Root -MissingFrameworkEndpointBoundary:$true | Out-Null
+
+        $manifestPath = Join-Path $repo.Root "deployment-mode-support.json"
+        @{
+            deploymentModes = @{
+                trim       = @{ status = "not-claimed" }
+                nativeAot  = @{ status = "not-claimed" }
+                singleFile = @{ status = "not-claimed" }
+            }
+            deploymentModeEligibility = @{
+                packages = @(
+                    @{
+                        packageName = "Cephalon.AspNetCore"
+                        nugetId = "Cephalon.AspNetCore"
+                        claimAuditTier = "high"
+                        supportedModes = @()
+                        requiredProjectProperties = @()
+                        knownHazards = @(
+                            @{
+                                kind = "dynamic-minimal-api-operator-route-binding"
+                                site = "src/Cephalon.AspNetCore/Hosting/EngineWebApplicationExtensions.cs:7"
+                                pattern = "MapCephalon dynamic route binding"
+                                remediation = "framework-owned host/documentation endpoint boundaries remain counted explicitly"
+                            }
+                        )
+                    }
+                )
+            }
+        } | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $manifestPath -Encoding UTF8
+
+        $outDir = Join-Path $repo.Root "out"
+        {
+            Invoke-DeploymentModeClaimValidation `
+                -DeploymentMode "nativeAot" `
+                -ManifestPath $manifestPath `
+                -OutputPath $outDir `
+                -RepoRoot $repo.Root `
+                -SkipPublish
+        } | Should -Throw "*framework-endpoint-boundary-audit-failed*"
+
+        $hazardInventoryPath = Join-Path $outDir "hazard-inventory.json"
+        Test-Path -LiteralPath $hazardInventoryPath | Should -BeTrue
+        $inventory = Get-Content -LiteralPath $hazardInventoryPath -Raw | ConvertFrom-Json
+        $inventory.BoundaryAnnotationAuditStatus | Should -Be "matched"
+        $inventory.CoreRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.FullCommonRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.FullOperatorRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.OperatorResponseJsonContractAuditStatus | Should -Be "matched"
+        $inventory.NonOperatorEndpointAuditStatus | Should -Be "matched"
+        $inventory.FrameworkEndpointBoundaryAuditStatus | Should -Be "failed"
+        $inventory.FrameworkEndpointBoundaryAuditFailureCount | Should -Be 1
+        $inventory.FrameworkEndpointBoundaryAuditFailures[0].Failures | Should -Contain "framework-scalar-endpoint-count-drift:1"
+        $inventory.FrameworkEndpointBoundaryAuditFailures[0].Failures | Should -Contain "framework-endpoint-marker-missing:scalar-bff-scoped"
     }
 
     It "throws when the aggregate verdict is claim-overstated" {
