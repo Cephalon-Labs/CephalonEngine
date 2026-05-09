@@ -1,7 +1,7 @@
 {
-  "$schemaVersion": "1.7.0",
+  "$schemaVersion": "1.8.0",
   "status": "partial-stable-baseline-published",
-  "summary": "Stable baselines are published for the benchmark-backed guardrail-mapped hot-path subset plus the ASP.NET Core core-operator-surface cold-start SLI, the Worker cold-start SLI, the deployment-mode claim-truth SLI backed by the release-validation claims report, and the dotnet restore locked-mode, reference-docs, and full validate-release wall-time SLIs backed by release-validation timing evidence. CI flake-rate remains pending because it needs live GitHub Actions run/rerun history, but the row now points at the release-workflow collector and its machine-readable report.",
+  "summary": "Stable baselines are published for the benchmark-backed guardrail-mapped hot-path subset plus the ASP.NET Core core-operator-surface cold-start SLI, the Worker cold-start SLI, the deployment-mode claim-truth SLI backed by the release-validation claims report, and the dotnet restore locked-mode, reference-docs, and full validate-release wall-time SLIs backed by release-validation timing evidence. CI flake-rate remains pending because it needs live GitHub Actions run/rerun history, but the row now points at the release-workflow collector and its machine-readable report with Actions/workflow readiness evidence.",
   "capturedAtUtc": "2026-05-08T17:40:57.2595201Z",
   "capturedFromCommit": "69746a849f3de0fa0b66701d77cfabb798be17cb",
   "runCommand": "pwsh ./scripts/validate-release.ps1",
@@ -37,8 +37,8 @@
       "sliId": "engine.tests.flake-rate.7d",
       "status": "pending-stable-baseline",
       "blockerClass": "ci-metadata-unavailable",
-      "blockerSummary": "A live 7-day CI run/rerun history is required before flake-rate can be baselined; the collector currently reports no completed matching Actions runs.",
-      "nextEvidenceNeeded": "Let the release-validation workflow publish artifacts/sre-ci-flake-rate/ci-flake-rate.json until it reports promotionAllowed=true from completed GitHub Actions metadata.",
+      "blockerSummary": "A live 7-day CI run/rerun history is required before flake-rate can be baselined; the collector currently reports Actions enabled and target workflows active, but no completed matching Actions runs.",
+      "nextEvidenceNeeded": "Let the active release-validation, provider live, or publish-release workflows publish artifacts/sre-ci-flake-rate/ci-flake-rate.json until it reports promotionAllowed=true from completed GitHub Actions metadata.",
       "evidence": [
         {
           "kind": "ci-flake-rate-report",
@@ -50,6 +50,15 @@
           "requiredWindowDays": 7,
           "minimumCompletedRunCount": 5,
           "availabilityStatus": "unavailable-no-actions-history",
+          "actionsReadinessStatus": "actions-enabled",
+          "actionsEnabled": true,
+          "allowedActions": "all",
+          "workflowReadinessStatus": "active-workflows",
+          "matchingWorkflowCount": 3,
+          "activeWorkflowCount": 3,
+          "workflowDispatchReadinessStatus": "workflow-dispatch-configured",
+          "dispatchConfiguredWorkflowCount": 3,
+          "readinessBlockerClass": "no-completed-actions-history",
           "totalRunCount": 0,
           "targetFlakeRatePercent": 0.5,
           "promotionAllowed": false

@@ -210,6 +210,33 @@ Validation:
 - `dotnet test tests\Cephalon.Tests.Tooling\Cephalon.Tests.Tooling.csproj -c Release --no-restore --filter "FullyQualifiedName~OutOfTreePackageAdoptionAssetsTests|FullyQualifiedName~CompletionScorecardDocsStayAlignedWithDoctorSummary"`
 - `pwsh ./scripts/validate-out-of-tree-package-adoption.ps1 -ReportPath artifacts/adoption-smoke-smoke/out-of-tree-package-adoption.json`
 
+### ENG-552 SRE flake-rate Actions readiness evidence
+
+Status: done
+Estimate: 0.5
+Iteration: Sprint 125
+Area: release-readiness / SRE / CI stability evidence
+Quality dimensions: Reliability, Auditability, Maintainability, Usability
+
+Why:
+
+- `engine.tests.flake-rate.7d` still cannot be promoted while the canonical repository has no completed matching GitHub Actions run history
+- the live repository now has Actions enabled and the target release/provider/publish workflows active and dispatchable, so the blocker should say "no completed run history" instead of leaving release managers to infer whether Actions itself is misconfigured
+- the scorecard needs to preserve that readiness evidence without turning a pending flake-rate baseline into a release failure
+
+Delivered:
+
+- extended `scripts/measure-ci-flake-rate.ps1` report schema to `1.1.0` with Actions permission readiness, target workflow metadata readiness, `workflow_dispatch` readiness, matching/active/dispatchable workflow counts, missing workflow lists, and `ReadinessBlockerClass`
+- kept fixture-mode tests deterministic by letting script tests provide Actions and workflow definition JSON alongside workflow-run fixtures
+- updated `scripts/sre-posture-support.json` to schema `1.10.0` and `scripts/sre-stable-baselines.json` to schema `1.8.0` so pending flake-rate evidence records `actions-enabled`, `active-workflows`, `workflow-dispatch-configured`, 3 matching / 3 active / 3 dispatchable workflows, and `no-completed-actions-history`
+- carried the nested readiness fields through `SrePostureEvidence.PendingBaselineRows[].Evidence` without bumping the top-level scorecard schema
+- refreshed SRE posture, benchmarking, release checklist, scorecard, roadmap, architecture follow-up, and project-memory docs
+
+Validation:
+
+- live `pwsh ./scripts/measure-ci-flake-rate.ps1 -OutputPath artifacts/sre-ci-flake-rate-actions-readiness -AllowUnavailable` reported `pending-unavailable-no-actions-history`, `actions-enabled`, `active-workflows`, `workflow-dispatch-configured`, 3 matching / 3 active / 3 dispatchable workflows, `ReadinessBlockerClass=no-completed-actions-history`, and `PromotionAllowed=false`
+- `Invoke-Pester -Path tests\Cephalon.Tests.Scripts\measure-ci-flake-rate.Tests.ps1 -Output Detailed`
+
 ### ENG-536 Harden SRE flake-rate report output path
 
 Status: done
@@ -16426,6 +16453,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-549 Read non-operator endpoint proof into deployment-mode scorecard: Cephalon-owned non-operator host/documentation GET endpoints now map through app-level request delegates instead of direct `app.MapGet(...)`, `scripts/validate-deployment-mode-claims.ps1` emits `NonOperatorEndpointAuditStatus`, and scorecard schema `1.19.0`, release validation, and `cephalon doctor --scorecard` require the non-operator endpoint audit to be `matched/0` while framework-owned health/OpenAPI/Scalar endpoint extensions keep full-adapter support unclaimed. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability + Performance (shipped)
 - ENG-550 Read framework endpoint boundary proof into deployment-mode scorecard: framework-owned ASP.NET Core health/OpenAPI/Scalar endpoint extensions now have `FrameworkEndpointBoundaryAuditStatus` generated readback with fail-closed count/marker drift detection, scorecard schema `1.20.0`, release validation, and `cephalon doctor --scorecard` require the boundary audit to be `matched/0`, and the full-adapter support row remains unclaimed until a later deliberate support-promotion slice widens project properties, workflow, docs, and package guidance. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability + Performance (shipped)
 - ENG-551 Align deployment-mode manifest with framework endpoint boundary readback: the `Cephalon.AspNetCore` dynamic Minimal API hazard row in `scripts/deployment-mode-support.json` now records `ENG-550`, `FrameworkEndpointBoundaryAuditStatus`, and the counted-but-unclaimed framework health/OpenAPI/Scalar boundary posture in its pattern/remediation/evidence/extendedBy truth, with manifest Pester coverage preventing the source manifest from drifting behind scorecard readback again. Quality dimensions: Auditability + Compatibility + Maintainability + Reliability (shipped)
+- ENG-552 Add SRE flake-rate Actions readiness evidence: `scripts/measure-ci-flake-rate.ps1` schema `1.1.0` now records Actions permission readiness, target workflow active-state readiness, `workflow_dispatch` readiness, and `ReadinessBlockerClass`; `scripts/sre-posture-support.json` schema `1.10.0` plus `scripts/sre-stable-baselines.json` schema `1.8.0` preserve the live readback of `actions-enabled`, `active-workflows`, `workflow-dispatch-configured`, 3 matching / 3 active / 3 dispatchable workflows, and `no-completed-actions-history` while keeping flake-rate pending until completed Actions history exists. Quality dimensions: Reliability + Auditability + Maintainability + Usability (shipped)
 - ENG-524 Harden deployment-mode audit-only probes: direct trim and Native AOT runs now keep the single-file release gate out of their verdict by returning `PublishProbeGate=not-applicable` when only audit-only modes are evaluated; compiler-only analyzer/source-generator `ProjectReference` entries strip app publish-mode globals through `CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove`; and `Cephalon.Analyzers`, `Cephalon.Behaviors.SourceGen`, and `Cephalon.Engine.SourceGen` localize publish/RID globals with `TreatAsLocalProperty` so publish probes reach real runtime blocker evidence instead of failing on compiler-only `netstandard2.0` drift. Release closeout also stabilized the readiness warmup hosting test, refreshed the REST projection/governance guardrail to a measured 1 s ceiling while keeping the existing 16 MB allocation ceiling, and moved the canonical full `validate-release` wall-time target to 30 minutes after the current full lane measured about 1,669.848 seconds. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability + Performance (shipped)
 - ENG-535 Close generated REST behavior source-generator adoption proof: `Cephalon.Behaviors.SourceGen` now packs its compiler assembly under `analyzers/dotnet/cs`, scaffolded REST behavior modules and template-pack REST starters reference it as `PrivateAssets=all`, generated module projects keep `Cephalon.Engine.SourceGen` in every blueprint, and the out-of-tree adoption temporary feed publishes the full generated REST behavior package closure (`Cephalon.Behaviors.SourceGen`, `Cephalon.Diagnostics`, and `Cephalon.Resilience`) so restore/build/run replay can produce the REST profile hints required by `MapProfile<TBehavior>()`. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability (shipped)
 - ENG-487 Add opt-in CDC integration baseline: `tests/Cephalon.Tests.CdcIntegration` now carries the first dedicated live CDC integration lane, proving MongoDB change streams against a disposable `EphemeralMongo7` replica set with real outbox staging, provider-native runtime binding, runtime-state reporting, execution-runtime aggregation, and checkpoint persistence; `data.slnf` now points at the split data-relevant test projects instead of the retired monolithic test project, and SQL Server/Postgres live CDC coverage stays explicitly later until an external-service/Testcontainers gate exists. Quality dimensions: Reliability + Compatibility + Auditability + Maintainability (shipped)

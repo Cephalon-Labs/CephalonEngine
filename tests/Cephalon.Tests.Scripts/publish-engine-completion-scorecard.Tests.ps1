@@ -509,12 +509,12 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_PROVIDER_SMTP_API_URI"
         $json.ProviderIntegrationEvidence.EnvironmentVariables | Should -Contain "CEPHALON_CDC_POSTGRES_CONNECTION_STRING"
 
-        $json.SrePostureEvidence.ManifestSchemaVersion | Should -Be "1.9.0"
+        $json.SrePostureEvidence.ManifestSchemaVersion | Should -Be "1.10.0"
         $json.SrePostureEvidence.Status | Should -Be "partial-stable-baseline-published"
         $json.SrePostureEvidence.ReleaseValidationSummaryMode | Should -Be "release-validation-console-and-scorecard-artifact"
         $json.SrePostureEvidence.StableBaselinesPublished | Should -BeTrue
         $json.SrePostureEvidence.StableBaselineManifest | Should -Be "scripts/sre-stable-baselines.json"
-        $json.SrePostureEvidence.StableBaselineManifestSchemaVersion | Should -Be "1.7.0"
+        $json.SrePostureEvidence.StableBaselineManifestSchemaVersion | Should -Be "1.8.0"
         $json.SrePostureEvidence.StableBaselineManifestStatus | Should -Be "partial-stable-baseline-published"
         $json.SrePostureEvidence.GuardrailCatalog | Should -Be "benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json"
         $json.SrePostureEvidence.GuardrailCatalogEntryCount | Should -Be 31
@@ -552,6 +552,13 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $flakeRatePendingBaseline.Evidence.Kind | Should -Be "ci-flake-rate-report"
         $flakeRatePendingBaseline.Evidence.EvidenceScript | Should -Be "scripts/measure-ci-flake-rate.ps1"
         $flakeRatePendingBaseline.Evidence.ReportPath | Should -Be "artifacts/sre-ci-flake-rate/ci-flake-rate.json"
+        $flakeRatePendingBaseline.Evidence.ActionsReadinessStatus | Should -Be "actions-enabled"
+        $flakeRatePendingBaseline.Evidence.WorkflowReadinessStatus | Should -Be "active-workflows"
+        $flakeRatePendingBaseline.Evidence.WorkflowDispatchReadinessStatus | Should -Be "workflow-dispatch-configured"
+        $flakeRatePendingBaseline.Evidence.ReadinessBlockerClass | Should -Be "no-completed-actions-history"
+        $flakeRatePendingBaseline.Evidence.MatchingWorkflowCount | Should -Be 3
+        $flakeRatePendingBaseline.Evidence.ActiveWorkflowCount | Should -Be 3
+        $flakeRatePendingBaseline.Evidence.DispatchConfiguredWorkflowCount | Should -Be 3
         $flakeRatePendingBaseline.Evidence.PromotionAllowed | Should -BeFalse
         $json.SrePostureEvidence.SourceDocuments | Should -Contain "docs/sre-posture.md"
         $json.SrePostureEvidence.SourceDocuments | Should -Contain "docs/benchmarking.md"

@@ -5,6 +5,8 @@ param(
     [int]$MinimumCompletedRunCount = 5,
     [string[]]$WorkflowName = @("Release Validation", "Provider Live Testcontainers", "Publish Release"),
     [string]$WorkflowRunsJsonPath = "",
+    [string]$ActionsPermissionsJsonPath = "",
+    [string]$WorkflowsJsonPath = "",
     [string]$AttemptJobsDirectory = "",
     [string]$OutputPath = "artifacts/sre-ci-flake-rate",
     [string]$TestFailurePattern = "(?i)(Pester|dotnet test|testcontainers|test results|Run tests|Run release validation)",
@@ -131,6 +133,74 @@ function Get-WorkflowRunsPayload {
     return Invoke-GitHubApiJson -Endpoint "repos/$Repository/actions/runs?per_page=100&created=$createdFilter"
 }
 
+function Get-ActionsPermissionsPayload {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Repository,
+        [string]$ActionsPermissionsJsonPath,
+        [string]$WorkflowRunsJsonPath,
+        [Parameter(Mandatory = $true)]
+        [string]$RepoRoot
+    )
+
+    if (-not [string]::IsNullOrWhiteSpace($ActionsPermissionsJsonPath)) {
+        $resolvedPath = Resolve-RepoPath -Path $ActionsPermissionsJsonPath -RepoRoot $RepoRoot
+        if (-not (Test-Path -LiteralPath $resolvedPath -PathType Leaf)) {
+            throw "Actions permissions fixture was not found at '$resolvedPath'."
+        }
+
+        return [pscustomobject]@{
+            Status = "available"
+            Detail = "Actions permissions were read from fixture '$ActionsPermissionsJsonPath'."
+            Value  = Read-JsonFile -Path $resolvedPath
+        }
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($WorkflowRunsJsonPath)) {
+        return [pscustomobject]@{
+            Status = "not-evaluated-fixture-mode"
+            Detail = "Actions permissions were not queried because workflow runs were read from a fixture."
+            Value  = $null
+        }
+    }
+
+    return Invoke-GitHubApiJson -Endpoint "repos/$Repository/actions/permissions"
+}
+
+function Get-WorkflowDefinitionsPayload {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Repository,
+        [string]$WorkflowsJsonPath,
+        [string]$WorkflowRunsJsonPath,
+        [Parameter(Mandatory = $true)]
+        [string]$RepoRoot
+    )
+
+    if (-not [string]::IsNullOrWhiteSpace($WorkflowsJsonPath)) {
+        $resolvedPath = Resolve-RepoPath -Path $WorkflowsJsonPath -RepoRoot $RepoRoot
+        if (-not (Test-Path -LiteralPath $resolvedPath -PathType Leaf)) {
+            throw "Workflow definitions fixture was not found at '$resolvedPath'."
+        }
+
+        return [pscustomobject]@{
+            Status = "available"
+            Detail = "Workflow definitions were read from fixture '$WorkflowsJsonPath'."
+            Value  = Read-JsonFile -Path $resolvedPath
+        }
+    }
+
+    if (-not [string]::IsNullOrWhiteSpace($WorkflowRunsJsonPath)) {
+        return [pscustomobject]@{
+            Status = "not-evaluated-fixture-mode"
+            Detail = "Workflow definitions were not queried because workflow runs were read from a fixture."
+            Value  = $null
+        }
+    }
+
+    return Invoke-GitHubApiJson -Endpoint "repos/$Repository/actions/workflows?per_page=100"
+}
+
 function Get-WorkflowRunAttemptJobsPayload {
     param(
         [Parameter(Mandatory = $true)]
@@ -163,6 +233,60 @@ function Get-WorkflowRunAttemptJobsPayload {
     }
 
     return Invoke-GitHubApiJson -Endpoint "repos/$Repository/actions/runs/$RunId/attempts/$AttemptNumber/jobs?per_page=100"
+}
+
+function Convert-ToNormalizedWorkflowDefinition {
+    param(
+        [Parameter(Mandatory = $true)]
+        [object]$Workflow
+    )
+
+    $dispatchConfigured = $null
+    if ($Workflow.PSObject.Properties.Name -contains "dispatch_configured") {
+        $dispatchConfigured = [bool]$Workflow.dispatch_configured
+    }
+    elseif ($Workflow.PSObject.Properties.Name -contains "DispatchConfigured") {
+        $dispatchConfigured = [bool]$Workflow.DispatchConfigured
+    }
+
+    [pscustomobject]([ordered]@{
+        Id      = [string]$Workflow.id
+        Name    = [string]$Workflow.name
+        Path    = [string]$Workflow.path
+        State   = [string]$Workflow.state
+        HtmlUrl = [string]$Workflow.html_url
+        DispatchConfigured = $dispatchConfigured
+    })
+}
+
+function Test-WorkflowDispatchConfigured {
+    param(
+        [AllowNull()]
+        [object]$Workflow,
+        [Parameter(Mandatory = $true)]
+        [string]$RepoRoot
+    )
+
+    if ($null -eq $Workflow) {
+        return $false
+    }
+
+    $workflowPath = [string]$Workflow.Path
+    if ($Workflow.PSObject.Properties.Name -contains "DispatchConfigured" -and $null -ne $Workflow.DispatchConfigured) {
+        return [bool]$Workflow.DispatchConfigured
+    }
+
+    if ([string]::IsNullOrWhiteSpace($workflowPath)) {
+        return $false
+    }
+
+    $resolvedPath = Resolve-RepoPath -Path $workflowPath -RepoRoot $RepoRoot
+    if (-not (Test-Path -LiteralPath $resolvedPath -PathType Leaf)) {
+        return $false
+    }
+
+    $workflowContent = Get-Content -LiteralPath $resolvedPath -Raw -Encoding UTF8
+    return $workflowContent -match "(?m)^\s*workflow_dispatch\s*:"
 }
 
 function Convert-ToNormalizedWorkflowRun {
@@ -248,6 +372,8 @@ function Invoke-CiFlakeRateMeasurement {
         [int]$MinimumCompletedRunCount = 5,
         [string[]]$WorkflowName = @("Release Validation", "Provider Live Testcontainers", "Publish Release"),
         [string]$WorkflowRunsJsonPath = "",
+        [string]$ActionsPermissionsJsonPath = "",
+        [string]$WorkflowsJsonPath = "",
         [string]$AttemptJobsDirectory = "",
         [string]$OutputPath = "artifacts/sre-ci-flake-rate",
         [string]$TestFailurePattern = "(?i)(Pester|dotnet test|testcontainers|test results|Run tests|Run release validation)",
@@ -271,6 +397,18 @@ function Invoke-CiFlakeRateMeasurement {
         -WorkflowRunsJsonPath $WorkflowRunsJsonPath `
         -RepoRoot $repoRoot
 
+    $actionsPermissionsPayload = Get-ActionsPermissionsPayload `
+        -Repository $Repository `
+        -ActionsPermissionsJsonPath $ActionsPermissionsJsonPath `
+        -WorkflowRunsJsonPath $WorkflowRunsJsonPath `
+        -RepoRoot $repoRoot
+
+    $workflowDefinitionsPayload = Get-WorkflowDefinitionsPayload `
+        -Repository $Repository `
+        -WorkflowsJsonPath $WorkflowsJsonPath `
+        -WorkflowRunsJsonPath $WorkflowRunsJsonPath `
+        -RepoRoot $repoRoot
+
     $availabilityStatus = $workflowRunsPayload.Status
     $availabilityDetail = $workflowRunsPayload.Detail
     $rawRuns = @()
@@ -279,6 +417,90 @@ function Invoke-CiFlakeRateMeasurement {
     }
     elseif (-not $AllowUnavailable) {
         throw "CI flake-rate metadata is unavailable: $availabilityStatus. $availabilityDetail"
+    }
+
+    $actionsEnabled = $null
+    $allowedActions = ""
+    $actionsReadinessStatus = $actionsPermissionsPayload.Status
+    $actionsReadinessDetail = $actionsPermissionsPayload.Detail
+    if ($actionsPermissionsPayload.Status -eq "available") {
+        $actionsEnabled = [bool]$actionsPermissionsPayload.Value.enabled
+        $allowedActions = [string]$actionsPermissionsPayload.Value.allowed_actions
+        if ($actionsEnabled) {
+            $actionsReadinessStatus = "actions-enabled"
+            $actionsReadinessDetail = "GitHub Actions is enabled for the repository."
+        }
+        else {
+            $actionsReadinessStatus = "actions-disabled"
+            $actionsReadinessDetail = "GitHub Actions is disabled for the repository."
+        }
+    }
+
+    $workflowDefinitions = @()
+    $matchingWorkflowDefinitions = @()
+    $missingWorkflowNames = @()
+    $inactiveWorkflowNames = @()
+    $missingWorkflowDispatchNames = @()
+    $workflowReadinessStatus = $workflowDefinitionsPayload.Status
+    $workflowReadinessDetail = $workflowDefinitionsPayload.Detail
+    $workflowDispatchReadinessStatus = $workflowDefinitionsPayload.Status
+    $workflowDispatchReadinessDetail = $workflowDefinitionsPayload.Detail
+    if ($workflowDefinitionsPayload.Status -eq "available") {
+        $workflowDefinitions = @(
+            @($workflowDefinitionsPayload.Value.workflows) |
+                ForEach-Object {
+                    $definition = Convert-ToNormalizedWorkflowDefinition -Workflow $_
+                    if ($null -eq $definition.DispatchConfigured) {
+                        $definition.DispatchConfigured = Test-WorkflowDispatchConfigured -Workflow $definition -RepoRoot $repoRoot
+                    }
+                    $definition
+                } |
+                Sort-Object Name
+        )
+        $matchingWorkflowDefinitions = @(
+            $workflowDefinitions |
+                Where-Object { Test-WorkflowNameIncluded -Name $_.Name -IncludedNames $WorkflowName }
+        )
+        $workflowDefinitionNames = @($workflowDefinitions | ForEach-Object { $_.Name })
+        $missingWorkflowNames = @(
+            $WorkflowName |
+                Where-Object {
+                    $workflowNameToFind = $_
+                    -not @($workflowDefinitionNames | Where-Object { $_.Equals($workflowNameToFind, [System.StringComparison]::OrdinalIgnoreCase) }).Count
+                }
+        )
+        $inactiveWorkflowNames = @(
+            $matchingWorkflowDefinitions |
+                Where-Object { -not [string]::Equals($_.State, "active", [System.StringComparison]::OrdinalIgnoreCase) } |
+                ForEach-Object { $_.Name }
+        )
+        $missingWorkflowDispatchNames = @(
+            $matchingWorkflowDefinitions |
+                Where-Object { -not [bool]$_.DispatchConfigured } |
+                ForEach-Object { $_.Name }
+        )
+
+        if ($missingWorkflowNames.Count -gt 0) {
+            $workflowReadinessStatus = "missing-workflows"
+            $workflowReadinessDetail = "One or more configured workflow names were not found in repository workflow metadata."
+        }
+        elseif ($inactiveWorkflowNames.Count -gt 0) {
+            $workflowReadinessStatus = "inactive-workflows"
+            $workflowReadinessDetail = "One or more configured workflow names are present but not active."
+        }
+        else {
+            $workflowReadinessStatus = "active-workflows"
+            $workflowReadinessDetail = "All configured workflow names are present and active."
+        }
+
+        if ($missingWorkflowDispatchNames.Count -gt 0) {
+            $workflowDispatchReadinessStatus = "workflow-dispatch-missing"
+            $workflowDispatchReadinessDetail = "One or more configured workflow names are missing workflow_dispatch."
+        }
+        else {
+            $workflowDispatchReadinessStatus = "workflow-dispatch-configured"
+            $workflowDispatchReadinessDetail = "All configured workflow names include workflow_dispatch."
+        }
     }
 
     $allRuns = @(
@@ -392,6 +614,28 @@ function Invoke-CiFlakeRateMeasurement {
     }
 
     $promotionAllowed = $availabilityStatus -eq "measured" -and $flakeRatePercent -le $TargetFlakeRatePercent
+    $readinessBlockerClass = if ($actionsReadinessStatus -eq "actions-disabled") {
+        "actions-disabled"
+    }
+    elseif ($workflowReadinessStatus -eq "missing-workflows" -or $workflowReadinessStatus -eq "inactive-workflows") {
+        "workflow-metadata-not-ready"
+    }
+    elseif ($workflowDispatchReadinessStatus -eq "workflow-dispatch-missing") {
+        "workflow-dispatch-not-ready"
+    }
+    elseif ($availabilityStatus -eq "unavailable-no-actions-history") {
+        "no-completed-actions-history"
+    }
+    elseif ($availabilityStatus -eq "insufficient-actions-history") {
+        "insufficient-actions-history"
+    }
+    elseif ($availabilityStatus -eq "measured") {
+        "none"
+    }
+    else {
+        $availabilityStatus
+    }
+
     $status = if ($promotionAllowed) {
         "stable-baseline-candidate"
     }
@@ -406,7 +650,7 @@ function Invoke-CiFlakeRateMeasurement {
     }
 
     $report = [pscustomobject]([ordered]@{
-        '$schemaVersion' = "1.0.0"
+        '$schemaVersion' = "1.1.0"
         Status = $status
         SliId = "engine.tests.flake-rate.7d"
         GeneratedAtUtc = [DateTimeOffset]::UtcNow.ToString("O")
@@ -418,6 +662,21 @@ function Invoke-CiFlakeRateMeasurement {
         MinimumCompletedRunCount = $MinimumCompletedRunCount
         AvailabilityStatus = $availabilityStatus
         AvailabilityDetail = $availabilityDetail
+        ActionsReadinessStatus = $actionsReadinessStatus
+        ActionsReadinessDetail = $actionsReadinessDetail
+        ActionsEnabled = $actionsEnabled
+        AllowedActions = $allowedActions
+        WorkflowReadinessStatus = $workflowReadinessStatus
+        WorkflowReadinessDetail = $workflowReadinessDetail
+        MatchingWorkflowCount = $matchingWorkflowDefinitions.Count
+        ActiveWorkflowCount = @($matchingWorkflowDefinitions | Where-Object { [string]::Equals($_.State, "active", [System.StringComparison]::OrdinalIgnoreCase) }).Count
+        WorkflowDispatchReadinessStatus = $workflowDispatchReadinessStatus
+        WorkflowDispatchReadinessDetail = $workflowDispatchReadinessDetail
+        DispatchConfiguredWorkflowCount = @($matchingWorkflowDefinitions | Where-Object { [bool]$_.DispatchConfigured }).Count
+        MissingWorkflowNames = $missingWorkflowNames
+        InactiveWorkflowNames = $inactiveWorkflowNames
+        MissingWorkflowDispatchNames = $missingWorkflowDispatchNames
+        ReadinessBlockerClass = $readinessBlockerClass
         TotalRunCount = $allRuns.Count
         CompletedRunCount = $completedRuns.Count
         SuccessfulRunCount = $successfulRuns.Count
@@ -428,6 +687,7 @@ function Invoke-CiFlakeRateMeasurement {
         FlakeRatePercent = $flakeRatePercent
         PromotionAllowed = $promotionAllowed
         FlakeEvents = $flakeEvents
+        WorkflowDefinitions = $matchingWorkflowDefinitions
         ObservedRuns = $completedRuns
     })
 
@@ -462,6 +722,8 @@ if (-not $env:CEPHALON_CI_FLAKE_RATE_NO_RUN) {
         -MinimumCompletedRunCount $MinimumCompletedRunCount `
         -WorkflowName $WorkflowName `
         -WorkflowRunsJsonPath $WorkflowRunsJsonPath `
+        -ActionsPermissionsJsonPath $ActionsPermissionsJsonPath `
+        -WorkflowsJsonPath $WorkflowsJsonPath `
         -AttemptJobsDirectory $AttemptJobsDirectory `
         -OutputPath $OutputPath `
         -TestFailurePattern $TestFailurePattern `

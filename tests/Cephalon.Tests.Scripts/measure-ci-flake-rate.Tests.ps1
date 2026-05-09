@@ -34,6 +34,35 @@ function script:New-WorkflowRunFixture {
     } | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $Path -Encoding UTF8
 }
 
+function script:New-ActionsPermissionsFixture {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path,
+        [bool]$Enabled = $true,
+        [string]$AllowedActions = "all"
+    )
+
+    @{
+        enabled = $Enabled
+        allowed_actions = $AllowedActions
+    } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $Path -Encoding UTF8
+}
+
+function script:New-WorkflowDefinitionsFixture {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path,
+        [Parameter(Mandatory = $true)]
+        [AllowEmptyCollection()]
+        [array]$Workflows
+    )
+
+    @{
+        total_count = $Workflows.Count
+        workflows = $Workflows
+    } | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $Path -Encoding UTF8
+}
+
 function script:New-AttemptJobsFixture {
     param(
         [Parameter(Mandatory = $true)]
@@ -70,6 +99,8 @@ Describe "measure-ci-flake-rate.ps1" {
         $script:tempRoot = Join-Path ([System.IO.Path]::GetTempPath()) "cephalon-ci-flake-rate-$([System.Guid]::NewGuid().ToString('N'))"
         New-Item -ItemType Directory -Path $script:tempRoot -Force | Out-Null
         $script:runsPath = Join-Path $script:tempRoot "workflow-runs.json"
+        $script:actionsPermissionsPath = Join-Path $script:tempRoot "actions-permissions.json"
+        $script:workflowsPath = Join-Path $script:tempRoot "workflows.json"
         $script:attemptsPath = Join-Path $script:tempRoot "attempts"
         $script:outputPath = Join-Path $script:tempRoot "out"
         New-Item -ItemType Directory -Path $script:attemptsPath -Force | Out-Null
@@ -93,7 +124,95 @@ Describe "measure-ci-flake-rate.ps1" {
         Test-Path -LiteralPath $result.JsonPath -PathType Leaf | Should -BeTrue
         $result.Report.Status | Should -Be "pending-unavailable-no-actions-history"
         $result.Report.AvailabilityStatus | Should -Be "unavailable-no-actions-history"
+        $result.Report.ActionsReadinessStatus | Should -Be "not-evaluated-fixture-mode"
+        $result.Report.WorkflowReadinessStatus | Should -Be "not-evaluated-fixture-mode"
         $result.Report.CompletedRunCount | Should -Be 0
+        $result.Report.PromotionAllowed | Should -BeFalse
+    }
+
+    It "records Actions and workflow readiness separately from missing run history" {
+        New-WorkflowRunFixture -Path $script:runsPath -Runs @()
+        New-ActionsPermissionsFixture -Path $script:actionsPermissionsPath
+        New-WorkflowDefinitionsFixture -Path $script:workflowsPath -Workflows @(
+            @{
+                id = 1
+                name = "Release Validation"
+                path = ".github/workflows/release-validation.yml"
+                state = "active"
+                html_url = "https://example.test/release-validation"
+                dispatch_configured = $true
+            },
+            @{
+                id = 2
+                name = "Provider Live Testcontainers"
+                path = ".github/workflows/provider-live-testcontainers.yml"
+                state = "active"
+                html_url = "https://example.test/provider-live"
+                dispatch_configured = $true
+            },
+            @{
+                id = 3
+                name = "Publish Release"
+                path = ".github/workflows/publish-release.yml"
+                state = "active"
+                html_url = "https://example.test/publish-release"
+                dispatch_configured = $true
+            }
+        )
+
+        $result = Invoke-CiFlakeRateMeasurement `
+            -WorkflowRunsJsonPath $script:runsPath `
+            -ActionsPermissionsJsonPath $script:actionsPermissionsPath `
+            -WorkflowsJsonPath $script:workflowsPath `
+            -AttemptJobsDirectory $script:attemptsPath `
+            -OutputPath $script:outputPath `
+            -AllowUnavailable
+
+        $result.Report.Status | Should -Be "pending-unavailable-no-actions-history"
+        $result.Report.ActionsReadinessStatus | Should -Be "actions-enabled"
+        $result.Report.ActionsEnabled | Should -BeTrue
+        $result.Report.AllowedActions | Should -Be "all"
+        $result.Report.WorkflowReadinessStatus | Should -Be "active-workflows"
+        $result.Report.WorkflowDispatchReadinessStatus | Should -Be "workflow-dispatch-configured"
+        $result.Report.MatchingWorkflowCount | Should -Be 3
+        $result.Report.ActiveWorkflowCount | Should -Be 3
+        $result.Report.DispatchConfiguredWorkflowCount | Should -Be 3
+        @($result.Report.MissingWorkflowNames).Count | Should -Be 0
+        @($result.Report.InactiveWorkflowNames).Count | Should -Be 0
+        @($result.Report.MissingWorkflowDispatchNames).Count | Should -Be 0
+        $result.Report.ReadinessBlockerClass | Should -Be "no-completed-actions-history"
+        @($result.Report.WorkflowDefinitions).Count | Should -Be 3
+        $result.Report.PromotionAllowed | Should -BeFalse
+    }
+
+    It "reports workflow dispatch as a readiness blocker when target workflows are not dispatchable" {
+        New-WorkflowRunFixture -Path $script:runsPath -Runs @()
+        New-ActionsPermissionsFixture -Path $script:actionsPermissionsPath
+        New-WorkflowDefinitionsFixture -Path $script:workflowsPath -Workflows @(
+            @{
+                id = 1
+                name = "Release Validation"
+                path = ".github/workflows/release-validation.yml"
+                state = "active"
+                html_url = "https://example.test/release-validation"
+                dispatch_configured = $false
+            }
+        )
+
+        $result = Invoke-CiFlakeRateMeasurement `
+            -WorkflowRunsJsonPath $script:runsPath `
+            -ActionsPermissionsJsonPath $script:actionsPermissionsPath `
+            -WorkflowsJsonPath $script:workflowsPath `
+            -WorkflowName @("Release Validation") `
+            -AttemptJobsDirectory $script:attemptsPath `
+            -OutputPath $script:outputPath `
+            -AllowUnavailable
+
+        $result.Report.WorkflowReadinessStatus | Should -Be "active-workflows"
+        $result.Report.WorkflowDispatchReadinessStatus | Should -Be "workflow-dispatch-missing"
+        $result.Report.DispatchConfiguredWorkflowCount | Should -Be 0
+        $result.Report.MissingWorkflowDispatchNames | Should -Contain "Release Validation"
+        $result.Report.ReadinessBlockerClass | Should -Be "workflow-dispatch-not-ready"
         $result.Report.PromotionAllowed | Should -BeFalse
     }
 

@@ -2753,6 +2753,15 @@ function Convert-SrePostureEvidence {
                                     @{ Source = "requiredWindowDays"; Target = "RequiredWindowDays" },
                                     @{ Source = "minimumCompletedRunCount"; Target = "MinimumCompletedRunCount" },
                                     @{ Source = "availabilityStatus"; Target = "AvailabilityStatus" },
+                                    @{ Source = "actionsReadinessStatus"; Target = "ActionsReadinessStatus" },
+                                    @{ Source = "actionsEnabled"; Target = "ActionsEnabled" },
+                                    @{ Source = "allowedActions"; Target = "AllowedActions" },
+                                    @{ Source = "workflowReadinessStatus"; Target = "WorkflowReadinessStatus" },
+                                    @{ Source = "matchingWorkflowCount"; Target = "MatchingWorkflowCount" },
+                                    @{ Source = "activeWorkflowCount"; Target = "ActiveWorkflowCount" },
+                                    @{ Source = "workflowDispatchReadinessStatus"; Target = "WorkflowDispatchReadinessStatus" },
+                                    @{ Source = "dispatchConfiguredWorkflowCount"; Target = "DispatchConfiguredWorkflowCount" },
+                                    @{ Source = "readinessBlockerClass"; Target = "ReadinessBlockerClass" },
                                     @{ Source = "totalRunCount"; Target = "TotalRunCount" },
                                     @{ Source = "targetFlakeRatePercent"; Target = "TargetFlakeRatePercent" }
                                 )) {
@@ -3565,7 +3574,18 @@ function Write-EngineCompletionScorecardReport {
                 "``$($_.Kind)`` from ``$($_.ReportFileName)`` / ``$($_.Benchmark)``"
             }
             elseif ($_.PSObject.Properties.Name -contains "AvailabilityStatus") {
-                "``$($_.Kind)`` $($_.AvailabilityStatus)"
+                $readiness = @($_.AvailabilityStatus)
+                if ($_.PSObject.Properties.Name -contains "ActionsReadinessStatus") {
+                    $readiness += $_.ActionsReadinessStatus
+                }
+                if ($_.PSObject.Properties.Name -contains "WorkflowReadinessStatus") {
+                    $readiness += $_.WorkflowReadinessStatus
+                }
+                if ($_.PSObject.Properties.Name -contains "WorkflowDispatchReadinessStatus") {
+                    $readiness += $_.WorkflowDispatchReadinessStatus
+                }
+
+                "``$($_.Kind)`` $([string]::Join('; ', $readiness))"
             }
             else {
                 "``$($_.Kind)``"
