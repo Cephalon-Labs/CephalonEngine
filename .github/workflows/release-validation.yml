@@ -108,6 +108,14 @@ jobs:
           path: artifacts/deployment-mode-claims-release
           if-no-files-found: warn
 
+      - name: Upload NuGet vulnerability audit
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-vulnerability-audit-${{ matrix.benchmark_artifact_suffix }}
+          path: artifacts/nuget-vulnerability-audit-release
+          if-no-files-found: warn
+
       - name: Upload Pester test results
         if: always()
         uses: actions/upload-artifact@v4

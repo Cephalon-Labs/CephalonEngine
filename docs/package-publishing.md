@@ -150,6 +150,7 @@ The metadata-validation JSON uses schema `1.0.0` and reports `PackageCount`, `Fa
 - solution build
 - test execution
 - framework-readiness audit output
+- NuGet vulnerability audit output through `scripts/validate-nuget-vulnerability-audit.ps1`
 - operational convention validation
 - benchmark smoke coverage and guardrails
 - reference-doc publishing
@@ -168,11 +169,11 @@ The signed release pipeline runs on a `v*.*.*` tag push (and supports `workflow_
 
 1. checkout, .NET SDK setup, Pester install
 2. on a real tag push only, fail-closed external-policy preflight through `scripts/validate-supply-chain-external-policy-preflight.ps1 -RequireAll`
-3. full release validation through `scripts/validate-release.ps1` (locked-mode restore, build, tests, readiness, deployment-mode audit, benchmarks, reference docs, package artefacts)
+3. full release validation through `scripts/validate-release.ps1` (locked-mode restore, vulnerability audit, build, tests, readiness, deployment-mode audit, benchmarks, reference docs, package artefacts)
 4. CycloneDX SBOM generation per `Cephalon.*` project, written to `artifacts/sboms-release/<package-id>/<package-id>.cdx.json`
 5. Sigstore Cosign keyless signing of every `.nupkg`, with the resulting `.sig` and `.pem` written under `artifacts/signatures-release/`; the OIDC identity is the GitHub Actions workflow run, the transparency log is Rekor
 6. SLSA v1.1 build provenance attestation through `actions/attest-build-provenance` against every `.nupkg` subject path
-7. release manifest (`artifacts/release-bundle/release-manifest.json`) with SHA-256 + size for every package, SBOM, signature, and external-policy preflight artefact
+7. release manifest (`artifacts/release-bundle/release-manifest.json`) with SHA-256 + size for every package, SBOM, signature, NuGet vulnerability audit, and external-policy preflight artefact
 8. NuGet trusted-publishing login (federated OIDC token exchange) followed by `dotnet nuget push` for `.nupkg` and `.snupkg` files; this stage runs only on a real tag push, never on `workflow_dispatch` dry-runs
 
 Per-package nuget.org configuration must be in place before the first push:
@@ -186,7 +187,7 @@ The pipeline is intentionally additive over `release-validation.yml`. The per-PR
 
 The preflight writes `artifacts/supply-chain-external-policy/external-policy-preflight.json` and verifies only facts the workflow can truthfully know: `NUGET_USER` is present and the two release-manager confirmation variables are set. It does not claim to independently inspect nuget.org policy state.
 
-The release-readiness scorecard validates the workflow-facing portion of this posture through [`scripts/supply-chain-release-support.json`](../scripts/supply-chain-release-support.json) before emitting `SupplyChainEvidence`. That generated evidence records which release-provenance items are already workflow-ready (locked release validation, package checksums, CycloneDX SBOM, Sigstore/Cosign signatures, SLSA provenance, Rekor transparency, and release-bundle checksums), which items still require external nuget.org or repository policy (trusted-publishing policy, `Cephalon.*` prefix reservation, and `NUGET_USER`), and which fail-closed preflight checks must pass before a real tag can log in to NuGet.
+The release-readiness scorecard validates the workflow-facing portion of this posture through [`scripts/supply-chain-release-support.json`](../scripts/supply-chain-release-support.json) before emitting `SupplyChainEvidence`. That generated evidence records which release-provenance items are already workflow-ready (locked release validation, package checksums, package metadata validation, NuGet vulnerability audit, CycloneDX SBOM, Sigstore/Cosign signatures, SLSA provenance, Rekor transparency, and release-bundle checksums), which items still require external nuget.org or repository policy (trusted-publishing policy, `Cephalon.*` prefix reservation, and `NUGET_USER`), and which fail-closed preflight checks must pass before a real tag can log in to NuGet.
 
 ## Maintenance rules
 
@@ -194,6 +195,7 @@ The release-readiness scorecard validates the workflow-facing portion of this po
 - keep benchmarks, playgrounds, and sample-only libraries out of the release package set unless they are deliberately promoted
 - keep shared package metadata and any package-specific readmes aligned with the actual release surface
 - keep `scripts/validate-package-metadata.ps1`, package tags, package readmes, symbol output, and the publish-artifact manifest aligned whenever package metadata changes
+- keep `scripts/validate-nuget-vulnerability-audit.ps1`, release-validation output, workflow artifact upload, and supply-chain evidence aligned whenever the vulnerability-audit contract changes
 - keep the stable `cephalon` tool command name aligned across CLI packaging, docs, and validation coverage
 - keep release checksum/provenance metadata aligned with the actual repository source revision and package file set
 - keep the published-module staging flow aligned with the CLI package-stage command and external package lifecycle guide

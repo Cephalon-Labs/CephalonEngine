@@ -33,6 +33,7 @@ Current focus:
 - treat scorecard hard blockers as release-validation failures even when a later narrow step is skipped: `scripts/validate-release.ps1` fails during the scorecard step when generated evidence reports blocked platform gates, supply-chain blocked items, or public API removals; `partial`, `not-claimed`, externally gated provider lanes, SRE pending baselines, and external-policy-pending items remain explicit readback/exception posture
 - treat supply-chain external-policy-pending evidence as truthful pre-release posture: real tag pushes now fail closed before NuGet login unless `NUGET_USER` is present and the release manager has set protected confirmation variables for the nuget.org trusted-publishing policy and `Cephalon.*` prefix reservation; the preflight verifies those workflow inputs only and does not claim independent nuget.org inspection
 - treat package publishing and NuGet discoverability as archive-validated release evidence: `scripts/publish-package-artifacts.ps1` now emits `.snupkg` symbol packages for runtime/tool packages, runs `scripts/validate-package-metadata.ps1`, and writes `package-metadata-validation.json` so readmes, tags, license, package type, repository/source metadata, and symbol pairing are checked from the produced archives before package publication can be considered green
+- treat NuGet vulnerability audit as a fail-closed security/compliance release gate: `scripts/validate-release.ps1` now runs `scripts/validate-nuget-vulnerability-audit.ps1`, writes `artifacts/nuget-vulnerability-audit-release/nuget-vulnerability-audit.json`, and the signed release bundle includes the advisory report beside package, SBOM, signature, and external-policy artefacts
 - treat the CDC integration-test lane as additive evidence over the runtime catalog truth: `tests/Cephalon.Tests.CdcIntegration` now proves MongoDB change streams against a real disposable replica set, SQL Server CDC against an opt-in live service, Postgres logical replication against an opt-in live service, MySQL binlog streaming against an opt-in live service, and Oracle LogMiner against an opt-in live service while keeping default CI Docker-free through the shared external-service gate, instead of implying those provider paths through fake transport harnesses
 - treat the provider integration-test lane as additive evidence over non-CDC provider truth: `tests/Cephalon.Tests.ProviderIntegration` now proves Redis data outbox/inbox/dispatch-store behavior plus Redis Streams event sourcing against an opt-in live Redis runtime, MongoDB data outbox/inbox/dispatch-store behavior against a disposable replica-set runtime without a permanent external service, Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant data outbox/inbox runtime behavior against either pre-provisioned provider services or disposable Testcontainers-backed runtimes, and SMTP invitation delivery handoff against a live relay/API pair
 - treat `scripts/provider-integration-support.json` as the release-readiness manifest for provider claims across live-provider tests, CDC integration lanes, and the eighteen dependency-health companion-pack live managed-probe proofs; the scorecard, release validation, CLI doctor, and script-level Pester tests must read provider-integration counts and dependency-health provider-manifest readback from that manifest instead of hand-authored prose, and the scorecard publisher must fail if dependency-health provider rows drift from the source-derived provider manifest
@@ -150,6 +151,33 @@ Validation:
 
 - `gh workflow list --repo Cephalon-Labs/CephalonEngine`
 - `gh workflow run "Publish Release" --repo Cephalon-Labs/CephalonEngine --ref master -f dry_run=true`
+
+### ENG-533 NuGet vulnerability audit release gate
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: release-readiness / security / supply-chain
+Quality dimensions: Security, Compliance, Auditability, Reliability, Maintainability
+
+Why:
+
+- the security/compliance scorecard gate named vulnerability scans, but the release flow did not yet have a first-class artifact or fail-closed script for NuGet advisory output
+- release managers need a durable report they can attach to the release bundle instead of trusting console output from `dotnet list package --vulnerable`
+- the advisory scan must be testable without network access so Pester can prove report parsing and fail-closed behavior deterministically
+
+Delivered:
+
+- added `scripts/validate-nuget-vulnerability-audit.ps1`, which captures `dotnet list package --vulnerable --include-transitive --format json --output-version 1`, writes the raw JSON plus `nuget-vulnerability-audit.json`, and fails the default release gate when any advisory is present
+- wired `scripts/validate-release.ps1` to run the audit by default through `-SkipNuGetVulnerabilityAudit` opt-out and uploaded `artifacts/nuget-vulnerability-audit-release` from the release-validation workflow
+- included the vulnerability-audit artifact in the signed release bundle manifest and extended `scripts/supply-chain-release-support.json` so `SupplyChainEvidence` reads back `12` evidence items / `9` workflow-ready / `3` external-policy-pending
+- refreshed engineering standards, package publishing, supply-chain plan, release checklist/template, scorecard, roadmap, backlog, project memory, and script/tooling tests so docs/source/planning agree on the new security/compliance gate
+
+Validation:
+
+- `Invoke-Pester -Path tests\Cephalon.Tests.Scripts\validate-nuget-vulnerability-audit.Tests.ps1 -Output Detailed`
+- `Invoke-Pester -Path tests\Cephalon.Tests.Scripts\publish-engine-completion-scorecard.Tests.ps1 -Output Detailed`
+- `Invoke-Pester -Path tests\Cephalon.Tests.Scripts\validate-release.Tests.ps1 -Output Detailed`
 
 ### SMTP invitation delivery live provider proof
 

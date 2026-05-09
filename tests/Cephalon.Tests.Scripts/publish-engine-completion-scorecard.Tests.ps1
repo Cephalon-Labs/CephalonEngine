@@ -148,7 +148,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.PublicApiDeltaScript | Should -Be "scripts/summarise-public-api-deltas.ps1"
         $json.StatusVocabulary.Count | Should -Be 6
         $json.EvidenceSources.Count | Should -Be 13
-        $json.EvidenceSourceReferences.Count | Should -Be 27
+        $json.EvidenceSourceReferences.Count | Should -Be 28
         $json.PlatformGates.Count | Should -Be 12
         $json.QualityDimensions.Count | Should -Be 12
         $json.PackageFamilies.Count | Should -Be 9
@@ -192,8 +192,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.SrePendingBaselineRowCount | Should -Be 1
         $json.Summary.SrePendingBaselineBlockerCount | Should -Be 1
         $json.Summary.SrePendingBaselineEvidenceCount | Should -Be 1
-        $json.Summary.SupplyChainEvidenceItemCount | Should -Be 11
-        $json.Summary.SupplyChainWorkflowReadyCount | Should -Be 8
+        $json.Summary.SupplyChainEvidenceItemCount | Should -Be 12
+        $json.Summary.SupplyChainWorkflowReadyCount | Should -Be 9
         $json.Summary.SupplyChainExternalPolicyPendingCount | Should -Be 3
         $json.Summary.SupplyChainExternalPolicyPreflightCheckCount | Should -Be 3
         $json.Summary.SupplyChainBlockedCount | Should -Be 0
@@ -202,7 +202,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.PublicApiAdditiveEntryCount | Should -Be 0
         $json.Summary.PublicApiRemovalEntryCount | Should -Be 0
         $json.Summary.EvidenceSourceCount | Should -Be 13
-        $json.Summary.EvidenceSourceReferenceCount | Should -Be 27
+        $json.Summary.EvidenceSourceReferenceCount | Should -Be 28
         $json.Summary.PlatformStatusCounts.'ready-for-preview' | Should -Be 3
         $json.Summary.PlatformStatusCounts.partial | Should -Be 8
         $json.Summary.PlatformStatusCounts.'not-claimed' | Should -Be 1
@@ -449,20 +449,22 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $aspNetCoreColdStartBaseline.Measurements.GuardrailMaxAllocatedBytes | Should -Be 30000000
         $requestAllocationBaseline.Measurements.AllocatedBytes | Should -Contain 27914.24
 
-        $json.SupplyChainEvidence.ManifestSchemaVersion | Should -Be "1.1.0"
+        $json.SupplyChainEvidence.ManifestSchemaVersion | Should -Be "1.2.0"
         $json.SupplyChainEvidence.Status | Should -Be "workflow-ready-external-policy-pending"
         $json.SupplyChainEvidence.ReleaseWorkflow | Should -Be ".github/workflows/publish-release.yml"
         $json.SupplyChainEvidence.SourceDocuments | Should -Contain "docs/package-publishing.md"
         $json.SupplyChainEvidence.SourceDocuments | Should -Contain "docs/supply-chain-uplift-plan.md"
         $json.SupplyChainEvidence.ValidationScripts | Should -Contain "scripts/validate-release.ps1"
+        $json.SupplyChainEvidence.ValidationScripts | Should -Contain "scripts/validate-nuget-vulnerability-audit.ps1"
         $json.SupplyChainEvidence.ValidationScripts | Should -Contain "scripts/validate-supply-chain-external-policy-preflight.ps1"
         $json.SupplyChainEvidence.RequiredWorkflowTokens | Should -Contain "actions/attest-build-provenance"
         $json.SupplyChainEvidence.RequiredWorkflowTokens | Should -Contain "NuGet/login"
         $json.SupplyChainEvidence.RequiredWorkflowTokens | Should -Contain "Validate supply-chain external policy preflight"
+        $json.SupplyChainEvidence.RequiredWorkflowTokens | Should -Contain "artifacts/nuget-vulnerability-audit-release"
         $json.SupplyChainEvidence.RequiredWorkflowTokens | Should -Contain "CEPHALON_NUGET_TRUSTED_PUBLISHING_POLICY_CONFIRMED"
         $json.SupplyChainEvidence.RequiredWorkflowTokens | Should -Contain "CEPHALON_NUGET_PREFIX_RESERVATION_CONFIRMED"
-        $json.SupplyChainEvidence.EvidenceItemCount | Should -Be 11
-        $json.SupplyChainEvidence.WorkflowReadyCount | Should -Be 8
+        $json.SupplyChainEvidence.EvidenceItemCount | Should -Be 12
+        $json.SupplyChainEvidence.WorkflowReadyCount | Should -Be 9
         $json.SupplyChainEvidence.ExternalPolicyPendingCount | Should -Be 3
         $json.SupplyChainEvidence.ExternalPolicyPreflightCheckCount | Should -Be 3
         $json.SupplyChainEvidence.ExternalPolicyPreflight.Status | Should -Be "required-before-real-tag-push"
@@ -474,6 +476,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.SupplyChainEvidence.ExternalPolicyPreflight.RequiredChecks.EvidenceItemId | Should -Contain "nuget-user-secret"
         $json.SupplyChainEvidence.ExternalPolicyPreflight.ReleaseWorkflowTokens | Should -Contain "-RequireAll"
         $json.SupplyChainEvidence.BlockedCount | Should -Be 0
+        $json.SupplyChainEvidence.EvidenceItems.Id | Should -Contain "nuget-vulnerability-audit"
         $json.SupplyChainEvidence.EvidenceItems.Id | Should -Contain "cyclonedx-sbom-per-package"
         $json.SupplyChainEvidence.EvidenceItems.Id | Should -Contain "nuget-trusted-publishing-policy"
         $json.SupplyChainEvidence.EvidenceItems.Status | Should -Contain "external-policy-pending"
@@ -535,7 +538,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "SRE pending guardrail coverage SLIs: 0"
         $markdown | Should -Match "Guardrail coverage"
         $markdown | Should -Match "Supply-Chain Release Evidence"
-        $markdown | Should -Match "Supply-chain evidence items: 11"
+        $markdown | Should -Match "Supply-chain evidence items: 12"
         $markdown | Should -Match "External-Policy Preflight"
         $markdown | Should -Match "External-policy preflight checks: 3"
         $markdown | Should -Match "external-policy-pending"
