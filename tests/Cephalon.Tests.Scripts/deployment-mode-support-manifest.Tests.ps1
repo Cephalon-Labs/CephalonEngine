@@ -673,16 +673,16 @@ Describe "deploymentModeEligibility" {
 
         $source = Get-Content -LiteralPath $sourcePath -Raw -Encoding UTF8
         $workflowStart = $source.IndexOf("MapCephalonFullCommonOperatorRoutes(engineGroup);", [System.StringComparison]::Ordinal)
-        $rateLimitingStart = $source.IndexOf('engineGroup.MapGet("/rate-limiting"', [System.StringComparison]::Ordinal)
+        $foundationStart = $source.IndexOf('MapGetResultRequestDelegate(engineGroup, "/rate-limiting"', [System.StringComparison]::Ordinal)
         $helperStart = $source.IndexOf("private static void MapGetResultRequestDelegate(", [System.StringComparison]::Ordinal)
         $nextHelperStart = $source.IndexOf("private static TService GetRequiredService", [System.StringComparison]::Ordinal)
 
         $workflowStart | Should -BeGreaterOrEqual 0 -Because "the full operator route catalog should keep its common route boundary visible"
-        $rateLimitingStart | Should -BeGreaterThan $workflowStart -Because "the rate-limiting route marks the next still-Minimal API full route family"
-        $helperStart | Should -BeGreaterThan $rateLimitingStart -Because "the result request-delegate helper should follow the route catalog"
+        $foundationStart | Should -BeGreaterThan $workflowStart -Because "the rate-limiting route marks the next full route family after the workflow request-delegate block"
+        $helperStart | Should -BeGreaterThan $foundationStart -Because "the result request-delegate helper should follow the route catalog"
         $nextHelperStart | Should -BeGreaterThan $helperStart -Because "the result request-delegate helper block should stay parseable"
 
-        $workflowBlock = $source.Substring($workflowStart, $rateLimitingStart - $workflowStart)
+        $workflowBlock = $source.Substring($workflowStart, $foundationStart - $workflowStart)
         $helperBlock = $source.Substring($helperStart, $nextHelperStart - $helperStart)
 
         $workflowBlock | Should -Not -Match 'engineGroup\.Map(Get|Post)\(' -Because "behavior-resilience, saga choreography, and durable execution full routes must not reintroduce Minimal API delegate binding"
@@ -692,6 +692,36 @@ Describe "deploymentModeEligibility" {
         $workflowBlock | Should -Match '/durable-executions/runtime/streams/\{streamId\}' -Because "the durable execution runtime route family should stay in the audited request-delegate block"
         $helperBlock | Should -Match 'Func<HttpContext, IResult> handler' -Because "the helper should execute a prebuilt result handler without ASP.NET Core delegate binding"
         $helperBlock | Should -Match 'MapGetRequestDelegate' -Because "result request delegates should flow through the MapMethods-backed GET helper"
+    }
+
+    It "full foundation ASP.NET Core operator routes use request delegates instead of Minimal API delegate binding" {
+        $sourcePath = Join-Path $script:repoRoot "src/Cephalon.AspNetCore/Hosting/EngineWebApplicationExtensions.cs"
+        $sourcePath = $sourcePath -replace '/', [System.IO.Path]::DirectorySeparatorChar
+        Test-Path -LiteralPath $sourcePath -PathType Leaf | Should -BeTrue
+
+        $source = Get-Content -LiteralPath $sourcePath -Raw -Encoding UTF8
+        $foundationStart = $source.IndexOf('MapGetResultRequestDelegate(engineGroup, "/rate-limiting"', [System.StringComparison]::Ordinal)
+        $cdcRuntimeStart = $source.IndexOf('engineGroup.MapGet("/cdc-capture-runtimes"', [System.StringComparison]::Ordinal)
+        $tailStart = $source.IndexOf('MapGetResultRequestDelegate(engineGroup, "/transports"', [System.StringComparison]::Ordinal)
+        $hostInfrastructureStart = $source.IndexOf("MapCephalonHostInfrastructure(", $tailStart, [System.StringComparison]::Ordinal)
+
+        $foundationStart | Should -BeGreaterOrEqual 0 -Because "the full foundation route block should start at rate limiting"
+        $cdcRuntimeStart | Should -BeGreaterThan $foundationStart -Because "CDC runtime routes are the next larger full route family after the foundation block"
+        $tailStart | Should -BeGreaterThan $cdcRuntimeStart -Because "the tail introspection block should stay visible after the richer full route catalog"
+        $hostInfrastructureStart | Should -BeGreaterThan $tailStart -Because "the host infrastructure mapping should follow the final operator routes"
+
+        $foundationBlock = $source.Substring($foundationStart, $cdcRuntimeStart - $foundationStart)
+        $tailBlock = $source.Substring($tailStart, $hostInfrastructureStart - $tailStart)
+
+        $foundationBlock | Should -Not -Match 'engineGroup\.Map(Get|Post)\(' -Because "rate limiting, REST metadata, database, execution, and CDC capture list routes must not reintroduce Minimal API delegate binding"
+        $tailBlock | Should -Not -Match 'engineGroup\.Map(Get|Post)\(' -Because "final transport, diagnostics, policy, status, and module routes must not reintroduce Minimal API delegate binding"
+        $foundationBlock | Should -Match '/rate-limiting' -Because "rate limiting should stay in the audited request-delegate block"
+        $foundationBlock | Should -Match '/rest-endpoint-suppressions/\{suppressionId\}' -Because "REST endpoint governance should stay in the audited request-delegate block"
+        $foundationBlock | Should -Match '/database-migration-playbook' -Because "database operational playbook should stay in the audited request-delegate block"
+        $foundationBlock | Should -Match '/hosted-executions/\{hostedExecutionId\}' -Because "hosted execution lookup should stay in the audited request-delegate block"
+        $foundationBlock | Should -Match '/cdc-captures' -Because "CDC capture catalog list should stay in the audited request-delegate block"
+        $tailBlock | Should -Match '/diagnostics-conventions' -Because "diagnostics convention readback should stay in the audited request-delegate block"
+        $tailBlock | Should -Match '/modules/\{moduleId\}' -Because "module lookup should stay in the audited request-delegate block"
     }
 }
 
