@@ -16,7 +16,9 @@ BeforeAll {
 
     function New-ScorecardFixture {
         param(
-            [switch]$OmitDependencyHealthProviderManifest
+            [switch]$OmitDependencyHealthProviderManifest,
+            [switch]$OmitTestCoverageEvidence,
+            [switch]$OpenTestCoverageQueue
         )
 
         $providerIntegrationEvidence = [ordered]@{
@@ -37,7 +39,7 @@ BeforeAll {
             }
         }
 
-        return [ordered]@{
+        $scorecard = [ordered]@{
             '$schemaVersion' = "1.12.0"
             SourceDocument = "docs/engine-completion-scorecard.md"
             DeploymentModeEvidence = [ordered]@{
@@ -102,6 +104,22 @@ BeforeAll {
             }
             PlatformGates = @()
         }
+
+        if (-not $OmitTestCoverageEvidence) {
+            $scorecard.TestCoverageEvidence = [ordered]@{
+                LayeredProjectCount = 8
+                GapDefinitionCriterionCount = 4
+                RecommendationCount = 11
+                ShippedRecommendationCount = 10
+                GatedRecommendationCount = 1
+                ActiveGapRecommendationCount = if ($OpenTestCoverageQueue) { 1 } else { 0 }
+                QuarantineEntryCount = 2
+                OpenQuarantineEntryCount = if ($OpenTestCoverageQueue) { 1 } else { 0 }
+                QuarantineQueueStatus = if ($OpenTestCoverageQueue) { "open" } else { "empty" }
+            }
+        }
+
+        return $scorecard
     }
 
     function Write-ScorecardFixture {
@@ -239,8 +257,9 @@ Describe "validate-release.ps1 scorecard readback" {
         $output | Should -Match "Deployment-mode evidence: 3 global claims; not-claimed 3; package-scoped claim packages 3; known hazards 15; transitive audit entries 7; publish probes single-file-publish-gate; claims report artifacts/deployment-mode-claims-release/claim-validation-report\.json; gate passed; targets 5; warnings 0; errors 0; truthful package claims 3; overstated package claims 0; boundary audit matched/0; core route-delegate audit matched/0\."
         $output | Should -Match "Provider integration evidence: 33 rows; live proofs 33; composition-only 0; external-service gates 14; default-skipped 14; runtime contracts 99; dependency-health providers 18 from scripts/observability-dependency-health-providers\.json schema 1\.0\.0 \(source-derived-provider-family-contract\)\."
         $output | Should -Match "SRE posture: 11 SLIs; target-declared 11; pending stable baselines 1; stable baselines 10; stable baseline rows 10; stable baseline measurements 12; pending baseline rows 1; blockers 1; pending evidence 1; guardrail-mapped 6; pending guardrail coverage 0; guardrail not-applicable 5; summary mode release-validation-console-and-scorecard-artifact; stable baseline manifest scripts/sre-stable-baselines\.json\."
+        $output | Should -Match "Test coverage evidence: 8 layered projects; gap criteria 4; recommendations 11; shipped 10; gated 1; active gaps 0; open quarantine entries 0; queue status empty\."
         $output | Should -Match "Supply-chain release evidence: 12 items; workflow-ready 9; external policy pending 3; external policy preflight checks 3; preflight status required-before-real-tag-push; blocked 0; status workflow-ready-external-policy-pending\."
-        $output | Should -Match "Engine completion scorecard hard-blocker gate: no blocked platform gates"
+        $output | Should -Match "Engine completion scorecard hard-blocker gate: no blocked platform gates, no supply-chain blocked items, no public API removals, and no active test-coverage gaps or open quarantine entries\."
     }
 
     It "fails when provider integration dependency-health manifest readback is missing" {
@@ -249,6 +268,22 @@ Describe "validate-release.ps1 scorecard readback" {
         {
             Write-EngineCompletionScorecardEvidenceSummary -ScorecardOutputPath $script:tempRoot
         } | Should -Throw "*Engine completion scorecard JSON is missing ProviderIntegrationEvidence.DependencyHealthProviderManifest.*"
+    }
+
+    It "fails when test coverage evidence is missing" {
+        Write-ScorecardFixture -Scorecard (New-ScorecardFixture -OmitTestCoverageEvidence) -OutputPath $script:tempRoot | Out-Null
+
+        {
+            Write-EngineCompletionScorecardEvidenceSummary -ScorecardOutputPath $script:tempRoot
+        } | Should -Throw "*Engine completion scorecard JSON is missing TestCoverageEvidence.*"
+    }
+
+    It "fails when test coverage reports active gaps or an open quarantine queue" {
+        Write-ScorecardFixture -Scorecard (New-ScorecardFixture -OpenTestCoverageQueue) -OutputPath $script:tempRoot | Out-Null
+
+        {
+            Write-EngineCompletionScorecardEvidenceSummary -ScorecardOutputPath $script:tempRoot
+        } | Should -Throw "*test coverage active gaps: 1; open quarantine entries: 1; queue status: open*"
     }
 
     It "fails when external-policy pending supply-chain evidence omits preflight readback" {

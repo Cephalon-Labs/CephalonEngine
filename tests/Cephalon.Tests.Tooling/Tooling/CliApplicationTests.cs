@@ -388,7 +388,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.14.0",
+              "$schemaVersion": "1.15.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -489,8 +489,18 @@ public sealed class CliApplicationTests
                 },
                 "BlockedCount": 0
               },
-              "PublicApiCompatibilityEvidence": {
-                "PackageCount": 104,
+              "TestCoverageEvidence": {
+                "LayeredProjectCount": 8,
+                "GapDefinitionCriterionCount": 4,
+                "RecommendationCount": 11,
+                "ShippedRecommendationCount": 10,
+                "GatedRecommendationCount": 1,
+                "ActiveGapRecommendationCount": 0,
+                "QuarantineEntryCount": 2,
+                "OpenQuarantineEntryCount": 0,
+                "QuarantineQueueStatus": "empty"
+              },
+              "PublicApiCompatibilityEvidence": {                "PackageCount": 104,
                 "PendingPackageCount": 0,
                 "HeaderOnlyPackageCount": 104,
                 "AdditiveEntryCount": 0,
@@ -547,8 +557,15 @@ public sealed class CliApplicationTests
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainExternalPolicyPreflightCheckCount": 3,
                 "SupplyChainBlockedCount": 0,
-                "PublicApiPackageCount": 104,
-                "PublicApiPendingPackageCount": 0,
+                "TestCoverageLayeredProjectCount": 8,
+                "TestCoverageGapCriterionCount": 4,
+                "TestCoverageRecommendationCount": 11,
+                "TestCoverageShippedRecommendationCount": 10,
+                "TestCoverageGatedRecommendationCount": 1,
+                "TestCoverageActiveGapRecommendationCount": 0,
+                "TestCoverageQuarantineEntryCount": 2,
+                "TestCoverageOpenQuarantineEntryCount": 0,
+                "PublicApiPackageCount": 104,                "PublicApiPendingPackageCount": 0,
                 "PublicApiAdditiveEntryCount": 0,
                 "PublicApiRemovalEntryCount": 0
               }
@@ -569,7 +586,7 @@ public sealed class CliApplicationTests
                 stderr);
 
             Assert.Equal(0, exitCode);
-            Assert.Contains("[ok] Engine completion scorecard artifact: schema 1.14.0 from docs/engine-completion-scorecard.md; conformance matrix docs/conformance-matrix.md.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Engine completion scorecard artifact: schema 1.15.0 from docs/engine-completion-scorecard.md; conformance matrix docs/conformance-matrix.md.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard platform gates: 12 gates; blocked 0, needs-refresh 0, partial 8, not-claimed 1.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Engine completion scorecard evidence references: 28 repo-local references validated by the published artifact.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard package GA readiness: 90 package rows; partial 89, not-claimed 1, needs-refresh 0.", stdout.ToString(), StringComparison.Ordinal);
@@ -578,6 +595,7 @@ public sealed class CliApplicationTests
             Assert.Contains("[warn] Engine completion scorecard provider integration evidence: 33 rows; live proofs 33, composition-only 0, external-service gates 14, default-skipped 14, runtime contracts 99; dependency-health providers 18 from scripts/observability-dependency-health-providers.json schema 1.0.0 (source-derived-provider-family-contract).", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard SRE posture: 11 SLIs; target-declared 11, pending stable baselines 1, stable baselines 10, stable baseline rows 10, stable baseline measurements 12, pending baseline rows 1, blockers 1, pending evidence 1, guardrail-mapped 6, pending guardrail coverage 0, guardrail not-applicable 5, guardrail references 8; stable baseline manifest scripts/sre-stable-baselines.json.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard supply-chain release evidence: 12 items; workflow-ready 9, external-policy-pending 3, preflight checks 3, preflight status required-before-real-tag-push, blocked 0.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Engine completion scorecard test coverage evidence: 8 layered projects; gap criteria 4; recommendations 11; shipped 10, gated 1, active gaps 0; quarantine entries 2, open 0, queue empty.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Engine completion scorecard public API compatibility: 104 package baselines; pending packages 0, additions 0, removals 0.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Equal(string.Empty, stderr.ToString());
         }
@@ -665,7 +683,7 @@ public sealed class CliApplicationTests
                 stderr);
 
             Assert.Equal(1, exitCode);
-            Assert.Contains("[error] Engine completion scorecard artifact: Unsupported schema '1.0.0'. Doctor expects scorecard schema '1.14.0'.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Engine completion scorecard artifact: Unsupported schema '1.0.0'. Doctor expects scorecard schema '1.15.0'.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("scorecard artifact blockers", stderr.ToString(), StringComparison.Ordinal);
         }
         finally
@@ -688,7 +706,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.14.0",
+              "$schemaVersion": "1.15.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -789,8 +807,18 @@ public sealed class CliApplicationTests
                 },
                 "BlockedCount": 0
               },
-              "PublicApiCompatibilityEvidence": {
-                "PackageCount": 104,
+              "TestCoverageEvidence": {
+                "LayeredProjectCount": 8,
+                "GapDefinitionCriterionCount": 4,
+                "RecommendationCount": 11,
+                "ShippedRecommendationCount": 10,
+                "GatedRecommendationCount": 1,
+                "ActiveGapRecommendationCount": 0,
+                "QuarantineEntryCount": 2,
+                "OpenQuarantineEntryCount": 0,
+                "QuarantineQueueStatus": "empty"
+              },
+              "PublicApiCompatibilityEvidence": {                "PackageCount": 104,
                 "PendingPackageCount": 0,
                 "HeaderOnlyPackageCount": 104,
                 "AdditiveEntryCount": 0,
@@ -847,8 +875,15 @@ public sealed class CliApplicationTests
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainExternalPolicyPreflightCheckCount": 3,
                 "SupplyChainBlockedCount": 0,
-                "PublicApiPackageCount": 104,
-                "PublicApiPendingPackageCount": 0,
+                "TestCoverageLayeredProjectCount": 8,
+                "TestCoverageGapCriterionCount": 4,
+                "TestCoverageRecommendationCount": 11,
+                "TestCoverageShippedRecommendationCount": 10,
+                "TestCoverageGatedRecommendationCount": 1,
+                "TestCoverageActiveGapRecommendationCount": 0,
+                "TestCoverageQuarantineEntryCount": 2,
+                "TestCoverageOpenQuarantineEntryCount": 0,
+                "PublicApiPackageCount": 104,                "PublicApiPendingPackageCount": 0,
                 "PublicApiAdditiveEntryCount": 0,
                 "PublicApiRemovalEntryCount": 0
               }
@@ -893,7 +928,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.14.0",
+              "$schemaVersion": "1.15.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -994,8 +1029,18 @@ public sealed class CliApplicationTests
                 },
                 "BlockedCount": 0
               },
-              "PublicApiCompatibilityEvidence": {
-                "PackageCount": 104,
+              "TestCoverageEvidence": {
+                "LayeredProjectCount": 8,
+                "GapDefinitionCriterionCount": 4,
+                "RecommendationCount": 11,
+                "ShippedRecommendationCount": 10,
+                "GatedRecommendationCount": 1,
+                "ActiveGapRecommendationCount": 0,
+                "QuarantineEntryCount": 2,
+                "OpenQuarantineEntryCount": 0,
+                "QuarantineQueueStatus": "empty"
+              },
+              "PublicApiCompatibilityEvidence": {                "PackageCount": 104,
                 "PendingPackageCount": 0,
                 "HeaderOnlyPackageCount": 104,
                 "AdditiveEntryCount": 0,
@@ -1052,8 +1097,15 @@ public sealed class CliApplicationTests
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainExternalPolicyPreflightCheckCount": 3,
                 "SupplyChainBlockedCount": 0,
-                "PublicApiPackageCount": 104,
-                "PublicApiPendingPackageCount": 0,
+                "TestCoverageLayeredProjectCount": 8,
+                "TestCoverageGapCriterionCount": 4,
+                "TestCoverageRecommendationCount": 11,
+                "TestCoverageShippedRecommendationCount": 10,
+                "TestCoverageGatedRecommendationCount": 1,
+                "TestCoverageActiveGapRecommendationCount": 0,
+                "TestCoverageQuarantineEntryCount": 2,
+                "TestCoverageOpenQuarantineEntryCount": 0,
+                "PublicApiPackageCount": 104,                "PublicApiPendingPackageCount": 0,
                 "PublicApiAdditiveEntryCount": 0,
                 "PublicApiRemovalEntryCount": 0
               }
@@ -1098,7 +1150,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.14.0",
+              "$schemaVersion": "1.15.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -1193,8 +1245,18 @@ public sealed class CliApplicationTests
                 },
                 "BlockedCount": 0
               },
-              "PublicApiCompatibilityEvidence": {
-                "PackageCount": 104,
+              "TestCoverageEvidence": {
+                "LayeredProjectCount": 8,
+                "GapDefinitionCriterionCount": 4,
+                "RecommendationCount": 11,
+                "ShippedRecommendationCount": 10,
+                "GatedRecommendationCount": 1,
+                "ActiveGapRecommendationCount": 0,
+                "QuarantineEntryCount": 2,
+                "OpenQuarantineEntryCount": 0,
+                "QuarantineQueueStatus": "empty"
+              },
+              "PublicApiCompatibilityEvidence": {                "PackageCount": 104,
                 "PendingPackageCount": 0,
                 "HeaderOnlyPackageCount": 104,
                 "AdditiveEntryCount": 0,
@@ -1251,8 +1313,15 @@ public sealed class CliApplicationTests
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainExternalPolicyPreflightCheckCount": 3,
                 "SupplyChainBlockedCount": 0,
-                "PublicApiPackageCount": 104,
-                "PublicApiPendingPackageCount": 0,
+                "TestCoverageLayeredProjectCount": 8,
+                "TestCoverageGapCriterionCount": 4,
+                "TestCoverageRecommendationCount": 11,
+                "TestCoverageShippedRecommendationCount": 10,
+                "TestCoverageGatedRecommendationCount": 1,
+                "TestCoverageActiveGapRecommendationCount": 0,
+                "TestCoverageQuarantineEntryCount": 2,
+                "TestCoverageOpenQuarantineEntryCount": 0,
+                "PublicApiPackageCount": 104,                "PublicApiPendingPackageCount": 0,
                 "PublicApiAdditiveEntryCount": 0,
                 "PublicApiRemovalEntryCount": 0
               }
@@ -1297,7 +1366,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.14.0",
+              "$schemaVersion": "1.15.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -1398,8 +1467,18 @@ public sealed class CliApplicationTests
                 },
                 "BlockedCount": 0
               },
-              "PublicApiCompatibilityEvidence": {
-                "PackageCount": 103,
+              "TestCoverageEvidence": {
+                "LayeredProjectCount": 8,
+                "GapDefinitionCriterionCount": 4,
+                "RecommendationCount": 11,
+                "ShippedRecommendationCount": 10,
+                "GatedRecommendationCount": 1,
+                "ActiveGapRecommendationCount": 0,
+                "QuarantineEntryCount": 2,
+                "OpenQuarantineEntryCount": 0,
+                "QuarantineQueueStatus": "empty"
+              },
+              "PublicApiCompatibilityEvidence": {                "PackageCount": 103,
                 "PendingPackageCount": 0,
                 "HeaderOnlyPackageCount": 103,
                 "AdditiveEntryCount": 0,
@@ -1456,8 +1535,15 @@ public sealed class CliApplicationTests
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainExternalPolicyPreflightCheckCount": 3,
                 "SupplyChainBlockedCount": 0,
-                "PublicApiPackageCount": 104,
-                "PublicApiPendingPackageCount": 0,
+                "TestCoverageLayeredProjectCount": 8,
+                "TestCoverageGapCriterionCount": 4,
+                "TestCoverageRecommendationCount": 11,
+                "TestCoverageShippedRecommendationCount": 10,
+                "TestCoverageGatedRecommendationCount": 1,
+                "TestCoverageActiveGapRecommendationCount": 0,
+                "TestCoverageQuarantineEntryCount": 2,
+                "TestCoverageOpenQuarantineEntryCount": 0,
+                "PublicApiPackageCount": 104,                "PublicApiPendingPackageCount": 0,
                 "PublicApiAdditiveEntryCount": 0,
                 "PublicApiRemovalEntryCount": 0
               }
@@ -1502,7 +1588,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.14.0",
+              "$schemaVersion": "1.15.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -1603,8 +1689,18 @@ public sealed class CliApplicationTests
                 },
                 "BlockedCount": 0
               },
-              "PublicApiCompatibilityEvidence": {
-                "PackageCount": 104,
+              "TestCoverageEvidence": {
+                "LayeredProjectCount": 8,
+                "GapDefinitionCriterionCount": 4,
+                "RecommendationCount": 11,
+                "ShippedRecommendationCount": 10,
+                "GatedRecommendationCount": 1,
+                "ActiveGapRecommendationCount": 0,
+                "QuarantineEntryCount": 2,
+                "OpenQuarantineEntryCount": 0,
+                "QuarantineQueueStatus": "empty"
+              },
+              "PublicApiCompatibilityEvidence": {                "PackageCount": 104,
                 "PendingPackageCount": 0,
                 "HeaderOnlyPackageCount": 104,
                 "AdditiveEntryCount": 0,
@@ -1661,8 +1757,15 @@ public sealed class CliApplicationTests
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainExternalPolicyPreflightCheckCount": 3,
                 "SupplyChainBlockedCount": 0,
-                "PublicApiPackageCount": 104,
-                "PublicApiPendingPackageCount": 0,
+                "TestCoverageLayeredProjectCount": 8,
+                "TestCoverageGapCriterionCount": 4,
+                "TestCoverageRecommendationCount": 11,
+                "TestCoverageShippedRecommendationCount": 10,
+                "TestCoverageGatedRecommendationCount": 1,
+                "TestCoverageActiveGapRecommendationCount": 0,
+                "TestCoverageQuarantineEntryCount": 2,
+                "TestCoverageOpenQuarantineEntryCount": 0,
+                "PublicApiPackageCount": 104,                "PublicApiPendingPackageCount": 0,
                 "PublicApiAdditiveEntryCount": 0,
                 "PublicApiRemovalEntryCount": 0
               }
@@ -1707,7 +1810,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.14.0",
+              "$schemaVersion": "1.15.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -1808,8 +1911,18 @@ public sealed class CliApplicationTests
                 },
                 "BlockedCount": 0
               },
-              "PublicApiCompatibilityEvidence": {
-                "PackageCount": 104,
+              "TestCoverageEvidence": {
+                "LayeredProjectCount": 8,
+                "GapDefinitionCriterionCount": 4,
+                "RecommendationCount": 11,
+                "ShippedRecommendationCount": 10,
+                "GatedRecommendationCount": 1,
+                "ActiveGapRecommendationCount": 0,
+                "QuarantineEntryCount": 2,
+                "OpenQuarantineEntryCount": 0,
+                "QuarantineQueueStatus": "empty"
+              },
+              "PublicApiCompatibilityEvidence": {                "PackageCount": 104,
                 "PendingPackageCount": 0,
                 "HeaderOnlyPackageCount": 104,
                 "AdditiveEntryCount": 0,
@@ -1866,8 +1979,15 @@ public sealed class CliApplicationTests
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainExternalPolicyPreflightCheckCount": 3,
                 "SupplyChainBlockedCount": 0,
-                "PublicApiPackageCount": 104,
-                "PublicApiPendingPackageCount": 0,
+                "TestCoverageLayeredProjectCount": 8,
+                "TestCoverageGapCriterionCount": 4,
+                "TestCoverageRecommendationCount": 11,
+                "TestCoverageShippedRecommendationCount": 10,
+                "TestCoverageGatedRecommendationCount": 1,
+                "TestCoverageActiveGapRecommendationCount": 0,
+                "TestCoverageQuarantineEntryCount": 2,
+                "TestCoverageOpenQuarantineEntryCount": 0,
+                "PublicApiPackageCount": 104,                "PublicApiPendingPackageCount": 0,
                 "PublicApiAdditiveEntryCount": 0,
                 "PublicApiRemovalEntryCount": 0
               }

@@ -17,7 +17,7 @@ internal static class DoctorCommand
     private const string DotNetSdkDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/sdk:";
     private const string DotNetAspNetDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/aspnet:";
     private const string TemplatePackCustomHiveEnvironmentVariable = "CEPHALON_DOCTOR_TEMPLATE_HIVE";
-    private const string RequiredScorecardSchemaVersion = "1.14.0";
+    private const string RequiredScorecardSchemaVersion = "1.15.0";
 
     private static readonly string[] ExpectedTemplateShortNames =
     [
@@ -777,6 +777,7 @@ internal static class DoctorCommand
         var providerIntegrationEvidence = scorecard["ProviderIntegrationEvidence"];
         var srePostureEvidence = scorecard["SrePostureEvidence"];
         var supplyChainEvidence = scorecard["SupplyChainEvidence"];
+        var testCoverageEvidence = scorecard["TestCoverageEvidence"];
         var publicApiCompatibilityEvidence = scorecard["PublicApiCompatibilityEvidence"];
 
         if (deploymentModeEvidence is null)
@@ -802,6 +803,11 @@ internal static class DoctorCommand
         if (supplyChainEvidence is null)
         {
             errors.Add("SupplyChainEvidence");
+        }
+
+        if (testCoverageEvidence is null)
+        {
+            errors.Add("TestCoverageEvidence");
         }
 
         if (publicApiCompatibilityEvidence is null)
@@ -859,6 +865,14 @@ internal static class DoctorCommand
         var supplyChainExternalPolicyPendingCount = GetRequiredScorecardInt(summary, "SupplyChainExternalPolicyPendingCount", errors);
         var supplyChainExternalPolicyPreflightCheckCount = GetRequiredScorecardInt(summary, "SupplyChainExternalPolicyPreflightCheckCount", errors);
         var supplyChainBlockedCount = GetRequiredScorecardInt(summary, "SupplyChainBlockedCount", errors);
+        var testCoverageLayeredProjectCount = GetRequiredScorecardInt(summary, "TestCoverageLayeredProjectCount", errors);
+        var testCoverageGapCriterionCount = GetRequiredScorecardInt(summary, "TestCoverageGapCriterionCount", errors);
+        var testCoverageRecommendationCount = GetRequiredScorecardInt(summary, "TestCoverageRecommendationCount", errors);
+        var testCoverageShippedRecommendationCount = GetRequiredScorecardInt(summary, "TestCoverageShippedRecommendationCount", errors);
+        var testCoverageGatedRecommendationCount = GetRequiredScorecardInt(summary, "TestCoverageGatedRecommendationCount", errors);
+        var testCoverageActiveGapRecommendationCount = GetRequiredScorecardInt(summary, "TestCoverageActiveGapRecommendationCount", errors);
+        var testCoverageQuarantineEntryCount = GetRequiredScorecardInt(summary, "TestCoverageQuarantineEntryCount", errors);
+        var testCoverageOpenQuarantineEntryCount = GetRequiredScorecardInt(summary, "TestCoverageOpenQuarantineEntryCount", errors);
         var publicApiPackageCount = GetRequiredScorecardInt(summary, "PublicApiPackageCount", errors);
         var publicApiPendingPackageCount = GetRequiredScorecardInt(summary, "PublicApiPendingPackageCount", errors);
         var publicApiAdditiveEntryCount = GetRequiredScorecardInt(summary, "PublicApiAdditiveEntryCount", errors);
@@ -971,6 +985,15 @@ internal static class DoctorCommand
                 errors,
                 "SupplyChainEvidence.ExternalPolicyPreflight") ?? "unknown";
         var evidenceSupplyChainBlockedCount = GetRequiredScorecardInt(supplyChainEvidence, "BlockedCount", errors, "SupplyChainEvidence");
+        var evidenceTestCoverageLayeredProjectCount = GetRequiredScorecardInt(testCoverageEvidence, "LayeredProjectCount", errors, "TestCoverageEvidence");
+        var evidenceTestCoverageGapCriterionCount = GetRequiredScorecardInt(testCoverageEvidence, "GapDefinitionCriterionCount", errors, "TestCoverageEvidence");
+        var evidenceTestCoverageRecommendationCount = GetRequiredScorecardInt(testCoverageEvidence, "RecommendationCount", errors, "TestCoverageEvidence");
+        var evidenceTestCoverageShippedRecommendationCount = GetRequiredScorecardInt(testCoverageEvidence, "ShippedRecommendationCount", errors, "TestCoverageEvidence");
+        var evidenceTestCoverageGatedRecommendationCount = GetRequiredScorecardInt(testCoverageEvidence, "GatedRecommendationCount", errors, "TestCoverageEvidence");
+        var evidenceTestCoverageActiveGapRecommendationCount = GetRequiredScorecardInt(testCoverageEvidence, "ActiveGapRecommendationCount", errors, "TestCoverageEvidence");
+        var evidenceTestCoverageQuarantineEntryCount = GetRequiredScorecardInt(testCoverageEvidence, "QuarantineEntryCount", errors, "TestCoverageEvidence");
+        var evidenceTestCoverageOpenQuarantineEntryCount = GetRequiredScorecardInt(testCoverageEvidence, "OpenQuarantineEntryCount", errors, "TestCoverageEvidence");
+        var evidenceTestCoverageQuarantineQueueStatus = GetRequiredScorecardString(testCoverageEvidence, "QuarantineQueueStatus", errors, "TestCoverageEvidence") ?? "unknown";
         var evidencePublicApiPackageCount = GetRequiredScorecardInt(publicApiCompatibilityEvidence, "PackageCount", errors, "PublicApiCompatibilityEvidence");
         var evidencePublicApiPendingPackageCount = GetRequiredScorecardInt(publicApiCompatibilityEvidence, "PendingPackageCount", errors, "PublicApiCompatibilityEvidence");
         var evidencePublicApiAdditiveEntryCount = GetRequiredScorecardInt(publicApiCompatibilityEvidence, "AdditiveEntryCount", errors, "PublicApiCompatibilityEvidence");
@@ -1089,6 +1112,35 @@ internal static class DoctorCommand
             return;
         }
 
+        if (testCoverageLayeredProjectCount != evidenceTestCoverageLayeredProjectCount ||
+            testCoverageGapCriterionCount != evidenceTestCoverageGapCriterionCount ||
+            testCoverageRecommendationCount != evidenceTestCoverageRecommendationCount ||
+            testCoverageShippedRecommendationCount != evidenceTestCoverageShippedRecommendationCount ||
+            testCoverageGatedRecommendationCount != evidenceTestCoverageGatedRecommendationCount ||
+            testCoverageActiveGapRecommendationCount != evidenceTestCoverageActiveGapRecommendationCount ||
+            testCoverageQuarantineEntryCount != evidenceTestCoverageQuarantineEntryCount ||
+            testCoverageOpenQuarantineEntryCount != evidenceTestCoverageOpenQuarantineEntryCount)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Engine completion scorecard test coverage evidence",
+                $"Artifact '{resolvedScorecardPath}' has test coverage summary counts that do not match TestCoverageEvidence.",
+                "Regenerate the scorecard artifact with the current `scripts/publish-engine-completion-scorecard.ps1`."));
+            return;
+        }
+
+        if (testCoverageActiveGapRecommendationCount > 0 ||
+            testCoverageOpenQuarantineEntryCount > 0 ||
+            !string.Equals(evidenceTestCoverageQuarantineQueueStatus, "empty", StringComparison.OrdinalIgnoreCase))
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Engine completion scorecard test coverage evidence",
+                $"Artifact '{resolvedScorecardPath}' has active test coverage gaps or quarantine work: active gaps {testCoverageActiveGapRecommendationCount}, open quarantine entries {testCoverageOpenQuarantineEntryCount}, queue status {evidenceTestCoverageQuarantineQueueStatus}.",
+                "Close or deliberately gate the owning test-coverage roadmap entries, then regenerate the scorecard artifact."));
+            return;
+        }
+
         if (publicApiPackageCount != evidencePublicApiPackageCount ||
             publicApiPendingPackageCount != evidencePublicApiPendingPackageCount ||
             publicApiAdditiveEntryCount != evidencePublicApiAdditiveEntryCount ||
@@ -1198,6 +1250,12 @@ internal static class DoctorCommand
             supplyChainSeverity == DoctorCheckSeverity.Pass
                 ? null
                 : "Treat workflow-ready evidence as release-readiness posture only; complete nuget.org-side trusted publishing, prefix reservation, repository secret policy, and the fail-closed publish-workflow preflight before a real tag push."));
+
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Engine completion scorecard test coverage evidence",
+            $"{testCoverageLayeredProjectCount} layered projects; gap criteria {testCoverageGapCriterionCount}; recommendations {testCoverageRecommendationCount}; shipped {testCoverageShippedRecommendationCount}, gated {testCoverageGatedRecommendationCount}, active gaps {testCoverageActiveGapRecommendationCount}; quarantine entries {testCoverageQuarantineEntryCount}, open {testCoverageOpenQuarantineEntryCount}, queue {evidenceTestCoverageQuarantineQueueStatus}.",
+            null));
 
         var publicApiSeverity = publicApiRemovalEntryCount > 0
             ? DoctorCheckSeverity.Warning

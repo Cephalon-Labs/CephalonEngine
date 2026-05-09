@@ -235,7 +235,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
 
         $json = Get-Content -LiteralPath $result.Paths.JsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
 
-        $json.'$schemaVersion' | Should -Be "1.14.0"
+        $json.'$schemaVersion' | Should -Be "1.15.0"
         $json.SourceDocument | Should -Be "docs/engine-completion-scorecard.md"
         $json.ConformanceMatrix | Should -Be "docs/conformance-matrix.md"
         $json.DeploymentModeManifest | Should -Be "scripts/deployment-mode-support.json"
@@ -244,6 +244,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.ProviderIntegrationManifest | Should -Be "scripts/provider-integration-support.json"
         $json.SrePostureManifest | Should -Be "scripts/sre-posture-support.json"
         $json.SupplyChainManifest | Should -Be "scripts/supply-chain-release-support.json"
+        $json.TestCoverageRoadmap | Should -Be "docs/test-coverage-roadmap.md"
         $json.PublicApiDeltaScript | Should -Be "scripts/summarise-public-api-deltas.ps1"
         $json.StatusVocabulary.Count | Should -Be 6
         $json.EvidenceSources.Count | Should -Be 13
@@ -299,6 +300,14 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.SupplyChainExternalPolicyPendingCount | Should -Be 3
         $json.Summary.SupplyChainExternalPolicyPreflightCheckCount | Should -Be 3
         $json.Summary.SupplyChainBlockedCount | Should -Be 0
+        $json.Summary.TestCoverageLayeredProjectCount | Should -Be 8
+        $json.Summary.TestCoverageGapCriterionCount | Should -Be 4
+        $json.Summary.TestCoverageRecommendationCount | Should -Be 11
+        $json.Summary.TestCoverageShippedRecommendationCount | Should -Be 10
+        $json.Summary.TestCoverageGatedRecommendationCount | Should -Be 1
+        $json.Summary.TestCoverageActiveGapRecommendationCount | Should -Be 0
+        $json.Summary.TestCoverageQuarantineEntryCount | Should -Be 2
+        $json.Summary.TestCoverageOpenQuarantineEntryCount | Should -Be 0
         $json.Summary.PublicApiPackageCount | Should -Be 104
         $json.Summary.PublicApiPendingPackageCount | Should -Be 0
         $json.Summary.PublicApiAdditiveEntryCount | Should -Be 0
@@ -396,6 +405,24 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.AdoptionSmokeEvidence.ExecutionReport.RequiredFields.Count | Should -Be 9
         $json.AdoptionSmokeEvidence.ExecutionReport.RequiredFields | Should -Contain '$schemaVersion'
         $json.AdoptionSmokeEvidence.ExecutionReport.RequiredFields | Should -Contain "RuntimeProbes"
+
+        $json.TestCoverageEvidence.Roadmap | Should -Be "docs/test-coverage-roadmap.md"
+        $json.TestCoverageEvidence.LayeredProjectCount | Should -Be 8
+        $json.TestCoverageEvidence.GapDefinitionCriterionCount | Should -Be 4
+        $json.TestCoverageEvidence.RecommendationCount | Should -Be 11
+        $json.TestCoverageEvidence.ShippedRecommendationCount | Should -Be 10
+        $json.TestCoverageEvidence.GatedRecommendationCount | Should -Be 1
+        $json.TestCoverageEvidence.ActiveGapRecommendationCount | Should -Be 0
+        $json.TestCoverageEvidence.QuarantineEntryCount | Should -Be 2
+        $json.TestCoverageEvidence.OpenQuarantineEntryCount | Should -Be 0
+        $json.TestCoverageEvidence.QuarantineQueueStatus | Should -Be "empty"
+        $json.TestCoverageEvidence.LayeredProjects.Reference | Should -Contain "tests/Cephalon.Tests.ProviderIntegration"
+        $json.TestCoverageEvidence.LayeredProjects.Reference | Should -Contain "benchmarks/Cephalon.Benchmarks"
+        $json.TestCoverageEvidence.GapCriteria.Id | Should -Contain "a"
+        $json.TestCoverageEvidence.Recommendations.Number | Should -Contain 6
+        $json.TestCoverageEvidence.Recommendations.Status | Should -Contain "gated"
+        $json.TestCoverageEvidence.QuarantineRows.Status | Should -Not -Contain "open"
+        $json.TestCoverageEvidence.ValidatedReferences.Reference | Should -Contain "docs/test-coverage-roadmap.md"
 
         $json.ProviderIntegrationEvidence.ManifestSchemaVersion | Should -Be "1.0.0"
         $json.ProviderIntegrationEvidence.Status | Should -Be "expanded-live-provider-evidence"
@@ -1443,6 +1470,33 @@ jobs:
         } | Should -Throw "*Provider integration dependency-health row 'sqlserver-dependency-health-live' provider must match source-derived manifest value 'SQL Server' but found 'SQL Server Drift'.*"
     }
 
+    It "fails when a test coverage roadmap layered project reference is missing" {
+        $fixtureRoot = Join-Path $script:tempRoot "test-coverage-fixture"
+        $docsRoot = Join-Path $fixtureRoot "docs"
+        New-Item -ItemType Directory -Path $docsRoot -Force | Out-Null
+        foreach ($directory in @(
+            "tests\Cephalon.Tests.Composition",
+            "tests\Cephalon.Tests.Hosting",
+            "tests\Cephalon.Tests.Tooling",
+            "tests\Cephalon.Tests.CdcIntegration",
+            "tests\Cephalon.Tests.Scripts",
+            "tests\Cephalon.Tests.Support",
+            "benchmarks\Cephalon.Benchmarks"
+        )) {
+            New-Item -ItemType Directory -Path (Join-Path $fixtureRoot $directory) -Force | Out-Null
+        }
+
+        $roadmapPath = Join-Path $docsRoot "test-coverage-roadmap.md"
+        $contents = Get-Content -LiteralPath (Join-Path $script:repoRoot "docs\test-coverage-roadmap.md") -Raw -Encoding UTF8
+        $contents = $contents.Replace("../tests/Cephalon.Tests.ProviderIntegration", "../tests/Cephalon.Tests.ProviderIntegration.Missing")
+        $contents | Should -Match "ProviderIntegration\.Missing"
+        Set-Content -LiteralPath $roadmapPath -Value $contents -Encoding UTF8
+
+        {
+            Convert-TestCoverageEvidence -ResolvedRoadmapPath $roadmapPath -ResolvedRepoRoot $fixtureRoot
+        } | Should -Throw "*Test coverage roadmap layered project reference '../tests/Cephalon.Tests.ProviderIntegration.Missing'*"
+    }
+
     It "keeps release validation wired to the scorecard artifact" {
         $releaseValidation = Get-Content -LiteralPath (Join-Path $script:repoRoot "scripts\validate-release.ps1") -Raw -Encoding UTF8
 
@@ -1458,6 +1512,9 @@ jobs:
         $releaseValidation | Should -Match "ProviderIntegrationEvidence\.DependencyHealthProviderManifest"
         $releaseValidation | Should -Match "Provider integration evidence"
         $releaseValidation | Should -Match "dependency-health providers"
+        $releaseValidation | Should -Match "TestCoverageEvidence"
+        $releaseValidation | Should -Match "Test coverage evidence"
+        $releaseValidation | Should -Match "OpenQuarantineEntryCount"
         $releaseValidation | Should -Match "SrePostureEvidence"
         $releaseValidation | Should -Match "guardrail-mapped"
         $releaseValidation | Should -Match "SupplyChainEvidence"

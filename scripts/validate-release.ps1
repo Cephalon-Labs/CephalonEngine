@@ -329,6 +329,26 @@ function Get-ScorecardRequiredPropertyValue {
     return $property.Value
 }
 
+function Get-ScorecardRequiredNode {
+    param(
+        [Parameter(Mandatory = $true)]
+        [object]$Object,
+        [Parameter(Mandatory = $true)]
+        [string]$NodeName
+    )
+
+    if ($null -eq $Object) {
+        throw "Engine completion scorecard JSON is missing $NodeName."
+    }
+
+    $property = $Object.PSObject.Properties[$NodeName]
+    if ($null -eq $property -or $null -eq $property.Value) {
+        throw "Engine completion scorecard JSON is missing $NodeName."
+    }
+
+    return $property.Value
+}
+
 function Assert-EngineCompletionScorecardHardBlockers {
     param([Parameter(Mandatory = $true)] [object]$Scorecard)
 
@@ -376,11 +396,21 @@ function Assert-EngineCompletionScorecardHardBlockers {
         $hardBlockers.Add("public API removal entries: $publicApiRemovalCount")
     }
 
+    $testCoverageEvidence = Get-ScorecardRequiredNode -Object $Scorecard -NodeName "TestCoverageEvidence"
+    $testCoverageActiveGapCount = Get-ScorecardIntegerProperty -Object $testCoverageEvidence -PropertyName "ActiveGapRecommendationCount"
+    $testCoverageOpenQuarantineCount = Get-ScorecardIntegerProperty -Object $testCoverageEvidence -PropertyName "OpenQuarantineEntryCount"
+    $testCoverageQueueStatus = [string](Get-ScorecardRequiredPropertyValue -Object $testCoverageEvidence -PropertyName "QuarantineQueueStatus" -OwnerName "TestCoverageEvidence")
+    if ($testCoverageActiveGapCount -gt 0 -or
+        $testCoverageOpenQuarantineCount -gt 0 -or
+        $testCoverageQueueStatus -ne "empty") {
+        $hardBlockers.Add("test coverage active gaps: $testCoverageActiveGapCount; open quarantine entries: $testCoverageOpenQuarantineCount; queue status: $testCoverageQueueStatus")
+    }
+
     if ($hardBlockers.Count -gt 0) {
         throw "Engine completion scorecard has hard release blocker(s): $($hardBlockers -join '; ')."
     }
 
-    Write-Host "Engine completion scorecard hard-blocker gate: no blocked platform gates, no supply-chain blocked items, and no public API removals."
+    Write-Host "Engine completion scorecard hard-blocker gate: no blocked platform gates, no supply-chain blocked items, no public API removals, and no active test-coverage gaps or open quarantine entries."
 }
 
 function Write-EngineCompletionScorecardEvidenceSummary {
@@ -392,30 +422,23 @@ function Write-EngineCompletionScorecardEvidenceSummary {
     }
 
     $scorecard = Get-Content -LiteralPath $scorecardJsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
-    if ($null -eq $scorecard.DeploymentModeEvidence) {
-        throw "Engine completion scorecard JSON is missing DeploymentModeEvidence."
-    }
-
-    if ($null -eq $scorecard.SrePostureEvidence) {
-        throw "Engine completion scorecard JSON is missing SrePostureEvidence."
-    }
-
-    if ($null -eq $scorecard.ProviderIntegrationEvidence) {
-        throw "Engine completion scorecard JSON is missing ProviderIntegrationEvidence."
-    }
+    $deploymentModeEvidence = Get-ScorecardRequiredNode -Object $scorecard -NodeName "DeploymentModeEvidence"
+    $srePostureEvidence = Get-ScorecardRequiredNode -Object $scorecard -NodeName "SrePostureEvidence"
+    $providerIntegrationEvidence = Get-ScorecardRequiredNode -Object $scorecard -NodeName "ProviderIntegrationEvidence"
+    $testCoverageEvidence = Get-ScorecardRequiredNode -Object $scorecard -NodeName "TestCoverageEvidence"
 
     $deploymentModeClaimsReport = Get-ScorecardRequiredPropertyValue `
-        -Object $scorecard.DeploymentModeEvidence `
+        -Object $deploymentModeEvidence `
         -PropertyName "ClaimsReport" `
         -OwnerName "DeploymentModeEvidence"
     $deploymentModeClaimsReportPresent = [System.Convert]::ToBoolean(
         (Get-ScorecardRequiredPropertyValue `
-            -Object $scorecard.DeploymentModeEvidence `
+            -Object $deploymentModeEvidence `
             -PropertyName "ClaimsReportPresent" `
             -OwnerName "DeploymentModeEvidence"),
         [System.Globalization.CultureInfo]::InvariantCulture)
     $deploymentModeClaimsReportGateStatus = Get-ScorecardRequiredPropertyValue `
-        -Object $scorecard.DeploymentModeEvidence `
+        -Object $deploymentModeEvidence `
         -PropertyName "ClaimsReportPublishProbeGateStatus" `
         -OwnerName "DeploymentModeEvidence"
     $deploymentModeClaimsReportTargetCount = [System.Convert]::ToInt32(
@@ -512,6 +535,53 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         throw "Engine completion scorecard JSON is missing PublicApiCompatibilityEvidence."
     }
 
+    $testCoverageLayeredProjectCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $scorecard.TestCoverageEvidence `
+            -PropertyName "LayeredProjectCount" `
+            -OwnerName "TestCoverageEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $testCoverageGapCriterionCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $scorecard.TestCoverageEvidence `
+            -PropertyName "GapDefinitionCriterionCount" `
+            -OwnerName "TestCoverageEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $testCoverageRecommendationCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $scorecard.TestCoverageEvidence `
+            -PropertyName "RecommendationCount" `
+            -OwnerName "TestCoverageEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $testCoverageShippedRecommendationCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $scorecard.TestCoverageEvidence `
+            -PropertyName "ShippedRecommendationCount" `
+            -OwnerName "TestCoverageEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $testCoverageGatedRecommendationCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $scorecard.TestCoverageEvidence `
+            -PropertyName "GatedRecommendationCount" `
+            -OwnerName "TestCoverageEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $testCoverageActiveGapRecommendationCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $scorecard.TestCoverageEvidence `
+            -PropertyName "ActiveGapRecommendationCount" `
+            -OwnerName "TestCoverageEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $testCoverageOpenQuarantineEntryCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $scorecard.TestCoverageEvidence `
+            -PropertyName "OpenQuarantineEntryCount" `
+            -OwnerName "TestCoverageEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $testCoverageQueueStatus = Get-ScorecardRequiredPropertyValue `
+        -Object $scorecard.TestCoverageEvidence `
+        -PropertyName "QuarantineQueueStatus" `
+        -OwnerName "TestCoverageEvidence"
+
     $sreStableBaselineManifest = Get-ScorecardRequiredPropertyValue `
         -Object $scorecard.SrePostureEvidence `
         -PropertyName "StableBaselineManifest" `
@@ -593,6 +663,16 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         $scorecard.SrePostureEvidence.GuardrailNotApplicableSliCount,
         $scorecard.SrePostureEvidence.ReleaseValidationSummaryMode,
         $sreStableBaselineManifest)
+
+    Write-Host ("Test coverage evidence: {0} layered projects; gap criteria {1}; recommendations {2}; shipped {3}; gated {4}; active gaps {5}; open quarantine entries {6}; queue status {7}." -f `
+        $testCoverageLayeredProjectCount,
+        $testCoverageGapCriterionCount,
+        $testCoverageRecommendationCount,
+        $testCoverageShippedRecommendationCount,
+        $testCoverageGatedRecommendationCount,
+        $testCoverageActiveGapRecommendationCount,
+        $testCoverageOpenQuarantineEntryCount,
+        $testCoverageQueueStatus)
 
     $supplyChainExternalPolicyPendingCount = Get-ScorecardIntegerProperty -Object $scorecard.SupplyChainEvidence -PropertyName "ExternalPolicyPendingCount"
     $supplyChainExternalPolicyPreflightCheckCount = Get-ScorecardIntegerProperty -Object $scorecard.SupplyChainEvidence -PropertyName "ExternalPolicyPreflightCheckCount"

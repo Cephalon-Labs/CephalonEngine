@@ -7,6 +7,7 @@ param(
     [string]$ProviderIntegrationManifestPath = "scripts/provider-integration-support.json",
     [string]$SrePostureManifestPath = "scripts/sre-posture-support.json",
     [string]$SupplyChainManifestPath = "scripts/supply-chain-release-support.json",
+    [string]$TestCoverageRoadmapPath = "docs/test-coverage-roadmap.md",
     [string]$PublicApiDeltaScriptPath = "scripts/summarise-public-api-deltas.ps1",
     [string]$OutputPath = "artifacts/engine-completion-scorecard-release",
     [string]$RepoRoot
@@ -15,7 +16,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$Script:SchemaVersion = "1.14.0"
+$Script:SchemaVersion = "1.15.0"
 $Script:AllowedStatuses = @(
     "ready-for-preview",
     "partial",
@@ -1750,6 +1751,185 @@ function Convert-AdoptionSmokeEvidence {
     })
 }
 
+function Convert-TestCoverageEvidence {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedRoadmapPath,
+        [Parameter(Mandatory = $true)]
+        [string]$ResolvedRepoRoot
+    )
+
+    if (-not (Test-Path -LiteralPath $ResolvedRoadmapPath -PathType Leaf)) {
+        throw "Test coverage roadmap '$ResolvedRoadmapPath' was not found."
+    }
+
+    $lines = @(Get-Content -LiteralPath $ResolvedRoadmapPath -Encoding UTF8)
+    $markdown = [string]::Join("`n", $lines)
+    $roadmapDirectory = [System.IO.Path]::GetDirectoryName($ResolvedRoadmapPath)
+    $roadmapReference = Get-RepoRelativePath -Path $ResolvedRoadmapPath -RepoRoot $ResolvedRepoRoot
+
+    $validatedReferences = [System.Collections.Generic.List[object]]::new()
+    $validatedReferences.Add([pscustomobject]([ordered]@{
+        Reference  = $roadmapReference
+        DeclaredAs = $roadmapReference
+        Kind       = "doc"
+    }))
+
+    $layeredPostureRows = Convert-MarkdownTable `
+        -TableLines (Get-MarkdownTableLines `
+            -SectionLines (Get-MarkdownSectionLines -Lines $lines -Heading "Layered test posture") `
+            -Heading "Layered test posture") `
+        -Heading "Layered test posture"
+
+    if (@($layeredPostureRows).Count -eq 0) {
+        throw "Test coverage roadmap must declare at least one layered test posture row."
+    }
+
+    $layeredProjects = @(
+        foreach ($row in $layeredPostureRows) {
+            $projectCell = [string]$row.Project
+            $projectPathMatch = [regex]::Match($projectCell, '\]\((?<Path>[^)]+)\)')
+            if (-not $projectPathMatch.Success) {
+                throw "Test coverage roadmap layered project row '$projectCell' must link to a repo path."
+            }
+
+            $declaredPath = $projectPathMatch.Groups["Path"].Value
+            $declaredPathWithoutAnchor = ($declaredPath -split '#')[0]
+            $resolvedProjectPath = Resolve-FullPath -Path $declaredPathWithoutAnchor -BasePath $roadmapDirectory
+            if (-not (Test-Path -LiteralPath $resolvedProjectPath)) {
+                throw "Test coverage roadmap layered project reference '$declaredPath' was not found at '$resolvedProjectPath'."
+            }
+
+            $projectReference = Get-RepoRelativePath -Path $resolvedProjectPath -RepoRoot $ResolvedRepoRoot
+            $validatedReferences.Add([pscustomobject]([ordered]@{
+                Reference  = $projectReference
+                DeclaredAs = $declaredPath
+                Kind       = if (Test-Path -LiteralPath $resolvedProjectPath -PathType Container) { "directory" } else { Get-SourceReferenceKind -Reference $projectReference }
+            }))
+
+            [pscustomobject]([ordered]@{
+                Project      = Remove-MarkdownInlineFormatting -Value $projectCell
+                Reference    = $projectReference
+                Layer        = Remove-MarkdownInlineFormatting -Value ([string]$row.Layer)
+                WhatItProves = Remove-MarkdownInlineFormatting -Value ([string]$row.'What it proves')
+            })
+        }
+    )
+
+    $gapCriterionLines = @(
+        Get-MarkdownSectionLines -Lines $lines -Heading "Gap definition criteria" |
+            Where-Object { $_ -match '^\s*-\s+\([a-z]\)\s+' }
+    )
+    if ($gapCriterionLines.Count -eq 0) {
+        throw "Test coverage roadmap gap definition criteria were not found."
+    }
+
+    $gapCriteria = @(
+        foreach ($line in $gapCriterionLines) {
+            $match = [regex]::Match($line, '^\s*-\s+\((?<Id>[a-z])\)\s+(?<Text>.+)$')
+            [pscustomobject]([ordered]@{
+                Id   = $match.Groups["Id"].Value
+                Text = Remove-MarkdownInlineFormatting -Value $match.Groups["Text"].Value
+            })
+        }
+    )
+
+    $recommendationSection = Get-MarkdownSectionLines -Lines $lines -Heading "Prioritized recommendations"
+    $recommendations = @(
+        foreach ($line in $recommendationSection) {
+            $match = [regex]::Match($line, '^### #(?<Number>\d+)\s+\S+\s+(?<Text>.+)$')
+            if (-not $match.Success) {
+                continue
+            }
+
+            $number = [int]$match.Groups["Number"].Value
+            $text = $match.Groups["Text"].Value.Trim()
+            $priorityMatch = [regex]::Match($text, '(?<Priority>high|medium|low) priority')
+            if (-not $priorityMatch.Success) {
+                throw "Test coverage recommendation #$number must declare high, medium, or low priority."
+            }
+
+            $status = "active"
+            if ($text -match '\*\*shipped through\b') {
+                $status = "shipped"
+            }
+            elseif ($text -match '\*\*gated\*\*') {
+                $status = "gated"
+            }
+
+            $title = [regex]::Replace($text, '\s+\((?:high|medium|low) priority,.*$', '')
+
+            [pscustomobject]([ordered]@{
+                Number   = $number
+                Title    = Remove-MarkdownInlineFormatting -Value $title
+                Priority = $priorityMatch.Groups["Priority"].Value
+                Status   = $status
+            })
+        }
+    )
+
+    if ($recommendations.Count -eq 0) {
+        throw "Test coverage roadmap prioritized recommendations were not found."
+    }
+
+    $quarantineRows = @(
+        Convert-MarkdownTable `
+            -TableLines (Get-MarkdownTableLines `
+                -SectionLines (Get-MarkdownSectionLines -Lines $lines -Heading "Test-flake quarantine queue") `
+                -Heading "Test-flake quarantine queue") `
+            -Heading "Test-flake quarantine queue" |
+            ForEach-Object {
+                $deadline = Remove-MarkdownInlineFormatting -Value ([string]$_.Deadline)
+                $action = Remove-MarkdownInlineFormatting -Value ([string]$_.'Quarantine action')
+                $status = if ($deadline -match '^Closed\b' -or $action -match '\bResolved\b') { "closed" } else { "open" }
+
+                [pscustomobject]([ordered]@{
+                    Test             = Remove-MarkdownInlineFormatting -Value ([string]$_.Test)
+                    Project          = Remove-MarkdownInlineFormatting -Value ([string]$_.Project)
+                    FirstObserved    = Remove-MarkdownInlineFormatting -Value ([string]$_.'First observed')
+                    QuarantineAction = $action
+                    Deadline         = $deadline
+                    Status           = $status
+                })
+            }
+    )
+
+    $queueEmptyDeclared = $markdown.Contains("The queue is empty.", [System.StringComparison]::Ordinal)
+    $openQuarantineRows = @($quarantineRows | Where-Object { $_.Status -ne "closed" })
+    if ($queueEmptyDeclared -and $openQuarantineRows.Count -gt 0) {
+        throw "Test coverage roadmap declares an empty quarantine queue but has $($openQuarantineRows.Count) open row(s)."
+    }
+
+    $queueStatus = if ($queueEmptyDeclared -and $openQuarantineRows.Count -eq 0) {
+        "empty"
+    }
+    elseif ($openQuarantineRows.Count -gt 0) {
+        "open"
+    }
+    else {
+        "not-declared"
+    }
+
+    return [pscustomobject]([ordered]@{
+        Roadmap                        = $roadmapReference
+        SourceDocument                 = $roadmapReference
+        LayeredProjectCount            = $layeredProjects.Count
+        GapDefinitionCriterionCount    = $gapCriteria.Count
+        RecommendationCount            = $recommendations.Count
+        ShippedRecommendationCount     = @($recommendations | Where-Object { $_.Status -eq "shipped" }).Count
+        GatedRecommendationCount       = @($recommendations | Where-Object { $_.Status -eq "gated" }).Count
+        ActiveGapRecommendationCount   = @($recommendations | Where-Object { $_.Status -eq "active" }).Count
+        QuarantineEntryCount           = $quarantineRows.Count
+        OpenQuarantineEntryCount       = $openQuarantineRows.Count
+        QuarantineQueueStatus          = $queueStatus
+        LayeredProjects                = $layeredProjects
+        GapCriteria                    = $gapCriteria
+        Recommendations                = $recommendations
+        QuarantineRows                 = $quarantineRows
+        ValidatedReferences            = @($validatedReferences | Sort-Object Reference -Unique)
+    })
+}
+
 function Convert-ProviderIntegrationEvidence {
     param(
         [Parameter(Mandatory = $true)]
@@ -2984,6 +3164,8 @@ function New-EngineCompletionScorecardReport {
         [Parameter(Mandatory = $true)]
         [string]$ResolvedSupplyChainManifestPath,
         [Parameter(Mandatory = $true)]
+        [string]$ResolvedTestCoverageRoadmapPath,
+        [Parameter(Mandatory = $true)]
         [string]$ResolvedPublicApiDeltaScriptPath,
         [Parameter(Mandatory = $true)]
         [string]$ResolvedRepoRoot
@@ -3007,6 +3189,7 @@ function New-EngineCompletionScorecardReport {
     $providerIntegrationEvidence = Convert-ProviderIntegrationEvidence -ResolvedManifestPath $ResolvedProviderIntegrationManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
     $srePostureEvidence = Convert-SrePostureEvidence -ResolvedManifestPath $ResolvedSrePostureManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
     $supplyChainEvidence = Convert-SupplyChainEvidence -ResolvedManifestPath $ResolvedSupplyChainManifestPath -ResolvedRepoRoot $ResolvedRepoRoot
+    $testCoverageEvidence = Convert-TestCoverageEvidence -ResolvedRoadmapPath $ResolvedTestCoverageRoadmapPath -ResolvedRepoRoot $ResolvedRepoRoot
     $publicApiCompatibilityEvidence = Convert-PublicApiCompatibilityEvidence -ResolvedPublicApiDeltaScriptPath $ResolvedPublicApiDeltaScriptPath -ResolvedRepoRoot $ResolvedRepoRoot
     $promotionRules = @(Get-ScorecardListItems -Lines $lines -Heading "Promotion rules" | ForEach-Object { Remove-MarkdownInlineFormatting -Value $_ })
     $refreshCadence = @(Get-ScorecardListItems -Lines $lines -Heading "Refresh cadence" | ForEach-Object { Remove-MarkdownInlineFormatting -Value $_ })
@@ -3039,6 +3222,7 @@ function New-EngineCompletionScorecardReport {
         ProviderIntegrationManifest = Get-RepoRelativePath -Path $ResolvedProviderIntegrationManifestPath -RepoRoot $ResolvedRepoRoot
         SrePostureManifest = Get-RepoRelativePath -Path $ResolvedSrePostureManifestPath -RepoRoot $ResolvedRepoRoot
         SupplyChainManifest = Get-RepoRelativePath -Path $ResolvedSupplyChainManifestPath -RepoRoot $ResolvedRepoRoot
+        TestCoverageRoadmap = Get-RepoRelativePath -Path $ResolvedTestCoverageRoadmapPath -RepoRoot $ResolvedRepoRoot
         PublicApiDeltaScript = Get-RepoRelativePath -Path $ResolvedPublicApiDeltaScriptPath -RepoRoot $ResolvedRepoRoot
         StatusVocabulary   = $statusVocabulary
         EvidenceSources    = $evidenceSources
@@ -3052,6 +3236,7 @@ function New-EngineCompletionScorecardReport {
         ProviderIntegrationEvidence = $providerIntegrationEvidence
         SrePostureEvidence = $srePostureEvidence
         SupplyChainEvidence = $supplyChainEvidence
+        TestCoverageEvidence = $testCoverageEvidence
         PublicApiCompatibilityEvidence = $publicApiCompatibilityEvidence
         PromotionRules     = $promotionRules
         RefreshCadence     = $refreshCadence
@@ -3103,6 +3288,14 @@ function New-EngineCompletionScorecardReport {
             SupplyChainExternalPolicyPendingCount = $supplyChainEvidence.ExternalPolicyPendingCount
             SupplyChainExternalPolicyPreflightCheckCount = $supplyChainEvidence.ExternalPolicyPreflightCheckCount
             SupplyChainBlockedCount = $supplyChainEvidence.BlockedCount
+            TestCoverageLayeredProjectCount = $testCoverageEvidence.LayeredProjectCount
+            TestCoverageGapCriterionCount = $testCoverageEvidence.GapDefinitionCriterionCount
+            TestCoverageRecommendationCount = $testCoverageEvidence.RecommendationCount
+            TestCoverageShippedRecommendationCount = $testCoverageEvidence.ShippedRecommendationCount
+            TestCoverageGatedRecommendationCount = $testCoverageEvidence.GatedRecommendationCount
+            TestCoverageActiveGapRecommendationCount = $testCoverageEvidence.ActiveGapRecommendationCount
+            TestCoverageQuarantineEntryCount = $testCoverageEvidence.QuarantineEntryCount
+            TestCoverageOpenQuarantineEntryCount = $testCoverageEvidence.OpenQuarantineEntryCount
             PublicApiPackageCount = $publicApiCompatibilityEvidence.PackageCount
             PublicApiPendingPackageCount = $publicApiCompatibilityEvidence.PendingPackageCount
             PublicApiAdditiveEntryCount = $publicApiCompatibilityEvidence.AdditiveEntryCount
@@ -3148,6 +3341,7 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("Provider integration manifest: ``$($Report.ProviderIntegrationManifest)``")
     $markdown.Add("SRE posture manifest: ``$($Report.SrePostureManifest)``")
     $markdown.Add("Supply-chain release manifest: ``$($Report.SupplyChainManifest)``")
+    $markdown.Add("Test coverage roadmap: ``$($Report.TestCoverageRoadmap)``")
     $markdown.Add("Public API delta script: ``$($Report.PublicApiDeltaScript)``")
     $markdown.Add("Generated at UTC: ``$($Report.GeneratedAtUtc)``")
     $markdown.Add("Schema version: ``$($Report.'$schemaVersion')``")
@@ -3187,6 +3381,14 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- Supply-chain external-policy-pending items: $($Report.Summary.SupplyChainExternalPolicyPendingCount)")
     $markdown.Add("- Supply-chain external-policy preflight checks: $($Report.Summary.SupplyChainExternalPolicyPreflightCheckCount)")
     $markdown.Add("- Supply-chain blocked items: $($Report.Summary.SupplyChainBlockedCount)")
+    $markdown.Add("- Test coverage layered projects: $($Report.Summary.TestCoverageLayeredProjectCount)")
+    $markdown.Add("- Test coverage gap criteria: $($Report.Summary.TestCoverageGapCriterionCount)")
+    $markdown.Add("- Test coverage recommendations: $($Report.Summary.TestCoverageRecommendationCount)")
+    $markdown.Add("- Test coverage shipped recommendations: $($Report.Summary.TestCoverageShippedRecommendationCount)")
+    $markdown.Add("- Test coverage gated recommendations: $($Report.Summary.TestCoverageGatedRecommendationCount)")
+    $markdown.Add("- Test coverage active gap recommendations: $($Report.Summary.TestCoverageActiveGapRecommendationCount)")
+    $markdown.Add("- Test coverage quarantine entries: $($Report.Summary.TestCoverageQuarantineEntryCount)")
+    $markdown.Add("- Test coverage open quarantine entries: $($Report.Summary.TestCoverageOpenQuarantineEntryCount)")
     $markdown.Add("- Public API packages: $($Report.Summary.PublicApiPackageCount)")
     $markdown.Add("- Public API packages with pending changes: $($Report.Summary.PublicApiPendingPackageCount)")
     $markdown.Add("- Public API additive entries: $($Report.Summary.PublicApiAdditiveEntryCount)")
@@ -3394,6 +3596,26 @@ function Write-EngineCompletionScorecardReport {
     }
 
     $markdown.Add("")
+    $markdown.Add("## Test Coverage Evidence")
+    $markdown.Add("")
+    $markdown.Add("- Roadmap: ``$($Report.TestCoverageEvidence.Roadmap)``")
+    $markdown.Add("- Layered projects: $($Report.TestCoverageEvidence.LayeredProjectCount)")
+    $markdown.Add("- Gap criteria: $($Report.TestCoverageEvidence.GapDefinitionCriterionCount)")
+    $markdown.Add("- Recommendations: $($Report.TestCoverageEvidence.RecommendationCount)")
+    $markdown.Add("- Shipped recommendations: $($Report.TestCoverageEvidence.ShippedRecommendationCount)")
+    $markdown.Add("- Gated recommendations: $($Report.TestCoverageEvidence.GatedRecommendationCount)")
+    $markdown.Add("- Active gap recommendations: $($Report.TestCoverageEvidence.ActiveGapRecommendationCount)")
+    $markdown.Add("- Quarantine entries: $($Report.TestCoverageEvidence.QuarantineEntryCount)")
+    $markdown.Add("- Open quarantine entries: $($Report.TestCoverageEvidence.OpenQuarantineEntryCount)")
+    $markdown.Add("- Quarantine queue status: $($Report.TestCoverageEvidence.QuarantineQueueStatus)")
+    $markdown.Add("")
+    $markdown.Add("| Recommendation | Priority | Status | Title |")
+    $markdown.Add("| --- | --- | --- | --- |")
+    foreach ($recommendation in $Report.TestCoverageEvidence.Recommendations) {
+        $markdown.Add("| #$($recommendation.Number) | $($recommendation.Priority) | $($recommendation.Status) | $($recommendation.Title) |")
+    }
+
+    $markdown.Add("")
     $markdown.Add("## Provider Integration Evidence")
     $markdown.Add("")
     $markdown.Add("- Manifest: ``$($Report.ProviderIntegrationEvidence.Manifest)``")
@@ -3451,6 +3673,7 @@ function Invoke-EngineCompletionScorecardPublish {
         [string]$ProviderIntegrationManifestPath = "scripts/provider-integration-support.json",
         [string]$SrePostureManifestPath = "scripts/sre-posture-support.json",
         [string]$SupplyChainManifestPath = "scripts/supply-chain-release-support.json",
+        [string]$TestCoverageRoadmapPath = "docs/test-coverage-roadmap.md",
         [string]$PublicApiDeltaScriptPath = "scripts/summarise-public-api-deltas.ps1",
         [Parameter(Mandatory = $true)]
         [string]$OutputPath,
@@ -3467,10 +3690,11 @@ function Invoke-EngineCompletionScorecardPublish {
     $resolvedProviderIntegrationManifestPath = Resolve-FullPath -Path $ProviderIntegrationManifestPath -BasePath $resolvedRepoRoot
     $resolvedSrePostureManifestPath = Resolve-FullPath -Path $SrePostureManifestPath -BasePath $resolvedRepoRoot
     $resolvedSupplyChainManifestPath = Resolve-FullPath -Path $SupplyChainManifestPath -BasePath $resolvedRepoRoot
+    $resolvedTestCoverageRoadmapPath = Resolve-FullPath -Path $TestCoverageRoadmapPath -BasePath $resolvedRepoRoot
     $resolvedPublicApiDeltaScriptPath = Resolve-FullPath -Path $PublicApiDeltaScriptPath -BasePath $resolvedRepoRoot
     $resolvedOutputPath = Resolve-FullPath -Path $OutputPath -BasePath $resolvedRepoRoot
 
-    $report = New-EngineCompletionScorecardReport -ResolvedScorecardPath $resolvedScorecardPath -ResolvedConformanceMatrixPath $resolvedConformanceMatrixPath -ResolvedDeploymentModeManifestPath $resolvedDeploymentModeManifestPath -ResolvedDeploymentModeClaimsReportPath $resolvedDeploymentModeClaimsReportPath -ResolvedAdoptionSmokeManifestPath $resolvedAdoptionSmokeManifestPath -ResolvedProviderIntegrationManifestPath $resolvedProviderIntegrationManifestPath -ResolvedSrePostureManifestPath $resolvedSrePostureManifestPath -ResolvedSupplyChainManifestPath $resolvedSupplyChainManifestPath -ResolvedPublicApiDeltaScriptPath $resolvedPublicApiDeltaScriptPath -ResolvedRepoRoot $resolvedRepoRoot
+    $report = New-EngineCompletionScorecardReport -ResolvedScorecardPath $resolvedScorecardPath -ResolvedConformanceMatrixPath $resolvedConformanceMatrixPath -ResolvedDeploymentModeManifestPath $resolvedDeploymentModeManifestPath -ResolvedDeploymentModeClaimsReportPath $resolvedDeploymentModeClaimsReportPath -ResolvedAdoptionSmokeManifestPath $resolvedAdoptionSmokeManifestPath -ResolvedProviderIntegrationManifestPath $resolvedProviderIntegrationManifestPath -ResolvedSrePostureManifestPath $resolvedSrePostureManifestPath -ResolvedSupplyChainManifestPath $resolvedSupplyChainManifestPath -ResolvedTestCoverageRoadmapPath $resolvedTestCoverageRoadmapPath -ResolvedPublicApiDeltaScriptPath $resolvedPublicApiDeltaScriptPath -ResolvedRepoRoot $resolvedRepoRoot
     $paths = Write-EngineCompletionScorecardReport -Report $report -ResolvedOutputPath $resolvedOutputPath
 
     Write-Host "Engine completion scorecard artifact written to $($paths.JsonPath)"
@@ -3489,5 +3713,5 @@ if (-not $env:CEPHALON_ENGINE_COMPLETION_SCORECARD_NO_RUN) {
         $resolvedRoot = (Resolve-Path (Join-Path $PSScriptRoot "..")).Path
     }
 
-    $null = Invoke-EngineCompletionScorecardPublish -ScorecardPath $ScorecardPath -ConformanceMatrixPath $ConformanceMatrixPath -DeploymentModeManifestPath $DeploymentModeManifestPath -DeploymentModeClaimsReportPath $DeploymentModeClaimsReportPath -AdoptionSmokeManifestPath $AdoptionSmokeManifestPath -ProviderIntegrationManifestPath $ProviderIntegrationManifestPath -SrePostureManifestPath $SrePostureManifestPath -SupplyChainManifestPath $SupplyChainManifestPath -PublicApiDeltaScriptPath $PublicApiDeltaScriptPath -OutputPath $OutputPath -RepoRoot $resolvedRoot
+    $null = Invoke-EngineCompletionScorecardPublish -ScorecardPath $ScorecardPath -ConformanceMatrixPath $ConformanceMatrixPath -DeploymentModeManifestPath $DeploymentModeManifestPath -DeploymentModeClaimsReportPath $DeploymentModeClaimsReportPath -AdoptionSmokeManifestPath $AdoptionSmokeManifestPath -ProviderIntegrationManifestPath $ProviderIntegrationManifestPath -SrePostureManifestPath $SrePostureManifestPath -SupplyChainManifestPath $SupplyChainManifestPath -TestCoverageRoadmapPath $TestCoverageRoadmapPath -PublicApiDeltaScriptPath $PublicApiDeltaScriptPath -OutputPath $OutputPath -RepoRoot $resolvedRoot
 }

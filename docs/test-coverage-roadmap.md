@@ -1,8 +1,8 @@
 # Test Coverage Roadmap
 
-Maturity: `M2` planning surface — this document is the canonical home for the layered-test posture, the gap-definition criteria, the prioritized recommendation list, and the test-flake quarantine queue. Recommendations are referenced by stable number from `docs/engine-backlog.md` cards and from `docs/sre-posture.md` so test-coverage slices can cite "recommendation #N" without copying the full rationale into every backlog entry.
+Maturity: `M2` planning surface — this document is the canonical home for the layered-test posture, the gap-definition criteria, the prioritized recommendation list, and the test-flake quarantine queue. Recommendations are referenced by stable number from `docs/engine-backlog.md` cards and from `docs/sre-posture.md` so test-coverage slices can cite "recommendation #N" without copying the full rationale into every backlog entry. `scripts/publish-engine-completion-scorecard.ps1` reads this page into `TestCoverageEvidence`, and release validation plus `cephalon doctor --scorecard` fail closed when active recommendation gaps or open quarantine entries are present.
 
-Cross-references: [`engineering-standards.md`](engineering-standards.md), [`sre-posture.md`](sre-posture.md), [`benchmarking.md`](benchmarking.md), [`runtime-failure-policy.md`](runtime-failure-policy.md), [`operational-hardening-gap-inventory.md`](operational-hardening-gap-inventory.md), [`engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md), [`conformance-matrix.md`](conformance-matrix.md), [`engine-backlog.md`](engine-backlog.md).
+Cross-references: [`engineering-standards.md`](engineering-standards.md), [`sre-posture.md`](sre-posture.md), [`benchmarking.md`](benchmarking.md), [`runtime-failure-policy.md`](runtime-failure-policy.md), [`operational-hardening-gap-inventory.md`](operational-hardening-gap-inventory.md), [`engine-surface-maturity-audit.md`](engine-surface-maturity-audit.md), [`conformance-matrix.md`](conformance-matrix.md), [`engine-completion-scorecard.md`](engine-completion-scorecard.md), [`engine-backlog.md`](engine-backlog.md).
 
 ## Why this document exists
 
@@ -15,6 +15,8 @@ This roadmap exists so the framework can answer four questions consistently:
 3. What are the next-priority gaps right now? (See *Prioritized recommendations* below.)
 4. Which tests are flaking on `main` and what is the quarantine deadline? (See *Test-flake quarantine queue* below.)
 
+The generated scorecard treats this page as a read model source, not a replacement source of truth: layered project links must resolve, the four gap criteria must remain declared, recommendation counts must match the numbered sections, and the quarantine queue must be explicitly `empty` before release readback can pass.
+
 ## Layered test posture
 
 The repository ships six .NET test projects under `tests/`, one Pester-based scripts suite under `tests/Cephalon.Tests.Scripts`, and one benchmark project under `benchmarks/`. Each layer answers a different question:
@@ -26,7 +28,7 @@ The repository ships six .NET test projects under `tests/`, one Pester-based scr
 | [`tests/Cephalon.Tests.Tooling`](../tests/Cephalon.Tests.Tooling) | Tooling and contract | The shipped tooling (reference-docs generator, package-surface assertions, manifest validators, public-API delta helpers) produces deterministic output on the current `src/` tree. |
 | [`tests/Cephalon.Tests.CdcIntegration`](../tests/Cephalon.Tests.CdcIntegration) | CDC provider integration | Provider-native CDC paths run against real data-system runtimes while the default lane remains deterministic through explicit external-service gates. |
 | [`tests/Cephalon.Tests.ProviderIntegration`](../tests/Cephalon.Tests.ProviderIntegration) | Provider integration | Provider-backed data, eventing, event-sourcing, and companion-pack surfaces that need a real infrastructure runtime. Disposable runtimes that the repo owns, currently MongoDB data through the shared `EphemeralMongo` replica-set runner, can run in the default lane; externally managed providers such as Redis and SMTP relay delivery stay discovered by default and run only when an explicit provider gate is enabled. |
-| [`tests/Cephalon.Tests.Scripts`](../tests/Cephalon.Tests.Scripts) | Scripts | The PowerShell / bash scripts under `scripts/` are testable units rather than opaque automation; behavior changes flow through real assertions, including release-readiness manifest drift such as dependency-health provider rows diverging from their source-derived provider manifest and release-validation scorecard readback failing when dependency-health provider-manifest evidence is missing. |
+| [`tests/Cephalon.Tests.Scripts`](../tests/Cephalon.Tests.Scripts) | Scripts | The PowerShell / bash scripts under `scripts/` are testable units rather than opaque automation; behavior changes flow through real assertions, including release-readiness manifest drift such as dependency-health provider rows diverging from their source-derived provider manifest, release-validation scorecard readback failing when dependency-health provider-manifest evidence is missing, and `TestCoverageEvidence` failing when layered project links, active-gap counts, or the quarantine queue drift. |
 | [`tests/Cephalon.Tests.Support`](../tests/Cephalon.Tests.Support) | Shared support | Reusable test modules (e.g. `IdentityAuthorizationTestModule`, `IdentityDecisionMatrixTestModule`) consumed across the four execution layers above. Not an execution layer itself. |
 | [`benchmarks/Cephalon.Benchmarks`](../benchmarks/Cephalon.Benchmarks) | Performance | Per-package guardrail benchmarks tracked by the SLI catalog in [`sre-posture.md`](sre-posture.md). |
 

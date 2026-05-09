@@ -509,6 +509,7 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("SRE posture counts from `SrePostureEvidence`", scorecard, StringComparison.Ordinal);
         Assert.Contains("stable-baseline manifest rows/measurements", scorecard, StringComparison.Ordinal);
         Assert.Contains("pending-baseline blocker evidence rows", scorecard, StringComparison.Ordinal);
+        Assert.Contains("test coverage counts from `TestCoverageEvidence`", scorecard, StringComparison.Ordinal);
         Assert.Contains($"generated artifact is now schema `{expectedSchemaVersion}`", projectMemory, StringComparison.Ordinal);
         Assert.Contains($"currently requires scorecard schema `{expectedSchemaVersion}`", projectMemory, StringComparison.Ordinal);
         Assert.Contains("deployment-mode claims-report gate/target/warning/error/package-claim verdict counts", projectMemory, StringComparison.Ordinal);
@@ -520,6 +521,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("ProviderIntegrationEvidence.DependencyHealthProviderManifest", projectMemory, StringComparison.Ordinal);
         Assert.Contains("scripts/sre-stable-baselines.json", projectMemory, StringComparison.Ordinal);
         Assert.Contains("provider live/composition/gate/runtime-contract posture", projectMemory, StringComparison.Ordinal);
+        Assert.Contains("validates `docs/test-coverage-roadmap.md` into `TestCoverageEvidence`", projectMemory, StringComparison.Ordinal);
+        Assert.Contains("test coverage counts from `TestCoverageEvidence`", projectMemory, StringComparison.Ordinal);
         Assert.Contains("claims-report gate/target/warning/error/package-claim", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("adoption-smoke execution-report readback", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("claims-report gate/target/warning/error/package-claim", cliPackageReadme, StringComparison.Ordinal);
@@ -529,6 +532,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("dependency-health provider-manifest readback", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("SRE posture plus stable-baseline manifest, pending-baseline blocker, and guardrail-coverage counts", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("SRE SLI/target/baseline/stable-baseline-manifest/pending-baseline-blocker/guardrail-coverage counts", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("test coverage counts from `TestCoverageEvidence`", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("test coverage layered-project/gap/recommendation/quarantine counts from `TestCoverageEvidence`", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --scorecard <path>", planningGovernance, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --scorecard artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json", releaseChecklist, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --scorecard artifacts/engine-completion-scorecard-release/engine-completion-scorecard.json", releaseChecklistTemplate, StringComparison.Ordinal);
@@ -538,6 +543,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("deployment-mode claims-report", releaseChecklistTemplate, StringComparison.Ordinal);
         Assert.Contains("release-validation and optional `cephalon doctor --scorecard", releaseChecklist, StringComparison.Ordinal);
         Assert.Contains("release-validation and optional `cephalon doctor --scorecard", releaseChecklistTemplate, StringComparison.Ordinal);
+        Assert.Contains("TestCoverageEvidence", releaseChecklist, StringComparison.Ordinal);
+        Assert.Contains("TestCoverageEvidence", releaseChecklistTemplate, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --scorecard <path>", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("cephalon doctor --scorecard <path>", cliPackageReadme, StringComparison.Ordinal);
     }
