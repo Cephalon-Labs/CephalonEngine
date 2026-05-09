@@ -898,6 +898,42 @@ public sealed class AspNetCoreHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonCoreOperatorSurfaceHandlesRouteAndQueryValues()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularVerticalSlice";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "RestApi";
+        builder.Configuration[$"{EngineSettings.SectionName}:Localization:DefaultCulture"] = "en";
+        builder.Configuration[$"{EngineSettings.SectionName}:Localization:SupportedCultures:0"] = "en";
+        builder.Configuration[$"{EngineSettings.SectionName}:Localization:SupportedCultures:1"] = "th";
+        builder.Configuration[$"{EngineSettings.SectionName}:Localization:Resources:th:engine.docs.rest.title"] = "เอกสาร REST ของ Cephalon";
+        builder.Configuration["Engine:AspNetCore:OperatorSurface:Mode"] = "core";
+        builder.AddCephalon(cephalon =>
+        {
+            cephalon.AddModule(new PlatformTestModule());
+            cephalon.AddModule(new DiscoveryTestModule());
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+
+        var platformModule = await client.GetFromJsonAsync<ModuleManifest>("/engine/modules/platform");
+        var missingModuleResponse = await client.GetAsync("/engine/modules/missing-module");
+        var thaiSnapshot = await client.GetFromJsonAsync<LocalizedResourcesSnapshot>("/engine/localization?culture=th");
+
+        Assert.NotNull(platformModule);
+        Assert.Equal("platform", platformModule.Id);
+        Assert.Equal(HttpStatusCode.NotFound, missingModuleResponse.StatusCode);
+        Assert.NotNull(thaiSnapshot);
+        Assert.Equal("th", thaiSnapshot.ResolvedCulture);
+        Assert.Equal("เอกสาร REST ของ Cephalon", thaiSnapshot.Resources["engine.docs.rest.title"]);
+    }
+
+    [Fact]
     public async Task MapCephalonRejectsUnsupportedOperatorSurfaceMode()
     {
         var builder = WebApplication.CreateSlimBuilder();

@@ -265,6 +265,36 @@ Validation:
 - `Invoke-Pester -Path tests\Cephalon.Tests.Scripts\deployment-mode-support-manifest.Tests.ps1 -Output Detailed`
 - `pwsh ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode nativeAot -SkipPublish -OutputPath artifacts/deployment-mode-boundary-annotation-audit`
 
+### ENG-538 ASP.NET Core core-operator request-delegate proof
+
+Status: done
+Estimate: 0.5
+Iteration: Sprint 125
+Area: release-readiness / deployment-mode / ASP.NET Core
+Quality dimensions: Compatibility, Auditability, Maintainability, Reliability, Performance
+
+Why:
+
+- the full ASP.NET Core operator surface remains a truthful dynamic Minimal API boundary, but the opt-in `core` surface is the cold-start and deployment-mode remediation lane
+- route-delegate proof needs to cover real route/query behavior, not only static source shape
+- the docs, manifest, and planning truth need to show that the proof narrows a route subset without promoting global trim, Native AOT, single-file, or full-adapter support claims
+
+Delivered:
+
+- moved the `Engine:AspNetCore:OperatorSurface:Mode=core` operator route subset in `EngineWebApplicationExtensions` to prebuilt `RequestDelegate` handlers mapped through `MapMethods(...)`
+- kept the default/full `MapCephalon()` route catalog as the compatibility-preserving Minimal API delegate surface with explicit trim/AOT annotations
+- added hosting coverage for `/engine/modules/{moduleId}` route-value behavior, missing-module `404`, and `/engine/localization?culture=th` query-value behavior in core mode
+- added manifest Pester coverage that rejects `.MapGet(...)` drift inside `MapCephalonCoreOperatorRoutes(...)` and verifies the request-delegate helper uses `MapMethods(...)`
+- refreshed deployment-mode support docs, trim/AOT hazard inventory, ASP.NET Core component docs, compatibility/readiness notes, roadmap/follow-up notes, scorecard guidance, manifest evidence, and project memory
+
+Validation:
+
+- `dotnet build src\Cephalon.AspNetCore\Cephalon.AspNetCore.csproj -c Debug --no-restore`
+- `dotnet test tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj -c Debug --no-restore --filter "FullyQualifiedName~MapCephalonCoreOperatorSurfaceKeepsCoreAndTransportRoutes|FullyQualifiedName~MapCephalonCoreOperatorSurfaceHandlesRouteAndQueryValues|FullyQualifiedName~MapCephalonDefaultsToFullOperatorSurface|FullyQualifiedName~MapCephalonRejectsUnsupportedOperatorSurfaceMode"`
+- `Invoke-Pester -Path tests\Cephalon.Tests.Scripts\deployment-mode-support-manifest.Tests.ps1 -Output Detailed`
+- `pwsh ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode nativeAot -SkipPublish -OutputPath artifacts/deployment-mode-core-request-delegate-audit`
+- `pwsh ./scripts/publish-engine-completion-scorecard.ps1 -OutputPath artifacts/engine-completion-scorecard-core-request-delegates -SkipMarkdownOpen`
+
 ### SMTP invitation delivery live provider proof
 
 Status: done

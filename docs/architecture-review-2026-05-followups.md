@@ -33,6 +33,8 @@ Each entry should name the closing slice (`ENG-NNN` reference) when status moves
 
 > Current deployment-mode audit-lane checkpoint (`ENG-524` + `ENG-529` + `ENG-537`, May 9, 2026): direct trim and Native AOT audits now keep the single-file release gate out of their verdict by reporting `PublishProbeGate=not-applicable` when only audit-only modes are evaluated. Compiler-only analyzer/source-generator references strip app publish-mode globals through `CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove`, and the excluded-by-design compiler-only projects localize the same publish/RID globals with `TreatAsLocalProperty`. Trim and Native AOT probes now reach real runtime blocker evidence instead of failing first on compiler-only `netstandard2.0` drift; `MapCephalon()` now exposes the ASP.NET Core operator route layer as an annotated dynamic Minimal API boundary; the harness audits that boundary against the manifest-referenced source window and fails closed if it drifts; global support rows remain `not-claimed`.
 
+> Current ASP.NET Core core-operator request-delegate checkpoint (`ENG-538`, May 9, 2026): the opt-in `Engine:AspNetCore:OperatorSurface:Mode=core` route subset now maps through prebuilt `RequestDelegate` handlers and `MapMethods(...)`, with hosting coverage for route/query values and manifest Pester coverage that prevents `.MapGet(...)` delegate binding from returning to `MapCephalonCoreOperatorRoutes(...)`. This advances the deployment-mode remediation lane but does not promote global trim, Native AOT, single-file, or full-adapter support claims.
+
 ## Recommendations: Next 30 days (≈ May 2026)
 
 | Recommendation | Status | Closing slice(s) | Closed date | Notes |

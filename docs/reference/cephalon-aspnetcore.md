@@ -1057,6 +1057,8 @@ When the REST transport is active, it also enables OpenAPI and Scalar documentat
 
 The current full operator route surface uses ASP.NET Core Minimal API delegate binding, which is not a trim or Native AOT support claim for this package. The annotation is intentional so package-local analyzer builds report the boundary where consumers would otherwise receive framework warnings.
 
+Setting `Engine:AspNetCore:OperatorSurface:Mode` to `core` maps the bounded core operator routes through prebuilt request delegates instead of Minimal API delegate binding. That mode reduces the dynamic route boundary for the core route subset, but it does not make the full adapter surface a trim or Native AOT support claim.
+
 Returns: The same application instance for fluent host composition.
 
 Parameters:
