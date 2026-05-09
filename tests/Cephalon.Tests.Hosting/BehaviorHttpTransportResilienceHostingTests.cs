@@ -4,6 +4,7 @@ using System.Net.Http.Json;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.Behaviors.Hosting;
@@ -14,7 +15,7 @@ using Microsoft.AspNetCore.TestHost;
 
 namespace Cephalon.Tests.Hosting;
 
-public sealed class BehaviorHttpTransportResilienceHostingTests
+public sealed partial class BehaviorHttpTransportResilienceHostingTests
 {
     private const string CircuitBreakerBehaviorId = "tests.circuit-breaker";
     private const string RateLimitedBehaviorId = "tests.rate-limited";
@@ -244,7 +245,9 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
             engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
             {
                 behaviors.AddHttpBehaviorBindings();
-                behaviors.Register<RateLimitedBehavior, RateLimitedInput, RateLimitedOutput>(topology =>
+                behaviors.Register<RateLimitedBehavior, RateLimitedInput, RateLimitedOutput>(
+                    BehaviorHttpTransportJsonSerializerContext.Default.RateLimitedInput,
+                    topology =>
                 {
                     topology.AsDirect();
                     ConfigureTransport(topology, transportId);
@@ -295,7 +298,9 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
             engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
             {
                 behaviors.AddHttpBehaviorBindings();
-                behaviors.Register<TimeoutBehavior, SlowInput, SlowOutput>(topology =>
+                behaviors.Register<TimeoutBehavior, SlowInput, SlowOutput>(
+                    BehaviorHttpTransportJsonSerializerContext.Default.SlowInput,
+                    topology =>
                 {
                     topology.AsDirect();
                     ConfigureTransport(topology, transportId);
@@ -327,7 +332,9 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
             engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
             {
                 behaviors.AddHttpBehaviorBindings();
-                behaviors.Register<CircuitBreakerBehavior, SlowInput, SlowOutput>(topology =>
+                behaviors.Register<CircuitBreakerBehavior, SlowInput, SlowOutput>(
+                    BehaviorHttpTransportJsonSerializerContext.Default.SlowInput,
+                    topology =>
                 {
                     topology.AsDirect();
                     ConfigureTransport(topology, transportId);
@@ -975,4 +982,9 @@ public sealed class BehaviorHttpTransportResilienceHostingTests
     private sealed record SlowOutput(string? Value);
 
     private sealed record SseMessage(string? EventName, string Data);
+
+    [JsonSerializable(typeof(RateLimitedInput))]
+    [JsonSerializable(typeof(SlowInput))]
+    [JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true, PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
+    private sealed partial class BehaviorHttpTransportJsonSerializerContext : JsonSerializerContext;
 }

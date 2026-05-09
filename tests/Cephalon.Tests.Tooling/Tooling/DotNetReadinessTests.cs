@@ -47,9 +47,18 @@ public sealed class DotNetReadinessTests
             Assert.Equal("not-claimed", deploymentModeSupport["DeploymentModes"]?["NativeAot"]?["Status"]?.GetValue<string>());
             Assert.Equal("not-claimed", deploymentModeSupport["DeploymentModes"]?["SingleFile"]?["Status"]?.GetValue<string>());
             var packageScopedClaims = Assert.IsType<JsonArray>(deploymentModeSupport["PackageScopedClaims"]);
-            var diagnosticsClaim = Assert.IsType<JsonObject>(Assert.Single(packageScopedClaims));
-            Assert.Equal("Cephalon.Diagnostics", diagnosticsClaim["PackageName"]?.GetValue<string>());
-            Assert.Contains("singleFile", diagnosticsClaim["SupportedModes"]!.AsArray().Select(mode => mode!.GetValue<string>()));
+            Assert.Equal(3, packageScopedClaims.Count);
+            var packageScopedClaimNames = packageScopedClaims
+                .Select(claim => Assert.IsType<JsonObject>(claim)["PackageName"]?.GetValue<string>() ?? string.Empty)
+                .Order(StringComparer.Ordinal)
+                .ToArray();
+            Assert.Equal(
+                ["Cephalon.Abstractions", "Cephalon.Diagnostics", "Cephalon.Scaffolding"],
+                packageScopedClaimNames);
+            foreach (var claim in packageScopedClaims.Select(claim => Assert.IsType<JsonObject>(claim)))
+            {
+                Assert.Contains("singleFile", claim["SupportedModes"]!.AsArray().Select(mode => mode!.GetValue<string>()));
+            }
 
             var claims = Assert.IsType<JsonObject>(report["Claims"]);
             Assert.Equal("not-claimed", claims["Trim"]?["Status"]?.GetValue<string>());

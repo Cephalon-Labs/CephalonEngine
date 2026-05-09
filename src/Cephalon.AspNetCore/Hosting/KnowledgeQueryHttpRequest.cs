@@ -6,6 +6,13 @@ namespace Cephalon.AspNetCore.Hosting;
 public sealed class KnowledgeQueryHttpRequest
 {
     /// <summary>
+    /// Initializes a new instance of the <see cref="KnowledgeQueryHttpRequest"/> class.
+    /// </summary>
+    public KnowledgeQueryHttpRequest()
+    {
+    }
+
+    /// <summary>
     /// Gets or initializes the query text.
     /// </summary>
     public string? QueryText { get; init; }

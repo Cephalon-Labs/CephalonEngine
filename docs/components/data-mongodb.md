@@ -4,6 +4,8 @@
 
 `Cephalon.Data.MongoDB` is the MongoDB document-store companion pack for Cephalon. It proves that the companion-pack pattern established by `Cephalon.Data.EntityFramework` extends cleanly to non-relational providers without any changes to `Cephalon.Engine` or `Cephalon.Abstractions`, and it now also proves the first concrete provider-native CDC runner on top of the shared `Cephalon.Data` execution/runtime catalog family.
 
+The package follows the repository-managed `MongoDB.Driver` version and keeps `SharpCompress` as an explicit direct dependency so NuGet audit and downstream consumers resolve the same non-vulnerable compression stack used by release validation.
+
 ## What it owns
 
 - registers a singleton `IMongoClient` from a connection string and a singleton `IMongoDatabase` from the configured database name, using `TryAdd` semantics so a host-owned client is never displaced

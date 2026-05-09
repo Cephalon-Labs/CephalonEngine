@@ -1309,6 +1309,7 @@ Browse the published API surface by public member.
   - Creates a new agent-tool execution decision.
   - `AgentToolExecutionDecision(string kind, string reason, IReadOnlyDictionary<string, string> metadata)`
 - [AgentToolExecutionHttpRequest](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest-ctor): `Constructors` on `AgentToolExecutionHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=AgentToolExecutionHttpRequest&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Initializes a new instance of the `AgentToolExecutionHttpRequest` class.
   - `AgentToolExecutionHttpRequest()`
 - [AgentToolExecutionReport](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutionreport-ctor-system-string-system-string-system-string-system-datetimeoffset-system-string-system-string-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=AgentToolExecutionReport&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Creates a new runtime observation for an agent-tool run.
@@ -9048,6 +9049,7 @@ Browse the published API surface by public member.
   - Creates a new event publication request.
   - `EventPublication(string id, string channelId, string eventType, string payload, DateTimeOffset occurredAtUtc, string contentType, string correlationId, string tenantId, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> metadata)`
 - [EventPublicationHttpRequest](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-eventpublicationhttprequest-ctor): `Constructors` on `EventPublicationHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=EventPublicationHttpRequest&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Initializes a new instance of the `EventPublicationHttpRequest` class.
   - `EventPublicationHttpRequest()`
 - [EventPublicationRequest](cephalon-abstractions.md#member-m-cephalon-abstractions-data-eventpublicationrequest-ctor-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventPublicationRequest&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates an event-publication request.
@@ -14969,6 +14971,7 @@ Browse the published API surface by public member.
   - Gets the stable counter name for completed knowledge-queries.
   - `const string KnowledgeQueryCounterName`
 - [KnowledgeQueryHttpRequest](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-knowledgequeryhttprequest-ctor): `Constructors` on `KnowledgeQueryHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=KnowledgeQueryHttpRequest&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Initializes a new instance of the `KnowledgeQueryHttpRequest` class.
   - `KnowledgeQueryHttpRequest()`
 - [KnowledgeQueryMatch](cephalon-abstractions.md#member-m-cephalon-abstractions-retrieval-knowledgequerymatch-ctor-system-string-system-string-system-string-system-string-system-int32-system-uri-system-collections-generic-ireadonlylist-system-string-system-nullable-system-datetimeoffset-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `KnowledgeQueryMatch` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=KnowledgeQueryMatch&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Describes one ranked document match returned by the managed query engine.

@@ -1278,6 +1278,11 @@ separate concerns:
   resolved runtime answer per endpoint
 - GraphQL and JSON-RPC keep their protocol-native response shapes and are intentionally not wrapped
   in `ResultModel`
+- generic behavior HTTP bindings dispatch JSON payloads through the behavior execution slot; manual
+  fluent registrations that target these bindings should use
+  `Register<TBehavior, TInput, TOutput>(JsonTypeInfo<TInput>, configureTopology)` so GraphQL,
+  JSON-RPC, SSE, and WebSocket payloads materialize through explicit JSON metadata instead of
+  falling back to reflection-based contract discovery
 - when behavior-owned execution rate limiting rejects a generic behavior HTTP request, GraphQL HTTP,
   JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings keep their native error envelopes
   while surfacing the shared Cephalon limiter code plus `429` metadata instead of flattening the

@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization.Metadata;
 using Cephalon.Behaviors.Builders;
 using Cephalon.Abstractions.Behaviors;
 using Microsoft.Extensions.DependencyInjection;
@@ -55,6 +56,33 @@ public interface IBehaviorCollectionBuilder
         TInput,
         TOutput>(
         Action<BehaviorTopologyBuilder>? configureTopology = null)
+        where TBehavior : class, IAppBehavior<TInput, TOutput>
+        where TInput : notnull;
+
+    /// <summary>
+    /// Registers a behavior and its closed generic execution slot with explicit JSON input metadata.
+    /// </summary>
+    /// <typeparam name="TBehavior">
+    /// The concrete behavior type. Must be decorated with <see cref="AppBehaviorAttribute" />
+    /// and implement <see cref="IAppBehavior{TIn,TOut}" /> for the supplied input and output types.
+    /// </typeparam>
+    /// <typeparam name="TInput">The behavior input contract.</typeparam>
+    /// <typeparam name="TOutput">The behavior output contract.</typeparam>
+    /// <param name="inputJsonTypeInfo">
+    /// The source-generated JSON contract used to materialize <typeparamref name="TInput" /> inputs.
+    /// </param>
+    /// <param name="configureTopology">
+    /// An optional callback that configures the behavior's transport topology.
+    /// When <see langword="null" />, topology is resolved from configuration.
+    /// </param>
+    /// <returns>The same builder for fluent chaining.</returns>
+    IBehaviorCollectionBuilder Register<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+        TBehavior,
+        TInput,
+        TOutput>(
+        JsonTypeInfo<TInput> inputJsonTypeInfo,
+        Action<BehaviorTopologyBuilder>? configureTopology)
         where TBehavior : class, IAppBehavior<TInput, TOutput>
         where TInput : notnull;
 }

@@ -54,7 +54,10 @@ services.AddCephalon(config, engine => engine
 
 Use the typed overload when the fluent registration is meant to dispatch at runtime. The type-only
 `Register<TBehavior>(...)` overload still records behavior metadata/topology, but dispatch requires
-a source-generated `BehaviorExecutionSlot` or a typed explicit registration.
+a source-generated `BehaviorExecutionSlot` or a typed explicit registration. When a fluent manual
+registration is exposed through HTTP-style bindings that pass `JsonElement` payloads, prefer the
+`Register<TBehavior, TInput, TOutput>(JsonTypeInfo<TInput>, configureTopology)` overload so input
+materialization uses the same source-generated JSON contract that trim-ready hosts need.
 
 ## Module-owned behaviors
 
@@ -361,7 +364,9 @@ Implements `ITechnologyRuntimeContributor` and reports the behavior subsystem su
 `JsonTypeInfo<TInput>` metadata. Source-generated behavior slots provide runtime metadata through
 their generated provider as a compatibility bridge, and manual dispatch slots can pass true
 source-generated metadata through
-`BehaviorExecutionSlot.For<TBehavior, TInput, TOutput>(JsonTypeInfo<TInput>)`.
+`BehaviorExecutionSlot.For<TBehavior, TInput, TOutput>(JsonTypeInfo<TInput>)` or through the
+fluent registration overload
+`Register<TBehavior, TInput, TOutput>(JsonTypeInfo<TInput>, configureTopology)`.
 
 Source-generated behavior registration now also emits a generated module registry entry plus closed
 generic execution-slot hints with explicit JSON contract metadata. `BehaviorModule` consumes
@@ -377,9 +382,11 @@ Source-generated topology descriptors now also cover supported
 still needs runtime `ConfigureTopology(...)` execution, because `BehaviorModule` no longer invokes
 that method reflectively. Type-only registrations and runtime-discovered behavior metadata now fail
 fast at dispatcher construction if no source-generated or explicitly registered
-`BehaviorExecutionSlot` is available; use `Register<TBehavior, TInput, TOutput>(...)` or
+`BehaviorExecutionSlot` is available; use `Register<TBehavior, TInput, TOutput>(...)`,
+`Register<TBehavior, TInput, TOutput>(JsonTypeInfo<TInput>, configureTopology)`, or
 `IBehaviorModuleBuilder.Add<TBehavior, TInput, TOutput>(...)` for dispatch-ready manual
-registrations.
+registrations. Use the `JsonTypeInfo<TInput>` form when the behavior can receive JSON transport
+payloads and the host must avoid reflection-based JSON contract fallback.
 
 ### BehaviorDiagnostics EventId constants (5100-5109)
 

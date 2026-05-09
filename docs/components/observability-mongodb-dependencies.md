@@ -4,6 +4,8 @@
 
 `Cephalon.Observability.MongoDbDependencies` adds a supported MongoDB dependency-health path for Cephalon hosts.
 
+The package follows the repository-managed `MongoDB.Driver` version and keeps `SharpCompress` as an explicit direct dependency so NuGet audit and downstream consumers resolve the same non-vulnerable compression stack used by release validation.
+
 ## What it owns
 
 - `Engine:Observability:DependencyHealth:MongoDb` configuration binding
