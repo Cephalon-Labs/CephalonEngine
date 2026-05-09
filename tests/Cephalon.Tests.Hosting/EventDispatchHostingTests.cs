@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Http.Json;
+using System.Globalization;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.AspNetCore.Hosting;
@@ -623,6 +624,158 @@ public sealed class EventDispatchHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonSchedulesCoreInProcessEventPublicationWithoutWolverine()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
+        {
+            ["Engine:Messaging:InProcessSubscriptions:EnableExecution"] = "true",
+            ["Engine:Messaging:Publications:Scheduling:Enabled"] = "true",
+            ["Engine:Messaging:Publications:Scheduling:MaxDelayMilliseconds"] = "5000",
+            ["Engine:Messaging:Publications:Scheduling:MaxPendingCount"] = "4"
+        });
+        builder.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new TechnologyPackContributionModule());
+            engine.AddEventingFromConfiguration(builder.Configuration);
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        var scheduledForUtc = DateTimeOffset.UtcNow.AddMilliseconds(200);
+        var client = app.GetTestClient();
+        var response = await client.PostAsJsonAsync(
+            "/engine/event-publications",
+            new
+            {
+                id = "audit-scheduled-001",
+                channelId = "audit",
+                eventType = "audit.created",
+                payload = new
+                {
+                    id = "audit-scheduled-001"
+                },
+                occurredAtUtc = new DateTimeOffset(2026, 05, 10, 10, 0, 0, TimeSpan.Zero),
+                correlationId = "corr-audit-scheduled-001",
+                metadata = new Dictionary<string, string>
+                {
+                    ["scheduledForUtc"] = scheduledForUtc.ToString("O", CultureInfo.InvariantCulture),
+                    ["requestedBy"] = "scheduled-hosting-test"
+                }
+            });
+        var result = await response.Content.ReadFromJsonAsync<EventPublicationResult>();
+        var probe = app.Services.GetRequiredService<ManagedAuditProjectorProbe>();
+        var publicationRuntimeCatalog = app.Services.GetRequiredService<IEventPublicationRuntimeCatalog>();
+        var pendingSurfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/event-driven-integration");
+        var acceptedState = Assert.Single(publicationRuntimeCatalog.States);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(result);
+        Assert.Equal(EventPublicationOutcomes.Accepted, result.Outcome);
+        Assert.Equal("bounded-process-local", result.Metadata["schedulePolicy"]);
+        Assert.Equal("scheduled", result.Metadata["scheduleState"]);
+        Assert.Equal("process-local", result.Metadata["scheduleScope"]);
+        Assert.Equal("none", result.Metadata["scheduleDurability"]);
+        Assert.Equal("pending", result.Metadata["scheduleDispatch"]);
+        Assert.Equal("scheduled-hosting-test", result.Metadata["requestedBy"]);
+        Assert.Equal(0, probe.TotalAttempts);
+        Assert.Equal(EventPublicationRuntimeOutcomes.Accepted, acceptedState.LastOutcome);
+        Assert.Equal("scheduled", acceptedState.Metadata["scheduleState"]);
+        Assert.Equal("pending", acceptedState.Metadata["scheduleDispatch"]);
+
+        Assert.NotNull(pendingSurfaces);
+        var pendingPublisherEntry = Assert.Single(
+            pendingSurfaces.Single(surface => surface.SurfaceId == "event-publishers").Entries);
+        Assert.Equal("bounded-process-local", pendingPublisherEntry.Metadata["publicationSchedulingPolicy"]);
+        Assert.Equal("process-local", pendingPublisherEntry.Metadata["publicationSchedulingScope"]);
+        Assert.Equal("none", pendingPublisherEntry.Metadata["publicationSchedulingDurability"]);
+        Assert.Equal("4", pendingPublisherEntry.Metadata["publicationSchedulingMaxPendingCount"]);
+        Assert.Equal("1", pendingPublisherEntry.Metadata["scheduledPublicationPendingCount"]);
+
+        await WaitForConditionAsync(() => probe.SuccessfulAttempts == 1);
+
+        var completedState = Assert.Single(publicationRuntimeCatalog.States);
+        var runtimeState = Assert.Single(app.Services.GetRequiredService<IEventSubscriptionRuntimeCatalog>().States);
+        var completedSurfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/event-driven-integration");
+
+        Assert.Equal(1, probe.TotalAttempts);
+        Assert.Equal("audit-scheduled-001", probe.LastMessageId);
+        Assert.Equal(EventPublicationRuntimeOutcomes.Succeeded, completedState.LastOutcome);
+        Assert.Equal(1, completedState.AcceptedCount);
+        Assert.Equal(1, completedState.SucceededCount);
+        Assert.Equal("due", completedState.Metadata["publicationMetadata.scheduleState"]);
+        Assert.Equal("started", completedState.Metadata["publicationMetadata.scheduleDispatch"]);
+        Assert.Equal("bounded-process-local", completedState.Metadata["publicationMetadata.schedulePolicy"]);
+        Assert.Equal("process-local", completedState.Metadata["publicationMetadata.scheduleScope"]);
+        Assert.Equal("none", completedState.Metadata["publicationMetadata.scheduleDurability"]);
+        Assert.Equal("due", runtimeState.Metadata["publicationMetadata.scheduleState"]);
+        Assert.Equal("scheduled-hosting-test", runtimeState.Metadata["publicationMetadata.requestedBy"]);
+
+        Assert.NotNull(completedSurfaces);
+        var completedPublisherEntry = Assert.Single(
+            completedSurfaces.Single(surface => surface.SurfaceId == "event-publishers").Entries);
+        Assert.Equal("0", completedPublisherEntry.Metadata["scheduledPublicationPendingCount"]);
+        Assert.Equal("succeeded", completedPublisherEntry.Metadata["lastPublicationOutcome"]);
+    }
+
+    [Fact]
+    public async Task MapCephalonRejectsScheduledEventPublicationWhenSchedulingIsDisabled()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new TechnologyPackContributionModule());
+            engine.AddEventing(options =>
+            {
+                options.EnableInProcessSubscriptionExecution = true;
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        var client = app.GetTestClient();
+        var response = await client.PostAsJsonAsync(
+            "/engine/event-publications",
+            new
+            {
+                id = "audit-scheduled-disabled-001",
+                channelId = "audit",
+                eventType = "audit.created",
+                payload = new
+                {
+                    id = "audit-scheduled-disabled-001"
+                },
+                metadata = new Dictionary<string, string>
+                {
+                    ["delayMilliseconds"] = "100"
+                }
+            });
+
+        var probe = app.Services.GetRequiredService<ManagedAuditProjectorProbe>();
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(0, probe.TotalAttempts);
+    }
+
+    [Fact]
     public async Task MapCephalonRetriesCoreInProcessEventSubscriptionFailuresWithinConfiguredBound()
     {
         var builder = WebApplication.CreateSlimBuilder();
@@ -1113,6 +1266,24 @@ public sealed class EventDispatchHostingTests
             entry => entry.Id == "audit-projector");
         Assert.Equal("cephalon-managed", snapshotSubscription.Metadata["dispatchRuntime"]);
         Assert.Equal("succeeded", snapshotSubscription.Metadata["lastOutcome"]);
+    }
+
+    private static async Task WaitForConditionAsync(
+        Func<bool> condition,
+        int timeoutMilliseconds = 3000)
+    {
+        var deadline = DateTimeOffset.UtcNow.AddMilliseconds(timeoutMilliseconds);
+        while (DateTimeOffset.UtcNow < deadline)
+        {
+            if (condition())
+            {
+                return;
+            }
+
+            await Task.Delay(25);
+        }
+
+        Assert.True(condition(), "The expected condition was not reached before the timeout.");
     }
 
     private sealed class RecordingInbox : IInbox

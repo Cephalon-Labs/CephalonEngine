@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-09T22:38:01.9090165+00:00",
+  "GeneratedAtUtc": "2026-05-09T22:59:05.464076+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8373,7 +8373,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 12,
+        "Properties": 15,
         "Methods": 0
       }
     },
@@ -51110,6 +51110,17 @@
       "AnchorId": "member-p-cephalon-edge-configuration-edgeruntimeoptions-enableofflinemode",
       "Signature": "bool EnableOfflineMode { get; set; }",
       "Summary": "Gets or sets a value indicating whether offline mode features are enabled."
+    },
+    {
+      "DisplayName": "EnablePublicationScheduling",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-enablepublicationscheduling",
+      "Signature": "bool EnablePublicationScheduling { get; set; }",
+      "Summary": "Gets or sets a value indicating whether publication requests can be delayed by the native eventing pack."
     },
     {
       "DisplayName": "EnablePublishing",
@@ -99548,6 +99559,28 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationoutcomes-publicationplanunavailable",
       "Signature": "const string PublicationPlanUnavailable",
       "Summary": "The proof publication planner did not produce a usable plan."
+    },
+    {
+      "DisplayName": "PublicationSchedulingMaxDelayMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-publicationschedulingmaxdelaymilliseconds",
+      "Signature": "int PublicationSchedulingMaxDelayMilliseconds { get; set; }",
+      "Summary": "Gets or sets the maximum delay, in milliseconds, accepted by the process-local publication scheduler."
+    },
+    {
+      "DisplayName": "PublicationSchedulingMaxPendingCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-publicationschedulingmaxpendingcount",
+      "Signature": "int PublicationSchedulingMaxPendingCount { get; set; }",
+      "Summary": "Gets or sets the maximum number of delayed publications retained by the process-local scheduler."
     },
     {
       "DisplayName": "PublishAsync",

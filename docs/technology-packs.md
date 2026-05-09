@@ -378,6 +378,7 @@ Shipped pack-specific extension points:
 - `Cephalon.Eventing`
   - `IEventChannelContributor`, `IEventChannelRegistry`, `IEventSubscriptionExecutionBindingContributor`, `IEventSubscriptionExecutionBindingCatalog`, the abstraction-level `IEventSubscriptionExecutionReadinessCatalog`, and the abstraction-level `IEventPublicationRuntimeCatalog`
   - `EventingOptions.InProcessSubscriptionIdempotencyStore` and `engine.AddEventingFromConfiguration(configuration)` for config-driven native in-process subscription execution, including `Engine:Messaging:InProcessSubscriptions:Idempotency:Store = inbox` when exactly one registered `IInbox` should own completed-execution duplicate suppression without Wolverine
+  - `EventingOptions.EnablePublicationScheduling`, `PublicationSchedulingMaxDelayMilliseconds`, and `PublicationSchedulingMaxPendingCount` for config-driven native delayed publication acceptance through `Engine:Messaging:Publications:Scheduling` and request metadata keys `scheduledForUtc` or `delayMilliseconds`; the current proof is bounded, process-local, non-durable, and Wolverine-free
 - `Cephalon.Edge`
   - `IEdgeNodeContributor` and `IEdgeNodeRegistry`
 

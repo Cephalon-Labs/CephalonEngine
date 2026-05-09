@@ -2271,6 +2271,11 @@ Current payload highlights:
 - when the core in-process lane is selected, the route triggers the active `IEventPublisher`,
   invokes matching `IEventSubscriptionExecutor` services, and flows publication metadata back into
   the existing subscription runtime catalog as `publicationMetadata.*`
+- when native publication scheduling is enabled, request metadata can include exactly one of
+  `scheduledForUtc` or `delayMilliseconds`; the route returns `accepted` immediately with
+  `schedulePolicy = bounded-process-local`, `scheduleState = scheduled`, `scheduleScope = process-local`,
+  `scheduleDurability = none`, and pending-count metadata before the local timer hands the publication
+  to the active publisher
 - each runtime-state entry carries the publication id, latest channel id, event type, latest
   outcome, observation timestamp, accepted/succeeded/failed/skipped counters, latest subscription
   counts, optional error summary, and safe metadata
@@ -2284,10 +2289,11 @@ Current payload highlights:
 Current note:
 
 - this is a bounded operator action over the active eventing publication path; the in-process lane
-  can optionally suppress duplicate completed executions process-locally, and the runtime-state
-  catalog reports that local publication outcome, but the route is not a durable broker, durable
-  inbox, cross-node idempotency, retry-queue, distributed scheduler, or provider-specific
-  inbound-consumption claim
+  can optionally suppress duplicate completed executions process-locally and can optionally accept
+  bounded process-local delayed publication requests, and the runtime-state catalog reports that
+  local publication outcome, but the route is not a durable broker, durable inbox, cross-node
+  idempotency, retry-queue, durable/distributed scheduler, broker delayed-delivery surface, or
+  provider-specific inbound-consumption claim
 - outbox-backed publication states use `accepted` to mean "staged for later dispatch"; downstream
   dispatch completion remains the job of the dispatch-runtime and dispatch-state surfaces
 - the action and read contracts live in `Cephalon.Abstractions.Data` so `Cephalon.Engine` and
@@ -2464,6 +2470,12 @@ Current `Cephalon.Eventing` highlights:
   `idempotencyKey = subscription-publication`, `idempotencyRetentionMinutes`,
   `idempotencyDurability = none`, and `idempotencyScope = process-local` through capabilities,
   bindings, `event-publishers`, `event-subscriptions`, and `reported.*` metadata
+- when `EnablePublicationScheduling` is enabled, the publication dispatcher accepts bounded delayed
+  publication requests over `scheduledForUtc` or `delayMilliseconds` metadata, reports
+  `schedulePolicy = bounded-process-local`, `scheduleScope = process-local`,
+  `scheduleDurability = none`, pending count, and next due time through `eventing.publish`,
+  `event-publishers`, and publication runtime metadata, and then uses an in-memory local timer to
+  hand due publications to the selected publisher
 - outbox-backed event publication reports `accepted` publication state with
   `handoff = outbox` and `deliveryCompletion = pending-dispatch`, keeping publication acceptance
   separate from later dispatch completion
@@ -3399,7 +3411,7 @@ It executes a curated suite that validates:
 - structured `Engine:Data`, `Engine:Identity`, `Engine:Tenancy`, `Engine:Audit`, and `Engine:Messaging` settings plus phase-8 app-profile truth
 - host-agnostic phase-8 contracts, runtime catalogs, and runtime-snapshot answers for data products, projections, inboxes, outboxes, audit stores, and authorization policies
 - `Cephalon.Data`, `Cephalon.Data.EntityFramework`, and `Cephalon.Ids.Sfid` through the shipped relational-first CQRS, inbox, outbox, and `Sfid` baseline
-- `Cephalon.Eventing` plus `Cephalon.Eventing.Wolverine` through the staged publication, declarative subscription, public execution-binding catalog, public execution-readiness catalog, runtime-reporting, bounded Wolverine managed-dispatch retry, bounded Wolverine managed-subscription retry, terminal exhausted-attempt failure posture, dispatch-store terminal failure behavior, and adapter-surface path
+- `Cephalon.Eventing` plus optional `Cephalon.Eventing.Wolverine` through the staged publication, declarative subscription, public execution-binding catalog, public execution-readiness catalog, runtime-reporting, native bounded process-local retry/idempotency/scheduled-publication proofs, bounded Wolverine managed-dispatch retry, bounded Wolverine managed-subscription retry, terminal exhausted-attempt failure posture, dispatch-store terminal failure behavior, and adapter-surface path
 - `Cephalon.Identity`, `Cephalon.Identity.AspNetCore`, `Cephalon.MultiTenancy`, and `Cephalon.Audit` through their runtime surfaces, adapter behavior, and package/reference-doc truth
 - low-ceremony starter output across `Cephalon.Scaffolding`, `Cephalon.Cli`, `Cephalon.TemplatePack`, adoption docs, and starter samples so generated apps stay aligned with the runtime story
 

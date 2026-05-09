@@ -209,6 +209,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
 
         if (hasPublishingPath)
         {
+            services.TryAddSingleton<EventPublicationScheduleQueue>();
             services.TryAddSingleton<EventPublicationRuntimeCatalog>();
             services.TryAddSingleton<IEventPublicationRuntimeCatalog>(static provider => provider.GetRequiredService<EventPublicationRuntimeCatalog>());
             services.TryAddSingleton<IEventPublicationRuntimeReporter>(static provider => provider.GetRequiredService<EventPublicationRuntimeCatalog>());
@@ -237,6 +238,11 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             var inProcessIdempotencyScope = InProcessEventingIdempotencyPolicy.GetScope(options);
             var inProcessIdempotencyDurability = InProcessEventingIdempotencyPolicy.GetDurability(options);
             var inProcessIdempotencyRetentionMinutes = InProcessEventingIdempotencyPolicy.GetRetentionMinutes(options).ToString(CultureInfo.InvariantCulture);
+            var publicationSchedulingPolicy = EventPublicationSchedulingPolicy.GetPolicyId(options);
+            var publicationSchedulingScope = EventPublicationSchedulingPolicy.GetScope(options);
+            var publicationSchedulingDurability = EventPublicationSchedulingPolicy.GetDurability(options);
+            var publicationSchedulingMaxDelayMilliseconds = options.PublicationSchedulingMaxDelayMilliseconds.ToString(CultureInfo.InvariantCulture);
+            var publicationSchedulingMaxPendingCount = options.PublicationSchedulingMaxPendingCount.ToString(CultureInfo.InvariantCulture);
             var publishMetadata = hasInProcessSubscriptionExecutionPath
                 ? new Dictionary<string, string>
                 {
@@ -261,6 +267,11 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["idempotencyDurability"] = inProcessIdempotencyDurability,
                     ["idempotencyScope"] = inProcessIdempotencyScope,
                     ["inbox"] = hasInboxPath ? "available" : "not-configured",
+                    ["publicationSchedulingPolicy"] = publicationSchedulingPolicy,
+                    ["publicationSchedulingScope"] = publicationSchedulingScope,
+                    ["publicationSchedulingDurability"] = publicationSchedulingDurability,
+                    ["publicationSchedulingMaxDelayMilliseconds"] = publicationSchedulingMaxDelayMilliseconds,
+                    ["publicationSchedulingMaxPendingCount"] = publicationSchedulingMaxPendingCount,
                     ["runtimeState"] = "available"
                 }
                 : new Dictionary<string, string>
@@ -271,6 +282,11 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["dispatchStore"] = hasDispatchStore ? "available" : "not-configured",
                     ["publicationDispatcher"] = "available",
                     ["publicationRuntimeState"] = "available",
+                    ["publicationSchedulingPolicy"] = publicationSchedulingPolicy,
+                    ["publicationSchedulingScope"] = publicationSchedulingScope,
+                    ["publicationSchedulingDurability"] = publicationSchedulingDurability,
+                    ["publicationSchedulingMaxDelayMilliseconds"] = publicationSchedulingMaxDelayMilliseconds,
+                    ["publicationSchedulingMaxPendingCount"] = publicationSchedulingMaxPendingCount,
                     ["runtimeState"] = "available"
                 };
 

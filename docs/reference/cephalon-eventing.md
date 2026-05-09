@@ -86,6 +86,18 @@ Gets or sets a value indicating whether the direct in-process publisher should s
 
 Remarks: This is a bounded process-local guard for lightweight hosts. It records only successful direct executions in memory and skips later duplicate `subscriptionId + publicationId` pairs while the entry remains in the retention window. It is not a durable inbox, cross-node idempotency store, or broker-owned exactly-once guarantee.
 
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-enablepublicationscheduling"></a>
+
+##### `EnablePublicationScheduling`
+
+```csharp
+bool EnablePublicationScheduling { get; set; }
+```
+
+Gets or sets a value indicating whether publication requests can be delayed by the native eventing pack.
+
+Remarks: Delayed publications are held in the current process until their due time and then handed to the active publisher. This is a lightweight Wolverine-free scheduling baseline, not a durable or distributed scheduler.
+
 <a id="member-p-cephalon-eventing-configuration-eventingoptions-enablepublishing"></a>
 
 ##### `EnablePublishing`
@@ -153,6 +165,28 @@ int InProcessSubscriptionRetryDelayMilliseconds { get; set; }
 Gets or sets the delay in milliseconds before the direct in-process publisher retries a failed subscription attempt.
 
 Remarks: The delay is applied only when `InProcessSubscriptionMaxAttempts` is greater than `1`. The default value of `0` retries immediately and is useful for tests and lightweight process-local remediation paths.
+
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-publicationschedulingmaxdelaymilliseconds"></a>
+
+##### `PublicationSchedulingMaxDelayMilliseconds`
+
+```csharp
+int PublicationSchedulingMaxDelayMilliseconds { get; set; }
+```
+
+Gets or sets the maximum delay, in milliseconds, accepted by the process-local publication scheduler.
+
+Remarks: The default value is `86,400,000` milliseconds, or twenty-four hours.
+
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-publicationschedulingmaxpendingcount"></a>
+
+##### `PublicationSchedulingMaxPendingCount`
+
+```csharp
+int PublicationSchedulingMaxPendingCount { get; set; }
+```
+
+Gets or sets the maximum number of delayed publications retained by the process-local scheduler.
 
 <a id="member-p-cephalon-eventing-configuration-eventingoptions-remediationcommandhistorylimit"></a>
 

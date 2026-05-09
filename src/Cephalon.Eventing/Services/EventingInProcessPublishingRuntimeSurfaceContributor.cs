@@ -10,7 +10,8 @@ internal sealed class EventingInProcessPublishingRuntimeSurfaceContributor(
     IEventChannelCatalog channels,
     InProcessEventSubscriptionExecutorCatalog executors,
     IEventPublicationRuntimeCatalog publicationRuntimeCatalog,
-    EventingRuntimeTopology topology) : ITechnologyRuntimeContributor
+    EventingRuntimeTopology topology,
+    EventPublicationScheduleQueue scheduleQueue) : ITechnologyRuntimeContributor
 {
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
@@ -57,6 +58,13 @@ internal sealed class EventingInProcessPublishingRuntimeSurfaceContributor(
                         ["subscriptionExecutionRuntimeId"] = InProcessEventingRuntimeIds.SubscriptionExecutionRuntimeId,
                         ["publicationDispatcher"] = "available",
                         ["publicationRuntimeState"] = publicationStates.Count > 0 ? "reported" : "not-reported",
+                        ["publicationSchedulingPolicy"] = EventPublicationSchedulingPolicy.GetPolicyId(options),
+                        ["publicationSchedulingScope"] = EventPublicationSchedulingPolicy.GetScope(options),
+                        ["publicationSchedulingDurability"] = EventPublicationSchedulingPolicy.GetDurability(options),
+                        ["publicationSchedulingMaxDelayMilliseconds"] = options.PublicationSchedulingMaxDelayMilliseconds.ToString(CultureInfo.InvariantCulture),
+                        ["publicationSchedulingMaxPendingCount"] = options.PublicationSchedulingMaxPendingCount.ToString(CultureInfo.InvariantCulture),
+                        ["scheduledPublicationPendingCount"] = scheduleQueue.PendingCount.ToString(CultureInfo.InvariantCulture),
+                        ["nextScheduledPublicationDueAtUtc"] = scheduleQueue.NextDueAtUtc?.ToString("O", CultureInfo.InvariantCulture) ?? string.Empty,
                         ["publicationStateCount"] = publicationStates.Count.ToString(CultureInfo.InvariantCulture),
                         ["publicationAcceptedCount"] = publicationStates.Sum(static state => state.AcceptedCount).ToString(CultureInfo.InvariantCulture),
                         ["publicationSucceededCount"] = publicationStates.Sum(static state => state.SucceededCount).ToString(CultureInfo.InvariantCulture),

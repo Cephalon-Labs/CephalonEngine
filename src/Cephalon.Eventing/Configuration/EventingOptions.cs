@@ -54,6 +54,8 @@ public sealed class EventingOptions
     private int inProcessSubscriptionRetryDelayMilliseconds;
     private int inProcessSubscriptionIdempotencyRetentionMinutes = 60;
     private string inProcessSubscriptionIdempotencyStore = InProcessEventingIdempotencyPolicy.ProcessLocalStore;
+    private int publicationSchedulingMaxDelayMilliseconds = 86_400_000;
+    private int publicationSchedulingMaxPendingCount = 256;
     private int remediationCommandHistoryLimit = 256;
 
     /// <summary>
@@ -167,6 +169,58 @@ public sealed class EventingOptions
     /// get a chance to run before the failure is returned to the caller.
     /// </remarks>
     public bool ContinueInProcessSubscriptionExecutionAfterFailure { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether publication requests can be delayed by the native eventing pack.
+    /// </summary>
+    /// <remarks>
+    /// Delayed publications are held in the current process until their due time and then handed to the active
+    /// publisher. This is a lightweight Wolverine-free scheduling baseline, not a durable or distributed scheduler.
+    /// </remarks>
+    public bool EnablePublicationScheduling { get; set; }
+
+    /// <summary>
+    /// Gets or sets the maximum delay, in milliseconds, accepted by the process-local publication scheduler.
+    /// </summary>
+    /// <remarks>
+    /// The default value is <c>86,400,000</c> milliseconds, or twenty-four hours.
+    /// </remarks>
+    public int PublicationSchedulingMaxDelayMilliseconds
+    {
+        get => publicationSchedulingMaxDelayMilliseconds;
+        set
+        {
+            if (value < 1)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(value),
+                    value,
+                    "Publication scheduling max delay must be greater than or equal to 1 millisecond.");
+            }
+
+            publicationSchedulingMaxDelayMilliseconds = value;
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the maximum number of delayed publications retained by the process-local scheduler.
+    /// </summary>
+    public int PublicationSchedulingMaxPendingCount
+    {
+        get => publicationSchedulingMaxPendingCount;
+        set
+        {
+            if (value < 1)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(value),
+                    value,
+                    "Publication scheduling max pending count must be greater than or equal to 1.");
+            }
+
+            publicationSchedulingMaxPendingCount = value;
+        }
+    }
 
     /// <summary>
     /// Gets or sets the maximum number of event-dispatch remediation command results retained in memory for operator reads.

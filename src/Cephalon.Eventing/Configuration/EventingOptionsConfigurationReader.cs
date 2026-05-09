@@ -18,6 +18,15 @@ internal static class EventingOptionsConfigurationReader
             .GetSection("Messaging")
             .GetSection("InProcessSubscriptions");
         var idempotencySection = section.GetSection("Idempotency");
+        var publicationSchedulingSection = configuration
+            .GetSection(sectionPath)
+            .GetSection("Messaging")
+            .GetSection("Publications")
+            .GetSection("Scheduling");
+        var legacyPublicationSchedulingSection = configuration
+            .GetSection(sectionPath)
+            .GetSection("Messaging")
+            .GetSection("PublicationScheduling");
 
         ReadBoolean(section, options, static (target, value) => target.EnableInProcessSubscriptionExecution = value, "EnableExecution", "Enabled");
         ReadInteger(section, options, static (target, value) => target.InProcessSubscriptionMaxAttempts = value, "MaxAttempts");
@@ -31,6 +40,14 @@ internal static class EventingOptionsConfigurationReader
         ReadBoolean(section, options, static (target, value) => target.EnableInProcessSubscriptionIdempotency = value, "EnableIdempotency");
         ReadString(section, options, static (target, value) => target.InProcessSubscriptionIdempotencyStore = value, "IdempotencyStore");
         ReadInteger(section, options, static (target, value) => target.InProcessSubscriptionIdempotencyRetentionMinutes = value, "IdempotencyRetentionMinutes");
+
+        ReadBoolean(publicationSchedulingSection, options, static (target, value) => target.EnablePublicationScheduling = value, "Enabled");
+        ReadInteger(publicationSchedulingSection, options, static (target, value) => target.PublicationSchedulingMaxDelayMilliseconds = value, "MaxDelayMilliseconds");
+        ReadInteger(publicationSchedulingSection, options, static (target, value) => target.PublicationSchedulingMaxPendingCount = value, "MaxPendingCount");
+
+        ReadBoolean(legacyPublicationSchedulingSection, options, static (target, value) => target.EnablePublicationScheduling = value, "Enabled");
+        ReadInteger(legacyPublicationSchedulingSection, options, static (target, value) => target.PublicationSchedulingMaxDelayMilliseconds = value, "MaxDelayMilliseconds");
+        ReadInteger(legacyPublicationSchedulingSection, options, static (target, value) => target.PublicationSchedulingMaxPendingCount = value, "MaxPendingCount");
 
         return options;
     }

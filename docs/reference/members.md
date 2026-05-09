@@ -8700,6 +8700,9 @@ Browse the published API surface by public member.
 - [EnableOfflineMode](cephalon-edge.md#member-p-cephalon-edge-configuration-edgeruntimeoptions-enableofflinemode): `Properties` on `EdgeRuntimeOptions` in `Cephalon.Edge.Configuration` (`Cephalon.Edge`) [Browse](browse.html?q=EnableOfflineMode&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Configuration&scope=members)
   - Gets or sets a value indicating whether offline mode features are enabled.
   - `bool EnableOfflineMode { get; set; }`
+- [EnablePublicationScheduling](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-enablepublicationscheduling): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=EnablePublicationScheduling&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
+  - Gets or sets a value indicating whether publication requests can be delayed by the native eventing pack.
+  - `bool EnablePublicationScheduling { get; set; }`
 - [EnablePublishing](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-enablepublishing): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=EnablePublishing&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
   - Gets or sets a value indicating whether publishing features are enabled.
   - `bool EnablePublishing { get; set; }`
@@ -21939,6 +21942,12 @@ Browse the published API surface by public member.
 - [PublicationPlanUnavailable](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationoutcomes-publicationplanunavailable): `Fields` on `TenantDomainOwnershipHttpProofPublicationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=PublicationPlanUnavailable&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The proof publication planner did not produce a usable plan.
   - `const string PublicationPlanUnavailable`
+- [PublicationSchedulingMaxDelayMilliseconds](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-publicationschedulingmaxdelaymilliseconds): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=PublicationSchedulingMaxDelayMilliseconds&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
+  - Gets or sets the maximum delay, in milliseconds, accepted by the process-local publication scheduler.
+  - `int PublicationSchedulingMaxDelayMilliseconds { get; set; }`
+- [PublicationSchedulingMaxPendingCount](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-publicationschedulingmaxpendingcount): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=PublicationSchedulingMaxPendingCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
+  - Gets or sets the maximum number of delayed publications retained by the process-local scheduler.
+  - `int PublicationSchedulingMaxPendingCount { get; set; }`
 - [PublishAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventpublicationdispatcher-publishasync-cephalon-abstractions-data-eventpublicationrequest-system-threading-cancellationtoken): `Methods` on `IEventPublicationDispatcher` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PublishAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Publishes one integration event through the active eventing runtime.
   - `ValueTask<EventPublicationResult> PublishAsync(EventPublicationRequest request, CancellationToken cancellationToken)`

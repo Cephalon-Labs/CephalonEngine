@@ -1,14 +1,17 @@
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Technologies;
+using Cephalon.Eventing.Configuration;
 using System.Globalization;
 
 namespace Cephalon.Eventing.Services;
 
 internal sealed class EventingPublishingRuntimeSurfaceContributor(
+    EventingOptions options,
     IEventChannelCatalog channels,
     IOutboxCatalog outboxes,
     IEventDispatchRuntimeDescriptorCatalog dispatchRuntimes,
-    IEventPublicationRuntimeCatalog publicationRuntimeCatalog) : ITechnologyRuntimeContributor
+    IEventPublicationRuntimeCatalog publicationRuntimeCatalog,
+    EventPublicationScheduleQueue scheduleQueue) : ITechnologyRuntimeContributor
 {
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
@@ -58,6 +61,13 @@ internal sealed class EventingPublishingRuntimeSurfaceContributor(
                         ["dispatchStore"] = hasDispatchStore ? "available" : "not-configured",
                         ["publicationDispatcher"] = "available",
                         ["publicationRuntimeState"] = publicationStates.Count > 0 ? "reported" : "not-reported",
+                        ["publicationSchedulingPolicy"] = EventPublicationSchedulingPolicy.GetPolicyId(options),
+                        ["publicationSchedulingScope"] = EventPublicationSchedulingPolicy.GetScope(options),
+                        ["publicationSchedulingDurability"] = EventPublicationSchedulingPolicy.GetDurability(options),
+                        ["publicationSchedulingMaxDelayMilliseconds"] = options.PublicationSchedulingMaxDelayMilliseconds.ToString(CultureInfo.InvariantCulture),
+                        ["publicationSchedulingMaxPendingCount"] = options.PublicationSchedulingMaxPendingCount.ToString(CultureInfo.InvariantCulture),
+                        ["scheduledPublicationPendingCount"] = scheduleQueue.PendingCount.ToString(CultureInfo.InvariantCulture),
+                        ["nextScheduledPublicationDueAtUtc"] = scheduleQueue.NextDueAtUtc?.ToString("O", CultureInfo.InvariantCulture) ?? string.Empty,
                         ["publicationStateCount"] = publicationStates.Count.ToString(CultureInfo.InvariantCulture),
                         ["publicationAcceptedCount"] = publicationStates.Sum(static state => state.AcceptedCount).ToString(CultureInfo.InvariantCulture),
                         ["publicationSucceededCount"] = publicationStates.Sum(static state => state.SucceededCount).ToString(CultureInfo.InvariantCulture),
