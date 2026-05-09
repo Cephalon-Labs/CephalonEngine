@@ -32,10 +32,13 @@ public static class EventingEngineBuilderExtensions
     }
 
     /// <summary>
-    /// Adds the eventing runtime pack to the engine and reads host-owned native eventing settings from configuration.
+    /// Adds the eventing runtime pack to the engine and reads host-owned native eventing descriptors and settings from configuration.
     /// </summary>
     /// <param name="builder">The engine builder to extend.</param>
-    /// <param name="configuration">The host configuration that contains the <c>Engine:Messaging</c> section.</param>
+    /// <param name="configuration">
+    /// The host configuration that contains the <c>Engine:Messaging</c> section, including optional
+    /// <c>Channels</c>, <c>Subscriptions</c>, <c>InProcessSubscriptions</c>, and publication settings.
+    /// </param>
     /// <returns>The same engine builder for fluent composition.</returns>
     public static EngineBuilder AddEventingFromConfiguration(
         this EngineBuilder builder,
@@ -45,10 +48,13 @@ public static class EventingEngineBuilderExtensions
     }
 
     /// <summary>
-    /// Adds the eventing runtime pack to the engine and reads host-owned native eventing settings from configuration.
+    /// Adds the eventing runtime pack to the engine and reads host-owned native eventing descriptors and settings from configuration.
     /// </summary>
     /// <param name="builder">The engine builder to extend.</param>
-    /// <param name="configuration">The host configuration that contains the <c>Engine:Messaging</c> section.</param>
+    /// <param name="configuration">
+    /// The host configuration that contains the <c>Engine:Messaging</c> section, including optional
+    /// <c>Channels</c>, <c>Subscriptions</c>, <c>InProcessSubscriptions</c>, and publication settings.
+    /// </param>
     /// <param name="configure">
     /// A callback that can add channels, subscriptions, or deliberate overrides after configuration is read.
     /// </param>

@@ -1141,10 +1141,10 @@ Browse the published API surface by public member.
   - Adds the eventing runtime pack to the engine.
   - `EngineBuilder AddEventing(this EngineBuilder builder, Action<EventingOptions> configure)`
 - [AddEventingFromConfiguration](cephalon-eventing.md#member-m-cephalon-eventing-registration-eventingenginebuilderextensions-addeventingfromconfiguration-cephalon-engine-composition-enginebuilder-microsoft-extensions-configuration-iconfiguration): `Methods` on `EventingEngineBuilderExtensions` in `Cephalon.Eventing.Registration` (`Cephalon.Eventing`) [Browse](browse.html?q=AddEventingFromConfiguration&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Registration&scope=members)
-  - Adds the eventing runtime pack to the engine and reads host-owned native eventing settings from configuration.
+  - Adds the eventing runtime pack to the engine and reads host-owned native eventing descriptors and settings from configuration.
   - `EngineBuilder AddEventingFromConfiguration(this EngineBuilder builder, IConfiguration configuration)`
 - [AddEventingFromConfiguration](cephalon-eventing.md#member-m-cephalon-eventing-registration-eventingenginebuilderextensions-addeventingfromconfiguration-cephalon-engine-composition-enginebuilder-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-eventing-configuration-eventingoptions): `Methods` on `EventingEngineBuilderExtensions` in `Cephalon.Eventing.Registration` (`Cephalon.Eventing`) [Browse](browse.html?q=AddEventingFromConfiguration&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Registration&scope=members)
-  - Adds the eventing runtime pack to the engine and reads host-owned native eventing settings from configuration.
+  - Adds the eventing runtime pack to the engine and reads host-owned native eventing descriptors and settings from configuration.
   - `EngineBuilder AddEventingFromConfiguration(this EngineBuilder builder, IConfiguration configuration, Action<EventingOptions> configure)`
 - [AddEventSourcing](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-registration-eventsourcingenginebuilderextensions-addeventsourcing-cephalon-engine-composition-enginebuilder-system-action-cephalon-eventsourcing-configuration-eventsourcingoptions): `Methods` on `EventSourcingEngineBuilderExtensions` in `Cephalon.EventSourcing.Registration` (`Cephalon.EventSourcing`) [Browse](browse.html?q=AddEventSourcing&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Registration&scope=members)
   - Adds the Cephalon event-sourcing companion pack to the engine.

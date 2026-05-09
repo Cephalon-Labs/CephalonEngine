@@ -1,4 +1,5 @@
 using Cephalon.Engine.Configuration;
+using Cephalon.Eventing.Services;
 using Microsoft.Extensions.Configuration;
 using System.Globalization;
 
@@ -13,25 +14,26 @@ internal static class EventingOptionsConfigurationReader
         ArgumentNullException.ThrowIfNull(configuration);
 
         var options = new EventingOptions();
-        var section = configuration
+        var messagingPath = $"{sectionPath}:Messaging";
+        var messagingSection = configuration
             .GetSection(sectionPath)
-            .GetSection("Messaging")
+            .GetSection("Messaging");
+        var section = messagingSection
             .GetSection("InProcessSubscriptions");
         var idempotencySection = section.GetSection("Idempotency");
-        var publicationSchedulingSection = configuration
-            .GetSection(sectionPath)
-            .GetSection("Messaging")
+        var publicationSchedulingSection = messagingSection
             .GetSection("Publications")
             .GetSection("Scheduling");
-        var publicationRoutingSection = configuration
-            .GetSection(sectionPath)
-            .GetSection("Messaging")
+        var publicationRoutingSection = messagingSection
             .GetSection("Publications")
             .GetSection("Routing");
-        var legacyPublicationSchedulingSection = configuration
-            .GetSection(sectionPath)
-            .GetSection("Messaging")
+        var legacyPublicationSchedulingSection = messagingSection
             .GetSection("PublicationScheduling");
+
+        ReadChannels(messagingSection.GetSection("Channels"), options, $"{messagingPath}:Channels");
+        ReadChannels(messagingSection.GetSection("EventChannels"), options, $"{messagingPath}:EventChannels");
+        ReadSubscriptions(messagingSection.GetSection("Subscriptions"), options, $"{messagingPath}:Subscriptions");
+        ReadSubscriptions(messagingSection.GetSection("EventSubscriptions"), options, $"{messagingPath}:EventSubscriptions");
 
         ReadBoolean(section, options, static (target, value) => target.EnableInProcessSubscriptionExecution = value, "EnableExecution", "Enabled");
         ReadInteger(section, options, static (target, value) => target.InProcessSubscriptionMaxAttempts = value, "MaxAttempts");
@@ -132,6 +134,133 @@ internal static class EventingOptionsConfigurationReader
 
             options.PublicationRoutes[child.Key.Trim()] = child.Value.Trim();
         }
+    }
+
+    private static void ReadChannels(
+        IConfiguration configuration,
+        EventingOptions options,
+        string path)
+    {
+        foreach (var child in configuration.GetChildren())
+        {
+            var id = ReadDescriptorId(child, path, "channel");
+            var displayName = ReadOptionalString(child, "DisplayName", "Name") ?? id;
+            var description = ReadOptionalString(child, "Description") ?? $"{displayName} event channel.";
+
+            options.Channels.Add(new EventChannelDescriptor(
+                id,
+                displayName,
+                description,
+                ReadStringList(child.GetSection("Tags"))));
+        }
+    }
+
+    private static void ReadSubscriptions(
+        IConfiguration configuration,
+        EventingOptions options,
+        string path)
+    {
+        foreach (var child in configuration.GetChildren())
+        {
+            var id = ReadDescriptorId(child, path, "subscription");
+            var displayName = ReadOptionalString(child, "DisplayName", "Name") ?? id;
+            var description = ReadOptionalString(child, "Description") ?? $"{displayName} event subscription.";
+            var channelId = ReadRequiredString(child, path, id, "subscription", "ChannelId", "Channel");
+            var handlerId = ReadOptionalString(child, "HandlerId", "Handler", "ExecutorId", "ConsumerId") ?? id;
+            var deliveryMode = ReadOptionalString(child, "DeliveryMode", "Mode") ?? "message-handler";
+            var metadata = ReadMetadata(child.GetSection("Metadata"));
+            metadata.TryAdd("descriptorSource", "configuration");
+            metadata.TryAdd("configurationPath", $"{path}:{child.Key}");
+
+            options.Subscriptions.Add(new EventSubscriptionDescriptor(
+                id,
+                displayName,
+                description,
+                channelId,
+                handlerId,
+                deliveryMode,
+                ReadStringList(child.GetSection("Tags")),
+                metadata));
+        }
+    }
+
+    private static string ReadDescriptorId(
+        IConfigurationSection configuration,
+        string path,
+        string descriptorKind)
+    {
+        var id = ReadOptionalString(configuration, "Id");
+        if (!string.IsNullOrWhiteSpace(id))
+        {
+            return id;
+        }
+
+        if (int.TryParse(configuration.Key, NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
+        {
+            throw new FormatException(
+                $"Eventing {descriptorKind} configuration entry '{path}:{configuration.Key}' must provide an 'Id' value when entries are represented as an array.");
+        }
+
+        return configuration.Key;
+    }
+
+    private static string ReadRequiredString(
+        IConfiguration configuration,
+        string path,
+        string id,
+        string descriptorKind,
+        params string[] keys)
+    {
+        var value = ReadOptionalString(configuration, keys);
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            return value;
+        }
+
+        throw new FormatException(
+            $"Eventing {descriptorKind} configuration entry '{path}:{id}' must provide '{string.Join("' or '", keys)}'.");
+    }
+
+    private static string? ReadOptionalString(
+        IConfiguration configuration,
+        params string[] keys)
+    {
+        return TryGetValue(configuration, out var value, keys)
+            ? value.Trim()
+            : null;
+    }
+
+    private static List<string> ReadStringList(IConfigurationSection configuration)
+    {
+        var values = new List<string>();
+        if (!string.IsNullOrWhiteSpace(configuration.Value))
+        {
+            values.AddRange(configuration.Value.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
+        }
+
+        foreach (var child in configuration.GetChildren())
+        {
+            if (!string.IsNullOrWhiteSpace(child.Value))
+            {
+                values.Add(child.Value.Trim());
+            }
+        }
+
+        return values;
+    }
+
+    private static Dictionary<string, string> ReadMetadata(IConfiguration configuration)
+    {
+        var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var child in configuration.GetChildren())
+        {
+            if (!string.IsNullOrWhiteSpace(child.Key) && !string.IsNullOrWhiteSpace(child.Value))
+            {
+                metadata[child.Key.Trim()] = child.Value.Trim();
+            }
+        }
+
+        return metadata;
     }
 
     private static bool TryGetValue(

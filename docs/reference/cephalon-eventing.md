@@ -355,13 +355,13 @@ Parameters:
 EngineBuilder AddEventingFromConfiguration(this EngineBuilder builder, IConfiguration configuration)
 ```
 
-Adds the eventing runtime pack to the engine and reads host-owned native eventing settings from configuration.
+Adds the eventing runtime pack to the engine and reads host-owned native eventing descriptors and settings from configuration.
 
 Returns: The same engine builder for fluent composition.
 
 Parameters:
 - `builder`: The engine builder to extend.
-- `configuration`: The host configuration that contains the `Engine:Messaging` section.
+- `configuration`: The host configuration that contains the `Engine:Messaging` section, including optional `Channels`, `Subscriptions`, `InProcessSubscriptions`, and publication settings.
 
 <a id="member-m-cephalon-eventing-registration-eventingenginebuilderextensions-addeventingfromconfiguration-cephalon-engine-composition-enginebuilder-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-eventing-configuration-eventingoptions"></a>
 
@@ -371,13 +371,13 @@ Parameters:
 EngineBuilder AddEventingFromConfiguration(this EngineBuilder builder, IConfiguration configuration, Action<EventingOptions> configure)
 ```
 
-Adds the eventing runtime pack to the engine and reads host-owned native eventing settings from configuration.
+Adds the eventing runtime pack to the engine and reads host-owned native eventing descriptors and settings from configuration.
 
 Returns: The same engine builder for fluent composition.
 
 Parameters:
 - `builder`: The engine builder to extend.
-- `configuration`: The host configuration that contains the `Engine:Messaging` section.
+- `configuration`: The host configuration that contains the `Engine:Messaging` section, including optional `Channels`, `Subscriptions`, `InProcessSubscriptions`, and publication settings.
 - `configure`: A callback that can add channels, subscriptions, or deliberate overrides after configuration is read.
 
 <a id="namespace-cephalon-eventing-services"></a>

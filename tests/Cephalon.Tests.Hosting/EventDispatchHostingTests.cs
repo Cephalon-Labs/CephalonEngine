@@ -624,6 +624,103 @@ public sealed class EventDispatchHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonDiscoversEventChannelsAndSubscriptionsFromConfigurationWithoutWolverine()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
+        {
+            ["Engine:Messaging:InProcessSubscriptions:EnableExecution"] = "true",
+            ["Engine:Messaging:Channels:audit:DisplayName"] = "Configured Audit",
+            ["Engine:Messaging:Channels:audit:Description"] = "Audit events declared by host configuration.",
+            ["Engine:Messaging:Channels:audit:Tags:0"] = "configuration",
+            ["Engine:Messaging:Channels:audit:Tags:1"] = "audit",
+            ["Engine:Messaging:Subscriptions:audit-projector:DisplayName"] = "Configured Audit Projector",
+            ["Engine:Messaging:Subscriptions:audit-projector:Description"] = "Projects configured audit events without code-declared descriptors.",
+            ["Engine:Messaging:Subscriptions:audit-projector:ChannelId"] = "audit",
+            ["Engine:Messaging:Subscriptions:audit-projector:HandlerId"] = "configured-audit-projector",
+            ["Engine:Messaging:Subscriptions:audit-projector:DeliveryMode"] = "message-handler",
+            ["Engine:Messaging:Subscriptions:audit-projector:Tags:0"] = "configuration",
+            ["Engine:Messaging:Subscriptions:audit-projector:Tags:1"] = "projection",
+            ["Engine:Messaging:Subscriptions:audit-projector:Metadata:owner"] = "configuration"
+        });
+        builder.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new TechnologyPackContributionModule());
+            engine.AddEventingFromConfiguration(builder.Configuration);
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        await using (var scope = app.Services.CreateAsyncScope())
+        {
+            var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(new EventPublication(
+                id: "audit-config-discovery-001",
+                channelId: "audit",
+                eventType: "audit.created",
+                payload: """{"id":"audit-config-discovery-001"}""",
+                occurredAtUtc: new DateTimeOffset(2026, 05, 10, 16, 0, 0, TimeSpan.Zero),
+                contentType: "application/json",
+                correlationId: "corr-audit-config-discovery-001",
+                tenantId: "tenant-config-discovery-001"));
+        }
+
+        var client = app.GetTestClient();
+        var channelCatalog = app.Services.GetRequiredService<IEventChannelCatalog>();
+        var subscriptionCatalog = app.Services.GetRequiredService<IEventSubscriptionCatalog>();
+        var probe = app.Services.GetRequiredService<ManagedAuditProjectorProbe>();
+        var eventingSurfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/event-driven-integration");
+        var capabilities = await client.GetFromJsonAsync<CapabilityManifest[]>("/engine/capabilities");
+
+        Assert.True(channelCatalog.TryGet("audit", out var channel));
+        Assert.Equal("Configured Audit", channel.DisplayName);
+        Assert.Equal("Audit events declared by host configuration.", channel.Description);
+        Assert.Equal(["audit", "configuration"], channel.Tags);
+
+        Assert.True(subscriptionCatalog.TryGet("audit-projector", out var subscription));
+        Assert.Equal("Configured Audit Projector", subscription.DisplayName);
+        Assert.Equal("Projects configured audit events without code-declared descriptors.", subscription.Description);
+        Assert.Equal("configured-audit-projector", subscription.HandlerId);
+        Assert.Equal("message-handler", subscription.DeliveryMode);
+        Assert.Equal(["configuration", "projection"], subscription.Tags);
+        Assert.Equal("configuration", subscription.Metadata["owner"]);
+        Assert.Equal("configuration", subscription.Metadata["descriptorSource"]);
+        Assert.Equal("Engine:Messaging:Subscriptions:audit-projector", subscription.Metadata["configurationPath"]);
+
+        Assert.Equal(1, probe.TotalAttempts);
+        Assert.Equal(1, probe.SuccessfulAttempts);
+        Assert.Equal("audit-config-discovery-001", probe.LastMessageId);
+
+        Assert.NotNull(eventingSurfaces);
+        var channelEntry = Assert.Single(eventingSurfaces.Single(surface => surface.SurfaceId == "event-channels").Entries);
+        Assert.Equal("Configured Audit", channelEntry.DisplayName);
+        Assert.Equal("audit,configuration", channelEntry.Metadata["tags"]);
+        var subscriptionEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "event-subscriptions").Entries,
+            entry => entry.Id == "audit-projector");
+        Assert.Equal("Configured Audit Projector", subscriptionEntry.DisplayName);
+        Assert.Equal("configuration", subscriptionEntry.Metadata["descriptorSource"]);
+        Assert.Equal("Engine:Messaging:Subscriptions:audit-projector", subscriptionEntry.Metadata["configurationPath"]);
+        Assert.Equal("configured-audit-projector", subscriptionEntry.Metadata["handlerId"]);
+        Assert.Equal("message-handler", subscriptionEntry.Metadata["deliveryMode"]);
+        Assert.Equal("cephalon-managed", subscriptionEntry.Metadata["executionOwnership"]);
+        Assert.Equal("runtime-bound", subscriptionEntry.Metadata["subscriptionRuntime"]);
+
+        Assert.NotNull(capabilities);
+        var subscribeCapability = Assert.Single(capabilities, capability => capability.Key == "eventing.subscribe");
+        Assert.Equal("cephalon-managed", subscribeCapability.Metadata["executionOwnership"]);
+    }
+
+    [Fact]
     public async Task MapCephalonRoutesCoreInProcessEventPublicationFromConfigurationWithoutWolverine()
     {
         var builder = WebApplication.CreateSlimBuilder();
