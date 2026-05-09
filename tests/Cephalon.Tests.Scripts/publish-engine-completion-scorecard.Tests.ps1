@@ -136,7 +136,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
 
         $json = Get-Content -LiteralPath $result.Paths.JsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
 
-        $json.'$schemaVersion' | Should -Be "1.12.0"
+        $json.'$schemaVersion' | Should -Be "1.13.0"
         $json.SourceDocument | Should -Be "docs/engine-completion-scorecard.md"
         $json.ConformanceMatrix | Should -Be "docs/conformance-matrix.md"
         $json.DeploymentModeManifest | Should -Be "scripts/deployment-mode-support.json"
@@ -175,6 +175,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.AdoptionSmokeScenarioCount | Should -Be 1
         $json.Summary.AdoptionSmokeRuntimeProbeCount | Should -Be 6
         $json.Summary.AdoptionSmokeAssertionCount | Should -Be 7
+        $json.Summary.AdoptionSmokeExecutionReportRequiredFieldCount | Should -Be 9
         $json.Summary.ProviderIntegrationEvidenceRowCount | Should -Be 33
         $json.Summary.ProviderIntegrationLiveProofCount | Should -Be 33
         $json.Summary.ProviderIntegrationCompositionOnlyCount | Should -Be 0
@@ -273,9 +274,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.DeploymentModeEvidence.PackageRows.PackageName | Should -Contain "Cephalon.Data.MySql.SciSharpReplication"
         $json.DeploymentModeEvidence.TransitiveAuditRows.PackagePattern | Should -Contain "Newtonsoft.Json"
 
-        $json.AdoptionSmokeEvidence.ManifestSchemaVersion | Should -Be "1.0.0"
+        $json.AdoptionSmokeEvidence.ManifestSchemaVersion | Should -Be "1.1.0"
         $json.AdoptionSmokeEvidence.ScenarioId | Should -Be "out-of-tree-generated-app-package-stage"
-        $json.AdoptionSmokeEvidence.Status | Should -Be "replay-available"
+        $json.AdoptionSmokeEvidence.Status | Should -Be "execution-report-ready"
         $json.AdoptionSmokeEvidence.ValidationScript | Should -Be "scripts/validate-out-of-tree-package-adoption.ps1"
         $json.AdoptionSmokeEvidence.ReferenceModuleProject | Should -Be "samples/Cephalon.ReferenceModule.Operations/Cephalon.ReferenceModule.Operations.csproj"
         $json.AdoptionSmokeEvidence.SupportingScripts | Should -Contain "scripts/validate-generated-app-adoption.ps1"
@@ -283,6 +284,13 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.AdoptionSmokeEvidence.RuntimeProbes.Path | Should -Contain "/engine/packages"
         $json.AdoptionSmokeEvidence.RuntimeProbes.Path | Should -Contain "/engine/trust-policy"
         $json.AdoptionSmokeEvidence.RuntimeProbes.Path | Should -Contain "/api/operations/status"
+        $json.AdoptionSmokeEvidence.ExecutionReport.SchemaVersion | Should -Be "1.0.0"
+        $json.AdoptionSmokeEvidence.ExecutionReport.DefaultPath | Should -Be "artifacts/adoption-smoke/out-of-tree-package-adoption.json"
+        $json.AdoptionSmokeEvidence.ExecutionReport.StatusValues | Should -Contain "passed"
+        $json.AdoptionSmokeEvidence.ExecutionReport.StatusValues | Should -Contain "failed"
+        $json.AdoptionSmokeEvidence.ExecutionReport.RequiredFields.Count | Should -Be 9
+        $json.AdoptionSmokeEvidence.ExecutionReport.RequiredFields | Should -Contain '$schemaVersion'
+        $json.AdoptionSmokeEvidence.ExecutionReport.RequiredFields | Should -Contain "RuntimeProbes"
 
         $json.ProviderIntegrationEvidence.ManifestSchemaVersion | Should -Be "1.0.0"
         $json.ProviderIntegrationEvidence.Status | Should -Be "expanded-live-provider-evidence"
@@ -688,9 +696,9 @@ Start-Process
 
         $manifestPath = Join-Path $scriptsRoot "adoption-smoke-support.json"
         @{
-            '$schemaVersion' = "1.0.0"
+            '$schemaVersion' = "1.1.0"
             scenarioId = "fixture"
-            status = "replay-available"
+            status = "execution-report-ready"
             validationScript = $replayScriptPath
             supportingScripts = @(
                 (Join-Path $scriptsRoot "validate-generated-app-adoption.ps1"),
@@ -714,6 +722,22 @@ Start-Process
                 runsGeneratedHost = $true
             }
             requiredScriptTokens = @("Cephalon.Cli", "cephalon package stage", "Cephalon.ReferenceModule.Operations", "PackageDirectories", "PackagePolicy", "Trust", "RequireTrustedPackages", "TrustedPublishers", "Start-Process", '"run"')
+            executionReport = @{
+                schemaVersion = "1.0.0"
+                defaultPath = "artifacts/adoption-smoke/out-of-tree-package-adoption.json"
+                statusValues = @("passed", "failed")
+                requiredFields = @(
+                    '$schemaVersion',
+                    "ScenarioId",
+                    "Status",
+                    "StartedAtUtc",
+                    "CompletedAtUtc",
+                    "DurationMilliseconds",
+                    "Assertions",
+                    "RuntimeProbes",
+                    "Paths"
+                )
+            }
             runtimeProbes = @(
                 @{ kind = "package-runtime"; path = "/engine/packages" },
                 @{ kind = "trust-policy"; path = "/engine/trust-policy" }

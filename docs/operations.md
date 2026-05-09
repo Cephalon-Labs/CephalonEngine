@@ -36,13 +36,13 @@ See `docs/getting-started.md` for the corresponding template-pack install, docto
 
 ## Out-of-tree package parity smoke
 
-For a repo-native external-adoption replay that publishes a temporary package feed, installs `Cephalon.Cli`, scaffolds a fresh app outside the repository, packs and stages `Cephalon.ReferenceModule.Operations` through `cephalon package stage`, patches `Engine:Discovery:PackageDirectories` plus `Engine:PackagePolicy` and `Engine:Trust`, reruns `cephalon doctor --app-root`, restores, builds, runs the generated host, and validates `/api/operations/status`, `/engine/packages`, `/engine/package-policy`, `/engine/trust-policy`, and `/engine/snapshot`, run:
+For a repo-native external-adoption replay that publishes a temporary package feed with the generated app package closure including `Cephalon.Behaviors.SourceGen`, `Cephalon.Diagnostics`, and `Cephalon.Resilience`, installs `Cephalon.Cli`, scaffolds a fresh app outside the repository, packs and stages `Cephalon.ReferenceModule.Operations` through `cephalon package stage`, patches `Engine:Discovery:PackageDirectories` plus `Engine:PackagePolicy` and `Engine:Trust`, reruns `cephalon doctor --app-root`, restores, builds, runs the generated host, and validates `/api/operations/status`, `/engine/packages`, `/engine/package-policy`, `/engine/trust-policy`, and `/engine/snapshot`, run:
 
 ```powershell
 pwsh ./scripts/validate-out-of-tree-package-adoption.ps1
 ```
 
-The release-readiness scorecard validates the same replay path through `scripts/adoption-smoke-support.json` and emits it as `AdoptionSmokeEvidence` in the generated scorecard artifact. Keep that manifest aligned whenever this smoke path adds or removes script phases, staged packages, or runtime probes.
+The script writes `artifacts/adoption-smoke/out-of-tree-package-adoption.json` by default; pass `-ReportPath <path>` when a release run needs the report in a different artifact folder. The release-readiness scorecard validates the same replay path and execution-report contract through `scripts/adoption-smoke-support.json` and emits it as `AdoptionSmokeEvidence` in the generated scorecard artifact. Keep that manifest aligned whenever this smoke path adds or removes script phases, staged packages, runtime probes, or report fields.
 
 See `docs/external-package-lifecycle.md` for the corresponding stage, trust, and inspect guidance.
 

@@ -647,6 +647,12 @@ docker compose up --build
 
             foreach (var package in packageReferences)
             {
+                if (IsPrivateAnalyzerPackage(package))
+                {
+                    builder.AppendLine("    <PackageReference Include=\"" + package + "\" PrivateAssets=\"all\" />");
+                    continue;
+                }
+
                 if (project.Template == "cephalon-tests" && package == "coverlet.collector")
                 {
                     builder.AppendLine("    <PackageReference Include=\"coverlet.collector\">");
@@ -3416,13 +3422,25 @@ service:
             effectivePackages.Add("Serilog.Sinks.Console");
         }
 
+        if (template == "cephalon-module")
+        {
+            effectivePackages.Add("Cephalon.Engine.SourceGen");
+        }
+
         if (template == "cephalon-module" && HasRestApiTransport(appProfile))
         {
             effectivePackages.Add("Cephalon.Behaviors.Http");
+            effectivePackages.Add("Cephalon.Behaviors.SourceGen");
         }
 
         return effectivePackages
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .ToArray();
+    }
+
+    private static bool IsPrivateAnalyzerPackage(string package)
+    {
+        return string.Equals(package, "Cephalon.Engine.SourceGen", StringComparison.OrdinalIgnoreCase) ||
+            string.Equals(package, "Cephalon.Behaviors.SourceGen", StringComparison.OrdinalIgnoreCase);
     }
 }

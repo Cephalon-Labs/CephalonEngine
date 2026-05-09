@@ -30,6 +30,9 @@ public sealed class OutOfTreePackageAdoptionAssetsTests
         Assert.Contains("\"tool\"", validationScript, StringComparison.Ordinal);
         Assert.Contains("\"install\"", validationScript, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Cli", validationScript, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Behaviors.SourceGen", validationScript, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Diagnostics", validationScript, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Resilience", validationScript, StringComparison.Ordinal);
         Assert.Contains("cephalon package stage", validationScript, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("\"package\"", validationScript, StringComparison.Ordinal);
         Assert.Contains("\"stage\"", validationScript, StringComparison.Ordinal);
@@ -42,10 +45,17 @@ public sealed class OutOfTreePackageAdoptionAssetsTests
         Assert.Contains("/engine/trust-policy", validationScript, StringComparison.Ordinal);
         Assert.Contains("/engine/snapshot", validationScript, StringComparison.Ordinal);
         Assert.Contains("/api/operations/status", validationScript, StringComparison.Ordinal);
+        Assert.Contains("ReportPath", validationScript, StringComparison.Ordinal);
+        Assert.Contains("Write-AdoptionSmokeExecutionReport", validationScript, StringComparison.Ordinal);
+        Assert.Contains("Adoption smoke execution report:", validationScript, StringComparison.Ordinal);
         Assert.Contains("Out-of-tree package adoption validation completed successfully.", validationScript, StringComparison.Ordinal);
 
         Assert.Contains("out-of-tree-generated-app-package-stage", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("execution-report-ready", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("validate-out-of-tree-package-adoption.ps1", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Behaviors.SourceGen", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Diagnostics", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Resilience", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("Cephalon.ReferenceModule.Operations.csproj", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("docs/package-publishing.md", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("runsOutsideRepository", adoptionSmokeManifest, StringComparison.Ordinal);
@@ -55,6 +65,10 @@ public sealed class OutOfTreePackageAdoptionAssetsTests
         Assert.Contains("/engine/trust-policy", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("/engine/snapshot", adoptionSmokeManifest, StringComparison.Ordinal);
         Assert.Contains("/api/operations/status", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("executionReport", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("artifacts/adoption-smoke/out-of-tree-package-adoption.json", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("RuntimeProbes", adoptionSmokeManifest, StringComparison.Ordinal);
+        Assert.Contains("Paths", adoptionSmokeManifest, StringComparison.Ordinal);
     }
 
     private static string GetRepositoryRoot()

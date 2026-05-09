@@ -85,4 +85,4 @@ Then point `Engine:Discovery` at the staged package directory:
 
 With the host running, inspect `/api/operations/status`, `/engine/packages`, `/engine/package-policy`, `/engine/trust-policy`, and `/engine/snapshot`.
 
-For the repo-native external replay of that same path, use `pwsh ./scripts/validate-out-of-tree-package-adoption.ps1`.
+For the repo-native external replay of that same path, use `pwsh ./scripts/validate-out-of-tree-package-adoption.ps1`; it publishes the generated app package closure including `Cephalon.Behaviors.SourceGen`, `Cephalon.Diagnostics`, and `Cephalon.Resilience`, and writes `artifacts/adoption-smoke/out-of-tree-package-adoption.json` unless `-ReportPath` overrides it.

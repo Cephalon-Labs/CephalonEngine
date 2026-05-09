@@ -1,8 +1,8 @@
 {
-  "$schemaVersion": "1.0.0",
+  "$schemaVersion": "1.1.0",
   "scenarioId": "out-of-tree-generated-app-package-stage",
-  "status": "replay-available",
-  "summary": "Out-of-repo generated-app adoption replay that consumes repo-local packages, stages the reference operations module package, runs the generated host, and validates package/trust/runtime operator surfaces.",
+  "status": "execution-report-ready",
+  "summary": "Out-of-repo generated-app adoption replay that consumes repo-local packages, stages the reference operations module package, runs the generated host, validates package/trust/runtime operator surfaces, and writes a machine-readable execution report.",
   "validationScript": "scripts/validate-out-of-tree-package-adoption.ps1",
   "supportingScripts": [
     "scripts/validate-generated-app-adoption.ps1",
@@ -28,6 +28,9 @@
   },
   "requiredScriptTokens": [
     "Cephalon.Cli",
+    "Cephalon.Behaviors.SourceGen",
+    "Cephalon.Diagnostics",
+    "Cephalon.Resilience",
     "cephalon package stage",
     "Cephalon.ReferenceModule.Operations",
     "PackageDirectories",
@@ -36,8 +39,29 @@
     "RequireTrustedPackages",
     "TrustedPublishers",
     "Start-Process",
-    "\"run\""
+    "\"run\"",
+    "AdoptionSmokeExecutionReport",
+    "ReportPath"
   ],
+  "executionReport": {
+    "schemaVersion": "1.0.0",
+    "defaultPath": "artifacts/adoption-smoke/out-of-tree-package-adoption.json",
+    "statusValues": [
+      "passed",
+      "failed"
+    ],
+    "requiredFields": [
+      "$schemaVersion",
+      "ScenarioId",
+      "Status",
+      "StartedAtUtc",
+      "CompletedAtUtc",
+      "DurationMilliseconds",
+      "Assertions",
+      "RuntimeProbes",
+      "Paths"
+    ]
+  },
   "runtimeProbes": [
     {
       "kind": "health",

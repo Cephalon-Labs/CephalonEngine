@@ -9,6 +9,7 @@
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <IsRoslynComponent>true</IsRoslynComponent>
     <Description>Roslyn source generator and analyzer for Cephalon behavior classes annotated with [AppBehavior].</Description>
+    <PackageTags>cephalon;source-generator;behaviors;rest;trimming;native-aot</PackageTags>
     <!--
       This project is a Roslyn source generator that runs at compile time only and never ships
       runtime code into a published app. Override PublishTrimmed / PublishAot / PublishSingleFile
@@ -17,6 +18,9 @@
       3.0 or higher). Also mark IsTrimmable / IsAotCompatible explicitly false so any analyzer
       that reads those declarations sees the right value.
     -->
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IncludeSymbols>false</IncludeSymbols>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     <IsTrimmable>false</IsTrimmable>
     <IsAotCompatible>false</IsAotCompatible>
     <PublishTrimmed>false</PublishTrimmed>
@@ -30,5 +34,6 @@
   <ItemGroup>
     <AdditionalFiles Include="AnalyzerReleases.Shipped.md" />
     <AdditionalFiles Include="AnalyzerReleases.Unshipped.md" />
+    <None Include="$(OutputPath)$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
   </ItemGroup>
 </Project>

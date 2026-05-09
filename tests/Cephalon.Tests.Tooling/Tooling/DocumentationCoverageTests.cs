@@ -501,6 +501,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("cephalon doctor --scorecard <path>", scorecard, StringComparison.Ordinal);
         Assert.Contains($"schema version `{expectedSchemaVersion}`", scorecard, StringComparison.Ordinal);
         Assert.Contains("provider integration counts from `ProviderIntegrationEvidence`", scorecard, StringComparison.Ordinal);
+        Assert.Contains("adoption-smoke counts from `AdoptionSmokeEvidence`", scorecard, StringComparison.Ordinal);
+        Assert.Contains("execution-report default path/schema", scorecard, StringComparison.Ordinal);
         Assert.Contains("ProviderIntegrationEvidence.DependencyHealthProviderManifest", scorecard, StringComparison.Ordinal);
         Assert.Contains("claims-report path, gate status, target count, warning count, error count, and package-claim verdict counts", scorecard, StringComparison.Ordinal);
         Assert.Contains("SRE posture counts from `SrePostureEvidence`", scorecard, StringComparison.Ordinal);
@@ -509,12 +511,15 @@ public sealed class DocumentationCoverageTests
         Assert.Contains($"generated artifact is now schema `{expectedSchemaVersion}`", projectMemory, StringComparison.Ordinal);
         Assert.Contains($"currently requires scorecard schema `{expectedSchemaVersion}`", projectMemory, StringComparison.Ordinal);
         Assert.Contains("deployment-mode claims-report gate/target/warning/error/package-claim verdict counts", projectMemory, StringComparison.Ordinal);
+        Assert.Contains("adoption-smoke execution-report counts/path", projectMemory, StringComparison.Ordinal);
+        Assert.Contains("AdoptionSmokeEvidence.ExecutionReport", projectMemory, StringComparison.Ordinal);
         Assert.Contains("validates provider-integration evidence from `scripts/provider-integration-support.json`", projectMemory, StringComparison.Ordinal);
         Assert.Contains("ProviderIntegrationEvidence", projectMemory, StringComparison.Ordinal);
         Assert.Contains("ProviderIntegrationEvidence.DependencyHealthProviderManifest", projectMemory, StringComparison.Ordinal);
         Assert.Contains("scripts/sre-stable-baselines.json", projectMemory, StringComparison.Ordinal);
         Assert.Contains("provider live/composition/gate/runtime-contract posture", projectMemory, StringComparison.Ordinal);
         Assert.Contains("claims-report gate/target/warning/error/package-claim", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("adoption-smoke execution-report readback", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("claims-report gate/target/warning/error/package-claim", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("provider integration counts from `ProviderIntegrationEvidence`", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("dependency-health provider-manifest readback", cliComponentDoc, StringComparison.Ordinal);
@@ -563,6 +568,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("AddCephalonProjectConfigurations", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("MapCephalon", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("PackageReference", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Engine.SourceGen", gettingStarted, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Behaviors.SourceGen", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("Configurations/**/*.json", gettingStarted, StringComparison.Ordinal);
         Assert.Contains(".cephalon/packages/README.md", gettingStarted, StringComparison.Ordinal);
         Assert.Contains("CephalonFolder.pubxml", gettingStarted, StringComparison.Ordinal);
@@ -688,6 +695,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("AddCephalonProjectConfigurations", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("MapCephalon", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("PackageReference", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Engine.SourceGen", cliPackageReadme, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Behaviors.SourceGen", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("Configurations/**/*.json", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("PublishTrimmed", cliPackageReadme, StringComparison.Ordinal);
         Assert.Contains("PublishAot", cliPackageReadme, StringComparison.Ordinal);
@@ -738,6 +747,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("AddCephalonProjectConfigurations", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("MapCephalon", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("PackageReference", templatePackReadme, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Engine.SourceGen", templatePackReadme, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Behaviors.SourceGen", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("Configurations/**/*.json", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("Configurations/AddEngine.*.json", templatePackReadme, StringComparison.Ordinal);
         Assert.Contains("Configurations/Observability/Development.json", templatePackReadme, StringComparison.Ordinal);
@@ -798,6 +809,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("AddCephalonProjectConfigurations", rootReadme, StringComparison.Ordinal);
         Assert.Contains("MapCephalon", rootReadme, StringComparison.Ordinal);
         Assert.Contains("PackageReference", rootReadme, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Engine.SourceGen", rootReadme, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Behaviors.SourceGen", rootReadme, StringComparison.Ordinal);
         Assert.Contains("Configurations/**/*.json", rootReadme, StringComparison.Ordinal);
         Assert.Contains("Configurations/AddEngine.*.json", rootReadme, StringComparison.Ordinal);
         Assert.Contains("Configurations/Observability/Development.json", rootReadme, StringComparison.Ordinal);
@@ -817,6 +830,8 @@ public sealed class DocumentationCoverageTests
         Assert.Contains("AddCephalonProjectConfigurations", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("MapCephalon", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("PackageReference", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Engine.SourceGen", cliComponentDoc, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Behaviors.SourceGen", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("Configurations/**/*.json", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("CompositionSmokeTests.cs", cliComponentDoc, StringComparison.Ordinal);
         Assert.Contains("BehaviorSpecifications.cs", cliComponentDoc, StringComparison.Ordinal);

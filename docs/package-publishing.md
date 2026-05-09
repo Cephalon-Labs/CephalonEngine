@@ -116,10 +116,13 @@ as an analyzer. The staged runtime assembly carries generated `ModuleDiscoveryDe
 metadata in a module initializer, so the engine can load modules without scanning assembly types
 or using reflective constructors. Packages that need custom factories should register modules
 explicitly through module/package registration code instead of relying on assembly discovery.
+Behavior-backed REST module packages that use `MapProfile<TBehavior>()` must also build with
+`Cephalon.Behaviors.SourceGen` as an analyzer so REST profile, behavior-type, input-contract,
+and output-contract descriptors are generated before the package is staged.
 
 For the full author -> publish -> trust -> load -> inspect walkthrough, see [External package lifecycle](external-package-lifecycle.md).
 
-For the scenario-driven external replay of that same staged-package path, use `pwsh ./scripts/validate-out-of-tree-package-adoption.ps1`. It scaffolds a fresh app outside the repository, stages `Cephalon.ReferenceModule.Operations` through `cephalon package stage`, patches `Engine:Discovery:PackageDirectories` plus `Engine:PackagePolicy` and `Engine:Trust`, reruns `cephalon doctor --app-root`, and validates `/engine/packages`, `/engine/package-policy`, `/engine/trust-policy`, `/engine/snapshot`, and `/api/operations/status`. The release-readiness scorecard validates this replay through `scripts/adoption-smoke-support.json` before emitting `AdoptionSmokeEvidence`.
+For the scenario-driven external replay of that same staged-package path, use `pwsh ./scripts/validate-out-of-tree-package-adoption.ps1`. It publishes the generated app package closure, including `Cephalon.Behaviors.SourceGen`, `Cephalon.Diagnostics`, and `Cephalon.Resilience`, scaffolds a fresh app outside the repository, stages `Cephalon.ReferenceModule.Operations` through `cephalon package stage`, patches `Engine:Discovery:PackageDirectories` plus `Engine:PackagePolicy` and `Engine:Trust`, reruns `cephalon doctor --app-root`, validates `/engine/packages`, `/engine/package-policy`, `/engine/trust-policy`, `/engine/snapshot`, and `/api/operations/status`, and writes `artifacts/adoption-smoke/out-of-tree-package-adoption.json` unless `-ReportPath` overrides it. The release-readiness scorecard validates this replay and execution-report contract through `scripts/adoption-smoke-support.json` before emitting `AdoptionSmokeEvidence`.
 
 For the matching higher-assurance detached-signature replay, use `pwsh ./scripts/validate-signed-package-governance.ps1`. It repacks `Cephalon.ReferenceModule.Operations` with a deterministic detached signature, stages the signed `.nupkg`, patches stricter `Engine:PackagePolicy` plus `Engine:Trust:TrustedSignaturePublicKeys`, validates the same runtime/package surfaces, and then proves a tampered signed package is denied when signature verification is required.
 

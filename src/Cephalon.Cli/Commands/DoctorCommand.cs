@@ -17,7 +17,7 @@ internal static class DoctorCommand
     private const string DotNetSdkDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/sdk:";
     private const string DotNetAspNetDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/aspnet:";
     private const string TemplatePackCustomHiveEnvironmentVariable = "CEPHALON_DOCTOR_TEMPLATE_HIVE";
-    private const string RequiredScorecardSchemaVersion = "1.12.0";
+    private const string RequiredScorecardSchemaVersion = "1.13.0";
 
     private static readonly string[] ExpectedTemplateShortNames =
     [
@@ -773,6 +773,7 @@ internal static class DoctorCommand
         }
 
         var deploymentModeEvidence = scorecard["DeploymentModeEvidence"];
+        var adoptionSmokeEvidence = scorecard["AdoptionSmokeEvidence"];
         var providerIntegrationEvidence = scorecard["ProviderIntegrationEvidence"];
         var srePostureEvidence = scorecard["SrePostureEvidence"];
         var supplyChainEvidence = scorecard["SupplyChainEvidence"];
@@ -781,6 +782,11 @@ internal static class DoctorCommand
         if (deploymentModeEvidence is null)
         {
             errors.Add("DeploymentModeEvidence");
+        }
+
+        if (adoptionSmokeEvidence is null)
+        {
+            errors.Add("AdoptionSmokeEvidence");
         }
 
         if (providerIntegrationEvidence is null)
@@ -825,6 +831,10 @@ internal static class DoctorCommand
         var deploymentModeClaimsReportPublishProbeErrorCount = GetRequiredScorecardInt(summary, "DeploymentModeClaimsReportPublishProbeErrorCount", errors);
         var deploymentModeClaimsReportPackageClaimTruthfulCount = GetRequiredScorecardInt(summary, "DeploymentModeClaimsReportPackageClaimTruthfulCount", errors);
         var deploymentModeClaimsReportPackageClaimOverstatedCount = GetRequiredScorecardInt(summary, "DeploymentModeClaimsReportPackageClaimOverstatedCount", errors);
+        var adoptionSmokeScenarioCount = GetRequiredScorecardInt(summary, "AdoptionSmokeScenarioCount", errors);
+        var adoptionSmokeRuntimeProbeCount = GetRequiredScorecardInt(summary, "AdoptionSmokeRuntimeProbeCount", errors);
+        var adoptionSmokeAssertionCount = GetRequiredScorecardInt(summary, "AdoptionSmokeAssertionCount", errors);
+        var adoptionSmokeExecutionReportRequiredFieldCount = GetRequiredScorecardInt(summary, "AdoptionSmokeExecutionReportRequiredFieldCount", errors);
         var providerIntegrationEvidenceRowCount = GetRequiredScorecardInt(summary, "ProviderIntegrationEvidenceRowCount", errors);
         var providerIntegrationLiveProofCount = GetRequiredScorecardInt(summary, "ProviderIntegrationLiveProofCount", errors);
         var providerIntegrationCompositionOnlyCount = GetRequiredScorecardInt(summary, "ProviderIntegrationCompositionOnlyCount", errors);
@@ -866,6 +876,31 @@ internal static class DoctorCommand
         var evidenceDeploymentModeClaimsReportPublishProbeErrorCount = GetRequiredScorecardInt(deploymentModeEvidence, "ClaimsReportPublishProbeErrorCount", errors, "DeploymentModeEvidence");
         var evidenceDeploymentModeClaimsReportPackageClaimTruthfulCount = GetRequiredScorecardInt(deploymentModeEvidence, "ClaimsReportPackageClaimTruthfulCount", errors, "DeploymentModeEvidence");
         var evidenceDeploymentModeClaimsReportPackageClaimOverstatedCount = GetRequiredScorecardInt(deploymentModeEvidence, "ClaimsReportPackageClaimOverstatedCount", errors, "DeploymentModeEvidence");
+        var evidenceAdoptionSmokeScenarioId = GetRequiredScorecardString(adoptionSmokeEvidence, "ScenarioId", errors, "AdoptionSmokeEvidence") ?? "unknown";
+        var evidenceAdoptionSmokeStatus = GetRequiredScorecardString(adoptionSmokeEvidence, "Status", errors, "AdoptionSmokeEvidence") ?? "unknown";
+        var evidenceAdoptionSmokeRuntimeProbeCount = GetRequiredScorecardArrayCount(adoptionSmokeEvidence, "RuntimeProbes", errors, "AdoptionSmokeEvidence");
+        var evidenceAdoptionSmokeAssertionCount = GetRequiredScorecardArrayCount(adoptionSmokeEvidence, "Assertions", errors, "AdoptionSmokeEvidence");
+        var adoptionSmokeExecutionReport = adoptionSmokeEvidence?["ExecutionReport"];
+        if (adoptionSmokeEvidence is not null && adoptionSmokeExecutionReport is null)
+        {
+            errors.Add("AdoptionSmokeEvidence.ExecutionReport");
+        }
+
+        var evidenceAdoptionSmokeExecutionReportPath = GetRequiredScorecardString(
+            adoptionSmokeExecutionReport,
+            "DefaultPath",
+            errors,
+            "AdoptionSmokeEvidence.ExecutionReport") ?? "unknown";
+        var evidenceAdoptionSmokeExecutionReportSchema = GetRequiredScorecardString(
+            adoptionSmokeExecutionReport,
+            "SchemaVersion",
+            errors,
+            "AdoptionSmokeEvidence.ExecutionReport") ?? "unknown";
+        var evidenceAdoptionSmokeExecutionReportRequiredFieldCount = GetRequiredScorecardArrayCount(
+            adoptionSmokeExecutionReport,
+            "RequiredFields",
+            errors,
+            "AdoptionSmokeEvidence.ExecutionReport");
         var evidenceProviderIntegrationEvidenceRowCount = GetRequiredScorecardInt(providerIntegrationEvidence, "EvidenceRowCount", errors, "ProviderIntegrationEvidence");
         var evidenceProviderIntegrationLiveProofCount = GetRequiredScorecardInt(providerIntegrationEvidence, "LiveProofCount", errors, "ProviderIntegrationEvidence");
         var evidenceProviderIntegrationCompositionOnlyCount = GetRequiredScorecardInt(providerIntegrationEvidence, "CompositionOnlyCount", errors, "ProviderIntegrationEvidence");
@@ -995,6 +1030,19 @@ internal static class DoctorCommand
             return;
         }
 
+        if (adoptionSmokeScenarioCount != 1 ||
+            adoptionSmokeRuntimeProbeCount != evidenceAdoptionSmokeRuntimeProbeCount ||
+            adoptionSmokeAssertionCount != evidenceAdoptionSmokeAssertionCount ||
+            adoptionSmokeExecutionReportRequiredFieldCount != evidenceAdoptionSmokeExecutionReportRequiredFieldCount)
+        {
+            checks.Add(new DoctorCheck(
+                DoctorCheckSeverity.Failure,
+                "Engine completion scorecard adoption smoke evidence",
+                $"Artifact '{resolvedScorecardPath}' has adoption smoke summary counts that do not match AdoptionSmokeEvidence.",
+                "Regenerate the scorecard artifact with the current `scripts/publish-engine-completion-scorecard.ps1`."));
+            return;
+        }
+
         if (sreSliCount != evidenceSreSliCount ||
             sreTargetDeclaredCount != evidenceSreTargetDeclaredCount ||
             srePendingStableBaselineCount != evidenceSrePendingStableBaselineCount ||
@@ -1096,6 +1144,12 @@ internal static class DoctorCommand
             deploymentModeSeverity == DoctorCheckSeverity.Pass
                 ? null
                 : "Treat deployment-mode posture as release-readiness evidence only; do not promote trim, Native AOT, single-file, or publish-probe support until the manifest, harness, workflow, docs, and package guidance agree."));
+
+        checks.Add(new DoctorCheck(
+            DoctorCheckSeverity.Pass,
+            "Engine completion scorecard adoption smoke evidence",
+            $"{adoptionSmokeScenarioCount} scenario ({evidenceAdoptionSmokeScenarioId}, {evidenceAdoptionSmokeStatus}); runtime probes {adoptionSmokeRuntimeProbeCount}, assertions {adoptionSmokeAssertionCount}, execution-report fields {adoptionSmokeExecutionReportRequiredFieldCount}; report {evidenceAdoptionSmokeExecutionReportPath} schema {evidenceAdoptionSmokeExecutionReportSchema}.",
+            null));
 
         var providerIntegrationSeverity =
             providerIntegrationCompositionOnlyCount > 0 ||
@@ -1206,6 +1260,26 @@ internal static class DoctorCommand
             errors.Add($"{ownerName}.{propertyName}");
             return 0;
         }
+    }
+
+    private static int GetRequiredScorecardArrayCount(
+        JsonNode? scorecard,
+        string propertyName,
+        List<string> errors,
+        string ownerName)
+    {
+        if (scorecard is null)
+        {
+            return 0;
+        }
+
+        if (scorecard[propertyName] is JsonArray array)
+        {
+            return array.Count;
+        }
+
+        errors.Add($"{ownerName}.{propertyName}");
+        return 0;
     }
 
     private static bool GetRequiredScorecardBool(

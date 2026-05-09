@@ -24,7 +24,7 @@ public static class BuiltInScaffolds
                 role: ProjectRoles.Host,
                 template: "cephalon-web-host",
                 dependsOn: ["foundation", "module"],
-                packages: ["Cephalon.AspNetCore", "Cephalon.Observability", "Cephalon.Observability.OpenTelemetry", "Microsoft.Extensions.Hosting.WindowsServices"],
+                packages: ["Cephalon.AspNetCore", "Cephalon.Engine.SourceGen", "Cephalon.Observability", "Cephalon.Observability.OpenTelemetry", "Microsoft.Extensions.Hosting.WindowsServices"],
                 metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
                     ["hostKind"] = "aspnet-core"
@@ -95,7 +95,7 @@ public static class BuiltInScaffolds
                 role: ProjectRoles.Host,
                 template: "cephalon-web-host",
                 dependsOn: ["foundation", "module"],
-                packages: ["Cephalon.AspNetCore", "Cephalon.Observability", "Cephalon.Observability.OpenTelemetry", "Microsoft.Extensions.Hosting.WindowsServices"],
+                packages: ["Cephalon.AspNetCore", "Cephalon.Engine.SourceGen", "Cephalon.Observability", "Cephalon.Observability.OpenTelemetry", "Microsoft.Extensions.Hosting.WindowsServices"],
                 metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
                     ["hostKind"] = "aspnet-core"
@@ -116,7 +116,7 @@ public static class BuiltInScaffolds
                 role: ProjectRoles.Module,
                 template: "cephalon-module",
                 dependsOn: ["foundation"],
-                packages: ["Cephalon.Abstractions"]),
+                packages: ["Cephalon.Abstractions", "Cephalon.Engine.SourceGen"]),
             new ScaffoldProject(
                 id: "tests",
                 nameTemplate: "{AppName}.Tests",
@@ -167,7 +167,7 @@ public static class BuiltInScaffolds
                 role: ProjectRoles.Host,
                 template: "cephalon-service-host",
                 dependsOn: ["foundation", "contracts", "module"],
-                packages: ["Cephalon.AspNetCore", "Cephalon.Observability", "Cephalon.Observability.OpenTelemetry", "Microsoft.Extensions.Hosting.WindowsServices"],
+                packages: ["Cephalon.AspNetCore", "Cephalon.Engine.SourceGen", "Cephalon.Observability", "Cephalon.Observability.OpenTelemetry", "Microsoft.Extensions.Hosting.WindowsServices"],
                 metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                 {
                     ["hostKind"] = "aspnet-core"
@@ -197,7 +197,7 @@ public static class BuiltInScaffolds
                 role: ProjectRoles.Module,
                 template: "cephalon-module",
                 dependsOn: ["foundation", "contracts"],
-                packages: ["Cephalon.Abstractions"]),
+                packages: ["Cephalon.Abstractions", "Cephalon.Engine.SourceGen"]),
             new ScaffoldProject(
                 id: "tests",
                 nameTemplate: "{AppName}.Service.Tests",

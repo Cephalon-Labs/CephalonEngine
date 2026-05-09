@@ -336,6 +336,7 @@ public sealed class TemplatePackTests
             Assert.Contains("Cephalon.Audit", appProjectContents, StringComparison.Ordinal);
             Assert.Contains("Cephalon.Ids.Sfid", appProjectContents, StringComparison.Ordinal);
             Assert.Contains("Cephalon.Behaviors.Http", appProjectContents, StringComparison.Ordinal);
+            Assert.Contains("<PackageReference Include=\"Cephalon.Behaviors.SourceGen\" Version=\"0.1.0-preview\" PrivateAssets=\"all\" />", appProjectContents, StringComparison.Ordinal);
             Assert.Contains("<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>", appProjectContents, StringComparison.Ordinal);
             Assert.Contains("Cephalon.Observability.OpenTelemetry", appProjectContents, StringComparison.Ordinal);
             Assert.Contains("Cephalon.Observability.Serilog", appProjectContents, StringComparison.Ordinal);
@@ -555,6 +556,7 @@ public sealed class TemplatePackTests
             var behaviorModuleProjectPath = Path.Combine(behaviorModuleOutputPath, "OrdersBehaviorKit.csproj");
             var behaviorModuleProjectContents = File.ReadAllText(behaviorModuleProjectPath);
             Assert.Contains("Cephalon.Behaviors.Http", behaviorModuleProjectContents, StringComparison.Ordinal);
+            Assert.Contains("<PackageReference Include=\"Cephalon.Behaviors.SourceGen\" Version=\"0.1.0-preview\" PrivateAssets=\"all\" />", behaviorModuleProjectContents, StringComparison.Ordinal);
             Assert.Contains("<Content Include=\"cephalon.package.json\">", behaviorModuleProjectContents, StringComparison.Ordinal);
 
             var behaviorPackageManifestPath = Path.Combine(behaviorModuleOutputPath, "cephalon.package.json");
@@ -639,6 +641,7 @@ public sealed class TemplatePackTests
             package,
             $"content/templates/{templateFolder}/CephalonTemplateApp.csproj");
         Assert.Contains("Cephalon.Behaviors.Http", appProject, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Behaviors.SourceGen", appProject, StringComparison.Ordinal);
 
         var moduleContents = ReadPackageEntry(
             package,

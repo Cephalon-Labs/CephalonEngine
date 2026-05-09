@@ -5,6 +5,9 @@
 `Cephalon.Behaviors.SourceGen` is the M5 compile-time tooling layer of the Adaptive Behavior Topology (ABT).
 It provides a Roslyn incremental source generator and diagnostic analyzer that validate behavior authoring
 conventions at build time and produce a compile-time-known registration hint file.
+The NuGet package is compiler-only: it suppresses runtime build output and packs the generator assembly
+under `analyzers/dotnet/cs`, so generated REST behavior modules reference it with `PrivateAssets=all`
+without carrying source-generator runtime assets into published apps.
 
 ## What it owns
 

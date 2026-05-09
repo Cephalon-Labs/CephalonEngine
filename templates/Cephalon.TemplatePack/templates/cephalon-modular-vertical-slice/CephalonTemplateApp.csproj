@@ -9,6 +9,7 @@
     <PackageReference Include="Cephalon.AspNetCore" Version="0.1.0-preview" />
     <PackageReference Include="Cephalon.Audit" Version="0.1.0-preview" />
     <PackageReference Include="Cephalon.Behaviors.Http" Version="0.1.0-preview" />
+    <PackageReference Include="Cephalon.Behaviors.SourceGen" Version="0.1.0-preview" PrivateAssets="all" />
     <PackageReference Include="Cephalon.Engine.SourceGen" Version="0.1.0-preview" PrivateAssets="all" />
     <PackageReference Include="Cephalon.Ids.Sfid" Version="0.1.0-preview" />
     <PackageReference Include="Cephalon.Observability" Version="0.1.0-preview" />

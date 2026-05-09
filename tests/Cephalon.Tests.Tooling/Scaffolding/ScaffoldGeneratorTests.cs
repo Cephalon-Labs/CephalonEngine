@@ -36,10 +36,14 @@ public sealed class ScaffoldGeneratorTests
             project.Packages.Contains("Cephalon.AspNetCore.GraphQL", StringComparer.OrdinalIgnoreCase) &&
             project.Packages.Contains("Cephalon.AspNetCore.JsonRpc", StringComparer.OrdinalIgnoreCase) &&
             project.Packages.Contains("Cephalon.AspNetCore.Grpc", StringComparer.OrdinalIgnoreCase) &&
+            project.Packages.Contains("Cephalon.Engine.SourceGen", StringComparer.OrdinalIgnoreCase) &&
             project.Packages.Contains("Cephalon.Observability.Serilog", StringComparer.OrdinalIgnoreCase) &&
             project.Packages.Contains("Serilog.Sinks.Console", StringComparer.OrdinalIgnoreCase));
         Assert.Contains(scaffold.Folders, folder =>
             folder.Path == "src/Acme.Explorer.Modules.Platform/Features/Greetings/Commands");
+
+        var generatedHostProject = Assert.Single(scaffold.Files, file => file.Path == "src/Acme.Explorer.Host/Acme.Explorer.Host.csproj");
+        Assert.Contains("<PackageReference Include=\"Cephalon.Engine.SourceGen\" PrivateAssets=\"all\" />", generatedHostProject.Contents, StringComparison.Ordinal);
 
         var solution = Assert.Single(scaffold.Files, file => file.Path == "Acme.Explorer.slnx");
         Assert.Contains("src/Acme.Explorer.Host/Acme.Explorer.Host.csproj", solution.Contents, StringComparison.Ordinal);
@@ -117,6 +121,7 @@ public sealed class ScaffoldGeneratorTests
         Assert.Contains("Cephalon.Retrieval", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.AspNetCore.GraphQL", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.AspNetCore.JsonRpc", packageProps.Contents, StringComparison.Ordinal);
+        Assert.Contains("Cephalon.Engine.SourceGen", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Observability.Serilog", packageProps.Contents, StringComparison.Ordinal);
 
         var hostProject = Assert.Single(
@@ -585,6 +590,14 @@ public sealed class ScaffoldGeneratorTests
 
         var moduleProject = Assert.Single(scaffold.Projects, project => project.Name == "Acme.RestStarter.Modules.Platform");
         Assert.Contains("Cephalon.Behaviors.Http", moduleProject.Packages, StringComparer.OrdinalIgnoreCase);
+        Assert.Contains("Cephalon.Behaviors.SourceGen", moduleProject.Packages, StringComparer.OrdinalIgnoreCase);
+        Assert.Contains("Cephalon.Engine.SourceGen", moduleProject.Packages, StringComparer.OrdinalIgnoreCase);
+
+        var moduleProjectFile = Assert.Single(
+            scaffold.Files,
+            file => file.Path == "src/Acme.RestStarter.Modules.Platform/Acme.RestStarter.Modules.Platform.csproj");
+        Assert.Contains("<PackageReference Include=\"Cephalon.Behaviors.SourceGen\" PrivateAssets=\"all\" />", moduleProjectFile.Contents, StringComparison.Ordinal);
+        Assert.Contains("<PackageReference Include=\"Cephalon.Engine.SourceGen\" PrivateAssets=\"all\" />", moduleProjectFile.Contents, StringComparison.Ordinal);
 
         var moduleFile = Assert.Single(
             scaffold.Files,
@@ -603,6 +616,9 @@ public sealed class ScaffoldGeneratorTests
         var readme = Assert.Single(scaffold.Files, file => file.Path == "README.md");
         Assert.Contains("/scalar", readme.Contents, StringComparison.Ordinal);
         Assert.Contains("ConfigureRestBehaviors(...)", readme.Contents, StringComparison.Ordinal);
+
+        var packageProps = Assert.Single(scaffold.Files, file => file.Path == "Directory.Packages.props");
+        Assert.Contains("Cephalon.Behaviors.SourceGen", packageProps.Contents, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -623,6 +639,8 @@ public sealed class ScaffoldGeneratorTests
 
         var moduleProject = Assert.Single(scaffold.Projects, project => project.Name == "Acme.GenericStarter.Modules.Platform");
         Assert.DoesNotContain("Cephalon.Behaviors.Http", moduleProject.Packages, StringComparer.OrdinalIgnoreCase);
+        Assert.DoesNotContain("Cephalon.Behaviors.SourceGen", moduleProject.Packages, StringComparer.OrdinalIgnoreCase);
+        Assert.Contains("Cephalon.Engine.SourceGen", moduleProject.Packages, StringComparer.OrdinalIgnoreCase);
 
         var moduleFile = Assert.Single(
             scaffold.Files,

@@ -3,6 +3,7 @@ param(
     [string]$HostUrl = "http://127.0.0.1:18083",
     [int]$TimeoutSeconds = 120,
     [string]$Configuration = "Release",
+    [string]$ReportPath = "artifacts/adoption-smoke/out-of-tree-package-adoption.json",
     [switch]$SkipPackageBuild,
     [switch]$KeepOutput
 )
@@ -26,9 +27,11 @@ $stdoutLogPath = Join-Path $tempRoot "external-package.stdout.log"
 $stderrLogPath = Join-Path $tempRoot "external-package.stderr.log"
 $packageProjectPaths = @(
     "src/Cephalon.Abstractions/Cephalon.Abstractions.csproj",
+    "src/Cephalon.Diagnostics/Cephalon.Diagnostics.csproj",
     "src/Cephalon.Engine/Cephalon.Engine.csproj",
     "src/Cephalon.Engine.SourceGen/Cephalon.Engine.SourceGen.csproj",
     "src/Cephalon.AspNetCore/Cephalon.AspNetCore.csproj",
+    "src/Cephalon.Resilience/Cephalon.Resilience.csproj",
     "src/Cephalon.Behaviors/Cephalon.Behaviors.csproj",
     "src/Cephalon.Behaviors.Http/Cephalon.Behaviors.Http.csproj",
     "src/Cephalon.Behaviors.SourceGen/Cephalon.Behaviors.SourceGen.csproj",
@@ -42,6 +45,7 @@ $packageProjectPaths = @(
 $referenceModuleProjectPath = "samples/Cephalon.ReferenceModule.Operations/Cephalon.ReferenceModule.Operations.csproj"
 $cephalonExecutableFileName = if ($IsWindows) { "cephalon.exe" } else { "cephalon" }
 $cephalonExecutablePath = Join-Path $toolPath $cephalonExecutableFileName
+$validationStartedAtUtc = [DateTimeOffset]::UtcNow
 
 function Invoke-DotNet {
     param(
@@ -242,6 +246,106 @@ function Resolve-ReferencePackagePath {
     return $packages[0].FullName
 }
 
+function Resolve-ReportPath {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path
+    )
+
+    if ([System.IO.Path]::IsPathRooted($Path)) {
+        return [System.IO.Path]::GetFullPath($Path)
+    }
+
+    return [System.IO.Path]::GetFullPath((Join-Path $repoRoot $Path))
+}
+
+function New-AdoptionSmokeRuntimeProbeRows {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Status
+    )
+
+    @(
+        [pscustomobject]([ordered]@{ Kind = "health"; Path = "/health/ready"; Status = $Status })
+        [pscustomobject]([ordered]@{ Kind = "package-runtime"; Path = "/engine/packages"; Status = $Status })
+        [pscustomobject]([ordered]@{ Kind = "package-policy"; Path = "/engine/package-policy"; Status = $Status })
+        [pscustomobject]([ordered]@{ Kind = "trust-policy"; Path = "/engine/trust-policy"; Status = $Status })
+        [pscustomobject]([ordered]@{ Kind = "snapshot"; Path = "/engine/snapshot"; Status = $Status })
+        [pscustomobject]([ordered]@{ Kind = "reference-module-route"; Path = "/api/operations/status"; Status = $Status })
+    )
+}
+
+function New-AdoptionSmokeAssertionRows {
+    param(
+        [Parameter(Mandatory = $true)]
+        [bool]$Passed
+    )
+
+    @(
+        [pscustomobject]([ordered]@{ Name = "runsOutsideRepository"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "publishesLocalPackages"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "installsCliFromTemporaryFeed"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "scaffoldsGeneratedApp"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "stagesReferenceModulePackage"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "patchesPackagePolicyAndTrust"; Passed = $Passed })
+        [pscustomobject]([ordered]@{ Name = "runsGeneratedHost"; Passed = $Passed })
+    )
+}
+
+function Write-AdoptionSmokeExecutionReport {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Status,
+        [string]$ErrorMessage = "",
+        [string]$ReferencePackagePath = ""
+    )
+
+    $completedAtUtc = [DateTimeOffset]::UtcNow
+    $passed = $Status.Equals("passed", [System.StringComparison]::OrdinalIgnoreCase)
+    $runtimeProbeStatus = if ($passed) { "passed" } else { "not-run-or-failed" }
+    $resolvedReportPath = Resolve-ReportPath -Path $ReportPath
+    $reportDirectory = Split-Path -Parent $resolvedReportPath
+    if (-not [string]::IsNullOrWhiteSpace($reportDirectory)) {
+        New-Item -ItemType Directory -Path $reportDirectory -Force | Out-Null
+    }
+
+    $report = [pscustomobject]([ordered]@{
+        '$schemaVersion' = "1.0.0"
+        ScenarioId = "out-of-tree-generated-app-package-stage"
+        Status = $Status
+        AppName = $AppName
+        HostUrl = $HostUrl
+        Configuration = $Configuration
+        SkipPackageBuild = [bool]$SkipPackageBuild
+        KeepOutput = [bool]$KeepOutput
+        StartedAtUtc = $validationStartedAtUtc.ToString("O")
+        CompletedAtUtc = $completedAtUtc.ToString("O")
+        DurationMilliseconds = [math]::Round(($completedAtUtc - $validationStartedAtUtc).TotalMilliseconds, 2)
+        Assertions = New-AdoptionSmokeAssertionRows -Passed:$passed
+        RuntimeProbes = New-AdoptionSmokeRuntimeProbeRows -Status $runtimeProbeStatus
+        Paths = [pscustomobject]([ordered]@{
+            TemporaryRoot = $tempRoot
+            PackageFeed = $packageFeedPath
+            ReferencePackageArtifacts = $referencePackageArtifactsPath
+            ReferencePackage = $ReferencePackagePath
+            ToolPath = $toolPath
+            NuGetPackages = $nuGetPackagesPath
+            WorkspaceRoot = $workspaceRoot
+            GeneratedAppRoot = $generatedRoot
+            GeneratedPackageFeed = $generatedPackageFeedPath
+            PluginsRoot = $pluginsRootPath
+            StagedPackageRoot = $stagedPackagePath
+            StdoutLog = $stdoutLogPath
+            StderrLog = $stderrLogPath
+            TemporaryOutputRetained = [bool]$KeepOutput
+        })
+        Error = $ErrorMessage
+    })
+
+    $report | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $resolvedReportPath -Encoding UTF8
+    Write-Host "Adoption smoke execution report: $resolvedReportPath" -ForegroundColor Cyan
+}
+
 function Assert-ExternalPackageRuntimeTruth {
     param(
         [Parameter(Mandatory = $true)]
@@ -316,6 +420,7 @@ function Assert-ExternalPackageRuntimeTruth {
 $process = $null
 $previousNuGetPackages = $null
 $restoreRepoPackageAssets = $false
+$referencePackagePath = ""
 
 try {
     New-Item -ItemType Directory -Path $packageFeedPath -Force | Out-Null
@@ -467,6 +572,7 @@ try {
     Wait-ForHttpSuccess -Uri "$HostUrl/engine/snapshot" -TimeoutSeconds $TimeoutSeconds -Process $process
     Wait-ForHttpSuccess -Uri "$HostUrl/api/operations/status" -TimeoutSeconds $TimeoutSeconds -Process $process
     Assert-ExternalPackageRuntimeTruth -HostUrl $HostUrl
+    Write-AdoptionSmokeExecutionReport -Status "passed" -ReferencePackagePath $referencePackagePath
 
     Write-Host ""
     Write-Host "Out-of-tree package adoption validation completed successfully." -ForegroundColor Green
@@ -482,6 +588,12 @@ catch {
     Write-Host "Out-of-tree package adoption validation failed." -ForegroundColor Yellow
     Write-RecentLogs -Path $stdoutLogPath -Label "Generated host stdout"
     Write-RecentLogs -Path $stderrLogPath -Label "Generated host stderr"
+    try {
+        Write-AdoptionSmokeExecutionReport -Status "failed" -ErrorMessage $_.Exception.Message -ReferencePackagePath $referencePackagePath
+    }
+    catch {
+        Write-Warning "Could not write adoption smoke execution report: $($_.Exception.Message)"
+    }
     throw
 }
 finally {

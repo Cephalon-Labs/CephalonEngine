@@ -35,6 +35,11 @@ module descriptors during build so the engine can discover modules without scann
 types at runtime. Modules that require custom construction should be registered explicitly through
 `AddModule(...)` or package registration code.
 
+For behavior-backed REST modules that use `MapProfile<TBehavior>()`, keep the generated
+`Cephalon.Behaviors.SourceGen` analyzer reference too. It emits the REST profile, behavior-type,
+input-contract, and output-contract descriptors that the runtime consumes without reflecting over
+behavior/input types in restored consumer packages.
+
 For concrete reference implementations, use:
 
 - `samples/Cephalon.ReferenceModule.Operations`
@@ -63,7 +68,7 @@ That keeps the authoring path close to the same module-first ideas used by Cepha
 3. Register explicit capabilities in `RegisterCapabilities(...)`.
 4. Implement lifecycle hooks only when the package owns startup/runtime behavior.
 5. Use `ILocalizedResourceContributor` for package-owned text instead of hardcoding strings in hosts.
-6. Keep `Cephalon.Engine.SourceGen` referenced as an analyzer when the module should be discovered from an assembly or package manifest; generated discovery supports non-abstract, non-generic module classes with an accessible parameterless constructor.
+6. Keep `Cephalon.Engine.SourceGen` referenced as an analyzer when the module should be discovered from an assembly or package manifest; generated discovery supports non-abstract, non-generic module classes with an accessible parameterless constructor. Keep `Cephalon.Behaviors.SourceGen` referenced as an analyzer when a behavior-backed REST module uses `MapProfile<TBehavior>()`.
 7. Use `ITechnologyContributor` when the package introduces a future-tech profile, workload convention, or package hint that the host should be able to select through `Engine:Technologies`.
 8. Use `ITechnologyServiceContributor` or `ITechnologyCapabilityContributor` when package services or capabilities should only activate for specific technology profiles.
 9. If the package extends a shipped technology pack, register the pack-specific contributor service in `ConfigureServices(...)` such as `IAgentToolContributor`, `IKnowledgeCollectionContributor`, `IKnowledgeDocumentProvider`, `IEventChannelContributor`, or `IEdgeNodeContributor`; use abstraction-level catalogs and command seams such as `IAgentToolRunCatalog`, `Cephalon.Abstractions.Retrieval.IKnowledgeIndexCatalog`, and `Cephalon.Abstractions.Retrieval.IKnowledgeIndexer` when modules need runtime posture or bounded operator actions without depending on implementation packages.

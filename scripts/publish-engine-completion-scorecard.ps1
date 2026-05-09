@@ -15,7 +15,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$Script:SchemaVersion = "1.12.0"
+$Script:SchemaVersion = "1.13.0"
 $Script:AllowedStatuses = @(
     "ready-for-preview",
     "partial",
@@ -1657,6 +1657,47 @@ function Convert-AdoptionSmokeEvidence {
         throw "Adoption smoke support manifest must declare at least one runtime probe."
     }
 
+    $executionReport = Get-ManifestPropertyValue -Object $manifest -PropertyName "executionReport"
+    if ($null -eq $executionReport) {
+        throw "Adoption smoke support manifest is missing executionReport."
+    }
+
+    $executionReportSchemaVersion = [string](Get-ManifestPropertyValue -Object $executionReport -PropertyName "schemaVersion" -DefaultValue "")
+    if ([string]::IsNullOrWhiteSpace($executionReportSchemaVersion)) {
+        throw "Adoption smoke executionReport is missing schemaVersion."
+    }
+
+    $executionReportPath = [string](Get-ManifestPropertyValue -Object $executionReport -PropertyName "defaultPath" -DefaultValue "")
+    if ([string]::IsNullOrWhiteSpace($executionReportPath)) {
+        throw "Adoption smoke executionReport is missing defaultPath."
+    }
+
+    if (-not $executionReportPath.EndsWith(".json", [System.StringComparison]::OrdinalIgnoreCase)) {
+        throw "Adoption smoke executionReport defaultPath '$executionReportPath' must point at a JSON report."
+    }
+
+    $executionReportStatusValues = @(
+        Get-ManifestPropertyValue -Object $executionReport -PropertyName "statusValues" -DefaultValue @() |
+            ForEach-Object { [string]$_ } |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    )
+    foreach ($requiredStatus in @("passed", "failed")) {
+        if ($executionReportStatusValues -notcontains $requiredStatus) {
+            throw "Adoption smoke executionReport statusValues must include '$requiredStatus'."
+        }
+    }
+
+    $executionReportRequiredFields = @(
+        Get-ManifestPropertyValue -Object $executionReport -PropertyName "requiredFields" -DefaultValue @() |
+            ForEach-Object { [string]$_ } |
+            Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+    )
+    foreach ($requiredField in @('$schemaVersion', "ScenarioId", "Status", "Assertions", "RuntimeProbes", "Paths")) {
+        if ($executionReportRequiredFields -notcontains $requiredField) {
+            throw "Adoption smoke executionReport requiredFields must include '$requiredField'."
+        }
+    }
+
     return [pscustomobject]([ordered]@{
         Manifest                  = Get-RepoRelativePath -Path $ResolvedManifestPath -RepoRoot $ResolvedRepoRoot
         ManifestSchemaVersion     = $schemaVersion
@@ -1669,6 +1710,12 @@ function Convert-AdoptionSmokeEvidence {
         ReferenceModuleProject    = $referenceModuleProjectReference.Reference
         Assertions                = $assertionRows
         RequiredScriptTokens      = $requiredScriptTokens
+        ExecutionReport           = [pscustomobject]([ordered]@{
+            SchemaVersion = $executionReportSchemaVersion
+            DefaultPath = $executionReportPath
+            StatusValues = $executionReportStatusValues
+            RequiredFields = $executionReportRequiredFields
+        })
         RuntimeProbes             = $runtimeProbes
         ValidatedReferences       = @(
             $validationScriptReference
@@ -3007,6 +3054,7 @@ function New-EngineCompletionScorecardReport {
             AdoptionSmokeScenarioCount = if ($null -ne $adoptionSmokeEvidence) { 1 } else { 0 }
             AdoptionSmokeRuntimeProbeCount = @($adoptionSmokeEvidence.RuntimeProbes).Count
             AdoptionSmokeAssertionCount = @($adoptionSmokeEvidence.Assertions).Count
+            AdoptionSmokeExecutionReportRequiredFieldCount = @($adoptionSmokeEvidence.ExecutionReport.RequiredFields).Count
             ProviderIntegrationEvidenceRowCount = $providerIntegrationEvidence.EvidenceRowCount
             ProviderIntegrationLiveProofCount = $providerIntegrationEvidence.LiveProofCount
             ProviderIntegrationCompositionOnlyCount = $providerIntegrationEvidence.CompositionOnlyCount
@@ -3093,6 +3141,7 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- Deployment-mode publish probes: $($Report.DeploymentModeEvidence.PublishProbeReleaseValidationMode)")
     $markdown.Add("- Adoption smoke scenarios: $($Report.Summary.AdoptionSmokeScenarioCount)")
     $markdown.Add("- Adoption smoke runtime probes: $($Report.Summary.AdoptionSmokeRuntimeProbeCount)")
+    $markdown.Add("- Adoption smoke execution-report fields: $($Report.Summary.AdoptionSmokeExecutionReportRequiredFieldCount)")
     $markdown.Add("- Provider integration evidence rows: $($Report.Summary.ProviderIntegrationEvidenceRowCount)")
     $markdown.Add("- Provider integration live proofs: $($Report.Summary.ProviderIntegrationLiveProofCount)")
     $markdown.Add("- Provider integration composition-only rows: $($Report.Summary.ProviderIntegrationCompositionOnlyCount)")
@@ -3305,6 +3354,7 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- Scenario: $($Report.AdoptionSmokeEvidence.ScenarioId)")
     $markdown.Add("- Status: $($Report.AdoptionSmokeEvidence.Status)")
     $markdown.Add("- Validation script: ``$($Report.AdoptionSmokeEvidence.ValidationScript)``")
+    $markdown.Add("- Execution report: ``$($Report.AdoptionSmokeEvidence.ExecutionReport.DefaultPath)`` (schema ``$($Report.AdoptionSmokeEvidence.ExecutionReport.SchemaVersion)``)")
     $markdown.Add("- Reference module project: ``$($Report.AdoptionSmokeEvidence.ReferenceModuleProject)``")
     $markdown.Add("- Assertions: $(@($Report.AdoptionSmokeEvidence.Assertions).Count)")
     $markdown.Add("- Runtime probes: $(@($Report.AdoptionSmokeEvidence.RuntimeProbes).Count)")
