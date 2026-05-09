@@ -10,17 +10,17 @@ This guide records the current Cephalon truth for future-framework assessment wi
 - `.NET 11` is currently a readiness lane, not a default-target migration
 - trim, Native AOT, and single-file support remain explicit global `not-claimed` support statements tracked through [Deployment-mode support](deployment-mode-support.md) and `scripts/deployment-mode-support.json`; package-scoped claims such as `Cephalon.Diagnostics` single-file support are narrower manifest entries and do not change the global support rows, and `publishProbePolicy` now makes the representative `singleFile` publish probe release-blocking without promoting global single-file support
 
-As of `May 5, 2026`, Microsoft has:
+As of `May 9, 2026`, Microsoft has:
 
 - shipped `.NET 11 Preview 1` on `February 10, 2026`
 - shipped `.NET 11 Preview 2` on `March 10, 2026`
 - shipped `.NET 11 Preview 3` on `April 14, 2026`
-- published `11.0.100-preview.3` as the current SDK on the `.NET 11` download page
-- not yet announced `Preview 4`; Microsoft's monthly preview cadence implies the next preview is most likely to land on or near the second Tuesday of `May 2026` (May 12, 2026), but Cephalon should keep that as an expectation, not a commitment, until the official `devblogs.microsoft.com/dotnet` post and the `dotnet/core/release-notes/11.0/preview/` folder both publish that build
+- published `11.0.100-preview.3.26207.106` as the current SDK on the `.NET 11` download page
+- not yet announced `Preview 4`; the official `dotnet/core` release-notes folder still contains only `preview1`, `preview2`, and `preview3`. Microsoft's monthly preview cadence implies the next preview is most likely to land on or near the second Tuesday of `May 2026` (May 12, 2026), but Cephalon should keep that as an expectation, not a commitment, until the official `devblogs.microsoft.com/dotnet` post, the `.NET 11` download page, and the `dotnet/core/release-notes/11.0/preview/` folder all publish that build
 - kept `.NET 10` in active LTS support through `November 14, 2028`
 - kept the official `.NET 11` final-release target on `November 2026`
 
-When the next preview lands, refresh this anchor again rather than letting the dated section drift into multi-month staleness; the readiness lane is most useful when the dated truth is recent.
+When the next preview lands, refresh this anchor again rather than letting the dated section drift into multi-month staleness; the readiness lane is most useful when the dated truth is recent. The May 9 refresh removes the current release-scorecard `needs-refresh` warning for the `.NET 11` gate, but it does not promote a `.NET 11` support baseline.
 
 Official sources:
 
