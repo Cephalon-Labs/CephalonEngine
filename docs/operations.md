@@ -2266,6 +2266,13 @@ Current payload highlights:
 - the response is `EventPublicationResult` with the publication id, channel id, event type,
   `accepted` outcome, accepted timestamp, and safe route-trigger metadata such as
   `trigger = aspnetcore-operator-route` and `route = /engine/event-publications`
+- when `Engine:Messaging:Publications:Routing` is enabled, the response channel id is the
+  effective routed channel; metadata reports `requestedChannelId`, `routingPolicy`,
+  `routingState`, `routingRequestedChannelId`, `routingEffectiveChannelId`, `routingRule`,
+  and `routingRuleChannelId` when a route is matched
+- routed requests can use `channelId = auto` by default, exact event-type route keys match
+  before trailing-`*` prefix routes, and explicit channel mismatches return `400` when
+  `RejectMismatchedExplicitChannel` is enabled
 - the route returns `404` when event publication is not active in the selected runtime or when the
   requested channel is not registered, and `400` when the publication body is invalid
 - when the core in-process lane is selected, the route triggers the active `IEventPublisher`,
@@ -2289,11 +2296,12 @@ Current payload highlights:
 Current note:
 
 - this is a bounded operator action over the active eventing publication path; the in-process lane
-  can optionally suppress duplicate completed executions process-locally and can optionally accept
-  bounded process-local delayed publication requests, and the runtime-state catalog reports that
-  local publication outcome, but the route is not a durable broker, durable inbox, cross-node
-  idempotency, retry-queue, durable/distributed scheduler, broker delayed-delivery surface, or
-  provider-specific inbound-consumption claim
+  can optionally suppress duplicate completed executions process-locally, can optionally resolve or
+  validate event-type-to-channel publication routing, and can optionally accept bounded
+  process-local delayed publication requests; the runtime-state catalog reports that local
+  publication outcome, but the route is not a durable broker, durable inbox, cross-node idempotency,
+  retry-queue, durable/distributed scheduler, broker delayed-delivery surface, broker topology
+  materializer, provider partition owner, or provider-specific inbound-consumption claim
 - outbox-backed publication states use `accepted` to mean "staged for later dispatch"; downstream
   dispatch completion remains the job of the dispatch-runtime and dispatch-state surfaces
 - the action and read contracts live in `Cephalon.Abstractions.Data` so `Cephalon.Engine` and
@@ -2476,6 +2484,11 @@ Current `Cephalon.Eventing` highlights:
   `scheduleDurability = none`, pending count, and next due time through `eventing.publish`,
   `event-publishers`, and publication runtime metadata, and then uses an in-memory local timer to
   hand due publications to the selected publisher
+- when `EnablePublicationRouting` is enabled, the publication dispatcher resolves or validates the
+  effective channel through `Engine:Messaging:Publications:Routing`; `eventing.publish`,
+  `event-publishers`, publication runtime metadata, and `eventing-superiority-profile` expose the
+  route policy, route count, auto-channel id, strict-match flags, and per-publication `routing*`
+  metadata so operators can verify that Cephalon-native routing, not Wolverine, selected the channel
 - outbox-backed event publication reports `accepted` publication state with
   `handoff = outbox` and `deliveryCompletion = pending-dispatch`, keeping publication acceptance
   separate from later dispatch completion

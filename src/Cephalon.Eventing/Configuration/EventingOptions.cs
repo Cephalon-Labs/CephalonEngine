@@ -56,6 +56,7 @@ public sealed class EventingOptions
     private string inProcessSubscriptionIdempotencyStore = InProcessEventingIdempotencyPolicy.ProcessLocalStore;
     private int publicationSchedulingMaxDelayMilliseconds = 86_400_000;
     private int publicationSchedulingMaxPendingCount = 256;
+    private string publicationRoutingAutoChannelId = "auto";
     private int remediationCommandHistoryLimit = 256;
 
     /// <summary>
@@ -221,6 +222,68 @@ public sealed class EventingOptions
             publicationSchedulingMaxPendingCount = value;
         }
     }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether publication requests can resolve an effective
+    /// channel from the configured event-type routing table before the active publisher runs.
+    /// </summary>
+    /// <remarks>
+    /// The routing table is provider-neutral and runs inside the Cephalon eventing dispatcher.
+    /// It can route requests that use <see cref="PublicationRoutingAutoChannelId" /> as the
+    /// requested channel, and it can validate explicit channels against declared event-type
+    /// ownership. Broker topology, queues, exchanges, topics, and subscriptions still belong to
+    /// the selected transport or companion package.
+    /// </remarks>
+    public bool EnablePublicationRouting { get; set; }
+
+    /// <summary>
+    /// Gets or sets the requested channel identifier that tells the dispatcher to resolve the
+    /// effective channel from <see cref="PublicationRoutes" />.
+    /// </summary>
+    /// <remarks>
+    /// The default value is <c>auto</c>. Hosts can keep application code stable by allowing
+    /// callers to publish with this logical channel while routing remains configuration-owned.
+    /// </remarks>
+    public string PublicationRoutingAutoChannelId
+    {
+        get => publicationRoutingAutoChannelId;
+        set
+        {
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                throw new ArgumentException(
+                    "Publication routing auto channel id must not be blank.",
+                    nameof(value));
+            }
+
+            publicationRoutingAutoChannelId = value.Trim();
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether every routed publication must match a configured event-type route.
+    /// </summary>
+    /// <remarks>
+    /// This guard is useful when a host wants central routing governance for all events. Requests
+    /// that use the auto channel always require a match because the dispatcher has no effective
+    /// channel without one.
+    /// </remarks>
+    public bool PublicationRoutingRequireMatchedRoute { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether an explicitly requested channel that disagrees
+    /// with a matched event-type route should be rejected before publishing.
+    /// </summary>
+    public bool PublicationRoutingRejectMismatchedExplicitChannel { get; set; }
+
+    /// <summary>
+    /// Gets the provider-neutral event-type route table used by the Cephalon dispatcher.
+    /// </summary>
+    /// <remarks>
+    /// Keys are event-type patterns. Exact keys match first; keys ending with <c>*</c> match by
+    /// case-insensitive prefix. Values are effective event channel identifiers.
+    /// </remarks>
+    public IDictionary<string, string> PublicationRoutes { get; } = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     /// Gets or sets the maximum number of event-dispatch remediation command results retained in memory for operator reads.

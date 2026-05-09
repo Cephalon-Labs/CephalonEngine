@@ -23,6 +23,11 @@ internal static class EventingOptionsConfigurationReader
             .GetSection("Messaging")
             .GetSection("Publications")
             .GetSection("Scheduling");
+        var publicationRoutingSection = configuration
+            .GetSection(sectionPath)
+            .GetSection("Messaging")
+            .GetSection("Publications")
+            .GetSection("Routing");
         var legacyPublicationSchedulingSection = configuration
             .GetSection(sectionPath)
             .GetSection("Messaging")
@@ -44,6 +49,12 @@ internal static class EventingOptionsConfigurationReader
         ReadBoolean(publicationSchedulingSection, options, static (target, value) => target.EnablePublicationScheduling = value, "Enabled");
         ReadInteger(publicationSchedulingSection, options, static (target, value) => target.PublicationSchedulingMaxDelayMilliseconds = value, "MaxDelayMilliseconds");
         ReadInteger(publicationSchedulingSection, options, static (target, value) => target.PublicationSchedulingMaxPendingCount = value, "MaxPendingCount");
+
+        ReadBoolean(publicationRoutingSection, options, static (target, value) => target.EnablePublicationRouting = value, "Enabled");
+        ReadString(publicationRoutingSection, options, static (target, value) => target.PublicationRoutingAutoChannelId = value, "AutoChannelId");
+        ReadBoolean(publicationRoutingSection, options, static (target, value) => target.PublicationRoutingRequireMatchedRoute = value, "RequireMatchedRoute");
+        ReadBoolean(publicationRoutingSection, options, static (target, value) => target.PublicationRoutingRejectMismatchedExplicitChannel = value, "RejectMismatchedExplicitChannel");
+        ReadRoutes(publicationRoutingSection.GetSection("Routes"), options);
 
         ReadBoolean(legacyPublicationSchedulingSection, options, static (target, value) => target.EnablePublicationScheduling = value, "Enabled");
         ReadInteger(legacyPublicationSchedulingSection, options, static (target, value) => target.PublicationSchedulingMaxDelayMilliseconds = value, "MaxDelayMilliseconds");
@@ -101,6 +112,21 @@ internal static class EventingOptionsConfigurationReader
         if (TryGetValue(configuration, out var value, keys))
         {
             assign(options, value);
+        }
+    }
+
+    private static void ReadRoutes(
+        IConfiguration configuration,
+        EventingOptions options)
+    {
+        foreach (var child in configuration.GetChildren())
+        {
+            if (string.IsNullOrWhiteSpace(child.Key) || string.IsNullOrWhiteSpace(child.Value))
+            {
+                continue;
+            }
+
+            options.PublicationRoutes[child.Key.Trim()] = child.Value.Trim();
         }
     }
 

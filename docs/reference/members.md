@@ -8700,6 +8700,9 @@ Browse the published API surface by public member.
 - [EnableOfflineMode](cephalon-edge.md#member-p-cephalon-edge-configuration-edgeruntimeoptions-enableofflinemode): `Properties` on `EdgeRuntimeOptions` in `Cephalon.Edge.Configuration` (`Cephalon.Edge`) [Browse](browse.html?q=EnableOfflineMode&assembly=Cephalon.Edge&namespace=Cephalon.Edge.Configuration&scope=members)
   - Gets or sets a value indicating whether offline mode features are enabled.
   - `bool EnableOfflineMode { get; set; }`
+- [EnablePublicationRouting](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-enablepublicationrouting): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=EnablePublicationRouting&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
+  - Gets or sets a value indicating whether publication requests can resolve an effective channel from the configured event-type routing table before the active publisher runs.
+  - `bool EnablePublicationRouting { get; set; }`
 - [EnablePublicationScheduling](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-enablepublicationscheduling): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=EnablePublicationScheduling&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
   - Gets or sets a value indicating whether publication requests can be delayed by the native eventing pack.
   - `bool EnablePublicationScheduling { get; set; }`
@@ -21942,6 +21945,18 @@ Browse the published API surface by public member.
 - [PublicationPlanUnavailable](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationoutcomes-publicationplanunavailable): `Fields` on `TenantDomainOwnershipHttpProofPublicationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=PublicationPlanUnavailable&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The proof publication planner did not produce a usable plan.
   - `const string PublicationPlanUnavailable`
+- [PublicationRoutes](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-publicationroutes): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=PublicationRoutes&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
+  - Gets the provider-neutral event-type route table used by the Cephalon dispatcher.
+  - `IDictionary<string, string> PublicationRoutes { get; }`
+- [PublicationRoutingAutoChannelId](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-publicationroutingautochannelid): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=PublicationRoutingAutoChannelId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
+  - Gets or sets the requested channel identifier that tells the dispatcher to resolve the effective channel from `PublicationRoutes`.
+  - `string PublicationRoutingAutoChannelId { get; set; }`
+- [PublicationRoutingRejectMismatchedExplicitChannel](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-publicationroutingrejectmismatchedexplicitchannel): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=PublicationRoutingRejectMismatchedExplicitChannel&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
+  - Gets or sets a value indicating whether an explicitly requested channel that disagrees with a matched event-type route should be rejected before publishing.
+  - `bool PublicationRoutingRejectMismatchedExplicitChannel { get; set; }`
+- [PublicationRoutingRequireMatchedRoute](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-publicationroutingrequirematchedroute): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=PublicationRoutingRequireMatchedRoute&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
+  - Gets or sets a value indicating whether every routed publication must match a configured event-type route.
+  - `bool PublicationRoutingRequireMatchedRoute { get; set; }`
 - [PublicationSchedulingMaxDelayMilliseconds](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-publicationschedulingmaxdelaymilliseconds): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=PublicationSchedulingMaxDelayMilliseconds&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
   - Gets or sets the maximum delay, in milliseconds, accepted by the process-local publication scheduler.
   - `int PublicationSchedulingMaxDelayMilliseconds { get; set; }`

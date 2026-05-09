@@ -243,6 +243,11 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             var publicationSchedulingDurability = EventPublicationSchedulingPolicy.GetDurability(options);
             var publicationSchedulingMaxDelayMilliseconds = options.PublicationSchedulingMaxDelayMilliseconds.ToString(CultureInfo.InvariantCulture);
             var publicationSchedulingMaxPendingCount = options.PublicationSchedulingMaxPendingCount.ToString(CultureInfo.InvariantCulture);
+            var publicationRoutingPolicy = EventPublicationRoutingPolicy.GetPolicyId(options);
+            var publicationRoutingRouteCount = EventPublicationRoutingPolicy.GetRouteCount(options);
+            var publicationRoutingAutoChannelId = EventPublicationRoutingPolicy.GetAutoChannelId(options);
+            var publicationRoutingRequireMatchedRoute = options.PublicationRoutingRequireMatchedRoute.ToString().ToLowerInvariant();
+            var publicationRoutingRejectMismatchedExplicitChannel = options.PublicationRoutingRejectMismatchedExplicitChannel.ToString().ToLowerInvariant();
             var publishMetadata = hasInProcessSubscriptionExecutionPath
                 ? new Dictionary<string, string>
                 {
@@ -272,6 +277,11 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["publicationSchedulingDurability"] = publicationSchedulingDurability,
                     ["publicationSchedulingMaxDelayMilliseconds"] = publicationSchedulingMaxDelayMilliseconds,
                     ["publicationSchedulingMaxPendingCount"] = publicationSchedulingMaxPendingCount,
+                    ["publicationRoutingPolicy"] = publicationRoutingPolicy,
+                    ["publicationRoutingRouteCount"] = publicationRoutingRouteCount,
+                    ["publicationRoutingAutoChannelId"] = publicationRoutingAutoChannelId,
+                    ["publicationRoutingRequireMatchedRoute"] = publicationRoutingRequireMatchedRoute,
+                    ["publicationRoutingRejectMismatchedExplicitChannel"] = publicationRoutingRejectMismatchedExplicitChannel,
                     ["runtimeState"] = "available"
                 }
                 : new Dictionary<string, string>
@@ -287,6 +297,11 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["publicationSchedulingDurability"] = publicationSchedulingDurability,
                     ["publicationSchedulingMaxDelayMilliseconds"] = publicationSchedulingMaxDelayMilliseconds,
                     ["publicationSchedulingMaxPendingCount"] = publicationSchedulingMaxPendingCount,
+                    ["publicationRoutingPolicy"] = publicationRoutingPolicy,
+                    ["publicationRoutingRouteCount"] = publicationRoutingRouteCount,
+                    ["publicationRoutingAutoChannelId"] = publicationRoutingAutoChannelId,
+                    ["publicationRoutingRequireMatchedRoute"] = publicationRoutingRequireMatchedRoute,
+                    ["publicationRoutingRejectMismatchedExplicitChannel"] = publicationRoutingRejectMismatchedExplicitChannel,
                     ["runtimeState"] = "available"
                 };
 

@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-09T22:59:05.464076+00:00",
+  "GeneratedAtUtc": "2026-05-09T23:16:47.2552262+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8373,7 +8373,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 15,
+        "Properties": 20,
         "Methods": 0
       }
     },
@@ -51110,6 +51110,17 @@
       "AnchorId": "member-p-cephalon-edge-configuration-edgeruntimeoptions-enableofflinemode",
       "Signature": "bool EnableOfflineMode { get; set; }",
       "Summary": "Gets or sets a value indicating whether offline mode features are enabled."
+    },
+    {
+      "DisplayName": "EnablePublicationRouting",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-enablepublicationrouting",
+      "Signature": "bool EnablePublicationRouting { get; set; }",
+      "Summary": "Gets or sets a value indicating whether publication requests can resolve an effective channel from the configured event-type routing table before the active publisher runs."
     },
     {
       "DisplayName": "EnablePublicationScheduling",
@@ -99559,6 +99570,50 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershiphttpproofpublicationoutcomes-publicationplanunavailable",
       "Signature": "const string PublicationPlanUnavailable",
       "Summary": "The proof publication planner did not produce a usable plan."
+    },
+    {
+      "DisplayName": "PublicationRoutes",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-publicationroutes",
+      "Signature": "IDictionary\u003Cstring, string\u003E PublicationRoutes { get; }",
+      "Summary": "Gets the provider-neutral event-type route table used by the Cephalon dispatcher."
+    },
+    {
+      "DisplayName": "PublicationRoutingAutoChannelId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-publicationroutingautochannelid",
+      "Signature": "string PublicationRoutingAutoChannelId { get; set; }",
+      "Summary": "Gets or sets the requested channel identifier that tells the dispatcher to resolve the effective channel from \u0060PublicationRoutes\u0060."
+    },
+    {
+      "DisplayName": "PublicationRoutingRejectMismatchedExplicitChannel",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-publicationroutingrejectmismatchedexplicitchannel",
+      "Signature": "bool PublicationRoutingRejectMismatchedExplicitChannel { get; set; }",
+      "Summary": "Gets or sets a value indicating whether an explicitly requested channel that disagrees with a matched event-type route should be rejected before publishing."
+    },
+    {
+      "DisplayName": "PublicationRoutingRequireMatchedRoute",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-publicationroutingrequirematchedroute",
+      "Signature": "bool PublicationRoutingRequireMatchedRoute { get; set; }",
+      "Summary": "Gets or sets a value indicating whether every routed publication must match a configured event-type route."
     },
     {
       "DisplayName": "PublicationSchedulingMaxDelayMilliseconds",

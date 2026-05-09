@@ -3,10 +3,19 @@ Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionIdempotency
 Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionIdempotencyStore.set -> void
 Cephalon.Eventing.Configuration.EventingOptions.EnablePublicationScheduling.get -> bool
 Cephalon.Eventing.Configuration.EventingOptions.EnablePublicationScheduling.set -> void
+Cephalon.Eventing.Configuration.EventingOptions.EnablePublicationRouting.get -> bool
+Cephalon.Eventing.Configuration.EventingOptions.EnablePublicationRouting.set -> void
 Cephalon.Eventing.Configuration.EventingOptions.PublicationSchedulingMaxDelayMilliseconds.get -> int
 Cephalon.Eventing.Configuration.EventingOptions.PublicationSchedulingMaxDelayMilliseconds.set -> void
 Cephalon.Eventing.Configuration.EventingOptions.PublicationSchedulingMaxPendingCount.get -> int
 Cephalon.Eventing.Configuration.EventingOptions.PublicationSchedulingMaxPendingCount.set -> void
+Cephalon.Eventing.Configuration.EventingOptions.PublicationRoutes.get -> System.Collections.Generic.IDictionary<string!, string!>!
+Cephalon.Eventing.Configuration.EventingOptions.PublicationRoutingAutoChannelId.get -> string!
+Cephalon.Eventing.Configuration.EventingOptions.PublicationRoutingAutoChannelId.set -> void
+Cephalon.Eventing.Configuration.EventingOptions.PublicationRoutingRejectMismatchedExplicitChannel.get -> bool
+Cephalon.Eventing.Configuration.EventingOptions.PublicationRoutingRejectMismatchedExplicitChannel.set -> void
+Cephalon.Eventing.Configuration.EventingOptions.PublicationRoutingRequireMatchedRoute.get -> bool
+Cephalon.Eventing.Configuration.EventingOptions.PublicationRoutingRequireMatchedRoute.set -> void
 Cephalon.Eventing.Configuration.EventingOptions.RemediationCommandHistoryLimit.get -> int
 Cephalon.Eventing.Configuration.EventingOptions.RemediationCommandHistoryLimit.set -> void
 static Cephalon.Eventing.Registration.EventingEngineBuilderExtensions.AddEventingFromConfiguration(this Cephalon.Engine.Composition.EngineBuilder! builder, Microsoft.Extensions.Configuration.IConfiguration! configuration) -> Cephalon.Engine.Composition.EngineBuilder!

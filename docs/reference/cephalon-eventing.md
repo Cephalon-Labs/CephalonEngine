@@ -86,6 +86,18 @@ Gets or sets a value indicating whether the direct in-process publisher should s
 
 Remarks: This is a bounded process-local guard for lightweight hosts. It records only successful direct executions in memory and skips later duplicate `subscriptionId + publicationId` pairs while the entry remains in the retention window. It is not a durable inbox, cross-node idempotency store, or broker-owned exactly-once guarantee.
 
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-enablepublicationrouting"></a>
+
+##### `EnablePublicationRouting`
+
+```csharp
+bool EnablePublicationRouting { get; set; }
+```
+
+Gets or sets a value indicating whether publication requests can resolve an effective channel from the configured event-type routing table before the active publisher runs.
+
+Remarks: The routing table is provider-neutral and runs inside the Cephalon eventing dispatcher. It can route requests that use `PublicationRoutingAutoChannelId` as the requested channel, and it can validate explicit channels against declared event-type ownership. Broker topology, queues, exchanges, topics, and subscriptions still belong to the selected transport or companion package.
+
 <a id="member-p-cephalon-eventing-configuration-eventingoptions-enablepublicationscheduling"></a>
 
 ##### `EnablePublicationScheduling`
@@ -165,6 +177,52 @@ int InProcessSubscriptionRetryDelayMilliseconds { get; set; }
 Gets or sets the delay in milliseconds before the direct in-process publisher retries a failed subscription attempt.
 
 Remarks: The delay is applied only when `InProcessSubscriptionMaxAttempts` is greater than `1`. The default value of `0` retries immediately and is useful for tests and lightweight process-local remediation paths.
+
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-publicationroutes"></a>
+
+##### `PublicationRoutes`
+
+```csharp
+IDictionary<string, string> PublicationRoutes { get; }
+```
+
+Gets the provider-neutral event-type route table used by the Cephalon dispatcher.
+
+Remarks: Keys are event-type patterns. Exact keys match first; keys ending with `*` match by case-insensitive prefix. Values are effective event channel identifiers.
+
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-publicationroutingautochannelid"></a>
+
+##### `PublicationRoutingAutoChannelId`
+
+```csharp
+string PublicationRoutingAutoChannelId { get; set; }
+```
+
+Gets or sets the requested channel identifier that tells the dispatcher to resolve the effective channel from `PublicationRoutes`.
+
+Remarks: The default value is `auto`. Hosts can keep application code stable by allowing callers to publish with this logical channel while routing remains configuration-owned.
+
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-publicationroutingrejectmismatchedexplicitchannel"></a>
+
+##### `PublicationRoutingRejectMismatchedExplicitChannel`
+
+```csharp
+bool PublicationRoutingRejectMismatchedExplicitChannel { get; set; }
+```
+
+Gets or sets a value indicating whether an explicitly requested channel that disagrees with a matched event-type route should be rejected before publishing.
+
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-publicationroutingrequirematchedroute"></a>
+
+##### `PublicationRoutingRequireMatchedRoute`
+
+```csharp
+bool PublicationRoutingRequireMatchedRoute { get; set; }
+```
+
+Gets or sets a value indicating whether every routed publication must match a configured event-type route.
+
+Remarks: This guard is useful when a host wants central routing governance for all events. Requests that use the auto channel always require a match because the dispatcher has no effective channel without one.
 
 <a id="member-p-cephalon-eventing-configuration-eventingoptions-publicationschedulingmaxdelaymilliseconds"></a>
 

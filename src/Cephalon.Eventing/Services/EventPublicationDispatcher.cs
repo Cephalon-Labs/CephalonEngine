@@ -15,16 +15,21 @@ internal sealed class EventPublicationDispatcher(
         ArgumentNullException.ThrowIfNull(request);
         cancellationToken.ThrowIfCancellationRequested();
 
-        var publication = CreatePublication(request, request.Metadata);
+        var routing = EventPublicationRoutingPolicy.Resolve(request, options);
+        var effectiveChannelId = routing.EffectiveChannelId;
 
         var metadata = new Dictionary<string, string>(request.Metadata, StringComparer.OrdinalIgnoreCase)
         {
             ["publicationDispatcher"] = "cephalon-eventing",
             ["publicationRuntimeState"] = "available",
             ["publicationId"] = request.Id,
-            ["channelId"] = request.ChannelId,
+            ["requestedChannelId"] = request.ChannelId,
+            ["channelId"] = effectiveChannelId,
             ["eventType"] = request.EventType
         };
+        MergeMetadata(metadata, routing.Metadata);
+
+        var publication = CreatePublication(request, effectiveChannelId, metadata);
 
         var nowUtc = DateTimeOffset.UtcNow;
         if (EventPublicationSchedulingPolicy.TryCreateSchedule(request, nowUtc, out var schedule))
@@ -39,7 +44,7 @@ internal sealed class EventPublicationDispatcher(
             if (schedule.DelayMilliseconds > 0)
             {
                 var scheduledMetadata = await scheduleQueue.ScheduleAsync(
-                        CreatePublication(request, metadata),
+                        CreatePublication(request, effectiveChannelId, metadata),
                         schedule,
                         cancellationToken)
                     .ConfigureAwait(false);
@@ -47,7 +52,7 @@ internal sealed class EventPublicationDispatcher(
 
                 return new EventPublicationResult(
                     request.Id,
-                    request.ChannelId,
+                    effectiveChannelId,
                     request.EventType,
                     EventPublicationOutcomes.Accepted,
                     DateTimeOffset.UtcNow,
@@ -62,14 +67,14 @@ internal sealed class EventPublicationDispatcher(
                 scheduleQueue.PendingCount);
             immediateMetadata["scheduleDispatch"] = "immediate";
             MergeMetadata(metadata, immediateMetadata);
-            publication = CreatePublication(request, metadata);
+            publication = CreatePublication(request, effectiveChannelId, metadata);
         }
 
         await publisher.PublishAsync(publication, cancellationToken).ConfigureAwait(false);
 
         return new EventPublicationResult(
             request.Id,
-            request.ChannelId,
+            effectiveChannelId,
             request.EventType,
             EventPublicationOutcomes.Accepted,
             DateTimeOffset.UtcNow,
@@ -79,11 +84,12 @@ internal sealed class EventPublicationDispatcher(
 
     private static EventPublication CreatePublication(
         EventPublicationRequest request,
+        string channelId,
         IReadOnlyDictionary<string, string> metadata)
     {
         return new EventPublication(
             id: request.Id,
-            channelId: request.ChannelId,
+            channelId: channelId,
             eventType: request.EventType,
             payload: request.Payload,
             occurredAtUtc: request.OccurredAtUtc,

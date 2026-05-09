@@ -13,6 +13,14 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
 
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
+        var routeCount = options.PublicationRoutes.Count.ToString(CultureInfo.InvariantCulture);
+        var routingStatus = options.EnablePublicationRouting && options.PublicationRoutes.Count > 0
+            ? "claimed"
+            : options.EnablePublicationRouting ? "partial" : "not-claimed";
+        var routingEvidence = options.EnablePublicationRouting
+            ? $"policy={EventPublicationRoutingPolicy.GetPolicyId(options)} routes={routeCount} autoChannel={EventPublicationRoutingPolicy.GetAutoChannelId(options)}"
+            : "publication routing is not enabled.";
+
         return new TechnologyRuntimeSurface(
             technologyId: "event-driven-integration",
             surfaceId: "eventing-superiority-profile",
@@ -28,6 +36,16 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     evidence: "Engine:Technologies=EventDrivenIntegration; provider adapters remain explicit opt-ins.",
                     advantage: "Consumers can switch native, in-process, outbox, or provider-managed paths without rewriting application handlers around a vendor API.",
                     nextGap: "Keep adding provider-specific companion packs only behind explicit Engine:Messaging choices."),
+                CreateEntry(
+                    id: "routing-and-provider-portability",
+                    displayName: "Routing And Provider Portability",
+                    description: "Routes event publications through a Cephalon-owned event-type map before any in-process, outbox, or provider-managed publisher receives the message.",
+                    status: routingStatus,
+                    evidence: routingEvidence,
+                    advantage: "Application code can publish against a stable Cephalon route contract while channel ownership moves through configuration instead of Wolverine, MassTransit, NServiceBus, or MediatR APIs.",
+                    nextGap: options.EnablePublicationRouting && options.PublicationRoutes.Count > 0
+                        ? "Extend this same route truth into future broker-topology and generated contract validation surfaces."
+                        : "Configure Engine:Messaging:Publications:Routing:Routes before claiming routing evidence."),
                 CreateEntry(
                     id: "native-wolverine-free-baseline",
                     displayName: "Native Wolverine-free Baseline",

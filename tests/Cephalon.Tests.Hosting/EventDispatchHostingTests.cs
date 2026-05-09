@@ -624,6 +624,170 @@ public sealed class EventDispatchHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonRoutesCoreInProcessEventPublicationFromConfigurationWithoutWolverine()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
+        {
+            ["Engine:Messaging:InProcessSubscriptions:EnableExecution"] = "true",
+            ["Engine:Messaging:Publications:Routing:Enabled"] = "true",
+            ["Engine:Messaging:Publications:Routing:AutoChannelId"] = "auto",
+            ["Engine:Messaging:Publications:Routing:RejectMismatchedExplicitChannel"] = "true",
+            ["Engine:Messaging:Publications:Routing:Routes:audit.created"] = "audit"
+        });
+        builder.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new TechnologyPackContributionModule());
+            engine.AddEventingFromConfiguration(builder.Configuration);
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        var client = app.GetTestClient();
+        var response = await client.PostAsJsonAsync(
+            "/engine/event-publications",
+            new
+            {
+                id = "audit-routed-001",
+                channelId = "auto",
+                eventType = "audit.created",
+                payload = new
+                {
+                    id = "audit-routed-001"
+                },
+                occurredAtUtc = new DateTimeOffset(2026, 05, 10, 12, 0, 0, TimeSpan.Zero),
+                correlationId = "corr-audit-routed-001",
+                metadata = new Dictionary<string, string>
+                {
+                    ["requestedBy"] = "routing-hosting-test"
+                }
+            });
+
+        var result = await response.Content.ReadFromJsonAsync<EventPublicationResult>();
+        var probe = app.Services.GetRequiredService<ManagedAuditProjectorProbe>();
+        var publicationRuntimeCatalog = app.Services.GetRequiredService<IEventPublicationRuntimeCatalog>();
+        var capabilities = await client.GetFromJsonAsync<CapabilityManifest[]>("/engine/capabilities");
+        var eventingSurfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/event-driven-integration");
+        var channelPublicationStates = await client.GetFromJsonAsync<EventPublicationRuntimeState[]>("/engine/event-publications/runtime/channels/audit");
+        var snapshot = await client.GetFromJsonAsync<Cephalon.Engine.Runtime.RuntimeIntrospectionSnapshot>("/engine/snapshot");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.NotNull(result);
+        Assert.Equal("audit-routed-001", result.PublicationId);
+        Assert.Equal("audit", result.ChannelId);
+        Assert.Equal("auto", result.Metadata["requestedChannelId"]);
+        Assert.Equal("audit", result.Metadata["channelId"]);
+        Assert.Equal("event-type-map", result.Metadata["routingPolicy"]);
+        Assert.Equal("routed", result.Metadata["routingState"]);
+        Assert.Equal("auto-channel", result.Metadata["routingSource"]);
+        Assert.Equal("auto", result.Metadata["routingRequestedChannelId"]);
+        Assert.Equal("audit", result.Metadata["routingEffectiveChannelId"]);
+        Assert.Equal("audit.created", result.Metadata["routingRule"]);
+        Assert.Equal("audit", result.Metadata["routingRuleChannelId"]);
+        Assert.Equal("routing-hosting-test", result.Metadata["requestedBy"]);
+
+        Assert.Equal(1, probe.TotalAttempts);
+        Assert.Equal(1, probe.SuccessfulAttempts);
+        Assert.Equal("audit-routed-001", probe.LastMessageId);
+
+        var publicationState = Assert.Single(publicationRuntimeCatalog.States);
+        Assert.Equal("audit", publicationState.LastChannelId);
+        Assert.Equal(EventPublicationRuntimeOutcomes.Succeeded, publicationState.LastOutcome);
+        Assert.Equal("routed", publicationState.Metadata["publicationMetadata.routingState"]);
+        Assert.Equal("auto", publicationState.Metadata["publicationMetadata.routingRequestedChannelId"]);
+        Assert.Equal("audit", publicationState.Metadata["publicationMetadata.routingEffectiveChannelId"]);
+        Assert.NotNull(channelPublicationStates);
+        Assert.Single(channelPublicationStates);
+
+        Assert.NotNull(capabilities);
+        var publishCapability = Assert.Single(capabilities, capability => capability.Key == "eventing.publish");
+        Assert.Equal("event-type-map", publishCapability.Metadata["publicationRoutingPolicy"]);
+        Assert.Equal("1", publishCapability.Metadata["publicationRoutingRouteCount"]);
+        Assert.Equal("auto", publishCapability.Metadata["publicationRoutingAutoChannelId"]);
+        Assert.Equal("true", publishCapability.Metadata["publicationRoutingRejectMismatchedExplicitChannel"]);
+
+        Assert.NotNull(eventingSurfaces);
+        var publisherEntry = Assert.Single(eventingSurfaces.Single(surface => surface.SurfaceId == "event-publishers").Entries);
+        Assert.Equal("event-type-map", publisherEntry.Metadata["publicationRoutingPolicy"]);
+        Assert.Equal("1", publisherEntry.Metadata["publicationRoutingRouteCount"]);
+        Assert.Equal("auto", publisherEntry.Metadata["publicationRoutingAutoChannelId"]);
+
+        var superiorityEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "routing-and-provider-portability");
+        Assert.Equal("claimed", superiorityEntry.Metadata["status"]);
+        Assert.Contains("routes=1", superiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+
+        Assert.NotNull(snapshot);
+        var snapshotPublicationState = Assert.Single(snapshot.EventPublicationStates);
+        Assert.Equal("audit", snapshotPublicationState.LastChannelId);
+        var snapshotRoutingEntry = Assert.Single(
+            snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "routing-and-provider-portability");
+        Assert.Equal("claimed", snapshotRoutingEntry.Metadata["status"]);
+    }
+
+    [Fact]
+    public async Task MapCephalonRejectsMismatchedExplicitEventPublicationRouteFromConfigurationWithoutWolverine()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
+        {
+            ["Engine:Messaging:InProcessSubscriptions:EnableExecution"] = "true",
+            ["Engine:Messaging:Publications:Routing:Enabled"] = "true",
+            ["Engine:Messaging:Publications:Routing:RejectMismatchedExplicitChannel"] = "true",
+            ["Engine:Messaging:Publications:Routing:Routes:audit.created"] = "audit"
+        });
+        builder.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new TechnologyPackContributionModule());
+            engine.AddEventingFromConfiguration(builder.Configuration);
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        var client = app.GetTestClient();
+        var response = await client.PostAsJsonAsync(
+            "/engine/event-publications",
+            new
+            {
+                id = "audit-route-mismatch-001",
+                channelId = "catalog-events",
+                eventType = "audit.created",
+                payload = new
+                {
+                    id = "audit-route-mismatch-001"
+                }
+            });
+        var body = await response.Content.ReadAsStringAsync();
+        var probe = app.Services.GetRequiredService<ManagedAuditProjectorProbe>();
+        var publicationRuntimeCatalog = app.Services.GetRequiredService<IEventPublicationRuntimeCatalog>();
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Contains("does not match configured route", body, StringComparison.Ordinal);
+        Assert.Equal(0, probe.TotalAttempts);
+        Assert.Empty(publicationRuntimeCatalog.States);
+    }
+
+    [Fact]
     public async Task MapCephalonSchedulesCoreInProcessEventPublicationWithoutWolverine()
     {
         var builder = WebApplication.CreateSlimBuilder();
