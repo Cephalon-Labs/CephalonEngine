@@ -33,6 +33,101 @@ Describe "publish-engine-completion-scorecard.ps1" {
         }
     }
 
+    function script:New-TestDeploymentModeClaimsReport {
+        param(
+            [Parameter(Mandatory = $true)]
+            [string]$Path,
+            [Parameter(Mandatory = $true)]
+            [string]$ManifestPath
+        )
+
+        $publishTargets = @(
+            "samples/Cephalon.Sample.ModularMonolith/Cephalon.Sample.ModularMonolith.csproj",
+            "samples/Cephalon.Sample.ModularVerticalSlice/Cephalon.Sample.ModularVerticalSlice.csproj",
+            "samples/Cephalon.Sample.Microservice/Cephalon.Sample.Microservice.csproj",
+            "samples/Cephalon.Sample.MicroserviceSuite/services/CatalogService/Cephalon.Sample.MicroserviceSuite.CatalogService.csproj",
+            "samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.csproj"
+        )
+
+        $report = [ordered]@{
+            DeploymentMode = "singleFile"
+            ManifestPath = $ManifestPath
+            Configuration = "Release"
+            ValidationStrategy = "publish-required"
+            AggregateVerdict = "not-claimed"
+            PublishProbePolicy = [ordered]@{
+                Source = "manifest"
+                ReleaseValidationMode = "single-file-publish-gate"
+                ReleaseValidationDeploymentModes = @("singleFile")
+                ReleaseValidationSkipsPublish = $false
+                CurrentRunSkipsPublish = $false
+                NonOptOutGate = $true
+                GatedModes = @("singleFile")
+                AuditOnlyModes = @("trim", "nativeAot")
+                FailureBlocksRelease = $true
+                FailOnWarnings = $true
+                GatePromotion = "eng-510-single-file-publish-probe-release-gate"
+                RepresentativePublishTargets = 5
+            }
+            PublishProbeGate = [ordered]@{
+                Status = "passed"
+                Enabled = $true
+                FailureBlocksRelease = $true
+                FailOnWarnings = $true
+                GatedModes = @("singleFile")
+                FailureCount = 0
+                Reasons = @("all gated publish probes passed")
+            }
+            Modes = @(
+                [ordered]@{
+                    Mode = "singleFile"
+                    Verdict = "not-claimed"
+                    PublishProbe = [ordered]@{
+                        Mode = "singleFile"
+                        Skipped = $false
+                        Targets = @($publishTargets | ForEach-Object {
+                            [ordered]@{
+                                Target = $_
+                                ExitCode = 0
+                                WarningCount = 0
+                                ErrorCount = 0
+                                Warnings = @()
+                                Errors = @()
+                                Success = $true
+                            }
+                        })
+                    }
+                    PackageClaimAudits = @(
+                        [ordered]@{ Mode = "singleFile"; PackageName = "Cephalon.Diagnostics"; Verdict = "claim-truthful" },
+                        [ordered]@{ Mode = "singleFile"; PackageName = "Cephalon.Abstractions"; Verdict = "claim-truthful" },
+                        [ordered]@{ Mode = "singleFile"; PackageName = "Cephalon.Scaffolding"; Verdict = "claim-truthful" }
+                    )
+                }
+            )
+            HazardInventory = [ordered]@{
+                TotalPackages = 9
+                PackagesWithScopedClaims = 3
+                TotalKnownHazards = 15
+                KnownTransitiveHazardAudit = [ordered]@{
+                    Status = "matched"
+                    MissingEntries = 0
+                    LockFileCount = 116
+                }
+                BoundaryAnnotationAuditStatus = "matched"
+                BoundaryAnnotationAuditFailureCount = 0
+                CoreRouteDelegateAuditStatus = "matched"
+                CoreRouteDelegateAuditFailureCount = 0
+            }
+        }
+
+        $parent = Split-Path -Parent $Path
+        if (-not [string]::IsNullOrWhiteSpace($parent)) {
+            New-Item -ItemType Directory -Path $parent -Force | Out-Null
+        }
+
+        $report | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath $Path -Encoding UTF8
+    }
+
     It "emits JSON and Markdown artifacts from the current scorecard" {
         $outputPath = Join-Path $script:tempRoot "artifacts"
         $claimsReportPath = Join-Path $script:tempRoot "claim-validation-report.json"
@@ -120,6 +215,10 @@ Describe "publish-engine-completion-scorecard.ps1" {
                     MissingEntries = 0
                     LockFileCount = 116
                 }
+                BoundaryAnnotationAuditStatus = "matched"
+                BoundaryAnnotationAuditFailureCount = 0
+                CoreRouteDelegateAuditStatus = "matched"
+                CoreRouteDelegateAuditFailureCount = 0
             }
         }
         $claimsReport | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath $claimsReportPath -Encoding UTF8
@@ -136,7 +235,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
 
         $json = Get-Content -LiteralPath $result.Paths.JsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
 
-        $json.'$schemaVersion' | Should -Be "1.13.0"
+        $json.'$schemaVersion' | Should -Be "1.14.0"
         $json.SourceDocument | Should -Be "docs/engine-completion-scorecard.md"
         $json.ConformanceMatrix | Should -Be "docs/conformance-matrix.md"
         $json.DeploymentModeManifest | Should -Be "scripts/deployment-mode-support.json"
@@ -172,6 +271,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.DeploymentModeClaimsReportPublishProbeErrorCount | Should -Be 0
         $json.Summary.DeploymentModeClaimsReportPackageClaimTruthfulCount | Should -Be 3
         $json.Summary.DeploymentModeClaimsReportPackageClaimOverstatedCount | Should -Be 0
+        $json.Summary.DeploymentModeClaimsReportBoundaryAnnotationAuditFailures | Should -Be 0
+        $json.Summary.DeploymentModeClaimsReportCoreRouteDelegateAuditFailures | Should -Be 0
         $json.Summary.AdoptionSmokeScenarioCount | Should -Be 1
         $json.Summary.AdoptionSmokeRuntimeProbeCount | Should -Be 6
         $json.Summary.AdoptionSmokeAssertionCount | Should -Be 7
@@ -268,6 +369,10 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.DeploymentModeEvidence.ClaimsReportPackageClaimTruthfulCount | Should -Be 3
         $json.DeploymentModeEvidence.ClaimsReportPackageClaimOverstatedCount | Should -Be 0
         $json.DeploymentModeEvidence.ClaimsReportHazardInventoryTransitiveAuditStatus | Should -Be "matched"
+        $json.DeploymentModeEvidence.ClaimsReportHazardInventoryBoundaryAnnotationAuditStatus | Should -Be "matched"
+        $json.DeploymentModeEvidence.ClaimsReportHazardInventoryBoundaryAnnotationAuditFailureCount | Should -Be 0
+        $json.DeploymentModeEvidence.ClaimsReportHazardInventoryCoreRouteDelegateAuditStatus | Should -Be "matched"
+        $json.DeploymentModeEvidence.ClaimsReportHazardInventoryCoreRouteDelegateAuditFailureCount | Should -Be 0
         $json.DeploymentModeEvidence.PackageRows.PackageName | Should -Contain "Cephalon.Diagnostics"
         $json.DeploymentModeEvidence.PackageRows.PackageName | Should -Contain "Cephalon.Abstractions"
         $json.DeploymentModeEvidence.PackageRows.PackageName | Should -Contain "Cephalon.Scaffolding"
@@ -650,6 +755,10 @@ Describe "publish-engine-completion-scorecard.ps1" {
                     MissingEntries = 0
                     LockFileCount = 116
                 }
+                BoundaryAnnotationAuditStatus = "matched"
+                BoundaryAnnotationAuditFailureCount = 0
+                CoreRouteDelegateAuditStatus = "matched"
+                CoreRouteDelegateAuditFailureCount = 0
             }
         }
         $report | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $reportPath -Encoding UTF8
@@ -670,6 +779,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
         New-Item -ItemType Directory -Path $scriptsRoot -Force | Out-Null
         New-Item -ItemType Directory -Path $docsRoot -Force | Out-Null
         New-Item -ItemType Directory -Path $sampleRoot -Force | Out-Null
+        $claimsReportPath = Join-Path $script:tempRoot "adoption-claim-validation-report.json"
+        $deploymentManifestPath = (Resolve-Path (Join-Path $script:repoRoot "scripts\deployment-mode-support.json")).Path
+        New-TestDeploymentModeClaimsReport -Path $claimsReportPath -ManifestPath $deploymentManifestPath
 
         $replayScriptPath = Join-Path $scriptsRoot "validate-out-of-tree-package-adoption.ps1"
         Set-Content -LiteralPath $replayScriptPath -Value @'
@@ -748,6 +860,7 @@ Start-Process
             Invoke-EngineCompletionScorecardPublish `
                 -ScorecardPath "docs/engine-completion-scorecard.md" `
                 -ConformanceMatrixPath "docs/conformance-matrix.md" `
+                -DeploymentModeClaimsReportPath $claimsReportPath `
                 -AdoptionSmokeManifestPath $manifestPath `
                 -OutputPath (Join-Path $script:tempRoot "artifacts") `
                 -RepoRoot $script:repoRoot

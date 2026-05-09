@@ -119,13 +119,17 @@ hazard, resolves its source window, reports whether both public boundary annotat
 present, and fails closed when the audit reports `failed`. This is not a support promotion; it makes
 the boundary harder to drift silently.
 
-`ENG-538` starts the route-delegate remediation lane for the opt-in core operator surface only.
+`ENG-538` starts the route-delegate remediation lane for the opt-in core operator surface only,
+and `ENG-539` makes that route-delegate proof fail-closed in the deployment-mode harness and
+scorecard readback.
 When hosts set `Engine:AspNetCore:OperatorSurface:Mode=core`, the bounded core `/engine/*`
 route subset now maps through prebuilt `RequestDelegate` handlers and `MapMethods(...)`
-instead of Minimal API delegate binding. A manifest Pester guard checks that
-`MapCephalonCoreOperatorRoutes(...)` does not reintroduce `.MapGet(...)`. The default/full
-`MapCephalon()` route catalog still remains the high-tier dynamic boundary below until the
-full adapter surface has typed/request-delegate routes and source-generated JSON contracts.
+instead of Minimal API delegate binding. A manifest Pester guard and generated
+`CoreRouteDelegateAuditStatus` both check that `MapCephalonCoreOperatorRoutes(...)` does not
+reintroduce `.MapGet(...)` and that the helper still accepts `RequestDelegate` and calls
+`MapMethods(...)`. The default/full `MapCephalon()` route catalog still remains the high-tier
+dynamic boundary below until the full adapter surface has typed/request-delegate routes and
+source-generated JSON contracts.
 
 | Package | File | Line | Pattern | Notes |
 | --- | --- | --- | --- | --- |

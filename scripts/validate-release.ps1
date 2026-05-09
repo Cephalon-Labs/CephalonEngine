@@ -448,13 +448,37 @@ function Write-EngineCompletionScorecardEvidenceSummary {
             -PropertyName "ClaimsReportPackageClaimOverstatedCount" `
             -OwnerName "DeploymentModeEvidence"),
         [System.Globalization.CultureInfo]::InvariantCulture)
+    $deploymentModeClaimsReportBoundaryAnnotationAuditStatus = Get-ScorecardRequiredPropertyValue `
+        -Object $scorecard.DeploymentModeEvidence `
+        -PropertyName "ClaimsReportHazardInventoryBoundaryAnnotationAuditStatus" `
+        -OwnerName "DeploymentModeEvidence"
+    $deploymentModeClaimsReportBoundaryAnnotationAuditFailureCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $scorecard.DeploymentModeEvidence `
+            -PropertyName "ClaimsReportHazardInventoryBoundaryAnnotationAuditFailureCount" `
+            -OwnerName "DeploymentModeEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
+    $deploymentModeClaimsReportCoreRouteDelegateAuditStatus = Get-ScorecardRequiredPropertyValue `
+        -Object $scorecard.DeploymentModeEvidence `
+        -PropertyName "ClaimsReportHazardInventoryCoreRouteDelegateAuditStatus" `
+        -OwnerName "DeploymentModeEvidence"
+    $deploymentModeClaimsReportCoreRouteDelegateAuditFailureCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $scorecard.DeploymentModeEvidence `
+            -PropertyName "ClaimsReportHazardInventoryCoreRouteDelegateAuditFailureCount" `
+            -OwnerName "DeploymentModeEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
 
     if (-not $deploymentModeClaimsReportPresent -or
         $deploymentModeClaimsReportGateStatus -ne "passed" -or
         $deploymentModeClaimsReportWarningCount -ne 0 -or
         $deploymentModeClaimsReportErrorCount -ne 0 -or
-        $deploymentModeClaimsReportOverstatedClaimCount -ne 0) {
-        throw "Engine completion scorecard deployment-mode claims report readback is not release-ready: report '$deploymentModeClaimsReport', present=$deploymentModeClaimsReportPresent, gate=$deploymentModeClaimsReportGateStatus, warnings=$deploymentModeClaimsReportWarningCount, errors=$deploymentModeClaimsReportErrorCount, overstatedPackageClaims=$deploymentModeClaimsReportOverstatedClaimCount."
+        $deploymentModeClaimsReportOverstatedClaimCount -ne 0 -or
+        $deploymentModeClaimsReportBoundaryAnnotationAuditStatus -ne "matched" -or
+        $deploymentModeClaimsReportBoundaryAnnotationAuditFailureCount -ne 0 -or
+        $deploymentModeClaimsReportCoreRouteDelegateAuditStatus -ne "matched" -or
+        $deploymentModeClaimsReportCoreRouteDelegateAuditFailureCount -ne 0) {
+        throw "Engine completion scorecard deployment-mode claims report readback is not release-ready: report '$deploymentModeClaimsReport', present=$deploymentModeClaimsReportPresent, gate=$deploymentModeClaimsReportGateStatus, warnings=$deploymentModeClaimsReportWarningCount, errors=$deploymentModeClaimsReportErrorCount, overstatedPackageClaims=$deploymentModeClaimsReportOverstatedClaimCount, boundaryAudit=$deploymentModeClaimsReportBoundaryAnnotationAuditStatus/$deploymentModeClaimsReportBoundaryAnnotationAuditFailureCount, coreRouteDelegateAudit=$deploymentModeClaimsReportCoreRouteDelegateAuditStatus/$deploymentModeClaimsReportCoreRouteDelegateAuditFailureCount."
     }
 
     $dependencyHealthProviderManifest = Get-ScorecardRequiredPropertyValue `
@@ -523,7 +547,7 @@ function Write-EngineCompletionScorecardEvidenceSummary {
             -OwnerName "SrePostureEvidence"),
         [System.Globalization.CultureInfo]::InvariantCulture)
 
-    Write-Host ("Deployment-mode evidence: {0} global claims; not-claimed {1}; package-scoped claim packages {2}; known hazards {3}; transitive audit entries {4}; publish probes {5}; claims report {6}; gate {7}; targets {8}; warnings {9}; errors {10}; truthful package claims {11}; overstated package claims {12}." -f `
+    Write-Host ("Deployment-mode evidence: {0} global claims; not-claimed {1}; package-scoped claim packages {2}; known hazards {3}; transitive audit entries {4}; publish probes {5}; claims report {6}; gate {7}; targets {8}; warnings {9}; errors {10}; truthful package claims {11}; overstated package claims {12}; boundary audit {13}/{14}; core route-delegate audit {15}/{16}." -f `
         $scorecard.DeploymentModeEvidence.GlobalClaimCount,
         $scorecard.DeploymentModeEvidence.GlobalNotClaimedCount,
         $scorecard.DeploymentModeEvidence.PackageScopedClaimPackageCount,
@@ -536,7 +560,11 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         $deploymentModeClaimsReportWarningCount,
         $deploymentModeClaimsReportErrorCount,
         $deploymentModeClaimsReportTruthfulClaimCount,
-        $deploymentModeClaimsReportOverstatedClaimCount)
+        $deploymentModeClaimsReportOverstatedClaimCount,
+        $deploymentModeClaimsReportBoundaryAnnotationAuditStatus,
+        $deploymentModeClaimsReportBoundaryAnnotationAuditFailureCount,
+        $deploymentModeClaimsReportCoreRouteDelegateAuditStatus,
+        $deploymentModeClaimsReportCoreRouteDelegateAuditFailureCount)
 
     Write-Host ("Provider integration evidence: {0} rows; live proofs {1}; composition-only {2}; external-service gates {3}; default-skipped {4}; runtime contracts {5}; dependency-health providers {6} from {7} schema {8} ({9})." -f `
         $scorecard.ProviderIntegrationEvidence.EvidenceRowCount,

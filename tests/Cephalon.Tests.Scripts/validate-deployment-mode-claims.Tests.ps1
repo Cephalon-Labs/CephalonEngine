@@ -115,6 +115,61 @@ BeforeAll {
         $lockObject | ConvertTo-Json -Depth 16 | Set-Content -LiteralPath $path -Encoding UTF8
         return $path
     }
+
+    function script:Set-TempAspNetCoreOperatorSource {
+        param(
+            [Parameter(Mandatory)] [string]$RepoRoot,
+            [bool]$RequiresUnreferencedCode = $true,
+            [bool]$RequiresDynamicCode = $true,
+            [bool]$UseMinimalApiMapGet = $false,
+            [bool]$UseMapMethods = $true
+        )
+
+        $sourcePath = Join-Path $RepoRoot "src\Cephalon.AspNetCore\Hosting\EngineWebApplicationExtensions.cs"
+        New-Item -Path (Split-Path -Parent $sourcePath) -ItemType Directory -Force | Out-Null
+
+        $annotationLines = @()
+        if ($RequiresUnreferencedCode) {
+            $annotationLines += '    [RequiresUnreferencedCode("dynamic route binding")]'
+        }
+        if ($RequiresDynamicCode) {
+            $annotationLines += '    [RequiresDynamicCode("dynamic route binding")]'
+        }
+
+        $coreRouteLine = if ($UseMinimalApiMapGet) {
+            '        engineGroup.MapGet("/manifest", (HttpContext context) => Results.Ok("manifest"));'
+        }
+        else {
+            '        MapGetRequestDelegate(engineGroup, "/manifest", "GetCephalonManifest", static context => Task.CompletedTask);'
+        }
+        $helperRouteLine = if ($UseMapMethods) {
+            '        engineGroup.MapMethods(pattern, [HttpMethods.Get], requestDelegate).WithName(endpointName);'
+        }
+        else {
+            '        _ = pattern; _ = endpointName; _ = requestDelegate;'
+        }
+
+        @(
+            'using System.Diagnostics.CodeAnalysis;',
+            'namespace Cephalon.AspNetCore.Hosting;',
+            'public static class EngineWebApplicationExtensions',
+            '{',
+            $annotationLines,
+            '    public static void MapCephalon() { }',
+            '    private static void MapCephalonCoreOperatorRoutes(RouteGroupBuilder engineGroup, ReferenceDocsSurface referenceDocsSurface)',
+            '    {',
+            $coreRouteLine,
+            '    }',
+            '    private static void MapGetRequestDelegate(RouteGroupBuilder engineGroup, string pattern, string endpointName, RequestDelegate requestDelegate)',
+            '    {',
+            $helperRouteLine,
+            '    }',
+            '    private static TService GetRequiredService<TService>(HttpContext context) where TService : notnull => throw new System.NotImplementedException();',
+            '}'
+        ) | Set-Content -LiteralPath $sourcePath -Encoding UTF8
+
+        return $sourcePath
+    }
 }
 
 AfterAll {
@@ -1210,18 +1265,7 @@ Describe "Get-DeploymentModeHazardInventory" {
 
     It "marks dynamic Minimal API boundary hazards as matched when the source site carries trim and AOT annotations" {
         $repo = New-TempRepoRoot -Projects @()
-        $sourcePath = Join-Path $repo.Root "src\Cephalon.AspNetCore\Hosting\EngineWebApplicationExtensions.cs"
-        New-Item -Path (Split-Path -Parent $sourcePath) -ItemType Directory -Force | Out-Null
-        @(
-            'using System.Diagnostics.CodeAnalysis;',
-            'namespace Cephalon.AspNetCore.Hosting;',
-            'public static class EngineWebApplicationExtensions',
-            '{',
-            '    [RequiresUnreferencedCode("dynamic route binding")]',
-            '    [RequiresDynamicCode("dynamic route binding")]',
-            '    public static void MapCephalon() { }',
-            '}'
-        ) | Set-Content -LiteralPath $sourcePath -Encoding UTF8
+        Set-TempAspNetCoreOperatorSource -RepoRoot $repo.Root | Out-Null
 
         $manifest = [pscustomobject]@{
             deploymentModeEligibility = [pscustomobject]@{
@@ -1253,21 +1297,14 @@ Describe "Get-DeploymentModeHazardInventory" {
         $inventory.BoundaryAnnotationAudits[0].RequiresUnreferencedCode | Should -BeTrue
         $inventory.BoundaryAnnotationAudits[0].RequiresDynamicCode | Should -BeTrue
         $inventory.BoundaryAnnotationAudits[0].Status | Should -Be "annotated"
+        $inventory.CoreRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.CoreRouteDelegateAuditCount | Should -Be 1
+        $inventory.CoreRouteDelegateAuditFailureCount | Should -Be 0
     }
 
     It "marks dynamic Minimal API boundary hazards as failed when either required annotation is missing" {
         $repo = New-TempRepoRoot -Projects @()
-        $sourcePath = Join-Path $repo.Root "src\Cephalon.AspNetCore\Hosting\EngineWebApplicationExtensions.cs"
-        New-Item -Path (Split-Path -Parent $sourcePath) -ItemType Directory -Force | Out-Null
-        @(
-            'using System.Diagnostics.CodeAnalysis;',
-            'namespace Cephalon.AspNetCore.Hosting;',
-            'public static class EngineWebApplicationExtensions',
-            '{',
-            '    [RequiresDynamicCode("dynamic route binding")]',
-            '    public static void MapCephalon() { }',
-            '}'
-        ) | Set-Content -LiteralPath $sourcePath -Encoding UTF8
+        Set-TempAspNetCoreOperatorSource -RepoRoot $repo.Root -RequiresUnreferencedCode:$false | Out-Null
 
         $manifest = [pscustomobject]@{
             deploymentModeEligibility = [pscustomobject]@{
@@ -1299,6 +1336,79 @@ Describe "Get-DeploymentModeHazardInventory" {
         $inventory.BoundaryAnnotationAuditFailures[0].RequiresUnreferencedCode | Should -BeFalse
         $inventory.BoundaryAnnotationAuditFailures[0].RequiresDynamicCode | Should -BeTrue
         $inventory.BoundaryAnnotationAuditFailures[0].Status | Should -Be "missing-annotation"
+        $inventory.CoreRouteDelegateAuditStatus | Should -Be "matched"
+    }
+
+    It "audits the ASP.NET Core core operator routes as request-delegate mapped when the route subset avoids Minimal API binding" {
+        $repo = New-TempRepoRoot -Projects @()
+        Set-TempAspNetCoreOperatorSource -RepoRoot $repo.Root | Out-Null
+
+        $manifest = [pscustomobject]@{
+            deploymentModeEligibility = [pscustomobject]@{
+                packages = @(
+                    [pscustomobject]@{
+                        packageName = "Cephalon.AspNetCore"
+                        nugetId = "Cephalon.AspNetCore"
+                        claimAuditTier = "high"
+                        supportedModes = @()
+                        requiredProjectProperties = @()
+                        knownHazards = @(
+                            [pscustomobject]@{
+                                kind = "dynamic-minimal-api-operator-route-binding"
+                                site = "src/Cephalon.AspNetCore/Hosting/EngineWebApplicationExtensions.cs:7"
+                                pattern = "MapCephalon dynamic route binding"
+                                remediation = "core routes use request delegates"
+                            }
+                        )
+                    }
+                )
+            }
+        }
+
+        $inventory = Get-DeploymentModeHazardInventory -Manifest $manifest -RepoRoot $repo.Root
+
+        $inventory.CoreRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.CoreRouteDelegateAuditCount | Should -Be 1
+        $inventory.CoreRouteDelegateAuditFailureCount | Should -Be 0
+        $inventory.CoreRouteDelegateAudits[0].CoreRoutesUseRequestDelegateHelper | Should -BeTrue
+        $inventory.CoreRouteDelegateAudits[0].CoreRoutesUseMinimalApiMapGet | Should -BeFalse
+        $inventory.CoreRouteDelegateAudits[0].HelperAcceptsRequestDelegate | Should -BeTrue
+        $inventory.CoreRouteDelegateAudits[0].HelperUsesMapMethods | Should -BeTrue
+    }
+
+    It "marks the core operator route-delegate audit as failed when Minimal API binding returns to the core route subset" {
+        $repo = New-TempRepoRoot -Projects @()
+        Set-TempAspNetCoreOperatorSource -RepoRoot $repo.Root -UseMinimalApiMapGet:$true | Out-Null
+
+        $manifest = [pscustomobject]@{
+            deploymentModeEligibility = [pscustomobject]@{
+                packages = @(
+                    [pscustomobject]@{
+                        packageName = "Cephalon.AspNetCore"
+                        nugetId = "Cephalon.AspNetCore"
+                        claimAuditTier = "high"
+                        supportedModes = @()
+                        requiredProjectProperties = @()
+                        knownHazards = @(
+                            [pscustomobject]@{
+                                kind = "dynamic-minimal-api-operator-route-binding"
+                                site = "src/Cephalon.AspNetCore/Hosting/EngineWebApplicationExtensions.cs:7"
+                                pattern = "MapCephalon dynamic route binding"
+                                remediation = "core routes use request delegates"
+                            }
+                        )
+                    }
+                )
+            }
+        }
+
+        $inventory = Get-DeploymentModeHazardInventory -Manifest $manifest -RepoRoot $repo.Root
+
+        $inventory.CoreRouteDelegateAuditStatus | Should -Be "failed"
+        $inventory.CoreRouteDelegateAuditCount | Should -Be 1
+        $inventory.CoreRouteDelegateAuditFailureCount | Should -Be 1
+        $inventory.CoreRouteDelegateAuditFailures[0].CoreRoutesUseMinimalApiMapGet | Should -BeTrue
+        $inventory.CoreRouteDelegateAuditFailures[0].Failures | Should -Contain "core-routes-use-mapget-delegate-binding"
     }
 
     It "returns an empty inventory when the manifest has no eligibility block" {
@@ -1308,6 +1418,7 @@ Describe "Get-DeploymentModeHazardInventory" {
         $inventory.Packages.Count | Should -Be 0
         $inventory.KnownTransitiveHazardAudit.Status | Should -Be "not-configured"
         $inventory.BoundaryAnnotationAuditStatus | Should -Be "not-applicable"
+        $inventory.CoreRouteDelegateAuditStatus | Should -Be "not-applicable"
     }
 }
 
@@ -1347,17 +1458,7 @@ Describe "Invoke-DeploymentModeClaimValidation (integration)" {
 
     It "throws after writing reports when the dynamic route boundary annotation audit fails" {
         $repo = New-TempRepoRoot -Projects @()
-        $sourcePath = Join-Path $repo.Root "src\Cephalon.AspNetCore\Hosting\EngineWebApplicationExtensions.cs"
-        New-Item -Path (Split-Path -Parent $sourcePath) -ItemType Directory -Force | Out-Null
-        @(
-            'using System.Diagnostics.CodeAnalysis;',
-            'namespace Cephalon.AspNetCore.Hosting;',
-            'public static class EngineWebApplicationExtensions',
-            '{',
-            '    [RequiresDynamicCode("dynamic route binding")]',
-            '    public static void MapCephalon() { }',
-            '}'
-        ) | Set-Content -LiteralPath $sourcePath -Encoding UTF8
+        Set-TempAspNetCoreOperatorSource -RepoRoot $repo.Root -RequiresUnreferencedCode:$false | Out-Null
 
         $manifestPath = Join-Path $repo.Root "deployment-mode-support.json"
         @{
@@ -1402,6 +1503,57 @@ Describe "Invoke-DeploymentModeClaimValidation (integration)" {
         $inventory = Get-Content -LiteralPath $hazardInventoryPath -Raw | ConvertFrom-Json
         $inventory.BoundaryAnnotationAuditStatus | Should -Be "failed"
         $inventory.BoundaryAnnotationAuditFailureCount | Should -Be 1
+        $inventory.CoreRouteDelegateAuditStatus | Should -Be "matched"
+    }
+
+    It "throws after writing reports when the core operator route-delegate audit fails" {
+        $repo = New-TempRepoRoot -Projects @()
+        Set-TempAspNetCoreOperatorSource -RepoRoot $repo.Root -UseMinimalApiMapGet:$true | Out-Null
+
+        $manifestPath = Join-Path $repo.Root "deployment-mode-support.json"
+        @{
+            deploymentModes = @{
+                trim       = @{ status = "not-claimed" }
+                nativeAot  = @{ status = "not-claimed" }
+                singleFile = @{ status = "not-claimed" }
+            }
+            deploymentModeEligibility = @{
+                packages = @(
+                    @{
+                        packageName = "Cephalon.AspNetCore"
+                        nugetId = "Cephalon.AspNetCore"
+                        claimAuditTier = "high"
+                        supportedModes = @()
+                        requiredProjectProperties = @()
+                        knownHazards = @(
+                            @{
+                                kind = "dynamic-minimal-api-operator-route-binding"
+                                site = "src/Cephalon.AspNetCore/Hosting/EngineWebApplicationExtensions.cs:7"
+                                pattern = "MapCephalon dynamic route binding"
+                                remediation = "core routes use request delegates"
+                            }
+                        )
+                    }
+                )
+            }
+        } | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $manifestPath -Encoding UTF8
+
+        $outDir = Join-Path $repo.Root "out"
+        {
+            Invoke-DeploymentModeClaimValidation `
+                -DeploymentMode "nativeAot" `
+                -ManifestPath $manifestPath `
+                -OutputPath $outDir `
+                -RepoRoot $repo.Root `
+                -SkipPublish
+        } | Should -Throw "*core-route-delegate-audit-failed*"
+
+        $hazardInventoryPath = Join-Path $outDir "hazard-inventory.json"
+        Test-Path -LiteralPath $hazardInventoryPath | Should -BeTrue
+        $inventory = Get-Content -LiteralPath $hazardInventoryPath -Raw | ConvertFrom-Json
+        $inventory.BoundaryAnnotationAuditStatus | Should -Be "matched"
+        $inventory.CoreRouteDelegateAuditStatus | Should -Be "failed"
+        $inventory.CoreRouteDelegateAuditFailureCount | Should -Be 1
     }
 
     It "throws when the aggregate verdict is claim-overstated" {

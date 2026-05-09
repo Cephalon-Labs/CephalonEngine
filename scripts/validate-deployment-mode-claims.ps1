@@ -940,6 +940,129 @@ function Get-DeploymentModeBoundaryAnnotationAudits {
     return @($rows)
 }
 
+function Get-DeploymentModeCoreRouteDelegateAudits {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)] $Manifest,
+        [string]$RepoRoot = ""
+    )
+
+    $rows = @()
+    if ($null -eq $Manifest -or
+        -not $Manifest.PSObject.Properties.Match("deploymentModeEligibility").Count -or
+        $null -eq $Manifest.deploymentModeEligibility -or
+        -not $Manifest.deploymentModeEligibility.PSObject.Properties.Match("packages").Count) {
+        return @()
+    }
+
+    foreach ($pkg in @($Manifest.deploymentModeEligibility.packages)) {
+        if ($null -eq $pkg -or $pkg.PSObject.Properties.Match("knownHazards").Count -eq 0) { continue }
+
+        $packageName = if ($pkg.PSObject.Properties.Match("packageName").Count -gt 0) { [string]$pkg.packageName } else { "" }
+        if (-not [string]::Equals($packageName, "Cephalon.AspNetCore", [System.StringComparison]::OrdinalIgnoreCase)) {
+            continue
+        }
+
+        foreach ($hazard in @($pkg.knownHazards)) {
+            if ($null -eq $hazard -or $hazard.PSObject.Properties.Match("kind").Count -eq 0) { continue }
+
+            $kind = [string]$hazard.kind
+            if (-not [string]::Equals($kind, "dynamic-minimal-api-operator-route-binding", [System.StringComparison]::OrdinalIgnoreCase)) {
+                continue
+            }
+
+            $site = if ($hazard.PSObject.Properties.Match("site").Count -gt 0) { [string]$hazard.site } else { "" }
+            $sourceRelativePath = $site
+            $match = [regex]::Match($site.Trim(), '^(?<path>.+?\.cs)(?::(?<line>\d+))?$')
+            if ($match.Success) {
+                $sourceRelativePath = $match.Groups["path"].Value
+            }
+
+            $resolvedPath = $sourceRelativePath
+            if (-not [System.IO.Path]::IsPathRooted($resolvedPath) -and -not [string]::IsNullOrWhiteSpace($RepoRoot)) {
+                $resolvedPath = Join-Path $RepoRoot ($sourceRelativePath -replace '/', [System.IO.Path]::DirectorySeparatorChar)
+            }
+
+            $sourceExists = Test-Path -LiteralPath $resolvedPath -PathType Leaf
+            $coreMethodFound = $false
+            $requestDelegateHelperFound = $false
+            $helperBlockFound = $false
+            $coreRoutesUseMinimalApiMapGet = $false
+            $coreRoutesUseRequestDelegateHelper = $false
+            $helperAcceptsRequestDelegate = $false
+            $helperUsesMapMethods = $false
+            $failures = @()
+
+            if (-not $sourceExists) {
+                $failures += "source-missing"
+            }
+            else {
+                $source = Get-Content -LiteralPath $resolvedPath -Raw -Encoding UTF8
+                $coreStart = $source.IndexOf("private static void MapCephalonCoreOperatorRoutes(", [System.StringComparison]::Ordinal)
+                $helperStart = $source.IndexOf("private static void MapGetRequestDelegate(", [System.StringComparison]::Ordinal)
+                $nextHelperStart = $source.IndexOf("private static TService GetRequiredService", [System.StringComparison]::Ordinal)
+
+                $coreMethodFound = $coreStart -ge 0
+                $requestDelegateHelperFound = $helperStart -gt $coreStart
+                $helperBlockFound = $requestDelegateHelperFound -and $nextHelperStart -gt $helperStart
+
+                if (-not $coreMethodFound) {
+                    $failures += "core-route-method-missing"
+                }
+                if (-not $requestDelegateHelperFound) {
+                    $failures += "request-delegate-helper-missing"
+                }
+                if (-not $helperBlockFound) {
+                    $failures += "request-delegate-helper-block-unparseable"
+                }
+
+                if ($coreMethodFound -and $requestDelegateHelperFound) {
+                    $coreBlock = $source.Substring($coreStart, $helperStart - $coreStart)
+                    $coreRoutesUseMinimalApiMapGet = $coreBlock -match '\.MapGet\('
+                    $coreRoutesUseRequestDelegateHelper = $coreBlock -match 'MapGetRequestDelegate'
+                    if ($coreRoutesUseMinimalApiMapGet) {
+                        $failures += "core-routes-use-mapget-delegate-binding"
+                    }
+                    if (-not $coreRoutesUseRequestDelegateHelper) {
+                        $failures += "core-routes-missing-request-delegate-helper"
+                    }
+                }
+
+                if ($helperBlockFound) {
+                    $helperBlock = $source.Substring($helperStart, $nextHelperStart - $helperStart)
+                    $helperAcceptsRequestDelegate = $helperBlock -match 'RequestDelegate\s+requestDelegate'
+                    $helperUsesMapMethods = $helperBlock -match '\.MapMethods\('
+                    if (-not $helperAcceptsRequestDelegate) {
+                        $failures += "helper-missing-requestdelegate-parameter"
+                    }
+                    if (-not $helperUsesMapMethods) {
+                        $failures += "helper-missing-mapmethods"
+                    }
+                }
+            }
+
+            $rows += [pscustomobject]@{
+                PackageName                         = $packageName
+                HazardKind                          = $kind
+                Site                                = $site
+                SourcePath                          = $sourceRelativePath
+                SourceExists                        = $sourceExists
+                CoreMethodFound                     = $coreMethodFound
+                RequestDelegateHelperFound          = $requestDelegateHelperFound
+                HelperBlockFound                    = $helperBlockFound
+                CoreRoutesUseMinimalApiMapGet       = $coreRoutesUseMinimalApiMapGet
+                CoreRoutesUseRequestDelegateHelper  = $coreRoutesUseRequestDelegateHelper
+                HelperAcceptsRequestDelegate        = $helperAcceptsRequestDelegate
+                HelperUsesMapMethods                = $helperUsesMapMethods
+                Status                              = if ($failures.Count -eq 0) { "matched" } else { "failed" }
+                Failures                            = @($failures)
+            }
+        }
+    }
+
+    return @($rows)
+}
+
 function Get-DeploymentModeHazardInventory {
     [CmdletBinding()]
     param(
@@ -1057,6 +1180,18 @@ function Get-DeploymentModeHazardInventory {
         "failed"
     }
 
+    $coreRouteDelegateAudits = @(Get-DeploymentModeCoreRouteDelegateAudits -Manifest $Manifest -RepoRoot $RepoRoot)
+    $coreRouteDelegateAuditFailures = @($coreRouteDelegateAudits | Where-Object { $_.Status -ne "matched" })
+    $coreRouteDelegateAuditStatus = if ($coreRouteDelegateAudits.Count -eq 0) {
+        "not-applicable"
+    }
+    elseif ($coreRouteDelegateAuditFailures.Count -eq 0) {
+        "matched"
+    }
+    else {
+        "failed"
+    }
+
     $tierRows = foreach ($tierName in $tierCounts.Keys) {
         [pscustomobject]@{
             Tier  = $tierName
@@ -1110,6 +1245,11 @@ function Get-DeploymentModeHazardInventory {
         BoundaryAnnotationAuditFailureCount = $boundaryAnnotationAuditFailures.Count
         BoundaryAnnotationAuditFailures     = @($boundaryAnnotationAuditFailures)
         BoundaryAnnotationAudits            = @($boundaryAnnotationAudits)
+        CoreRouteDelegateAuditStatus        = $coreRouteDelegateAuditStatus
+        CoreRouteDelegateAuditCount         = $coreRouteDelegateAudits.Count
+        CoreRouteDelegateAuditFailureCount  = $coreRouteDelegateAuditFailures.Count
+        CoreRouteDelegateAuditFailures      = @($coreRouteDelegateAuditFailures)
+        CoreRouteDelegateAudits             = @($coreRouteDelegateAudits)
         Packages                  = @($packages)
     }
 }
@@ -1680,6 +1820,11 @@ function Write-ValidationReport {
             [void]$sb.AppendLine("- Boundary annotation audit entries: $($hazardInventory.BoundaryAnnotationAuditCount)")
             [void]$sb.AppendLine("- Boundary annotation audit failures: $($hazardInventory.BoundaryAnnotationAuditFailureCount)")
         }
+        if ($hazardInventory.PSObject.Properties.Match("CoreRouteDelegateAuditStatus").Count -gt 0) {
+            [void]$sb.AppendLine("- Core operator route-delegate audit: $($hazardInventory.CoreRouteDelegateAuditStatus)")
+            [void]$sb.AppendLine("- Core route-delegate audit entries: $($hazardInventory.CoreRouteDelegateAuditCount)")
+            [void]$sb.AppendLine("- Core route-delegate audit failures: $($hazardInventory.CoreRouteDelegateAuditFailureCount)")
+        }
         [void]$sb.AppendLine("")
         [void]$sb.AppendLine("Tier counts:")
         foreach ($tier in @($hazardInventory.TierCounts)) {
@@ -1718,6 +1863,15 @@ function Write-ValidationReport {
             [void]$sb.AppendLine("Dynamic route boundary annotation audit:")
             foreach ($audit in @($hazardInventory.BoundaryAnnotationAudits)) {
                 [void]$sb.AppendLine("- **$($audit.PackageName)** at ``$($audit.Site)``: $($audit.Status), RequiresUnreferencedCode=$($audit.RequiresUnreferencedCode), RequiresDynamicCode=$($audit.RequiresDynamicCode)")
+            }
+        }
+        if ($hazardInventory.PSObject.Properties.Match("CoreRouteDelegateAudits").Count -gt 0 -and
+            @($hazardInventory.CoreRouteDelegateAudits).Count -gt 0) {
+            [void]$sb.AppendLine("")
+            [void]$sb.AppendLine("Core operator route-delegate audit:")
+            foreach ($audit in @($hazardInventory.CoreRouteDelegateAudits)) {
+                $failures = if (@($audit.Failures).Count -gt 0) { @($audit.Failures) -join ", " } else { "none" }
+                [void]$sb.AppendLine("- **$($audit.PackageName)** at ``$($audit.SourcePath)``: $($audit.Status), usesRequestDelegateHelper=$($audit.CoreRoutesUseRequestDelegateHelper), usesMinimalApiMapGet=$($audit.CoreRoutesUseMinimalApiMapGet), helperUsesMapMethods=$($audit.HelperUsesMapMethods), failures=$failures")
             }
         }
     }
@@ -1868,6 +2022,9 @@ function Invoke-DeploymentModeClaimValidation {
     if ($hazardInventory.PSObject.Properties.Match("BoundaryAnnotationAuditStatus").Count -gt 0) {
         Invoke-Step -Title "Boundary annotation audit" -Detail $hazardInventory.BoundaryAnnotationAuditStatus
     }
+    if ($hazardInventory.PSObject.Properties.Match("CoreRouteDelegateAuditStatus").Count -gt 0) {
+        Invoke-Step -Title "Core route-delegate audit" -Detail $hazardInventory.CoreRouteDelegateAuditStatus
+    }
 
     if ($aggregateVerdict -eq "claim-overstated") {
         throw "claim-overstated: see $($paths.JsonPath) for details"
@@ -1879,6 +2036,11 @@ function Invoke-DeploymentModeClaimValidation {
         $hazardInventory.BoundaryAnnotationAuditStatus -eq "failed") {
         $detailsPath = if ($paths.HazardInventoryPath) { $paths.HazardInventoryPath } else { $paths.JsonPath }
         throw "boundary-annotation-audit-failed: see $detailsPath for details"
+    }
+    if ($hazardInventory.PSObject.Properties.Match("CoreRouteDelegateAuditStatus").Count -gt 0 -and
+        $hazardInventory.CoreRouteDelegateAuditStatus -eq "failed") {
+        $detailsPath = if ($paths.HazardInventoryPath) { $paths.HazardInventoryPath } else { $paths.JsonPath }
+        throw "core-route-delegate-audit-failed: see $detailsPath for details"
     }
 
     return [pscustomobject]@{
