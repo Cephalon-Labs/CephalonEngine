@@ -1865,12 +1865,20 @@ function Invoke-DeploymentModeClaimValidation {
 
     Invoke-Step -Title "Aggregate verdict" -Detail $aggregateVerdict
     Invoke-Step -Title "Publish-probe release gate" -Detail $publishProbeGate.Status
+    if ($hazardInventory.PSObject.Properties.Match("BoundaryAnnotationAuditStatus").Count -gt 0) {
+        Invoke-Step -Title "Boundary annotation audit" -Detail $hazardInventory.BoundaryAnnotationAuditStatus
+    }
 
     if ($aggregateVerdict -eq "claim-overstated") {
         throw "claim-overstated: see $($paths.JsonPath) for details"
     }
     if ($publishProbeGate.Status -eq "failed") {
         throw "publish-probe-gate-failed: see $($paths.JsonPath) for details"
+    }
+    if ($hazardInventory.PSObject.Properties.Match("BoundaryAnnotationAuditStatus").Count -gt 0 -and
+        $hazardInventory.BoundaryAnnotationAuditStatus -eq "failed") {
+        $detailsPath = if ($paths.HazardInventoryPath) { $paths.HazardInventoryPath } else { $paths.JsonPath }
+        throw "boundary-annotation-audit-failed: see $detailsPath for details"
     }
 
     return [pscustomobject]@{

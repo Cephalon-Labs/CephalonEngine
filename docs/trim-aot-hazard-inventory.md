@@ -115,8 +115,9 @@ The current answer is explicit rather than silent. `MapCephalon()` carries
 annotations, and package-local trim/AOT analyzer builds now pass without hiding the support
 boundary from consumers. `ENG-537` adds a manifest-backed audit to keep that machine-checkable:
 `scripts/validate-deployment-mode-claims.ps1` reads the `dynamic-minimal-api-operator-route-binding`
-hazard, resolves its source window, and reports whether both public boundary annotations are still
-present. This is not a support promotion; it makes the boundary harder to drift silently.
+hazard, resolves its source window, reports whether both public boundary annotations are still
+present, and fails closed when the audit reports `failed`. This is not a support promotion; it makes
+the boundary harder to drift silently.
 
 | Package | File | Line | Pattern | Notes |
 | --- | --- | --- | --- | --- |

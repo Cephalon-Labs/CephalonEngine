@@ -253,7 +253,9 @@ Delivered:
 
 - added a manifest-backed dynamic route boundary annotation audit to `scripts/validate-deployment-mode-claims.ps1`
 - projected `BoundaryAnnotationAuditStatus`, counts, failures, and rows into the generated `HazardInventory` read model and README report
+- made the deployment-mode harness fail closed with `boundary-annotation-audit-failed` when the dynamic route boundary audit reports `failed`
 - added script-level Pester coverage for matched and missing-annotation outcomes
+- added integration coverage proving a failed boundary annotation audit still writes reports before throwing
 - added manifest Pester coverage that checks the real `dynamic-minimal-api-operator-route-binding` source window for both boundary annotations
 - refreshed deployment-mode support docs, the trim/AOT hazard inventory, ASP.NET Core component docs, roadmap/follow-up notes, and project memory
 

@@ -1345,6 +1345,65 @@ Describe "Invoke-DeploymentModeClaimValidation (integration)" {
         Test-Path -LiteralPath $result.Paths.MarkdownPath | Should -BeTrue
     }
 
+    It "throws after writing reports when the dynamic route boundary annotation audit fails" {
+        $repo = New-TempRepoRoot -Projects @()
+        $sourcePath = Join-Path $repo.Root "src\Cephalon.AspNetCore\Hosting\EngineWebApplicationExtensions.cs"
+        New-Item -Path (Split-Path -Parent $sourcePath) -ItemType Directory -Force | Out-Null
+        @(
+            'using System.Diagnostics.CodeAnalysis;',
+            'namespace Cephalon.AspNetCore.Hosting;',
+            'public static class EngineWebApplicationExtensions',
+            '{',
+            '    [RequiresDynamicCode("dynamic route binding")]',
+            '    public static void MapCephalon() { }',
+            '}'
+        ) | Set-Content -LiteralPath $sourcePath -Encoding UTF8
+
+        $manifestPath = Join-Path $repo.Root "deployment-mode-support.json"
+        @{
+            deploymentModes = @{
+                trim       = @{ status = "not-claimed" }
+                nativeAot  = @{ status = "not-claimed" }
+                singleFile = @{ status = "not-claimed" }
+            }
+            deploymentModeEligibility = @{
+                packages = @(
+                    @{
+                        packageName = "Cephalon.AspNetCore"
+                        nugetId = "Cephalon.AspNetCore"
+                        claimAuditTier = "high"
+                        supportedModes = @()
+                        requiredProjectProperties = @()
+                        knownHazards = @(
+                            @{
+                                kind = "dynamic-minimal-api-operator-route-binding"
+                                site = "src/Cephalon.AspNetCore/Hosting/EngineWebApplicationExtensions.cs:6"
+                                pattern = "MapCephalon dynamic route binding"
+                                remediation = "typed endpoints"
+                            }
+                        )
+                    }
+                )
+            }
+        } | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $manifestPath -Encoding UTF8
+
+        $outDir = Join-Path $repo.Root "out"
+        {
+            Invoke-DeploymentModeClaimValidation `
+                -DeploymentMode "nativeAot" `
+                -ManifestPath $manifestPath `
+                -OutputPath $outDir `
+                -RepoRoot $repo.Root `
+                -SkipPublish
+        } | Should -Throw "*boundary-annotation-audit-failed*"
+
+        $hazardInventoryPath = Join-Path $outDir "hazard-inventory.json"
+        Test-Path -LiteralPath $hazardInventoryPath | Should -BeTrue
+        $inventory = Get-Content -LiteralPath $hazardInventoryPath -Raw | ConvertFrom-Json
+        $inventory.BoundaryAnnotationAuditStatus | Should -Be "failed"
+        $inventory.BoundaryAnnotationAuditFailureCount | Should -Be 1
+    }
+
     It "throws when the aggregate verdict is claim-overstated" {
         $repo = New-TempRepoRoot -Projects @(
             @{ Name = "Cephalon.AlphaPack"; Properties = @{ TargetFramework = "net10.0" } }
