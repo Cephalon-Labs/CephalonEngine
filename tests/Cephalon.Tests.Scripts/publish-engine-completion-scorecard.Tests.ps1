@@ -204,9 +204,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.EvidenceSourceCount | Should -Be 13
         $json.Summary.EvidenceSourceReferenceCount | Should -Be 26
         $json.Summary.PlatformStatusCounts.'ready-for-preview' | Should -Be 3
-        $json.Summary.PlatformStatusCounts.partial | Should -Be 7
+        $json.Summary.PlatformStatusCounts.partial | Should -Be 8
         $json.Summary.PlatformStatusCounts.'not-claimed' | Should -Be 1
-        $json.Summary.PlatformStatusCounts.'needs-refresh' | Should -Be 1
+        $json.Summary.PlatformStatusCounts.'needs-refresh' | Should -Be 0
         $json.Summary.PackageStatusCounts.'ready-for-preview' | Should -Be 4
         $json.Summary.PackageStatusCounts.partial | Should -Be 5
         $json.Summary.PackageGAStatusCounts.partial | Should -Be 89

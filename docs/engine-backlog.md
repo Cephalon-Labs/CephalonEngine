@@ -452,6 +452,31 @@ Validation:
 - `dotnet build src/Cephalon.Behaviors/Cephalon.Behaviors.csproj -c Release --no-restore /p:BuildProjectReferences=false /p:IsAotCompatible=true /p:EnableTrimAnalyzer=true /p:EnableAotAnalyzer=true /p:WarningsAsErrors=IL2026%3BIL2067%3BIL2072%3BIL3050` passed
 - `pwsh ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode trim -PublishTargets samples/Cephalon.Sample.ModularMonolith/Cephalon.Sample.ModularMonolith.csproj -OutputPath artifacts/deployment-mode-claims-trim-focused` reported aggregate `not-claimed` and `PublishProbeGate=not-applicable`
 
+### ENG-530 Refresh .NET 11 May 9 readiness truth
+
+Status: done
+Iteration: Sprint 125
+Area: release-readiness / framework readiness
+Quality dimensions: Compatibility, Auditability, Maintainability, Usability
+
+Why:
+
+- the engine-completion scorecard still carried one `needs-refresh` platform gate for `.NET 11` even though the repo needed an explicit current official-source refresh rather than a baseline migration
+- `.NET 11` is version-sensitive and must be checked against Microsoft sources before release-readiness posture is updated
+- Cephalon must keep `net10.0` as the shipping floor until a deliberate migration lane is approved
+
+Delivered:
+
+- rechecked Microsoft Learn, the `.NET 11` download page, the .NET Blog, and the `dotnet/core` release-notes folder on May 9, 2026
+- confirmed `.NET 11` remains Preview 3 with SDK `11.0.100-preview.3.26207.106`, final release still expected in November 2026, and no Preview 4 release-notes folder yet
+- refreshed `docs/dotnet11-readiness.md`, project memory, the May architecture follow-up tracker, and the engine-completion scorecard so `.NET 11` reads as a refreshed `partial` assessment lane instead of stale `needs-refresh`
+- updated scorecard and CLI fixture counts from `needs-refresh=1 partial=7` to `needs-refresh=0 partial=8` while preserving the `net10.0` shipping floor
+
+Validation:
+
+- `pwsh ./scripts/measure-ci-flake-rate.ps1 -AllowUnavailable` confirmed the remaining SRE flake-rate baseline is still not promotable because the canonical repository reports zero matching completed Actions runs
+- scorecard publishing and focused script/tooling tests were refreshed in this slice
+
 ### ENG-529 Mark ASP.NET Core operator route AOT boundary
 
 Status: done

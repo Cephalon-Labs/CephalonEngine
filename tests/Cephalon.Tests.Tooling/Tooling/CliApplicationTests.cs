@@ -459,8 +459,8 @@ public sealed class CliApplicationTests
               "Summary": {
                 "PlatformGateCount": 12,
                 "BlockedPlatformGates": 0,
-                "NeedsRefreshGates": 1,
-                "PartialPlatformGates": 7,
+                "NeedsRefreshGates": 0,
+                "PartialPlatformGates": 8,
                 "NotClaimedPlatformGates": 1,
                 "EvidenceSourceReferenceCount": 20,
                 "PackageGAReadinessCount": 90,
@@ -524,7 +524,7 @@ public sealed class CliApplicationTests
 
             Assert.Equal(0, exitCode);
             Assert.Contains("[ok] Engine completion scorecard artifact: schema 1.12.0 from docs/engine-completion-scorecard.md; conformance matrix docs/conformance-matrix.md.", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("[warn] Engine completion scorecard platform gates: 12 gates; blocked 0, needs-refresh 1, partial 7, not-claimed 1.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[warn] Engine completion scorecard platform gates: 12 gates; blocked 0, needs-refresh 0, partial 8, not-claimed 1.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Engine completion scorecard evidence references: 20 repo-local references validated by the published artifact.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard package GA readiness: 90 package rows; partial 89, not-claimed 1, needs-refresh 0.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard deployment-mode evidence: 3 global claims; not-claimed 3, package-scoped claim packages 1, known hazards 14 across 2 packages, transitive audit entries 7, publish probes single-file-publish-gate; claims report artifacts/deployment-mode-claims-release/claim-validation-report.json, gate passed, targets 5, warnings 0, errors 0, truthful package claims 1.", stdout.ToString(), StringComparison.Ordinal);
@@ -592,8 +592,8 @@ public sealed class CliApplicationTests
               "Summary": {
                 "PlatformGateCount": 12,
                 "BlockedPlatformGates": 0,
-                "NeedsRefreshGates": 1,
-                "PartialPlatformGates": 7,
+                "NeedsRefreshGates": 0,
+                "PartialPlatformGates": 8,
                 "NotClaimedPlatformGates": 1,
                 "EvidenceSourceReferenceCount": 13,
                 "PackageGAReadinessCount": 88,
@@ -712,8 +712,8 @@ public sealed class CliApplicationTests
               "Summary": {
                 "PlatformGateCount": 12,
                 "BlockedPlatformGates": 0,
-                "NeedsRefreshGates": 1,
-                "PartialPlatformGates": 7,
+                "NeedsRefreshGates": 0,
+                "PartialPlatformGates": 8,
                 "NotClaimedPlatformGates": 1,
                 "EvidenceSourceReferenceCount": 20,
                 "PackageGAReadinessCount": 90,
@@ -871,8 +871,8 @@ public sealed class CliApplicationTests
               "Summary": {
                 "PlatformGateCount": 12,
                 "BlockedPlatformGates": 0,
-                "NeedsRefreshGates": 1,
-                "PartialPlatformGates": 7,
+                "NeedsRefreshGates": 0,
+                "PartialPlatformGates": 8,
                 "NotClaimedPlatformGates": 1,
                 "EvidenceSourceReferenceCount": 20,
                 "PackageGAReadinessCount": 90,
@@ -1024,8 +1024,8 @@ public sealed class CliApplicationTests
               "Summary": {
                 "PlatformGateCount": 12,
                 "BlockedPlatformGates": 0,
-                "NeedsRefreshGates": 1,
-                "PartialPlatformGates": 7,
+                "NeedsRefreshGates": 0,
+                "PartialPlatformGates": 8,
                 "NotClaimedPlatformGates": 1,
                 "EvidenceSourceReferenceCount": 20,
                 "PackageGAReadinessCount": 90,
@@ -1183,8 +1183,8 @@ public sealed class CliApplicationTests
               "Summary": {
                 "PlatformGateCount": 12,
                 "BlockedPlatformGates": 0,
-                "NeedsRefreshGates": 1,
-                "PartialPlatformGates": 7,
+                "NeedsRefreshGates": 0,
+                "PartialPlatformGates": 8,
                 "NotClaimedPlatformGates": 1,
                 "EvidenceSourceReferenceCount": 20,
                 "PackageGAReadinessCount": 90,
@@ -1342,8 +1342,8 @@ public sealed class CliApplicationTests
               "Summary": {
                 "PlatformGateCount": 12,
                 "BlockedPlatformGates": 0,
-                "NeedsRefreshGates": 1,
-                "PartialPlatformGates": 7,
+                "NeedsRefreshGates": 0,
+                "PartialPlatformGates": 8,
                 "NotClaimedPlatformGates": 1,
                 "EvidenceSourceReferenceCount": 20,
                 "PackageGAReadinessCount": 90,
@@ -1501,8 +1501,8 @@ public sealed class CliApplicationTests
               "Summary": {
                 "PlatformGateCount": 12,
                 "BlockedPlatformGates": 0,
-                "NeedsRefreshGates": 1,
-                "PartialPlatformGates": 7,
+                "NeedsRefreshGates": 0,
+                "PartialPlatformGates": 8,
                 "NotClaimedPlatformGates": 1,
                 "EvidenceSourceReferenceCount": 20,
                 "PackageGAReadinessCount": 90,
