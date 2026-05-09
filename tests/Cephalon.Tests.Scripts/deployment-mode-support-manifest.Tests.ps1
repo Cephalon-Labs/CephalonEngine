@@ -731,12 +731,12 @@ Describe "deploymentModeEligibility" {
 
         $source = Get-Content -LiteralPath $sourcePath -Raw -Encoding UTF8
         $cdcRuntimeStart = $source.IndexOf('MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes"', [System.StringComparison]::Ordinal)
-        $cdcReportStart = $source.IndexOf('engineGroup.MapPost("/cdc-capture-runtimes/{executionRuntimeId}/reports"', $cdcRuntimeStart, [System.StringComparison]::Ordinal)
+        $cdcReportStart = $source.IndexOf('MapPostAsyncResultRequestDelegate(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}/reports"', $cdcRuntimeStart, [System.StringComparison]::Ordinal)
         $helperStart = $source.IndexOf("private static void MapCdcCaptureRuntimeCollectionRoute(", [System.StringComparison]::Ordinal)
         $nextHelperStart = $source.IndexOf("private static TService GetRequiredService", [System.StringComparison]::Ordinal)
 
         $cdcRuntimeStart | Should -BeGreaterOrEqual 0 -Because "the CDC runtime read-only route block should stay visible"
-        $cdcReportStart | Should -BeGreaterThan $cdcRuntimeStart -Because "CDC runtime report submission remains the following POST action seam"
+        $cdcReportStart | Should -BeGreaterThan $cdcRuntimeStart -Because "CDC runtime report submission should remain the following POST action seam"
         $helperStart | Should -BeGreaterThan $cdcReportStart -Because "the CDC runtime request-delegate helper should follow the route catalog"
         $nextHelperStart | Should -BeGreaterThan $helperStart -Because "the CDC runtime helper block should stay parseable"
 
@@ -753,33 +753,50 @@ Describe "deploymentModeEligibility" {
         $helperBlock | Should -Match 'Func<HttpContext, ICdcCaptureExecutionRuntimeCatalog, IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor>> selector' -Because "collection routes should execute typed catalog selectors behind a request delegate"
     }
 
-    It "full ASP.NET Core read-only operator GET routes use request delegates instead of Minimal API delegate binding" {
+    It "full ASP.NET Core operator routes use request delegates instead of Minimal API delegate binding" {
         $sourcePath = Join-Path $script:repoRoot "src/Cephalon.AspNetCore/Hosting/EngineWebApplicationExtensions.cs"
         $sourcePath = $sourcePath -replace '/', [System.IO.Path]::DirectorySeparatorChar
+        $jsonContextPath = Join-Path $script:repoRoot "src/Cephalon.AspNetCore/AspNetCoreJsonSerializerContext.cs"
+        $jsonContextPath = $jsonContextPath -replace '/', [System.IO.Path]::DirectorySeparatorChar
         Test-Path -LiteralPath $sourcePath -PathType Leaf | Should -BeTrue
+        Test-Path -LiteralPath $jsonContextPath -PathType Leaf | Should -BeTrue
 
         $source = Get-Content -LiteralPath $sourcePath -Raw -Encoding UTF8
+        $jsonContext = Get-Content -LiteralPath $jsonContextPath -Raw -Encoding UTF8
         $mapCephalonStart = $source.IndexOf("public static WebApplication MapCephalon(", [System.StringComparison]::Ordinal)
         $catalogStart = $source.IndexOf("MapCephalonFullCommonOperatorRoutes(engineGroup);", $mapCephalonStart, [System.StringComparison]::Ordinal)
         $hostInfrastructureStart = $source.IndexOf("MapCephalonHostInfrastructure(", $catalogStart, [System.StringComparison]::Ordinal)
         $helperStart = $source.IndexOf("private static void MapGetAsyncResultRequestDelegate(", [System.StringComparison]::Ordinal)
+        $postHelperStart = $source.IndexOf("private static void MapPostAsyncResultRequestDelegate(", [System.StringComparison]::Ordinal)
 
         $mapCephalonStart | Should -BeGreaterOrEqual 0 -Because "the full operator route catalog should stay parseable"
         $catalogStart | Should -BeGreaterThan $mapCephalonStart -Because "the full/common operator catalog should follow the core-mode branch"
         $hostInfrastructureStart | Should -BeGreaterThan $catalogStart -Because "host infrastructure should still follow operator routes"
         $helperStart | Should -BeGreaterThan $hostInfrastructureStart -Because "async request-delegate helper should follow the route catalog"
+        $postHelperStart | Should -BeGreaterThan $hostInfrastructureStart -Because "POST request-delegate helper should follow the route catalog"
 
         $operatorRouteCatalog = $source.Substring($catalogStart, $hostInfrastructureStart - $catalogStart)
-        $operatorRouteCatalog | Should -Not -Match 'engineGroup\.MapGet\(' -Because "all read-only operator GET routes should avoid Minimal API delegate binding"
-        ([regex]::Matches($operatorRouteCatalog, 'engineGroup\.MapPost\(')).Count | Should -Be 6 -Because "bounded action POST seams remain explicit and unclaimed"
+        $operatorRouteCatalog | Should -Not -Match 'engineGroup\.MapGet\(' -Because "operator GET routes must avoid Minimal API delegate binding"
+        $operatorRouteCatalog | Should -Not -Match 'engineGroup\.MapPost\(' -Because "operator POST action seams must avoid Minimal API delegate binding"
         $operatorRouteCatalog | Should -Match '/event-publications/runtime/\{publicationId\}' -Because "eventing runtime read routes should stay in the request-delegate catalog"
+        $operatorRouteCatalog | Should -Match '/event-publications' -Because "eventing action route should stay in the request-delegate catalog"
         $operatorRouteCatalog | Should -Match '/agent-tool-runs/by-tool/\{toolId\}' -Because "agentics read routes should stay in the request-delegate catalog"
+        $operatorRouteCatalog | Should -Match '/agent-tools/\{toolId\}/runs' -Because "agentics action route should stay in the request-delegate catalog"
         $operatorRouteCatalog | Should -Match '/audit-history/export' -Because "async audit-history export GET should stay in the request-delegate catalog"
         $operatorRouteCatalog | Should -Match '/strangler-fig/cutover/resolve' -Because "async strangler-fig resolve GETs should stay in the request-delegate catalog"
         $operatorRouteCatalog | Should -Match '/backend-for-frontend/rest-documents/\{documentId\}' -Because "BFF document read routes should stay in the request-delegate catalog"
         $operatorRouteCatalog | Should -Match '/cell-traffic-automations/health-isolations/\{healthIsolationId\}' -Because "cell automation read routes should stay in the request-delegate catalog"
         $operatorRouteCatalog | Should -Match '/knowledge-indexes/\{collectionId\}' -Because "knowledge-index read routes should stay in the request-delegate catalog"
+        $operatorRouteCatalog | Should -Match '/knowledge-indexes/\{collectionId\}/queries' -Because "knowledge query action route should stay in the request-delegate catalog"
+        $operatorRouteCatalog | Should -Match '/knowledge-indexes/\{collectionId\}/reindex' -Because "knowledge reindex action route should stay in the request-delegate catalog"
         $source | Should -Match 'TryGetNullableDateTimeOffsetQueryValue' -Because "query-bound audit date filters should be parsed without Minimal API delegate binding"
+        $source | Should -Match 'ReadOptionalJsonBodyAsync' -Because "POST body binding should use source-generated JSON contracts behind request delegates"
+        $source | Should -Match 'CdcCaptureRuntimeObservationArray' -Because "CDC report bodies should use source-generated JSON metadata"
+        $jsonContext | Should -Match 'CdcCaptureRuntimeObservation\[\]' -Because "CDC report body arrays should be source-generated"
+        $jsonContext | Should -Match 'CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest' -Because "CDC command bodies should be source-generated"
+        $jsonContext | Should -Match 'EventPublicationHttpRequest' -Because "event publication bodies should be source-generated"
+        $jsonContext | Should -Match 'AgentToolExecutionHttpRequest' -Because "agent-tool execution bodies should be source-generated"
+        $jsonContext | Should -Match 'KnowledgeQueryHttpRequest' -Because "knowledge query bodies should be source-generated"
     }
 }
 

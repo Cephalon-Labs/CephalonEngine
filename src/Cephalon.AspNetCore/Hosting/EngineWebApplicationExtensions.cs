@@ -38,6 +38,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 
 namespace Cephalon.AspNetCore.Hosting;
 
@@ -747,29 +748,35 @@ public static class EngineWebApplicationExtensions
         MapCdcCaptureRuntimeDescriptorRoute(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}", "GetCephalonCdcCaptureRuntime", static runtime => runtime);
         if (app.Services.GetService<ICdcCaptureExecutionRuntimeReportSink>() is not null)
         {
-            engineGroup.MapPost("/cdc-capture-runtimes/{executionRuntimeId}/reports", async (
-                    string executionRuntimeId,
-                    CdcCaptureRuntimeObservation[]? observations,
-                    HttpContext httpContext,
-                    CancellationToken cancellationToken) =>
+            MapPostAsyncResultRequestDelegate(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}/reports", "PostCephalonCdcCaptureRuntimeReports", static async context =>
                 {
+                    var executionRuntimeId = GetRouteValue(context, "executionRuntimeId");
+                    var (observations, bodyError) = await ReadOptionalJsonBodyAsync(
+                            context,
+                            AspNetCoreJsonSerializerContext.Default.CdcCaptureRuntimeObservationArray)
+                        .ConfigureAwait(false);
+                    if (bodyError is not null)
+                    {
+                        return bodyError;
+                    }
+
                     if (observations is null || observations.Length == 0)
                     {
                         return Results.BadRequest("At least one CDC capture runtime observation is required.");
                     }
 
-                    var runtimeCatalog = httpContext.RequestServices.GetService<ICdcCaptureExecutionRuntimeCatalog>();
+                    var runtimeCatalog = context.RequestServices.GetService<ICdcCaptureExecutionRuntimeCatalog>();
                     var runtimeDescriptor = runtimeCatalog?.GetById(executionRuntimeId);
                     if (runtimeDescriptor is null)
                     {
                         return Results.NotFound();
                     }
 
-                    var reportSink = httpContext.RequestServices.GetRequiredService<ICdcCaptureExecutionRuntimeReportSink>();
+                    var reportSink = GetRequiredService<ICdcCaptureExecutionRuntimeReportSink>(context);
 
                     try
                     {
-                        await reportSink.ReportAsync(executionRuntimeId, observations, cancellationToken);
+                        await reportSink.ReportAsync(executionRuntimeId, observations, context.RequestAborted);
                     }
                     catch (InvalidOperationException exception)
                     {
@@ -777,26 +784,31 @@ public static class EngineWebApplicationExtensions
                     }
 
                     return Results.Ok(runtimeCatalog?.GetById(executionRuntimeId) ?? runtimeDescriptor);
-                })
-                .WithName("PostCephalonCdcCaptureRuntimeReports");
+                });
         }
         if (app.Services.GetService<ICdcCaptureExecutionRuntimeManagedConnectorCommandExecutor>() is not null)
         {
-            engineGroup.MapPost("/cdc-capture-runtimes/{executionRuntimeId}/commands/{operationId}", async (
-                    string executionRuntimeId,
-                    string operationId,
-                    CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest? request,
-                    HttpContext httpContext,
-                    CancellationToken cancellationToken) =>
+            MapPostAsyncResultRequestDelegate(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}/commands/{operationId}", "PostCephalonManagedConnectorCommandExecution", static async context =>
                 {
-                    var runtimeCatalog = httpContext.RequestServices.GetService<ICdcCaptureExecutionRuntimeCatalog>();
+                    var executionRuntimeId = GetRouteValue(context, "executionRuntimeId");
+                    var operationId = GetRouteValue(context, "operationId");
+                    var (request, bodyError) = await ReadOptionalJsonBodyAsync(
+                            context,
+                            AspNetCoreJsonSerializerContext.Default.CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest)
+                        .ConfigureAwait(false);
+                    if (bodyError is not null)
+                    {
+                        return bodyError;
+                    }
+
+                    var runtimeCatalog = context.RequestServices.GetService<ICdcCaptureExecutionRuntimeCatalog>();
                     var runtimeDescriptor = runtimeCatalog?.GetById(executionRuntimeId);
                     if (runtimeDescriptor is null)
                     {
                         return Results.NotFound();
                     }
 
-                    var executor = httpContext.RequestServices.GetRequiredService<ICdcCaptureExecutionRuntimeManagedConnectorCommandExecutor>();
+                    var executor = GetRequiredService<ICdcCaptureExecutionRuntimeManagedConnectorCommandExecutor>(context);
 
                     try
                     {
@@ -804,7 +816,7 @@ public static class EngineWebApplicationExtensions
                             executionRuntimeId,
                             operationId,
                             request,
-                            cancellationToken);
+                            context.RequestAborted);
 
                         return Results.Ok(result);
                     }
@@ -812,8 +824,7 @@ public static class EngineWebApplicationExtensions
                     {
                         return Results.BadRequest(exception.Message);
                     }
-                })
-                .WithName("PostCephalonManagedConnectorCommandExecution");
+                });
         }
         MapGetResultRequestDelegate(engineGroup, "/cdc-captures/runtime", "GetCephalonCdcCaptureStates", static context =>
             {
@@ -1000,14 +1011,22 @@ public static class EngineWebApplicationExtensions
 
                 return state is null ? Results.NotFound() : Results.Ok(state);
             });
-        engineGroup.MapPost(
-                "/event-publications",
-                async (
-                    [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] EventPublicationHttpRequest? request,
-                    HttpContext httpContext,
-                    CancellationToken cancellationToken) =>
+        MapPostAsyncResultRequestDelegate(
+            engineGroup,
+            "/event-publications",
+            "PublishCephalonEventPublication",
+            static async context =>
                 {
-                    var dispatcher = httpContext.RequestServices.GetService<IEventPublicationDispatcher>();
+                    var (request, bodyError) = await ReadOptionalJsonBodyAsync(
+                            context,
+                            AspNetCoreJsonSerializerContext.Default.EventPublicationHttpRequest)
+                        .ConfigureAwait(false);
+                    if (bodyError is not null)
+                    {
+                        return bodyError;
+                    }
+
+                    var dispatcher = context.RequestServices.GetService<IEventPublicationDispatcher>();
                     if (dispatcher is null)
                     {
                         return Results.NotFound(new
@@ -1018,8 +1037,8 @@ public static class EngineWebApplicationExtensions
 
                     try
                     {
-                        var publicationRequest = CreateEventPublicationRequest(request, httpContext);
-                        var result = await dispatcher.PublishAsync(publicationRequest, cancellationToken).ConfigureAwait(false);
+                        var publicationRequest = CreateEventPublicationRequest(request, context);
+                        var result = await dispatcher.PublishAsync(publicationRequest, context.RequestAborted).ConfigureAwait(false);
                         return Results.Ok(result);
                     }
                     catch (ArgumentException exception)
@@ -1038,8 +1057,7 @@ public static class EngineWebApplicationExtensions
                             detail: exception.Message,
                             statusCode: StatusCodes.Status500InternalServerError);
                     }
-                })
-            .WithName("PublishCephalonEventPublication");
+                });
         MapGetResultRequestDelegate(engineGroup, "/agent-tool-runs", "GetCephalonAgentToolRuns", static context =>
             {
                 var runs = context.RequestServices
@@ -1106,15 +1124,23 @@ public static class EngineWebApplicationExtensions
 
                 return Results.Ok(runs);
             });
-        engineGroup.MapPost(
-                "/agent-tools/{toolId}/runs",
-                async (
-                    string toolId,
-                    [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] AgentToolExecutionHttpRequest? request,
-                    HttpContext httpContext,
-                    CancellationToken cancellationToken) =>
+        MapPostAsyncResultRequestDelegate(
+            engineGroup,
+            "/agent-tools/{toolId}/runs",
+            "RunCephalonAgentTool",
+            static async context =>
                 {
-                    var dispatcher = httpContext.RequestServices.GetService<IAgentToolDispatcher>();
+                    var toolId = GetRouteValue(context, "toolId");
+                    var (request, bodyError) = await ReadOptionalJsonBodyAsync(
+                            context,
+                            AspNetCoreJsonSerializerContext.Default.AgentToolExecutionHttpRequest)
+                        .ConfigureAwait(false);
+                    if (bodyError is not null)
+                    {
+                        return bodyError;
+                    }
+
+                    var dispatcher = context.RequestServices.GetService<IAgentToolDispatcher>();
                     if (dispatcher is null)
                     {
                         return Results.NotFound(new
@@ -1125,8 +1151,8 @@ public static class EngineWebApplicationExtensions
 
                     try
                     {
-                        var executionRequest = CreateAgentToolExecutionRequest(toolId, request, httpContext);
-                        var result = await dispatcher.ExecuteAsync(executionRequest, cancellationToken).ConfigureAwait(false);
+                        var executionRequest = CreateAgentToolExecutionRequest(toolId, request, context);
+                        var result = await dispatcher.ExecuteAsync(executionRequest, context.RequestAborted).ConfigureAwait(false);
                         return Results.Ok(result);
                     }
                     catch (ArgumentException exception)
@@ -1150,8 +1176,7 @@ public static class EngineWebApplicationExtensions
                             detail: exception.Message,
                             statusCode: StatusCodes.Status500InternalServerError);
                     }
-                })
-            .WithName("RunCephalonAgentTool");
+                });
         MapGetResultRequestDelegate(engineGroup, "/event-subscription-readiness", "GetCephalonEventSubscriptionExecutionReadiness", static context =>
             {
                 var readiness = context.RequestServices
@@ -1583,15 +1608,23 @@ public static class EngineWebApplicationExtensions
 
                 return state is null ? Results.NotFound() : Results.Ok(state);
             });
-        engineGroup.MapPost(
-                "/knowledge-indexes/{collectionId}/queries",
-                async (
-                    string collectionId,
-                    [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] KnowledgeQueryHttpRequest? request,
-                    HttpContext httpContext,
-                    CancellationToken cancellationToken) =>
+        MapPostAsyncResultRequestDelegate(
+            engineGroup,
+            "/knowledge-indexes/{collectionId}/queries",
+            "QueryCephalonKnowledgeIndex",
+            static async context =>
                 {
-                    var queryEngine = httpContext.RequestServices.GetService<IKnowledgeQueryEngine>();
+                    var collectionId = GetRouteValue(context, "collectionId");
+                    var (request, bodyError) = await ReadOptionalJsonBodyAsync(
+                            context,
+                            AspNetCoreJsonSerializerContext.Default.KnowledgeQueryHttpRequest)
+                        .ConfigureAwait(false);
+                    if (bodyError is not null)
+                    {
+                        return bodyError;
+                    }
+
+                    var queryEngine = context.RequestServices.GetService<IKnowledgeQueryEngine>();
                     if (queryEngine is null)
                     {
                         return Results.NotFound(new
@@ -1602,8 +1635,8 @@ public static class EngineWebApplicationExtensions
 
                     try
                     {
-                        var queryRequest = CreateKnowledgeQueryRequest(collectionId, request, httpContext);
-                        var result = await queryEngine.QueryAsync(queryRequest, cancellationToken).ConfigureAwait(false);
+                        var queryRequest = CreateKnowledgeQueryRequest(collectionId, request, context);
+                        var result = await queryEngine.QueryAsync(queryRequest, context.RequestAborted).ConfigureAwait(false);
                         return Results.Ok(result);
                     }
                     catch (ArgumentException exception)
@@ -1622,19 +1655,18 @@ public static class EngineWebApplicationExtensions
                             detail: exception.Message,
                             statusCode: StatusCodes.Status500InternalServerError);
                     }
-                })
-            .WithName("QueryCephalonKnowledgeIndex");
-        engineGroup.MapPost(
-                "/knowledge-indexes/{collectionId}/reindex",
-                async (
-                    string collectionId,
-                    [FromQuery] string? runId,
-                    [FromQuery] string? actorId,
-                    [FromQuery] string? correlationId,
-                    HttpContext httpContext,
-                    CancellationToken cancellationToken) =>
+                });
+        MapPostAsyncResultRequestDelegate(
+            engineGroup,
+            "/knowledge-indexes/{collectionId}/reindex",
+            "ReindexCephalonKnowledgeIndex",
+            static async context =>
                 {
-                    var indexer = httpContext.RequestServices.GetService<IKnowledgeIndexer>();
+                    var collectionId = GetRouteValue(context, "collectionId");
+                    var runId = GetQueryValue(context, "runId");
+                    var actorId = GetQueryValue(context, "actorId");
+                    var correlationId = GetQueryValue(context, "correlationId");
+                    var indexer = context.RequestServices.GetService<IKnowledgeIndexer>();
                     if (indexer is null)
                     {
                         return Results.NotFound(new
@@ -1648,15 +1680,15 @@ public static class EngineWebApplicationExtensions
                         var request = new KnowledgeIndexingRequest(
                             collectionId,
                             string.IsNullOrWhiteSpace(runId) ? CreateKnowledgeReindexRunId() : runId,
-                            ResolveKnowledgeOperatorActorId(httpContext, actorId),
-                            string.IsNullOrWhiteSpace(correlationId) ? httpContext.TraceIdentifier : correlationId,
+                            ResolveKnowledgeOperatorActorId(context, actorId),
+                            string.IsNullOrWhiteSpace(correlationId) ? context.TraceIdentifier : correlationId,
                             metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
                             {
                                 ["trigger"] = "aspnetcore-operator-route",
                                 ["route"] = "/engine/knowledge-indexes/{collectionId}/reindex"
                             });
 
-                        var result = await indexer.IndexAsync(request, cancellationToken).ConfigureAwait(false);
+                        var result = await indexer.IndexAsync(request, context.RequestAborted).ConfigureAwait(false);
                         return Results.Ok(result);
                     }
                     catch (ArgumentException exception)
@@ -1675,8 +1707,7 @@ public static class EngineWebApplicationExtensions
                             detail: exception.Message,
                             statusCode: StatusCodes.Status500InternalServerError);
                     }
-                })
-            .WithName("ReindexCephalonKnowledgeIndex");
+                });
         MapGetResultRequestDelegate(engineGroup, "/transports", "GetCephalonTransports", static context =>
             TypedResults.Ok(GetRequiredService<RuntimeManifest>(context).AppProfile.Transports));
         MapGetResultRequestDelegate(engineGroup, "/dependencies", "GetCephalonDependencies", static context =>
@@ -1860,6 +1891,16 @@ public static class EngineWebApplicationExtensions
             .WithName(endpointName);
     }
 
+    private static void MapPostRequestDelegate(
+        RouteGroupBuilder engineGroup,
+        string pattern,
+        string endpointName,
+        RequestDelegate requestDelegate)
+    {
+        engineGroup.MapMethods(pattern, [HttpMethods.Post], requestDelegate)
+            .WithName(endpointName);
+    }
+
     private static void MapGetResultRequestDelegate(
         RouteGroupBuilder engineGroup,
         string pattern,
@@ -1877,6 +1918,19 @@ public static class EngineWebApplicationExtensions
         Func<HttpContext, Task<IResult>> handler)
     {
         MapGetRequestDelegate(engineGroup, pattern, endpointName, async context =>
+        {
+            var result = await handler(context).ConfigureAwait(false);
+            await result.ExecuteAsync(context).ConfigureAwait(false);
+        });
+    }
+
+    private static void MapPostAsyncResultRequestDelegate(
+        RouteGroupBuilder engineGroup,
+        string pattern,
+        string endpointName,
+        Func<HttpContext, Task<IResult>> handler)
+    {
+        MapPostRequestDelegate(engineGroup, pattern, endpointName, async context =>
         {
             var result = await handler(context).ConfigureAwait(false);
             await result.ExecuteAsync(context).ConfigureAwait(false);
@@ -2018,6 +2072,54 @@ public static class EngineWebApplicationExtensions
         value = null;
         error = Results.BadRequest($"Query parameter '{name}' must be a valid date/time offset.");
         return false;
+    }
+
+    private static async Task<(TValue? Value, IResult? Error)> ReadOptionalJsonBodyAsync<TValue>(
+        HttpContext context,
+        JsonTypeInfo<TValue> jsonTypeInfo)
+    {
+        if (context.Request.ContentLength == 0)
+        {
+            return (default, null);
+        }
+
+        try
+        {
+            if (context.Request.ContentLength is null)
+            {
+                using var buffer = new MemoryStream();
+                await context.Request.Body.CopyToAsync(buffer, context.RequestAborted).ConfigureAwait(false);
+                if (buffer.Length == 0)
+                {
+                    return (default, null);
+                }
+
+                buffer.Position = 0;
+                var bufferedValue = await JsonSerializer.DeserializeAsync(
+                        buffer,
+                        jsonTypeInfo,
+                        context.RequestAborted)
+                    .ConfigureAwait(false);
+
+                return (bufferedValue, null);
+            }
+
+            var value = await JsonSerializer.DeserializeAsync(
+                    context.Request.Body,
+                    jsonTypeInfo,
+                    context.RequestAborted)
+                .ConfigureAwait(false);
+
+            return (value, null);
+        }
+        catch (JsonException exception)
+        {
+            return (default, Results.BadRequest($"Invalid JSON request body: {exception.Message}"));
+        }
+        catch (NotSupportedException exception)
+        {
+            return (default, Results.BadRequest($"Unsupported JSON request body: {exception.Message}"));
+        }
     }
 
     private static Task WriteOkAsync<TValue>(HttpContext context, TValue value)

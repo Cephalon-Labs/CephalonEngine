@@ -1,6 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Cephalon.Abstractions.Audit;
+using Cephalon.Abstractions.Data;
 using Cephalon.AspNetCore.Health;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Transports.Rest;
@@ -13,6 +14,8 @@ namespace Cephalon.AspNetCore;
 [JsonSerializable(typeof(AuditHistoryEntry))]
 [JsonSerializable(typeof(StranglerFigUnsupportedEndpointProblem))]
 [JsonSerializable(typeof(RateLimitRejectionProblem))]
+[JsonSerializable(typeof(CdcCaptureRuntimeObservation[]))]
+[JsonSerializable(typeof(CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest))]
 [JsonSerializable(typeof(EventPublicationHttpRequest))]
 [JsonSerializable(typeof(AgentToolExecutionHttpRequest))]
 [JsonSerializable(typeof(KnowledgeQueryHttpRequest))]
