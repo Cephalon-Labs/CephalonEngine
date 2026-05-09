@@ -17,8 +17,9 @@
                                   a mode carry the expected per-package project properties?
     5. publish-probe policy     — emit the manifest-backed release-validation gate posture
                                   so audit-only runs are visible in release artifacts.
-    6. hazard inventory         — emit the manifest-backed per-package hazard and scoped-claim
-                                  inventory for release managers and follow-up automation.
+    6. hazard inventory         — emit the manifest-backed per-package hazard, scoped-claim,
+                                  transitive-hazard, and boundary-annotation inventory for
+                                  release managers and follow-up automation.
 
     The harness then computes a per-mode verdict and an aggregate verdict and writes both a
     machine-readable JSON report and a human-readable Markdown report under the output dir.
@@ -848,6 +849,97 @@ function Get-DeploymentModeTransitiveHazardAudit {
     }
 }
 
+function Get-DeploymentModeBoundaryAnnotationAudits {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)] $Manifest,
+        [string]$RepoRoot = ""
+    )
+
+    $rows = @()
+    if ($null -eq $Manifest -or
+        -not $Manifest.PSObject.Properties.Match("deploymentModeEligibility").Count -or
+        $null -eq $Manifest.deploymentModeEligibility -or
+        -not $Manifest.deploymentModeEligibility.PSObject.Properties.Match("packages").Count) {
+        return @()
+    }
+
+    foreach ($pkg in @($Manifest.deploymentModeEligibility.packages)) {
+        if ($null -eq $pkg -or $pkg.PSObject.Properties.Match("knownHazards").Count -eq 0) { continue }
+
+        $packageName = if ($pkg.PSObject.Properties.Match("packageName").Count -gt 0) { [string]$pkg.packageName } else { "" }
+        foreach ($hazard in @($pkg.knownHazards)) {
+            if ($null -eq $hazard -or $hazard.PSObject.Properties.Match("kind").Count -eq 0) { continue }
+
+            $kind = [string]$hazard.kind
+            if (-not [string]::Equals($kind, "dynamic-minimal-api-operator-route-binding", [System.StringComparison]::OrdinalIgnoreCase)) {
+                continue
+            }
+
+            $site = if ($hazard.PSObject.Properties.Match("site").Count -gt 0) { [string]$hazard.site } else { "" }
+            $sourceRelativePath = $site
+            $lineNumber = 0
+            $match = [regex]::Match($site.Trim(), '^(?<path>.+?\.cs)(?::(?<line>\d+))?$')
+            if ($match.Success) {
+                $sourceRelativePath = $match.Groups["path"].Value
+                if ($match.Groups["line"].Success) {
+                    $lineNumber = [int]$match.Groups["line"].Value
+                }
+            }
+
+            $resolvedPath = $sourceRelativePath
+            if (-not [System.IO.Path]::IsPathRooted($resolvedPath) -and -not [string]::IsNullOrWhiteSpace($RepoRoot)) {
+                $resolvedPath = Join-Path $RepoRoot ($sourceRelativePath -replace '/', [System.IO.Path]::DirectorySeparatorChar)
+            }
+
+            $sourceExists = Test-Path -LiteralPath $resolvedPath -PathType Leaf
+            $hasRequiresUnreferencedCode = $false
+            $hasRequiresDynamicCode = $false
+            if ($sourceExists) {
+                $sourceLines = @(Get-Content -LiteralPath $resolvedPath -Encoding UTF8)
+                if ($lineNumber -gt 0 -and $sourceLines.Count -gt 0 -and $lineNumber -le $sourceLines.Count) {
+                    $start = [Math]::Max(1, $lineNumber - 8)
+                    $end = [Math]::Min($sourceLines.Count, $lineNumber + 8)
+                    $window = $sourceLines[($start - 1)..($end - 1)] -join "`n"
+                }
+                elseif ($lineNumber -eq 0) {
+                    $window = $sourceLines -join "`n"
+                }
+                else {
+                    $window = ""
+                }
+
+                $hasRequiresUnreferencedCode = $window -match '\[RequiresUnreferencedCode\('
+                $hasRequiresDynamicCode = $window -match '\[RequiresDynamicCode\('
+            }
+
+            $status = if (-not $sourceExists) {
+                "missing-source"
+            }
+            elseif ($hasRequiresUnreferencedCode -and $hasRequiresDynamicCode) {
+                "annotated"
+            }
+            else {
+                "missing-annotation"
+            }
+
+            $rows += [pscustomobject]@{
+                PackageName              = $packageName
+                HazardKind               = $kind
+                Site                     = $site
+                SourcePath               = $sourceRelativePath
+                LineNumber               = $lineNumber
+                SourceExists             = $sourceExists
+                RequiresUnreferencedCode = $hasRequiresUnreferencedCode
+                RequiresDynamicCode      = $hasRequiresDynamicCode
+                Status                   = $status
+            }
+        }
+    }
+
+    return @($rows)
+}
+
 function Get-DeploymentModeHazardInventory {
     [CmdletBinding()]
     param(
@@ -953,6 +1045,17 @@ function Get-DeploymentModeHazardInventory {
     }
 
     $knownTransitiveHazardAudit = Get-DeploymentModeTransitiveHazardAudit -Manifest $Manifest -RepoRoot $RepoRoot
+    $boundaryAnnotationAudits = @(Get-DeploymentModeBoundaryAnnotationAudits -Manifest $Manifest -RepoRoot $RepoRoot)
+    $boundaryAnnotationAuditFailures = @($boundaryAnnotationAudits | Where-Object { $_.Status -ne "annotated" })
+    $boundaryAnnotationAuditStatus = if ($boundaryAnnotationAudits.Count -eq 0) {
+        "not-applicable"
+    }
+    elseif ($boundaryAnnotationAuditFailures.Count -eq 0) {
+        "matched"
+    }
+    else {
+        "failed"
+    }
 
     $tierRows = foreach ($tierName in $tierCounts.Keys) {
         [pscustomobject]@{
@@ -1002,6 +1105,11 @@ function Get-DeploymentModeHazardInventory {
         SupportedModeClaims       = @($supportedModeRows)
         KnownTransitiveHazards    = @($knownTransitiveHazards)
         KnownTransitiveHazardAudit = $knownTransitiveHazardAudit
+        BoundaryAnnotationAuditStatus       = $boundaryAnnotationAuditStatus
+        BoundaryAnnotationAuditCount        = $boundaryAnnotationAudits.Count
+        BoundaryAnnotationAuditFailureCount = $boundaryAnnotationAuditFailures.Count
+        BoundaryAnnotationAuditFailures     = @($boundaryAnnotationAuditFailures)
+        BoundaryAnnotationAudits            = @($boundaryAnnotationAudits)
         Packages                  = @($packages)
     }
 }
@@ -1567,6 +1675,11 @@ function Write-ValidationReport {
         [void]$sb.AppendLine("- Packages with known hazards: $($hazardInventory.PackagesWithKnownHazards)")
         [void]$sb.AppendLine("- Known hazard entries: $($hazardInventory.TotalKnownHazards)")
         [void]$sb.AppendLine("- Packages with scoped claims: $($hazardInventory.PackagesWithScopedClaims)")
+        if ($hazardInventory.PSObject.Properties.Match("BoundaryAnnotationAuditStatus").Count -gt 0) {
+            [void]$sb.AppendLine("- Dynamic route boundary annotation audit: $($hazardInventory.BoundaryAnnotationAuditStatus)")
+            [void]$sb.AppendLine("- Boundary annotation audit entries: $($hazardInventory.BoundaryAnnotationAuditCount)")
+            [void]$sb.AppendLine("- Boundary annotation audit failures: $($hazardInventory.BoundaryAnnotationAuditFailureCount)")
+        }
         [void]$sb.AppendLine("")
         [void]$sb.AppendLine("Tier counts:")
         foreach ($tier in @($hazardInventory.TierCounts)) {
@@ -1597,6 +1710,14 @@ function Write-ValidationReport {
                 $modes = if (@($entry.Modes).Count -gt 0) { @($entry.Modes) -join ", " } else { "none" }
                 $packages = if (@($entry.MatchedPackageIds).Count -gt 0) { @($entry.MatchedPackageIds) -join ", " } else { "none" }
                 [void]$sb.AppendLine("- **$($entry.PackagePattern)**: $($entry.Status), lock-file matches=$($entry.MatchCount), modes=$modes, packages=$packages")
+            }
+        }
+        if ($hazardInventory.PSObject.Properties.Match("BoundaryAnnotationAudits").Count -gt 0 -and
+            @($hazardInventory.BoundaryAnnotationAudits).Count -gt 0) {
+            [void]$sb.AppendLine("")
+            [void]$sb.AppendLine("Dynamic route boundary annotation audit:")
+            foreach ($audit in @($hazardInventory.BoundaryAnnotationAudits)) {
+                [void]$sb.AppendLine("- **$($audit.PackageName)** at ``$($audit.Site)``: $($audit.Status), RequiresUnreferencedCode=$($audit.RequiresUnreferencedCode), RequiresDynamicCode=$($audit.RequiresDynamicCode)")
             }
         }
     }

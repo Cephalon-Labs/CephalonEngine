@@ -1208,12 +1208,106 @@ Describe "Get-DeploymentModeHazardInventory" {
             Should -Contain "Azure.Identity"
     }
 
+    It "marks dynamic Minimal API boundary hazards as matched when the source site carries trim and AOT annotations" {
+        $repo = New-TempRepoRoot -Projects @()
+        $sourcePath = Join-Path $repo.Root "src\Cephalon.AspNetCore\Hosting\EngineWebApplicationExtensions.cs"
+        New-Item -Path (Split-Path -Parent $sourcePath) -ItemType Directory -Force | Out-Null
+        @(
+            'using System.Diagnostics.CodeAnalysis;',
+            'namespace Cephalon.AspNetCore.Hosting;',
+            'public static class EngineWebApplicationExtensions',
+            '{',
+            '    [RequiresUnreferencedCode("dynamic route binding")]',
+            '    [RequiresDynamicCode("dynamic route binding")]',
+            '    public static void MapCephalon() { }',
+            '}'
+        ) | Set-Content -LiteralPath $sourcePath -Encoding UTF8
+
+        $manifest = [pscustomobject]@{
+            deploymentModeEligibility = [pscustomobject]@{
+                packages = @(
+                    [pscustomobject]@{
+                        packageName = "Cephalon.AspNetCore"
+                        nugetId = "Cephalon.AspNetCore"
+                        claimAuditTier = "high"
+                        supportedModes = @()
+                        requiredProjectProperties = @()
+                        knownHazards = @(
+                            [pscustomobject]@{
+                                kind = "dynamic-minimal-api-operator-route-binding"
+                                site = "src/Cephalon.AspNetCore/Hosting/EngineWebApplicationExtensions.cs:7"
+                                pattern = "MapCephalon dynamic route binding"
+                                remediation = "typed endpoints"
+                            }
+                        )
+                    }
+                )
+            }
+        }
+
+        $inventory = Get-DeploymentModeHazardInventory -Manifest $manifest -RepoRoot $repo.Root
+
+        $inventory.BoundaryAnnotationAuditStatus | Should -Be "matched"
+        $inventory.BoundaryAnnotationAuditCount | Should -Be 1
+        $inventory.BoundaryAnnotationAuditFailureCount | Should -Be 0
+        $inventory.BoundaryAnnotationAudits[0].RequiresUnreferencedCode | Should -BeTrue
+        $inventory.BoundaryAnnotationAudits[0].RequiresDynamicCode | Should -BeTrue
+        $inventory.BoundaryAnnotationAudits[0].Status | Should -Be "annotated"
+    }
+
+    It "marks dynamic Minimal API boundary hazards as failed when either required annotation is missing" {
+        $repo = New-TempRepoRoot -Projects @()
+        $sourcePath = Join-Path $repo.Root "src\Cephalon.AspNetCore\Hosting\EngineWebApplicationExtensions.cs"
+        New-Item -Path (Split-Path -Parent $sourcePath) -ItemType Directory -Force | Out-Null
+        @(
+            'using System.Diagnostics.CodeAnalysis;',
+            'namespace Cephalon.AspNetCore.Hosting;',
+            'public static class EngineWebApplicationExtensions',
+            '{',
+            '    [RequiresDynamicCode("dynamic route binding")]',
+            '    public static void MapCephalon() { }',
+            '}'
+        ) | Set-Content -LiteralPath $sourcePath -Encoding UTF8
+
+        $manifest = [pscustomobject]@{
+            deploymentModeEligibility = [pscustomobject]@{
+                packages = @(
+                    [pscustomobject]@{
+                        packageName = "Cephalon.AspNetCore"
+                        nugetId = "Cephalon.AspNetCore"
+                        claimAuditTier = "high"
+                        supportedModes = @()
+                        requiredProjectProperties = @()
+                        knownHazards = @(
+                            [pscustomobject]@{
+                                kind = "dynamic-minimal-api-operator-route-binding"
+                                site = "src/Cephalon.AspNetCore/Hosting/EngineWebApplicationExtensions.cs:6"
+                                pattern = "MapCephalon dynamic route binding"
+                                remediation = "typed endpoints"
+                            }
+                        )
+                    }
+                )
+            }
+        }
+
+        $inventory = Get-DeploymentModeHazardInventory -Manifest $manifest -RepoRoot $repo.Root
+
+        $inventory.BoundaryAnnotationAuditStatus | Should -Be "failed"
+        $inventory.BoundaryAnnotationAuditCount | Should -Be 1
+        $inventory.BoundaryAnnotationAuditFailureCount | Should -Be 1
+        $inventory.BoundaryAnnotationAuditFailures[0].RequiresUnreferencedCode | Should -BeFalse
+        $inventory.BoundaryAnnotationAuditFailures[0].RequiresDynamicCode | Should -BeTrue
+        $inventory.BoundaryAnnotationAuditFailures[0].Status | Should -Be "missing-annotation"
+    }
+
     It "returns an empty inventory when the manifest has no eligibility block" {
         $inventory = Get-DeploymentModeHazardInventory -Manifest ([pscustomobject]@{ deploymentModes = @{} })
         $inventory.TotalPackages | Should -Be 0
         $inventory.TotalKnownHazards | Should -Be 0
         $inventory.Packages.Count | Should -Be 0
         $inventory.KnownTransitiveHazardAudit.Status | Should -Be "not-configured"
+        $inventory.BoundaryAnnotationAuditStatus | Should -Be "not-applicable"
     }
 }
 

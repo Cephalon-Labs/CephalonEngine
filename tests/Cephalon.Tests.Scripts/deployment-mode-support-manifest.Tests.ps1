@@ -595,6 +595,47 @@ Describe "deploymentModeEligibility" {
             }
         }
     }
+
+    It "dynamic Minimal API operator-route hazards point at source sites carrying trim and AOT boundary annotations" {
+        $dynamicHazards = @(
+            foreach ($pkg in $script:manifest.deploymentModeEligibility.packages) {
+                foreach ($hz in @($pkg.knownHazards)) {
+                    if ([string]::Equals([string]$hz.kind, "dynamic-minimal-api-operator-route-binding", [System.StringComparison]::OrdinalIgnoreCase)) {
+                        [pscustomobject]@{
+                            PackageName = [string]$pkg.packageName
+                            Hazard = $hz
+                        }
+                    }
+                }
+            }
+        )
+
+        $dynamicHazards.Count | Should -BeGreaterThan 0 -Because "the ASP.NET Core route boundary hazard should stay manifest-backed"
+        foreach ($row in $dynamicHazards) {
+            $rawSite = [string]$row.Hazard.site
+            $match = [regex]::Match($rawSite.Trim(), '^(?<path>.+?\.cs)(?::(?<line>\d+))?')
+            $match.Success | Should -BeTrue -Because "dynamic route hazard '$rawSite' on package '$($row.PackageName)' must include a .cs source path"
+
+            $relativePath = $match.Groups["path"].Value
+            $lineNumber = if ($match.Groups["line"].Success) { [int]$match.Groups["line"].Value } else { 0 }
+            $resolved = Join-Path $script:repoRoot ($relativePath -replace '/', [System.IO.Path]::DirectorySeparatorChar)
+
+            Test-Path -LiteralPath $resolved -PathType Leaf | Should -BeTrue -Because "dynamic route hazard '$rawSite' on package '$($row.PackageName)' must resolve to an existing file"
+            $sourceLines = @(Get-Content -LiteralPath $resolved -Encoding UTF8)
+            if ($lineNumber -gt 0) {
+                ($lineNumber -le $sourceLines.Count) | Should -BeTrue -Because "dynamic route hazard '$rawSite' line number must remain inside '$relativePath'"
+                $start = [Math]::Max(1, $lineNumber - 8)
+                $end = [Math]::Min($sourceLines.Count, $lineNumber + 8)
+                $window = $sourceLines[($start - 1)..($end - 1)] -join "`n"
+            }
+            else {
+                $window = $sourceLines -join "`n"
+            }
+
+            $window | Should -Match '\[RequiresUnreferencedCode\(' -Because "dynamic route hazard '$rawSite' must surface the trim boundary to consumers and analyzers"
+            $window | Should -Match '\[RequiresDynamicCode\(' -Because "dynamic route hazard '$rawSite' must surface the Native AOT boundary to consumers and analyzers"
+        }
+    }
 }
 
 Describe "knownTransitiveHazards" {

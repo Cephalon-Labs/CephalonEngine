@@ -235,6 +235,34 @@ Validation:
 - `gh api repos/Cephalon-Labs/CephalonEngine/actions/runs?per_page=20` returned `total_count=0`, so the SLI remains pending
 - `Invoke-Pester -Path tests\Cephalon.Tests.Scripts\measure-ci-flake-rate.Tests.ps1 -Output Detailed`
 
+### ENG-537 Deployment-mode boundary annotation audit
+
+Status: done
+Estimate: 0.5
+Iteration: Sprint 125
+Area: release-readiness / deployment-mode / ASP.NET Core
+Quality dimensions: Auditability, Compatibility, Maintainability, Reliability
+
+Why:
+
+- `Cephalon.AspNetCore` correctly keeps the full `/engine/*` operator route surface as a dynamic Minimal API boundary rather than a Native AOT support claim
+- the manifest recorded that boundary and the source carried `RequiresUnreferencedCode` / `RequiresDynamicCode`, but the harness did not yet prove those two pieces still matched
+- release managers need drift-proof evidence that the annotated route boundary remains visible before any future adapter-level trim/AOT promotion work starts
+
+Delivered:
+
+- added a manifest-backed dynamic route boundary annotation audit to `scripts/validate-deployment-mode-claims.ps1`
+- projected `BoundaryAnnotationAuditStatus`, counts, failures, and rows into the generated `HazardInventory` read model and README report
+- added script-level Pester coverage for matched and missing-annotation outcomes
+- added manifest Pester coverage that checks the real `dynamic-minimal-api-operator-route-binding` source window for both boundary annotations
+- refreshed deployment-mode support docs, the trim/AOT hazard inventory, ASP.NET Core component docs, roadmap/follow-up notes, and project memory
+
+Validation:
+
+- `Invoke-Pester -Path tests\Cephalon.Tests.Scripts\validate-deployment-mode-claims.Tests.ps1 -Output Detailed`
+- `Invoke-Pester -Path tests\Cephalon.Tests.Scripts\deployment-mode-support-manifest.Tests.ps1 -Output Detailed`
+- `pwsh ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode nativeAot -SkipPublish -OutputPath artifacts/deployment-mode-boundary-annotation-audit`
+
 ### SMTP invitation delivery live provider proof
 
 Status: done
