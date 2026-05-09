@@ -32,6 +32,7 @@ Current focus:
 - treat the long-term release-readiness notes in [`project-memory.md`](project-memory.md) as guarded scorecard contract, not loose historical prose: Tooling documentation coverage now reads `$Script:SchemaVersion` from `scripts/publish-engine-completion-scorecard.ps1` and requires project memory, scorecard docs, CLI docs, release checklists, and package docs to stay aligned with the generated schema plus provider-integration doctor/release-validation readback
 - treat scorecard hard blockers as release-validation failures even when a later narrow step is skipped: `scripts/validate-release.ps1` fails during the scorecard step when generated evidence reports blocked platform gates, supply-chain blocked items, or public API removals; `partial`, `not-claimed`, externally gated provider lanes, SRE pending baselines, and external-policy-pending items remain explicit readback/exception posture
 - treat supply-chain external-policy-pending evidence as truthful pre-release posture: real tag pushes now fail closed before NuGet login unless `NUGET_USER` is present and the release manager has set protected confirmation variables for the nuget.org trusted-publishing policy and `Cephalon.*` prefix reservation; the preflight verifies those workflow inputs only and does not claim independent nuget.org inspection
+- treat package publishing and NuGet discoverability as archive-validated release evidence: `scripts/publish-package-artifacts.ps1` now emits `.snupkg` symbol packages for runtime/tool packages, runs `scripts/validate-package-metadata.ps1`, and writes `package-metadata-validation.json` so readmes, tags, license, package type, repository/source metadata, and symbol pairing are checked from the produced archives before package publication can be considered green
 - treat the CDC integration-test lane as additive evidence over the runtime catalog truth: `tests/Cephalon.Tests.CdcIntegration` now proves MongoDB change streams against a real disposable replica set, SQL Server CDC against an opt-in live service, Postgres logical replication against an opt-in live service, MySQL binlog streaming against an opt-in live service, and Oracle LogMiner against an opt-in live service while keeping default CI Docker-free through the shared external-service gate, instead of implying those provider paths through fake transport harnesses
 - treat the provider integration-test lane as additive evidence over non-CDC provider truth: `tests/Cephalon.Tests.ProviderIntegration` now proves Redis data outbox/inbox/dispatch-store behavior plus Redis Streams event sourcing against an opt-in live Redis runtime, MongoDB data outbox/inbox/dispatch-store behavior against a disposable replica-set runtime without a permanent external service, Cassandra, ClickHouse, Elasticsearch, NATS, Neo4j, OpenSearch, and Qdrant data outbox/inbox runtime behavior against either pre-provisioned provider services or disposable Testcontainers-backed runtimes, and SMTP invitation delivery handoff against a live relay/API pair
 - treat `scripts/provider-integration-support.json` as the release-readiness manifest for provider claims across live-provider tests, CDC integration lanes, and the eighteen dependency-health companion-pack live managed-probe proofs; the scorecard, release validation, CLI doctor, and script-level Pester tests must read provider-integration counts and dependency-health provider-manifest readback from that manifest instead of hand-authored prose, and the scorecard publisher must fail if dependency-health provider rows drift from the source-derived provider manifest
@@ -91,6 +92,35 @@ Validation:
 
 - `pwsh ./scripts/validate-supply-chain-external-policy-preflight.ps1`
 - `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/validate-supply-chain-external-policy-preflight.Tests.ps1 -Output Detailed`
+
+### ENG-531 Package metadata archive validation
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: release-readiness / package publishing / NuGet discoverability
+Quality dimensions: Compatibility, Auditability, Maintainability, Usability, Security
+
+Why:
+
+- the package-publishing gate still relied on project metadata and prose for readme/tag/source/symbol claims after the signed release workflow became available
+- release managers need a machine-readable artifact proving the produced `.nupkg` and `.snupkg` files actually contain the metadata NuGet search, debugging, and source provenance require
+- template/analyzer packages should remain valid without pretending they produce runtime symbol packages
+
+Delivered:
+
+- added `scripts/validate-package-metadata.ps1`, which opens produced archives and validates `Cephalon.*` id prefix, version, authorship, MIT license, project URL, repository URL/type/source commit, `cephalon` tag, package readme, tool/template package type, and runtime/tool `.snupkg` pairing
+- taught `scripts/publish-package-artifacts.ps1` to run the validator by default and emit `package-metadata-validation.json`
+- added shared default `PackageTags`, enabled `.snupkg` output for runtime/tool packages, and explicitly opted template/analyzer/source-generator packages out of symbol-package generation where they have no runtime/tool output
+- extended `scripts/supply-chain-release-support.json` so the scorecard supply-chain evidence reads back `11` items / `8` workflow-ready / `3` external-policy-pending while keeping NuGet policy/prefix/user prerequisites external
+- refreshed package-publishing, engineering standards, release checklist/template, scorecard, roadmap, backlog, and project memory so docs/source/planning agree on archive-level package validation
+
+Validation:
+
+- `Invoke-Pester -Path tests\Cephalon.Tests.Scripts\validate-package-metadata.Tests.ps1 -Output Detailed`
+- `pwsh ./scripts/publish-package-artifacts.ps1 -OutputPath artifacts/packages-release-metadata-validation` (`108` packages, `105` symbol-required runtime/tool packages, `105` `.snupkg` pairs, `0` failed metadata checks)
+- `pwsh ./scripts/publish-package-artifacts.ps1 -OutputPath artifacts/package-metadata-smoke -ProjectPaths src/Cephalon.Abstractions/Cephalon.Abstractions.csproj,templates/Cephalon.TemplatePack/Cephalon.TemplatePack.csproj`
+- `pwsh ./scripts/publish-package-artifacts.ps1 -OutputPath artifacts/package-metadata-analyzer-smoke -ProjectPaths src/Cephalon.Analyzers/Cephalon.Analyzers.csproj,src/Cephalon.Engine.SourceGen/Cephalon.Engine.SourceGen.csproj,src/Cephalon.Cli/Cephalon.Cli.csproj`
 
 ### SMTP invitation delivery live provider proof
 

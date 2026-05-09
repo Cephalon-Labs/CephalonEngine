@@ -5,6 +5,7 @@
     <Description>Curated meta-package that gives Cephalon-engine consumers a single PackageReference for the engine's analyzer baseline (Microsoft NetAnalyzers + Roslynator + Meziantou + BannedApiAnalyzers + VS Threading + PublicApiAnalyzers) plus a curated BannedSymbols.txt and .editorconfig snippet aligned with Cephalon's quality posture.</Description>
     <IsPackable>true</IsPackable>
     <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IncludeSymbols>false</IncludeSymbols>
     <SuppressDependenciesWhenPacking>false</SuppressDependenciesWhenPacking>
     <GenerateDocumentationFile>false</GenerateDocumentationFile>
     <!-- NU5128: dependency-only meta-package without lib assets; expected for an analyzer meta-package. -->

@@ -19,6 +19,9 @@
     <RepositoryUrl Condition="'$(RepositoryUrl)' == ''">https://github.com/Cephalon-Labs/CephalonEngine</RepositoryUrl>
     <RepositoryType Condition="'$(RepositoryType)' == ''">git</RepositoryType>
     <PublishRepositoryUrl Condition="'$(PublishRepositoryUrl)' == ''">true</PublishRepositoryUrl>
+    <PackageTags Condition="'$(PackageTags)' == ''">cephalon;dotnet;framework;engine</PackageTags>
+    <IncludeSymbols Condition="'$(IncludeSymbols)' == ''">true</IncludeSymbols>
+    <SymbolPackageFormat Condition="'$(SymbolPackageFormat)' == ''">snupkg</SymbolPackageFormat>
     <PackageReadmeFile Condition="'$(IsPackable)' != 'false' and '$(PackageReadmeFile)' == ''">PACKAGE.md</PackageReadmeFile>
     <RestorePackagesWithLockFile Condition="'$(RestorePackagesWithLockFile)' == ''">true</RestorePackagesWithLockFile>
   </PropertyGroup>

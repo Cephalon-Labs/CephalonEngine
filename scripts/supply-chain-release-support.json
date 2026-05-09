@@ -14,6 +14,7 @@
   "validationScripts": [
     "scripts/validate-release.ps1",
     "scripts/publish-package-artifacts.ps1",
+    "scripts/validate-package-metadata.ps1",
     "scripts/validate-supply-chain-external-policy-preflight.ps1"
   ],
   "requiredWorkflowTokens": [
@@ -90,6 +91,19 @@
       "workflowTokens": [
         "artifacts/packages-release",
         "release-manifest.json"
+      ],
+      "externalPolicyRequired": false
+    },
+    {
+      "id": "package-metadata-validation",
+      "category": "package-discoverability",
+      "status": "workflow-ready",
+      "summary": "Published package artifacts are validated from the produced .nupkg/.snupkg files for Cephalon id prefix, readme, tags, license, repository/source metadata, package type, and runtime symbol package pairing.",
+      "sourceDocument": "docs/package-publishing.md",
+      "sourceToken": "package-metadata-validation.json",
+      "workflowTokens": [
+        "Run release validation",
+        "artifacts/packages-release"
       ],
       "externalPolicyRequired": false
     },
