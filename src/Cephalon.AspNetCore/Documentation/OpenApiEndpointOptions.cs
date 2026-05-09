@@ -77,7 +77,7 @@ public sealed class OpenApiEndpointOptions
         var routePattern = section["RoutePattern"];
         var scalarRoutePrefix = section["Scalar:RoutePrefix"] ?? section["ScalarRoutePrefix"];
         var documentedStatusCodes = NormalizeStatusCodes(
-            section.GetSection("BehaviorRest:DocumentedStatusCodes").Get<int[]>() ?? DefaultBehaviorRestDocumentedStatusCodes);
+            ReadStatusCodes(section.GetSection("BehaviorRest:DocumentedStatusCodes")) ?? DefaultBehaviorRestDocumentedStatusCodes);
 
         return new OpenApiEndpointOptions
         {
@@ -105,6 +105,28 @@ public sealed class OpenApiEndpointOptions
         }
 
         return normalized;
+    }
+
+    private static int[]? ReadStatusCodes(IConfigurationSection section)
+    {
+        var configuredValues = section.GetChildren()
+            .Select(static child => child.Value)
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .Select(static value =>
+            {
+                if (!int.TryParse(value, out var statusCode))
+                {
+                    throw new InvalidOperationException(
+                        "OpenApi:BehaviorRest:DocumentedStatusCodes entries must be valid integer HTTP status codes.");
+                }
+
+                return statusCode;
+            })
+            .ToArray();
+
+        return configuredValues.Length == 0
+            ? null
+            : configuredValues;
     }
 
     private static string NormalizeRoutePattern(string? routePattern)

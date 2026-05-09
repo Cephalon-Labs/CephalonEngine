@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Runtime.Loader;
 
@@ -17,11 +18,19 @@ internal sealed class PackageAssemblyLoadContext : AssemblyLoadContext
         resolver = new AssemblyDependencyResolver(mainAssemblyPath);
     }
 
+    [UnconditionalSuppressMessage(
+        "Trimming",
+        "IL2026",
+        Justification = "Dynamic package loading is an explicit Cephalon package boundary. The no-package deployment path does not require this path, and Native AOT hosts fail fast before loading packages.")]
     public Assembly LoadMainAssembly()
     {
         return LoadFromAssemblyPath(mainAssemblyPath);
     }
 
+    [UnconditionalSuppressMessage(
+        "Trimming",
+        "IL2026",
+        Justification = "Dynamic package dependency loading is scoped to external package assemblies and remains outside the global trim/AOT claim.")]
     protected override Assembly? Load(AssemblyName assemblyName)
     {
         var sharedAssembly = AppDomain.CurrentDomain

@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 using Cephalon.Abstractions.Behaviors;
 
 namespace Cephalon.Behaviors.Services;
@@ -9,7 +10,6 @@ namespace Cephalon.Behaviors.Services;
 /// </summary>
 public sealed class BehaviorExecutionSlot
 {
-    private static readonly JsonSerializerOptions WebJsonSerializerOptions = new(JsonSerializerDefaults.Web);
     private readonly Func<object, object, IBehaviorContext, CancellationToken, Task<object?>> _invoke;
 
     private BehaviorExecutionSlot(Func<object, object, IBehaviorContext, CancellationToken, Task<object?>> invoke)
@@ -27,13 +27,25 @@ public sealed class BehaviorExecutionSlot
     public static BehaviorExecutionSlot For<TBehavior, TIn, TOut>()
         where TBehavior : IAppBehavior<TIn, TOut>
         where TIn : notnull
+        => For<TBehavior, TIn, TOut>(inputJsonTypeInfo: null);
+
+    /// <summary>
+    /// Creates a <see cref="BehaviorExecutionSlot" /> for a behavior whose generic type arguments and input JSON metadata are known at compile time.
+    /// </summary>
+    /// <typeparam name="TBehavior">The concrete behavior type.</typeparam>
+    /// <typeparam name="TIn">The input message type.</typeparam>
+    /// <typeparam name="TOut">The output message type.</typeparam>
+    /// <param name="inputJsonTypeInfo">The source-generated JSON metadata for <typeparamref name="TIn" />.</param>
+    /// <returns>A compiled execution slot for the behavior.</returns>
+    public static BehaviorExecutionSlot For<TBehavior, TIn, TOut>(
+        JsonTypeInfo<TIn>? inputJsonTypeInfo)
+        where TBehavior : IAppBehavior<TIn, TOut>
+        where TIn : notnull
     {
         return new BehaviorExecutionSlot(async (behavior, input, context, ct) =>
         {
             // When input arrives as a JsonElement (e.g. from an HTTP transport), coerce it to TIn.
-            TIn typedInput = input is JsonElement je
-                ? JsonSerializer.Deserialize<TIn>(je.GetRawText(), WebJsonSerializerOptions)!
-                : (TIn)input;
+            TIn typedInput = CoerceInput<TIn>(input, inputJsonTypeInfo);
             var result = await ((TBehavior)behavior).HandleAsync(typedInput, context, ct).ConfigureAwait(false);
             return result;
         });
@@ -44,6 +56,36 @@ public sealed class BehaviorExecutionSlot
     {
         ArgumentNullException.ThrowIfNull(invoke);
         return new BehaviorExecutionSlot(invoke);
+    }
+
+    private static TIn CoerceInput<TIn>(
+        object input,
+        JsonTypeInfo<TIn>? inputJsonTypeInfo)
+        where TIn : notnull
+    {
+        if (input is not JsonElement jsonElement)
+        {
+            return (TIn)input;
+        }
+
+        if (typeof(TIn) == typeof(JsonElement))
+        {
+            return (TIn)(object)jsonElement;
+        }
+
+        if (typeof(TIn) == typeof(object))
+        {
+            return (TIn)(object)jsonElement;
+        }
+
+        if (inputJsonTypeInfo is null)
+        {
+            throw new InvalidOperationException(
+                $"Behavior input type '{typeof(TIn).FullName}' requires source-generated JSON metadata when dispatch input arrives as JsonElement. " +
+                "Use BehaviorExecutionSlot.For<TBehavior, TInput, TOutput>(JsonTypeInfo<TInput>) or source-generated behavior registration.");
+        }
+
+        return jsonElement.Deserialize(inputJsonTypeInfo)!;
     }
 
     /// <summary>
@@ -62,4 +104,5 @@ public sealed class BehaviorExecutionSlot
     {
         return _invoke(behavior, input, context, ct);
     }
+
 }

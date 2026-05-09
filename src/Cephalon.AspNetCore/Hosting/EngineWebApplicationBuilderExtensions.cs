@@ -1,3 +1,4 @@
+using Cephalon.AspNetCore;
 using Cephalon.AspNetCore.Documentation;
 using Cephalon.AspNetCore.Transports.Rest;
 using Cephalon.AspNetCore.Health;
@@ -366,26 +367,24 @@ public static class EngineWebApplicationBuilderExtensions
 
             await Results.Json(
                     envelope,
+                    AspNetCoreJsonSerializerContext.Default.ResultModelError,
                     statusCode: AspNetCoreRateLimitingPolicyResolver.RejectionStatusCode)
                 .ExecuteAsync(context.HttpContext)
                 .ConfigureAwait(false);
             return;
         }
 
-        var problem = new ProblemDetails
+        var problem = new RateLimitRejectionProblem
         {
             Status = AspNetCoreRateLimitingPolicyResolver.RejectionStatusCode,
             Title = "Too Many Requests",
-            Detail = "The request exceeded the configured Cephalon rate limit."
+            Detail = "The request exceeded the configured Cephalon rate limit.",
+            RetryAfterSeconds = retryAfterSeconds
         };
-
-        if (retryAfterSeconds.HasValue)
-        {
-            problem.Extensions["retryAfterSeconds"] = retryAfterSeconds.Value;
-        }
 
         await Results.Json(
                 problem,
+                AspNetCoreJsonSerializerContext.Default.RateLimitRejectionProblem,
                 statusCode: AspNetCoreRateLimitingPolicyResolver.RejectionStatusCode,
                 contentType: "application/problem+json")
             .ExecuteAsync(context.HttpContext)

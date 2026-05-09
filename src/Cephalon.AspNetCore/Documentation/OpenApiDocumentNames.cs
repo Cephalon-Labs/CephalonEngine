@@ -70,10 +70,8 @@ internal static class OpenApiDocumentNames
 
     private static string[]? ResolveFromEnabledVersions(IConfiguration configuration)
     {
-        var configuredVersions = configuration
-            .GetSection("OpenApi:EnabledVersions")
-            .Get<string[]>()
-            ?? configuration.GetSection("OpenApi:EnableVersions").Get<string[]>();
+        var configuredVersions = ReadStringArray(configuration.GetSection("OpenApi:EnabledVersions"))
+            ?? ReadStringArray(configuration.GetSection("OpenApi:EnableVersions"));
 
         if (configuredVersions is null || configuredVersions.Length == 0)
         {
@@ -105,9 +103,7 @@ internal static class OpenApiDocumentNames
 
     private static string[]? ResolveLegacyDocumentNames(IConfiguration configuration)
     {
-        var configuredNames = configuration
-            .GetSection("OpenApi:Documents")
-            .Get<string[]>();
+        var configuredNames = ReadStringArray(configuration.GetSection("OpenApi:Documents"));
 
         if (configuredNames is null || configuredNames.Length == 0)
         {
@@ -149,5 +145,18 @@ internal static class OpenApiDocumentNames
         }
 
         return $"v{major}";
+    }
+
+    private static string[]? ReadStringArray(IConfigurationSection section)
+    {
+        var values = section.GetChildren()
+            .Select(static child => child.Value)
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .Select(static value => value!.Trim())
+            .ToArray();
+
+        return values.Length == 0
+            ? null
+            : values;
     }
 }

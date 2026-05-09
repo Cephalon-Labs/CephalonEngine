@@ -1,4 +1,6 @@
 using System.Reflection;
+using Cephalon.Behaviors.Services;
+using Microsoft.Extensions.Configuration;
 
 namespace Cephalon.Behaviors.Configuration;
 
@@ -40,6 +42,37 @@ public sealed class BehaviorOptions
     public List<string> AutoRegisterExcludeAssemblyPrefixes { get; set; } = [];
 
     /// <summary>
+    /// Creates behavior options from the <c>Engine:Behaviors</c> configuration section without using reflection-based binding.
+    /// </summary>
+    /// <param name="configuration">The configuration source that contains the engine section.</param>
+    /// <returns>The parsed behavior options.</returns>
+    public static BehaviorOptions FromConfiguration(IConfiguration configuration)
+    {
+        ArgumentNullException.ThrowIfNull(configuration);
+
+        var options = new BehaviorOptions();
+        options.ApplyConfiguration(configuration.GetSection("Engine").GetSection("Behaviors"));
+        return options;
+    }
+
+    /// <summary>
+    /// Applies values from an <c>Engine:Behaviors</c> configuration section without using reflection-based binding.
+    /// </summary>
+    /// <param name="section">The behavior configuration section.</param>
+    private void ApplyConfiguration(IConfigurationSection section)
+    {
+        ArgumentNullException.ThrowIfNull(section);
+
+        if (TryGetBoolean(section.GetSection(nameof(AutoRegister)), out var autoRegister))
+        {
+            AutoRegister = autoRegister;
+        }
+
+        AutoRegisterAssemblies = ReadStringList(section.GetSection(nameof(AutoRegisterAssemblies)));
+        AutoRegisterExcludeAssemblyPrefixes = ReadStringList(section.GetSection(nameof(AutoRegisterExcludeAssemblyPrefixes)));
+    }
+
+    /// <summary>
     /// Resolves the assemblies to inspect for generated auto-registration hints.
     /// </summary>
     /// <returns>The assemblies to inspect for generated hints.</returns>
@@ -61,24 +94,16 @@ public sealed class BehaviorOptions
                 .ToArray();
         }
 
-        // Default: consider all loaded assemblies that reference Cephalon.Abstractions,
-        // excluding well-known framework assemblies that can never contain behaviors.
-        var abstractionsName = typeof(Abstractions.Behaviors.AppBehaviorAttribute).Assembly.GetName().Name!;
-
-        // Merge built-in + user-configured exclusion prefixes
+        // Default: use only source-generated module hints that have already registered themselves.
         var excludePrefixes = MergeExcludePrefixes();
-
-        return AppDomain.CurrentDomain.GetAssemblies()
-            .Where(a => !a.IsDynamic
-                        && !IsExcludedByPrefix(a, excludePrefixes)
-                        && ReferencesAssembly(a, abstractionsName))
+        return BehaviorGeneratedModuleRegistry.GetRegisteredAssemblies()
+            .Where(a => !a.IsDynamic && !IsExcludedByPrefix(a, excludePrefixes))
             .ToArray();
     }
 
     /// <summary>
     /// Well-known assembly name prefixes that never contain application behaviors.
-    /// Checked before the more expensive <see cref="ReferencesAssembly" /> call
-    /// to eliminate 90%+ of loaded assemblies with a cheap string comparison.
+    /// Checked before generated module hints are considered.
     /// </summary>
     private static readonly string[] BuiltInExcludePrefixes =
     [
@@ -181,12 +206,25 @@ public sealed class BehaviorOptions
         }
     }
 
-    private static bool ReferencesAssembly(Assembly assembly, string referenceName)
+    private static bool TryGetBoolean(IConfigurationSection section, out bool value)
     {
-        if (string.Equals(assembly.GetName().Name, referenceName, StringComparison.OrdinalIgnoreCase))
-            return true;
+        var rawValue = section.Value;
+        if (string.IsNullOrWhiteSpace(rawValue))
+        {
+            value = false;
+            return false;
+        }
 
-        return assembly.GetReferencedAssemblies()
-            .Any(r => string.Equals(r.Name, referenceName, StringComparison.OrdinalIgnoreCase));
+        return bool.TryParse(rawValue, out value);
+    }
+
+    private static List<string> ReadStringList(IConfigurationSection section)
+    {
+        return section
+            .GetChildren()
+            .Select(static child => child.Value)
+            .Where(static value => !string.IsNullOrWhiteSpace(value))
+            .Select(static value => value!.Trim())
+            .ToList();
     }
 }

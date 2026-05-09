@@ -11,9 +11,7 @@ internal sealed class SecuritySchemeTransformer(IConfiguration configuration) : 
         OpenApiDocumentTransformerContext context,
         CancellationToken cancellationToken)
     {
-        var configuredSchemes = configuration
-            .GetSection("OpenApi:SecuritySchemes")
-            .Get<OpenApiSecuritySchemeSettings[]>();
+        var configuredSchemes = ReadSecuritySchemes(configuration.GetSection("OpenApi:SecuritySchemes"));
 
         if (configuredSchemes is null || configuredSchemes.Length == 0)
         {
@@ -101,18 +99,51 @@ internal sealed class SecuritySchemeTransformer(IConfiguration configuration) : 
 
     private static string? GetSecuritySchemeId(IOpenApiSecurityScheme scheme)
     {
+        if (scheme is OpenApiSecuritySchemeReference reference &&
+            !string.IsNullOrWhiteSpace(reference.Reference?.Id))
+        {
+            return reference.Reference.Id;
+        }
+
         if (scheme is OpenApiSecurityScheme concreteScheme && !string.IsNullOrWhiteSpace(concreteScheme.Name))
         {
             return concreteScheme.Name;
         }
 
-        var targetElementIdProperty = scheme.GetType().GetProperty("TargetElementId");
-        if (targetElementIdProperty?.GetValue(scheme) is string targetElementId &&
-            !string.IsNullOrWhiteSpace(targetElementId))
-        {
-            return targetElementId;
-        }
-
         return null;
+    }
+
+    private static OpenApiSecuritySchemeSettings[]? ReadSecuritySchemes(IConfigurationSection section)
+    {
+        var schemes = section.GetChildren()
+            .Select(ReadSecurityScheme)
+            .Where(static scheme => !string.IsNullOrWhiteSpace(scheme.Name))
+            .ToArray();
+
+        return schemes.Length == 0
+            ? null
+            : schemes;
+    }
+
+    private static OpenApiSecuritySchemeSettings ReadSecurityScheme(IConfigurationSection section)
+    {
+        return new OpenApiSecuritySchemeSettings
+        {
+            Name = section["Name"],
+            Type = ReadEnum(section["Type"], SecuritySchemeType.Http),
+            In = ReadEnum(section["In"], ParameterLocation.Header),
+            Description = section["Description"],
+            Scheme = section["Scheme"],
+            BearerFormat = section["BearerFormat"],
+            OpenIdConnectUrl = section["OpenIdConnectUrl"]
+        };
+    }
+
+    private static TEnum ReadEnum<TEnum>(string? value, TEnum fallback)
+        where TEnum : struct
+    {
+        return string.IsNullOrWhiteSpace(value) || !Enum.TryParse<TEnum>(value, ignoreCase: true, out var parsed)
+            ? fallback
+            : parsed;
     }
 }

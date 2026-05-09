@@ -40,11 +40,11 @@ See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), 
 - `/engine/database-migrations` when the engine-owned database-migration catalog is active
 - `/engine/audit-history` and `/engine/audit-history/export` when durable audit-history services are active
 - `/engine/event-dispatch-runtimes`, `/engine/event-dispatches`, and `/engine/event-dispatches/terminal-failures` when eventing packs register dispatch-runtime descriptors or live dispatch-state reporters
-- `POST /engine/event-publications` when eventing packs register the abstraction-level publication dispatcher action seam
+- `POST /engine/event-publications` when eventing packs register the abstraction-level publication dispatcher action seam; the request body is represented by `EventPublicationHttpRequest` so generated request delegates can bind the contract without private reflection
 - `/engine/event-publications/runtime` when eventing packs register the abstraction-level publication runtime-state catalog
 - `/engine/event-subscription-readiness` when eventing packs register the abstraction-level subscription execution-readiness catalog
-- `/engine/agent-tool-runs` and `POST /engine/agent-tools/{toolId}/runs` when agentics packs register the abstraction-level agent-tool run-state catalog and dispatcher action seam
-- `/engine/knowledge-indexes`, `POST /engine/knowledge-indexes/{collectionId}/queries`, and `POST /engine/knowledge-indexes/{collectionId}/reindex` when retrieval packs register the abstraction-level knowledge-index catalog, query command seam, and indexer command seam
+- `/engine/agent-tool-runs` and `POST /engine/agent-tools/{toolId}/runs` when agentics packs register the abstraction-level agent-tool run-state catalog and dispatcher action seam; the run request body is represented by `AgentToolExecutionHttpRequest`
+- `/engine/knowledge-indexes`, `POST /engine/knowledge-indexes/{collectionId}/queries`, and `POST /engine/knowledge-indexes/{collectionId}/reindex` when retrieval packs register the abstraction-level knowledge-index catalog, query command seam, and indexer command seam; query request bodies use `KnowledgeQueryHttpRequest`
 - `/engine/package-policy`, `/engine/packages`, and the rest of the engine governance surface
 - `/health`, `/health/live`, and `/health/ready` surfaces
 - opt-in HTTP request/response logging with bounded request and response body capture under `Engine:Observability:HttpLogging`; `HttpRequestResponseLoggingMiddleware` adds correlation tags (`cephalon.http.request_id`, `cephalon.http.traceparent`) to `Activity.Current` and emits `cephalon.http.request.started` / `cephalon.http.request.body.logged` / `cephalon.http.response.completed` / `cephalon.http.response.body.logged` / `cephalon.http.request.failed` activity events with stable Cephalon-prefix tags (`cephalon.log.event_id`, `cephalon.http.request_id`, `cephalon.http.traceparent`, `cephalon.http.elapsed_ms`, `cephalon.http.body.truncated`, plus body-text payload tags), all routed through the `RedactionPipeline` resolved from DI so consumer-registered redaction filters scrub HTTP-emission attributes before exporter dispatch; this is the first M1 redaction emission site shipped through `ENG-365`
@@ -57,6 +57,9 @@ See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), 
 ## Main surfaces
 
 - `Hosting/AuditHistoryExportHttpResponseExtensions.cs`
+- `Hosting/EventPublicationHttpRequest.cs`
+- `Hosting/AgentToolExecutionHttpRequest.cs`
+- `Hosting/KnowledgeQueryHttpRequest.cs`
 - `Hosting/EngineWebApplicationBuilderExtensions.cs`
 - `Hosting/EngineWebApplicationExtensions.cs`
 - `Hosting/EngineHostedService.cs`

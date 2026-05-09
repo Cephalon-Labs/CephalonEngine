@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Behaviors.Builders;
 using Cephalon.Behaviors.Validation;
@@ -47,7 +48,9 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
     /// <exception cref="InvalidOperationException">
     /// Thrown when <typeparamref name="TBehavior" /> is not decorated with <see cref="AppBehaviorAttribute" />.
     /// </exception>
-    public IBehaviorCollectionBuilder Register<TBehavior>(
+    public IBehaviorCollectionBuilder Register<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+        TBehavior>(
         Action<BehaviorTopologyBuilder>? configureTopology = null)
         where TBehavior : class
     {
@@ -55,7 +58,7 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
             ? null
             : builder => configureTopology((BehaviorTopologyBuilder)builder);
 
-        RegisterCore(typeof(TBehavior), configureTopologyAdapter);
+        RegisterCore<TBehavior>(configureTopologyAdapter);
         return this;
     }
 
@@ -73,7 +76,11 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
     /// When <see langword="null" />, topology is resolved from configuration layers only.
     /// </param>
     /// <returns>The same builder for fluent chaining.</returns>
-    public IBehaviorCollectionBuilder Register<TBehavior, TInput, TOutput>(
+    public IBehaviorCollectionBuilder Register<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+        TBehavior,
+        TInput,
+        TOutput>(
         Action<BehaviorTopologyBuilder>? configureTopology = null)
         where TBehavior : class, IAppBehavior<TInput, TOutput>
         where TInput : notnull
@@ -82,7 +89,7 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
             ? null
             : builder => configureTopology((BehaviorTopologyBuilder)builder);
 
-        var behaviorId = RegisterCore(typeof(TBehavior), configureTopologyAdapter);
+        var behaviorId = RegisterCore<TBehavior>(configureTopologyAdapter);
         RegisterExecutionSlot(
             behaviorId,
             typeof(TBehavior),
@@ -91,6 +98,7 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
     }
 
     internal IBehaviorCollectionBuilder Register(
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
         Type behaviorType,
         Action<IBehaviorTopologyBuilder>? configureTopology = null,
         string? sourceModuleId = null)
@@ -99,6 +107,7 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
         return this;
     }
 
+    [UnconditionalSuppressMessage("Trimming", "IL2072", Justification = "Owned behavior registrations are produced by Engine APIs that either preserve public constructors on typed behavior registrations or mark type-based registrations as trim-unsafe before they reach Cephalon.Behaviors.")]
     internal IBehaviorCollectionBuilder Register(OwnedBehaviorRegistration registration)
     {
         ArgumentNullException.ThrowIfNull(registration);
@@ -119,7 +128,35 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
         return this;
     }
 
+    private string RegisterCore<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+        TBehavior>(
+        Action<IBehaviorTopologyBuilder>? configureTopology = null,
+        string? sourceModuleId = null)
+        where TBehavior : class
+    {
+        var behaviorType = typeof(TBehavior);
+        var behaviorId = RegisterCoreDescriptor(behaviorType, configureTopology, sourceModuleId);
+
+        Services.TryAddTransient<TBehavior>();
+
+        return behaviorId;
+    }
+
     private string RegisterCore(
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+        Type behaviorType,
+        Action<IBehaviorTopologyBuilder>? configureTopology = null,
+        string? sourceModuleId = null)
+    {
+        var behaviorId = RegisterCoreDescriptor(behaviorType, configureTopology, sourceModuleId);
+
+        Services.TryAddTransient(behaviorType);
+
+        return behaviorId;
+    }
+
+    private string RegisterCoreDescriptor(
         Type behaviorType,
         Action<IBehaviorTopologyBuilder>? configureTopology = null,
         string? sourceModuleId = null)
@@ -137,17 +174,14 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
 
         var behaviorId = attr.Id;
 
-        // 1. Register the type in DI as transient
-        Services.TryAddTransient(behaviorType);
-
-        // 2. Contribute the implementation descriptor
+        // 1. Contribute the implementation descriptor
         BehaviorImplementationRegistration.TryRegister(
             Services,
             behaviorId,
             behaviorType,
             ResolveIdempotencyMode(behaviorType));
 
-        // 3. If fluent topology provided, add a Layer-4 contributor
+        // 2. If fluent topology provided, add a Layer-4 contributor
         BehaviorTopologyDescriptor? descriptor = null;
         if (configureTopology is not null)
         {

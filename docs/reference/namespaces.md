@@ -130,7 +130,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.AspNetCore.Hosting`
 
-- [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-hosting): 10 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting)
+- [Cephalon.AspNetCore](cephalon-aspnetcore.md#namespace-cephalon-aspnetcore-hosting): 13 public types [Browse](browse.html?assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting)
 
 ## `Cephalon.AspNetCore.JsonRpc.Hosting`
 

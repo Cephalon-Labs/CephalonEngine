@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Cephalon.Behaviors.Builders;
 using Cephalon.Abstractions.Behaviors;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,7 +29,9 @@ public interface IBehaviorCollectionBuilder
     /// When <see langword="null" />, topology is resolved from configuration.
     /// </param>
     /// <returns>The same builder for fluent chaining.</returns>
-    IBehaviorCollectionBuilder Register<TBehavior>(
+    IBehaviorCollectionBuilder Register<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+        TBehavior>(
         Action<BehaviorTopologyBuilder>? configureTopology = null)
         where TBehavior : class;
 
@@ -46,7 +49,11 @@ public interface IBehaviorCollectionBuilder
     /// When <see langword="null" />, topology is resolved from configuration.
     /// </param>
     /// <returns>The same builder for fluent chaining.</returns>
-    IBehaviorCollectionBuilder Register<TBehavior, TInput, TOutput>(
+    IBehaviorCollectionBuilder Register<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+        TBehavior,
+        TInput,
+        TOutput>(
         Action<BehaviorTopologyBuilder>? configureTopology = null)
         where TBehavior : class, IAppBehavior<TInput, TOutput>
         where TInput : notnull;

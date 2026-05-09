@@ -46,6 +46,11 @@ public static class BehaviorGeneratedModuleRegistry
 
         return Registrations.TryGetValue(assembly, out registration!);
     }
+
+    internal static IReadOnlyList<Assembly> GetRegisteredAssemblies()
+    {
+        return Registrations.Keys.ToArray();
+    }
 }
 
 /// <summary>

@@ -7475,6 +7475,8 @@ IBehaviorModuleBuilder Add<TBehavior, TInput, TOutput>()
 
 Declares that the current module owns the specified behavior and supplies a closed execution slot.
 
+Remarks: This overload uses the default reflection-based JSON contract path when dispatch receives a `JsonElement` input. Trim- and Native AOT-ready modules should use the overload that supplies a `JsonTypeInfo<T>` for `TInput`.
+
 Returns: The same builder for fluent ownership registration.
 
 Type parameters:
@@ -7496,6 +7498,26 @@ Returns: The same builder for fluent ownership registration.
 
 Parameters:
 - `behaviorType`: The concrete behavior type owned by the module.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-3-system-text-json-serialization-metadata-jsontypeinfo-1"></a>
+
+##### `Add`
+
+```csharp
+IBehaviorModuleBuilder Add<TBehavior, TInput, TOutput>(JsonTypeInfo<TInput> inputJsonTypeInfo)
+```
+
+Declares that the current module owns the specified behavior and supplies a closed execution slot with source-generated JSON input metadata.
+
+Returns: The same builder for fluent ownership registration.
+
+Type parameters:
+- `TBehavior`: The concrete behavior type owned by the module.
+- `TInput`: The behavior input contract.
+- `TOutput`: The behavior output contract.
+
+Parameters:
+- `inputJsonTypeInfo`: The source-generated JSON contract used to materialize `TInput` inputs.
 
 <a id="member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-1-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder"></a>
 
@@ -7525,6 +7547,8 @@ IBehaviorModuleBuilder Add<TBehavior, TInput, TOutput>(Action<IBehaviorTopologyB
 
 Declares that the current module owns the specified behavior, supplies a closed execution slot, and applies an explicit topology override.
 
+Remarks: This overload uses the default reflection-based JSON contract path when dispatch receives a `JsonElement` input. Trim- and Native AOT-ready modules should use the overload that supplies a `JsonTypeInfo<T>` for `TInput`.
+
 Returns: The same builder for fluent ownership registration.
 
 Type parameters:
@@ -7549,6 +7573,27 @@ Returns: The same builder for fluent ownership registration.
 
 Parameters:
 - `behaviorType`: The concrete behavior type owned by the module.
+- `configureTopology`: The callback that selects the resolved behavior topology when attribute-only synthesis is not enough.
+
+<a id="member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-3-system-text-json-serialization-metadata-jsontypeinfo-1-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder"></a>
+
+##### `Add`
+
+```csharp
+IBehaviorModuleBuilder Add<TBehavior, TInput, TOutput>(JsonTypeInfo<TInput> inputJsonTypeInfo, Action<IBehaviorTopologyBuilder> configureTopology)
+```
+
+Declares that the current module owns the specified behavior, supplies a closed execution slot with source-generated JSON input metadata, and applies an explicit topology override.
+
+Returns: The same builder for fluent ownership registration.
+
+Type parameters:
+- `TBehavior`: The concrete behavior type owned by the module.
+- `TInput`: The behavior input contract.
+- `TOutput`: The behavior output contract.
+
+Parameters:
+- `inputJsonTypeInfo`: The source-generated JSON contract used to materialize `TInput` inputs.
 - `configureTopology`: The callback that selects the resolved behavior topology when attribute-only synthesis is not enough.
 
 <a id="member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-system-type-system-type-system-type"></a>

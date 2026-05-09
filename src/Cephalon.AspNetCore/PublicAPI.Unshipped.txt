@@ -1,1 +1,51 @@
 #nullable enable
+Cephalon.AspNetCore.Hosting.AgentToolExecutionHttpRequest
+Cephalon.AspNetCore.Hosting.AgentToolExecutionHttpRequest.ActorId.get -> string?
+Cephalon.AspNetCore.Hosting.AgentToolExecutionHttpRequest.ActorId.init -> void
+Cephalon.AspNetCore.Hosting.AgentToolExecutionHttpRequest.AgentToolExecutionHttpRequest() -> void
+Cephalon.AspNetCore.Hosting.AgentToolExecutionHttpRequest.Arguments.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>?
+Cephalon.AspNetCore.Hosting.AgentToolExecutionHttpRequest.Arguments.init -> void
+Cephalon.AspNetCore.Hosting.AgentToolExecutionHttpRequest.Attempt.get -> int?
+Cephalon.AspNetCore.Hosting.AgentToolExecutionHttpRequest.Attempt.init -> void
+Cephalon.AspNetCore.Hosting.AgentToolExecutionHttpRequest.CorrelationId.get -> string?
+Cephalon.AspNetCore.Hosting.AgentToolExecutionHttpRequest.CorrelationId.init -> void
+Cephalon.AspNetCore.Hosting.AgentToolExecutionHttpRequest.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>?
+Cephalon.AspNetCore.Hosting.AgentToolExecutionHttpRequest.Metadata.init -> void
+Cephalon.AspNetCore.Hosting.AgentToolExecutionHttpRequest.RunId.get -> string?
+Cephalon.AspNetCore.Hosting.AgentToolExecutionHttpRequest.RunId.init -> void
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest.ActorId.get -> string?
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest.ActorId.init -> void
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest.ChannelId.get -> string?
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest.ChannelId.init -> void
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest.ContentType.get -> string?
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest.ContentType.init -> void
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest.CorrelationId.get -> string?
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest.CorrelationId.init -> void
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest.EventPublicationHttpRequest() -> void
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest.EventType.get -> string?
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest.EventType.init -> void
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest.Headers.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>?
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest.Headers.init -> void
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest.Id.get -> string?
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest.Id.init -> void
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>?
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest.Metadata.init -> void
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest.OccurredAtUtc.get -> System.DateTimeOffset?
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest.OccurredAtUtc.init -> void
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest.Payload.get -> System.Text.Json.JsonElement?
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest.Payload.init -> void
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest.TenantId.get -> string?
+Cephalon.AspNetCore.Hosting.EventPublicationHttpRequest.TenantId.init -> void
+Cephalon.AspNetCore.Hosting.KnowledgeQueryHttpRequest
+Cephalon.AspNetCore.Hosting.KnowledgeQueryHttpRequest.ActorId.get -> string?
+Cephalon.AspNetCore.Hosting.KnowledgeQueryHttpRequest.ActorId.init -> void
+Cephalon.AspNetCore.Hosting.KnowledgeQueryHttpRequest.CorrelationId.get -> string?
+Cephalon.AspNetCore.Hosting.KnowledgeQueryHttpRequest.CorrelationId.init -> void
+Cephalon.AspNetCore.Hosting.KnowledgeQueryHttpRequest.KnowledgeQueryHttpRequest() -> void
+Cephalon.AspNetCore.Hosting.KnowledgeQueryHttpRequest.MaxResults.get -> int?
+Cephalon.AspNetCore.Hosting.KnowledgeQueryHttpRequest.MaxResults.init -> void
+Cephalon.AspNetCore.Hosting.KnowledgeQueryHttpRequest.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>?
+Cephalon.AspNetCore.Hosting.KnowledgeQueryHttpRequest.Metadata.init -> void
+Cephalon.AspNetCore.Hosting.KnowledgeQueryHttpRequest.QueryText.get -> string?
+Cephalon.AspNetCore.Hosting.KnowledgeQueryHttpRequest.QueryText.init -> void

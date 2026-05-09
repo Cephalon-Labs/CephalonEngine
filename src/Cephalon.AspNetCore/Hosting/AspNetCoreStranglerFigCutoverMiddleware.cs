@@ -1,4 +1,5 @@
 using Cephalon.Abstractions.Patterns;
+using Cephalon.AspNetCore;
 using Cephalon.AspNetCore.Documentation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -248,20 +249,20 @@ internal sealed class AspNetCoreStranglerFigCutoverMiddleware
         HttpContext context,
         AspNetCoreStranglerFigCutoverDecision decision)
     {
-        var problem = new ProblemDetails
+        var problem = new StranglerFigUnsupportedEndpointProblem
         {
             Status = decision.ResponseStatusCode ?? StatusCodes.Status502BadGateway,
             Title = "Unsupported strangler-fig cutover endpoint.",
-            Detail = decision.FailureReason
+            Detail = decision.FailureReason,
+            RouteId = decision.Resolution.RouteId,
+            SelectedEndpoint = decision.Resolution.SelectedEndpoint,
+            SelectedTarget = decision.Resolution.SelectedTarget.ToString().ToLowerInvariant(),
+            HandlingMode = decision.HandlingMode
         };
-
-        problem.Extensions["routeId"] = decision.Resolution.RouteId;
-        problem.Extensions["selectedEndpoint"] = decision.Resolution.SelectedEndpoint;
-        problem.Extensions["selectedTarget"] = decision.Resolution.SelectedTarget.ToString().ToLowerInvariant();
-        problem.Extensions["handlingMode"] = decision.HandlingMode;
 
         return Results.Json(
                 problem,
+                AspNetCoreJsonSerializerContext.Default.StranglerFigUnsupportedEndpointProblem,
                 statusCode: problem.Status,
                 contentType: "application/problem+json")
             .ExecuteAsync(context);

@@ -1,3 +1,5 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Behaviors.Builders;
 using Cephalon.Behaviors.Compatibility;
@@ -9,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.Behaviors;
 
-public sealed class BehaviorBaselineTests
+public sealed partial class BehaviorBaselineTests
 {
     // ─────────────────────────────────────────────────────────────────────────
     // Fixtures
@@ -21,6 +23,19 @@ public sealed class BehaviorBaselineTests
         public Task<string> HandleAsync(string input, IBehaviorContext context, CancellationToken cancellationToken = default)
             => Task.FromResult($"Hello, {input}!");
     }
+
+    [AppBehavior("greeting.typed-json")]
+    private sealed class TypedJsonGreetingBehavior : IAppBehavior<TypedJsonGreetingInput, string>
+    {
+        public Task<string> HandleAsync(TypedJsonGreetingInput input, IBehaviorContext context, CancellationToken cancellationToken = default)
+            => Task.FromResult($"Hello, {input.Name}!");
+    }
+
+    private sealed record TypedJsonGreetingInput(string Name);
+
+    [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
+    [JsonSerializable(typeof(TypedJsonGreetingInput))]
+    private sealed partial class BehaviorBaselineJsonSerializerContext : JsonSerializerContext;
 
     [AppBehavior("greeting.cqrs")]
     [BehaviorAllowedPatterns("cqrs", "direct")]
@@ -354,6 +369,20 @@ public sealed class BehaviorBaselineTests
         var ctx = new TestBehaviorContext("greeting.direct", isDirect: true);
 
         var result = await slot.InvokeAsync(behavior, "Claude", ctx);
+        Assert.Equal("Hello, Claude!", result);
+    }
+
+    [Fact]
+    public async Task BehaviorExecutionSlotForUsesSourceGeneratedJsonTypeInfoForJsonElementInput()
+    {
+        var slot = BehaviorExecutionSlot.For<TypedJsonGreetingBehavior, TypedJsonGreetingInput, string>(
+            BehaviorBaselineJsonSerializerContext.Default.TypedJsonGreetingInput);
+        var behavior = new TypedJsonGreetingBehavior();
+        var ctx = new TestBehaviorContext("greeting.typed-json", isDirect: true);
+        using var document = JsonDocument.Parse("""{"name":"Claude"}""");
+
+        var result = await slot.InvokeAsync(behavior, document.RootElement, ctx);
+
         Assert.Equal("Hello, Claude!", result);
     }
 
@@ -693,8 +722,7 @@ public sealed class BehaviorBaselineTests
             })
             .Build();
 
-        var options = new BehaviorOptions();
-        config.GetSection("Engine:Behaviors").Bind(options);
+        var options = BehaviorOptions.FromConfiguration(config);
 
         Assert.False(options.AutoRegister);
     }
@@ -709,8 +737,7 @@ public sealed class BehaviorBaselineTests
             })
             .Build();
 
-        var options = new BehaviorOptions();
-        config.GetSection("Engine:Behaviors").Bind(options);
+        var options = BehaviorOptions.FromConfiguration(config);
 
         Assert.True(options.AutoRegister);
     }
@@ -726,8 +753,7 @@ public sealed class BehaviorBaselineTests
             })
             .Build();
 
-        var options = new BehaviorOptions();
-        config.GetSection("Engine:Behaviors").Bind(options);
+        var options = BehaviorOptions.FromConfiguration(config);
 
         Assert.Equal(2, options.AutoRegisterExcludeAssemblyPrefixes.Count);
         Assert.Contains("MyCompany.Shared.", options.AutoRegisterExcludeAssemblyPrefixes);
@@ -745,8 +771,7 @@ public sealed class BehaviorBaselineTests
             })
             .Build();
 
-        var options = new BehaviorOptions();
-        config.GetSection("Engine:Behaviors").Bind(options);
+        var options = BehaviorOptions.FromConfiguration(config);
 
         Assert.Equal(2, options.AutoRegisterAssemblies.Count);
         Assert.Contains("MyApp.Domain", options.AutoRegisterAssemblies);
@@ -764,8 +789,7 @@ public sealed class BehaviorBaselineTests
             })
             .Build();
 
-        var options = new BehaviorOptions();
-        config.GetSection("Engine:Behaviors").Bind(options);
+        var options = BehaviorOptions.FromConfiguration(config);
 
         // Code override says false → code wins
         options.AutoRegister = false;

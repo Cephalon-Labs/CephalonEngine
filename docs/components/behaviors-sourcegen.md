@@ -13,7 +13,7 @@ conventions at build time and produce a compile-time-known registration hint fil
   - Emits `BehaviorRegistrationHints.g.cs` listing all discovered `[AppBehavior]` IDs
   - Emits `BehaviorAutoRegistration.g.cs` for generated module registration, zero-reflection DI/type registration, execution-slot descriptors, and pre-built topology descriptors when compile-time extraction succeeds or attribute-only topology can be synthesized
   - Emits a `RegisterGeneratedBehaviors()` module initializer that registers generated hints with `BehaviorGeneratedModuleRegistry` so `Cephalon.Behaviors` does not reflect over generated carrier methods
-  - Emits `GetExecutionSlots()` with closed `BehaviorGeneratedExecutionSlotDescriptor` / `BehaviorExecutionSlot.For<TBehavior, TInput, TOutput>()` calls so `Cephalon.Behaviors` can prefer source-generated dispatch startup over open-generic slot reflection
+  - Emits `GetExecutionSlots()` with closed `BehaviorGeneratedExecutionSlotDescriptor` / `BehaviorExecutionSlot.For<TBehavior, TInput, TOutput>(JsonTypeInfo<TInput>)` calls so `Cephalon.Behaviors` can prefer generated dispatch startup and input JSON binding over open-generic slot reflection; the generated provider currently supplies runtime JSON metadata as a compatibility bridge, while fully source-generated JSON context ownership remains a future support-promotion lane
   - Emits closed `DurableExecutionSlot.For<TBehavior, TInput, TState, TOutput>()` registrations when a behavior implements `IDurableExecution<TInput, TState, TOutput>` so `Cephalon.Behaviors.Patterns` can execute durable workflows and project durable metadata without runtime open-generic fallback
   - Emits closed `SagaChoreographyRuntimeSlot.For<TBehavior, TInput, TResult>(...)` registrations when a behavior declares `saga-choreography` topology and references the pattern runtime slot, so `Cephalon.Behaviors.Patterns` can project choreography authoring/result-shape metadata without runtime interface-shape inspection
   - Emits source-generated metadata-only REST profile hints through `GetRestProfiles()` when behaviors declare valid `BehaviorRestProfileAttribute` metadata, including descriptor-backed scalar/object input contracts for explicit binding validation, then registers those hints through a module initializer and `BehaviorRestGeneratedProfileRegistry` so runtime profile consumption does not reflectively find generated REST carrier methods or inspect behavior/input types for profile binding shape
@@ -98,6 +98,19 @@ internal static class BehaviorAutoRegistration
             DurableExecutionSlot.For<OrderWorkflowBehavior, OrderWorkflowInput, OrderWorkflowState, OrderWorkflowOutput>()));
     }
 
+    internal static class BehaviorJsonTypeInfoProvider
+    {
+        private static readonly JsonSerializerOptions Options = new(JsonSerializerDefaults.Web)
+        {
+            TypeInfoResolver = new DefaultJsonTypeInfoResolver()
+        };
+
+        internal static JsonTypeInfo<T> Get<T>()
+        {
+            return (JsonTypeInfo<T>)Options.GetTypeInfo(typeof(T));
+        }
+    }
+
     internal static IReadOnlyList<BehaviorGeneratedExecutionSlotDescriptor> GetExecutionSlots()
     {
         return
@@ -105,7 +118,8 @@ internal static class BehaviorAutoRegistration
             new BehaviorGeneratedExecutionSlotDescriptor(
                 "catalog.lookup",
                 typeof(CatalogLookupBehavior),
-                BehaviorExecutionSlot.For<CatalogLookupBehavior, CatalogLookupInput, CatalogLookupResult>())
+                BehaviorExecutionSlot.For<CatalogLookupBehavior, CatalogLookupInput, CatalogLookupResult>(
+                    BehaviorJsonTypeInfoProvider.Get<CatalogLookupInput>()))
         ];
     }
 

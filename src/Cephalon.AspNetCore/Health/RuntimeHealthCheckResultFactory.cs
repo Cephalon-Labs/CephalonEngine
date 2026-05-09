@@ -31,14 +31,14 @@ internal static class RuntimeHealthCheckResultFactory
         if (report.Dependencies.Count > 0)
         {
             data["dependencyCount"] = report.Dependencies.Count;
-            data["dependencies"] = report.Dependencies.Select(static dependency => new
+            data["dependencies"] = report.Dependencies.Select(static dependency => new HealthResponseDependencyPayload
             {
-                dependency.Id,
-                dependency.DisplayName,
-                state = dependency.State.ToString(),
-                dependency.Description,
-                dependency.Required,
-                dependency.Source
+                Id = dependency.Id,
+                DisplayName = dependency.DisplayName,
+                State = dependency.State.ToString(),
+                Description = dependency.Description,
+                Required = dependency.Required,
+                Source = dependency.Source
             }).ToArray();
         }
 
