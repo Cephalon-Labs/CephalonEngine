@@ -3,6 +3,7 @@ param(
     [string]$OutputPath = "artifacts/packages-release",
     [string]$DotNetWorkingDirectory,
     [switch]$SkipBuild,
+    [switch]$SkipMetadataValidation,
     [string[]]$ProjectPaths
 )
 
@@ -219,6 +220,7 @@ $artifacts = [System.Collections.Generic.List[object]]::new()
 $projects = Get-ReleasePackageProjects -SelectedProjectPaths $ProjectPaths
 $sourceRepository = Invoke-Git -Arguments @("-C", $repoRoot, "remote", "get-url", "origin")
 $sourceRevision = Invoke-Git -Arguments @("-C", $repoRoot, "rev-parse", "HEAD")
+$packageMetadataValidationScriptPath = Join-Path $repoRoot "scripts\validate-package-metadata.ps1"
 
 Push-Location $resolvedDotNetWorkingDirectory
 try {
@@ -273,6 +275,12 @@ try {
         ForEach-Object { "{0} *{1}" -f $_.Sha256, $_.FileName }
 
     $checksumLines | Set-Content -LiteralPath $checksumPath -Encoding utf8
+
+    if (-not $SkipMetadataValidation) {
+        & $packageMetadataValidationScriptPath `
+            -PackageArtifactsPath $resolvedOutputPath `
+            -ManifestPath $manifestPath
+    }
 
     Write-Host ""
     Write-Host "Published $($artifacts.Count) package projects to '$resolvedOutputPath'." -ForegroundColor Green

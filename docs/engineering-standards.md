@@ -151,13 +151,15 @@ Shared metadata (already inherited via `Directory.Build.props`):
 - `Authors = Cephalon`
 - `PackageLicenseExpression = MIT`
 - `PackageProjectUrl`, `RepositoryUrl`, `RepositoryType = git`, `PublishRepositoryUrl = true`
+- default `PackageTags = cephalon;dotnet;framework;engine`, with package-specific tags allowed when they remain discoverable under the `cephalon` family tag
 - shared `PACKAGE.md` readme by default; package-specific `PACKAGE.md` allowed when the package needs its own
 - baseline package version `0.1.0-preview` until the family enters its first stable cut
 
 Required publishing hygiene:
 
-- Source Link is enabled on all packable `Cephalon.*` projects
-- symbol packages (`.snupkg`) ship alongside primary `.nupkg`
+- source repository/revision metadata is emitted through `PublishRepositoryUrl=true` plus the release `ContinuousIntegrationBuild=true` pack path
+- symbol packages (`.snupkg`) ship alongside runtime/tool primary `.nupkg` artifacts with managed `lib/` or `tools/` output
+- package metadata, readme, tags, repository/source metadata, package type, and symbol-package pairing are validated from the produced archives by [`scripts/validate-package-metadata.ps1`](../scripts/validate-package-metadata.ps1)
 - `PackageValidationBaselineVersion` is configured for stable packages so accidental binary breaks fail packaging
 - vulnerability scans (`dotnet list package --vulnerable --include-transitive`) run as part of release validation
 - prefer trusted publishing (NuGet trusted-publishing flow + GitHub OIDC) over long-lived API keys when the release flow is formalized

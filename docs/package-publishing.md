@@ -62,6 +62,20 @@ pwsh ./scripts/publish-package-artifacts.ps1 -OutputPath (Join-Path $generatedRo
 
 That path aligns with the `NuGet.config` emitted by `cephalon new` and the app-focused `dotnet new` starters, so `dotnet build` and `docker compose up --build` can restore Cephalon packages without editing the generated host first.
 
+The publish script validates the produced artifacts before it reports success. The validation reads the actual `.nupkg` and `.snupkg` files, not only project metadata, and checks:
+
+- `Cephalon.*` package id prefix, version, authorship, license, project URL, repository URL/type, and source commit metadata
+- NuGet search tags, including the `cephalon` family tag
+- declared package readme plus the matching file inside the package
+- package type for the CLI tool and template pack
+- `.snupkg` pairing for runtime/tool packages with managed `lib/` or `tools/` output
+
+Run the validator directly against an existing artifact directory:
+
+```powershell
+pwsh ./scripts/validate-package-metadata.ps1 -PackageArtifactsPath artifacts/packages-release
+```
+
 Install the packaged CLI tool from a locally published artifact:
 
 ```powershell
@@ -116,14 +130,18 @@ For the matching certificate-chain trust replay, use `pwsh ./scripts/validate-si
 The publish script writes package artifacts to `artifacts/packages-release/` by default:
 
 - `.nupkg` package files for the intended release-pack surface, including the `Cephalon.Cli` tool package
+- `.snupkg` symbol packages for runtime/tool packages with managed `lib/` or `tools/` output
 - `package-artifacts-manifest.json` with the packed project list, package kinds, package file sizes, SHA-256 checksums, and top-level source repository/revision provenance hints
 - `package-artifacts.sha256` with one checksum line per produced package artifact for consumers that want file verification without parsing JSON
+- `package-metadata-validation.json` with per-package readme/tag/license/repository/source/package-type/symbol-pairing verdicts
 
 The JSON manifest now carries:
 
 - `SourceRepository` and `SourceRevision` for the release source that produced the package set
 - `PackageKind` per packed project such as `library`, `dotnet-tool`, `template-pack`, or `reference-module`
 - `PackageFiles` entries with `Path`, `FileName`, `SizeBytes`, and `Sha256`
+
+The metadata-validation JSON uses schema `1.0.0` and reports `PackageCount`, `FailedPackageCount`, `SymbolRequiredPackageCount`, `SymbolPackageCount`, and per-package check verdicts. The validator fails closed when the package family loses required metadata or a runtime/tool package omits its `.snupkg` pair. Template/analyzer packages that intentionally ship no runtime/tool output are validated for metadata and package type/readme posture without requiring a symbol package.
 
 ## Release validation
 
@@ -175,6 +193,7 @@ The release-readiness scorecard validates the workflow-facing portion of this po
 - keep the intended packable surface explicit; do not rely on solution-wide `dotnet pack` defaults
 - keep benchmarks, playgrounds, and sample-only libraries out of the release package set unless they are deliberately promoted
 - keep shared package metadata and any package-specific readmes aligned with the actual release surface
+- keep `scripts/validate-package-metadata.ps1`, package tags, package readmes, symbol output, and the publish-artifact manifest aligned whenever package metadata changes
 - keep the stable `cephalon` tool command name aligned across CLI packaging, docs, and validation coverage
 - keep release checksum/provenance metadata aligned with the actual repository source revision and package file set
 - keep the published-module staging flow aligned with the CLI package-stage command and external package lifecycle guide
