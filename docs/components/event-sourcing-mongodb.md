@@ -4,6 +4,8 @@
 
 `Cephalon.EventSourcing.MongoDB` is the MongoDB event-store provider for Cephalon, following the same provider pattern as `Cephalon.EventSourcing.EntityFramework`. It delivers the `IEventStore` contract against a MongoDB collection instead of a relational table, with optimistic concurrency enforced by a compound unique index on `(StreamId, StreamVersion)`.
 
+The package follows the repository-managed `MongoDB.Driver` version and keeps `SharpCompress` as an explicit direct dependency so NuGet audit and downstream consumers resolve the same non-vulnerable compression stack used by release validation.
+
 ## What it owns
 
 - a MongoDB-backed implementation of `IEventStore` registered through `AddCephalonMongoDbEventSourcing()`

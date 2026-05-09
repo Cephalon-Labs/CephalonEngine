@@ -625,6 +625,8 @@ public sealed class AgentToolExecutionHttpRequest
 AgentToolExecutionHttpRequest()
 ```
 
+Initializes a new instance of the `AgentToolExecutionHttpRequest` class.
+
 #### Properties
 
 <a id="member-p-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest-actorid"></a>
@@ -1053,6 +1055,8 @@ Remarks: This method maps the engine introspection surface under `/engine`, heal
 
 When the REST transport is active, it also enables OpenAPI and Scalar documentation while keeping non-REST protocol routes out of the generated API description.
 
+The current full operator route surface uses ASP.NET Core Minimal API delegate binding, which is not a trim or Native AOT support claim for this package. The annotation is intentional so package-local analyzer builds report the boundary where consumers would otherwise receive framework warnings.
+
 Returns: The same application instance for fluent host composition.
 
 Parameters:
@@ -1078,6 +1082,8 @@ public sealed class EventPublicationHttpRequest
 ```csharp
 EventPublicationHttpRequest()
 ```
+
+Initializes a new instance of the `EventPublicationHttpRequest` class.
 
 #### Properties
 
@@ -1375,6 +1381,8 @@ public sealed class KnowledgeQueryHttpRequest
 ```csharp
 KnowledgeQueryHttpRequest()
 ```
+
+Initializes a new instance of the `KnowledgeQueryHttpRequest` class.
 
 #### Properties
 

@@ -100,6 +100,25 @@ manual/module registration, and dispatch can coerce `JsonElement` inputs through
 returned to clean-baseline absence from the active table. Global trim / Native AOT / single-file
 support still remains `not-claimed` because other packages retain active hazards.
 
+### `high` — dynamic Minimal API route binding in the ASP.NET Core operator surface (added via `ENG-529`)
+
+`Cephalon.AspNetCore` exposes the full `/engine/*` operator surface through `MapCephalon()`.
+That surface intentionally maps many operator endpoints through ASP.NET Core Minimal API
+`MapGet` / `MapPost` delegate overloads. ASP.NET Core's Request Delegate Generator can make
+application-authored Minimal API route handlers trim/AOT-friendly, but a reusable library package
+that owns dynamic, catalog-driven route projection still has a real boundary: the package cannot
+claim the full operator surface is Native AOT-safe until the route layer moves to typed endpoint
+generation or an AOT-specific `RequestDelegate` + source-generated JSON contract path.
+
+The current answer is explicit rather than silent. `MapCephalon()` carries
+`RequiresUnreferencedCode` and `RequiresDynamicCode`, the private mapping helpers carry the same
+annotations, and package-local trim/AOT analyzer builds now pass without hiding the support
+boundary from consumers. This is not a support promotion; it makes the boundary machine-checkable.
+
+| Package | File | Line | Pattern | Notes |
+| --- | --- | --- | --- | --- |
+| `Cephalon.AspNetCore` | `Hosting/EngineWebApplicationExtensions.cs` | 96 | `MapCephalon()` maps the full operator surface through Minimal API delegate route binding | Public `RequiresUnreferencedCode` / `RequiresDynamicCode` annotations make the package-local analyzer path clean while preserving the truthful not-claimed AOT support posture. |
+
 ### `high` — non-public reflective access on a third-party transport type in `Cephalon.Data.MySql.SciSharpReplication` (added via `ENG-434`, isolated via `ENG-477`)
 
 `Cephalon.Data.MySql.SciSharpReplication` ships the optional SciSharp-backed binlog CDC transport adapter that depends on reflective access to third-party `SciSharp.MySQL.Replication` types. The transport reflectively resolves one public static checksum property, four non-public methods, one non-public hierarchy method, and three non-public fields by string name at type-init time, then mutates or invokes the resolved members through `PropertyInfo.SetValue`, `FieldInfo.SetValue`, and `MethodInfo.Invoke`. Trim and Native AOT can remove or reshape these third-party members because there is no annotation path that reaches across an external compiled binary; remediation requires either an upstream API surface change in `SciSharp.MySQL.Replication` or rewriting the transport against a fully public API path. `ENG-477` moves this risk out of the core `Cephalon.Data.MySql` package and into the explicitly named optional adapter, so the core MySQL package can return to clean-baseline source-code posture while the adapter remains `high`. `ENG-478` then makes the adapter's durable answer explicit: until that upstream/public transport path exists, the package declares `IsTrimmable=false`, `IsAotCompatible=false`, `PublishTrimmed=false`, `PublishAot=false`, and `PublishSingleFile=false`, and the manifest records those same values as `requiredProjectProperties` so posture drift is machine-checkable. `ENG-459` had already retired the separate hosted-service duck-typed capture failure metadata fallback, so the remaining MySQL hazard is now this optional transport adapter path only.
@@ -380,6 +399,8 @@ A future slice may add explicit `IsTrimmable=false; IsAotCompatible=false; Publi
 **Update May 9, 2026 (`ENG-526`):** `Cephalon.Engine` now retires several analyzer-reported deployment-mode blockers without promoting a support claim. Package manifest parsing moved from `JsonSerializer.Deserialize<PackageDefinitionFile>(..., JsonSerializerOptions)` to the source-generated `PackageDefinitionFileJsonContext`; `EngineBuilder.AddFeatureFlagProvider<TProvider>()` now preserves provider public constructors for the DI registration analyzer path; and `IBehaviorModuleBuilder` / `OwnedBehaviorModuleBuilder` now annotate behavior type/interface preservation, typed input JSON preservation, and type-based behavior registration's trim/AOT boundary. A focused trim publish probe for `samples/Cephalon.Sample.ModularMonolith` now reports only the two remaining `PackageAssemblyLoadContext.LoadFromAssemblyPath(...)` trim errors. A focused Native AOT probe reports those same two dynamic package-loading errors plus the still-real generic behavior input JSON fallback, which needs a future source-generated behavior input contract or typed transport path before Native AOT can be claimed. Global trim / Native AOT / single-file support remains `not-claimed`.
 
 **Update May 9, 2026 (`ENG-527`):** the `Cephalon.ReferenceDocs` permanent-not-claimed hazard rows were re-anchored to the current source line numbers after the generator gained two lines above `CreateTypePage(...)`. The by-design package posture is unchanged; the manifest and docs now point at `ReferenceDocsGenerator.cs:297/303/310/315` for constructor, field, property, and method enumeration respectively.
+
+**Update May 9, 2026 (`ENG-529`):** `Cephalon.AspNetCore` now records the full operator route layer as an explicit dynamic Minimal API boundary. `MapCephalon()` and the private route-mapping helpers carry `RequiresUnreferencedCode` / `RequiresDynamicCode` annotations, so package-local trim/AOT analyzer builds can pass without pretending the full `/engine/*` surface is Native AOT-safe. `scripts/deployment-mode-support.json` adds `Cephalon.AspNetCore` as a high-tier unclaimed package with one dynamic route-binding hazard. The current manifest-backed inventory reports 9 package entries, 3 packages with known hazards, 15 known hazard entries, tier counts of 3 `high` + 0 `medium` + 3 `excluded-by-design` + 3 `clean-baseline`, zero active `low` entries, 3 package-scoped `singleFile` claims, and transitive-hazard hint counts of `trim=4`, `nativeAot=8`, and `singleFile=2`. Global trim / Native AOT / single-file support remains `not-claimed`.
 
 ## Refresh discipline
 

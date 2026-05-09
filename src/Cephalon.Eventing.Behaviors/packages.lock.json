@@ -286,7 +286,6 @@
           "Cephalon.Engine": "[0.1.0-preview, )",
           "Cephalon.Resilience": "[0.1.0-preview, )",
           "Microsoft.Extensions.Configuration.Abstractions": "[10.0.5, )",
-          "Microsoft.Extensions.Configuration.Binder": "[10.0.5, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.5, )",
           "Microsoft.Extensions.Hosting": "[10.0.5, )",
           "Microsoft.Extensions.Options": "[10.0.5, )"

@@ -1,3 +1,1 @@
 #nullable enable
-static Cephalon.Behaviors.Services.BehaviorExecutionSlot.For<TBehavior, TIn, TOut>(System.Text.Json.Serialization.Metadata.JsonTypeInfo<TIn>? inputJsonTypeInfo) -> Cephalon.Behaviors.Services.BehaviorExecutionSlot!
-static Cephalon.Behaviors.Configuration.BehaviorOptions.FromConfiguration(Microsoft.Extensions.Configuration.IConfiguration! configuration) -> Cephalon.Behaviors.Configuration.BehaviorOptions!

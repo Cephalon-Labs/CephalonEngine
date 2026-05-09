@@ -402,7 +402,7 @@ See Section 3 above. Marten doubles as a document database on PostgreSQL with LI
 - GridFS for large file storage
 - **Vector search index support** (v3.6) -- `CreateVectorSearchIndexModel` and auto-embedding
 
-**Current version:** MongoDB.Driver 3.6.0 (March 2026).
+**Current version:** MongoDB.Driver 3.8.0 (May 2026). Cephalon's MongoDB-facing packages also keep `SharpCompress` pinned as a direct dependency so NuGet audit resolves the non-vulnerable compression package version in package consumers and release publish probes.
 
 **Framework relevance:** CephalonEngine has `Cephalon.Data.MongoDB` and `Cephalon.EventSourcing.MongoDB`.
 
@@ -1110,7 +1110,7 @@ Each layer provides cross-cutting concern injection (logging, validation, transa
 | Refit | 9.0.2 | Yes (AOT) | MIT | Yes |
 | Scrutor | 7.0.0 | Yes | MIT | Yes |
 | StackExchange.Redis | 2.11.8 | Yes | MIT | Yes |
-| MongoDB.Driver | 3.6.0 | Yes | Apache 2.0 | Yes |
+| MongoDB.Driver | 3.8.0 | Yes | Apache 2.0 | Yes |
 | Hangfire | 1.8.x | Yes | LGPL/Commercial | Yes |
 | Quartz.NET | 3.x | Yes | Apache 2.0 | Yes |
 | Verify | Latest | Yes (net10) | MIT | Yes |

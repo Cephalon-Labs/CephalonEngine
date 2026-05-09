@@ -34,6 +34,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Scalar.AspNetCore;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using System.Text.Json;
@@ -45,6 +46,12 @@ namespace Cephalon.AspNetCore.Hosting;
 /// </summary>
 public static class EngineWebApplicationExtensions
 {
+    private const string DynamicRouteMappingRequiresUnreferencedCodeMessage =
+        "Cephalon.AspNetCore maps operator endpoints through ASP.NET Core Minimal API delegate binding. " +
+        "The current full operator surface is not a trim-safe support claim; use it only when reflection-based route binding is acceptable.";
+    private const string DynamicRouteMappingRequiresDynamicCodeMessage =
+        "Cephalon.AspNetCore maps operator endpoints through ASP.NET Core Minimal API delegate binding. " +
+        "The current full operator surface is not a Native AOT support claim; use it only when dynamic route binding is acceptable.";
     private const string OpenApiToggleScriptResourceName = "Cephalon.AspNetCore.Assets.openapi-toggle.js";
     private const string ScalarFaviconResourceName = "Cephalon.AspNetCore.Assets.docs-favicon.svg";
     private const string ScalarRoutePrefixToken = "__CEPHALON_SCALAR_ROUTE_PREFIX__";
@@ -77,7 +84,14 @@ public static class EngineWebApplicationExtensions
     /// When the REST transport is active, it also enables OpenAPI and Scalar documentation while keeping
     /// non-REST protocol routes out of the generated API description.
     /// </para>
+    /// <para>
+    /// The current full operator route surface uses ASP.NET Core Minimal API delegate binding, which is
+    /// not a trim or Native AOT support claim for this package. The annotation is intentional so package-local
+    /// analyzer builds report the boundary where consumers would otherwise receive framework warnings.
+    /// </para>
     /// </remarks>
+    [RequiresUnreferencedCode(DynamicRouteMappingRequiresUnreferencedCodeMessage)]
+    [RequiresDynamicCode(DynamicRouteMappingRequiresDynamicCodeMessage)]
     public static WebApplication MapCephalon(this WebApplication app)
     {
         ArgumentNullException.ThrowIfNull(app);
@@ -2890,6 +2904,8 @@ public static class EngineWebApplicationExtensions
             $"Unsupported Cephalon ASP.NET Core operator surface mode '{configuredValue}'. Configure '{OperatorSurfaceModeConfigurationKey}' as 'full' or 'core'.");
     }
 
+    [RequiresUnreferencedCode(DynamicRouteMappingRequiresUnreferencedCodeMessage)]
+    [RequiresDynamicCode(DynamicRouteMappingRequiresDynamicCodeMessage)]
     private static void MapCephalonCoreOperatorRoutes(RouteGroupBuilder engineGroup, ReferenceDocsSurface referenceDocsSurface)
     {
         engineGroup.MapGet("/scaffold", (RuntimeManifest manifest) =>
@@ -2989,6 +3005,8 @@ public static class EngineWebApplicationExtensions
             .WithName("GetCephalonModule");
     }
 
+    [RequiresUnreferencedCode(DynamicRouteMappingRequiresUnreferencedCodeMessage)]
+    [RequiresDynamicCode(DynamicRouteMappingRequiresDynamicCodeMessage)]
     private static void MapCephalonHostInfrastructure(
         WebApplication app,
         IRuntime runtime,
@@ -3183,6 +3201,8 @@ public static class EngineWebApplicationExtensions
         return localizedTextCatalog.ResolveText(localizationKey, CultureInfo.CurrentUICulture.Name, fallbackValue);
     }
 
+    [RequiresUnreferencedCode(DynamicRouteMappingRequiresUnreferencedCodeMessage)]
+    [RequiresDynamicCode(DynamicRouteMappingRequiresDynamicCodeMessage)]
     private static void MapReferenceDocs(
         WebApplication app,
         ReferenceDocsHostingOptions options,
@@ -3432,6 +3452,8 @@ public static class EngineWebApplicationExtensions
         return rendered;
     }
 
+    [RequiresUnreferencedCode(DynamicRouteMappingRequiresUnreferencedCodeMessage)]
+    [RequiresDynamicCode(DynamicRouteMappingRequiresDynamicCodeMessage)]
     private static void MapBackendForFrontendRestOpenApiDocuments(
         WebApplication app,
         OpenApiEndpointOptions openApiEndpointOptions)
@@ -3474,6 +3496,8 @@ public static class EngineWebApplicationExtensions
             .ExcludeFromDescription();
     }
 
+    [RequiresUnreferencedCode(DynamicRouteMappingRequiresUnreferencedCodeMessage)]
+    [RequiresDynamicCode(DynamicRouteMappingRequiresDynamicCodeMessage)]
     private static void MapBackendForFrontendRestScalarSurfaces(
         WebApplication app,
         OpenApiEndpointOptions openApiEndpointOptions,
@@ -3513,6 +3537,8 @@ public static class EngineWebApplicationExtensions
             resolveTitleSuffix: static (_, scopeId) => scopeId);
     }
 
+    [RequiresUnreferencedCode(DynamicRouteMappingRequiresUnreferencedCodeMessage)]
+    [RequiresDynamicCode(DynamicRouteMappingRequiresDynamicCodeMessage)]
     private static void MapBackendForFrontendRestScalarSurface(
         WebApplication app,
         OpenApiEndpointOptions openApiEndpointOptions,

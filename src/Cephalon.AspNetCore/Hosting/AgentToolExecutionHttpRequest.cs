@@ -6,6 +6,13 @@ namespace Cephalon.AspNetCore.Hosting;
 public sealed class AgentToolExecutionHttpRequest
 {
     /// <summary>
+    /// Initializes a new instance of the <see cref="AgentToolExecutionHttpRequest"/> class.
+    /// </summary>
+    public AgentToolExecutionHttpRequest()
+    {
+    }
+
+    /// <summary>
     /// Gets or initializes the caller-supplied run identifier.
     /// </summary>
     public string? RunId { get; init; }

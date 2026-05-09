@@ -8,6 +8,13 @@ namespace Cephalon.AspNetCore.Hosting;
 public sealed class EventPublicationHttpRequest
 {
     /// <summary>
+    /// Initializes a new instance of the <see cref="EventPublicationHttpRequest"/> class.
+    /// </summary>
+    public EventPublicationHttpRequest()
+    {
+    }
+
+    /// <summary>
     /// Gets or initializes the caller-supplied publication identifier.
     /// </summary>
     public string? Id { get; init; }

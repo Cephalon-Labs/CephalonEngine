@@ -452,6 +452,36 @@ Validation:
 - `dotnet build src/Cephalon.Behaviors/Cephalon.Behaviors.csproj -c Release --no-restore /p:BuildProjectReferences=false /p:IsAotCompatible=true /p:EnableTrimAnalyzer=true /p:EnableAotAnalyzer=true /p:WarningsAsErrors=IL2026%3BIL2067%3BIL2072%3BIL3050` passed
 - `pwsh ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode trim -PublishTargets samples/Cephalon.Sample.ModularMonolith/Cephalon.Sample.ModularMonolith.csproj -OutputPath artifacts/deployment-mode-claims-trim-focused` reported aggregate `not-claimed` and `PublishProbeGate=not-applicable`
 
+### ENG-529 Mark ASP.NET Core operator route AOT boundary
+
+Status: done
+Iteration: Sprint 125
+Area: release-readiness / deployment-mode / host adapters
+Quality dimensions: Compatibility, Maintainability, Auditability, Usability
+
+Why:
+
+- after `ENG-528`, `Cephalon.AspNetCore` still had package-local trim/AOT analyzer errors from ASP.NET Core Minimal API `MapGet` / `MapPost` delegate overloads
+- the full `/engine/*` operator surface is valuable for normal ASP.NET Core hosts, but it must not look like a Native AOT support claim until typed endpoint generation or an AOT-specific route layer exists
+- release evidence should expose the route layer as a deliberate package boundary instead of leaving consumers to rediscover framework analyzer warnings
+
+Delivered:
+
+- annotated `EngineWebApplicationExtensions.MapCephalon()` and the private operator/documentation route-mapping helpers with `RequiresUnreferencedCode` and `RequiresDynamicCode`
+- added XML remarks that explain the full operator route surface still uses dynamic Minimal API delegate binding
+- added `Cephalon.AspNetCore` to `scripts/deployment-mode-support.json` as a high-tier, unclaimed dynamic route-binding boundary
+- added the dispatch-ready `IBehaviorCollectionBuilder.Register<TBehavior, TInput, TOutput>(JsonTypeInfo<TInput>, configureTopology)` fluent registration path so manual generic behavior HTTP registrations can materialize JSON payloads through explicit metadata instead of reflection fallback
+- refreshed the behavior HTTP resilience proof so GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket all prove protocol-native rate-limit, timeout, and circuit-breaker envelopes against real dispatch
+- refreshed deployment-mode docs, trim/AOT inventory, compatibility, `.NET 11` readiness, component docs, roadmap, backlog, project memory, scorecard tests, and release-validation fixtures to read back 9 package entries / 3 known-hazard packages / 15 hazard entries without promoting global support
+- closed the release publish-probe NuGet audit failure by updating the MongoDB-family runtime dependency baseline to `MongoDB.Driver` 3.8.0 and pinning `SharpCompress` 0.48.0 directly in the MongoDB-facing packages instead of suppressing NU1902
+
+Validation:
+
+- `dotnet build src/Cephalon.AspNetCore/Cephalon.AspNetCore.csproj -c Release --no-restore /p:BuildProjectReferences=false /p:IsAotCompatible=true /p:EnableTrimAnalyzer=true /p:EnableAotAnalyzer=true /p:WarningsAsErrors=IL2026%3BIL2067%3BIL2072%3BIL3050%3BRDG012` passed with 0 warnings
+- `dotnet build src/Cephalon.AspNetCore/Cephalon.AspNetCore.csproj --no-restore` passed with 0 warnings
+- `dotnet test tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj -c Release --no-build --no-restore --filter FullyQualifiedName~BehaviorHttpTransportResilienceHostingTests` passed 18/18
+- `dotnet list samples/Cephalon.Sample.Showcase/Cephalon.Sample.Showcase.csproj package --include-transitive --vulnerable` reported no vulnerable packages after the MongoDB dependency refresh
+
 ### ENG-523 Publish pending-baseline blocker evidence
 
 Status: shipped

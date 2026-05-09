@@ -112,9 +112,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
                 }
             )
             HazardInventory = [ordered]@{
-                TotalPackages = 8
+                TotalPackages = 9
                 PackagesWithScopedClaims = 3
-                TotalKnownHazards = 14
+                TotalKnownHazards = 15
                 KnownTransitiveHazardAudit = [ordered]@{
                     Status = "matched"
                     MissingEntries = 0
@@ -159,11 +159,11 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.PackageGAReadinessCount | Should -Be 90
         $json.Summary.DeploymentModeGlobalClaimCount | Should -Be 3
         $json.Summary.DeploymentModeGlobalNotClaimedCount | Should -Be 3
-        $json.Summary.DeploymentModePackageEntryCount | Should -Be 8
+        $json.Summary.DeploymentModePackageEntryCount | Should -Be 9
         $json.Summary.DeploymentModePackageScopedClaimPackageCount | Should -Be 3
         $json.Summary.DeploymentModePackageScopedClaimCount | Should -Be 3
-        $json.Summary.DeploymentModeKnownHazardPackageCount | Should -Be 2
-        $json.Summary.DeploymentModeKnownHazardEntryCount | Should -Be 14
+        $json.Summary.DeploymentModeKnownHazardPackageCount | Should -Be 3
+        $json.Summary.DeploymentModeKnownHazardEntryCount | Should -Be 15
         $json.Summary.DeploymentModeTransitiveAuditEntryCount | Should -Be 7
         $json.Summary.DeploymentModeRepresentativePublishTargetCount | Should -Be 5
         $json.Summary.DeploymentModeClaimsReportPresent | Should -BeTrue
@@ -237,12 +237,12 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.DeploymentModeEvidence.GlobalClaimStatuses.Mode | Should -Contain "trim"
         $json.DeploymentModeEvidence.GlobalClaimStatuses.Mode | Should -Contain "nativeAot"
         $json.DeploymentModeEvidence.GlobalClaimStatuses.Mode | Should -Contain "singleFile"
-        $json.DeploymentModeEvidence.PackageEntryCount | Should -Be 8
+        $json.DeploymentModeEvidence.PackageEntryCount | Should -Be 9
         $json.DeploymentModeEvidence.PackageScopedClaimPackageCount | Should -Be 3
         $json.DeploymentModeEvidence.PackageScopedClaimCount | Should -Be 3
-        $json.DeploymentModeEvidence.KnownHazardPackageCount | Should -Be 2
-        $json.DeploymentModeEvidence.KnownHazardEntryCount | Should -Be 14
-        $json.DeploymentModeEvidence.ClaimAuditTierCounts.high | Should -Be 2
+        $json.DeploymentModeEvidence.KnownHazardPackageCount | Should -Be 3
+        $json.DeploymentModeEvidence.KnownHazardEntryCount | Should -Be 15
+        $json.DeploymentModeEvidence.ClaimAuditTierCounts.high | Should -Be 3
         $json.DeploymentModeEvidence.ClaimAuditTierCounts.'excluded-by-design' | Should -Be 3
         $json.DeploymentModeEvidence.ClaimAuditTierCounts.'clean-baseline' | Should -Be 3
         $json.DeploymentModeEvidence.TransitiveAuditEntryCount | Should -Be 7
@@ -510,7 +510,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $markdown | Should -Match "Platform gates: 12"
         $markdown | Should -Match "Package families: 9"
         $markdown | Should -Match "Deployment-Mode Evidence"
-        $markdown | Should -Match "Deployment-mode known hazards: 14"
+        $markdown | Should -Match "Deployment-mode known hazards: 15"
         $markdown | Should -Match "Publish-probe release validation mode: single-file-publish-gate"
         $markdown | Should -Match "Publish-probe release validation deployment modes: singleFile"
         $markdown | Should -Match "Publish-probe gated modes: singleFile"
@@ -631,9 +631,9 @@ Describe "publish-engine-completion-scorecard.ps1" {
             }
             Modes = @()
             HazardInventory = [ordered]@{
-                TotalPackages = 8
+                TotalPackages = 9
                 PackagesWithScopedClaims = 3
-                TotalKnownHazards = 14
+                TotalKnownHazards = 15
                 KnownTransitiveHazardAudit = [ordered]@{
                     Status = "matched"
                     MissingEntries = 0

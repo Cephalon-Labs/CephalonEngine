@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization.Metadata;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Behaviors.Builders;
 using Cephalon.Behaviors.Validation;
@@ -94,6 +95,48 @@ public sealed class BehaviorCollectionBuilder : IBehaviorCollectionBuilder
             behaviorId,
             typeof(TBehavior),
             BehaviorExecutionSlot.For<TBehavior, TInput, TOutput>());
+        return this;
+    }
+
+    /// <summary>
+    /// Registers a behavior of type <typeparamref name="TBehavior" /> with a closed generic
+    /// execution slot that uses explicit JSON input metadata.
+    /// </summary>
+    /// <typeparam name="TBehavior">
+    /// The concrete behavior type. Must be decorated with <see cref="AppBehaviorAttribute" />
+    /// and implement <see cref="IAppBehavior{TIn,TOut}" />.
+    /// </typeparam>
+    /// <typeparam name="TInput">The behavior input contract.</typeparam>
+    /// <typeparam name="TOutput">The behavior output contract.</typeparam>
+    /// <param name="inputJsonTypeInfo">
+    /// The source-generated JSON contract used to materialize <typeparamref name="TInput" /> inputs.
+    /// </param>
+    /// <param name="configureTopology">
+    /// An optional callback that configures the behavior's transport topology at Layer 4 (highest priority).
+    /// When <see langword="null" />, topology is resolved from configuration layers only.
+    /// </param>
+    /// <returns>The same builder for fluent chaining.</returns>
+    public IBehaviorCollectionBuilder Register<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+        TBehavior,
+        TInput,
+        TOutput>(
+        JsonTypeInfo<TInput> inputJsonTypeInfo,
+        Action<BehaviorTopologyBuilder>? configureTopology)
+        where TBehavior : class, IAppBehavior<TInput, TOutput>
+        where TInput : notnull
+    {
+        ArgumentNullException.ThrowIfNull(inputJsonTypeInfo);
+
+        Action<IBehaviorTopologyBuilder>? configureTopologyAdapter = configureTopology is null
+            ? null
+            : builder => configureTopology((BehaviorTopologyBuilder)builder);
+
+        var behaviorId = RegisterCore<TBehavior>(configureTopologyAdapter);
+        RegisterExecutionSlot(
+            behaviorId,
+            typeof(TBehavior),
+            BehaviorExecutionSlot.For<TBehavior, TInput, TOutput>(inputJsonTypeInfo));
         return this;
     }
 
