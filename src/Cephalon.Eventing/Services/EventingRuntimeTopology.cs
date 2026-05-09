@@ -8,6 +8,7 @@ internal sealed record EventingRuntimeTopology(
     bool HasInboxPath,
     bool HasInProcessSubscriptionExecutionPath,
     bool HasManagedSubscriptionExecutionBindings,
+    bool HasOutboxPublishingPath,
     bool HasPublishingPath,
     bool HasSubscriptionContributors,
     bool HasSubscriptionExecutors);

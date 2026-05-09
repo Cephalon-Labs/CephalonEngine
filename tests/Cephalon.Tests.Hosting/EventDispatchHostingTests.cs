@@ -188,6 +188,13 @@ public sealed class EventDispatchHostingTests
         var terminalDispatchEntry = Assert.Single(terminalDispatchSurface.Entries, entry => entry.Id == "entity-framework-outbox");
         Assert.Equal("true", terminalDispatchEntry.Metadata["terminalFailure"]);
         Assert.Equal("1", terminalDispatchEntry.Metadata["terminalFailureCount"]);
+        var terminalRemediationSurface = Assert.Single(terminalEventingSurfaces, surface => surface.SurfaceId == "event-dispatch-remediations");
+        var terminalRemediationEntry = Assert.Single(terminalRemediationSurface.Entries, entry => entry.Id == "entity-framework-outbox:evt-900");
+        Assert.Equal("terminal-failure", terminalRemediationEntry.Metadata["remediationState"]);
+        Assert.Equal("inspect-terminal-failure-before-replay", terminalRemediationEntry.Metadata["recommendedAction"]);
+        Assert.Equal("advisory-only", terminalRemediationEntry.Metadata["operatorCommandState"]);
+        Assert.Equal("not-claimed", terminalRemediationEntry.Metadata["replayCommand"]);
+        Assert.Equal("false", terminalRemediationEntry.Metadata["wolverineRequired"]);
         var terminalRuntimeSurface = Assert.Single(terminalEventingSurfaces, surface => surface.SurfaceId == "event-dispatch-runtimes");
         var terminalRuntimeEntry = Assert.Single(terminalRuntimeSurface.Entries, entry => entry.Id == "wolverine-dispatch-loop");
         Assert.Equal("1", terminalRuntimeEntry.Metadata["reportedTerminalFailureCount"]);

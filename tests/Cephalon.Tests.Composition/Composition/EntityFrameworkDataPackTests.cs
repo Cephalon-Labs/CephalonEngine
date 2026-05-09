@@ -1220,6 +1220,17 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("outbox-backed-publisher", dispatchEntry.Metadata["reported.publisherId"]);
         Assert.Equal("2026-04-04T12:06:00.0000000+00:00", dispatchEntry.Metadata["reported.nextRetryAtUtc"]);
         Assert.Equal("Broker temporarily unavailable", dispatchEntry.Metadata["lastError"]);
+        var remediationSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatch-remediations");
+        var remediationEntry = Assert.Single(remediationSurface.Entries, entry => entry.Id == "entity-framework-outbox:evt-020");
+        Assert.Equal("retry-pending", remediationEntry.Metadata["remediationState"]);
+        Assert.Equal("wait-for-scheduled-retry-or-inspect-downstream", remediationEntry.Metadata["recommendedAction"]);
+        Assert.Equal("advisory-only", remediationEntry.Metadata["operatorCommandState"]);
+        Assert.Equal("not-claimed", remediationEntry.Metadata["replayCommand"]);
+        Assert.Equal("not-claimed", remediationEntry.Metadata["deadLetterCommand"]);
+        Assert.Equal("false", remediationEntry.Metadata["wolverineRequired"]);
+        Assert.Equal("true", remediationEntry.Metadata["providerNeutral"]);
+        Assert.Equal("2026-04-04T12:06:00.0000000+00:00", remediationEntry.Metadata["nextRetryAtUtc"]);
+        Assert.Equal("exponential", remediationEntry.Metadata["retryPolicy"]);
 
         await reporter.ReportAsync(new EventDispatchExecutionReport(
             outboxId: "entity-framework-outbox",
@@ -1252,6 +1263,16 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("1", dispatchEntry.Metadata["terminalFailureCount"]);
         Assert.Equal("max-attempts-exhausted", dispatchEntry.Metadata["reported.retryOutcome"]);
         Assert.Equal("true", dispatchEntry.Metadata["reported.terminalFailure"]);
+        remediationSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatch-remediations");
+        remediationEntry = Assert.Single(remediationSurface.Entries, entry => entry.Id == "entity-framework-outbox:evt-020");
+        Assert.Equal("terminal-failure", remediationEntry.Metadata["remediationState"]);
+        Assert.Equal("inspect-terminal-failure-before-replay", remediationEntry.Metadata["recommendedAction"]);
+        Assert.Equal("Dispatch retry budget exhausted.", remediationEntry.Metadata["lastError"]);
+        Assert.Equal("true", remediationEntry.Metadata["terminalFailure"]);
+        Assert.Equal("1", remediationEntry.Metadata["terminalFailureCount"]);
+        Assert.Equal("max-attempts-exhausted", remediationEntry.Metadata["retryOutcome"]);
+        Assert.Equal("true", remediationEntry.Metadata["retryExhausted"]);
+        Assert.Equal("true", remediationEntry.Metadata["reported.terminalFailure"]);
     }
 
     [Fact]

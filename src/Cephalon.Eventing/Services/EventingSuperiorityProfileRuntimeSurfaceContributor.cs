@@ -43,9 +43,9 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                 CreateEntry(
                     id: "runtime-truth-and-operator-surfaces",
                     displayName: "Runtime Truth And Operator Surfaces",
-                    description: "Projects channels, subscriptions, publication state, dispatch state, readiness, and claim maturity through Cephalon introspection.",
+                    description: "Projects channels, subscriptions, publication state, dispatch state, remediation advice, readiness, and claim maturity through Cephalon introspection.",
                     status: "claimed",
-                    evidence: "event-channels,event-subscriptions,event-publishers,event-dispatches,event-dispatch-runtimes,eventing-superiority-profile",
+                    evidence: "event-channels,event-subscriptions,event-publishers,event-dispatches,event-dispatch-remediations,event-dispatch-runtimes,eventing-superiority-profile",
                     advantage: "Operators get one Cephalon snapshot instead of reverse-engineering the selected bus, mediator, hosted service, and outbox combination.",
                     nextGap: "Keep any new eventing claim paired with a runtime surface and snapshot field before documenting it as supported."),
                 CreateEntry(
@@ -96,11 +96,11 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     id: "dead-letter-replay-and-remediation",
                     displayName: "Dead-letter Replay And Remediation",
                     description: "Distinguishes terminal failures from retryable failures before claiming replay operations.",
-                    status: topology.HasDispatchRuntimeContributors ? "partial" : "not-claimed",
-                    evidence: topology.HasDispatchRuntimeContributors
-                        ? "dispatch runtime metadata can report terminal failures, but replay commands are not yet provider-neutral."
-                        : "no dispatch runtime is active.",
-                    advantage: "The engine refuses to claim replay support until the operator command surface exists across providers.",
+                    status: topology.HasOutboxPublishingPath ? "partial" : "not-claimed",
+                    evidence: topology.HasOutboxPublishingPath
+                        ? "event-dispatch-remediations derives retry-pending, skipped, failed, and terminal-failure advice from reported dispatch state; replay commands are not yet provider-neutral."
+                        : "no outbox-backed dispatch reporting path is active.",
+                    advantage: "The engine can explain remediation posture without depending on Wolverine, MassTransit, NServiceBus, or a broker-specific dead-letter API.",
                     nextGap: "Ship provider-neutral dead-letter, retry-later, replay, skip, and quarantine commands with audit evidence."),
                 CreateEntry(
                     id: "observability-compliance-and-auditability",

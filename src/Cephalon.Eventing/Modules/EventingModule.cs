@@ -142,6 +142,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             HasInboxPath: hasInboxPath,
             HasInProcessSubscriptionExecutionPath: hasInProcessSubscriptionExecutionPath,
             HasManagedSubscriptionExecutionBindings: hasManagedSubscriptionExecutionBindings,
+            HasOutboxPublishingPath: hasOutboxPublishingPath,
             HasPublishingPath: hasPublishingPath,
             HasSubscriptionContributors: hasSubscriptionContributors,
             HasSubscriptionExecutors: hasSubscriptionExecutors));
@@ -163,6 +164,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             services.TryAddScoped<IEventPublisher, OutboxBackedEventPublisher>();
             services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingPublishingRuntimeSurfaceContributor>());
             services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingDispatchRuntimeSurfaceContributor>());
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingDispatchRemediationRuntimeSurfaceContributor>());
             if (hasDispatchRuntimeContributors)
             {
                 services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingDispatchRuntimeCatalogSurfaceContributor>());

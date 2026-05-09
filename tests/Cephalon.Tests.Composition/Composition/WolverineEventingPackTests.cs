@@ -344,8 +344,10 @@ public sealed class WolverineEventingPackTests
         var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
         var adapterSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
         var dispatchSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatches");
+        var remediationSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatch-remediations");
         var adapterEntry = Assert.Single(adapterSurface.Entries, entry => entry.Id == "wolverine-eventing");
         var dispatchEntry = Assert.Single(dispatchSurface.Entries, entry => entry.Id == "entity-framework-outbox");
+        var remediationEntry = Assert.Single(remediationSurface.Entries, entry => entry.Id == "entity-framework-outbox:evt-500");
         var runtimeDescriptor = dispatchRuntimeDescriptors.GetById(WolverineEventingRuntimeIds.DispatchRuntimeId);
         Assert.NotNull(runtimeDescriptor);
 
@@ -368,6 +370,16 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("3", dispatchEntry.Metadata["reported.retryMaxAttempts"]);
         Assert.Equal("30", dispatchEntry.Metadata["reported.retryDelaySeconds"]);
         Assert.Equal("wolverine-managed", dispatchEntry.Metadata[$"dispatchRuntime.{WolverineEventingRuntimeIds.DispatchRuntimeId}.dispatchBridge"]);
+        Assert.Equal("retry-pending", remediationEntry.Metadata["remediationState"]);
+        Assert.Equal("wait-for-scheduled-retry-or-inspect-downstream", remediationEntry.Metadata["recommendedAction"]);
+        Assert.Equal("advisory-only", remediationEntry.Metadata["operatorCommandState"]);
+        Assert.Equal("not-claimed", remediationEntry.Metadata["replayCommand"]);
+        Assert.Equal("not-claimed", remediationEntry.Metadata["deadLetterCommand"]);
+        Assert.Equal("false", remediationEntry.Metadata["wolverineRequired"]);
+        Assert.Equal("true", remediationEntry.Metadata["providerNeutral"]);
+        Assert.Equal("wolverine-managed", remediationEntry.Metadata["reported.dispatchBridge"]);
+        Assert.Equal("2026-04-04T14:06:00.0000000+00:00", remediationEntry.Metadata["nextRetryAtUtc"]);
+        Assert.Equal("bounded-fixed-delay", remediationEntry.Metadata["retryPolicy"]);
         Assert.True(runtimeDescriptor!.Summary.HasReports);
         Assert.Equal(["entity-framework-outbox"], runtimeDescriptor.Summary.ReportedOutboxIds);
         Assert.Equal("entity-framework-outbox", runtimeDescriptor.Summary.LastOutboxId);
