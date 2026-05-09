@@ -194,6 +194,7 @@ jobs:
             'artifacts/packages-release',
             'artifacts/sboms-release',
             'artifacts/signatures-release',
+            'artifacts/nuget-vulnerability-audit-release',
             'artifacts/supply-chain-external-policy'
           )
           foreach ($root in $artifactRoots) {
@@ -235,6 +236,13 @@ jobs:
         with:
           name: release-manifest
           path: artifacts/release-bundle
+          if-no-files-found: error
+
+      - name: Upload NuGet vulnerability audit
+        uses: actions/upload-artifact@v4
+        with:
+          name: nuget-vulnerability-audit
+          path: artifacts/nuget-vulnerability-audit-release
           if-no-files-found: error
 
       - name: Upload supply-chain external policy preflight

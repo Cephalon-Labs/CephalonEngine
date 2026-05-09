@@ -75,6 +75,7 @@ Each test file should:
 | `scripts/measure-ci-flake-rate.ps1` | `measure-ci-flake-rate.Tests.ps1` | GitHub Actions fixture parsing + no-history pending report + rerun flake detection + clean-window promotion candidate + fail-closed promotion gate |
 | `scripts/publish-engine-completion-scorecard.ps1` | `publish-engine-completion-scorecard.Tests.ps1` | scorecard JSON/Markdown artifact shape + evidence-source reference validation + per-package GA readiness rows + provider integration evidence manifest validation + SRE guardrail-reference validation + unsupported status guard + release-validation wiring |
 | `scripts/validate-supply-chain-external-policy-preflight.ps1` | `validate-supply-chain-external-policy-preflight.Tests.ps1` | pending/pass/fail-closed external policy checks + release-manager confirmation parsing |
+| `scripts/validate-nuget-vulnerability-audit.ps1` | `validate-nuget-vulnerability-audit.Tests.ps1` | captured `dotnet list package --vulnerable` JSON parsing + fail-closed vulnerability report + report-only override |
 | `scripts/validate-package-metadata.ps1` | `validate-package-metadata.Tests.ps1` | NuGet package metadata/readme/tag/repository checks + symbol package pairing |
 | `scripts/validate-release.ps1` | `validate-release.Tests.ps1` | scorecard evidence readback behavior + dependency-health provider manifest readback + missing manifest failure |
 | `scripts/summarise-public-api-deltas.ps1` | `summarise-public-api-deltas.Tests.ps1` | markdown/JSON report shape + optional removal gate + release-validation removal-gate wiring |

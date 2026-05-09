@@ -5,6 +5,7 @@ param(
     [switch]$SkipDotNetReadiness,
     [switch]$SkipDeploymentModeClaims,
     [switch]$SkipEngineCompletionScorecard,
+    [switch]$SkipNuGetVulnerabilityAudit,
     [switch]$SkipOperationalConventions,
     [switch]$SkipPhase8Conventions,
     [switch]$SkipBenchmarks,
@@ -43,6 +44,7 @@ $deploymentModeSupportManifestPath = [System.IO.Path]::Combine($repoRoot, "scrip
 $dotNetReadinessScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-dotnet-readiness.ps1")
 $deploymentModeClaimsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-deployment-mode-claims.ps1")
 $engineCompletionScorecardScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "publish-engine-completion-scorecard.ps1")
+$nugetVulnerabilityAuditScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-nuget-vulnerability-audit.ps1")
 $referenceDocsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "publish-reference-docs.ps1")
 $packageArtifactsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "publish-package-artifacts.ps1")
 $operationalConventionsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "validate-operational-conventions.ps1")
@@ -50,6 +52,7 @@ $phase8ConventionsScriptPath = [System.IO.Path]::Combine($repoRoot, "scripts", "
 $dotNetReadinessOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "dotnet-readiness-release")
 $deploymentModeClaimsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "deployment-mode-claims-release")
 $engineCompletionScorecardOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "engine-completion-scorecard-release")
+$nugetVulnerabilityAuditOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "nuget-vulnerability-audit-release")
 $sreReleaseValidationOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "sre-release-validation")
 $referenceDocsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "reference-docs-release")
 $packageArtifactsOutputPath = [System.IO.Path]::Combine($repoRoot, "artifacts", "packages-release")
@@ -241,6 +244,7 @@ function Test-IsCanonicalReleaseValidationRun {
         $SkipDotNetReadiness -or
         $SkipDeploymentModeClaims -or
         $SkipEngineCompletionScorecard -or
+        $SkipNuGetVulnerabilityAudit -or
         $SkipOperationalConventions -or
         $SkipPhase8Conventions -or
         $SkipBenchmarks -or
@@ -694,6 +698,15 @@ try {
 
                 Invoke-PowerShellScript -Path $deploymentModeClaimsScriptPath -Arguments $deploymentModeClaimArguments
             }
+        }
+    }
+
+    if (-not $SkipNuGetVulnerabilityAudit) {
+        Invoke-Step "Validate NuGet vulnerability audit (Release)" {
+            Invoke-PowerShellScript -Path $nugetVulnerabilityAuditScriptPath -Arguments @(
+                "-SolutionPath", $solutionPath,
+                "-OutputPath", $nugetVulnerabilityAuditOutputPath
+            )
         }
     }
 

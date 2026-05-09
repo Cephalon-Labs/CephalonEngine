@@ -439,8 +439,8 @@ public sealed class CliApplicationTests
                 "GuardrailReferenceCount": 8
               },
               "SupplyChainEvidence": {
-                "EvidenceItemCount": 11,
-                "WorkflowReadyCount": 8,
+                "EvidenceItemCount": 12,
+                "WorkflowReadyCount": 9,
                 "ExternalPolicyPendingCount": 3,
                 "ExternalPolicyPreflightCheckCount": 3,
                 "ExternalPolicyPreflight": {
@@ -462,7 +462,7 @@ public sealed class CliApplicationTests
                 "NeedsRefreshGates": 0,
                 "PartialPlatformGates": 8,
                 "NotClaimedPlatformGates": 1,
-                "EvidenceSourceReferenceCount": 27,
+                "EvidenceSourceReferenceCount": 28,
                 "PackageGAReadinessCount": 90,
                 "PartialPackageGAGates": 89,
                 "NotClaimedPackageGAGates": 1,
@@ -496,8 +496,8 @@ public sealed class CliApplicationTests
                 "SrePendingBaselineRowCount": 1,
                 "SrePendingBaselineBlockerCount": 1,
                 "SrePendingBaselineEvidenceCount": 1,
-                "SupplyChainEvidenceItemCount": 11,
-                "SupplyChainWorkflowReadyCount": 8,
+                "SupplyChainEvidenceItemCount": 12,
+                "SupplyChainWorkflowReadyCount": 9,
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainExternalPolicyPreflightCheckCount": 3,
                 "SupplyChainBlockedCount": 0,
@@ -525,12 +525,12 @@ public sealed class CliApplicationTests
             Assert.Equal(0, exitCode);
             Assert.Contains("[ok] Engine completion scorecard artifact: schema 1.12.0 from docs/engine-completion-scorecard.md; conformance matrix docs/conformance-matrix.md.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard platform gates: 12 gates; blocked 0, needs-refresh 0, partial 8, not-claimed 1.", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("[ok] Engine completion scorecard evidence references: 27 repo-local references validated by the published artifact.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Engine completion scorecard evidence references: 28 repo-local references validated by the published artifact.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard package GA readiness: 90 package rows; partial 89, not-claimed 1, needs-refresh 0.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard deployment-mode evidence: 3 global claims; not-claimed 3, package-scoped claim packages 1, known hazards 14 across 2 packages, transitive audit entries 7, publish probes single-file-publish-gate; claims report artifacts/deployment-mode-claims-release/claim-validation-report.json, gate passed, targets 5, warnings 0, errors 0, truthful package claims 1.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard provider integration evidence: 33 rows; live proofs 33, composition-only 0, external-service gates 14, default-skipped 14, runtime contracts 99; dependency-health providers 18 from scripts/observability-dependency-health-providers.json schema 1.0.0 (source-derived-provider-family-contract).", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard SRE posture: 11 SLIs; target-declared 11, pending stable baselines 1, stable baselines 10, stable baseline rows 10, stable baseline measurements 12, pending baseline rows 1, blockers 1, pending evidence 1, guardrail-mapped 6, pending guardrail coverage 0, guardrail not-applicable 5, guardrail references 8; stable baseline manifest scripts/sre-stable-baselines.json.", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("[warn] Engine completion scorecard supply-chain release evidence: 11 items; workflow-ready 8, external-policy-pending 3, preflight checks 3, preflight status required-before-real-tag-push, blocked 0.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[warn] Engine completion scorecard supply-chain release evidence: 12 items; workflow-ready 9, external-policy-pending 3, preflight checks 3, preflight status required-before-real-tag-push, blocked 0.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Engine completion scorecard public API compatibility: 104 package baselines; pending packages 0, additions 0, removals 0.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Equal(string.Empty, stderr.ToString());
         }
@@ -692,8 +692,8 @@ public sealed class CliApplicationTests
                 "GuardrailReferenceCount": 8
               },
               "SupplyChainEvidence": {
-                "EvidenceItemCount": 11,
-                "WorkflowReadyCount": 8,
+                "EvidenceItemCount": 12,
+                "WorkflowReadyCount": 9,
                 "ExternalPolicyPendingCount": 3,
                 "ExternalPolicyPreflightCheckCount": 3,
                 "ExternalPolicyPreflight": {
@@ -715,7 +715,7 @@ public sealed class CliApplicationTests
                 "NeedsRefreshGates": 0,
                 "PartialPlatformGates": 8,
                 "NotClaimedPlatformGates": 1,
-                "EvidenceSourceReferenceCount": 27,
+                "EvidenceSourceReferenceCount": 28,
                 "PackageGAReadinessCount": 90,
                 "PartialPackageGAGates": 89,
                 "NotClaimedPackageGAGates": 1,
@@ -749,8 +749,8 @@ public sealed class CliApplicationTests
                 "SrePendingBaselineRowCount": 1,
                 "SrePendingBaselineBlockerCount": 1,
                 "SrePendingBaselineEvidenceCount": 1,
-                "SupplyChainEvidenceItemCount": 11,
-                "SupplyChainWorkflowReadyCount": 8,
+                "SupplyChainEvidenceItemCount": 12,
+                "SupplyChainWorkflowReadyCount": 9,
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainExternalPolicyPreflightCheckCount": 3,
                 "SupplyChainBlockedCount": 0,
@@ -851,8 +851,8 @@ public sealed class CliApplicationTests
                 "GuardrailReferenceCount": 8
               },
               "SupplyChainEvidence": {
-                "EvidenceItemCount": 11,
-                "WorkflowReadyCount": 8,
+                "EvidenceItemCount": 12,
+                "WorkflowReadyCount": 9,
                 "ExternalPolicyPendingCount": 3,
                 "ExternalPolicyPreflightCheckCount": 3,
                 "ExternalPolicyPreflight": {
@@ -874,7 +874,7 @@ public sealed class CliApplicationTests
                 "NeedsRefreshGates": 0,
                 "PartialPlatformGates": 8,
                 "NotClaimedPlatformGates": 1,
-                "EvidenceSourceReferenceCount": 27,
+                "EvidenceSourceReferenceCount": 28,
                 "PackageGAReadinessCount": 90,
                 "PartialPackageGAGates": 89,
                 "NotClaimedPackageGAGates": 1,
@@ -908,8 +908,8 @@ public sealed class CliApplicationTests
                 "SrePendingBaselineRowCount": 1,
                 "SrePendingBaselineBlockerCount": 1,
                 "SrePendingBaselineEvidenceCount": 1,
-                "SupplyChainEvidenceItemCount": 11,
-                "SupplyChainWorkflowReadyCount": 8,
+                "SupplyChainEvidenceItemCount": 12,
+                "SupplyChainWorkflowReadyCount": 9,
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainExternalPolicyPreflightCheckCount": 3,
                 "SupplyChainBlockedCount": 0,
@@ -1004,8 +1004,8 @@ public sealed class CliApplicationTests
                 "GuardrailReferenceCount": 8
               },
               "SupplyChainEvidence": {
-                "EvidenceItemCount": 11,
-                "WorkflowReadyCount": 8,
+                "EvidenceItemCount": 12,
+                "WorkflowReadyCount": 9,
                 "ExternalPolicyPendingCount": 3,
                 "ExternalPolicyPreflightCheckCount": 3,
                 "ExternalPolicyPreflight": {
@@ -1027,7 +1027,7 @@ public sealed class CliApplicationTests
                 "NeedsRefreshGates": 0,
                 "PartialPlatformGates": 8,
                 "NotClaimedPlatformGates": 1,
-                "EvidenceSourceReferenceCount": 27,
+                "EvidenceSourceReferenceCount": 28,
                 "PackageGAReadinessCount": 90,
                 "PartialPackageGAGates": 89,
                 "NotClaimedPackageGAGates": 1,
@@ -1061,8 +1061,8 @@ public sealed class CliApplicationTests
                 "SrePendingBaselineRowCount": 1,
                 "SrePendingBaselineBlockerCount": 1,
                 "SrePendingBaselineEvidenceCount": 1,
-                "SupplyChainEvidenceItemCount": 11,
-                "SupplyChainWorkflowReadyCount": 8,
+                "SupplyChainEvidenceItemCount": 12,
+                "SupplyChainWorkflowReadyCount": 9,
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainExternalPolicyPreflightCheckCount": 3,
                 "SupplyChainBlockedCount": 0,
@@ -1163,8 +1163,8 @@ public sealed class CliApplicationTests
                 "GuardrailReferenceCount": 8
               },
               "SupplyChainEvidence": {
-                "EvidenceItemCount": 11,
-                "WorkflowReadyCount": 8,
+                "EvidenceItemCount": 12,
+                "WorkflowReadyCount": 9,
                 "ExternalPolicyPendingCount": 3,
                 "ExternalPolicyPreflightCheckCount": 3,
                 "ExternalPolicyPreflight": {
@@ -1186,7 +1186,7 @@ public sealed class CliApplicationTests
                 "NeedsRefreshGates": 0,
                 "PartialPlatformGates": 8,
                 "NotClaimedPlatformGates": 1,
-                "EvidenceSourceReferenceCount": 27,
+                "EvidenceSourceReferenceCount": 28,
                 "PackageGAReadinessCount": 90,
                 "PartialPackageGAGates": 89,
                 "NotClaimedPackageGAGates": 1,
@@ -1220,8 +1220,8 @@ public sealed class CliApplicationTests
                 "SrePendingBaselineRowCount": 1,
                 "SrePendingBaselineBlockerCount": 1,
                 "SrePendingBaselineEvidenceCount": 1,
-                "SupplyChainEvidenceItemCount": 11,
-                "SupplyChainWorkflowReadyCount": 8,
+                "SupplyChainEvidenceItemCount": 12,
+                "SupplyChainWorkflowReadyCount": 9,
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainExternalPolicyPreflightCheckCount": 3,
                 "SupplyChainBlockedCount": 0,
@@ -1322,8 +1322,8 @@ public sealed class CliApplicationTests
                 "GuardrailReferenceCount": 8
               },
               "SupplyChainEvidence": {
-                "EvidenceItemCount": 11,
-                "WorkflowReadyCount": 8,
+                "EvidenceItemCount": 12,
+                "WorkflowReadyCount": 9,
                 "ExternalPolicyPendingCount": 3,
                 "ExternalPolicyPreflightCheckCount": 3,
                 "ExternalPolicyPreflight": {
@@ -1345,7 +1345,7 @@ public sealed class CliApplicationTests
                 "NeedsRefreshGates": 0,
                 "PartialPlatformGates": 8,
                 "NotClaimedPlatformGates": 1,
-                "EvidenceSourceReferenceCount": 27,
+                "EvidenceSourceReferenceCount": 28,
                 "PackageGAReadinessCount": 90,
                 "PartialPackageGAGates": 89,
                 "NotClaimedPackageGAGates": 1,
@@ -1379,8 +1379,8 @@ public sealed class CliApplicationTests
                 "SrePendingBaselineRowCount": 1,
                 "SrePendingBaselineBlockerCount": 1,
                 "SrePendingBaselineEvidenceCount": 1,
-                "SupplyChainEvidenceItemCount": 11,
-                "SupplyChainWorkflowReadyCount": 8,
+                "SupplyChainEvidenceItemCount": 12,
+                "SupplyChainWorkflowReadyCount": 9,
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainExternalPolicyPreflightCheckCount": 3,
                 "SupplyChainBlockedCount": 0,
@@ -1482,7 +1482,7 @@ public sealed class CliApplicationTests
               },
               "SupplyChainEvidence": {
                 "EvidenceItemCount": 9,
-                "WorkflowReadyCount": 8,
+                "WorkflowReadyCount": 9,
                 "ExternalPolicyPendingCount": 2,
                 "ExternalPolicyPreflightCheckCount": 3,
                 "ExternalPolicyPreflight": {
@@ -1504,7 +1504,7 @@ public sealed class CliApplicationTests
                 "NeedsRefreshGates": 0,
                 "PartialPlatformGates": 8,
                 "NotClaimedPlatformGates": 1,
-                "EvidenceSourceReferenceCount": 27,
+                "EvidenceSourceReferenceCount": 28,
                 "PackageGAReadinessCount": 90,
                 "PartialPackageGAGates": 89,
                 "NotClaimedPackageGAGates": 1,
@@ -1538,8 +1538,8 @@ public sealed class CliApplicationTests
                 "SrePendingBaselineRowCount": 1,
                 "SrePendingBaselineBlockerCount": 1,
                 "SrePendingBaselineEvidenceCount": 1,
-                "SupplyChainEvidenceItemCount": 11,
-                "SupplyChainWorkflowReadyCount": 8,
+                "SupplyChainEvidenceItemCount": 12,
+                "SupplyChainWorkflowReadyCount": 9,
                 "SupplyChainExternalPolicyPendingCount": 3,
                 "SupplyChainExternalPolicyPreflightCheckCount": 3,
                 "SupplyChainBlockedCount": 0,

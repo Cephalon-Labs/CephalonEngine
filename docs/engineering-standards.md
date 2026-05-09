@@ -161,7 +161,7 @@ Required publishing hygiene:
 - symbol packages (`.snupkg`) ship alongside runtime/tool primary `.nupkg` artifacts with managed `lib/` or `tools/` output
 - package metadata, readme, tags, repository/source metadata, package type, and symbol-package pairing are validated from the produced archives by [`scripts/validate-package-metadata.ps1`](../scripts/validate-package-metadata.ps1)
 - `PackageValidationBaselineVersion` is configured for stable packages so accidental binary breaks fail packaging
-- vulnerability scans (`dotnet list package --vulnerable --include-transitive`) run as part of release validation
+- NuGet vulnerability audit runs as a fail-closed release-validation step through [`scripts/validate-nuget-vulnerability-audit.ps1`](../scripts/validate-nuget-vulnerability-audit.ps1); it captures `dotnet list package --vulnerable --include-transitive --format json` output and writes `artifacts/nuget-vulnerability-audit-release/nuget-vulnerability-audit.json`
 - prefer trusted publishing (NuGet trusted-publishing flow + GitHub OIDC) over long-lived API keys when the release flow is formalized
 
 Required restore determinism:
@@ -245,7 +245,7 @@ Security is a framework concern, not an application concern. Cephalon's standard
 
 - secrets, tokens, and signing keys never live in repo-tracked files; secrets are injected through environment, host config, or trusted-publishing flows
 - transport security defaults assume TLS; HTTP-only modes are explicit opt-in for development scenarios
-- vulnerability scans run on every release validation pass; transitive vulnerabilities are part of the report
+- vulnerability scans run on every release validation pass through [`scripts/validate-nuget-vulnerability-audit.ps1`](../scripts/validate-nuget-vulnerability-audit.ps1); transitive vulnerabilities are part of the report and any advisory fails the default release gate
 - analyzer-only signals are readiness, not support; trim/AOT/single-file claims still need the manifest, project settings, validation coverage, workflow automation, and docs to all agree (see [`dotnet11-readiness.md`](dotnet11-readiness.md))
 - the shipped `scripts/validate-deployment-mode-claims.ps1` validation harness is the authoritative gate for promoting trim, Native AOT, or single-file support from `not-claimed` to `claimed`; analyzer-only signals or local publish experiments do not widen the contract by themselves, the emitted `PublishProbePolicy` must stay aligned with `publishProbePolicy` when release-validation gate posture changes, and the emitted `HazardInventory` / `hazard-inventory.json` report must stay aligned with the manifest when package hazards or scoped claims change (see [`deployment-mode-support.md`](deployment-mode-support.md))
 - compiler-only analyzer and source-generator projects must not inherit app publish-mode globals during representative publish probes; keep `CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove`, `GlobalPropertiesToRemove`, and compiler-only project `TreatAsLocalProperty` declarations aligned whenever a new analyzer/source-generator reference is added

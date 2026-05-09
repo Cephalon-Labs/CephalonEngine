@@ -1,5 +1,5 @@
 {
-  "$schemaVersion": "1.1.0",
+  "$schemaVersion": "1.2.0",
   "status": "workflow-ready-external-policy-pending",
   "summary": "Tag-triggered package release provenance is wired in GitHub Actions, while nuget.org-side trusted-publishing policy, prefix reservation, and the publishing account secret remain external release-manager prerequisites before the first real tag push.",
   "releaseWorkflow": ".github/workflows/publish-release.yml",
@@ -15,6 +15,7 @@
     "scripts/validate-release.ps1",
     "scripts/publish-package-artifacts.ps1",
     "scripts/validate-package-metadata.ps1",
+    "scripts/validate-nuget-vulnerability-audit.ps1",
     "scripts/validate-supply-chain-external-policy-preflight.ps1"
   ],
   "requiredWorkflowTokens": [
@@ -30,6 +31,7 @@
     "dotnet nuget push",
     "NUGET_USER",
     "Validate supply-chain external policy preflight",
+    "artifacts/nuget-vulnerability-audit-release",
     "CEPHALON_NUGET_TRUSTED_PUBLISHING_POLICY_CONFIRMED",
     "CEPHALON_NUGET_PREFIX_RESERVATION_CONFIRMED",
     "validate-supply-chain-external-policy-preflight.ps1",
@@ -104,6 +106,20 @@
       "workflowTokens": [
         "Run release validation",
         "artifacts/packages-release"
+      ],
+      "externalPolicyRequired": false
+    },
+    {
+      "id": "nuget-vulnerability-audit",
+      "category": "vulnerability-audit",
+      "status": "workflow-ready",
+      "summary": "Release validation runs dotnet package vulnerability audit across the solution with transitive packages and writes a fail-closed report into the release artifacts.",
+      "sourceDocument": "docs/engineering-standards.md",
+      "sourceToken": "NuGet vulnerability audit",
+      "workflowTokens": [
+        "Run release validation",
+        "artifacts/nuget-vulnerability-audit-release",
+        "release-manifest.json"
       ],
       "externalPolicyRequired": false
     },
