@@ -637,6 +637,26 @@ Describe "deploymentModeEligibility" {
         }
     }
 
+    It "ASP.NET Core dynamic route hazard narrative includes framework endpoint boundary readback without claiming adapter support" {
+        $aspNetCore = @($script:manifest.deploymentModeEligibility.packages | Where-Object {
+                [string]::Equals([string]$_.packageName, "Cephalon.AspNetCore", [System.StringComparison]::Ordinal)
+            })
+        $aspNetCore.Count | Should -Be 1
+
+        $dynamicHazards = @($aspNetCore[0].knownHazards | Where-Object {
+                [string]::Equals([string]$_.kind, "dynamic-minimal-api-operator-route-binding", [System.StringComparison]::OrdinalIgnoreCase)
+            })
+        $dynamicHazards.Count | Should -Be 1
+
+        @($aspNetCore[0].supportedModes).Count | Should -Be 0 -Because "framework endpoint boundary readback is evidence, not an adapter support claim"
+        [string]$aspNetCore[0].extendedBy | Should -Match 'ENG-550'
+        [string]$aspNetCore[0].evidence | Should -Match 'ENG-550'
+        [string]$aspNetCore[0].evidence | Should -Match 'framework health/OpenAPI/Scalar endpoint boundary proof'
+        [string]$dynamicHazards[0].pattern | Should -Match 'ENG-550'
+        [string]$dynamicHazards[0].remediation | Should -Match 'FrameworkEndpointBoundaryAuditStatus'
+        [string]$dynamicHazards[0].remediation | Should -Match 'framework endpoints are counted but remain unclaimed adapter-boundary markers'
+    }
+
     It "core and full common ASP.NET Core operator routes use request delegates instead of Minimal API delegate binding" {
         $sourcePath = Join-Path $script:repoRoot "src/Cephalon.AspNetCore/Hosting/EngineWebApplicationExtensions.cs"
         $sourcePath = $sourcePath -replace '/', [System.IO.Path]::DirectorySeparatorChar

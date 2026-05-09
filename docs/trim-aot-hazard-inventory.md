@@ -466,6 +466,8 @@ A future slice may add explicit `IsTrimmable=false; IsAotCompatible=false; Publi
 
 **Update May 10, 2026 (`ENG-550`):** framework-owned ASP.NET Core endpoint boundaries now have generated readback. `scripts/validate-deployment-mode-claims.ps1` emits `FrameworkEndpointBoundaryAuditStatus`, counts, failures, and rows for `MapHealthChecks`, `MapOpenApi`, and `MapScalarApiReference`; the harness fails closed if health/OpenAPI/Scalar endpoint counts or expected boundary markers drift. Global trim, Native AOT, single-file, and full-adapter support remain `not-claimed` until a later support-promotion slice widens project properties, workflow, docs, and package guidance deliberately.
 
+**Update May 10, 2026 (`ENG-551`):** the deployment-mode manifest now carries the ENG-550 framework-boundary truth directly. The `Cephalon.AspNetCore` dynamic Minimal API hazard row in `scripts/deployment-mode-support.json` names `FrameworkEndpointBoundaryAuditStatus`, includes `ENG-550` in its pattern, remediation, evidence, and `extendedBy` trail, and keeps `supportedModes` empty so counted framework health/OpenAPI/Scalar boundary proof cannot be misread as adapter trim or Native AOT support. Manifest Pester coverage now fails if that row loses the framework-boundary readback or starts claiming support.
+
 ## Refresh discipline
 
 This inventory is refreshed in the same slice that:

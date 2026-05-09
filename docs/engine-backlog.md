@@ -585,6 +585,35 @@ Validation:
 - `pwsh ./scripts/validate-release.ps1 -SkipRestore -SkipBuild -SkipTests -SkipDotNetReadiness -SkipDeploymentModeClaims -SkipNuGetVulnerabilityAudit -SkipOperationalConventions -SkipPhase8Conventions -SkipBenchmarks -SkipPackages -SkipPublicApiDeltaSummary -SkipReferenceDocs` passed with the generated scorecard readback
 - `pwsh ./scripts/publish-reference-docs.ps1 -Configuration Debug` passed and regenerated 87 reference doc files
 
+### ENG-551 Deployment-mode manifest framework-boundary truth
+
+Status: done
+Estimate: 0.5
+Iteration: Sprint 125
+Area: release-readiness / deployment-mode / manifest truth
+Quality dimensions: Auditability, Compatibility, Maintainability, Reliability
+
+Why:
+
+- `ENG-550` shipped generated `FrameworkEndpointBoundaryAuditStatus` readback, but the `Cephalon.AspNetCore` dynamic route hazard narrative in `scripts/deployment-mode-support.json` still stopped at `ENG-549`
+- the deployment-mode manifest is source truth for scorecard/readiness evidence, so the framework endpoint boundary proof needed to be recorded there rather than only in prose docs
+- the update must keep the full adapter support row unclaimed: framework health/OpenAPI/Scalar endpoints are counted by generated readback, not promoted as trim or Native AOT support
+
+Delivered:
+
+- updated the `Cephalon.AspNetCore` dynamic Minimal API hazard `pattern`, `remediation`, `evidence`, and `extendedBy` fields to include `ENG-550` and `FrameworkEndpointBoundaryAuditStatus`
+- refreshed the manifest-wide eligibility comment to record `ENG-550` and the `May 10, 2026` observed-source date
+- added deployment-mode manifest Pester coverage that fails if the ASP.NET Core hazard narrative loses the framework endpoint boundary readback or accidentally claims adapter support
+- kept global trim, Native AOT, single-file, and full-adapter support rows `not-claimed`
+
+Validation:
+
+- passed `Invoke-Pester -Path tests\Cephalon.Tests.Scripts\deployment-mode-support-manifest.Tests.ps1 -Output Detailed` (48 tests)
+- passed `pwsh ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode trim -Configuration Release -SkipPublish -OutputPath artifacts/deployment-mode-claims-manifest-framework-boundary-truth`; `Framework endpoint boundary audit` reported `matched`
+- passed `pwsh ./scripts/publish-engine-completion-scorecard.ps1 -OutputPath artifacts/engine-completion-scorecard-manifest-framework-boundary-truth -SkipMarkdownOpen`; generated scorecard schema `1.20.0`
+- passed `dotnet run --project src\Cephalon.Cli\Cephalon.Cli.csproj -c Debug --no-restore -- doctor --scorecard artifacts\engine-completion-scorecard-manifest-framework-boundary-truth\engine-completion-scorecard.json`; deployment-mode evidence reported `framework endpoint boundary audit matched/0`
+- passed `pwsh ./scripts/validate-release.ps1 -SkipRestore -SkipBuild -SkipTests -SkipDotNetReadiness -SkipDeploymentModeClaims -SkipNuGetVulnerabilityAudit -SkipOperationalConventions -SkipPhase8Conventions -SkipBenchmarks -SkipPackages -SkipPublicApiDeltaSummary -SkipReferenceDocs`; release-validation readback reported `framework endpoint boundary audit matched/0`
+
 ### ENG-550 ASP.NET Core framework endpoint boundary audit readback
 
 Status: done
@@ -16396,6 +16425,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-548 Read operator response JSON contracts into deployment-mode scorecard: `AddCephalon(...)` now registers the ASP.NET Core source-generated JSON context for HTTP and MVC JSON options, `scripts/validate-deployment-mode-claims.ps1` emits `OperatorResponseJsonContractAuditStatus`, and scorecard schema `1.18.0`, release validation, and `cephalon doctor --scorecard` require the operator response JSON contract audit to be `matched/0` without widening global trim / Native AOT / single-file or full-adapter support claims. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability + Performance (shipped)
 - ENG-549 Read non-operator endpoint proof into deployment-mode scorecard: Cephalon-owned non-operator host/documentation GET endpoints now map through app-level request delegates instead of direct `app.MapGet(...)`, `scripts/validate-deployment-mode-claims.ps1` emits `NonOperatorEndpointAuditStatus`, and scorecard schema `1.19.0`, release validation, and `cephalon doctor --scorecard` require the non-operator endpoint audit to be `matched/0` while framework-owned health/OpenAPI/Scalar endpoint extensions keep full-adapter support unclaimed. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability + Performance (shipped)
 - ENG-550 Read framework endpoint boundary proof into deployment-mode scorecard: framework-owned ASP.NET Core health/OpenAPI/Scalar endpoint extensions now have `FrameworkEndpointBoundaryAuditStatus` generated readback with fail-closed count/marker drift detection, scorecard schema `1.20.0`, release validation, and `cephalon doctor --scorecard` require the boundary audit to be `matched/0`, and the full-adapter support row remains unclaimed until a later deliberate support-promotion slice widens project properties, workflow, docs, and package guidance. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability + Performance (shipped)
+- ENG-551 Align deployment-mode manifest with framework endpoint boundary readback: the `Cephalon.AspNetCore` dynamic Minimal API hazard row in `scripts/deployment-mode-support.json` now records `ENG-550`, `FrameworkEndpointBoundaryAuditStatus`, and the counted-but-unclaimed framework health/OpenAPI/Scalar boundary posture in its pattern/remediation/evidence/extendedBy truth, with manifest Pester coverage preventing the source manifest from drifting behind scorecard readback again. Quality dimensions: Auditability + Compatibility + Maintainability + Reliability (shipped)
 - ENG-524 Harden deployment-mode audit-only probes: direct trim and Native AOT runs now keep the single-file release gate out of their verdict by returning `PublishProbeGate=not-applicable` when only audit-only modes are evaluated; compiler-only analyzer/source-generator `ProjectReference` entries strip app publish-mode globals through `CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove`; and `Cephalon.Analyzers`, `Cephalon.Behaviors.SourceGen`, and `Cephalon.Engine.SourceGen` localize publish/RID globals with `TreatAsLocalProperty` so publish probes reach real runtime blocker evidence instead of failing on compiler-only `netstandard2.0` drift. Release closeout also stabilized the readiness warmup hosting test, refreshed the REST projection/governance guardrail to a measured 1 s ceiling while keeping the existing 16 MB allocation ceiling, and moved the canonical full `validate-release` wall-time target to 30 minutes after the current full lane measured about 1,669.848 seconds. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability + Performance (shipped)
 - ENG-535 Close generated REST behavior source-generator adoption proof: `Cephalon.Behaviors.SourceGen` now packs its compiler assembly under `analyzers/dotnet/cs`, scaffolded REST behavior modules and template-pack REST starters reference it as `PrivateAssets=all`, generated module projects keep `Cephalon.Engine.SourceGen` in every blueprint, and the out-of-tree adoption temporary feed publishes the full generated REST behavior package closure (`Cephalon.Behaviors.SourceGen`, `Cephalon.Diagnostics`, and `Cephalon.Resilience`) so restore/build/run replay can produce the REST profile hints required by `MapProfile<TBehavior>()`. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability (shipped)
 - ENG-487 Add opt-in CDC integration baseline: `tests/Cephalon.Tests.CdcIntegration` now carries the first dedicated live CDC integration lane, proving MongoDB change streams against a disposable `EphemeralMongo7` replica set with real outbox staging, provider-native runtime binding, runtime-state reporting, execution-runtime aggregation, and checkpoint persistence; `data.slnf` now points at the split data-relevant test projects instead of the retired monolithic test project, and SQL Server/Postgres live CDC coverage stays explicitly later until an external-service/Testcontainers gate exists. Quality dimensions: Reliability + Compatibility + Auditability + Maintainability (shipped)
