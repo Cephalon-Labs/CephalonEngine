@@ -35,6 +35,34 @@ function Resolve-RepoPath {
     return [System.IO.Path]::GetFullPath((Join-Path $RepoRoot $Path))
 }
 
+function Resolve-CiFlakeRateOutputTarget {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path,
+        [Parameter(Mandatory = $true)]
+        [string]$RepoRoot
+    )
+
+    $resolvedPath = Resolve-RepoPath -Path $Path -RepoRoot $RepoRoot
+    if ((Test-Path -LiteralPath $resolvedPath -PathType Container) -or
+        -not $resolvedPath.EndsWith(".json", [System.StringComparison]::OrdinalIgnoreCase)) {
+        return [pscustomobject]@{
+            Directory = $resolvedPath
+            JsonPath  = Join-Path $resolvedPath "ci-flake-rate.json"
+        }
+    }
+
+    $directory = Split-Path -Parent $resolvedPath
+    if ([string]::IsNullOrWhiteSpace($directory)) {
+        $directory = $RepoRoot
+    }
+
+    return [pscustomobject]@{
+        Directory = $directory
+        JsonPath  = $resolvedPath
+    }
+}
+
 function Read-JsonFile {
     param(
         [Parameter(Mandatory = $true)]
@@ -403,9 +431,9 @@ function Invoke-CiFlakeRateMeasurement {
         ObservedRuns = $completedRuns
     })
 
-    $resolvedOutputPath = Resolve-RepoPath -Path $OutputPath -RepoRoot $repoRoot
-    New-Item -ItemType Directory -Path $resolvedOutputPath -Force | Out-Null
-    $jsonPath = Join-Path $resolvedOutputPath "ci-flake-rate.json"
+    $outputTarget = Resolve-CiFlakeRateOutputTarget -Path $OutputPath -RepoRoot $repoRoot
+    New-Item -ItemType Directory -Path $outputTarget.Directory -Force | Out-Null
+    $jsonPath = $outputTarget.JsonPath
     $report | ConvertTo-Json -Depth 16 | Set-Content -LiteralPath $jsonPath -Encoding UTF8
 
     Write-Host ("CI flake-rate evidence: {0}; completed {1}; flakes {2}; rate {3}%; promotionAllowed {4}; report {5}" -f `

@@ -97,6 +97,21 @@ Describe "measure-ci-flake-rate.ps1" {
         $result.Report.PromotionAllowed | Should -BeFalse
     }
 
+    It "accepts a JSON output file path without nesting another report directory" {
+        New-WorkflowRunFixture -Path $script:runsPath -Runs @()
+        $jsonOutputPath = Join-Path $script:tempRoot "reports\custom-ci-flake-rate.json"
+
+        $result = Invoke-CiFlakeRateMeasurement `
+            -WorkflowRunsJsonPath $script:runsPath `
+            -AttemptJobsDirectory $script:attemptsPath `
+            -OutputPath $jsonOutputPath `
+            -AllowUnavailable
+
+        $result.JsonPath | Should -Be ([System.IO.Path]::GetFullPath($jsonOutputPath))
+        Test-Path -LiteralPath $jsonOutputPath -PathType Leaf | Should -BeTrue
+        Test-Path -LiteralPath (Join-Path $jsonOutputPath "ci-flake-rate.json") | Should -BeFalse
+    }
+
     It "detects a successful rerun after a failed test attempt" {
         New-WorkflowRunFixture -Path $script:runsPath -Runs @(
             @{

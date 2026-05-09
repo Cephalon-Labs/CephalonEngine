@@ -210,6 +210,31 @@ Validation:
 - `dotnet test tests\Cephalon.Tests.Tooling\Cephalon.Tests.Tooling.csproj -c Release --no-restore --filter "FullyQualifiedName~OutOfTreePackageAdoptionAssetsTests|FullyQualifiedName~CompletionScorecardDocsStayAlignedWithDoctorSummary"`
 - `pwsh ./scripts/validate-out-of-tree-package-adoption.ps1 -ReportPath artifacts/adoption-smoke-smoke/out-of-tree-package-adoption.json`
 
+### ENG-536 Harden SRE flake-rate report output path
+
+Status: done
+Estimate: 0.5
+Iteration: Sprint 125
+Area: release-readiness / SRE / CI stability evidence
+Quality dimensions: Usability, Reliability, Auditability, Maintainability
+
+Why:
+
+- `engine.tests.flake-rate.7d` is still correctly pending because live GitHub Actions returns zero workflow runs for `Cephalon-Labs/CephalonEngine`
+- release managers may reasonably pass an explicit JSON file path to the flake-rate collector when running local or ad-hoc evidence captures
+- the previous `-OutputPath` handling treated every value as a directory, so `-OutputPath artifacts/.../ci-flake-rate.json` wrote `artifacts/.../ci-flake-rate.json/ci-flake-rate.json` and made the evidence path confusing
+
+Delivered:
+
+- taught `scripts/measure-ci-flake-rate.ps1` to resolve `-OutputPath` as either a directory or an explicit `.json` report path while preserving the default directory behavior used by release validation
+- added Pester coverage proving JSON output paths are written directly and do not create a nested report directory
+- refreshed SRE posture docs and project memory so the collector usability contract is clear while the flake-rate SLI remains pending until live CI history exists
+
+Validation:
+
+- `gh api repos/Cephalon-Labs/CephalonEngine/actions/runs?per_page=20` returned `total_count=0`, so the SLI remains pending
+- `Invoke-Pester -Path tests\Cephalon.Tests.Scripts\measure-ci-flake-rate.Tests.ps1 -Output Detailed`
+
 ### SMTP invitation delivery live provider proof
 
 Status: done
