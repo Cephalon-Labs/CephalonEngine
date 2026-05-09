@@ -111,25 +111,28 @@ claim the full operator surface is Native AOT-safe until the route layer moves t
 generation or an AOT-specific `RequestDelegate` + source-generated JSON contract path.
 
 The current answer is explicit rather than silent. `MapCephalon()` carries
-`RequiresUnreferencedCode` and `RequiresDynamicCode`, the private mapping helpers carry the same
-annotations, and package-local trim/AOT analyzer builds now pass without hiding the support
-boundary from consumers. `ENG-537` adds a manifest-backed audit to keep that machine-checkable:
+`RequiresUnreferencedCode` and `RequiresDynamicCode`, and package-local trim/AOT analyzer builds now
+pass without hiding the support boundary from consumers. `ENG-537` adds a manifest-backed audit to
+keep that machine-checkable:
 `scripts/validate-deployment-mode-claims.ps1` reads the `dynamic-minimal-api-operator-route-binding`
 hazard, resolves its source window, reports whether both public boundary annotations are still
 present, and fails closed when the audit reports `failed`. This is not a support promotion; it makes
 the boundary harder to drift silently.
 
-`ENG-538` starts the route-delegate remediation lane for the opt-in core operator surface only,
-and `ENG-539` makes that route-delegate proof fail-closed in the deployment-mode harness and
-scorecard readback.
+`ENG-538` starts the route-delegate remediation lane for the opt-in core operator surface,
+`ENG-539` makes that route-delegate proof fail-closed in the deployment-mode harness and
+scorecard readback, and `ENG-541` applies the same proof to the full-mode routes that are shared
+with the core surface.
 When hosts set `Engine:AspNetCore:OperatorSurface:Mode=core`, the bounded core `/engine/*`
 route subset now maps through prebuilt `RequestDelegate` handlers and `MapMethods(...)`
-instead of Minimal API delegate binding. A manifest Pester guard and generated
-`CoreRouteDelegateAuditStatus` both check that `MapCephalonCoreOperatorRoutes(...)` does not
-reintroduce `.MapGet(...)` and that the helper still accepts `RequestDelegate` and calls
-`MapMethods(...)`. The default/full `MapCephalon()` route catalog still remains the high-tier
-dynamic boundary below until the full adapter surface has typed/request-delegate routes and
-source-generated JSON contracts.
+instead of Minimal API delegate binding. In full mode, `/`, `/manifest`, `/snapshot`, `/app-model`,
+and `/resilience` now use the same `RequestDelegate` + `MapMethods(...)` helper before the remaining
+full-only operator routes are mapped. Manifest Pester guards plus generated
+`CoreRouteDelegateAuditStatus` and `FullCommonRouteDelegateAuditStatus` check that those two route
+subsets do not reintroduce `.MapGet(...)` and that the helper still accepts `RequestDelegate` and
+calls `MapMethods(...)`. The remaining default/full `MapCephalon()` route catalog still remains the
+high-tier dynamic boundary below until the full adapter surface has typed/request-delegate routes
+and source-generated JSON contracts.
 
 | Package | File | Line | Pattern | Notes |
 | --- | --- | --- | --- | --- |
@@ -416,7 +419,9 @@ A future slice may add explicit `IsTrimmable=false; IsAotCompatible=false; Publi
 
 **Update May 9, 2026 (`ENG-527`):** the `Cephalon.ReferenceDocs` permanent-not-claimed hazard rows were re-anchored to the current source line numbers after the generator gained two lines above `CreateTypePage(...)`. The by-design package posture is unchanged; the manifest and docs now point at `ReferenceDocsGenerator.cs:297/303/310/315` for constructor, field, property, and method enumeration respectively.
 
-**Update May 9, 2026 (`ENG-529`):** `Cephalon.AspNetCore` now records the full operator route layer as an explicit dynamic Minimal API boundary. `MapCephalon()` and the private route-mapping helpers carry `RequiresUnreferencedCode` / `RequiresDynamicCode` annotations, so package-local trim/AOT analyzer builds can pass without pretending the full `/engine/*` surface is Native AOT-safe. `scripts/deployment-mode-support.json` adds `Cephalon.AspNetCore` as a high-tier unclaimed package with one dynamic route-binding hazard. The current manifest-backed inventory reports 9 package entries, 3 packages with known hazards, 15 known hazard entries, tier counts of 3 `high` + 0 `medium` + 3 `excluded-by-design` + 3 `clean-baseline`, zero active `low` entries, 3 package-scoped `singleFile` claims, and transitive-hazard hint counts of `trim=4`, `nativeAot=8`, and `singleFile=2`. Global trim / Native AOT / single-file support remains `not-claimed`.
+**Update May 9, 2026 (`ENG-529`):** `Cephalon.AspNetCore` now records the full operator route layer as an explicit dynamic Minimal API boundary. `MapCephalon()` carries `RequiresUnreferencedCode` / `RequiresDynamicCode` annotations, so package-local trim/AOT analyzer builds can pass without pretending the full `/engine/*` surface is Native AOT-safe. `scripts/deployment-mode-support.json` adds `Cephalon.AspNetCore` as a high-tier unclaimed package with one dynamic route-binding hazard. The current manifest-backed inventory reports 9 package entries, 3 packages with known hazards, 15 known hazard entries, tier counts of 3 `high` + 0 `medium` + 3 `excluded-by-design` + 3 `clean-baseline`, zero active `low` entries, 3 package-scoped `singleFile` claims, and transitive-hazard hint counts of `trim=4`, `nativeAot=8`, and `singleFile=2`. Global trim / Native AOT / single-file support remains `not-claimed`.
+
+**Update May 9, 2026 (`ENG-541`):** the five full/common ASP.NET Core operator routes shared by full and core mode now map through the same prebuilt `RequestDelegate` + `MapMethods(...)` helper used by the core route subset. The deployment-mode harness emits `FullCommonRouteDelegateAuditStatus`, fails with `full-common-route-delegate-audit-failed` if those shared routes return to `.MapGet(...)`, and the scorecard / release-validation / doctor readback require `matched/0` before treating deployment-mode evidence as release-ready. This narrows the route-binding blocker but does not promote global trim, Native AOT, single-file, or full-adapter support.
 
 ## Refresh discipline
 

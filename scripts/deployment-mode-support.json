@@ -199,12 +199,12 @@
             "kind": "dynamic-minimal-api-operator-route-binding",
             "site": "src/Cephalon.AspNetCore/Hosting/EngineWebApplicationExtensions.cs:101",
             "pattern": "MapCephalon maps the full operator surface through ASP.NET Core Minimal API Delegate overloads (MapGet/MapPost), which require reflection-based binding and dynamic code for route-handler metadata.",
-            "remediation": "Keep the full-surface boundary explicit with RequiresUnreferencedCode/RequiresDynamicCode. ENG-538 moved the opt-in core operator route subset to RequestDelegate/MapMethods, and ENG-539 makes that route-delegate proof validation-harness and scorecard readback. A trim or Native AOT adapter claim still requires source-generated JSON contracts and a broader full-surface typed/request-delegate route path."
+            "remediation": "Keep the full-surface boundary explicit with RequiresUnreferencedCode/RequiresDynamicCode. ENG-538 moved the opt-in core operator route subset to RequestDelegate/MapMethods, ENG-539 makes that route-delegate proof validation-harness and scorecard readback, and ENG-541 moves the shared full/common operator routes to the same RequestDelegate/MapMethods helper with fail-closed harness and scorecard readback. A trim or Native AOT adapter claim still requires source-generated JSON contracts and a broader full-surface typed/request-delegate route path."
           }
         ],
-        "evidence": "docs/trim-aot-hazard-inventory.md (high tier — full ASP.NET Core operator route mapping remains a deliberate dynamic Minimal API boundary; ENG-529 annotates it so package-local trim/AOT analyzer builds are clean without promoting an AOT support claim; ENG-538 proves the opt-in core operator route subset can map through RequestDelegate/MapMethods without widening support; ENG-539 makes that proof fail-closed in the deployment-mode harness and scorecard readback)",
+        "evidence": "docs/trim-aot-hazard-inventory.md (high tier — full ASP.NET Core operator route mapping remains a deliberate dynamic Minimal API boundary; ENG-529 annotates it so package-local trim/AOT analyzer builds are clean without promoting an AOT support claim; ENG-538 proves the opt-in core operator route subset can map through RequestDelegate/MapMethods without widening support; ENG-539 makes that proof fail-closed in the deployment-mode harness and scorecard readback; ENG-541 adds the same fail-closed proof for the shared full/common operator routes)",
         "introducedBy": "ENG-529",
-        "extendedBy": "ENG-538; ENG-539"
+        "extendedBy": "ENG-538; ENG-539; ENG-541"
       },
       {
         "packageName": "Cephalon.Data.MySql.SciSharpReplication",

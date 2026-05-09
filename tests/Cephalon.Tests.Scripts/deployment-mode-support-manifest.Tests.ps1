@@ -637,23 +637,29 @@ Describe "deploymentModeEligibility" {
         }
     }
 
-    It "core ASP.NET Core operator routes use request delegates instead of Minimal API delegate binding" {
+    It "core and full common ASP.NET Core operator routes use request delegates instead of Minimal API delegate binding" {
         $sourcePath = Join-Path $script:repoRoot "src/Cephalon.AspNetCore/Hosting/EngineWebApplicationExtensions.cs"
         $sourcePath = $sourcePath -replace '/', [System.IO.Path]::DirectorySeparatorChar
         Test-Path -LiteralPath $sourcePath -PathType Leaf | Should -BeTrue
 
         $source = Get-Content -LiteralPath $sourcePath -Raw -Encoding UTF8
+        $fullCommonStart = $source.IndexOf("private static void MapCephalonFullCommonOperatorRoutes(", [System.StringComparison]::Ordinal)
         $coreStart = $source.IndexOf("private static void MapCephalonCoreOperatorRoutes(", [System.StringComparison]::Ordinal)
         $helperStart = $source.IndexOf("private static void MapGetRequestDelegate(", [System.StringComparison]::Ordinal)
         $nextHelperStart = $source.IndexOf("private static TService GetRequiredService", [System.StringComparison]::Ordinal)
 
+        $fullCommonStart | Should -BeGreaterOrEqual 0 -Because "the full common operator route method should stay explicit"
         $coreStart | Should -BeGreaterOrEqual 0 -Because "the core operator route method should stay explicit"
+        $coreStart | Should -BeGreaterThan $fullCommonStart -Because "the core route method should follow the full common route method"
         $helperStart | Should -BeGreaterThan $coreStart -Because "the request-delegate helper should follow the core route method"
         $nextHelperStart | Should -BeGreaterThan $helperStart -Because "the request-delegate helper block should stay parseable"
 
+        $fullCommonBlock = $source.Substring($fullCommonStart, $coreStart - $fullCommonStart)
         $coreBlock = $source.Substring($coreStart, $helperStart - $coreStart)
         $helperBlock = $source.Substring($helperStart, $nextHelperStart - $helperStart)
 
+        $fullCommonBlock | Should -Not -Match '\.MapGet\(' -Because "full common operator routes must not reintroduce Minimal API delegate binding"
+        $fullCommonBlock | Should -Match 'MapGetRequestDelegate' -Because "full common operator routes should stay on the request-delegate helper"
         $coreBlock | Should -Not -Match '\.MapGet\(' -Because "core operator routes must not reintroduce Minimal API delegate binding"
         $coreBlock | Should -Match 'MapGetRequestDelegate' -Because "core operator routes should stay on the request-delegate helper"
         $helperBlock | Should -Match 'RequestDelegate requestDelegate' -Because "the helper must accept prebuilt request delegates"

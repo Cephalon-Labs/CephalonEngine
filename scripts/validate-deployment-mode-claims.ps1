@@ -1063,6 +1063,136 @@ function Get-DeploymentModeCoreRouteDelegateAudits {
     return @($rows)
 }
 
+function Get-DeploymentModeFullCommonRouteDelegateAudits {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)] $Manifest,
+        [string]$RepoRoot = ""
+    )
+
+    $rows = @()
+    if ($null -eq $Manifest -or
+        -not $Manifest.PSObject.Properties.Match("deploymentModeEligibility").Count -or
+        $null -eq $Manifest.deploymentModeEligibility -or
+        -not $Manifest.deploymentModeEligibility.PSObject.Properties.Match("packages").Count) {
+        return @()
+    }
+
+    foreach ($pkg in @($Manifest.deploymentModeEligibility.packages)) {
+        if ($null -eq $pkg -or $pkg.PSObject.Properties.Match("knownHazards").Count -eq 0) { continue }
+
+        $packageName = if ($pkg.PSObject.Properties.Match("packageName").Count -gt 0) { [string]$pkg.packageName } else { "" }
+        if (-not [string]::Equals($packageName, "Cephalon.AspNetCore", [System.StringComparison]::OrdinalIgnoreCase)) {
+            continue
+        }
+
+        foreach ($hazard in @($pkg.knownHazards)) {
+            if ($null -eq $hazard -or $hazard.PSObject.Properties.Match("kind").Count -eq 0) { continue }
+
+            $kind = [string]$hazard.kind
+            if (-not [string]::Equals($kind, "dynamic-minimal-api-operator-route-binding", [System.StringComparison]::OrdinalIgnoreCase)) {
+                continue
+            }
+
+            $site = if ($hazard.PSObject.Properties.Match("site").Count -gt 0) { [string]$hazard.site } else { "" }
+            $sourceRelativePath = $site
+            $match = [regex]::Match($site.Trim(), '^(?<path>.+?\.cs)(?::(?<line>\d+))?$')
+            if ($match.Success) {
+                $sourceRelativePath = $match.Groups["path"].Value
+            }
+
+            $resolvedPath = $sourceRelativePath
+            if (-not [System.IO.Path]::IsPathRooted($resolvedPath) -and -not [string]::IsNullOrWhiteSpace($RepoRoot)) {
+                $resolvedPath = Join-Path $RepoRoot ($sourceRelativePath -replace '/', [System.IO.Path]::DirectorySeparatorChar)
+            }
+
+            $sourceExists = Test-Path -LiteralPath $resolvedPath -PathType Leaf
+            $fullCommonMethodFound = $false
+            $coreMethodFound = $false
+            $requestDelegateHelperFound = $false
+            $helperBlockFound = $false
+            $fullCommonRoutesUseMinimalApiMapGet = $false
+            $fullCommonRoutesUseRequestDelegateHelper = $false
+            $helperAcceptsRequestDelegate = $false
+            $helperUsesMapMethods = $false
+            $failures = @()
+
+            if (-not $sourceExists) {
+                $failures += "source-missing"
+            }
+            else {
+                $source = Get-Content -LiteralPath $resolvedPath -Raw -Encoding UTF8
+                $fullCommonStart = $source.IndexOf("private static void MapCephalonFullCommonOperatorRoutes(", [System.StringComparison]::Ordinal)
+                $coreStart = $source.IndexOf("private static void MapCephalonCoreOperatorRoutes(", [System.StringComparison]::Ordinal)
+                $helperStart = $source.IndexOf("private static void MapGetRequestDelegate(", [System.StringComparison]::Ordinal)
+                $nextHelperStart = $source.IndexOf("private static TService GetRequiredService", [System.StringComparison]::Ordinal)
+
+                $fullCommonMethodFound = $fullCommonStart -ge 0
+                $coreMethodFound = $coreStart -gt $fullCommonStart
+                $requestDelegateHelperFound = $helperStart -gt $coreStart
+                $helperBlockFound = $requestDelegateHelperFound -and $nextHelperStart -gt $helperStart
+
+                if (-not $fullCommonMethodFound) {
+                    $failures += "full-common-route-method-missing"
+                }
+                if (-not $coreMethodFound) {
+                    $failures += "core-route-method-missing"
+                }
+                if (-not $requestDelegateHelperFound) {
+                    $failures += "request-delegate-helper-missing"
+                }
+                if (-not $helperBlockFound) {
+                    $failures += "request-delegate-helper-block-unparseable"
+                }
+
+                if ($fullCommonMethodFound -and $coreMethodFound) {
+                    $fullCommonBlock = $source.Substring($fullCommonStart, $coreStart - $fullCommonStart)
+                    $fullCommonRoutesUseMinimalApiMapGet = $fullCommonBlock -match '\.MapGet\('
+                    $fullCommonRoutesUseRequestDelegateHelper = $fullCommonBlock -match 'MapGetRequestDelegate'
+                    if ($fullCommonRoutesUseMinimalApiMapGet) {
+                        $failures += "full-common-routes-use-mapget-delegate-binding"
+                    }
+                    if (-not $fullCommonRoutesUseRequestDelegateHelper) {
+                        $failures += "full-common-routes-missing-request-delegate-helper"
+                    }
+                }
+
+                if ($helperBlockFound) {
+                    $helperBlock = $source.Substring($helperStart, $nextHelperStart - $helperStart)
+                    $helperAcceptsRequestDelegate = $helperBlock -match 'RequestDelegate\s+requestDelegate'
+                    $helperUsesMapMethods = $helperBlock -match '\.MapMethods\('
+                    if (-not $helperAcceptsRequestDelegate) {
+                        $failures += "helper-missing-requestdelegate-parameter"
+                    }
+                    if (-not $helperUsesMapMethods) {
+                        $failures += "helper-missing-mapmethods"
+                    }
+                }
+            }
+
+            $rows += [pscustomobject]@{
+                PackageName                                 = $packageName
+                HazardKind                                  = $kind
+                Site                                        = $site
+                SourcePath                                  = $sourceRelativePath
+                SourceExists                                = $sourceExists
+                FullCommonMethodFound                       = $fullCommonMethodFound
+                CoreMethodFound                             = $coreMethodFound
+                RequestDelegateHelperFound                  = $requestDelegateHelperFound
+                HelperBlockFound                            = $helperBlockFound
+                FullCommonRoutesUseMinimalApiMapGet         = $fullCommonRoutesUseMinimalApiMapGet
+                FullCommonRoutesUseRequestDelegateHelper    = $fullCommonRoutesUseRequestDelegateHelper
+                HelperAcceptsRequestDelegate                = $helperAcceptsRequestDelegate
+                HelperUsesMapMethods                        = $helperUsesMapMethods
+                Status                                      = if ($failures.Count -eq 0) { "matched" } else { "failed" }
+                Failures                                    = @($failures)
+            }
+        }
+    }
+
+    return @($rows)
+}
+
 function Get-DeploymentModeHazardInventory {
     [CmdletBinding()]
     param(
@@ -1192,6 +1322,18 @@ function Get-DeploymentModeHazardInventory {
         "failed"
     }
 
+    $fullCommonRouteDelegateAudits = @(Get-DeploymentModeFullCommonRouteDelegateAudits -Manifest $Manifest -RepoRoot $RepoRoot)
+    $fullCommonRouteDelegateAuditFailures = @($fullCommonRouteDelegateAudits | Where-Object { $_.Status -ne "matched" })
+    $fullCommonRouteDelegateAuditStatus = if ($fullCommonRouteDelegateAudits.Count -eq 0) {
+        "not-applicable"
+    }
+    elseif ($fullCommonRouteDelegateAuditFailures.Count -eq 0) {
+        "matched"
+    }
+    else {
+        "failed"
+    }
+
     $tierRows = foreach ($tierName in $tierCounts.Keys) {
         [pscustomobject]@{
             Tier  = $tierName
@@ -1250,6 +1392,11 @@ function Get-DeploymentModeHazardInventory {
         CoreRouteDelegateAuditFailureCount  = $coreRouteDelegateAuditFailures.Count
         CoreRouteDelegateAuditFailures      = @($coreRouteDelegateAuditFailures)
         CoreRouteDelegateAudits             = @($coreRouteDelegateAudits)
+        FullCommonRouteDelegateAuditStatus        = $fullCommonRouteDelegateAuditStatus
+        FullCommonRouteDelegateAuditCount         = $fullCommonRouteDelegateAudits.Count
+        FullCommonRouteDelegateAuditFailureCount  = $fullCommonRouteDelegateAuditFailures.Count
+        FullCommonRouteDelegateAuditFailures      = @($fullCommonRouteDelegateAuditFailures)
+        FullCommonRouteDelegateAudits             = @($fullCommonRouteDelegateAudits)
         Packages                  = @($packages)
     }
 }
@@ -1825,6 +1972,11 @@ function Write-ValidationReport {
             [void]$sb.AppendLine("- Core route-delegate audit entries: $($hazardInventory.CoreRouteDelegateAuditCount)")
             [void]$sb.AppendLine("- Core route-delegate audit failures: $($hazardInventory.CoreRouteDelegateAuditFailureCount)")
         }
+        if ($hazardInventory.PSObject.Properties.Match("FullCommonRouteDelegateAuditStatus").Count -gt 0) {
+            [void]$sb.AppendLine("- Full common operator route-delegate audit: $($hazardInventory.FullCommonRouteDelegateAuditStatus)")
+            [void]$sb.AppendLine("- Full common route-delegate audit entries: $($hazardInventory.FullCommonRouteDelegateAuditCount)")
+            [void]$sb.AppendLine("- Full common route-delegate audit failures: $($hazardInventory.FullCommonRouteDelegateAuditFailureCount)")
+        }
         [void]$sb.AppendLine("")
         [void]$sb.AppendLine("Tier counts:")
         foreach ($tier in @($hazardInventory.TierCounts)) {
@@ -1872,6 +2024,15 @@ function Write-ValidationReport {
             foreach ($audit in @($hazardInventory.CoreRouteDelegateAudits)) {
                 $failures = if (@($audit.Failures).Count -gt 0) { @($audit.Failures) -join ", " } else { "none" }
                 [void]$sb.AppendLine("- **$($audit.PackageName)** at ``$($audit.SourcePath)``: $($audit.Status), usesRequestDelegateHelper=$($audit.CoreRoutesUseRequestDelegateHelper), usesMinimalApiMapGet=$($audit.CoreRoutesUseMinimalApiMapGet), helperUsesMapMethods=$($audit.HelperUsesMapMethods), failures=$failures")
+            }
+        }
+        if ($hazardInventory.PSObject.Properties.Match("FullCommonRouteDelegateAudits").Count -gt 0 -and
+            @($hazardInventory.FullCommonRouteDelegateAudits).Count -gt 0) {
+            [void]$sb.AppendLine("")
+            [void]$sb.AppendLine("Full common operator route-delegate audit:")
+            foreach ($audit in @($hazardInventory.FullCommonRouteDelegateAudits)) {
+                $failures = if (@($audit.Failures).Count -gt 0) { @($audit.Failures) -join ", " } else { "none" }
+                [void]$sb.AppendLine("- **$($audit.PackageName)** at ``$($audit.SourcePath)``: $($audit.Status), usesRequestDelegateHelper=$($audit.FullCommonRoutesUseRequestDelegateHelper), usesMinimalApiMapGet=$($audit.FullCommonRoutesUseMinimalApiMapGet), helperUsesMapMethods=$($audit.HelperUsesMapMethods), failures=$failures")
             }
         }
     }
@@ -2025,6 +2186,9 @@ function Invoke-DeploymentModeClaimValidation {
     if ($hazardInventory.PSObject.Properties.Match("CoreRouteDelegateAuditStatus").Count -gt 0) {
         Invoke-Step -Title "Core route-delegate audit" -Detail $hazardInventory.CoreRouteDelegateAuditStatus
     }
+    if ($hazardInventory.PSObject.Properties.Match("FullCommonRouteDelegateAuditStatus").Count -gt 0) {
+        Invoke-Step -Title "Full common route-delegate audit" -Detail $hazardInventory.FullCommonRouteDelegateAuditStatus
+    }
 
     if ($aggregateVerdict -eq "claim-overstated") {
         throw "claim-overstated: see $($paths.JsonPath) for details"
@@ -2041,6 +2205,11 @@ function Invoke-DeploymentModeClaimValidation {
         $hazardInventory.CoreRouteDelegateAuditStatus -eq "failed") {
         $detailsPath = if ($paths.HazardInventoryPath) { $paths.HazardInventoryPath } else { $paths.JsonPath }
         throw "core-route-delegate-audit-failed: see $detailsPath for details"
+    }
+    if ($hazardInventory.PSObject.Properties.Match("FullCommonRouteDelegateAuditStatus").Count -gt 0 -and
+        $hazardInventory.FullCommonRouteDelegateAuditStatus -eq "failed") {
+        $detailsPath = if ($paths.HazardInventoryPath) { $paths.HazardInventoryPath } else { $paths.JsonPath }
+        throw "full-common-route-delegate-audit-failed: see $detailsPath for details"
     }
 
     return [pscustomobject]@{

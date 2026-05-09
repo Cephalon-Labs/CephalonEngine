@@ -2901,21 +2901,18 @@ public static class EngineWebApplicationExtensions
             $"Unsupported Cephalon ASP.NET Core operator surface mode '{configuredValue}'. Configure '{OperatorSurfaceModeConfigurationKey}' as 'full' or 'core'.");
     }
 
-    [RequiresUnreferencedCode(DynamicRouteMappingRequiresUnreferencedCodeMessage)]
-    [RequiresDynamicCode(DynamicRouteMappingRequiresDynamicCodeMessage)]
     private static void MapCephalonFullCommonOperatorRoutes(RouteGroupBuilder engineGroup)
     {
-        engineGroup.MapGet("/", (RuntimeManifest manifest) => TypedResults.Ok(manifest))
-            .WithName("GetCephalonManifest");
-        engineGroup.MapGet("/manifest", (RuntimeManifest manifest) => TypedResults.Ok(manifest))
-            .WithName("GetCephalonManifestByPath");
-        engineGroup.MapGet("/snapshot", ([FromServices] IRuntimeIntrospectionSnapshotProvider provider) =>
-                TypedResults.Ok(provider.CreateSnapshot()))
-            .WithName("GetCephalonSnapshot");
-        engineGroup.MapGet("/app-model", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile))
-            .WithName("GetCephalonAppModel");
-        engineGroup.MapGet("/resilience", (RuntimeManifest manifest) => TypedResults.Ok(manifest.AppProfile.Resilience))
-            .WithName("GetCephalonResilience");
+        MapGetRequestDelegate(engineGroup, "/", "GetCephalonManifest", static context =>
+            WriteOkAsync(context, GetRequiredService<RuntimeManifest>(context)));
+        MapGetRequestDelegate(engineGroup, "/manifest", "GetCephalonManifestByPath", static context =>
+            WriteOkAsync(context, GetRequiredService<RuntimeManifest>(context)));
+        MapGetRequestDelegate(engineGroup, "/snapshot", "GetCephalonSnapshot", static context =>
+            WriteOkAsync(context, GetRequiredService<IRuntimeIntrospectionSnapshotProvider>(context).CreateSnapshot()));
+        MapGetRequestDelegate(engineGroup, "/app-model", "GetCephalonAppModel", static context =>
+            WriteOkAsync(context, GetRequiredService<RuntimeManifest>(context).AppProfile));
+        MapGetRequestDelegate(engineGroup, "/resilience", "GetCephalonResilience", static context =>
+            WriteOkAsync(context, GetRequiredService<RuntimeManifest>(context).AppProfile.Resilience));
     }
 
     private static void MapCephalonCoreOperatorRoutes(RouteGroupBuilder engineGroup, ReferenceDocsSurface referenceDocsSurface)

@@ -16,7 +16,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$Script:SchemaVersion = "1.15.0"
+$Script:SchemaVersion = "1.16.0"
 $Script:AllowedStatuses = @(
     "ready-for-preview",
     "partial",
@@ -1101,6 +1101,8 @@ function Convert-DeploymentModeClaimsReportEvidence {
             HazardInventoryBoundaryAnnotationAuditFailureCount = 0
             HazardInventoryCoreRouteDelegateAuditStatus = ""
             HazardInventoryCoreRouteDelegateAuditFailureCount = 0
+            HazardInventoryFullCommonRouteDelegateAuditStatus = ""
+            HazardInventoryFullCommonRouteDelegateAuditFailureCount = 0
         })
     }
 
@@ -1261,6 +1263,12 @@ function Convert-DeploymentModeClaimsReportEvidence {
         throw "Deployment-mode claims report '$reportReference' core route-delegate audit is not matched."
     }
 
+    $fullCommonRouteDelegateAuditStatus = [string](Get-ManifestPropertyValue -Object $hazardInventory -PropertyName "FullCommonRouteDelegateAuditStatus" -DefaultValue "")
+    $fullCommonRouteDelegateAuditFailureCount = [int](Get-ManifestPropertyValue -Object $hazardInventory -PropertyName "FullCommonRouteDelegateAuditFailureCount" -DefaultValue -1)
+    if ($fullCommonRouteDelegateAuditStatus -ne "matched" -or $fullCommonRouteDelegateAuditFailureCount -ne 0) {
+        throw "Deployment-mode claims report '$reportReference' full common route-delegate audit is not matched."
+    }
+
     return [pscustomobject]([ordered]@{
         Report                              = $reportReference
         Present                             = $true
@@ -1287,6 +1295,8 @@ function Convert-DeploymentModeClaimsReportEvidence {
         HazardInventoryBoundaryAnnotationAuditFailureCount = $boundaryAnnotationAuditFailureCount
         HazardInventoryCoreRouteDelegateAuditStatus = $coreRouteDelegateAuditStatus
         HazardInventoryCoreRouteDelegateAuditFailureCount = $coreRouteDelegateAuditFailureCount
+        HazardInventoryFullCommonRouteDelegateAuditStatus = $fullCommonRouteDelegateAuditStatus
+        HazardInventoryFullCommonRouteDelegateAuditFailureCount = $fullCommonRouteDelegateAuditFailureCount
     })
 }
 
@@ -1569,6 +1579,8 @@ function Convert-DeploymentModeEvidence {
         ClaimsReportHazardInventoryBoundaryAnnotationAuditFailureCount = $claimsReportEvidence.HazardInventoryBoundaryAnnotationAuditFailureCount
         ClaimsReportHazardInventoryCoreRouteDelegateAuditStatus = $claimsReportEvidence.HazardInventoryCoreRouteDelegateAuditStatus
         ClaimsReportHazardInventoryCoreRouteDelegateAuditFailureCount = $claimsReportEvidence.HazardInventoryCoreRouteDelegateAuditFailureCount
+        ClaimsReportHazardInventoryFullCommonRouteDelegateAuditStatus = $claimsReportEvidence.HazardInventoryFullCommonRouteDelegateAuditStatus
+        ClaimsReportHazardInventoryFullCommonRouteDelegateAuditFailureCount = $claimsReportEvidence.HazardInventoryFullCommonRouteDelegateAuditFailureCount
     })
 }
 
@@ -3262,6 +3274,7 @@ function New-EngineCompletionScorecardReport {
             DeploymentModeClaimsReportPackageClaimOverstatedCount = $deploymentModeEvidence.ClaimsReportPackageClaimOverstatedCount
             DeploymentModeClaimsReportBoundaryAnnotationAuditFailures = $deploymentModeEvidence.ClaimsReportHazardInventoryBoundaryAnnotationAuditFailureCount
             DeploymentModeClaimsReportCoreRouteDelegateAuditFailures = $deploymentModeEvidence.ClaimsReportHazardInventoryCoreRouteDelegateAuditFailureCount
+            DeploymentModeClaimsReportFullCommonRouteDelegateAuditFailures = $deploymentModeEvidence.ClaimsReportHazardInventoryFullCommonRouteDelegateAuditFailureCount
             AdoptionSmokeScenarioCount = if ($null -ne $adoptionSmokeEvidence) { 1 } else { 0 }
             AdoptionSmokeRuntimeProbeCount = @($adoptionSmokeEvidence.RuntimeProbes).Count
             AdoptionSmokeAssertionCount = @($adoptionSmokeEvidence.Assertions).Count
@@ -3441,6 +3454,7 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- Claims-report package claims: truthful $($Report.DeploymentModeEvidence.ClaimsReportPackageClaimTruthfulCount); overstated $($Report.DeploymentModeEvidence.ClaimsReportPackageClaimOverstatedCount)")
     $markdown.Add("- Claims-report boundary annotation audit: $($Report.DeploymentModeEvidence.ClaimsReportHazardInventoryBoundaryAnnotationAuditStatus); failures $($Report.DeploymentModeEvidence.ClaimsReportHazardInventoryBoundaryAnnotationAuditFailureCount)")
     $markdown.Add("- Claims-report core route-delegate audit: $($Report.DeploymentModeEvidence.ClaimsReportHazardInventoryCoreRouteDelegateAuditStatus); failures $($Report.DeploymentModeEvidence.ClaimsReportHazardInventoryCoreRouteDelegateAuditFailureCount)")
+    $markdown.Add("- Claims-report full common route-delegate audit: $($Report.DeploymentModeEvidence.ClaimsReportHazardInventoryFullCommonRouteDelegateAuditStatus); failures $($Report.DeploymentModeEvidence.ClaimsReportHazardInventoryFullCommonRouteDelegateAuditFailureCount)")
     $markdown.Add("")
     $markdown.Add("| Mode | Status | Summary |")
     $markdown.Add("| --- | --- | --- |")

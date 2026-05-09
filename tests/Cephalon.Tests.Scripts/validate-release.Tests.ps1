@@ -61,6 +61,8 @@ BeforeAll {
                 ClaimsReportHazardInventoryBoundaryAnnotationAuditFailureCount = 0
                 ClaimsReportHazardInventoryCoreRouteDelegateAuditStatus = "matched"
                 ClaimsReportHazardInventoryCoreRouteDelegateAuditFailureCount = 0
+                ClaimsReportHazardInventoryFullCommonRouteDelegateAuditStatus = "matched"
+                ClaimsReportHazardInventoryFullCommonRouteDelegateAuditFailureCount = 0
             }
             ProviderIntegrationEvidence = $providerIntegrationEvidence
             SrePostureEvidence = [ordered]@{
@@ -254,7 +256,7 @@ Describe "validate-release.ps1 scorecard readback" {
             Write-EngineCompletionScorecardEvidenceSummary -ScorecardOutputPath $script:tempRoot
         } 6>&1 | Out-String
 
-        $output | Should -Match "Deployment-mode evidence: 3 global claims; not-claimed 3; package-scoped claim packages 3; known hazards 15; transitive audit entries 7; publish probes single-file-publish-gate; claims report artifacts/deployment-mode-claims-release/claim-validation-report\.json; gate passed; targets 5; warnings 0; errors 0; truthful package claims 3; overstated package claims 0; boundary audit matched/0; core route-delegate audit matched/0\."
+        $output | Should -Match "Deployment-mode evidence: 3 global claims; not-claimed 3; package-scoped claim packages 3; known hazards 15; transitive audit entries 7; publish probes single-file-publish-gate; claims report artifacts/deployment-mode-claims-release/claim-validation-report\.json; gate passed; targets 5; warnings 0; errors 0; truthful package claims 3; overstated package claims 0; boundary audit matched/0; core route-delegate audit matched/0; full common route-delegate audit matched/0\."
         $output | Should -Match "Provider integration evidence: 33 rows; live proofs 33; composition-only 0; external-service gates 14; default-skipped 14; runtime contracts 99; dependency-health providers 18 from scripts/observability-dependency-health-providers\.json schema 1\.0\.0 \(source-derived-provider-family-contract\)\."
         $output | Should -Match "SRE posture: 11 SLIs; target-declared 11; pending stable baselines 1; stable baselines 10; stable baseline rows 10; stable baseline measurements 12; pending baseline rows 1; blockers 1; pending evidence 1; guardrail-mapped 6; pending guardrail coverage 0; guardrail not-applicable 5; summary mode release-validation-console-and-scorecard-artifact; stable baseline manifest scripts/sre-stable-baselines\.json\."
         $output | Should -Match "Test coverage evidence: 8 layered projects; gap criteria 4; recommendations 11; shipped 10; gated 1; active gaps 0; open quarantine entries 0; queue status empty\."
