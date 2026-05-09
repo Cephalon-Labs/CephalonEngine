@@ -5,9 +5,14 @@ using System.Globalization;
 namespace Cephalon.Eventing.Services;
 
 internal sealed class EventingDispatchRemediationRuntimeSurfaceContributor(
-    IEventDispatchRuntimeCatalog runtimeCatalog) : ITechnologyRuntimeContributor
+    IEventDispatchRuntimeCatalog runtimeCatalog,
+    IOutboxCatalog outboxes,
+    EventingRuntimeTopology topology) : ITechnologyRuntimeContributor
 {
-    private const string ClaimPolicy = "reported-state-advisory-only";
+    private const string AdvisoryClaimPolicy = "reported-state-advisory-only";
+    private const string CommandReadyClaimPolicy = "reported-state-plus-bounded-dispatch-store-commands";
+    private const string CommandRoute = "/engine/event-dispatches/{outboxId}/commands/{operationId}";
+    private const string CommandOperations = "retry-now,retry-later,skip,quarantine";
 
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
@@ -28,9 +33,10 @@ internal sealed class EventingDispatchRemediationRuntimeSurfaceContributor(
         IsOutcome(state, EventDispatchExecutionOutcomes.Failed) ||
         IsOutcome(state, EventDispatchExecutionOutcomes.Skipped);
 
-    private static TechnologyRuntimeEntry CreateEntry(EventDispatchRuntimeState state)
+    private TechnologyRuntimeEntry CreateEntry(EventDispatchRuntimeState state)
     {
         var remediationState = ResolveRemediationState(state);
+        var commandsReady = AreCommandsReady(state);
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["outboxId"] = state.OutboxId,
@@ -45,15 +51,31 @@ internal sealed class EventingDispatchRemediationRuntimeSurfaceContributor(
             ["terminalFailureCount"] = state.TerminalFailureCount.ToString(CultureInfo.InvariantCulture),
             ["remediationState"] = remediationState,
             ["recommendedAction"] = ResolveRecommendedAction(remediationState),
-            ["operatorCommandState"] = "advisory-only",
-            ["replayCommand"] = "not-claimed",
+            ["operatorCommandState"] = commandsReady ? "bounded-dispatch-store-command-ready" : "advisory-only",
+            ["replayCommand"] = commandsReady ? "retry-now-ready" : "not-claimed",
+            ["retryLaterCommand"] = commandsReady ? "ready" : "not-claimed",
             ["deadLetterCommand"] = "not-claimed",
-            ["quarantineCommand"] = "not-claimed",
-            ["skipCommand"] = "not-claimed",
-            ["claimPolicy"] = ClaimPolicy,
+            ["quarantineCommand"] = commandsReady ? "ready" : "not-claimed",
+            ["skipCommand"] = commandsReady ? "ready" : "not-claimed",
+            ["claimPolicy"] = commandsReady ? CommandReadyClaimPolicy : AdvisoryClaimPolicy,
             ["providerNeutral"] = "true",
             ["wolverineRequired"] = "false"
         };
+
+        if (commandsReady)
+        {
+            metadata["operatorCommandRoute"] = CommandRoute;
+            metadata["operatorCommandOperations"] = CommandOperations;
+            metadata["operatorCommandScope"] = "dispatch-store";
+            metadata["deadLetterCommandReason"] = "broker-specific-dead-letter-not-owned";
+        }
+
+        var outbox = outboxes.GetById(state.OutboxId);
+        if (outbox is not null)
+        {
+            metadata["dispatchPolicy"] = outbox.DispatchPolicy.PolicyId;
+            metadata["dispatchExecutionMode"] = outbox.DispatchPolicy.ExecutionMode;
+        }
 
         if (!string.IsNullOrWhiteSpace(state.LastChannelId))
         {
@@ -156,12 +178,24 @@ internal sealed class EventingDispatchRemediationRuntimeSurfaceContributor(
     private static string ResolveDescription(string remediationState) =>
         remediationState switch
         {
-            "terminal-failure" => "The dispatch path is terminally failed; inspect the recorded error and retry-exhaustion metadata before any future replay or quarantine command.",
-            "retry-pending" => "The dispatch path has a scheduled retry; inspect the downstream dependency and retry eligibility before forcing manual action.",
-            "skipped" => "The dispatch path was skipped; inspect why it did not continue before requeueing or discarding the message in a provider-specific tool.",
-            _ => "The dispatch path reported a failure; inspect the latest error and policy metadata before retrying manually."
+            "terminal-failure" => "The dispatch path is terminally failed; inspect the recorded error and retry-exhaustion metadata before retry, skip, or quarantine commands.",
+            "retry-pending" => "The dispatch path has a scheduled retry; inspect the downstream dependency and retry eligibility before forcing a retry-now or retry-later command.",
+            "skipped" => "The dispatch path was skipped; inspect why it did not continue before issuing a retry command or leaving it terminal.",
+            _ => "The dispatch path reported a failure; inspect the latest error and policy metadata before issuing an operator command."
         };
 
     private static bool IsOutcome(EventDispatchRuntimeState state, string outcome) =>
         string.Equals(state.LastOutcome, outcome, StringComparison.OrdinalIgnoreCase);
+
+    private bool AreCommandsReady(EventDispatchRuntimeState state)
+    {
+        if (!topology.HasDispatchStore)
+        {
+            return false;
+        }
+
+        var outbox = outboxes.GetById(state.OutboxId);
+        return outbox is not null &&
+            !string.Equals(outbox.DispatchPolicy.ExecutionMode, "disabled", StringComparison.OrdinalIgnoreCase);
+    }
 }

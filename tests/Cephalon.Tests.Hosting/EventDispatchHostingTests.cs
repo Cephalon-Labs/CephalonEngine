@@ -192,8 +192,12 @@ public sealed class EventDispatchHostingTests
         var terminalRemediationEntry = Assert.Single(terminalRemediationSurface.Entries, entry => entry.Id == "entity-framework-outbox:evt-900");
         Assert.Equal("terminal-failure", terminalRemediationEntry.Metadata["remediationState"]);
         Assert.Equal("inspect-terminal-failure-before-replay", terminalRemediationEntry.Metadata["recommendedAction"]);
-        Assert.Equal("advisory-only", terminalRemediationEntry.Metadata["operatorCommandState"]);
-        Assert.Equal("not-claimed", terminalRemediationEntry.Metadata["replayCommand"]);
+        Assert.Equal("bounded-dispatch-store-command-ready", terminalRemediationEntry.Metadata["operatorCommandState"]);
+        Assert.Equal("retry-now-ready", terminalRemediationEntry.Metadata["replayCommand"]);
+        Assert.Equal("ready", terminalRemediationEntry.Metadata["retryLaterCommand"]);
+        Assert.Equal("ready", terminalRemediationEntry.Metadata["quarantineCommand"]);
+        Assert.Equal("ready", terminalRemediationEntry.Metadata["skipCommand"]);
+        Assert.Equal("/engine/event-dispatches/{outboxId}/commands/{operationId}", terminalRemediationEntry.Metadata["operatorCommandRoute"]);
         Assert.Equal("false", terminalRemediationEntry.Metadata["wolverineRequired"]);
         var terminalRuntimeSurface = Assert.Single(terminalEventingSurfaces, surface => surface.SurfaceId == "event-dispatch-runtimes");
         var terminalRuntimeEntry = Assert.Single(terminalRuntimeSurface.Entries, entry => entry.Id == "wolverine-dispatch-loop");
@@ -204,6 +208,115 @@ public sealed class EventDispatchHostingTests
         Assert.Equal(1, terminalSnapshot.EventDispatchRuntimes[0].Summary.TerminalFailureCount);
         Assert.Equal(1, terminalSnapshot.EventDispatchRuntimes[0].Summary.TerminalOutboxCount);
         Assert.True(terminalSnapshot.EventDispatchStates[0].TerminalFailure);
+    }
+
+    [Fact]
+    public async Task MapCephalonRunsEventDispatchRemediationCommandWithoutWolverine()
+    {
+        var databaseName = $"cephalon-hosting-event-dispatch-command-{Guid.NewGuid():N}";
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"],
+                data: new DataSettings(
+                    provider: "EntityFramework",
+                    outboxEnabled: true),
+                messaging: new MessagingSettings(provider: "InMemoryChannels")));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "catalog-events",
+                    displayName: "Catalog Events",
+                    description: "Catalog integration events."));
+            });
+            engine.AddEntityFrameworkData<OutboxCatalogDbContext>(
+                options => options.UseInMemoryDatabase(databaseName),
+                configure: options => options.RegisterOutbox = true);
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        var client = app.GetTestClient();
+        var capabilities = await client.GetFromJsonAsync<CapabilityManifest[]>("/engine/capabilities");
+        Assert.NotNull(capabilities);
+        var remediationCapability = Assert.Single(capabilities, capability => capability.Key == "eventing.dispatch-remediation");
+        Assert.Equal("false", remediationCapability.Metadata["wolverineRequired"]);
+        Assert.Equal("retry-now,retry-later,skip,quarantine", remediationCapability.Metadata["operationIds"]);
+
+        var publicationResponse = await client.PostAsJsonAsync("/engine/event-publications", new
+        {
+            id = "evt-command-001",
+            channelId = "catalog-events",
+            eventType = "catalog.item.changed",
+            payload = new { id = "item-command-001" },
+            occurredAtUtc = new DateTimeOffset(2026, 04, 12, 08, 0, 0, TimeSpan.Zero),
+            correlationId = "corr-command-001"
+        });
+        publicationResponse.EnsureSuccessStatusCode();
+
+        await using var setupScope = app.Services.CreateAsyncScope();
+        var dispatchStore = setupScope.ServiceProvider.GetRequiredService<IEventDispatchStore>();
+        var reporter = app.Services.GetRequiredService<IEventDispatchRuntimeReporter>();
+        var terminalReport = new EventDispatchExecutionReport(
+            outboxId: "entity-framework-outbox",
+            channelId: "catalog-events",
+            outcome: EventDispatchExecutionOutcomes.Failed,
+            observedAtUtc: new DateTimeOffset(2026, 04, 12, 08, 5, 0, TimeSpan.Zero),
+            messageId: "evt-command-001",
+            attempt: 1,
+            error: "Dispatch exhausted before operator recovery.",
+            metadata: new Dictionary<string, string>
+            {
+                [EventDispatchRuntimeMetadataKeys.RetryOutcome] = "max-attempts-exhausted",
+                [EventDispatchRuntimeMetadataKeys.RetryExhausted] = "true",
+                [EventDispatchRuntimeMetadataKeys.TerminalFailure] = "true"
+            });
+        await dispatchStore.ApplyReportAsync(terminalReport);
+        await reporter.ReportAsync(terminalReport);
+
+        var terminalPending = await dispatchStore.ReadPendingAsync(10);
+        Assert.Empty(terminalPending);
+
+        var commandResponse = await client.PostAsJsonAsync(
+            "/engine/event-dispatches/entity-framework-outbox/commands/retry-now",
+            new
+            {
+                commandId = "cmd-command-001-retry",
+                messageId = "evt-command-001",
+                channelId = "catalog-events",
+                reason = "Downstream recovered.",
+                actorId = "operator-001",
+                correlationId = "corr-command-operator-001"
+            });
+        commandResponse.EnsureSuccessStatusCode();
+        var commandResult = await commandResponse.Content.ReadFromJsonAsync<EventDispatchRemediationResult>();
+        var remediatedState = await client.GetFromJsonAsync<EventDispatchRuntimeState>("/engine/event-dispatches/entity-framework-outbox");
+        await using var readScope = app.Services.CreateAsyncScope();
+        var readStore = readScope.ServiceProvider.GetRequiredService<IEventDispatchStore>();
+        var pending = await readStore.ReadPendingAsync(10);
+
+        Assert.NotNull(commandResult);
+        Assert.Equal(EventDispatchRemediationOutcomes.Accepted, commandResult.Outcome);
+        Assert.Equal(EventDispatchExecutionOutcomes.RetryScheduled, commandResult.DispatchOutcome);
+        Assert.Equal("cmd-command-001-retry", commandResult.CommandId);
+        Assert.Equal("operator-001", commandResult.Metadata["operatorActorId"]);
+        Assert.NotNull(remediatedState);
+        Assert.Equal(EventDispatchExecutionOutcomes.RetryScheduled, remediatedState.LastOutcome);
+        Assert.True(remediatedState.RetryPending);
+        Assert.False(remediatedState.TerminalFailure);
+        Assert.Equal("retry-now", remediatedState.Metadata["operatorCommand"]);
+        Assert.Equal("dispatch-store", remediatedState.Metadata[EventDispatchRuntimeMetadataKeys.RetryDurability]);
+        var pendingItem = Assert.Single(pending);
+        Assert.Equal("evt-command-001", pendingItem.MessageId);
+        Assert.Equal(2, pendingItem.DispatchAttemptCount);
     }
 
     [Fact]

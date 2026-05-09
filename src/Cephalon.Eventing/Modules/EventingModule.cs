@@ -33,6 +33,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
     private bool hasInboxPath;
     private bool hasInProcessSubscriptionExecutionPath;
     private bool hasManagedSubscriptionExecutionBindings;
+    private bool hasOutboxPublishingPath;
     private bool hasSubscriptionContributors;
     private bool hasSubscriptionExecutors;
     private bool hasPublishingPath;
@@ -130,7 +131,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             }
         }
 
-        var hasOutboxPublishingPath = options.EnablePublishing &&
+        hasOutboxPublishingPath = options.EnablePublishing &&
             !hasInProcessSubscriptionExecutionPath &&
             services.Any(static descriptor => descriptor.ServiceType == typeof(IOutbox));
         hasPublishingPath = hasInProcessSubscriptionExecutionPath || hasOutboxPublishingPath;
@@ -162,6 +163,11 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             services.TryAddSingleton<IEventDispatchRuntimeReporter>(static provider => provider.GetRequiredService<EventDispatchRuntimeCatalog>());
             services.TryAddSingleton<IOutboxDispatchPolicyCatalog, OutboxDispatchPolicyCatalog>();
             services.TryAddScoped<IEventPublisher, OutboxBackedEventPublisher>();
+            if (hasDispatchStore)
+            {
+                services.TryAddScoped<IEventDispatchRemediationDispatcher, EventDispatchRemediationDispatcher>();
+            }
+
             services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingPublishingRuntimeSurfaceContributor>());
             services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingDispatchRuntimeSurfaceContributor>());
             services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingDispatchRemediationRuntimeSurfaceContributor>());
@@ -297,6 +303,34 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["idempotencyRetentionMinutes"] = InProcessEventingIdempotencyPolicy.GetRetentionMinutes(options).ToString(CultureInfo.InvariantCulture),
                     ["idempotencyDurability"] = InProcessEventingIdempotencyPolicy.Durability,
                     ["idempotencyScope"] = InProcessEventingIdempotencyPolicy.GetScope(options)
+                }));
+        }
+
+        if (options.EnablePublishing && hasOutboxPublishingPath && hasDispatchStore)
+        {
+            capabilities.Add(new Capability(
+                key: "eventing.dispatch-remediation",
+                displayName: "Event Dispatch Remediation",
+                description: "Runs bounded provider-neutral operator commands against the active dispatch store without requiring Wolverine or another bus package.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["technology"] = "event-driven-integration",
+                    ["surfaceId"] = "event-dispatch-remediations",
+                    ["commandRoute"] = "/engine/event-dispatches/{outboxId}/commands/{operationId}",
+                    ["operationIds"] = string.Join(
+                        ",",
+                        EventDispatchRemediationOperationIds.RetryNow,
+                        EventDispatchRemediationOperationIds.RetryLater,
+                        EventDispatchRemediationOperationIds.Skip,
+                        EventDispatchRemediationOperationIds.Quarantine),
+                    ["commandScope"] = "dispatch-store",
+                    ["retryCommand"] = "ready",
+                    ["retryLaterCommand"] = "ready",
+                    ["skipCommand"] = "ready",
+                    ["quarantineCommand"] = "ready",
+                    ["deadLetterCommand"] = "not-claimed",
+                    ["wolverineRequired"] = "false",
+                    ["runtimeState"] = "available"
                 }));
         }
 

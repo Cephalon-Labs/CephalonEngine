@@ -372,8 +372,12 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("wolverine-managed", dispatchEntry.Metadata[$"dispatchRuntime.{WolverineEventingRuntimeIds.DispatchRuntimeId}.dispatchBridge"]);
         Assert.Equal("retry-pending", remediationEntry.Metadata["remediationState"]);
         Assert.Equal("wait-for-scheduled-retry-or-inspect-downstream", remediationEntry.Metadata["recommendedAction"]);
-        Assert.Equal("advisory-only", remediationEntry.Metadata["operatorCommandState"]);
-        Assert.Equal("not-claimed", remediationEntry.Metadata["replayCommand"]);
+        Assert.Equal("bounded-dispatch-store-command-ready", remediationEntry.Metadata["operatorCommandState"]);
+        Assert.Equal("retry-now-ready", remediationEntry.Metadata["replayCommand"]);
+        Assert.Equal("ready", remediationEntry.Metadata["retryLaterCommand"]);
+        Assert.Equal("ready", remediationEntry.Metadata["quarantineCommand"]);
+        Assert.Equal("ready", remediationEntry.Metadata["skipCommand"]);
+        Assert.Equal("/engine/event-dispatches/{outboxId}/commands/{operationId}", remediationEntry.Metadata["operatorCommandRoute"]);
         Assert.Equal("not-claimed", remediationEntry.Metadata["deadLetterCommand"]);
         Assert.Equal("false", remediationEntry.Metadata["wolverineRequired"]);
         Assert.Equal("true", remediationEntry.Metadata["providerNeutral"]);

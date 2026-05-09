@@ -2224,6 +2224,9 @@ Current payload highlights:
   returns `404` when no state has been reported for that path
 - `GET /engine/event-dispatches/terminal-failures` filters the same state catalog to outbox paths
   whose latest report marks the dispatch path as terminally failed
+- `POST /engine/event-dispatches/{outboxId}/commands/{operationId}` runs bounded dispatch-store
+  remediation commands when `IEventDispatchRemediationDispatcher` is active; current operations are
+  `retry-now`, `retry-later`, `skip`, and `quarantine`
 - the same descriptor and state catalogs are also available through `/engine/snapshot` in
   `EventDispatchRuntimes` and `EventDispatchStates` when operators want one merged runtime answer
 
@@ -2232,6 +2235,8 @@ Current note:
 - terminal-failure posture is an operator/drill-down answer over dispatch reports and supported
   dispatch-store state; it is not a broker-specific dead-letter queue, durable inbox, generic
   inbound broker-consumption, downstream delivery-completion, or cross-node exactly-once claim
+- dispatch remediation commands apply only to the mutable dispatch store that owns the outbox; they
+  do not claim broker dead-letter/replay ownership
 - outbox-backed publication states use `accepted` to mean "staged for later dispatch"; dispatch
   completion and terminal dispatch failure remain separate event-dispatch runtime answers
 

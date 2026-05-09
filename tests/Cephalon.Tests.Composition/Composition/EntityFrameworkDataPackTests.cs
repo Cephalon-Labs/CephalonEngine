@@ -1159,6 +1159,18 @@ public sealed class EntityFrameworkDataPackTests
         });
 
         using var provider = services.BuildServiceProvider();
+        using (var publicationScope = provider.CreateScope())
+        {
+            var publisher = publicationScope.ServiceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(new EventPublication(
+                id: "evt-020",
+                channelId: "catalog-events",
+                eventType: "catalog.item.updated",
+                payload: "{\"id\":\"item-020\"}",
+                occurredAtUtc: new DateTimeOffset(2026, 04, 04, 11, 59, 0, TimeSpan.Zero),
+                correlationId: "corr-020"));
+        }
+
         var diagnosticsCatalog = provider.GetRequiredService<IRuntimeDiagnosticsCatalog>();
         var reporter = provider.GetRequiredService<IEventDispatchRuntimeReporter>();
         var runtimeCatalog = provider.GetRequiredService<IEventDispatchRuntimeCatalog>();
@@ -1224,8 +1236,13 @@ public sealed class EntityFrameworkDataPackTests
         var remediationEntry = Assert.Single(remediationSurface.Entries, entry => entry.Id == "entity-framework-outbox:evt-020");
         Assert.Equal("retry-pending", remediationEntry.Metadata["remediationState"]);
         Assert.Equal("wait-for-scheduled-retry-or-inspect-downstream", remediationEntry.Metadata["recommendedAction"]);
-        Assert.Equal("advisory-only", remediationEntry.Metadata["operatorCommandState"]);
-        Assert.Equal("not-claimed", remediationEntry.Metadata["replayCommand"]);
+        Assert.Equal("bounded-dispatch-store-command-ready", remediationEntry.Metadata["operatorCommandState"]);
+        Assert.Equal("retry-now-ready", remediationEntry.Metadata["replayCommand"]);
+        Assert.Equal("ready", remediationEntry.Metadata["retryLaterCommand"]);
+        Assert.Equal("ready", remediationEntry.Metadata["quarantineCommand"]);
+        Assert.Equal("ready", remediationEntry.Metadata["skipCommand"]);
+        Assert.Equal("/engine/event-dispatches/{outboxId}/commands/{operationId}", remediationEntry.Metadata["operatorCommandRoute"]);
+        Assert.Equal("retry-now,retry-later,skip,quarantine", remediationEntry.Metadata["operatorCommandOperations"]);
         Assert.Equal("not-claimed", remediationEntry.Metadata["deadLetterCommand"]);
         Assert.Equal("false", remediationEntry.Metadata["wolverineRequired"]);
         Assert.Equal("true", remediationEntry.Metadata["providerNeutral"]);
@@ -1273,6 +1290,36 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("max-attempts-exhausted", remediationEntry.Metadata["retryOutcome"]);
         Assert.Equal("true", remediationEntry.Metadata["retryExhausted"]);
         Assert.Equal("true", remediationEntry.Metadata["reported.terminalFailure"]);
+
+        using (var commandScope = provider.CreateScope())
+        {
+            var dispatcher = commandScope.ServiceProvider.GetRequiredService<IEventDispatchRemediationDispatcher>();
+            var commandResult = await dispatcher.DispatchAsync(new EventDispatchRemediationRequest(
+                outboxId: "entity-framework-outbox",
+                messageId: "evt-020",
+                channelId: "catalog-events",
+                operationId: EventDispatchRemediationOperationIds.RetryNow,
+                commandId: "cmd-evt-020-retry",
+                requestedAtUtc: new DateTimeOffset(2026, 04, 04, 12, 12, 0, TimeSpan.Zero),
+                reason: "Downstream recovered.",
+                actorId: "operator-001",
+                correlationId: "corr-command-020"));
+
+            Assert.Equal(EventDispatchRemediationOutcomes.Accepted, commandResult.Outcome);
+            Assert.Equal(EventDispatchExecutionOutcomes.RetryScheduled, commandResult.DispatchOutcome);
+            Assert.Equal("operator-001", commandResult.Metadata["operatorActorId"]);
+        }
+
+        var commandState = Assert.Single(runtimeCatalog.States);
+        Assert.Equal(EventDispatchExecutionOutcomes.RetryScheduled, commandState.LastOutcome);
+        Assert.True(commandState.RetryPending);
+        Assert.False(commandState.TerminalFailure);
+        Assert.Equal(4, commandState.LastAttempt);
+        Assert.Equal("cmd-evt-020-retry", commandState.Metadata["operatorCommandId"]);
+        Assert.Equal("retry-now", commandState.Metadata["operatorCommand"]);
+        Assert.Equal("operator-command", commandState.Metadata[EventDispatchRuntimeMetadataKeys.RetryScope]);
+        Assert.Equal("dispatch-store", commandState.Metadata[EventDispatchRuntimeMetadataKeys.RetryDurability]);
+        Assert.Equal("operator-retry-now", commandState.Metadata[EventDispatchRuntimeMetadataKeys.RetryOutcome]);
     }
 
     [Fact]

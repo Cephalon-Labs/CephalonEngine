@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-09T17:42:31.4178434+00:00",
+  "GeneratedAtUtc": "2026-05-09T21:43:15.1513963+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 21,
-      "TypeCount": 551
+      "TypeCount": 556
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -284,7 +284,7 @@
     {
       "AssemblyName": "Cephalon.Eventing.Wolverine",
       "Category": "Phase 8 Companion Packs",
-      "Description": "Official Wolverine adapter and managed dispatch-loop integration for Cephalon eventing workloads.",
+      "Description": "Optional Wolverine adapter and managed dispatch-loop integration for Cephalon eventing workloads.",
       "FileName": "cephalon-eventing-wolverine.md",
       "NamespaceCount": 3,
       "TypeCount": 4
@@ -785,7 +785,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 251
+      "TypeCount": 256
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -8301,6 +8301,66 @@
       }
     },
     {
+      "DisplayName": "EventDispatchRemediationOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-eventdispatchremediationoperationids",
+      "Declaration": "public static class EventDispatchRemediationOperationIds",
+      "Summary": "Defines stable event-dispatch remediation operation identifiers.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 4,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EventDispatchRemediationOutcomes",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-eventdispatchremediationoutcomes",
+      "Declaration": "public static class EventDispatchRemediationOutcomes",
+      "Summary": "Defines stable outcomes returned by event-dispatch remediation commands.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 2,
+        "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EventDispatchRemediationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-eventdispatchremediationrequest",
+      "Declaration": "public sealed class EventDispatchRemediationRequest",
+      "Summary": "Describes one host-agnostic request to remediate a staged event-dispatch path.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 11,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EventDispatchRemediationResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-eventdispatchremediationresult",
+      "Declaration": "public sealed class EventDispatchRemediationResult",
+      "Summary": "Describes the operator-facing result of one event-dispatch remediation command.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 10,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "EventDispatchRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -10978,6 +11038,21 @@
       "AnchorId": "type-cephalon-eventing-services-ieventchannelregistry",
       "Declaration": "public interface IEventChannelRegistry",
       "Summary": "Collects event channel descriptors contributed to the active eventing runtime pack.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEventDispatchRemediationDispatcher",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-ieventdispatchremediationdispatcher",
+      "Declaration": "public interface IEventDispatchRemediationDispatcher",
+      "Summary": "Dispatches bounded remediation commands for staged event-dispatch paths without exposing package-specific implementation types to host adapters.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -19336,6 +19411,17 @@
     {
       "DisplayName": "Accepted",
       "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationOutcomes",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-eventdispatchremediationoutcomes-accepted",
+      "Signature": "const string Accepted",
+      "Summary": "The command was accepted and applied to the active dispatch store."
+    },
+    {
+      "DisplayName": "Accepted",
+      "Category": "Fields",
       "DeclaringTypeName": "EventPublicationOutcomes",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -21345,6 +21431,17 @@
       "AnchorId": "member-f-cephalon-audit-conventions-auditmetadatakeys-actorid",
       "Signature": "const string ActorId",
       "Summary": "The metadata key that stores the actor identifier associated with an audit entry."
+    },
+    {
+      "DisplayName": "ActorId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationrequest-actorid",
+      "Signature": "string ActorId { get; }",
+      "Summary": "Gets the actor responsible for requesting the command."
     },
     {
       "DisplayName": "ActorId",
@@ -33966,6 +34063,28 @@
     {
       "DisplayName": "ChannelId",
       "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationrequest-channelid",
+      "Signature": "string ChannelId { get; }",
+      "Summary": "Gets the event channel identifier associated with the staged event."
+    },
+    {
+      "DisplayName": "ChannelId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationresult-channelid",
+      "Signature": "string ChannelId { get; set; }",
+      "Summary": "The event channel identifier associated with the staged event."
+    },
+    {
+      "DisplayName": "ChannelId",
+      "Category": "Properties",
       "DeclaringTypeName": "EventPublication",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -35931,6 +36050,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-commandfingerprint",
       "Signature": "string CommandFingerprint { get; set; }",
       "Summary": "Gets the deterministic command fingerprint currently associated with the retry-execution policy."
+    },
+    {
+      "DisplayName": "CommandId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationrequest-commandid",
+      "Signature": "string CommandId { get; }",
+      "Summary": "Gets the stable command identifier."
+    },
+    {
+      "DisplayName": "CommandId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationresult-commandid",
+      "Signature": "string CommandId { get; set; }",
+      "Summary": "The stable command identifier."
     },
     {
       "DisplayName": "CommandIds",
@@ -39517,6 +39658,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventdispatchitem-correlationid",
       "Signature": "string CorrelationId { get; }",
       "Summary": "Gets the correlation identifier associated with the message."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationrequest-correlationid",
+      "Signature": "string CorrelationId { get; }",
+      "Summary": "Gets the correlation identifier associated with the command."
     },
     {
       "DisplayName": "CorrelationId",
@@ -45942,6 +46094,17 @@
     {
       "DisplayName": "DispatchAsync",
       "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationDispatcher",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationdispatcher-dispatchasync-cephalon-abstractions-data-eventdispatchremediationrequest-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CEventDispatchRemediationResult\u003E DispatchAsync(EventDispatchRemediationRequest request, CancellationToken cancellationToken)",
+      "Summary": "Dispatches one event-dispatch remediation command through the active eventing runtime."
+    },
+    {
+      "DisplayName": "DispatchAsync",
+      "Category": "Methods",
       "DeclaringTypeName": "ITenantInvitationDeliveryDispatcher",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -46158,6 +46321,17 @@
       "AnchorId": "member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-dispatchmaxattempts",
       "Signature": "int DispatchMaxAttempts { get; set; }",
       "Summary": "Gets or sets the maximum number of Wolverine-managed dispatch attempts for one staged event publication."
+    },
+    {
+      "DisplayName": "DispatchOutcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationresult-dispatchoutcome",
+      "Signature": "string DispatchOutcome { get; set; }",
+      "Summary": "The dispatch observation outcome applied by the command when accepted."
     },
     {
       "DisplayName": "DispatchPolicy",
@@ -51937,6 +52111,17 @@
     {
       "DisplayName": "Error",
       "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationresult-error",
+      "Signature": "string Error { get; set; }",
+      "Summary": "The operator-facing error summary when the command was rejected."
+    },
+    {
+      "DisplayName": "Error",
+      "Category": "Properties",
       "DeclaringTypeName": "EventPublicationResult",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -52219,6 +52404,28 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventdispatchitem-ctor-system-string-system-string-system-string-system-string-system-string-system-datetimeoffset-system-datetimeoffset-system-int32-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "EventDispatchItem(string outboxId, string messageId, string channelId, string eventType, string payload, DateTimeOffset occurredAtUtc, DateTimeOffset createdAtUtc, int dispatchAttemptCount, string contentType, string correlationId, string tenantId, IReadOnlyDictionary\u003Cstring, string\u003E headers, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Creates a new dispatch item."
+    },
+    {
+      "DisplayName": "EventDispatchRemediationRequest",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventDispatchRemediationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchremediationrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "EventDispatchRemediationRequest(string outboxId, string messageId, string channelId, string operationId, string commandId, DateTimeOffset? requestedAtUtc, DateTimeOffset? nextAttemptAtUtc, string reason, string actorId, string correlationId, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates an event-dispatch remediation request."
+    },
+    {
+      "DisplayName": "EventDispatchRemediationResult",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventDispatchRemediationResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchremediationresult-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "EventDispatchRemediationResult(string CommandId, string OutboxId, string MessageId, string ChannelId, string OperationId, string Outcome, string DispatchOutcome, DateTimeOffset ObservedAtUtc, string Error, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
+      "Summary": "Describes the operator-facing result of one event-dispatch remediation command."
     },
     {
       "DisplayName": "EventDispatchRuntimeDescriptor",
@@ -81670,6 +81877,28 @@
     {
       "DisplayName": "MessageId",
       "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationrequest-messageid",
+      "Signature": "string MessageId { get; }",
+      "Summary": "Gets the staged event message identifier."
+    },
+    {
+      "DisplayName": "MessageId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationresult-messageid",
+      "Signature": "string MessageId { get; set; }",
+      "Summary": "The staged event message identifier."
+    },
+    {
+      "DisplayName": "MessageId",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionExecutionReport",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -82535,6 +82764,28 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventdispatchitem-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets optional message metadata associated with the dispatch item."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationrequest-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets optional operator-facing command metadata."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationresult-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; set; }",
+      "Summary": "Optional operator-facing metadata captured with the result."
     },
     {
       "DisplayName": "Metadata",
@@ -86453,6 +86704,17 @@
     {
       "DisplayName": "NextAttemptAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationrequest-nextattemptatutc",
+      "Signature": "DateTimeOffset? NextAttemptAtUtc { get; }",
+      "Summary": "Gets the UTC retry eligibility timestamp used by delayed retry commands."
+    },
+    {
+      "DisplayName": "NextAttemptAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "TenantInvitationDeliveryRetryDescriptor",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -88224,6 +88486,17 @@
     {
       "DisplayName": "ObservedAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationresult-observedatutc",
+      "Signature": "DateTimeOffset ObservedAtUtc { get; set; }",
+      "Summary": "The UTC timestamp when the command was evaluated."
+    },
+    {
+      "DisplayName": "ObservedAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionExecutionReport",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -89388,6 +89661,28 @@
       "Summary": "Gets the stable management-operation identifier currently associated with scheduler recovery and execution hardening."
     },
     {
+      "DisplayName": "OperationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationrequest-operationid",
+      "Signature": "string OperationId { get; }",
+      "Summary": "Gets the remediation operation identifier."
+    },
+    {
+      "DisplayName": "OperationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationresult-operationid",
+      "Signature": "string OperationId { get; set; }",
+      "Summary": "The remediation operation identifier."
+    },
+    {
       "DisplayName": "OperationPath",
       "Category": "Properties",
       "DeclaringTypeName": "BehaviorApiSurfaceDescriptor",
@@ -90455,6 +90750,28 @@
     {
       "DisplayName": "OutboxId",
       "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationrequest-outboxid",
+      "Signature": "string OutboxId { get; }",
+      "Summary": "Gets the outbox identifier that owns the staged event."
+    },
+    {
+      "DisplayName": "OutboxId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationresult-outboxid",
+      "Signature": "string OutboxId { get; set; }",
+      "Summary": "The outbox identifier that owns the staged event."
+    },
+    {
+      "DisplayName": "OutboxId",
+      "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRuntimeState",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -90715,6 +91032,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventdispatchexecutionreport-outcome",
       "Signature": "string Outcome { get; }",
       "Summary": "Gets the stable outcome identifier for the observed dispatch activity."
+    },
+    {
+      "DisplayName": "Outcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationResult",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationresult-outcome",
+      "Signature": "string Outcome { get; set; }",
+      "Summary": "The stable command outcome identifier."
     },
     {
       "DisplayName": "Outcome",
@@ -99328,6 +99656,17 @@
       "Summary": "Gets the human-readable purpose of the folder."
     },
     {
+      "DisplayName": "Quarantine",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-eventdispatchremediationoperationids-quarantine",
+      "Signature": "const string Quarantine",
+      "Summary": "Marks a staged event as terminally failed so it stops re-entering pending-dispatch reads."
+    },
+    {
       "DisplayName": "QueriedAtUtc",
       "Category": "Properties",
       "DeclaringTypeName": "KnowledgeQueryResult",
@@ -100019,6 +100358,17 @@
       "AnchorId": "member-p-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-reason",
       "Signature": "string Reason { get; }",
       "Summary": "Gets the stable reason identifier that explains why the current condition state was selected."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationrequest-reason",
+      "Signature": "string Reason { get; }",
+      "Summary": "Gets the operator-facing reason for the command."
     },
     {
       "DisplayName": "Reason",
@@ -102597,6 +102947,17 @@
     {
       "DisplayName": "Rejected",
       "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationOutcomes",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-eventdispatchremediationoutcomes-rejected",
+      "Signature": "const string Rejected",
+      "Summary": "The command was rejected before it could be applied to the active dispatch store."
+    },
+    {
+      "DisplayName": "Rejected",
+      "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipProofEvaluationOutcomes",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance",
@@ -104320,6 +104681,17 @@
       "AnchorId": "member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-requested",
       "Signature": "RateLimitingSelection Requested { get; set; }",
       "Summary": "The requested app-model selection that asked for rate limiting."
+    },
+    {
+      "DisplayName": "RequestedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRequest",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationrequest-requestedatutc",
+      "Signature": "DateTimeOffset RequestedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp when the command was requested."
     },
     {
       "DisplayName": "RequestedAtUtc",
@@ -108227,6 +108599,17 @@
       "Summary": "Gets the stable retry entry identifier."
     },
     {
+      "DisplayName": "RetryLater",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-eventdispatchremediationoperationids-retrylater",
+      "Signature": "const string RetryLater",
+      "Summary": "Makes a staged event eligible for another dispatch attempt at a later time."
+    },
+    {
       "DisplayName": "RetryMaxAttempts",
       "Category": "Fields",
       "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
@@ -108236,6 +108619,17 @@
       "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrymaxattempts",
       "Signature": "const string RetryMaxAttempts",
       "Summary": "Identifies the maximum number of dispatch attempts allowed for one staged message."
+    },
+    {
+      "DisplayName": "RetryNow",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-eventdispatchremediationoperationids-retrynow",
+      "Signature": "const string RetryNow",
+      "Summary": "Makes a staged event immediately eligible for another dispatch attempt."
     },
     {
       "DisplayName": "RetryOutcome",
@@ -112911,6 +113305,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-singlenoderuntime",
       "Signature": "const string SingleNodeRuntime",
       "Summary": "The runtime currently executes automatic retry on a single node without cross-node lease ownership."
+    },
+    {
+      "DisplayName": "Skip",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-eventdispatchremediationoperationids-skip",
+      "Signature": "const string Skip",
+      "Summary": "Marks a staged event as intentionally skipped by an operator."
     },
     {
       "DisplayName": "Skipped",

@@ -40,7 +40,7 @@ See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), 
 - `/engine/database-roles` when the engine-owned database-role catalog is active
 - `/engine/database-migrations` when the engine-owned database-migration catalog is active
 - `/engine/audit-history` and `/engine/audit-history/export` when durable audit-history services are active
-- `/engine/event-dispatch-runtimes`, `/engine/event-dispatches`, and `/engine/event-dispatches/terminal-failures` when eventing packs register dispatch-runtime descriptors or live dispatch-state reporters
+- `/engine/event-dispatch-runtimes`, `/engine/event-dispatches`, `/engine/event-dispatches/terminal-failures`, and `POST /engine/event-dispatches/{outboxId}/commands/{operationId}` when eventing packs register dispatch-runtime descriptors, live dispatch-state reporters, or the abstraction-level dispatch-remediation command seam
 - `POST /engine/event-publications` when eventing packs register the abstraction-level publication dispatcher action seam; the request body is represented by `EventPublicationHttpRequest` so generated request delegates can bind the contract without private reflection
 - `/engine/event-publications/runtime` when eventing packs register the abstraction-level publication runtime-state catalog
 - `/engine/event-subscription-readiness` when eventing packs register the abstraction-level subscription execution-readiness catalog
@@ -59,6 +59,7 @@ See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), 
 
 - `Hosting/AuditHistoryExportHttpResponseExtensions.cs`
 - `Hosting/EventPublicationHttpRequest.cs`
+- `Hosting/EventDispatchRemediationHttpRequest.cs`
 - `Hosting/AgentToolExecutionHttpRequest.cs`
 - `Hosting/KnowledgeQueryHttpRequest.cs`
 - `Hosting/EngineWebApplicationBuilderExtensions.cs`
@@ -507,6 +508,13 @@ catalog to outbox paths whose latest report is terminally failed, so operators d
 `EventDispatchRuntimes` and `EventDispatchStates`, which keeps operator tooling aligned across the
 host route surface and the broader runtime snapshot without forcing adapter packs to re-aggregate
 state by hand.
+
+When the selected eventing pack also registers `IEventDispatchRemediationDispatcher`, the host maps
+`POST /engine/event-dispatches/{outboxId}/commands/{operationId}` for bounded dispatch-store
+operator commands. The current provider-neutral operations are `retry-now`, `retry-later`, `skip`,
+and `quarantine`; the route returns `EventDispatchRemediationResult`, returns `404` when no
+dispatcher is active, returns `409` when a command is rejected by the active runtime, and keeps
+broker-specific dead-letter commands outside the claim until a companion package owns that path.
 
 The host now also exposes bounded event-publication operator action and publication runtime-state
 surfaces directly. When a selected eventing pack registers `IEventPublicationDispatcher`,

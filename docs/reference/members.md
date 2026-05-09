@@ -24,6 +24,9 @@ Browse the published API surface by public member.
 - [Accepted](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandissuancestates-accepted): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandIssuanceStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Accepted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Cephalon can accept the command onto a future shared issuance lane, but approval still gates later execution handoff.
   - `const string Accepted`
+- [Accepted](cephalon-abstractions.md#member-f-cephalon-abstractions-data-eventdispatchremediationoutcomes-accepted): `Fields` on `EventDispatchRemediationOutcomes` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Accepted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The command was accepted and applied to the active dispatch store.
+  - `const string Accepted`
 - [Accepted](cephalon-abstractions.md#member-f-cephalon-abstractions-data-eventpublicationoutcomes-accepted): `Fields` on `EventPublicationOutcomes` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Accepted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The publication was accepted by the active eventing runtime.
   - `const string Accepted`
@@ -573,6 +576,9 @@ Browse the published API surface by public member.
 - [ActorId](cephalon-audit.md#member-f-cephalon-audit-conventions-auditmetadatakeys-actorid): `Fields` on `AuditMetadataKeys` in `Cephalon.Audit.Conventions` (`Cephalon.Audit`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Conventions&scope=members)
   - The metadata key that stores the actor identifier associated with an audit entry.
   - `const string ActorId`
+- [ActorId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationrequest-actorid): `Properties` on `EventDispatchRemediationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the actor responsible for requesting the command.
+  - `string ActorId { get; }`
 - [ActorId](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-actorid): `Properties` on `EventPublicationHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ActorId&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Gets or initializes the actor identifier responsible for the publication.
   - `string ActorId { get; set; }`
@@ -4020,6 +4026,12 @@ Browse the published API surface by public member.
 - [ChannelId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchitem-channelid): `Properties` on `EventDispatchItem` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the logical channel or destination identifier.
   - `string ChannelId { get; }`
+- [ChannelId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationrequest-channelid): `Properties` on `EventDispatchRemediationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the event channel identifier associated with the staged event.
+  - `string ChannelId { get; }`
+- [ChannelId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationresult-channelid): `Properties` on `EventDispatchRemediationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The event channel identifier associated with the staged event.
+  - `string ChannelId { get; set; }`
 - [ChannelId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-channelid): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the logical channel or destination identifier.
   - `string ChannelId { get; }`
@@ -4557,6 +4569,12 @@ Browse the published API surface by public member.
 - [CommandFingerprint](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-commandfingerprint): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandFingerprint&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the deterministic command fingerprint currently associated with the retry-execution policy.
   - `string CommandFingerprint { get; set; }`
+- [CommandId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationrequest-commandid): `Properties` on `EventDispatchRemediationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable command identifier.
+  - `string CommandId { get; }`
+- [CommandId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationresult-commandid): `Properties` on `EventDispatchRemediationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The stable command identifier.
+  - `string CommandId { get; set; }`
 - [CommandIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommandbatch-commandids): `Properties` on `DatabaseMigrationOperationalExecutionGroupCommandBatch` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable command identifiers represented in this batch, in encounter order.
   - `IReadOnlyList<string> CommandIds { get; }`
@@ -5534,6 +5552,9 @@ Browse the published API surface by public member.
   - `string CorrelationId { get; set; }`
 - [CorrelationId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchitem-correlationid): `Properties` on `EventDispatchItem` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the correlation identifier associated with the message.
+  - `string CorrelationId { get; }`
+- [CorrelationId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationrequest-correlationid): `Properties` on `EventDispatchRemediationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the correlation identifier associated with the command.
   - `string CorrelationId { get; }`
 - [CorrelationId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-correlationid): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the correlation identifier associated with the event.
@@ -7287,6 +7308,9 @@ Browse the published API surface by public member.
 - [DiscoveryServiceClient](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-ctor-grpc-core-callinvoker): `Constructors` on `DiscoveryServiceClient` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=DiscoveryServiceClient&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Creates a new client for DiscoveryService that uses a custom `CallInvoker`.
   - `DiscoveryServiceClient(CallInvoker callInvoker)`
+- [DispatchAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationdispatcher-dispatchasync-cephalon-abstractions-data-eventdispatchremediationrequest-system-threading-cancellationtoken): `Methods` on `IEventDispatchRemediationDispatcher` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DispatchAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Dispatches one event-dispatch remediation command through the active eventing runtime.
+  - `ValueTask<EventDispatchRemediationResult> DispatchAsync(EventDispatchRemediationRequest request, CancellationToken cancellationToken)`
 - [DispatchAsync](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantinvitationdeliverydispatcher-dispatchasync-cephalon-multitenancy-governance-services-tenantinvitationdeliveryrequest-system-threading-cancellationtoken): `Methods` on `ITenantInvitationDeliveryDispatcher` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=DispatchAsync&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Dispatches one tenant invitation delivery request.
   - `ValueTask<TenantInvitationDeliveryResult> DispatchAsync(TenantInvitationDeliveryRequest request, CancellationToken cancellationToken)`
@@ -7347,6 +7371,9 @@ Browse the published API surface by public member.
 - [DispatchMaxAttempts](cephalon-eventing-wolverine.md#member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-dispatchmaxattempts): `Properties` on `WolverineEventingOptions` in `Cephalon.Eventing.Wolverine.Configuration` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=DispatchMaxAttempts&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Configuration&scope=members)
   - Gets or sets the maximum number of Wolverine-managed dispatch attempts for one staged event publication.
   - `int DispatchMaxAttempts { get; set; }`
+- [DispatchOutcome](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationresult-dispatchoutcome): `Properties` on `EventDispatchRemediationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DispatchOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The dispatch observation outcome applied by the command when accepted.
+  - `string DispatchOutcome { get; set; }`
 - [DispatchPolicy](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxdescriptor-dispatchpolicy): `Properties` on `OutboxDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DispatchPolicy&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the effective dispatch-execution policy for the outbox.
   - `OutboxDispatchPolicyDescriptor DispatchPolicy { get; }`
@@ -8925,6 +8952,9 @@ Browse the published API surface by public member.
 - [Error](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchexecutionreport-error): `Properties` on `EventDispatchExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Error&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the operator-facing error summary when the observation represents a failure.
   - `string Error { get; }`
+- [Error](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationresult-error): `Properties` on `EventDispatchRemediationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Error&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The operator-facing error summary when the command was rejected.
+  - `string Error { get; set; }`
 - [Error](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationresult-error): `Properties` on `EventPublicationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Error&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The operator-facing error summary when publication failed.
   - `string Error { get; set; }`
@@ -9003,6 +9033,12 @@ Browse the published API surface by public member.
 - [EventDispatchItem](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchitem-ctor-system-string-system-string-system-string-system-string-system-string-system-datetimeoffset-system-datetimeoffset-system-int32-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventDispatchItem` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventDispatchItem&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a new dispatch item.
   - `EventDispatchItem(string outboxId, string messageId, string channelId, string eventType, string payload, DateTimeOffset occurredAtUtc, DateTimeOffset createdAtUtc, int dispatchAttemptCount, string contentType, string correlationId, string tenantId, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> metadata)`
+- [EventDispatchRemediationRequest](cephalon-abstractions.md#member-m-cephalon-abstractions-data-eventdispatchremediationrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventDispatchRemediationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventDispatchRemediationRequest&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates an event-dispatch remediation request.
+  - `EventDispatchRemediationRequest(string outboxId, string messageId, string channelId, string operationId, string commandId, DateTimeOffset? requestedAtUtc, DateTimeOffset? nextAttemptAtUtc, string reason, string actorId, string correlationId, IReadOnlyDictionary<string, string> metadata)`
+- [EventDispatchRemediationResult](cephalon-abstractions.md#member-m-cephalon-abstractions-data-eventdispatchremediationresult-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventDispatchRemediationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventDispatchRemediationResult&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Describes the operator-facing result of one event-dispatch remediation command.
+  - `EventDispatchRemediationResult(string CommandId, string OutboxId, string MessageId, string ChannelId, string OperationId, string Outcome, string DispatchOutcome, DateTimeOffset ObservedAtUtc, string Error, IReadOnlyDictionary<string, string> Metadata)`
 - [EventDispatchRuntimeDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-eventdispatchruntimedescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlylist-system-string-cephalon-abstractions-data-eventdispatchruntimesummary): `Constructors` on `EventDispatchRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventDispatchRuntimeDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new event-dispatch runtime descriptor.
   - `EventDispatchRuntimeDescriptor(string id, string displayName, string description, IReadOnlyDictionary<string, string> metadata, IReadOnlyList<string> outboxIds, EventDispatchRuntimeSummary summary)`
@@ -17058,6 +17094,12 @@ Browse the published API surface by public member.
 - [MessageId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchitem-messageid): `Properties` on `EventDispatchItem` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=MessageId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable outbound message identifier.
   - `string MessageId { get; }`
+- [MessageId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationrequest-messageid): `Properties` on `EventDispatchRemediationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MessageId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the staged event message identifier.
+  - `string MessageId { get; }`
+- [MessageId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationresult-messageid): `Properties` on `EventDispatchRemediationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=MessageId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The staged event message identifier.
+  - `string MessageId { get; set; }`
 - [MessageId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutionreport-messageid): `Properties` on `EventSubscriptionExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=MessageId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable inbound message identifier when one was reported.
   - `string MessageId { get; }`
@@ -17295,6 +17337,12 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchitem-metadata): `Properties` on `EventDispatchItem` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets optional message metadata associated with the dispatch item.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationrequest-metadata): `Properties` on `EventDispatchRemediationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets optional operator-facing command metadata.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationresult-metadata): `Properties` on `EventDispatchRemediationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Optional operator-facing metadata captured with the result.
+  - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimedescriptor-metadata): `Properties` on `EventDispatchRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets operator-facing metadata for the dispatch runtime.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -18364,6 +18412,9 @@ Browse the published API surface by public member.
 - [NextAttemptAtUtc](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-entityframeworkoutboxentry-nextattemptatutc): `Properties` on `EntityFrameworkOutboxEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=NextAttemptAtUtc&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Gets or sets the time at which the outbox row becomes eligible for the next dispatch attempt, when delayed retry is in effect.
   - `DateTimeOffset? NextAttemptAtUtc { get; set; }`
+- [NextAttemptAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationrequest-nextattemptatutc): `Properties` on `EventDispatchRemediationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=NextAttemptAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the UTC retry eligibility timestamp used by delayed retry commands.
+  - `DateTimeOffset? NextAttemptAtUtc { get; }`
 - [NextAttemptAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-nextattemptatutc): `Properties` on `TenantInvitationDeliveryRetryDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=NextAttemptAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the UTC timestamp when the next attempt is due.
   - `DateTimeOffset NextAttemptAtUtc { get; }`
@@ -18850,6 +18901,9 @@ Browse the published API surface by public member.
 - [ObservedAtUtc](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchexecutionreport-observedatutc): `Properties` on `EventDispatchExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the UTC timestamp when the observation occurred.
   - `DateTimeOffset ObservedAtUtc { get; }`
+- [ObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationresult-observedatutc): `Properties` on `EventDispatchRemediationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The UTC timestamp when the command was evaluated.
+  - `DateTimeOffset ObservedAtUtc { get; set; }`
 - [ObservedAtUtc](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutionreport-observedatutc): `Properties` on `EventSubscriptionExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the UTC timestamp when the observation occurred.
   - `DateTimeOffset ObservedAtUtc { get; }`
@@ -19168,6 +19222,12 @@ Browse the published API surface by public member.
 - [OperationId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-operationid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable management-operation identifier currently associated with scheduler recovery and execution hardening.
   - `string OperationId { get; set; }`
+- [OperationId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationrequest-operationid): `Properties` on `EventDispatchRemediationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the remediation operation identifier.
+  - `string OperationId { get; }`
+- [OperationId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationresult-operationid): `Properties` on `EventDispatchRemediationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The remediation operation identifier.
+  - `string OperationId { get; set; }`
 - [OperationPath](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-operationpath): `Properties` on `BehaviorApiSurfaceDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperationPath&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the logical operation path shared by transport-specific projections.
   - `string OperationPath { get; }`
@@ -19457,6 +19517,12 @@ Browse the published API surface by public member.
 - [OutboxId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchitem-outboxid): `Properties` on `EventDispatchItem` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=OutboxId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable outbox identifier that owns the staged message.
   - `string OutboxId { get; }`
+- [OutboxId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationrequest-outboxid): `Properties` on `EventDispatchRemediationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OutboxId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the outbox identifier that owns the staged event.
+  - `string OutboxId { get; }`
+- [OutboxId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationresult-outboxid): `Properties` on `EventDispatchRemediationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OutboxId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The outbox identifier that owns the staged event.
+  - `string OutboxId { get; set; }`
 - [OutboxId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimestate-outboxid): `Properties` on `EventDispatchRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OutboxId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The stable outbox identifier that owns the dispatch path.
   - `string OutboxId { get; set; }`
@@ -19529,6 +19595,9 @@ Browse the published API surface by public member.
 - [Outcome](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchexecutionreport-outcome): `Properties` on `EventDispatchExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable outcome identifier for the observed dispatch activity.
   - `string Outcome { get; }`
+- [Outcome](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationresult-outcome): `Properties` on `EventDispatchRemediationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The stable command outcome identifier.
+  - `string Outcome { get; set; }`
 - [Outcome](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationresult-outcome): `Properties` on `EventPublicationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Outcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The stable publication outcome identifier.
   - `string Outcome { get; set; }`
@@ -21882,6 +21951,9 @@ Browse the published API surface by public member.
 
 ## Q
 
+- [Quarantine](cephalon-abstractions.md#member-f-cephalon-abstractions-data-eventdispatchremediationoperationids-quarantine): `Fields` on `EventDispatchRemediationOperationIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Quarantine&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Marks a staged event as terminally failed so it stops re-entering pending-dispatch reads.
+  - `const string Quarantine`
 - [QueriedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryresult-queriedatutc): `Properties` on `KnowledgeQueryResult` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=QueriedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The UTC timestamp when the query executed.
   - `DateTimeOffset QueriedAtUtc { get; set; }`
@@ -22073,6 +22145,9 @@ Browse the published API surface by public member.
   - `string Reason { get; set; }`
 - [Reason](cephalon-abstractions.md#member-p-cephalon-abstractions-technologies-celltrafficautomationmaterializationconditiondescriptor-reason): `Properties` on `CellTrafficAutomationMaterializationConditionDescriptor` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Reason&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets the stable reason identifier that explains why the current condition state was selected.
+  - `string Reason { get; }`
+- [Reason](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationrequest-reason): `Properties` on `EventDispatchRemediationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Reason&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the operator-facing reason for the command.
   - `string Reason { get; }`
 - [Reason](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationresult-reason): `Properties` on `FeatureFlagEvaluationResult` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=Reason&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
   - The operator-facing explanation for the evaluation result.
@@ -22776,6 +22851,9 @@ Browse the published API surface by public member.
 - [Rejected](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccapturereporterparticipantroles-rejected): `Fields` on `CdcCaptureReporterParticipantRoles` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Rejected&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The reporter most recently attempted to report while another reporter still owned the active lease.
   - `const string Rejected`
+- [Rejected](cephalon-abstractions.md#member-f-cephalon-abstractions-data-eventdispatchremediationoutcomes-rejected): `Fields` on `EventDispatchRemediationOutcomes` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Rejected&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The command was rejected before it could be applied to the active dispatch store.
+  - `const string Rejected`
 - [Rejected](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofevaluationoutcomes-rejected): `Fields` on `TenantDomainOwnershipProofEvaluationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Rejected&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The observed proof did not match the expected proof and the domain ownership was rejected.
   - `const string Rejected`
@@ -23247,6 +23325,9 @@ Browse the published API surface by public member.
 - [Requested](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ratelimitingruntimedescriptor-requested): `Properties` on `RateLimitingRuntimeDescriptor` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Requested&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - The requested app-model selection that asked for rate limiting.
   - `RateLimitingSelection Requested { get; set; }`
+- [RequestedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationrequest-requestedatutc): `Properties` on `EventDispatchRemediationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequestedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the UTC timestamp when the command was requested.
+  - `DateTimeOffset RequestedAtUtc { get; }`
 - [RequestedAtUtc](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgedocumentprovidercontext-requestedatutc): `Properties` on `KnowledgeDocumentProviderContext` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=RequestedAtUtc&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Gets the UTC timestamp when indexing was requested.
   - `DateTimeOffset RequestedAtUtc { get; }`
@@ -24312,9 +24393,15 @@ Browse the published API surface by public member.
 - [RetryId](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretrydescriptor-retryid): `Properties` on `TenantInvitationDeliveryRetryDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=RetryId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the stable retry entry identifier.
   - `string RetryId { get; }`
+- [RetryLater](cephalon-abstractions.md#member-f-cephalon-abstractions-data-eventdispatchremediationoperationids-retrylater): `Fields` on `EventDispatchRemediationOperationIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryLater&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Makes a staged event eligible for another dispatch attempt at a later time.
+  - `const string RetryLater`
 - [RetryMaxAttempts](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrymaxattempts): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryMaxAttempts&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the maximum number of dispatch attempts allowed for one staged message.
   - `const string RetryMaxAttempts`
+- [RetryNow](cephalon-abstractions.md#member-f-cephalon-abstractions-data-eventdispatchremediationoperationids-retrynow): `Fields` on `EventDispatchRemediationOperationIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryNow&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Makes a staged event immediately eligible for another dispatch attempt.
+  - `const string RetryNow`
 - [RetryOutcome](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retryoutcome): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryOutcome&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the retry decision represented by the latest observation.
   - `const string RetryOutcome`
@@ -25593,6 +25680,9 @@ Browse the published API surface by public member.
 - [SingleNodeRuntime](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-singlenoderuntime): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorSchedulerRecoveryExecutionHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=SingleNodeRuntime&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The runtime currently executes automatic retry on a single node without cross-node lease ownership.
   - `const string SingleNodeRuntime`
+- [Skip](cephalon-abstractions.md#member-f-cephalon-abstractions-data-eventdispatchremediationoperationids-skip): `Fields` on `EventDispatchRemediationOperationIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Skip&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Marks a staged event as intentionally skipped by an operator.
+  - `const string Skip`
 - [Skipped](cephalon-abstractions.md#member-f-cephalon-abstractions-agentics-agenttoolexecutionoutcomes-skipped): `Fields` on `AgentToolExecutionOutcomes` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=Skipped&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Gets the outcome identifier used when a tool run is intentionally skipped.
   - `const string Skipped`

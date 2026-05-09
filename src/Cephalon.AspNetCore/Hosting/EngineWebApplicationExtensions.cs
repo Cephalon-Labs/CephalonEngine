@@ -987,6 +987,55 @@ public static class EngineWebApplicationExtensions
 
                 return state is null ? Results.NotFound() : Results.Ok(state);
             });
+        MapPostAsyncResultRequestDelegate(
+            engineGroup,
+            "/event-dispatches/{outboxId}/commands/{operationId}",
+            "RunCephalonEventDispatchRemediationCommand",
+            static async context =>
+                {
+                    var (request, bodyError) = await ReadOptionalJsonBodyAsync(
+                            context,
+                            AspNetCoreJsonSerializerContext.Default.EventDispatchRemediationHttpRequest)
+                        .ConfigureAwait(false);
+                    if (bodyError is not null)
+                    {
+                        return bodyError;
+                    }
+
+                    var dispatcher = context.RequestServices.GetService<IEventDispatchRemediationDispatcher>();
+                    if (dispatcher is null)
+                    {
+                        return Results.NotFound(new
+                        {
+                            error = "Event dispatch remediation is not available in the active runtime."
+                        });
+                    }
+
+                    try
+                    {
+                        var remediationRequest = CreateEventDispatchRemediationRequest(
+                            GetRouteValue(context, "outboxId"),
+                            GetRouteValue(context, "operationId"),
+                            request,
+                            context);
+                        var result = await dispatcher.DispatchAsync(remediationRequest, context.RequestAborted).ConfigureAwait(false);
+
+                        return string.Equals(result.Outcome, EventDispatchRemediationOutcomes.Rejected, StringComparison.OrdinalIgnoreCase)
+                            ? Results.Conflict(result)
+                            : Results.Ok(result);
+                    }
+                    catch (ArgumentException exception)
+                    {
+                        return Results.BadRequest(new { error = exception.Message });
+                    }
+                    catch (InvalidOperationException exception)
+                    {
+                        return Results.Problem(
+                            title: "Event dispatch remediation command failed.",
+                            detail: exception.Message,
+                            statusCode: StatusCodes.Status500InternalServerError);
+                    }
+                });
         MapGetResultRequestDelegate(engineGroup, "/event-publications/runtime", "GetCephalonEventPublicationRuntimeStates", static context =>
             {
                 var states = context.RequestServices
@@ -2947,6 +2996,34 @@ public static class EngineWebApplicationExtensions
         return exception.Message.Contains(
             "is not registered in the active eventing runtime",
             StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static EventDispatchRemediationRequest CreateEventDispatchRemediationRequest(
+        string outboxId,
+        string operationId,
+        EventDispatchRemediationHttpRequest? request,
+        HttpContext httpContext)
+    {
+        if (request is null)
+        {
+            throw new ArgumentException("Event dispatch remediation request body is required.", nameof(request));
+        }
+
+        var metadata = CopyEventPublicationValues(request.Metadata);
+        metadata["trigger"] = "aspnetcore-operator-route";
+        metadata["route"] = "/engine/event-dispatches/{outboxId}/commands/{operationId}";
+
+        return new EventDispatchRemediationRequest(
+            outboxId: outboxId,
+            messageId: request.MessageId ?? string.Empty,
+            channelId: request.ChannelId ?? string.Empty,
+            operationId: operationId,
+            commandId: request.CommandId,
+            nextAttemptAtUtc: request.NextAttemptAtUtc,
+            reason: request.Reason,
+            actorId: ResolveEventPublicationActorId(httpContext, request.ActorId),
+            correlationId: string.IsNullOrWhiteSpace(request.CorrelationId) ? httpContext.TraceIdentifier : request.CorrelationId,
+            metadata: metadata);
     }
 
     private static Dictionary<string, string> CopyEventPublicationValues(IReadOnlyDictionary<string, string>? values)

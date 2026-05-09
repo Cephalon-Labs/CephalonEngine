@@ -59,7 +59,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                         ? $"in-process retry={InProcessEventingRetryPolicy.GetPolicyId(options)} attempts={InProcessEventingRetryPolicy.GetMaxAttempts(options).ToString(CultureInfo.InvariantCulture)}"
                         : topology.HasDispatchRuntimeContributors ? "dispatch runtime contributors are configured." : "no managed retry runtime is active.",
                     advantage: "Retry truth is emitted as stable Cephalon metadata rather than hidden in a provider-specific error queue or middleware pipeline.",
-                    nextGap: "Add provider-neutral replay/dead-letter operator commands before claiming full remediation parity."),
+                    nextGap: "Add provider-neutral broker dead-letter ownership before claiming full remediation parity."),
                 CreateEntry(
                     id: "durability-and-outbox-portability",
                     displayName: "Durability And Outbox Portability",
@@ -71,7 +71,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                         ? topology.HasDispatchRuntimeContributors ? "dispatch store and dispatch runtime contributor are active." : "dispatch store is available without a managed dispatch runtime."
                         : "no dispatch store is configured.",
                     advantage: "Cephalon can make outbox ownership truthful per provider instead of assuming one bus owns every delivery path.",
-                    nextGap: "Move replay, poison-message quarantine, and delayed eligibility into shared operator contracts."),
+                    nextGap: "Broaden broker dead-letter, replay, and audit evidence only when a package owns those paths."),
                 CreateEntry(
                     id: "mediator-style-in-process-low-ceremony",
                     displayName: "Mediator-style In-process Low Ceremony",
@@ -98,10 +98,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     description: "Distinguishes terminal failures from retryable failures before claiming replay operations.",
                     status: topology.HasOutboxPublishingPath ? "partial" : "not-claimed",
                     evidence: topology.HasOutboxPublishingPath
-                        ? "event-dispatch-remediations derives retry-pending, skipped, failed, and terminal-failure advice from reported dispatch state; replay commands are not yet provider-neutral."
+                        ? "event-dispatch-remediations derives retry-pending, skipped, failed, and terminal-failure posture from reported dispatch state; supported dispatch stores expose retry-now, retry-later, skip, and quarantine commands."
                         : "no outbox-backed dispatch reporting path is active.",
                     advantage: "The engine can explain remediation posture without depending on Wolverine, MassTransit, NServiceBus, or a broker-specific dead-letter API.",
-                    nextGap: "Ship provider-neutral dead-letter, retry-later, replay, skip, and quarantine commands with audit evidence."),
+                    nextGap: "Ship broker dead-letter/replay ownership only when a provider companion can prove that path with audit evidence."),
                 CreateEntry(
                     id: "observability-compliance-and-auditability",
                     displayName: "Observability Compliance And Auditability",

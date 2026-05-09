@@ -46033,6 +46033,377 @@ IReadOnlyList<string> Tags { get; }
 
 Gets descriptive tags associated with the data product.
 
+<a id="type-cephalon-abstractions-data-eventdispatchremediationoperationids"></a>
+
+### `EventDispatchRemediationOperationIds`
+
+Defines stable event-dispatch remediation operation identifiers.
+
+#### Declaration
+```csharp
+public static class EventDispatchRemediationOperationIds
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-eventdispatchremediationoperationids-quarantine"></a>
+
+##### `Quarantine`
+
+```csharp
+const string Quarantine
+```
+
+Marks a staged event as terminally failed so it stops re-entering pending-dispatch reads.
+
+<a id="member-f-cephalon-abstractions-data-eventdispatchremediationoperationids-retrylater"></a>
+
+##### `RetryLater`
+
+```csharp
+const string RetryLater
+```
+
+Makes a staged event eligible for another dispatch attempt at a later time.
+
+<a id="member-f-cephalon-abstractions-data-eventdispatchremediationoperationids-retrynow"></a>
+
+##### `RetryNow`
+
+```csharp
+const string RetryNow
+```
+
+Makes a staged event immediately eligible for another dispatch attempt.
+
+<a id="member-f-cephalon-abstractions-data-eventdispatchremediationoperationids-skip"></a>
+
+##### `Skip`
+
+```csharp
+const string Skip
+```
+
+Marks a staged event as intentionally skipped by an operator.
+
+<a id="type-cephalon-abstractions-data-eventdispatchremediationoutcomes"></a>
+
+### `EventDispatchRemediationOutcomes`
+
+Defines stable outcomes returned by event-dispatch remediation commands.
+
+#### Declaration
+```csharp
+public static class EventDispatchRemediationOutcomes
+```
+
+#### Fields
+
+<a id="member-f-cephalon-abstractions-data-eventdispatchremediationoutcomes-accepted"></a>
+
+##### `Accepted`
+
+```csharp
+const string Accepted
+```
+
+The command was accepted and applied to the active dispatch store.
+
+<a id="member-f-cephalon-abstractions-data-eventdispatchremediationoutcomes-rejected"></a>
+
+##### `Rejected`
+
+```csharp
+const string Rejected
+```
+
+The command was rejected before it could be applied to the active dispatch store.
+
+<a id="type-cephalon-abstractions-data-eventdispatchremediationrequest"></a>
+
+### `EventDispatchRemediationRequest`
+
+Describes one host-agnostic request to remediate a staged event-dispatch path.
+
+#### Declaration
+```csharp
+public sealed class EventDispatchRemediationRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-eventdispatchremediationrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `EventDispatchRemediationRequest`
+
+```csharp
+EventDispatchRemediationRequest(string outboxId, string messageId, string channelId, string operationId, string commandId, DateTimeOffset? requestedAtUtc, DateTimeOffset? nextAttemptAtUtc, string reason, string actorId, string correlationId, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates an event-dispatch remediation request.
+
+Parameters:
+- `outboxId`: The outbox identifier that owns the staged event.
+- `messageId`: The staged event message identifier.
+- `channelId`: The event channel identifier associated with the staged event.
+- `operationId`: The remediation operation identifier.
+- `commandId`: The stable command identifier. A generated identifier is used when omitted.
+- `requestedAtUtc`: The UTC timestamp when the command was requested. The current UTC time is used when omitted.
+- `nextAttemptAtUtc`: The UTC retry eligibility timestamp used by delayed retry commands.
+- `reason`: The operator-facing reason for the command.
+- `actorId`: The actor responsible for requesting the command.
+- `correlationId`: The correlation identifier associated with the command.
+- `metadata`: Optional operator-facing command metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationrequest-actorid"></a>
+
+##### `ActorId`
+
+```csharp
+string ActorId { get; }
+```
+
+Gets the actor responsible for requesting the command.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationrequest-channelid"></a>
+
+##### `ChannelId`
+
+```csharp
+string ChannelId { get; }
+```
+
+Gets the event channel identifier associated with the staged event.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationrequest-commandid"></a>
+
+##### `CommandId`
+
+```csharp
+string CommandId { get; }
+```
+
+Gets the stable command identifier.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationrequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; }
+```
+
+Gets the correlation identifier associated with the command.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationrequest-messageid"></a>
+
+##### `MessageId`
+
+```csharp
+string MessageId { get; }
+```
+
+Gets the staged event message identifier.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationrequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets optional operator-facing command metadata.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationrequest-nextattemptatutc"></a>
+
+##### `NextAttemptAtUtc`
+
+```csharp
+DateTimeOffset? NextAttemptAtUtc { get; }
+```
+
+Gets the UTC retry eligibility timestamp used by delayed retry commands.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationrequest-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; }
+```
+
+Gets the remediation operation identifier.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationrequest-outboxid"></a>
+
+##### `OutboxId`
+
+```csharp
+string OutboxId { get; }
+```
+
+Gets the outbox identifier that owns the staged event.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationrequest-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; }
+```
+
+Gets the operator-facing reason for the command.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationrequest-requestedatutc"></a>
+
+##### `RequestedAtUtc`
+
+```csharp
+DateTimeOffset RequestedAtUtc { get; }
+```
+
+Gets the UTC timestamp when the command was requested.
+
+<a id="type-cephalon-abstractions-data-eventdispatchremediationresult"></a>
+
+### `EventDispatchRemediationResult`
+
+Describes the operator-facing result of one event-dispatch remediation command.
+
+#### Declaration
+```csharp
+public sealed class EventDispatchRemediationResult
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-eventdispatchremediationresult-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `EventDispatchRemediationResult`
+
+```csharp
+EventDispatchRemediationResult(string CommandId, string OutboxId, string MessageId, string ChannelId, string OperationId, string Outcome, string DispatchOutcome, DateTimeOffset ObservedAtUtc, string Error, IReadOnlyDictionary<string, string> Metadata)
+```
+
+Describes the operator-facing result of one event-dispatch remediation command.
+
+Parameters:
+- `CommandId`: The stable command identifier.
+- `OutboxId`: The outbox identifier that owns the staged event.
+- `MessageId`: The staged event message identifier.
+- `ChannelId`: The event channel identifier associated with the staged event.
+- `OperationId`: The remediation operation identifier.
+- `Outcome`: The stable command outcome identifier.
+- `DispatchOutcome`: The dispatch observation outcome applied by the command when accepted.
+- `ObservedAtUtc`: The UTC timestamp when the command was evaluated.
+- `Error`: The operator-facing error summary when the command was rejected.
+- `Metadata`: Optional operator-facing metadata captured with the result.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationresult-channelid"></a>
+
+##### `ChannelId`
+
+```csharp
+string ChannelId { get; set; }
+```
+
+The event channel identifier associated with the staged event.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationresult-commandid"></a>
+
+##### `CommandId`
+
+```csharp
+string CommandId { get; set; }
+```
+
+The stable command identifier.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationresult-dispatchoutcome"></a>
+
+##### `DispatchOutcome`
+
+```csharp
+string DispatchOutcome { get; set; }
+```
+
+The dispatch observation outcome applied by the command when accepted.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationresult-error"></a>
+
+##### `Error`
+
+```csharp
+string Error { get; set; }
+```
+
+The operator-facing error summary when the command was rejected.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationresult-messageid"></a>
+
+##### `MessageId`
+
+```csharp
+string MessageId { get; set; }
+```
+
+The staged event message identifier.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationresult-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; set; }
+```
+
+Optional operator-facing metadata captured with the result.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationresult-observedatutc"></a>
+
+##### `ObservedAtUtc`
+
+```csharp
+DateTimeOffset ObservedAtUtc { get; set; }
+```
+
+The UTC timestamp when the command was evaluated.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationresult-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; set; }
+```
+
+The remediation operation identifier.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationresult-outboxid"></a>
+
+##### `OutboxId`
+
+```csharp
+string OutboxId { get; set; }
+```
+
+The outbox identifier that owns the staged event.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationresult-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; set; }
+```
+
+The stable command outcome identifier.
+
 <a id="type-cephalon-abstractions-data-eventdispatchruntimedescriptor"></a>
 
 ### `EventDispatchRuntimeDescriptor`
@@ -50271,6 +50642,35 @@ Queries the current value of the data product.
 Returns: A task that completes with the current data product value.
 
 Parameters:
+- `cancellationToken`: The token that cancels the operation.
+
+<a id="type-cephalon-abstractions-data-ieventdispatchremediationdispatcher"></a>
+
+### `IEventDispatchRemediationDispatcher`
+
+Dispatches bounded remediation commands for staged event-dispatch paths without exposing package-specific implementation types to host adapters.
+
+#### Declaration
+```csharp
+public interface IEventDispatchRemediationDispatcher
+```
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationdispatcher-dispatchasync-cephalon-abstractions-data-eventdispatchremediationrequest-system-threading-cancellationtoken"></a>
+
+##### `DispatchAsync`
+
+```csharp
+ValueTask<EventDispatchRemediationResult> DispatchAsync(EventDispatchRemediationRequest request, CancellationToken cancellationToken)
+```
+
+Dispatches one event-dispatch remediation command through the active eventing runtime.
+
+Returns: The operator-facing command result.
+
+Parameters:
+- `request`: The remediation request to dispatch.
 - `cancellationToken`: The token that cancels the operation.
 
 <a id="type-cephalon-abstractions-data-ieventdispatchruntimecatalog"></a>
