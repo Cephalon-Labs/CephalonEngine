@@ -123,6 +123,8 @@ BeforeAll {
             [bool]$RequiresDynamicCode = $true,
             [bool]$UseFullCommonMinimalApiMapGet = $false,
             [bool]$UseMinimalApiMapGet = $false,
+            [bool]$UseFullOperatorMinimalApiMapGet = $false,
+            [bool]$UseFullOperatorMinimalApiMapPost = $false,
             [bool]$UseMapMethods = $true
         )
 
@@ -149,8 +151,26 @@ BeforeAll {
         else {
             '        MapGetRequestDelegate(engineGroup, "/", "GetCephalonManifest", static context => Task.CompletedTask);'
         }
+        $fullOperatorGetRouteLine = if ($UseFullOperatorMinimalApiMapGet) {
+            '        engineGroup.MapGet("/modules", (HttpContext context) => Results.Ok("modules"));'
+        }
+        else {
+            '        MapGetResultRequestDelegate(engineGroup, "/modules", "GetCephalonModules", static context => Results.Ok("modules"));'
+        }
+        $fullOperatorPostRouteLine = if ($UseFullOperatorMinimalApiMapPost) {
+            '        engineGroup.MapPost("/event-publications", (EventPublicationHttpRequest? request) => Results.Ok(request));'
+        }
+        else {
+            '        MapPostAsyncResultRequestDelegate(engineGroup, "/event-publications", "PublishCephalonEventPublication", static async context => { await ReadOptionalJsonBodyAsync(context, AspNetCoreJsonSerializerContext.Default.EventPublicationHttpRequest); await ReadOptionalJsonBodyAsync(context, AspNetCoreJsonSerializerContext.Default.AgentToolExecutionHttpRequest); await ReadOptionalJsonBodyAsync(context, AspNetCoreJsonSerializerContext.Default.KnowledgeQueryHttpRequest); await ReadOptionalJsonBodyAsync(context, AspNetCoreJsonSerializerContext.Default.CdcCaptureRuntimeObservationArray); await ReadOptionalJsonBodyAsync(context, AspNetCoreJsonSerializerContext.Default.CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest); return Results.Ok(); });'
+        }
         $helperRouteLine = if ($UseMapMethods) {
             '        engineGroup.MapMethods(pattern, [HttpMethods.Get], requestDelegate).WithName(endpointName);'
+        }
+        else {
+            '        _ = pattern; _ = endpointName; _ = requestDelegate;'
+        }
+        $postHelperRouteLine = if ($UseMapMethods) {
+            '        engineGroup.MapMethods(pattern, [HttpMethods.Post], requestDelegate).WithName(endpointName);'
         }
         else {
             '        _ = pattern; _ = endpointName; _ = requestDelegate;'
@@ -162,7 +182,13 @@ BeforeAll {
             'public static class EngineWebApplicationExtensions',
             '{',
             $annotationLines,
-            '    public static void MapCephalon() { }',
+            '    public static void MapCephalon(RouteGroupBuilder engineGroup)',
+            '    {',
+            '        MapCephalonFullCommonOperatorRoutes(engineGroup);',
+            $fullOperatorGetRouteLine,
+            $fullOperatorPostRouteLine,
+            '        MapCephalonHostInfrastructure();',
+            '    }',
             '    private static void MapCephalonFullCommonOperatorRoutes(RouteGroupBuilder engineGroup)',
             '    {',
             $fullCommonRouteLine,
@@ -175,7 +201,22 @@ BeforeAll {
             '    {',
             $helperRouteLine,
             '    }',
+            '    private static void MapPostRequestDelegate(RouteGroupBuilder engineGroup, string pattern, string endpointName, RequestDelegate requestDelegate)',
+            '    {',
+            $postHelperRouteLine,
+            '    }',
+            '    private static void MapGetResultRequestDelegate(RouteGroupBuilder engineGroup, string pattern, string endpointName, Func<HttpContext, IResult> handler)',
+            '    {',
+            '        MapGetRequestDelegate(engineGroup, pattern, endpointName, context => handler(context).ExecuteAsync(context));',
+            '    }',
+            '    private static void MapPostAsyncResultRequestDelegate(RouteGroupBuilder engineGroup, string pattern, string endpointName, Func<HttpContext, Task<IResult>> handler)',
+            '    {',
+            '        MapPostRequestDelegate(engineGroup, pattern, endpointName, async context => await (await handler(context)).ExecuteAsync(context));',
+            '    }',
+            '    private static void MapCdcCaptureRuntimeCollectionRoute() { }',
             '    private static TService GetRequiredService<TService>(HttpContext context) where TService : notnull => throw new System.NotImplementedException();',
+            '    private static void MapCephalonHostInfrastructure() { }',
+            '    private static Task<(TValue? Value, IResult? Error)> ReadOptionalJsonBodyAsync<TValue>(HttpContext context, object jsonTypeInfo) => throw new System.NotImplementedException();',
             '}'
         ) | Set-Content -LiteralPath $sourcePath -Encoding UTF8
 
@@ -1314,6 +1355,9 @@ Describe "Get-DeploymentModeHazardInventory" {
         $inventory.FullCommonRouteDelegateAuditStatus | Should -Be "matched"
         $inventory.FullCommonRouteDelegateAuditCount | Should -Be 1
         $inventory.FullCommonRouteDelegateAuditFailureCount | Should -Be 0
+        $inventory.FullOperatorRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.FullOperatorRouteDelegateAuditCount | Should -Be 1
+        $inventory.FullOperatorRouteDelegateAuditFailureCount | Should -Be 0
     }
 
     It "marks dynamic Minimal API boundary hazards as failed when either required annotation is missing" {
@@ -1352,6 +1396,7 @@ Describe "Get-DeploymentModeHazardInventory" {
         $inventory.BoundaryAnnotationAuditFailures[0].Status | Should -Be "missing-annotation"
         $inventory.CoreRouteDelegateAuditStatus | Should -Be "matched"
         $inventory.FullCommonRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.FullOperatorRouteDelegateAuditStatus | Should -Be "matched"
     }
 
     It "audits the ASP.NET Core core operator routes as request-delegate mapped when the route subset avoids Minimal API binding" {
@@ -1396,6 +1441,17 @@ Describe "Get-DeploymentModeHazardInventory" {
         $inventory.FullCommonRouteDelegateAudits[0].FullCommonRoutesUseMinimalApiMapGet | Should -BeFalse
         $inventory.FullCommonRouteDelegateAudits[0].HelperAcceptsRequestDelegate | Should -BeTrue
         $inventory.FullCommonRouteDelegateAudits[0].HelperUsesMapMethods | Should -BeTrue
+        $inventory.FullOperatorRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.FullOperatorRouteDelegateAuditCount | Should -Be 1
+        $inventory.FullOperatorRouteDelegateAuditFailureCount | Should -Be 0
+        $inventory.FullOperatorRouteDelegateAudits[0].FullOperatorRoutesUseGetRequestDelegateHelper | Should -BeTrue
+        $inventory.FullOperatorRouteDelegateAudits[0].FullOperatorRoutesUsePostRequestDelegateHelper | Should -BeTrue
+        $inventory.FullOperatorRouteDelegateAudits[0].FullOperatorRoutesUseMinimalApiMapGet | Should -BeFalse
+        $inventory.FullOperatorRouteDelegateAudits[0].FullOperatorRoutesUseMinimalApiMapPost | Should -BeFalse
+        $inventory.FullOperatorRouteDelegateAudits[0].GetHelperUsesMapMethods | Should -BeTrue
+        $inventory.FullOperatorRouteDelegateAudits[0].PostHelperUsesMapMethods | Should -BeTrue
+        $inventory.FullOperatorRouteDelegateAudits[0].RequestBodyJsonHelperFound | Should -BeTrue
+        @($inventory.FullOperatorRouteDelegateAudits[0].SourceGeneratedRequestBodyContracts).Count | Should -Be 5
     }
 
     It "marks the core operator route-delegate audit as failed when Minimal API binding returns to the core route subset" {
@@ -1432,6 +1488,7 @@ Describe "Get-DeploymentModeHazardInventory" {
         $inventory.CoreRouteDelegateAuditFailures[0].CoreRoutesUseMinimalApiMapGet | Should -BeTrue
         $inventory.CoreRouteDelegateAuditFailures[0].Failures | Should -Contain "core-routes-use-mapget-delegate-binding"
         $inventory.FullCommonRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.FullOperatorRouteDelegateAuditStatus | Should -Be "matched"
     }
 
     It "marks the full common operator route-delegate audit as failed when Minimal API binding returns to the common full route subset" {
@@ -1468,6 +1525,44 @@ Describe "Get-DeploymentModeHazardInventory" {
         $inventory.FullCommonRouteDelegateAuditFailureCount | Should -Be 1
         $inventory.FullCommonRouteDelegateAuditFailures[0].FullCommonRoutesUseMinimalApiMapGet | Should -BeTrue
         $inventory.FullCommonRouteDelegateAuditFailures[0].Failures | Should -Contain "full-common-routes-use-mapget-delegate-binding"
+        $inventory.FullOperatorRouteDelegateAuditStatus | Should -Be "matched"
+    }
+
+    It "marks the full operator route-delegate audit as failed when Minimal API binding returns to the full operator catalog" {
+        $repo = New-TempRepoRoot -Projects @()
+        Set-TempAspNetCoreOperatorSource -RepoRoot $repo.Root -UseFullOperatorMinimalApiMapPost:$true | Out-Null
+
+        $manifest = [pscustomobject]@{
+            deploymentModeEligibility = [pscustomobject]@{
+                packages = @(
+                    [pscustomobject]@{
+                        packageName = "Cephalon.AspNetCore"
+                        nugetId = "Cephalon.AspNetCore"
+                        claimAuditTier = "high"
+                        supportedModes = @()
+                        requiredProjectProperties = @()
+                        knownHazards = @(
+                            [pscustomobject]@{
+                                kind = "dynamic-minimal-api-operator-route-binding"
+                                site = "src/Cephalon.AspNetCore/Hosting/EngineWebApplicationExtensions.cs:7"
+                                pattern = "MapCephalon dynamic route binding"
+                                remediation = "full operator routes use request delegates"
+                            }
+                        )
+                    }
+                )
+            }
+        }
+
+        $inventory = Get-DeploymentModeHazardInventory -Manifest $manifest -RepoRoot $repo.Root
+
+        $inventory.CoreRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.FullCommonRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.FullOperatorRouteDelegateAuditStatus | Should -Be "failed"
+        $inventory.FullOperatorRouteDelegateAuditCount | Should -Be 1
+        $inventory.FullOperatorRouteDelegateAuditFailureCount | Should -BeGreaterThan 0
+        $inventory.FullOperatorRouteDelegateAuditFailures[0].FullOperatorRoutesUseMinimalApiMapPost | Should -BeTrue
+        $inventory.FullOperatorRouteDelegateAuditFailures[0].Failures | Should -Contain "full-operator-routes-use-mappost-delegate-binding"
     }
 
     It "returns an empty inventory when the manifest has no eligibility block" {
@@ -1479,6 +1574,7 @@ Describe "Get-DeploymentModeHazardInventory" {
         $inventory.BoundaryAnnotationAuditStatus | Should -Be "not-applicable"
         $inventory.CoreRouteDelegateAuditStatus | Should -Be "not-applicable"
         $inventory.FullCommonRouteDelegateAuditStatus | Should -Be "not-applicable"
+        $inventory.FullOperatorRouteDelegateAuditStatus | Should -Be "not-applicable"
     }
 }
 
@@ -1565,6 +1661,7 @@ Describe "Invoke-DeploymentModeClaimValidation (integration)" {
         $inventory.BoundaryAnnotationAuditFailureCount | Should -Be 1
         $inventory.CoreRouteDelegateAuditStatus | Should -Be "matched"
         $inventory.FullCommonRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.FullOperatorRouteDelegateAuditStatus | Should -Be "matched"
     }
 
     It "throws after writing reports when the core operator route-delegate audit fails" {
@@ -1616,6 +1713,7 @@ Describe "Invoke-DeploymentModeClaimValidation (integration)" {
         $inventory.CoreRouteDelegateAuditStatus | Should -Be "failed"
         $inventory.CoreRouteDelegateAuditFailureCount | Should -Be 1
         $inventory.FullCommonRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.FullOperatorRouteDelegateAuditStatus | Should -Be "matched"
     }
 
     It "throws after writing reports when the full common operator route-delegate audit fails" {
@@ -1667,6 +1765,59 @@ Describe "Invoke-DeploymentModeClaimValidation (integration)" {
         $inventory.CoreRouteDelegateAuditStatus | Should -Be "matched"
         $inventory.FullCommonRouteDelegateAuditStatus | Should -Be "failed"
         $inventory.FullCommonRouteDelegateAuditFailureCount | Should -Be 1
+        $inventory.FullOperatorRouteDelegateAuditStatus | Should -Be "matched"
+    }
+
+    It "throws after writing reports when the full operator route-delegate audit fails" {
+        $repo = New-TempRepoRoot -Projects @()
+        Set-TempAspNetCoreOperatorSource -RepoRoot $repo.Root -UseFullOperatorMinimalApiMapPost:$true | Out-Null
+
+        $manifestPath = Join-Path $repo.Root "deployment-mode-support.json"
+        @{
+            deploymentModes = @{
+                trim       = @{ status = "not-claimed" }
+                nativeAot  = @{ status = "not-claimed" }
+                singleFile = @{ status = "not-claimed" }
+            }
+            deploymentModeEligibility = @{
+                packages = @(
+                    @{
+                        packageName = "Cephalon.AspNetCore"
+                        nugetId = "Cephalon.AspNetCore"
+                        claimAuditTier = "high"
+                        supportedModes = @()
+                        requiredProjectProperties = @()
+                        knownHazards = @(
+                            @{
+                                kind = "dynamic-minimal-api-operator-route-binding"
+                                site = "src/Cephalon.AspNetCore/Hosting/EngineWebApplicationExtensions.cs:7"
+                                pattern = "MapCephalon dynamic route binding"
+                                remediation = "full operator routes use request delegates"
+                            }
+                        )
+                    }
+                )
+            }
+        } | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $manifestPath -Encoding UTF8
+
+        $outDir = Join-Path $repo.Root "out"
+        {
+            Invoke-DeploymentModeClaimValidation `
+                -DeploymentMode "nativeAot" `
+                -ManifestPath $manifestPath `
+                -OutputPath $outDir `
+                -RepoRoot $repo.Root `
+                -SkipPublish
+        } | Should -Throw "*full-operator-route-delegate-audit-failed*"
+
+        $hazardInventoryPath = Join-Path $outDir "hazard-inventory.json"
+        Test-Path -LiteralPath $hazardInventoryPath | Should -BeTrue
+        $inventory = Get-Content -LiteralPath $hazardInventoryPath -Raw | ConvertFrom-Json
+        $inventory.BoundaryAnnotationAuditStatus | Should -Be "matched"
+        $inventory.CoreRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.FullCommonRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.FullOperatorRouteDelegateAuditStatus | Should -Be "failed"
+        $inventory.FullOperatorRouteDelegateAuditFailureCount | Should -BeGreaterThan 0
     }
 
     It "throws when the aggregate verdict is claim-overstated" {

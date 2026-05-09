@@ -1055,7 +1055,7 @@ Remarks: This method maps the engine introspection surface under `/engine`, heal
 
 When the REST transport is active, it also enables OpenAPI and Scalar documentation while keeping non-REST protocol routes out of the generated API description.
 
-The current full operator route surface uses ASP.NET Core Minimal API delegate binding, which is not a trim or Native AOT support claim for this package. The annotation is intentional so package-local analyzer builds report the boundary where consumers would otherwise receive framework warnings.
+The full operator route surface now avoids direct ASP.NET Core Minimal API delegate binding for the operator catalog, but the package still has an explicit trim and Native AOT boundary until response/output JSON contracts and non-operator host endpoints are promoted together.
 
 Setting `Engine:AspNetCore:OperatorSurface:Mode` to `core` maps the bounded core operator routes through prebuilt request delegates instead of Minimal API delegate binding. That mode reduces the dynamic route boundary for the core route subset, but it does not make the full adapter surface a trim or Native AOT support claim.
 

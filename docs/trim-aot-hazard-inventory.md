@@ -108,8 +108,9 @@ That surface originally mapped many operator endpoints through ASP.NET Core Mini
 application-authored Minimal API route handlers trim/AOT-friendly, but a reusable library package
 that owns dynamic, catalog-driven route projection still has a real boundary. The current
 remediation lane moves operator routes to explicit request delegates and source-generated request
-body metadata first, then leaves support promotion to a later slice that can prove response/output
-JSON contracts, non-operator host/documentation endpoints, and generated hazard-inventory readback.
+body metadata first, with generated hazard-inventory and scorecard readback now covering the
+boundary/core/full-common/full-operator route proof. Support promotion stays for a later slice
+that can prove response/output JSON contracts and non-operator host/documentation endpoints.
 
 The current answer is explicit rather than silent. `MapCephalon()` carries
 `RequiresUnreferencedCode` and `RequiresDynamicCode`, and package-local trim/AOT analyzer builds now
@@ -130,23 +131,22 @@ full/default guard to the foundation and tail introspection route blocks, `ENG-5
 CDC runtime read-only GET route block to CDC runtime request-delegate helpers, and `ENG-545`
 moves the remaining full/default read-only GET catalog to result or async request delegates.
 `ENG-546` moves the six operator POST action seams to request delegates with source-generated
-request-body JSON metadata.
+request-body JSON metadata, and `ENG-547` promotes the full/default operator route-catalog
+proof into generated hazard-inventory, scorecard, release-validation, and doctor readback.
 When hosts set `Engine:AspNetCore:OperatorSurface:Mode=core`, the bounded core `/engine/*`
 route subset now maps through prebuilt `RequestDelegate` handlers and `MapMethods(...)`
 instead of Minimal API delegate binding. In full mode, `/`, `/manifest`, `/snapshot`, `/app-model`,
 and `/resilience` now use the same `RequestDelegate` + `MapMethods(...)` helper, and the broader
 read-only GET catalog also uses result or async request-delegate helpers. The six POST action seams
 use POST request delegates and source-generated request-body JSON metadata. Manifest Pester guards plus generated
-`CoreRouteDelegateAuditStatus` and `FullCommonRouteDelegateAuditStatus` check that those two route
-subsets do not reintroduce `.MapGet(...)` and that the helper still accepts `RequestDelegate` and
-calls `MapMethods(...)`, while source-shape Pester coverage rejects direct `engineGroup.MapGet(...)`
-and `engineGroup.MapPost(...)` binding in the operator catalog. The remaining default/full
-`MapCephalon()` support boundary still stays high-tier until response/output JSON contracts,
-non-operator endpoint proof, and generated readback can be promoted deliberately.
+`CoreRouteDelegateAuditStatus`, `FullCommonRouteDelegateAuditStatus`, and `FullOperatorRouteDelegateAuditStatus`
+check that those route subsets do not reintroduce direct Minimal API delegate binding and that the helper still
+accepts `RequestDelegate` and calls `MapMethods(...)`. The remaining default/full `MapCephalon()` support boundary
+still stays high-tier until response/output JSON contracts and non-operator endpoint proof can be promoted deliberately.
 
 | Package | File | Line | Pattern | Notes |
 | --- | --- | --- | --- | --- |
-| `Cephalon.AspNetCore` | `Hosting/EngineWebApplicationExtensions.cs` | 101 | `MapCephalon()` still carries the full operator surface as an explicit deployment-mode boundary | Public `RequiresUnreferencedCode` / `RequiresDynamicCode` annotations make the package-local analyzer path clean while preserving the truthful not-claimed AOT support posture; the `core`, full/common, and full/default operator catalog now has request-delegate proof, including POST action request bodies through source-generated JSON metadata, but response/output JSON contracts, non-operator endpoint proof, and generated readback keep the full/default surface unclaimed. |
+| `Cephalon.AspNetCore` | `Hosting/EngineWebApplicationExtensions.cs` | 101 | `MapCephalon()` still carries the full operator surface as an explicit deployment-mode boundary | Public `RequiresUnreferencedCode` / `RequiresDynamicCode` annotations make the package-local analyzer path clean while preserving the truthful not-claimed AOT support posture; the `core`, full/common, and full/default operator catalog now has generated request-delegate proof, including POST action request bodies through source-generated JSON metadata, but response/output JSON contracts and non-operator endpoint proof keep the full/default surface unclaimed. |
 
 ### `high` — non-public reflective access on a third-party transport type in `Cephalon.Data.MySql.SciSharpReplication` (added via `ENG-434`, isolated via `ENG-477`)
 
@@ -442,6 +442,8 @@ A future slice may add explicit `IsTrimmable=false; IsAotCompatible=false; Publi
 **Update May 9, 2026 (`ENG-545`):** the remaining full/default read-only GET route catalog now maps through result or async request delegates. This covers CDC capture runtime/state drilldowns, projection and outbox reads, event dispatch/publication state reads, agent-tool run reads, event subscription readiness, inbox/audit-store/feature reads, audit-history read/export GETs, strangler-fig resolve/read GETs, backend-for-frontend read GETs, cell and cell-traffic read GETs, technology read GETs, and knowledge-index read GETs. At that checkpoint, the source-shape Pester guard rejected any `engineGroup.MapGet(...)` in the operator route catalog while still counting six explicit `MapPost(...)` action seams. Global trim, Native AOT, single-file, and full-adapter support remained `not-claimed`.
 
 **Update May 9, 2026 (`ENG-546`):** the six full/default operator POST action seams now map through request delegates too. CDC runtime reports, managed-connector command execution, event publication, agent-tool execution, knowledge queries, and manual knowledge reindex actions now use POST request delegates, route/query value extraction, and source-generated request-body JSON metadata. The source-shape Pester guard now rejects both direct `engineGroup.MapGet(...)` and direct `engineGroup.MapPost(...)` in the operator route catalog. Global trim, Native AOT, single-file, and full-adapter support remain `not-claimed` because response/output JSON contracts, non-operator host/documentation endpoints, and generated readback still need a deliberate support-promotion slice.
+
+**Update May 9, 2026 (`ENG-547`):** the full/default operator route-catalog request-delegate proof is now generated readback, not only source-shape coverage. `scripts/validate-deployment-mode-claims.ps1` emits `FullOperatorRouteDelegateAuditStatus`, counts, failures, and rows; the harness fails closed if direct `engineGroup.MapGet(...)` / `engineGroup.MapPost(...)` binding returns to the operator catalog; and scorecard schema `1.17.0`, release validation, and `cephalon doctor --scorecard` require the audit to read `matched/0`. Global trim, Native AOT, single-file, and full-adapter support remain `not-claimed` until response/output JSON contracts and non-operator host/documentation endpoints are promoted deliberately.
 
 ## Refresh discipline
 

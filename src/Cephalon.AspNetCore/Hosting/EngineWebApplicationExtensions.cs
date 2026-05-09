@@ -86,9 +86,9 @@ public static class EngineWebApplicationExtensions
     /// non-REST protocol routes out of the generated API description.
     /// </para>
     /// <para>
-    /// The current full operator route surface uses ASP.NET Core Minimal API delegate binding, which is
-    /// not a trim or Native AOT support claim for this package. The annotation is intentional so package-local
-    /// analyzer builds report the boundary where consumers would otherwise receive framework warnings.
+    /// The full operator route surface now avoids direct ASP.NET Core Minimal API delegate binding for the
+    /// operator catalog, but the package still has an explicit trim and Native AOT boundary until response/output
+    /// JSON contracts and non-operator host endpoints are promoted together.
     /// </para>
     /// <para>
     /// Setting <c>Engine:AspNetCore:OperatorSurface:Mode</c> to <c>core</c> maps the bounded core

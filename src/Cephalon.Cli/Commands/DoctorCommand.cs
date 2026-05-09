@@ -17,7 +17,7 @@ internal static class DoctorCommand
     private const string DotNetSdkDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/sdk:";
     private const string DotNetAspNetDockerImagePrefix = "FROM mcr.microsoft.com/dotnet/aspnet:";
     private const string TemplatePackCustomHiveEnvironmentVariable = "CEPHALON_DOCTOR_TEMPLATE_HIVE";
-    private const string RequiredScorecardSchemaVersion = "1.16.0";
+    private const string RequiredScorecardSchemaVersion = "1.17.0";
 
     private static readonly string[] ExpectedTemplateShortNames =
     [
@@ -840,6 +840,7 @@ internal static class DoctorCommand
         var deploymentModeClaimsReportBoundaryAnnotationAuditFailures = GetRequiredScorecardInt(summary, "DeploymentModeClaimsReportBoundaryAnnotationAuditFailures", errors);
         var deploymentModeClaimsReportCoreRouteDelegateAuditFailures = GetRequiredScorecardInt(summary, "DeploymentModeClaimsReportCoreRouteDelegateAuditFailures", errors);
         var deploymentModeClaimsReportFullCommonRouteDelegateAuditFailures = GetRequiredScorecardInt(summary, "DeploymentModeClaimsReportFullCommonRouteDelegateAuditFailures", errors);
+        var deploymentModeClaimsReportFullOperatorRouteDelegateAuditFailures = GetRequiredScorecardInt(summary, "DeploymentModeClaimsReportFullOperatorRouteDelegateAuditFailures", errors);
         var adoptionSmokeScenarioCount = GetRequiredScorecardInt(summary, "AdoptionSmokeScenarioCount", errors);
         var adoptionSmokeRuntimeProbeCount = GetRequiredScorecardInt(summary, "AdoptionSmokeRuntimeProbeCount", errors);
         var adoptionSmokeAssertionCount = GetRequiredScorecardInt(summary, "AdoptionSmokeAssertionCount", errors);
@@ -899,6 +900,8 @@ internal static class DoctorCommand
         var evidenceDeploymentModeClaimsReportCoreRouteDelegateAuditFailureCount = GetRequiredScorecardInt(deploymentModeEvidence, "ClaimsReportHazardInventoryCoreRouteDelegateAuditFailureCount", errors, "DeploymentModeEvidence");
         var evidenceDeploymentModeClaimsReportFullCommonRouteDelegateAuditStatus = GetRequiredScorecardString(deploymentModeEvidence, "ClaimsReportHazardInventoryFullCommonRouteDelegateAuditStatus", errors, "DeploymentModeEvidence") ?? "unknown";
         var evidenceDeploymentModeClaimsReportFullCommonRouteDelegateAuditFailureCount = GetRequiredScorecardInt(deploymentModeEvidence, "ClaimsReportHazardInventoryFullCommonRouteDelegateAuditFailureCount", errors, "DeploymentModeEvidence");
+        var evidenceDeploymentModeClaimsReportFullOperatorRouteDelegateAuditStatus = GetRequiredScorecardString(deploymentModeEvidence, "ClaimsReportHazardInventoryFullOperatorRouteDelegateAuditStatus", errors, "DeploymentModeEvidence") ?? "unknown";
+        var evidenceDeploymentModeClaimsReportFullOperatorRouteDelegateAuditFailureCount = GetRequiredScorecardInt(deploymentModeEvidence, "ClaimsReportHazardInventoryFullOperatorRouteDelegateAuditFailureCount", errors, "DeploymentModeEvidence");
         var evidenceAdoptionSmokeScenarioId = GetRequiredScorecardString(adoptionSmokeEvidence, "ScenarioId", errors, "AdoptionSmokeEvidence") ?? "unknown";
         var evidenceAdoptionSmokeStatus = GetRequiredScorecardString(adoptionSmokeEvidence, "Status", errors, "AdoptionSmokeEvidence") ?? "unknown";
         var evidenceAdoptionSmokeRuntimeProbeCount = GetRequiredScorecardArrayCount(adoptionSmokeEvidence, "RuntimeProbes", errors, "AdoptionSmokeEvidence");
@@ -1026,7 +1029,8 @@ internal static class DoctorCommand
             deploymentModeClaimsReportPackageClaimOverstatedCount != evidenceDeploymentModeClaimsReportPackageClaimOverstatedCount ||
             deploymentModeClaimsReportBoundaryAnnotationAuditFailures != evidenceDeploymentModeClaimsReportBoundaryAnnotationAuditFailureCount ||
             deploymentModeClaimsReportCoreRouteDelegateAuditFailures != evidenceDeploymentModeClaimsReportCoreRouteDelegateAuditFailureCount ||
-            deploymentModeClaimsReportFullCommonRouteDelegateAuditFailures != evidenceDeploymentModeClaimsReportFullCommonRouteDelegateAuditFailureCount)
+            deploymentModeClaimsReportFullCommonRouteDelegateAuditFailures != evidenceDeploymentModeClaimsReportFullCommonRouteDelegateAuditFailureCount ||
+            deploymentModeClaimsReportFullOperatorRouteDelegateAuditFailures != evidenceDeploymentModeClaimsReportFullOperatorRouteDelegateAuditFailureCount)
         {
             checks.Add(new DoctorCheck(
                 DoctorCheckSeverity.Failure,
@@ -1046,12 +1050,14 @@ internal static class DoctorCommand
             !string.Equals(evidenceDeploymentModeClaimsReportCoreRouteDelegateAuditStatus, "matched", StringComparison.OrdinalIgnoreCase) ||
             evidenceDeploymentModeClaimsReportCoreRouteDelegateAuditFailureCount != 0 ||
             !string.Equals(evidenceDeploymentModeClaimsReportFullCommonRouteDelegateAuditStatus, "matched", StringComparison.OrdinalIgnoreCase) ||
-            evidenceDeploymentModeClaimsReportFullCommonRouteDelegateAuditFailureCount != 0)
+            evidenceDeploymentModeClaimsReportFullCommonRouteDelegateAuditFailureCount != 0 ||
+            !string.Equals(evidenceDeploymentModeClaimsReportFullOperatorRouteDelegateAuditStatus, "matched", StringComparison.OrdinalIgnoreCase) ||
+            evidenceDeploymentModeClaimsReportFullOperatorRouteDelegateAuditFailureCount != 0)
         {
             checks.Add(new DoctorCheck(
                 DoctorCheckSeverity.Failure,
                 "Engine completion scorecard deployment-mode evidence",
-                $"Artifact '{resolvedScorecardPath}' has an invalid deployment-mode claims report readback: report {evidenceDeploymentModeClaimsReport}, present {evidenceDeploymentModeClaimsReportPresent}, gate {evidenceDeploymentModeClaimsReportGateStatus}, warnings {evidenceDeploymentModeClaimsReportPublishProbeWarningCount}, errors {evidenceDeploymentModeClaimsReportPublishProbeErrorCount}, overstated package claims {evidenceDeploymentModeClaimsReportPackageClaimOverstatedCount}, boundary audit {evidenceDeploymentModeClaimsReportBoundaryAnnotationAuditStatus}/{evidenceDeploymentModeClaimsReportBoundaryAnnotationAuditFailureCount}, core route-delegate audit {evidenceDeploymentModeClaimsReportCoreRouteDelegateAuditStatus}/{evidenceDeploymentModeClaimsReportCoreRouteDelegateAuditFailureCount}, full common route-delegate audit {evidenceDeploymentModeClaimsReportFullCommonRouteDelegateAuditStatus}/{evidenceDeploymentModeClaimsReportFullCommonRouteDelegateAuditFailureCount}.",
+                $"Artifact '{resolvedScorecardPath}' has an invalid deployment-mode claims report readback: report {evidenceDeploymentModeClaimsReport}, present {evidenceDeploymentModeClaimsReportPresent}, gate {evidenceDeploymentModeClaimsReportGateStatus}, warnings {evidenceDeploymentModeClaimsReportPublishProbeWarningCount}, errors {evidenceDeploymentModeClaimsReportPublishProbeErrorCount}, overstated package claims {evidenceDeploymentModeClaimsReportPackageClaimOverstatedCount}, boundary audit {evidenceDeploymentModeClaimsReportBoundaryAnnotationAuditStatus}/{evidenceDeploymentModeClaimsReportBoundaryAnnotationAuditFailureCount}, core route-delegate audit {evidenceDeploymentModeClaimsReportCoreRouteDelegateAuditStatus}/{evidenceDeploymentModeClaimsReportCoreRouteDelegateAuditFailureCount}, full common route-delegate audit {evidenceDeploymentModeClaimsReportFullCommonRouteDelegateAuditStatus}/{evidenceDeploymentModeClaimsReportFullCommonRouteDelegateAuditFailureCount}, full operator route-delegate audit {evidenceDeploymentModeClaimsReportFullOperatorRouteDelegateAuditStatus}/{evidenceDeploymentModeClaimsReportFullOperatorRouteDelegateAuditFailureCount}.",
                 "Run `scripts/validate-deployment-mode-claims.ps1` through `scripts/validate-release.ps1` and regenerate the scorecard artifact."));
             return;
         }
@@ -1210,7 +1216,7 @@ internal static class DoctorCommand
         checks.Add(new DoctorCheck(
             deploymentModeSeverity,
             "Engine completion scorecard deployment-mode evidence",
-            $"{deploymentModeGlobalClaimCount} global claims; not-claimed {deploymentModeGlobalNotClaimedCount}, package-scoped claim packages {deploymentModePackageScopedClaimPackageCount}, known hazards {deploymentModeKnownHazardEntryCount} across {deploymentModeKnownHazardPackageCount} packages, transitive audit entries {deploymentModeTransitiveAuditEntryCount}, publish probes {deploymentModePublishProbeReleaseValidationMode}; claims report {evidenceDeploymentModeClaimsReport}, gate {evidenceDeploymentModeClaimsReportGateStatus}, targets {deploymentModeClaimsReportPublishProbeTargetCount}, warnings {deploymentModeClaimsReportPublishProbeWarningCount}, errors {deploymentModeClaimsReportPublishProbeErrorCount}, truthful package claims {deploymentModeClaimsReportPackageClaimTruthfulCount}, boundary audit {evidenceDeploymentModeClaimsReportBoundaryAnnotationAuditStatus}/{evidenceDeploymentModeClaimsReportBoundaryAnnotationAuditFailureCount}, core route-delegate audit {evidenceDeploymentModeClaimsReportCoreRouteDelegateAuditStatus}/{evidenceDeploymentModeClaimsReportCoreRouteDelegateAuditFailureCount}, full common route-delegate audit {evidenceDeploymentModeClaimsReportFullCommonRouteDelegateAuditStatus}/{evidenceDeploymentModeClaimsReportFullCommonRouteDelegateAuditFailureCount}.",
+            $"{deploymentModeGlobalClaimCount} global claims; not-claimed {deploymentModeGlobalNotClaimedCount}, package-scoped claim packages {deploymentModePackageScopedClaimPackageCount}, known hazards {deploymentModeKnownHazardEntryCount} across {deploymentModeKnownHazardPackageCount} packages, transitive audit entries {deploymentModeTransitiveAuditEntryCount}, publish probes {deploymentModePublishProbeReleaseValidationMode}; claims report {evidenceDeploymentModeClaimsReport}, gate {evidenceDeploymentModeClaimsReportGateStatus}, targets {deploymentModeClaimsReportPublishProbeTargetCount}, warnings {deploymentModeClaimsReportPublishProbeWarningCount}, errors {deploymentModeClaimsReportPublishProbeErrorCount}, truthful package claims {deploymentModeClaimsReportPackageClaimTruthfulCount}, boundary audit {evidenceDeploymentModeClaimsReportBoundaryAnnotationAuditStatus}/{evidenceDeploymentModeClaimsReportBoundaryAnnotationAuditFailureCount}, core route-delegate audit {evidenceDeploymentModeClaimsReportCoreRouteDelegateAuditStatus}/{evidenceDeploymentModeClaimsReportCoreRouteDelegateAuditFailureCount}, full common route-delegate audit {evidenceDeploymentModeClaimsReportFullCommonRouteDelegateAuditStatus}/{evidenceDeploymentModeClaimsReportFullCommonRouteDelegateAuditFailureCount}, full operator route-delegate audit {evidenceDeploymentModeClaimsReportFullOperatorRouteDelegateAuditStatus}/{evidenceDeploymentModeClaimsReportFullOperatorRouteDelegateAuditFailureCount}.",
             deploymentModeSeverity == DoctorCheckSeverity.Pass
                 ? null
                 : "Treat deployment-mode posture as release-readiness evidence only; do not promote trim, Native AOT, single-file, or publish-probe support until the manifest, harness, workflow, docs, and package guidance agree."));

@@ -388,7 +388,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.16.0",
+              "$schemaVersion": "1.17.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -412,7 +412,9 @@ public sealed class CliApplicationTests
                 "ClaimsReportHazardInventoryCoreRouteDelegateAuditStatus": "matched",
                 "ClaimsReportHazardInventoryCoreRouteDelegateAuditFailureCount": 0,
                 "ClaimsReportHazardInventoryFullCommonRouteDelegateAuditStatus": "matched",
-                "ClaimsReportHazardInventoryFullCommonRouteDelegateAuditFailureCount": 0
+                "ClaimsReportHazardInventoryFullCommonRouteDelegateAuditFailureCount": 0,
+                "ClaimsReportHazardInventoryFullOperatorRouteDelegateAuditStatus": "matched",
+                "ClaimsReportHazardInventoryFullOperatorRouteDelegateAuditFailureCount": 0
               },
               "AdoptionSmokeEvidence": {
                 "ScenarioId": "out-of-tree-generated-app-package-stage",
@@ -534,6 +536,7 @@ public sealed class CliApplicationTests
                 "DeploymentModeClaimsReportBoundaryAnnotationAuditFailures": 0,
                 "DeploymentModeClaimsReportCoreRouteDelegateAuditFailures": 0,
                 "DeploymentModeClaimsReportFullCommonRouteDelegateAuditFailures": 0,
+                "DeploymentModeClaimsReportFullOperatorRouteDelegateAuditFailures": 0,
                 "AdoptionSmokeScenarioCount": 1,
                 "AdoptionSmokeRuntimeProbeCount": 6,
                 "AdoptionSmokeAssertionCount": 7,
@@ -589,11 +592,11 @@ public sealed class CliApplicationTests
                 stderr);
 
             Assert.Equal(0, exitCode);
-            Assert.Contains("[ok] Engine completion scorecard artifact: schema 1.16.0 from docs/engine-completion-scorecard.md; conformance matrix docs/conformance-matrix.md.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[ok] Engine completion scorecard artifact: schema 1.17.0 from docs/engine-completion-scorecard.md; conformance matrix docs/conformance-matrix.md.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard platform gates: 12 gates; blocked 0, needs-refresh 0, partial 8, not-claimed 1.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Engine completion scorecard evidence references: 28 repo-local references validated by the published artifact.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard package GA readiness: 90 package rows; partial 89, not-claimed 1, needs-refresh 0.", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("[warn] Engine completion scorecard deployment-mode evidence: 3 global claims; not-claimed 3, package-scoped claim packages 1, known hazards 14 across 2 packages, transitive audit entries 7, publish probes single-file-publish-gate; claims report artifacts/deployment-mode-claims-release/claim-validation-report.json, gate passed, targets 5, warnings 0, errors 0, truthful package claims 1, boundary audit matched/0, core route-delegate audit matched/0, full common route-delegate audit matched/0.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[warn] Engine completion scorecard deployment-mode evidence: 3 global claims; not-claimed 3, package-scoped claim packages 1, known hazards 14 across 2 packages, transitive audit entries 7, publish probes single-file-publish-gate; claims report artifacts/deployment-mode-claims-release/claim-validation-report.json, gate passed, targets 5, warnings 0, errors 0, truthful package claims 1, boundary audit matched/0, core route-delegate audit matched/0, full common route-delegate audit matched/0, full operator route-delegate audit matched/0.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Engine completion scorecard adoption smoke evidence: 1 scenario (out-of-tree-generated-app-package-stage, execution-report-ready); runtime probes 6, assertions 7, execution-report fields 9; report artifacts/adoption-smoke/out-of-tree-package-adoption.json schema 1.0.0.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard provider integration evidence: 33 rows; live proofs 33, composition-only 0, external-service gates 14, default-skipped 14, runtime contracts 99; dependency-health providers 18 from scripts/observability-dependency-health-providers.json schema 1.0.0 (source-derived-provider-family-contract).", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard SRE posture: 11 SLIs; target-declared 11, pending stable baselines 1, stable baselines 10, stable baseline rows 10, stable baseline measurements 12, pending baseline rows 1, blockers 1, pending evidence 1, guardrail-mapped 6, pending guardrail coverage 0, guardrail not-applicable 5, guardrail references 8; stable baseline manifest scripts/sre-stable-baselines.json.", stdout.ToString(), StringComparison.Ordinal);
@@ -686,7 +689,7 @@ public sealed class CliApplicationTests
                 stderr);
 
             Assert.Equal(1, exitCode);
-            Assert.Contains("[error] Engine completion scorecard artifact: Unsupported schema '1.0.0'. Doctor expects scorecard schema '1.16.0'.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[error] Engine completion scorecard artifact: Unsupported schema '1.0.0'. Doctor expects scorecard schema '1.17.0'.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("scorecard artifact blockers", stderr.ToString(), StringComparison.Ordinal);
         }
         finally
@@ -709,7 +712,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.16.0",
+              "$schemaVersion": "1.17.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -733,7 +736,9 @@ public sealed class CliApplicationTests
                 "ClaimsReportHazardInventoryCoreRouteDelegateAuditStatus": "matched",
                 "ClaimsReportHazardInventoryCoreRouteDelegateAuditFailureCount": 0,
                 "ClaimsReportHazardInventoryFullCommonRouteDelegateAuditStatus": "matched",
-                "ClaimsReportHazardInventoryFullCommonRouteDelegateAuditFailureCount": 0
+                "ClaimsReportHazardInventoryFullCommonRouteDelegateAuditFailureCount": 0,
+                "ClaimsReportHazardInventoryFullOperatorRouteDelegateAuditStatus": "matched",
+                "ClaimsReportHazardInventoryFullOperatorRouteDelegateAuditFailureCount": 0
               },
               "AdoptionSmokeEvidence": {
                 "ScenarioId": "out-of-tree-generated-app-package-stage",
@@ -855,6 +860,7 @@ public sealed class CliApplicationTests
                 "DeploymentModeClaimsReportBoundaryAnnotationAuditFailures": 0,
                 "DeploymentModeClaimsReportCoreRouteDelegateAuditFailures": 0,
                 "DeploymentModeClaimsReportFullCommonRouteDelegateAuditFailures": 0,
+                "DeploymentModeClaimsReportFullOperatorRouteDelegateAuditFailures": 0,
                 "AdoptionSmokeScenarioCount": 1,
                 "AdoptionSmokeRuntimeProbeCount": 6,
                 "AdoptionSmokeAssertionCount": 7,
@@ -934,7 +940,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.16.0",
+              "$schemaVersion": "1.17.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -958,7 +964,9 @@ public sealed class CliApplicationTests
                 "ClaimsReportHazardInventoryCoreRouteDelegateAuditStatus": "matched",
                 "ClaimsReportHazardInventoryCoreRouteDelegateAuditFailureCount": 0,
                 "ClaimsReportHazardInventoryFullCommonRouteDelegateAuditStatus": "matched",
-                "ClaimsReportHazardInventoryFullCommonRouteDelegateAuditFailureCount": 0
+                "ClaimsReportHazardInventoryFullCommonRouteDelegateAuditFailureCount": 0,
+                "ClaimsReportHazardInventoryFullOperatorRouteDelegateAuditStatus": "matched",
+                "ClaimsReportHazardInventoryFullOperatorRouteDelegateAuditFailureCount": 0
               },
               "AdoptionSmokeEvidence": {
                 "ScenarioId": "out-of-tree-generated-app-package-stage",
@@ -1080,6 +1088,7 @@ public sealed class CliApplicationTests
                 "DeploymentModeClaimsReportBoundaryAnnotationAuditFailures": 0,
                 "DeploymentModeClaimsReportCoreRouteDelegateAuditFailures": 0,
                 "DeploymentModeClaimsReportFullCommonRouteDelegateAuditFailures": 0,
+                "DeploymentModeClaimsReportFullOperatorRouteDelegateAuditFailures": 0,
                 "AdoptionSmokeScenarioCount": 1,
                 "AdoptionSmokeRuntimeProbeCount": 6,
                 "AdoptionSmokeAssertionCount": 7,
@@ -1159,7 +1168,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.16.0",
+              "$schemaVersion": "1.17.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -1183,7 +1192,9 @@ public sealed class CliApplicationTests
                 "ClaimsReportHazardInventoryCoreRouteDelegateAuditStatus": "matched",
                 "ClaimsReportHazardInventoryCoreRouteDelegateAuditFailureCount": 0,
                 "ClaimsReportHazardInventoryFullCommonRouteDelegateAuditStatus": "matched",
-                "ClaimsReportHazardInventoryFullCommonRouteDelegateAuditFailureCount": 0
+                "ClaimsReportHazardInventoryFullCommonRouteDelegateAuditFailureCount": 0,
+                "ClaimsReportHazardInventoryFullOperatorRouteDelegateAuditStatus": "matched",
+                "ClaimsReportHazardInventoryFullOperatorRouteDelegateAuditFailureCount": 0
               },
               "AdoptionSmokeEvidence": {
                 "ScenarioId": "out-of-tree-generated-app-package-stage",
@@ -1299,6 +1310,7 @@ public sealed class CliApplicationTests
                 "DeploymentModeClaimsReportBoundaryAnnotationAuditFailures": 0,
                 "DeploymentModeClaimsReportCoreRouteDelegateAuditFailures": 0,
                 "DeploymentModeClaimsReportFullCommonRouteDelegateAuditFailures": 0,
+                "DeploymentModeClaimsReportFullOperatorRouteDelegateAuditFailures": 0,
                 "AdoptionSmokeScenarioCount": 1,
                 "AdoptionSmokeRuntimeProbeCount": 6,
                 "AdoptionSmokeAssertionCount": 7,
@@ -1378,7 +1390,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.16.0",
+              "$schemaVersion": "1.17.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -1402,7 +1414,9 @@ public sealed class CliApplicationTests
                 "ClaimsReportHazardInventoryCoreRouteDelegateAuditStatus": "matched",
                 "ClaimsReportHazardInventoryCoreRouteDelegateAuditFailureCount": 0,
                 "ClaimsReportHazardInventoryFullCommonRouteDelegateAuditStatus": "matched",
-                "ClaimsReportHazardInventoryFullCommonRouteDelegateAuditFailureCount": 0
+                "ClaimsReportHazardInventoryFullCommonRouteDelegateAuditFailureCount": 0,
+                "ClaimsReportHazardInventoryFullOperatorRouteDelegateAuditStatus": "matched",
+                "ClaimsReportHazardInventoryFullOperatorRouteDelegateAuditFailureCount": 0
               },
               "AdoptionSmokeEvidence": {
                 "ScenarioId": "out-of-tree-generated-app-package-stage",
@@ -1524,6 +1538,7 @@ public sealed class CliApplicationTests
                 "DeploymentModeClaimsReportBoundaryAnnotationAuditFailures": 0,
                 "DeploymentModeClaimsReportCoreRouteDelegateAuditFailures": 0,
                 "DeploymentModeClaimsReportFullCommonRouteDelegateAuditFailures": 0,
+                "DeploymentModeClaimsReportFullOperatorRouteDelegateAuditFailures": 0,
                 "AdoptionSmokeScenarioCount": 1,
                 "AdoptionSmokeRuntimeProbeCount": 6,
                 "AdoptionSmokeAssertionCount": 7,
@@ -1603,7 +1618,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.16.0",
+              "$schemaVersion": "1.17.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -1627,7 +1642,9 @@ public sealed class CliApplicationTests
                 "ClaimsReportHazardInventoryCoreRouteDelegateAuditStatus": "matched",
                 "ClaimsReportHazardInventoryCoreRouteDelegateAuditFailureCount": 0,
                 "ClaimsReportHazardInventoryFullCommonRouteDelegateAuditStatus": "matched",
-                "ClaimsReportHazardInventoryFullCommonRouteDelegateAuditFailureCount": 0
+                "ClaimsReportHazardInventoryFullCommonRouteDelegateAuditFailureCount": 0,
+                "ClaimsReportHazardInventoryFullOperatorRouteDelegateAuditStatus": "matched",
+                "ClaimsReportHazardInventoryFullOperatorRouteDelegateAuditFailureCount": 0
               },
               "AdoptionSmokeEvidence": {
                 "ScenarioId": "out-of-tree-generated-app-package-stage",
@@ -1749,6 +1766,7 @@ public sealed class CliApplicationTests
                 "DeploymentModeClaimsReportBoundaryAnnotationAuditFailures": 0,
                 "DeploymentModeClaimsReportCoreRouteDelegateAuditFailures": 0,
                 "DeploymentModeClaimsReportFullCommonRouteDelegateAuditFailures": 0,
+                "DeploymentModeClaimsReportFullOperatorRouteDelegateAuditFailures": 0,
                 "AdoptionSmokeScenarioCount": 1,
                 "AdoptionSmokeRuntimeProbeCount": 6,
                 "AdoptionSmokeAssertionCount": 7,
@@ -1828,7 +1846,7 @@ public sealed class CliApplicationTests
 
         await File.WriteAllTextAsync(scorecardPath, """
             {
-              "$schemaVersion": "1.16.0",
+              "$schemaVersion": "1.17.0",
               "SourceDocument": "docs/engine-completion-scorecard.md",
               "ConformanceMatrix": "docs/conformance-matrix.md",
               "DeploymentModeEvidence": {
@@ -1852,7 +1870,9 @@ public sealed class CliApplicationTests
                 "ClaimsReportHazardInventoryCoreRouteDelegateAuditStatus": "matched",
                 "ClaimsReportHazardInventoryCoreRouteDelegateAuditFailureCount": 0,
                 "ClaimsReportHazardInventoryFullCommonRouteDelegateAuditStatus": "matched",
-                "ClaimsReportHazardInventoryFullCommonRouteDelegateAuditFailureCount": 0
+                "ClaimsReportHazardInventoryFullCommonRouteDelegateAuditFailureCount": 0,
+                "ClaimsReportHazardInventoryFullOperatorRouteDelegateAuditStatus": "matched",
+                "ClaimsReportHazardInventoryFullOperatorRouteDelegateAuditFailureCount": 0
               },
               "AdoptionSmokeEvidence": {
                 "ScenarioId": "out-of-tree-generated-app-package-stage",
@@ -1974,6 +1994,7 @@ public sealed class CliApplicationTests
                 "DeploymentModeClaimsReportBoundaryAnnotationAuditFailures": 0,
                 "DeploymentModeClaimsReportCoreRouteDelegateAuditFailures": 0,
                 "DeploymentModeClaimsReportFullCommonRouteDelegateAuditFailures": 0,
+                "DeploymentModeClaimsReportFullOperatorRouteDelegateAuditFailures": 0,
                 "AdoptionSmokeScenarioCount": 1,
                 "AdoptionSmokeRuntimeProbeCount": 6,
                 "AdoptionSmokeAssertionCount": 7,
