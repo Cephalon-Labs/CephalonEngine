@@ -66,6 +66,7 @@ Current baseline packages:
 - `Cephalon.Eventing`
   - runtime services and capability activation for `EventDrivenIntegration`
   - registers `IEventChannelCatalog`, `IEventSubscriptionCatalog`, `IEventSubscriptionExecutionBindingCatalog`, the abstraction-level `IEventSubscriptionExecutionReadinessCatalog`, the abstraction-level `IEventPublicationRuntimeCatalog`, the abstraction-level event-dispatch runtime descriptor/state catalogs, and stable event subscription plus dispatch runtime metadata keys when the profile and options enable those paths
+  - treats Wolverine-class durable messaging features as the minimum external benchmark while keeping the native contract provider-neutral and config-driven through engine-owned messaging, durability, retry, scheduling, dead-letter, topology, observability, governance, and compliance options
   - lets `Cephalon.Engine`, host adapters, and operator tooling read subscription execution readiness through `/engine/event-subscription-readiness` and `snapshot.EventSubscriptionExecutionReadiness` without taking a direct dependency on the eventing pack
   - registers the abstraction-level `IEventPublicationDispatcher` when a real publishing path exists, allowing host adapters to expose bounded publication actions such as `POST /engine/event-publications` without depending on eventing implementation types
   - lets `Cephalon.Engine`, host adapters, and operator tooling read publication runtime state through `/engine/event-publications/runtime*` and `snapshot.EventPublicationStates`, with in-process outcomes separated from outbox `accepted` handoff truth
@@ -73,6 +74,7 @@ Current baseline packages:
 - `Cephalon.Eventing.Wolverine`
   - optional companion adapter proof for managed dispatch over `EventDrivenIntegration`
   - projects runtime truth for the current Wolverine-backed outbox, dispatch loop, bounded provider-managed dispatch retry with terminal storage semantics, first-class terminal dispatch-state/summary posture, managed subscription bindings, bounded provider-managed subscription retry, terminal exhausted-attempt failure posture, and subscription readiness without turning Wolverine into an engine-core dependency or a default scaffold requirement
+  - should feed proven provider-specific capabilities back into the Cephalon-owned eventing contract instead of making Wolverine APIs the long-term authoring surface
 - `Cephalon.Retrieval`
   - runtime services and capability activation for `KnowledgeRetrieval`
   - registers `IKnowledgeCatalog`, the abstraction-level `IKnowledgeIndexCatalog`, `IKnowledgeIndexer`, and `IKnowledgeQueryEngine` when the profile and options enable those paths
