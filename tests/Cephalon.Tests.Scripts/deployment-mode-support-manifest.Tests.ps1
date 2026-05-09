@@ -665,6 +665,34 @@ Describe "deploymentModeEligibility" {
         $helperBlock | Should -Match 'RequestDelegate requestDelegate' -Because "the helper must accept prebuilt request delegates"
         $helperBlock | Should -Match '\.MapMethods\(' -Because "request delegates should be mapped through MapMethods rather than Delegate route handlers"
     }
+
+    It "full workflow ASP.NET Core operator routes use request delegates instead of Minimal API delegate binding" {
+        $sourcePath = Join-Path $script:repoRoot "src/Cephalon.AspNetCore/Hosting/EngineWebApplicationExtensions.cs"
+        $sourcePath = $sourcePath -replace '/', [System.IO.Path]::DirectorySeparatorChar
+        Test-Path -LiteralPath $sourcePath -PathType Leaf | Should -BeTrue
+
+        $source = Get-Content -LiteralPath $sourcePath -Raw -Encoding UTF8
+        $workflowStart = $source.IndexOf("MapCephalonFullCommonOperatorRoutes(engineGroup);", [System.StringComparison]::Ordinal)
+        $rateLimitingStart = $source.IndexOf('engineGroup.MapGet("/rate-limiting"', [System.StringComparison]::Ordinal)
+        $helperStart = $source.IndexOf("private static void MapGetResultRequestDelegate(", [System.StringComparison]::Ordinal)
+        $nextHelperStart = $source.IndexOf("private static TService GetRequiredService", [System.StringComparison]::Ordinal)
+
+        $workflowStart | Should -BeGreaterOrEqual 0 -Because "the full operator route catalog should keep its common route boundary visible"
+        $rateLimitingStart | Should -BeGreaterThan $workflowStart -Because "the rate-limiting route marks the next still-Minimal API full route family"
+        $helperStart | Should -BeGreaterThan $rateLimitingStart -Because "the result request-delegate helper should follow the route catalog"
+        $nextHelperStart | Should -BeGreaterThan $helperStart -Because "the result request-delegate helper block should stay parseable"
+
+        $workflowBlock = $source.Substring($workflowStart, $rateLimitingStart - $workflowStart)
+        $helperBlock = $source.Substring($helperStart, $nextHelperStart - $helperStart)
+
+        $workflowBlock | Should -Not -Match 'engineGroup\.Map(Get|Post)\(' -Because "behavior-resilience, saga choreography, and durable execution full routes must not reintroduce Minimal API delegate binding"
+        $workflowBlock | Should -Match 'MapGetResultRequestDelegate' -Because "full workflow operator routes should stay on the result request-delegate helper"
+        $workflowBlock | Should -Match '/behavior-resilience' -Because "the behavior resilience full route family should stay in the audited request-delegate block"
+        $workflowBlock | Should -Match '/saga-choreographies/runtime/publications/\{publicationStateId\}' -Because "the saga choreography runtime route family should stay in the audited request-delegate block"
+        $workflowBlock | Should -Match '/durable-executions/runtime/streams/\{streamId\}' -Because "the durable execution runtime route family should stay in the audited request-delegate block"
+        $helperBlock | Should -Match 'Func<HttpContext, IResult> handler' -Because "the helper should execute a prebuilt result handler without ASP.NET Core delegate binding"
+        $helperBlock | Should -Match 'MapGetRequestDelegate' -Because "result request delegates should flow through the MapMethods-backed GET helper"
+    }
 }
 
 Describe "knownTransitiveHazards" {

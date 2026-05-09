@@ -121,8 +121,10 @@ the boundary harder to drift silently.
 
 `ENG-538` starts the route-delegate remediation lane for the opt-in core operator surface,
 `ENG-539` makes that route-delegate proof fail-closed in the deployment-mode harness and
-scorecard readback, and `ENG-541` applies the same proof to the full-mode routes that are shared
-with the core surface.
+scorecard readback, `ENG-541` applies the same proof to the full-mode routes that are shared
+with the core surface, and `ENG-542` begins migrating the remaining full/default catalog by
+moving the behavior-resilience, saga-choreography, and durable-execution route families to
+result request delegates with source-shape Pester coverage.
 When hosts set `Engine:AspNetCore:OperatorSurface:Mode=core`, the bounded core `/engine/*`
 route subset now maps through prebuilt `RequestDelegate` handlers and `MapMethods(...)`
 instead of Minimal API delegate binding. In full mode, `/`, `/manifest`, `/snapshot`, `/app-model`,
@@ -130,13 +132,14 @@ and `/resilience` now use the same `RequestDelegate` + `MapMethods(...)` helper 
 full-only operator routes are mapped. Manifest Pester guards plus generated
 `CoreRouteDelegateAuditStatus` and `FullCommonRouteDelegateAuditStatus` check that those two route
 subsets do not reintroduce `.MapGet(...)` and that the helper still accepts `RequestDelegate` and
-calls `MapMethods(...)`. The remaining default/full `MapCephalon()` route catalog still remains the
+calls `MapMethods(...)`. The workflow route families now use the same request-delegate route helper
+in full/default mode, but the remaining default/full `MapCephalon()` route catalog still remains the
 high-tier dynamic boundary below until the full adapter surface has typed/request-delegate routes
 and source-generated JSON contracts.
 
 | Package | File | Line | Pattern | Notes |
 | --- | --- | --- | --- | --- |
-| `Cephalon.AspNetCore` | `Hosting/EngineWebApplicationExtensions.cs` | 101 | `MapCephalon()` maps the full operator surface through Minimal API delegate route binding | Public `RequiresUnreferencedCode` / `RequiresDynamicCode` annotations make the package-local analyzer path clean while preserving the truthful not-claimed AOT support posture; the `core` operator surface now has request-delegate proof, but the full/default surface is still unclaimed. |
+| `Cephalon.AspNetCore` | `Hosting/EngineWebApplicationExtensions.cs` | 101 | `MapCephalon()` maps the remaining full operator surface through Minimal API delegate route binding | Public `RequiresUnreferencedCode` / `RequiresDynamicCode` annotations make the package-local analyzer path clean while preserving the truthful not-claimed AOT support posture; the `core`, full/common, and first full/default workflow route families now have request-delegate proof, but the full/default surface is still unclaimed. |
 
 ### `high` — non-public reflective access on a third-party transport type in `Cephalon.Data.MySql.SciSharpReplication` (added via `ENG-434`, isolated via `ENG-477`)
 
@@ -422,6 +425,8 @@ A future slice may add explicit `IsTrimmable=false; IsAotCompatible=false; Publi
 **Update May 9, 2026 (`ENG-529`):** `Cephalon.AspNetCore` now records the full operator route layer as an explicit dynamic Minimal API boundary. `MapCephalon()` carries `RequiresUnreferencedCode` / `RequiresDynamicCode` annotations, so package-local trim/AOT analyzer builds can pass without pretending the full `/engine/*` surface is Native AOT-safe. `scripts/deployment-mode-support.json` adds `Cephalon.AspNetCore` as a high-tier unclaimed package with one dynamic route-binding hazard. The current manifest-backed inventory reports 9 package entries, 3 packages with known hazards, 15 known hazard entries, tier counts of 3 `high` + 0 `medium` + 3 `excluded-by-design` + 3 `clean-baseline`, zero active `low` entries, 3 package-scoped `singleFile` claims, and transitive-hazard hint counts of `trim=4`, `nativeAot=8`, and `singleFile=2`. Global trim / Native AOT / single-file support remains `not-claimed`.
 
 **Update May 9, 2026 (`ENG-541`):** the five full/common ASP.NET Core operator routes shared by full and core mode now map through the same prebuilt `RequestDelegate` + `MapMethods(...)` helper used by the core route subset. The deployment-mode harness emits `FullCommonRouteDelegateAuditStatus`, fails with `full-common-route-delegate-audit-failed` if those shared routes return to `.MapGet(...)`, and the scorecard / release-validation / doctor readback require `matched/0` before treating deployment-mode evidence as release-ready. This narrows the route-binding blocker but does not promote global trim, Native AOT, single-file, or full-adapter support.
+
+**Update May 9, 2026 (`ENG-542`):** the full/default behavior-resilience, saga-choreography, and durable-execution operator route families now map through result request delegates and the same `MapMethods(...)` GET helper instead of ASP.NET Core Minimal API delegate binding. The manifest Pester suite guards that workflow block against returning to `.MapGet(...)` while the broader full/default operator catalog continues to carry the explicit dynamic Minimal API boundary. Global trim, Native AOT, single-file, and full-adapter support remain `not-claimed`.
 
 ## Refresh discipline
 

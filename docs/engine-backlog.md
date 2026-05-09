@@ -359,6 +359,36 @@ Validation:
 - `pwsh ./scripts/publish-engine-completion-scorecard.ps1 -OutputPath artifacts/engine-completion-scorecard-test-coverage-readback`
 - `dotnet run --project src\Cephalon.Cli\Cephalon.Cli.csproj -c Debug --no-restore -- doctor --scorecard artifacts\engine-completion-scorecard-test-coverage-readback\engine-completion-scorecard.json`
 
+### ENG-542 ASP.NET Core full workflow request-delegate migration
+
+Status: done
+Estimate: 0.5
+Iteration: Sprint 125
+Area: release-readiness / deployment-mode / ASP.NET Core
+Quality dimensions: Compatibility, Reliability, Auditability, Maintainability, Performance
+
+Why:
+
+- the shared full/common route proof narrowed the ASP.NET Core route-binding boundary, but the first full/default-only workflow route families still used Minimal API `.MapGet(...)` delegate binding
+- behavior resilience, saga choreography, and durable execution are cohesive operator surfaces with route-value and not-found behavior that can prove the full/default migration pattern before touching the much larger CDC and provider drill-down catalog
+- docs and manifest tests need to distinguish this source-shape proof from a global trim, Native AOT, single-file, or full-adapter support claim
+
+Delivered:
+
+- added `MapGetResultRequestDelegate(...)`, a result-handler wrapper that still maps through the existing `RequestDelegate` + `MapMethods(...)` GET helper
+- moved full/default behavior-resilience, saga-choreography, and durable-execution operator routes from Minimal API delegate binding to result request delegates
+- preserved route names, route values, optional catalog lookup behavior, `404` responses, and JSON result shapes for the converted route families
+- added manifest Pester coverage that rejects `.MapGet(...)` drift inside the converted full/default workflow route block and verifies the result request-delegate helper shape
+- refreshed deployment-mode support docs, trim/AOT hazard inventory, ASP.NET Core component docs, roadmap, backlog, project memory, and manifest evidence while keeping global deployment-mode support rows `not-claimed`
+
+Validation:
+
+- `dotnet build src\Cephalon.AspNetCore\Cephalon.AspNetCore.csproj -c Debug --no-restore -m:1` passed with 0 warnings and 0 errors
+- `dotnet test tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj -c Debug --no-restore -m:1 --filter "FullyQualifiedName~MapCephalonDefaultsToFullOperatorSurface|FullyQualifiedName~BehaviorResilienceHostingTests|FullyQualifiedName~SagaChoreographyHostingTests|FullyQualifiedName~DurableExecutionHostingTests"` passed 6 tests
+- `Invoke-Pester -Path tests\Cephalon.Tests.Scripts\deployment-mode-support-manifest.Tests.ps1 -Output Detailed` passed 44 tests
+- `pwsh ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode trim -Configuration Release -SkipPublish -OutputPath artifacts/deployment-mode-claims-full-workflow-request-delegates` reported aggregate `not-claimed`, publish-probe gate `not-applicable`, and matched boundary/core/full-common route audits
+- `git diff --check` passed
+
 ### ENG-541 ASP.NET Core full common route-delegate audit readback
 
 Status: done
@@ -16096,6 +16126,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-539 Read core route-delegate proof into deployment-mode scorecard: `scripts/validate-deployment-mode-claims.ps1` now emits `CoreRouteDelegateAuditStatus` and fails closed if the opt-in ASP.NET Core core operator route subset drifts back to `.MapGet(...)` delegate binding, while `scripts/publish-engine-completion-scorecard.ps1` schema `1.14.0`, release validation, and `cephalon doctor --scorecard` read back boundary/core route audit status and failure counts without widening global trim / Native AOT / single-file support claims. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability (shipped)
 - ENG-540 Read test coverage roadmap proof into scorecard: `scripts/publish-engine-completion-scorecard.ps1` schema `1.15.0` now emits `TestCoverageEvidence` from `docs/test-coverage-roadmap.md`, validates layered project links, gap criteria, recommendation status, and quarantine queue posture, and keeps release validation plus `cephalon doctor --scorecard <path>` fail-closed on active test-coverage gaps or open quarantine entries while preserving gated recommendations as visible readback. Quality dimensions: Reliability + Auditability + Maintainability + Compatibility + Usability (shipped)
 - ENG-541 Read full common route-delegate proof into deployment-mode scorecard: `MapCephalonFullCommonOperatorRoutes(...)` now maps the shared full-mode `/`, `/manifest`, `/snapshot`, `/app-model`, and `/resilience` routes through prebuilt `RequestDelegate` handlers and `MapMethods(...)`; `scripts/validate-deployment-mode-claims.ps1` emits `FullCommonRouteDelegateAuditStatus` and fails closed if those shared routes drift back to `.MapGet(...)`; and scorecard schema `1.16.0`, release validation, and `cephalon doctor --scorecard` read back boundary/core/full-common route audit status and failure counts without widening global trim / Native AOT / single-file support claims. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability (shipped)
+- ENG-542 Move first full/default workflow routes to request delegates: `MapCephalon()` now maps behavior-resilience, saga-choreography, and durable-execution full/default operator route families through `MapGetResultRequestDelegate(...)` and the existing `RequestDelegate` / `MapMethods(...)` helper, while manifest Pester coverage rejects `.MapGet(...)` drift inside that workflow route block without promoting global trim / Native AOT / single-file or full-adapter support claims. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Performance (shipped)
 - ENG-524 Harden deployment-mode audit-only probes: direct trim and Native AOT runs now keep the single-file release gate out of their verdict by returning `PublishProbeGate=not-applicable` when only audit-only modes are evaluated; compiler-only analyzer/source-generator `ProjectReference` entries strip app publish-mode globals through `CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove`; and `Cephalon.Analyzers`, `Cephalon.Behaviors.SourceGen`, and `Cephalon.Engine.SourceGen` localize publish/RID globals with `TreatAsLocalProperty` so publish probes reach real runtime blocker evidence instead of failing on compiler-only `netstandard2.0` drift. Release closeout also stabilized the readiness warmup hosting test, refreshed the REST projection/governance guardrail to a measured 1 s ceiling while keeping the existing 16 MB allocation ceiling, and moved the canonical full `validate-release` wall-time target to 30 minutes after the current full lane measured about 1,669.848 seconds. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability + Performance (shipped)
 - ENG-535 Close generated REST behavior source-generator adoption proof: `Cephalon.Behaviors.SourceGen` now packs its compiler assembly under `analyzers/dotnet/cs`, scaffolded REST behavior modules and template-pack REST starters reference it as `PrivateAssets=all`, generated module projects keep `Cephalon.Engine.SourceGen` in every blueprint, and the out-of-tree adoption temporary feed publishes the full generated REST behavior package closure (`Cephalon.Behaviors.SourceGen`, `Cephalon.Diagnostics`, and `Cephalon.Resilience`) so restore/build/run replay can produce the REST profile hints required by `MapProfile<TBehavior>()`. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability (shipped)
 - ENG-487 Add opt-in CDC integration baseline: `tests/Cephalon.Tests.CdcIntegration` now carries the first dedicated live CDC integration lane, proving MongoDB change streams against a disposable `EphemeralMongo7` replica set with real outbox staging, provider-native runtime binding, runtime-state reporting, execution-runtime aggregation, and checkpoint persistence; `data.slnf` now points at the split data-relevant test projects instead of the retired monolithic test project, and SQL Server/Postgres live CDC coverage stays explicitly later until an external-service/Testcontainers gate exists. Quality dimensions: Reliability + Compatibility + Auditability + Maintainability (shipped)

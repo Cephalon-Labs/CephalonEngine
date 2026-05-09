@@ -152,196 +152,186 @@ public static class EngineWebApplicationExtensions
 
         MapCephalonFullCommonOperatorRoutes(engineGroup);
 
-        engineGroup.MapGet("/behavior-resilience", (HttpContext httpContext) =>
+        MapGetResultRequestDelegate(engineGroup, "/behavior-resilience", "GetCephalonBehaviorResilience", static httpContext =>
             {
                 var catalog = httpContext.RequestServices.GetService<Cephalon.Abstractions.Resilience.IBehaviorResilienceRuntimeCatalog>();
                 return TypedResults.Ok(catalog?.Policies ?? []);
-            })
-            .WithName("GetCephalonBehaviorResilience");
-        engineGroup.MapGet("/behavior-resilience/{policyId}", (string policyId, HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/behavior-resilience/{policyId}", "GetCephalonBehaviorResiliencePolicy", static httpContext =>
             {
+                var policyId = GetRouteValue(httpContext, "policyId");
                 var catalog = httpContext.RequestServices.GetService<Cephalon.Abstractions.Resilience.IBehaviorResilienceRuntimeCatalog>();
                 var policy = catalog?.GetById(policyId);
 
                 return policy is null ? Results.NotFound() : Results.Ok(policy);
-            })
-            .WithName("GetCephalonBehaviorResiliencePolicy");
-        engineGroup.MapGet("/saga-choreographies", (HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/saga-choreographies", "GetCephalonSagaChoreographies", static httpContext =>
             {
                 var catalog = httpContext.RequestServices.GetService<ISagaChoreographyRuntimeCatalog>();
                 return TypedResults.Ok(catalog?.SagaChoreographies ?? []);
-            })
-            .WithName("GetCephalonSagaChoreographies");
-        engineGroup.MapGet("/saga-choreographies/modules/{moduleId}", (string moduleId, HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/saga-choreographies/modules/{moduleId}", "GetCephalonSagaChoreographiesByModule", static httpContext =>
             {
+                var moduleId = GetRouteValue(httpContext, "moduleId");
                 var catalog = httpContext.RequestServices.GetService<ISagaChoreographyRuntimeCatalog>();
                 return TypedResults.Ok(catalog?.GetBySourceModule(moduleId) ?? []);
-            })
-            .WithName("GetCephalonSagaChoreographiesByModule");
-        engineGroup.MapGet("/saga-choreographies/transports/{transportId}", (string transportId, HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/saga-choreographies/transports/{transportId}", "GetCephalonSagaChoreographiesByTransport", static httpContext =>
             {
+                var transportId = GetRouteValue(httpContext, "transportId");
                 var catalog = httpContext.RequestServices.GetService<ISagaChoreographyRuntimeCatalog>();
                 return TypedResults.Ok(catalog?.GetByTransportId(transportId) ?? []);
-            })
-            .WithName("GetCephalonSagaChoreographiesByTransport");
-        engineGroup.MapGet("/saga-choreographies/{behaviorId}", (string behaviorId, HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/saga-choreographies/{behaviorId}", "GetCephalonSagaChoreography", static httpContext =>
             {
+                var behaviorId = GetRouteValue(httpContext, "behaviorId");
                 var catalog = httpContext.RequestServices.GetService<ISagaChoreographyRuntimeCatalog>();
                 var choreography = catalog?.GetById(behaviorId);
 
                 return choreography is null ? Results.NotFound() : Results.Ok(choreography);
-            })
-            .WithName("GetCephalonSagaChoreography");
-        engineGroup.MapGet("/saga-choreographies/runtime", (HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/saga-choreographies/runtime", "GetCephalonSagaChoreographyPublicationStates", static httpContext =>
             {
                 var catalog = httpContext.RequestServices.GetService<ISagaChoreographyPublicationRuntimeStateCatalog>();
                 return TypedResults.Ok(catalog?.States ?? []);
-            })
-            .WithName("GetCephalonSagaChoreographyPublicationStates");
-        engineGroup.MapGet("/saga-choreographies/runtime/behaviors/{behaviorId}", (string behaviorId, HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/saga-choreographies/runtime/behaviors/{behaviorId}", "GetCephalonSagaChoreographyPublicationStatesByBehavior", static httpContext =>
             {
+                var behaviorId = GetRouteValue(httpContext, "behaviorId");
                 var catalog = httpContext.RequestServices.GetService<ISagaChoreographyPublicationRuntimeStateCatalog>();
                 return TypedResults.Ok(catalog?.GetByBehaviorId(behaviorId) ?? []);
-            })
-            .WithName("GetCephalonSagaChoreographyPublicationStatesByBehavior");
-        engineGroup.MapGet("/saga-choreographies/runtime/modules/{moduleId}", (string moduleId, HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/saga-choreographies/runtime/modules/{moduleId}", "GetCephalonSagaChoreographyPublicationStatesByModule", static httpContext =>
             {
+                var moduleId = GetRouteValue(httpContext, "moduleId");
                 var catalog = httpContext.RequestServices.GetService<ISagaChoreographyPublicationRuntimeStateCatalog>();
                 return TypedResults.Ok(catalog?.GetBySourceModule(moduleId) ?? []);
-            })
-            .WithName("GetCephalonSagaChoreographyPublicationStatesByModule");
-        engineGroup.MapGet("/saga-choreographies/runtime/transports/{transportId}", (string transportId, HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/saga-choreographies/runtime/transports/{transportId}", "GetCephalonSagaChoreographyPublicationStatesByTransport", static httpContext =>
             {
+                var transportId = GetRouteValue(httpContext, "transportId");
                 var catalog = httpContext.RequestServices.GetService<ISagaChoreographyPublicationRuntimeStateCatalog>();
                 return TypedResults.Ok(catalog?.GetByTransportId(transportId) ?? []);
-            })
-            .WithName("GetCephalonSagaChoreographyPublicationStatesByTransport");
-        engineGroup.MapGet("/saga-choreographies/runtime/channels/{channelId}", (string channelId, HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/saga-choreographies/runtime/channels/{channelId}", "GetCephalonSagaChoreographyPublicationStatesByChannel", static httpContext =>
             {
+                var channelId = GetRouteValue(httpContext, "channelId");
                 var catalog = httpContext.RequestServices.GetService<ISagaChoreographyPublicationRuntimeStateCatalog>();
                 return TypedResults.Ok(catalog?.GetByChannelId(channelId) ?? []);
-            })
-            .WithName("GetCephalonSagaChoreographyPublicationStatesByChannel");
-        engineGroup.MapGet("/saga-choreographies/runtime/correlations/{correlationId}", (string correlationId, HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/saga-choreographies/runtime/correlations/{correlationId}", "GetCephalonSagaChoreographyPublicationStatesByCorrelation", static httpContext =>
             {
+                var correlationId = GetRouteValue(httpContext, "correlationId");
                 var catalog = httpContext.RequestServices.GetService<ISagaChoreographyPublicationRuntimeStateCatalog>();
                 return TypedResults.Ok(catalog?.GetByCorrelationId(correlationId) ?? []);
-            })
-            .WithName("GetCephalonSagaChoreographyPublicationStatesByCorrelation");
-        engineGroup.MapGet("/saga-choreographies/runtime/compensations", (HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/saga-choreographies/runtime/compensations", "GetCephalonSagaChoreographyCompensationPublicationStates", static httpContext =>
             {
                 var catalog = httpContext.RequestServices.GetService<ISagaChoreographyPublicationRuntimeStateCatalog>();
                 return TypedResults.Ok(catalog?.GetCompensationPublications() ?? []);
-            })
-            .WithName("GetCephalonSagaChoreographyCompensationPublicationStates");
-        engineGroup.MapGet("/saga-choreographies/runtime/failures", (HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/saga-choreographies/runtime/failures", "GetCephalonSagaChoreographyFailedPublicationStates", static httpContext =>
             {
                 var catalog = httpContext.RequestServices.GetService<ISagaChoreographyPublicationRuntimeStateCatalog>();
                 return TypedResults.Ok(catalog?.GetFailedPublications() ?? []);
-            })
-            .WithName("GetCephalonSagaChoreographyFailedPublicationStates");
-        engineGroup.MapGet("/saga-choreographies/runtime/publications/{publicationStateId}", (string publicationStateId, HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/saga-choreographies/runtime/publications/{publicationStateId}", "GetCephalonSagaChoreographyPublicationState", static httpContext =>
             {
+                var publicationStateId = GetRouteValue(httpContext, "publicationStateId");
                 var catalog = httpContext.RequestServices.GetService<ISagaChoreographyPublicationRuntimeStateCatalog>();
                 var state = catalog?.GetById(publicationStateId);
 
                 return state is null ? Results.NotFound() : Results.Ok(state);
-            })
-            .WithName("GetCephalonSagaChoreographyPublicationState");
-        engineGroup.MapGet("/durable-executions", (HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/durable-executions", "GetCephalonDurableExecutions", static httpContext =>
             {
                 var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeCatalog>();
                 return TypedResults.Ok(catalog?.DurableExecutions ?? []);
-            })
-            .WithName("GetCephalonDurableExecutions");
-        engineGroup.MapGet("/durable-executions/modules/{moduleId}", (string moduleId, HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/durable-executions/modules/{moduleId}", "GetCephalonDurableExecutionsByModule", static httpContext =>
             {
+                var moduleId = GetRouteValue(httpContext, "moduleId");
                 var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeCatalog>();
                 return TypedResults.Ok(catalog?.GetBySourceModule(moduleId) ?? []);
-            })
-            .WithName("GetCephalonDurableExecutionsByModule");
-        engineGroup.MapGet("/durable-executions/transports/{transportId}", (string transportId, HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/durable-executions/transports/{transportId}", "GetCephalonDurableExecutionsByTransport", static httpContext =>
             {
+                var transportId = GetRouteValue(httpContext, "transportId");
                 var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeCatalog>();
                 return TypedResults.Ok(catalog?.GetByTransportId(transportId) ?? []);
-            })
-            .WithName("GetCephalonDurableExecutionsByTransport");
-        engineGroup.MapGet("/durable-executions/{behaviorId}", (string behaviorId, HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/durable-executions/{behaviorId}", "GetCephalonDurableExecution", static httpContext =>
             {
+                var behaviorId = GetRouteValue(httpContext, "behaviorId");
                 var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeCatalog>();
                 var durableExecution = catalog?.GetById(behaviorId);
 
                 return durableExecution is null ? Results.NotFound() : Results.Ok(durableExecution);
-            })
-            .WithName("GetCephalonDurableExecution");
-        engineGroup.MapGet("/durable-executions/runtime", (HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/durable-executions/runtime", "GetCephalonDurableExecutionStates", static httpContext =>
             {
                 var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();
                 return TypedResults.Ok(catalog?.States ?? []);
-            })
-            .WithName("GetCephalonDurableExecutionStates");
-        engineGroup.MapGet("/durable-executions/runtime/behaviors/{behaviorId}", (string behaviorId, HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/durable-executions/runtime/behaviors/{behaviorId}", "GetCephalonDurableExecutionStatesByBehavior", static httpContext =>
             {
+                var behaviorId = GetRouteValue(httpContext, "behaviorId");
                 var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();
                 return TypedResults.Ok(catalog?.GetByBehaviorId(behaviorId) ?? []);
-            })
-            .WithName("GetCephalonDurableExecutionStatesByBehavior");
-        engineGroup.MapGet("/durable-executions/runtime/modules/{moduleId}", (string moduleId, HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/durable-executions/runtime/modules/{moduleId}", "GetCephalonDurableExecutionStatesByModule", static httpContext =>
             {
+                var moduleId = GetRouteValue(httpContext, "moduleId");
                 var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();
                 return TypedResults.Ok(catalog?.GetBySourceModule(moduleId) ?? []);
-            })
-            .WithName("GetCephalonDurableExecutionStatesByModule");
-        engineGroup.MapGet("/durable-executions/runtime/transports/{transportId}", (string transportId, HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/durable-executions/runtime/transports/{transportId}", "GetCephalonDurableExecutionStatesByTransport", static httpContext =>
             {
+                var transportId = GetRouteValue(httpContext, "transportId");
                 var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();
                 return TypedResults.Ok(catalog?.GetByTransportId(transportId) ?? []);
-            })
-            .WithName("GetCephalonDurableExecutionStatesByTransport");
-        engineGroup.MapGet("/durable-executions/runtime/timers", (HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/durable-executions/runtime/timers", "GetCephalonDurableExecutionStatesWithPendingTimers", static httpContext =>
             {
                 var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();
                 return TypedResults.Ok(catalog?.GetWithPendingTimers() ?? []);
-            })
-            .WithName("GetCephalonDurableExecutionStatesWithPendingTimers");
-        engineGroup.MapGet("/durable-executions/runtime/timers/{timerId}", (string timerId, HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/durable-executions/runtime/timers/{timerId}", "GetCephalonDurableExecutionStatesByPendingTimer", static httpContext =>
             {
+                var timerId = GetRouteValue(httpContext, "timerId");
                 var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();
                 return TypedResults.Ok(catalog?.GetByPendingTimerId(timerId) ?? []);
-            })
-            .WithName("GetCephalonDurableExecutionStatesByPendingTimer");
-        engineGroup.MapGet("/durable-executions/runtime/signals", (HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/durable-executions/runtime/signals", "GetCephalonDurableExecutionStatesWithPendingSignals", static httpContext =>
             {
                 var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();
                 return TypedResults.Ok(catalog?.GetWithPendingSignals() ?? []);
-            })
-            .WithName("GetCephalonDurableExecutionStatesWithPendingSignals");
-        engineGroup.MapGet("/durable-executions/runtime/signals/{signalId}", (string signalId, HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/durable-executions/runtime/signals/{signalId}", "GetCephalonDurableExecutionStatesByPendingSignal", static httpContext =>
             {
+                var signalId = GetRouteValue(httpContext, "signalId");
                 var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();
                 return TypedResults.Ok(catalog?.GetByPendingSignalId(signalId) ?? []);
-            })
-            .WithName("GetCephalonDurableExecutionStatesByPendingSignal");
-        engineGroup.MapGet("/durable-executions/runtime/compensations", (HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/durable-executions/runtime/compensations", "GetCephalonDurableExecutionStatesWithCompensationActions", static httpContext =>
             {
                 var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();
                 return TypedResults.Ok(catalog?.GetWithCompensationActions() ?? []);
-            })
-            .WithName("GetCephalonDurableExecutionStatesWithCompensationActions");
-        engineGroup.MapGet("/durable-executions/runtime/compensations/{compensationId}", (string compensationId, HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/durable-executions/runtime/compensations/{compensationId}", "GetCephalonDurableExecutionStatesByCompensationAction", static httpContext =>
             {
+                var compensationId = GetRouteValue(httpContext, "compensationId");
                 var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();
                 return TypedResults.Ok(catalog?.GetByCompensationActionId(compensationId) ?? []);
-            })
-            .WithName("GetCephalonDurableExecutionStatesByCompensationAction");
-        engineGroup.MapGet("/durable-executions/runtime/streams/{streamId}", (string streamId, HttpContext httpContext) =>
+            });
+        MapGetResultRequestDelegate(engineGroup, "/durable-executions/runtime/streams/{streamId}", "GetCephalonDurableExecutionState", static httpContext =>
             {
+                var streamId = GetRouteValue(httpContext, "streamId");
                 var catalog = httpContext.RequestServices.GetService<IDurableExecutionRuntimeStateCatalog>();
                 var state = catalog?.GetByStreamId(streamId);
 
                 return state is null ? Results.NotFound() : Results.Ok(state);
-            })
-            .WithName("GetCephalonDurableExecutionState");
+            });
         engineGroup.MapGet("/rate-limiting", ([FromServices] IRateLimitingRuntimeCatalog catalog) => TypedResults.Ok(catalog.Policies))
             .WithName("GetCephalonRateLimiting");
         engineGroup.MapGet("/rate-limiting/{policyId}", (string policyId, [FromServices] IRateLimitingRuntimeCatalog catalog) =>
@@ -3003,6 +2993,16 @@ public static class EngineWebApplicationExtensions
     {
         engineGroup.MapMethods(pattern, [HttpMethods.Get], requestDelegate)
             .WithName(endpointName);
+    }
+
+    private static void MapGetResultRequestDelegate(
+        RouteGroupBuilder engineGroup,
+        string pattern,
+        string endpointName,
+        Func<HttpContext, IResult> handler)
+    {
+        MapGetRequestDelegate(engineGroup, pattern, endpointName, context =>
+            handler(context).ExecuteAsync(context));
     }
 
     private static TService GetRequiredService<TService>(HttpContext context)
