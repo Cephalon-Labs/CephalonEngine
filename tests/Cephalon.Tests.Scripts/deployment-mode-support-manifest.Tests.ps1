@@ -752,6 +752,35 @@ Describe "deploymentModeEligibility" {
         $cdcRuntimeBlock | Should -Match 'GetBooleanRouteValue' -Because "bool route values should be parsed from RouteValues instead of Minimal API parameter binding"
         $helperBlock | Should -Match 'Func<HttpContext, ICdcCaptureExecutionRuntimeCatalog, IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor>> selector' -Because "collection routes should execute typed catalog selectors behind a request delegate"
     }
+
+    It "full ASP.NET Core read-only operator GET routes use request delegates instead of Minimal API delegate binding" {
+        $sourcePath = Join-Path $script:repoRoot "src/Cephalon.AspNetCore/Hosting/EngineWebApplicationExtensions.cs"
+        $sourcePath = $sourcePath -replace '/', [System.IO.Path]::DirectorySeparatorChar
+        Test-Path -LiteralPath $sourcePath -PathType Leaf | Should -BeTrue
+
+        $source = Get-Content -LiteralPath $sourcePath -Raw -Encoding UTF8
+        $mapCephalonStart = $source.IndexOf("public static WebApplication MapCephalon(", [System.StringComparison]::Ordinal)
+        $catalogStart = $source.IndexOf("MapCephalonFullCommonOperatorRoutes(engineGroup);", $mapCephalonStart, [System.StringComparison]::Ordinal)
+        $hostInfrastructureStart = $source.IndexOf("MapCephalonHostInfrastructure(", $catalogStart, [System.StringComparison]::Ordinal)
+        $helperStart = $source.IndexOf("private static void MapGetAsyncResultRequestDelegate(", [System.StringComparison]::Ordinal)
+
+        $mapCephalonStart | Should -BeGreaterOrEqual 0 -Because "the full operator route catalog should stay parseable"
+        $catalogStart | Should -BeGreaterThan $mapCephalonStart -Because "the full/common operator catalog should follow the core-mode branch"
+        $hostInfrastructureStart | Should -BeGreaterThan $catalogStart -Because "host infrastructure should still follow operator routes"
+        $helperStart | Should -BeGreaterThan $hostInfrastructureStart -Because "async request-delegate helper should follow the route catalog"
+
+        $operatorRouteCatalog = $source.Substring($catalogStart, $hostInfrastructureStart - $catalogStart)
+        $operatorRouteCatalog | Should -Not -Match 'engineGroup\.MapGet\(' -Because "all read-only operator GET routes should avoid Minimal API delegate binding"
+        ([regex]::Matches($operatorRouteCatalog, 'engineGroup\.MapPost\(')).Count | Should -Be 6 -Because "bounded action POST seams remain explicit and unclaimed"
+        $operatorRouteCatalog | Should -Match '/event-publications/runtime/\{publicationId\}' -Because "eventing runtime read routes should stay in the request-delegate catalog"
+        $operatorRouteCatalog | Should -Match '/agent-tool-runs/by-tool/\{toolId\}' -Because "agentics read routes should stay in the request-delegate catalog"
+        $operatorRouteCatalog | Should -Match '/audit-history/export' -Because "async audit-history export GET should stay in the request-delegate catalog"
+        $operatorRouteCatalog | Should -Match '/strangler-fig/cutover/resolve' -Because "async strangler-fig resolve GETs should stay in the request-delegate catalog"
+        $operatorRouteCatalog | Should -Match '/backend-for-frontend/rest-documents/\{documentId\}' -Because "BFF document read routes should stay in the request-delegate catalog"
+        $operatorRouteCatalog | Should -Match '/cell-traffic-automations/health-isolations/\{healthIsolationId\}' -Because "cell automation read routes should stay in the request-delegate catalog"
+        $operatorRouteCatalog | Should -Match '/knowledge-indexes/\{collectionId\}' -Because "knowledge-index read routes should stay in the request-delegate catalog"
+        $source | Should -Match 'TryGetNullableDateTimeOffsetQueryValue' -Because "query-bound audit date filters should be parsed without Minimal API delegate binding"
+    }
 }
 
 Describe "knownTransitiveHazards" {

@@ -125,23 +125,23 @@ scorecard readback, `ENG-541` applies the same proof to the full-mode routes tha
 with the core surface, `ENG-542` begins migrating the remaining full/default catalog by
 moving the behavior-resilience, saga-choreography, and durable-execution route families to
 result request delegates with source-shape Pester coverage, `ENG-543` extends the same
-full/default guard to the foundation and tail introspection route blocks, and `ENG-544` moves the
-CDC runtime read-only GET route block to CDC runtime request-delegate helpers.
+full/default guard to the foundation and tail introspection route blocks, `ENG-544` moves the
+CDC runtime read-only GET route block to CDC runtime request-delegate helpers, and `ENG-545`
+moves the remaining full/default read-only GET catalog to result or async request delegates.
 When hosts set `Engine:AspNetCore:OperatorSurface:Mode=core`, the bounded core `/engine/*`
 route subset now maps through prebuilt `RequestDelegate` handlers and `MapMethods(...)`
 instead of Minimal API delegate binding. In full mode, `/`, `/manifest`, `/snapshot`, `/app-model`,
-and `/resilience` now use the same `RequestDelegate` + `MapMethods(...)` helper before the remaining
-full-only operator routes are mapped. Manifest Pester guards plus generated
+and `/resilience` now use the same `RequestDelegate` + `MapMethods(...)` helper, and the broader
+read-only GET catalog also uses result or async request-delegate helpers. Manifest Pester guards plus generated
 `CoreRouteDelegateAuditStatus` and `FullCommonRouteDelegateAuditStatus` check that those two route
 subsets do not reintroduce `.MapGet(...)` and that the helper still accepts `RequestDelegate` and
-calls `MapMethods(...)`. The workflow, foundation, and tail introspection route blocks now use the
-same request-delegate route helper in full/default mode, but the remaining default/full `MapCephalon()` route catalog still remains the
-high-tier dynamic boundary below until the full adapter surface has typed/request-delegate routes
-and source-generated JSON contracts.
+calls `MapMethods(...)`. The remaining default/full `MapCephalon()` route catalog still remains the
+high-tier dynamic boundary below until the POST/action seams and source-generated JSON contracts have
+their own deliberate support-promotion path.
 
 | Package | File | Line | Pattern | Notes |
 | --- | --- | --- | --- | --- |
-| `Cephalon.AspNetCore` | `Hosting/EngineWebApplicationExtensions.cs` | 101 | `MapCephalon()` maps the remaining full operator surface through Minimal API delegate route binding | Public `RequiresUnreferencedCode` / `RequiresDynamicCode` annotations make the package-local analyzer path clean while preserving the truthful not-claimed AOT support posture; the `core`, full/common, and first full/default workflow/foundation/tail route blocks now have request-delegate proof, but the full/default surface is still unclaimed. |
+| `Cephalon.AspNetCore` | `Hosting/EngineWebApplicationExtensions.cs` | 101 | `MapCephalon()` still carries the full operator surface as an explicit dynamic route-binding boundary | Public `RequiresUnreferencedCode` / `RequiresDynamicCode` annotations make the package-local analyzer path clean while preserving the truthful not-claimed AOT support posture; the `core`, full/common, and full/default read-only GET route catalog now have request-delegate proof, but POST/action seams and source-generated JSON contracts keep the full/default surface unclaimed. |
 
 ### `high` — non-public reflective access on a third-party transport type in `Cephalon.Data.MySql.SciSharpReplication` (added via `ENG-434`, isolated via `ENG-477`)
 
@@ -433,6 +433,8 @@ A future slice may add explicit `IsTrimmable=false; IsAotCompatible=false; Publi
 **Update May 9, 2026 (`ENG-543`):** the full/default foundation and tail introspection route blocks now map through result request delegates as well. That covers rate limiting, REST endpoint metadata/governance, database topology/migration, scaffold/capability/module/package readback, hosted executions, execution graphs, data products, the CDC capture catalog list, transports, dependency health, localization, reference docs, policy, status, runtime story, diagnostics, and final module lookup. Manifest Pester coverage guards both blocks against returning to `.MapGet(...)`; at that checkpoint, CDC runtime, eventing, agentics, knowledge-indexing, audit-history, strangler-fig, backend-for-frontend, cell, and POST action surfaces remained part of the explicit unclaimed full/default boundary.
 
 **Update May 9, 2026 (`ENG-544`):** the full/default CDC runtime read-only GET block now maps through CDC runtime request-delegate helpers. The proof covers the 126 collection/filter routes, 19 descriptor drilldown routes, and one command-execution history route under `/engine/cdc-capture-runtimes*`, including bool route constraints parsed from route values instead of Minimal API parameter binding. Manifest Pester coverage guards that block against returning to `.MapGet(...)`; CDC runtime report/command POSTs plus eventing, agentics, knowledge-indexing, audit-history, strangler-fig, backend-for-frontend, and cell action surfaces remain part of the explicit unclaimed full/default boundary.
+
+**Update May 9, 2026 (`ENG-545`):** the remaining full/default read-only GET route catalog now maps through result or async request delegates. This covers CDC capture runtime/state drilldowns, projection and outbox reads, event dispatch/publication state reads, agent-tool run reads, event subscription readiness, inbox/audit-store/feature reads, audit-history read/export GETs, strangler-fig resolve/read GETs, backend-for-frontend read GETs, cell and cell-traffic read GETs, technology read GETs, and knowledge-index read GETs. The source-shape Pester guard now rejects any `engineGroup.MapGet(...)` in the operator route catalog while still counting the six explicit `MapPost(...)` action seams. Global trim, Native AOT, single-file, and full-adapter support remain `not-claimed`.
 
 ## Refresh discipline
 
