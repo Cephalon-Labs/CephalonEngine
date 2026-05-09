@@ -18,6 +18,10 @@ internal sealed class EventingInProcessPublishingRuntimeSurfaceContributor(
         var maxAttempts = InProcessEventingRetryPolicy.GetMaxAttempts(options);
         var retryDelayMilliseconds = InProcessEventingRetryPolicy.GetRetryDelayMilliseconds(options);
         var retryPolicy = InProcessEventingRetryPolicy.GetPolicyId(options);
+        var retryBackoff = InProcessEventingRetryPolicy.GetBackoff(options);
+        var retryBackoffMultiplier = InProcessEventingRetryPolicy.GetBackoffMultiplier(options);
+        var retryMaxDelayMilliseconds = InProcessEventingRetryPolicy.GetMaxDelayMilliseconds(options);
+        var retryJitterPercent = InProcessEventingRetryPolicy.GetJitterPercent(options);
         var idempotencyPolicy = InProcessEventingIdempotencyPolicy.GetPolicyId(options);
         var idempotencyKey = InProcessEventingIdempotencyPolicy.GetKeyShape(options);
         var idempotencyStore = InProcessEventingIdempotencyPolicy.GetStore(options);
@@ -82,6 +86,10 @@ internal sealed class EventingInProcessPublishingRuntimeSurfaceContributor(
                         ["retryPolicy"] = retryPolicy,
                         ["retryMaxAttempts"] = maxAttempts.ToString(CultureInfo.InvariantCulture),
                         ["retryDelayMilliseconds"] = retryDelayMilliseconds.ToString(CultureInfo.InvariantCulture),
+                        ["retryBackoff"] = retryBackoff,
+                        ["retryBackoffMultiplier"] = retryBackoffMultiplier.ToString(CultureInfo.InvariantCulture),
+                        ["retryMaxDelayMilliseconds"] = retryMaxDelayMilliseconds.ToString(CultureInfo.InvariantCulture),
+                        ["retryJitterPercent"] = retryJitterPercent.ToString(CultureInfo.InvariantCulture),
                         ["retryDurability"] = "none",
                         ["retryScope"] = "process-local",
                         ["idempotencyPolicy"] = idempotencyPolicy,

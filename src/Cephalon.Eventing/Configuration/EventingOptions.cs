@@ -109,6 +109,91 @@ public sealed class EventingOptions
         }
     }
 
+    private string inProcessSubscriptionRetryBackoff = InProcessEventingRetryPolicy.FixedBackoff;
+    private int inProcessSubscriptionRetryBackoffMultiplier = 2;
+    private int inProcessSubscriptionRetryMaxDelayMilliseconds = 60_000;
+    private int inProcessSubscriptionRetryJitterPercent;
+
+    /// <summary>
+    /// Gets or sets the process-local backoff strategy used between failed direct subscription attempts.
+    /// </summary>
+    /// <remarks>
+    /// Supported values are <c>fixed</c> and <c>exponential</c>. The default <c>fixed</c> value
+    /// preserves the original bounded in-process retry behavior.
+    /// </remarks>
+    public string InProcessSubscriptionRetryBackoff
+    {
+        get => inProcessSubscriptionRetryBackoff;
+        set => inProcessSubscriptionRetryBackoff = InProcessEventingRetryPolicy.NormalizeBackoff(value);
+    }
+
+    /// <summary>
+    /// Gets or sets the exponential retry-delay multiplier used by the direct in-process publisher.
+    /// </summary>
+    /// <remarks>
+    /// The value is used only when <see cref="InProcessSubscriptionRetryBackoff" /> is <c>exponential</c>.
+    /// </remarks>
+    public int InProcessSubscriptionRetryBackoffMultiplier
+    {
+        get => inProcessSubscriptionRetryBackoffMultiplier;
+        set
+        {
+            if (value < 1)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(value),
+                    value,
+                    "In-process subscription retry backoff multiplier must be greater than or equal to 1.");
+            }
+
+            inProcessSubscriptionRetryBackoffMultiplier = value;
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the maximum retry delay, in milliseconds, accepted by the direct in-process publisher.
+    /// </summary>
+    public int InProcessSubscriptionRetryMaxDelayMilliseconds
+    {
+        get => inProcessSubscriptionRetryMaxDelayMilliseconds;
+        set
+        {
+            if (value < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(value),
+                    value,
+                    "In-process subscription retry max delay must be greater than or equal to 0 milliseconds.");
+            }
+
+            inProcessSubscriptionRetryMaxDelayMilliseconds = value;
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the deterministic retry jitter percentage applied by the direct in-process publisher.
+    /// </summary>
+    /// <remarks>
+    /// Jitter is derived from publication id, subscription id, and attempt number so it stays
+    /// deterministic for a message while still spreading retry timings across different messages.
+    /// </remarks>
+    public int InProcessSubscriptionRetryJitterPercent
+    {
+        get => inProcessSubscriptionRetryJitterPercent;
+        set
+        {
+            if (value is < 0 or > 100)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(value),
+                    value,
+                    "In-process subscription retry jitter percent must be between 0 and 100.");
+            }
+
+            inProcessSubscriptionRetryJitterPercent = value;
+        }
+    }
+
     /// <summary>
     /// Gets or sets a value indicating whether the direct in-process publisher should suppress
     /// duplicate completed subscription executions for the same publication identifier.

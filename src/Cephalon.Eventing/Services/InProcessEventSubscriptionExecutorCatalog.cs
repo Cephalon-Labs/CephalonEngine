@@ -10,6 +10,10 @@ internal sealed class InProcessEventSubscriptionExecutorCatalog : IEventSubscrip
     private readonly int maxAttempts;
     private readonly string retryPolicy;
     private readonly int retryDelayMilliseconds;
+    private readonly string retryBackoff;
+    private readonly int retryBackoffMultiplier;
+    private readonly int retryMaxDelayMilliseconds;
+    private readonly int retryJitterPercent;
     private readonly string idempotencyPolicy;
     private readonly string idempotencyKey;
     private readonly string idempotencyStore;
@@ -29,6 +33,10 @@ internal sealed class InProcessEventSubscriptionExecutorCatalog : IEventSubscrip
         maxAttempts = InProcessEventingRetryPolicy.GetMaxAttempts(options);
         retryPolicy = InProcessEventingRetryPolicy.GetPolicyId(options);
         retryDelayMilliseconds = InProcessEventingRetryPolicy.GetRetryDelayMilliseconds(options);
+        retryBackoff = InProcessEventingRetryPolicy.GetBackoff(options);
+        retryBackoffMultiplier = InProcessEventingRetryPolicy.GetBackoffMultiplier(options);
+        retryMaxDelayMilliseconds = InProcessEventingRetryPolicy.GetMaxDelayMilliseconds(options);
+        retryJitterPercent = InProcessEventingRetryPolicy.GetJitterPercent(options);
         idempotencyPolicy = InProcessEventingIdempotencyPolicy.GetPolicyId(options);
         idempotencyKey = InProcessEventingIdempotencyPolicy.GetKeyShape(options);
         idempotencyStore = InProcessEventingIdempotencyPolicy.GetStore(options);
@@ -82,6 +90,10 @@ internal sealed class InProcessEventSubscriptionExecutorCatalog : IEventSubscrip
                     ["retryPolicy"] = retryPolicy,
                     ["retryMaxAttempts"] = maxAttempts.ToString(CultureInfo.InvariantCulture),
                     ["retryDelayMilliseconds"] = retryDelayMilliseconds.ToString(CultureInfo.InvariantCulture),
+                    ["retryBackoff"] = retryBackoff,
+                    ["retryBackoffMultiplier"] = retryBackoffMultiplier.ToString(CultureInfo.InvariantCulture),
+                    ["retryMaxDelayMilliseconds"] = retryMaxDelayMilliseconds.ToString(CultureInfo.InvariantCulture),
+                    ["retryJitterPercent"] = retryJitterPercent.ToString(CultureInfo.InvariantCulture),
                     ["retryDurability"] = "none",
                     ["retryScope"] = "process-local",
                     ["idempotencyPolicy"] = idempotencyPolicy,

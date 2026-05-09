@@ -1039,6 +1039,114 @@ public sealed class EventDispatchHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonAppliesConfigDrivenInProcessEventSubscriptionRetryBackoffWithoutWolverine()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
+        {
+            ["Engine:Messaging:InProcessSubscriptions:EnableExecution"] = "true",
+            ["Engine:Messaging:InProcessSubscriptions:MaxAttempts"] = "3",
+            ["Engine:Messaging:InProcessSubscriptions:RetryDelayMilliseconds"] = "1",
+            ["Engine:Messaging:InProcessSubscriptions:RetryBackoff"] = "exponential",
+            ["Engine:Messaging:InProcessSubscriptions:RetryBackoffMultiplier"] = "2",
+            ["Engine:Messaging:InProcessSubscriptions:RetryMaxDelayMilliseconds"] = "5",
+            ["Engine:Messaging:InProcessSubscriptions:RetryJitterPercent"] = "0"
+        });
+        builder.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new TechnologyPackContributionModule());
+            engine.AddEventingFromConfiguration(builder.Configuration);
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        var probe = app.Services.GetRequiredService<ManagedAuditProjectorProbe>();
+        probe.FailuresRemaining = 2;
+        await using (var scope = app.Services.CreateAsyncScope())
+        {
+            var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(new EventPublication(
+                id: "audit-backoff-001",
+                channelId: "audit",
+                eventType: "audit.created",
+                payload: """{"id":"audit-backoff-001"}""",
+                occurredAtUtc: new DateTimeOffset(2026, 05, 10, 14, 0, 0, TimeSpan.Zero),
+                contentType: "application/json",
+                correlationId: "corr-audit-backoff-001",
+                tenantId: "tenant-backoff-001"));
+        }
+
+        var client = app.GetTestClient();
+        var runtimeCatalog = app.Services.GetRequiredService<IEventSubscriptionRuntimeCatalog>();
+        var publicationRuntimeCatalog = app.Services.GetRequiredService<IEventPublicationRuntimeCatalog>();
+        var bindingCatalog = app.Services.GetRequiredService<IEventSubscriptionExecutionBindingCatalog>();
+        var capabilities = await client.GetFromJsonAsync<CapabilityManifest[]>("/engine/capabilities");
+        var eventingSurfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/event-driven-integration");
+
+        Assert.Equal(3, probe.TotalAttempts);
+        Assert.Equal(1, probe.SuccessfulAttempts);
+
+        var runtimeState = Assert.Single(runtimeCatalog.States);
+        Assert.Equal(EventSubscriptionExecutionOutcomes.Succeeded, runtimeState.LastOutcome);
+        Assert.Equal(3, runtimeState.LastAttempt);
+        Assert.Equal(2, runtimeState.RetryScheduledCount);
+        Assert.Equal("bounded-in-process", runtimeState.Metadata["retryPolicy"]);
+        Assert.Equal("3", runtimeState.Metadata["retryMaxAttempts"]);
+        Assert.Equal("1", runtimeState.Metadata["retryDelayMilliseconds"]);
+        Assert.Equal("exponential", runtimeState.Metadata["retryBackoff"]);
+        Assert.Equal("2", runtimeState.Metadata["retryBackoffMultiplier"]);
+        Assert.Equal("5", runtimeState.Metadata["retryMaxDelayMilliseconds"]);
+        Assert.Equal("0", runtimeState.Metadata["retryJitterPercent"]);
+
+        var publicationState = Assert.Single(publicationRuntimeCatalog.States);
+        Assert.Equal(EventPublicationRuntimeOutcomes.Succeeded, publicationState.LastOutcome);
+        Assert.Equal(3, publicationState.StartedSubscriptionCount);
+        Assert.Equal(2, publicationState.RetryScheduledSubscriptionCount);
+        Assert.Equal("exponential", publicationState.Metadata["retryBackoff"]);
+        Assert.Equal("5", publicationState.Metadata["retryMaxDelayMilliseconds"]);
+
+        var binding = Assert.Single(bindingCatalog.Bindings);
+        Assert.Equal("exponential", binding.Metadata["retryBackoff"]);
+        Assert.Equal("2", binding.Metadata["retryBackoffMultiplier"]);
+        Assert.Equal("5", binding.Metadata["retryMaxDelayMilliseconds"]);
+
+        Assert.NotNull(capabilities);
+        var publishCapability = Assert.Single(capabilities, capability => capability.Key == "eventing.publish");
+        Assert.Equal("exponential", publishCapability.Metadata["retryBackoff"]);
+        Assert.Equal("5", publishCapability.Metadata["retryMaxDelayMilliseconds"]);
+        var subscribeCapability = Assert.Single(capabilities, capability => capability.Key == "eventing.subscribe");
+        Assert.Equal("exponential", subscribeCapability.Metadata["retryBackoff"]);
+        Assert.Equal("0", subscribeCapability.Metadata["retryJitterPercent"]);
+
+        Assert.NotNull(eventingSurfaces);
+        var publisherEntry = Assert.Single(eventingSurfaces.Single(surface => surface.SurfaceId == "event-publishers").Entries);
+        Assert.Equal("exponential", publisherEntry.Metadata["retryBackoff"]);
+        Assert.Equal("2", publisherEntry.Metadata["retryBackoffMultiplier"]);
+        var subscriptionEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "event-subscriptions").Entries,
+            entry => entry.Id == "audit-projector");
+        Assert.Equal("exponential", subscriptionEntry.Metadata["binding.retryBackoff"]);
+        Assert.Equal("exponential", subscriptionEntry.Metadata["reported.retryBackoff"]);
+        Assert.Equal("2", subscriptionEntry.Metadata["retryScheduledCount"]);
+
+        var recoverabilityEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "recoverability-and-terminal-failure-posture");
+        Assert.Equal("claimed", recoverabilityEntry.Metadata["status"]);
+        Assert.Contains("backoff=exponential", recoverabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("jitter=0", recoverabilityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task MapCephalonSkipsDuplicateCoreInProcessEventSubscriptionExecutionsWithinProcess()
     {
         var builder = WebApplication.CreateSlimBuilder();

@@ -56,7 +56,10 @@ internal sealed class InProcessEventPublisher(
         var entries = executors.GetByChannelId(publication.ChannelId);
         var maxAttempts = InProcessEventingRetryPolicy.GetMaxAttempts(options);
         var retryDelayMilliseconds = InProcessEventingRetryPolicy.GetRetryDelayMilliseconds(options);
-        var retryDelay = TimeSpan.FromMilliseconds(retryDelayMilliseconds);
+        var retryBackoff = InProcessEventingRetryPolicy.GetBackoff(options);
+        var retryBackoffMultiplier = InProcessEventingRetryPolicy.GetBackoffMultiplier(options);
+        var retryMaxDelayMilliseconds = InProcessEventingRetryPolicy.GetMaxDelayMilliseconds(options);
+        var retryJitterPercent = InProcessEventingRetryPolicy.GetJitterPercent(options);
         var idempotencyPolicy = InProcessEventingIdempotencyPolicy.GetPolicyId(options);
         var idempotencyStore = InProcessEventingIdempotencyPolicy.GetStore(options);
         var idempotencyDurability = InProcessEventingIdempotencyPolicy.GetDurability(options);
@@ -100,6 +103,10 @@ internal sealed class InProcessEventPublisher(
                         skippedSubscriptionCount: 0,
                         maxAttempts,
                         retryDelayMilliseconds,
+                        retryBackoff,
+                        retryBackoffMultiplier,
+                        retryMaxDelayMilliseconds,
+                        retryJitterPercent,
                         idempotencyPolicy,
                         idempotencyStore,
                         idempotencyDurability,
@@ -148,6 +155,10 @@ internal sealed class InProcessEventPublisher(
                                 attempt: 1,
                                 maxAttempts,
                                 retryDelayMilliseconds,
+                                retryBackoff,
+                                retryBackoffMultiplier,
+                                retryMaxDelayMilliseconds,
+                                retryJitterPercent,
                                 idempotencyPolicy,
                                 idempotencyStore,
                                 idempotencyDurability,
@@ -169,6 +180,10 @@ internal sealed class InProcessEventPublisher(
                     attempt,
                     maxAttempts,
                     retryDelayMilliseconds,
+                    retryBackoff,
+                    retryBackoffMultiplier,
+                    retryMaxDelayMilliseconds,
+                    retryJitterPercent,
                     idempotencyPolicy,
                     idempotencyStore,
                     idempotencyDurability,
@@ -224,6 +239,11 @@ internal sealed class InProcessEventPublisher(
                     finalFailure = exception;
                     if (attempt < maxAttempts)
                     {
+                        var retryDelay = InProcessEventingRetryPolicy.CalculateDelay(
+                            options,
+                            publication,
+                            entry.Subscription,
+                            attempt);
                         retryScheduledSubscriptionCount++;
                         await runtimeReporter.ReportAsync(
                             new EventSubscriptionExecutionReport(
@@ -307,6 +327,10 @@ internal sealed class InProcessEventPublisher(
                         skippedSubscriptionCount,
                         maxAttempts,
                         retryDelayMilliseconds,
+                        retryBackoff,
+                        retryBackoffMultiplier,
+                        retryMaxDelayMilliseconds,
+                        retryJitterPercent,
                         idempotencyPolicy,
                         idempotencyStore,
                         idempotencyDurability,
@@ -366,6 +390,10 @@ internal sealed class InProcessEventPublisher(
                     skippedSubscriptionCount,
                     maxAttempts,
                     retryDelayMilliseconds,
+                    retryBackoff,
+                    retryBackoffMultiplier,
+                    retryMaxDelayMilliseconds,
+                    retryJitterPercent,
                     idempotencyPolicy,
                     idempotencyStore,
                     idempotencyDurability,
@@ -524,6 +552,10 @@ internal sealed class InProcessEventPublisher(
         int attempt,
         int maxAttempts,
         int retryDelayMilliseconds,
+        string retryBackoff,
+        int retryBackoffMultiplier,
+        int retryMaxDelayMilliseconds,
+        int retryJitterPercent,
         string idempotencyPolicy,
         string idempotencyStore,
         string idempotencyDurability,
@@ -542,6 +574,10 @@ internal sealed class InProcessEventPublisher(
             ["retryPolicy"] = maxAttempts > 1 ? InProcessEventingRetryPolicy.BoundedInProcess : InProcessEventingRetryPolicy.None,
             ["retryMaxAttempts"] = maxAttempts.ToString(CultureInfo.InvariantCulture),
             ["retryDelayMilliseconds"] = retryDelayMilliseconds.ToString(CultureInfo.InvariantCulture),
+            ["retryBackoff"] = retryBackoff,
+            ["retryBackoffMultiplier"] = retryBackoffMultiplier.ToString(CultureInfo.InvariantCulture),
+            ["retryMaxDelayMilliseconds"] = retryMaxDelayMilliseconds.ToString(CultureInfo.InvariantCulture),
+            ["retryJitterPercent"] = retryJitterPercent.ToString(CultureInfo.InvariantCulture),
             ["retryDurability"] = "none",
             ["retryScope"] = "process-local",
             ["idempotencyPolicy"] = idempotencyPolicy,
@@ -597,7 +633,8 @@ internal sealed class InProcessEventPublisher(
     {
         var retryMetadata = new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase)
         {
-            ["nextRetryAtUtc"] = DateTimeOffset.UtcNow.Add(retryDelay).ToString("O", CultureInfo.InvariantCulture)
+            ["nextRetryAtUtc"] = DateTimeOffset.UtcNow.Add(retryDelay).ToString("O", CultureInfo.InvariantCulture),
+            ["retryEffectiveDelayMilliseconds"] = ((long)retryDelay.TotalMilliseconds).ToString(CultureInfo.InvariantCulture)
         };
 
         return retryMetadata;
@@ -637,6 +674,10 @@ internal sealed class InProcessEventPublisher(
         int skippedSubscriptionCount,
         int maxAttempts,
         int retryDelayMilliseconds,
+        string retryBackoff,
+        int retryBackoffMultiplier,
+        int retryMaxDelayMilliseconds,
+        int retryJitterPercent,
         string idempotencyPolicy,
         string idempotencyStore,
         string idempotencyDurability,
@@ -666,6 +707,10 @@ internal sealed class InProcessEventPublisher(
             ["retryPolicy"] = maxAttempts > 1 ? InProcessEventingRetryPolicy.BoundedInProcess : InProcessEventingRetryPolicy.None,
             ["retryMaxAttempts"] = maxAttempts.ToString(CultureInfo.InvariantCulture),
             ["retryDelayMilliseconds"] = retryDelayMilliseconds.ToString(CultureInfo.InvariantCulture),
+            ["retryBackoff"] = retryBackoff,
+            ["retryBackoffMultiplier"] = retryBackoffMultiplier.ToString(CultureInfo.InvariantCulture),
+            ["retryMaxDelayMilliseconds"] = retryMaxDelayMilliseconds.ToString(CultureInfo.InvariantCulture),
+            ["retryJitterPercent"] = retryJitterPercent.ToString(CultureInfo.InvariantCulture),
             ["retryDurability"] = "none",
             ["retryScope"] = "process-local",
             ["idempotencyPolicy"] = idempotencyPolicy,

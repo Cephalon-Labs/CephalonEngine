@@ -166,6 +166,30 @@ Gets or sets the maximum number of direct in-process execution attempts per matc
 
 Remarks: The default value of `1` preserves the no-retry baseline. Values greater than `1` enable a bounded, process-local retry loop; this still does not provide durable broker, inbox, or distributed retry guarantees.
 
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionretrybackoff"></a>
+
+##### `InProcessSubscriptionRetryBackoff`
+
+```csharp
+string InProcessSubscriptionRetryBackoff { get; set; }
+```
+
+Gets or sets the process-local backoff strategy used between failed direct subscription attempts.
+
+Remarks: Supported values are `fixed` and `exponential`. The default `fixed` value preserves the original bounded in-process retry behavior.
+
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionretrybackoffmultiplier"></a>
+
+##### `InProcessSubscriptionRetryBackoffMultiplier`
+
+```csharp
+int InProcessSubscriptionRetryBackoffMultiplier { get; set; }
+```
+
+Gets or sets the exponential retry-delay multiplier used by the direct in-process publisher.
+
+Remarks: The value is used only when `InProcessSubscriptionRetryBackoff` is `exponential`.
+
 <a id="member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionretrydelaymilliseconds"></a>
 
 ##### `InProcessSubscriptionRetryDelayMilliseconds`
@@ -177,6 +201,28 @@ int InProcessSubscriptionRetryDelayMilliseconds { get; set; }
 Gets or sets the delay in milliseconds before the direct in-process publisher retries a failed subscription attempt.
 
 Remarks: The delay is applied only when `InProcessSubscriptionMaxAttempts` is greater than `1`. The default value of `0` retries immediately and is useful for tests and lightweight process-local remediation paths.
+
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionretryjitterpercent"></a>
+
+##### `InProcessSubscriptionRetryJitterPercent`
+
+```csharp
+int InProcessSubscriptionRetryJitterPercent { get; set; }
+```
+
+Gets or sets the deterministic retry jitter percentage applied by the direct in-process publisher.
+
+Remarks: Jitter is derived from publication id, subscription id, and attempt number so it stays deterministic for a message while still spreading retry timings across different messages.
+
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionretrymaxdelaymilliseconds"></a>
+
+##### `InProcessSubscriptionRetryMaxDelayMilliseconds`
+
+```csharp
+int InProcessSubscriptionRetryMaxDelayMilliseconds { get; set; }
+```
+
+Gets or sets the maximum retry delay, in milliseconds, accepted by the direct in-process publisher.
 
 <a id="member-p-cephalon-eventing-configuration-eventingoptions-publicationroutes"></a>
 

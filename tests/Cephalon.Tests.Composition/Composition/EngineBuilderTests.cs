@@ -2242,7 +2242,7 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
-    public void AddEventingProjectsSuperiorityProfileWithoutWolverine()
+    public async Task AddEventingProjectsSuperiorityProfileWithoutWolverine()
     {
         var services = new ServiceCollection();
         services.AddCephalon(engine =>
@@ -2261,7 +2261,7 @@ public sealed class EngineBuilderTests
             });
         });
 
-        using var provider = services.BuildServiceProvider();
+        await using var provider = services.BuildServiceProvider();
         var runtime = provider.GetRequiredService<IRuntime>();
         var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
 

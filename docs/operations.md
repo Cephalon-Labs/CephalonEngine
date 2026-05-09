@@ -2469,8 +2469,9 @@ Current `Cephalon.Eventing` highlights:
   `publicationRuntimeState = available` by default
 - when `InProcessSubscriptionMaxAttempts` is greater than `1`, that same core path reports
   `retryPolicy = bounded-in-process`, `retryMaxAttempts`, `retryDelayMilliseconds`,
-  `retryDurability = none`, and `retryScope = process-local`, emits `retry-scheduled`
-  observations between attempts, and updates `event-subscriptions` counters such as
+  `retryBackoff`, `retryBackoffMultiplier`, `retryMaxDelayMilliseconds`,
+  `retryJitterPercent`, `retryDurability = none`, and `retryScope = process-local`, emits
+  `retry-scheduled` observations with `retryEffectiveDelayMilliseconds` between attempts, and updates `event-subscriptions` counters such as
   `retryScheduledCount`, `lastAttempt`, and `reported.retryPolicy`
 - when `EnableInProcessSubscriptionIdempotency` is enabled, the direct lane suppresses duplicate
   completed `subscriptionId + publicationId` executions inside the configured process-local

@@ -13779,9 +13779,21 @@ Browse the published API surface by public member.
 - [InProcessSubscriptionMaxAttempts](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionmaxattempts): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=InProcessSubscriptionMaxAttempts&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
   - Gets or sets the maximum number of direct in-process execution attempts per matching subscription.
   - `int InProcessSubscriptionMaxAttempts { get; set; }`
+- [InProcessSubscriptionRetryBackoff](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionretrybackoff): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=InProcessSubscriptionRetryBackoff&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
+  - Gets or sets the process-local backoff strategy used between failed direct subscription attempts.
+  - `string InProcessSubscriptionRetryBackoff { get; set; }`
+- [InProcessSubscriptionRetryBackoffMultiplier](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionretrybackoffmultiplier): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=InProcessSubscriptionRetryBackoffMultiplier&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
+  - Gets or sets the exponential retry-delay multiplier used by the direct in-process publisher.
+  - `int InProcessSubscriptionRetryBackoffMultiplier { get; set; }`
 - [InProcessSubscriptionRetryDelayMilliseconds](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionretrydelaymilliseconds): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=InProcessSubscriptionRetryDelayMilliseconds&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
   - Gets or sets the delay in milliseconds before the direct in-process publisher retries a failed subscription attempt.
   - `int InProcessSubscriptionRetryDelayMilliseconds { get; set; }`
+- [InProcessSubscriptionRetryJitterPercent](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionretryjitterpercent): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=InProcessSubscriptionRetryJitterPercent&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
+  - Gets or sets the deterministic retry jitter percentage applied by the direct in-process publisher.
+  - `int InProcessSubscriptionRetryJitterPercent { get; set; }`
+- [InProcessSubscriptionRetryMaxDelayMilliseconds](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionretrymaxdelaymilliseconds): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=InProcessSubscriptionRetryMaxDelayMilliseconds&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
+  - Gets or sets the maximum retry delay, in milliseconds, accepted by the direct in-process publisher.
+  - `int InProcessSubscriptionRetryMaxDelayMilliseconds { get; set; }`
 - [InputType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimedescriptor-inputtype): `Properties` on `DurableExecutionRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=InputType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the durable workflow input type name.
   - `string InputType { get; }`

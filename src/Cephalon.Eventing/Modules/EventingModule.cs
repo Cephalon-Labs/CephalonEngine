@@ -232,6 +232,10 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             var inProcessRetryPolicy = InProcessEventingRetryPolicy.GetPolicyId(options);
             var inProcessRetryMaxAttempts = InProcessEventingRetryPolicy.GetMaxAttempts(options).ToString(CultureInfo.InvariantCulture);
             var inProcessRetryDelayMilliseconds = InProcessEventingRetryPolicy.GetRetryDelayMilliseconds(options).ToString(CultureInfo.InvariantCulture);
+            var inProcessRetryBackoff = InProcessEventingRetryPolicy.GetBackoff(options);
+            var inProcessRetryBackoffMultiplier = InProcessEventingRetryPolicy.GetBackoffMultiplier(options).ToString(CultureInfo.InvariantCulture);
+            var inProcessRetryMaxDelayMilliseconds = InProcessEventingRetryPolicy.GetMaxDelayMilliseconds(options).ToString(CultureInfo.InvariantCulture);
+            var inProcessRetryJitterPercent = InProcessEventingRetryPolicy.GetJitterPercent(options).ToString(CultureInfo.InvariantCulture);
             var inProcessIdempotencyPolicy = InProcessEventingIdempotencyPolicy.GetPolicyId(options);
             var inProcessIdempotencyKey = InProcessEventingIdempotencyPolicy.GetKeyShape(options);
             var inProcessIdempotencyStore = InProcessEventingIdempotencyPolicy.GetStore(options);
@@ -263,6 +267,10 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["retryPolicy"] = inProcessRetryPolicy,
                     ["retryMaxAttempts"] = inProcessRetryMaxAttempts,
                     ["retryDelayMilliseconds"] = inProcessRetryDelayMilliseconds,
+                    ["retryBackoff"] = inProcessRetryBackoff,
+                    ["retryBackoffMultiplier"] = inProcessRetryBackoffMultiplier,
+                    ["retryMaxDelayMilliseconds"] = inProcessRetryMaxDelayMilliseconds,
+                    ["retryJitterPercent"] = inProcessRetryJitterPercent,
                     ["retryDurability"] = "none",
                     ["retryScope"] = "process-local",
                     ["idempotencyPolicy"] = inProcessIdempotencyPolicy,
@@ -361,6 +369,10 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["retryPolicy"] = retryPolicy,
                     ["retryMaxAttempts"] = InProcessEventingRetryPolicy.GetMaxAttempts(options).ToString(CultureInfo.InvariantCulture),
                     ["retryDelayMilliseconds"] = InProcessEventingRetryPolicy.GetRetryDelayMilliseconds(options).ToString(CultureInfo.InvariantCulture),
+                    ["retryBackoff"] = InProcessEventingRetryPolicy.GetBackoff(options),
+                    ["retryBackoffMultiplier"] = InProcessEventingRetryPolicy.GetBackoffMultiplier(options).ToString(CultureInfo.InvariantCulture),
+                    ["retryMaxDelayMilliseconds"] = InProcessEventingRetryPolicy.GetMaxDelayMilliseconds(options).ToString(CultureInfo.InvariantCulture),
+                    ["retryJitterPercent"] = InProcessEventingRetryPolicy.GetJitterPercent(options).ToString(CultureInfo.InvariantCulture),
                     ["retryDurability"] = "none",
                     ["retryScope"] = "process-local",
                     ["idempotencyPolicy"] = InProcessEventingIdempotencyPolicy.GetPolicyId(options),

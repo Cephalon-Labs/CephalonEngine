@@ -36,6 +36,10 @@ internal static class EventingOptionsConfigurationReader
         ReadBoolean(section, options, static (target, value) => target.EnableInProcessSubscriptionExecution = value, "EnableExecution", "Enabled");
         ReadInteger(section, options, static (target, value) => target.InProcessSubscriptionMaxAttempts = value, "MaxAttempts");
         ReadInteger(section, options, static (target, value) => target.InProcessSubscriptionRetryDelayMilliseconds = value, "RetryDelayMilliseconds");
+        ReadString(section, options, static (target, value) => target.InProcessSubscriptionRetryBackoff = value, "RetryBackoff", "Backoff");
+        ReadInteger(section, options, static (target, value) => target.InProcessSubscriptionRetryBackoffMultiplier = value, "RetryBackoffMultiplier", "BackoffMultiplier");
+        ReadInteger(section, options, static (target, value) => target.InProcessSubscriptionRetryMaxDelayMilliseconds = value, "RetryMaxDelayMilliseconds", "MaxRetryDelayMilliseconds");
+        ReadInteger(section, options, static (target, value) => target.InProcessSubscriptionRetryJitterPercent = value, "RetryJitterPercent", "JitterPercent");
         ReadBoolean(section, options, static (target, value) => target.ContinueInProcessSubscriptionExecutionAfterFailure = value, "ContinueAfterFailure");
 
         ReadBoolean(idempotencySection, options, static (target, value) => target.EnableInProcessSubscriptionIdempotency = value, "Enabled");

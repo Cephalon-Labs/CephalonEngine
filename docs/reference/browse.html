@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-09T23:16:47.2552262+00:00",
+  "GeneratedAtUtc": "2026-05-09T23:37:18.4822452+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8476,7 +8476,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 20,
+        "Properties": 24,
         "Methods": 0
       }
     },
@@ -69794,6 +69794,28 @@
       "Summary": "Gets or sets the maximum number of direct in-process execution attempts per matching subscription."
     },
     {
+      "DisplayName": "InProcessSubscriptionRetryBackoff",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionretrybackoff",
+      "Signature": "string InProcessSubscriptionRetryBackoff { get; set; }",
+      "Summary": "Gets or sets the process-local backoff strategy used between failed direct subscription attempts."
+    },
+    {
+      "DisplayName": "InProcessSubscriptionRetryBackoffMultiplier",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionretrybackoffmultiplier",
+      "Signature": "int InProcessSubscriptionRetryBackoffMultiplier { get; set; }",
+      "Summary": "Gets or sets the exponential retry-delay multiplier used by the direct in-process publisher."
+    },
+    {
       "DisplayName": "InProcessSubscriptionRetryDelayMilliseconds",
       "Category": "Properties",
       "DeclaringTypeName": "EventingOptions",
@@ -69803,6 +69825,28 @@
       "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionretrydelaymilliseconds",
       "Signature": "int InProcessSubscriptionRetryDelayMilliseconds { get; set; }",
       "Summary": "Gets or sets the delay in milliseconds before the direct in-process publisher retries a failed subscription attempt."
+    },
+    {
+      "DisplayName": "InProcessSubscriptionRetryJitterPercent",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionretryjitterpercent",
+      "Signature": "int InProcessSubscriptionRetryJitterPercent { get; set; }",
+      "Summary": "Gets or sets the deterministic retry jitter percentage applied by the direct in-process publisher."
+    },
+    {
+      "DisplayName": "InProcessSubscriptionRetryMaxDelayMilliseconds",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionretrymaxdelaymilliseconds",
+      "Signature": "int InProcessSubscriptionRetryMaxDelayMilliseconds { get; set; }",
+      "Summary": "Gets or sets the maximum retry delay, in milliseconds, accepted by the direct in-process publisher."
     },
     {
       "DisplayName": "InputType",

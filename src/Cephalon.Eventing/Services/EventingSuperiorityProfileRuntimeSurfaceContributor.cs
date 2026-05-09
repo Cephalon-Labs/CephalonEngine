@@ -74,7 +74,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                         ? "claimed"
                         : topology.HasPublishingPath ? "partial" : "not-claimed",
                     evidence: topology.HasInProcessSubscriptionExecutionPath
-                        ? $"in-process retry={InProcessEventingRetryPolicy.GetPolicyId(options)} attempts={InProcessEventingRetryPolicy.GetMaxAttempts(options).ToString(CultureInfo.InvariantCulture)}"
+                        ? $"in-process retry={InProcessEventingRetryPolicy.GetPolicyId(options)} attempts={InProcessEventingRetryPolicy.GetMaxAttempts(options).ToString(CultureInfo.InvariantCulture)} backoff={InProcessEventingRetryPolicy.GetBackoff(options)} jitter={InProcessEventingRetryPolicy.GetJitterPercent(options).ToString(CultureInfo.InvariantCulture)}"
                         : topology.HasDispatchRuntimeContributors ? "dispatch runtime contributors are configured." : "no managed retry runtime is active.",
                     advantage: "Retry truth is emitted as stable Cephalon metadata rather than hidden in a provider-specific error queue or middleware pipeline.",
                     nextGap: "Add provider-neutral broker dead-letter ownership before claiming full remediation parity."),

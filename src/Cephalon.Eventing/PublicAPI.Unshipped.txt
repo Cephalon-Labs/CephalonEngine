@@ -1,4 +1,12 @@
 #nullable enable
+Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionRetryBackoff.get -> string!
+Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionRetryBackoff.set -> void
+Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionRetryBackoffMultiplier.get -> int
+Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionRetryBackoffMultiplier.set -> void
+Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionRetryJitterPercent.get -> int
+Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionRetryJitterPercent.set -> void
+Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionRetryMaxDelayMilliseconds.get -> int
+Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionRetryMaxDelayMilliseconds.set -> void
 Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionIdempotencyStore.get -> string!
 Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionIdempotencyStore.set -> void
 Cephalon.Eventing.Configuration.EventingOptions.EnablePublicationScheduling.get -> bool
