@@ -21,7 +21,8 @@ This first cut focuses on the core shape we can keep growing:
 - optional multi-tenancy companion packages for tenant resolution, ambient tenant context, durable tenant-membership and tenant-invitation governance, declared domain ownership, and approval/remediation action workflows
 - optional audit companion package for host-agnostic audit recording and runtime cataloging
 - optional `Sfid.Net`-backed identifier companion package for low-ceremony database ids
-- optional Wolverine eventing adapter as the current first-class managed dispatch path
+- eventing companion package with runtime-neutral channel, subscription, publication, dispatch, in-process execution, retry/idempotency, and operator-state contracts
+- optional Wolverine eventing adapter for consumer apps that explicitly choose a provider-managed dispatch/subscription lane
 - observability package with runtime logs, metrics, and tracing conventions
 - engine-level OpenTelemetry semantic-convention adapter (`Cephalon.Diagnostics`) publishing canonical `ActivitySource` and `Meter` names plus stable `cephalon.*` attribute keys, the `IRedactionFilter` + `RedactionPipeline` engine-boundary redaction surface wired at seven M1 emission sites (AspNetCore HTTP middleware, engine runtime module-phase tags, Wolverine dispatch tags, Agentics tool-dispatch tags, Retrieval knowledge-indexing + knowledge-query tags, Worker lifecycle tags, Eventing in-process publication-dispatch tags), and the central diagnostic-id registry that catalogs every allocated `EventId` range across packages
 - engine-managed resilience runtime companion (`Cephalon.Resilience`) consuming `Microsoft.Extensions.Resilience` (Polly v8 in-box) for declarative retry / circuit-breaker / bulkhead / timeout / rate-limit policy resolution, circuit-breaker state registry, and exception classification — extracted from `Cephalon.Behaviors` so consumers can adopt resilience without taking the full behavior dispatch runtime
@@ -72,8 +73,8 @@ This first cut focuses on the core shape we can keep growing:
 - `src/Cephalon.Audit`: host-agnostic audit recording companion package
 - `src/Cephalon.Data`: runtime-neutral data companion package for command/query-backed stores
 - `src/Cephalon.Data.EntityFramework`: Entity Framework Core companion package for read/write DbContexts plus inbox/outbox baselines
-- `src/Cephalon.Eventing`: companion package for event-driven integration runtime services
-- `src/Cephalon.Eventing.Wolverine`: official Wolverine adapter companion package for managed event dispatch
+- `src/Cephalon.Eventing`: companion package for event-driven integration runtime services and the default runtime-neutral eventing contract
+- `src/Cephalon.Eventing.Wolverine`: optional Wolverine adapter companion package for explicit provider-managed event dispatch/subscription proofs
 - `src/Cephalon.Identity`: host-agnostic identity and authorization companion package
 - `src/Cephalon.Identity.AspNetCore`: ASP.NET Core adapter for Cephalon identity and authorization
 - `src/Cephalon.Ids.Sfid`: official `Sfid.Net` identifier companion package

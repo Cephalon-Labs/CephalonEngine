@@ -268,9 +268,7 @@ The runtime should support configuration-driven blueprint, pattern, technology, 
         }
       }
     },
-    "Messaging": {
-      "Provider": "Wolverine"
-    },
+    "Messaging": {},
     "Resilience": {
       "Retry": {
         "Enabled": true,
@@ -314,6 +312,7 @@ That gives developers a controlled way to mix architecture choices, design patte
 Technology profiles are intentionally lighter than blueprints. They should add workload semantics, dependency hints, validation rules, and scaffold conventions without forcing an entirely new project shape.
 They should also be additive by default: built-ins come from the engine, packages can contribute more through `ITechnologyContributor`, and projects can register their own descriptors without rewriting the blueprint catalog.
 When a profile needs reusable runtime services, Cephalon prefers a companion package such as `Cephalon.Agentics`, `Cephalon.Eventing`, `Cephalon.Retrieval`, or `Cephalon.Edge` over expanding the engine core directly.
+`Engine:Technologies` selecting `event-driven-integration` activates the native `Cephalon.Eventing` package hints and scaffold wiring, but it does not imply a broker/provider adapter. `Engine:Messaging:Provider = Wolverine` remains an explicit opt-in that adds `Cephalon.Eventing.Wolverine` and its provider-managed registration.
 
 If a transport is implemented by a companion host package, the app must both select it in `Engine:Transports` and register the matching adapter in startup.
 

@@ -186,7 +186,7 @@
 
 **Current version:** v8.x (OSS, Apache 2.0); v9.x (commercial).
 
-**Framework relevance:** CephalonEngine could provide a MassTransit transport adapter for its eventing layer, though the licensing change means OpenTransit or Wolverine may be more appropriate defaults.
+**Framework relevance:** CephalonEngine could provide a MassTransit or OpenTransit transport adapter for its eventing layer, but provider frameworks should remain explicit companion choices. Wolverine is already a shipped optional companion proof, not the engine default.
 
 ---
 

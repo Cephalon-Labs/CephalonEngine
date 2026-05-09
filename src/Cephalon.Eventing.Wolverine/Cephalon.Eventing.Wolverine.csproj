@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
-    <Description>Official Wolverine host-wiring companion package for Cephalon eventing workloads.</Description>
+    <Description>Optional Wolverine host-wiring companion package for Cephalon eventing workloads.</Description>
   </PropertyGroup>
 
   <ItemGroup>

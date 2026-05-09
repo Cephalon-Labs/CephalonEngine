@@ -1286,12 +1286,13 @@ public sealed class EngineBuilderTests
             convention.Contains("Agentic Workloads", StringComparison.Ordinal));
         Assert.Contains(scaffold.Conventions, convention =>
             convention.Contains("Realtime Experience", StringComparison.Ordinal));
-        Assert.Contains(scaffold.Projects, project =>
-            project.Role == ProjectRoles.Host &&
-            project.Packages.Contains("Cephalon.Agentics", StringComparer.OrdinalIgnoreCase) &&
-            project.Packages.Contains("Cephalon.Eventing", StringComparer.OrdinalIgnoreCase) &&
-            project.Packages.Contains("Cephalon.Retrieval", StringComparer.OrdinalIgnoreCase) &&
-            project.Packages.Contains("Cephalon.Edge", StringComparer.OrdinalIgnoreCase));
+        var hostProject = Assert.Single(scaffold.Projects, project =>
+            project.Role == ProjectRoles.Host);
+        Assert.Contains("Cephalon.Agentics", hostProject.Packages, StringComparer.OrdinalIgnoreCase);
+        Assert.Contains("Cephalon.Eventing", hostProject.Packages, StringComparer.OrdinalIgnoreCase);
+        Assert.DoesNotContain("Cephalon.Eventing.Wolverine", hostProject.Packages, StringComparer.OrdinalIgnoreCase);
+        Assert.Contains("Cephalon.Retrieval", hostProject.Packages, StringComparer.OrdinalIgnoreCase);
+        Assert.Contains("Cephalon.Edge", hostProject.Packages, StringComparer.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -1378,11 +1379,12 @@ public sealed class EngineBuilderTests
         Assert.Equal("SharedDatabase", appProfile.Tenancy.Mode);
         Assert.True(appProfile.Audit.Enabled);
         Assert.Equal("Wolverine", appProfile.Messaging.Provider);
-        Assert.Contains(scaffold.Projects, project =>
-            project.Role == ProjectRoles.Host &&
-            project.Packages.Contains("Cephalon.Identity", StringComparer.OrdinalIgnoreCase) &&
-            project.Packages.Contains("Cephalon.MultiTenancy", StringComparer.OrdinalIgnoreCase) &&
-            project.Packages.Contains("Cephalon.Eventing", StringComparer.OrdinalIgnoreCase));
+        var hostProject = Assert.Single(scaffold.Projects, project =>
+            project.Role == ProjectRoles.Host);
+        Assert.Contains("Cephalon.Identity", hostProject.Packages, StringComparer.OrdinalIgnoreCase);
+        Assert.Contains("Cephalon.MultiTenancy", hostProject.Packages, StringComparer.OrdinalIgnoreCase);
+        Assert.Contains("Cephalon.Eventing", hostProject.Packages, StringComparer.OrdinalIgnoreCase);
+        Assert.Contains("Cephalon.Eventing.Wolverine", hostProject.Packages, StringComparer.OrdinalIgnoreCase);
     }
 
     [Fact]

@@ -88,7 +88,7 @@ The behaviors family is the engine's core execution backbone. `Cephalon.Behavior
 | `Cephalon.Eventing.Wolverine` | M3 | provider-managed | (projected through parent eventing) | `EventDispatchStates`, `EventPublicationStates` | — | optional Wolverine-managed dispatch lane with terminal dispatch/subscription retry; `WolverineEventDispatchHostedService` is one of the seven M1 redaction emission sites — `wolverine.dispatch` span tags including `cephalon.tenant_id` / `cephalon.correlation_id` / `cephalon.message_id` route through the registered `RedactionPipeline` before exporter dispatch (`ENG-374`) |
 | `Cephalon.Eventing.Behaviors` | M1 | application-managed | — | — | — | behavior-native eventing bridge; saga choreography handoff into outbox-backed eventing |
 
-Eventing's core baseline owns the in-process execution lane and operator state surfaces. Wolverine is the first provider-managed dispatch follow-through. The behaviors-native bridge is the explicit phase-12 seam between saga choreography authoring and outbox-backed publication.
+Eventing's core baseline owns the native package hint, in-process execution lane, publication/dispatch seams, and operator state surfaces. Wolverine is the first optional provider-managed dispatch follow-through, not the default generated answer for `event-driven-integration`. The behaviors-native bridge is the explicit phase-12 seam between saga choreography authoring and outbox-backed publication.
 
 ## Agentics and retrieval
 

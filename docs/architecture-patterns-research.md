@@ -847,7 +847,7 @@ public class HandlerRegistrationGenerator : IIncrementalGenerator
 
 **Key Difference:** MediatR's `INotificationHandler` is strictly fire-and-forget -- unsuitable for scenarios requiring delivery guarantees. Wolverine supports both fire-and-forget ("Buffered") and durable transactional inbox/outbox with local queues, ensuring work is not lost during errors.
 
-**CephalonEngine Choice:** The engine uses Wolverine (`Cephalon.Eventing.Wolverine`) for its superior durability and built-in outbox. For teams preferring MediatR's simplicity, the `Cephalon.Behaviors` pipeline provides a similar API surface but backed by Wolverine's infrastructure.
+**CephalonEngine Choice:** The engine does not require Wolverine as its messaging foundation. `Cephalon.Eventing` owns the runtime-neutral channel, subscription, publication, dispatch, in-process execution, readiness, and operator-state contracts so the engine remains complete without a provider adapter. `Cephalon.Eventing.Wolverine` is an optional provider-managed companion for teams that deliberately choose Wolverine durability or dispatch/subscription execution; future companions can plug into the same seams without changing consumer app code.
 
 **Sources:**
 - [Jeremy Miller: Wolverine for MediatR Users](https://jeremydmiller.com/2025/01/28/wolverine-for-mediatr-users/)

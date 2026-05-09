@@ -390,7 +390,7 @@ internal sealed class AppProfileBuilder
             var includeMultiTenancyPack = ShouldHintMultiTenancyPack(selectedTechnologies);
             var includeAuditPack = ShouldHintAuditPack();
             var includeEventingPack = ShouldHintEventingPack(selectedTechnologies);
-            var includeWolverinePack = ShouldHintWolverinePack(selectedTechnologies);
+            var includeWolverinePack = ShouldHintWolverinePack();
 
             if (includeDataPack)
             {
@@ -493,22 +493,20 @@ internal sealed class AppProfileBuilder
             HasTechnology(selectedTechnologies, "event-driven-integration");
     }
 
-    private bool ShouldHintWolverinePack(IReadOnlyList<TechnologyDescriptor> selectedTechnologies)
+    private bool ShouldHintWolverinePack()
     {
-        var provider = ResolveGeneratedMessagingProvider(selectedTechnologies);
+        var provider = ResolveGeneratedMessagingProvider();
         return string.Equals(provider, "Wolverine", StringComparison.OrdinalIgnoreCase);
     }
 
-    private string? ResolveGeneratedMessagingProvider(IReadOnlyList<TechnologyDescriptor> selectedTechnologies)
+    private string? ResolveGeneratedMessagingProvider()
     {
         if (!string.IsNullOrWhiteSpace(messagingSelection.Provider))
         {
             return messagingSelection.Provider;
         }
 
-        return ShouldHintEventingPack(selectedTechnologies)
-            ? "Wolverine"
-            : null;
+        return null;
     }
 
     private static bool HasPattern(IReadOnlyList<PatternDescriptor> selectedPatterns, string patternId)

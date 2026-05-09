@@ -1258,9 +1258,7 @@ variables, and command-line arguments continue to win the same way developers ex
             return appProfile.Messaging.Provider;
         }
 
-        return ShouldGenerateEventingPack(appProfile)
-            ? "Wolverine"
-            : null;
+        return null;
     }
 
     private static bool HasPattern(AppProfile appProfile, string patternId)

@@ -6,7 +6,7 @@
 
 ## What it owns
 
-- wires the optional `WolverineFx` runtime into a Cephalon host when `EventDrivenIntegration` is active
+- wires the optional `WolverineFx` runtime into a Cephalon host only when the app installs and registers this companion
 - keeps Wolverine-specific host registration out of `Cephalon.Engine` and `Cephalon.Eventing`
 - exposes a dedicated `wolverine-adapter` runtime surface under `event-driven-integration`
 - publishes the `eventing.wolverine` capability so operators can see when the optional adapter choice is active
@@ -41,7 +41,7 @@
 
 ## How it fits
 
-This package is intentionally thin, but it is no longer just a passive host-wiring shim. Cephalon now has a shipped Wolverine companion path that can be selected and introspected without pushing Wolverine APIs into the engine core, and it can optionally own both the durable staged-event dispatch loop and one truthful managed subscription-execution lane when the app deliberately enables that behavior.
+This package is intentionally thin, but it is no longer just a passive host-wiring shim. Cephalon now has a shipped Wolverine companion path that can be selected and introspected without pushing Wolverine APIs into the engine core, and it can optionally own both the durable staged-event dispatch loop and one truthful managed subscription-execution lane when the app deliberately enables that behavior. Selecting `event-driven-integration` alone does not generate this package, `Engine:Messaging:Provider = Wolverine`, or `engine.AddWolverineEventing()`; those appear only for an explicit Wolverine provider/adoption choice.
 
 Today the pack does three concrete things truthfully. First, it registers Wolverine host wiring and projects that choice back into Cephalon runtime introspection through `eventing.wolverine` and the `wolverine-adapter` surface. Second, when `EnableDispatchLoop` is turned on and a real `IEventDispatchStore` is available, it runs a hosted `wolverine-managed` dispatch pump that reads staged `EventPublication` payloads, publishes them through Wolverine, records durable dispatch outcomes, and reports execution/runtime metadata back through the shared eventing surfaces. `DispatchMaxAttempts` defaults to `3`, can be set to `1` to disable dispatch retries, and causes both no-destination and Wolverine `PublishAsync(...)` exception paths on the final exhausted attempt to report `failed` with `retryExhausted = true` / `terminalFailure = true` metadata instead of re-entering pending dispatch forever. Third, when `EnableSubscriptionExecution` is turned on, `EnableDispatchLoop` is already active, `EnableHostWiring` is left on, and at least one declared `IEventSubscriptionExecutor` is registered, the same staged-publication flow can trigger `wolverine-managed` execution of matching declared subscriptions with bounded fixed-delay retry scheduling through Wolverine's own scheduled-message pipeline. `SubscriptionMaxAttempts` defaults to `3`, can be set to `1` to disable requeue retries, and causes the final exhausted attempt to report `failed` with `retryExhausted = true` / `terminalFailure = true` metadata instead of silently requeueing forever. That bridge is no longer limited to the Entity Framework outbox baseline; the current MongoDB, Redis, Elasticsearch, OpenSearch, Neo4j, Qdrant, and NATS outbox packs now register the same runtime-neutral dispatch-store contract as well.
 

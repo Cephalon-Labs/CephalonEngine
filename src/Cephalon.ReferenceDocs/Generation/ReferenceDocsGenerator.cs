@@ -75,7 +75,7 @@ public static class ReferenceDocsGenerator
         new("Cephalon.EventSourcing.EntityFramework", "Event-Sourcing Companion Packs", "Entity Framework Core append/read event-store provider for Cephalon event-sourcing workloads."),
         new("Cephalon.Eventing", "Technology Packs", "Event-driven integration runtime services and extension points."),
         new("Cephalon.Eventing.Behaviors", "Phase 12 Companion Packs", "Explicit bridge that routes behavior saga choreography publications through the shared Cephalon eventing publish path."),
-        new("Cephalon.Eventing.Wolverine", "Phase 8 Companion Packs", "Official Wolverine adapter and managed dispatch-loop integration for Cephalon eventing workloads."),
+        new("Cephalon.Eventing.Wolverine", "Phase 8 Companion Packs", "Optional Wolverine adapter and managed dispatch-loop integration for Cephalon eventing workloads."),
         new("Cephalon.Identity", "Phase 8 Companion Packs", "Host-agnostic identity and authorization baseline for Cephalon runtimes."),
         new("Cephalon.Identity.AspNetCore", "Phase 8 Companion Packs", "ASP.NET Core host adapter for Cephalon identity and authorization workloads."),
         new("Cephalon.Ids.Sfid", "Phase 8 Companion Packs", "Official Sfid.Net-backed identifier generation for Cephalon runtimes."),

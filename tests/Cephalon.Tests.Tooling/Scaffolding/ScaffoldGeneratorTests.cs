@@ -77,7 +77,7 @@ public sealed class ScaffoldGeneratorTests
             scaffold.Files,
             file => file.Path == "src/Acme.Explorer.Host/Configurations/AddEngine.Messaging.json");
         Assert.Contains("\"Messaging\"", messagingSettings.Contents, StringComparison.Ordinal);
-        Assert.Contains("\"Provider\": \"Wolverine\"", messagingSettings.Contents, StringComparison.Ordinal);
+        Assert.DoesNotContain("\"Provider\": \"Wolverine\"", messagingSettings.Contents, StringComparison.Ordinal);
 
         var localizationSettings = Assert.Single(
             scaffold.Files,
@@ -116,7 +116,7 @@ public sealed class ScaffoldGeneratorTests
         var packageProps = Assert.Single(scaffold.Files, file => file.Path == "Directory.Packages.props");
         Assert.Contains("Cephalon.Agentics", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Eventing", packageProps.Contents, StringComparison.Ordinal);
-        Assert.Contains("Cephalon.Eventing.Wolverine", packageProps.Contents, StringComparison.Ordinal);
+        Assert.DoesNotContain("Cephalon.Eventing.Wolverine", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Edge", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.Retrieval", packageProps.Contents, StringComparison.Ordinal);
         Assert.Contains("Cephalon.AspNetCore.GraphQL", packageProps.Contents, StringComparison.Ordinal);
@@ -139,7 +139,7 @@ public sealed class ScaffoldGeneratorTests
         Assert.DoesNotContain("builder.Configuration.AddEnvironmentVariables();", phase8HostProgram.Contents, StringComparison.Ordinal);
         Assert.Contains("builder.AddCephalon(engine =>", phase8HostProgram.Contents, StringComparison.Ordinal);
         Assert.Contains("engine.AddEventing();", phase8HostProgram.Contents, StringComparison.Ordinal);
-        Assert.Contains("engine.AddWolverineEventing();", phase8HostProgram.Contents, StringComparison.Ordinal);
+        Assert.DoesNotContain("engine.AddWolverineEventing();", phase8HostProgram.Contents, StringComparison.Ordinal);
         Assert.Contains("builder.Configuration.GetSection(\"Serilog\").Exists()", phase8HostProgram.Contents, StringComparison.Ordinal);
         Assert.Contains("builder.Logging.ClearProviders();", phase8HostProgram.Contents, StringComparison.Ordinal);
         Assert.Contains("builder.AddCephalonSerilog();", phase8HostProgram.Contents, StringComparison.Ordinal);
