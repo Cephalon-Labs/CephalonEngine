@@ -129,6 +129,8 @@ The libraries in this section are reference systems for ideas, not required Ceph
 
 Extraction work should target superiority, not imitation. A Cephalon-native version of an ecosystem capability should be judged against the reference library on capability breadth, configuration model, host/provider neutrality, developer ceremony, runtime truth, operational control, failure handling, performance posture, security/compliance/auditability, testability, documentation quality, and dependency/licensing/upgrade risk. If Cephalon cannot yet outperform the reference in a dimension, record that as a known gap rather than borrowing the other framework's package to hide it.
 
+For eventing, that rule now has a runtime checkpoint: `Cephalon.Eventing` emits `eventing-superiority-profile` plus capability `eventing.superiority-profile` so the active runtime can say which MassTransit/NServiceBus/Wolverine/MediatR-inspired dimensions are `claimed`, `partial`, or `not-claimed` before docs or roadmap items describe them as complete.
+
 ### MediatR
 
 **What it does:** In-process mediator pattern implementation for .NET. Decouples request/command senders from handlers.

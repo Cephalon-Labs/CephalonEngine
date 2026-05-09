@@ -2436,12 +2436,12 @@ public sealed class AspNetCoreHostingTests
         Assert.NotNull(snapshot);
         Assert.Equal(RuntimeStatus.Started, snapshot.Status.Status);
         Assert.Equal("modular-vertical-slice", snapshot.Manifest.AppProfile.BlueprintId);
-        Assert.Equal(12, snapshot.TechnologySurfaces.Count);
+        Assert.Equal(13, snapshot.TechnologySurfaces.Count);
         Assert.Contains(snapshot.DiagnosticsConventions, convention => convention.Source == "Cephalon.Eventing");
         Assert.NotNull(surfaces);
-        Assert.Equal(12, surfaces.Length);
+        Assert.Equal(13, surfaces.Length);
         Assert.NotNull(eventingSurfaces);
-        Assert.Equal(2, eventingSurfaces.Length);
+        Assert.Equal(3, eventingSurfaces.Length);
         Assert.NotNull(knowledgeIndexes);
         var knowledgeIndex = Assert.Single(knowledgeIndexes, state => state.CollectionId == "runbooks");
         Assert.Equal(KnowledgeIndexingOutcomes.Succeeded, knowledgeIndex.LastOutcome);

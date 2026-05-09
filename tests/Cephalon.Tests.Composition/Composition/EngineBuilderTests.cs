@@ -2183,7 +2183,7 @@ public sealed class EngineBuilderTests
         Assert.Contains(eventingConvention.Events, entry => entry.Id == 4200 && entry.Name == "EventPublicationStaged");
         Assert.Contains(eventingConvention.Events, entry => entry.Id == 4204 && entry.Name == "EventSubscriptionRetryScheduled");
         Assert.Contains(eventingConvention.Events, entry => entry.Id == 4209 && entry.Name == "EventPublicationDispatchRetryScheduled");
-        Assert.Equal(5, technologySurfaces.Surfaces.Count);
+        Assert.Equal(6, technologySurfaces.Surfaces.Count);
         Assert.Single(technologySurfaces.GetByTechnology("agentic-workloads"));
         Assert.Contains(
             technologySurfaces.GetByTechnology("event-driven-integration")
@@ -2216,7 +2216,7 @@ public sealed class EngineBuilderTests
                     entry.Metadata["lastError"] == "Transient projection failure");
         Assert.Same(runtime.Manifest, snapshot.Manifest);
         Assert.Equal(RuntimeStatus.Created, snapshot.Status.Status);
-        Assert.Equal(5, snapshot.TechnologySurfaces.Count);
+        Assert.Equal(6, snapshot.TechnologySurfaces.Count);
         Assert.Contains(
             snapshot.TechnologySurfaces.Single(surface => surface.TechnologyId == "knowledge-retrieval").Entries,
             entry => entry.Id == "runbooks" &&
@@ -2239,6 +2239,52 @@ public sealed class EngineBuilderTests
             entry => entry.Id == "audit-projector" &&
                 entry.Metadata[EventSubscriptionRuntimeMetadataKeys.LastOutcome] == "retry-scheduled" &&
                 entry.Metadata[EventSubscriptionRuntimeMetadataKeys.RetryPending] == "true");
+    }
+
+    [Fact]
+    public void AddEventingProjectsSuperiorityProfileWithoutWolverine()
+    {
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new TechnologyPackContributionModule());
+            engine.AddEventing(options =>
+            {
+                options.EnableInProcessSubscriptionExecution = true;
+                options.InProcessSubscriptionMaxAttempts = 2;
+                options.EnableInProcessSubscriptionIdempotency = true;
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var runtime = provider.GetRequiredService<IRuntime>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        var profileSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile");
+        var dimensions = profileSurface.Entries.ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var capability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.superiority-profile");
+        Assert.Equal("true", capability.Metadata["wolverineOptional"]);
+        Assert.Equal("claimed-only-with-runtime-evidence", capability.Metadata["claimPolicy"]);
+        Assert.Equal("eventing-superiority-profile", capability.Metadata["surfaceId"]);
+
+        Assert.Equal("claimed", dimensions["configuration-first-provider-neutrality"].Metadata["status"]);
+        Assert.Equal("claimed", dimensions["native-wolverine-free-baseline"].Metadata["status"]);
+        Assert.Equal("claimed", dimensions["runtime-truth-and-operator-surfaces"].Metadata["status"]);
+        Assert.Equal("claimed", dimensions["recoverability-and-terminal-failure-posture"].Metadata["status"]);
+        Assert.Equal("claimed", dimensions["mediator-style-in-process-low-ceremony"].Metadata["status"]);
+        Assert.Equal("not-claimed", dimensions["durability-and-outbox-portability"].Metadata["status"]);
+        Assert.Equal("not-claimed", dimensions["dead-letter-replay-and-remediation"].Metadata["status"]);
+        Assert.Equal("MassTransit,NServiceBus,Wolverine,MediatR", dimensions["native-wolverine-free-baseline"].Metadata["referenceFrameworks"]);
+        Assert.Contains("Wolverine remains optional", dimensions["native-wolverine-free-baseline"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("EnableInProcessSubscriptionExecution=true", dimensions["mediator-style-in-process-low-ceremony"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]

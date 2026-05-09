@@ -134,6 +134,18 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             !hasInProcessSubscriptionExecutionPath &&
             services.Any(static descriptor => descriptor.ServiceType == typeof(IOutbox));
         hasPublishingPath = hasInProcessSubscriptionExecutionPath || hasOutboxPublishingPath;
+        services.TryAddSingleton(new EventingRuntimeTopology(
+            HasChannelContributors: hasChannelContributors,
+            HasDispatchStore: hasDispatchStore,
+            HasDispatchRuntimeContributors: hasDispatchRuntimeContributors,
+            HasExternalManagedSubscriptionExecutionBindings: hasExternalManagedSubscriptionExecutionBindings,
+            HasInboxPath: hasInboxPath,
+            HasInProcessSubscriptionExecutionPath: hasInProcessSubscriptionExecutionPath,
+            HasManagedSubscriptionExecutionBindings: hasManagedSubscriptionExecutionBindings,
+            HasPublishingPath: hasPublishingPath,
+            HasSubscriptionContributors: hasSubscriptionContributors,
+            HasSubscriptionExecutors: hasSubscriptionExecutors));
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingSuperiorityProfileRuntimeSurfaceContributor>());
         if (hasInProcessSubscriptionExecutionPath)
         {
             services.TryAddScoped<IEventPublisher, InProcessEventPublisher>();
@@ -228,6 +240,20 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     : "Accepts integration events for configured event channels and stages them through the active outbox path.",
                 metadata: publishMetadata));
         }
+
+        capabilities.Add(new Capability(
+            key: "eventing.superiority-profile",
+            displayName: "Eventing Superiority Profile",
+            description: "Projects runtime evidence for how the native Cephalon eventing path compares with established .NET messaging and mediator framework capabilities.",
+            metadata: new Dictionary<string, string>
+            {
+                ["technology"] = "event-driven-integration",
+                ["surfaceId"] = "eventing-superiority-profile",
+                ["referenceFrameworks"] = "MassTransit,NServiceBus,Wolverine,MediatR",
+                ["claimPolicy"] = "claimed-only-with-runtime-evidence",
+                ["wolverineOptional"] = "true",
+                ["runtimeState"] = "available"
+            }));
 
         if (options.EnableSubscriptions && (options.Subscriptions.Count > 0 || hasSubscriptionContributors))
         {

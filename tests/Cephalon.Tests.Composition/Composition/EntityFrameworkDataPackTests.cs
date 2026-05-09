@@ -941,7 +941,7 @@ public sealed class EntityFrameworkDataPackTests
         var runtime = provider.GetRequiredService<Cephalon.Engine.Runtime.IRuntime>();
         var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
 
-        Assert.Equal(4, eventingSurfaces.Count);
+        Assert.Equal(5, eventingSurfaces.Count);
         var outboxSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "outbox-producers");
         var outboxEntry = Assert.Single(outboxSurface.Entries);
         var publishSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-publishers");
@@ -1012,7 +1012,7 @@ public sealed class EntityFrameworkDataPackTests
         var runtime = provider.GetRequiredService<Cephalon.Engine.Runtime.IRuntime>();
         var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
 
-        Assert.Equal(3, eventingSurfaces.Count);
+        Assert.Equal(4, eventingSurfaces.Count);
         var inboxSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "inbox-stores");
         var inboxEntry = Assert.Single(inboxSurface.Entries);
         var subscriptionSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
