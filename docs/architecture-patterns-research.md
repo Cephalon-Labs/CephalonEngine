@@ -847,9 +847,12 @@ public class HandlerRegistrationGenerator : IIncrementalGenerator
 
 **Key Difference:** MediatR's `INotificationHandler` is strictly fire-and-forget -- unsuitable for scenarios requiring delivery guarantees. Wolverine supports both fire-and-forget ("Buffered") and durable transactional inbox/outbox with local queues, ensuring work is not lost during errors.
 
-**CephalonEngine Choice:** The engine does not require Wolverine as its messaging foundation. `Cephalon.Eventing` owns the runtime-neutral channel, subscription, publication, dispatch, in-process execution, readiness, and operator-state contracts so the engine remains complete without a provider adapter. `Cephalon.Eventing.Wolverine` is an optional provider-managed companion for teams that deliberately choose Wolverine durability or dispatch/subscription execution; future companions can plug into the same seams without changing consumer app code.
+**CephalonEngine Choice:** The engine does not require Wolverine, MassTransit, NServiceBus, or MediatR as its messaging foundation. `Cephalon.Eventing` owns the runtime-neutral channel, subscription, publication, dispatch, in-process execution, readiness, and operator-state contracts so the engine remains complete without a provider adapter. External frameworks are research references: MediatR informs low-ceremony in-process dispatch and ordered behaviors, Wolverine informs durable inbox/outbox and generated handler pipelines, MassTransit informs transport topology, routing slips, saga state machines, and test harnesses, and NServiceBus informs logical endpoints, recoverability, error queues, outbox consistency, correlation headers, and operations. Each useful idea should be re-expressed as Cephalon-owned configuration and runtime truth before it becomes an adoption claim. `Cephalon.Eventing.Wolverine` is an optional provider-managed companion for teams that deliberately choose Wolverine durability or dispatch/subscription execution; future interop companions can plug into the same seams without changing consumer app code.
 
 **Sources:**
+- [MassTransit: Concepts](https://masstransit.io/documentation/concepts)
+- [NServiceBus: Overview](https://docs.particular.net/nservicebus/)
+- [MediatR README](https://github.com/LuckyPennySoftware/MediatR)
 - [Jeremy Miller: Wolverine for MediatR Users](https://jeremydmiller.com/2025/01/28/wolverine-for-mediatr-users/)
 - [TheCodeMan: MediatR Alternative - Wolverine](https://thecodeman.net/posts/mediatr-alternative-wolverine)
 

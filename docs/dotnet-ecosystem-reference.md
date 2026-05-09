@@ -123,6 +123,10 @@
 
 ## 2. Messaging and CQRS Frameworks
 
+### Cephalon extraction policy
+
+The libraries in this section are reference systems for ideas, not required Cephalon dependencies. For core engine work, extract proven capabilities from their public behavior and documentation, then rebuild the useful shape as Cephalon-owned contracts, configuration, runtime catalogs, diagnostics, validation, and operator surfaces. Direct package usage belongs only in optional interop, migration, or compatibility companions; it must not define engine completeness.
+
 ### MediatR
 
 **What it does:** In-process mediator pattern implementation for .NET. Decouples request/command senders from handlers.
@@ -140,7 +144,7 @@
 
 **Current version:** MediatR 12.x. Supports .NET 8+.
 
-**Framework relevance:** CephalonEngine's behavior pipeline (`Cephalon.Behaviors`) is conceptually similar to MediatR pipeline behaviors. The engine could offer a MediatR-compatible adapter or serve as an alternative.
+**Framework relevance:** CephalonEngine's behavior pipeline (`Cephalon.Behaviors`) is conceptually similar to MediatR pipeline behaviors, but the target is a Cephalon-owned in-process command/query/notification/stream pipeline with explicit runtime truth, not a hard MediatR dependency.
 
 ---
 
@@ -162,7 +166,7 @@
 
 **Current version:** Actively developed. Latest releases in March/April 2026. Fully supports .NET 10.
 
-**Framework relevance:** CephalonEngine already has `Cephalon.Eventing.Wolverine` which references `WolverineFx`. Wolverine is a first-class integration target. Polecat expands this to SQL Server users.
+**Framework relevance:** CephalonEngine has `Cephalon.Eventing.Wolverine` as an optional provider-managed proof, but Wolverine's broader value should be mined into Cephalon-owned eventing capabilities such as durable inbox/outbox, scheduled delivery, error policy, handler discovery, diagnostics, and dead-letter replay without making Wolverine the default engine layer.
 
 ---
 
@@ -186,7 +190,7 @@
 
 **Current version:** v8.x (OSS, Apache 2.0); v9.x (commercial).
 
-**Framework relevance:** CephalonEngine could provide a MassTransit or OpenTransit transport adapter for its eventing layer, but provider frameworks should remain explicit companion choices. Wolverine is already a shipped optional companion proof, not the engine default.
+**Framework relevance:** CephalonEngine should study MassTransit for transport topology, saga state machines, routing slips, middleware filters, outbox, scheduling, multi-bus, observability, and test-harness ergonomics, then express the useful pieces through Cephalon-owned config and runtime surfaces. A MassTransit/OpenTransit adapter is only justified for explicit interop or migration work, not for core engine completeness.
 
 ---
 
@@ -205,7 +209,9 @@
 
 **When to use:** Large-scale enterprise systems where the tooling (ServicePulse, ServiceInsight) and support contract justify the cost.
 
-**Current version:** NServiceBus 9.x. Supports .NET 8+.
+**Current version:** NServiceBus 10.x docs are current in the official Particular documentation set.
+
+**Framework relevance:** CephalonEngine should study NServiceBus for logical endpoint modeling, routing layers, recoverability, immediate/delayed retries, error queues, outbox consistency, correlation headers, saga best-practice validation, audit/monitoring/health signals, and ServiceControl-style operator workflows. Those should become Cephalon-owned contracts and operator surfaces rather than a dependency on NServiceBus packages.
 
 ---
 
