@@ -1398,6 +1398,141 @@ function Get-DeploymentModeFullOperatorRouteDelegateAudits {
     return @($rows)
 }
 
+function Get-DeploymentModeOperatorResponseJsonContractAudits {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)] $Manifest,
+        [string]$RepoRoot = ""
+    )
+
+    $rows = @()
+    if ($null -eq $Manifest -or
+        -not $Manifest.PSObject.Properties.Match("deploymentModeEligibility").Count -or
+        $null -eq $Manifest.deploymentModeEligibility -or
+        -not $Manifest.deploymentModeEligibility.PSObject.Properties.Match("packages").Count) {
+        return @()
+    }
+
+    $expectedResponseJsonContracts = @(
+        "RuntimeManifest",
+        "RuntimeIntrospectionSnapshot",
+        "AppProfile",
+        "ResilienceSelection",
+        "ScaffoldPlan",
+        "IReadOnlyList<CapabilityManifest>",
+        "IReadOnlyList<ModuleManifest>",
+        "IReadOnlyList<PackageManifest>",
+        "IReadOnlyList<PatternDescriptor>",
+        "IReadOnlyList<TechnologyDescriptor>",
+        "IReadOnlyList<TechnologyRuntimeSurface>",
+        "IReadOnlyList<TransportDescriptor>",
+        "DependencyHealthReport[]",
+        "LocalizedResourcesSnapshot",
+        "ReferenceDocsSurface",
+        "EngineOptions",
+        "PackagePolicy",
+        "FailurePolicy",
+        "TrustSnapshot",
+        "RuntimeStatusSnapshot",
+        "RuntimeOperationalStory",
+        "DiagnosticsSurface",
+        "DiagnosticsConventionsSurface"
+    )
+
+    foreach ($pkg in @($Manifest.deploymentModeEligibility.packages)) {
+        if ($null -eq $pkg -or $pkg.PSObject.Properties.Match("knownHazards").Count -eq 0) { continue }
+
+        $packageName = if ($pkg.PSObject.Properties.Match("packageName").Count -gt 0) { [string]$pkg.packageName } else { "" }
+        if (-not [string]::Equals($packageName, "Cephalon.AspNetCore", [System.StringComparison]::OrdinalIgnoreCase)) {
+            continue
+        }
+
+        foreach ($hazard in @($pkg.knownHazards)) {
+            if ($null -eq $hazard -or $hazard.PSObject.Properties.Match("kind").Count -eq 0) { continue }
+
+            $kind = [string]$hazard.kind
+            if (-not [string]::Equals($kind, "dynamic-minimal-api-operator-route-binding", [System.StringComparison]::OrdinalIgnoreCase)) {
+                continue
+            }
+
+            $jsonContextRelativePath = "src/Cephalon.AspNetCore/AspNetCoreJsonSerializerContext.cs"
+            $builderExtensionsRelativePath = "src/Cephalon.AspNetCore/Hosting/EngineWebApplicationBuilderExtensions.cs"
+            $jsonContextPath = $jsonContextRelativePath
+            $builderExtensionsPath = $builderExtensionsRelativePath
+            if (-not [string]::IsNullOrWhiteSpace($RepoRoot)) {
+                $jsonContextPath = Join-Path $RepoRoot ($jsonContextRelativePath -replace '/', [System.IO.Path]::DirectorySeparatorChar)
+                $builderExtensionsPath = Join-Path $RepoRoot ($builderExtensionsRelativePath -replace '/', [System.IO.Path]::DirectorySeparatorChar)
+            }
+
+            $jsonContextExists = Test-Path -LiteralPath $jsonContextPath -PathType Leaf
+            $builderExtensionsExists = Test-Path -LiteralPath $builderExtensionsPath -PathType Leaf
+            $sourceGeneratedResponseContracts = @()
+            $missingResponseJsonContracts = @()
+            $httpJsonOptionsResolverRegistered = $false
+            $mvcJsonOptionsResolverRegistered = $false
+            $failures = @()
+
+            if (-not $jsonContextExists) {
+                $failures += "json-context-source-missing"
+            }
+            else {
+                $jsonContextSource = Get-Content -LiteralPath $jsonContextPath -Raw -Encoding UTF8
+                foreach ($contract in $expectedResponseJsonContracts) {
+                    if ($jsonContextSource -match [regex]::Escape("typeof($contract)")) {
+                        $sourceGeneratedResponseContracts += $contract
+                    }
+                    else {
+                        $missingResponseJsonContracts += $contract
+                    }
+                }
+
+                foreach ($missingContract in $missingResponseJsonContracts) {
+                    $failures += "source-generated-response-contract-missing:$missingContract"
+                }
+            }
+
+            if (-not $builderExtensionsExists) {
+                $failures += "builder-extensions-source-missing"
+            }
+            else {
+                $builderExtensionsSource = Get-Content -LiteralPath $builderExtensionsPath -Raw -Encoding UTF8
+                $httpJsonOptionsResolverRegistered =
+                    $builderExtensionsSource -match [regex]::Escape("Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>") -and
+                    $builderExtensionsSource -match [regex]::Escape("AspNetCoreJsonSerializerContext.Default") -and
+                    $builderExtensionsSource -match [regex]::Escape("TypeInfoResolverChain.Insert(0, AspNetCoreJsonSerializerContext.Default)")
+                $mvcJsonOptionsResolverRegistered =
+                    $builderExtensionsSource -match [regex]::Escape("Configure<Microsoft.AspNetCore.Mvc.JsonOptions>") -and
+                    $builderExtensionsSource -match [regex]::Escape("AspNetCoreJsonSerializerContext.Default") -and
+                    $builderExtensionsSource -match [regex]::Escape("JsonSerializerOptions.TypeInfoResolverChain.Insert(0, AspNetCoreJsonSerializerContext.Default)")
+
+                if (-not $httpJsonOptionsResolverRegistered) {
+                    $failures += "http-json-source-generated-resolver-not-registered"
+                }
+                if (-not $mvcJsonOptionsResolverRegistered) {
+                    $failures += "mvc-json-source-generated-resolver-not-registered"
+                }
+            }
+
+            $rows += [pscustomobject]@{
+                PackageName                           = $packageName
+                HazardKind                            = $kind
+                JsonContextPath                       = $jsonContextRelativePath
+                BuilderExtensionsPath                 = $builderExtensionsRelativePath
+                JsonContextExists                     = $jsonContextExists
+                BuilderExtensionsExists               = $builderExtensionsExists
+                HttpJsonOptionsResolverRegistered     = $httpJsonOptionsResolverRegistered
+                MvcJsonOptionsResolverRegistered      = $mvcJsonOptionsResolverRegistered
+                SourceGeneratedResponseContracts      = @($sourceGeneratedResponseContracts)
+                MissingResponseJsonContracts          = @($missingResponseJsonContracts)
+                Status                                = if ($failures.Count -eq 0) { "matched" } else { "failed" }
+                Failures                              = @($failures)
+            }
+        }
+    }
+
+    return @($rows)
+}
+
 function Get-DeploymentModeHazardInventory {
     [CmdletBinding()]
     param(
@@ -1551,6 +1686,18 @@ function Get-DeploymentModeHazardInventory {
         "failed"
     }
 
+    $operatorResponseJsonContractAudits = @(Get-DeploymentModeOperatorResponseJsonContractAudits -Manifest $Manifest -RepoRoot $RepoRoot)
+    $operatorResponseJsonContractAuditFailures = @($operatorResponseJsonContractAudits | Where-Object { $_.Status -ne "matched" })
+    $operatorResponseJsonContractAuditStatus = if ($operatorResponseJsonContractAudits.Count -eq 0) {
+        "not-applicable"
+    }
+    elseif ($operatorResponseJsonContractAuditFailures.Count -eq 0) {
+        "matched"
+    }
+    else {
+        "failed"
+    }
+
     $tierRows = foreach ($tierName in $tierCounts.Keys) {
         [pscustomobject]@{
             Tier  = $tierName
@@ -1619,6 +1766,11 @@ function Get-DeploymentModeHazardInventory {
         FullOperatorRouteDelegateAuditFailureCount  = $fullOperatorRouteDelegateAuditFailures.Count
         FullOperatorRouteDelegateAuditFailures      = @($fullOperatorRouteDelegateAuditFailures)
         FullOperatorRouteDelegateAudits             = @($fullOperatorRouteDelegateAudits)
+        OperatorResponseJsonContractAuditStatus        = $operatorResponseJsonContractAuditStatus
+        OperatorResponseJsonContractAuditCount         = $operatorResponseJsonContractAudits.Count
+        OperatorResponseJsonContractAuditFailureCount  = $operatorResponseJsonContractAuditFailures.Count
+        OperatorResponseJsonContractAuditFailures      = @($operatorResponseJsonContractAuditFailures)
+        OperatorResponseJsonContractAudits             = @($operatorResponseJsonContractAudits)
         Packages                  = @($packages)
     }
 }
@@ -2204,6 +2356,11 @@ function Write-ValidationReport {
             [void]$sb.AppendLine("- Full operator route-delegate audit entries: $($hazardInventory.FullOperatorRouteDelegateAuditCount)")
             [void]$sb.AppendLine("- Full operator route-delegate audit failures: $($hazardInventory.FullOperatorRouteDelegateAuditFailureCount)")
         }
+        if ($hazardInventory.PSObject.Properties.Match("OperatorResponseJsonContractAuditStatus").Count -gt 0) {
+            [void]$sb.AppendLine("- Operator response JSON contract audit: $($hazardInventory.OperatorResponseJsonContractAuditStatus)")
+            [void]$sb.AppendLine("- Operator response JSON contract audit entries: $($hazardInventory.OperatorResponseJsonContractAuditCount)")
+            [void]$sb.AppendLine("- Operator response JSON contract audit failures: $($hazardInventory.OperatorResponseJsonContractAuditFailureCount)")
+        }
         [void]$sb.AppendLine("")
         [void]$sb.AppendLine("Tier counts:")
         foreach ($tier in @($hazardInventory.TierCounts)) {
@@ -2270,6 +2427,16 @@ function Write-ValidationReport {
                 $failures = if (@($audit.Failures).Count -gt 0) { @($audit.Failures) -join ", " } else { "none" }
                 $contracts = if (@($audit.SourceGeneratedRequestBodyContracts).Count -gt 0) { @($audit.SourceGeneratedRequestBodyContracts) -join ", " } else { "none" }
                 [void]$sb.AppendLine("- **$($audit.PackageName)** at ``$($audit.SourcePath)``: $($audit.Status), usesGetRequestDelegateHelper=$($audit.FullOperatorRoutesUseGetRequestDelegateHelper), usesPostRequestDelegateHelper=$($audit.FullOperatorRoutesUsePostRequestDelegateHelper), usesMinimalApiMapGet=$($audit.FullOperatorRoutesUseMinimalApiMapGet), usesMinimalApiMapPost=$($audit.FullOperatorRoutesUseMinimalApiMapPost), requestBodyJsonHelper=$($audit.RequestBodyJsonHelperFound), sourceGeneratedRequestBodies=$contracts, failures=$failures")
+            }
+        }
+        if ($hazardInventory.PSObject.Properties.Match("OperatorResponseJsonContractAudits").Count -gt 0 -and
+            @($hazardInventory.OperatorResponseJsonContractAudits).Count -gt 0) {
+            [void]$sb.AppendLine("")
+            [void]$sb.AppendLine("Operator response JSON contract audit:")
+            foreach ($audit in @($hazardInventory.OperatorResponseJsonContractAudits)) {
+                $failures = if (@($audit.Failures).Count -gt 0) { @($audit.Failures) -join ", " } else { "none" }
+                $contracts = if (@($audit.SourceGeneratedResponseContracts).Count -gt 0) { @($audit.SourceGeneratedResponseContracts) -join ", " } else { "none" }
+                [void]$sb.AppendLine("- **$($audit.PackageName)**: $($audit.Status), httpJsonResolver=$($audit.HttpJsonOptionsResolverRegistered), mvcJsonResolver=$($audit.MvcJsonOptionsResolverRegistered), sourceGeneratedResponses=$contracts, failures=$failures")
             }
         }
     }
@@ -2429,6 +2596,9 @@ function Invoke-DeploymentModeClaimValidation {
     if ($hazardInventory.PSObject.Properties.Match("FullOperatorRouteDelegateAuditStatus").Count -gt 0) {
         Invoke-Step -Title "Full operator route-delegate audit" -Detail $hazardInventory.FullOperatorRouteDelegateAuditStatus
     }
+    if ($hazardInventory.PSObject.Properties.Match("OperatorResponseJsonContractAuditStatus").Count -gt 0) {
+        Invoke-Step -Title "Operator response JSON contract audit" -Detail $hazardInventory.OperatorResponseJsonContractAuditStatus
+    }
 
     if ($aggregateVerdict -eq "claim-overstated") {
         throw "claim-overstated: see $($paths.JsonPath) for details"
@@ -2455,6 +2625,11 @@ function Invoke-DeploymentModeClaimValidation {
         $hazardInventory.FullOperatorRouteDelegateAuditStatus -eq "failed") {
         $detailsPath = if ($paths.HazardInventoryPath) { $paths.HazardInventoryPath } else { $paths.JsonPath }
         throw "full-operator-route-delegate-audit-failed: see $detailsPath for details"
+    }
+    if ($hazardInventory.PSObject.Properties.Match("OperatorResponseJsonContractAuditStatus").Count -gt 0 -and
+        $hazardInventory.OperatorResponseJsonContractAuditStatus -eq "failed") {
+        $detailsPath = if ($paths.HazardInventoryPath) { $paths.HazardInventoryPath } else { $paths.JsonPath }
+        throw "operator-response-json-contract-audit-failed: see $detailsPath for details"
     }
 
     return [pscustomobject]@{

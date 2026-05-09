@@ -25,6 +25,7 @@ using Cephalon.Abstractions.Transports;
 using Cephalon.Agentics.Registration;
 using Cephalon.Agentics.Services;
 using Cephalon.Audit.Registration;
+using Cephalon.AspNetCore;
 using Cephalon.AspNetCore.Diagnostics;
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.Documentation;
@@ -61,6 +62,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Cephalon.Tests.Support;
 
 namespace Cephalon.Tests.Hosting;
@@ -68,6 +70,32 @@ namespace Cephalon.Tests.Hosting;
 public sealed class AspNetCoreHostingTests
 {
     private static readonly string[] MultiDocumentNames = ["v1", "v2"];
+
+    [Fact]
+    public void AddCephalonRegistersSourceGeneratedJsonResolver()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+
+        builder.AddCephalon();
+
+        using var app = builder.Build();
+
+        var httpJsonOptions = app.Services
+            .GetRequiredService<IOptions<Microsoft.AspNetCore.Http.Json.JsonOptions>>()
+            .Value;
+        var mvcJsonOptions = app.Services
+            .GetRequiredService<IOptions<Microsoft.AspNetCore.Mvc.JsonOptions>>()
+            .Value;
+
+        Assert.Contains(AspNetCoreJsonSerializerContext.Default, httpJsonOptions.SerializerOptions.TypeInfoResolverChain);
+        Assert.Contains(AspNetCoreJsonSerializerContext.Default, mvcJsonOptions.JsonSerializerOptions.TypeInfoResolverChain);
+        Assert.NotNull(AspNetCoreJsonSerializerContext.Default.GetTypeInfo(typeof(RuntimeManifest)));
+        Assert.NotNull(AspNetCoreJsonSerializerContext.Default.GetTypeInfo(typeof(RuntimeIntrospectionSnapshot)));
+        Assert.NotNull(AspNetCoreJsonSerializerContext.Default.GetTypeInfo(typeof(AppProfile)));
+        Assert.NotNull(AspNetCoreJsonSerializerContext.Default.GetTypeInfo(typeof(IReadOnlyList<ModuleManifest>)));
+        Assert.NotNull(AspNetCoreJsonSerializerContext.Default.GetTypeInfo(typeof(IReadOnlyList<CapabilityManifest>)));
+        Assert.NotNull(AspNetCoreJsonSerializerContext.Default.GetTypeInfo(typeof(IReadOnlyList<TechnologyRuntimeSurface>)));
+    }
 
     [Fact]
     public async Task MapCephalonServesHostedReferenceDocsWhenEnabled()

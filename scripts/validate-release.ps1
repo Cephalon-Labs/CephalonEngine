@@ -511,6 +511,16 @@ function Write-EngineCompletionScorecardEvidenceSummary {
             -PropertyName "ClaimsReportHazardInventoryFullOperatorRouteDelegateAuditFailureCount" `
             -OwnerName "DeploymentModeEvidence"),
         [System.Globalization.CultureInfo]::InvariantCulture)
+    $deploymentModeClaimsReportOperatorResponseJsonContractAuditStatus = Get-ScorecardRequiredPropertyValue `
+        -Object $scorecard.DeploymentModeEvidence `
+        -PropertyName "ClaimsReportHazardInventoryOperatorResponseJsonContractAuditStatus" `
+        -OwnerName "DeploymentModeEvidence"
+    $deploymentModeClaimsReportOperatorResponseJsonContractAuditFailureCount = [System.Convert]::ToInt32(
+        (Get-ScorecardRequiredPropertyValue `
+            -Object $scorecard.DeploymentModeEvidence `
+            -PropertyName "ClaimsReportHazardInventoryOperatorResponseJsonContractAuditFailureCount" `
+            -OwnerName "DeploymentModeEvidence"),
+        [System.Globalization.CultureInfo]::InvariantCulture)
 
     if (-not $deploymentModeClaimsReportPresent -or
         $deploymentModeClaimsReportGateStatus -ne "passed" -or
@@ -524,8 +534,10 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         $deploymentModeClaimsReportFullCommonRouteDelegateAuditStatus -ne "matched" -or
         $deploymentModeClaimsReportFullCommonRouteDelegateAuditFailureCount -ne 0 -or
         $deploymentModeClaimsReportFullOperatorRouteDelegateAuditStatus -ne "matched" -or
-        $deploymentModeClaimsReportFullOperatorRouteDelegateAuditFailureCount -ne 0) {
-        throw "Engine completion scorecard deployment-mode claims report readback is not release-ready: report '$deploymentModeClaimsReport', present=$deploymentModeClaimsReportPresent, gate=$deploymentModeClaimsReportGateStatus, warnings=$deploymentModeClaimsReportWarningCount, errors=$deploymentModeClaimsReportErrorCount, overstatedPackageClaims=$deploymentModeClaimsReportOverstatedClaimCount, boundaryAudit=$deploymentModeClaimsReportBoundaryAnnotationAuditStatus/$deploymentModeClaimsReportBoundaryAnnotationAuditFailureCount, coreRouteDelegateAudit=$deploymentModeClaimsReportCoreRouteDelegateAuditStatus/$deploymentModeClaimsReportCoreRouteDelegateAuditFailureCount, fullCommonRouteDelegateAudit=$deploymentModeClaimsReportFullCommonRouteDelegateAuditStatus/$deploymentModeClaimsReportFullCommonRouteDelegateAuditFailureCount, fullOperatorRouteDelegateAudit=$deploymentModeClaimsReportFullOperatorRouteDelegateAuditStatus/$deploymentModeClaimsReportFullOperatorRouteDelegateAuditFailureCount."
+        $deploymentModeClaimsReportFullOperatorRouteDelegateAuditFailureCount -ne 0 -or
+        $deploymentModeClaimsReportOperatorResponseJsonContractAuditStatus -ne "matched" -or
+        $deploymentModeClaimsReportOperatorResponseJsonContractAuditFailureCount -ne 0) {
+        throw "Engine completion scorecard deployment-mode claims report readback is not release-ready: report '$deploymentModeClaimsReport', present=$deploymentModeClaimsReportPresent, gate=$deploymentModeClaimsReportGateStatus, warnings=$deploymentModeClaimsReportWarningCount, errors=$deploymentModeClaimsReportErrorCount, overstatedPackageClaims=$deploymentModeClaimsReportOverstatedClaimCount, boundaryAudit=$deploymentModeClaimsReportBoundaryAnnotationAuditStatus/$deploymentModeClaimsReportBoundaryAnnotationAuditFailureCount, coreRouteDelegateAudit=$deploymentModeClaimsReportCoreRouteDelegateAuditStatus/$deploymentModeClaimsReportCoreRouteDelegateAuditFailureCount, fullCommonRouteDelegateAudit=$deploymentModeClaimsReportFullCommonRouteDelegateAuditStatus/$deploymentModeClaimsReportFullCommonRouteDelegateAuditFailureCount, fullOperatorRouteDelegateAudit=$deploymentModeClaimsReportFullOperatorRouteDelegateAuditStatus/$deploymentModeClaimsReportFullOperatorRouteDelegateAuditFailureCount, operatorResponseJsonContractAudit=$deploymentModeClaimsReportOperatorResponseJsonContractAuditStatus/$deploymentModeClaimsReportOperatorResponseJsonContractAuditFailureCount."
     }
 
     $dependencyHealthProviderManifest = Get-ScorecardRequiredPropertyValue `
@@ -641,7 +653,7 @@ function Write-EngineCompletionScorecardEvidenceSummary {
             -OwnerName "SrePostureEvidence"),
         [System.Globalization.CultureInfo]::InvariantCulture)
 
-    Write-Host ("Deployment-mode evidence: {0} global claims; not-claimed {1}; package-scoped claim packages {2}; known hazards {3}; transitive audit entries {4}; publish probes {5}; claims report {6}; gate {7}; targets {8}; warnings {9}; errors {10}; truthful package claims {11}; overstated package claims {12}; boundary audit {13}/{14}; core route-delegate audit {15}/{16}; full common route-delegate audit {17}/{18}; full operator route-delegate audit {19}/{20}." -f `
+    Write-Host ("Deployment-mode evidence: {0} global claims; not-claimed {1}; package-scoped claim packages {2}; known hazards {3}; transitive audit entries {4}; publish probes {5}; claims report {6}; gate {7}; targets {8}; warnings {9}; errors {10}; truthful package claims {11}; overstated package claims {12}; boundary audit {13}/{14}; core route-delegate audit {15}/{16}; full common route-delegate audit {17}/{18}; full operator route-delegate audit {19}/{20}; operator response JSON contract audit {21}/{22}." -f `
         $scorecard.DeploymentModeEvidence.GlobalClaimCount,
         $scorecard.DeploymentModeEvidence.GlobalNotClaimedCount,
         $scorecard.DeploymentModeEvidence.PackageScopedClaimPackageCount,
@@ -662,7 +674,9 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         $deploymentModeClaimsReportFullCommonRouteDelegateAuditStatus,
         $deploymentModeClaimsReportFullCommonRouteDelegateAuditFailureCount,
         $deploymentModeClaimsReportFullOperatorRouteDelegateAuditStatus,
-        $deploymentModeClaimsReportFullOperatorRouteDelegateAuditFailureCount)
+        $deploymentModeClaimsReportFullOperatorRouteDelegateAuditFailureCount,
+        $deploymentModeClaimsReportOperatorResponseJsonContractAuditStatus,
+        $deploymentModeClaimsReportOperatorResponseJsonContractAuditFailureCount)
 
     Write-Host ("Provider integration evidence: {0} rows; live proofs {1}; composition-only {2}; external-service gates {3}; default-skipped {4}; runtime contracts {5}; dependency-health providers {6} from {7} schema {8} ({9})." -f `
         $scorecard.ProviderIntegrationEvidence.EvidenceRowCount,

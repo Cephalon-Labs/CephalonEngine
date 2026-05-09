@@ -125,7 +125,10 @@ BeforeAll {
             [bool]$UseMinimalApiMapGet = $false,
             [bool]$UseFullOperatorMinimalApiMapGet = $false,
             [bool]$UseFullOperatorMinimalApiMapPost = $false,
-            [bool]$UseMapMethods = $true
+            [bool]$UseMapMethods = $true,
+            [string[]]$MissingResponseJsonContracts = @(),
+            [bool]$RegisterHttpJsonResolver = $true,
+            [bool]$RegisterMvcJsonResolver = $true
         )
 
         $sourcePath = Join-Path $RepoRoot "src\Cephalon.AspNetCore\Hosting\EngineWebApplicationExtensions.cs"
@@ -219,6 +222,77 @@ BeforeAll {
             '    private static Task<(TValue? Value, IResult? Error)> ReadOptionalJsonBodyAsync<TValue>(HttpContext context, object jsonTypeInfo) => throw new System.NotImplementedException();',
             '}'
         ) | Set-Content -LiteralPath $sourcePath -Encoding UTF8
+
+        $jsonContextPath = Join-Path $RepoRoot "src\Cephalon.AspNetCore\AspNetCoreJsonSerializerContext.cs"
+        New-Item -Path (Split-Path -Parent $jsonContextPath) -ItemType Directory -Force | Out-Null
+
+        $expectedResponseJsonContracts = @(
+            "RuntimeManifest",
+            "RuntimeIntrospectionSnapshot",
+            "AppProfile",
+            "ResilienceSelection",
+            "ScaffoldPlan",
+            "IReadOnlyList<CapabilityManifest>",
+            "IReadOnlyList<ModuleManifest>",
+            "IReadOnlyList<PackageManifest>",
+            "IReadOnlyList<PatternDescriptor>",
+            "IReadOnlyList<TechnologyDescriptor>",
+            "IReadOnlyList<TechnologyRuntimeSurface>",
+            "IReadOnlyList<TransportDescriptor>",
+            "DependencyHealthReport[]",
+            "LocalizedResourcesSnapshot",
+            "ReferenceDocsSurface",
+            "EngineOptions",
+            "PackagePolicy",
+            "FailurePolicy",
+            "TrustSnapshot",
+            "RuntimeStatusSnapshot",
+            "RuntimeOperationalStory",
+            "DiagnosticsSurface",
+            "DiagnosticsConventionsSurface"
+        )
+
+        $responseJsonContractAttributes = @(
+            foreach ($contract in $expectedResponseJsonContracts) {
+                if (@($MissingResponseJsonContracts) -notcontains $contract) {
+                    "[JsonSerializable(typeof($contract))]"
+                }
+            }
+        )
+
+        @(
+            'using System.Text.Json.Serialization;',
+            'namespace Cephalon.AspNetCore;',
+            '[JsonSerializable(typeof(EventPublicationHttpRequest))]',
+            $responseJsonContractAttributes,
+            'internal sealed partial class AspNetCoreJsonSerializerContext;'
+        ) | Set-Content -LiteralPath $jsonContextPath -Encoding UTF8
+
+        $builderExtensionsPath = Join-Path $RepoRoot "src\Cephalon.AspNetCore\Hosting\EngineWebApplicationBuilderExtensions.cs"
+        $httpResolverLine = if ($RegisterHttpJsonResolver) {
+            '        services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(static options => options.SerializerOptions.TypeInfoResolverChain.Insert(0, AspNetCoreJsonSerializerContext.Default));'
+        }
+        else {
+            '        _ = services;'
+        }
+        $mvcResolverLine = if ($RegisterMvcJsonResolver) {
+            '        services.Configure<Microsoft.AspNetCore.Mvc.JsonOptions>(static options => options.JsonSerializerOptions.TypeInfoResolverChain.Insert(0, AspNetCoreJsonSerializerContext.Default));'
+        }
+        else {
+            '        _ = services;'
+        }
+
+        @(
+            'namespace Cephalon.AspNetCore.Hosting;',
+            'public static class EngineWebApplicationBuilderExtensions',
+            '{',
+            '    public static void AddCephalon(IServiceCollection services)',
+            '    {',
+            $httpResolverLine,
+            $mvcResolverLine,
+            '    }',
+            '}'
+        ) | Set-Content -LiteralPath $builderExtensionsPath -Encoding UTF8
 
         return $sourcePath
     }
@@ -1358,6 +1432,12 @@ Describe "Get-DeploymentModeHazardInventory" {
         $inventory.FullOperatorRouteDelegateAuditStatus | Should -Be "matched"
         $inventory.FullOperatorRouteDelegateAuditCount | Should -Be 1
         $inventory.FullOperatorRouteDelegateAuditFailureCount | Should -Be 0
+        $inventory.OperatorResponseJsonContractAuditStatus | Should -Be "matched"
+        $inventory.OperatorResponseJsonContractAuditCount | Should -Be 1
+        $inventory.OperatorResponseJsonContractAuditFailureCount | Should -Be 0
+        $inventory.OperatorResponseJsonContractAudits[0].HttpJsonOptionsResolverRegistered | Should -BeTrue
+        $inventory.OperatorResponseJsonContractAudits[0].MvcJsonOptionsResolverRegistered | Should -BeTrue
+        @($inventory.OperatorResponseJsonContractAudits[0].SourceGeneratedResponseContracts).Count | Should -Be 23
     }
 
     It "marks dynamic Minimal API boundary hazards as failed when either required annotation is missing" {
@@ -1397,6 +1477,7 @@ Describe "Get-DeploymentModeHazardInventory" {
         $inventory.CoreRouteDelegateAuditStatus | Should -Be "matched"
         $inventory.FullCommonRouteDelegateAuditStatus | Should -Be "matched"
         $inventory.FullOperatorRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.OperatorResponseJsonContractAuditStatus | Should -Be "matched"
     }
 
     It "audits the ASP.NET Core core operator routes as request-delegate mapped when the route subset avoids Minimal API binding" {
@@ -1452,6 +1533,12 @@ Describe "Get-DeploymentModeHazardInventory" {
         $inventory.FullOperatorRouteDelegateAudits[0].PostHelperUsesMapMethods | Should -BeTrue
         $inventory.FullOperatorRouteDelegateAudits[0].RequestBodyJsonHelperFound | Should -BeTrue
         @($inventory.FullOperatorRouteDelegateAudits[0].SourceGeneratedRequestBodyContracts).Count | Should -Be 5
+        $inventory.OperatorResponseJsonContractAuditStatus | Should -Be "matched"
+        $inventory.OperatorResponseJsonContractAuditCount | Should -Be 1
+        $inventory.OperatorResponseJsonContractAuditFailureCount | Should -Be 0
+        $inventory.OperatorResponseJsonContractAudits[0].HttpJsonOptionsResolverRegistered | Should -BeTrue
+        $inventory.OperatorResponseJsonContractAudits[0].MvcJsonOptionsResolverRegistered | Should -BeTrue
+        @($inventory.OperatorResponseJsonContractAudits[0].SourceGeneratedResponseContracts).Count | Should -Be 23
     }
 
     It "marks the core operator route-delegate audit as failed when Minimal API binding returns to the core route subset" {
@@ -1565,6 +1652,44 @@ Describe "Get-DeploymentModeHazardInventory" {
         $inventory.FullOperatorRouteDelegateAuditFailures[0].Failures | Should -Contain "full-operator-routes-use-mappost-delegate-binding"
     }
 
+    It "marks the operator response JSON contract audit as failed when a response contract is missing" {
+        $repo = New-TempRepoRoot -Projects @()
+        Set-TempAspNetCoreOperatorSource -RepoRoot $repo.Root -MissingResponseJsonContracts @("RuntimeIntrospectionSnapshot") | Out-Null
+
+        $manifest = [pscustomobject]@{
+            deploymentModeEligibility = [pscustomobject]@{
+                packages = @(
+                    [pscustomobject]@{
+                        packageName = "Cephalon.AspNetCore"
+                        nugetId = "Cephalon.AspNetCore"
+                        claimAuditTier = "high"
+                        supportedModes = @()
+                        requiredProjectProperties = @()
+                        knownHazards = @(
+                            [pscustomobject]@{
+                                kind = "dynamic-minimal-api-operator-route-binding"
+                                site = "src/Cephalon.AspNetCore/Hosting/EngineWebApplicationExtensions.cs:7"
+                                pattern = "MapCephalon dynamic route binding"
+                                remediation = "operator responses use source-generated JSON metadata"
+                            }
+                        )
+                    }
+                )
+            }
+        }
+
+        $inventory = Get-DeploymentModeHazardInventory -Manifest $manifest -RepoRoot $repo.Root
+
+        $inventory.CoreRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.FullCommonRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.FullOperatorRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.OperatorResponseJsonContractAuditStatus | Should -Be "failed"
+        $inventory.OperatorResponseJsonContractAuditCount | Should -Be 1
+        $inventory.OperatorResponseJsonContractAuditFailureCount | Should -Be 1
+        $inventory.OperatorResponseJsonContractAuditFailures[0].MissingResponseJsonContracts | Should -Contain "RuntimeIntrospectionSnapshot"
+        $inventory.OperatorResponseJsonContractAuditFailures[0].Failures | Should -Contain "source-generated-response-contract-missing:RuntimeIntrospectionSnapshot"
+    }
+
     It "returns an empty inventory when the manifest has no eligibility block" {
         $inventory = Get-DeploymentModeHazardInventory -Manifest ([pscustomobject]@{ deploymentModes = @{} })
         $inventory.TotalPackages | Should -Be 0
@@ -1575,6 +1700,7 @@ Describe "Get-DeploymentModeHazardInventory" {
         $inventory.CoreRouteDelegateAuditStatus | Should -Be "not-applicable"
         $inventory.FullCommonRouteDelegateAuditStatus | Should -Be "not-applicable"
         $inventory.FullOperatorRouteDelegateAuditStatus | Should -Be "not-applicable"
+        $inventory.OperatorResponseJsonContractAuditStatus | Should -Be "not-applicable"
     }
 }
 
@@ -1714,6 +1840,7 @@ Describe "Invoke-DeploymentModeClaimValidation (integration)" {
         $inventory.CoreRouteDelegateAuditFailureCount | Should -Be 1
         $inventory.FullCommonRouteDelegateAuditStatus | Should -Be "matched"
         $inventory.FullOperatorRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.OperatorResponseJsonContractAuditStatus | Should -Be "matched"
     }
 
     It "throws after writing reports when the full common operator route-delegate audit fails" {
@@ -1766,6 +1893,7 @@ Describe "Invoke-DeploymentModeClaimValidation (integration)" {
         $inventory.FullCommonRouteDelegateAuditStatus | Should -Be "failed"
         $inventory.FullCommonRouteDelegateAuditFailureCount | Should -Be 1
         $inventory.FullOperatorRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.OperatorResponseJsonContractAuditStatus | Should -Be "matched"
     }
 
     It "throws after writing reports when the full operator route-delegate audit fails" {
@@ -1818,6 +1946,61 @@ Describe "Invoke-DeploymentModeClaimValidation (integration)" {
         $inventory.FullCommonRouteDelegateAuditStatus | Should -Be "matched"
         $inventory.FullOperatorRouteDelegateAuditStatus | Should -Be "failed"
         $inventory.FullOperatorRouteDelegateAuditFailureCount | Should -BeGreaterThan 0
+        $inventory.OperatorResponseJsonContractAuditStatus | Should -Be "matched"
+    }
+
+    It "throws after writing reports when the operator response JSON contract audit fails" {
+        $repo = New-TempRepoRoot -Projects @()
+        Set-TempAspNetCoreOperatorSource -RepoRoot $repo.Root -RegisterMvcJsonResolver:$false | Out-Null
+
+        $manifestPath = Join-Path $repo.Root "deployment-mode-support.json"
+        @{
+            deploymentModes = @{
+                trim       = @{ status = "not-claimed" }
+                nativeAot  = @{ status = "not-claimed" }
+                singleFile = @{ status = "not-claimed" }
+            }
+            deploymentModeEligibility = @{
+                packages = @(
+                    @{
+                        packageName = "Cephalon.AspNetCore"
+                        nugetId = "Cephalon.AspNetCore"
+                        claimAuditTier = "high"
+                        supportedModes = @()
+                        requiredProjectProperties = @()
+                        knownHazards = @(
+                            @{
+                                kind = "dynamic-minimal-api-operator-route-binding"
+                                site = "src/Cephalon.AspNetCore/Hosting/EngineWebApplicationExtensions.cs:7"
+                                pattern = "MapCephalon dynamic route binding"
+                                remediation = "operator responses use source-generated JSON metadata"
+                            }
+                        )
+                    }
+                )
+            }
+        } | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $manifestPath -Encoding UTF8
+
+        $outDir = Join-Path $repo.Root "out"
+        {
+            Invoke-DeploymentModeClaimValidation `
+                -DeploymentMode "nativeAot" `
+                -ManifestPath $manifestPath `
+                -OutputPath $outDir `
+                -RepoRoot $repo.Root `
+                -SkipPublish
+        } | Should -Throw "*operator-response-json-contract-audit-failed*"
+
+        $hazardInventoryPath = Join-Path $outDir "hazard-inventory.json"
+        Test-Path -LiteralPath $hazardInventoryPath | Should -BeTrue
+        $inventory = Get-Content -LiteralPath $hazardInventoryPath -Raw | ConvertFrom-Json
+        $inventory.BoundaryAnnotationAuditStatus | Should -Be "matched"
+        $inventory.CoreRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.FullCommonRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.FullOperatorRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.OperatorResponseJsonContractAuditStatus | Should -Be "failed"
+        $inventory.OperatorResponseJsonContractAuditFailureCount | Should -Be 1
+        $inventory.OperatorResponseJsonContractAuditFailures[0].Failures | Should -Contain "mvc-json-source-generated-resolver-not-registered"
     }
 
     It "throws when the aggregate verdict is claim-overstated" {

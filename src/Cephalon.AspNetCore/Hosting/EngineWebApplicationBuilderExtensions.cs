@@ -74,7 +74,8 @@ public static class EngineWebApplicationBuilderExtensions
     /// <returns>The same builder instance for fluent composition.</returns>
     /// <remarks>
     /// This method wires OpenAPI, Scalar-ready document transformers, health checks, hosted runtime
-    /// startup, and the built-in ASP.NET Core transport mappers before registering the engine itself.
+    /// startup, source-generated JSON metadata for Cephalon operator responses, and the built-in
+    /// ASP.NET Core transport mappers before registering the engine itself.
     /// </remarks>
     public static WebApplicationBuilder AddCephalon(
         this WebApplicationBuilder builder,
@@ -83,6 +84,20 @@ public static class EngineWebApplicationBuilderExtensions
         ArgumentNullException.ThrowIfNull(builder);
         builder.AddCephalonProjectConfigurations();
         builder.AddCephalonHttpLogging();
+        builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(static options =>
+        {
+            if (!options.SerializerOptions.TypeInfoResolverChain.Contains(AspNetCoreJsonSerializerContext.Default))
+            {
+                options.SerializerOptions.TypeInfoResolverChain.Insert(0, AspNetCoreJsonSerializerContext.Default);
+            }
+        });
+        builder.Services.Configure<Microsoft.AspNetCore.Mvc.JsonOptions>(static options =>
+        {
+            if (!options.JsonSerializerOptions.TypeInfoResolverChain.Contains(AspNetCoreJsonSerializerContext.Default))
+            {
+                options.JsonSerializerOptions.TypeInfoResolverChain.Insert(0, AspNetCoreJsonSerializerContext.Default);
+            }
+        });
 
         foreach (var documentName in OpenApiDocumentNames.Resolve(builder.Configuration))
         {

@@ -967,7 +967,7 @@ WebApplicationBuilder AddCephalon(this WebApplicationBuilder builder, Action<Eng
 
 Adds Cephalon to the builder and allows additional code-based engine configuration.
 
-Remarks: This method wires OpenAPI, Scalar-ready document transformers, health checks, hosted runtime startup, and the built-in ASP.NET Core transport mappers before registering the engine itself.
+Remarks: This method wires OpenAPI, Scalar-ready document transformers, health checks, hosted runtime startup, source-generated JSON metadata for Cephalon operator responses, and the built-in ASP.NET Core transport mappers before registering the engine itself.
 
 Returns: The same builder instance for fluent composition.
 
@@ -1055,7 +1055,7 @@ Remarks: This method maps the engine introspection surface under `/engine`, heal
 
 When the REST transport is active, it also enables OpenAPI and Scalar documentation while keeping non-REST protocol routes out of the generated API description.
 
-The full operator route surface now avoids direct ASP.NET Core Minimal API delegate binding for the operator catalog, but the package still has an explicit trim and Native AOT boundary until response/output JSON contracts and non-operator host endpoints are promoted together.
+The full operator route surface now avoids direct ASP.NET Core Minimal API delegate binding for the operator catalog and common operator responses have source-generated JSON metadata, but the package still has an explicit trim and Native AOT boundary until non-operator host/documentation endpoints are promoted.
 
 Setting `Engine:AspNetCore:OperatorSurface:Mode` to `core` maps the bounded core operator routes through prebuilt request delegates instead of Minimal API delegate binding. That mode reduces the dynamic route boundary for the core route subset, but it does not make the full adapter surface a trim or Native AOT support claim.
 

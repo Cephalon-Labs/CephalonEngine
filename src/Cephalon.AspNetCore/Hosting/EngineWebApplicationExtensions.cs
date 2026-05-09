@@ -48,11 +48,11 @@ namespace Cephalon.AspNetCore.Hosting;
 public static class EngineWebApplicationExtensions
 {
     private const string DynamicRouteMappingRequiresUnreferencedCodeMessage =
-        "Cephalon.AspNetCore maps operator endpoints through ASP.NET Core Minimal API delegate binding. " +
-        "The current full operator surface is not a trim-safe support claim; use it only when reflection-based route binding is acceptable.";
+        "Cephalon.AspNetCore still carries an explicit trim boundary for the full adapter endpoint surface. " +
+        "Use it only when the remaining non-promoted endpoint surfaces are acceptable.";
     private const string DynamicRouteMappingRequiresDynamicCodeMessage =
-        "Cephalon.AspNetCore maps operator endpoints through ASP.NET Core Minimal API delegate binding. " +
-        "The current full operator surface is not a Native AOT support claim; use it only when dynamic route binding is acceptable.";
+        "Cephalon.AspNetCore still carries an explicit Native AOT boundary for the full adapter endpoint surface. " +
+        "Use it only when the remaining non-promoted endpoint surfaces are acceptable.";
     private const string OpenApiToggleScriptResourceName = "Cephalon.AspNetCore.Assets.openapi-toggle.js";
     private const string ScalarFaviconResourceName = "Cephalon.AspNetCore.Assets.docs-favicon.svg";
     private const string ScalarRoutePrefixToken = "__CEPHALON_SCALAR_ROUTE_PREFIX__";
@@ -87,8 +87,8 @@ public static class EngineWebApplicationExtensions
     /// </para>
     /// <para>
     /// The full operator route surface now avoids direct ASP.NET Core Minimal API delegate binding for the
-    /// operator catalog, but the package still has an explicit trim and Native AOT boundary until response/output
-    /// JSON contracts and non-operator host endpoints are promoted together.
+    /// operator catalog and common operator responses have source-generated JSON metadata, but the package still
+    /// has an explicit trim and Native AOT boundary until non-operator host/documentation endpoints are promoted.
     /// </para>
     /// <para>
     /// Setting <c>Engine:AspNetCore:OperatorSurface:Mode</c> to <c>core</c> maps the bounded core

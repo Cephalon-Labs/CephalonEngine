@@ -121,6 +121,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
                 FullCommonRouteDelegateAuditFailureCount = 0
                 FullOperatorRouteDelegateAuditStatus = "matched"
                 FullOperatorRouteDelegateAuditFailureCount = 0
+                OperatorResponseJsonContractAuditStatus = "matched"
+                OperatorResponseJsonContractAuditFailureCount = 0
             }
         }
 
@@ -227,6 +229,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
                 FullCommonRouteDelegateAuditFailureCount = 0
                 FullOperatorRouteDelegateAuditStatus = "matched"
                 FullOperatorRouteDelegateAuditFailureCount = 0
+                OperatorResponseJsonContractAuditStatus = "matched"
+                OperatorResponseJsonContractAuditFailureCount = 0
             }
         }
         $claimsReport | ConvertTo-Json -Depth 20 | Set-Content -LiteralPath $claimsReportPath -Encoding UTF8
@@ -243,7 +247,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
 
         $json = Get-Content -LiteralPath $result.Paths.JsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
 
-        $json.'$schemaVersion' | Should -Be "1.17.0"
+        $json.'$schemaVersion' | Should -Be "1.18.0"
         $json.SourceDocument | Should -Be "docs/engine-completion-scorecard.md"
         $json.ConformanceMatrix | Should -Be "docs/conformance-matrix.md"
         $json.DeploymentModeManifest | Should -Be "scripts/deployment-mode-support.json"
@@ -284,6 +288,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.Summary.DeploymentModeClaimsReportCoreRouteDelegateAuditFailures | Should -Be 0
         $json.Summary.DeploymentModeClaimsReportFullCommonRouteDelegateAuditFailures | Should -Be 0
         $json.Summary.DeploymentModeClaimsReportFullOperatorRouteDelegateAuditFailures | Should -Be 0
+        $json.Summary.DeploymentModeClaimsReportOperatorResponseJsonContractAuditFailures | Should -Be 0
         $json.Summary.AdoptionSmokeScenarioCount | Should -Be 1
         $json.Summary.AdoptionSmokeRuntimeProbeCount | Should -Be 6
         $json.Summary.AdoptionSmokeAssertionCount | Should -Be 7
@@ -396,6 +401,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.DeploymentModeEvidence.ClaimsReportHazardInventoryFullCommonRouteDelegateAuditFailureCount | Should -Be 0
         $json.DeploymentModeEvidence.ClaimsReportHazardInventoryFullOperatorRouteDelegateAuditStatus | Should -Be "matched"
         $json.DeploymentModeEvidence.ClaimsReportHazardInventoryFullOperatorRouteDelegateAuditFailureCount | Should -Be 0
+        $json.DeploymentModeEvidence.ClaimsReportHazardInventoryOperatorResponseJsonContractAuditStatus | Should -Be "matched"
+        $json.DeploymentModeEvidence.ClaimsReportHazardInventoryOperatorResponseJsonContractAuditFailureCount | Should -Be 0
         $json.DeploymentModeEvidence.PackageRows.PackageName | Should -Contain "Cephalon.Diagnostics"
         $json.DeploymentModeEvidence.PackageRows.PackageName | Should -Contain "Cephalon.Abstractions"
         $json.DeploymentModeEvidence.PackageRows.PackageName | Should -Contain "Cephalon.Scaffolding"
@@ -804,6 +811,8 @@ Describe "publish-engine-completion-scorecard.ps1" {
                 FullCommonRouteDelegateAuditFailureCount = 0
                 FullOperatorRouteDelegateAuditStatus = "matched"
                 FullOperatorRouteDelegateAuditFailureCount = 0
+                OperatorResponseJsonContractAuditStatus = "matched"
+                OperatorResponseJsonContractAuditFailureCount = 0
             }
         }
         $report | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $reportPath -Encoding UTF8
