@@ -127,6 +127,8 @@
 
 The libraries in this section are reference systems for ideas, not required Cephalon dependencies. For core engine work, extract proven capabilities from their public behavior and documentation, then rebuild the useful shape as Cephalon-owned contracts, configuration, runtime catalogs, diagnostics, validation, and operator surfaces. Direct package usage belongs only in optional interop, migration, or compatibility companions; it must not define engine completeness.
 
+Extraction work should target superiority, not imitation. A Cephalon-native version of an ecosystem capability should be judged against the reference library on capability breadth, configuration model, host/provider neutrality, developer ceremony, runtime truth, operational control, failure handling, performance posture, security/compliance/auditability, testability, documentation quality, and dependency/licensing/upgrade risk. If Cephalon cannot yet outperform the reference in a dimension, record that as a known gap rather than borrowing the other framework's package to hide it.
+
 ### MediatR
 
 **What it does:** In-process mediator pattern implementation for .NET. Decouples request/command senders from handlers.
