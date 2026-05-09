@@ -1,6 +1,7 @@
 using Cephalon.AspNetCore.Documentation;
 using Cephalon.AspNetCore.Diagnostics;
 using Cephalon.AspNetCore.Health;
+using Cephalon.AspNetCore;
 using Cephalon.Abstractions.AppModel;
 using Cephalon.Abstractions.Audit;
 using Cephalon.Abstractions.Authorization;
@@ -3417,11 +3418,15 @@ public static class EngineWebApplicationExtensions
             StringComparison.Ordinal);
         rendered = rendered.Replace(
             ScalarDocumentNamesToken,
-            JsonSerializer.Serialize(documentNames),
+            JsonSerializer.Serialize(
+                documentNames.ToArray(),
+                AspNetCoreJsonSerializerContext.Default.StringArray),
             StringComparison.Ordinal);
         rendered = rendered.Replace(
             ScalarDefaultDocumentNameToken,
-            JsonSerializer.Serialize(defaultDocumentName),
+            JsonSerializer.Serialize(
+                defaultDocumentName,
+                AspNetCoreJsonSerializerContext.Default.String),
             StringComparison.Ordinal);
 
         return rendered;
@@ -3838,59 +3843,6 @@ public static class EngineWebApplicationExtensions
         return exception.Message.Contains(
             "is not registered in the active retrieval runtime",
             StringComparison.OrdinalIgnoreCase);
-    }
-
-    private sealed class EventPublicationHttpRequest
-    {
-        public string? Id { get; init; }
-
-        public string? ChannelId { get; init; }
-
-        public string? EventType { get; init; }
-
-        public JsonElement? Payload { get; init; }
-
-        public DateTimeOffset? OccurredAtUtc { get; init; }
-
-        public string? ContentType { get; init; }
-
-        public string? CorrelationId { get; init; }
-
-        public string? TenantId { get; init; }
-
-        public IReadOnlyDictionary<string, string>? Headers { get; init; }
-
-        public IReadOnlyDictionary<string, string>? Metadata { get; init; }
-
-        public string? ActorId { get; init; }
-    }
-
-    private sealed class AgentToolExecutionHttpRequest
-    {
-        public string? RunId { get; init; }
-
-        public IReadOnlyDictionary<string, string>? Arguments { get; init; }
-
-        public string? ActorId { get; init; }
-
-        public string? CorrelationId { get; init; }
-
-        public int? Attempt { get; init; }
-
-        public IReadOnlyDictionary<string, string>? Metadata { get; init; }
-    }
-
-    private sealed class KnowledgeQueryHttpRequest
-    {
-        public string? QueryText { get; init; }
-
-        public int? MaxResults { get; init; }
-
-        public string? ActorId { get; init; }
-
-        public string? CorrelationId { get; init; }
-
-        public IReadOnlyDictionary<string, string>? Metadata { get; init; }
     }
 
     private static string LoadEmbeddedAsset(string resourceName, string assetDescription)

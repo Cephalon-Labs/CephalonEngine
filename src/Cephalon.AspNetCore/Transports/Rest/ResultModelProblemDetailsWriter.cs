@@ -1,16 +1,14 @@
 using System.Text.Json;
+using Cephalon.AspNetCore;
 using Cephalon.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Options;
-using HttpJsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 
 namespace Cephalon.AspNetCore.Transports.Rest;
 
 internal sealed class ResultModelProblemDetailsWriter(
-    IConfiguration configuration,
-    IOptions<HttpJsonOptions> jsonOptions) : IProblemDetailsWriter
+    IConfiguration configuration) : IProblemDetailsWriter
 {
     public bool CanWrite(ProblemDetailsContext context)
     {
@@ -61,7 +59,7 @@ internal sealed class ResultModelProblemDetailsWriter(
         await JsonSerializer.SerializeAsync(
                 context.HttpContext.Response.Body,
                 envelope,
-                jsonOptions.Value.SerializerOptions,
+                AspNetCoreJsonSerializerContext.Default.ResultModelError,
                 context.HttpContext.RequestAborted)
             .ConfigureAwait(false);
     }

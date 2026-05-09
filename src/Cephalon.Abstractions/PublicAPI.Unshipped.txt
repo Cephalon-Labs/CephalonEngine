@@ -1,1 +1,3 @@
 #nullable enable
+Cephalon.Abstractions.Behaviors.IBehaviorModuleBuilder.Add<TBehavior, TInput, TOutput>(System.Text.Json.Serialization.Metadata.JsonTypeInfo<TInput>! inputJsonTypeInfo) -> Cephalon.Abstractions.Behaviors.IBehaviorModuleBuilder!
+Cephalon.Abstractions.Behaviors.IBehaviorModuleBuilder.Add<TBehavior, TInput, TOutput>(System.Text.Json.Serialization.Metadata.JsonTypeInfo<TInput>! inputJsonTypeInfo, System.Action<Cephalon.Abstractions.Behaviors.IBehaviorTopologyBuilder!>! configureTopology) -> Cephalon.Abstractions.Behaviors.IBehaviorModuleBuilder!

@@ -61,10 +61,9 @@ internal sealed class BehaviorModule(
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        var options = new BehaviorOptions();
-
-        // Bind from configuration first (Engine:Behaviors section)
-        configuration?.GetSection("Engine:Behaviors")?.Bind(options);
+        var options = configuration is null
+            ? new BehaviorOptions()
+            : BehaviorOptions.FromConfiguration(configuration);
 
         // Then apply code-level overrides (code wins over config)
         configureOptions?.Invoke(options);

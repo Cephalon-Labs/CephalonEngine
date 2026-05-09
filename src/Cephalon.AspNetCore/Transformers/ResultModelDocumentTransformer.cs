@@ -630,10 +630,7 @@ internal sealed class ResultModelDocumentTransformer : IOpenApiDocumentTransform
         if (schema is OpenApiSchema concreteSchema)
             return concreteSchema;
 
-        return TryGetNestedSchema(schema, "RecursiveTarget")
-               ?? TryGetNestedSchema(schema, "Target")
-               ?? TryGetNestedSchema(schema, "Value")
-               ?? TryGetNestedSchema(schema, "Schema");
+        return TryGetNestedSchema(schema);
     }
 
     private static string? TryGetSchemaComponentId(IOpenApiSchema? schema, OpenApiDocument document)
@@ -668,40 +665,12 @@ internal sealed class ResultModelDocumentTransformer : IOpenApiDocumentTransform
 
     private static string? TryGetReferenceId(IOpenApiSchema? schema)
     {
-        if (schema is null)
+        if (schema is not OpenApiSchemaReference schemaReference)
             return null;
 
-        try
-        {
-            var targetElementIdProperty = schema.GetType().GetProperty("TargetElementId");
-            if (targetElementIdProperty?.GetValue(schema) is string targetElementId &&
-                !string.IsNullOrWhiteSpace(targetElementId))
-            {
-                return targetElementId;
-            }
-        }
-        catch
-        {
-            // ignored
-        }
-
-        try
-        {
-            var referenceProperty = schema.GetType().GetProperty("Reference");
-            var reference = referenceProperty?.GetValue(schema);
-            if (reference is null)
-                return null;
-
-            var idProperty = reference.GetType().GetProperty("Id") ?? reference.GetType().GetProperty("id");
-            if (idProperty?.GetValue(reference) is string referenceId && !string.IsNullOrWhiteSpace(referenceId))
-                return referenceId;
-        }
-        catch
-        {
-            // ignored
-        }
-
-        return null;
+        return !string.IsNullOrWhiteSpace(schemaReference.Reference?.Id)
+            ? schemaReference.Reference.Id
+            : null;
     }
 
     private static string? TryGetSchemaIdValue(IOpenApiSchema? schema)
@@ -709,39 +678,26 @@ internal sealed class ResultModelDocumentTransformer : IOpenApiDocumentTransform
         if (schema is null)
             return null;
 
-        if (schema is OpenApiSchema openApiSchema && !string.IsNullOrWhiteSpace(openApiSchema.Id))
-            return openApiSchema.Id;
-
-        try
-        {
-            var idProperty = schema.GetType().GetProperty("Id") ?? schema.GetType().GetProperty("id");
-            if (idProperty?.GetValue(schema) is string schemaId && !string.IsNullOrWhiteSpace(schemaId))
-                return schemaId;
-        }
-        catch
-        {
-            // ignored
-        }
-
-        return null;
+        return !string.IsNullOrWhiteSpace(schema.Id)
+            ? schema.Id
+            : null;
     }
 
-    private static OpenApiSchema? TryGetNestedSchema(object instance, string propertyName)
+    private static OpenApiSchema? TryGetNestedSchema(IOpenApiSchema schema)
     {
-        try
-        {
-            var property = instance.GetType().GetProperty(propertyName);
-            return property?.GetValue(instance) switch
-            {
-                OpenApiSchema openApiSchema => openApiSchema,
-                IOpenApiSchema nestedSchema => UnwrapSchema(nestedSchema),
-                _ => null
-            };
-        }
-        catch
+        if (schema is not OpenApiSchemaReference schemaReference)
         {
             return null;
         }
+
+        if (schemaReference.RecursiveTarget is not null)
+        {
+            return schemaReference.RecursiveTarget;
+        }
+
+        return schemaReference.Target is null
+            ? null
+            : UnwrapSchema(schemaReference.Target);
     }
 
     private static OpenApiSchema CloneWithoutErrors(OpenApiSchema source)

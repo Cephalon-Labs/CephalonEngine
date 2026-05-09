@@ -824,7 +824,9 @@ public sealed class EngineBuilder
 
         try
         {
-            var loadedPackages = ModulePackageLoader.Load(packages, packageDirectories, packagePolicy, trustPolicy);
+            var loadedPackages = HasPackageInputs()
+                ? ModulePackageLoader.Load(packages, packageDirectories, packagePolicy, trustPolicy)
+                : [];
             var packageManifests = loadedPackages
                 .Select(package => CreatePackageManifest(package, trustPolicy))
                 .ToArray();
@@ -1218,6 +1220,11 @@ public sealed class EngineBuilder
             buildActivity?.SetStatus(ActivityStatusCode.Error, exception.Message);
             throw;
         }
+    }
+
+    private bool HasPackageInputs()
+    {
+        return packages.Count > 0 || packageDirectories.Count > 0;
     }
 
     private static CapabilityManifest[] ApplyCapabilityOptions(

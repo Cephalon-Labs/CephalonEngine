@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Text.Json.Serialization.Metadata;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Transports;
@@ -6522,6 +6523,15 @@ public sealed class BehaviorRestProjectionTests
             return this;
         }
 
+        public IBehaviorModuleBuilder Add<TBehavior, TInput, TOutput>(JsonTypeInfo<TInput> inputJsonTypeInfo)
+            where TBehavior : class, IAppBehavior<TInput, TOutput>
+            where TInput : notnull
+        {
+            ArgumentNullException.ThrowIfNull(inputJsonTypeInfo);
+            Registrations.Add(new OwnedBehaviorRegistration(typeof(TBehavior), HasExplicitTopologyOverride: false, HasExplicitExecutionSlot: true));
+            return this;
+        }
+
         public IBehaviorModuleBuilder Add(Type behaviorType)
         {
             ArgumentNullException.ThrowIfNull(behaviorType);
@@ -6546,6 +6556,18 @@ public sealed class BehaviorRestProjectionTests
             where TBehavior : class, IAppBehavior<TInput, TOutput>
             where TInput : notnull
         {
+            ArgumentNullException.ThrowIfNull(configureTopology);
+            Registrations.Add(new OwnedBehaviorRegistration(typeof(TBehavior), HasExplicitTopologyOverride: true, HasExplicitExecutionSlot: true));
+            return this;
+        }
+
+        public IBehaviorModuleBuilder Add<TBehavior, TInput, TOutput>(
+            JsonTypeInfo<TInput> inputJsonTypeInfo,
+            Action<IBehaviorTopologyBuilder> configureTopology)
+            where TBehavior : class, IAppBehavior<TInput, TOutput>
+            where TInput : notnull
+        {
+            ArgumentNullException.ThrowIfNull(inputJsonTypeInfo);
             ArgumentNullException.ThrowIfNull(configureTopology);
             Registrations.Add(new OwnedBehaviorRegistration(typeof(TBehavior), HasExplicitTopologyOverride: true, HasExplicitExecutionSlot: true));
             return this;

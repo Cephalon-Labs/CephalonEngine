@@ -294,21 +294,25 @@ public sealed class XmlCommentsDocumentTransformer(string[]? xmlFiles = null) : 
             return concreteSchema;
         }
 
-        var targetElementIdProperty = schema.GetType().GetProperty("TargetElementId");
-        if (targetElementIdProperty?.GetValue(schema) is string targetElementId &&
-            !string.IsNullOrWhiteSpace(targetElementId) &&
-            document.Components?.Schemas is not null &&
-            document.Components.Schemas.TryGetValue(targetElementId, out var referencedSchema))
+        if (schema is OpenApiSchemaReference schemaReference)
         {
-            return ResolveSchema(referencedSchema, document);
-        }
+            var referenceId = schemaReference.Reference?.Id;
+            if (!string.IsNullOrWhiteSpace(referenceId) &&
+                document.Components?.Schemas is not null &&
+                document.Components.Schemas.TryGetValue(referenceId, out var referencedSchema))
+            {
+                return ResolveSchema(referencedSchema, document);
+            }
 
-        var targetProperty = schema.GetType().GetProperty("Target") ??
-                             schema.GetType().GetProperty("RecursiveTarget") ??
-                             schema.GetType().GetProperty("Value");
-        if (targetProperty?.GetValue(schema) is IOpenApiSchema targetSchema)
-        {
-            return ResolveSchema(targetSchema, document);
+            if (schemaReference.Target is not null)
+            {
+                return ResolveSchema(schemaReference.Target, document);
+            }
+
+            if (schemaReference.RecursiveTarget is not null)
+            {
+                return ResolveSchema(schemaReference.RecursiveTarget, document);
+            }
         }
 
         return null;

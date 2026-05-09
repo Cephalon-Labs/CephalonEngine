@@ -604,6 +604,89 @@ The hosted path to the type index.
 
 ## Namespace Cephalon.AspNetCore.Hosting
 
+<a id="type-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest"></a>
+
+### `AgentToolExecutionHttpRequest`
+
+Represents the operator HTTP request body used to execute an agent tool.
+
+#### Declaration
+```csharp
+public sealed class AgentToolExecutionHttpRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest-ctor"></a>
+
+##### `AgentToolExecutionHttpRequest`
+
+```csharp
+AgentToolExecutionHttpRequest()
+```
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest-actorid"></a>
+
+##### `ActorId`
+
+```csharp
+string ActorId { get; set; }
+```
+
+Gets or initializes the actor identifier responsible for the run.
+
+<a id="member-p-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest-arguments"></a>
+
+##### `Arguments`
+
+```csharp
+IReadOnlyDictionary<string, string> Arguments { get; set; }
+```
+
+Gets or initializes the tool arguments.
+
+<a id="member-p-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest-attempt"></a>
+
+##### `Attempt`
+
+```csharp
+int? Attempt { get; set; }
+```
+
+Gets or initializes the execution attempt number.
+
+<a id="member-p-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; set; }
+```
+
+Gets or initializes the correlation identifier for the run.
+
+<a id="member-p-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; set; }
+```
+
+Gets or initializes metadata to attach to the run.
+
+<a id="member-p-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest-runid"></a>
+
+##### `RunId`
+
+```csharp
+string RunId { get; set; }
+```
+
+Gets or initializes the caller-supplied run identifier.
+
 <a id="type-cephalon-aspnetcore-hosting-apiroutesoptions"></a>
 
 ### `ApiRoutesOptions`
@@ -975,6 +1058,139 @@ Returns: The same application instance for fluent host composition.
 Parameters:
 - `app`: The ASP.NET Core application to extend.
 
+<a id="type-cephalon-aspnetcore-hosting-eventpublicationhttprequest"></a>
+
+### `EventPublicationHttpRequest`
+
+Represents the operator HTTP request body used to publish an event through the active eventing runtime.
+
+#### Declaration
+```csharp
+public sealed class EventPublicationHttpRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-hosting-eventpublicationhttprequest-ctor"></a>
+
+##### `EventPublicationHttpRequest`
+
+```csharp
+EventPublicationHttpRequest()
+```
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-actorid"></a>
+
+##### `ActorId`
+
+```csharp
+string ActorId { get; set; }
+```
+
+Gets or initializes the actor identifier responsible for the publication.
+
+<a id="member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-channelid"></a>
+
+##### `ChannelId`
+
+```csharp
+string ChannelId { get; set; }
+```
+
+Gets or initializes the target event channel identifier.
+
+<a id="member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-contenttype"></a>
+
+##### `ContentType`
+
+```csharp
+string ContentType { get; set; }
+```
+
+Gets or initializes the payload content type.
+
+<a id="member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; set; }
+```
+
+Gets or initializes the correlation identifier for the publication.
+
+<a id="member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-eventtype"></a>
+
+##### `EventType`
+
+```csharp
+string EventType { get; set; }
+```
+
+Gets or initializes the logical event type.
+
+<a id="member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-headers"></a>
+
+##### `Headers`
+
+```csharp
+IReadOnlyDictionary<string, string> Headers { get; set; }
+```
+
+Gets or initializes provider-specific event headers.
+
+<a id="member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; set; }
+```
+
+Gets or initializes the caller-supplied publication identifier.
+
+<a id="member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; set; }
+```
+
+Gets or initializes metadata to attach to the publication.
+
+<a id="member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-occurredatutc"></a>
+
+##### `OccurredAtUtc`
+
+```csharp
+DateTimeOffset? OccurredAtUtc { get; set; }
+```
+
+Gets or initializes the event occurrence timestamp.
+
+<a id="member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-payload"></a>
+
+##### `Payload`
+
+```csharp
+JsonElement? Payload { get; set; }
+```
+
+Gets or initializes the event payload as JSON.
+
+<a id="member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+string TenantId { get; set; }
+```
+
+Gets or initializes the tenant identifier associated with the event.
+
 <a id="type-cephalon-aspnetcore-hosting-httprequestresponseloggingoptions"></a>
 
 ### `HttpRequestResponseLoggingOptions`
@@ -1138,6 +1354,79 @@ Maps the transport's routes onto the supplied application.
 Parameters:
 - `app`: The ASP.NET Core application to extend.
 - `runtime`: The runtime whose manifest and services back the mapped routes.
+
+<a id="type-cephalon-aspnetcore-hosting-knowledgequeryhttprequest"></a>
+
+### `KnowledgeQueryHttpRequest`
+
+Represents the operator HTTP request body used to query a knowledge collection.
+
+#### Declaration
+```csharp
+public sealed class KnowledgeQueryHttpRequest
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-aspnetcore-hosting-knowledgequeryhttprequest-ctor"></a>
+
+##### `KnowledgeQueryHttpRequest`
+
+```csharp
+KnowledgeQueryHttpRequest()
+```
+
+#### Properties
+
+<a id="member-p-cephalon-aspnetcore-hosting-knowledgequeryhttprequest-actorid"></a>
+
+##### `ActorId`
+
+```csharp
+string ActorId { get; set; }
+```
+
+Gets or initializes the actor identifier responsible for the query.
+
+<a id="member-p-cephalon-aspnetcore-hosting-knowledgequeryhttprequest-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; set; }
+```
+
+Gets or initializes the correlation identifier for the query.
+
+<a id="member-p-cephalon-aspnetcore-hosting-knowledgequeryhttprequest-maxresults"></a>
+
+##### `MaxResults`
+
+```csharp
+int? MaxResults { get; set; }
+```
+
+Gets or initializes the maximum number of results to return.
+
+<a id="member-p-cephalon-aspnetcore-hosting-knowledgequeryhttprequest-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; set; }
+```
+
+Gets or initializes metadata to attach to the query.
+
+<a id="member-p-cephalon-aspnetcore-hosting-knowledgequeryhttprequest-querytext"></a>
+
+##### `QueryText`
+
+```csharp
+string QueryText { get; set; }
+```
+
+Gets or initializes the query text.
 
 <a id="type-cephalon-aspnetcore-hosting-restapigovernanceoptions"></a>
 

@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-08T22:58:06.1726928+00:00",
+  "GeneratedAtUtc": "2026-05-09T00:10:15.4067512+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -127,7 +127,7 @@
       "Description": "ASP.NET Core host core, REST surface, docs, health, and runtime endpoints.",
       "FileName": "cephalon-aspnetcore.md",
       "NamespaceCount": 8,
-      "TypeCount": 26
+      "TypeCount": 29
     },
     {
       "AssemblyName": "Cephalon.AspNetCore.GraphQL",
@@ -953,7 +953,7 @@
       "AssemblyName": "Cephalon.AspNetCore",
       "FileName": "cephalon-aspnetcore.md",
       "AnchorId": "namespace-cephalon-aspnetcore-hosting",
-      "TypeCount": 10
+      "TypeCount": 13
     },
     {
       "NamespaceName": "Cephalon.AspNetCore.JsonRpc.Hosting",
@@ -2312,6 +2312,21 @@
         "Constructors": 0,
         "Fields": 3,
         "Properties": 0,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "AgentToolExecutionHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "type-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest",
+      "Declaration": "public sealed class AgentToolExecutionHttpRequest",
+      "Summary": "Represents the operator HTTP request body used to execute an agent tool.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 6,
         "Methods": 0
       }
     },
@@ -8406,6 +8421,21 @@
       }
     },
     {
+      "DisplayName": "EventPublicationHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "type-cephalon-aspnetcore-hosting-eventpublicationhttprequest",
+      "Declaration": "public sealed class EventPublicationHttpRequest",
+      "Summary": "Represents the operator HTTP request body used to publish an event through the active eventing runtime.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 11,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "EventPublicationOutcomes",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -9872,7 +9902,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 0,
-        "Methods": 8
+        "Methods": 10
       }
     },
     {
@@ -13397,6 +13427,21 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 22,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "KnowledgeQueryHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "type-cephalon-aspnetcore-hosting-knowledgequeryhttprequest",
+      "Declaration": "public sealed class KnowledgeQueryHttpRequest",
+      "Summary": "Represents the operator HTTP request body used to query a knowledge collection.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 5,
         "Methods": 0
       }
     },
@@ -21227,6 +21272,17 @@
     {
       "DisplayName": "ActorId",
       "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest-actorid",
+      "Signature": "string ActorId { get; set; }",
+      "Summary": "Gets or initializes the actor identifier responsible for the run."
+    },
+    {
+      "DisplayName": "ActorId",
+      "Category": "Properties",
       "DeclaringTypeName": "AgentToolExecutionReport",
       "NamespaceName": "Cephalon.Agentics.Services",
       "AssemblyName": "Cephalon.Agentics",
@@ -21293,6 +21349,17 @@
     {
       "DisplayName": "ActorId",
       "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-actorid",
+      "Signature": "string ActorId { get; set; }",
+      "Summary": "Gets or initializes the actor identifier responsible for the publication."
+    },
+    {
+      "DisplayName": "ActorId",
+      "Category": "Properties",
       "DeclaringTypeName": "KnowledgeDocumentProviderContext",
       "NamespaceName": "Cephalon.Retrieval.Services",
       "AssemblyName": "Cephalon.Retrieval",
@@ -21311,6 +21378,17 @@
       "AnchorId": "member-p-cephalon-abstractions-retrieval-knowledgeindexingrequest-actorid",
       "Signature": "string ActorId { get; }",
       "Summary": "Gets the optional actor that requested indexing."
+    },
+    {
+      "DisplayName": "ActorId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-knowledgequeryhttprequest-actorid",
+      "Signature": "string ActorId { get; set; }",
+      "Summary": "Gets or initializes the actor identifier responsible for the query."
     },
     {
       "DisplayName": "ActorId",
@@ -21682,6 +21760,17 @@
       "NamespaceName": "Cephalon.Abstractions.Behaviors",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-3-system-text-json-serialization-metadata-jsontypeinfo-1",
+      "Signature": "IBehaviorModuleBuilder Add\u003CTBehavior, TInput, TOutput\u003E(JsonTypeInfo\u003CTInput\u003E inputJsonTypeInfo)",
+      "Summary": "Declares that the current module owns the specified behavior and supplies a closed execution slot with source-generated JSON input metadata."
+    },
+    {
+      "DisplayName": "Add",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBehaviorModuleBuilder",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
       "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-1-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder",
       "Signature": "IBehaviorModuleBuilder Add\u003CTBehavior\u003E(Action\u003CIBehaviorTopologyBuilder\u003E configureTopology)",
       "Summary": "Declares that the current module owns the specified behavior and supplies an explicit topology override."
@@ -21707,6 +21796,17 @@
       "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-system-type-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder",
       "Signature": "IBehaviorModuleBuilder Add(Type behaviorType, Action\u003CIBehaviorTopologyBuilder\u003E configureTopology)",
       "Summary": "Declares that the current module owns the specified behavior type and supplies an explicit topology override."
+    },
+    {
+      "DisplayName": "Add",
+      "Category": "Methods",
+      "DeclaringTypeName": "IBehaviorModuleBuilder",
+      "NamespaceName": "Cephalon.Abstractions.Behaviors",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-3-system-text-json-serialization-metadata-jsontypeinfo-1-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder",
+      "Signature": "IBehaviorModuleBuilder Add\u003CTBehavior, TInput, TOutput\u003E(JsonTypeInfo\u003CTInput\u003E inputJsonTypeInfo, Action\u003CIBehaviorTopologyBuilder\u003E configureTopology)",
+      "Summary": "Declares that the current module owns the specified behavior, supplies a closed execution slot with source-generated JSON input metadata, and applies an explicit topology override."
     },
     {
       "DisplayName": "Add",
@@ -23940,6 +24040,16 @@
       "AnchorId": "member-m-cephalon-agentics-services-agenttoolexecutiondecision-ctor-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "AgentToolExecutionDecision(string kind, string reason, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Creates a new agent-tool execution decision."
+    },
+    {
+      "DisplayName": "AgentToolExecutionHttpRequest",
+      "Category": "Constructors",
+      "DeclaringTypeName": "AgentToolExecutionHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest-ctor",
+      "Signature": "AgentToolExecutionHttpRequest()"
     },
     {
       "DisplayName": "AgentToolExecutionReport",
@@ -26408,6 +26518,17 @@
     {
       "DisplayName": "Arguments",
       "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest-arguments",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Arguments { get; set; }",
+      "Summary": "Gets or initializes the tool arguments."
+    },
+    {
+      "DisplayName": "Arguments",
+      "Category": "Properties",
       "DeclaringTypeName": "AgentToolExecutionRequest",
       "NamespaceName": "Cephalon.Abstractions.Agentics",
       "AssemblyName": "Cephalon.Abstractions",
@@ -26591,6 +26712,17 @@
       "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutioncontext-attempt",
       "Signature": "int Attempt { get; }",
       "Summary": "Gets the execution attempt number."
+    },
+    {
+      "DisplayName": "Attempt",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest-attempt",
+      "Signature": "int? Attempt { get; set; }",
+      "Summary": "Gets or initializes the execution attempt number."
     },
     {
       "DisplayName": "Attempt",
@@ -33844,6 +33976,17 @@
     {
       "DisplayName": "ChannelId",
       "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-channelid",
+      "Signature": "string ChannelId { get; set; }",
+      "Summary": "Gets or initializes the target event channel identifier."
+    },
+    {
+      "DisplayName": "ChannelId",
+      "Category": "Properties",
       "DeclaringTypeName": "EventPublicationRequest",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -38354,6 +38497,17 @@
     {
       "DisplayName": "ContentType",
       "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-contenttype",
+      "Signature": "string ContentType { get; set; }",
+      "Summary": "Gets or initializes the payload content type."
+    },
+    {
+      "DisplayName": "ContentType",
+      "Category": "Properties",
       "DeclaringTypeName": "EventPublicationRequest",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -39212,6 +39366,17 @@
     {
       "DisplayName": "CorrelationId",
       "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest-correlationid",
+      "Signature": "string CorrelationId { get; set; }",
+      "Summary": "Gets or initializes the correlation identifier for the run."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
       "DeclaringTypeName": "AgentToolExecutionReport",
       "NamespaceName": "Cephalon.Agentics.Services",
       "AssemblyName": "Cephalon.Agentics",
@@ -39366,6 +39531,17 @@
     {
       "DisplayName": "CorrelationId",
       "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-correlationid",
+      "Signature": "string CorrelationId { get; set; }",
+      "Summary": "Gets or initializes the correlation identifier for the publication."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
       "DeclaringTypeName": "EventPublicationRequest",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -39428,6 +39604,17 @@
       "AnchorId": "member-p-cephalon-abstractions-retrieval-knowledgeindexingrequest-correlationid",
       "Signature": "string CorrelationId { get; }",
       "Summary": "Gets the optional correlation identifier for this indexing attempt."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-knowledgequeryhttprequest-correlationid",
+      "Signature": "string CorrelationId { get; set; }",
+      "Summary": "Gets or initializes the correlation identifier for the query."
     },
     {
       "DisplayName": "CorrelationId",
@@ -52198,6 +52385,16 @@
       "Summary": "Creates a new event publication request."
     },
     {
+      "DisplayName": "EventPublicationHttpRequest",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventPublicationHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-hosting-eventpublicationhttprequest-ctor",
+      "Signature": "EventPublicationHttpRequest()"
+    },
+    {
       "DisplayName": "EventPublicationRequest",
       "Category": "Constructors",
       "DeclaringTypeName": "EventPublicationRequest",
@@ -52515,6 +52712,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventpublication-eventtype",
       "Signature": "string EventType { get; }",
       "Summary": "Gets the logical event type identifier."
+    },
+    {
+      "DisplayName": "EventType",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-eventtype",
+      "Signature": "string EventType { get; set; }",
+      "Summary": "Gets or initializes the logical event type."
     },
     {
       "DisplayName": "EventType",
@@ -65180,6 +65388,17 @@
     {
       "DisplayName": "Headers",
       "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-headers",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Headers { get; set; }",
+      "Summary": "Gets or initializes provider-specific event headers."
+    },
+    {
+      "DisplayName": "Headers",
+      "Category": "Properties",
       "DeclaringTypeName": "EventPublicationRequest",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -67277,6 +67496,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventpublication-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable publication identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-id",
+      "Signature": "string Id { get; set; }",
+      "Summary": "Gets or initializes the caller-supplied publication identifier."
     },
     {
       "DisplayName": "Id",
@@ -73800,6 +74030,16 @@
       "AnchorId": "member-f-cephalon-retrieval-services-retrievaldiagnostics-knowledgequerycountername",
       "Signature": "const string KnowledgeQueryCounterName",
       "Summary": "Gets the stable counter name for completed knowledge-queries."
+    },
+    {
+      "DisplayName": "KnowledgeQueryHttpRequest",
+      "Category": "Constructors",
+      "DeclaringTypeName": "KnowledgeQueryHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-m-cephalon-aspnetcore-hosting-knowledgequeryhttprequest-ctor",
+      "Signature": "KnowledgeQueryHttpRequest()"
     },
     {
       "DisplayName": "KnowledgeQueryMatch",
@@ -80998,6 +81238,17 @@
     {
       "DisplayName": "MaxResults",
       "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-knowledgequeryhttprequest-maxresults",
+      "Signature": "int? MaxResults { get; set; }",
+      "Summary": "Gets or initializes the maximum number of results to return."
+    },
+    {
+      "DisplayName": "MaxResults",
+      "Category": "Properties",
       "DeclaringTypeName": "KnowledgeQueryRequest",
       "NamespaceName": "Cephalon.Abstractions.Retrieval",
       "AssemblyName": "Cephalon.Abstractions",
@@ -81713,6 +81964,17 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; set; }",
+      "Summary": "Gets or initializes metadata to attach to the run."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "AgentToolExecutionReport",
       "NamespaceName": "Cephalon.Agentics.Services",
       "AssemblyName": "Cephalon.Agentics",
@@ -82307,6 +82569,17 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; set; }",
+      "Summary": "Gets or initializes metadata to attach to the publication."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "EventPublicationRequest",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -82611,6 +82884,17 @@
       "AnchorId": "member-p-cephalon-abstractions-retrieval-knowledgeindexstate-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; set; }",
       "Summary": "Optional operator-facing metadata captured with the latest indexing observation."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-knowledgequeryhttprequest-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; set; }",
+      "Summary": "Gets or initializes metadata to attach to the query."
     },
     {
       "DisplayName": "Metadata",
@@ -88366,6 +88650,17 @@
     {
       "DisplayName": "OccurredAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-occurredatutc",
+      "Signature": "DateTimeOffset? OccurredAtUtc { get; set; }",
+      "Summary": "Gets or initializes the event occurrence timestamp."
+    },
+    {
+      "DisplayName": "OccurredAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "EventPublicationRequest",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -92397,6 +92692,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventpublication-payload",
       "Signature": "string Payload { get; }",
       "Summary": "Gets the serialized event payload."
+    },
+    {
+      "DisplayName": "Payload",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-payload",
+      "Signature": "JsonElement? Payload { get; set; }",
+      "Summary": "Gets or initializes the event payload as JSON."
     },
     {
       "DisplayName": "Payload",
@@ -99127,6 +99433,17 @@
       "AnchorId": "member-f-cephalon-retrieval-services-retrievaldiagnostics-queryoutcometag",
       "Signature": "const string QueryOutcomeTag",
       "Summary": "Stable Cephalon-prefix tag carrying the terminal query outcome emitted on the activity (succeeded or failed). Unlike indexing, queries do not have a skipped or started state on the runtime path."
+    },
+    {
+      "DisplayName": "QueryText",
+      "Category": "Properties",
+      "DeclaringTypeName": "KnowledgeQueryHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-knowledgequeryhttprequest-querytext",
+      "Signature": "string QueryText { get; set; }",
+      "Summary": "Gets or initializes the query text."
     },
     {
       "DisplayName": "QueryText",
@@ -109170,6 +109487,17 @@
       "AnchorId": "member-p-cephalon-agentics-services-agenttoolexecutioncontext-runid",
       "Signature": "string RunId { get; }",
       "Summary": "Gets the stable run identifier for this execution."
+    },
+    {
+      "DisplayName": "RunId",
+      "Category": "Properties",
+      "DeclaringTypeName": "AgentToolExecutionHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest-runid",
+      "Signature": "string RunId { get; set; }",
+      "Summary": "Gets or initializes the caller-supplied run identifier."
     },
     {
       "DisplayName": "RunId",
@@ -120640,6 +120968,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventpublication-tenantid",
       "Signature": "string TenantId { get; }",
       "Summary": "Gets the tenant identifier associated with the event."
+    },
+    {
+      "DisplayName": "TenantId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventPublicationHttpRequest",
+      "NamespaceName": "Cephalon.AspNetCore.Hosting",
+      "AssemblyName": "Cephalon.AspNetCore",
+      "FileName": "cephalon-aspnetcore.md",
+      "AnchorId": "member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-tenantid",
+      "Signature": "string TenantId { get; set; }",
+      "Summary": "Gets or initializes the tenant identifier associated with the event."
     },
     {
       "DisplayName": "TenantId",

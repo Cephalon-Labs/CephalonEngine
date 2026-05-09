@@ -15,7 +15,7 @@ It does **not** widen the global support contract. Trim, Native AOT, and single-
 
 - **Sources searched.** Every `src/Cephalon.*/*.cs` file under the repo, plus every `src/Cephalon.*/*.csproj` for explicit trim / AOT property declarations.
 - **Patterns flagged (extended via `ENG-433`).** The `ENG-426` first-pass query covered `Activator.CreateInstance`, `Type.GetType(string)`, `MakeGenericType`, and `Assembly.LoadFrom`. The `ENG-432` deeper read of `Cephalon.Behaviors.Http` revealed that real hazards routinely show up under `MakeGenericMethod`, `MethodInfo.Invoke`, and `BindingFlags.NonPublic`-style member lookups — patterns the first-pass query did not match. The current pattern set is therefore: `Activator.CreateInstance`, `Type.GetType(string)`, `MakeGenericType`, `MakeGenericMethod`, `Assembly.LoadFrom`, `MethodInfo.Invoke`, `BindingFlags.\*`, `\.InvokeMember\(`, `Expression.Lambda`, `TypeBuilder` / `DynamicMethod` / `ILGenerator` / `Emit\.\*`, plus `[DynamicallyAccessedMembers]`, `[RequiresUnreferencedCode]`, and `[RequiresDynamicCode]` annotations.
-- **Method.** Pattern matches were classified by the actual call site, not by attribute presence. As of May 6, 2026, **no Cephalon runtime type carries `[RequiresUnreferencedCode]` / `[RequiresDynamicCode]` annotations** — every entry below is a pre-annotation hazard. The validation harness will gate annotation rollout on the matching project properties (`PublishTrimmed`, `PublishAot`, etc.) being intentionally set.
+- **Method.** Pattern matches are classified by the actual call site, not by attribute presence. As of May 9, 2026, some public compatibility overloads now deliberately carry `[RequiresUnreferencedCode]` / `[RequiresDynamicCode]` annotations so trim/AOT-hostile paths are visible to consumers and analyzers. Those annotations do not create a support claim by themselves; the validation harness still gates claims on matching project properties (`PublishTrimmed`, `PublishAot`, etc.), package eligibility, and publish/analyzer evidence.
 - **Known not-yet-classified hazard surface (`ENG-433` first-pass under broadened patterns).** The broadened `Grep` (May 5, 2026) surfaced additional `MakeGenericMethod` / `BindingFlags`-based hazards in `Cephalon.Behaviors`, `Cephalon.Behaviors.Http`, and `Cephalon.ReferenceDocs`; those first-pass findings are now all classified, retired, or intentionally documented. CDC capture failure metadata reflection was classified through `ENG-434` and retired through `ENG-459` / `ENG-460`; the remaining MySQL SciSharp transport reflection was isolated into optional `Cephalon.Data.MySql.SciSharpReplication` by `ENG-477`, given a machine-checkable permanent `not-claimed` posture by `ENG-478`, and confirmed by `ENG-494` as a resolved package-level support boundary rather than an open global remediation blocker; REST wire-name enum-field reflection was classified through `ENG-435` and retired by `ENG-456`; `Cephalon.Behaviors` startup and execution-slot reflection was classified through `ENG-436`, narrowed by `ENG-457`, the generated carrier-method subset was retired by `ENG-465`, the fallback assembly scan was retired by `ENG-469`, generated auto-registration's static `ConfigureTopology(...)` runtime fallback was retired by `ENG-470`, and the open-generic execution-slot fallback was retired by `ENG-471`; `Cephalon.Behaviors.Patterns` durable open-generic fallback was narrowed by `ENG-458` and retired by `ENG-467`, and its remaining saga choreography runtime-catalog shape reflection was retired by `ENG-468` through source-generated or explicitly registered `SagaChoreographyRuntimeSlot` metadata; `Cephalon.Behaviors.Http` route/projection/module-builder reflection was classified through `ENG-437` and retired by `ENG-463`, its bounded `ResultModel<>` envelope metadata and generated-profile carrier-method lookups were retired by `ENG-464`, its generated-profile assembly-scan fallback was retired by `ENG-466`, its `MapProfile<TBehavior>()` attribute/profile binding fallback was retired by `ENG-473`, its input-shape inspection was retired by `ENG-474`, and its manual/type-based route-contract reflection was retired by `ENG-475` through generated or explicitly registered `BehaviorContractDescriptor` metadata; `Cephalon.Engine` module discovery reflection was retired by `ENG-476` through generated `ModuleDiscoveryDescriptor` metadata registered by `Cephalon.Engine.SourceGen`; `Cephalon.ReferenceDocs` reflection was classified through `ENG-438` as a by-design permanent `not-claimed` package surface, made machine-checkable through `ENG-439`, and confirmed by `ENG-494` as a resolved package-level support boundary. After this slice every item in the original `ENG-433` not-yet-classified callout remains closed.
 - **Out of scope.** Test, benchmark, sample, and tooling projects. Concrete provider packs only appear when their `Cephalon.*` runtime surface itself contains a hazard pattern (transitive provider-SDK hazards belong in the harness's advisory `knownTransitiveHazards` list and the lock-file-backed `knownTransitiveHazardAudit` subset, not in the first-party source-code hazard table below).
 
@@ -59,12 +59,24 @@ must reference `Cephalon.Engine.SourceGen` as an analyzer or register modules ex
 absence from the active first-party hazard table without promoting any global deployment-mode
 support row.
 
+### Boundary — `Cephalon.Engine` dynamic package loading in trim / Native AOT audits
+
+The package loader remains an explicit runtime package boundary rather than a global Native AOT
+feature. The no-package path now skips `ModulePackageLoader` entirely, and `Cephalon.Engine` passes
+package-local trim and Native AOT analyzer builds when package inputs are absent. When a host
+configures `Engine:Discovery:Packages` or `Engine:Discovery:PackageDirectories`, the loader verifies
+that dynamic code is supported before resolving package assemblies and fails fast in Native AOT with
+guidance to reference modules at compile time or disable package discovery. The
+`PackageAssemblyLoadContext` calls that load external package assemblies are intentionally
+documented as package-boundary calls, not as evidence for a global Native AOT claim.
+
 ### Retired — `Cephalon.Behaviors` generated auto-registration, execution-slot, and implementation mapping reflection (added via `ENG-436`, retired through `ENG-472`)
 
 `Cephalon.Behaviors` no longer has an active first-party deployment-mode hazard row. The behavior
 runtime now joins topology descriptors to concrete implementation metadata through explicit
 `BehaviorImplementationDescriptor` registrations emitted by source generation or added by typed
-manual/module registration. The earlier reflection and mutable registry path retired in stages:
+manual/module registration, and dispatch can coerce `JsonElement` inputs through explicit
+`JsonTypeInfo<TInput>` metadata. The earlier reflection and mutable registry path retired in stages:
 
 - **`Modules/BehaviorModule.cs`** consumes `BehaviorGeneratedModuleRegistry` entries populated by the
   source generator's module initializer for auto-registration. `ENG-465` removed generated-carrier
@@ -74,7 +86,11 @@ manual/module registration. The earlier reflection and mutable registry path ret
 - **`Services/BehaviorExecutionSlot.cs`** no longer carries `ForType(...)`. `ENG-471` removes the
   open-generic `GetMethod(...).MakeGenericMethod(...).Invoke(...)` fallback and makes dispatch
   startup require source-generated or explicitly registered closed `BehaviorExecutionSlot` metadata.
-  Type-only registrations now fail fast at dispatcher construction when no slot is available.
+  Type-only registrations now fail fast at dispatcher construction when no slot is available. The
+  current follow-up adds `BehaviorExecutionSlot.For<TBehavior, TInput, TOutput>(JsonTypeInfo<TInput>)`
+  so hosts and generated modules can avoid reflection-based `System.Text.Json` input materialization;
+  generated behavior modules currently use a runtime metadata provider as a compatibility bridge, so
+  fully source-generated JSON context ownership remains a future support-promotion item.
 - **`Services/BehaviorTypeRegistry.cs` / `IBehaviorTypeRegistry.cs`** are removed by `ENG-472`.
   `BehaviorDispatcher`, `BehaviorIdempotencyResolver`, durable runtime catalog projection, saga
   runtime catalog projection, benchmarks, and source-generated registration now consume

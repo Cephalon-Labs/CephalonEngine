@@ -1103,6 +1103,33 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
         sb.AppendLine();
         sb.AppendLine("namespace Cephalon.Behaviors.Generated;");
         sb.AppendLine();
+        var inputTypeNames = infos
+            .Select(static info => info is { IsValid: true, InputType: not null }
+                ? info.InputType.GenericInputTypeName
+                : null)
+            .Where(static name => name is not null)
+            .Select(static name => name!)
+            .Distinct(StringComparer.Ordinal)
+            .OrderBy(static name => name, StringComparer.Ordinal)
+            .ToArray();
+        if (inputTypeNames.Length > 0)
+        {
+            sb.AppendLine("[global::System.ComponentModel.EditorBrowsable(global::System.ComponentModel.EditorBrowsableState.Never)]");
+            sb.AppendLine("internal static class BehaviorJsonTypeInfoProvider");
+            sb.AppendLine("{");
+            sb.AppendLine("    private static readonly global::System.Text.Json.JsonSerializerOptions Options = new(global::System.Text.Json.JsonSerializerDefaults.Web)");
+            sb.AppendLine("    {");
+            sb.AppendLine("        TypeInfoResolver = new global::System.Text.Json.Serialization.Metadata.DefaultJsonTypeInfoResolver()");
+            sb.AppendLine("    };");
+            sb.AppendLine();
+            sb.AppendLine("    internal static global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<T> Get<T>()");
+            sb.AppendLine("    {");
+            sb.AppendLine("        return (global::System.Text.Json.Serialization.Metadata.JsonTypeInfo<T>)Options.GetTypeInfo(typeof(T));");
+            sb.AppendLine("    }");
+            sb.AppendLine("}");
+            sb.AppendLine();
+        }
+
         sb.AppendLine("/// <summary>");
         sb.AppendLine("/// Source-generated zero-reflection behavior registration.");
         sb.AppendLine("/// Called by the engine at startup instead of scanning assembly types via reflection.");
@@ -1181,7 +1208,7 @@ public sealed class BehaviorSourceGenerator : IIncrementalGenerator
             var id = EscapeString(info.BehaviorId);
             var inputType = info.InputType.GenericInputTypeName;
             var outputType = info.InputType.GenericOutputTypeName;
-            sb.AppendLine($"            new global::Cephalon.Behaviors.Services.BehaviorGeneratedExecutionSlotDescriptor(\"{id}\", typeof({fqn}), global::Cephalon.Behaviors.Services.BehaviorExecutionSlot.For<{fqn}, {inputType}, {outputType}>()),");
+            sb.AppendLine($"            new global::Cephalon.Behaviors.Services.BehaviorGeneratedExecutionSlotDescriptor(\"{id}\", typeof({fqn}), global::Cephalon.Behaviors.Services.BehaviorExecutionSlot.For<{fqn}, {inputType}, {outputType}>(global::Cephalon.Behaviors.Generated.BehaviorJsonTypeInfoProvider.Get<{inputType}>())),");
         }
 
         sb.AppendLine("        };");

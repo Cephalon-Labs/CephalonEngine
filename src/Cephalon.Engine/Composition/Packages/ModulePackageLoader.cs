@@ -1,5 +1,6 @@
 using Cephalon.Engine.Configuration;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.Versioning;
 using System.Security.Cryptography;
 using System.Text.Json;
@@ -21,9 +22,20 @@ internal static class ModulePackageLoader
         packagePolicy ??= PackagePolicy.Default;
         trustPolicy ??= TrustPolicy.Default;
 
-        var requests = packages
+        var packageReferences = packages as IReadOnlyCollection<ModulePackageReference> ?? packages.ToArray();
+        var directories = packageDirectories is null
+            ? Array.Empty<ModulePackageDirectory>()
+            : packageDirectories as IReadOnlyCollection<ModulePackageDirectory> ?? packageDirectories.ToArray();
+        if (packageReferences.Count == 0 && directories.Count == 0)
+        {
+            return [];
+        }
+
+        EnsureDynamicPackageLoadingSupported();
+
+        var requests = packageReferences
             .Select(ResolvePackage)
-            .Concat(DiscoverPackages(packageDirectories ?? []))
+            .Concat(DiscoverPackages(directories))
             .ToArray();
         ValidateRequests(requests);
 
@@ -31,6 +43,18 @@ internal static class ModulePackageLoader
             .Select(request => LoadPackage(request, packagePolicy, trustPolicy))
             .OrderBy(static package => package.Request.Id, StringComparer.OrdinalIgnoreCase)
             .ToArray();
+    }
+
+    private static void EnsureDynamicPackageLoadingSupported()
+    {
+        if (RuntimeFeature.IsDynamicCodeSupported)
+        {
+            return;
+        }
+
+        throw new InvalidOperationException(
+            "Cephalon dynamic package loading requires runtime assembly loading and is not supported in Native AOT hosts. " +
+            "Reference modules at compile time or disable Engine:Discovery:Packages and Engine:Discovery:PackageDirectories for Native AOT deployments.");
     }
 
     private static LoadedPackage LoadPackage(

@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 using Cephalon.Abstractions.Behaviors;
 
 namespace Cephalon.Engine.Composition;
@@ -9,6 +10,8 @@ internal sealed class OwnedBehaviorModuleBuilder(string sourceModuleId) : IBehav
 {
     private const string TypeBasedBehaviorRegistrationMessage =
         "Type-based behavior ownership registration closes generic execution delegates at runtime. Prefer Add<TBehavior, TInput, TOutput>() or source-generated behavior descriptors for trim-ready hosts.";
+    private const string JsonOptionsBehaviorRegistrationMessage =
+        "Behavior ownership registration without JsonTypeInfo uses reflection-based System.Text.Json input materialization. Prefer the JsonTypeInfo overload for trim- and Native AOT-ready hosts.";
     private static readonly Type AppBehaviorOpenGeneric = typeof(IAppBehavior<,>);
     private static readonly JsonSerializerOptions WebJsonSerializerOptions = new(JsonSerializerDefaults.Web);
     private readonly string sourceModuleId = NormalizeRequired(sourceModuleId);
@@ -20,6 +23,8 @@ internal sealed class OwnedBehaviorModuleBuilder(string sourceModuleId) : IBehav
         where TBehavior : class
         => Add(typeof(TBehavior));
 
+    [RequiresDynamicCode(JsonOptionsBehaviorRegistrationMessage)]
+    [RequiresUnreferencedCode(JsonOptionsBehaviorRegistrationMessage)]
     public IBehaviorModuleBuilder Add<
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
         TBehavior,
@@ -35,6 +40,21 @@ internal sealed class OwnedBehaviorModuleBuilder(string sourceModuleId) : IBehav
 
     public IBehaviorModuleBuilder Add<
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
+        TBehavior,
+        TInput,
+        TOutput>(JsonTypeInfo<TInput> inputJsonTypeInfo)
+        where TBehavior : class, IAppBehavior<TInput, TOutput>
+        where TInput : notnull
+    {
+        ArgumentNullException.ThrowIfNull(inputJsonTypeInfo);
+        return AddCore(
+            typeof(TBehavior),
+            configureTopology: null,
+            CreateExecutionDelegate<TBehavior, TInput, TOutput>(inputJsonTypeInfo));
+    }
+
+    public IBehaviorModuleBuilder Add<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
         TBehavior>(Action<IBehaviorTopologyBuilder> configureTopology)
         where TBehavior : class
     {
@@ -42,6 +62,8 @@ internal sealed class OwnedBehaviorModuleBuilder(string sourceModuleId) : IBehav
         return Add(typeof(TBehavior), configureTopology);
     }
 
+    [RequiresDynamicCode(JsonOptionsBehaviorRegistrationMessage)]
+    [RequiresUnreferencedCode(JsonOptionsBehaviorRegistrationMessage)]
     public IBehaviorModuleBuilder Add<
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
         TBehavior,
@@ -57,6 +79,24 @@ internal sealed class OwnedBehaviorModuleBuilder(string sourceModuleId) : IBehav
             typeof(TBehavior),
             configureTopology,
             CreateExecutionDelegate<TBehavior, TInput, TOutput>());
+    }
+
+    public IBehaviorModuleBuilder Add<
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces)]
+        TBehavior,
+        TInput,
+        TOutput>(
+        JsonTypeInfo<TInput> inputJsonTypeInfo,
+        Action<IBehaviorTopologyBuilder> configureTopology)
+        where TBehavior : class, IAppBehavior<TInput, TOutput>
+        where TInput : notnull
+    {
+        ArgumentNullException.ThrowIfNull(inputJsonTypeInfo);
+        ArgumentNullException.ThrowIfNull(configureTopology);
+        return AddCore(
+            typeof(TBehavior),
+            configureTopology,
+            CreateExecutionDelegate<TBehavior, TInput, TOutput>(inputJsonTypeInfo));
     }
 
     public IBehaviorModuleBuilder Add(
@@ -143,7 +183,8 @@ internal sealed class OwnedBehaviorModuleBuilder(string sourceModuleId) : IBehav
         return this;
     }
 
-    [UnconditionalSuppressMessage("Trimming", "IL2026", Justification = "TInput is a closed behavior contract annotated for public JSON members by the module-owned behavior registration API.")]
+    [RequiresDynamicCode(JsonOptionsBehaviorRegistrationMessage)]
+    [RequiresUnreferencedCode(JsonOptionsBehaviorRegistrationMessage)]
     private static Func<object, object, IBehaviorContext, CancellationToken, Task<object?>> CreateExecutionDelegate<
         TBehavior,
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicProperties)]
@@ -156,6 +197,26 @@ internal sealed class OwnedBehaviorModuleBuilder(string sourceModuleId) : IBehav
         {
             TInput typedInput = input is JsonElement jsonElement
                 ? JsonSerializer.Deserialize<TInput>(jsonElement.GetRawText(), WebJsonSerializerOptions)!
+                : (TInput)input;
+            var result = await ((TBehavior)behavior)
+                .HandleAsync(typedInput, context, cancellationToken)
+                .ConfigureAwait(false);
+            return result;
+        };
+    }
+
+    private static Func<object, object, IBehaviorContext, CancellationToken, Task<object?>> CreateExecutionDelegate<
+        TBehavior,
+        TInput,
+        TOutput>(JsonTypeInfo<TInput> inputJsonTypeInfo)
+        where TBehavior : class, IAppBehavior<TInput, TOutput>
+        where TInput : notnull
+    {
+        ArgumentNullException.ThrowIfNull(inputJsonTypeInfo);
+        return async (behavior, input, context, cancellationToken) =>
+        {
+            TInput typedInput = input is JsonElement jsonElement
+                ? jsonElement.Deserialize(inputJsonTypeInfo)!
                 : (TInput)input;
             var result = await ((TBehavior)behavior)
                 .HandleAsync(typedInput, context, cancellationToken)
@@ -189,6 +250,8 @@ internal sealed class OwnedBehaviorModuleBuilder(string sourceModuleId) : IBehav
         return (Func<object, object, IBehaviorContext, CancellationToken, Task<object?>>)closedFactory.Invoke(null, null)!;
     }
 
+    [RequiresDynamicCode(JsonOptionsBehaviorRegistrationMessage)]
+    [RequiresUnreferencedCode(JsonOptionsBehaviorRegistrationMessage)]
     private static Func<object, object, IBehaviorContext, CancellationToken, Task<object?>> CreateExecutionDelegateCore<
         TBehavior,
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors | DynamicallyAccessedMemberTypes.PublicProperties)]

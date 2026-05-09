@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json;
 using Cephalon.Abstractions.Audit;
+using Cephalon.AspNetCore;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Net.Http.Headers;
 
@@ -11,8 +12,6 @@ namespace Cephalon.AspNetCore.Hosting;
 /// </summary>
 public static class AuditHistoryExportHttpResponseExtensions
 {
-    private static readonly JsonSerializerOptions SerializerOptions = new(JsonSerializerDefaults.Web);
-
     /// <summary>
     /// Writes the supplied audit-history export as newline-delimited JSON.
     /// </summary>
@@ -44,7 +43,12 @@ public static class AuditHistoryExportHttpResponseExtensions
 
         await foreach (var entry in exporter.ExportAsync(request, cancellationToken).WithCancellation(cancellationToken).ConfigureAwait(false))
         {
-            await JsonSerializer.SerializeAsync(response.Body, entry, SerializerOptions, cancellationToken).ConfigureAwait(false);
+            await JsonSerializer.SerializeAsync(
+                    response.Body,
+                    entry,
+                    AspNetCoreJsonSerializerContext.Default.AuditHistoryEntry,
+                    cancellationToken)
+                .ConfigureAwait(false);
             await response.Body.WriteAsync(lineBreak, cancellationToken).ConfigureAwait(false);
         }
 

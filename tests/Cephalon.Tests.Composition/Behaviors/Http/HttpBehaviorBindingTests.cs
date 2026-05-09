@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.EventSourcing;
 using Cephalon.Abstractions.Modules;
@@ -20,7 +21,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.Behaviors.Http;
 
-public sealed class HttpBehaviorBindingTests
+public sealed partial class HttpBehaviorBindingTests
 {
     [AppBehavior("object.echo")]
     private sealed class ObjectEchoBehavior : IAppBehavior<object, object>
@@ -52,6 +53,10 @@ public sealed class HttpBehaviorBindingTests
         string ProductName,
         int Quantity,
         bool HasEventStore);
+
+    [JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
+    [JsonSerializable(typeof(RestHelperEchoInput))]
+    private sealed partial class HttpBehaviorBindingJsonSerializerContext : JsonSerializerContext;
 
     private sealed class RestHelperModule : ModuleBase, IEndpointModule
     {
@@ -178,7 +183,8 @@ public sealed class HttpBehaviorBindingTests
         slotRegistry.Register(
             descriptor.Id,
             typeof(RestHelperEchoBehavior),
-            BehaviorExecutionSlot.For<RestHelperEchoBehavior, RestHelperEchoInput, RestHelperEchoOutput>());
+            BehaviorExecutionSlot.For<RestHelperEchoBehavior, RestHelperEchoInput, RestHelperEchoOutput>(
+                HttpBehaviorBindingJsonSerializerContext.Default.RestHelperEchoInput));
         builder.Services.AddSingleton<IBehaviorContributor>(new FluentBehaviorContributor(descriptor));
         builder.Services.AddSingleton(slotRegistry);
         builder.Services.AddSingleton<IBehaviorCatalog>(sp =>

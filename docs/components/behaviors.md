@@ -222,10 +222,12 @@ error envelopes.
 `Engine:Behaviors` now controls generated-hint lookup and auto-registration only. It no longer acts
 as a per-behavior topology override surface, and explicit module ownership is now the preferred
 default path. Turn `AutoRegister` on only when a host deliberately wants configuration-driven
-assembly selection over source-generated behavior module hints. Explicit `AutoRegisterAssemblies`
-entries now fail fast when an assembly does not expose `BehaviorGeneratedModuleRegistry` hints; add
-`Cephalon.Behaviors.SourceGen` to that behavior assembly or register the behavior through module
-ownership / `AddBehaviors(..., behaviors => ...)`.
+assembly selection over source-generated behavior module hints. When `AutoRegisterAssemblies` is
+empty, the default lookup reads assemblies that already registered generated hints instead of
+probing assembly references at runtime. Explicit `AutoRegisterAssemblies` entries now fail fast when
+an assembly does not expose `BehaviorGeneratedModuleRegistry` hints; add `Cephalon.Behaviors.SourceGen`
+to that behavior assembly or register the behavior through module ownership /
+`AddBehaviors(..., behaviors => ...)`.
 
 ## Resolution model
 
@@ -279,7 +281,7 @@ Behavior metadata stays transport-neutral on purpose.
 ## Performance characteristics
 
 - Dispatch table built once at `EngineBuilder.Build()` into a `FrozenDictionary`
-- Zero reflection on the hot dispatch path — the dispatcher reuses typed execution delegates; source-generated module hints are read from `BehaviorGeneratedModuleRegistry`, source-generated behavior slots and topology descriptors are materialized as closed generated metadata, unsupported generated topology declarations fail fast, and dispatch startup fails fast when a runtime-discovered behavior does not have a source-generated or explicitly registered closed execution slot
+- Zero reflection on the hot dispatch path — the dispatcher reuses typed execution delegates; source-generated module hints are read from `BehaviorGeneratedModuleRegistry`, source-generated behavior slots carry closed generated `JsonTypeInfo<TInput>` metadata for `JsonElement` payload coercion, topology descriptors are materialized as closed generated metadata, unsupported generated topology declarations fail fast, and dispatch startup fails fast when a runtime-discovered behavior does not have a source-generated or explicitly registered closed execution slot
 - Behavior implementation lookup is descriptor-based: source-generated, fluent, and module-owned registrations contribute `BehaviorImplementationDescriptor` records, and runtime services consume those descriptors instead of a mutable id-to-`Type` registry.
 - Transport bindings deferred to first request (`LazyTransportBinding`) — zero startup overhead per transport
 - Compatibility matrix runs at startup only — no runtime overhead
@@ -355,16 +357,21 @@ Implements `ITechnologyRuntimeContributor` and reports the behavior subsystem su
 - `RabbitMqBehaviorContext` — resolves from a per-delivery DI scope
 - `TestBehaviorContext` — accepts injected `IEventStore?` for test scenarios
 
-`BehaviorExecutionSlot` now also deserializes `JsonElement` payloads with
-`JsonSerializerDefaults.Web`, so camelCase HTTP inputs bind cleanly into typical C# DTOs without
-per-behavior casing workarounds.
+`BehaviorExecutionSlot` now deserializes `JsonElement` payloads through explicit
+`JsonTypeInfo<TInput>` metadata. Source-generated behavior slots provide runtime metadata through
+their generated provider as a compatibility bridge, and manual dispatch slots can pass true
+source-generated metadata through
+`BehaviorExecutionSlot.For<TBehavior, TInput, TOutput>(JsonTypeInfo<TInput>)`.
 
 Source-generated behavior registration now also emits a generated module registry entry plus closed
-generic execution-slot hints. `BehaviorModule` consumes `BehaviorGeneratedModuleRegistry` directly
-instead of reflectively invoking generated carrier methods, and the dispatcher prefers generated
-slots when the behavior id and concrete type still match the runtime registry. The common
-source-generated path therefore avoids both generated-carrier method lookup and open-generic method
-dispatch during startup. Source-generated topology descriptors now also cover supported
+generic execution-slot hints with explicit JSON contract metadata. `BehaviorModule` consumes
+`BehaviorGeneratedModuleRegistry` directly instead of reflectively invoking generated carrier
+methods, and the dispatcher prefers generated slots when the behavior id and concrete type still
+match the runtime registry. The common source-generated path therefore avoids generated-carrier
+method lookup and open-generic method dispatch during startup. Full trim / Native AOT support still
+requires hosts or generated modules to supply source-generated JSON contracts instead of relying on
+the compatibility provider.
+Source-generated topology descriptors now also cover supported
 `ConfigureTopology(...)` fluent chains and attribute-only `[BehaviorAllowedPatterns]` /
 `[BehaviorAllowedTransports]` declarations; generated auto-registration fails fast when a behavior
 still needs runtime `ConfigureTopology(...)` execution, because `BehaviorModule` no longer invokes

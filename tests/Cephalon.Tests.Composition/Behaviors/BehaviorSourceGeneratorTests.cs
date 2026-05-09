@@ -372,6 +372,9 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.Contains("BehaviorImplementationRegistration.TryRegister(", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("BehaviorIdempotencyMode.Unknown", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("new global::Cephalon.Behaviors.Services.BehaviorGeneratedExecutionSlotDescriptor(\"orders.create\"", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("internal static class BehaviorJsonTypeInfoProvider", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("DefaultJsonTypeInfoResolver", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorJsonTypeInfoProvider.Get<string>()", autoRegistration, StringComparison.Ordinal);
         Assert.DoesNotContain("new global::Cephalon.Behaviors.Services.BehaviorGeneratedRuntimeTopologyDescriptor(\"orders.create\"", autoRegistration, StringComparison.Ordinal);
         Assert.DoesNotContain("IBehaviorTypeRegistry", autoRegistration, StringComparison.Ordinal);
         Assert.DoesNotContain("typeRegistry", autoRegistration, StringComparison.Ordinal);
@@ -470,6 +473,7 @@ public sealed class BehaviorSourceGeneratorTests
         Assert.Contains("new global::Cephalon.Behaviors.Services.BehaviorContractDescriptor(\"orders.get\"", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("BehaviorGeneratedExecutionSlotDescriptor", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("BehaviorExecutionSlot.For<global::GetOrderBehavior", autoRegistration, StringComparison.Ordinal);
+        Assert.Contains("BehaviorJsonTypeInfoProvider.Get<string>()", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("[global::System.Runtime.CompilerServices.ModuleInitializer]", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("RegisterRestProfiles()", autoRegistration, StringComparison.Ordinal);
         Assert.Contains("BehaviorRestGeneratedProfileRegistry.Register(", autoRegistration, StringComparison.Ordinal);

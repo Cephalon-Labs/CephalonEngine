@@ -552,6 +552,9 @@ Browse the published API surface by public member.
 - [ActorId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutioncontext-actorid): `Properties` on `AgentToolExecutionContext` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the optional actor identifier responsible for the request.
   - `string ActorId { get; }`
+- [ActorId](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest-actorid): `Properties` on `AgentToolExecutionHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ActorId&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or initializes the actor identifier responsible for the run.
+  - `string ActorId { get; set; }`
 - [ActorId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-actorid): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the optional actor identifier responsible for the run.
   - `string ActorId { get; }`
@@ -570,12 +573,18 @@ Browse the published API surface by public member.
 - [ActorId](cephalon-audit.md#member-f-cephalon-audit-conventions-auditmetadatakeys-actorid): `Fields` on `AuditMetadataKeys` in `Cephalon.Audit.Conventions` (`Cephalon.Audit`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Audit&namespace=Cephalon.Audit.Conventions&scope=members)
   - The metadata key that stores the actor identifier associated with an audit entry.
   - `const string ActorId`
+- [ActorId](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-actorid): `Properties` on `EventPublicationHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ActorId&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or initializes the actor identifier responsible for the publication.
+  - `string ActorId { get; set; }`
 - [ActorId](cephalon-retrieval.md#member-p-cephalon-retrieval-services-knowledgedocumentprovidercontext-actorid): `Properties` on `KnowledgeDocumentProviderContext` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Gets the optional actor that requested indexing.
   - `string ActorId { get; }`
 - [ActorId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexingrequest-actorid): `Properties` on `KnowledgeIndexingRequest` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Gets the optional actor that requested indexing.
   - `string ActorId { get; }`
+- [ActorId](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-knowledgequeryhttprequest-actorid): `Properties` on `KnowledgeQueryHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ActorId&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or initializes the actor identifier responsible for the query.
+  - `string ActorId { get; set; }`
 - [ActorId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryrequest-actorid): `Properties` on `KnowledgeQueryRequest` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=ActorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Gets the optional actor that requested the query.
   - `string ActorId { get; }`
@@ -675,6 +684,9 @@ Browse the published API surface by public member.
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-system-type): `Methods` on `IBehaviorModuleBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Declares that the current module owns the specified behavior type.
   - `IBehaviorModuleBuilder Add(Type behaviorType)`
+- [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-3-system-text-json-serialization-metadata-jsontypeinfo-1): `Methods` on `IBehaviorModuleBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Declares that the current module owns the specified behavior and supplies a closed execution slot with source-generated JSON input metadata.
+  - `IBehaviorModuleBuilder Add<TBehavior, TInput, TOutput>(JsonTypeInfo<TInput> inputJsonTypeInfo)`
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-1-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder): `Methods` on `IBehaviorModuleBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Declares that the current module owns the specified behavior and supplies an explicit topology override.
   - `IBehaviorModuleBuilder Add<TBehavior>(Action<IBehaviorTopologyBuilder> configureTopology)`
@@ -684,6 +696,9 @@ Browse the published API surface by public member.
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-system-type-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder): `Methods` on `IBehaviorModuleBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Declares that the current module owns the specified behavior type and supplies an explicit topology override.
   - `IBehaviorModuleBuilder Add(Type behaviorType, Action<IBehaviorTopologyBuilder> configureTopology)`
+- [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-3-system-text-json-serialization-metadata-jsontypeinfo-1-system-action-cephalon-abstractions-behaviors-ibehaviortopologybuilder): `Methods` on `IBehaviorModuleBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
+  - Declares that the current module owns the specified behavior, supplies a closed execution slot with source-generated JSON input metadata, and applies an explicit topology override.
+  - `IBehaviorModuleBuilder Add<TBehavior, TInput, TOutput>(JsonTypeInfo<TInput> inputJsonTypeInfo, Action<IBehaviorTopologyBuilder> configureTopology)`
 - [Add](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehaviormodulebuilder-add-system-type-system-type-system-type): `Methods` on `IBehaviorModuleBuilder` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=Add&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Declares that the current module owns the specified behavior and supplies the closed input/output contract.
   - `IBehaviorModuleBuilder Add(Type behaviorType, Type inputType, Type outputType)`
@@ -1293,6 +1308,8 @@ Browse the published API surface by public member.
 - [AgentToolExecutionDecision](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutiondecision-ctor-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AgentToolExecutionDecision` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=AgentToolExecutionDecision&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Creates a new agent-tool execution decision.
   - `AgentToolExecutionDecision(string kind, string reason, IReadOnlyDictionary<string, string> metadata)`
+- [AgentToolExecutionHttpRequest](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest-ctor): `Constructors` on `AgentToolExecutionHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=AgentToolExecutionHttpRequest&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - `AgentToolExecutionHttpRequest()`
 - [AgentToolExecutionReport](cephalon-agentics.md#member-m-cephalon-agentics-services-agenttoolexecutionreport-ctor-system-string-system-string-system-string-system-datetimeoffset-system-string-system-string-system-int32-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=AgentToolExecutionReport&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Creates a new runtime observation for an agent-tool run.
   - `AgentToolExecutionReport(string toolId, string runId, string outcome, DateTimeOffset observedAtUtc, string actorId, string correlationId, int attempt, string outputSummary, string error, IReadOnlyDictionary<string, string> metadata)`
@@ -1965,6 +1982,9 @@ Browse the published API surface by public member.
 - [Arguments](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutioncontext-arguments): `Properties` on `AgentToolExecutionContext` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Arguments&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets optional string arguments supplied to the tool executor.
   - `IReadOnlyDictionary<string, string> Arguments { get; }`
+- [Arguments](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest-arguments): `Properties` on `AgentToolExecutionHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Arguments&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or initializes the tool arguments.
+  - `IReadOnlyDictionary<string, string> Arguments { get; set; }`
 - [Arguments](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolexecutionrequest-arguments): `Properties` on `AgentToolExecutionRequest` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=Arguments&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Gets optional string arguments supplied to the tool executor.
   - `IReadOnlyDictionary<string, string> Arguments { get; }`
@@ -2016,6 +2036,9 @@ Browse the published API surface by public member.
 - [Attempt](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutioncontext-attempt): `Properties` on `AgentToolExecutionContext` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Attempt&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the execution attempt number.
   - `int Attempt { get; }`
+- [Attempt](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest-attempt): `Properties` on `AgentToolExecutionHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Attempt&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or initializes the execution attempt number.
+  - `int? Attempt { get; set; }`
 - [Attempt](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-attempt): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Attempt&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the execution attempt number.
   - `int Attempt { get; }`
@@ -3999,6 +4022,9 @@ Browse the published API surface by public member.
 - [ChannelId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-channelid): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the logical channel or destination identifier.
   - `string ChannelId { get; }`
+- [ChannelId](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-channelid): `Properties` on `EventPublicationHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or initializes the target event channel identifier.
+  - `string ChannelId { get; set; }`
 - [ChannelId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationrequest-channelid): `Properties` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the logical channel or destination identifier.
   - `string ChannelId { get; }`
@@ -5229,6 +5255,9 @@ Browse the published API surface by public member.
 - [ContentType](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-contenttype): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ContentType&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the payload content type when one is known.
   - `string ContentType { get; }`
+- [ContentType](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-contenttype): `Properties` on `EventPublicationHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ContentType&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or initializes the payload content type.
+  - `string ContentType { get; set; }`
 - [ContentType](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationrequest-contenttype): `Properties` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ContentType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the payload content type when one is known.
   - `string ContentType { get; }`
@@ -5463,6 +5492,9 @@ Browse the published API surface by public member.
 - [CorrelationId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutioncontext-correlationid): `Properties` on `AgentToolExecutionContext` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the optional correlation identifier for the request.
   - `string CorrelationId { get; }`
+- [CorrelationId](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest-correlationid): `Properties` on `AgentToolExecutionHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or initializes the correlation identifier for the run.
+  - `string CorrelationId { get; set; }`
 - [CorrelationId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-correlationid): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the optional correlation identifier associated with the run.
   - `string CorrelationId { get; }`
@@ -5505,6 +5537,9 @@ Browse the published API surface by public member.
 - [CorrelationId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-correlationid): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the correlation identifier associated with the event.
   - `string CorrelationId { get; }`
+- [CorrelationId](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-correlationid): `Properties` on `EventPublicationHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or initializes the correlation identifier for the publication.
+  - `string CorrelationId { get; set; }`
 - [CorrelationId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationrequest-correlationid): `Properties` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the correlation identifier associated with the event.
   - `string CorrelationId { get; }`
@@ -5523,6 +5558,9 @@ Browse the published API surface by public member.
 - [CorrelationId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexingrequest-correlationid): `Properties` on `KnowledgeIndexingRequest` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Gets the optional correlation identifier for this indexing attempt.
   - `string CorrelationId { get; }`
+- [CorrelationId](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-knowledgequeryhttprequest-correlationid): `Properties` on `KnowledgeQueryHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or initializes the correlation identifier for the query.
+  - `string CorrelationId { get; set; }`
 - [CorrelationId](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryrequest-correlationid): `Properties` on `KnowledgeQueryRequest` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Gets the optional correlation identifier for the query.
   - `string CorrelationId { get; }`
@@ -9009,6 +9047,8 @@ Browse the published API surface by public member.
 - [EventPublication](cephalon-eventing.md#member-m-cephalon-eventing-services-eventpublication-ctor-system-string-system-string-system-string-system-string-system-datetimeoffset-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventPublication&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a new event publication request.
   - `EventPublication(string id, string channelId, string eventType, string payload, DateTimeOffset occurredAtUtc, string contentType, string correlationId, string tenantId, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> metadata)`
+- [EventPublicationHttpRequest](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-eventpublicationhttprequest-ctor): `Constructors` on `EventPublicationHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=EventPublicationHttpRequest&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - `EventPublicationHttpRequest()`
 - [EventPublicationRequest](cephalon-abstractions.md#member-m-cephalon-abstractions-data-eventpublicationrequest-ctor-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventPublicationRequest&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates an event-publication request.
   - `EventPublicationRequest(string channelId, string eventType, string payload, string id, DateTimeOffset? occurredAtUtc, string contentType, string correlationId, string tenantId, IReadOnlyDictionary<string, string> headers, IReadOnlyDictionary<string, string> metadata)`
@@ -9096,6 +9136,9 @@ Browse the published API surface by public member.
 - [EventType](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-eventtype): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventType&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the logical event type identifier.
   - `string EventType { get; }`
+- [EventType](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-eventtype): `Properties` on `EventPublicationHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=EventType&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or initializes the logical event type.
+  - `string EventType { get; set; }`
 - [EventType](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationrequest-eventtype): `Properties` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the logical event type identifier.
   - `string EventType { get; }`
@@ -12558,6 +12601,9 @@ Browse the published API surface by public member.
 - [Headers](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-headers): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Headers&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the event headers associated with the publication.
   - `IReadOnlyDictionary<string, string> Headers { get; }`
+- [Headers](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-headers): `Properties` on `EventPublicationHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Headers&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or initializes provider-specific event headers.
+  - `IReadOnlyDictionary<string, string> Headers { get; set; }`
 - [Headers](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationrequest-headers): `Properties` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Headers&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets event headers associated with the publication.
   - `IReadOnlyDictionary<string, string> Headers { get; }`
@@ -13134,6 +13180,9 @@ Browse the published API surface by public member.
 - [Id](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-id): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Id&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable publication identifier.
   - `string Id { get; }`
+- [Id](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-id): `Properties` on `EventPublicationHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Id&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or initializes the caller-supplied publication identifier.
+  - `string Id { get; set; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationrequest-id): `Properties` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable publication identifier.
   - `string Id { get; }`
@@ -14919,6 +14968,8 @@ Browse the published API surface by public member.
 - [KnowledgeQueryCounterName](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-knowledgequerycountername): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=KnowledgeQueryCounterName&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Gets the stable counter name for completed knowledge-queries.
   - `const string KnowledgeQueryCounterName`
+- [KnowledgeQueryHttpRequest](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-knowledgequeryhttprequest-ctor): `Constructors` on `KnowledgeQueryHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=KnowledgeQueryHttpRequest&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - `KnowledgeQueryHttpRequest()`
 - [KnowledgeQueryMatch](cephalon-abstractions.md#member-m-cephalon-abstractions-retrieval-knowledgequerymatch-ctor-system-string-system-string-system-string-system-string-system-int32-system-uri-system-collections-generic-ireadonlylist-system-string-system-nullable-system-datetimeoffset-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `KnowledgeQueryMatch` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=KnowledgeQueryMatch&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Describes one ranked document match returned by the managed query engine.
   - `KnowledgeQueryMatch(string CollectionId, string DocumentId, string Title, string ContentSnippet, int Score, Uri Uri, IReadOnlyList<string> Tags, DateTimeOffset? LastModifiedAtUtc, IReadOnlyDictionary<string, string> Metadata)`
@@ -16887,6 +16938,9 @@ Browse the published API surface by public member.
 - [MaxRestartAttempts](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-maxrestartattempts): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=MaxRestartAttempts&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the maximum number of manual restarts.
   - `int MaxRestartAttempts { get; }`
+- [MaxResults](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-knowledgequeryhttprequest-maxresults): `Properties` on `KnowledgeQueryHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=MaxResults&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or initializes the maximum number of results to return.
+  - `int? MaxResults { get; set; }`
 - [MaxResults](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryrequest-maxresults): `Properties` on `KnowledgeQueryRequest` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=MaxResults&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Gets the optional maximum number of matches to return.
   - `int? MaxResults { get; }`
@@ -17082,6 +17136,9 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutiondecision-metadata): `Properties` on `AgentToolExecutionDecision` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets optional metadata captured with the decision.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest-metadata): `Properties` on `AgentToolExecutionHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Metadata&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or initializes metadata to attach to the run.
+  - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
 - [Metadata](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-metadata): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets optional operator-facing metadata captured alongside the observation.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -17244,6 +17301,9 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-metadata): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the event metadata associated with the publication.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-metadata): `Properties` on `EventPublicationHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Metadata&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or initializes metadata to attach to the publication.
+  - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationrequest-metadata): `Properties` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets optional operator-facing event metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -17327,6 +17387,9 @@ Browse the published API surface by public member.
   - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgeindexstate-metadata): `Properties` on `KnowledgeIndexState` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Optional operator-facing metadata captured with the latest indexing observation.
+  - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
+- [Metadata](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-knowledgequeryhttprequest-metadata): `Properties` on `KnowledgeQueryHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Metadata&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or initializes metadata to attach to the query.
   - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequerymatch-metadata): `Properties` on `KnowledgeQueryMatch` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - The operator-facing metadata attached to the matched document.
@@ -18901,6 +18964,9 @@ Browse the published API surface by public member.
 - [OccurredAtUtc](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-occurredatutc): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the time at which the event occurred.
   - `DateTimeOffset OccurredAtUtc { get; }`
+- [OccurredAtUtc](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-occurredatutc): `Properties` on `EventPublicationHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or initializes the event occurrence timestamp.
+  - `DateTimeOffset? OccurredAtUtc { get; set; }`
 - [OccurredAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationrequest-occurredatutc): `Properties` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OccurredAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the time at which the event occurred.
   - `DateTimeOffset OccurredAtUtc { get; }`
@@ -20003,6 +20069,9 @@ Browse the published API surface by public member.
 - [Payload](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-payload): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Payload&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the serialized event payload.
   - `string Payload { get; }`
+- [Payload](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-payload): `Properties` on `EventPublicationHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=Payload&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or initializes the event payload as JSON.
+  - `JsonElement? Payload { get; set; }`
 - [Payload](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationrequest-payload): `Properties` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Payload&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the serialized event payload.
   - `string Payload { get; }`
@@ -21840,6 +21909,9 @@ Browse the published API surface by public member.
 - [QueryOutcomeTag](cephalon-retrieval.md#member-f-cephalon-retrieval-services-retrievaldiagnostics-queryoutcometag): `Fields` on `RetrievalDiagnostics` in `Cephalon.Retrieval.Services` (`Cephalon.Retrieval`) [Browse](browse.html?q=QueryOutcomeTag&assembly=Cephalon.Retrieval&namespace=Cephalon.Retrieval.Services&scope=members)
   - Stable Cephalon-prefix tag carrying the terminal query outcome emitted on the activity (succeeded or failed). Unlike indexing, queries do not have a skipped or started state on the runtime path.
   - `const string QueryOutcomeTag`
+- [QueryText](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-knowledgequeryhttprequest-querytext): `Properties` on `KnowledgeQueryHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=QueryText&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or initializes the query text.
+  - `string QueryText { get; set; }`
 - [QueryText](cephalon-abstractions.md#member-p-cephalon-abstractions-retrieval-knowledgequeryrequest-querytext): `Properties` on `KnowledgeQueryRequest` in `Cephalon.Abstractions.Retrieval` (`Cephalon.Abstractions`) [Browse](browse.html?q=QueryText&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Retrieval&scope=members)
   - Gets the text to search for.
   - `string QueryText { get; }`
@@ -24582,6 +24654,9 @@ Browse the published API surface by public member.
 - [RunId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutioncontext-runid): `Properties` on `AgentToolExecutionContext` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=RunId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the stable run identifier for this execution.
   - `string RunId { get; }`
+- [RunId](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-agenttoolexecutionhttprequest-runid): `Properties` on `AgentToolExecutionHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=RunId&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or initializes the caller-supplied run identifier.
+  - `string RunId { get; set; }`
 - [RunId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutionreport-runid): `Properties` on `AgentToolExecutionReport` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=RunId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the stable run identifier.
   - `string RunId { get; }`
@@ -27714,6 +27789,9 @@ Browse the published API surface by public member.
 - [TenantId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventpublication-tenantid): `Properties` on `EventPublication` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the tenant identifier associated with the event.
   - `string TenantId { get; }`
+- [TenantId](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-hosting-eventpublicationhttprequest-tenantid): `Properties` on `EventPublicationHttpRequest` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=TenantId&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
+  - Gets or initializes the tenant identifier associated with the event.
+  - `string TenantId { get; set; }`
 - [TenantId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationrequest-tenantid): `Properties` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the tenant identifier associated with the event.
   - `string TenantId { get; }`

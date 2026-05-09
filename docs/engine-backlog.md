@@ -419,6 +419,39 @@ Validation:
 
 - `Invoke-Pester -Path tests/Cephalon.Tests.Scripts/deployment-mode-support-manifest.Tests.ps1 -Output Detailed`
 
+### ENG-528 Harden deployment-mode package load boundary
+
+Status: done
+Iteration: Sprint 125
+Area: release-readiness / deployment-mode / engine / host adapters
+Quality dimensions: Compatibility, Maintainability, Reliability, Auditability
+
+Why:
+
+- after `ENG-526`, the remaining engine-local trim/AOT evidence still conflated the no-package path with dynamic package loading
+- behavior input materialization needed an explicit `JsonTypeInfo<TInput>` path so trim/AOT-ready modules can avoid reflection-based JSON contracts
+- ASP.NET Core OpenAPI/security/health support still carried avoidable binder/JSON-node warnings even though route mapping remains a separate Native AOT lane
+
+Delivered:
+
+- skipped `ModulePackageLoader` when no package inputs are configured and added a Native AOT fail-fast message for configured dynamic package loading
+- scoped `PackageAssemblyLoadContext` trim suppressions to the external package boundary instead of the no-package engine path
+- added `JsonTypeInfo<TInput>` behavior registration and execution-slot overloads across Abstractions, Engine, and Behaviors
+- moved `Cephalon.Behaviors` default auto-registration to generated registry entries instead of runtime assembly-reference probing
+- replaced ASP.NET Core OpenAPI/security configuration binding and health dependency JSON projection with trim-friendlier manual parsing/typed payloads
+- kept global trim / Native AOT / single-file rows `not-claimed` and documented that ASP.NET Core route `MapGet` / `MapPost` delegate mapping remains the next adapter blocker
+
+Validation:
+
+- `dotnet build CephalonEngine.slnx --no-restore -m:1`
+- `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --no-build --filter "FullyQualifiedName~Behaviors"` passed 217/217
+- `dotnet test tests/Cephalon.Tests.Hosting/Cephalon.Tests.Hosting.csproj --no-build --filter "FullyQualifiedName~BehaviorRestProjection|FullyQualifiedName~AspNetCore"` passed 288/288
+- `dotnet test tests/Cephalon.Tests.Tooling/Cephalon.Tests.Tooling.csproj --no-build --filter "FullyQualifiedName~PackageSurface"` passed 225/225
+- `dotnet build src/Cephalon.Engine/Cephalon.Engine.csproj -c Release --no-restore /p:PublishTrimmed=true /p:TreatWarningsAsErrors=true /p:SuppressTrimAnalysisWarnings=false` passed
+- `dotnet build src/Cephalon.Engine/Cephalon.Engine.csproj -c Release --no-restore /p:PublishAot=true /p:TreatWarningsAsErrors=true /p:SuppressAotAnalysisWarnings=false` passed
+- `dotnet build src/Cephalon.Behaviors/Cephalon.Behaviors.csproj -c Release --no-restore /p:BuildProjectReferences=false /p:IsAotCompatible=true /p:EnableTrimAnalyzer=true /p:EnableAotAnalyzer=true /p:WarningsAsErrors=IL2026%3BIL2067%3BIL2072%3BIL3050` passed
+- `pwsh ./scripts/validate-deployment-mode-claims.ps1 -DeploymentMode trim -PublishTargets samples/Cephalon.Sample.ModularMonolith/Cephalon.Sample.ModularMonolith.csproj -OutputPath artifacts/deployment-mode-claims-trim-focused` reported aggregate `not-claimed` and `PublishProbeGate=not-applicable`
+
 ### ENG-523 Publish pending-baseline blocker evidence
 
 Status: shipped
