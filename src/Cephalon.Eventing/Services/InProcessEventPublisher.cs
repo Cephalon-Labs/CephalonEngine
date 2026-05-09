@@ -16,11 +16,13 @@ internal sealed class InProcessEventPublisher(
     InProcessEventSubscriptionIdempotencyTracker idempotencyTracker,
     IEventSubscriptionRuntimeReporter runtimeReporter,
     IEventPublicationRuntimeReporter publicationRuntimeReporter,
+    IEnumerable<IInbox> inboxes,
     ILoggerFactory? loggerFactory = null,
     RedactionPipeline? redactionPipeline = null) : IEventPublisher
 {
     private readonly ILogger logger = (loggerFactory ?? NullLoggerFactory.Instance)
         .CreateLogger<InProcessEventPublisher>();
+    private readonly IInbox? inbox = ResolveInbox(options, inboxes);
 
     public async ValueTask PublishAsync(
         EventPublication publication,
@@ -56,7 +58,11 @@ internal sealed class InProcessEventPublisher(
         var retryDelayMilliseconds = InProcessEventingRetryPolicy.GetRetryDelayMilliseconds(options);
         var retryDelay = TimeSpan.FromMilliseconds(retryDelayMilliseconds);
         var idempotencyPolicy = InProcessEventingIdempotencyPolicy.GetPolicyId(options);
+        var idempotencyStore = InProcessEventingIdempotencyPolicy.GetStore(options);
+        var idempotencyDurability = InProcessEventingIdempotencyPolicy.GetDurability(options);
+        var idempotencyScope = InProcessEventingIdempotencyPolicy.GetScope(options);
         var idempotencyRetentionMinutes = InProcessEventingIdempotencyPolicy.GetRetentionMinutes(options);
+        var inboxState = inbox is null ? "not-configured" : "available";
         var matchedSubscriptionCount = entries.Count;
         var startedSubscriptionCount = 0;
         var succeededSubscriptionCount = 0;
@@ -95,6 +101,10 @@ internal sealed class InProcessEventPublisher(
                         maxAttempts,
                         retryDelayMilliseconds,
                         idempotencyPolicy,
+                        idempotencyStore,
+                        idempotencyDurability,
+                        idempotencyScope,
+                        inboxState,
                         idempotencyRetentionMinutes,
                         subscriptionIds,
                         skipReason: "no-matching-subscriptions")),
@@ -117,11 +127,11 @@ internal sealed class InProcessEventPublisher(
 
         foreach (var entry in entries)
         {
-            if (idempotencyTracker.TryGetCompleted(
+            var idempotencyCheck = await CheckDuplicateAsync(
                 entry.Subscription.Id,
-                publication.Id,
-                DateTimeOffset.UtcNow,
-                out var completedAtUtc))
+                publication,
+                cancellationToken).ConfigureAwait(false);
+            if (idempotencyCheck.IsDuplicate)
             {
                 skippedSubscriptionCount++;
                 await runtimeReporter.ReportAsync(
@@ -139,8 +149,13 @@ internal sealed class InProcessEventPublisher(
                                 maxAttempts,
                                 retryDelayMilliseconds,
                                 idempotencyPolicy,
+                                idempotencyStore,
+                                idempotencyDurability,
+                                idempotencyScope,
+                                inboxState,
                                 idempotencyRetentionMinutes),
-                            completedAtUtc)),
+                            idempotencyCheck.CompletedAtUtc,
+                            idempotencyCheck.CheckedAtUtc)),
                     cancellationToken).ConfigureAwait(false);
                 continue;
             }
@@ -155,6 +170,10 @@ internal sealed class InProcessEventPublisher(
                     maxAttempts,
                     retryDelayMilliseconds,
                     idempotencyPolicy,
+                    idempotencyStore,
+                    idempotencyDurability,
+                    idempotencyScope,
+                    inboxState,
                     idempotencyRetentionMinutes);
                 startedSubscriptionCount++;
                 await runtimeReporter.ReportAsync(
@@ -188,7 +207,11 @@ internal sealed class InProcessEventPublisher(
                         cancellationToken).ConfigureAwait(false);
 
                     succeededSubscriptionCount++;
-                    idempotencyTracker.MarkCompleted(entry.Subscription.Id, publication.Id, DateTimeOffset.UtcNow);
+                    await MarkCompletedAsync(
+                        entry.Subscription,
+                        publication,
+                        metadata,
+                        cancellationToken).ConfigureAwait(false);
                     finalFailure = null;
                     break;
                 }
@@ -285,6 +308,10 @@ internal sealed class InProcessEventPublisher(
                         maxAttempts,
                         retryDelayMilliseconds,
                         idempotencyPolicy,
+                        idempotencyStore,
+                        idempotencyDurability,
+                        idempotencyScope,
+                        inboxState,
                         idempotencyRetentionMinutes,
                         subscriptionIds,
                         error: message)),
@@ -340,6 +367,10 @@ internal sealed class InProcessEventPublisher(
                     maxAttempts,
                     retryDelayMilliseconds,
                     idempotencyPolicy,
+                    idempotencyStore,
+                    idempotencyDurability,
+                    idempotencyScope,
+                    inboxState,
                     idempotencyRetentionMinutes,
                     subscriptionIds,
                     skipReason: publicationOutcome == EventPublicationRuntimeOutcomes.Skipped
@@ -352,6 +383,82 @@ internal sealed class InProcessEventPublisher(
             publication,
             publicationOutcome,
             matchedSubscriptionCount);
+    }
+
+    private async ValueTask<IdempotencyCheck> CheckDuplicateAsync(
+        string subscriptionId,
+        EventPublication publication,
+        CancellationToken cancellationToken)
+    {
+        var checkedAtUtc = DateTimeOffset.UtcNow;
+        if (!InProcessEventingIdempotencyPolicy.IsEnabled(options))
+        {
+            return new IdempotencyCheck(false, null, checkedAtUtc);
+        }
+
+        if (InProcessEventingIdempotencyPolicy.UsesInbox(options))
+        {
+            if (inbox is null)
+            {
+                throw new InvalidOperationException(
+                    "Inbox-backed in-process event subscription idempotency requires exactly one IInbox registration.");
+            }
+
+            var messageId = CreateInboxMessageId(subscriptionId, publication.Id);
+            var hasProcessed = await inbox.HasProcessedAsync(messageId, cancellationToken).ConfigureAwait(false);
+            return new IdempotencyCheck(hasProcessed, null, checkedAtUtc);
+        }
+
+        return idempotencyTracker.TryGetCompleted(
+            subscriptionId,
+            publication.Id,
+            checkedAtUtc,
+            out var completedAtUtc)
+            ? new IdempotencyCheck(true, completedAtUtc, checkedAtUtc)
+            : new IdempotencyCheck(false, null, checkedAtUtc);
+    }
+
+    private async ValueTask MarkCompletedAsync(
+        EventSubscriptionDescriptor subscription,
+        EventPublication publication,
+        IReadOnlyDictionary<string, string> metadata,
+        CancellationToken cancellationToken)
+    {
+        if (!InProcessEventingIdempotencyPolicy.IsEnabled(options))
+        {
+            return;
+        }
+
+        if (InProcessEventingIdempotencyPolicy.UsesInbox(options))
+        {
+            if (inbox is null)
+            {
+                throw new InvalidOperationException(
+                    "Inbox-backed in-process event subscription idempotency requires exactly one IInbox registration.");
+            }
+
+            var inboxMetadata = new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase)
+            {
+                ["idempotencyOutcome"] = "completed-recorded",
+                ["idempotencyStore"] = InProcessEventingIdempotencyPolicy.InboxStore
+            };
+            await inbox.MarkProcessedAsync(
+                new InboxMessage(
+                    id: CreateInboxMessageId(subscription.Id, publication.Id),
+                    channelId: publication.ChannelId,
+                    messageType: publication.EventType,
+                    payload: publication.Payload,
+                    receivedAtUtc: DateTimeOffset.UtcNow,
+                    contentType: publication.ContentType,
+                    correlationId: publication.CorrelationId,
+                    tenantId: publication.TenantId,
+                    headers: publication.Headers,
+                    metadata: inboxMetadata),
+                cancellationToken).ConfigureAwait(false);
+            return;
+        }
+
+        idempotencyTracker.MarkCompleted(subscription.Id, publication.Id, DateTimeOffset.UtcNow);
     }
 
     /// <summary>
@@ -418,6 +525,10 @@ internal sealed class InProcessEventPublisher(
         int maxAttempts,
         int retryDelayMilliseconds,
         string idempotencyPolicy,
+        string idempotencyStore,
+        string idempotencyDurability,
+        string idempotencyScope,
+        string inboxState,
         int idempotencyRetentionMinutes)
     {
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -437,11 +548,14 @@ internal sealed class InProcessEventPublisher(
             ["idempotencyKey"] = idempotencyPolicy == InProcessEventingIdempotencyPolicy.None
                 ? InProcessEventingIdempotencyPolicy.None
                 : InProcessEventingIdempotencyPolicy.KeyShape,
+            ["idempotencyStore"] = idempotencyStore,
             ["idempotencyRetentionMinutes"] = idempotencyRetentionMinutes.ToString(CultureInfo.InvariantCulture),
-            ["idempotencyDurability"] = InProcessEventingIdempotencyPolicy.Durability,
-            ["idempotencyScope"] = idempotencyPolicy == InProcessEventingIdempotencyPolicy.None
+            ["idempotencyDurability"] = idempotencyDurability,
+            ["idempotencyScope"] = idempotencyScope,
+            ["inbox"] = inboxState,
+            ["idempotencyMessageId"] = idempotencyPolicy == InProcessEventingIdempotencyPolicy.None
                 ? InProcessEventingIdempotencyPolicy.None
-                : InProcessEventingIdempotencyPolicy.Scope,
+                : CreateInboxMessageId(subscription.Id, publication.Id),
             ["channelId"] = publication.ChannelId,
             ["eventType"] = publication.EventType,
             ["subscriptionId"] = subscription.Id,
@@ -491,13 +605,23 @@ internal sealed class InProcessEventPublisher(
 
     private static Dictionary<string, string> CreateDuplicateSkippedMetadata(
         IReadOnlyDictionary<string, string> metadata,
-        DateTimeOffset completedAtUtc)
+        DateTimeOffset? completedAtUtc,
+        DateTimeOffset checkedAtUtc)
     {
         var skippedMetadata = new Dictionary<string, string>(metadata, StringComparer.OrdinalIgnoreCase)
         {
             ["idempotencyOutcome"] = "duplicate-skipped",
-            ["idempotencyCompletedAtUtc"] = completedAtUtc.ToString("O", CultureInfo.InvariantCulture)
+            ["idempotencyCheckedAtUtc"] = checkedAtUtc.ToString("O", CultureInfo.InvariantCulture)
         };
+
+        if (completedAtUtc is null)
+        {
+            skippedMetadata["idempotencyCompletionState"] = "recorded";
+        }
+        else
+        {
+            skippedMetadata["idempotencyCompletedAtUtc"] = completedAtUtc.Value.ToString("O", CultureInfo.InvariantCulture);
+        }
 
         return skippedMetadata;
     }
@@ -514,6 +638,10 @@ internal sealed class InProcessEventPublisher(
         int maxAttempts,
         int retryDelayMilliseconds,
         string idempotencyPolicy,
+        string idempotencyStore,
+        string idempotencyDurability,
+        string idempotencyScope,
+        string inboxState,
         int idempotencyRetentionMinutes,
         IReadOnlyList<string> subscriptionIds,
         string? skipReason = null,
@@ -544,11 +672,11 @@ internal sealed class InProcessEventPublisher(
             ["idempotencyKey"] = idempotencyPolicy == InProcessEventingIdempotencyPolicy.None
                 ? InProcessEventingIdempotencyPolicy.None
                 : InProcessEventingIdempotencyPolicy.KeyShape,
+            ["idempotencyStore"] = idempotencyStore,
             ["idempotencyRetentionMinutes"] = idempotencyRetentionMinutes.ToString(CultureInfo.InvariantCulture),
-            ["idempotencyDurability"] = InProcessEventingIdempotencyPolicy.Durability,
-            ["idempotencyScope"] = idempotencyPolicy == InProcessEventingIdempotencyPolicy.None
-                ? InProcessEventingIdempotencyPolicy.None
-                : InProcessEventingIdempotencyPolicy.Scope,
+            ["idempotencyDurability"] = idempotencyDurability,
+            ["idempotencyScope"] = idempotencyScope,
+            ["inbox"] = inboxState,
             ["matchedSubscriptionCount"] = matchedSubscriptionCount.ToString(CultureInfo.InvariantCulture),
             ["startedSubscriptionCount"] = startedSubscriptionCount.ToString(CultureInfo.InvariantCulture),
             ["succeededSubscriptionCount"] = succeededSubscriptionCount.ToString(CultureInfo.InvariantCulture),
@@ -595,4 +723,38 @@ internal sealed class InProcessEventPublisher(
 
         return metadata;
     }
+
+    private static IInbox? ResolveInbox(
+        EventingOptions options,
+        IEnumerable<IInbox> inboxes)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentNullException.ThrowIfNull(inboxes);
+
+        if (!InProcessEventingIdempotencyPolicy.UsesInbox(options))
+        {
+            return null;
+        }
+
+        var resolvedInboxes = inboxes.ToArray();
+        if (resolvedInboxes.Length == 1)
+        {
+            return resolvedInboxes[0];
+        }
+
+        throw new InvalidOperationException(
+            "Inbox-backed in-process event subscription idempotency requires exactly one IInbox registration.");
+    }
+
+    private static string CreateInboxMessageId(string subscriptionId, string publicationId)
+    {
+        return string.Create(
+            CultureInfo.InvariantCulture,
+            $"cephalon:eventing:subscription:{subscriptionId}:publication:{publicationId}");
+    }
+
+    private readonly record struct IdempotencyCheck(
+        bool IsDuplicate,
+        DateTimeOffset? CompletedAtUtc,
+        DateTimeOffset CheckedAtUtc);
 }

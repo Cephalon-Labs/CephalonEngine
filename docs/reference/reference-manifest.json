@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-09T22:05:17.7407011+00:00",
+  "GeneratedAtUtc": "2026-05-09T22:38:01.9090165+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8359,7 +8359,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 0,
-        "Methods": 1
+        "Methods": 3
       }
     },
     {
@@ -8373,7 +8373,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 11,
+        "Properties": 12,
         "Methods": 0
       }
     },
@@ -23426,6 +23426,28 @@
       "AnchorId": "member-m-cephalon-eventing-registration-eventingenginebuilderextensions-addeventing-cephalon-engine-composition-enginebuilder-system-action-cephalon-eventing-configuration-eventingoptions",
       "Signature": "EngineBuilder AddEventing(this EngineBuilder builder, Action\u003CEventingOptions\u003E configure)",
       "Summary": "Adds the eventing runtime pack to the engine."
+    },
+    {
+      "DisplayName": "AddEventingFromConfiguration",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventingEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Eventing.Registration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-registration-eventingenginebuilderextensions-addeventingfromconfiguration-cephalon-engine-composition-enginebuilder-microsoft-extensions-configuration-iconfiguration",
+      "Signature": "EngineBuilder AddEventingFromConfiguration(this EngineBuilder builder, IConfiguration configuration)",
+      "Summary": "Adds the eventing runtime pack to the engine and reads host-owned native eventing settings from configuration."
+    },
+    {
+      "DisplayName": "AddEventingFromConfiguration",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventingEngineBuilderExtensions",
+      "NamespaceName": "Cephalon.Eventing.Registration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-registration-eventingenginebuilderextensions-addeventingfromconfiguration-cephalon-engine-composition-enginebuilder-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-eventing-configuration-eventingoptions",
+      "Signature": "EngineBuilder AddEventingFromConfiguration(this EngineBuilder builder, IConfiguration configuration, Action\u003CEventingOptions\u003E configure)",
+      "Summary": "Adds the eventing runtime pack to the engine and reads host-owned native eventing settings from configuration."
     },
     {
       "DisplayName": "AddEventSourcing",
@@ -69623,6 +69645,17 @@
       "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionidempotencyretentionminutes",
       "Signature": "int InProcessSubscriptionIdempotencyRetentionMinutes { get; set; }",
       "Summary": "Gets or sets the number of minutes that successful direct in-process subscription executions remain eligible for duplicate suppression."
+    },
+    {
+      "DisplayName": "InProcessSubscriptionIdempotencyStore",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionidempotencystore",
+      "Signature": "string InProcessSubscriptionIdempotencyStore { get; set; }",
+      "Summary": "Gets or sets the store used by the direct in-process publisher for completed subscription-execution idempotency."
     },
     {
       "DisplayName": "InProcessSubscriptionMaxAttempts",

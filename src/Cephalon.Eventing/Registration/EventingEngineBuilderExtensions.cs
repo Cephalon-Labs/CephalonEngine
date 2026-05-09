@@ -1,6 +1,7 @@
 using Cephalon.Engine.Composition;
 using Cephalon.Eventing.Configuration;
 using Cephalon.Eventing.Modules;
+using Microsoft.Extensions.Configuration;
 
 namespace Cephalon.Eventing.Registration;
 
@@ -24,6 +25,53 @@ public static class EventingEngineBuilderExtensions
         ArgumentNullException.ThrowIfNull(builder);
 
         var options = new EventingOptions();
+        configure?.Invoke(options);
+
+        builder.AddModule(new EventingModule(options));
+        return builder;
+    }
+
+    /// <summary>
+    /// Adds the eventing runtime pack to the engine and reads host-owned native eventing settings from configuration.
+    /// </summary>
+    /// <param name="builder">The engine builder to extend.</param>
+    /// <param name="configuration">The host configuration that contains the <c>Engine:Messaging</c> section.</param>
+    /// <returns>The same engine builder for fluent composition.</returns>
+    public static EngineBuilder AddEventingFromConfiguration(
+        this EngineBuilder builder,
+        IConfiguration configuration)
+    {
+        return AddEventingCore(builder, configuration, configure: null);
+    }
+
+    /// <summary>
+    /// Adds the eventing runtime pack to the engine and reads host-owned native eventing settings from configuration.
+    /// </summary>
+    /// <param name="builder">The engine builder to extend.</param>
+    /// <param name="configuration">The host configuration that contains the <c>Engine:Messaging</c> section.</param>
+    /// <param name="configure">
+    /// A callback that can add channels, subscriptions, or deliberate overrides after configuration is read.
+    /// </param>
+    /// <returns>The same engine builder for fluent composition.</returns>
+    public static EngineBuilder AddEventingFromConfiguration(
+        this EngineBuilder builder,
+        IConfiguration configuration,
+        Action<EventingOptions> configure)
+    {
+        ArgumentNullException.ThrowIfNull(configure);
+
+        return AddEventingCore(builder, configuration, configure);
+    }
+
+    private static EngineBuilder AddEventingCore(
+        EngineBuilder builder,
+        IConfiguration configuration,
+        Action<EventingOptions>? configure)
+    {
+        ArgumentNullException.ThrowIfNull(builder);
+        ArgumentNullException.ThrowIfNull(configuration);
+
+        var options = EventingOptionsConfigurationReader.Read(configuration);
         configure?.Invoke(options);
 
         builder.AddModule(new EventingModule(options));

@@ -13,6 +13,7 @@ using Cephalon.Tests.Support;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Cephalon.Tests.Hosting;
@@ -837,6 +838,161 @@ public sealed class EventDispatchHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonSkipsDuplicateCoreInProcessEventSubscriptionExecutionsWithInboxStore()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
+        {
+            ["Engine:Messaging:InProcessSubscriptions:EnableExecution"] = "true",
+            ["Engine:Messaging:InProcessSubscriptions:Idempotency:Enabled"] = "true",
+            ["Engine:Messaging:InProcessSubscriptions:Idempotency:Store"] = "inbox",
+            ["Engine:Messaging:InProcessSubscriptions:Idempotency:RetentionMinutes"] = "45"
+        });
+        builder.Services.AddSingleton<RecordingInbox>();
+        builder.Services.AddSingleton<IInbox>(static serviceProvider =>
+            serviceProvider.GetRequiredService<RecordingInbox>());
+        builder.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new TechnologyPackContributionModule());
+            engine.AddEventingFromConfiguration(builder.Configuration);
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        await using (var scope = app.Services.CreateAsyncScope())
+        {
+            var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+            var publication = new EventPublication(
+                id: "audit-inbox-idempotency-001",
+                channelId: "audit",
+                eventType: "audit.created",
+                payload: """{"id":"audit-inbox-idempotency-001"}""",
+                occurredAtUtc: new DateTimeOffset(2026, 05, 10, 9, 0, 0, TimeSpan.Zero),
+                contentType: "application/json",
+                correlationId: "corr-audit-inbox-idempotency-001",
+                tenantId: "tenant-inbox-idempotency-001");
+
+            await publisher.PublishAsync(publication);
+            await publisher.PublishAsync(publication);
+        }
+
+        var client = app.GetTestClient();
+        var probe = app.Services.GetRequiredService<ManagedAuditProjectorProbe>();
+        var inbox = app.Services.GetRequiredService<RecordingInbox>();
+        var runtimeCatalog = app.Services.GetRequiredService<IEventSubscriptionRuntimeCatalog>();
+        var publicationRuntimeCatalog = app.Services.GetRequiredService<IEventPublicationRuntimeCatalog>();
+        var bindingCatalog = app.Services.GetRequiredService<IEventSubscriptionExecutionBindingCatalog>();
+        var capabilities = await client.GetFromJsonAsync<CapabilityManifest[]>("/engine/capabilities");
+        var eventingSurfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/event-driven-integration");
+
+        Assert.Equal(1, probe.TotalAttempts);
+        Assert.Equal(1, probe.SuccessfulAttempts);
+        const string inboxMessageId = "cephalon:eventing:subscription:audit-projector:publication:audit-inbox-idempotency-001";
+        Assert.Equal(inboxMessageId, Assert.Single(inbox.MarkedMessageIds));
+        Assert.Collection(
+            inbox.HasProcessedMessageIds,
+            messageId => Assert.Equal(inboxMessageId, messageId),
+            messageId => Assert.Equal(inboxMessageId, messageId));
+        var recordedMessage = Assert.Single(inbox.MarkedMessages);
+        Assert.Equal("audit", recordedMessage.ChannelId);
+        Assert.Equal("audit.created", recordedMessage.MessageType);
+        Assert.Equal("inbox", recordedMessage.Metadata["idempotencyStore"]);
+        Assert.Equal("completed-publication", recordedMessage.Metadata["idempotencyPolicy"]);
+
+        var runtimeState = Assert.Single(runtimeCatalog.States);
+        Assert.Equal(EventSubscriptionExecutionOutcomes.Skipped, runtimeState.LastOutcome);
+        Assert.Equal("completed-publication", runtimeState.Metadata["idempotencyPolicy"]);
+        Assert.Equal("subscription-publication", runtimeState.Metadata["idempotencyKey"]);
+        Assert.Equal("inbox", runtimeState.Metadata["idempotencyStore"]);
+        Assert.Equal("45", runtimeState.Metadata["idempotencyRetentionMinutes"]);
+        Assert.Equal("inbox", runtimeState.Metadata["idempotencyDurability"]);
+        Assert.Equal("durable-store", runtimeState.Metadata["idempotencyScope"]);
+        Assert.Equal("available", runtimeState.Metadata["inbox"]);
+        Assert.Equal("duplicate-skipped", runtimeState.Metadata["idempotencyOutcome"]);
+        Assert.Equal("recorded", runtimeState.Metadata["idempotencyCompletionState"]);
+        Assert.True(runtimeState.Metadata.ContainsKey("idempotencyCheckedAtUtc"));
+
+        var publicationState = Assert.Single(publicationRuntimeCatalog.States);
+        Assert.Equal(EventPublicationRuntimeOutcomes.Skipped, publicationState.LastOutcome);
+        Assert.Equal(1, publicationState.SucceededCount);
+        Assert.Equal(1, publicationState.SkippedCount);
+        Assert.Equal("duplicate-completed-subscriptions", publicationState.Metadata["skipReason"]);
+        Assert.Equal("inbox", publicationState.Metadata["idempotencyStore"]);
+        Assert.Equal("inbox", publicationState.Metadata["idempotencyDurability"]);
+        Assert.Equal("durable-store", publicationState.Metadata["idempotencyScope"]);
+        Assert.Equal("available", publicationState.Metadata["inbox"]);
+
+        var binding = Assert.Single(bindingCatalog.Bindings);
+        Assert.Equal("inbox", binding.Metadata["idempotencyStore"]);
+        Assert.Equal("inbox", binding.Metadata["idempotencyDurability"]);
+        Assert.Equal("durable-store", binding.Metadata["idempotencyScope"]);
+
+        Assert.NotNull(capabilities);
+        var publishCapability = Assert.Single(capabilities, capability => capability.Key == "eventing.publish");
+        Assert.Equal("inbox", publishCapability.Metadata["idempotencyStore"]);
+        Assert.Equal("inbox", publishCapability.Metadata["idempotencyDurability"]);
+        Assert.Equal("durable-store", publishCapability.Metadata["idempotencyScope"]);
+        Assert.Equal("available", publishCapability.Metadata["inbox"]);
+        var subscribeCapability = Assert.Single(capabilities, capability => capability.Key == "eventing.subscribe");
+        Assert.Equal("inbox", subscribeCapability.Metadata["idempotencyStore"]);
+        Assert.Equal("inbox", subscribeCapability.Metadata["idempotencyDurability"]);
+        Assert.Equal("durable-store", subscribeCapability.Metadata["idempotencyScope"]);
+        Assert.Equal("available", subscribeCapability.Metadata["inbox"]);
+
+        Assert.NotNull(eventingSurfaces);
+        var publisherSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-publishers");
+        var publisherEntry = Assert.Single(publisherSurface.Entries);
+        Assert.Equal("inbox", publisherEntry.Metadata["idempotencyStore"]);
+        Assert.Equal("inbox", publisherEntry.Metadata["idempotencyDurability"]);
+        Assert.Equal("durable-store", publisherEntry.Metadata["idempotencyScope"]);
+        Assert.Equal("available", publisherEntry.Metadata["inbox"]);
+
+        var subscriptionSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
+        var subscriptionEntry = Assert.Single(subscriptionSurface.Entries, entry => entry.Id == "audit-projector");
+        Assert.Equal("inbox", subscriptionEntry.Metadata["binding.idempotencyStore"]);
+        Assert.Equal("inbox", subscriptionEntry.Metadata["binding.idempotencyDurability"]);
+        Assert.Equal("durable-store", subscriptionEntry.Metadata["binding.idempotencyScope"]);
+        Assert.Equal("inbox", subscriptionEntry.Metadata["reported.idempotencyStore"]);
+        Assert.Equal("inbox", subscriptionEntry.Metadata["reported.idempotencyDurability"]);
+        Assert.Equal("durable-store", subscriptionEntry.Metadata["reported.idempotencyScope"]);
+        Assert.Equal("duplicate-skipped", subscriptionEntry.Metadata["reported.idempotencyOutcome"]);
+    }
+
+    [Fact]
+    public void BuildRejectsInboxBackedCoreInProcessIdempotencyWithoutInboxStore()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        var exception = Assert.Throws<InvalidOperationException>(() => builder.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new TechnologyPackContributionModule());
+            engine.AddEventing(options =>
+            {
+                options.EnableInProcessSubscriptionExecution = true;
+                options.EnableInProcessSubscriptionIdempotency = true;
+                options.InProcessSubscriptionIdempotencyStore = "inbox";
+            });
+        }));
+
+        Assert.Contains("IInbox", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("exactly one", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task MapCephalonExecutesCoreInProcessEventSubscriptionsWithoutWolverine()
     {
         var builder = WebApplication.CreateSlimBuilder();
@@ -957,5 +1113,77 @@ public sealed class EventDispatchHostingTests
             entry => entry.Id == "audit-projector");
         Assert.Equal("cephalon-managed", snapshotSubscription.Metadata["dispatchRuntime"]);
         Assert.Equal("succeeded", snapshotSubscription.Metadata["lastOutcome"]);
+    }
+
+    private sealed class RecordingInbox : IInbox
+    {
+        private readonly Lock gate = new();
+        private readonly List<string> hasProcessedMessageIds = [];
+        private readonly List<InboxMessage> markedMessages = [];
+        private readonly Dictionary<string, InboxMessage> messages = new(StringComparer.OrdinalIgnoreCase);
+
+        public IReadOnlyList<string> HasProcessedMessageIds
+        {
+            get
+            {
+                lock (gate)
+                {
+                    return hasProcessedMessageIds.ToArray();
+                }
+            }
+        }
+
+        public IReadOnlyList<string> MarkedMessageIds
+        {
+            get
+            {
+                lock (gate)
+                {
+                    return markedMessages
+                        .Select(static message => message.Id)
+                        .ToArray();
+                }
+            }
+        }
+
+        public IReadOnlyList<InboxMessage> MarkedMessages
+        {
+            get
+            {
+                lock (gate)
+                {
+                    return markedMessages.ToArray();
+                }
+            }
+        }
+
+        public ValueTask<bool> HasProcessedAsync(
+            string messageId,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            lock (gate)
+            {
+                hasProcessedMessageIds.Add(messageId);
+                return ValueTask.FromResult(messages.ContainsKey(messageId));
+            }
+        }
+
+        public ValueTask MarkProcessedAsync(
+            InboxMessage message,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(message);
+            cancellationToken.ThrowIfCancellationRequested();
+
+            lock (gate)
+            {
+                messages[message.Id] = message;
+                markedMessages.Add(message);
+            }
+
+            return ValueTask.CompletedTask;
+        }
     }
 }

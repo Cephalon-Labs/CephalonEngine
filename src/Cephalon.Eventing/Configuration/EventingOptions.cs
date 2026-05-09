@@ -53,6 +53,7 @@ public sealed class EventingOptions
     private int inProcessSubscriptionMaxAttempts = 1;
     private int inProcessSubscriptionRetryDelayMilliseconds;
     private int inProcessSubscriptionIdempotencyRetentionMinutes = 60;
+    private string inProcessSubscriptionIdempotencyStore = InProcessEventingIdempotencyPolicy.ProcessLocalStore;
     private int remediationCommandHistoryLimit = 256;
 
     /// <summary>
@@ -116,6 +117,20 @@ public sealed class EventingOptions
     /// cross-node idempotency store, or broker-owned exactly-once guarantee.
     /// </remarks>
     public bool EnableInProcessSubscriptionIdempotency { get; set; }
+
+    /// <summary>
+    /// Gets or sets the store used by the direct in-process publisher for completed subscription-execution idempotency.
+    /// </summary>
+    /// <remarks>
+    /// The default value is <c>process-local</c>, which records completed executions in the current process only.
+    /// Set the value to <c>inbox</c> to use exactly one registered <see cref="Cephalon.Abstractions.Data.IInbox" />
+    /// as the duplicate-suppression store while keeping the same direct in-process execution path.
+    /// </remarks>
+    public string InProcessSubscriptionIdempotencyStore
+    {
+        get => inProcessSubscriptionIdempotencyStore;
+        set => inProcessSubscriptionIdempotencyStore = InProcessEventingIdempotencyPolicy.NormalizeStore(value);
+    }
 
     /// <summary>
     /// Gets or sets the number of minutes that successful direct in-process subscription

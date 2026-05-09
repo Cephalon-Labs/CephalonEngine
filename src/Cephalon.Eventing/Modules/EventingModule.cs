@@ -67,7 +67,8 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
         hasDispatchStore = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchStore));
         hasDispatchRuntimeContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchRuntimeContributor));
         hasExternalManagedSubscriptionExecutionBindings = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventSubscriptionExecutionBindingContributor));
-        hasInboxPath = services.Any(static descriptor => descriptor.ServiceType == typeof(IInbox));
+        var inboxRegistrationCount = services.Count(static descriptor => descriptor.ServiceType == typeof(IInbox));
+        hasInboxPath = inboxRegistrationCount > 0;
         hasSubscriptionContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventSubscriptionContributor));
         hasSubscriptionExecutors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventSubscriptionExecutor));
         hasInProcessSubscriptionExecutionPath = options.EnableInProcessSubscriptionExecution && hasSubscriptionExecutors;
@@ -129,6 +130,28 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                 throw new InvalidOperationException(
                     "In-process event subscription execution cannot be combined with an event dispatch runtime contributor. Select either the built-in direct in-process path or a dispatch-runtime-backed companion path for this host.");
             }
+
+            if (options.EnableInProcessSubscriptionIdempotency &&
+                InProcessEventingIdempotencyPolicy.UsesInbox(options))
+            {
+                if (inboxRegistrationCount == 0)
+                {
+                    throw new InvalidOperationException(
+                        "Inbox-backed in-process event subscription idempotency requires exactly one IInbox registration. Register an inbox store before setting Engine:Messaging:InProcessSubscriptions:Idempotency:Store to 'inbox'.");
+                }
+
+                if (inboxRegistrationCount > 1)
+                {
+                    throw new InvalidOperationException(
+                        "Inbox-backed in-process event subscription idempotency requires exactly one IInbox registration. Multiple inbox registrations would make duplicate suppression nondeterministic.");
+                }
+            }
+        }
+        else if (options.EnableInProcessSubscriptionIdempotency &&
+            InProcessEventingIdempotencyPolicy.UsesInbox(options))
+        {
+            throw new InvalidOperationException(
+                "Inbox-backed in-process event subscription idempotency requires EnableInProcessSubscriptionExecution to be enabled because it protects the built-in direct subscription executor path.");
         }
 
         hasOutboxPublishingPath = options.EnablePublishing &&
@@ -210,7 +233,9 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             var inProcessRetryDelayMilliseconds = InProcessEventingRetryPolicy.GetRetryDelayMilliseconds(options).ToString(CultureInfo.InvariantCulture);
             var inProcessIdempotencyPolicy = InProcessEventingIdempotencyPolicy.GetPolicyId(options);
             var inProcessIdempotencyKey = InProcessEventingIdempotencyPolicy.GetKeyShape(options);
+            var inProcessIdempotencyStore = InProcessEventingIdempotencyPolicy.GetStore(options);
             var inProcessIdempotencyScope = InProcessEventingIdempotencyPolicy.GetScope(options);
+            var inProcessIdempotencyDurability = InProcessEventingIdempotencyPolicy.GetDurability(options);
             var inProcessIdempotencyRetentionMinutes = InProcessEventingIdempotencyPolicy.GetRetentionMinutes(options).ToString(CultureInfo.InvariantCulture);
             var publishMetadata = hasInProcessSubscriptionExecutionPath
                 ? new Dictionary<string, string>
@@ -231,9 +256,11 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["retryScope"] = "process-local",
                     ["idempotencyPolicy"] = inProcessIdempotencyPolicy,
                     ["idempotencyKey"] = inProcessIdempotencyKey,
+                    ["idempotencyStore"] = inProcessIdempotencyStore,
                     ["idempotencyRetentionMinutes"] = inProcessIdempotencyRetentionMinutes,
-                    ["idempotencyDurability"] = InProcessEventingIdempotencyPolicy.Durability,
+                    ["idempotencyDurability"] = inProcessIdempotencyDurability,
                     ["idempotencyScope"] = inProcessIdempotencyScope,
+                    ["inbox"] = hasInboxPath ? "available" : "not-configured",
                     ["runtimeState"] = "available"
                 }
                 : new Dictionary<string, string>
@@ -291,7 +318,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             capabilities.Add(new Capability(
                 key: "eventing.subscribe",
                 displayName: "Managed Event Subscription Execution",
-                description: "Executes declared event subscriptions through the built-in in-process direct publisher with optional bounded process-local retries and duplicate suppression while staying non-durable.",
+                description: "Executes declared event subscriptions through the built-in in-process direct publisher with optional bounded process-local retries and process-local or inbox-backed duplicate suppression.",
                 metadata: new Dictionary<string, string>
                 {
                     ["technology"] = "event-driven-integration",
@@ -307,9 +334,11 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["retryScope"] = "process-local",
                     ["idempotencyPolicy"] = InProcessEventingIdempotencyPolicy.GetPolicyId(options),
                     ["idempotencyKey"] = InProcessEventingIdempotencyPolicy.GetKeyShape(options),
+                    ["idempotencyStore"] = InProcessEventingIdempotencyPolicy.GetStore(options),
                     ["idempotencyRetentionMinutes"] = InProcessEventingIdempotencyPolicy.GetRetentionMinutes(options).ToString(CultureInfo.InvariantCulture),
-                    ["idempotencyDurability"] = InProcessEventingIdempotencyPolicy.Durability,
-                    ["idempotencyScope"] = InProcessEventingIdempotencyPolicy.GetScope(options)
+                    ["idempotencyDurability"] = InProcessEventingIdempotencyPolicy.GetDurability(options),
+                    ["idempotencyScope"] = InProcessEventingIdempotencyPolicy.GetScope(options),
+                    ["inbox"] = hasInboxPath ? "available" : "not-configured"
                 }));
         }
 

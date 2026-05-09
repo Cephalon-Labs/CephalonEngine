@@ -118,6 +118,18 @@ Gets or sets the number of minutes that successful direct in-process subscriptio
 
 Remarks: The default value is `60` minutes. The value is used only when `EnableInProcessSubscriptionIdempotency` is enabled.
 
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionidempotencystore"></a>
+
+##### `InProcessSubscriptionIdempotencyStore`
+
+```csharp
+string InProcessSubscriptionIdempotencyStore { get; set; }
+```
+
+Gets or sets the store used by the direct in-process publisher for completed subscription-execution idempotency.
+
+Remarks: The default value is `process-local`, which records completed executions in the current process only. Set the value to `inbox` to use exactly one registered `IInbox` as the duplicate-suppression store while keeping the same direct in-process execution path.
+
 <a id="member-p-cephalon-eventing-configuration-eventingoptions-inprocesssubscriptionmaxattempts"></a>
 
 ##### `InProcessSubscriptionMaxAttempts`
@@ -196,6 +208,39 @@ Returns: The same engine builder for fluent composition.
 Parameters:
 - `builder`: The engine builder to extend.
 - `configure`: An optional callback that configures the host-owned eventing options.
+
+<a id="member-m-cephalon-eventing-registration-eventingenginebuilderextensions-addeventingfromconfiguration-cephalon-engine-composition-enginebuilder-microsoft-extensions-configuration-iconfiguration"></a>
+
+##### `AddEventingFromConfiguration`
+
+```csharp
+EngineBuilder AddEventingFromConfiguration(this EngineBuilder builder, IConfiguration configuration)
+```
+
+Adds the eventing runtime pack to the engine and reads host-owned native eventing settings from configuration.
+
+Returns: The same engine builder for fluent composition.
+
+Parameters:
+- `builder`: The engine builder to extend.
+- `configuration`: The host configuration that contains the `Engine:Messaging` section.
+
+<a id="member-m-cephalon-eventing-registration-eventingenginebuilderextensions-addeventingfromconfiguration-cephalon-engine-composition-enginebuilder-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-eventing-configuration-eventingoptions"></a>
+
+##### `AddEventingFromConfiguration`
+
+```csharp
+EngineBuilder AddEventingFromConfiguration(this EngineBuilder builder, IConfiguration configuration, Action<EventingOptions> configure)
+```
+
+Adds the eventing runtime pack to the engine and reads host-owned native eventing settings from configuration.
+
+Returns: The same engine builder for fluent composition.
+
+Parameters:
+- `builder`: The engine builder to extend.
+- `configuration`: The host configuration that contains the `Engine:Messaging` section.
+- `configure`: A callback that can add channels, subscriptions, or deliberate overrides after configuration is read.
 
 <a id="namespace-cephalon-eventing-services"></a>
 

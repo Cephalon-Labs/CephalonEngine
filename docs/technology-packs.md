@@ -377,6 +377,7 @@ Shipped pack-specific extension points:
 - `MultiTenancyGovernanceOptions` for host-defined memberships, invitations, domain ownerships, governance actions, store paths, tenant-administration workflow enablement, invitation delivery dispatch/run-history enablement, invitation delivery retry queue enablement/max attempts/delay/batch limit/file durability/process-local execution coordination/background scheduling, invitation delivery status reconciliation enablement, delivery-status observation-store enablement/history/file durability, proof challenge defaults, proof publication planning, HTTP proof collection, DNS TXT proof collection resolver/timeout/size limits, proof verification runner orchestration, bounded proof polling enablement/batch limits, proof evaluation, and validation/evaluation/decision/workflow enablement
 - `Cephalon.Eventing`
   - `IEventChannelContributor`, `IEventChannelRegistry`, `IEventSubscriptionExecutionBindingContributor`, `IEventSubscriptionExecutionBindingCatalog`, the abstraction-level `IEventSubscriptionExecutionReadinessCatalog`, and the abstraction-level `IEventPublicationRuntimeCatalog`
+  - `EventingOptions.InProcessSubscriptionIdempotencyStore` and `engine.AddEventingFromConfiguration(configuration)` for config-driven native in-process subscription execution, including `Engine:Messaging:InProcessSubscriptions:Idempotency:Store = inbox` when exactly one registered `IInbox` should own completed-execution duplicate suppression without Wolverine
 - `Cephalon.Edge`
   - `IEdgeNodeContributor` and `IEdgeNodeRegistry`
 

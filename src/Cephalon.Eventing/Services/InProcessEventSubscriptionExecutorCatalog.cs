@@ -12,7 +12,9 @@ internal sealed class InProcessEventSubscriptionExecutorCatalog : IEventSubscrip
     private readonly int retryDelayMilliseconds;
     private readonly string idempotencyPolicy;
     private readonly string idempotencyKey;
+    private readonly string idempotencyStore;
     private readonly string idempotencyScope;
+    private readonly string idempotencyDurability;
     private readonly int idempotencyRetentionMinutes;
 
     public InProcessEventSubscriptionExecutorCatalog(
@@ -29,7 +31,9 @@ internal sealed class InProcessEventSubscriptionExecutorCatalog : IEventSubscrip
         retryDelayMilliseconds = InProcessEventingRetryPolicy.GetRetryDelayMilliseconds(options);
         idempotencyPolicy = InProcessEventingIdempotencyPolicy.GetPolicyId(options);
         idempotencyKey = InProcessEventingIdempotencyPolicy.GetKeyShape(options);
+        idempotencyStore = InProcessEventingIdempotencyPolicy.GetStore(options);
         idempotencyScope = InProcessEventingIdempotencyPolicy.GetScope(options);
+        idempotencyDurability = InProcessEventingIdempotencyPolicy.GetDurability(options);
         idempotencyRetentionMinutes = InProcessEventingIdempotencyPolicy.GetRetentionMinutes(options);
         index = new Dictionary<string, ManagedSubscriptionEntry>(StringComparer.OrdinalIgnoreCase);
         foreach (var executor in executors)
@@ -82,8 +86,9 @@ internal sealed class InProcessEventSubscriptionExecutorCatalog : IEventSubscrip
                     ["retryScope"] = "process-local",
                     ["idempotencyPolicy"] = idempotencyPolicy,
                     ["idempotencyKey"] = idempotencyKey,
+                    ["idempotencyStore"] = idempotencyStore,
                     ["idempotencyRetentionMinutes"] = idempotencyRetentionMinutes.ToString(CultureInfo.InvariantCulture),
-                    ["idempotencyDurability"] = InProcessEventingIdempotencyPolicy.Durability,
+                    ["idempotencyDurability"] = idempotencyDurability,
                     ["idempotencyScope"] = idempotencyScope,
                     ["channelId"] = entry.Subscription.ChannelId,
                     ["handlerId"] = entry.Subscription.HandlerId,

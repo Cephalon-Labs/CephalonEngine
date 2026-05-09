@@ -1925,6 +1925,7 @@
         "dependencies": {
           "Cephalon.Diagnostics": "[0.1.0-preview, )",
           "Cephalon.Engine": "[0.1.0-preview, )",
+          "Microsoft.Extensions.Configuration.Abstractions": "[10.0.5, )",
           "Microsoft.Extensions.DependencyInjection.Abstractions": "[10.0.5, )"
         }
       },

@@ -9,7 +9,8 @@ internal sealed class EventingInProcessPublishingRuntimeSurfaceContributor(
     EventingOptions options,
     IEventChannelCatalog channels,
     InProcessEventSubscriptionExecutorCatalog executors,
-    IEventPublicationRuntimeCatalog publicationRuntimeCatalog) : ITechnologyRuntimeContributor
+    IEventPublicationRuntimeCatalog publicationRuntimeCatalog,
+    EventingRuntimeTopology topology) : ITechnologyRuntimeContributor
 {
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
@@ -18,7 +19,9 @@ internal sealed class EventingInProcessPublishingRuntimeSurfaceContributor(
         var retryPolicy = InProcessEventingRetryPolicy.GetPolicyId(options);
         var idempotencyPolicy = InProcessEventingIdempotencyPolicy.GetPolicyId(options);
         var idempotencyKey = InProcessEventingIdempotencyPolicy.GetKeyShape(options);
+        var idempotencyStore = InProcessEventingIdempotencyPolicy.GetStore(options);
         var idempotencyScope = InProcessEventingIdempotencyPolicy.GetScope(options);
+        var idempotencyDurability = InProcessEventingIdempotencyPolicy.GetDurability(options);
         var idempotencyRetentionMinutes = InProcessEventingIdempotencyPolicy.GetRetentionMinutes(options);
         var channelIds = channels.Channels
             .Select(static channel => channel.Id)
@@ -70,9 +73,11 @@ internal sealed class EventingInProcessPublishingRuntimeSurfaceContributor(
                         ["retryScope"] = "process-local",
                         ["idempotencyPolicy"] = idempotencyPolicy,
                         ["idempotencyKey"] = idempotencyKey,
+                        ["idempotencyStore"] = idempotencyStore,
                         ["idempotencyRetentionMinutes"] = idempotencyRetentionMinutes.ToString(CultureInfo.InvariantCulture),
-                        ["idempotencyDurability"] = InProcessEventingIdempotencyPolicy.Durability,
+                        ["idempotencyDurability"] = idempotencyDurability,
                         ["idempotencyScope"] = idempotencyScope,
+                        ["inbox"] = topology.HasInboxPath ? "available" : "not-configured",
                         ["channelCount"] = channelIds.Length.ToString(CultureInfo.InvariantCulture),
                         ["channelIds"] = string.Join(",", channelIds),
                         ["subscriptionExecutorCount"] = subscriptionIds.Length.ToString(CultureInfo.InvariantCulture),
