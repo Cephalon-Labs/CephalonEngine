@@ -16,7 +16,7 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
-$Script:SchemaVersion = "1.18.0"
+$Script:SchemaVersion = "1.19.0"
 $Script:AllowedStatuses = @(
     "ready-for-preview",
     "partial",
@@ -1107,6 +1107,8 @@ function Convert-DeploymentModeClaimsReportEvidence {
             HazardInventoryFullOperatorRouteDelegateAuditFailureCount = 0
             HazardInventoryOperatorResponseJsonContractAuditStatus = ""
             HazardInventoryOperatorResponseJsonContractAuditFailureCount = 0
+            HazardInventoryNonOperatorEndpointAuditStatus = ""
+            HazardInventoryNonOperatorEndpointAuditFailureCount = 0
         })
     }
 
@@ -1285,6 +1287,12 @@ function Convert-DeploymentModeClaimsReportEvidence {
         throw "Deployment-mode claims report '$reportReference' operator response JSON contract audit is not matched."
     }
 
+    $nonOperatorEndpointAuditStatus = [string](Get-ManifestPropertyValue -Object $hazardInventory -PropertyName "NonOperatorEndpointAuditStatus" -DefaultValue "")
+    $nonOperatorEndpointAuditFailureCount = [int](Get-ManifestPropertyValue -Object $hazardInventory -PropertyName "NonOperatorEndpointAuditFailureCount" -DefaultValue -1)
+    if ($nonOperatorEndpointAuditStatus -ne "matched" -or $nonOperatorEndpointAuditFailureCount -ne 0) {
+        throw "Deployment-mode claims report '$reportReference' non-operator endpoint audit is not matched."
+    }
+
     return [pscustomobject]([ordered]@{
         Report                              = $reportReference
         Present                             = $true
@@ -1317,6 +1325,8 @@ function Convert-DeploymentModeClaimsReportEvidence {
         HazardInventoryFullOperatorRouteDelegateAuditFailureCount = $fullOperatorRouteDelegateAuditFailureCount
         HazardInventoryOperatorResponseJsonContractAuditStatus = $operatorResponseJsonContractAuditStatus
         HazardInventoryOperatorResponseJsonContractAuditFailureCount = $operatorResponseJsonContractAuditFailureCount
+        HazardInventoryNonOperatorEndpointAuditStatus = $nonOperatorEndpointAuditStatus
+        HazardInventoryNonOperatorEndpointAuditFailureCount = $nonOperatorEndpointAuditFailureCount
     })
 }
 
@@ -1605,6 +1615,8 @@ function Convert-DeploymentModeEvidence {
         ClaimsReportHazardInventoryFullOperatorRouteDelegateAuditFailureCount = $claimsReportEvidence.HazardInventoryFullOperatorRouteDelegateAuditFailureCount
         ClaimsReportHazardInventoryOperatorResponseJsonContractAuditStatus = $claimsReportEvidence.HazardInventoryOperatorResponseJsonContractAuditStatus
         ClaimsReportHazardInventoryOperatorResponseJsonContractAuditFailureCount = $claimsReportEvidence.HazardInventoryOperatorResponseJsonContractAuditFailureCount
+        ClaimsReportHazardInventoryNonOperatorEndpointAuditStatus = $claimsReportEvidence.HazardInventoryNonOperatorEndpointAuditStatus
+        ClaimsReportHazardInventoryNonOperatorEndpointAuditFailureCount = $claimsReportEvidence.HazardInventoryNonOperatorEndpointAuditFailureCount
     })
 }
 
@@ -3301,6 +3313,7 @@ function New-EngineCompletionScorecardReport {
             DeploymentModeClaimsReportFullCommonRouteDelegateAuditFailures = $deploymentModeEvidence.ClaimsReportHazardInventoryFullCommonRouteDelegateAuditFailureCount
             DeploymentModeClaimsReportFullOperatorRouteDelegateAuditFailures = $deploymentModeEvidence.ClaimsReportHazardInventoryFullOperatorRouteDelegateAuditFailureCount
             DeploymentModeClaimsReportOperatorResponseJsonContractAuditFailures = $deploymentModeEvidence.ClaimsReportHazardInventoryOperatorResponseJsonContractAuditFailureCount
+            DeploymentModeClaimsReportNonOperatorEndpointAuditFailures = $deploymentModeEvidence.ClaimsReportHazardInventoryNonOperatorEndpointAuditFailureCount
             AdoptionSmokeScenarioCount = if ($null -ne $adoptionSmokeEvidence) { 1 } else { 0 }
             AdoptionSmokeRuntimeProbeCount = @($adoptionSmokeEvidence.RuntimeProbes).Count
             AdoptionSmokeAssertionCount = @($adoptionSmokeEvidence.Assertions).Count
@@ -3483,6 +3496,7 @@ function Write-EngineCompletionScorecardReport {
     $markdown.Add("- Claims-report full common route-delegate audit: $($Report.DeploymentModeEvidence.ClaimsReportHazardInventoryFullCommonRouteDelegateAuditStatus); failures $($Report.DeploymentModeEvidence.ClaimsReportHazardInventoryFullCommonRouteDelegateAuditFailureCount)")
     $markdown.Add("- Claims-report full operator route-delegate audit: $($Report.DeploymentModeEvidence.ClaimsReportHazardInventoryFullOperatorRouteDelegateAuditStatus); failures $($Report.DeploymentModeEvidence.ClaimsReportHazardInventoryFullOperatorRouteDelegateAuditFailureCount)")
     $markdown.Add("- Claims-report operator response JSON contract audit: $($Report.DeploymentModeEvidence.ClaimsReportHazardInventoryOperatorResponseJsonContractAuditStatus); failures $($Report.DeploymentModeEvidence.ClaimsReportHazardInventoryOperatorResponseJsonContractAuditFailureCount)")
+    $markdown.Add("- Claims-report non-operator host/documentation endpoint audit: $($Report.DeploymentModeEvidence.ClaimsReportHazardInventoryNonOperatorEndpointAuditStatus); failures $($Report.DeploymentModeEvidence.ClaimsReportHazardInventoryNonOperatorEndpointAuditFailureCount)")
     $markdown.Add("")
     $markdown.Add("| Mode | Status | Summary |")
     $markdown.Add("| --- | --- | --- |")

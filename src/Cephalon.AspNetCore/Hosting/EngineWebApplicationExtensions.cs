@@ -87,8 +87,10 @@ public static class EngineWebApplicationExtensions
     /// </para>
     /// <para>
     /// The full operator route surface now avoids direct ASP.NET Core Minimal API delegate binding for the
-    /// operator catalog and common operator responses have source-generated JSON metadata, but the package still
-    /// has an explicit trim and Native AOT boundary until non-operator host/documentation endpoints are promoted.
+    /// operator catalog, common operator responses have source-generated JSON metadata, and Cephalon-owned
+    /// non-operator documentation endpoints use request delegates; framework health, OpenAPI, and Scalar
+    /// endpoints are still audited as an explicit trim and Native AOT boundary until full-adapter support is
+    /// promoted deliberately.
     /// </para>
     /// <para>
     /// Setting <c>Engine:AspNetCore:OperatorSurface:Mode</c> to <c>core</c> maps the bounded core
@@ -1901,6 +1903,35 @@ public static class EngineWebApplicationExtensions
             .WithName(endpointName);
     }
 
+    private static IEndpointConventionBuilder MapGetRequestDelegate(
+        WebApplication app,
+        string pattern,
+        RequestDelegate requestDelegate)
+    {
+        return app.MapMethods(pattern, [HttpMethods.Get], requestDelegate);
+    }
+
+    private static IEndpointConventionBuilder MapGetResultRequestDelegate(
+        WebApplication app,
+        string pattern,
+        Func<HttpContext, IResult> handler)
+    {
+        return MapGetRequestDelegate(app, pattern, context =>
+            handler(context).ExecuteAsync(context));
+    }
+
+    private static IEndpointConventionBuilder MapGetAsyncResultRequestDelegate(
+        WebApplication app,
+        string pattern,
+        Func<HttpContext, Task<IResult>> handler)
+    {
+        return MapGetRequestDelegate(app, pattern, async context =>
+        {
+            var result = await handler(context).ConfigureAwait(false);
+            await result.ExecuteAsync(context).ConfigureAwait(false);
+        });
+    }
+
     private static void MapGetResultRequestDelegate(
         RouteGroupBuilder engineGroup,
         string pattern,
@@ -2275,9 +2306,10 @@ public static class EngineWebApplicationExtensions
 
             app.MapOpenApi(openApiEndpointOptions.RoutePattern)
                 .DisableRateLimiting();
-            app.MapGet(
+            MapGetResultRequestDelegate(
+                    app,
                     openApiToggleScriptRoute,
-                    () => Results.Text(
+                    _ => Results.Text(
                         RenderOpenApiToggleScript(
                             openApiEndpointOptions.ScalarRoutePrefix,
                             openApiDocumentNames,
@@ -2285,10 +2317,10 @@ public static class EngineWebApplicationExtensions
                         "application/javascript"))
                 .DisableRateLimiting()
                 .ExcludeFromDescription();
-            app.MapGet(scalarFaviconRoute, () => Results.Text(ScalarFavicon.Value, "image/svg+xml"))
+            MapGetResultRequestDelegate(app, scalarFaviconRoute, _ => Results.Text(ScalarFavicon.Value, "image/svg+xml"))
                 .DisableRateLimiting()
                 .ExcludeFromDescription();
-            app.MapGet("/favicon.ico", () => Results.Redirect(scalarFaviconReference))
+            MapGetResultRequestDelegate(app, "/favicon.ico", _ => Results.Redirect(scalarFaviconReference))
                 .DisableRateLimiting()
                 .ExcludeFromDescription();
             app.UseWhen(
@@ -2398,14 +2430,14 @@ public static class EngineWebApplicationExtensions
 
         ValidateReferenceDocsOptions(options, surface);
 
-        app.MapGet(surface.RoutePrefix, () => Results.Redirect(surface.DefaultDocumentPath))
+        MapGetResultRequestDelegate(app, surface.RoutePrefix, _ => Results.Redirect(surface.DefaultDocumentPath))
             .DisableRateLimiting()
             .ExcludeFromDescription();
-        app.MapGet($"{surface.RoutePrefix}/", () => Results.Redirect(surface.DefaultDocumentPath))
+        MapGetResultRequestDelegate(app, $"{surface.RoutePrefix}/", _ => Results.Redirect(surface.DefaultDocumentPath))
             .DisableRateLimiting()
             .ExcludeFromDescription();
-        app.MapGet($"{surface.RoutePrefix}/{{**filePath}}", (string? filePath) =>
-                ServeReferenceDocsFile(options, filePath))
+        MapGetResultRequestDelegate(app, $"{surface.RoutePrefix}/{{**filePath}}", context =>
+                ServeReferenceDocsFile(options, GetRouteValue(context, "filePath")))
             .DisableRateLimiting()
             .ExcludeFromDescription();
     }
@@ -2644,14 +2676,14 @@ public static class EngineWebApplicationExtensions
         var bindingRoutePattern = BackendForFrontendRestDocumentRoutes.BuildBindingOpenApiRoutePattern(openApiEndpointOptions.RoutePattern);
         var clientRoutePattern = BackendForFrontendRestDocumentRoutes.BuildClientOpenApiRoutePattern(openApiEndpointOptions.RoutePattern);
 
-        app.MapGet(bindingRoutePattern, async (
-                string bindingId,
-                string documentName,
-                [FromServices] AspNetCoreBackendForFrontendRestDocumentPublisher publisher,
-                CancellationToken cancellationToken) =>
+        MapGetAsyncResultRequestDelegate(app, bindingRoutePattern, async context =>
             {
+                var publisher = context.RequestServices.GetRequiredService<AspNetCoreBackendForFrontendRestDocumentPublisher>();
                 var payload = await publisher
-                    .GenerateBindingDocumentAsync(bindingId, documentName, cancellationToken)
+                    .GenerateBindingDocumentAsync(
+                        GetRouteValue(context, "bindingId"),
+                        GetRouteValue(context, "documentName"),
+                        context.RequestAborted)
                     .ConfigureAwait(false);
 
                 return payload is null
@@ -2661,14 +2693,14 @@ public static class EngineWebApplicationExtensions
             .DisableRateLimiting()
             .ExcludeFromDescription();
 
-        app.MapGet(clientRoutePattern, async (
-                string clientId,
-                string documentName,
-                [FromServices] AspNetCoreBackendForFrontendRestDocumentPublisher publisher,
-                CancellationToken cancellationToken) =>
+        MapGetAsyncResultRequestDelegate(app, clientRoutePattern, async context =>
             {
+                var publisher = context.RequestServices.GetRequiredService<AspNetCoreBackendForFrontendRestDocumentPublisher>();
                 var payload = await publisher
-                    .GenerateClientDocumentAsync(clientId, documentName, cancellationToken)
+                    .GenerateClientDocumentAsync(
+                        GetRouteValue(context, "clientId"),
+                        GetRouteValue(context, "documentName"),
+                        context.RequestAborted)
                     .ConfigureAwait(false);
 
                 return payload is null
@@ -2737,10 +2769,12 @@ public static class EngineWebApplicationExtensions
         var scalarFaviconRoute = BuildScalarAssetRoute(scalarRoutePrefix, "assets/favicon.svg");
         var scalarFaviconReference = BuildVersionedAssetReference(scalarFaviconRoute);
 
-        app.MapGet(
+        MapGetResultRequestDelegate(
+                app,
                 openApiToggleScriptRoute,
-                (HttpContext httpContext, [FromServices] IBackendForFrontendRestDocumentRuntimeCatalog catalog) =>
+                httpContext =>
                 {
+                    var catalog = httpContext.RequestServices.GetRequiredService<IBackendForFrontendRestDocumentRuntimeCatalog>();
                     var scopeId = httpContext.Request.Query[scopeParameterName].ToString();
                     var documents = string.IsNullOrWhiteSpace(scopeId)
                         ? []
@@ -2761,7 +2795,7 @@ public static class EngineWebApplicationExtensions
                 })
             .DisableRateLimiting()
             .ExcludeFromDescription();
-        app.MapGet(scalarFaviconRoute, () => Results.Text(ScalarFavicon.Value, "image/svg+xml"))
+        MapGetResultRequestDelegate(app, scalarFaviconRoute, _ => Results.Text(ScalarFavicon.Value, "image/svg+xml"))
             .DisableRateLimiting()
             .ExcludeFromDescription();
         app.UseWhen(

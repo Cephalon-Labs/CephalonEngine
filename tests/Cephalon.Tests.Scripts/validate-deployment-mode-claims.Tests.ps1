@@ -126,6 +126,7 @@ BeforeAll {
             [bool]$UseFullOperatorMinimalApiMapGet = $false,
             [bool]$UseFullOperatorMinimalApiMapPost = $false,
             [bool]$UseMapMethods = $true,
+            [bool]$UseNonOperatorMinimalApiMapGet = $false,
             [string[]]$MissingResponseJsonContracts = @(),
             [bool]$RegisterHttpJsonResolver = $true,
             [bool]$RegisterMvcJsonResolver = $true
@@ -178,6 +179,12 @@ BeforeAll {
         else {
             '        _ = pattern; _ = endpointName; _ = requestDelegate;'
         }
+        $nonOperatorMinimalApiLine = if ($UseNonOperatorMinimalApiMapGet) {
+            '        app.MapGet("/favicon.ico", () => Results.Redirect("/scalar/assets/favicon.svg"));'
+        }
+        else {
+            ''
+        }
 
         @(
             'using System.Diagnostics.CodeAnalysis;',
@@ -208,6 +215,18 @@ BeforeAll {
             '    {',
             $postHelperRouteLine,
             '    }',
+            '    private static RouteHandlerBuilder MapGetRequestDelegate(WebApplication app, string pattern, RequestDelegate requestDelegate)',
+            '    {',
+            '        return app.MapMethods(pattern, [HttpMethods.Get], requestDelegate);',
+            '    }',
+            '    private static RouteHandlerBuilder MapGetResultRequestDelegate(WebApplication app, string pattern, Func<HttpContext, IResult> handler)',
+            '    {',
+            '        return MapGetRequestDelegate(app, pattern, context => handler(context).ExecuteAsync(context));',
+            '    }',
+            '    private static RouteHandlerBuilder MapGetAsyncResultRequestDelegate(WebApplication app, string pattern, Func<HttpContext, Task<IResult>> handler)',
+            '    {',
+            '        return MapGetRequestDelegate(app, pattern, async context => await (await handler(context)).ExecuteAsync(context));',
+            '    }',
             '    private static void MapGetResultRequestDelegate(RouteGroupBuilder engineGroup, string pattern, string endpointName, Func<HttpContext, IResult> handler)',
             '    {',
             '        MapGetRequestDelegate(engineGroup, pattern, endpointName, context => handler(context).ExecuteAsync(context));',
@@ -218,7 +237,51 @@ BeforeAll {
             '    }',
             '    private static void MapCdcCaptureRuntimeCollectionRoute() { }',
             '    private static TService GetRequiredService<TService>(HttpContext context) where TService : notnull => throw new System.NotImplementedException();',
-            '    private static void MapCephalonHostInfrastructure() { }',
+            '    private static void MapCephalonHostInfrastructure()',
+            '    {',
+            '        var app = default(WebApplication)!;',
+            '        var openApiEndpointOptions = new { RoutePattern = "/openapi/{documentName}.json", ScalarRoutePrefix = "/scalar" };',
+            '        var openApiToggleScriptRoute = "/scalar/openapi-toggle.js";',
+            '        var scalarFaviconRoute = "/scalar/assets/favicon.svg";',
+            '        app.MapHealthChecks("/health", default!);',
+            '        app.MapHealthChecks("/health/live", default!);',
+            '        app.MapHealthChecks("/health/ready", default!);',
+            '        app.UseWhen(default!, default!);',
+            '        app.MapOpenApi(openApiEndpointOptions.RoutePattern);',
+            '        MapGetResultRequestDelegate(app, openApiToggleScriptRoute, static context => Results.Ok());',
+            '        MapGetResultRequestDelegate(app, scalarFaviconRoute, static context => Results.Ok());',
+            '        MapGetResultRequestDelegate(app, "/favicon.ico", static context => Results.Ok());',
+            $nonOperatorMinimalApiLine,
+            '        app.UseWhen(default!, default!);',
+            '        app.MapScalarApiReference(openApiEndpointOptions.ScalarRoutePrefix, default!);',
+            '        MapReferenceDocs(app);',
+            '        MapBackendForFrontendRestOpenApiDocuments(app);',
+            '        MapBackendForFrontendRestScalarSurface(app);',
+            '    }',
+            '    private static void MapReferenceDocs(WebApplication app)',
+            '    {',
+            '        var surface = new { RoutePrefix = "/engine/reference-docs" };',
+            '        MapGetResultRequestDelegate(app, surface.RoutePrefix, static context => Results.Ok());',
+            '        MapGetResultRequestDelegate(app, $"{surface.RoutePrefix}/", static context => Results.Ok());',
+            '        MapGetResultRequestDelegate(app, $"{surface.RoutePrefix}/{{**filePath}}", static context => Results.Ok());',
+            '    }',
+            '    private static void MapBackendForFrontendRestOpenApiDocuments(WebApplication app)',
+            '    {',
+            '        var bindingRoutePattern = "/openapi/bff/bindings/{bindingId}/{documentName}.json";',
+            '        var clientRoutePattern = "/openapi/bff/clients/{clientId}/{documentName}.json";',
+            '        MapGetAsyncResultRequestDelegate(app, bindingRoutePattern, static context => Task.FromResult<IResult>(Results.Ok()));',
+            '        MapGetAsyncResultRequestDelegate(app, clientRoutePattern, static context => Task.FromResult<IResult>(Results.Ok()));',
+            '    }',
+            '    private static void MapBackendForFrontendRestScalarSurface(WebApplication app)',
+            '    {',
+            '        var openApiToggleScriptRoute = "/scalar/bff/openapi-toggle.js";',
+            '        var scalarFaviconRoute = "/scalar/bff/assets/favicon.svg";',
+            '        var scalarRoutePrefix = "/scalar/bff";',
+            '        MapGetResultRequestDelegate(app, openApiToggleScriptRoute, static context => Results.Ok());',
+            '        MapGetResultRequestDelegate(app, scalarFaviconRoute, static context => Results.Ok());',
+            '        app.UseWhen(default!, default!);',
+            '        app.MapScalarApiReference(scalarRoutePrefix, default!);',
+            '    }',
             '    private static Task<(TValue? Value, IResult? Error)> ReadOptionalJsonBodyAsync<TValue>(HttpContext context, object jsonTypeInfo) => throw new System.NotImplementedException();',
             '}'
         ) | Set-Content -LiteralPath $sourcePath -Encoding UTF8
@@ -1438,6 +1501,14 @@ Describe "Get-DeploymentModeHazardInventory" {
         $inventory.OperatorResponseJsonContractAudits[0].HttpJsonOptionsResolverRegistered | Should -BeTrue
         $inventory.OperatorResponseJsonContractAudits[0].MvcJsonOptionsResolverRegistered | Should -BeTrue
         @($inventory.OperatorResponseJsonContractAudits[0].SourceGeneratedResponseContracts).Count | Should -Be 23
+        $inventory.NonOperatorEndpointAuditStatus | Should -Be "matched"
+        $inventory.NonOperatorEndpointAuditCount | Should -Be 1
+        $inventory.NonOperatorEndpointAuditFailureCount | Should -Be 0
+        $inventory.NonOperatorEndpointAudits[0].DirectAppMapGetCount | Should -Be 0
+        $inventory.NonOperatorEndpointAudits[0].SelfOwnedRequestDelegateEndpointCount | Should -Be 10
+        $inventory.NonOperatorEndpointAudits[0].FrameworkEndpointCount | Should -Be 6
+        $inventory.NonOperatorEndpointAudits[0].UseWhenBranchCount | Should -Be 3
+        @($inventory.NonOperatorEndpointAudits[0].FrameworkEndpointMarkers).Count | Should -Be 6
     }
 
     It "marks dynamic Minimal API boundary hazards as failed when either required annotation is missing" {
@@ -1701,6 +1772,7 @@ Describe "Get-DeploymentModeHazardInventory" {
         $inventory.FullCommonRouteDelegateAuditStatus | Should -Be "not-applicable"
         $inventory.FullOperatorRouteDelegateAuditStatus | Should -Be "not-applicable"
         $inventory.OperatorResponseJsonContractAuditStatus | Should -Be "not-applicable"
+        $inventory.NonOperatorEndpointAuditStatus | Should -Be "not-applicable"
     }
 }
 
@@ -2001,6 +2073,61 @@ Describe "Invoke-DeploymentModeClaimValidation (integration)" {
         $inventory.OperatorResponseJsonContractAuditStatus | Should -Be "failed"
         $inventory.OperatorResponseJsonContractAuditFailureCount | Should -Be 1
         $inventory.OperatorResponseJsonContractAuditFailures[0].Failures | Should -Contain "mvc-json-source-generated-resolver-not-registered"
+    }
+
+    It "throws after writing reports when the non-operator endpoint audit fails" {
+        $repo = New-TempRepoRoot -Projects @()
+        Set-TempAspNetCoreOperatorSource -RepoRoot $repo.Root -UseNonOperatorMinimalApiMapGet:$true | Out-Null
+
+        $manifestPath = Join-Path $repo.Root "deployment-mode-support.json"
+        @{
+            deploymentModes = @{
+                trim       = @{ status = "not-claimed" }
+                nativeAot  = @{ status = "not-claimed" }
+                singleFile = @{ status = "not-claimed" }
+            }
+            deploymentModeEligibility = @{
+                packages = @(
+                    @{
+                        packageName = "Cephalon.AspNetCore"
+                        nugetId = "Cephalon.AspNetCore"
+                        claimAuditTier = "high"
+                        supportedModes = @()
+                        requiredProjectProperties = @()
+                        knownHazards = @(
+                            @{
+                                kind = "dynamic-minimal-api-operator-route-binding"
+                                site = "src/Cephalon.AspNetCore/Hosting/EngineWebApplicationExtensions.cs:7"
+                                pattern = "MapCephalon dynamic route binding"
+                                remediation = "non-operator host/documentation endpoints use request delegates or explicit framework endpoints"
+                            }
+                        )
+                    }
+                )
+            }
+        } | ConvertTo-Json -Depth 12 | Set-Content -LiteralPath $manifestPath -Encoding UTF8
+
+        $outDir = Join-Path $repo.Root "out"
+        {
+            Invoke-DeploymentModeClaimValidation `
+                -DeploymentMode "nativeAot" `
+                -ManifestPath $manifestPath `
+                -OutputPath $outDir `
+                -RepoRoot $repo.Root `
+                -SkipPublish
+        } | Should -Throw "*non-operator-endpoint-audit-failed*"
+
+        $hazardInventoryPath = Join-Path $outDir "hazard-inventory.json"
+        Test-Path -LiteralPath $hazardInventoryPath | Should -BeTrue
+        $inventory = Get-Content -LiteralPath $hazardInventoryPath -Raw | ConvertFrom-Json
+        $inventory.BoundaryAnnotationAuditStatus | Should -Be "matched"
+        $inventory.CoreRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.FullCommonRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.FullOperatorRouteDelegateAuditStatus | Should -Be "matched"
+        $inventory.OperatorResponseJsonContractAuditStatus | Should -Be "matched"
+        $inventory.NonOperatorEndpointAuditStatus | Should -Be "failed"
+        $inventory.NonOperatorEndpointAuditFailureCount | Should -Be 1
+        $inventory.NonOperatorEndpointAuditFailures[0].Failures | Should -Contain "direct-app-mapget-still-present:1"
     }
 
     It "throws when the aggregate verdict is claim-overstated" {

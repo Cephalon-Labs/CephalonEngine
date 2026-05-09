@@ -1533,6 +1533,148 @@ function Get-DeploymentModeOperatorResponseJsonContractAudits {
     return @($rows)
 }
 
+function Get-DeploymentModeNonOperatorEndpointAudits {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)] $Manifest,
+        [string]$RepoRoot = ""
+    )
+
+    $rows = @()
+    if ($null -eq $Manifest -or
+        -not $Manifest.PSObject.Properties.Match("deploymentModeEligibility").Count -or
+        $null -eq $Manifest.deploymentModeEligibility -or
+        -not $Manifest.deploymentModeEligibility.PSObject.Properties.Match("packages").Count) {
+        return @()
+    }
+
+    foreach ($pkg in @($Manifest.deploymentModeEligibility.packages)) {
+        if ($null -eq $pkg -or $pkg.PSObject.Properties.Match("knownHazards").Count -eq 0) { continue }
+
+        $packageName = if ($pkg.PSObject.Properties.Match("packageName").Count -gt 0) { [string]$pkg.packageName } else { "" }
+        if (-not [string]::Equals($packageName, "Cephalon.AspNetCore", [System.StringComparison]::OrdinalIgnoreCase)) {
+            continue
+        }
+
+        foreach ($hazard in @($pkg.knownHazards)) {
+            if ($null -eq $hazard -or $hazard.PSObject.Properties.Match("kind").Count -eq 0) { continue }
+
+            $kind = [string]$hazard.kind
+            if (-not [string]::Equals($kind, "dynamic-minimal-api-operator-route-binding", [System.StringComparison]::OrdinalIgnoreCase)) {
+                continue
+            }
+
+            $sourceRelativePath = "src/Cephalon.AspNetCore/Hosting/EngineWebApplicationExtensions.cs"
+            $sourcePath = $sourceRelativePath
+            if (-not [string]::IsNullOrWhiteSpace($RepoRoot)) {
+                $sourcePath = Join-Path $RepoRoot ($sourceRelativePath -replace '/', [System.IO.Path]::DirectorySeparatorChar)
+            }
+
+            $sourceExists = Test-Path -LiteralPath $sourcePath -PathType Leaf
+            $frameworkEndpointMarkers = @()
+            $missingFrameworkEndpointMarkers = @()
+            $helperFound = $false
+            $helperAcceptsRequestDelegate = $false
+            $helperUsesMapMethods = $false
+            $directAppMapGetCount = 0
+            $selfOwnedRequestDelegateEndpointCount = 0
+            $frameworkEndpointCount = 0
+            $useWhenBranchCount = 0
+            $failures = @()
+
+            $expectedFrameworkMarkers = @(
+                [pscustomobject]@{ Id = "health"; Marker = 'app.MapHealthChecks("/health"' },
+                [pscustomobject]@{ Id = "health-live"; Marker = 'app.MapHealthChecks("/health/live"' },
+                [pscustomobject]@{ Id = "health-ready"; Marker = 'app.MapHealthChecks("/health/ready"' },
+                [pscustomobject]@{ Id = "openapi"; Marker = 'app.MapOpenApi(openApiEndpointOptions.RoutePattern)' },
+                [pscustomobject]@{ Id = "scalar-default"; Marker = 'app.MapScalarApiReference(openApiEndpointOptions.ScalarRoutePrefix' },
+                [pscustomobject]@{ Id = "scalar-bff-scoped"; Marker = 'app.MapScalarApiReference(scalarRoutePrefix' }
+            )
+
+            if (-not $sourceExists) {
+                $failures += "source-missing"
+            }
+            else {
+                $source = Get-Content -LiteralPath $sourcePath -Raw -Encoding UTF8
+                $directAppMapGetCount = ([regex]::Matches($source, 'app\.MapGet\s*\(')).Count
+                $selfOwnedRequestDelegateEndpointCount =
+                    ([regex]::Matches($source, 'MapGetResultRequestDelegate\s*\(\s*app\s*,')).Count +
+                    ([regex]::Matches($source, 'MapGetAsyncResultRequestDelegate\s*\(\s*app\s*,')).Count
+                $frameworkEndpointCount =
+                    ([regex]::Matches($source, 'app\.MapHealthChecks\s*\(')).Count +
+                    ([regex]::Matches($source, 'app\.MapOpenApi\s*\(')).Count +
+                    ([regex]::Matches($source, 'app\.MapScalarApiReference\s*\(')).Count
+                $useWhenBranchCount = ([regex]::Matches($source, 'app\.UseWhen\s*\(')).Count
+
+                foreach ($expectedMarker in $expectedFrameworkMarkers) {
+                    if ($source.Contains([string]$expectedMarker.Marker, [System.StringComparison]::Ordinal)) {
+                        $frameworkEndpointMarkers += [string]$expectedMarker.Id
+                    }
+                    else {
+                        $missingFrameworkEndpointMarkers += [string]$expectedMarker.Id
+                    }
+                }
+
+                $helperStartMatch = [regex]::Match($source, 'private\s+static\s+(?:IEndpointConventionBuilder|RouteHandlerBuilder)\s+MapGetRequestDelegate\s*\(')
+                $helperEndMatch = [regex]::Match($source, 'private\s+static\s+(?:IEndpointConventionBuilder|RouteHandlerBuilder)\s+MapGetResultRequestDelegate\s*\(')
+                $helperStart = if ($helperStartMatch.Success) { $helperStartMatch.Index } else { -1 }
+                $helperEnd = if ($helperEndMatch.Success) { $helperEndMatch.Index } else { -1 }
+                if ($helperStart -ge 0 -and $helperEnd -gt $helperStart) {
+                    $helperFound = $true
+                    $helperBlock = $source.Substring($helperStart, $helperEnd - $helperStart)
+                    $helperAcceptsRequestDelegate = $helperBlock -match 'RequestDelegate\s+requestDelegate'
+                    $helperUsesMapMethods = $helperBlock -match 'app\.MapMethods\(' -and $helperBlock -match 'HttpMethods\.Get'
+                }
+
+                if ($directAppMapGetCount -ne 0) {
+                    $failures += "direct-app-mapget-still-present:$directAppMapGetCount"
+                }
+                if ($selfOwnedRequestDelegateEndpointCount -ne 10) {
+                    $failures += "self-owned-request-delegate-endpoint-count-drift:$selfOwnedRequestDelegateEndpointCount"
+                }
+                if ($frameworkEndpointCount -ne 6) {
+                    $failures += "framework-endpoint-count-drift:$frameworkEndpointCount"
+                }
+                if ($useWhenBranchCount -ne 3) {
+                    $failures += "host-documentation-usewhen-count-drift:$useWhenBranchCount"
+                }
+                foreach ($missingMarker in $missingFrameworkEndpointMarkers) {
+                    $failures += "framework-endpoint-marker-missing:$missingMarker"
+                }
+                if (-not $helperFound) {
+                    $failures += "app-get-request-delegate-helper-missing"
+                }
+                if (-not $helperAcceptsRequestDelegate) {
+                    $failures += "app-get-request-delegate-helper-missing-requestdelegate-parameter"
+                }
+                if (-not $helperUsesMapMethods) {
+                    $failures += "app-get-request-delegate-helper-missing-mapmethods"
+                }
+            }
+
+            $rows += [pscustomobject]@{
+                PackageName                            = $packageName
+                HazardKind                             = $kind
+                SourcePath                             = $sourceRelativePath
+                SourceExists                           = $sourceExists
+                DirectAppMapGetCount                   = $directAppMapGetCount
+                SelfOwnedRequestDelegateEndpointCount  = $selfOwnedRequestDelegateEndpointCount
+                FrameworkEndpointCount                 = $frameworkEndpointCount
+                UseWhenBranchCount                     = $useWhenBranchCount
+                AppGetRequestDelegateHelperFound       = $helperFound
+                AppGetRequestDelegateHelperAcceptsRequestDelegate = $helperAcceptsRequestDelegate
+                AppGetRequestDelegateHelperUsesMapMethods = $helperUsesMapMethods
+                FrameworkEndpointMarkers               = @($frameworkEndpointMarkers)
+                MissingFrameworkEndpointMarkers        = @($missingFrameworkEndpointMarkers)
+                Status                                 = if ($failures.Count -eq 0) { "matched" } else { "failed" }
+                Failures                               = @($failures)
+            }
+        }
+    }
+
+    return @($rows)
+}
+
 function Get-DeploymentModeHazardInventory {
     [CmdletBinding()]
     param(
@@ -1698,6 +1840,18 @@ function Get-DeploymentModeHazardInventory {
         "failed"
     }
 
+    $nonOperatorEndpointAudits = @(Get-DeploymentModeNonOperatorEndpointAudits -Manifest $Manifest -RepoRoot $RepoRoot)
+    $nonOperatorEndpointAuditFailures = @($nonOperatorEndpointAudits | Where-Object { $_.Status -ne "matched" })
+    $nonOperatorEndpointAuditStatus = if ($nonOperatorEndpointAudits.Count -eq 0) {
+        "not-applicable"
+    }
+    elseif ($nonOperatorEndpointAuditFailures.Count -eq 0) {
+        "matched"
+    }
+    else {
+        "failed"
+    }
+
     $tierRows = foreach ($tierName in $tierCounts.Keys) {
         [pscustomobject]@{
             Tier  = $tierName
@@ -1771,6 +1925,11 @@ function Get-DeploymentModeHazardInventory {
         OperatorResponseJsonContractAuditFailureCount  = $operatorResponseJsonContractAuditFailures.Count
         OperatorResponseJsonContractAuditFailures      = @($operatorResponseJsonContractAuditFailures)
         OperatorResponseJsonContractAudits             = @($operatorResponseJsonContractAudits)
+        NonOperatorEndpointAuditStatus        = $nonOperatorEndpointAuditStatus
+        NonOperatorEndpointAuditCount         = $nonOperatorEndpointAudits.Count
+        NonOperatorEndpointAuditFailureCount  = $nonOperatorEndpointAuditFailures.Count
+        NonOperatorEndpointAuditFailures      = @($nonOperatorEndpointAuditFailures)
+        NonOperatorEndpointAudits             = @($nonOperatorEndpointAudits)
         Packages                  = @($packages)
     }
 }
@@ -2361,6 +2520,11 @@ function Write-ValidationReport {
             [void]$sb.AppendLine("- Operator response JSON contract audit entries: $($hazardInventory.OperatorResponseJsonContractAuditCount)")
             [void]$sb.AppendLine("- Operator response JSON contract audit failures: $($hazardInventory.OperatorResponseJsonContractAuditFailureCount)")
         }
+        if ($hazardInventory.PSObject.Properties.Match("NonOperatorEndpointAuditStatus").Count -gt 0) {
+            [void]$sb.AppendLine("- Non-operator host/documentation endpoint audit: $($hazardInventory.NonOperatorEndpointAuditStatus)")
+            [void]$sb.AppendLine("- Non-operator endpoint audit entries: $($hazardInventory.NonOperatorEndpointAuditCount)")
+            [void]$sb.AppendLine("- Non-operator endpoint audit failures: $($hazardInventory.NonOperatorEndpointAuditFailureCount)")
+        }
         [void]$sb.AppendLine("")
         [void]$sb.AppendLine("Tier counts:")
         foreach ($tier in @($hazardInventory.TierCounts)) {
@@ -2437,6 +2601,16 @@ function Write-ValidationReport {
                 $failures = if (@($audit.Failures).Count -gt 0) { @($audit.Failures) -join ", " } else { "none" }
                 $contracts = if (@($audit.SourceGeneratedResponseContracts).Count -gt 0) { @($audit.SourceGeneratedResponseContracts) -join ", " } else { "none" }
                 [void]$sb.AppendLine("- **$($audit.PackageName)**: $($audit.Status), httpJsonResolver=$($audit.HttpJsonOptionsResolverRegistered), mvcJsonResolver=$($audit.MvcJsonOptionsResolverRegistered), sourceGeneratedResponses=$contracts, failures=$failures")
+            }
+        }
+        if ($hazardInventory.PSObject.Properties.Match("NonOperatorEndpointAudits").Count -gt 0 -and
+            @($hazardInventory.NonOperatorEndpointAudits).Count -gt 0) {
+            [void]$sb.AppendLine("")
+            [void]$sb.AppendLine("Non-operator host/documentation endpoint audit:")
+            foreach ($audit in @($hazardInventory.NonOperatorEndpointAudits)) {
+                $failures = if (@($audit.Failures).Count -gt 0) { @($audit.Failures) -join ", " } else { "none" }
+                $markers = if (@($audit.FrameworkEndpointMarkers).Count -gt 0) { @($audit.FrameworkEndpointMarkers) -join ", " } else { "none" }
+                [void]$sb.AppendLine("- **$($audit.PackageName)** at ``$($audit.SourcePath)``: $($audit.Status), directAppMapGet=$($audit.DirectAppMapGetCount), selfOwnedRequestDelegateEndpoints=$($audit.SelfOwnedRequestDelegateEndpointCount), frameworkEndpoints=$($audit.FrameworkEndpointCount), useWhenBranches=$($audit.UseWhenBranchCount), frameworkMarkers=$markers, failures=$failures")
             }
         }
     }
@@ -2599,6 +2773,9 @@ function Invoke-DeploymentModeClaimValidation {
     if ($hazardInventory.PSObject.Properties.Match("OperatorResponseJsonContractAuditStatus").Count -gt 0) {
         Invoke-Step -Title "Operator response JSON contract audit" -Detail $hazardInventory.OperatorResponseJsonContractAuditStatus
     }
+    if ($hazardInventory.PSObject.Properties.Match("NonOperatorEndpointAuditStatus").Count -gt 0) {
+        Invoke-Step -Title "Non-operator endpoint audit" -Detail $hazardInventory.NonOperatorEndpointAuditStatus
+    }
 
     if ($aggregateVerdict -eq "claim-overstated") {
         throw "claim-overstated: see $($paths.JsonPath) for details"
@@ -2630,6 +2807,11 @@ function Invoke-DeploymentModeClaimValidation {
         $hazardInventory.OperatorResponseJsonContractAuditStatus -eq "failed") {
         $detailsPath = if ($paths.HazardInventoryPath) { $paths.HazardInventoryPath } else { $paths.JsonPath }
         throw "operator-response-json-contract-audit-failed: see $detailsPath for details"
+    }
+    if ($hazardInventory.PSObject.Properties.Match("NonOperatorEndpointAuditStatus").Count -gt 0 -and
+        $hazardInventory.NonOperatorEndpointAuditStatus -eq "failed") {
+        $detailsPath = if ($paths.HazardInventoryPath) { $paths.HazardInventoryPath } else { $paths.JsonPath }
+        throw "non-operator-endpoint-audit-failed: see $detailsPath for details"
     }
 
     return [pscustomobject]@{
