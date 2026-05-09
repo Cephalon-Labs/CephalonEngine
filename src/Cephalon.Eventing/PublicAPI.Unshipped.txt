@@ -1,1 +1,3 @@
 #nullable enable
+Cephalon.Eventing.Configuration.EventingOptions.RemediationCommandHistoryLimit.get -> int
+Cephalon.Eventing.Configuration.EventingOptions.RemediationCommandHistoryLimit.set -> void

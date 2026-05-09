@@ -45,7 +45,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     displayName: "Runtime Truth And Operator Surfaces",
                     description: "Projects channels, subscriptions, publication state, dispatch state, remediation advice, readiness, and claim maturity through Cephalon introspection.",
                     status: "claimed",
-                    evidence: "event-channels,event-subscriptions,event-publishers,event-dispatches,event-dispatch-remediations,event-dispatch-runtimes,eventing-superiority-profile",
+                    evidence: "event-channels,event-subscriptions,event-publishers,event-dispatches,event-dispatch-remediations,event-dispatch-remediation-commands,event-dispatch-runtimes,eventing-superiority-profile",
                     advantage: "Operators get one Cephalon snapshot instead of reverse-engineering the selected bus, mediator, hosted service, and outbox combination.",
                     nextGap: "Keep any new eventing claim paired with a runtime surface and snapshot field before documenting it as supported."),
                 CreateEntry(
@@ -98,7 +98,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     description: "Distinguishes terminal failures from retryable failures before claiming replay operations.",
                     status: topology.HasOutboxPublishingPath ? "partial" : "not-claimed",
                     evidence: topology.HasOutboxPublishingPath
-                        ? "event-dispatch-remediations derives retry-pending, skipped, failed, and terminal-failure posture from reported dispatch state; supported dispatch stores expose retry-now, retry-later, skip, and quarantine commands."
+                        ? "event-dispatch-remediations derives retry-pending, skipped, failed, and terminal-failure posture from reported dispatch state; supported dispatch stores expose retry-now, retry-later, skip, and quarantine commands plus bounded command-result reads."
                         : "no outbox-backed dispatch reporting path is active.",
                     advantage: "The engine can explain remediation posture without depending on Wolverine, MassTransit, NServiceBus, or a broker-specific dead-letter API.",
                     nextGap: "Ship broker dead-letter/replay ownership only when a provider companion can prove that path with audit evidence."),

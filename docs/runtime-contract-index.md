@@ -102,6 +102,7 @@ The route prefix `/engine` is reserved for Cephalon engine introspection. App-ow
 | `GET /event-dispatch-runtimes` | `Cephalon.AspNetCore` | event dispatch runtime descriptors | optional |
 | `GET /event-dispatches` | `Cephalon.AspNetCore` | event dispatch states with terminal-failure and per-outbox drill-downs | optional |
 | `POST /event-dispatches/{outboxId}/commands/{operationId}` | `Cephalon.AspNetCore` | bounded event-dispatch remediation commands (`retry-now`, `retry-later`, `skip`, `quarantine`) through `IEventDispatchRemediationDispatcher` | optional |
+| `GET /event-dispatch-remediation-commands*` | `Cephalon.AspNetCore` | bounded event-dispatch remediation command results with command-id, outbox, and outcome drill-downs | optional |
 | `GET /event-publications/runtime` | `Cephalon.AspNetCore` | event publication runtime states with channel and per-publication drill-downs | optional |
 | `POST /event-publications` | `Cephalon.AspNetCore` | dispatch an event publication through `IEventPublicationDispatcher` | optional |
 | `GET /inboxes` | `Cephalon.AspNetCore` | inbox descriptors | optional |
@@ -193,7 +194,7 @@ These interfaces live in `Cephalon.Abstractions` and own the in-process truth th
 
 **Data, eventing, CDC**
 
-`IDataProductCatalog`, `IProjectionCatalog`, `IOutboxCatalog`, `IInboxCatalog`, `IEventDispatchRuntimeCatalog`, `IEventPublicationRuntimeCatalog`, `IEventSubscriptionExecutionReadinessCatalog`, `ICdcCaptureCatalog`, `ICdcCaptureExecutionRuntimeCatalog`, `IDatabaseRoleCatalog`, `IDatabaseMigrationCatalog`.
+`IDataProductCatalog`, `IProjectionCatalog`, `IOutboxCatalog`, `IInboxCatalog`, `IEventDispatchRuntimeCatalog`, `IEventDispatchRemediationRuntimeCatalog`, `IEventPublicationRuntimeCatalog`, `IEventSubscriptionExecutionReadinessCatalog`, `ICdcCaptureCatalog`, `ICdcCaptureExecutionRuntimeCatalog`, `IDatabaseRoleCatalog`, `IDatabaseMigrationCatalog`.
 
 `Cephalon.Eventing` also contributes `eventing-superiority-profile` through `ITechnologyRuntimeCatalog` / `TechnologySurfaces`; it is intentionally a technology surface rather than a new public catalog interface because it summarizes active runtime evidence and claim maturity (`claimed`, `partial`, `not-claimed`) from the existing eventing catalogs.
 

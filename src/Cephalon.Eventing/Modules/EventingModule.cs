@@ -165,12 +165,19 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             services.TryAddScoped<IEventPublisher, OutboxBackedEventPublisher>();
             if (hasDispatchStore)
             {
+                services.TryAddSingleton<EventDispatchRemediationRuntimeCatalog>();
+                services.TryAddSingleton<IEventDispatchRemediationRuntimeCatalog>(static provider => provider.GetRequiredService<EventDispatchRemediationRuntimeCatalog>());
                 services.TryAddScoped<IEventDispatchRemediationDispatcher, EventDispatchRemediationDispatcher>();
             }
 
             services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingPublishingRuntimeSurfaceContributor>());
             services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingDispatchRuntimeSurfaceContributor>());
             services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingDispatchRemediationRuntimeSurfaceContributor>());
+            if (hasDispatchStore)
+            {
+                services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingDispatchRemediationCommandRuntimeSurfaceContributor>());
+            }
+
             if (hasDispatchRuntimeContributors)
             {
                 services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingDispatchRuntimeCatalogSurfaceContributor>());
@@ -317,6 +324,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["technology"] = "event-driven-integration",
                     ["surfaceId"] = "event-dispatch-remediations",
                     ["commandRoute"] = "/engine/event-dispatches/{outboxId}/commands/{operationId}",
+                    ["commandResultRoute"] = "/engine/event-dispatch-remediation-commands/{commandId}",
                     ["operationIds"] = string.Join(
                         ",",
                         EventDispatchRemediationOperationIds.RetryNow,
@@ -329,6 +337,8 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["skipCommand"] = "ready",
                     ["quarantineCommand"] = "ready",
                     ["deadLetterCommand"] = "not-claimed",
+                    ["commandRuntimeState"] = "available",
+                    ["commandHistoryLimit"] = options.RemediationCommandHistoryLimit.ToString(CultureInfo.InvariantCulture),
                     ["wolverineRequired"] = "false",
                     ["runtimeState"] = "available"
                 }));

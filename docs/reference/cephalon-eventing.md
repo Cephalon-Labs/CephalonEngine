@@ -142,6 +142,18 @@ Gets or sets the delay in milliseconds before the direct in-process publisher re
 
 Remarks: The delay is applied only when `InProcessSubscriptionMaxAttempts` is greater than `1`. The default value of `0` retries immediately and is useful for tests and lightweight process-local remediation paths.
 
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-remediationcommandhistorylimit"></a>
+
+##### `RemediationCommandHistoryLimit`
+
+```csharp
+int RemediationCommandHistoryLimit { get; set; }
+```
+
+Gets or sets the maximum number of event-dispatch remediation command results retained in memory for operator reads.
+
+Remarks: The default value is `256`. Set the value to `0` to disable the process-local remediation command history while keeping the command dispatcher itself available. The catalog is an operator-audit read model, not a durable compliance store; hosts that need long-term retention should also persist command results.
+
 <a id="member-p-cephalon-eventing-configuration-eventingoptions-subscriptions"></a>
 
 ##### `Subscriptions`

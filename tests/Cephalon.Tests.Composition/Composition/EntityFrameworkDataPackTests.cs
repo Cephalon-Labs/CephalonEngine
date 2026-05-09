@@ -1174,6 +1174,7 @@ public sealed class EntityFrameworkDataPackTests
         var diagnosticsCatalog = provider.GetRequiredService<IRuntimeDiagnosticsCatalog>();
         var reporter = provider.GetRequiredService<IEventDispatchRuntimeReporter>();
         var runtimeCatalog = provider.GetRequiredService<IEventDispatchRuntimeCatalog>();
+        var remediationCommandCatalog = provider.GetRequiredService<IEventDispatchRemediationRuntimeCatalog>();
         var technologyCatalog = provider.GetRequiredService<global::Cephalon.Abstractions.Technologies.ITechnologyRuntimeCatalog>();
 
         await reporter.ReportAsync(new EventDispatchExecutionReport(
@@ -1242,6 +1243,7 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("ready", remediationEntry.Metadata["quarantineCommand"]);
         Assert.Equal("ready", remediationEntry.Metadata["skipCommand"]);
         Assert.Equal("/engine/event-dispatches/{outboxId}/commands/{operationId}", remediationEntry.Metadata["operatorCommandRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", remediationEntry.Metadata["operatorCommandResultRoute"]);
         Assert.Equal("retry-now,retry-later,skip,quarantine", remediationEntry.Metadata["operatorCommandOperations"]);
         Assert.Equal("not-claimed", remediationEntry.Metadata["deadLetterCommand"]);
         Assert.Equal("false", remediationEntry.Metadata["wolverineRequired"]);
@@ -1309,6 +1311,23 @@ public sealed class EntityFrameworkDataPackTests
             Assert.Equal(EventDispatchExecutionOutcomes.RetryScheduled, commandResult.DispatchOutcome);
             Assert.Equal("operator-001", commandResult.Metadata["operatorActorId"]);
         }
+
+        var remediationCommandState = Assert.Single(remediationCommandCatalog.States);
+        Assert.Equal("cmd-evt-020-retry", remediationCommandState.CommandId);
+        Assert.Equal("entity-framework-outbox", remediationCommandState.OutboxId);
+        Assert.Equal(EventDispatchRemediationOutcomes.Accepted, remediationCommandState.Outcome);
+        Assert.Equal(EventDispatchExecutionOutcomes.RetryScheduled, remediationCommandState.DispatchOutcome);
+        Assert.Equal("operator-001", remediationCommandState.Metadata["operatorActorId"]);
+        Assert.Equal(remediationCommandState, remediationCommandCatalog.GetByCommandId("cmd-evt-020-retry"));
+        Assert.Equal(remediationCommandState, Assert.Single(remediationCommandCatalog.GetByOutboxId("entity-framework-outbox")));
+        Assert.Equal(remediationCommandState, Assert.Single(remediationCommandCatalog.GetByOutcome("accepted")));
+        eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        var remediationCommandSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatch-remediation-commands");
+        var remediationCommandEntry = Assert.Single(remediationCommandSurface.Entries, entry => entry.Id == "cmd-evt-020-retry");
+        Assert.Equal("retry-now", remediationCommandEntry.Metadata["operationId"]);
+        Assert.Equal("accepted", remediationCommandEntry.Metadata["outcome"]);
+        Assert.Equal("retry-scheduled", remediationCommandEntry.Metadata["dispatchOutcome"]);
+        Assert.Equal("false", remediationCommandEntry.Metadata["wolverineRequired"]);
 
         var commandState = Assert.Single(runtimeCatalog.States);
         Assert.Equal(EventDispatchExecutionOutcomes.RetryScheduled, commandState.LastOutcome);

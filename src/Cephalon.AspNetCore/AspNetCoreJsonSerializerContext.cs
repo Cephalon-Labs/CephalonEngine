@@ -33,6 +33,8 @@ namespace Cephalon.AspNetCore;
 [JsonSerializable(typeof(CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest))]
 [JsonSerializable(typeof(EventPublicationHttpRequest))]
 [JsonSerializable(typeof(EventDispatchRemediationHttpRequest))]
+[JsonSerializable(typeof(EventDispatchRemediationRuntimeState))]
+[JsonSerializable(typeof(EventDispatchRemediationRuntimeState[]))]
 [JsonSerializable(typeof(AgentToolExecutionHttpRequest))]
 [JsonSerializable(typeof(KnowledgeQueryHttpRequest))]
 [JsonSerializable(typeof(RuntimeManifest))]

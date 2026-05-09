@@ -987,6 +987,41 @@ public static class EngineWebApplicationExtensions
 
                 return state is null ? Results.NotFound() : Results.Ok(state);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands", "GetCephalonEventDispatchRemediationCommands", static context =>
+            {
+                var states = context.RequestServices
+                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
+                    .States ?? [];
+
+                return Results.Ok(states);
+            });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/outboxes/{outboxId}", "GetCephalonEventDispatchRemediationCommandsByOutbox", static context =>
+            {
+                var outboxId = GetRouteValue(context, "outboxId");
+                var states = context.RequestServices
+                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
+                    .GetByOutboxId(outboxId) ?? [];
+
+                return Results.Ok(states);
+            });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/outcomes/{outcome}", "GetCephalonEventDispatchRemediationCommandsByOutcome", static context =>
+            {
+                var outcome = GetRouteValue(context, "outcome");
+                var states = context.RequestServices
+                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
+                    .GetByOutcome(outcome) ?? [];
+
+                return Results.Ok(states);
+            });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/{commandId}", "GetCephalonEventDispatchRemediationCommand", static context =>
+            {
+                var commandId = GetRouteValue(context, "commandId");
+                var state = context.RequestServices
+                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
+                    .GetByCommandId(commandId);
+
+                return state is null ? Results.NotFound() : Results.Ok(state);
+            });
         MapPostAsyncResultRequestDelegate(
             engineGroup,
             "/event-dispatches/{outboxId}/commands/{operationId}",

@@ -12,6 +12,7 @@ internal sealed class EventingDispatchRemediationRuntimeSurfaceContributor(
     private const string AdvisoryClaimPolicy = "reported-state-advisory-only";
     private const string CommandReadyClaimPolicy = "reported-state-plus-bounded-dispatch-store-commands";
     private const string CommandRoute = "/engine/event-dispatches/{outboxId}/commands/{operationId}";
+    private const string CommandResultRoute = "/engine/event-dispatch-remediation-commands/{commandId}";
     private const string CommandOperations = "retry-now,retry-later,skip,quarantine";
 
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
@@ -65,6 +66,7 @@ internal sealed class EventingDispatchRemediationRuntimeSurfaceContributor(
         if (commandsReady)
         {
             metadata["operatorCommandRoute"] = CommandRoute;
+            metadata["operatorCommandResultRoute"] = CommandResultRoute;
             metadata["operatorCommandOperations"] = CommandOperations;
             metadata["operatorCommandScope"] = "dispatch-store";
             metadata["deadLetterCommandReason"] = "broker-specific-dead-letter-not-owned";

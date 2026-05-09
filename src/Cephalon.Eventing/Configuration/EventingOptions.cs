@@ -53,6 +53,7 @@ public sealed class EventingOptions
     private int inProcessSubscriptionMaxAttempts = 1;
     private int inProcessSubscriptionRetryDelayMilliseconds;
     private int inProcessSubscriptionIdempotencyRetentionMinutes = 60;
+    private int remediationCommandHistoryLimit = 256;
 
     /// <summary>
     /// Gets or sets the maximum number of direct in-process execution attempts per matching subscription.
@@ -151,4 +152,29 @@ public sealed class EventingOptions
     /// get a chance to run before the failure is returned to the caller.
     /// </remarks>
     public bool ContinueInProcessSubscriptionExecutionAfterFailure { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the maximum number of event-dispatch remediation command results retained in memory for operator reads.
+    /// </summary>
+    /// <remarks>
+    /// The default value is <c>256</c>. Set the value to <c>0</c> to disable the process-local remediation command
+    /// history while keeping the command dispatcher itself available. The catalog is an operator-audit read model,
+    /// not a durable compliance store; hosts that need long-term retention should also persist command results.
+    /// </remarks>
+    public int RemediationCommandHistoryLimit
+    {
+        get => remediationCommandHistoryLimit;
+        set
+        {
+            if (value < 0)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(value),
+                    value,
+                    "Remediation command history limit must be greater than or equal to 0.");
+            }
+
+            remediationCommandHistoryLimit = value;
+        }
+    }
 }

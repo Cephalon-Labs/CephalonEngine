@@ -2227,6 +2227,14 @@ Current payload highlights:
 - `POST /engine/event-dispatches/{outboxId}/commands/{operationId}` runs bounded dispatch-store
   remediation commands when `IEventDispatchRemediationDispatcher` is active; current operations are
   `retry-now`, `retry-later`, `skip`, and `quarantine`
+- `GET /engine/event-dispatch-remediation-commands` lists accepted and rejected command results
+  recorded by `IEventDispatchRemediationRuntimeCatalog`
+- `GET /engine/event-dispatch-remediation-commands/{commandId}` narrows the command-result catalog
+  to one command and returns `404` when no command has been recorded with that id
+- `GET /engine/event-dispatch-remediation-commands/outboxes/{outboxId}` filters command results by
+  target outbox id
+- `GET /engine/event-dispatch-remediation-commands/outcomes/{outcome}` filters command results by
+  command outcome, such as `accepted` or `rejected`
 - the same descriptor and state catalogs are also available through `/engine/snapshot` in
   `EventDispatchRuntimes` and `EventDispatchStates` when operators want one merged runtime answer
 
@@ -2237,6 +2245,9 @@ Current note:
   inbound broker-consumption, downstream delivery-completion, or cross-node exactly-once claim
 - dispatch remediation commands apply only to the mutable dispatch store that owns the outbox; they
   do not claim broker dead-letter/replay ownership
+- remediation command-result history is bounded and process-local by default; it gives operators a
+  typed command-audit read model for the active host, not durable compliance retention or broker
+  replay ownership
 - outbox-backed publication states use `accepted` to mean "staged for later dispatch"; dispatch
   completion and terminal dispatch failure remain separate event-dispatch runtime answers
 
@@ -2456,6 +2467,9 @@ Current `Cephalon.Eventing` highlights:
 - outbox-backed event publication reports `accepted` publication state with
   `handoff = outbox` and `deliveryCompletion = pending-dispatch`, keeping publication acceptance
   separate from later dispatch completion
+- `event-dispatch-remediation-commands` exposes the bounded command-result read model for
+  `retry-now`, `retry-later`, `skip`, and `quarantine`, while `/engine/event-dispatch-remediation-commands*`
+  provides the typed route family for operators who do not want to parse technology-surface metadata
 - Wolverine or another companion adapter can still move staged dispatch or one subscription to
   provider-managed ownership for brokered or staged dispatch scenarios; the shipped Wolverine path
   now keeps both the dispatch loop and managed subscription retry lanes bounded with max attempts,

@@ -7,7 +7,8 @@ internal sealed class EventDispatchRemediationDispatcher(
     IEnumerable<IEventDispatchStore> dispatchStores,
     IEventDispatchRuntimeCatalog runtimeCatalog,
     IEventDispatchRuntimeReporter runtimeReporter,
-    IEventChannelCatalog channels) : IEventDispatchRemediationDispatcher
+    IEventChannelCatalog channels,
+    EventDispatchRemediationRuntimeCatalog commandCatalog) : IEventDispatchRemediationDispatcher
 {
     private const string CommandSource = "cephalon-event-dispatch-remediation-dispatcher";
 
@@ -31,36 +32,36 @@ internal sealed class EventDispatchRemediationDispatcher(
         var dispatchStore = ResolveDispatchStore(request.OutboxId);
         if (dispatchStore is null)
         {
-            return CreateRejectedResult(
+            return Record(CreateRejectedResult(
                 request,
                 operationId,
                 dispatchOutcome,
                 observedAtUtc,
                 $"Outbox '{request.OutboxId}' is not owned by the active event dispatch remediation dispatcher.",
-                metadata);
+                metadata));
         }
 
         if (!channels.TryGet(request.ChannelId, out _))
         {
-            return CreateRejectedResult(
+            return Record(CreateRejectedResult(
                 request,
                 operationId,
                 dispatchOutcome,
                 observedAtUtc,
                 $"Event channel '{request.ChannelId}' is not registered in the active eventing runtime.",
-                metadata);
+                metadata));
         }
 
         if (string.Equals(operationId, EventDispatchRemediationOperationIds.RetryLater, StringComparison.OrdinalIgnoreCase) &&
             request.NextAttemptAtUtc is null)
         {
-            return CreateRejectedResult(
+            return Record(CreateRejectedResult(
                 request,
                 operationId,
                 dispatchOutcome,
                 observedAtUtc,
                 "Retry-later event-dispatch remediation requires a next attempt timestamp.",
-                metadata);
+                metadata));
         }
 
         var report = new EventDispatchExecutionReport(
@@ -80,16 +81,16 @@ internal sealed class EventDispatchRemediationDispatcher(
         }
         catch (InvalidOperationException exception)
         {
-            return CreateRejectedResult(
+            return Record(CreateRejectedResult(
                 request,
                 operationId,
                 dispatchOutcome,
                 observedAtUtc,
                 exception.Message,
-                metadata);
+                metadata));
         }
 
-        return new EventDispatchRemediationResult(
+        return Record(new EventDispatchRemediationResult(
             CommandId: request.CommandId,
             OutboxId: request.OutboxId,
             MessageId: request.MessageId,
@@ -99,7 +100,13 @@ internal sealed class EventDispatchRemediationDispatcher(
             DispatchOutcome: dispatchOutcome,
             ObservedAtUtc: observedAtUtc,
             Error: null,
-            Metadata: metadata);
+            Metadata: metadata));
+    }
+
+    private EventDispatchRemediationResult Record(EventDispatchRemediationResult result)
+    {
+        commandCatalog.Record(result);
+        return result;
     }
 
     private IEventDispatchStore? ResolveDispatchStore(string outboxId)

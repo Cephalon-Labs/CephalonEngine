@@ -46404,6 +46404,143 @@ string Outcome { get; set; }
 
 The stable command outcome identifier.
 
+<a id="type-cephalon-abstractions-data-eventdispatchremediationruntimestate"></a>
+
+### `EventDispatchRemediationRuntimeState`
+
+Describes the operator-facing runtime state recorded for one event-dispatch remediation command.
+
+#### Declaration
+```csharp
+public sealed class EventDispatchRemediationRuntimeState
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-eventdispatchremediationruntimestate-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `EventDispatchRemediationRuntimeState`
+
+```csharp
+EventDispatchRemediationRuntimeState(string CommandId, string OutboxId, string MessageId, string ChannelId, string OperationId, string Outcome, string DispatchOutcome, DateTimeOffset ObservedAtUtc, string Error, IReadOnlyDictionary<string, string> Metadata)
+```
+
+Describes the operator-facing runtime state recorded for one event-dispatch remediation command.
+
+Parameters:
+- `CommandId`: The stable remediation command identifier.
+- `OutboxId`: The outbox identifier that owned the staged event targeted by the command.
+- `MessageId`: The staged event message identifier targeted by the command.
+- `ChannelId`: The event channel identifier associated with the targeted staged event.
+- `OperationId`: The remediation operation identifier requested by the operator.
+- `Outcome`: The stable command outcome identifier.
+- `DispatchOutcome`: The dispatch observation outcome produced by the command when it was accepted.
+- `ObservedAtUtc`: The UTC timestamp when the command was evaluated by the runtime.
+- `Error`: The operator-facing error summary when the command was rejected.
+- `Metadata`: The operator-facing metadata captured with the command result.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimestate-channelid"></a>
+
+##### `ChannelId`
+
+```csharp
+string ChannelId { get; set; }
+```
+
+The event channel identifier associated with the targeted staged event.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimestate-commandid"></a>
+
+##### `CommandId`
+
+```csharp
+string CommandId { get; set; }
+```
+
+The stable remediation command identifier.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimestate-dispatchoutcome"></a>
+
+##### `DispatchOutcome`
+
+```csharp
+string DispatchOutcome { get; set; }
+```
+
+The dispatch observation outcome produced by the command when it was accepted.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimestate-error"></a>
+
+##### `Error`
+
+```csharp
+string Error { get; set; }
+```
+
+The operator-facing error summary when the command was rejected.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimestate-messageid"></a>
+
+##### `MessageId`
+
+```csharp
+string MessageId { get; set; }
+```
+
+The staged event message identifier targeted by the command.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimestate-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; set; }
+```
+
+The operator-facing metadata captured with the command result.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimestate-observedatutc"></a>
+
+##### `ObservedAtUtc`
+
+```csharp
+DateTimeOffset ObservedAtUtc { get; set; }
+```
+
+The UTC timestamp when the command was evaluated by the runtime.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimestate-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; set; }
+```
+
+The remediation operation identifier requested by the operator.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimestate-outboxid"></a>
+
+##### `OutboxId`
+
+```csharp
+string OutboxId { get; set; }
+```
+
+The outbox identifier that owned the staged event targeted by the command.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimestate-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; set; }
+```
+
+The stable command outcome identifier.
+
 <a id="type-cephalon-abstractions-data-eventdispatchruntimedescriptor"></a>
 
 ### `EventDispatchRuntimeDescriptor`
@@ -50672,6 +50809,76 @@ Returns: The operator-facing command result.
 Parameters:
 - `request`: The remediation request to dispatch.
 - `cancellationToken`: The token that cancels the operation.
+
+<a id="type-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog"></a>
+
+### `IEventDispatchRemediationRuntimeCatalog`
+
+Exposes operator-facing runtime state recorded by event-dispatch remediation command paths.
+
+#### Declaration
+```csharp
+public interface IEventDispatchRemediationRuntimeCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-states"></a>
+
+##### `States`
+
+```csharp
+IReadOnlyList<EventDispatchRemediationRuntimeState> States { get; }
+```
+
+Gets the remediation command-state entries visible to the current runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbycommandid-system-string"></a>
+
+##### `GetByCommandId`
+
+```csharp
+EventDispatchRemediationRuntimeState GetByCommandId(string commandId)
+```
+
+Gets one remediation command-state entry by command identifier.
+
+Returns: The recorded command state, or `null` when the command has not reported runtime state.
+
+Parameters:
+- `commandId`: The stable remediation command identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbyoutboxid-system-string"></a>
+
+##### `GetByOutboxId`
+
+```csharp
+IReadOnlyList<EventDispatchRemediationRuntimeState> GetByOutboxId(string outboxId)
+```
+
+Gets the remediation command-state entries recorded for one outbox identifier.
+
+Returns: The recorded command states for the outbox, ordered by observed time and command identifier.
+
+Parameters:
+- `outboxId`: The stable outbox identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbyoutcome-system-string"></a>
+
+##### `GetByOutcome`
+
+```csharp
+IReadOnlyList<EventDispatchRemediationRuntimeState> GetByOutcome(string outcome)
+```
+
+Gets the remediation command-state entries recorded for one command outcome.
+
+Returns: The recorded command states for the outcome, ordered by observed time and command identifier.
+
+Parameters:
+- `outcome`: The stable command outcome identifier to resolve.
 
 <a id="type-cephalon-abstractions-data-ieventdispatchruntimecatalog"></a>
 

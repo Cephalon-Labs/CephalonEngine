@@ -40,7 +40,7 @@ See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), 
 - `/engine/database-roles` when the engine-owned database-role catalog is active
 - `/engine/database-migrations` when the engine-owned database-migration catalog is active
 - `/engine/audit-history` and `/engine/audit-history/export` when durable audit-history services are active
-- `/engine/event-dispatch-runtimes`, `/engine/event-dispatches`, `/engine/event-dispatches/terminal-failures`, and `POST /engine/event-dispatches/{outboxId}/commands/{operationId}` when eventing packs register dispatch-runtime descriptors, live dispatch-state reporters, or the abstraction-level dispatch-remediation command seam
+- `/engine/event-dispatch-runtimes`, `/engine/event-dispatches`, `/engine/event-dispatches/terminal-failures`, `POST /engine/event-dispatches/{outboxId}/commands/{operationId}`, and `/engine/event-dispatch-remediation-commands*` when eventing packs register dispatch-runtime descriptors, live dispatch-state reporters, the abstraction-level dispatch-remediation command seam, or the abstraction-level command-result catalog
 - `POST /engine/event-publications` when eventing packs register the abstraction-level publication dispatcher action seam; the request body is represented by `EventPublicationHttpRequest` so generated request delegates can bind the contract without private reflection
 - `/engine/event-publications/runtime` when eventing packs register the abstraction-level publication runtime-state catalog
 - `/engine/event-subscription-readiness` when eventing packs register the abstraction-level subscription execution-readiness catalog
@@ -515,6 +515,12 @@ operator commands. The current provider-neutral operations are `retry-now`, `ret
 and `quarantine`; the route returns `EventDispatchRemediationResult`, returns `404` when no
 dispatcher is active, returns `409` when a command is rejected by the active runtime, and keeps
 broker-specific dead-letter commands outside the claim until a companion package owns that path.
+When the same runtime registers `IEventDispatchRemediationRuntimeCatalog`, the host also maps
+`/engine/event-dispatch-remediation-commands`,
+`/engine/event-dispatch-remediation-commands/{commandId}`,
+`/engine/event-dispatch-remediation-commands/outboxes/{outboxId}`, and
+`/engine/event-dispatch-remediation-commands/outcomes/{outcome}` so operators can inspect accepted
+and rejected command results separately from the latest per-outbox dispatch state.
 
 The host now also exposes bounded event-publication operator action and publication runtime-state
 surfaces directly. When a selected eventing pack registers `IEventPublicationDispatcher`,
