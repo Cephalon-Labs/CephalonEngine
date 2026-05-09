@@ -701,7 +701,7 @@ Describe "deploymentModeEligibility" {
 
         $source = Get-Content -LiteralPath $sourcePath -Raw -Encoding UTF8
         $foundationStart = $source.IndexOf('MapGetResultRequestDelegate(engineGroup, "/rate-limiting"', [System.StringComparison]::Ordinal)
-        $cdcRuntimeStart = $source.IndexOf('engineGroup.MapGet("/cdc-capture-runtimes"', [System.StringComparison]::Ordinal)
+        $cdcRuntimeStart = $source.IndexOf('MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes"', [System.StringComparison]::Ordinal)
         $tailStart = $source.IndexOf('MapGetResultRequestDelegate(engineGroup, "/transports"', [System.StringComparison]::Ordinal)
         $hostInfrastructureStart = $source.IndexOf("MapCephalonHostInfrastructure(", $tailStart, [System.StringComparison]::Ordinal)
 
@@ -722,6 +722,35 @@ Describe "deploymentModeEligibility" {
         $foundationBlock | Should -Match '/cdc-captures' -Because "CDC capture catalog list should stay in the audited request-delegate block"
         $tailBlock | Should -Match '/diagnostics-conventions' -Because "diagnostics convention readback should stay in the audited request-delegate block"
         $tailBlock | Should -Match '/modules/\{moduleId\}' -Because "module lookup should stay in the audited request-delegate block"
+    }
+
+    It "full CDC runtime ASP.NET Core operator routes use request delegates instead of Minimal API delegate binding" {
+        $sourcePath = Join-Path $script:repoRoot "src/Cephalon.AspNetCore/Hosting/EngineWebApplicationExtensions.cs"
+        $sourcePath = $sourcePath -replace '/', [System.IO.Path]::DirectorySeparatorChar
+        Test-Path -LiteralPath $sourcePath -PathType Leaf | Should -BeTrue
+
+        $source = Get-Content -LiteralPath $sourcePath -Raw -Encoding UTF8
+        $cdcRuntimeStart = $source.IndexOf('MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes"', [System.StringComparison]::Ordinal)
+        $cdcReportStart = $source.IndexOf('engineGroup.MapPost("/cdc-capture-runtimes/{executionRuntimeId}/reports"', $cdcRuntimeStart, [System.StringComparison]::Ordinal)
+        $helperStart = $source.IndexOf("private static void MapCdcCaptureRuntimeCollectionRoute(", [System.StringComparison]::Ordinal)
+        $nextHelperStart = $source.IndexOf("private static TService GetRequiredService", [System.StringComparison]::Ordinal)
+
+        $cdcRuntimeStart | Should -BeGreaterOrEqual 0 -Because "the CDC runtime read-only route block should stay visible"
+        $cdcReportStart | Should -BeGreaterThan $cdcRuntimeStart -Because "CDC runtime report submission remains the following POST action seam"
+        $helperStart | Should -BeGreaterThan $cdcReportStart -Because "the CDC runtime request-delegate helper should follow the route catalog"
+        $nextHelperStart | Should -BeGreaterThan $helperStart -Because "the CDC runtime helper block should stay parseable"
+
+        $cdcRuntimeBlock = $source.Substring($cdcRuntimeStart, $cdcReportStart - $cdcRuntimeStart)
+        $helperBlock = $source.Substring($helperStart, $nextHelperStart - $helperStart)
+
+        $cdcRuntimeBlock | Should -Not -Match 'engineGroup\.MapGet\(' -Because "CDC runtime read-only routes must not reintroduce Minimal API delegate binding"
+        ([regex]::Matches($cdcRuntimeBlock, 'MapCdcCaptureRuntimeCollectionRoute')).Count | Should -Be 126
+        ([regex]::Matches($cdcRuntimeBlock, 'MapCdcCaptureRuntimeDescriptorRoute')).Count | Should -Be 19
+        ([regex]::Matches($cdcRuntimeBlock, 'MapGetResultRequestDelegate')).Count | Should -Be 1
+        $cdcRuntimeBlock | Should -Match '/cdc-capture-runtimes/provider-specific-control-plane-materializers/current-nodes/\{canUseOnCurrentNode:bool\}' -Because "provider-specific bool route constraints should stay covered by the CDC runtime block"
+        $cdcRuntimeBlock | Should -Match '/cdc-capture-runtimes/\{executionRuntimeId\}/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardening' -Because "descriptor drilldowns should stay covered by the CDC runtime block"
+        $cdcRuntimeBlock | Should -Match 'GetBooleanRouteValue' -Because "bool route values should be parsed from RouteValues instead of Minimal API parameter binding"
+        $helperBlock | Should -Match 'Func<HttpContext, ICdcCaptureExecutionRuntimeCatalog, IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor>> selector' -Because "collection routes should execute typed catalog selectors behind a request delegate"
     }
 }
 

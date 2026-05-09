@@ -124,8 +124,9 @@ the boundary harder to drift silently.
 scorecard readback, `ENG-541` applies the same proof to the full-mode routes that are shared
 with the core surface, `ENG-542` begins migrating the remaining full/default catalog by
 moving the behavior-resilience, saga-choreography, and durable-execution route families to
-result request delegates with source-shape Pester coverage, and `ENG-543` extends the same
-full/default guard to the foundation and tail introspection route blocks.
+result request delegates with source-shape Pester coverage, `ENG-543` extends the same
+full/default guard to the foundation and tail introspection route blocks, and `ENG-544` moves the
+CDC runtime read-only GET route block to CDC runtime request-delegate helpers.
 When hosts set `Engine:AspNetCore:OperatorSurface:Mode=core`, the bounded core `/engine/*`
 route subset now maps through prebuilt `RequestDelegate` handlers and `MapMethods(...)`
 instead of Minimal API delegate binding. In full mode, `/`, `/manifest`, `/snapshot`, `/app-model`,
@@ -429,7 +430,9 @@ A future slice may add explicit `IsTrimmable=false; IsAotCompatible=false; Publi
 
 **Update May 9, 2026 (`ENG-542`):** the full/default behavior-resilience, saga-choreography, and durable-execution operator route families now map through result request delegates and the same `MapMethods(...)` GET helper instead of ASP.NET Core Minimal API delegate binding. The manifest Pester suite guards that workflow block against returning to `.MapGet(...)` while the broader full/default operator catalog continues to carry the explicit dynamic Minimal API boundary. Global trim, Native AOT, single-file, and full-adapter support remain `not-claimed`.
 
-**Update May 9, 2026 (`ENG-543`):** the full/default foundation and tail introspection route blocks now map through result request delegates as well. That covers rate limiting, REST endpoint metadata/governance, database topology/migration, scaffold/capability/module/package readback, hosted executions, execution graphs, data products, the CDC capture catalog list, transports, dependency health, localization, reference docs, policy, status, runtime story, diagnostics, and final module lookup. Manifest Pester coverage guards both blocks against returning to `.MapGet(...)` while the larger CDC runtime, eventing, agentics, knowledge-indexing, audit-history, strangler-fig, backend-for-frontend, cell, and POST action surfaces remain part of the explicit unclaimed full/default boundary.
+**Update May 9, 2026 (`ENG-543`):** the full/default foundation and tail introspection route blocks now map through result request delegates as well. That covers rate limiting, REST endpoint metadata/governance, database topology/migration, scaffold/capability/module/package readback, hosted executions, execution graphs, data products, the CDC capture catalog list, transports, dependency health, localization, reference docs, policy, status, runtime story, diagnostics, and final module lookup. Manifest Pester coverage guards both blocks against returning to `.MapGet(...)`; at that checkpoint, CDC runtime, eventing, agentics, knowledge-indexing, audit-history, strangler-fig, backend-for-frontend, cell, and POST action surfaces remained part of the explicit unclaimed full/default boundary.
+
+**Update May 9, 2026 (`ENG-544`):** the full/default CDC runtime read-only GET block now maps through CDC runtime request-delegate helpers. The proof covers the 126 collection/filter routes, 19 descriptor drilldown routes, and one command-execution history route under `/engine/cdc-capture-runtimes*`, including bool route constraints parsed from route values instead of Minimal API parameter binding. Manifest Pester coverage guards that block against returning to `.MapGet(...)`; CDC runtime report/command POSTs plus eventing, agentics, knowledge-indexing, audit-history, strangler-fig, backend-for-frontend, and cell action surfaces remain part of the explicit unclaimed full/default boundary.
 
 ## Refresh discipline
 

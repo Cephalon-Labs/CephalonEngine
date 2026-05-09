@@ -472,1359 +472,279 @@ public static class EngineWebApplicationExtensions
             });
         MapGetResultRequestDelegate(engineGroup, "/cdc-captures", "GetCephalonCdcCaptures", static context =>
             TypedResults.Ok(GetRequiredService<ICdcCaptureCatalog>(context).CdcCaptures));
-        engineGroup.MapGet("/cdc-capture-runtimes", (HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .Runtimes ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimes");
-        engineGroup.MapGet("/cdc-capture-runtimes/reporters/{reporterId}", (string reporterId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByReporterId(reporterId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByReporter");
-        engineGroup.MapGet("/cdc-capture-runtimes/edge-nodes/{edgeNodeId}", (string edgeNodeId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByEdgeNodeId(edgeNodeId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByEdgeNode");
-        engineGroup.MapGet("/cdc-capture-runtimes/reporter-coordination/{coordinationState}", (string coordinationState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByReporterCoordinationState(coordinationState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByReporterCoordinationState");
-        engineGroup.MapGet("/cdc-capture-runtimes/reporter-coordination/issues/{degradedReason}", (string degradedReason, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByReporterCoordinationIssueReason(degradedReason) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByReporterCoordinationIssueReason");
-        engineGroup.MapGet("/cdc-capture-runtimes/remediation/{remediationState}", (string remediationState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByRemediationState(remediationState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByRemediationState");
-        engineGroup.MapGet("/cdc-capture-runtimes/remediation/categories/{remediationCategory}", (string remediationCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByRemediationCategory(remediationCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByRemediationCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/governance/{governanceState}", (string governanceState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorGovernanceState(governanceState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorGovernanceState");
-        engineGroup.MapGet("/cdc-capture-runtimes/governance/categories/{governanceCategory}", (string governanceCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorGovernanceCategory(governanceCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorGovernanceCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/drift/{driftState}", (string driftState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorDriftState(driftState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorDriftState");
-        engineGroup.MapGet("/cdc-capture-runtimes/drift/categories/{driftCategory}", (string driftCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorDriftCategory(driftCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorDriftCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/action-plans/{actionPlanState}", (string actionPlanState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorActionPlanState(actionPlanState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorActionPlanState");
-        engineGroup.MapGet("/cdc-capture-runtimes/actions/{actionId}", (string actionId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorActionId(actionId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorAction");
-        engineGroup.MapGet("/cdc-capture-runtimes/write-path-readiness/{readinessState}", (string readinessState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorWritePathReadinessState(readinessState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorWritePathReadinessState");
-        engineGroup.MapGet("/cdc-capture-runtimes/write-path-readiness/categories/{readinessCategory}", (string readinessCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorWritePathReadinessCategory(readinessCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorWritePathReadinessCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/preflight/{preflightState}", (string preflightState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorPreflightState(preflightState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorPreflightState");
-        engineGroup.MapGet("/cdc-capture-runtimes/preflight/categories/{preflightCategory}", (string preflightCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorPreflightCategory(preflightCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorPreflightCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/preflight/operations/{operationId}", (string operationId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorPreflightOperationId(operationId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorPreflightOperation");
-        engineGroup.MapGet("/cdc-capture-runtimes/dry-runs/{dryRunState}", (string dryRunState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorDryRunState(dryRunState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorDryRunState");
-        engineGroup.MapGet("/cdc-capture-runtimes/dry-runs/categories/{dryRunCategory}", (string dryRunCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorDryRunCategory(dryRunCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorDryRunCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/dry-runs/operations/{operationId}", (string operationId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorDryRunOperationId(operationId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorDryRunOperation");
-        engineGroup.MapGet("/cdc-capture-runtimes/execution-intents/{executionIntentState}", (string executionIntentState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorExecutionIntentState(executionIntentState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorExecutionIntentState");
-        engineGroup.MapGet("/cdc-capture-runtimes/execution-intents/categories/{executionIntentCategory}", (string executionIntentCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorExecutionIntentCategory(executionIntentCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorExecutionIntentCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/execution-intents/operations/{operationId}", (string operationId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorExecutionIntentOperationId(operationId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorExecutionIntentOperation");
-        engineGroup.MapGet("/cdc-capture-runtimes/execution-approvals/{executionApprovalState}", (string executionApprovalState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorExecutionApprovalState(executionApprovalState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorExecutionApprovalState");
-        engineGroup.MapGet("/cdc-capture-runtimes/execution-approvals/categories/{executionApprovalCategory}", (string executionApprovalCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorExecutionApprovalCategory(executionApprovalCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorExecutionApprovalCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/execution-approvals/operations/{operationId}", (string operationId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorExecutionApprovalOperationId(operationId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorExecutionApprovalOperation");
-        engineGroup.MapGet("/cdc-capture-runtimes/command-envelopes/{commandState}", (string commandState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorCommandEnvelopeState(commandState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCommandEnvelopeState");
-        engineGroup.MapGet("/cdc-capture-runtimes/command-envelopes/categories/{commandCategory}", (string commandCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorCommandEnvelopeCategory(commandCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCommandEnvelopeCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/command-envelopes/operations/{operationId}", (string operationId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorCommandEnvelopeOperationId(operationId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCommandEnvelopeOperation");
-        engineGroup.MapGet("/cdc-capture-runtimes/command-issuances/{issuanceState}", (string issuanceState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorCommandIssuanceState(issuanceState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCommandIssuanceState");
-        engineGroup.MapGet("/cdc-capture-runtimes/command-issuances/categories/{issuanceCategory}", (string issuanceCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorCommandIssuanceCategory(issuanceCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCommandIssuanceCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/command-issuances/operations/{operationId}", (string operationId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorCommandIssuanceOperationId(operationId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCommandIssuanceOperation");
-        engineGroup.MapGet("/cdc-capture-runtimes/execution-adapters/{executionAdapterState}", (string executionAdapterState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorExecutionAdapterState(executionAdapterState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorExecutionAdapterState");
-        engineGroup.MapGet("/cdc-capture-runtimes/execution-adapters/categories/{executionAdapterCategory}", (string executionAdapterCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorExecutionAdapterCategory(executionAdapterCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorExecutionAdapterCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/execution-adapters/operations/{operationId}", (string operationId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorExecutionAdapterOperationId(operationId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorExecutionAdapterOperation");
-        engineGroup.MapGet("/cdc-capture-runtimes/command-executions/{executionState}", (string executionState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorCommandExecutionState(executionState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCommandExecutionState");
-        engineGroup.MapGet("/cdc-capture-runtimes/command-executions/operations/{operationId}", (string operationId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorCommandExecutionOperationId(operationId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCommandExecutionOperation");
-        engineGroup.MapGet("/cdc-capture-runtimes/command-retries/{retryState}", (string retryState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorCommandRetryState(retryState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCommandRetryState");
-        engineGroup.MapGet("/cdc-capture-runtimes/command-retries/categories/{retryCategory}", (string retryCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorCommandRetryCategory(retryCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCommandRetryCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/command-retries/operations/{operationId}", (string operationId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorCommandRetryOperationId(operationId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCommandRetryOperation");
-        engineGroup.MapGet("/cdc-capture-runtimes/retry-execution-policies/{policyState}", (string policyState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorRetryExecutionPolicyState(policyState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorRetryExecutionPolicyState");
-        engineGroup.MapGet("/cdc-capture-runtimes/retry-execution-policies/categories/{policyCategory}", (string policyCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorRetryExecutionPolicyCategory(policyCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorRetryExecutionPolicyCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/retry-execution-policies/operations/{operationId}", (string operationId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorRetryExecutionPolicyOperationId(operationId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorRetryExecutionPolicyOperation");
-        engineGroup.MapGet("/cdc-capture-runtimes/command-journals/{journalState}", (string journalState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorCommandJournalState(journalState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCommandJournalState");
-        engineGroup.MapGet("/cdc-capture-runtimes/command-journals/categories/{journalCategory}", (string journalCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorCommandJournalCategory(journalCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCommandJournalCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/command-journal-durability/{durabilityState}", (string durabilityState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorCommandJournalDurabilityState(durabilityState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCommandJournalDurabilityState");
-        engineGroup.MapGet("/cdc-capture-runtimes/command-journal-durability/categories/{durabilityCategory}", (string durabilityCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorCommandJournalDurabilityCategory(durabilityCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCommandJournalDurabilityCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/automatic-retries/{automaticRetryState}", (string automaticRetryState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorAutomaticRetryExecutionState(automaticRetryState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorAutomaticRetryExecutionState");
-        engineGroup.MapGet("/cdc-capture-runtimes/automatic-retries/categories/{automaticRetryCategory}", (string automaticRetryCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorAutomaticRetryExecutionCategory(automaticRetryCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorAutomaticRetryExecutionCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/automatic-retries/operations/{operationId}", (string operationId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorAutomaticRetryExecutionOperationId(operationId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorAutomaticRetryExecutionOperation");
-        engineGroup.MapGet("/cdc-capture-runtimes/automatic-retry-coordinations/{coordinationState}", (string coordinationState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorAutomaticRetryCoordinationState(coordinationState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorAutomaticRetryCoordinationState");
-        engineGroup.MapGet("/cdc-capture-runtimes/automatic-retry-coordinations/categories/{coordinationCategory}", (string coordinationCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorAutomaticRetryCoordinationCategory(coordinationCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorAutomaticRetryCoordinationCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/automatic-retry-coordinations/owners/{ownerId}", (string ownerId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorAutomaticRetryCoordinationOwnerId(ownerId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorAutomaticRetryCoordinationOwner");
-        engineGroup.MapGet("/cdc-capture-runtimes/distributed-retry-leases/{leaseState}", (string leaseState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorDistributedRetryLeaseState(leaseState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorDistributedRetryLeaseState");
-        engineGroup.MapGet("/cdc-capture-runtimes/distributed-retry-leases/categories/{leaseCategory}", (string leaseCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorDistributedRetryLeaseCategory(leaseCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorDistributedRetryLeaseCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/distributed-retry-leases/owners/{ownerId}", (string ownerId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorDistributedRetryLeaseOwnerId(ownerId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorDistributedRetryLeaseOwner");
-        engineGroup.MapGet("/cdc-capture-runtimes/cross-node-idempotency-hardenings/{hardeningState}", (string hardeningState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorCrossNodeIdempotencyHardeningState(hardeningState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCrossNodeIdempotencyHardeningState");
-        engineGroup.MapGet("/cdc-capture-runtimes/cross-node-idempotency-hardenings/categories/{hardeningCategory}", (string hardeningCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorCrossNodeIdempotencyHardeningCategory(hardeningCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCrossNodeIdempotencyHardeningCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/cross-node-idempotency-hardenings/owners/{ownerId}", (string ownerId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorCrossNodeIdempotencyHardeningOwnerId(ownerId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCrossNodeIdempotencyHardeningOwner");
-        engineGroup.MapGet("/cdc-capture-runtimes/cross-node-idempotency-hardenings/fingerprints/{retryFingerprint}", (string retryFingerprint, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorCrossNodeIdempotencyHardeningRetryFingerprint(retryFingerprint) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorCrossNodeIdempotencyHardeningRetryFingerprint");
-        engineGroup.MapGet("/cdc-capture-runtimes/distributed-retry-orchestrations/{orchestrationState}", (string orchestrationState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorDistributedRetryOrchestrationState(orchestrationState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorDistributedRetryOrchestrationState");
-        engineGroup.MapGet("/cdc-capture-runtimes/distributed-retry-orchestrations/categories/{orchestrationCategory}", (string orchestrationCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorDistributedRetryOrchestrationCategory(orchestrationCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorDistributedRetryOrchestrationCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/distributed-retry-orchestrations/owners/{ownerId}", (string ownerId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorDistributedRetryOrchestrationOwnerId(ownerId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorDistributedRetryOrchestrationOwner");
-        engineGroup.MapGet("/cdc-capture-runtimes/multi-node-lease-executions/{leaseExecutionState}", (string leaseExecutionState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorMultiNodeLeaseExecutionState(leaseExecutionState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorMultiNodeLeaseExecutionState");
-        engineGroup.MapGet("/cdc-capture-runtimes/multi-node-lease-executions/categories/{leaseExecutionCategory}", (string leaseExecutionCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorMultiNodeLeaseExecutionCategory(leaseExecutionCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorMultiNodeLeaseExecutionCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/multi-node-lease-executions/owners/{ownerId}", (string ownerId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorMultiNodeLeaseExecutionOwnerId(ownerId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorMultiNodeLeaseExecutionOwner");
-        engineGroup.MapGet("/cdc-capture-runtimes/durable-shared-scheduler-orchestrations/{schedulerState}", (string schedulerState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorDurableSharedSchedulerOrchestrationState(schedulerState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorDurableSharedSchedulerOrchestrationState");
-        engineGroup.MapGet("/cdc-capture-runtimes/durable-shared-scheduler-orchestrations/categories/{schedulerCategory}", (string schedulerCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorDurableSharedSchedulerOrchestrationCategory(schedulerCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorDurableSharedSchedulerOrchestrationCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/durable-shared-scheduler-orchestrations/owners/{ownerId}", (string ownerId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorDurableSharedSchedulerOrchestrationOwnerId(ownerId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorDurableSharedSchedulerOrchestrationOwner");
-        engineGroup.MapGet("/cdc-capture-runtimes/scheduler-recovery-execution-hardenings/{hardeningState}", (string hardeningState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorSchedulerRecoveryExecutionHardeningState(hardeningState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorSchedulerRecoveryExecutionHardeningState");
-        engineGroup.MapGet("/cdc-capture-runtimes/scheduler-recovery-execution-hardenings/categories/{hardeningCategory}", (string hardeningCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorSchedulerRecoveryExecutionHardeningCategory(hardeningCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorSchedulerRecoveryExecutionHardeningCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/scheduler-recovery-execution-hardenings/owners/{ownerId}", (string ownerId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorSchedulerRecoveryExecutionHardeningOwnerId(ownerId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorSchedulerRecoveryExecutionHardeningOwner");
-        engineGroup.MapGet("/cdc-capture-runtimes/scheduler-recovery-execution-hardenings/fingerprints/{retryFingerprint}", (string retryFingerprint, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorSchedulerRecoveryExecutionHardeningRetryFingerprint(retryFingerprint) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorSchedulerRecoveryExecutionHardeningRetryFingerprint");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-write-path-executions/{providerExecutionState}", (string providerExecutionState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderOwnedWritePathExecutionState(providerExecutionState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedWritePathExecutionState");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-write-path-executions/categories/{providerExecutionCategory}", (string providerExecutionCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderOwnedWritePathExecutionCategory(providerExecutionCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedWritePathExecutionCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-write-path-executions/operations/{operationId}", (string operationId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderOwnedWritePathExecutionOperationId(operationId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedWritePathExecutionOperation");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-execution-orchestrations/{providerExecutionOrchestrationState}", (string providerExecutionOrchestrationState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderExecutionOrchestrationState(providerExecutionOrchestrationState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderExecutionOrchestrationState");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-execution-orchestrations/categories/{providerExecutionOrchestrationCategory}", (string providerExecutionOrchestrationCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderExecutionOrchestrationCategory(providerExecutionOrchestrationCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderExecutionOrchestrationCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-execution-orchestrations/operations/{operationId}", (string operationId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderExecutionOrchestrationOperationId(operationId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderExecutionOrchestrationOperation");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-ownership/{providerOwnedControlPlaneOwnershipState}", (string providerOwnedControlPlaneOwnershipState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderOwnedControlPlaneOwnershipState(providerOwnedControlPlaneOwnershipState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneOwnershipState");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-ownership/categories/{providerOwnedControlPlaneOwnershipCategory}", (string providerOwnedControlPlaneOwnershipCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderOwnedControlPlaneOwnershipCategory(providerOwnedControlPlaneOwnershipCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneOwnershipCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-ownership/operations/{operationId}", (string operationId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderOwnedControlPlaneOwnershipOperationId(operationId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneOwnershipOperation");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-mutation-reconcile/{providerOwnedControlPlaneMutationReconcileState}", (string providerOwnedControlPlaneMutationReconcileState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderOwnedControlPlaneMutationReconcileState(providerOwnedControlPlaneMutationReconcileState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneMutationReconcileState");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-mutation-reconcile/categories/{providerOwnedControlPlaneMutationReconcileCategory}", (string providerOwnedControlPlaneMutationReconcileCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderOwnedControlPlaneMutationReconcileCategory(providerOwnedControlPlaneMutationReconcileCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneMutationReconcileCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-mutation-reconcile/operations/{operationId}", (string operationId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderOwnedControlPlaneMutationReconcileOperationId(operationId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneMutationReconcileOperation");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-provisioning/{providerOwnedControlPlaneProvisioningState}", (string providerOwnedControlPlaneProvisioningState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderOwnedControlPlaneProvisioningState(providerOwnedControlPlaneProvisioningState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneProvisioningState");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-provisioning/categories/{providerOwnedControlPlaneProvisioningCategory}", (string providerOwnedControlPlaneProvisioningCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderOwnedControlPlaneProvisioningCategory(providerOwnedControlPlaneProvisioningCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneProvisioningCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-provisioning/operations/{operationId}", (string operationId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderOwnedControlPlaneProvisioningOperationId(operationId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneProvisioningOperation");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-apply-and-reconcile-executions/{applyAndReconcileExecutionState}", (string applyAndReconcileExecutionState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionState(applyAndReconcileExecutionState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionState");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-apply-and-reconcile-executions/categories/{applyAndReconcileExecutionCategory}", (string applyAndReconcileExecutionCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionCategory(applyAndReconcileExecutionCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-apply-and-reconcile-executions/operations/{operationId}", (string operationId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionOperationId(operationId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionOperation");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-apply-and-reconcile-hardenings/{hardeningState}", (string hardeningState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningState(hardeningState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningState");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-apply-and-reconcile-hardenings/categories/{hardeningCategory}", (string hardeningCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategory(hardeningCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-apply-and-reconcile-hardenings/operations/{operationId}", (string operationId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningOperationId(operationId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningOperation");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-provisioning-and-mutation-hardenings/{hardeningState}", (string hardeningState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningState(hardeningState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningState");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-provisioning-and-mutation-hardenings/categories/{hardeningCategory}", (string hardeningCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningCategory(hardeningCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-provisioning-and-mutation-hardenings/operations/{operationId}", (string operationId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningOperationId(operationId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningOperation");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-materializers/{materializerState}", (string materializerState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerState(materializerState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerState");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-materializers/categories/{materializerCategory}", (string materializerCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerCategory(materializerCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-materializers/providers/{providerId}", (string providerId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerProviderId(providerId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerProvider");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-materializers/provider-surfaces/{providerSurfaceId}", (string providerSurfaceId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerProviderSurfaceId(providerSurfaceId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerProviderSurface");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-materializers/materializers/{materializerId}", (string materializerId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerId(materializerId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerId");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-materializers/transports/{transportKind}", (string transportKind, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerTransportKind(transportKind) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerTransport");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-materializers/connect-clusters/{connectClusterId}", (string connectClusterId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectClusterId(connectClusterId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerConnectCluster");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-materializers/connector-classes/{connectorClass}", (string connectorClass, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectorClass(connectorClass) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerConnectorClass");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-materializers/source-providers/{sourceProviderId}", (string sourceProviderId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerSourceProviderId(sourceProviderId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerSourceProvider");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-materializers/connectors/{connectorId}", (string connectorId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectorId(connectorId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerConnector");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-materializers/workers/{workerId}", (string workerId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerWorkerId(workerId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerWorker");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-materializers/current-nodes/{canUseOnCurrentNode:bool}", (bool canUseOnCurrentNode, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerCanUseOnCurrentNode(canUseOnCurrentNode) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerCurrentNode");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-materializers/operations/{operationId}", (string operationId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneMaterializerOperationId(operationId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerOperation");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/{hardeningState}", (string hardeningState, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningState(hardeningState) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningState");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/categories/{hardeningCategory}", (string hardeningCategory, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCategory(hardeningCategory) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCategory");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/providers/{providerId}", (string providerId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningProviderId(providerId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningProvider");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/provider-surfaces/{providerSurfaceId}", (string providerSurfaceId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningProviderSurfaceId(providerSurfaceId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningProviderSurface");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/materializers/{materializerId}", (string materializerId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningMaterializerId(materializerId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningMaterializer");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/transports/{transportKind}", (string transportKind, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningTransportKind(transportKind) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningTransport");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/connect-clusters/{connectClusterId}", (string connectClusterId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectClusterId(connectClusterId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectCluster");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/connector-classes/{connectorClass}", (string connectorClass, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectorClass(connectorClass) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectorClass");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/source-providers/{sourceProviderId}", (string sourceProviderId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningSourceProviderId(sourceProviderId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningSourceProvider");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/connectors/{connectorId}", (string connectorId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectorId(connectorId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnector");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/workers/{workerId}", (string workerId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningWorkerId(workerId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningWorker");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/current-nodes/{canExecuteOnCurrentNode:bool}", (bool canExecuteOnCurrentNode, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteOnCurrentNode(canExecuteOnCurrentNode) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCurrentNode");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/current-nodes/teardowns/{canExecuteTeardownOnCurrentNode:bool}", (bool canExecuteTeardownOnCurrentNode, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteTeardownOnCurrentNode(canExecuteTeardownOnCurrentNode) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCurrentNodeTeardown");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/current-nodes/mutation-executions/{canExecuteMutationExecutionOnCurrentNode:bool}", (bool canExecuteMutationExecutionOnCurrentNode, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteMutationExecutionOnCurrentNode(canExecuteMutationExecutionOnCurrentNode) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCurrentNodeMutationExecution");
-        engineGroup.MapGet("/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/operations/{operationId}", (string operationId, HttpContext httpContext) =>
-            {
-                var runtimes = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningOperationId(operationId) ?? [];
-
-                return Results.Ok(runtimes);
-            })
-            .WithName("GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningOperation");
-        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/command-executions", (string executionRuntimeId, HttpContext httpContext) =>
-            {
-                var runtimeCatalog = httpContext.RequestServices.GetService<ICdcCaptureExecutionRuntimeCatalog>();
-                var runtimeDescriptor = runtimeCatalog?.GetById(executionRuntimeId);
-                if (runtimeDescriptor is null)
-                {
-                    return Results.NotFound();
-                }
-
-                return Results.Ok(runtimeCatalog?.GetManagedConnectorCommandExecutionHistory(executionRuntimeId) ?? []);
-            })
-            .WithName("GetCephalonManagedConnectorCommandExecutionHistory");
-        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/command-journal", (string executionRuntimeId, HttpContext httpContext) =>
-            {
-                var runtimeDescriptor = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetById(executionRuntimeId);
-
-                return runtimeDescriptor is null
-                    ? Results.NotFound()
-                    : Results.Ok(runtimeDescriptor.ManagedConnectorCommandJournal);
-            })
-            .WithName("GetCephalonManagedConnectorCommandJournal");
-        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/command-journal-durability", (string executionRuntimeId, HttpContext httpContext) =>
-            {
-                var runtimeDescriptor = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetById(executionRuntimeId);
-
-                return runtimeDescriptor is null
-                    ? Results.NotFound()
-                    : Results.Ok(runtimeDescriptor.ManagedConnectorCommandJournalDurability);
-            })
-            .WithName("GetCephalonManagedConnectorCommandJournalDurability");
-        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/distributed-retry-lease", (string executionRuntimeId, HttpContext httpContext) =>
-            {
-                var runtimeDescriptor = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetById(executionRuntimeId);
-
-                return runtimeDescriptor is null
-                    ? Results.NotFound()
-                    : Results.Ok(runtimeDescriptor.ManagedConnectorDistributedRetryLease);
-            })
-            .WithName("GetCephalonManagedConnectorDistributedRetryLease");
-        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/cross-node-idempotency-hardening", (string executionRuntimeId, HttpContext httpContext) =>
-            {
-                var runtimeDescriptor = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetById(executionRuntimeId);
-
-                return runtimeDescriptor is null
-                    ? Results.NotFound()
-                    : Results.Ok(runtimeDescriptor.ManagedConnectorCrossNodeIdempotencyHardening);
-            })
-            .WithName("GetCephalonManagedConnectorCrossNodeIdempotencyHardening");
-        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/distributed-retry-orchestration", (string executionRuntimeId, HttpContext httpContext) =>
-            {
-                var runtimeDescriptor = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetById(executionRuntimeId);
-
-                return runtimeDescriptor is null
-                    ? Results.NotFound()
-                    : Results.Ok(runtimeDescriptor.ManagedConnectorDistributedRetryOrchestration);
-            })
-            .WithName("GetCephalonManagedConnectorDistributedRetryOrchestration");
-        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/multi-node-lease-execution", (string executionRuntimeId, HttpContext httpContext) =>
-            {
-                var runtimeDescriptor = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetById(executionRuntimeId);
-
-                return runtimeDescriptor is null
-                    ? Results.NotFound()
-                    : Results.Ok(runtimeDescriptor.ManagedConnectorMultiNodeLeaseExecution);
-            })
-            .WithName("GetCephalonManagedConnectorMultiNodeLeaseExecution");
-        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/durable-shared-scheduler-orchestration", (string executionRuntimeId, HttpContext httpContext) =>
-            {
-                var runtimeDescriptor = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetById(executionRuntimeId);
-
-                return runtimeDescriptor is null
-                    ? Results.NotFound()
-                    : Results.Ok(runtimeDescriptor.ManagedConnectorDurableSharedSchedulerOrchestration);
-            })
-            .WithName("GetCephalonManagedConnectorDurableSharedSchedulerOrchestration");
-        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/scheduler-recovery-execution-hardening", (string executionRuntimeId, HttpContext httpContext) =>
-            {
-                var runtimeDescriptor = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetById(executionRuntimeId);
-
-                return runtimeDescriptor is null
-                    ? Results.NotFound()
-                    : Results.Ok(runtimeDescriptor.ManagedConnectorSchedulerRecoveryExecutionHardening);
-            })
-            .WithName("GetCephalonManagedConnectorSchedulerRecoveryExecutionHardening");
-        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-write-path-execution", (string executionRuntimeId, HttpContext httpContext) =>
-            {
-                var runtimeDescriptor = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetById(executionRuntimeId);
-
-                return runtimeDescriptor is null
-                    ? Results.NotFound()
-                    : Results.Ok(runtimeDescriptor.ManagedConnectorProviderOwnedWritePathExecution);
-            })
-            .WithName("GetCephalonManagedConnectorProviderOwnedWritePathExecution");
-        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/provider-execution-orchestration", (string executionRuntimeId, HttpContext httpContext) =>
-            {
-                var runtimeDescriptor = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetById(executionRuntimeId);
-
-                return runtimeDescriptor is null
-                    ? Results.NotFound()
-                    : Results.Ok(runtimeDescriptor.ManagedConnectorProviderExecutionOrchestration);
-            })
-            .WithName("GetCephalonManagedConnectorProviderExecutionOrchestration");
-        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-control-plane-ownership", (string executionRuntimeId, HttpContext httpContext) =>
-            {
-                var runtimeDescriptor = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetById(executionRuntimeId);
-
-                return runtimeDescriptor is null
-                    ? Results.NotFound()
-                    : Results.Ok(runtimeDescriptor.ManagedConnectorProviderOwnedControlPlaneOwnership);
-            })
-            .WithName("GetCephalonManagedConnectorProviderOwnedControlPlaneOwnership");
-        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-control-plane-mutation-reconcile", (string executionRuntimeId, HttpContext httpContext) =>
-            {
-                var runtimeDescriptor = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetById(executionRuntimeId);
-
-                return runtimeDescriptor is null
-                    ? Results.NotFound()
-                    : Results.Ok(runtimeDescriptor.ManagedConnectorProviderOwnedControlPlaneMutationReconcile);
-            })
-            .WithName("GetCephalonManagedConnectorProviderOwnedControlPlaneMutationReconcile");
-        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-control-plane-provisioning", (string executionRuntimeId, HttpContext httpContext) =>
-            {
-                var runtimeDescriptor = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetById(executionRuntimeId);
-
-                return runtimeDescriptor is null
-                    ? Results.NotFound()
-                    : Results.Ok(runtimeDescriptor.ManagedConnectorProviderOwnedControlPlaneProvisioning);
-            })
-            .WithName("GetCephalonManagedConnectorProviderOwnedControlPlaneProvisioning");
-        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-control-plane-apply-and-reconcile-execution", (string executionRuntimeId, HttpContext httpContext) =>
-            {
-                var runtimeDescriptor = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetById(executionRuntimeId);
-
-                return runtimeDescriptor is null
-                    ? Results.NotFound()
-                    : Results.Ok(runtimeDescriptor.ManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution);
-            })
-            .WithName("GetCephalonManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution");
-        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-control-plane-dependency-aware-apply-and-reconcile-hardening", (string executionRuntimeId, HttpContext httpContext) =>
-            {
-                var runtimeDescriptor = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetById(executionRuntimeId);
-
-                return runtimeDescriptor is null
-                    ? Results.NotFound()
-                    : Results.Ok(runtimeDescriptor.ManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening);
-            })
-            .WithName("GetCephalonManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening");
-        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-control-plane-dependency-aware-provisioning-and-mutation-hardening", (string executionRuntimeId, HttpContext httpContext) =>
-            {
-                var runtimeDescriptor = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetById(executionRuntimeId);
-
-                return runtimeDescriptor is null
-                    ? Results.NotFound()
-                    : Results.Ok(runtimeDescriptor.ManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening);
-            })
-            .WithName("GetCephalonManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening");
-        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/provider-specific-control-plane-materializer", (string executionRuntimeId, HttpContext httpContext) =>
-            {
-                var runtimeDescriptor = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetById(executionRuntimeId);
-
-                return runtimeDescriptor is null
-                    ? Results.NotFound()
-                    : Results.Ok(runtimeDescriptor.ManagedConnectorProviderSpecificControlPlaneMaterializer);
-            })
-            .WithName("GetCephalonManagedConnectorProviderSpecificControlPlaneMaterializer");
-        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardening", (string executionRuntimeId, HttpContext httpContext) =>
-            {
-                var runtimeDescriptor = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetById(executionRuntimeId);
-
-                return runtimeDescriptor is null
-                    ? Results.NotFound()
-                    : Results.Ok(runtimeDescriptor.ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening);
-            })
-            .WithName("GetCephalonManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening");
-        engineGroup.MapGet("/cdc-capture-runtimes/{executionRuntimeId}", (string executionRuntimeId, HttpContext httpContext) =>
-            {
-                var runtimeDescriptor = httpContext.RequestServices
-                    .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
-                    .GetById(executionRuntimeId);
-
-                return runtimeDescriptor is null ? Results.NotFound() : Results.Ok(runtimeDescriptor);
-            })
-            .WithName("GetCephalonCdcCaptureRuntime");
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes", "GetCephalonCdcCaptureRuntimes", static (_, catalog) =>
+            catalog.Runtimes);
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/reporters/{reporterId}", "GetCephalonCdcCaptureRuntimesByReporter", static (context, catalog) =>
+            catalog.GetByReporterId(GetRouteValue(context, "reporterId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/edge-nodes/{edgeNodeId}", "GetCephalonCdcCaptureRuntimesByEdgeNode", static (context, catalog) =>
+            catalog.GetByEdgeNodeId(GetRouteValue(context, "edgeNodeId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/reporter-coordination/{coordinationState}", "GetCephalonCdcCaptureRuntimesByReporterCoordinationState", static (context, catalog) =>
+            catalog.GetByReporterCoordinationState(GetRouteValue(context, "coordinationState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/reporter-coordination/issues/{degradedReason}", "GetCephalonCdcCaptureRuntimesByReporterCoordinationIssueReason", static (context, catalog) =>
+            catalog.GetByReporterCoordinationIssueReason(GetRouteValue(context, "degradedReason")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/remediation/{remediationState}", "GetCephalonCdcCaptureRuntimesByRemediationState", static (context, catalog) =>
+            catalog.GetByRemediationState(GetRouteValue(context, "remediationState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/remediation/categories/{remediationCategory}", "GetCephalonCdcCaptureRuntimesByRemediationCategory", static (context, catalog) =>
+            catalog.GetByRemediationCategory(GetRouteValue(context, "remediationCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/governance/{governanceState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorGovernanceState", static (context, catalog) =>
+            catalog.GetByManagedConnectorGovernanceState(GetRouteValue(context, "governanceState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/governance/categories/{governanceCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorGovernanceCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorGovernanceCategory(GetRouteValue(context, "governanceCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/drift/{driftState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorDriftState", static (context, catalog) =>
+            catalog.GetByManagedConnectorDriftState(GetRouteValue(context, "driftState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/drift/categories/{driftCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorDriftCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorDriftCategory(GetRouteValue(context, "driftCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/action-plans/{actionPlanState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorActionPlanState", static (context, catalog) =>
+            catalog.GetByManagedConnectorActionPlanState(GetRouteValue(context, "actionPlanState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/actions/{actionId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorAction", static (context, catalog) =>
+            catalog.GetByManagedConnectorActionId(GetRouteValue(context, "actionId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/write-path-readiness/{readinessState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorWritePathReadinessState", static (context, catalog) =>
+            catalog.GetByManagedConnectorWritePathReadinessState(GetRouteValue(context, "readinessState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/write-path-readiness/categories/{readinessCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorWritePathReadinessCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorWritePathReadinessCategory(GetRouteValue(context, "readinessCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/preflight/{preflightState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorPreflightState", static (context, catalog) =>
+            catalog.GetByManagedConnectorPreflightState(GetRouteValue(context, "preflightState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/preflight/categories/{preflightCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorPreflightCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorPreflightCategory(GetRouteValue(context, "preflightCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/preflight/operations/{operationId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorPreflightOperation", static (context, catalog) =>
+            catalog.GetByManagedConnectorPreflightOperationId(GetRouteValue(context, "operationId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/dry-runs/{dryRunState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorDryRunState", static (context, catalog) =>
+            catalog.GetByManagedConnectorDryRunState(GetRouteValue(context, "dryRunState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/dry-runs/categories/{dryRunCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorDryRunCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorDryRunCategory(GetRouteValue(context, "dryRunCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/dry-runs/operations/{operationId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorDryRunOperation", static (context, catalog) =>
+            catalog.GetByManagedConnectorDryRunOperationId(GetRouteValue(context, "operationId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/execution-intents/{executionIntentState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorExecutionIntentState", static (context, catalog) =>
+            catalog.GetByManagedConnectorExecutionIntentState(GetRouteValue(context, "executionIntentState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/execution-intents/categories/{executionIntentCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorExecutionIntentCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorExecutionIntentCategory(GetRouteValue(context, "executionIntentCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/execution-intents/operations/{operationId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorExecutionIntentOperation", static (context, catalog) =>
+            catalog.GetByManagedConnectorExecutionIntentOperationId(GetRouteValue(context, "operationId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/execution-approvals/{executionApprovalState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorExecutionApprovalState", static (context, catalog) =>
+            catalog.GetByManagedConnectorExecutionApprovalState(GetRouteValue(context, "executionApprovalState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/execution-approvals/categories/{executionApprovalCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorExecutionApprovalCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorExecutionApprovalCategory(GetRouteValue(context, "executionApprovalCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/execution-approvals/operations/{operationId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorExecutionApprovalOperation", static (context, catalog) =>
+            catalog.GetByManagedConnectorExecutionApprovalOperationId(GetRouteValue(context, "operationId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/command-envelopes/{commandState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorCommandEnvelopeState", static (context, catalog) =>
+            catalog.GetByManagedConnectorCommandEnvelopeState(GetRouteValue(context, "commandState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/command-envelopes/categories/{commandCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorCommandEnvelopeCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorCommandEnvelopeCategory(GetRouteValue(context, "commandCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/command-envelopes/operations/{operationId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorCommandEnvelopeOperation", static (context, catalog) =>
+            catalog.GetByManagedConnectorCommandEnvelopeOperationId(GetRouteValue(context, "operationId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/command-issuances/{issuanceState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorCommandIssuanceState", static (context, catalog) =>
+            catalog.GetByManagedConnectorCommandIssuanceState(GetRouteValue(context, "issuanceState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/command-issuances/categories/{issuanceCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorCommandIssuanceCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorCommandIssuanceCategory(GetRouteValue(context, "issuanceCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/command-issuances/operations/{operationId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorCommandIssuanceOperation", static (context, catalog) =>
+            catalog.GetByManagedConnectorCommandIssuanceOperationId(GetRouteValue(context, "operationId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/execution-adapters/{executionAdapterState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorExecutionAdapterState", static (context, catalog) =>
+            catalog.GetByManagedConnectorExecutionAdapterState(GetRouteValue(context, "executionAdapterState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/execution-adapters/categories/{executionAdapterCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorExecutionAdapterCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorExecutionAdapterCategory(GetRouteValue(context, "executionAdapterCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/execution-adapters/operations/{operationId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorExecutionAdapterOperation", static (context, catalog) =>
+            catalog.GetByManagedConnectorExecutionAdapterOperationId(GetRouteValue(context, "operationId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/command-executions/{executionState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorCommandExecutionState", static (context, catalog) =>
+            catalog.GetByManagedConnectorCommandExecutionState(GetRouteValue(context, "executionState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/command-executions/operations/{operationId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorCommandExecutionOperation", static (context, catalog) =>
+            catalog.GetByManagedConnectorCommandExecutionOperationId(GetRouteValue(context, "operationId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/command-retries/{retryState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorCommandRetryState", static (context, catalog) =>
+            catalog.GetByManagedConnectorCommandRetryState(GetRouteValue(context, "retryState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/command-retries/categories/{retryCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorCommandRetryCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorCommandRetryCategory(GetRouteValue(context, "retryCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/command-retries/operations/{operationId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorCommandRetryOperation", static (context, catalog) =>
+            catalog.GetByManagedConnectorCommandRetryOperationId(GetRouteValue(context, "operationId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/retry-execution-policies/{policyState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorRetryExecutionPolicyState", static (context, catalog) =>
+            catalog.GetByManagedConnectorRetryExecutionPolicyState(GetRouteValue(context, "policyState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/retry-execution-policies/categories/{policyCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorRetryExecutionPolicyCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorRetryExecutionPolicyCategory(GetRouteValue(context, "policyCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/retry-execution-policies/operations/{operationId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorRetryExecutionPolicyOperation", static (context, catalog) =>
+            catalog.GetByManagedConnectorRetryExecutionPolicyOperationId(GetRouteValue(context, "operationId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/command-journals/{journalState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorCommandJournalState", static (context, catalog) =>
+            catalog.GetByManagedConnectorCommandJournalState(GetRouteValue(context, "journalState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/command-journals/categories/{journalCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorCommandJournalCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorCommandJournalCategory(GetRouteValue(context, "journalCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/command-journal-durability/{durabilityState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorCommandJournalDurabilityState", static (context, catalog) =>
+            catalog.GetByManagedConnectorCommandJournalDurabilityState(GetRouteValue(context, "durabilityState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/command-journal-durability/categories/{durabilityCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorCommandJournalDurabilityCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorCommandJournalDurabilityCategory(GetRouteValue(context, "durabilityCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/automatic-retries/{automaticRetryState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorAutomaticRetryExecutionState", static (context, catalog) =>
+            catalog.GetByManagedConnectorAutomaticRetryExecutionState(GetRouteValue(context, "automaticRetryState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/automatic-retries/categories/{automaticRetryCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorAutomaticRetryExecutionCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorAutomaticRetryExecutionCategory(GetRouteValue(context, "automaticRetryCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/automatic-retries/operations/{operationId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorAutomaticRetryExecutionOperation", static (context, catalog) =>
+            catalog.GetByManagedConnectorAutomaticRetryExecutionOperationId(GetRouteValue(context, "operationId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/automatic-retry-coordinations/{coordinationState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorAutomaticRetryCoordinationState", static (context, catalog) =>
+            catalog.GetByManagedConnectorAutomaticRetryCoordinationState(GetRouteValue(context, "coordinationState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/automatic-retry-coordinations/categories/{coordinationCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorAutomaticRetryCoordinationCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorAutomaticRetryCoordinationCategory(GetRouteValue(context, "coordinationCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/automatic-retry-coordinations/owners/{ownerId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorAutomaticRetryCoordinationOwner", static (context, catalog) =>
+            catalog.GetByManagedConnectorAutomaticRetryCoordinationOwnerId(GetRouteValue(context, "ownerId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/distributed-retry-leases/{leaseState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorDistributedRetryLeaseState", static (context, catalog) =>
+            catalog.GetByManagedConnectorDistributedRetryLeaseState(GetRouteValue(context, "leaseState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/distributed-retry-leases/categories/{leaseCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorDistributedRetryLeaseCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorDistributedRetryLeaseCategory(GetRouteValue(context, "leaseCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/distributed-retry-leases/owners/{ownerId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorDistributedRetryLeaseOwner", static (context, catalog) =>
+            catalog.GetByManagedConnectorDistributedRetryLeaseOwnerId(GetRouteValue(context, "ownerId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/cross-node-idempotency-hardenings/{hardeningState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorCrossNodeIdempotencyHardeningState", static (context, catalog) =>
+            catalog.GetByManagedConnectorCrossNodeIdempotencyHardeningState(GetRouteValue(context, "hardeningState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/cross-node-idempotency-hardenings/categories/{hardeningCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorCrossNodeIdempotencyHardeningCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorCrossNodeIdempotencyHardeningCategory(GetRouteValue(context, "hardeningCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/cross-node-idempotency-hardenings/owners/{ownerId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorCrossNodeIdempotencyHardeningOwner", static (context, catalog) =>
+            catalog.GetByManagedConnectorCrossNodeIdempotencyHardeningOwnerId(GetRouteValue(context, "ownerId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/cross-node-idempotency-hardenings/fingerprints/{retryFingerprint}", "GetCephalonCdcCaptureRuntimesByManagedConnectorCrossNodeIdempotencyHardeningRetryFingerprint", static (context, catalog) =>
+            catalog.GetByManagedConnectorCrossNodeIdempotencyHardeningRetryFingerprint(GetRouteValue(context, "retryFingerprint")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/distributed-retry-orchestrations/{orchestrationState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorDistributedRetryOrchestrationState", static (context, catalog) =>
+            catalog.GetByManagedConnectorDistributedRetryOrchestrationState(GetRouteValue(context, "orchestrationState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/distributed-retry-orchestrations/categories/{orchestrationCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorDistributedRetryOrchestrationCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorDistributedRetryOrchestrationCategory(GetRouteValue(context, "orchestrationCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/distributed-retry-orchestrations/owners/{ownerId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorDistributedRetryOrchestrationOwner", static (context, catalog) =>
+            catalog.GetByManagedConnectorDistributedRetryOrchestrationOwnerId(GetRouteValue(context, "ownerId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/multi-node-lease-executions/{leaseExecutionState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorMultiNodeLeaseExecutionState", static (context, catalog) =>
+            catalog.GetByManagedConnectorMultiNodeLeaseExecutionState(GetRouteValue(context, "leaseExecutionState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/multi-node-lease-executions/categories/{leaseExecutionCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorMultiNodeLeaseExecutionCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorMultiNodeLeaseExecutionCategory(GetRouteValue(context, "leaseExecutionCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/multi-node-lease-executions/owners/{ownerId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorMultiNodeLeaseExecutionOwner", static (context, catalog) =>
+            catalog.GetByManagedConnectorMultiNodeLeaseExecutionOwnerId(GetRouteValue(context, "ownerId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/durable-shared-scheduler-orchestrations/{schedulerState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorDurableSharedSchedulerOrchestrationState", static (context, catalog) =>
+            catalog.GetByManagedConnectorDurableSharedSchedulerOrchestrationState(GetRouteValue(context, "schedulerState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/durable-shared-scheduler-orchestrations/categories/{schedulerCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorDurableSharedSchedulerOrchestrationCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorDurableSharedSchedulerOrchestrationCategory(GetRouteValue(context, "schedulerCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/durable-shared-scheduler-orchestrations/owners/{ownerId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorDurableSharedSchedulerOrchestrationOwner", static (context, catalog) =>
+            catalog.GetByManagedConnectorDurableSharedSchedulerOrchestrationOwnerId(GetRouteValue(context, "ownerId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/scheduler-recovery-execution-hardenings/{hardeningState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorSchedulerRecoveryExecutionHardeningState", static (context, catalog) =>
+            catalog.GetByManagedConnectorSchedulerRecoveryExecutionHardeningState(GetRouteValue(context, "hardeningState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/scheduler-recovery-execution-hardenings/categories/{hardeningCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorSchedulerRecoveryExecutionHardeningCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorSchedulerRecoveryExecutionHardeningCategory(GetRouteValue(context, "hardeningCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/scheduler-recovery-execution-hardenings/owners/{ownerId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorSchedulerRecoveryExecutionHardeningOwner", static (context, catalog) =>
+            catalog.GetByManagedConnectorSchedulerRecoveryExecutionHardeningOwnerId(GetRouteValue(context, "ownerId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/scheduler-recovery-execution-hardenings/fingerprints/{retryFingerprint}", "GetCephalonCdcCaptureRuntimesByManagedConnectorSchedulerRecoveryExecutionHardeningRetryFingerprint", static (context, catalog) =>
+            catalog.GetByManagedConnectorSchedulerRecoveryExecutionHardeningRetryFingerprint(GetRouteValue(context, "retryFingerprint")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-owned-write-path-executions/{providerExecutionState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedWritePathExecutionState", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderOwnedWritePathExecutionState(GetRouteValue(context, "providerExecutionState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-owned-write-path-executions/categories/{providerExecutionCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedWritePathExecutionCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderOwnedWritePathExecutionCategory(GetRouteValue(context, "providerExecutionCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-owned-write-path-executions/operations/{operationId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedWritePathExecutionOperation", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderOwnedWritePathExecutionOperationId(GetRouteValue(context, "operationId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-execution-orchestrations/{providerExecutionOrchestrationState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderExecutionOrchestrationState", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderExecutionOrchestrationState(GetRouteValue(context, "providerExecutionOrchestrationState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-execution-orchestrations/categories/{providerExecutionOrchestrationCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderExecutionOrchestrationCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderExecutionOrchestrationCategory(GetRouteValue(context, "providerExecutionOrchestrationCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-execution-orchestrations/operations/{operationId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderExecutionOrchestrationOperation", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderExecutionOrchestrationOperationId(GetRouteValue(context, "operationId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-owned-control-plane-ownership/{providerOwnedControlPlaneOwnershipState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneOwnershipState", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderOwnedControlPlaneOwnershipState(GetRouteValue(context, "providerOwnedControlPlaneOwnershipState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-owned-control-plane-ownership/categories/{providerOwnedControlPlaneOwnershipCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneOwnershipCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderOwnedControlPlaneOwnershipCategory(GetRouteValue(context, "providerOwnedControlPlaneOwnershipCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-owned-control-plane-ownership/operations/{operationId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneOwnershipOperation", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderOwnedControlPlaneOwnershipOperationId(GetRouteValue(context, "operationId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-owned-control-plane-mutation-reconcile/{providerOwnedControlPlaneMutationReconcileState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneMutationReconcileState", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderOwnedControlPlaneMutationReconcileState(GetRouteValue(context, "providerOwnedControlPlaneMutationReconcileState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-owned-control-plane-mutation-reconcile/categories/{providerOwnedControlPlaneMutationReconcileCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneMutationReconcileCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderOwnedControlPlaneMutationReconcileCategory(GetRouteValue(context, "providerOwnedControlPlaneMutationReconcileCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-owned-control-plane-mutation-reconcile/operations/{operationId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneMutationReconcileOperation", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderOwnedControlPlaneMutationReconcileOperationId(GetRouteValue(context, "operationId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-owned-control-plane-provisioning/{providerOwnedControlPlaneProvisioningState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneProvisioningState", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderOwnedControlPlaneProvisioningState(GetRouteValue(context, "providerOwnedControlPlaneProvisioningState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-owned-control-plane-provisioning/categories/{providerOwnedControlPlaneProvisioningCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneProvisioningCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderOwnedControlPlaneProvisioningCategory(GetRouteValue(context, "providerOwnedControlPlaneProvisioningCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-owned-control-plane-provisioning/operations/{operationId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneProvisioningOperation", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderOwnedControlPlaneProvisioningOperationId(GetRouteValue(context, "operationId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-owned-control-plane-apply-and-reconcile-executions/{applyAndReconcileExecutionState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionState", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionState(GetRouteValue(context, "applyAndReconcileExecutionState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-owned-control-plane-apply-and-reconcile-executions/categories/{applyAndReconcileExecutionCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionCategory(GetRouteValue(context, "applyAndReconcileExecutionCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-owned-control-plane-apply-and-reconcile-executions/operations/{operationId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionOperation", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionOperationId(GetRouteValue(context, "operationId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-apply-and-reconcile-hardenings/{hardeningState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningState", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningState(GetRouteValue(context, "hardeningState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-apply-and-reconcile-hardenings/categories/{hardeningCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningCategory(GetRouteValue(context, "hardeningCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-apply-and-reconcile-hardenings/operations/{operationId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningOperation", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardeningOperationId(GetRouteValue(context, "operationId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-provisioning-and-mutation-hardenings/{hardeningState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningState", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningState(GetRouteValue(context, "hardeningState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-provisioning-and-mutation-hardenings/categories/{hardeningCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningCategory(GetRouteValue(context, "hardeningCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-owned-control-plane-dependency-aware-provisioning-and-mutation-hardenings/operations/{operationId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningOperation", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningOperationId(GetRouteValue(context, "operationId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-materializers/{materializerState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerState", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneMaterializerState(GetRouteValue(context, "materializerState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-materializers/categories/{materializerCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneMaterializerCategory(GetRouteValue(context, "materializerCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-materializers/providers/{providerId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerProvider", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneMaterializerProviderId(GetRouteValue(context, "providerId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-materializers/provider-surfaces/{providerSurfaceId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerProviderSurface", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneMaterializerProviderSurfaceId(GetRouteValue(context, "providerSurfaceId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-materializers/materializers/{materializerId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerId", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneMaterializerId(GetRouteValue(context, "materializerId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-materializers/transports/{transportKind}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerTransport", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneMaterializerTransportKind(GetRouteValue(context, "transportKind")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-materializers/connect-clusters/{connectClusterId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerConnectCluster", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectClusterId(GetRouteValue(context, "connectClusterId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-materializers/connector-classes/{connectorClass}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerConnectorClass", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectorClass(GetRouteValue(context, "connectorClass")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-materializers/source-providers/{sourceProviderId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerSourceProvider", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneMaterializerSourceProviderId(GetRouteValue(context, "sourceProviderId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-materializers/connectors/{connectorId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerConnector", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneMaterializerConnectorId(GetRouteValue(context, "connectorId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-materializers/workers/{workerId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerWorker", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneMaterializerWorkerId(GetRouteValue(context, "workerId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-materializers/current-nodes/{canUseOnCurrentNode:bool}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerCurrentNode", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneMaterializerCanUseOnCurrentNode(GetBooleanRouteValue(context, "canUseOnCurrentNode")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-materializers/operations/{operationId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneMaterializerOperation", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneMaterializerOperationId(GetRouteValue(context, "operationId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/{hardeningState}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningState", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningState(GetRouteValue(context, "hardeningState")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/categories/{hardeningCategory}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCategory", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCategory(GetRouteValue(context, "hardeningCategory")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/providers/{providerId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningProvider", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningProviderId(GetRouteValue(context, "providerId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/provider-surfaces/{providerSurfaceId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningProviderSurface", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningProviderSurfaceId(GetRouteValue(context, "providerSurfaceId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/materializers/{materializerId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningMaterializer", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningMaterializerId(GetRouteValue(context, "materializerId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/transports/{transportKind}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningTransport", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningTransportKind(GetRouteValue(context, "transportKind")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/connect-clusters/{connectClusterId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectCluster", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectClusterId(GetRouteValue(context, "connectClusterId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/connector-classes/{connectorClass}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectorClass", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectorClass(GetRouteValue(context, "connectorClass")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/source-providers/{sourceProviderId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningSourceProvider", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningSourceProviderId(GetRouteValue(context, "sourceProviderId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/connectors/{connectorId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnector", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningConnectorId(GetRouteValue(context, "connectorId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/workers/{workerId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningWorker", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningWorkerId(GetRouteValue(context, "workerId")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/current-nodes/{canExecuteOnCurrentNode:bool}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCurrentNode", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteOnCurrentNode(GetBooleanRouteValue(context, "canExecuteOnCurrentNode")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/current-nodes/teardowns/{canExecuteTeardownOnCurrentNode:bool}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCurrentNodeTeardown", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteTeardownOnCurrentNode(GetBooleanRouteValue(context, "canExecuteTeardownOnCurrentNode")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/current-nodes/mutation-executions/{canExecuteMutationExecutionOnCurrentNode:bool}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCurrentNodeMutationExecution", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCanExecuteMutationExecutionOnCurrentNode(GetBooleanRouteValue(context, "canExecuteMutationExecutionOnCurrentNode")));
+        MapCdcCaptureRuntimeCollectionRoute(engineGroup, "/cdc-capture-runtimes/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardenings/operations/{operationId}", "GetCephalonCdcCaptureRuntimesByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningOperation", static (context, catalog) =>
+            catalog.GetByManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningOperationId(GetRouteValue(context, "operationId")));
+        MapGetResultRequestDelegate(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}/command-executions", "GetCephalonManagedConnectorCommandExecutionHistory", static context =>
+            GetCdcCaptureRuntimeCommandExecutionHistory(context));
+        MapCdcCaptureRuntimeDescriptorRoute(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}/command-journal", "GetCephalonManagedConnectorCommandJournal", static runtime => runtime.ManagedConnectorCommandJournal);
+        MapCdcCaptureRuntimeDescriptorRoute(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}/command-journal-durability", "GetCephalonManagedConnectorCommandJournalDurability", static runtime => runtime.ManagedConnectorCommandJournalDurability);
+        MapCdcCaptureRuntimeDescriptorRoute(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}/distributed-retry-lease", "GetCephalonManagedConnectorDistributedRetryLease", static runtime => runtime.ManagedConnectorDistributedRetryLease);
+        MapCdcCaptureRuntimeDescriptorRoute(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}/cross-node-idempotency-hardening", "GetCephalonManagedConnectorCrossNodeIdempotencyHardening", static runtime => runtime.ManagedConnectorCrossNodeIdempotencyHardening);
+        MapCdcCaptureRuntimeDescriptorRoute(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}/distributed-retry-orchestration", "GetCephalonManagedConnectorDistributedRetryOrchestration", static runtime => runtime.ManagedConnectorDistributedRetryOrchestration);
+        MapCdcCaptureRuntimeDescriptorRoute(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}/multi-node-lease-execution", "GetCephalonManagedConnectorMultiNodeLeaseExecution", static runtime => runtime.ManagedConnectorMultiNodeLeaseExecution);
+        MapCdcCaptureRuntimeDescriptorRoute(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}/durable-shared-scheduler-orchestration", "GetCephalonManagedConnectorDurableSharedSchedulerOrchestration", static runtime => runtime.ManagedConnectorDurableSharedSchedulerOrchestration);
+        MapCdcCaptureRuntimeDescriptorRoute(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}/scheduler-recovery-execution-hardening", "GetCephalonManagedConnectorSchedulerRecoveryExecutionHardening", static runtime => runtime.ManagedConnectorSchedulerRecoveryExecutionHardening);
+        MapCdcCaptureRuntimeDescriptorRoute(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-write-path-execution", "GetCephalonManagedConnectorProviderOwnedWritePathExecution", static runtime => runtime.ManagedConnectorProviderOwnedWritePathExecution);
+        MapCdcCaptureRuntimeDescriptorRoute(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}/provider-execution-orchestration", "GetCephalonManagedConnectorProviderExecutionOrchestration", static runtime => runtime.ManagedConnectorProviderExecutionOrchestration);
+        MapCdcCaptureRuntimeDescriptorRoute(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-control-plane-ownership", "GetCephalonManagedConnectorProviderOwnedControlPlaneOwnership", static runtime => runtime.ManagedConnectorProviderOwnedControlPlaneOwnership);
+        MapCdcCaptureRuntimeDescriptorRoute(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-control-plane-mutation-reconcile", "GetCephalonManagedConnectorProviderOwnedControlPlaneMutationReconcile", static runtime => runtime.ManagedConnectorProviderOwnedControlPlaneMutationReconcile);
+        MapCdcCaptureRuntimeDescriptorRoute(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-control-plane-provisioning", "GetCephalonManagedConnectorProviderOwnedControlPlaneProvisioning", static runtime => runtime.ManagedConnectorProviderOwnedControlPlaneProvisioning);
+        MapCdcCaptureRuntimeDescriptorRoute(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-control-plane-apply-and-reconcile-execution", "GetCephalonManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution", static runtime => runtime.ManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecution);
+        MapCdcCaptureRuntimeDescriptorRoute(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-control-plane-dependency-aware-apply-and-reconcile-hardening", "GetCephalonManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening", static runtime => runtime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareApplyAndReconcileHardening);
+        MapCdcCaptureRuntimeDescriptorRoute(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}/provider-owned-control-plane-dependency-aware-provisioning-and-mutation-hardening", "GetCephalonManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening", static runtime => runtime.ManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardening);
+        MapCdcCaptureRuntimeDescriptorRoute(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}/provider-specific-control-plane-materializer", "GetCephalonManagedConnectorProviderSpecificControlPlaneMaterializer", static runtime => runtime.ManagedConnectorProviderSpecificControlPlaneMaterializer);
+        MapCdcCaptureRuntimeDescriptorRoute(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}/provider-specific-control-plane-dependency-aware-teardown-and-mutation-execution-hardening", "GetCephalonManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening", static runtime => runtime.ManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening);
+        MapCdcCaptureRuntimeDescriptorRoute(engineGroup, "/cdc-capture-runtimes/{executionRuntimeId}", "GetCephalonCdcCaptureRuntime", static runtime => runtime);
         if (app.Services.GetService<ICdcCaptureExecutionRuntimeReportSink>() is not null)
         {
             engineGroup.MapPost("/cdc-capture-runtimes/{executionRuntimeId}/reports", async (
@@ -2979,6 +1899,50 @@ public static class EngineWebApplicationExtensions
             handler(context).ExecuteAsync(context));
     }
 
+    private static void MapCdcCaptureRuntimeCollectionRoute(
+        RouteGroupBuilder engineGroup,
+        string pattern,
+        string endpointName,
+        Func<HttpContext, ICdcCaptureExecutionRuntimeCatalog, IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor>> selector)
+    {
+        MapGetResultRequestDelegate(engineGroup, pattern, endpointName, context =>
+        {
+            var catalog = context.RequestServices.GetService<ICdcCaptureExecutionRuntimeCatalog>();
+            IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> runtimes = catalog is null ? [] : selector(context, catalog);
+
+            return Results.Ok(runtimes);
+        });
+    }
+
+    private static void MapCdcCaptureRuntimeDescriptorRoute<TResult>(
+        RouteGroupBuilder engineGroup,
+        string pattern,
+        string endpointName,
+        Func<CdcCaptureExecutionRuntimeDescriptor, TResult> selector)
+    {
+        MapGetResultRequestDelegate(engineGroup, pattern, endpointName, context =>
+        {
+            var runtimeDescriptor = context.RequestServices
+                .GetService<ICdcCaptureExecutionRuntimeCatalog>()?
+                .GetById(GetRouteValue(context, "executionRuntimeId"));
+
+            return runtimeDescriptor is null ? Results.NotFound() : Results.Ok(selector(runtimeDescriptor));
+        });
+    }
+
+    private static IResult GetCdcCaptureRuntimeCommandExecutionHistory(HttpContext context)
+    {
+        var executionRuntimeId = GetRouteValue(context, "executionRuntimeId");
+        var runtimeCatalog = context.RequestServices.GetService<ICdcCaptureExecutionRuntimeCatalog>();
+        var runtimeDescriptor = runtimeCatalog?.GetById(executionRuntimeId);
+        if (runtimeCatalog is null || runtimeDescriptor is null)
+        {
+            return Results.NotFound();
+        }
+
+        return Results.Ok(runtimeCatalog.GetManagedConnectorCommandExecutionHistory(executionRuntimeId));
+    }
+
     private static TService GetRequiredService<TService>(HttpContext context)
         where TService : notnull
     {
@@ -2989,6 +1953,11 @@ public static class EngineWebApplicationExtensions
     {
         var value = context.Request.RouteValues[name]?.ToString();
         return string.IsNullOrWhiteSpace(value) ? string.Empty : value;
+    }
+
+    private static bool GetBooleanRouteValue(HttpContext context, string name)
+    {
+        return bool.TryParse(GetRouteValue(context, name), out var value) && value;
     }
 
     private static string? GetQueryValue(HttpContext context, string name)
