@@ -122,6 +122,35 @@ Validation:
 - `pwsh ./scripts/publish-package-artifacts.ps1 -OutputPath artifacts/package-metadata-smoke -ProjectPaths src/Cephalon.Abstractions/Cephalon.Abstractions.csproj,templates/Cephalon.TemplatePack/Cephalon.TemplatePack.csproj`
 - `pwsh ./scripts/publish-package-artifacts.ps1 -OutputPath artifacts/package-metadata-analyzer-smoke -ProjectPaths src/Cephalon.Analyzers/Cephalon.Analyzers.csproj,src/Cephalon.Engine.SourceGen/Cephalon.Engine.SourceGen.csproj,src/Cephalon.Cli/Cephalon.Cli.csproj`
 
+### ENG-532 Signed-release dry-run dispatch blocker
+
+Status: blocked
+Estimate: 1
+Iteration: Sprint 125
+Area: release-readiness / supply-chain / GitHub Actions
+Quality dimensions: Security, Compliance, Auditability, Maintainability, Reliability
+
+Why:
+
+- the package-publishing gate still needs a signed-release workflow dry-run before the repo can claim that build/sign/attest/upload runs end-to-end outside local validation
+- the `Publish Release` workflow is active, but the dispatch identity must be allowed to run Actions before a dry-run can produce artifact evidence
+
+Observed:
+
+- `gh workflow list --repo Cephalon-Labs/CephalonEngine` reports `Publish Release` as `active`
+- `gh workflow run "Publish Release" --repo Cephalon-Labs/CephalonEngine --ref master -f dry_run=true` failed with `HTTP 422: Actions has been disabled for this user`
+- no signed-release dry-run workflow run was created, so the scorecard must keep package-publishing / signed-release proof `partial`
+
+Next:
+
+- enable Actions for the dispatching user/token or dispatch the same workflow from an Actions-enabled release-manager identity
+- rerun `Publish Release` with `dry_run=true`, then attach the workflow URL and artifact summary to the release-readiness evidence
+
+Validation:
+
+- `gh workflow list --repo Cephalon-Labs/CephalonEngine`
+- `gh workflow run "Publish Release" --repo Cephalon-Labs/CephalonEngine --ref master -f dry_run=true`
+
 ### SMTP invitation delivery live provider proof
 
 Status: done
