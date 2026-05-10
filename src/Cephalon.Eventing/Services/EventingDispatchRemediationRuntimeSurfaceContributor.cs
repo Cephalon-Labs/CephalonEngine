@@ -11,26 +11,6 @@ internal sealed class EventingDispatchRemediationRuntimeSurfaceContributor(
 {
     private const string AdvisoryClaimPolicy = "reported-state-advisory-only";
     private const string CommandReadyClaimPolicy = "reported-state-plus-bounded-dispatch-store-commands";
-    private const string CommandRoute = "/engine/event-dispatches/{outboxId}/commands/{operationId}";
-    private const string CommandListRoute = "/engine/event-dispatch-remediation-commands";
-    private const string CommandResultRoute = "/engine/event-dispatch-remediation-commands/{commandId}";
-    private const string CommandSummaryRoute = "/engine/event-dispatch-remediation-commands/summary";
-    private const string CommandLatestRoute = "/engine/event-dispatch-remediation-commands/latest";
-    private const string CommandRetentionRoute = "/engine/event-dispatch-remediation-commands/retention";
-    private const string CommandOutboxRoute = "/engine/event-dispatch-remediation-commands/outboxes/{outboxId}";
-    private const string CommandObservationRoute = "/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}";
-    private const string CommandObservationSummaryRoute = "/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}";
-    private const string CommandOperationRoute = "/engine/event-dispatch-remediation-commands/operations/{operationId}";
-    private const string CommandActorRoute = "/engine/event-dispatch-remediation-commands/actors/{actorId}";
-    private const string CommandCorrelationRoute = "/engine/event-dispatch-remediation-commands/correlations/{correlationId}";
-    private const string CommandReasonRoute = "/engine/event-dispatch-remediation-commands/reasons/{reason}";
-    private const string CommandMessageRoute = "/engine/event-dispatch-remediation-commands/messages/{messageId}";
-    private const string CommandChannelRoute = "/engine/event-dispatch-remediation-commands/channels/{channelId}";
-    private const string CommandDispatchOutcomeRoute = "/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}";
-    private const string CommandOutcomeRoute = "/engine/event-dispatch-remediation-commands/outcomes/{outcome}";
-    private const string CommandOperations = "retry-now,retry-later,skip,quarantine,dead-letter";
-    private const string CommandReadLimitRoutes =
-        "all,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes";
 
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
@@ -77,40 +57,17 @@ internal sealed class EventingDispatchRemediationRuntimeSurfaceContributor(
             ["skipCommand"] = commandsReady ? "ready" : "not-claimed",
             ["claimPolicy"] = commandsReady ? CommandReadyClaimPolicy : AdvisoryClaimPolicy,
             ["providerNeutral"] = "true",
-            ["wolverineRequired"] = "false",
-            [EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy] = "unique-command-id",
-            [EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy] = "reject-without-mutation"
+            ["wolverineRequired"] = "false"
         };
+        EventDispatchRemediationCommandMetadata.AddIdempotencyMetadata(metadata);
 
         if (commandsReady)
         {
-            metadata["operatorCommandRoute"] = CommandRoute;
-            metadata["operatorCommandListRoute"] = CommandListRoute;
-            metadata["operatorCommandResultRoute"] = CommandResultRoute;
-            metadata["operatorCommandSummaryRoute"] = CommandSummaryRoute;
-            metadata["operatorCommandLatestRoute"] = CommandLatestRoute;
-            metadata["operatorCommandRetentionRoute"] = CommandRetentionRoute;
-            metadata["operatorCommandOutboxRoute"] = CommandOutboxRoute;
-            metadata["operatorCommandObservationRoute"] = CommandObservationRoute;
-            metadata["operatorCommandObservationSummaryRoute"] = CommandObservationSummaryRoute;
-            metadata["operatorCommandObservationWindowQuery"] = "fromUtc,toUtc";
-            metadata["operatorCommandObservationWindowPolicy"] = "inclusive-observed-utc";
-            metadata["operatorCommandObservationWindowDetailOrder"] = "newest-first";
-            metadata["operatorCommandObservationWindowSummary"] = "available";
-            metadata["operatorCommandObservationWindowInvalidBounds"] = "reject-reversed-window";
-            metadata["operatorCommandOperationRoute"] = CommandOperationRoute;
-            metadata["operatorCommandActorRoute"] = CommandActorRoute;
-            metadata["operatorCommandCorrelationRoute"] = CommandCorrelationRoute;
-            metadata["operatorCommandReasonRoute"] = CommandReasonRoute;
-            metadata["operatorCommandMessageRoute"] = CommandMessageRoute;
-            metadata["operatorCommandChannelRoute"] = CommandChannelRoute;
-            metadata["operatorCommandDispatchOutcomeRoute"] = CommandDispatchOutcomeRoute;
-            metadata["operatorCommandOutcomeRoute"] = CommandOutcomeRoute;
-            metadata["operatorCommandReadLimitQuery"] = "limit";
-            metadata["operatorCommandReadLimitPolicy"] = "positive-integer-newest-first";
-            metadata["operatorCommandReadLimitAppliesTo"] = "list-and-filter-routes";
-            metadata["operatorCommandReadLimitRoutes"] = CommandReadLimitRoutes;
-            metadata["operatorCommandOperations"] = CommandOperations;
+            EventDispatchRemediationCommandMetadata.AddCommandActionRouteMetadata(metadata, "operatorCommand");
+            EventDispatchRemediationCommandMetadata.AddCommandResultRouteMetadata(metadata, "operatorCommand");
+            EventDispatchRemediationCommandMetadata.AddObservationWindowMetadata(metadata, "operatorCommand");
+            EventDispatchRemediationCommandMetadata.AddReadLimitMetadata(metadata, "operatorCommand");
+            metadata["operatorCommandOperations"] = EventDispatchRemediationCommandMetadata.CommandOperations;
             metadata["operatorCommandScope"] = "dispatch-store";
             metadata["deadLetterCommandScope"] = "dispatch-store-terminal";
             metadata["brokerDeadLetterCommand"] = "not-claimed";

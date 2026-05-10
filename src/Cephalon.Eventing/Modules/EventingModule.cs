@@ -415,61 +415,34 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
 
         if (options.EnablePublishing && hasOutboxPublishingPath && hasDispatchStore)
         {
+            var remediationMetadata = new Dictionary<string, string>
+            {
+                ["technology"] = "event-driven-integration",
+                ["surfaceId"] = "event-dispatch-remediations",
+                ["operationIds"] = EventDispatchRemediationCommandMetadata.CommandOperations,
+                ["commandScope"] = "dispatch-store",
+                ["retryCommand"] = "ready",
+                ["retryLaterCommand"] = "ready",
+                ["skipCommand"] = "ready",
+                ["quarantineCommand"] = "ready",
+                ["deadLetterCommand"] = "dispatch-store-ready",
+                ["brokerDeadLetterCommand"] = "not-claimed",
+                ["commandRuntimeState"] = "available",
+                ["commandHistoryLimit"] = options.RemediationCommandHistoryLimit.ToString(CultureInfo.InvariantCulture),
+                ["wolverineRequired"] = "false",
+                ["runtimeState"] = "available"
+            };
+            EventDispatchRemediationCommandMetadata.AddCommandActionRouteMetadata(remediationMetadata);
+            EventDispatchRemediationCommandMetadata.AddCommandResultRouteMetadata(remediationMetadata);
+            EventDispatchRemediationCommandMetadata.AddObservationWindowMetadata(remediationMetadata);
+            EventDispatchRemediationCommandMetadata.AddReadLimitMetadata(remediationMetadata);
+            EventDispatchRemediationCommandMetadata.AddIdempotencyMetadata(remediationMetadata);
+
             capabilities.Add(new Capability(
                 key: "eventing.dispatch-remediation",
                 displayName: "Event Dispatch Remediation",
                 description: "Runs bounded provider-neutral operator commands against the active dispatch store without requiring Wolverine or another bus package.",
-                metadata: new Dictionary<string, string>
-                {
-                    ["technology"] = "event-driven-integration",
-                    ["surfaceId"] = "event-dispatch-remediations",
-                    ["commandRoute"] = "/engine/event-dispatches/{outboxId}/commands/{operationId}",
-                    ["commandListRoute"] = "/engine/event-dispatch-remediation-commands",
-                    ["commandResultRoute"] = "/engine/event-dispatch-remediation-commands/{commandId}",
-                    ["commandSummaryRoute"] = "/engine/event-dispatch-remediation-commands/summary",
-                    ["commandLatestRoute"] = "/engine/event-dispatch-remediation-commands/latest",
-                    ["commandRetentionRoute"] = "/engine/event-dispatch-remediation-commands/retention",
-                    ["commandOutboxRoute"] = "/engine/event-dispatch-remediation-commands/outboxes/{outboxId}",
-                    ["commandObservationRoute"] = "/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}",
-                    ["commandObservationSummaryRoute"] = "/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}",
-                    ["commandObservationWindowQuery"] = "fromUtc,toUtc",
-                    ["commandObservationWindowPolicy"] = "inclusive-observed-utc",
-                    ["commandObservationWindowDetailOrder"] = "newest-first",
-                    ["commandObservationWindowSummary"] = "available",
-                    ["commandObservationWindowInvalidBounds"] = "reject-reversed-window",
-                    ["commandOperationRoute"] = "/engine/event-dispatch-remediation-commands/operations/{operationId}",
-                    ["commandActorRoute"] = "/engine/event-dispatch-remediation-commands/actors/{actorId}",
-                    ["commandCorrelationRoute"] = "/engine/event-dispatch-remediation-commands/correlations/{correlationId}",
-                    ["commandReasonRoute"] = "/engine/event-dispatch-remediation-commands/reasons/{reason}",
-                    ["commandMessageRoute"] = "/engine/event-dispatch-remediation-commands/messages/{messageId}",
-                    ["commandChannelRoute"] = "/engine/event-dispatch-remediation-commands/channels/{channelId}",
-                    ["commandDispatchOutcomeRoute"] = "/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}",
-                    ["commandOutcomeRoute"] = "/engine/event-dispatch-remediation-commands/outcomes/{outcome}",
-                    ["commandReadLimitQuery"] = "limit",
-                    ["commandReadLimitPolicy"] = "positive-integer-newest-first",
-                    ["commandReadLimitAppliesTo"] = "list-and-filter-routes",
-                    ["commandReadLimitRoutes"] = "all,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes",
-                    ["operationIds"] = string.Join(
-                        ",",
-                        EventDispatchRemediationOperationIds.RetryNow,
-                        EventDispatchRemediationOperationIds.RetryLater,
-                        EventDispatchRemediationOperationIds.Skip,
-                        EventDispatchRemediationOperationIds.Quarantine,
-                        EventDispatchRemediationOperationIds.DeadLetter),
-                    ["commandScope"] = "dispatch-store",
-                    ["retryCommand"] = "ready",
-                    ["retryLaterCommand"] = "ready",
-                    ["skipCommand"] = "ready",
-                    ["quarantineCommand"] = "ready",
-                    ["deadLetterCommand"] = "dispatch-store-ready",
-                    ["brokerDeadLetterCommand"] = "not-claimed",
-                    [EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy] = "unique-command-id",
-                    [EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy] = "reject-without-mutation",
-                    ["commandRuntimeState"] = "available",
-                    ["commandHistoryLimit"] = options.RemediationCommandHistoryLimit.ToString(CultureInfo.InvariantCulture),
-                    ["wolverineRequired"] = "false",
-                    ["runtimeState"] = "available"
-                }));
+                metadata: remediationMetadata));
         }
 
         if (options.Channels.Count > 0 || hasChannelContributors)

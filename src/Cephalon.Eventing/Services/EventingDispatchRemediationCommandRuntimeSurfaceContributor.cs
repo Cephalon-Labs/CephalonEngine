@@ -7,24 +7,7 @@ namespace Cephalon.Eventing.Services;
 internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributor(
     IEventDispatchRemediationRuntimeCatalog commands) : ITechnologyRuntimeContributor
 {
-    private const string SurfaceId = "event-dispatch-remediation-commands";
-    private const string CommandListRoute = "/engine/event-dispatch-remediation-commands";
-    private const string CommandResultRoute = "/engine/event-dispatch-remediation-commands/{commandId}";
-    private const string CommandSummaryRoute = "/engine/event-dispatch-remediation-commands/summary";
-    private const string CommandLatestRoute = "/engine/event-dispatch-remediation-commands/latest";
-    private const string CommandRetentionRoute = "/engine/event-dispatch-remediation-commands/retention";
-    private const string CommandOutboxRoute = "/engine/event-dispatch-remediation-commands/outboxes/{outboxId}";
-    private const string CommandObservationRoute = "/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}";
-    private const string CommandObservationSummaryRoute = "/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}";
-    private const string CommandOperationRoute = "/engine/event-dispatch-remediation-commands/operations/{operationId}";
-    private const string CommandActorRoute = "/engine/event-dispatch-remediation-commands/actors/{actorId}";
-    private const string CommandCorrelationRoute = "/engine/event-dispatch-remediation-commands/correlations/{correlationId}";
-    private const string CommandReasonRoute = "/engine/event-dispatch-remediation-commands/reasons/{reason}";
-    private const string CommandMessageRoute = "/engine/event-dispatch-remediation-commands/messages/{messageId}";
-    private const string CommandChannelRoute = "/engine/event-dispatch-remediation-commands/channels/{channelId}";
-    private const string CommandDispatchOutcomeRoute = "/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}";
-    private const string CommandOutcomeRoute = "/engine/event-dispatch-remediation-commands/outcomes/{outcome}";
-    private const string CommandReadLimitRoutes = "all,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes";
+    private const string SurfaceId = EventDispatchRemediationCommandMetadata.SurfaceId;
 
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
@@ -66,10 +49,10 @@ internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributo
             ["wolverineRequired"] = "false"
         };
 
-        AddCommandRouteMetadata(metadata);
-        AddCommandObservationWindowMetadata(metadata);
-        AddCommandReadLimitMetadata(metadata);
-        AddCommandIdempotencyMetadata(metadata);
+        EventDispatchRemediationCommandMetadata.AddCommandResultRouteMetadata(metadata);
+        EventDispatchRemediationCommandMetadata.AddObservationWindowMetadata(metadata);
+        EventDispatchRemediationCommandMetadata.AddReadLimitMetadata(metadata);
+        EventDispatchRemediationCommandMetadata.AddIdempotencyMetadata(metadata);
 
         AddOptional(metadata, "latestCommandId", catalog.Latest?.CommandId);
         AddOptional(metadata, "latestOperationId", catalog.Summary.LastOperationId);
@@ -108,10 +91,10 @@ internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributo
             ["hasError"] = string.IsNullOrWhiteSpace(state.Error) ? "false" : "true"
         };
 
-        AddCommandRouteMetadata(metadata);
-        AddCommandObservationWindowMetadata(metadata);
-        AddCommandReadLimitMetadata(metadata);
-        AddCommandIdempotencyMetadata(metadata);
+        EventDispatchRemediationCommandMetadata.AddCommandResultRouteMetadata(metadata);
+        EventDispatchRemediationCommandMetadata.AddObservationWindowMetadata(metadata);
+        EventDispatchRemediationCommandMetadata.AddReadLimitMetadata(metadata);
+        EventDispatchRemediationCommandMetadata.AddIdempotencyMetadata(metadata);
 
         if (!string.IsNullOrWhiteSpace(state.Error))
         {
@@ -140,49 +123,6 @@ internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributo
         string.Equals(state.Outcome, EventDispatchRemediationOutcomes.Accepted, StringComparison.OrdinalIgnoreCase)
             ? "The event-dispatch remediation command was accepted and applied through the active dispatch store."
             : "The event-dispatch remediation command was rejected before mutating dispatch-store state.";
-
-    private static void AddCommandRouteMetadata(Dictionary<string, string> metadata)
-    {
-        metadata["commandListRoute"] = CommandListRoute;
-        metadata["commandResultRoute"] = CommandResultRoute;
-        metadata["commandSummaryRoute"] = CommandSummaryRoute;
-        metadata["commandLatestRoute"] = CommandLatestRoute;
-        metadata["commandRetentionRoute"] = CommandRetentionRoute;
-        metadata["commandOutboxRoute"] = CommandOutboxRoute;
-        metadata["commandObservationRoute"] = CommandObservationRoute;
-        metadata["commandObservationSummaryRoute"] = CommandObservationSummaryRoute;
-        metadata["commandOperationRoute"] = CommandOperationRoute;
-        metadata["commandActorRoute"] = CommandActorRoute;
-        metadata["commandCorrelationRoute"] = CommandCorrelationRoute;
-        metadata["commandReasonRoute"] = CommandReasonRoute;
-        metadata["commandMessageRoute"] = CommandMessageRoute;
-        metadata["commandChannelRoute"] = CommandChannelRoute;
-        metadata["commandDispatchOutcomeRoute"] = CommandDispatchOutcomeRoute;
-        metadata["commandOutcomeRoute"] = CommandOutcomeRoute;
-    }
-
-    private static void AddCommandObservationWindowMetadata(Dictionary<string, string> metadata)
-    {
-        metadata["commandObservationWindowQuery"] = "fromUtc,toUtc";
-        metadata["commandObservationWindowPolicy"] = "inclusive-observed-utc";
-        metadata["commandObservationWindowDetailOrder"] = "newest-first";
-        metadata["commandObservationWindowSummary"] = "available";
-        metadata["commandObservationWindowInvalidBounds"] = "reject-reversed-window";
-    }
-
-    private static void AddCommandReadLimitMetadata(Dictionary<string, string> metadata)
-    {
-        metadata["commandReadLimitQuery"] = "limit";
-        metadata["commandReadLimitPolicy"] = "positive-integer-newest-first";
-        metadata["commandReadLimitAppliesTo"] = "list-and-filter-routes";
-        metadata["commandReadLimitRoutes"] = CommandReadLimitRoutes;
-    }
-
-    private static void AddCommandIdempotencyMetadata(Dictionary<string, string> metadata)
-    {
-        metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy] = "unique-command-id";
-        metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy] = "reject-without-mutation";
-    }
 
     private static void AddOptional(
         Dictionary<string, string> metadata,

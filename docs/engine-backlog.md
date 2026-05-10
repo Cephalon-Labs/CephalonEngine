@@ -25,6 +25,7 @@ Current focus:
 - treat the core eventing execution-binding catalog, abstraction-level execution-readiness catalog, abstraction-level publication dispatcher, abstraction-level publication runtime-state catalog, abstraction-level dispatch-state/summary terminal posture, abstraction-level dispatch-remediation dispatcher, abstraction-level dispatch-remediation command-result catalog, dispatch-store `dead-letter` command intent metadata, `event-dispatch-remediations` command-readiness posture, `event-dispatch-remediation-commands` command-result posture including catalog metadata/latest/summary/retention/observed-window detail/observed-window summary/message/channel/operation/actor/correlation/reason/dispatch-outcome drill-downs, `/engine/event-subscription-readiness`, `POST /engine/event-publications`, `/engine/event-publications/runtime*`, `/engine/event-dispatches/terminal-failures`, `POST /engine/event-dispatches/{outboxId}/commands/{operationId}`, `/engine/event-dispatch-remediation-commands*`, `snapshot.EventSubscriptionExecutionReadiness`, `snapshot.EventPublicationStates`, `snapshot.EventDispatchStates`, config-driven channel descriptor discovery, code-first subscription descriptors/executors/descriptor providers, the opt-in direct in-process execution lane, bounded process-local fixed/exponential retry backoff and deterministic jitter metadata, bounded duplicate-completed execution suppression metadata, including process-local and `IInbox`-backed idempotency-store modes, config-driven event-type-to-channel publication routing metadata, and bounded process-local scheduled/delayed publication metadata, as adapter-neutral engine-owned proof, while the Wolverine-managed dispatch and event-subscription lanes remain optional provider-managed proofs instead of engine requirements
 - treat the native event-dispatch remediation command-result observation window as part of that Wolverine-free proof: `IEventDispatchRemediationRuntimeCatalog.GetByObservedAt(...)` and `/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}` provide inclusive retained-history incident timeline reads, while `IEventDispatchRemediationRuntimeCatalog.GetSummaryByObservedAt(...)` and `/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}` provide retained-window roll-ups without materializing the full list; summary responses carry dropped-command, retention-truncated, incomplete-summary, and oldest-retained cutoff evidence, `/retention` remains the full answer when bounded process-local history has dropped older records, and capability/runtime-surface metadata now advertises the `fromUtc,toUtc` query names, inclusive observed-UTC policy, latest-first detail order, summary availability, and reversed-window rejection posture
 - treat the native `event-dispatch-remediation-commands` catalog entry as the route-family discovery anchor: it must exist even when no command results have been recorded, report list/result/outbox route metadata, read-limit/window/idempotency policy plus retained/recorded/dropped counts, and keep `providerNeutral = true` / `wolverineRequired = false` visible before the first incident command
+- treat the native event-dispatch remediation command metadata as one Eventing-owned source truth: `eventing.dispatch-remediation`, `event-dispatch-remediations`, and `event-dispatch-remediation-commands` must use the same route, read-limit, observed-window, operation, and idempotency metadata helpers so future operator metadata changes do not drift across capability and technology surfaces
 - treat Wolverine-class durable messaging as the eventing-family minimum benchmark: future backlog items should close provider-neutral Cephalon gaps across durable inbox/outbox, local and external transports, routing, scheduled/delayed delivery, retry/backoff/jitter, sending failure policy, dead-letter/quarantine/replay, saga/process-manager coordination, handler/subscription discovery, serialization/versioning, idempotency, multi-tenancy/correlation, observability, diagnostics, operator actions, topology/runtime introspection, governance, compliance, and provider portability through config-driven engine contracts before promoting a Wolverine-only feature as a core engine claim
 - treat MassTransit, NServiceBus, and MediatR as additional eventing/behavior research baselines: pull useful concepts into Cephalon-owned config, contracts, runtime truth, and validation, but do not add their packages or API shapes to the core engine unless a future item is explicitly scoped as interop or migration compatibility
 - treat "better than the ecosystem" as a measurable backlog gate: every extracted capability should name the reference feature, the Cephalon-native design, the dimensions where Cephalon is expected to beat it, the validation or benchmark evidence required, and any dimensions still `partial` or `not-claimed`
@@ -5495,6 +5496,42 @@ Follow-up later:
 
 - durable command-result pagination, continuation tokens, cross-node command audit search, broker
   replay, and provider-specific operator dashboards remain package-owned future work
+
+### ENG-574 Eventing remediation command metadata source truth
+
+Status: done
+Estimate: 1
+Issue: #1228
+Iteration: Sprint 91 follow-through
+Area: eventing / operations / Wolverine-free baseline
+Quality dimensions: Maintainability, Compatibility, Usability, Auditability, Reliability
+
+Why:
+
+- after `ENG-573`, native remediation command route metadata was present on the capability,
+  remediation surface, and command-result surface, but the same route/read-limit/window/idempotency
+  literals still lived in multiple Eventing implementation files
+- Wolverine remains optional, so the native route-family contract should have one Eventing-owned
+  source truth before the next command-result metadata slice adds more operator keys
+
+Delivered:
+
+- added one internal `EventDispatchRemediationCommandMetadata` helper in `Cephalon.Eventing` for
+  command action routes, command-result route-family metadata, observed-window metadata,
+  read-limit metadata, supported operation ids, and idempotency policy metadata
+- rewired `eventing.dispatch-remediation`, `event-dispatch-remediations`, and
+  `event-dispatch-remediation-commands` to populate shared command metadata through that helper
+  instead of maintaining separate literals per surface
+- tightened ASP.NET hosting coverage so the native capability and command catalog entry must agree
+  on command route, observed-window, read-limit, and idempotency metadata
+- kept the helper internal so no new public API surface is created while still reducing drift risk
+  across the Wolverine-free operator contract
+
+Follow-up later:
+
+- durable command-result pagination, continuation tokens, cross-node command audit search, broker
+  replay, provider-specific operator dashboards, and any future public route-constant API remain
+  package-owned follow-up work
 
 ### ENG-269 Agentics tool execution operator-action baseline
 
@@ -16876,6 +16913,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-571 Eventing remediation observation-window metadata (shipped): native capabilities and technology surfaces now advertise retained observed-UTC window query names, inclusive-bounds policy, latest-first detail ordering, summary availability, and reversed-window rejection so operator UIs can discover incident-window semantics without route probing or Wolverine
 - ENG-572 Eventing remediation command catalog metadata (shipped): native `event-dispatch-remediation-commands` technology surfaces now emit a catalog entry before command history exists, carrying route, retention, read-limit, observed-window, idempotency, provider-neutral, and Wolverine-free metadata for operator discovery
 - ENG-573 Eventing remediation command route metadata parity (shipped): native capability and technology surfaces now advertise root list, command-id result, and outbox drill-down routes so operator UIs can discover the command-result route family without probing host routes, scraping docs, or installing Wolverine
+- ENG-574 Eventing remediation command metadata source truth (shipped): native capability and technology surfaces now populate command action/result routes, operation ids, observed-window policy, read-limit policy, and command-idempotency metadata through one Eventing-owned helper so future Wolverine-free operator metadata changes do not drift between surfaces
 
 ### Sprint 88
 
@@ -17212,6 +17250,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-571 Add Eventing remediation observation-window metadata: native command capabilities and runtime surfaces now expose `commandObservationWindow*` / `operatorCommandObservationWindow*` metadata so operator UIs can discover retained observed-UTC window query names, inclusive-bounds policy, latest-first detail ordering, summary availability, and reversed-window rejection without parsing route templates. Quality dimensions: Usability + Auditability + Compatibility + Reliability + Maintainability (shipped)
 - ENG-572 Add Eventing remediation command catalog metadata: native `event-dispatch-remediation-commands` runtime surfaces now expose a catalog entry before command history exists, including route/read-limit/window/idempotency policy, retention counts, provider-neutral metadata, and `wolverineRequired = false` so operator UIs can discover the route family without probing or waiting for command records. Quality dimensions: Usability + Auditability + Compatibility + Reliability + Maintainability (shipped)
 - ENG-573 Add Eventing remediation command route metadata parity: native command capabilities and runtime surfaces now expose `commandListRoute`, `commandResultRoute`, `commandOutboxRoute`, and matching `operatorCommand*` keys so operator UIs can bind root list, command-id, and outbox drill-down reads without probing routes or relying on Wolverine. Quality dimensions: Usability + Auditability + Compatibility + Reliability + Maintainability (shipped)
+- ENG-574 Add Eventing remediation command metadata source truth: native command capabilities and runtime surfaces now use one Eventing-owned helper for command routes, operation ids, observed-window metadata, read-limit metadata, and command-idempotency policy so future route-family changes stay synchronized. Quality dimensions: Maintainability + Compatibility + Usability + Auditability + Reliability (shipped)
 - ENG-524 Harden deployment-mode audit-only probes: direct trim and Native AOT runs now keep the single-file release gate out of their verdict by returning `PublishProbeGate=not-applicable` when only audit-only modes are evaluated; compiler-only analyzer/source-generator `ProjectReference` entries strip app publish-mode globals through `CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove`; and `Cephalon.Analyzers`, `Cephalon.Behaviors.SourceGen`, and `Cephalon.Engine.SourceGen` localize publish/RID globals with `TreatAsLocalProperty` so publish probes reach real runtime blocker evidence instead of failing on compiler-only `netstandard2.0` drift. Release closeout also stabilized the readiness warmup hosting test, refreshed the REST projection/governance guardrail to a measured 1 s ceiling while keeping the existing 16 MB allocation ceiling, and moved the canonical full `validate-release` wall-time target to 30 minutes after the current full lane measured about 1,669.848 seconds. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability + Performance (shipped)
 - ENG-535 Close generated REST behavior source-generator adoption proof: `Cephalon.Behaviors.SourceGen` now packs its compiler assembly under `analyzers/dotnet/cs`, scaffolded REST behavior modules and template-pack REST starters reference it as `PrivateAssets=all`, generated module projects keep `Cephalon.Engine.SourceGen` in every blueprint, and the out-of-tree adoption temporary feed publishes the full generated REST behavior package closure (`Cephalon.Behaviors.SourceGen`, `Cephalon.Diagnostics`, and `Cephalon.Resilience`) so restore/build/run replay can produce the REST profile hints required by `MapProfile<TBehavior>()`. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability (shipped)
 - ENG-487 Add opt-in CDC integration baseline: `tests/Cephalon.Tests.CdcIntegration` now carries the first dedicated live CDC integration lane, proving MongoDB change streams against a disposable `EphemeralMongo7` replica set with real outbox staging, provider-native runtime binding, runtime-state reporting, execution-runtime aggregation, and checkpoint persistence; `data.slnf` now points at the split data-relevant test projects instead of the retired monolithic test project, and SQL Server/Postgres live CDC coverage stays explicitly later until an external-service/Testcontainers gate exists. Quality dimensions: Reliability + Compatibility + Auditability + Maintainability (shipped)

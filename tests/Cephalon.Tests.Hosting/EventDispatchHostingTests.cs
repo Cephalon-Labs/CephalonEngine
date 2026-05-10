@@ -336,6 +336,14 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("true", initialCommandCatalogEntry.Metadata["providerNeutral"]);
         Assert.Equal("unique-command-id", initialCommandCatalogEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
         Assert.Equal("reject-without-mutation", initialCommandCatalogEntry.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
+        Assert.Equal(remediationCapability.Metadata["commandListRoute"], initialCommandCatalogEntry.Metadata["commandListRoute"]);
+        Assert.Equal(remediationCapability.Metadata["commandResultRoute"], initialCommandCatalogEntry.Metadata["commandResultRoute"]);
+        Assert.Equal(remediationCapability.Metadata["commandSummaryRoute"], initialCommandCatalogEntry.Metadata["commandSummaryRoute"]);
+        Assert.Equal(remediationCapability.Metadata["commandOutboxRoute"], initialCommandCatalogEntry.Metadata["commandOutboxRoute"]);
+        Assert.Equal(remediationCapability.Metadata["commandObservationRoute"], initialCommandCatalogEntry.Metadata["commandObservationRoute"]);
+        Assert.Equal(remediationCapability.Metadata["commandObservationWindowQuery"], initialCommandCatalogEntry.Metadata["commandObservationWindowQuery"]);
+        Assert.Equal(remediationCapability.Metadata["commandReadLimitPolicy"], initialCommandCatalogEntry.Metadata["commandReadLimitPolicy"]);
+        Assert.Equal(remediationCapability.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy], initialCommandCatalogEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
         Assert.False(initialCommandCatalogEntry.Metadata.ContainsKey("latestCommandId"));
 
         var publicationResponse = await client.PostAsJsonAsync("/engine/event-publications", new
