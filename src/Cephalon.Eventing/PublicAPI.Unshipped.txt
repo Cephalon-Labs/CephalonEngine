@@ -1,6 +1,12 @@
 #nullable enable
 Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys
 const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy = "commandIdempotencyPolicy" -> string!
+const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.CommandReservationDuplicatePolicy = "commandReservationDuplicatePolicy" -> string!
+const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.CommandReservationInDoubtOutcome = "commandReservationInDoubtOutcome" -> string!
+const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.CommandReservationOwner = "commandReservationOwner" -> string!
+const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.CommandReservationPolicy = "commandReservationPolicy" -> string!
+const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.CommandReservationState = "commandReservationState" -> string!
+const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.CommandReservationTiming = "commandReservationTiming" -> string!
 const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.DuplicateCommand = "duplicateCommand" -> string!
 const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy = "duplicateCommandPolicy" -> string!
 const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.ExistingCommandObservedAtUtc = "existingCommandObservedAtUtc" -> string!

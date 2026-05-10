@@ -886,6 +886,66 @@ const string CommandIdempotencyPolicy
 
 Identifies the command idempotency policy enforced by the active remediation dispatcher.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-commandreservationduplicatepolicy"></a>
+
+##### `CommandReservationDuplicatePolicy`
+
+```csharp
+const string CommandReservationDuplicatePolicy
+```
+
+Identifies how duplicate reservations are handled by the active command journal.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-commandreservationindoubtoutcome"></a>
+
+##### `CommandReservationInDoubtOutcome`
+
+```csharp
+const string CommandReservationInDoubtOutcome
+```
+
+Identifies the command outcome used when a reservation exists before finalization.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-commandreservationowner"></a>
+
+##### `CommandReservationOwner`
+
+```csharp
+const string CommandReservationOwner
+```
+
+Identifies the component that owns command reservations.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-commandreservationpolicy"></a>
+
+##### `CommandReservationPolicy`
+
+```csharp
+const string CommandReservationPolicy
+```
+
+Identifies the reservation policy enforced before dispatch-store mutation.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-commandreservationstate"></a>
+
+##### `CommandReservationState`
+
+```csharp
+const string CommandReservationState
+```
+
+Identifies the current command-reservation state visible in command metadata.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-commandreservationtiming"></a>
+
+##### `CommandReservationTiming`
+
+```csharp
+const string CommandReservationTiming
+```
+
+Identifies when the command identifier is reserved relative to dispatch-store mutation.
+
 <a id="member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-duplicatecommand"></a>
 
 ##### `DuplicateCommand`

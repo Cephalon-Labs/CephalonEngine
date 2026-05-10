@@ -1,6 +1,7 @@
 using Cephalon.Abstractions.Data;
 using Cephalon.Eventing.Configuration;
 using System.Collections.ObjectModel;
+using System.Globalization;
 
 namespace Cephalon.Eventing.Services;
 
@@ -12,6 +13,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
     private readonly Lock gate = new();
     private readonly Dictionary<string, EventDispatchRemediationRuntimeState> statesByCommandId = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, EventDispatchRemediationRuntimeState> reservationsByCommandId = new(StringComparer.OrdinalIgnoreCase);
     private readonly List<EventDispatchRemediationRuntimeState> states = [];
     private long totalRecordedCommandCount;
     private long droppedCommandCount;
@@ -175,7 +177,9 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return statesByCommandId.GetValueOrDefault(commandId.Trim());
+            var normalizedCommandId = commandId.Trim();
+            return statesByCommandId.GetValueOrDefault(normalizedCommandId) ??
+                reservationsByCommandId.GetValueOrDefault(normalizedCommandId);
         }
     }
 
@@ -407,6 +411,15 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
             Metadata: result.Metadata));
     }
 
+    public ValueTask<EventDispatchRemediationCommandReservation> ReserveAsync(
+        EventDispatchRemediationRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        cancellationToken.ThrowIfCancellationRequested();
+        return ValueTask.FromResult(Reserve(request));
+    }
+
     public ValueTask RecordAsync(
         EventDispatchRemediationResult result,
         CancellationToken cancellationToken = default)
@@ -416,15 +429,48 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         return ValueTask.CompletedTask;
     }
 
+    private EventDispatchRemediationCommandReservation Reserve(EventDispatchRemediationRequest request)
+    {
+        var state = CreateReservedState(request);
+
+        lock (gate)
+        {
+            if (statesByCommandId.TryGetValue(state.CommandId, out var existingState) ||
+                reservationsByCommandId.TryGetValue(state.CommandId, out existingState))
+            {
+                return CreateDuplicateReservation(state.CommandId, existingState);
+            }
+
+            reservationsByCommandId[state.CommandId] = state;
+
+            var limit = options.RemediationCommandHistoryLimit;
+            if (limit > 0)
+            {
+                states.Add(state);
+                statesByCommandId[state.CommandId] = state;
+                totalRecordedCommandCount++;
+
+                while (states.Count > limit)
+                {
+                    var oldest = GetOldestState(states)!;
+                    states.Remove(oldest);
+                    statesByCommandId.Remove(oldest.CommandId);
+                    droppedCommandCount++;
+                }
+            }
+        }
+
+        return new EventDispatchRemediationCommandReservation(
+            state.CommandId,
+            reserved: true,
+            existingCommand: null,
+            state.Metadata);
+    }
+
     private void Record(EventDispatchRemediationRuntimeState state)
     {
         ArgumentNullException.ThrowIfNull(state);
         var limit = options.RemediationCommandHistoryLimit;
-        if (limit == 0)
-        {
-            return;
-        }
-
         var metadata = state.Metadata.Count == 0
             ? EmptyMetadata
             : new ReadOnlyDictionary<string, string>(new Dictionary<string, string>(state.Metadata, StringComparer.OrdinalIgnoreCase));
@@ -442,12 +488,18 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
+            var replacedReservation = reservationsByCommandId.Remove(recordedState.CommandId);
+            if (limit == 0)
+            {
+                return;
+            }
+
             var replacedExisting = statesByCommandId.Remove(recordedState.CommandId);
             if (replacedExisting)
             {
                 states.RemoveAll(existing => string.Equals(existing.CommandId, recordedState.CommandId, StringComparison.OrdinalIgnoreCase));
             }
-            else
+            else if (!replacedReservation)
             {
                 totalRecordedCommandCount++;
             }
@@ -463,5 +515,81 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
                 droppedCommandCount++;
             }
         }
+    }
+
+    private static EventDispatchRemediationCommandReservation CreateDuplicateReservation(
+        string commandId,
+        EventDispatchRemediationRuntimeState existingState)
+    {
+        var metadata = CreateReservationMetadata(
+            commandId,
+            existingState.OperationId,
+            existingState.ObservedAtUtc,
+            state: "duplicate");
+
+        return new EventDispatchRemediationCommandReservation(
+            commandId,
+            reserved: false,
+            existingState,
+            metadata);
+    }
+
+    private static EventDispatchRemediationRuntimeState CreateReservedState(EventDispatchRemediationRequest request)
+    {
+        var observedAtUtc = request.RequestedAtUtc == default
+            ? DateTimeOffset.UtcNow
+            : request.RequestedAtUtc;
+        var metadata = CreateReservationMetadata(
+            request.CommandId,
+            request.OperationId,
+            observedAtUtc,
+            state: "reserved",
+            request.Metadata);
+
+        if (!string.IsNullOrWhiteSpace(request.Reason))
+        {
+            metadata[EventDispatchRemediationMetadataKeys.OperatorCommandReason] = request.Reason;
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.ActorId))
+        {
+            metadata[EventDispatchRemediationMetadataKeys.OperatorActorId] = request.ActorId;
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.CorrelationId))
+        {
+            metadata[EventDispatchRemediationMetadataKeys.OperatorCorrelationId] = request.CorrelationId;
+        }
+
+        return new EventDispatchRemediationRuntimeState(
+            CommandId: request.CommandId,
+            OutboxId: request.OutboxId,
+            MessageId: request.MessageId,
+            ChannelId: request.ChannelId,
+            OperationId: request.OperationId.Trim().ToLowerInvariant(),
+            Outcome: EventDispatchRemediationOutcomes.Reserved,
+            DispatchOutcome: "pending",
+            ObservedAtUtc: observedAtUtc,
+            Error: null,
+            Metadata: new ReadOnlyDictionary<string, string>(metadata));
+    }
+
+    private static Dictionary<string, string> CreateReservationMetadata(
+        string commandId,
+        string operationId,
+        DateTimeOffset observedAtUtc,
+        string state,
+        IReadOnlyDictionary<string, string>? sourceMetadata = null)
+    {
+        var metadata = sourceMetadata is null
+            ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            : new Dictionary<string, string>(sourceMetadata, StringComparer.OrdinalIgnoreCase);
+
+        metadata["operatorCommandId"] = commandId;
+        metadata["operatorCommand"] = operationId.Trim().ToLowerInvariant();
+        metadata["operatorCommandRequestedAtUtc"] = observedAtUtc.ToString("O", CultureInfo.InvariantCulture);
+        EventDispatchRemediationCommandMetadata.AddIdempotencyMetadata(metadata);
+        metadata[EventDispatchRemediationMetadataKeys.CommandReservationState] = state;
+        return metadata;
     }
 }

@@ -46137,6 +46137,77 @@ string Storage { get; set; }
 
 The storage medium used by the journal, such as memory or an Entity Framework table.
 
+<a id="type-cephalon-abstractions-data-eventdispatchremediationcommandreservation"></a>
+
+### `EventDispatchRemediationCommandReservation`
+
+Describes the result of reserving one event-dispatch remediation command identifier before dispatch-store mutation.
+
+#### Declaration
+```csharp
+public sealed class EventDispatchRemediationCommandReservation
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-eventdispatchremediationcommandreservation-ctor-system-string-system-boolean-cephalon-abstractions-data-eventdispatchremediationruntimestate-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `EventDispatchRemediationCommandReservation`
+
+```csharp
+EventDispatchRemediationCommandReservation(string commandId, bool reserved, EventDispatchRemediationRuntimeState existingCommand, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new command-reservation result.
+
+Parameters:
+- `commandId`: The stable remediation command identifier that was reserved or detected as a duplicate.
+- `reserved`: A value indicating whether the journal reserved the command identifier for the caller.
+- `existingCommand`: The existing command state when the identifier was already reserved or recorded.
+- `metadata`: Operator-facing metadata that describes the reservation policy and state.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationcommandreservation-commandid"></a>
+
+##### `CommandId`
+
+```csharp
+string CommandId { get; }
+```
+
+Gets the stable remediation command identifier that was reserved or detected as a duplicate.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationcommandreservation-existingcommand"></a>
+
+##### `ExistingCommand`
+
+```csharp
+EventDispatchRemediationRuntimeState ExistingCommand { get; }
+```
+
+Gets the existing command state when the identifier was already reserved or recorded.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationcommandreservation-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets operator-facing metadata that describes the reservation policy and state.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationcommandreservation-reserved"></a>
+
+##### `Reserved`
+
+```csharp
+bool Reserved { get; }
+```
+
+Gets a value indicating whether the journal reserved the command identifier for the caller.
+
 <a id="type-cephalon-abstractions-data-eventdispatchremediationoperationids"></a>
 
 ### `EventDispatchRemediationOperationIds`
@@ -46232,6 +46303,16 @@ const string Rejected
 ```
 
 The command was rejected before it could be applied to the active dispatch store.
+
+<a id="member-f-cephalon-abstractions-data-eventdispatchremediationoutcomes-reserved"></a>
+
+##### `Reserved`
+
+```csharp
+const string Reserved
+```
+
+The command identifier was reserved before the final command outcome was recorded.
 
 <a id="type-cephalon-abstractions-data-eventdispatchremediationrequest"></a>
 
@@ -51292,6 +51373,22 @@ Returns: A task that completes when the command result has been recorded.
 
 Parameters:
 - `result`: The command result to record.
+- `cancellationToken`: A token that observes cancellation requests.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationcommandjournal-reserveasync-cephalon-abstractions-data-eventdispatchremediationrequest-system-threading-cancellationtoken"></a>
+
+##### `ReserveAsync`
+
+```csharp
+ValueTask<EventDispatchRemediationCommandReservation> ReserveAsync(EventDispatchRemediationRequest request, CancellationToken cancellationToken)
+```
+
+Reserves one remediation command identifier before any dispatch-store mutation is attempted.
+
+Returns: A task that returns the reservation result. A duplicate or in-flight command returns the existing command state and must not be applied to the dispatch store again.
+
+Parameters:
+- `request`: The command request whose identifier should be reserved.
 - `cancellationToken`: A token that observes cancellation requests.
 
 <a id="type-cephalon-abstractions-data-ieventdispatchremediationdispatcher"></a>

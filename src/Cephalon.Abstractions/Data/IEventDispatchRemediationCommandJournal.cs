@@ -11,6 +11,19 @@ public interface IEventDispatchRemediationCommandJournal : IEventDispatchRemedia
     EventDispatchRemediationCommandJournalDescriptor Descriptor { get; }
 
     /// <summary>
+    /// Reserves one remediation command identifier before any dispatch-store mutation is attempted.
+    /// </summary>
+    /// <param name="request">The command request whose identifier should be reserved.</param>
+    /// <param name="cancellationToken">A token that observes cancellation requests.</param>
+    /// <returns>
+    /// A task that returns the reservation result. A duplicate or in-flight command returns the
+    /// existing command state and must not be applied to the dispatch store again.
+    /// </returns>
+    ValueTask<EventDispatchRemediationCommandReservation> ReserveAsync(
+        EventDispatchRemediationRequest request,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Records one event-dispatch remediation command result.
     /// </summary>
     /// <param name="result">The command result to record.</param>

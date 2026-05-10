@@ -1,5 +1,12 @@
 #nullable enable
+const Cephalon.Abstractions.Data.EventDispatchRemediationOutcomes.Reserved = "reserved" -> string!
 const Cephalon.Abstractions.Data.EventDispatchRemediationOperationIds.DeadLetter = "dead-letter" -> string!
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandReservation
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandReservation.CommandId.get -> string!
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandReservation.EventDispatchRemediationCommandReservation(string! commandId, bool reserved, Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState? existingCommand, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> void
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandReservation.ExistingCommand.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandReservation.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandReservation.Reserved.get -> bool
 Cephalon.Abstractions.Data.EventDispatchRemediationCommandJournalDescriptor
 Cephalon.Abstractions.Data.EventDispatchRemediationCommandJournalDescriptor.CrossNodeCommandAudit.get -> bool
 Cephalon.Abstractions.Data.EventDispatchRemediationCommandJournalDescriptor.Durability.get -> string!
@@ -42,6 +49,7 @@ Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.TotalCommandCo
 Cephalon.Abstractions.Data.IEventDispatchRemediationCommandJournal
 Cephalon.Abstractions.Data.IEventDispatchRemediationCommandJournal.Descriptor.get -> Cephalon.Abstractions.Data.EventDispatchRemediationCommandJournalDescriptor!
 Cephalon.Abstractions.Data.IEventDispatchRemediationCommandJournal.RecordAsync(Cephalon.Abstractions.Data.EventDispatchRemediationResult! result, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
+Cephalon.Abstractions.Data.IEventDispatchRemediationCommandJournal.ReserveAsync(Cephalon.Abstractions.Data.EventDispatchRemediationRequest! request, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Cephalon.Abstractions.Data.EventDispatchRemediationCommandReservation!>
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByActorId(string! actorId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByChannelId(string! channelId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByCorrelationId(string! correlationId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!

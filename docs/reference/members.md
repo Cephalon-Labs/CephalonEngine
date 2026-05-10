@@ -4602,6 +4602,9 @@ Browse the published API surface by public member.
 - [CommandId](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-commandid): `Properties` on `EntityFrameworkEventDispatchRemediationCommandEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=CommandId&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Gets or sets the stable remediation command identifier.
   - `string CommandId { get; set; }`
+- [CommandId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationcommandreservation-commandid): `Properties` on `EventDispatchRemediationCommandReservation` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the stable remediation command identifier that was reserved or detected as a duplicate.
+  - `string CommandId { get; }`
 - [CommandId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationrequest-commandid): `Properties` on `EventDispatchRemediationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable command identifier.
   - `string CommandId { get; }`
@@ -4797,6 +4800,24 @@ Browse the published API surface by public member.
 - [CommandJournalState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-commandjournalstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandJournalState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector command-journal state that informed provider-specific materialization.
   - `string CommandJournalState { get; set; }`
+- [CommandReservationDuplicatePolicy](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-commandreservationduplicatepolicy): `Fields` on `EventDispatchRemediationMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CommandReservationDuplicatePolicy&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies how duplicate reservations are handled by the active command journal.
+  - `const string CommandReservationDuplicatePolicy`
+- [CommandReservationInDoubtOutcome](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-commandreservationindoubtoutcome): `Fields` on `EventDispatchRemediationMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CommandReservationInDoubtOutcome&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the command outcome used when a reservation exists before finalization.
+  - `const string CommandReservationInDoubtOutcome`
+- [CommandReservationOwner](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-commandreservationowner): `Fields` on `EventDispatchRemediationMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CommandReservationOwner&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the component that owns command reservations.
+  - `const string CommandReservationOwner`
+- [CommandReservationPolicy](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-commandreservationpolicy): `Fields` on `EventDispatchRemediationMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CommandReservationPolicy&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the reservation policy enforced before dispatch-store mutation.
+  - `const string CommandReservationPolicy`
+- [CommandReservationState](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-commandreservationstate): `Fields` on `EventDispatchRemediationMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CommandReservationState&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the current command-reservation state visible in command metadata.
+  - `const string CommandReservationState`
+- [CommandReservationTiming](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-commandreservationtiming): `Fields` on `EventDispatchRemediationMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CommandReservationTiming&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies when the command identifier is reserved relative to dispatch-store mutation.
+  - `const string CommandReservationTiming`
 - [CommandRetry](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalsources-commandretry): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandRetry&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The command journal was derived primarily from the shared command-retry lane.
   - `const string CommandRetry`
@@ -9162,6 +9183,9 @@ Browse the published API surface by public member.
 - [EventDispatchRemediationCommandJournalEntries](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-ientityframeworkeventdispatchremediationcommandjournalcontext-eventdispatchremediationcommandjournalentries): `Properties` on `IEntityFrameworkEventDispatchRemediationCommandJournalContext` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=EventDispatchRemediationCommandJournalEntries&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Gets the durable remediation command journal rows owned by the current write-side `DbContext`.
   - `DbSet<EntityFrameworkEventDispatchRemediationCommandEntry> EventDispatchRemediationCommandJournalEntries { get; }`
+- [EventDispatchRemediationCommandReservation](cephalon-abstractions.md#member-m-cephalon-abstractions-data-eventdispatchremediationcommandreservation-ctor-system-string-system-boolean-cephalon-abstractions-data-eventdispatchremediationruntimestate-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventDispatchRemediationCommandReservation` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventDispatchRemediationCommandReservation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates a new command-reservation result.
+  - `EventDispatchRemediationCommandReservation(string commandId, bool reserved, EventDispatchRemediationRuntimeState existingCommand, IReadOnlyDictionary<string, string> metadata)`
 - [EventDispatchRemediationRequest](cephalon-abstractions.md#member-m-cephalon-abstractions-data-eventdispatchremediationrequest-ctor-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventDispatchRemediationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventDispatchRemediationRequest&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates an event-dispatch remediation request.
   - `EventDispatchRemediationRequest(string outboxId, string messageId, string channelId, string operationId, string commandId, DateTimeOffset? requestedAtUtc, DateTimeOffset? nextAttemptAtUtc, string reason, string actorId, string correlationId, IReadOnlyDictionary<string, string> metadata)`
@@ -9999,6 +10023,9 @@ Browse the published API surface by public member.
 - [ExhaustedCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-exhaustedcount): `Properties` on `TenantInvitationDeliveryRetryResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ExhaustedCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the number of attempted entries that exhausted their retry budget.
   - `int ExhaustedCount { get; }`
+- [ExistingCommand](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationcommandreservation-existingcommand): `Properties` on `EventDispatchRemediationCommandReservation` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExistingCommand&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the existing command state when the identifier was already reserved or recorded.
+  - `EventDispatchRemediationRuntimeState ExistingCommand { get; }`
 - [ExistingCommandObservedAtUtc](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-existingcommandobservedatutc): `Fields` on `EventDispatchRemediationMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ExistingCommandObservedAtUtc&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the UTC timestamp recorded for the first command that used the duplicate command identifier.
   - `const string ExistingCommandObservedAtUtc`
@@ -17592,6 +17619,9 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchitem-metadata): `Properties` on `EventDispatchItem` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets optional message metadata associated with the dispatch item.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
+- [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationcommandreservation-metadata): `Properties` on `EventDispatchRemediationCommandReservation` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets operator-facing metadata that describes the reservation policy and state.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationrequest-metadata): `Properties` on `EventDispatchRemediationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets optional operator-facing command metadata.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -24078,6 +24108,15 @@ Browse the published API surface by public member.
 - [RequireVersion](cephalon-engine.md#member-p-cephalon-engine-configuration-packagepolicy-requireversion): `Properties` on `PackagePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=RequireVersion&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets a value indicating whether package manifests must declare a version.
   - `bool RequireVersion { get; }`
+- [ReserveAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationcommandjournal-reserveasync-cephalon-abstractions-data-eventdispatchremediationrequest-system-threading-cancellationtoken): `Methods` on `IEventDispatchRemediationCommandJournal` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ReserveAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Reserves one remediation command identifier before any dispatch-store mutation is attempted.
+  - `ValueTask<EventDispatchRemediationCommandReservation> ReserveAsync(EventDispatchRemediationRequest request, CancellationToken cancellationToken)`
+- [Reserved](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationcommandreservation-reserved): `Properties` on `EventDispatchRemediationCommandReservation` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Reserved&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the journal reserved the command identifier for the caller.
+  - `bool Reserved { get; }`
+- [Reserved](cephalon-abstractions.md#member-f-cephalon-abstractions-data-eventdispatchremediationoutcomes-reserved): `Fields` on `EventDispatchRemediationOutcomes` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Reserved&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The command identifier was reserved before the final command outcome was recorded.
+  - `const string Reserved`
 - [Resilience](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-appprofile-resilience): `Properties` on `AppProfile` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=Resilience&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the selected resilience-policy inputs.
   - `ResilienceSelection Resilience { get; }`

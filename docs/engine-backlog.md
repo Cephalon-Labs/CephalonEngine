@@ -5675,8 +5675,44 @@ Delivered:
 
 Follow-up later:
 
-- distributed reservation-before-mutation, broker replay, provider-owned dashboards, and durable replay
-  cursors remain future package-owned work
+- broker replay, provider-owned dashboards, and durable replay cursors remain future package-owned work
+
+### ENG-579 Eventing remediation command reservation idempotency
+
+Status: done
+Estimate: 2
+Issue: #1233
+Iteration: Sprint 91 follow-through
+Area: eventing / data-entityframework / operations / Wolverine-free baseline
+Quality dimensions: Data Integrity, Auditability, Reliability, Availability, Compatibility, Maintainability
+
+Why:
+
+- `ENG-578` introduced the active remediation command journal, but duplicate checks still happened before
+  the final command result was written, leaving an in-doubt window if the process failed between duplicate
+  checking and dispatch-store mutation
+- Wolverine must remain optional, so cross-node command idempotency must be closed through Cephalon-owned
+  journal contracts and provider implementations rather than bus-package semantics
+- the hot path should stay code-owned while command id reservation remains a provider/runtime concern
+
+Delivered:
+
+- added `EventDispatchRemediationCommandReservation` and `IEventDispatchRemediationCommandJournal.ReserveAsync(...)`
+  so dispatchers reserve command ids before any dispatch-store mutation
+- added `EventDispatchRemediationOutcomes.Reserved` as the explicit in-doubt command outcome for reserved
+  command ids that have not yet finalized to accepted or rejected
+- updated the process-local Eventing journal to keep in-flight command reservations, expose reserved
+  states when history is enabled, and reject duplicates even when history retention is disabled
+- updated the Entity Framework durable journal to persist a `reserved` row before mutation, update that row
+  to the final result, and reject duplicate retries across provider/process rebuilds when the first command
+  only reached the reserved state
+- updated dispatcher metadata with `commandReservation*` keys so operator UIs can distinguish reserved,
+  duplicate, and finalized command states without provider-specific table knowledge
+
+Follow-up later:
+
+- broker replay, provider-owned dashboards, provider-specific dead-letter queues, and durable replay cursors
+  remain future package-owned work
 
 ### ENG-269 Agentics tool execution operator-action baseline
 

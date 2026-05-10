@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T12:02:47.9506726+00:00",
+  "GeneratedAtUtc": "2026-05-10T13:00:17.6042418+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 21,
-      "TypeCount": 562
+      "TypeCount": 563
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -785,7 +785,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 262
+      "TypeCount": 263
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -8338,6 +8338,21 @@
       }
     },
     {
+      "DisplayName": "EventDispatchRemediationCommandReservation",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-eventdispatchremediationcommandreservation",
+      "Declaration": "public sealed class EventDispatchRemediationCommandReservation",
+      "Summary": "Describes the result of reserving one event-dispatch remediation command identifier before dispatch-store mutation.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 4,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "EventDispatchRemediationMetadataKeys",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -8347,7 +8362,7 @@
       "Summary": "Defines stable metadata keys used by event-dispatch remediation command results.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 10,
+        "Fields": 16,
         "Properties": 0,
         "Methods": 0
       }
@@ -8377,7 +8392,7 @@
       "Summary": "Defines stable outcomes returned by event-dispatch remediation commands.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 2,
+        "Fields": 3,
         "Properties": 0,
         "Methods": 0
       }
@@ -11214,7 +11229,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 1
+        "Methods": 2
       }
     },
     {
@@ -36392,6 +36407,17 @@
     {
       "DisplayName": "CommandId",
       "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationCommandReservation",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationcommandreservation-commandid",
+      "Signature": "string CommandId { get; }",
+      "Summary": "Gets the stable remediation command identifier that was reserved or detected as a duplicate."
+    },
+    {
+      "DisplayName": "CommandId",
+      "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRemediationRequest",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -37103,6 +37129,72 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-commandjournalstate",
       "Signature": "string CommandJournalState { get; set; }",
       "Summary": "Gets the current managed-connector command-journal state that informed provider-specific materialization."
+    },
+    {
+      "DisplayName": "CommandReservationDuplicatePolicy",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-commandreservationduplicatepolicy",
+      "Signature": "const string CommandReservationDuplicatePolicy",
+      "Summary": "Identifies how duplicate reservations are handled by the active command journal."
+    },
+    {
+      "DisplayName": "CommandReservationInDoubtOutcome",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-commandreservationindoubtoutcome",
+      "Signature": "const string CommandReservationInDoubtOutcome",
+      "Summary": "Identifies the command outcome used when a reservation exists before finalization."
+    },
+    {
+      "DisplayName": "CommandReservationOwner",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-commandreservationowner",
+      "Signature": "const string CommandReservationOwner",
+      "Summary": "Identifies the component that owns command reservations."
+    },
+    {
+      "DisplayName": "CommandReservationPolicy",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-commandreservationpolicy",
+      "Signature": "const string CommandReservationPolicy",
+      "Summary": "Identifies the reservation policy enforced before dispatch-store mutation."
+    },
+    {
+      "DisplayName": "CommandReservationState",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-commandreservationstate",
+      "Signature": "const string CommandReservationState",
+      "Summary": "Identifies the current command-reservation state visible in command metadata."
+    },
+    {
+      "DisplayName": "CommandReservationTiming",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-commandreservationtiming",
+      "Signature": "const string CommandReservationTiming",
+      "Summary": "Identifies when the command identifier is reserved relative to dispatch-store mutation."
     },
     {
       "DisplayName": "CommandRetry",
@@ -53096,6 +53188,17 @@
       "Summary": "Gets the durable remediation command journal rows owned by the current write-side \u0060DbContext\u0060."
     },
     {
+      "DisplayName": "EventDispatchRemediationCommandReservation",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventDispatchRemediationCommandReservation",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchremediationcommandreservation-ctor-system-string-system-boolean-cephalon-abstractions-data-eventdispatchremediationruntimestate-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "EventDispatchRemediationCommandReservation(string commandId, bool reserved, EventDispatchRemediationRuntimeState existingCommand, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new command-reservation result."
+    },
+    {
       "DisplayName": "EventDispatchRemediationRequest",
       "Category": "Constructors",
       "DeclaringTypeName": "EventDispatchRemediationRequest",
@@ -56163,6 +56266,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-exhaustedcount",
       "Signature": "int ExhaustedCount { get; }",
       "Summary": "Gets the number of attempted entries that exhausted their retry budget."
+    },
+    {
+      "DisplayName": "ExistingCommand",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationCommandReservation",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationcommandreservation-existingcommand",
+      "Signature": "EventDispatchRemediationRuntimeState ExistingCommand { get; }",
+      "Summary": "Gets the existing command state when the identifier was already reserved or recorded."
     },
     {
       "DisplayName": "ExistingCommandObservedAtUtc",
@@ -83920,6 +84034,17 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationCommandReservation",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationcommandreservation-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets operator-facing metadata that describes the reservation policy and state."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRemediationRequest",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -107659,6 +107784,39 @@
       "AnchorId": "member-p-cephalon-engine-configuration-packagepolicy-requireversion",
       "Signature": "bool RequireVersion { get; }",
       "Summary": "Gets a value indicating whether package manifests must declare a version."
+    },
+    {
+      "DisplayName": "ReserveAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationCommandJournal",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationcommandjournal-reserveasync-cephalon-abstractions-data-eventdispatchremediationrequest-system-threading-cancellationtoken",
+      "Signature": "ValueTask\u003CEventDispatchRemediationCommandReservation\u003E ReserveAsync(EventDispatchRemediationRequest request, CancellationToken cancellationToken)",
+      "Summary": "Reserves one remediation command identifier before any dispatch-store mutation is attempted."
+    },
+    {
+      "DisplayName": "Reserved",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationCommandReservation",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationcommandreservation-reserved",
+      "Signature": "bool Reserved { get; }",
+      "Summary": "Gets a value indicating whether the journal reserved the command identifier for the caller."
+    },
+    {
+      "DisplayName": "Reserved",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationOutcomes",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-eventdispatchremediationoutcomes-reserved",
+      "Signature": "const string Reserved",
+      "Summary": "The command identifier was reserved before the final command outcome was recorded."
     },
     {
       "DisplayName": "Resilience",

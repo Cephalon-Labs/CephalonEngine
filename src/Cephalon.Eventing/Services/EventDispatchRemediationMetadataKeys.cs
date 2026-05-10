@@ -21,6 +21,36 @@ public static class EventDispatchRemediationMetadataKeys
     public const string DuplicateCommandPolicy = "duplicateCommandPolicy";
 
     /// <summary>
+    /// Identifies the reservation policy enforced before dispatch-store mutation.
+    /// </summary>
+    public const string CommandReservationPolicy = "commandReservationPolicy";
+
+    /// <summary>
+    /// Identifies when the command identifier is reserved relative to dispatch-store mutation.
+    /// </summary>
+    public const string CommandReservationTiming = "commandReservationTiming";
+
+    /// <summary>
+    /// Identifies the current command-reservation state visible in command metadata.
+    /// </summary>
+    public const string CommandReservationState = "commandReservationState";
+
+    /// <summary>
+    /// Identifies how duplicate reservations are handled by the active command journal.
+    /// </summary>
+    public const string CommandReservationDuplicatePolicy = "commandReservationDuplicatePolicy";
+
+    /// <summary>
+    /// Identifies the command outcome used when a reservation exists before finalization.
+    /// </summary>
+    public const string CommandReservationInDoubtOutcome = "commandReservationInDoubtOutcome";
+
+    /// <summary>
+    /// Identifies the component that owns command reservations.
+    /// </summary>
+    public const string CommandReservationOwner = "commandReservationOwner";
+
+    /// <summary>
     /// Identifies the operator actor that requested the remediation command.
     /// </summary>
     public const string OperatorActorId = "operatorActorId";

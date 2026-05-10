@@ -26,12 +26,9 @@ internal sealed class EventDispatchRemediationDispatcher(
         var operationId = NormalizeOperationId(request.OperationId);
         var dispatchOutcome = ResolveDispatchOutcome(operationId);
         var metadata = CreateMetadata(request, operationId, dispatchOutcome, observedAtUtc);
-        var attempt = Math.Max(
-            1,
-            (runtimeCatalog.GetByOutboxId(request.OutboxId)?.LastAttempt ?? 0) + 1);
 
-        var existingCommand = commandJournal.GetByCommandId(request.CommandId);
-        if (existingCommand is not null)
+        var reservation = await commandJournal.ReserveAsync(request, cancellationToken).ConfigureAwait(false);
+        if (!reservation.Reserved)
         {
             return CreateDuplicateCommandResult(
                 request,
@@ -39,8 +36,13 @@ internal sealed class EventDispatchRemediationDispatcher(
                 dispatchOutcome,
                 observedAtUtc,
                 metadata,
-                existingCommand);
+                reservation.ExistingCommand ?? commandJournal.GetByCommandId(request.CommandId)!);
         }
+
+        metadata[EventDispatchRemediationMetadataKeys.CommandReservationState] = "reserved";
+        var attempt = Math.Max(
+            1,
+            (runtimeCatalog.GetByOutboxId(request.OutboxId)?.LastAttempt ?? 0) + 1);
 
         var dispatchStore = ResolveDispatchStore(request.OutboxId);
         if (dispatchStore is null)
@@ -107,6 +109,7 @@ internal sealed class EventDispatchRemediationDispatcher(
                 cancellationToken).ConfigureAwait(false);
         }
 
+        metadata[EventDispatchRemediationMetadataKeys.CommandReservationState] = "finalized";
         return await RecordAsync(new EventDispatchRemediationResult(
             CommandId: request.CommandId,
             OutboxId: request.OutboxId,
@@ -160,8 +163,14 @@ internal sealed class EventDispatchRemediationDispatcher(
         string dispatchOutcome,
         DateTimeOffset observedAtUtc,
         string error,
-        IReadOnlyDictionary<string, string> metadata)
+        Dictionary<string, string> metadata,
+        bool finalizeReservation = true)
     {
+        if (finalizeReservation)
+        {
+            metadata[EventDispatchRemediationMetadataKeys.CommandReservationState] = "finalized";
+        }
+
         return new EventDispatchRemediationResult(
             CommandId: request.CommandId,
             OutboxId: request.OutboxId,
@@ -189,14 +198,16 @@ internal sealed class EventDispatchRemediationDispatcher(
         metadata[EventDispatchRemediationMetadataKeys.ExistingCommandOutboxId] = existingCommand.OutboxId;
         metadata[EventDispatchRemediationMetadataKeys.ExistingCommandObservedAtUtc] =
             existingCommand.ObservedAtUtc.ToString("O", CultureInfo.InvariantCulture);
+        metadata[EventDispatchRemediationMetadataKeys.CommandReservationState] = "duplicate";
 
         return CreateRejectedResult(
             request,
             operationId,
             dispatchOutcome,
             observedAtUtc,
-            $"Event-dispatch remediation command id '{request.CommandId}' was already recorded; inspect the existing command result before issuing another command.",
-            metadata);
+            $"Event-dispatch remediation command id '{request.CommandId}' was already recorded or reserved; inspect the existing command result before issuing another command.",
+            metadata,
+            finalizeReservation: false);
     }
 
     private static Dictionary<string, string> CreateMetadata(
@@ -211,10 +222,10 @@ internal sealed class EventDispatchRemediationDispatcher(
             ["operatorCommand"] = operationId,
             ["operatorCommandSource"] = CommandSource,
             ["operatorCommandOutcome"] = dispatchOutcome,
-            ["operatorCommandRequestedAtUtc"] = observedAtUtc.ToString("O", CultureInfo.InvariantCulture),
-            [EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy] = "unique-command-id",
-            [EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy] = "reject-without-mutation"
+            ["operatorCommandRequestedAtUtc"] = observedAtUtc.ToString("O", CultureInfo.InvariantCulture)
         };
+        EventDispatchRemediationCommandMetadata.AddIdempotencyMetadata(metadata);
+        metadata[EventDispatchRemediationMetadataKeys.CommandReservationState] = "pending";
 
         if (!string.IsNullOrWhiteSpace(request.Reason))
         {

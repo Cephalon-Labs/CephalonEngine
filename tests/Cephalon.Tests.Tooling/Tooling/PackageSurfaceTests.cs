@@ -356,6 +356,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureExecutionResult),
             typeof(global::Cephalon.Abstractions.Data.CdcCaptureRuntimeObservation),
             typeof(global::Cephalon.Abstractions.Data.EventDispatchRemediationCommandJournalDescriptor),
+            typeof(global::Cephalon.Abstractions.Data.EventDispatchRemediationCommandReservation),
             typeof(global::Cephalon.Abstractions.Data.ICdcCaptureAcknowledger),
             typeof(global::Cephalon.Abstractions.Data.ICdcCapture),
             typeof(global::Cephalon.Abstractions.Data.ICdcCaptureCatalog),

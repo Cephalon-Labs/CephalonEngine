@@ -1355,6 +1355,7 @@ public sealed class EntityFrameworkDataPackTests
 
             using var commandScope = provider.CreateScope();
             var dispatcher = commandScope.ServiceProvider.GetRequiredService<IEventDispatchRemediationDispatcher>();
+            var journal = commandScope.ServiceProvider.GetRequiredService<IEventDispatchRemediationCommandJournal>();
             var result = await dispatcher.DispatchAsync(new EventDispatchRemediationRequest(
                 outboxId: "entity-framework-outbox",
                 messageId: "evt-journal-001",
@@ -1367,6 +1368,23 @@ public sealed class EntityFrameworkDataPackTests
                 correlationId: "corr-journal-command-001"));
 
             Assert.Equal(EventDispatchRemediationOutcomes.Accepted, result.Outcome);
+
+            var reserved = await journal.ReserveAsync(new EventDispatchRemediationRequest(
+                outboxId: "entity-framework-outbox",
+                messageId: "evt-journal-001",
+                channelId: "catalog-events",
+                operationId: EventDispatchRemediationOperationIds.Skip,
+                commandId: "cmd-journal-002-reserved",
+                requestedAtUtc: new DateTimeOffset(2026, 04, 14, 10, 1, 30, TimeSpan.Zero),
+                reason: "Reserve before mutation.",
+                actorId: "operator-journal",
+                correlationId: "corr-journal-command-002"));
+
+            Assert.True(reserved.Reserved);
+            Assert.Null(reserved.ExistingCommand);
+            Assert.Equal("reserve-before-mutation", reserved.Metadata[EventDispatchRemediationMetadataKeys.CommandReservationPolicy]);
+            Assert.Equal("reserved", reserved.Metadata[EventDispatchRemediationMetadataKeys.CommandReservationState]);
+            Assert.Equal(EventDispatchRemediationOutcomes.Reserved, journal.GetByCommandId("cmd-journal-002-reserved")?.Outcome);
         }
 
         await using (var provider = BuildProvider())
@@ -1401,7 +1419,32 @@ public sealed class EntityFrameworkDataPackTests
             Assert.Equal("true", duplicate.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommand]);
             Assert.Equal(EventDispatchRemediationOutcomes.Accepted, duplicate.Metadata[EventDispatchRemediationMetadataKeys.ExistingCommandOutcome]);
             Assert.Equal("retry-now", duplicate.Metadata[EventDispatchRemediationMetadataKeys.ExistingCommandOperationId]);
-            Assert.Equal("cmd-journal-001-retry", Assert.Single(journal.States).CommandId);
+
+            var inDoubtDuplicate = await dispatcher.DispatchAsync(new EventDispatchRemediationRequest(
+                outboxId: "entity-framework-outbox",
+                messageId: "evt-journal-001",
+                channelId: "catalog-events",
+                operationId: EventDispatchRemediationOperationIds.RetryNow,
+                commandId: "cmd-journal-002-reserved",
+                requestedAtUtc: new DateTimeOffset(2026, 04, 14, 10, 3, 0, TimeSpan.Zero),
+                reason: "Duplicate while first command is reserved.",
+                actorId: "operator-journal-duplicate",
+                correlationId: "corr-journal-command-reserved-duplicate"));
+
+            Assert.Equal(EventDispatchRemediationOutcomes.Rejected, inDoubtDuplicate.Outcome);
+            Assert.Equal("true", inDoubtDuplicate.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommand]);
+            Assert.Equal(EventDispatchRemediationOutcomes.Reserved, inDoubtDuplicate.Metadata[EventDispatchRemediationMetadataKeys.ExistingCommandOutcome]);
+            Assert.Equal("duplicate", inDoubtDuplicate.Metadata[EventDispatchRemediationMetadataKeys.CommandReservationState]);
+            Assert.Equal("reserve-before-mutation", inDoubtDuplicate.Metadata[EventDispatchRemediationMetadataKeys.CommandReservationPolicy]);
+
+            var states = journal.States;
+            Assert.Equal(2, states.Count);
+            Assert.Contains(states, state =>
+                state.CommandId == "cmd-journal-001-retry" &&
+                state.Outcome == EventDispatchRemediationOutcomes.Accepted);
+            var reservedState = Assert.Single(states, state => state.CommandId == "cmd-journal-002-reserved");
+            Assert.Equal(EventDispatchRemediationOutcomes.Reserved, reservedState.Outcome);
+            Assert.Equal("reserved", reservedState.Metadata[EventDispatchRemediationMetadataKeys.CommandReservationState]);
             Assert.Empty(processLocalCatalog.States);
         }
     }

@@ -14,4 +14,9 @@ public static class EventDispatchRemediationOutcomes
     /// The command was rejected before it could be applied to the active dispatch store.
     /// </summary>
     public const string Rejected = "rejected";
+
+    /// <summary>
+    /// The command identifier was reserved before the final command outcome was recorded.
+    /// </summary>
+    public const string Reserved = "reserved";
 }

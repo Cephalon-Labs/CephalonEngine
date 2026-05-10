@@ -11,6 +11,8 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
     DbContext dbContext,
     IEntityFrameworkEventDispatchRemediationCommandJournalContext journalContext) : IEventDispatchRemediationCommandJournal
 {
+    private const string PendingDispatchOutcome = "pending";
+
     private static readonly IReadOnlyDictionary<string, string> EmptyMetadata =
         new ReadOnlyDictionary<string, string>(new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase));
 
@@ -150,6 +152,47 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
         return ReadStates(entries => entries.Where(entry => entry.DispatchOutcome == normalizedDispatchOutcome));
     }
 
+    public async ValueTask<EventDispatchRemediationCommandReservation> ReserveAsync(
+        EventDispatchRemediationRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        var normalizedCommandId = request.CommandId.Trim();
+        var existingState = await ReadStateByCommandIdAsync(normalizedCommandId, cancellationToken).ConfigureAwait(false);
+        if (existingState is not null)
+        {
+            return CreateDuplicateReservation(normalizedCommandId, existingState);
+        }
+
+        var entry = CreateReservedEntry(request);
+        journalContext.EventDispatchRemediationCommandJournalEntries.Add(entry);
+
+        try
+        {
+            await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (DbUpdateException)
+        {
+            dbContext.Entry(entry).State = EntityState.Detached;
+            existingState = await ReadStateByCommandIdAsync(normalizedCommandId, cancellationToken).ConfigureAwait(false);
+            if (existingState is not null)
+            {
+                return CreateDuplicateReservation(normalizedCommandId, existingState);
+            }
+
+            throw;
+        }
+
+        var reservedState = CreateState(entry);
+        return new EventDispatchRemediationCommandReservation(
+            normalizedCommandId,
+            reserved: true,
+            existingCommand: null,
+            reservedState.Metadata);
+    }
+
     public async ValueTask RecordAsync(
         EventDispatchRemediationResult result,
         CancellationToken cancellationToken = default)
@@ -158,15 +201,19 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
         cancellationToken.ThrowIfCancellationRequested();
 
         var normalizedCommandId = result.CommandId.Trim();
-        var exists = await journalContext.EventDispatchRemediationCommandJournalEntries
-            .AnyAsync(entry => entry.CommandId == normalizedCommandId, cancellationToken)
+        var existingEntry = await journalContext.EventDispatchRemediationCommandJournalEntries
+            .SingleOrDefaultAsync(entry => entry.CommandId == normalizedCommandId, cancellationToken)
             .ConfigureAwait(false);
-        if (exists)
+
+        if (existingEntry is null)
         {
-            return;
+            journalContext.EventDispatchRemediationCommandJournalEntries.Add(CreateEntry(result));
+        }
+        else
+        {
+            ApplyResult(existingEntry, result);
         }
 
-        journalContext.EventDispatchRemediationCommandJournalEntries.Add(CreateEntry(result));
         await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 
@@ -181,28 +228,89 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
         return entries.Select(CreateState).ToArray();
     }
 
+    private async Task<EventDispatchRemediationRuntimeState?> ReadStateByCommandIdAsync(
+        string normalizedCommandId,
+        CancellationToken cancellationToken)
+    {
+        var entry = await journalContext.EventDispatchRemediationCommandJournalEntries
+            .AsNoTracking()
+            .Where(entry => entry.CommandId == normalizedCommandId)
+            .OrderByDescending(entry => entry.ObservedAtUtc)
+            .ThenBy(entry => entry.CommandId)
+            .SingleOrDefaultAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        return entry is null ? null : CreateState(entry);
+    }
+
+    private static EntityFrameworkEventDispatchRemediationCommandEntry CreateReservedEntry(EventDispatchRemediationRequest request)
+    {
+        var observedAtUtc = request.RequestedAtUtc == default
+            ? DateTimeOffset.UtcNow
+            : request.RequestedAtUtc;
+        var metadata = CreateReservationMetadata(
+            request.CommandId,
+            request.OperationId,
+            observedAtUtc,
+            state: "reserved",
+            request.Metadata);
+
+        if (!string.IsNullOrWhiteSpace(request.Reason))
+        {
+            metadata[EventDispatchRemediationMetadataKeys.OperatorCommandReason] = request.Reason;
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.ActorId))
+        {
+            metadata[EventDispatchRemediationMetadataKeys.OperatorActorId] = request.ActorId;
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.CorrelationId))
+        {
+            metadata[EventDispatchRemediationMetadataKeys.OperatorCorrelationId] = request.CorrelationId;
+        }
+
+        return CreateEntry(new EventDispatchRemediationResult(
+            CommandId: request.CommandId,
+            OutboxId: request.OutboxId,
+            MessageId: request.MessageId,
+            ChannelId: request.ChannelId,
+            OperationId: request.OperationId.Trim().ToLowerInvariant(),
+            Outcome: EventDispatchRemediationOutcomes.Reserved,
+            DispatchOutcome: PendingDispatchOutcome,
+            ObservedAtUtc: observedAtUtc,
+            Error: null,
+            Metadata: metadata));
+    }
+
     private static EntityFrameworkEventDispatchRemediationCommandEntry CreateEntry(EventDispatchRemediationResult result)
+    {
+        var entry = new EntityFrameworkEventDispatchRemediationCommandEntry();
+        ApplyResult(entry, result);
+        return entry;
+    }
+
+    private static void ApplyResult(
+        EntityFrameworkEventDispatchRemediationCommandEntry entry,
+        EventDispatchRemediationResult result)
     {
         result.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.OperatorActorId, out var actorId);
         result.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.OperatorCorrelationId, out var correlationId);
         result.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.OperatorCommandReason, out var reason);
 
-        return new EntityFrameworkEventDispatchRemediationCommandEntry
-        {
-            CommandId = result.CommandId,
-            OutboxId = result.OutboxId,
-            MessageId = result.MessageId,
-            ChannelId = result.ChannelId,
-            OperationId = result.OperationId,
-            Outcome = result.Outcome,
-            DispatchOutcome = result.DispatchOutcome,
-            ObservedAtUtc = result.ObservedAtUtc,
-            Error = result.Error,
-            ActorId = string.IsNullOrWhiteSpace(actorId) ? null : actorId,
-            CorrelationId = string.IsNullOrWhiteSpace(correlationId) ? null : correlationId,
-            Reason = string.IsNullOrWhiteSpace(reason) ? null : reason,
-            MetadataJson = JsonSerializer.Serialize(new Dictionary<string, string>(result.Metadata, StringComparer.OrdinalIgnoreCase))
-        };
+        entry.CommandId = result.CommandId;
+        entry.OutboxId = result.OutboxId;
+        entry.MessageId = result.MessageId;
+        entry.ChannelId = result.ChannelId;
+        entry.OperationId = result.OperationId;
+        entry.Outcome = result.Outcome;
+        entry.DispatchOutcome = result.DispatchOutcome;
+        entry.ObservedAtUtc = result.ObservedAtUtc;
+        entry.Error = result.Error;
+        entry.ActorId = string.IsNullOrWhiteSpace(actorId) ? null : actorId;
+        entry.CorrelationId = string.IsNullOrWhiteSpace(correlationId) ? null : correlationId;
+        entry.Reason = string.IsNullOrWhiteSpace(reason) ? null : reason;
+        entry.MetadataJson = JsonSerializer.Serialize(new Dictionary<string, string>(result.Metadata, StringComparer.OrdinalIgnoreCase));
     }
 
     private static EventDispatchRemediationRuntimeState CreateState(EntityFrameworkEventDispatchRemediationCommandEntry entry)
@@ -284,5 +392,47 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
         return result is null
             ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
             : new Dictionary<string, string>(result, StringComparer.OrdinalIgnoreCase);
+    }
+
+    private static EventDispatchRemediationCommandReservation CreateDuplicateReservation(
+        string commandId,
+        EventDispatchRemediationRuntimeState existingState)
+    {
+        var metadata = CreateReservationMetadata(
+            commandId,
+            existingState.OperationId,
+            existingState.ObservedAtUtc,
+            state: "duplicate");
+
+        return new EventDispatchRemediationCommandReservation(
+            commandId,
+            reserved: false,
+            existingState,
+            metadata);
+    }
+
+    private static Dictionary<string, string> CreateReservationMetadata(
+        string commandId,
+        string operationId,
+        DateTimeOffset observedAtUtc,
+        string state,
+        IReadOnlyDictionary<string, string>? sourceMetadata = null)
+    {
+        var metadata = sourceMetadata is null
+            ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            : new Dictionary<string, string>(sourceMetadata, StringComparer.OrdinalIgnoreCase);
+
+        metadata["operatorCommandId"] = commandId;
+        metadata["operatorCommand"] = operationId.Trim().ToLowerInvariant();
+        metadata["operatorCommandRequestedAtUtc"] = observedAtUtc.ToString("O", System.Globalization.CultureInfo.InvariantCulture);
+        metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy] = "unique-command-id";
+        metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy] = "reject-without-mutation";
+        metadata[EventDispatchRemediationMetadataKeys.CommandReservationPolicy] = "reserve-before-mutation";
+        metadata[EventDispatchRemediationMetadataKeys.CommandReservationTiming] = "before-dispatch-store-mutation";
+        metadata[EventDispatchRemediationMetadataKeys.CommandReservationDuplicatePolicy] = "duplicate-reservation-rejects-without-mutation";
+        metadata[EventDispatchRemediationMetadataKeys.CommandReservationInDoubtOutcome] = EventDispatchRemediationOutcomes.Reserved;
+        metadata[EventDispatchRemediationMetadataKeys.CommandReservationOwner] = "command-journal";
+        metadata[EventDispatchRemediationMetadataKeys.CommandReservationState] = state;
+        return metadata;
     }
 }
