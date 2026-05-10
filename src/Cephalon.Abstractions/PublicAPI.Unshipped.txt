@@ -66,7 +66,16 @@ Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetInDoubt() 
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetInDoubtBefore(System.DateTimeOffset? beforeObservedAtUtc) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetInDoubtSummaryBefore(System.DateTimeOffset? beforeObservedAtUtc) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetOldestInDoubtBefore(System.DateTimeOffset? beforeObservedAtUtc) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetSummaryByActorId(string! actorId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetSummaryByChannelId(string! channelId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetSummaryByCorrelationId(string! correlationId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetSummaryByDispatchOutcome(string! dispatchOutcome) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetSummaryByMessageId(string! messageId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetSummaryByObservedAt(System.DateTimeOffset? fromObservedAtUtc, System.DateTimeOffset? toObservedAtUtc) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetSummaryByOperationId(string! operationId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetSummaryByOutboxId(string! outboxId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetSummaryByOutcome(string! outcome) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetSummaryByReason(string! reason) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.Latest.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.Retention.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.Summary.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!

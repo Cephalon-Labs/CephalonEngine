@@ -51741,6 +51741,81 @@ Returns: The oldest matching in-doubt command state, or `null` when none is reta
 Parameters:
 - `beforeObservedAtUtc`: The inclusive upper UTC observation cutoff, or `null` to search all retained in-doubt entries.
 
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyactorid-system-string"></a>
+
+##### `GetSummaryByActorId`
+
+```csharp
+EventDispatchRemediationRuntimeSummary GetSummaryByActorId(string actorId)
+```
+
+Summarizes remediation command-state entries recorded for one operator actor.
+
+Returns: The aggregate remediation command summary for the actor.
+
+Parameters:
+- `actorId`: The stable operator actor identifier to summarize.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybychannelid-system-string"></a>
+
+##### `GetSummaryByChannelId`
+
+```csharp
+EventDispatchRemediationRuntimeSummary GetSummaryByChannelId(string channelId)
+```
+
+Summarizes remediation command-state entries recorded for one event channel.
+
+Returns: The aggregate remediation command summary for the channel.
+
+Parameters:
+- `channelId`: The stable event channel identifier to summarize.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybycorrelationid-system-string"></a>
+
+##### `GetSummaryByCorrelationId`
+
+```csharp
+EventDispatchRemediationRuntimeSummary GetSummaryByCorrelationId(string correlationId)
+```
+
+Summarizes remediation command-state entries recorded for one operator correlation identifier.
+
+Returns: The aggregate remediation command summary for the correlation identifier.
+
+Parameters:
+- `correlationId`: The stable operator correlation identifier to summarize.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybydispatchoutcome-system-string"></a>
+
+##### `GetSummaryByDispatchOutcome`
+
+```csharp
+EventDispatchRemediationRuntimeSummary GetSummaryByDispatchOutcome(string dispatchOutcome)
+```
+
+Summarizes remediation command-state entries recorded for one dispatch-store outcome.
+
+Returns: The aggregate remediation command summary for the dispatch-store outcome.
+
+Parameters:
+- `dispatchOutcome`: The stable dispatch-store outcome identifier to summarize.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybymessageid-system-string"></a>
+
+##### `GetSummaryByMessageId`
+
+```csharp
+EventDispatchRemediationRuntimeSummary GetSummaryByMessageId(string messageId)
+```
+
+Summarizes remediation command-state entries recorded for one event message.
+
+Returns: The aggregate remediation command summary for the message.
+
+Parameters:
+- `messageId`: The stable event message identifier to summarize.
+
 <a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyobservedat-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset"></a>
 
 ##### `GetSummaryByObservedAt`
@@ -51756,6 +51831,66 @@ Returns: The aggregate remediation command summary for retained records in the o
 Parameters:
 - `fromObservedAtUtc`: The inclusive lower UTC observation bound, or `null` to leave the start open.
 - `toObservedAtUtc`: The inclusive upper UTC observation bound, or `null` to leave the end open.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyoperationid-system-string"></a>
+
+##### `GetSummaryByOperationId`
+
+```csharp
+EventDispatchRemediationRuntimeSummary GetSummaryByOperationId(string operationId)
+```
+
+Summarizes remediation command-state entries recorded for one command operation.
+
+Returns: The aggregate remediation command summary for the operation.
+
+Parameters:
+- `operationId`: The stable command operation identifier to summarize.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyoutboxid-system-string"></a>
+
+##### `GetSummaryByOutboxId`
+
+```csharp
+EventDispatchRemediationRuntimeSummary GetSummaryByOutboxId(string outboxId)
+```
+
+Summarizes remediation command-state entries recorded for one outbox identifier.
+
+Returns: The aggregate remediation command summary for the outbox.
+
+Parameters:
+- `outboxId`: The stable outbox identifier to summarize.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyoutcome-system-string"></a>
+
+##### `GetSummaryByOutcome`
+
+```csharp
+EventDispatchRemediationRuntimeSummary GetSummaryByOutcome(string outcome)
+```
+
+Summarizes remediation command-state entries recorded for one command outcome.
+
+Returns: The aggregate remediation command summary for the command outcome.
+
+Parameters:
+- `outcome`: The stable command outcome identifier to summarize.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyreason-system-string"></a>
+
+##### `GetSummaryByReason`
+
+```csharp
+EventDispatchRemediationRuntimeSummary GetSummaryByReason(string reason)
+```
+
+Summarizes remediation command-state entries recorded for one operator command reason.
+
+Returns: The aggregate remediation command summary for the reason.
+
+Parameters:
+- `reason`: The stable operator-facing command reason to summarize.
 
 <a id="type-cephalon-abstractions-data-ieventdispatchruntimecatalog"></a>
 

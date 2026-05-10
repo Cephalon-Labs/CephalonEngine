@@ -1101,6 +1101,14 @@ public static class EngineWebApplicationExtensions
 
                 return OkLimitedEventDispatchRemediationCommandStates(context, states);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/outboxes/{outboxId}/summary", "GetCephalonEventDispatchRemediationCommandSummaryByOutbox", static context =>
+            {
+                var outboxId = GetRouteValue(context, "outboxId");
+                var summary = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
+                    .GetSummaryByOutboxId(outboxId) ?? EventDispatchRemediationRuntimeSummary.Empty;
+
+                return Results.Ok(summary);
+            });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/outboxes/{outboxId}", "GetCephalonEventDispatchRemediationCommandsByOutbox", static context =>
             {
                 var outboxId = GetRouteValue(context, "outboxId");
@@ -1108,6 +1116,14 @@ public static class EngineWebApplicationExtensions
                     .GetByOutboxId(outboxId) ?? [];
 
                 return OkLimitedEventDispatchRemediationCommandStates(context, states);
+            });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/messages/{messageId}/summary", "GetCephalonEventDispatchRemediationCommandSummaryByMessage", static context =>
+            {
+                var messageId = GetRouteValue(context, "messageId");
+                var summary = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
+                    .GetSummaryByMessageId(messageId) ?? EventDispatchRemediationRuntimeSummary.Empty;
+
+                return Results.Ok(summary);
             });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/messages/{messageId}", "GetCephalonEventDispatchRemediationCommandsByMessage", static context =>
             {
@@ -1117,6 +1133,14 @@ public static class EngineWebApplicationExtensions
 
                 return OkLimitedEventDispatchRemediationCommandStates(context, states);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/channels/{channelId}/summary", "GetCephalonEventDispatchRemediationCommandSummaryByChannel", static context =>
+            {
+                var channelId = GetRouteValue(context, "channelId");
+                var summary = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
+                    .GetSummaryByChannelId(channelId) ?? EventDispatchRemediationRuntimeSummary.Empty;
+
+                return Results.Ok(summary);
+            });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/channels/{channelId}", "GetCephalonEventDispatchRemediationCommandsByChannel", static context =>
             {
                 var channelId = GetRouteValue(context, "channelId");
@@ -1124,6 +1148,14 @@ public static class EngineWebApplicationExtensions
                     .GetByChannelId(channelId) ?? [];
 
                 return OkLimitedEventDispatchRemediationCommandStates(context, states);
+            });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/operations/{operationId}/summary", "GetCephalonEventDispatchRemediationCommandSummaryByOperation", static context =>
+            {
+                var operationId = GetRouteValue(context, "operationId");
+                var summary = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
+                    .GetSummaryByOperationId(operationId) ?? EventDispatchRemediationRuntimeSummary.Empty;
+
+                return Results.Ok(summary);
             });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/operations/{operationId}", "GetCephalonEventDispatchRemediationCommandsByOperation", static context =>
             {
@@ -1133,6 +1165,14 @@ public static class EngineWebApplicationExtensions
 
                 return OkLimitedEventDispatchRemediationCommandStates(context, states);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/actors/{actorId}/summary", "GetCephalonEventDispatchRemediationCommandSummaryByActor", static context =>
+            {
+                var actorId = GetRouteValue(context, "actorId");
+                var summary = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
+                    .GetSummaryByActorId(actorId) ?? EventDispatchRemediationRuntimeSummary.Empty;
+
+                return Results.Ok(summary);
+            });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/actors/{actorId}", "GetCephalonEventDispatchRemediationCommandsByActor", static context =>
             {
                 var actorId = GetRouteValue(context, "actorId");
@@ -1140,6 +1180,14 @@ public static class EngineWebApplicationExtensions
                     .GetByActorId(actorId) ?? [];
 
                 return OkLimitedEventDispatchRemediationCommandStates(context, states);
+            });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/correlations/{correlationId}/summary", "GetCephalonEventDispatchRemediationCommandSummaryByCorrelation", static context =>
+            {
+                var correlationId = GetRouteValue(context, "correlationId");
+                var summary = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
+                    .GetSummaryByCorrelationId(correlationId) ?? EventDispatchRemediationRuntimeSummary.Empty;
+
+                return Results.Ok(summary);
             });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/correlations/{correlationId}", "GetCephalonEventDispatchRemediationCommandsByCorrelation", static context =>
             {
@@ -1149,6 +1197,14 @@ public static class EngineWebApplicationExtensions
 
                 return OkLimitedEventDispatchRemediationCommandStates(context, states);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/reasons/{reason}/summary", "GetCephalonEventDispatchRemediationCommandSummaryByReason", static context =>
+            {
+                var reason = GetRouteValue(context, "reason");
+                var summary = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
+                    .GetSummaryByReason(reason) ?? EventDispatchRemediationRuntimeSummary.Empty;
+
+                return Results.Ok(summary);
+            });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/reasons/{reason}", "GetCephalonEventDispatchRemediationCommandsByReason", static context =>
             {
                 var reason = GetRouteValue(context, "reason");
@@ -1157,6 +1213,14 @@ public static class EngineWebApplicationExtensions
 
                 return OkLimitedEventDispatchRemediationCommandStates(context, states);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/outcomes/{outcome}/summary", "GetCephalonEventDispatchRemediationCommandSummaryByOutcome", static context =>
+            {
+                var outcome = GetRouteValue(context, "outcome");
+                var summary = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
+                    .GetSummaryByOutcome(outcome) ?? EventDispatchRemediationRuntimeSummary.Empty;
+
+                return Results.Ok(summary);
+            });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/outcomes/{outcome}", "GetCephalonEventDispatchRemediationCommandsByOutcome", static context =>
             {
                 var outcome = GetRouteValue(context, "outcome");
@@ -1164,6 +1228,14 @@ public static class EngineWebApplicationExtensions
                     .GetByOutcome(outcome) ?? [];
 
                 return OkLimitedEventDispatchRemediationCommandStates(context, states);
+            });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}/summary", "GetCephalonEventDispatchRemediationCommandSummaryByDispatchOutcome", static context =>
+            {
+                var dispatchOutcome = GetRouteValue(context, "dispatchOutcome");
+                var summary = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
+                    .GetSummaryByDispatchOutcome(dispatchOutcome) ?? EventDispatchRemediationRuntimeSummary.Empty;
+
+                return Results.Ok(summary);
             });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}", "GetCephalonEventDispatchRemediationCommandsByDispatchOutcome", static context =>
             {

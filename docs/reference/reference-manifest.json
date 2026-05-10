@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T16:20:33.7536872+00:00",
+  "GeneratedAtUtc": "2026-05-10T16:45:28.3151053+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -11156,7 +11156,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 4,
-        "Methods": 16
+        "Methods": 25
       }
     },
     {
@@ -62809,6 +62809,61 @@
       "Summary": "Gets the merged resources visible for the specified culture."
     },
     {
+      "DisplayName": "GetSummaryByActorId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyactorid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeSummary GetSummaryByActorId(string actorId)",
+      "Summary": "Summarizes remediation command-state entries recorded for one operator actor."
+    },
+    {
+      "DisplayName": "GetSummaryByChannelId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybychannelid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeSummary GetSummaryByChannelId(string channelId)",
+      "Summary": "Summarizes remediation command-state entries recorded for one event channel."
+    },
+    {
+      "DisplayName": "GetSummaryByCorrelationId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybycorrelationid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeSummary GetSummaryByCorrelationId(string correlationId)",
+      "Summary": "Summarizes remediation command-state entries recorded for one operator correlation identifier."
+    },
+    {
+      "DisplayName": "GetSummaryByDispatchOutcome",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybydispatchoutcome-system-string",
+      "Signature": "EventDispatchRemediationRuntimeSummary GetSummaryByDispatchOutcome(string dispatchOutcome)",
+      "Summary": "Summarizes remediation command-state entries recorded for one dispatch-store outcome."
+    },
+    {
+      "DisplayName": "GetSummaryByMessageId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybymessageid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeSummary GetSummaryByMessageId(string messageId)",
+      "Summary": "Summarizes remediation command-state entries recorded for one event message."
+    },
+    {
       "DisplayName": "GetSummaryByObservedAt",
       "Category": "Methods",
       "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
@@ -62818,6 +62873,50 @@
       "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyobservedat-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset",
       "Signature": "EventDispatchRemediationRuntimeSummary GetSummaryByObservedAt(DateTimeOffset? fromObservedAtUtc, DateTimeOffset? toObservedAtUtc)",
       "Summary": "Summarizes remediation command-state entries observed inside an optional UTC observation window."
+    },
+    {
+      "DisplayName": "GetSummaryByOperationId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyoperationid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeSummary GetSummaryByOperationId(string operationId)",
+      "Summary": "Summarizes remediation command-state entries recorded for one command operation."
+    },
+    {
+      "DisplayName": "GetSummaryByOutboxId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyoutboxid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeSummary GetSummaryByOutboxId(string outboxId)",
+      "Summary": "Summarizes remediation command-state entries recorded for one outbox identifier."
+    },
+    {
+      "DisplayName": "GetSummaryByOutcome",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyoutcome-system-string",
+      "Signature": "EventDispatchRemediationRuntimeSummary GetSummaryByOutcome(string outcome)",
+      "Summary": "Summarizes remediation command-state entries recorded for one command outcome."
+    },
+    {
+      "DisplayName": "GetSummaryByReason",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyreason-system-string",
+      "Signature": "EventDispatchRemediationRuntimeSummary GetSummaryByReason(string reason)",
+      "Summary": "Summarizes remediation command-state entries recorded for one operator command reason."
     },
     {
       "DisplayName": "GetVersionAsync",

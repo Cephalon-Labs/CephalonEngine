@@ -11841,9 +11841,36 @@ Browse the published API surface by public member.
 - [GetResources](cephalon-engine.md#member-m-cephalon-engine-localization-localizedtextcatalog-getresources-system-string): `Methods` on `LocalizedTextCatalog` in `Cephalon.Engine.Localization` (`Cephalon.Engine`) [Browse](browse.html?q=GetResources&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Localization&scope=members)
   - Gets the merged resources visible for the specified culture.
   - `IReadOnlyDictionary<string, string> GetResources(string culture)`
+- [GetSummaryByActorId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyactorid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetSummaryByActorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Summarizes remediation command-state entries recorded for one operator actor.
+  - `EventDispatchRemediationRuntimeSummary GetSummaryByActorId(string actorId)`
+- [GetSummaryByChannelId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybychannelid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetSummaryByChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Summarizes remediation command-state entries recorded for one event channel.
+  - `EventDispatchRemediationRuntimeSummary GetSummaryByChannelId(string channelId)`
+- [GetSummaryByCorrelationId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybycorrelationid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetSummaryByCorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Summarizes remediation command-state entries recorded for one operator correlation identifier.
+  - `EventDispatchRemediationRuntimeSummary GetSummaryByCorrelationId(string correlationId)`
+- [GetSummaryByDispatchOutcome](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybydispatchoutcome-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetSummaryByDispatchOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Summarizes remediation command-state entries recorded for one dispatch-store outcome.
+  - `EventDispatchRemediationRuntimeSummary GetSummaryByDispatchOutcome(string dispatchOutcome)`
+- [GetSummaryByMessageId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybymessageid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetSummaryByMessageId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Summarizes remediation command-state entries recorded for one event message.
+  - `EventDispatchRemediationRuntimeSummary GetSummaryByMessageId(string messageId)`
 - [GetSummaryByObservedAt](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyobservedat-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetSummaryByObservedAt&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Summarizes remediation command-state entries observed inside an optional UTC observation window.
   - `EventDispatchRemediationRuntimeSummary GetSummaryByObservedAt(DateTimeOffset? fromObservedAtUtc, DateTimeOffset? toObservedAtUtc)`
+- [GetSummaryByOperationId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyoperationid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetSummaryByOperationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Summarizes remediation command-state entries recorded for one command operation.
+  - `EventDispatchRemediationRuntimeSummary GetSummaryByOperationId(string operationId)`
+- [GetSummaryByOutboxId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyoutboxid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetSummaryByOutboxId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Summarizes remediation command-state entries recorded for one outbox identifier.
+  - `EventDispatchRemediationRuntimeSummary GetSummaryByOutboxId(string outboxId)`
+- [GetSummaryByOutcome](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyoutcome-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetSummaryByOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Summarizes remediation command-state entries recorded for one command outcome.
+  - `EventDispatchRemediationRuntimeSummary GetSummaryByOutcome(string outcome)`
+- [GetSummaryByReason](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyreason-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetSummaryByReason&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Summarizes remediation command-state entries recorded for one operator command reason.
+  - `EventDispatchRemediationRuntimeSummary GetSummaryByReason(string reason)`
 - [GetVersionAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-eventsourcing-ieventstore-getversionasync-system-string-system-threading-cancellationtoken): `Methods` on `IEventStore` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetVersionAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the latest version known for the requested stream.
   - `Task<long> GetVersionAsync(string streamId, CancellationToken cancellationToken)`

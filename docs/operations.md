@@ -2315,6 +2315,10 @@ list, in-doubt, in-doubt summary, oldest in-doubt, command-id, and outbox drill-
   `commandInDoubtSummaryInvalidCutoff` metadata to discover the stale-reservation summary read; use
   `commandOldestInDoubtQuery`, `commandOldestInDoubtPolicy`, and
   `commandOldestInDoubtInvalidCutoff` metadata to discover the single oldest stale-reservation read;
+  use `commandFilterSummaryPolicy`, `commandFilterSummaryRoutes`, `commandFilterSummaryResponse`,
+  and `commandFilterSummaryMaterialization` metadata to discover retained filter roll-ups before
+  opening outbox/message/channel/operation/actor/correlation/reason/outcome/dispatch-outcome detail
+  routes;
   use
   `commandReadLimitQuery`, `commandReadLimitPolicy`, and `commandReadLimitRoutes` metadata from
   `/engine/capabilities`, `/engine/technology-surfaces`, or `/engine/snapshot` to discover the
@@ -2328,11 +2332,14 @@ list, in-doubt, in-doubt summary, oldest in-doubt, command-id, and outbox drill-
   dashboards need stale in-doubt counts and oldest retained reserved posture without the detail list; use
   `/engine/event-dispatch-remediation-commands/in-doubt/oldest?beforeUtc={beforeUtc}` when operators
   need only the next oldest retained stale reservation; use
+  `/engine/event-dispatch-remediation-commands/{filter}/{value}/summary` for retained summaries over
+  outboxes, messages, channels, operations, actors, correlations, reasons, outcomes, and dispatch
+  outcomes without materializing the matching detail list; use
   `/observations?fromUtc={fromUtc}&toUtc={toUtc}` for retained incident windows, but
   do not treat it as durable compliance retention or broker replay ownership
 - `event-dispatch-remediation-commands` includes a catalog entry even when the command history is
   empty; operator dashboards can use that `entryKind = catalog` entry to read command route,
-  retention, in-doubt summary, read-limit, observed-window, idempotency, provider-neutral, and Wolverine-free metadata
+  retention, in-doubt summary, filter-summary, read-limit, observed-window, idempotency, provider-neutral, and Wolverine-free metadata
   before any incident command is recorded
 - outbox-backed publication states use `accepted` to mean "staged for later dispatch"; dispatch
   completion and terminal dispatch failure remain separate event-dispatch runtime answers

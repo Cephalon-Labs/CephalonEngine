@@ -87,11 +87,25 @@ public interface IEventDispatchRemediationRuntimeCatalog
     IReadOnlyList<EventDispatchRemediationRuntimeState> GetByOutboxId(string outboxId);
 
     /// <summary>
+    /// Summarizes remediation command-state entries recorded for one outbox identifier.
+    /// </summary>
+    /// <param name="outboxId">The stable outbox identifier to summarize.</param>
+    /// <returns>The aggregate remediation command summary for the outbox.</returns>
+    EventDispatchRemediationRuntimeSummary GetSummaryByOutboxId(string outboxId);
+
+    /// <summary>
     /// Gets the remediation command-state entries recorded for one event message.
     /// </summary>
     /// <param name="messageId">The stable event message identifier to resolve.</param>
     /// <returns>The recorded command states for the message, ordered by observed time and command identifier.</returns>
     IReadOnlyList<EventDispatchRemediationRuntimeState> GetByMessageId(string messageId);
+
+    /// <summary>
+    /// Summarizes remediation command-state entries recorded for one event message.
+    /// </summary>
+    /// <param name="messageId">The stable event message identifier to summarize.</param>
+    /// <returns>The aggregate remediation command summary for the message.</returns>
+    EventDispatchRemediationRuntimeSummary GetSummaryByMessageId(string messageId);
 
     /// <summary>
     /// Gets the remediation command-state entries recorded for one event channel.
@@ -101,11 +115,25 @@ public interface IEventDispatchRemediationRuntimeCatalog
     IReadOnlyList<EventDispatchRemediationRuntimeState> GetByChannelId(string channelId);
 
     /// <summary>
+    /// Summarizes remediation command-state entries recorded for one event channel.
+    /// </summary>
+    /// <param name="channelId">The stable event channel identifier to summarize.</param>
+    /// <returns>The aggregate remediation command summary for the channel.</returns>
+    EventDispatchRemediationRuntimeSummary GetSummaryByChannelId(string channelId);
+
+    /// <summary>
     /// Gets the remediation command-state entries recorded for one command operation.
     /// </summary>
     /// <param name="operationId">The stable command operation identifier to resolve.</param>
     /// <returns>The recorded command states for the operation, ordered by observed time and command identifier.</returns>
     IReadOnlyList<EventDispatchRemediationRuntimeState> GetByOperationId(string operationId);
+
+    /// <summary>
+    /// Summarizes remediation command-state entries recorded for one command operation.
+    /// </summary>
+    /// <param name="operationId">The stable command operation identifier to summarize.</param>
+    /// <returns>The aggregate remediation command summary for the operation.</returns>
+    EventDispatchRemediationRuntimeSummary GetSummaryByOperationId(string operationId);
 
     /// <summary>
     /// Gets the remediation command-state entries recorded for one operator actor.
@@ -115,11 +143,25 @@ public interface IEventDispatchRemediationRuntimeCatalog
     IReadOnlyList<EventDispatchRemediationRuntimeState> GetByActorId(string actorId);
 
     /// <summary>
+    /// Summarizes remediation command-state entries recorded for one operator actor.
+    /// </summary>
+    /// <param name="actorId">The stable operator actor identifier to summarize.</param>
+    /// <returns>The aggregate remediation command summary for the actor.</returns>
+    EventDispatchRemediationRuntimeSummary GetSummaryByActorId(string actorId);
+
+    /// <summary>
     /// Gets the remediation command-state entries recorded for one operator correlation identifier.
     /// </summary>
     /// <param name="correlationId">The stable operator correlation identifier to resolve.</param>
     /// <returns>The recorded command states for the correlation identifier, ordered by observed time and command identifier.</returns>
     IReadOnlyList<EventDispatchRemediationRuntimeState> GetByCorrelationId(string correlationId);
+
+    /// <summary>
+    /// Summarizes remediation command-state entries recorded for one operator correlation identifier.
+    /// </summary>
+    /// <param name="correlationId">The stable operator correlation identifier to summarize.</param>
+    /// <returns>The aggregate remediation command summary for the correlation identifier.</returns>
+    EventDispatchRemediationRuntimeSummary GetSummaryByCorrelationId(string correlationId);
 
     /// <summary>
     /// Gets the remediation command-state entries recorded for one operator command reason.
@@ -129,6 +171,13 @@ public interface IEventDispatchRemediationRuntimeCatalog
     IReadOnlyList<EventDispatchRemediationRuntimeState> GetByReason(string reason);
 
     /// <summary>
+    /// Summarizes remediation command-state entries recorded for one operator command reason.
+    /// </summary>
+    /// <param name="reason">The stable operator-facing command reason to summarize.</param>
+    /// <returns>The aggregate remediation command summary for the reason.</returns>
+    EventDispatchRemediationRuntimeSummary GetSummaryByReason(string reason);
+
+    /// <summary>
     /// Gets the remediation command-state entries recorded for one command outcome.
     /// </summary>
     /// <param name="outcome">The stable command outcome identifier to resolve.</param>
@@ -136,9 +185,23 @@ public interface IEventDispatchRemediationRuntimeCatalog
     IReadOnlyList<EventDispatchRemediationRuntimeState> GetByOutcome(string outcome);
 
     /// <summary>
+    /// Summarizes remediation command-state entries recorded for one command outcome.
+    /// </summary>
+    /// <param name="outcome">The stable command outcome identifier to summarize.</param>
+    /// <returns>The aggregate remediation command summary for the command outcome.</returns>
+    EventDispatchRemediationRuntimeSummary GetSummaryByOutcome(string outcome);
+
+    /// <summary>
     /// Gets the remediation command-state entries recorded for one dispatch-store outcome.
     /// </summary>
     /// <param name="dispatchOutcome">The stable dispatch-store outcome identifier to resolve.</param>
     /// <returns>The recorded command states for the dispatch outcome, ordered by observed time and command identifier.</returns>
     IReadOnlyList<EventDispatchRemediationRuntimeState> GetByDispatchOutcome(string dispatchOutcome);
+
+    /// <summary>
+    /// Summarizes remediation command-state entries recorded for one dispatch-store outcome.
+    /// </summary>
+    /// <param name="dispatchOutcome">The stable dispatch-store outcome identifier to summarize.</param>
+    /// <returns>The aggregate remediation command summary for the dispatch-store outcome.</returns>
+    EventDispatchRemediationRuntimeSummary GetSummaryByDispatchOutcome(string dispatchOutcome);
 }

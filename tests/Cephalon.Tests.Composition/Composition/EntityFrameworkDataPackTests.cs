@@ -1495,6 +1495,16 @@ public sealed class EntityFrameworkDataPackTests
             Assert.Equal(EventDispatchRemediationOutcomes.Reserved, summary.LastOutcome);
             Assert.Equal("cmd-journal-002-reserved", summary.OldestReservedCommandId);
             Assert.Equal(new DateTimeOffset(2026, 04, 14, 10, 1, 30, TimeSpan.Zero), summary.OldestReservedObservedAtUtc);
+            Assert.Equal(2, journal.GetSummaryByOutboxId("entity-framework-outbox").TotalCommandCount);
+            Assert.Equal(2, journal.GetSummaryByMessageId("evt-journal-001").TotalCommandCount);
+            Assert.Equal(2, journal.GetSummaryByChannelId("catalog-events").TotalCommandCount);
+            Assert.Equal(1, journal.GetSummaryByOperationId(EventDispatchRemediationOperationIds.RetryNow).AcceptedCount);
+            Assert.Equal(2, journal.GetSummaryByActorId("operator-journal").TotalCommandCount);
+            Assert.Equal(1, journal.GetSummaryByCorrelationId("corr-journal-command-002").ReservedCount);
+            Assert.Equal(1, journal.GetSummaryByReason("Reserve before mutation.").ReservedCount);
+            Assert.Equal(1, journal.GetSummaryByOutcome(EventDispatchRemediationOutcomes.Accepted).AcceptedCount);
+            Assert.Equal(1, journal.GetSummaryByDispatchOutcome("pending").ReservedCount);
+            Assert.False(journal.GetSummaryByMessageId("missing-message").HasCommands);
 
             var observationSummary = journal.GetSummaryByObservedAt(
                 new DateTimeOffset(2026, 04, 14, 10, 1, 0, TimeSpan.Zero),
@@ -1522,6 +1532,10 @@ public sealed class EntityFrameworkDataPackTests
             Assert.Equal("retained-reserved-summary-observed-utc-before-or-equal", commandCatalogEntry.Metadata["commandInDoubtSummaryPolicy"]);
             Assert.Equal("beforeUtc", commandCatalogEntry.Metadata["commandOldestInDoubtQuery"]);
             Assert.Equal("oldest-retained-reserved-observed-utc-before-or-equal", commandCatalogEntry.Metadata["commandOldestInDoubtPolicy"]);
+            Assert.Equal("/engine/event-dispatch-remediation-commands/messages/{messageId}/summary", commandCatalogEntry.Metadata["commandMessageSummaryRoute"]);
+            Assert.Equal("/engine/event-dispatch-remediation-commands/outcomes/{outcome}/summary", commandCatalogEntry.Metadata["commandOutcomeSummaryRoute"]);
+            Assert.Equal("retained-filter-server-side-aggregate", commandCatalogEntry.Metadata["commandFilterSummaryPolicy"]);
+            Assert.Equal("outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", commandCatalogEntry.Metadata["commandFilterSummaryRoutes"]);
 
             var processLocalJournal = Assert.IsAssignableFrom<IEventDispatchRemediationCommandJournal>(processLocalCatalog);
             var processLocalReservation = await processLocalJournal.ReserveAsync(new EventDispatchRemediationRequest(
@@ -1540,6 +1554,10 @@ public sealed class EntityFrameworkDataPackTests
             Assert.Equal(1, processLocalSummary.TotalCommandCount);
             Assert.Equal(1, processLocalSummary.ReservedCount);
             Assert.True(processLocalSummary.HasInDoubtCommands);
+            Assert.Equal(1, processLocalCatalog.GetSummaryByOutboxId("entity-framework-outbox").ReservedCount);
+            Assert.Equal(1, processLocalCatalog.GetSummaryByActorId("operator-journal").ReservedCount);
+            Assert.Equal(1, processLocalCatalog.GetSummaryByOutcome(EventDispatchRemediationOutcomes.Reserved).ReservedCount);
+            Assert.Equal(1, processLocalCatalog.GetSummaryByDispatchOutcome("pending").ReservedCount);
             Assert.Equal("cmd-process-local-reserved", Assert.Single(processLocalCatalog.GetInDoubt()).CommandId);
             Assert.Equal("cmd-process-local-reserved", processLocalCatalog.GetOldestInDoubtBefore(null)?.CommandId);
             Assert.Equal("cmd-process-local-reserved", Assert.Single(processLocalCatalog.GetInDoubtBefore(new DateTimeOffset(2026, 04, 14, 10, 4, 0, TimeSpan.Zero))).CommandId);
