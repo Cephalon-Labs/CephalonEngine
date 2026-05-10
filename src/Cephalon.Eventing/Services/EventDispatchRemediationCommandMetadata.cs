@@ -12,6 +12,7 @@ internal static class EventDispatchRemediationCommandMetadata
     internal const string CommandLatestRoute = "/engine/event-dispatch-remediation-commands/latest";
     internal const string CommandRetentionRoute = "/engine/event-dispatch-remediation-commands/retention";
     internal const string CommandInDoubtRoute = "/engine/event-dispatch-remediation-commands/in-doubt";
+    internal const string CommandInDoubtSummaryRoute = "/engine/event-dispatch-remediation-commands/in-doubt/summary";
     internal const string CommandOldestInDoubtRoute = "/engine/event-dispatch-remediation-commands/in-doubt/oldest";
     internal const string CommandOutboxRoute = "/engine/event-dispatch-remediation-commands/outboxes/{outboxId}";
     internal const string CommandObservationRoute = "/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}";
@@ -45,6 +46,7 @@ internal static class EventDispatchRemediationCommandMetadata
         metadata[$"{prefix}LatestRoute"] = CommandLatestRoute;
         metadata[$"{prefix}RetentionRoute"] = CommandRetentionRoute;
         metadata[$"{prefix}InDoubtRoute"] = CommandInDoubtRoute;
+        metadata[$"{prefix}InDoubtSummaryRoute"] = CommandInDoubtSummaryRoute;
         metadata[$"{prefix}OldestInDoubtRoute"] = CommandOldestInDoubtRoute;
         metadata[$"{prefix}OutboxRoute"] = CommandOutboxRoute;
         metadata[$"{prefix}ObservationRoute"] = CommandObservationRoute;
@@ -78,6 +80,9 @@ internal static class EventDispatchRemediationCommandMetadata
         metadata[$"{prefix}InDoubtCutoffPolicy"] = "inclusive-observed-utc-before-or-equal";
         metadata[$"{prefix}InDoubtDetailOrder"] = "newest-first";
         metadata[$"{prefix}InDoubtInvalidCutoff"] = "reject-invalid-date-time-offset";
+        metadata[$"{prefix}InDoubtSummaryQuery"] = "beforeUtc";
+        metadata[$"{prefix}InDoubtSummaryPolicy"] = "retained-reserved-summary-observed-utc-before-or-equal";
+        metadata[$"{prefix}InDoubtSummaryInvalidCutoff"] = "reject-invalid-date-time-offset";
         metadata[$"{prefix}OldestInDoubtQuery"] = "beforeUtc";
         metadata[$"{prefix}OldestInDoubtPolicy"] = "oldest-retained-reserved-observed-utc-before-or-equal";
         metadata[$"{prefix}OldestInDoubtInvalidCutoff"] = "reject-invalid-date-time-offset";

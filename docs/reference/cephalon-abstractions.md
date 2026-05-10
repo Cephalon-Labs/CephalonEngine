@@ -51711,6 +51711,21 @@ Returns: The in-doubt command states at or before the cutoff, ordered by descend
 Parameters:
 - `beforeObservedAtUtc`: The inclusive upper UTC observation cutoff, or `null` to return all in-doubt entries.
 
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getindoubtsummarybefore-system-nullable-system-datetimeoffset"></a>
+
+##### `GetInDoubtSummaryBefore`
+
+```csharp
+EventDispatchRemediationRuntimeSummary GetInDoubtSummaryBefore(DateTimeOffset? beforeObservedAtUtc)
+```
+
+Summarizes retained in-doubt remediation command-state entries observed at or before an optional UTC cutoff.
+
+Returns: The aggregate in-doubt command summary for retained records at or before the cutoff.
+
+Parameters:
+- `beforeObservedAtUtc`: The inclusive upper UTC observation cutoff, or `null` to summarize all retained in-doubt entries.
+
 <a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestindoubtbefore-system-nullable-system-datetimeoffset"></a>
 
 ##### `GetOldestInDoubtBefore`

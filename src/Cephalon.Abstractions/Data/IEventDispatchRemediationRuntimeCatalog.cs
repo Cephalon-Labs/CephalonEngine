@@ -46,6 +46,13 @@ public interface IEventDispatchRemediationRuntimeCatalog
     EventDispatchRemediationRuntimeState? GetOldestInDoubtBefore(DateTimeOffset? beforeObservedAtUtc);
 
     /// <summary>
+    /// Summarizes retained in-doubt remediation command-state entries observed at or before an optional UTC cutoff.
+    /// </summary>
+    /// <param name="beforeObservedAtUtc">The inclusive upper UTC observation cutoff, or <see langword="null" /> to summarize all retained in-doubt entries.</param>
+    /// <returns>The aggregate in-doubt command summary for retained records at or before the cutoff.</returns>
+    EventDispatchRemediationRuntimeSummary GetInDoubtSummaryBefore(DateTimeOffset? beforeObservedAtUtc);
+
+    /// <summary>
     /// Gets remediation command-state entries observed inside an optional UTC observation window.
     /// </summary>
     /// <param name="fromObservedAtUtc">The inclusive lower UTC observation bound, or <see langword="null" /> to leave the start open.</param>

@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T15:58:38.260254+00:00",
+  "GeneratedAtUtc": "2026-05-10T16:20:33.7536872+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -11156,7 +11156,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 4,
-        "Methods": 15
+        "Methods": 16
       }
     },
     {
@@ -62719,6 +62719,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getindoubtbefore-system-nullable-system-datetimeoffset",
       "Signature": "IReadOnlyList\u003CEventDispatchRemediationRuntimeState\u003E GetInDoubtBefore(DateTimeOffset? beforeObservedAtUtc)",
       "Summary": "Gets in-doubt remediation command-state entries observed at or before an optional UTC cutoff."
+    },
+    {
+      "DisplayName": "GetInDoubtSummaryBefore",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getindoubtsummarybefore-system-nullable-system-datetimeoffset",
+      "Signature": "EventDispatchRemediationRuntimeSummary GetInDoubtSummaryBefore(DateTimeOffset? beforeObservedAtUtc)",
+      "Summary": "Summarizes retained in-doubt remediation command-state entries observed at or before an optional UTC cutoff."
     },
     {
       "DisplayName": "GetManagedConnectorCommandExecutionHistory",

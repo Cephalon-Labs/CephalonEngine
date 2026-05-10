@@ -88,6 +88,13 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
         return entry is null ? null : CreateState(entry);
     }
 
+    public EventDispatchRemediationRuntimeSummary GetInDoubtSummaryBefore(DateTimeOffset? beforeObservedAtUtc)
+    {
+        return CreateSummary(ReadStates(entries => entries
+            .Where(entry => entry.Outcome == EventDispatchRemediationOutcomes.Reserved)
+            .Where(entry => beforeObservedAtUtc == null || entry.ObservedAtUtc <= beforeObservedAtUtc.Value)));
+    }
+
     public EventDispatchRemediationRuntimeState? GetByCommandId(string commandId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(commandId);

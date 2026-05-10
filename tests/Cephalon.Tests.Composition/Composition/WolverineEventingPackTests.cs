@@ -385,10 +385,13 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("/engine/event-dispatch-remediation-commands", remediationEntry.Metadata["operatorCommandListRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", remediationEntry.Metadata["operatorCommandResultRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/in-doubt", remediationEntry.Metadata["operatorCommandInDoubtRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/in-doubt/summary", remediationEntry.Metadata["operatorCommandInDoubtSummaryRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/in-doubt/oldest", remediationEntry.Metadata["operatorCommandOldestInDoubtRoute"]);
         Assert.Equal("beforeUtc", remediationEntry.Metadata["operatorCommandInDoubtQuery"]);
         Assert.Equal("inclusive-observed-utc-before-or-equal", remediationEntry.Metadata["operatorCommandInDoubtCutoffPolicy"]);
         Assert.Equal("newest-first", remediationEntry.Metadata["operatorCommandInDoubtDetailOrder"]);
+        Assert.Equal("beforeUtc", remediationEntry.Metadata["operatorCommandInDoubtSummaryQuery"]);
+        Assert.Equal("retained-reserved-summary-observed-utc-before-or-equal", remediationEntry.Metadata["operatorCommandInDoubtSummaryPolicy"]);
         Assert.Equal("beforeUtc", remediationEntry.Metadata["operatorCommandOldestInDoubtQuery"]);
         Assert.Equal("oldest-retained-reserved-observed-utc-before-or-equal", remediationEntry.Metadata["operatorCommandOldestInDoubtPolicy"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}", remediationEntry.Metadata["operatorCommandOutboxRoute"]);

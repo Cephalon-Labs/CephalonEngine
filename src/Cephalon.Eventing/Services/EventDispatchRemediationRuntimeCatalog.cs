@@ -115,6 +115,25 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         }
     }
 
+    public EventDispatchRemediationRuntimeSummary GetInDoubtSummaryBefore(DateTimeOffset? beforeObservedAtUtc)
+    {
+        lock (gate)
+        {
+            var oldestState = GetOldestState(states);
+            var matchingStates = states
+                .Where(state =>
+                    IsReservedState(state) &&
+                    (beforeObservedAtUtc is null || state.ObservedAtUtc <= beforeObservedAtUtc.Value))
+                .ToList();
+
+            return CreateSummary(
+                matchingStates,
+                droppedCommandCount,
+                summaryMayBeIncomplete: droppedCommandCount > 0,
+                oldestRetainedState: oldestState);
+        }
+    }
+
     private static EventDispatchRemediationRuntimeSummary CreateSummary(
         List<EventDispatchRemediationRuntimeState> recordedStates,
         long droppedCommandCount = 0,

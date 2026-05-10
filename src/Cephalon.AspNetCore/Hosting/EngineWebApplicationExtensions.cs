@@ -1033,6 +1033,18 @@ public static class EngineWebApplicationExtensions
 
                 return OkLimitedEventDispatchRemediationCommandStates(context, states);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/in-doubt/summary", "GetCephalonEventDispatchRemediationInDoubtCommandSummary", static context =>
+            {
+                if (!TryGetNullableDateTimeOffsetQueryValue(context, "beforeUtc", out var beforeUtc, out var error))
+                {
+                    return error;
+                }
+
+                var summary = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
+                    .GetInDoubtSummaryBefore(beforeUtc) ?? EventDispatchRemediationRuntimeSummary.Empty;
+
+                return Results.Ok(summary);
+            });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/in-doubt/oldest", "GetCephalonEventDispatchRemediationOldestInDoubtCommand", static context =>
             {
                 if (!TryGetNullableDateTimeOffsetQueryValue(context, "beforeUtc", out var beforeUtc, out var error))

@@ -523,6 +523,7 @@ When the same runtime registers `IEventDispatchRemediationRuntimeCatalog`, the h
 `/engine/event-dispatch-remediation-commands/latest`,
 `/engine/event-dispatch-remediation-commands/retention`,
 `/engine/event-dispatch-remediation-commands/in-doubt?beforeUtc={beforeUtc}`,
+`/engine/event-dispatch-remediation-commands/in-doubt/summary?beforeUtc={beforeUtc}`,
 `/engine/event-dispatch-remediation-commands/in-doubt/oldest?beforeUtc={beforeUtc}`,
 `/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}`,
 `/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}`,
@@ -536,7 +537,7 @@ When the same runtime registers `IEventDispatchRemediationRuntimeCatalog`, the h
 `/engine/event-dispatch-remediation-commands/reasons/{reason}`,
 `/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}`, and
 `/engine/event-dispatch-remediation-commands/outcomes/{outcome}` so operators can inspect accepted
-and rejected command results by summary, latest command, retention posture, in-doubt reservations, stale in-doubt cutoff, oldest stale in-doubt command, command id, outbox id,
+and rejected command results by summary, latest command, retention posture, in-doubt reservations, stale in-doubt summary, stale in-doubt cutoff, oldest stale in-doubt command, command id, outbox id,
 message id, channel id, operation id, actor id, correlation id, reason, dispatch outcome, command
 outcome, inclusive observed UTC window, or observed-window summary separately from the latest per-outbox dispatch state. A
 duplicate command id does not
@@ -554,10 +555,12 @@ retained cutoff.
 The list and filter routes that return command-result arrays also accept
 `?limit={positiveInteger}` so operator dashboards can read the newest retained records first without
 materializing the full bounded history; invalid, zero, or negative limits return `400`, and summary,
-latest, retention, oldest-in-doubt, or single-command reads keep their existing contracts.
+latest, retention, in-doubt-summary, oldest-in-doubt, or single-command reads keep their existing contracts.
 The `in-doubt` route accepts optional `beforeUtc={dateTimeOffset}` to return only retained
 reserved records observed at or before that inclusive UTC cutoff, and returns `400` for invalid
 cutoff values.
+The `in-doubt/summary` route accepts the same optional cutoff and returns retained reserved counts
+and oldest retained reserved posture directly, without using list paging or read-limit contracts.
 The `in-doubt/oldest` route accepts the same optional cutoff, returns the oldest retained matching
 reserved record directly, returns `404` when none is retained, and returns `400` for invalid cutoff
 values.
@@ -569,15 +572,17 @@ through `commandObservationWindowQuery`, `commandObservationWindowPolicy`,
 `commandObservationWindowInvalidBounds`, so host UIs can discover the route family from
 `/engine/capabilities`, `/engine/technology-surfaces`, or `/engine/snapshot`.
 Those metadata blocks also publish `commandListRoute`, `commandResultRoute`,
-`commandInDoubtRoute`, `commandOldestInDoubtRoute`, and `commandOutboxRoute`, with `operatorCommand*` equivalents on
+`commandInDoubtRoute`, `commandInDoubtSummaryRoute`, `commandOldestInDoubtRoute`, and `commandOutboxRoute`, with `operatorCommand*` equivalents on
 `event-dispatch-remediations`, so a host UI does not have to infer the root list, in-doubt list,
-command-id, or outbox drill-down URL from route names or docs. `commandInDoubtQuery`,
+in-doubt summary, command-id, or outbox drill-down URL from route names or docs. `commandInDoubtQuery`,
 `commandInDoubtCutoffPolicy`, `commandInDoubtDetailOrder`, and `commandInDoubtInvalidCutoff`
-describe the optional stale-reservation cutoff; `commandOldestInDoubtQuery`,
+describe the optional stale-reservation cutoff; `commandInDoubtSummaryQuery`,
+`commandInDoubtSummaryPolicy`, and `commandInDoubtSummaryInvalidCutoff` describe the direct stale
+reservation summary; `commandOldestInDoubtQuery`,
 `commandOldestInDoubtPolicy`, and `commandOldestInDoubtInvalidCutoff` describe the direct oldest
 stale-reservation read.
 The `event-dispatch-remediation-commands` technology surface also emits a catalog entry before any
-command result exists, with route, in-doubt route/cutoff, oldest in-doubt route/cutoff, retention, read-limit, observed-window, idempotency,
+command result exists, with route, in-doubt route/cutoff, in-doubt summary, oldest in-doubt route/cutoff, retention, read-limit, observed-window, idempotency,
 provider-neutral, and `wolverineRequired = false` metadata, so an ASP.NET Core operator UI can bind
 to the command-result route family without waiting for command history or installing Wolverine.
 
