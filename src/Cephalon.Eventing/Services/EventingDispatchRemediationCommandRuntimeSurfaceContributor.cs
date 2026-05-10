@@ -34,6 +34,7 @@ internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributo
             ["commandScope"] = "dispatch-store",
             ["commandSummaryRoute"] = "/engine/event-dispatch-remediation-commands/summary",
             ["commandLatestRoute"] = "/engine/event-dispatch-remediation-commands/latest",
+            ["commandRetentionRoute"] = "/engine/event-dispatch-remediation-commands/retention",
             ["commandOperationRoute"] = "/engine/event-dispatch-remediation-commands/operations/{operationId}",
             ["commandActorRoute"] = "/engine/event-dispatch-remediation-commands/actors/{actorId}",
             ["commandCorrelationRoute"] = "/engine/event-dispatch-remediation-commands/correlations/{correlationId}",

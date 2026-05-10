@@ -2237,6 +2237,10 @@ Current payload highlights:
 - `GET /engine/event-dispatch-remediation-commands/latest` returns the newest authoritative
   command-result record with full metadata and error payload, and duplicate command-id attempts do
   not replace that record
+- `GET /engine/event-dispatch-remediation-commands/retention` returns the bounded command-result
+  retention posture: history limit, retained count, total recorded count, dropped count, truncation
+  flag, oldest retained command, and latest retained command so operators know when process-local
+  history has discarded older command results
 - `GET /engine/event-dispatch-remediation-commands/{commandId}` narrows the command-result catalog
   to one command and returns `404` when no command has been recorded with that id
 - `GET /engine/event-dispatch-remediation-commands/outboxes/{outboxId}` filters command results by
@@ -2274,8 +2278,8 @@ Current note:
   `/engine/event-dispatch-remediation-commands/latest` after an uncertain client retry and use a new
   command id for a new action
 - remediation command-result history is bounded and process-local by default; it gives operators a
-  typed command-audit read model for the active host, not durable compliance retention or broker
-  replay ownership
+  typed command-audit read model for the active host; use the `/retention` readback to identify
+  truncation, but do not treat it as durable compliance retention or broker replay ownership
 - outbox-backed publication states use `accepted` to mean "staged for later dispatch"; dispatch
   completion and terminal dispatch failure remain separate event-dispatch runtime answers
 

@@ -46414,6 +46414,142 @@ string Outcome { get; set; }
 
 The stable command outcome identifier.
 
+<a id="type-cephalon-abstractions-data-eventdispatchremediationruntimeretention"></a>
+
+### `EventDispatchRemediationRuntimeRetention`
+
+Describes the bounded in-memory retention posture for event-dispatch remediation command history.
+
+#### Declaration
+```csharp
+public sealed class EventDispatchRemediationRuntimeRetention
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-eventdispatchremediationruntimeretention-ctor-system-int32-system-int32-system-int64-system-int64-system-boolean-system-string-system-nullable-system-datetimeoffset-system-string-system-nullable-system-datetimeoffset"></a>
+
+##### `EventDispatchRemediationRuntimeRetention`
+
+```csharp
+EventDispatchRemediationRuntimeRetention(int historyLimit, int retainedCommandCount, long totalRecordedCommandCount, long droppedCommandCount, bool truncated, string oldestRetainedCommandId, DateTimeOffset? oldestRetainedObservedAtUtc, string latestRetainedCommandId, DateTimeOffset? latestRetainedObservedAtUtc)
+```
+
+Creates a new remediation command-retention state.
+
+Parameters:
+- `historyLimit`: The configured maximum number of command results retained in memory.
+- `retainedCommandCount`: The number of command results currently retained in the bounded history.
+- `totalRecordedCommandCount`: The number of non-duplicate command results accepted into the bounded catalog since startup.
+- `droppedCommandCount`: The number of older command results dropped because the bounded history limit was exceeded.
+- `truncated`: A value indicating whether the retained history no longer contains every command result recorded since startup.
+- `oldestRetainedCommandId`: The oldest retained command identifier when one exists.
+- `oldestRetainedObservedAtUtc`: The UTC timestamp for the oldest retained command result when one exists.
+- `latestRetainedCommandId`: The newest retained command identifier when one exists.
+- `latestRetainedObservedAtUtc`: The UTC timestamp for the newest retained command result when one exists.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-droppedcommandcount"></a>
+
+##### `DroppedCommandCount`
+
+```csharp
+long DroppedCommandCount { get; }
+```
+
+Gets the number of older command results dropped because the bounded history limit was exceeded.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-empty"></a>
+
+##### `Empty`
+
+```csharp
+EventDispatchRemediationRuntimeRetention Empty { get; }
+```
+
+Gets an empty remediation command-retention state when no bounded command history is available.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-historylimit"></a>
+
+##### `HistoryLimit`
+
+```csharp
+int HistoryLimit { get; }
+```
+
+Gets the configured maximum number of command results retained in memory.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-latestretainedcommandid"></a>
+
+##### `LatestRetainedCommandId`
+
+```csharp
+string LatestRetainedCommandId { get; }
+```
+
+Gets the newest retained command identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-latestretainedobservedatutc"></a>
+
+##### `LatestRetainedObservedAtUtc`
+
+```csharp
+DateTimeOffset? LatestRetainedObservedAtUtc { get; }
+```
+
+Gets the UTC timestamp for the newest retained command result when one exists.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-oldestretainedcommandid"></a>
+
+##### `OldestRetainedCommandId`
+
+```csharp
+string OldestRetainedCommandId { get; }
+```
+
+Gets the oldest retained command identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-oldestretainedobservedatutc"></a>
+
+##### `OldestRetainedObservedAtUtc`
+
+```csharp
+DateTimeOffset? OldestRetainedObservedAtUtc { get; }
+```
+
+Gets the UTC timestamp for the oldest retained command result when one exists.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-retainedcommandcount"></a>
+
+##### `RetainedCommandCount`
+
+```csharp
+int RetainedCommandCount { get; }
+```
+
+Gets the number of command results currently retained in the bounded history.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-totalrecordedcommandcount"></a>
+
+##### `TotalRecordedCommandCount`
+
+```csharp
+long TotalRecordedCommandCount { get; }
+```
+
+Gets the number of non-duplicate command results accepted into the bounded catalog since startup.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-truncated"></a>
+
+##### `Truncated`
+
+```csharp
+bool Truncated { get; }
+```
+
+Gets a value indicating whether the retained history no longer contains every command result recorded since startup.
+
 <a id="type-cephalon-abstractions-data-eventdispatchremediationruntimestate"></a>
 
 ### `EventDispatchRemediationRuntimeState`
@@ -51009,6 +51145,16 @@ EventDispatchRemediationRuntimeState Latest { get; }
 ```
 
 Gets the most recently observed remediation command-state entry visible to the current runtime.
+
+<a id="member-p-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-retention"></a>
+
+##### `Retention`
+
+```csharp
+EventDispatchRemediationRuntimeRetention Retention { get; }
+```
+
+Gets the bounded remediation command-history retention posture visible to the current runtime.
 
 <a id="member-p-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-states"></a>
 

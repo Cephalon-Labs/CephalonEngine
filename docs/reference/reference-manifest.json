@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T05:02:52.9622454+00:00",
+  "GeneratedAtUtc": "2026-05-10T07:00:10.9394128+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 21,
-      "TypeCount": 559
+      "TypeCount": 560
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -682,7 +682,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 259
+      "TypeCount": 260
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -8280,6 +8280,21 @@
       }
     },
     {
+      "DisplayName": "EventDispatchRemediationRuntimeRetention",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-eventdispatchremediationruntimeretention",
+      "Declaration": "public sealed class EventDispatchRemediationRuntimeRetention",
+      "Summary": "Describes the bounded in-memory retention posture for event-dispatch remediation command history.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 10,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "EventDispatchRemediationRuntimeState",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -11065,7 +11080,7 @@
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
-        "Properties": 3,
+        "Properties": 4,
         "Methods": 10
       }
     },
@@ -48793,6 +48808,17 @@
       "Summary": "Gets or sets the base URI of the Droplet metadata-service endpoint."
     },
     {
+      "DisplayName": "DroppedCommandCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeRetention",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-droppedcommandcount",
+      "Signature": "long DroppedCommandCount { get; }",
+      "Summary": "Gets the number of older command results dropped because the bounded history limit was exceeded."
+    },
+    {
       "DisplayName": "DryRun",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeSources",
@@ -50166,6 +50192,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-engineoptions-empty",
       "Signature": "EngineOptions Empty { get; }",
       "Summary": "Gets an empty options instance with no explicit overrides."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeRetention",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-empty",
+      "Signature": "EventDispatchRemediationRuntimeRetention Empty { get; }",
+      "Summary": "Gets an empty remediation command-retention state when no bounded command history is available."
     },
     {
       "DisplayName": "Empty",
@@ -52751,6 +52788,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchremediationresult-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "EventDispatchRemediationResult(string CommandId, string OutboxId, string MessageId, string ChannelId, string OperationId, string Outcome, string DispatchOutcome, DateTimeOffset ObservedAtUtc, string Error, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
       "Summary": "Describes the operator-facing result of one event-dispatch remediation command."
+    },
+    {
+      "DisplayName": "EventDispatchRemediationRuntimeRetention",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeRetention",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchremediationruntimeretention-ctor-system-int32-system-int32-system-int64-system-int64-system-boolean-system-string-system-nullable-system-datetimeoffset-system-string-system-nullable-system-datetimeoffset",
+      "Signature": "EventDispatchRemediationRuntimeRetention(int historyLimit, int retainedCommandCount, long totalRecordedCommandCount, long droppedCommandCount, bool truncated, string oldestRetainedCommandId, DateTimeOffset? oldestRetainedObservedAtUtc, string latestRetainedCommandId, DateTimeOffset? latestRetainedObservedAtUtc)",
+      "Summary": "Creates a new remediation command-retention state."
     },
     {
       "DisplayName": "EventDispatchRemediationRuntimeState",
@@ -66602,6 +66650,17 @@
       "Summary": "Gets the audit-history database target."
     },
     {
+      "DisplayName": "HistoryLimit",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeRetention",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-historylimit",
+      "Signature": "int HistoryLimit { get; }",
+      "Summary": "Gets the configured maximum number of command results retained in memory."
+    },
+    {
       "DisplayName": "HistoryTruncated",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories",
@@ -78669,6 +78728,28 @@
       "Summary": "Gets the latest Cephalon record timestamp in the bucket."
     },
     {
+      "DisplayName": "LatestRetainedCommandId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeRetention",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-latestretainedcommandid",
+      "Signature": "string LatestRetainedCommandId { get; }",
+      "Summary": "Gets the newest retained command identifier when one exists."
+    },
+    {
+      "DisplayName": "LatestRetainedObservedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeRetention",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-latestretainedobservedatutc",
+      "Signature": "DateTimeOffset? LatestRetainedObservedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp for the newest retained command result when one exists."
+    },
+    {
       "DisplayName": "LatestRun",
       "Category": "Properties",
       "DeclaringTypeName": "ITenantInvitationDeliveryRunCatalog",
@@ -89863,6 +89944,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-oldestretainedattemptid",
       "Signature": "string OldestRetainedAttemptId { get; set; }",
       "Summary": "Gets the stable oldest retained command-execution attempt identifier when one exists."
+    },
+    {
+      "DisplayName": "OldestRetainedCommandId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeRetention",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-oldestretainedcommandid",
+      "Signature": "string OldestRetainedCommandId { get; }",
+      "Summary": "Gets the oldest retained command identifier when one exists."
+    },
+    {
+      "DisplayName": "OldestRetainedObservedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeRetention",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-oldestretainedobservedatutc",
+      "Signature": "DateTimeOffset? OldestRetainedObservedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp for the oldest retained command result when one exists."
     },
     {
       "DisplayName": "OldestRetainedRecordedAtUtc",
@@ -108660,6 +108763,17 @@
       "Summary": "Gets the ordered candidate identifiers that survived authoring-policy enforcement."
     },
     {
+      "DisplayName": "RetainedCommandCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeRetention",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-retainedcommandcount",
+      "Signature": "int RetainedCommandCount { get; }",
+      "Summary": "Gets the number of command results currently retained in the bounded history."
+    },
+    {
       "DisplayName": "RetainedEntryCount",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
@@ -108724,6 +108838,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-audithistorysettings-retention",
       "Signature": "AuditHistoryRetentionSettings Retention { get; }",
       "Summary": "Gets the configured retention settings for durable history."
+    },
+    {
+      "DisplayName": "Retention",
+      "Category": "Properties",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-retention",
+      "Signature": "EventDispatchRemediationRuntimeRetention Retention { get; }",
+      "Summary": "Gets the bounded remediation command-history retention posture visible to the current runtime."
     },
     {
       "DisplayName": "Retried",
@@ -124530,6 +124655,17 @@
       "Summary": "The total number of outbox messages produced so far."
     },
     {
+      "DisplayName": "TotalRecordedCommandCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeRetention",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-totalrecordedcommandcount",
+      "Signature": "long TotalRecordedCommandCount { get; }",
+      "Summary": "Gets the number of non-duplicate command results accepted into the bounded catalog since startup."
+    },
+    {
       "DisplayName": "TotalRecordedEntryCount",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
@@ -125243,6 +125379,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstates-truncated",
       "Signature": "const string Truncated",
       "Summary": "The command journal currently retains only the newest bounded command history because older entries were truncated."
+    },
+    {
+      "DisplayName": "Truncated",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeRetention",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-truncated",
+      "Signature": "bool Truncated { get; }",
+      "Summary": "Gets a value indicating whether the retained history no longer contains every command result recorded since startup."
     },
     {
       "DisplayName": "TruncatedHistory",

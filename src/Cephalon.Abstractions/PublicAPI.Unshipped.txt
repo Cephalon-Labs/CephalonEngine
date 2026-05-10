@@ -1,5 +1,16 @@
 #nullable enable
 const Cephalon.Abstractions.Data.EventDispatchRemediationOperationIds.DeadLetter = "dead-letter" -> string!
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.DroppedCommandCount.get -> long
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.EventDispatchRemediationRuntimeRetention(int historyLimit = 0, int retainedCommandCount = 0, long totalRecordedCommandCount = 0, long droppedCommandCount = 0, bool truncated = false, string? oldestRetainedCommandId = null, System.DateTimeOffset? oldestRetainedObservedAtUtc = null, string? latestRetainedCommandId = null, System.DateTimeOffset? latestRetainedObservedAtUtc = null) -> void
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.HistoryLimit.get -> int
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.LatestRetainedCommandId.get -> string?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.LatestRetainedObservedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.OldestRetainedCommandId.get -> string?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.OldestRetainedObservedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.RetainedCommandCount.get -> int
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.TotalRecordedCommandCount.get -> long
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.Truncated.get -> bool
 Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary
 Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.AcceptedCount.get -> int
 Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.DuplicateCommandCount.get -> int
@@ -22,5 +33,7 @@ Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByMessageI
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByOperationId(string! operationId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByReason(string! reason) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.Latest.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.Retention.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.Summary.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
+static Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.Empty.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention!
 static Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.Empty.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!

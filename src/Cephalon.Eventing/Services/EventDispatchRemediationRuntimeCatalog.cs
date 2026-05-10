@@ -13,6 +13,8 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
     private readonly Lock gate = new();
     private readonly Dictionary<string, EventDispatchRemediationRuntimeState> statesByCommandId = new(StringComparer.OrdinalIgnoreCase);
     private readonly List<EventDispatchRemediationRuntimeState> states = [];
+    private long totalRecordedCommandCount;
+    private long droppedCommandCount;
 
     public EventDispatchRemediationRuntimeSummary Summary
     {
@@ -21,6 +23,21 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
             lock (gate)
             {
                 return CreateSummary(states);
+            }
+        }
+    }
+
+    public EventDispatchRemediationRuntimeRetention Retention
+    {
+        get
+        {
+            lock (gate)
+            {
+                return CreateRetention(
+                    states,
+                    options.RemediationCommandHistoryLimit,
+                    totalRecordedCommandCount,
+                    droppedCommandCount);
             }
         }
     }
@@ -76,10 +93,48 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
             lastObservedAtUtc: lastState.ObservedAtUtc);
     }
 
+    private static EventDispatchRemediationRuntimeRetention CreateRetention(
+        List<EventDispatchRemediationRuntimeState> recordedStates,
+        int historyLimit,
+        long totalRecordedCommandCount,
+        long droppedCommandCount)
+    {
+        if (recordedStates.Count == 0)
+        {
+            return new EventDispatchRemediationRuntimeRetention(
+                historyLimit: historyLimit,
+                totalRecordedCommandCount: totalRecordedCommandCount,
+                droppedCommandCount: droppedCommandCount,
+                truncated: droppedCommandCount > 0);
+        }
+
+        var oldestState = GetOldestState(recordedStates)!;
+        var latestState = GetLatestState(recordedStates)!;
+
+        return new EventDispatchRemediationRuntimeRetention(
+            historyLimit: historyLimit,
+            retainedCommandCount: recordedStates.Count,
+            totalRecordedCommandCount: totalRecordedCommandCount,
+            droppedCommandCount: droppedCommandCount,
+            truncated: droppedCommandCount > 0,
+            oldestRetainedCommandId: oldestState.CommandId,
+            oldestRetainedObservedAtUtc: oldestState.ObservedAtUtc,
+            latestRetainedCommandId: latestState.CommandId,
+            latestRetainedObservedAtUtc: latestState.ObservedAtUtc);
+    }
+
     private static EventDispatchRemediationRuntimeState? GetLatestState(List<EventDispatchRemediationRuntimeState> recordedStates)
     {
         return recordedStates
             .OrderByDescending(static state => state.ObservedAtUtc)
+            .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault();
+    }
+
+    private static EventDispatchRemediationRuntimeState? GetOldestState(List<EventDispatchRemediationRuntimeState> recordedStates)
+    {
+        return recordedStates
+            .OrderBy(static state => state.ObservedAtUtc)
             .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
             .FirstOrDefault();
     }
@@ -261,9 +316,14 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            if (statesByCommandId.Remove(state.CommandId))
+            var replacedExisting = statesByCommandId.Remove(state.CommandId);
+            if (replacedExisting)
             {
                 states.RemoveAll(existing => string.Equals(existing.CommandId, state.CommandId, StringComparison.OrdinalIgnoreCase));
+            }
+            else
+            {
+                totalRecordedCommandCount++;
             }
 
             states.Add(state);
@@ -271,12 +331,10 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
             while (states.Count > limit)
             {
-                var oldest = states
-                    .OrderBy(static existing => existing.ObservedAtUtc)
-                    .ThenBy(static existing => existing.CommandId, StringComparer.OrdinalIgnoreCase)
-                    .First();
+                var oldest = GetOldestState(states)!;
                 states.Remove(oldest);
                 statesByCommandId.Remove(oldest.CommandId);
+                droppedCommandCount++;
             }
         }
     }

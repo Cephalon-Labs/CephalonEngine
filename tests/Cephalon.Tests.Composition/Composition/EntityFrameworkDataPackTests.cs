@@ -1130,6 +1130,110 @@ public sealed class EntityFrameworkDataPackTests
     }
 
     [Fact]
+    public async Task AddEventingReportsEventDispatchRemediationCommandRetentionTruncation()
+    {
+        var databaseName = $"cephalon-data-ef-event-dispatch-command-retention-{Guid.NewGuid():N}";
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"],
+                data: new DataSettings(
+                    provider: "EntityFramework",
+                    outboxEnabled: true),
+                messaging: new MessagingSettings(provider: "InMemoryChannels")));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddEventing(options =>
+            {
+                options.RemediationCommandHistoryLimit = 2;
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "catalog-events",
+                    displayName: "Catalog Events",
+                    description: "Catalog integration events."));
+            });
+            engine.AddEntityFrameworkData<OutboxCatalogDbContext>(
+                options => options.UseInMemoryDatabase(databaseName),
+                configure: options => options.RegisterOutbox = true);
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        using (var publicationScope = provider.CreateScope())
+        {
+            var publisher = publicationScope.ServiceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(new EventPublication(
+                id: "evt-retention-001",
+                channelId: "catalog-events",
+                eventType: "catalog.item.retention",
+                payload: "{\"id\":\"item-retention-001\"}",
+                occurredAtUtc: new DateTimeOffset(2026, 04, 13, 10, 0, 0, TimeSpan.Zero),
+                correlationId: "corr-retention-001"));
+        }
+
+        using (var commandScope = provider.CreateScope())
+        {
+            var dispatcher = commandScope.ServiceProvider.GetRequiredService<IEventDispatchRemediationDispatcher>();
+            var retryResult = await dispatcher.DispatchAsync(new EventDispatchRemediationRequest(
+                outboxId: "entity-framework-outbox",
+                messageId: "evt-retention-001",
+                channelId: "catalog-events",
+                operationId: EventDispatchRemediationOperationIds.RetryNow,
+                commandId: "cmd-retention-001-retry",
+                requestedAtUtc: new DateTimeOffset(2026, 04, 13, 10, 1, 0, TimeSpan.Zero),
+                reason: "First retained candidate.",
+                actorId: "operator-retention",
+                correlationId: "corr-retention-command-001"));
+            var deadLetterResult = await dispatcher.DispatchAsync(new EventDispatchRemediationRequest(
+                outboxId: "entity-framework-outbox",
+                messageId: "evt-retention-001",
+                channelId: "catalog-events",
+                operationId: EventDispatchRemediationOperationIds.DeadLetter,
+                commandId: "cmd-retention-002-dead-letter",
+                requestedAtUtc: new DateTimeOffset(2026, 04, 13, 10, 2, 0, TimeSpan.Zero),
+                reason: "Retained oldest after truncation.",
+                actorId: "operator-retention",
+                correlationId: "corr-retention-command-002"));
+            var rejectedResult = await dispatcher.DispatchAsync(new EventDispatchRemediationRequest(
+                outboxId: "entity-framework-outbox",
+                messageId: "evt-retention-001",
+                channelId: "catalog-events",
+                operationId: EventDispatchRemediationOperationIds.RetryLater,
+                commandId: "cmd-retention-003-retry-later-rejected",
+                requestedAtUtc: new DateTimeOffset(2026, 04, 13, 10, 3, 0, TimeSpan.Zero),
+                reason: "Missing next attempt should still be retained.",
+                actorId: "operator-retention",
+                correlationId: "corr-retention-command-003"));
+
+            Assert.Equal(EventDispatchRemediationOutcomes.Accepted, retryResult.Outcome);
+            Assert.Equal(EventDispatchRemediationOutcomes.Accepted, deadLetterResult.Outcome);
+            Assert.Equal(EventDispatchRemediationOutcomes.Rejected, rejectedResult.Outcome);
+        }
+
+        var remediationCommandCatalog = provider.GetRequiredService<IEventDispatchRemediationRuntimeCatalog>();
+        var retention = remediationCommandCatalog.Retention;
+
+        Assert.Equal(2, retention.HistoryLimit);
+        Assert.Equal(2, retention.RetainedCommandCount);
+        Assert.Equal(3, retention.TotalRecordedCommandCount);
+        Assert.Equal(1, retention.DroppedCommandCount);
+        Assert.True(retention.Truncated);
+        Assert.Equal("cmd-retention-002-dead-letter", retention.OldestRetainedCommandId);
+        Assert.Equal(new DateTimeOffset(2026, 04, 13, 10, 2, 0, TimeSpan.Zero), retention.OldestRetainedObservedAtUtc);
+        Assert.Equal("cmd-retention-003-retry-later-rejected", retention.LatestRetainedCommandId);
+        Assert.Equal(new DateTimeOffset(2026, 04, 13, 10, 3, 0, TimeSpan.Zero), retention.LatestRetainedObservedAtUtc);
+        Assert.Null(remediationCommandCatalog.GetByCommandId("cmd-retention-001-retry"));
+        Assert.Equal(
+            ["cmd-retention-003-retry-later-rejected", "cmd-retention-002-dead-letter"],
+            remediationCommandCatalog.States.Select(state => state.CommandId).ToArray());
+        Assert.Equal(2, remediationCommandCatalog.Summary.TotalCommandCount);
+        Assert.Equal(1, remediationCommandCatalog.Summary.AcceptedCount);
+        Assert.Equal(1, remediationCommandCatalog.Summary.RejectedCount);
+        Assert.Equal(1, remediationCommandCatalog.Summary.ErrorCount);
+    }
+
+    [Fact]
     public async Task AddEventingCanReportDispatchRuntimeStateThroughEventingTechnologySurfaces()
     {
         var databaseName = $"cephalon-data-ef-event-dispatch-runtime-{Guid.NewGuid():N}";
@@ -1248,6 +1352,7 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", remediationEntry.Metadata["operatorCommandResultRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/summary", remediationEntry.Metadata["operatorCommandSummaryRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/latest", remediationEntry.Metadata["operatorCommandLatestRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/retention", remediationEntry.Metadata["operatorCommandRetentionRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/operations/{operationId}", remediationEntry.Metadata["operatorCommandOperationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/actors/{actorId}", remediationEntry.Metadata["operatorCommandActorRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/correlations/{correlationId}", remediationEntry.Metadata["operatorCommandCorrelationRoute"]);
@@ -1387,6 +1492,13 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal(EventDispatchExecutionOutcomes.RetryScheduled, remediationCommandCatalog.Summary.LastDispatchOutcome);
         Assert.True(remediationCommandCatalog.Summary.HasCommands);
         Assert.False(remediationCommandCatalog.Summary.HasFailures);
+        Assert.Equal(256, remediationCommandCatalog.Retention.HistoryLimit);
+        Assert.Equal(1, remediationCommandCatalog.Retention.RetainedCommandCount);
+        Assert.Equal(1, remediationCommandCatalog.Retention.TotalRecordedCommandCount);
+        Assert.Equal(0, remediationCommandCatalog.Retention.DroppedCommandCount);
+        Assert.False(remediationCommandCatalog.Retention.Truncated);
+        Assert.Equal("cmd-evt-020-retry", remediationCommandCatalog.Retention.OldestRetainedCommandId);
+        Assert.Equal("cmd-evt-020-retry", remediationCommandCatalog.Retention.LatestRetainedCommandId);
         eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
         var remediationCommandSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatch-remediation-commands");
         var remediationCommandEntry = Assert.Single(remediationCommandSurface.Entries, entry => entry.Id == "cmd-evt-020-retry");
@@ -1395,6 +1507,7 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("retry-scheduled", remediationCommandEntry.Metadata["dispatchOutcome"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/summary", remediationCommandEntry.Metadata["commandSummaryRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/latest", remediationCommandEntry.Metadata["commandLatestRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/retention", remediationCommandEntry.Metadata["commandRetentionRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/operations/{operationId}", remediationCommandEntry.Metadata["commandOperationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/actors/{actorId}", remediationCommandEntry.Metadata["commandActorRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/correlations/{correlationId}", remediationCommandEntry.Metadata["commandCorrelationRoute"]);

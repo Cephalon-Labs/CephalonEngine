@@ -1011,6 +1011,14 @@ public static class EngineWebApplicationExtensions
 
                 return state is null ? Results.NotFound() : Results.Ok(state);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/retention", "GetCephalonEventDispatchRemediationCommandRetention", static context =>
+            {
+                var retention = context.RequestServices
+                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
+                    .Retention ?? EventDispatchRemediationRuntimeRetention.Empty;
+
+                return Results.Ok(retention);
+            });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/outboxes/{outboxId}", "GetCephalonEventDispatchRemediationCommandsByOutbox", static context =>
             {
                 var outboxId = GetRouteValue(context, "outboxId");

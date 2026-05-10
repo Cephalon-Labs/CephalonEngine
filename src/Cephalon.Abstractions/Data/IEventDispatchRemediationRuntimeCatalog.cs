@@ -11,6 +11,11 @@ public interface IEventDispatchRemediationRuntimeCatalog
     EventDispatchRemediationRuntimeSummary Summary { get; }
 
     /// <summary>
+    /// Gets the bounded remediation command-history retention posture visible to the current runtime.
+    /// </summary>
+    EventDispatchRemediationRuntimeRetention Retention { get; }
+
+    /// <summary>
     /// Gets the most recently observed remediation command-state entry visible to the current runtime.
     /// </summary>
     EventDispatchRemediationRuntimeState? Latest { get; }

@@ -8034,6 +8034,9 @@ Browse the published API surface by public member.
 - [DropletMetadataEndpoint](cephalon-observability-digitalocean.md#member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-dropletmetadataendpoint): `Properties` on `DigitalOceanTelemetryExportOptions` in `Cephalon.Observability.DigitalOcean.Configuration` (`Cephalon.Observability.DigitalOcean`) [Browse](browse.html?q=DropletMetadataEndpoint&assembly=Cephalon.Observability.DigitalOcean&namespace=Cephalon.Observability.DigitalOcean.Configuration&scope=members)
   - Gets or sets the base URI of the Droplet metadata-service endpoint.
   - `string DropletMetadataEndpoint { get; set; }`
+- [DroppedCommandCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-droppedcommandcount): `Properties` on `EventDispatchRemediationRuntimeRetention` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DroppedCommandCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of older command results dropped because the bounded history limit was exceeded.
+  - `long DroppedCommandCount { get; }`
 - [DryRun](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandenvelopesources-dryrun): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DryRun&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The command envelope is primarily grounded in shared dry-run truth.
   - `const string DryRun`
@@ -8412,6 +8415,9 @@ Browse the published API surface by public member.
 - [Empty](cephalon-engine.md#member-p-cephalon-engine-configuration-engineoptions-empty): `Properties` on `EngineOptions` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Empty&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets an empty options instance with no explicit overrides.
   - `EngineOptions Empty { get; }`
+- [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-empty): `Properties` on `EventDispatchRemediationRuntimeRetention` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets an empty remediation command-retention state when no bounded command history is available.
+  - `EventDispatchRemediationRuntimeRetention Empty { get; }`
 - [Empty](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-empty): `Properties` on `EventDispatchRemediationRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Empty&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets an empty remediation command summary when no command results have been recorded.
   - `EventDispatchRemediationRuntimeSummary Empty { get; }`
@@ -9117,6 +9123,9 @@ Browse the published API surface by public member.
 - [EventDispatchRemediationResult](cephalon-abstractions.md#member-m-cephalon-abstractions-data-eventdispatchremediationresult-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventDispatchRemediationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventDispatchRemediationResult&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Describes the operator-facing result of one event-dispatch remediation command.
   - `EventDispatchRemediationResult(string CommandId, string OutboxId, string MessageId, string ChannelId, string OperationId, string Outcome, string DispatchOutcome, DateTimeOffset ObservedAtUtc, string Error, IReadOnlyDictionary<string, string> Metadata)`
+- [EventDispatchRemediationRuntimeRetention](cephalon-abstractions.md#member-m-cephalon-abstractions-data-eventdispatchremediationruntimeretention-ctor-system-int32-system-int32-system-int64-system-int64-system-boolean-system-string-system-nullable-system-datetimeoffset-system-string-system-nullable-system-datetimeoffset): `Constructors` on `EventDispatchRemediationRuntimeRetention` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventDispatchRemediationRuntimeRetention&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Creates a new remediation command-retention state.
+  - `EventDispatchRemediationRuntimeRetention(int historyLimit, int retainedCommandCount, long totalRecordedCommandCount, long droppedCommandCount, bool truncated, string oldestRetainedCommandId, DateTimeOffset? oldestRetainedObservedAtUtc, string latestRetainedCommandId, DateTimeOffset? latestRetainedObservedAtUtc)`
 - [EventDispatchRemediationRuntimeState](cephalon-abstractions.md#member-m-cephalon-abstractions-data-eventdispatchremediationruntimestate-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventDispatchRemediationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventDispatchRemediationRuntimeState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Describes the operator-facing runtime state recorded for one event-dispatch remediation command.
   - `EventDispatchRemediationRuntimeState(string CommandId, string OutboxId, string MessageId, string ChannelId, string OperationId, string Outcome, string DispatchOutcome, DateTimeOffset ObservedAtUtc, string Error, IReadOnlyDictionary<string, string> Metadata)`
@@ -12903,6 +12912,9 @@ Browse the published API surface by public member.
 - [History](cephalon-engine.md#member-p-cephalon-engine-configuration-databasetopologysettings-history): `Properties` on `DatabaseTopologySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=History&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the audit-history database target.
   - `DatabaseTargetSettings History { get; }`
+- [HistoryLimit](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-historylimit): `Properties` on `EventDispatchRemediationRuntimeRetention` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HistoryLimit&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the configured maximum number of command results retained in memory.
+  - `int HistoryLimit { get; }`
 - [HistoryTruncated](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalcategories-historytruncated): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HistoryTruncated&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The command journal has truncated older entries beyond the current bounded retention window.
   - `const string HistoryTruncated`
@@ -16206,6 +16218,12 @@ Browse the published API surface by public member.
 - [LatestRecordedAtUtc](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationsummarydescriptor-latestrecordedatutc): `Properties` on `TenantInvitationDeliveryStatusObservationSummaryDescriptor` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=LatestRecordedAtUtc&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Gets the latest Cephalon record timestamp in the bucket.
   - `DateTimeOffset LatestRecordedAtUtc { get; }`
+- [LatestRetainedCommandId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-latestretainedcommandid): `Properties` on `EventDispatchRemediationRuntimeRetention` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestRetainedCommandId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the newest retained command identifier when one exists.
+  - `string LatestRetainedCommandId { get; }`
+- [LatestRetainedObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-latestretainedobservedatutc): `Properties` on `EventDispatchRemediationRuntimeRetention` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestRetainedObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the UTC timestamp for the newest retained command result when one exists.
+  - `DateTimeOffset? LatestRetainedObservedAtUtc { get; }`
 - [LatestRun](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-itenantinvitationdeliveryruncatalog-latestrun): `Properties` on `ITenantInvitationDeliveryRunCatalog` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=LatestRun&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the latest recorded tenant invitation delivery dispatch attempt when one exists.
   - `TenantInvitationDeliveryRunDescriptor LatestRun { get; }`
@@ -19267,6 +19285,12 @@ Browse the published API surface by public member.
 - [OldestRetainedAttemptId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-oldestretainedattemptid): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OldestRetainedAttemptId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable oldest retained command-execution attempt identifier when one exists.
   - `string OldestRetainedAttemptId { get; set; }`
+- [OldestRetainedCommandId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-oldestretainedcommandid): `Properties` on `EventDispatchRemediationRuntimeRetention` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OldestRetainedCommandId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the oldest retained command identifier when one exists.
+  - `string OldestRetainedCommandId { get; }`
+- [OldestRetainedObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-oldestretainedobservedatutc): `Properties` on `EventDispatchRemediationRuntimeRetention` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OldestRetainedObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the UTC timestamp for the oldest retained command result when one exists.
+  - `DateTimeOffset? OldestRetainedObservedAtUtc { get; }`
 - [OldestRetainedRecordedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-oldestretainedrecordedatutc): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OldestRetainedRecordedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the timestamp when Cephalon recorded the oldest retained command-execution outcome currently visible in the bounded journal.
   - `DateTimeOffset? OldestRetainedRecordedAtUtc { get; set; }`
@@ -24399,6 +24423,9 @@ Browse the published API surface by public member.
 - [RetainedCandidateIds](cephalon-abstractions.md#member-p-cephalon-abstractions-transports-restendpointauthoringpolicydescriptor-retainedcandidateids): `Properties` on `RestEndpointAuthoringPolicyDescriptor` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetainedCandidateIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Gets the ordered candidate identifiers that survived authoring-policy enforcement.
   - `IReadOnlyList<string> RetainedCandidateIds { get; }`
+- [RetainedCommandCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-retainedcommandcount): `Properties` on `EventDispatchRemediationRuntimeRetention` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetainedCommandCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of command results currently retained in the bounded history.
+  - `int RetainedCommandCount { get; }`
 - [RetainedEntryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-retainedentrycount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetainedEntryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of bounded journal entries currently retained for the execution runtime.
   - `int RetainedEntryCount { get; set; }`
@@ -24417,6 +24444,9 @@ Browse the published API surface by public member.
 - [Retention](cephalon-engine.md#member-p-cephalon-engine-configuration-audithistorysettings-retention): `Properties` on `AuditHistorySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Retention&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the configured retention settings for durable history.
   - `AuditHistoryRetentionSettings Retention { get; }`
+- [Retention](cephalon-abstractions.md#member-p-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-retention): `Properties` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Retention&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the bounded remediation command-history retention posture visible to the current runtime.
+  - `EventDispatchRemediationRuntimeRetention Retention { get; }`
 - [Retried](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryoutcomes-retried): `Fields` on `TenantInvitationDeliveryRetryOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Retried&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Every attempted retry entry dispatched successfully.
   - `const string Retried`
@@ -28731,6 +28761,9 @@ Browse the published API surface by public member.
 - [TotalProducedMessageCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureruntimestate-totalproducedmessagecount): `Properties` on `CdcCaptureRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalProducedMessageCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The total number of outbox messages produced so far.
   - `long TotalProducedMessageCount { get; set; }`
+- [TotalRecordedCommandCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-totalrecordedcommandcount): `Properties` on `EventDispatchRemediationRuntimeRetention` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalRecordedCommandCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the number of non-duplicate command results accepted into the bounded catalog since startup.
+  - `long TotalRecordedCommandCount { get; }`
 - [TotalRecordedEntryCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-totalrecordedentrycount): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalRecordedEntryCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the total number of command-execution outcomes currently visible to the durability answer.
   - `int TotalRecordedEntryCount { get; set; }`
@@ -28926,6 +28959,9 @@ Browse the published API surface by public member.
 - [Truncated](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstates-truncated): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Truncated&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The command journal currently retains only the newest bounded command history because older entries were truncated.
   - `const string Truncated`
+- [Truncated](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-truncated): `Properties` on `EventDispatchRemediationRuntimeRetention` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Truncated&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets a value indicating whether the retained history no longer contains every command result recorded since startup.
+  - `bool Truncated { get; }`
 - [TruncatedHistory](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitycategories-truncatedhistory): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TruncatedHistory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The command journal currently exposes truncated retained history.
   - `const string TruncatedHistory`

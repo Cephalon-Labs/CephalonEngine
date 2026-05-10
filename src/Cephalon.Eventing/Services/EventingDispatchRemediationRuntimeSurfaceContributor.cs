@@ -15,6 +15,7 @@ internal sealed class EventingDispatchRemediationRuntimeSurfaceContributor(
     private const string CommandResultRoute = "/engine/event-dispatch-remediation-commands/{commandId}";
     private const string CommandSummaryRoute = "/engine/event-dispatch-remediation-commands/summary";
     private const string CommandLatestRoute = "/engine/event-dispatch-remediation-commands/latest";
+    private const string CommandRetentionRoute = "/engine/event-dispatch-remediation-commands/retention";
     private const string CommandOperationRoute = "/engine/event-dispatch-remediation-commands/operations/{operationId}";
     private const string CommandActorRoute = "/engine/event-dispatch-remediation-commands/actors/{actorId}";
     private const string CommandCorrelationRoute = "/engine/event-dispatch-remediation-commands/correlations/{correlationId}";
@@ -80,6 +81,7 @@ internal sealed class EventingDispatchRemediationRuntimeSurfaceContributor(
             metadata["operatorCommandResultRoute"] = CommandResultRoute;
             metadata["operatorCommandSummaryRoute"] = CommandSummaryRoute;
             metadata["operatorCommandLatestRoute"] = CommandLatestRoute;
+            metadata["operatorCommandRetentionRoute"] = CommandRetentionRoute;
             metadata["operatorCommandOperationRoute"] = CommandOperationRoute;
             metadata["operatorCommandActorRoute"] = CommandActorRoute;
             metadata["operatorCommandCorrelationRoute"] = CommandCorrelationRoute;
