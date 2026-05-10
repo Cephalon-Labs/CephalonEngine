@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T08:05:38.7333319+00:00",
+  "GeneratedAtUtc": "2026-05-10T12:02:47.9506726+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 21,
-      "TypeCount": 560
+      "TypeCount": 562
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -88,7 +88,7 @@
       "Description": "Entity Framework Core read/write, inbox, and outbox integration for Cephalon data workloads.",
       "FileName": "cephalon-data-entityframework.md",
       "NamespaceCount": 4,
-      "TypeCount": 11
+      "TypeCount": 13
     },
     {
       "AssemblyName": "Cephalon.Data.MySql",
@@ -682,7 +682,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 260
+      "TypeCount": 262
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -969,7 +969,7 @@
       "AssemblyName": "Cephalon.Data.EntityFramework",
       "FileName": "cephalon-data-entityframework.md",
       "AnchorId": "namespace-cephalon-data-entityframework-modeling",
-      "TypeCount": 5
+      "TypeCount": 7
     },
     {
       "NamespaceName": "Cephalon.Data.EntityFramework.Registration",
@@ -8040,6 +8040,21 @@
       }
     },
     {
+      "DisplayName": "EntityFrameworkEventDispatchRemediationCommandEntry",
+      "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
+      "AssemblyName": "Cephalon.Data.EntityFramework",
+      "FileName": "cephalon-data-entityframework.md",
+      "AnchorId": "type-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry",
+      "Declaration": "public sealed class EntityFrameworkEventDispatchRemediationCommandEntry",
+      "Summary": "Represents one durable event-dispatch remediation command result stored through Entity Framework Core.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 13,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "EntityFrameworkEventEntry",
       "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
       "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
@@ -8126,7 +8141,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 0,
-        "Methods": 2
+        "Methods": 3
       }
     },
     {
@@ -8201,6 +8216,21 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 13,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EventDispatchRemediationCommandJournalDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor",
+      "Declaration": "public sealed class EventDispatchRemediationCommandJournalDescriptor",
+      "Summary": "Describes the storage and audit posture of an event-dispatch remediation command journal.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
         "Methods": 0
       }
     },
@@ -10980,6 +11010,21 @@
       }
     },
     {
+      "DisplayName": "IEntityFrameworkEventDispatchRemediationCommandJournalContext",
+      "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
+      "AssemblyName": "Cephalon.Data.EntityFramework",
+      "FileName": "cephalon-data-entityframework.md",
+      "AnchorId": "type-cephalon-data-entityframework-modeling-ientityframeworkeventdispatchremediationcommandjournalcontext",
+      "Declaration": "public interface IEntityFrameworkEventDispatchRemediationCommandJournalContext",
+      "Summary": "Declares the write-side Entity Framework Core surface required by the durable event-dispatch remediation command journal.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "IEntityFrameworkInboxContext",
       "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
       "AssemblyName": "Cephalon.Data.EntityFramework",
@@ -11051,6 +11096,21 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEventDispatchRemediationCommandJournal",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-ieventdispatchremediationcommandjournal",
+      "Declaration": "public interface IEventDispatchRemediationCommandJournal",
+      "Summary": "Records and reads event-dispatch remediation command results for operator audit and command idempotency.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
         "Methods": 1
       }
     },
@@ -21496,6 +21556,17 @@
       "AnchorId": "member-f-cephalon-audit-conventions-auditmetadatakeys-actorid",
       "Signature": "const string ActorId",
       "Summary": "The metadata key that stores the actor identifier associated with an audit entry."
+    },
+    {
+      "DisplayName": "ActorId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventDispatchRemediationCommandEntry",
+      "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
+      "AssemblyName": "Cephalon.Data.EntityFramework",
+      "FileName": "cephalon-data-entityframework.md",
+      "AnchorId": "member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-actorid",
+      "Signature": "string ActorId { get; set; }",
+      "Summary": "Gets or sets the operator actor identifier when it was supplied with the command."
     },
     {
       "DisplayName": "ActorId",
@@ -34139,6 +34210,17 @@
     {
       "DisplayName": "ChannelId",
       "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventDispatchRemediationCommandEntry",
+      "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
+      "AssemblyName": "Cephalon.Data.EntityFramework",
+      "FileName": "cephalon-data-entityframework.md",
+      "AnchorId": "member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-channelid",
+      "Signature": "string ChannelId { get; set; }",
+      "Summary": "Gets or sets the event channel identifier associated with the targeted staged event."
+    },
+    {
+      "DisplayName": "ChannelId",
+      "Category": "Properties",
       "DeclaringTypeName": "EntityFrameworkInboxEntry",
       "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
       "AssemblyName": "Cephalon.Data.EntityFramework",
@@ -36196,6 +36278,17 @@
     {
       "DisplayName": "CommandId",
       "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventDispatchRemediationCommandEntry",
+      "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
+      "AssemblyName": "Cephalon.Data.EntityFramework",
+      "FileName": "cephalon-data-entityframework.md",
+      "AnchorId": "member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-commandid",
+      "Signature": "string CommandId { get; set; }",
+      "Summary": "Gets or sets the stable remediation command identifier."
+    },
+    {
+      "DisplayName": "CommandId",
+      "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRemediationRequest",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -37402,6 +37495,17 @@
       "AnchorId": "member-m-cephalon-abstractions-behaviors-ibehaviorownermodule-configurebehaviors-cephalon-abstractions-behaviors-ibehaviormodulebuilder",
       "Signature": "void ConfigureBehaviors(IBehaviorModuleBuilder behaviors)",
       "Summary": "Registers the behaviors owned by the current module."
+    },
+    {
+      "DisplayName": "ConfigureCephalonEventDispatchRemediationCommandJournal",
+      "Category": "Methods",
+      "DeclaringTypeName": "EntityFrameworkModelBuilderExtensions",
+      "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
+      "AssemblyName": "Cephalon.Data.EntityFramework",
+      "FileName": "cephalon-data-entityframework.md",
+      "AnchorId": "member-m-cephalon-data-entityframework-modeling-entityframeworkmodelbuilderextensions-configurecephaloneventdispatchremediationcommandjournal-microsoft-entityframeworkcore-modelbuilder-system-string",
+      "Signature": "ModelBuilder ConfigureCephalonEventDispatchRemediationCommandJournal(this ModelBuilder modelBuilder, string tableName)",
+      "Summary": "Adds the Cephalon event-dispatch remediation command journal entity mapping to the supplied model."
     },
     {
       "DisplayName": "ConfigureCephalonEvents",
@@ -39782,6 +39886,17 @@
     {
       "DisplayName": "CorrelationId",
       "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventDispatchRemediationCommandEntry",
+      "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
+      "AssemblyName": "Cephalon.Data.EntityFramework",
+      "FileName": "cephalon-data-entityframework.md",
+      "AnchorId": "member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-correlationid",
+      "Signature": "string CorrelationId { get; set; }",
+      "Summary": "Gets or sets the operator correlation identifier when it was supplied with the command."
+    },
+    {
+      "DisplayName": "CorrelationId",
+      "Category": "Properties",
       "DeclaringTypeName": "EntityFrameworkEventEntry",
       "NamespaceName": "Cephalon.EventSourcing.EntityFramework",
       "AssemblyName": "Cephalon.EventSourcing.EntityFramework",
@@ -40691,6 +40806,17 @@
       "AnchorId": "member-f-cephalon-engine-diagnostics-diagnosticseverity-critical",
       "Signature": "const DiagnosticSeverity Critical",
       "Summary": "The event indicates a critical condition that usually requires immediate attention."
+    },
+    {
+      "DisplayName": "CrossNodeCommandAudit",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationCommandJournalDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor-crossnodecommandaudit",
+      "Signature": "bool CrossNodeCommandAudit { get; set; }",
+      "Summary": "A value indicating whether command audit reads survive process and node boundaries."
     },
     {
       "DisplayName": "CrossNodeIdempotencyHardening",
@@ -45587,6 +45713,17 @@
     {
       "DisplayName": "Descriptor",
       "Category": "Properties",
+      "DeclaringTypeName": "IEventDispatchRemediationCommandJournal",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-ieventdispatchremediationcommandjournal-descriptor",
+      "Signature": "EventDispatchRemediationCommandJournalDescriptor Descriptor { get; }",
+      "Summary": "Gets the storage and audit posture exposed by this command journal."
+    },
+    {
+      "DisplayName": "Descriptor",
+      "Category": "Properties",
       "DeclaringTypeName": "IModule",
       "NamespaceName": "Cephalon.Abstractions.Modules",
       "AssemblyName": "Cephalon.Abstractions",
@@ -46551,6 +46688,17 @@
       "AnchorId": "member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-dispatchmaxattempts",
       "Signature": "int DispatchMaxAttempts { get; set; }",
       "Summary": "Gets or sets the maximum number of Wolverine-managed dispatch attempts for one staged event publication."
+    },
+    {
+      "DisplayName": "DispatchOutcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventDispatchRemediationCommandEntry",
+      "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
+      "AssemblyName": "Cephalon.Data.EntityFramework",
+      "FileName": "cephalon-data-entityframework.md",
+      "AnchorId": "member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-dispatchoutcome",
+      "Signature": "string DispatchOutcome { get; set; }",
+      "Summary": "Gets or sets the dispatch-store outcome applied by the accepted command."
     },
     {
       "DisplayName": "DispatchOutcome",
@@ -49182,6 +49330,17 @@
       "Summary": "Cross-node idempotency remains risky because retained command lineage already looks duplicated for the current retry posture."
     },
     {
+      "DisplayName": "Durability",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationCommandJournalDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor-durability",
+      "Signature": "string Durability { get; set; }",
+      "Summary": "The durability class exposed by the journal."
+    },
+    {
       "DisplayName": "DurableExecutionCompensationAction",
       "Category": "Constructors",
       "DeclaringTypeName": "DurableExecutionCompensationAction",
@@ -49444,6 +49603,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitysources-durablejournalstore",
       "Signature": "const string DurableJournalStore",
       "Summary": "The durability answer was derived primarily from a healthy durable journal store."
+    },
+    {
+      "DisplayName": "DurableReplayCursor",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationCommandJournalDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor-durablereplaycursor",
+      "Signature": "bool DurableReplayCursor { get; set; }",
+      "Summary": "A value indicating whether the journal exposes a durable replay cursor contract."
     },
     {
       "DisplayName": "DurableSharedScheduler",
@@ -52196,6 +52366,17 @@
       "Summary": "Initializes a new instance of the \u0060EntityFrameworkDataOptions\u0060 class."
     },
     {
+      "DisplayName": "EntityFrameworkEventDispatchRemediationCommandEntry",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EntityFrameworkEventDispatchRemediationCommandEntry",
+      "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
+      "AssemblyName": "Cephalon.Data.EntityFramework",
+      "FileName": "cephalon-data-entityframework.md",
+      "AnchorId": "member-m-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-ctor",
+      "Signature": "EntityFrameworkEventDispatchRemediationCommandEntry()",
+      "Summary": "Initializes a new instance of the \u0060EntityFrameworkEventDispatchRemediationCommandEntry\u0060 class."
+    },
+    {
       "DisplayName": "EntityFrameworkEventEntry",
       "Category": "Constructors",
       "DeclaringTypeName": "EntityFrameworkEventEntry",
@@ -52447,6 +52628,17 @@
       "AnchorId": "member-f-cephalon-engine-diagnostics-diagnosticseverity-error",
       "Signature": "const DiagnosticSeverity Error",
       "Summary": "The event indicates an error condition."
+    },
+    {
+      "DisplayName": "Error",
+      "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventDispatchRemediationCommandEntry",
+      "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
+      "AssemblyName": "Cephalon.Data.EntityFramework",
+      "FileName": "cephalon-data-entityframework.md",
+      "AnchorId": "member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-error",
+      "Signature": "string Error { get; set; }",
+      "Summary": "Gets or sets the operator-facing error summary when the command was rejected."
     },
     {
       "DisplayName": "Error",
@@ -52777,6 +52969,28 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventdispatchitem-ctor-system-string-system-string-system-string-system-string-system-string-system-datetimeoffset-system-datetimeoffset-system-int32-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "EventDispatchItem(string outboxId, string messageId, string channelId, string eventType, string payload, DateTimeOffset occurredAtUtc, DateTimeOffset createdAtUtc, int dispatchAttemptCount, string contentType, string correlationId, string tenantId, IReadOnlyDictionary\u003Cstring, string\u003E headers, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Creates a new dispatch item."
+    },
+    {
+      "DisplayName": "EventDispatchRemediationCommandJournalDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventDispatchRemediationCommandJournalDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-boolean-system-boolean",
+      "Signature": "EventDispatchRemediationCommandJournalDescriptor(string JournalId, string Provider, string Storage, string Durability, string Scope, bool CrossNodeCommandAudit, bool DurableReplayCursor)",
+      "Summary": "Describes the storage and audit posture of an event-dispatch remediation command journal."
+    },
+    {
+      "DisplayName": "EventDispatchRemediationCommandJournalEntries",
+      "Category": "Properties",
+      "DeclaringTypeName": "IEntityFrameworkEventDispatchRemediationCommandJournalContext",
+      "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
+      "AssemblyName": "Cephalon.Data.EntityFramework",
+      "FileName": "cephalon-data-entityframework.md",
+      "AnchorId": "member-p-cephalon-data-entityframework-modeling-ientityframeworkeventdispatchremediationcommandjournalcontext-eventdispatchremediationcommandjournalentries",
+      "Signature": "DbSet\u003CEntityFrameworkEventDispatchRemediationCommandEntry\u003E EventDispatchRemediationCommandJournalEntries { get; }",
+      "Summary": "Gets the durable remediation command journal rows owned by the current write-side \u0060DbContext\u0060."
     },
     {
       "DisplayName": "EventDispatchRemediationRequest",
@@ -74548,6 +74762,17 @@
       "Summary": "The durable command journal currently reports a recovery or persistence failure."
     },
     {
+      "DisplayName": "JournalId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationCommandJournalDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor-journalid",
+      "Signature": "string JournalId { get; set; }",
+      "Summary": "The stable journal identifier reported through runtime metadata."
+    },
+    {
       "DisplayName": "JsonRpc",
       "Category": "Properties",
       "DeclaringTypeName": "BuiltInTransports",
@@ -82657,6 +82882,17 @@
     {
       "DisplayName": "MessageId",
       "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventDispatchRemediationCommandEntry",
+      "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
+      "AssemblyName": "Cephalon.Data.EntityFramework",
+      "FileName": "cephalon-data-entityframework.md",
+      "AnchorId": "member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-messageid",
+      "Signature": "string MessageId { get; set; }",
+      "Summary": "Gets or sets the staged event message identifier targeted by the command."
+    },
+    {
+      "DisplayName": "MessageId",
+      "Category": "Properties",
       "DeclaringTypeName": "EventDispatchExecutionReport",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -84941,6 +85177,17 @@
       "AnchorId": "member-p-cephalon-abstractions-transports-transportdescriptor-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
       "Summary": "Gets optional transport metadata."
+    },
+    {
+      "DisplayName": "MetadataJson",
+      "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventDispatchRemediationCommandEntry",
+      "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
+      "AssemblyName": "Cephalon.Data.EntityFramework",
+      "FileName": "cephalon-data-entityframework.md",
+      "AnchorId": "member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-metadatajson",
+      "Signature": "string MetadataJson { get; set; }",
+      "Summary": "Gets or sets the serialized command metadata payload."
     },
     {
       "DisplayName": "MetadataJson",
@@ -89299,6 +89546,17 @@
     {
       "DisplayName": "ObservedAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventDispatchRemediationCommandEntry",
+      "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
+      "AssemblyName": "Cephalon.Data.EntityFramework",
+      "FileName": "cephalon-data-entityframework.md",
+      "AnchorId": "member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-observedatutc",
+      "Signature": "DateTimeOffset ObservedAtUtc { get; set; }",
+      "Summary": "Gets or sets the UTC timestamp when the command result was observed."
+    },
+    {
+      "DisplayName": "ObservedAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "EventDispatchExecutionReport",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -90542,6 +90800,17 @@
     {
       "DisplayName": "OperationId",
       "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventDispatchRemediationCommandEntry",
+      "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
+      "AssemblyName": "Cephalon.Data.EntityFramework",
+      "FileName": "cephalon-data-entityframework.md",
+      "AnchorId": "member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-operationid",
+      "Signature": "string OperationId { get; set; }",
+      "Summary": "Gets or sets the remediation operation identifier requested by the operator."
+    },
+    {
+      "DisplayName": "OperationId",
+      "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRemediationRequest",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -91651,6 +91920,17 @@
     {
       "DisplayName": "OutboxId",
       "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventDispatchRemediationCommandEntry",
+      "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
+      "AssemblyName": "Cephalon.Data.EntityFramework",
+      "FileName": "cephalon-data-entityframework.md",
+      "AnchorId": "member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-outboxid",
+      "Signature": "string OutboxId { get; set; }",
+      "Summary": "Gets or sets the outbox identifier that owned the targeted staged event."
+    },
+    {
+      "DisplayName": "OutboxId",
+      "Category": "Properties",
       "DeclaringTypeName": "EventDispatchExecutionReport",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -91955,6 +92235,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimeobservation-outcome",
       "Signature": "string Outcome { get; }",
       "Summary": "Gets the stable outcome identifier for the observed CDC activity."
+    },
+    {
+      "DisplayName": "Outcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventDispatchRemediationCommandEntry",
+      "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
+      "AssemblyName": "Cephalon.Data.EntityFramework",
+      "FileName": "cephalon-data-entityframework.md",
+      "AnchorId": "member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-outcome",
+      "Signature": "string Outcome { get; set; }",
+      "Summary": "Gets or sets the stable command outcome identifier."
     },
     {
       "DisplayName": "Outcome",
@@ -96830,6 +97121,17 @@
     {
       "DisplayName": "Provider",
       "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationCommandJournalDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor-provider",
+      "Signature": "string Provider { get; set; }",
+      "Summary": "The provider or companion package that owns the journal implementation."
+    },
+    {
+      "DisplayName": "Provider",
+      "Category": "Properties",
       "DeclaringTypeName": "EventStreamDescriptor",
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
       "AssemblyName": "Cephalon.Abstractions",
@@ -101373,6 +101675,17 @@
     {
       "DisplayName": "Reason",
       "Category": "Properties",
+      "DeclaringTypeName": "EntityFrameworkEventDispatchRemediationCommandEntry",
+      "NamespaceName": "Cephalon.Data.EntityFramework.Modeling",
+      "AssemblyName": "Cephalon.Data.EntityFramework",
+      "FileName": "cephalon-data-entityframework.md",
+      "AnchorId": "member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-reason",
+      "Signature": "string Reason { get; set; }",
+      "Summary": "Gets or sets the operator-facing command reason when it was supplied."
+    },
+    {
+      "DisplayName": "Reason",
+      "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRemediationRequest",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -102568,6 +102881,17 @@
       "AnchorId": "member-m-cephalon-audit-services-iauditrecorder-recordasync-cephalon-audit-services-auditrecordrequest-system-threading-cancellationtoken",
       "Signature": "ValueTask\u003CAuditEntry\u003E RecordAsync(AuditRecordRequest request, CancellationToken cancellationToken)",
       "Summary": "Records one audit entry and returns the normalized entry that was written."
+    },
+    {
+      "DisplayName": "RecordAsync",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationCommandJournal",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationcommandjournal-recordasync-cephalon-abstractions-data-eventdispatchremediationresult-system-threading-cancellationtoken",
+      "Signature": "ValueTask RecordAsync(EventDispatchRemediationResult result, CancellationToken cancellationToken)",
+      "Summary": "Records one event-dispatch remediation command result."
     },
     {
       "DisplayName": "RecordDelivery",
@@ -112516,6 +112840,17 @@
     {
       "DisplayName": "Scope",
       "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationCommandJournalDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor-scope",
+      "Signature": "string Scope { get; set; }",
+      "Summary": "The runtime scope where command idempotency and audit reads are valid."
+    },
+    {
+      "DisplayName": "Scope",
+      "Category": "Properties",
       "DeclaringTypeName": "IdGenerationRequest",
       "NamespaceName": "Cephalon.Abstractions.Ids",
       "AssemblyName": "Cephalon.Abstractions",
@@ -118702,6 +119037,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimestatussnapshot-stoppingatutc",
       "Signature": "DateTimeOffset? StoppingAtUtc { get; set; }",
       "Summary": "The UTC timestamp when shutdown most recently entered the stopping phase, if any."
+    },
+    {
+      "DisplayName": "Storage",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationCommandJournalDescriptor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor-storage",
+      "Signature": "string Storage { get; set; }",
+      "Summary": "The storage medium used by the journal, such as memory or an Entity Framework table."
     },
     {
       "DisplayName": "StoreFailed",

@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 namespace Cephalon.Eventing.Services;
 
 internal sealed class EventDispatchRemediationRuntimeCatalog(
-    EventingOptions options) : IEventDispatchRemediationRuntimeCatalog
+    EventingOptions options) : IEventDispatchRemediationCommandJournal
 {
     private static readonly IReadOnlyDictionary<string, string> EmptyMetadata =
         new ReadOnlyDictionary<string, string>(new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase));
@@ -15,6 +15,15 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
     private readonly List<EventDispatchRemediationRuntimeState> states = [];
     private long totalRecordedCommandCount;
     private long droppedCommandCount;
+
+    public EventDispatchRemediationCommandJournalDescriptor Descriptor { get; } = new(
+        JournalId: "eventing.process-local-remediation-command-journal",
+        Provider: "Cephalon.Eventing",
+        Storage: "memory",
+        Durability: "process-local",
+        Scope: "single-process",
+        CrossNodeCommandAudit: false,
+        DurableReplayCursor: false);
 
     public EventDispatchRemediationRuntimeSummary Summary
     {
@@ -385,16 +394,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
     public void Record(EventDispatchRemediationResult result)
     {
         ArgumentNullException.ThrowIfNull(result);
-        var limit = options.RemediationCommandHistoryLimit;
-        if (limit == 0)
-        {
-            return;
-        }
-
-        var metadata = result.Metadata.Count == 0
-            ? EmptyMetadata
-            : new ReadOnlyDictionary<string, string>(new Dictionary<string, string>(result.Metadata, StringComparer.OrdinalIgnoreCase));
-        var state = new EventDispatchRemediationRuntimeState(
+        Record(new EventDispatchRemediationRuntimeState(
             CommandId: result.CommandId,
             OutboxId: result.OutboxId,
             MessageId: result.MessageId,
@@ -404,22 +404,56 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
             DispatchOutcome: result.DispatchOutcome,
             ObservedAtUtc: result.ObservedAtUtc,
             Error: result.Error,
+            Metadata: result.Metadata));
+    }
+
+    public ValueTask RecordAsync(
+        EventDispatchRemediationResult result,
+        CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        Record(result);
+        return ValueTask.CompletedTask;
+    }
+
+    private void Record(EventDispatchRemediationRuntimeState state)
+    {
+        ArgumentNullException.ThrowIfNull(state);
+        var limit = options.RemediationCommandHistoryLimit;
+        if (limit == 0)
+        {
+            return;
+        }
+
+        var metadata = state.Metadata.Count == 0
+            ? EmptyMetadata
+            : new ReadOnlyDictionary<string, string>(new Dictionary<string, string>(state.Metadata, StringComparer.OrdinalIgnoreCase));
+        var recordedState = new EventDispatchRemediationRuntimeState(
+            CommandId: state.CommandId,
+            OutboxId: state.OutboxId,
+            MessageId: state.MessageId,
+            ChannelId: state.ChannelId,
+            OperationId: state.OperationId,
+            Outcome: state.Outcome,
+            DispatchOutcome: state.DispatchOutcome,
+            ObservedAtUtc: state.ObservedAtUtc,
+            Error: state.Error,
             Metadata: metadata);
 
         lock (gate)
         {
-            var replacedExisting = statesByCommandId.Remove(state.CommandId);
+            var replacedExisting = statesByCommandId.Remove(recordedState.CommandId);
             if (replacedExisting)
             {
-                states.RemoveAll(existing => string.Equals(existing.CommandId, state.CommandId, StringComparison.OrdinalIgnoreCase));
+                states.RemoveAll(existing => string.Equals(existing.CommandId, recordedState.CommandId, StringComparison.OrdinalIgnoreCase));
             }
             else
             {
                 totalRecordedCommandCount++;
             }
 
-            states.Add(state);
-            statesByCommandId[state.CommandId] = state;
+            states.Add(recordedState);
+            statesByCommandId[recordedState.CommandId] = recordedState;
 
             while (states.Count > limit)
             {

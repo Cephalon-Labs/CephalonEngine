@@ -9,7 +9,7 @@ internal sealed class EventPublicationScheduleQueue(
     EventingOptions options,
     IEventChannelCatalog channels,
     IEventPublicationRuntimeReporter publicationRuntimeReporter,
-    IServiceScopeFactory scopeFactory) : IAsyncDisposable
+    IServiceScopeFactory scopeFactory) : IDisposable, IAsyncDisposable
 {
     private readonly Lock gate = new();
     private readonly Dictionary<string, ScheduledPublication> pending = new(StringComparer.OrdinalIgnoreCase);
@@ -129,6 +129,20 @@ internal sealed class EventPublicationScheduleQueue(
         {
             await timerToDispose.DisposeAsync().ConfigureAwait(false);
         }
+    }
+
+    public void Dispose()
+    {
+        Timer? timerToDispose;
+        lock (gate)
+        {
+            disposed = true;
+            pending.Clear();
+            timerToDispose = timer;
+            timer = null;
+        }
+
+        timerToDispose?.Dispose();
     }
 
     private void OnTimer()

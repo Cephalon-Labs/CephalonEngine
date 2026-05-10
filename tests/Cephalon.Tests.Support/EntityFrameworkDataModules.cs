@@ -128,17 +128,24 @@ internal sealed class SplitCatalogWriteDbContext(DbContextOptions<SplitCatalogWr
     public DbSet<SplitCatalogWriteItem> CatalogItems => Set<SplitCatalogWriteItem>();
 }
 
-internal sealed class OutboxCatalogDbContext(DbContextOptions<OutboxCatalogDbContext> options) : DbContext(options), IEntityFrameworkOutboxContext
+internal sealed class OutboxCatalogDbContext(DbContextOptions<OutboxCatalogDbContext> options) :
+    DbContext(options),
+    IEntityFrameworkOutboxContext,
+    IEntityFrameworkEventDispatchRemediationCommandJournalContext
 {
     public DbSet<OutboxCatalogItem> CatalogItems => Set<OutboxCatalogItem>();
 
     public DbSet<EntityFrameworkOutboxEntry> OutboxMessages => Set<EntityFrameworkOutboxEntry>();
+
+    public DbSet<EntityFrameworkEventDispatchRemediationCommandEntry> EventDispatchRemediationCommandJournalEntries =>
+        Set<EntityFrameworkEventDispatchRemediationCommandEntry>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         ArgumentNullException.ThrowIfNull(modelBuilder);
 
         modelBuilder.ConfigureCephalonOutbox();
+        modelBuilder.ConfigureCephalonEventDispatchRemediationCommandJournal();
     }
 }
 

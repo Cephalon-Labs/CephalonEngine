@@ -46033,6 +46033,110 @@ IReadOnlyList<string> Tags { get; }
 
 Gets descriptive tags associated with the data product.
 
+<a id="type-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor"></a>
+
+### `EventDispatchRemediationCommandJournalDescriptor`
+
+Describes the storage and audit posture of an event-dispatch remediation command journal.
+
+#### Declaration
+```csharp
+public sealed class EventDispatchRemediationCommandJournalDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-boolean-system-boolean"></a>
+
+##### `EventDispatchRemediationCommandJournalDescriptor`
+
+```csharp
+EventDispatchRemediationCommandJournalDescriptor(string JournalId, string Provider, string Storage, string Durability, string Scope, bool CrossNodeCommandAudit, bool DurableReplayCursor)
+```
+
+Describes the storage and audit posture of an event-dispatch remediation command journal.
+
+Parameters:
+- `JournalId`: The stable journal identifier reported through runtime metadata.
+- `Provider`: The provider or companion package that owns the journal implementation.
+- `Storage`: The storage medium used by the journal, such as memory or an Entity Framework table.
+- `Durability`: The durability class exposed by the journal.
+- `Scope`: The runtime scope where command idempotency and audit reads are valid.
+- `CrossNodeCommandAudit`: A value indicating whether command audit reads survive process and node boundaries.
+- `DurableReplayCursor`: A value indicating whether the journal exposes a durable replay cursor contract.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor-crossnodecommandaudit"></a>
+
+##### `CrossNodeCommandAudit`
+
+```csharp
+bool CrossNodeCommandAudit { get; set; }
+```
+
+A value indicating whether command audit reads survive process and node boundaries.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor-durability"></a>
+
+##### `Durability`
+
+```csharp
+string Durability { get; set; }
+```
+
+The durability class exposed by the journal.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor-durablereplaycursor"></a>
+
+##### `DurableReplayCursor`
+
+```csharp
+bool DurableReplayCursor { get; set; }
+```
+
+A value indicating whether the journal exposes a durable replay cursor contract.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor-journalid"></a>
+
+##### `JournalId`
+
+```csharp
+string JournalId { get; set; }
+```
+
+The stable journal identifier reported through runtime metadata.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor-provider"></a>
+
+##### `Provider`
+
+```csharp
+string Provider { get; set; }
+```
+
+The provider or companion package that owns the journal implementation.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor-scope"></a>
+
+##### `Scope`
+
+```csharp
+string Scope { get; set; }
+```
+
+The runtime scope where command idempotency and audit reads are valid.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor-storage"></a>
+
+##### `Storage`
+
+```csharp
+string Storage { get; set; }
+```
+
+The storage medium used by the journal, such as memory or an Entity Framework table.
+
 <a id="type-cephalon-abstractions-data-eventdispatchremediationoperationids"></a>
 
 ### `EventDispatchRemediationOperationIds`
@@ -51148,6 +51252,47 @@ Returns: A task that completes with the current data product value.
 
 Parameters:
 - `cancellationToken`: The token that cancels the operation.
+
+<a id="type-cephalon-abstractions-data-ieventdispatchremediationcommandjournal"></a>
+
+### `IEventDispatchRemediationCommandJournal`
+
+Records and reads event-dispatch remediation command results for operator audit and command idempotency.
+
+#### Declaration
+```csharp
+public interface IEventDispatchRemediationCommandJournal
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-ieventdispatchremediationcommandjournal-descriptor"></a>
+
+##### `Descriptor`
+
+```csharp
+EventDispatchRemediationCommandJournalDescriptor Descriptor { get; }
+```
+
+Gets the storage and audit posture exposed by this command journal.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationcommandjournal-recordasync-cephalon-abstractions-data-eventdispatchremediationresult-system-threading-cancellationtoken"></a>
+
+##### `RecordAsync`
+
+```csharp
+ValueTask RecordAsync(EventDispatchRemediationResult result, CancellationToken cancellationToken)
+```
+
+Records one event-dispatch remediation command result.
+
+Returns: A task that completes when the command result has been recorded.
+
+Parameters:
+- `result`: The command result to record.
+- `cancellationToken`: A token that observes cancellation requests.
 
 <a id="type-cephalon-abstractions-data-ieventdispatchremediationdispatcher"></a>
 

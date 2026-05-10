@@ -941,13 +941,15 @@ public sealed class EntityFrameworkDataPackTests
         var runtime = provider.GetRequiredService<Cephalon.Engine.Runtime.IRuntime>();
         var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
 
-        Assert.Equal(5, eventingSurfaces.Count);
+        Assert.Equal(6, eventingSurfaces.Count);
         var outboxSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "outbox-producers");
         var outboxEntry = Assert.Single(outboxSurface.Entries);
         var publishSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-publishers");
         var publisherEntry = Assert.Single(publishSurface.Entries);
         var dispatchSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatches");
         var dispatchEntry = Assert.Single(dispatchSurface.Entries);
+        var remediationCommandSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatch-remediation-commands");
+        var remediationCommandEntry = Assert.Single(remediationCommandSurface.Entries);
         Assert.Equal("entity-framework-outbox", outboxEntry.Id);
         Assert.Equal("entity-framework", outboxEntry.Metadata["provider"]);
         Assert.Equal("transactional-table", outboxEntry.Metadata["mode"]);
@@ -968,9 +970,22 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("entity-framework", dispatchEntry.Metadata["provider"]);
         Assert.Equal("consumer-managed", dispatchEntry.Metadata["dispatchPolicyId"]);
         Assert.Equal("consumer-managed", dispatchEntry.Metadata["dispatchExecutionMode"]);
+        Assert.Equal("event-dispatch-remediation-commands", remediationCommandEntry.Id);
+        Assert.Equal("durable", remediationCommandEntry.Metadata["commandJournalDurability"]);
+        Assert.Equal("cross-node", remediationCommandEntry.Metadata["commandJournalScope"]);
+        Assert.Equal("Cephalon.Data.EntityFramework", remediationCommandEntry.Metadata["commandJournalProvider"]);
+        Assert.Equal("entity-framework-table", remediationCommandEntry.Metadata["commandJournalStorage"]);
+        Assert.Equal("true", remediationCommandEntry.Metadata["commandCrossNodeCommandAudit"]);
+        Assert.Equal("not-claimed", remediationCommandEntry.Metadata["commandJournalReplayCursor"]);
         Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.publish" && capability.Metadata["runtimeState"] == "available");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.publish" && capability.Metadata["dispatchStore"] == "available");
+        Assert.Contains(
+            runtime.Manifest.Capabilities,
+            capability => capability.Key == "data.entity-framework.event-dispatch-remediation-command-journal" &&
+                capability.Metadata["journalDurability"] == "durable" &&
+                capability.Metadata["journalScope"] == "cross-node" &&
+                capability.Metadata["crossNodeCommandAudit"] == "true");
     }
 
     [Fact]
@@ -1289,6 +1304,109 @@ public sealed class EntityFrameworkDataPackTests
     }
 
     [Fact]
+    public async Task AddEntityFrameworkDataPersistsEventDispatchRemediationCommandJournalAcrossProviderRebuilds()
+    {
+        var databaseName = $"cephalon-data-ef-event-dispatch-command-journal-{Guid.NewGuid():N}";
+        var databaseRoot = new Microsoft.EntityFrameworkCore.Storage.InMemoryDatabaseRoot();
+
+        ServiceProvider BuildProvider()
+        {
+            var services = new ServiceCollection();
+            services.AddCephalon(engine =>
+            {
+                engine.UseSettings(new EngineSettings(
+                    blueprint: "ModularVerticalSlice",
+                    patterns: ["CQRS", "Outbox"],
+                    technologies: ["EventDrivenIntegration"],
+                    transports: ["RestApi"],
+                    data: new DataSettings(
+                        provider: "EntityFramework",
+                        outboxEnabled: true),
+                    messaging: new MessagingSettings(provider: "InMemoryChannels")));
+                engine.AddModule(new PlatformTestModule());
+                engine.AddEventing(options =>
+                {
+                    options.Channels.Add(new EventChannelDescriptor(
+                        id: "catalog-events",
+                        displayName: "Catalog Events",
+                        description: "Catalog integration events."));
+                });
+                engine.AddEntityFrameworkData<OutboxCatalogDbContext>(
+                    options => options.UseInMemoryDatabase(databaseName, databaseRoot),
+                    configure: options => options.RegisterOutbox = true);
+            });
+
+            return services.BuildServiceProvider();
+        }
+
+        await using (var provider = BuildProvider())
+        {
+            using (var publicationScope = provider.CreateScope())
+            {
+                var publisher = publicationScope.ServiceProvider.GetRequiredService<IEventPublisher>();
+                await publisher.PublishAsync(new EventPublication(
+                    id: "evt-journal-001",
+                    channelId: "catalog-events",
+                    eventType: "catalog.item.journaled",
+                    payload: "{\"id\":\"item-journal-001\"}",
+                    occurredAtUtc: new DateTimeOffset(2026, 04, 14, 10, 0, 0, TimeSpan.Zero),
+                    correlationId: "corr-journal-001"));
+            }
+
+            using var commandScope = provider.CreateScope();
+            var dispatcher = commandScope.ServiceProvider.GetRequiredService<IEventDispatchRemediationDispatcher>();
+            var result = await dispatcher.DispatchAsync(new EventDispatchRemediationRequest(
+                outboxId: "entity-framework-outbox",
+                messageId: "evt-journal-001",
+                channelId: "catalog-events",
+                operationId: EventDispatchRemediationOperationIds.RetryNow,
+                commandId: "cmd-journal-001-retry",
+                requestedAtUtc: new DateTimeOffset(2026, 04, 14, 10, 1, 0, TimeSpan.Zero),
+                reason: "Persist command journal.",
+                actorId: "operator-journal",
+                correlationId: "corr-journal-command-001"));
+
+            Assert.Equal(EventDispatchRemediationOutcomes.Accepted, result.Outcome);
+        }
+
+        await using (var provider = BuildProvider())
+        {
+            using var commandScope = provider.CreateScope();
+            var journal = commandScope.ServiceProvider.GetRequiredService<IEventDispatchRemediationCommandJournal>();
+            var processLocalCatalog = provider.GetRequiredService<IEventDispatchRemediationRuntimeCatalog>();
+            var dispatcher = commandScope.ServiceProvider.GetRequiredService<IEventDispatchRemediationDispatcher>();
+
+            Assert.Equal("durable", journal.Descriptor.Durability);
+            Assert.Equal("cross-node", journal.Descriptor.Scope);
+            Assert.True(journal.Descriptor.CrossNodeCommandAudit);
+            Assert.Empty(processLocalCatalog.States);
+
+            var persistedState = journal.GetByCommandId("cmd-journal-001-retry");
+            Assert.NotNull(persistedState);
+            Assert.Equal(EventDispatchRemediationOutcomes.Accepted, persistedState.Outcome);
+            Assert.Equal("operator-journal", persistedState.Metadata[EventDispatchRemediationMetadataKeys.OperatorActorId]);
+
+            var duplicate = await dispatcher.DispatchAsync(new EventDispatchRemediationRequest(
+                outboxId: "entity-framework-outbox",
+                messageId: "evt-journal-001",
+                channelId: "catalog-events",
+                operationId: EventDispatchRemediationOperationIds.Skip,
+                commandId: "cmd-journal-001-retry",
+                requestedAtUtc: new DateTimeOffset(2026, 04, 14, 10, 2, 0, TimeSpan.Zero),
+                reason: "Duplicate after provider rebuild.",
+                actorId: "operator-journal-duplicate",
+                correlationId: "corr-journal-command-duplicate"));
+
+            Assert.Equal(EventDispatchRemediationOutcomes.Rejected, duplicate.Outcome);
+            Assert.Equal("true", duplicate.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommand]);
+            Assert.Equal(EventDispatchRemediationOutcomes.Accepted, duplicate.Metadata[EventDispatchRemediationMetadataKeys.ExistingCommandOutcome]);
+            Assert.Equal("retry-now", duplicate.Metadata[EventDispatchRemediationMetadataKeys.ExistingCommandOperationId]);
+            Assert.Equal("cmd-journal-001-retry", Assert.Single(journal.States).CommandId);
+            Assert.Empty(processLocalCatalog.States);
+        }
+    }
+
+    [Fact]
     public async Task AddEventingCanReportDispatchRuntimeStateThroughEventingTechnologySurfaces()
     {
         var databaseName = $"cephalon-data-ef-event-dispatch-runtime-{Guid.NewGuid():N}";
@@ -1579,11 +1697,17 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("1", remediationCommandCatalogEntry.Metadata["summaryAcceptedCount"]);
         Assert.Equal("0", remediationCommandCatalogEntry.Metadata["summaryRejectedCount"]);
         Assert.Equal("false", remediationCommandCatalogEntry.Metadata["summaryHasFailures"]);
-        Assert.Equal("256", remediationCommandCatalogEntry.Metadata["commandHistoryLimit"]);
+        Assert.Equal("0", remediationCommandCatalogEntry.Metadata["commandHistoryLimit"]);
         Assert.Equal("1", remediationCommandCatalogEntry.Metadata["retainedCommandCount"]);
         Assert.Equal("1", remediationCommandCatalogEntry.Metadata["totalRecordedCommandCount"]);
         Assert.Equal("0", remediationCommandCatalogEntry.Metadata["droppedCommandCount"]);
         Assert.Equal("false", remediationCommandCatalogEntry.Metadata["retentionTruncated"]);
+        Assert.Equal("durable", remediationCommandCatalogEntry.Metadata["commandJournalDurability"]);
+        Assert.Equal("cross-node", remediationCommandCatalogEntry.Metadata["commandJournalScope"]);
+        Assert.Equal("Cephalon.Data.EntityFramework", remediationCommandCatalogEntry.Metadata["commandJournalProvider"]);
+        Assert.Equal("entity-framework-table", remediationCommandCatalogEntry.Metadata["commandJournalStorage"]);
+        Assert.Equal("true", remediationCommandCatalogEntry.Metadata["commandCrossNodeCommandAudit"]);
+        Assert.Equal("not-claimed", remediationCommandCatalogEntry.Metadata["commandJournalReplayCursor"]);
         Assert.Equal("true", remediationCommandCatalogEntry.Metadata["hasLatestCommand"]);
         Assert.Equal("cmd-evt-020-retry", remediationCommandCatalogEntry.Metadata["latestCommandId"]);
         Assert.Equal("retry-now", remediationCommandCatalogEntry.Metadata["latestOperationId"]);

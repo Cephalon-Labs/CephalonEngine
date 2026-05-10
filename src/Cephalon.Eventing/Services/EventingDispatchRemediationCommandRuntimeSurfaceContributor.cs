@@ -1,21 +1,26 @@
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Technologies;
+using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
 
 namespace Cephalon.Eventing.Services;
 
 internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributor(
+    IServiceScopeFactory scopeFactory,
     IEventDispatchRemediationRuntimeCatalog commands) : ITechnologyRuntimeContributor
 {
     private const string SurfaceId = EventDispatchRemediationCommandMetadata.SurfaceId;
 
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
-        var entries = new List<TechnologyRuntimeEntry>(commands.States.Count + 1)
+        using var scope = scopeFactory.CreateScope();
+        var readModel = ResolveReadModel(scope.ServiceProvider);
+        var descriptor = (readModel as IEventDispatchRemediationCommandJournal)?.Descriptor;
+        var entries = new List<TechnologyRuntimeEntry>(readModel.States.Count + 1)
         {
-            CreateCatalogEntry(commands)
+            CreateCatalogEntry(readModel, descriptor)
         };
-        entries.AddRange(commands.States.Select(CreateCommandEntry));
+        entries.AddRange(readModel.States.Select(state => CreateCommandEntry(state, descriptor)));
 
         return new TechnologyRuntimeSurface(
             technologyId: "event-driven-integration",
@@ -25,7 +30,14 @@ internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributo
             entries: entries);
     }
 
-    private static TechnologyRuntimeEntry CreateCatalogEntry(IEventDispatchRemediationRuntimeCatalog catalog)
+    private IEventDispatchRemediationRuntimeCatalog ResolveReadModel(IServiceProvider serviceProvider)
+    {
+        return serviceProvider.GetService<IEventDispatchRemediationCommandJournal>() ?? commands;
+    }
+
+    private static TechnologyRuntimeEntry CreateCatalogEntry(
+        IEventDispatchRemediationRuntimeCatalog catalog,
+        EventDispatchRemediationCommandJournalDescriptor? descriptor)
     {
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -54,6 +66,7 @@ internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributo
         EventDispatchRemediationCommandMetadata.AddReadLimitMetadata(metadata);
         EventDispatchRemediationCommandMetadata.AddPaginationMetadata(metadata);
         EventDispatchRemediationCommandMetadata.AddIdempotencyMetadata(metadata);
+        EventDispatchRemediationCommandMetadata.AddJournalMetadata(metadata, descriptor);
 
         AddOptional(metadata, "latestCommandId", catalog.Latest?.CommandId);
         AddOptional(metadata, "latestOperationId", catalog.Summary.LastOperationId);
@@ -72,7 +85,9 @@ internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributo
             metadata: metadata);
     }
 
-    private static TechnologyRuntimeEntry CreateCommandEntry(EventDispatchRemediationRuntimeState state)
+    private static TechnologyRuntimeEntry CreateCommandEntry(
+        EventDispatchRemediationRuntimeState state,
+        EventDispatchRemediationCommandJournalDescriptor? descriptor)
     {
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -97,6 +112,7 @@ internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributo
         EventDispatchRemediationCommandMetadata.AddReadLimitMetadata(metadata);
         EventDispatchRemediationCommandMetadata.AddPaginationMetadata(metadata);
         EventDispatchRemediationCommandMetadata.AddIdempotencyMetadata(metadata);
+        EventDispatchRemediationCommandMetadata.AddJournalMetadata(metadata, descriptor);
 
         if (!string.IsNullOrWhiteSpace(state.Error))
         {

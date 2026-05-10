@@ -39,6 +39,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
     private bool hasSubscriptionExecutionPipeline;
     private bool hasSubscriptionExecutors;
     private bool hasPublishingPath;
+    private bool hasExternalRemediationCommandJournal;
     private string inProcessSubscriptionDescriptorDiscoveryMode = "none";
     private int subscriptionExecutionMiddlewareCount;
 
@@ -70,6 +71,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
         hasChannelContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventChannelContributor));
         hasDispatchStore = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchStore));
         hasDispatchRuntimeContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchRuntimeContributor));
+        hasExternalRemediationCommandJournal = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchRemediationCommandJournal));
         hasExternalManagedSubscriptionExecutionBindings = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventSubscriptionExecutionBindingContributor));
         var inboxRegistrationCount = services.Count(static descriptor => descriptor.ServiceType == typeof(IInbox));
         hasInboxPath = inboxRegistrationCount > 0;
@@ -211,6 +213,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             {
                 services.TryAddSingleton<EventDispatchRemediationRuntimeCatalog>();
                 services.TryAddSingleton<IEventDispatchRemediationRuntimeCatalog>(static provider => provider.GetRequiredService<EventDispatchRemediationRuntimeCatalog>());
+                services.TryAddScoped<IEventDispatchRemediationCommandJournal>(static provider => provider.GetRequiredService<EventDispatchRemediationRuntimeCatalog>());
                 services.TryAddScoped<IEventDispatchRemediationDispatcher, EventDispatchRemediationDispatcher>();
             }
 
@@ -429,6 +432,11 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                 ["brokerDeadLetterCommand"] = "not-claimed",
                 ["commandRuntimeState"] = "available",
                 ["commandHistoryLimit"] = options.RemediationCommandHistoryLimit.ToString(CultureInfo.InvariantCulture),
+                ["commandJournalState"] = hasExternalRemediationCommandJournal ? "provider-backed" : "process-local",
+                ["commandJournalDurability"] = hasExternalRemediationCommandJournal ? "provider-defined" : "process-local",
+                ["commandJournalScope"] = hasExternalRemediationCommandJournal ? "provider-defined" : "single-process",
+                ["crossNodeCommandAudit"] = hasExternalRemediationCommandJournal ? "provider-defined" : "false",
+                ["journalReplayCursor"] = "not-claimed",
                 ["wolverineRequired"] = "false",
                 ["runtimeState"] = "available"
             };

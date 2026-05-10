@@ -100,6 +100,17 @@ internal sealed class EntityFrameworkDataModule<TReadDbContext, TWriteDbContext>
                     dbContext,
                     (IEntityFrameworkOutboxContext)dbContext);
             });
+
+            if (typeof(IEntityFrameworkEventDispatchRemediationCommandJournalContext).IsAssignableFrom(typeof(TWriteDbContext)))
+            {
+                services.AddScoped<IEventDispatchRemediationCommandJournal>(serviceProvider =>
+                {
+                    var dbContext = serviceProvider.GetRequiredService<TWriteDbContext>();
+                    return new EntityFrameworkEventDispatchRemediationCommandJournal(
+                        dbContext,
+                        (IEntityFrameworkEventDispatchRemediationCommandJournalContext)dbContext);
+                });
+            }
         }
 
         if (options.RegisterInbox)
@@ -238,6 +249,27 @@ internal sealed class EntityFrameworkDataModule<TReadDbContext, TWriteDbContext>
                     ["projectionRuntime"] = "application-managed"
                 }));
         }
+
+        if (SupportsEventDispatchRemediationCommandJournal())
+        {
+            capabilities.Add(new Capability(
+                key: "data.entity-framework.event-dispatch-remediation-command-journal",
+                displayName: "Entity Framework Event Dispatch Remediation Command Journal",
+                description: "Persists provider-neutral event-dispatch remediation command results through the active write-side Entity Framework Core DbContext.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["pack"] = "Cephalon.Data.EntityFramework",
+                    ["provider"] = EntityFrameworkDataOptions.ProviderId,
+                    ["writeDbContext"] = GetTypeName(options.WriteDbContextType),
+                    ["journalId"] = "entity-framework.event-dispatch-remediation-command-journal",
+                    ["journalStorage"] = "entity-framework-table",
+                    ["journalDurability"] = "durable",
+                    ["journalScope"] = "cross-node",
+                    ["crossNodeCommandAudit"] = "true",
+                    ["journalReplayCursor"] = "not-claimed",
+                    ["topologySource"] = options.UsesEngineDatabaseTopology ? "engine-databases" : "registration-callbacks"
+                }));
+        }
     }
 
     public void RegisterInboxes(IInboxRegistry inboxes)
@@ -365,6 +397,12 @@ internal sealed class EntityFrameworkDataModule<TReadDbContext, TWriteDbContext>
     private static string GetTypeName(Type type)
     {
         return type.FullName ?? type.Name;
+    }
+
+    private bool SupportsEventDispatchRemediationCommandJournal()
+    {
+        return options.RegisterOutbox &&
+            typeof(IEntityFrameworkEventDispatchRemediationCommandJournalContext).IsAssignableFrom(options.WriteDbContextType);
     }
 
     private static void ValidateSfidSelection(AppProfile appProfile)

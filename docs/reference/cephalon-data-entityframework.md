@@ -405,6 +405,161 @@ Gets the write-side `DbContext` type.
 
 ## Namespace Cephalon.Data.EntityFramework.Modeling
 
+<a id="type-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry"></a>
+
+### `EntityFrameworkEventDispatchRemediationCommandEntry`
+
+Represents one durable event-dispatch remediation command result stored through Entity Framework Core.
+
+#### Declaration
+```csharp
+public sealed class EntityFrameworkEventDispatchRemediationCommandEntry
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-ctor"></a>
+
+##### `EntityFrameworkEventDispatchRemediationCommandEntry`
+
+```csharp
+EntityFrameworkEventDispatchRemediationCommandEntry()
+```
+
+Initializes a new instance of the `EntityFrameworkEventDispatchRemediationCommandEntry` class.
+
+#### Properties
+
+<a id="member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-actorid"></a>
+
+##### `ActorId`
+
+```csharp
+string ActorId { get; set; }
+```
+
+Gets or sets the operator actor identifier when it was supplied with the command.
+
+<a id="member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-channelid"></a>
+
+##### `ChannelId`
+
+```csharp
+string ChannelId { get; set; }
+```
+
+Gets or sets the event channel identifier associated with the targeted staged event.
+
+<a id="member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-commandid"></a>
+
+##### `CommandId`
+
+```csharp
+string CommandId { get; set; }
+```
+
+Gets or sets the stable remediation command identifier.
+
+<a id="member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+string CorrelationId { get; set; }
+```
+
+Gets or sets the operator correlation identifier when it was supplied with the command.
+
+<a id="member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-dispatchoutcome"></a>
+
+##### `DispatchOutcome`
+
+```csharp
+string DispatchOutcome { get; set; }
+```
+
+Gets or sets the dispatch-store outcome applied by the accepted command.
+
+<a id="member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-error"></a>
+
+##### `Error`
+
+```csharp
+string Error { get; set; }
+```
+
+Gets or sets the operator-facing error summary when the command was rejected.
+
+<a id="member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-messageid"></a>
+
+##### `MessageId`
+
+```csharp
+string MessageId { get; set; }
+```
+
+Gets or sets the staged event message identifier targeted by the command.
+
+<a id="member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-metadatajson"></a>
+
+##### `MetadataJson`
+
+```csharp
+string MetadataJson { get; set; }
+```
+
+Gets or sets the serialized command metadata payload.
+
+<a id="member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-observedatutc"></a>
+
+##### `ObservedAtUtc`
+
+```csharp
+DateTimeOffset ObservedAtUtc { get; set; }
+```
+
+Gets or sets the UTC timestamp when the command result was observed.
+
+<a id="member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-operationid"></a>
+
+##### `OperationId`
+
+```csharp
+string OperationId { get; set; }
+```
+
+Gets or sets the remediation operation identifier requested by the operator.
+
+<a id="member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-outboxid"></a>
+
+##### `OutboxId`
+
+```csharp
+string OutboxId { get; set; }
+```
+
+Gets or sets the outbox identifier that owned the targeted staged event.
+
+<a id="member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-outcome"></a>
+
+##### `Outcome`
+
+```csharp
+string Outcome { get; set; }
+```
+
+Gets or sets the stable command outcome identifier.
+
+<a id="member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-reason"></a>
+
+##### `Reason`
+
+```csharp
+string Reason { get; set; }
+```
+
+Gets or sets the operator-facing command reason when it was supplied.
+
 <a id="type-cephalon-data-entityframework-modeling-entityframeworkinboxentry"></a>
 
 ### `EntityFrameworkInboxEntry`
@@ -552,6 +707,22 @@ public static class EntityFrameworkModelBuilderExtensions
 ```
 
 #### Methods
+
+<a id="member-m-cephalon-data-entityframework-modeling-entityframeworkmodelbuilderextensions-configurecephaloneventdispatchremediationcommandjournal-microsoft-entityframeworkcore-modelbuilder-system-string"></a>
+
+##### `ConfigureCephalonEventDispatchRemediationCommandJournal`
+
+```csharp
+ModelBuilder ConfigureCephalonEventDispatchRemediationCommandJournal(this ModelBuilder modelBuilder, string tableName)
+```
+
+Adds the Cephalon event-dispatch remediation command journal entity mapping to the supplied model.
+
+Returns: The same model builder for fluent configuration.
+
+Parameters:
+- `modelBuilder`: The model builder to extend.
+- `tableName`: The table name that should hold durable remediation command rows.
 
 <a id="member-m-cephalon-data-entityframework-modeling-entityframeworkmodelbuilderextensions-configurecephaloninbox-microsoft-entityframeworkcore-modelbuilder-system-string"></a>
 
@@ -749,6 +920,29 @@ string TenantId { get; set; }
 ```
 
 Gets or sets the tenant identifier associated with the message.
+
+<a id="type-cephalon-data-entityframework-modeling-ientityframeworkeventdispatchremediationcommandjournalcontext"></a>
+
+### `IEntityFrameworkEventDispatchRemediationCommandJournalContext`
+
+Declares the write-side Entity Framework Core surface required by the durable event-dispatch remediation command journal.
+
+#### Declaration
+```csharp
+public interface IEntityFrameworkEventDispatchRemediationCommandJournalContext
+```
+
+#### Properties
+
+<a id="member-p-cephalon-data-entityframework-modeling-ientityframeworkeventdispatchremediationcommandjournalcontext-eventdispatchremediationcommandjournalentries"></a>
+
+##### `EventDispatchRemediationCommandJournalEntries`
+
+```csharp
+DbSet<EntityFrameworkEventDispatchRemediationCommandEntry> EventDispatchRemediationCommandJournalEntries { get; }
+```
+
+Gets the durable remediation command journal rows owned by the current write-side `DbContext`.
 
 <a id="type-cephalon-data-entityframework-modeling-ientityframeworkinboxcontext"></a>
 

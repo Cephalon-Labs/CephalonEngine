@@ -998,33 +998,27 @@ public static class EngineWebApplicationExtensions
             });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands", "GetCephalonEventDispatchRemediationCommands", static context =>
             {
-                var states = context.RequestServices
-                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
-                    .States ?? [];
+                var states = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?.States ?? [];
 
                 return OkLimitedEventDispatchRemediationCommandStates(context, states);
             });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/summary", "GetCephalonEventDispatchRemediationCommandSummary", static context =>
             {
-                var summary = context.RequestServices
-                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
-                    .Summary ?? EventDispatchRemediationRuntimeSummary.Empty;
+                var summary = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?.Summary ??
+                    EventDispatchRemediationRuntimeSummary.Empty;
 
                 return Results.Ok(summary);
             });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/latest", "GetCephalonEventDispatchRemediationLatestCommand", static context =>
             {
-                var state = context.RequestServices
-                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
-                    .Latest;
+                var state = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?.Latest;
 
                 return state is null ? Results.NotFound() : Results.Ok(state);
             });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/retention", "GetCephalonEventDispatchRemediationCommandRetention", static context =>
             {
-                var retention = context.RequestServices
-                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
-                    .Retention ?? EventDispatchRemediationRuntimeRetention.Empty;
+                var retention = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?.Retention ??
+                    EventDispatchRemediationRuntimeRetention.Empty;
 
                 return Results.Ok(retention);
             });
@@ -1045,8 +1039,7 @@ public static class EngineWebApplicationExtensions
                     return Results.BadRequest("Query parameter 'fromUtc' must be less than or equal to 'toUtc'.");
                 }
 
-                var summary = context.RequestServices
-                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
+                var summary = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
                     .GetSummaryByObservedAt(fromUtc, toUtc) ?? EventDispatchRemediationRuntimeSummary.Empty;
 
                 return Results.Ok(summary);
@@ -1068,8 +1061,7 @@ public static class EngineWebApplicationExtensions
                     return Results.BadRequest("Query parameter 'fromUtc' must be less than or equal to 'toUtc'.");
                 }
 
-                var states = context.RequestServices
-                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
+                var states = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
                     .GetByObservedAt(fromUtc, toUtc) ?? [];
 
                 return OkLimitedEventDispatchRemediationCommandStates(context, states);
@@ -1077,8 +1069,7 @@ public static class EngineWebApplicationExtensions
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/outboxes/{outboxId}", "GetCephalonEventDispatchRemediationCommandsByOutbox", static context =>
             {
                 var outboxId = GetRouteValue(context, "outboxId");
-                var states = context.RequestServices
-                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
+                var states = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
                     .GetByOutboxId(outboxId) ?? [];
 
                 return OkLimitedEventDispatchRemediationCommandStates(context, states);
@@ -1086,8 +1077,7 @@ public static class EngineWebApplicationExtensions
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/messages/{messageId}", "GetCephalonEventDispatchRemediationCommandsByMessage", static context =>
             {
                 var messageId = GetRouteValue(context, "messageId");
-                var states = context.RequestServices
-                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
+                var states = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
                     .GetByMessageId(messageId) ?? [];
 
                 return OkLimitedEventDispatchRemediationCommandStates(context, states);
@@ -1095,8 +1085,7 @@ public static class EngineWebApplicationExtensions
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/channels/{channelId}", "GetCephalonEventDispatchRemediationCommandsByChannel", static context =>
             {
                 var channelId = GetRouteValue(context, "channelId");
-                var states = context.RequestServices
-                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
+                var states = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
                     .GetByChannelId(channelId) ?? [];
 
                 return OkLimitedEventDispatchRemediationCommandStates(context, states);
@@ -1104,8 +1093,7 @@ public static class EngineWebApplicationExtensions
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/operations/{operationId}", "GetCephalonEventDispatchRemediationCommandsByOperation", static context =>
             {
                 var operationId = GetRouteValue(context, "operationId");
-                var states = context.RequestServices
-                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
+                var states = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
                     .GetByOperationId(operationId) ?? [];
 
                 return OkLimitedEventDispatchRemediationCommandStates(context, states);
@@ -1113,8 +1101,7 @@ public static class EngineWebApplicationExtensions
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/actors/{actorId}", "GetCephalonEventDispatchRemediationCommandsByActor", static context =>
             {
                 var actorId = GetRouteValue(context, "actorId");
-                var states = context.RequestServices
-                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
+                var states = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
                     .GetByActorId(actorId) ?? [];
 
                 return OkLimitedEventDispatchRemediationCommandStates(context, states);
@@ -1122,8 +1109,7 @@ public static class EngineWebApplicationExtensions
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/correlations/{correlationId}", "GetCephalonEventDispatchRemediationCommandsByCorrelation", static context =>
             {
                 var correlationId = GetRouteValue(context, "correlationId");
-                var states = context.RequestServices
-                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
+                var states = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
                     .GetByCorrelationId(correlationId) ?? [];
 
                 return OkLimitedEventDispatchRemediationCommandStates(context, states);
@@ -1131,8 +1117,7 @@ public static class EngineWebApplicationExtensions
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/reasons/{reason}", "GetCephalonEventDispatchRemediationCommandsByReason", static context =>
             {
                 var reason = GetRouteValue(context, "reason");
-                var states = context.RequestServices
-                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
+                var states = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
                     .GetByReason(reason) ?? [];
 
                 return OkLimitedEventDispatchRemediationCommandStates(context, states);
@@ -1140,8 +1125,7 @@ public static class EngineWebApplicationExtensions
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/outcomes/{outcome}", "GetCephalonEventDispatchRemediationCommandsByOutcome", static context =>
             {
                 var outcome = GetRouteValue(context, "outcome");
-                var states = context.RequestServices
-                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
+                var states = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
                     .GetByOutcome(outcome) ?? [];
 
                 return OkLimitedEventDispatchRemediationCommandStates(context, states);
@@ -1149,8 +1133,7 @@ public static class EngineWebApplicationExtensions
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}", "GetCephalonEventDispatchRemediationCommandsByDispatchOutcome", static context =>
             {
                 var dispatchOutcome = GetRouteValue(context, "dispatchOutcome");
-                var states = context.RequestServices
-                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
+                var states = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
                     .GetByDispatchOutcome(dispatchOutcome) ?? [];
 
                 return OkLimitedEventDispatchRemediationCommandStates(context, states);
@@ -1158,8 +1141,7 @@ public static class EngineWebApplicationExtensions
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/{commandId}", "GetCephalonEventDispatchRemediationCommand", static context =>
             {
                 var commandId = GetRouteValue(context, "commandId");
-                var state = context.RequestServices
-                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
+                var state = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
                     .GetByCommandId(commandId);
 
                 return state is null ? Results.NotFound() : Results.Ok(state);
@@ -2358,6 +2340,14 @@ public static class EngineWebApplicationExtensions
         }
 
         return Results.Ok(states.Take(limit.Value).ToArray());
+    }
+
+    private static IEventDispatchRemediationRuntimeCatalog? ResolveEventDispatchRemediationCommandReadModel(IServiceProvider services)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+
+        return services.GetService<IEventDispatchRemediationCommandJournal>() ??
+            services.GetService<IEventDispatchRemediationRuntimeCatalog>();
     }
 
     private static IResult OkPagedEventDispatchRemediationCommandStates(

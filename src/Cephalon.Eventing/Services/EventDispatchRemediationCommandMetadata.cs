@@ -94,4 +94,27 @@ internal static class EventDispatchRemediationCommandMetadata
         metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy] = "unique-command-id";
         metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy] = "reject-without-mutation";
     }
+
+    internal static void AddJournalMetadata(
+        IDictionary<string, string> metadata,
+        EventDispatchRemediationCommandJournalDescriptor? descriptor,
+        string prefix = "command")
+    {
+        descriptor ??= new EventDispatchRemediationCommandJournalDescriptor(
+            JournalId: "eventing.process-local-remediation-command-journal",
+            Provider: "Cephalon.Eventing",
+            Storage: "memory",
+            Durability: "process-local",
+            Scope: "single-process",
+            CrossNodeCommandAudit: false,
+            DurableReplayCursor: false);
+
+        metadata[$"{prefix}JournalId"] = descriptor.JournalId;
+        metadata[$"{prefix}JournalProvider"] = descriptor.Provider;
+        metadata[$"{prefix}JournalStorage"] = descriptor.Storage;
+        metadata[$"{prefix}JournalDurability"] = descriptor.Durability;
+        metadata[$"{prefix}JournalScope"] = descriptor.Scope;
+        metadata[$"{prefix}CrossNodeCommandAudit"] = descriptor.CrossNodeCommandAudit ? "true" : "false";
+        metadata[$"{prefix}JournalReplayCursor"] = descriptor.DurableReplayCursor ? "durable" : "not-claimed";
+    }
 }

@@ -326,11 +326,17 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("0", initialCommandCatalogEntry.Metadata["commandStateCount"]);
         Assert.Equal("0", initialCommandCatalogEntry.Metadata["summaryTotalCommandCount"]);
         Assert.Equal("false", initialCommandCatalogEntry.Metadata["summaryHasCommands"]);
-        Assert.Equal("256", initialCommandCatalogEntry.Metadata["commandHistoryLimit"]);
+        Assert.Equal("0", initialCommandCatalogEntry.Metadata["commandHistoryLimit"]);
         Assert.Equal("0", initialCommandCatalogEntry.Metadata["retainedCommandCount"]);
         Assert.Equal("0", initialCommandCatalogEntry.Metadata["totalRecordedCommandCount"]);
         Assert.Equal("0", initialCommandCatalogEntry.Metadata["droppedCommandCount"]);
         Assert.Equal("false", initialCommandCatalogEntry.Metadata["retentionTruncated"]);
+        Assert.Equal("durable", initialCommandCatalogEntry.Metadata["commandJournalDurability"]);
+        Assert.Equal("cross-node", initialCommandCatalogEntry.Metadata["commandJournalScope"]);
+        Assert.Equal("Cephalon.Data.EntityFramework", initialCommandCatalogEntry.Metadata["commandJournalProvider"]);
+        Assert.Equal("entity-framework-table", initialCommandCatalogEntry.Metadata["commandJournalStorage"]);
+        Assert.Equal("true", initialCommandCatalogEntry.Metadata["commandCrossNodeCommandAudit"]);
+        Assert.Equal("not-claimed", initialCommandCatalogEntry.Metadata["commandJournalReplayCursor"]);
         Assert.Equal("false", initialCommandCatalogEntry.Metadata["hasLatestCommand"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands", initialCommandCatalogEntry.Metadata["commandListRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", initialCommandCatalogEntry.Metadata["commandResultRoute"]);
@@ -488,7 +494,7 @@ public sealed class EventDispatchHostingTests
         Assert.Equal(0, commandSummaryBeforeObservationWindow.DroppedCommandCount);
         Assert.False(commandSummaryBeforeObservationWindow.RetentionTruncated);
         Assert.False(commandSummaryBeforeObservationWindow.SummaryMayBeIncomplete);
-        Assert.Equal("cmd-command-001-retry", commandSummaryBeforeObservationWindow.OldestRetainedCommandId);
+        Assert.Null(commandSummaryBeforeObservationWindow.OldestRetainedCommandId);
         Assert.False(commandSummaryBeforeObservationWindow.HasCommands);
         Assert.Equal(HttpStatusCode.BadRequest, invalidObservationWindowResponse.StatusCode);
         Assert.Equal(HttpStatusCode.BadRequest, invalidObservationWindowSummaryResponse.StatusCode);
@@ -535,7 +541,7 @@ public sealed class EventDispatchHostingTests
         Assert.True(commandSummary.HasCommands);
         Assert.False(commandSummary.HasFailures);
         Assert.NotNull(commandRetention);
-        Assert.Equal(256, commandRetention.HistoryLimit);
+        Assert.Equal(0, commandRetention.HistoryLimit);
         Assert.Equal(1, commandRetention.RetainedCommandCount);
         Assert.Equal(1, commandRetention.TotalRecordedCommandCount);
         Assert.Equal(0, commandRetention.DroppedCommandCount);
@@ -879,7 +885,7 @@ public sealed class EventDispatchHostingTests
         Assert.True(finalCommandSummary.HasCommands);
         Assert.True(finalCommandSummary.HasFailures);
         Assert.NotNull(finalCommandRetention);
-        Assert.Equal(256, finalCommandRetention.HistoryLimit);
+        Assert.Equal(0, finalCommandRetention.HistoryLimit);
         Assert.Equal(3, finalCommandRetention.RetainedCommandCount);
         Assert.Equal(3, finalCommandRetention.TotalRecordedCommandCount);
         Assert.Equal(0, finalCommandRetention.DroppedCommandCount);
@@ -1533,7 +1539,7 @@ public sealed class EventDispatchHostingTests
 
         await app.StartAsync();
 
-        var scheduledForUtc = DateTimeOffset.UtcNow.AddMilliseconds(200);
+        var scheduledForUtc = DateTimeOffset.UtcNow.AddMilliseconds(1000);
         var client = app.GetTestClient();
         var response = await client.PostAsJsonAsync(
             "/engine/event-publications",
@@ -1583,7 +1589,7 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("4", pendingPublisherEntry.Metadata["publicationSchedulingMaxPendingCount"]);
         Assert.Equal("1", pendingPublisherEntry.Metadata["scheduledPublicationPendingCount"]);
 
-        await WaitForConditionAsync(() => probe.SuccessfulAttempts == 1);
+        await WaitForConditionAsync(() => probe.SuccessfulAttempts == 1, timeoutMilliseconds: 5000);
 
         var completedState = Assert.Single(publicationRuntimeCatalog.States);
         var runtimeState = Assert.Single(app.Services.GetRequiredService<IEventSubscriptionRuntimeCatalog>().States);

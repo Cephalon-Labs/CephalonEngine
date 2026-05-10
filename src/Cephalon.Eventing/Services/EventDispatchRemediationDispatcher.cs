@@ -8,6 +8,7 @@ internal sealed class EventDispatchRemediationDispatcher(
     IEventDispatchRuntimeCatalog runtimeCatalog,
     IEventDispatchRuntimeReporter runtimeReporter,
     IEventChannelCatalog channels,
+    IEventDispatchRemediationCommandJournal commandJournal,
     EventDispatchRemediationRuntimeCatalog commandCatalog) : IEventDispatchRemediationDispatcher
 {
     private const string CommandSource = "cephalon-event-dispatch-remediation-dispatcher";
@@ -29,7 +30,7 @@ internal sealed class EventDispatchRemediationDispatcher(
             1,
             (runtimeCatalog.GetByOutboxId(request.OutboxId)?.LastAttempt ?? 0) + 1);
 
-        var existingCommand = commandCatalog.GetByCommandId(request.CommandId);
+        var existingCommand = commandJournal.GetByCommandId(request.CommandId);
         if (existingCommand is not null)
         {
             return CreateDuplicateCommandResult(
@@ -44,36 +45,39 @@ internal sealed class EventDispatchRemediationDispatcher(
         var dispatchStore = ResolveDispatchStore(request.OutboxId);
         if (dispatchStore is null)
         {
-            return Record(CreateRejectedResult(
+            return await RecordAsync(CreateRejectedResult(
                 request,
                 operationId,
                 dispatchOutcome,
                 observedAtUtc,
                 $"Outbox '{request.OutboxId}' is not owned by the active event dispatch remediation dispatcher.",
-                metadata));
+                metadata),
+                cancellationToken).ConfigureAwait(false);
         }
 
         if (!channels.TryGet(request.ChannelId, out _))
         {
-            return Record(CreateRejectedResult(
+            return await RecordAsync(CreateRejectedResult(
                 request,
                 operationId,
                 dispatchOutcome,
                 observedAtUtc,
                 $"Event channel '{request.ChannelId}' is not registered in the active eventing runtime.",
-                metadata));
+                metadata),
+                cancellationToken).ConfigureAwait(false);
         }
 
         if (string.Equals(operationId, EventDispatchRemediationOperationIds.RetryLater, StringComparison.OrdinalIgnoreCase) &&
             request.NextAttemptAtUtc is null)
         {
-            return Record(CreateRejectedResult(
+            return await RecordAsync(CreateRejectedResult(
                 request,
                 operationId,
                 dispatchOutcome,
                 observedAtUtc,
                 "Retry-later event-dispatch remediation requires a next attempt timestamp.",
-                metadata));
+                metadata),
+                cancellationToken).ConfigureAwait(false);
         }
 
         var report = new EventDispatchExecutionReport(
@@ -93,16 +97,17 @@ internal sealed class EventDispatchRemediationDispatcher(
         }
         catch (InvalidOperationException exception)
         {
-            return Record(CreateRejectedResult(
+            return await RecordAsync(CreateRejectedResult(
                 request,
                 operationId,
                 dispatchOutcome,
                 observedAtUtc,
                 exception.Message,
-                metadata));
+                metadata),
+                cancellationToken).ConfigureAwait(false);
         }
 
-        return Record(new EventDispatchRemediationResult(
+        return await RecordAsync(new EventDispatchRemediationResult(
             CommandId: request.CommandId,
             OutboxId: request.OutboxId,
             MessageId: request.MessageId,
@@ -112,12 +117,20 @@ internal sealed class EventDispatchRemediationDispatcher(
             DispatchOutcome: dispatchOutcome,
             ObservedAtUtc: observedAtUtc,
             Error: null,
-            Metadata: metadata));
+            Metadata: metadata),
+            cancellationToken).ConfigureAwait(false);
     }
 
-    private EventDispatchRemediationResult Record(EventDispatchRemediationResult result)
+    private async ValueTask<EventDispatchRemediationResult> RecordAsync(
+        EventDispatchRemediationResult result,
+        CancellationToken cancellationToken)
     {
-        commandCatalog.Record(result);
+        await commandJournal.RecordAsync(result, cancellationToken).ConfigureAwait(false);
+        if (!ReferenceEquals(commandJournal, commandCatalog))
+        {
+            commandCatalog.Record(result);
+        }
+
         return result;
     }
 

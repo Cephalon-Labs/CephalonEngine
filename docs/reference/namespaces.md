@@ -34,7 +34,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Abstractions.Data`
 
-- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-data): 260 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data)
+- [Cephalon.Abstractions](cephalon-abstractions.md#namespace-cephalon-abstractions-data): 262 public types [Browse](browse.html?assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data)
 
 ## `Cephalon.Abstractions.EventSourcing`
 
@@ -198,7 +198,7 @@ Browse the published API surface by namespace.
 
 ## `Cephalon.Data.EntityFramework.Modeling`
 
-- [Cephalon.Data.EntityFramework](cephalon-data-entityframework.md#namespace-cephalon-data-entityframework-modeling): 5 public types [Browse](browse.html?assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling)
+- [Cephalon.Data.EntityFramework](cephalon-data-entityframework.md#namespace-cephalon-data-entityframework-modeling): 7 public types [Browse](browse.html?assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling)
 
 ## `Cephalon.Data.EntityFramework.Registration`
 

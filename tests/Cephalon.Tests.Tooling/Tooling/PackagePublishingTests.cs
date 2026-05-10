@@ -65,7 +65,10 @@ public sealed class PackagePublishingTests
 
             var cliPackageFile = Assert.IsType<JsonArray>(cliArtifact["PackageFiles"])
                 .Select(node => Assert.IsType<JsonObject>(node))
-                .Single(file => file["FileName"]?.GetValue<string>() is string name && name.StartsWith("Cephalon.Cli.", StringComparison.Ordinal));
+                .Single(file => file["FileName"]?.GetValue<string>() is string name &&
+                    name.StartsWith("Cephalon.Cli.", StringComparison.Ordinal) &&
+                    name.EndsWith(".nupkg", StringComparison.OrdinalIgnoreCase) &&
+                    !name.EndsWith(".symbols.nupkg", StringComparison.OrdinalIgnoreCase));
 
             Assert.Equal(cliPackageFile["FileName"]?.GetValue<string>(), cliPackageFile["Path"]?.GetValue<string>());
             var cliPackagePath = Path.Combine(outputPath, cliPackageFile["FileName"]!.GetValue<string>());
