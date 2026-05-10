@@ -1,2 +1,3 @@
 #nullable enable
 const Cephalon.Abstractions.Data.EventDispatchRemediationOperationIds.DeadLetter = "dead-letter" -> string!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByOperationId(string! operationId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!

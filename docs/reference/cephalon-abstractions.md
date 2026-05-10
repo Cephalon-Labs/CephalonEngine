@@ -50860,6 +50860,21 @@ Returns: The recorded command state, or `null` when the command has not reported
 Parameters:
 - `commandId`: The stable remediation command identifier to resolve.
 
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbyoperationid-system-string"></a>
+
+##### `GetByOperationId`
+
+```csharp
+IReadOnlyList<EventDispatchRemediationRuntimeState> GetByOperationId(string operationId)
+```
+
+Gets the remediation command-state entries recorded for one command operation.
+
+Returns: The recorded command states for the operation, ordered by observed time and command identifier.
+
+Parameters:
+- `operationId`: The stable command operation identifier to resolve.
+
 <a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbyoutboxid-system-string"></a>
 
 ##### `GetByOutboxId`

@@ -2235,6 +2235,9 @@ Current payload highlights:
   to one command and returns `404` when no command has been recorded with that id
 - `GET /engine/event-dispatch-remediation-commands/outboxes/{outboxId}` filters command results by
   target outbox id
+- `GET /engine/event-dispatch-remediation-commands/operations/{operationId}` filters command
+  results by stable remediation operation id, such as `retry-now`, `retry-later`, `skip`,
+  `quarantine`, or `dead-letter`
 - `GET /engine/event-dispatch-remediation-commands/outcomes/{outcome}` filters command results by
   command outcome, such as `accepted` or `rejected`
 - the same descriptor and state catalogs are also available through `/engine/snapshot` in

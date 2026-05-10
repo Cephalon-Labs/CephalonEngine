@@ -1246,6 +1246,7 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("ready", remediationEntry.Metadata["skipCommand"]);
         Assert.Equal("/engine/event-dispatches/{outboxId}/commands/{operationId}", remediationEntry.Metadata["operatorCommandRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", remediationEntry.Metadata["operatorCommandResultRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/operations/{operationId}", remediationEntry.Metadata["operatorCommandOperationRoute"]);
         Assert.Equal("retry-now,retry-later,skip,quarantine,dead-letter", remediationEntry.Metadata["operatorCommandOperations"]);
         Assert.Equal("false", remediationEntry.Metadata["wolverineRequired"]);
         Assert.Equal("true", remediationEntry.Metadata["providerNeutral"]);
@@ -1343,6 +1344,8 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("reject-without-mutation", remediationCommandState.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
         Assert.Equal(remediationCommandState, remediationCommandCatalog.GetByCommandId("cmd-evt-020-retry"));
         Assert.Equal(remediationCommandState, Assert.Single(remediationCommandCatalog.GetByOutboxId("entity-framework-outbox")));
+        Assert.Equal(remediationCommandState, Assert.Single(remediationCommandCatalog.GetByOperationId("retry-now")));
+        Assert.Empty(remediationCommandCatalog.GetByOperationId("skip"));
         Assert.Equal(remediationCommandState, Assert.Single(remediationCommandCatalog.GetByOutcome("accepted")));
         eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
         var remediationCommandSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatch-remediation-commands");
@@ -1350,6 +1353,7 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("retry-now", remediationCommandEntry.Metadata["operationId"]);
         Assert.Equal("accepted", remediationCommandEntry.Metadata["outcome"]);
         Assert.Equal("retry-scheduled", remediationCommandEntry.Metadata["dispatchOutcome"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/operations/{operationId}", remediationCommandEntry.Metadata["commandOperationRoute"]);
         Assert.Equal("false", remediationCommandEntry.Metadata["wolverineRequired"]);
         Assert.Equal("unique-command-id", remediationCommandEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
         Assert.Equal("reject-without-mutation", remediationCommandEntry.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);

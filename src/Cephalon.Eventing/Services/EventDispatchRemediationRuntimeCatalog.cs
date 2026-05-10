@@ -53,6 +53,21 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         }
     }
 
+    public IReadOnlyList<EventDispatchRemediationRuntimeState> GetByOperationId(string operationId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(operationId);
+        var normalizedOperationId = operationId.Trim();
+
+        lock (gate)
+        {
+            return states
+                .Where(state => string.Equals(state.OperationId, normalizedOperationId, StringComparison.OrdinalIgnoreCase))
+                .OrderByDescending(static state => state.ObservedAtUtc)
+                .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+        }
+    }
+
     public IReadOnlyList<EventDispatchRemediationRuntimeState> GetByOutcome(string outcome)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(outcome);

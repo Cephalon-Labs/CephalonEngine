@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T02:47:32.2752464+00:00",
+  "GeneratedAtUtc": "2026-05-10T03:08:13.2975955+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -11051,7 +11051,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 3
+        "Methods": 4
       }
     },
     {
@@ -61063,6 +61063,17 @@
       "AnchorId": "member-m-cephalon-abstractions-technologies-icellboundarycatalog-getbymodule-system-string",
       "Signature": "IReadOnlyList\u003CCellBoundaryDescriptor\u003E GetByModule(string moduleId)",
       "Summary": "Gets all cell boundaries that include the requested module."
+    },
+    {
+      "DisplayName": "GetByOperationId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbyoperationid-system-string",
+      "Signature": "IReadOnlyList\u003CEventDispatchRemediationRuntimeState\u003E GetByOperationId(string operationId)",
+      "Summary": "Gets the remediation command-state entries recorded for one command operation."
     },
     {
       "DisplayName": "GetByOutboxId",

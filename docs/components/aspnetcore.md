@@ -521,8 +521,9 @@ When the same runtime registers `IEventDispatchRemediationRuntimeCatalog`, the h
 `/engine/event-dispatch-remediation-commands`,
 `/engine/event-dispatch-remediation-commands/{commandId}`,
 `/engine/event-dispatch-remediation-commands/outboxes/{outboxId}`, and
+`/engine/event-dispatch-remediation-commands/operations/{operationId}`, and
 `/engine/event-dispatch-remediation-commands/outcomes/{outcome}` so operators can inspect accepted
-and rejected command results separately from the latest per-outbox dispatch state. A duplicate
+and rejected command results by command id, outbox id, operation id, or outcome separately from the latest per-outbox dispatch state. A duplicate
 command id does not replace the original command-result record; callers can inspect the original
 record through `/engine/event-dispatch-remediation-commands/{commandId}` before issuing a new
 command id.

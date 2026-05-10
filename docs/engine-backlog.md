@@ -4862,6 +4862,41 @@ Follow-up later:
   inbox-backed command ownership remain future package-owned work until a package truly owns those
   paths
 
+### ENG-557 Eventing remediation command operation drill-down
+
+Status: done
+Estimate: 1
+Issue: #1211
+Iteration: Sprint 91 follow-through
+Area: eventing / operations / Wolverine-free baseline
+Quality dimensions: Auditability, Usability, Reliability, Compatibility, Maintainability
+
+Why:
+
+- operators need to inspect command-result history by operation family such as `retry-now`,
+  `retry-later`, `skip`, `quarantine`, or `dead-letter` without parsing latest dispatch-state
+  metadata
+- Wolverine remains optional, so the engine-owned remediation command-result catalog needs its own
+  provider-neutral operation drill-down in the abstraction and ASP.NET Core host adapter
+
+Delivered:
+
+- added `IEventDispatchRemediationRuntimeCatalog.GetByOperationId(...)` and the native catalog
+  implementation with the same bounded, process-local ordering semantics as outbox/outcome reads
+- exposed `GET /engine/event-dispatch-remediation-commands/operations/{operationId}` through
+  ASP.NET Core and surfaced the route through capability metadata plus
+  `event-dispatch-remediations` / `event-dispatch-remediation-commands` technology surfaces
+- proved the Wolverine-free HTTP route path, direct composition catalog path, and optional
+  Wolverine surface metadata alignment with focused tests
+- updated component docs, ASP.NET Core operations docs, runtime contract index, maturity and
+  conformance rows, roadmap, compatibility notes, project memory, and generated reference docs so
+  operation-level command-result history is part of the human and API contract
+
+Follow-up later:
+
+- durable command journals, cross-node operation analytics, and broker-owned replay/purge drill-downs
+  remain future package-owned work until a package truly owns those paths
+
 ### ENG-269 Agentics tool execution operator-action baseline
 
 Status: done
@@ -16225,6 +16260,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-554 Eventing attribute descriptor discovery baseline (shipped): registered `IEventSubscriptionExecutor` services can now declare static subscription metadata with `EventSubscriptionAttribute`, while `IEventSubscriptionDescriptorProvider` remains available for richer dynamic metadata; the native in-process descriptor contributor validates attribute id versus executor `SubscriptionId`, keeps manual descriptors authoritative, and reports `executor-attribute` / `code-first-attribute` metadata without enabling string subscription or handler configuration
 - ENG-555 Eventing dispatch-store dead-letter command baseline (shipped): native remediation now accepts `dead-letter` beside `retry-now`, `retry-later`, `skip`, and `quarantine`, reports terminal dispatch-store dead-letter intent through stable `deadLetter*` metadata, and keeps `brokerDeadLetter = false` so broker DLQ ownership remains a provider-companion claim
 - ENG-556 Eventing remediation command-idempotency baseline (shipped): native remediation now enforces `unique-command-id`, rejects duplicate command ids without dispatch-store mutation, preserves the first command-result record, and reports duplicate-command metadata for safe operator retry recovery
+- ENG-557 Eventing remediation command operation drill-down (shipped): native command-result history can now be filtered by operation id through `IEventDispatchRemediationRuntimeCatalog.GetByOperationId(...)` and `/engine/event-dispatch-remediation-commands/operations/{operationId}` without requiring Wolverine or parsing latest dispatch-state metadata
 
 ### Sprint 88
 
@@ -16544,6 +16580,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-554 Add Eventing attribute descriptor discovery: `EventSubscriptionAttribute` now lets registered native subscription executors carry static descriptor metadata without implementing a provider property, while the descriptor contributor still fails closed on executor/descriptor id mismatch, preserves manual descriptor authority, reports `executor-attribute` / `code-first-attribute` metadata, and keeps subscription/handler config binding rejected. Quality dimensions: Usability + Performance + Maintainability + Compatibility + Auditability (shipped)
 - ENG-555 Add Eventing dispatch-store dead-letter command: native remediation now exposes `dead-letter` as a bounded dispatch-store terminal intent command, reports `deadLetterOutcome`, `deadLetterScope`, `deadLetterDurability`, and `brokerDeadLetter = false`, and keeps broker DLQ ownership explicitly provider-specific while Wolverine remains optional. Quality dimensions: Reliability + Auditability + Maintainability + Usability + Compatibility (shipped)
 - ENG-556 Add Eventing remediation command idempotency: native remediation now rejects duplicate command ids before dispatch-store mutation, preserves the original command-result record, and surfaces `duplicateCommand` / existing-command metadata so operator retry recovery stays explicit while Wolverine remains optional. Quality dimensions: Data Integrity + Auditability + Reliability + Usability + Compatibility (shipped)
+- ENG-557 Add Eventing remediation command operation drill-down: native command-result history now has an operation-level read seam, ASP.NET Core publishes `/engine/event-dispatch-remediation-commands/operations/{operationId}`, and capability/runtime-surface metadata advertises the same route so operator command audits do not infer operation history from latest outbox state. Quality dimensions: Auditability + Usability + Reliability + Compatibility + Maintainability (shipped)
 - ENG-524 Harden deployment-mode audit-only probes: direct trim and Native AOT runs now keep the single-file release gate out of their verdict by returning `PublishProbeGate=not-applicable` when only audit-only modes are evaluated; compiler-only analyzer/source-generator `ProjectReference` entries strip app publish-mode globals through `CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove`; and `Cephalon.Analyzers`, `Cephalon.Behaviors.SourceGen`, and `Cephalon.Engine.SourceGen` localize publish/RID globals with `TreatAsLocalProperty` so publish probes reach real runtime blocker evidence instead of failing on compiler-only `netstandard2.0` drift. Release closeout also stabilized the readiness warmup hosting test, refreshed the REST projection/governance guardrail to a measured 1 s ceiling while keeping the existing 16 MB allocation ceiling, and moved the canonical full `validate-release` wall-time target to 30 minutes after the current full lane measured about 1,669.848 seconds. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability + Performance (shipped)
 - ENG-535 Close generated REST behavior source-generator adoption proof: `Cephalon.Behaviors.SourceGen` now packs its compiler assembly under `analyzers/dotnet/cs`, scaffolded REST behavior modules and template-pack REST starters reference it as `PrivateAssets=all`, generated module projects keep `Cephalon.Engine.SourceGen` in every blueprint, and the out-of-tree adoption temporary feed publishes the full generated REST behavior package closure (`Cephalon.Behaviors.SourceGen`, `Cephalon.Diagnostics`, and `Cephalon.Resilience`) so restore/build/run replay can produce the REST profile hints required by `MapProfile<TBehavior>()`. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability (shipped)
 - ENG-487 Add opt-in CDC integration baseline: `tests/Cephalon.Tests.CdcIntegration` now carries the first dedicated live CDC integration lane, proving MongoDB change streams against a disposable `EphemeralMongo7` replica set with real outbox staging, provider-native runtime binding, runtime-state reporting, execution-runtime aggregation, and checkpoint persistence; `data.slnf` now points at the split data-relevant test projects instead of the retired monolithic test project, and SQL Server/Postgres live CDC coverage stays explicitly later until an external-service/Testcontainers gate exists. Quality dimensions: Reliability + Compatibility + Auditability + Maintainability (shipped)

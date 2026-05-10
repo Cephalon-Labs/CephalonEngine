@@ -204,6 +204,7 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("ready", terminalRemediationEntry.Metadata["skipCommand"]);
         Assert.Equal("/engine/event-dispatches/{outboxId}/commands/{operationId}", terminalRemediationEntry.Metadata["operatorCommandRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", terminalRemediationEntry.Metadata["operatorCommandResultRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/operations/{operationId}", terminalRemediationEntry.Metadata["operatorCommandOperationRoute"]);
         Assert.Equal("false", terminalRemediationEntry.Metadata["wolverineRequired"]);
         Assert.Equal("unique-command-id", terminalRemediationEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
         Assert.Equal("reject-without-mutation", terminalRemediationEntry.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
@@ -262,6 +263,7 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("not-claimed", remediationCapability.Metadata["brokerDeadLetterCommand"]);
         Assert.Equal("available", remediationCapability.Metadata["commandRuntimeState"]);
         Assert.Equal("256", remediationCapability.Metadata["commandHistoryLimit"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/operations/{operationId}", remediationCapability.Metadata["commandOperationRoute"]);
         Assert.Equal("unique-command-id", remediationCapability.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
         Assert.Equal("reject-without-mutation", remediationCapability.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
 
@@ -315,6 +317,7 @@ public sealed class EventDispatchHostingTests
         var commandStates = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands");
         var commandState = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState>("/engine/event-dispatch-remediation-commands/cmd-command-001-retry");
         var commandStatesByOutbox = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/outboxes/entity-framework-outbox");
+        var commandStatesByRetryNowOperation = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/operations/retry-now");
         var acceptedCommandStates = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/outcomes/accepted");
         var remediatedState = await client.GetFromJsonAsync<EventDispatchRuntimeState>("/engine/event-dispatches/entity-framework-outbox");
         await using var readScope = app.Services.CreateAsyncScope();
@@ -340,6 +343,8 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("reject-without-mutation", commandState.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
         Assert.NotNull(commandStatesByOutbox);
         Assert.Equal("cmd-command-001-retry", Assert.Single(commandStatesByOutbox).CommandId);
+        Assert.NotNull(commandStatesByRetryNowOperation);
+        Assert.Equal("cmd-command-001-retry", Assert.Single(commandStatesByRetryNowOperation).CommandId);
         Assert.NotNull(acceptedCommandStates);
         Assert.Equal("cmd-command-001-retry", Assert.Single(acceptedCommandStates).CommandId);
         Assert.NotNull(remediatedState);
@@ -367,6 +372,7 @@ public sealed class EventDispatchHostingTests
         var duplicateCommandResult = await duplicateCommandResponse.Content.ReadFromJsonAsync<EventDispatchRemediationResult>();
         var originalCommandStateAfterDuplicate = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState>("/engine/event-dispatch-remediation-commands/cmd-command-001-retry");
         var commandStatesAfterDuplicate = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands");
+        var commandStatesBySkipOperation = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/operations/skip");
         var remediatedStateAfterDuplicate = await client.GetFromJsonAsync<EventDispatchRuntimeState>("/engine/event-dispatches/entity-framework-outbox");
         pending = await readStore.ReadPendingAsync(10);
 
@@ -383,6 +389,8 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("retry-now", originalCommandStateAfterDuplicate.OperationId);
         Assert.NotNull(commandStatesAfterDuplicate);
         Assert.Single(commandStatesAfterDuplicate);
+        Assert.NotNull(commandStatesBySkipOperation);
+        Assert.Empty(commandStatesBySkipOperation);
         Assert.NotNull(remediatedStateAfterDuplicate);
         Assert.Equal(EventDispatchExecutionOutcomes.RetryScheduled, remediatedStateAfterDuplicate.LastOutcome);
         Assert.Equal("retry-now", remediatedStateAfterDuplicate.Metadata["operatorCommand"]);
@@ -403,6 +411,7 @@ public sealed class EventDispatchHostingTests
         var deadLetterResult = await deadLetterResponse.Content.ReadFromJsonAsync<EventDispatchRemediationResult>();
         var deadLetterState = await client.GetFromJsonAsync<EventDispatchRuntimeState>("/engine/event-dispatches/entity-framework-outbox");
         var deadLetterCommandState = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState>("/engine/event-dispatch-remediation-commands/cmd-command-001-dead-letter");
+        var commandStatesByDeadLetterOperation = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/operations/dead-letter");
         pending = await readStore.ReadPendingAsync(10);
 
         Assert.NotNull(deadLetterResult);
@@ -418,6 +427,8 @@ public sealed class EventDispatchHostingTests
         Assert.Equal(EventDispatchRemediationOutcomes.Accepted, deadLetterCommandState.Outcome);
         Assert.Equal(EventDispatchExecutionOutcomes.Failed, deadLetterCommandState.DispatchOutcome);
         Assert.Equal("dead-letter", deadLetterCommandState.OperationId);
+        Assert.NotNull(commandStatesByDeadLetterOperation);
+        Assert.Equal("cmd-command-001-dead-letter", Assert.Single(commandStatesByDeadLetterOperation).CommandId);
         Assert.NotNull(deadLetterState);
         Assert.Equal(EventDispatchExecutionOutcomes.Failed, deadLetterState.LastOutcome);
         Assert.True(deadLetterState.TerminalFailure);
@@ -445,6 +456,7 @@ public sealed class EventDispatchHostingTests
         var rejectedResult = await rejectedResponse.Content.ReadFromJsonAsync<EventDispatchRemediationResult>();
         var rejectedCommandState = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState>("/engine/event-dispatch-remediation-commands/cmd-command-001-retry-later-rejected");
         var rejectedCommandStates = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/outcomes/rejected");
+        var rejectedCommandStatesByOperation = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/operations/retry-later");
         var allCommandStates = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands");
 
         Assert.NotNull(rejectedResult);
@@ -455,6 +467,8 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("next attempt", rejectedCommandState.Error, StringComparison.OrdinalIgnoreCase);
         Assert.NotNull(rejectedCommandStates);
         Assert.Equal("cmd-command-001-retry-later-rejected", Assert.Single(rejectedCommandStates).CommandId);
+        Assert.NotNull(rejectedCommandStatesByOperation);
+        Assert.Equal("cmd-command-001-retry-later-rejected", Assert.Single(rejectedCommandStatesByOperation).CommandId);
         Assert.NotNull(allCommandStates);
         Assert.Equal(3, allCommandStates.Length);
     }

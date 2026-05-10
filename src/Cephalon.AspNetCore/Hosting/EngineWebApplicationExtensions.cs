@@ -1004,6 +1004,15 @@ public static class EngineWebApplicationExtensions
 
                 return Results.Ok(states);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/operations/{operationId}", "GetCephalonEventDispatchRemediationCommandsByOperation", static context =>
+            {
+                var operationId = GetRouteValue(context, "operationId");
+                var states = context.RequestServices
+                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
+                    .GetByOperationId(operationId) ?? [];
+
+                return Results.Ok(states);
+            });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/outcomes/{outcome}", "GetCephalonEventDispatchRemediationCommandsByOutcome", static context =>
             {
                 var outcome = GetRouteValue(context, "outcome");
