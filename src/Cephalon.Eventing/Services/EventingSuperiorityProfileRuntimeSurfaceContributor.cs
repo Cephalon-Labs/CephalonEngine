@@ -32,6 +32,9 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var durableCommandJournalStatus = ResolveDurableCommandJournalStatus(commandJournalDescriptor);
         var durableCommandJournalEvidence = ResolveDurableCommandJournalEvidence(commandJournalDescriptor);
         var durableCommandJournalNextGap = ResolveDurableCommandJournalNextGap(commandJournalDescriptor);
+        var durableCommandJournalReplayStatus = ResolveDurableCommandJournalReplayStatus(commandJournalDescriptor);
+        var durableCommandJournalReplayEvidence = ResolveDurableCommandJournalReplayEvidence(commandJournalDescriptor);
+        var durableCommandJournalReplayNextGap = ResolveDurableCommandJournalReplayNextGap(commandJournalDescriptor);
 
         return new TechnologyRuntimeSurface(
             technologyId: "event-driven-integration",
@@ -167,6 +170,14 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     advantage: "Operators can audit and de-duplicate remediation commands through a Cephalon-owned journal contract while Wolverine, MassTransit, NServiceBus, and broker consoles remain optional.",
                     nextGap: durableCommandJournalNextGap),
                 CreateEntry(
+                    id: "durable-command-journal-replay-cursor",
+                    displayName: "Durable Command-journal Replay Cursor",
+                    description: "Shows whether the active remediation command journal exposes a durable, ordered replay cursor for command records without treating broker replay as claimed.",
+                    status: durableCommandJournalReplayStatus,
+                    evidence: durableCommandJournalReplayEvidence,
+                    advantage: "Provider code can resume command-journal replay through a Cephalon-owned cursor contract while ASP.NET Core paging, broker dead-letter queues, and Wolverine remain separate optional concerns.",
+                    nextGap: durableCommandJournalReplayNextGap),
+                CreateEntry(
                     id: "observability-compliance-and-auditability",
                     displayName: "Observability Compliance And Auditability",
                     description: "Publishes stable diagnostics, redaction-aware activity tags, runtime states, and claim maturity for review.",
@@ -229,6 +240,45 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         return descriptor.DurableReplayCursor
             ? "Attach broker dead-letter replay ownership to the same audit trail when a provider package owns that path."
             : "Add a durable replay cursor contract before claiming broker replay ownership.";
+    }
+
+    private static string ResolveDurableCommandJournalReplayStatus(EventDispatchRemediationCommandJournalDescriptor? descriptor)
+    {
+        if (descriptor is null)
+        {
+            return "not-claimed";
+        }
+
+        return descriptor.DurableReplayCursor ? "claimed" : "partial";
+    }
+
+    private static string ResolveDurableCommandJournalReplayEvidence(EventDispatchRemediationCommandJournalDescriptor? descriptor)
+    {
+        if (descriptor is null)
+        {
+            return "no remediation command journal is active.";
+        }
+
+        var replayCursor = descriptor.DurableReplayCursor ? "durable" : "not-claimed";
+        return descriptor.DurableReplayCursor
+            ? string.Create(
+                CultureInfo.InvariantCulture,
+                $"journalId={descriptor.JournalId}; provider={descriptor.Provider}; replayCursor={replayCursor}; order=oldest-first-observed-utc-command-id; scope=command-journal; brokerReplay=not-claimed; wolverineRequired=false")
+            : string.Create(
+                CultureInfo.InvariantCulture,
+                $"journalId={descriptor.JournalId}; provider={descriptor.Provider}; replayCursor={replayCursor}; brokerReplay=not-claimed; wolverineRequired=false");
+    }
+
+    private static string ResolveDurableCommandJournalReplayNextGap(EventDispatchRemediationCommandJournalDescriptor? descriptor)
+    {
+        if (descriptor is null)
+        {
+            return "Activate a remediation command journal before claiming command-journal replay cursor evidence.";
+        }
+
+        return descriptor.DurableReplayCursor
+            ? "Attach broker dead-letter replay ownership only when a provider package owns that broker path."
+            : "Implement IEventDispatchRemediationCommandReplayCursorCatalog in a durable provider before claiming command-journal replay cursor support.";
     }
 
     private static TechnologyRuntimeEntry CreateEntry(

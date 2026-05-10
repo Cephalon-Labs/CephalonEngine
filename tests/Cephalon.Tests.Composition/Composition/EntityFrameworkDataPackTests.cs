@@ -953,6 +953,7 @@ public sealed class EntityFrameworkDataPackTests
         var remediationCommandEntry = Assert.Single(remediationCommandSurface.Entries);
         var profileSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile");
         var durableAuditEntry = Assert.Single(profileSurface.Entries, entry => entry.Id == "durable-remediation-command-audit");
+        var durableReplayCursorEntry = Assert.Single(profileSurface.Entries, entry => entry.Id == "durable-command-journal-replay-cursor");
         Assert.Equal("entity-framework-outbox", outboxEntry.Id);
         Assert.Equal("entity-framework", outboxEntry.Metadata["provider"]);
         Assert.Equal("transactional-table", outboxEntry.Metadata["mode"]);
@@ -988,6 +989,13 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("scope=cross-node", durableAuditEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("crossNodeCommandAudit=true", durableAuditEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("replayCursor=durable", durableAuditEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("claimed", durableReplayCursorEntry.Metadata["status"]);
+        Assert.Contains("provider=Cephalon.Data.EntityFramework", durableReplayCursorEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("replayCursor=durable", durableReplayCursorEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("order=oldest-first-observed-utc-command-id", durableReplayCursorEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("scope=command-journal", durableReplayCursorEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerReplay=not-claimed", durableReplayCursorEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", durableReplayCursorEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.publish" && capability.Metadata["runtimeState"] == "available");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.publish" && capability.Metadata["dispatchStore"] == "available");

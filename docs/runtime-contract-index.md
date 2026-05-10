@@ -222,6 +222,8 @@ ENG-589 adds filtered retention reads: `IEventDispatchRemediationRuntimeCatalog.
 
 ENG-593 adds the durable command-journal replay cursor seam: `IEventDispatchRemediationCommandReplayCursorCatalog.LatestReplayCursor` and `GetAfterReplayCursor(...)` let provider-owned journals expose stable oldest-first replay over `(ObservedAtUtc, CommandId)` without changing ASP.NET Core newest-first paging tokens or claiming broker replay ownership.
 
+ENG-594 projects that seam into `eventing-superiority-profile` through `durable-command-journal-replay-cursor`, so runtime consumers can distinguish durable command-journal replay support from durable audit posture and broker replay ownership.
+
 **Cells and traffic automation**
 
 `ICellBoundaryCatalog`, `ICellRouteCatalog`, `ICellHealthIsolationCatalog`, `ICellTrafficAutomationRuntimeCatalog`.
