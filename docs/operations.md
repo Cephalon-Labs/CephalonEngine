@@ -2229,11 +2229,12 @@ Current payload highlights:
   `retry-now`, `retry-later`, `skip`, `quarantine`, and dispatch-store `dead-letter`; command ids
   are unique, and a duplicate command id returns a rejected result without mutating dispatch-store
   state or replacing the original command-result record
-- `GET /engine/event-dispatch-remediation-commands` lists accepted and rejected command results
+- `GET /engine/event-dispatch-remediation-commands` lists accepted, rejected, and reserved command results
   recorded by `IEventDispatchRemediationRuntimeCatalog`; `?limit={positiveInteger}` returns only
   the newest retained records
 - `GET /engine/event-dispatch-remediation-commands/summary` returns the bounded command-result
-  roll-up: total, accepted, rejected, errored, duplicate-command count, and latest command
+  roll-up: total, accepted, rejected, errored, duplicate-command count, reserved-command count,
+  in-doubt flag, and latest command
   identity/outcome fields without scanning the full history; it also carries dropped-command count,
   retention-truncated state, incomplete-summary warning state, and oldest retained cutoff metadata
 - `GET /engine/event-dispatch-remediation-commands/latest` returns the newest authoritative
@@ -2245,11 +2246,11 @@ Current payload highlights:
   history has discarded older command results
 - `GET /engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}`
   filters command results by inclusive observed UTC window so incident timelines can read retained
-  accepted and rejected command history without scanning the full bounded list; append
+  accepted, rejected, and reserved command history without scanning the full bounded list; append
   `&limit={positiveInteger}` to return only the newest retained records inside that window
 - `GET /engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}`
   summarizes retained command results inside the same observed UTC window so operator dashboards can
-  read accepted, rejected, error, duplicate, latest-command, retention-truncated, and
+  read accepted, rejected, reserved, error, duplicate, latest-command, in-doubt, retention-truncated, and
   incomplete-window posture without materializing the list
 - `GET /engine/event-dispatch-remediation-commands/{commandId}` narrows the command-result catalog
   to one command and returns `404` when no command has been recorded with that id

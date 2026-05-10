@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Health;
+using Cephalon.Abstractions.Technologies;
 using Cephalon.Behaviors.Hosting;
 using Cephalon.Behaviors.Patterns.Abstractions;
 using Cephalon.Behaviors.Patterns.Hosting;
@@ -1256,6 +1257,7 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal(1, observationSummary.AcceptedCount);
         Assert.Equal(1, observationSummary.RejectedCount);
         Assert.Equal(1, observationSummary.ErrorCount);
+        Assert.Equal(0, observationSummary.ReservedCount);
         Assert.Equal("cmd-retention-003-retry-later-rejected", observationSummary.LastCommandId);
         Assert.Equal(1, observationSummary.DroppedCommandCount);
         Assert.True(observationSummary.RetentionTruncated);
@@ -1264,6 +1266,7 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal(new DateTimeOffset(2026, 04, 13, 10, 2, 0, TimeSpan.Zero), observationSummary.OldestRetainedObservedAtUtc);
         Assert.True(observationSummary.HasCommands);
         Assert.True(observationSummary.HasFailures);
+        Assert.False(observationSummary.HasInDoubtCommands);
         Assert.Equal(
             ["cmd-retention-002-dead-letter"],
             remediationCommandCatalog.GetByObservedAt(
@@ -1285,6 +1288,7 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal(new DateTimeOffset(2026, 04, 13, 10, 2, 0, TimeSpan.Zero), emptyObservationSummary.OldestRetainedObservedAtUtc);
         Assert.False(emptyObservationSummary.HasCommands);
         Assert.False(emptyObservationSummary.HasFailures);
+        Assert.False(emptyObservationSummary.HasInDoubtCommands);
         Assert.Throws<ArgumentException>(() => remediationCommandCatalog.GetByObservedAt(
             new DateTimeOffset(2026, 04, 13, 10, 3, 0, TimeSpan.Zero),
             new DateTimeOffset(2026, 04, 13, 10, 2, 0, TimeSpan.Zero)));
@@ -1296,11 +1300,13 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal(1, retainedSummary.AcceptedCount);
         Assert.Equal(1, retainedSummary.RejectedCount);
         Assert.Equal(1, retainedSummary.ErrorCount);
+        Assert.Equal(0, retainedSummary.ReservedCount);
         Assert.Equal(1, retainedSummary.DroppedCommandCount);
         Assert.True(retainedSummary.RetentionTruncated);
         Assert.True(retainedSummary.SummaryMayBeIncomplete);
         Assert.Equal("cmd-retention-002-dead-letter", retainedSummary.OldestRetainedCommandId);
         Assert.Equal(new DateTimeOffset(2026, 04, 13, 10, 2, 0, TimeSpan.Zero), retainedSummary.OldestRetainedObservedAtUtc);
+        Assert.False(retainedSummary.HasInDoubtCommands);
     }
 
     [Fact]
@@ -1385,6 +1391,8 @@ public sealed class EntityFrameworkDataPackTests
             Assert.Equal("reserve-before-mutation", reserved.Metadata[EventDispatchRemediationMetadataKeys.CommandReservationPolicy]);
             Assert.Equal("reserved", reserved.Metadata[EventDispatchRemediationMetadataKeys.CommandReservationState]);
             Assert.Equal(EventDispatchRemediationOutcomes.Reserved, journal.GetByCommandId("cmd-journal-002-reserved")?.Outcome);
+            Assert.Equal(1, journal.Summary.ReservedCount);
+            Assert.True(journal.Summary.HasInDoubtCommands);
         }
 
         await using (var provider = BuildProvider())
@@ -1446,6 +1454,54 @@ public sealed class EntityFrameworkDataPackTests
             Assert.Equal(EventDispatchRemediationOutcomes.Reserved, reservedState.Outcome);
             Assert.Equal("reserved", reservedState.Metadata[EventDispatchRemediationMetadataKeys.CommandReservationState]);
             Assert.Empty(processLocalCatalog.States);
+
+            var summary = journal.Summary;
+            Assert.Equal(2, summary.TotalCommandCount);
+            Assert.Equal(1, summary.AcceptedCount);
+            Assert.Equal(0, summary.RejectedCount);
+            Assert.Equal(0, summary.ErrorCount);
+            Assert.Equal(0, summary.DuplicateCommandCount);
+            Assert.Equal(1, summary.ReservedCount);
+            Assert.True(summary.HasCommands);
+            Assert.False(summary.HasFailures);
+            Assert.True(summary.HasInDoubtCommands);
+            Assert.Equal("cmd-journal-002-reserved", summary.LastCommandId);
+            Assert.Equal(EventDispatchRemediationOutcomes.Reserved, summary.LastOutcome);
+
+            var observationSummary = journal.GetSummaryByObservedAt(
+                new DateTimeOffset(2026, 04, 14, 10, 1, 0, TimeSpan.Zero),
+                new DateTimeOffset(2026, 04, 14, 10, 1, 30, TimeSpan.Zero));
+            Assert.Equal(2, observationSummary.TotalCommandCount);
+            Assert.Equal(1, observationSummary.AcceptedCount);
+            Assert.Equal(1, observationSummary.ReservedCount);
+            Assert.True(observationSummary.HasInDoubtCommands);
+
+            var technologySurfaces = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+            var commandSurface = Assert.Single(
+                technologySurfaces.GetByTechnology("event-driven-integration"),
+                surface => surface.SurfaceId == "event-dispatch-remediation-commands");
+            var commandCatalogEntry = Assert.Single(commandSurface.Entries, entry => entry.Id == "event-dispatch-remediation-commands");
+            Assert.Equal("1", commandCatalogEntry.Metadata["summaryReservedCount"]);
+            Assert.Equal("true", commandCatalogEntry.Metadata["summaryHasInDoubtCommands"]);
+
+            var processLocalJournal = Assert.IsAssignableFrom<IEventDispatchRemediationCommandJournal>(processLocalCatalog);
+            var processLocalReservation = await processLocalJournal.ReserveAsync(new EventDispatchRemediationRequest(
+                outboxId: "entity-framework-outbox",
+                messageId: "evt-journal-001",
+                channelId: "catalog-events",
+                operationId: EventDispatchRemediationOperationIds.Skip,
+                commandId: "cmd-process-local-reserved",
+                requestedAtUtc: new DateTimeOffset(2026, 04, 14, 10, 4, 0, TimeSpan.Zero),
+                reason: "Process-local fallback summary proof.",
+                actorId: "operator-journal",
+                correlationId: "corr-process-local-reserved"));
+
+            var processLocalSummary = processLocalCatalog.Summary;
+            Assert.True(processLocalReservation.Reserved);
+            Assert.Equal(1, processLocalSummary.TotalCommandCount);
+            Assert.Equal(1, processLocalSummary.ReservedCount);
+            Assert.True(processLocalSummary.HasInDoubtCommands);
+            Assert.Equal(EventDispatchRemediationOutcomes.Reserved, processLocalSummary.LastOutcome);
         }
     }
 

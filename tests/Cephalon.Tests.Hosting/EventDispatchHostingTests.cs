@@ -325,7 +325,9 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("catalog", initialCommandCatalogEntry.Metadata["entryKind"]);
         Assert.Equal("0", initialCommandCatalogEntry.Metadata["commandStateCount"]);
         Assert.Equal("0", initialCommandCatalogEntry.Metadata["summaryTotalCommandCount"]);
+        Assert.Equal("0", initialCommandCatalogEntry.Metadata["summaryReservedCount"]);
         Assert.Equal("false", initialCommandCatalogEntry.Metadata["summaryHasCommands"]);
+        Assert.Equal("false", initialCommandCatalogEntry.Metadata["summaryHasInDoubtCommands"]);
         Assert.Equal("0", initialCommandCatalogEntry.Metadata["commandHistoryLimit"]);
         Assert.Equal("0", initialCommandCatalogEntry.Metadata["retainedCommandCount"]);
         Assert.Equal("0", initialCommandCatalogEntry.Metadata["totalRecordedCommandCount"]);
@@ -479,6 +481,7 @@ public sealed class EventDispatchHostingTests
         Assert.Equal(1, commandObservationSummary.TotalCommandCount);
         Assert.Equal(1, commandObservationSummary.AcceptedCount);
         Assert.Equal(0, commandObservationSummary.RejectedCount);
+        Assert.Equal(0, commandObservationSummary.ReservedCount);
         Assert.Equal("cmd-command-001-retry", commandObservationSummary.LastCommandId);
         Assert.Equal(0, commandObservationSummary.DroppedCommandCount);
         Assert.False(commandObservationSummary.RetentionTruncated);
@@ -487,15 +490,18 @@ public sealed class EventDispatchHostingTests
         Assert.Equal(commandState.ObservedAtUtc, commandObservationSummary.OldestRetainedObservedAtUtc);
         Assert.True(commandObservationSummary.HasCommands);
         Assert.False(commandObservationSummary.HasFailures);
+        Assert.False(commandObservationSummary.HasInDoubtCommands);
         Assert.NotNull(commandStatesBeforeObservationWindow);
         Assert.Empty(commandStatesBeforeObservationWindow);
         Assert.NotNull(commandSummaryBeforeObservationWindow);
         Assert.Equal(0, commandSummaryBeforeObservationWindow.TotalCommandCount);
+        Assert.Equal(0, commandSummaryBeforeObservationWindow.ReservedCount);
         Assert.Equal(0, commandSummaryBeforeObservationWindow.DroppedCommandCount);
         Assert.False(commandSummaryBeforeObservationWindow.RetentionTruncated);
         Assert.False(commandSummaryBeforeObservationWindow.SummaryMayBeIncomplete);
         Assert.Null(commandSummaryBeforeObservationWindow.OldestRetainedCommandId);
         Assert.False(commandSummaryBeforeObservationWindow.HasCommands);
+        Assert.False(commandSummaryBeforeObservationWindow.HasInDoubtCommands);
         Assert.Equal(HttpStatusCode.BadRequest, invalidObservationWindowResponse.StatusCode);
         Assert.Equal(HttpStatusCode.BadRequest, invalidObservationWindowSummaryResponse.StatusCode);
         Assert.Equal(HttpStatusCode.BadRequest, invalidCommandReadLimitResponse.StatusCode);
@@ -530,6 +536,7 @@ public sealed class EventDispatchHostingTests
         Assert.Equal(0, commandSummary.RejectedCount);
         Assert.Equal(0, commandSummary.ErrorCount);
         Assert.Equal(0, commandSummary.DuplicateCommandCount);
+        Assert.Equal(0, commandSummary.ReservedCount);
         Assert.Equal("cmd-command-001-retry", commandSummary.LastCommandId);
         Assert.Equal("retry-now", commandSummary.LastOperationId);
         Assert.Equal(EventDispatchRemediationOutcomes.Accepted, commandSummary.LastOutcome);
@@ -540,6 +547,7 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("cmd-command-001-retry", commandSummary.OldestRetainedCommandId);
         Assert.True(commandSummary.HasCommands);
         Assert.False(commandSummary.HasFailures);
+        Assert.False(commandSummary.HasInDoubtCommands);
         Assert.NotNull(commandRetention);
         Assert.Equal(0, commandRetention.HistoryLimit);
         Assert.Equal(1, commandRetention.RetainedCommandCount);
@@ -628,6 +636,7 @@ public sealed class EventDispatchHostingTests
         Assert.Equal(1, commandSummaryAfterDuplicate.AcceptedCount);
         Assert.Equal(0, commandSummaryAfterDuplicate.RejectedCount);
         Assert.Equal(0, commandSummaryAfterDuplicate.DuplicateCommandCount);
+        Assert.Equal(0, commandSummaryAfterDuplicate.ReservedCount);
         Assert.Equal("cmd-command-001-retry", commandSummaryAfterDuplicate.LastCommandId);
         Assert.NotNull(commandRetentionAfterDuplicate);
         Assert.Equal(1, commandRetentionAfterDuplicate.RetainedCommandCount);
@@ -797,12 +806,14 @@ public sealed class EventDispatchHostingTests
         Assert.Equal(1, finalCommandObservationSummary.AcceptedCount);
         Assert.Equal(1, finalCommandObservationSummary.RejectedCount);
         Assert.Equal(1, finalCommandObservationSummary.ErrorCount);
+        Assert.Equal(0, finalCommandObservationSummary.ReservedCount);
         Assert.Equal("cmd-command-001-retry-later-rejected", finalCommandObservationSummary.LastCommandId);
         Assert.Equal(0, finalCommandObservationSummary.DroppedCommandCount);
         Assert.False(finalCommandObservationSummary.RetentionTruncated);
         Assert.False(finalCommandObservationSummary.SummaryMayBeIncomplete);
         Assert.True(finalCommandObservationSummary.HasCommands);
         Assert.True(finalCommandObservationSummary.HasFailures);
+        Assert.False(finalCommandObservationSummary.HasInDoubtCommands);
         Assert.NotNull(finalLatestCommandState);
         Assert.Equal("cmd-command-001-retry-later-rejected", finalLatestCommandState.CommandId);
         Assert.Equal(EventDispatchRemediationOutcomes.Rejected, finalLatestCommandState.Outcome);
@@ -874,6 +885,7 @@ public sealed class EventDispatchHostingTests
         Assert.Equal(1, finalCommandSummary.RejectedCount);
         Assert.Equal(1, finalCommandSummary.ErrorCount);
         Assert.Equal(0, finalCommandSummary.DuplicateCommandCount);
+        Assert.Equal(0, finalCommandSummary.ReservedCount);
         Assert.Equal("cmd-command-001-retry-later-rejected", finalCommandSummary.LastCommandId);
         Assert.Equal("retry-later", finalCommandSummary.LastOperationId);
         Assert.Equal(EventDispatchRemediationOutcomes.Rejected, finalCommandSummary.LastOutcome);
@@ -884,6 +896,7 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("cmd-command-001-retry", finalCommandSummary.OldestRetainedCommandId);
         Assert.True(finalCommandSummary.HasCommands);
         Assert.True(finalCommandSummary.HasFailures);
+        Assert.False(finalCommandSummary.HasInDoubtCommands);
         Assert.NotNull(finalCommandRetention);
         Assert.Equal(0, finalCommandRetention.HistoryLimit);
         Assert.Equal(3, finalCommandRetention.RetainedCommandCount);

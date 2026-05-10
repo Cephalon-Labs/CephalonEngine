@@ -5714,6 +5714,37 @@ Follow-up later:
 - broker replay, provider-owned dashboards, provider-specific dead-letter queues, and durable replay cursors
   remain future package-owned work
 
+### ENG-580 Eventing remediation reserved-command summary posture
+
+Status: done
+Estimate: 1
+Issue: #1234
+Iteration: Sprint 91 follow-through
+Area: eventing / data-entityframework / operations / Wolverine-free baseline
+Quality dimensions: Auditability, Usability, Reliability, Data Integrity, Compatibility, Maintainability
+
+Why:
+
+- `ENG-579` made reserved remediation command rows authoritative, but aggregate summaries still required
+  operators to scan command records to notice stuck or in-doubt reservations
+- Wolverine must remain optional, so Cephalon-owned summary and technology-surface contracts need to
+  expose the in-doubt posture directly in both process-local and durable journal lanes
+
+Delivered:
+
+- added `ReservedCount` and `HasInDoubtCommands` to `EventDispatchRemediationRuntimeSummary`
+- updated the process-local Eventing journal and the Entity Framework durable journal to count
+  authoritative `reserved` command records in global and observed-window summaries
+- projected `summaryReservedCount` and `summaryHasInDoubtCommands` through the
+  `event-dispatch-remediation-commands` technology-surface catalog entry for snapshot-driven tools
+- updated Eventing, EF data-pack, compatibility, maturity, roadmap, runtime-contract, and durable
+  project memory docs so source, docs, and planning truth move together
+
+Follow-up later:
+
+- provider-owned dashboards can add richer stuck-reservation remediation once a provider package owns
+  the workflow; broker replay and provider-specific dead-letter queues remain future package-owned work
+
 ### ENG-269 Agentics tool execution operator-action baseline
 
 Status: done

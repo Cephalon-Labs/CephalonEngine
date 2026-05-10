@@ -18,6 +18,7 @@ public sealed class EventDispatchRemediationRuntimeSummary
     /// <param name="rejectedCount">The number of recorded commands that were rejected.</param>
     /// <param name="errorCount">The number of recorded commands that carry an operator-facing error.</param>
     /// <param name="duplicateCommandCount">The number of recorded commands marked as duplicate command responses.</param>
+    /// <param name="reservedCount">The number of recorded commands still reserved for mutation and not yet finalized.</param>
     /// <param name="lastCommandId">The most recently observed command identifier.</param>
     /// <param name="lastOperationId">The most recently observed remediation operation identifier.</param>
     /// <param name="lastOutcome">The most recently observed command outcome.</param>
@@ -34,6 +35,7 @@ public sealed class EventDispatchRemediationRuntimeSummary
         int rejectedCount = 0,
         int errorCount = 0,
         int duplicateCommandCount = 0,
+        int reservedCount = 0,
         string? lastCommandId = null,
         string? lastOperationId = null,
         string? lastOutcome = null,
@@ -50,6 +52,7 @@ public sealed class EventDispatchRemediationRuntimeSummary
         ArgumentOutOfRangeException.ThrowIfNegative(rejectedCount);
         ArgumentOutOfRangeException.ThrowIfNegative(errorCount);
         ArgumentOutOfRangeException.ThrowIfNegative(duplicateCommandCount);
+        ArgumentOutOfRangeException.ThrowIfNegative(reservedCount);
         ArgumentOutOfRangeException.ThrowIfNegative(droppedCommandCount);
 
         TotalCommandCount = totalCommandCount;
@@ -57,6 +60,7 @@ public sealed class EventDispatchRemediationRuntimeSummary
         RejectedCount = rejectedCount;
         ErrorCount = errorCount;
         DuplicateCommandCount = duplicateCommandCount;
+        ReservedCount = reservedCount;
         LastCommandId = string.IsNullOrWhiteSpace(lastCommandId) ? null : lastCommandId.Trim();
         LastOperationId = string.IsNullOrWhiteSpace(lastOperationId) ? null : lastOperationId.Trim();
         LastOutcome = string.IsNullOrWhiteSpace(lastOutcome) ? null : lastOutcome.Trim();
@@ -95,6 +99,11 @@ public sealed class EventDispatchRemediationRuntimeSummary
     /// Gets the number of recorded commands marked as duplicate command responses.
     /// </summary>
     public int DuplicateCommandCount { get; }
+
+    /// <summary>
+    /// Gets the number of recorded commands still reserved for mutation and not yet finalized.
+    /// </summary>
+    public int ReservedCount { get; }
 
     /// <summary>
     /// Gets the most recently observed command identifier when one exists.
@@ -155,4 +164,9 @@ public sealed class EventDispatchRemediationRuntimeSummary
     /// Gets a value indicating whether any recorded command result was rejected or errored.
     /// </summary>
     public bool HasFailures => RejectedCount > 0 || ErrorCount > 0;
+
+    /// <summary>
+    /// Gets a value indicating whether any recorded command remains reserved and therefore in doubt.
+    /// </summary>
+    public bool HasInDoubtCommands => ReservedCount > 0;
 }

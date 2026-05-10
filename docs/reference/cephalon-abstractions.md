@@ -46885,12 +46885,12 @@ public sealed class EventDispatchRemediationRuntimeSummary
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-data-eventdispatchremediationruntimesummary-ctor-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-int64-system-boolean-system-boolean-system-string-system-nullable-system-datetimeoffset"></a>
+<a id="member-m-cephalon-abstractions-data-eventdispatchremediationruntimesummary-ctor-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-int64-system-boolean-system-boolean-system-string-system-nullable-system-datetimeoffset"></a>
 
 ##### `EventDispatchRemediationRuntimeSummary`
 
 ```csharp
-EventDispatchRemediationRuntimeSummary(int totalCommandCount, int acceptedCount, int rejectedCount, int errorCount, int duplicateCommandCount, string lastCommandId, string lastOperationId, string lastOutcome, string lastDispatchOutcome, DateTimeOffset? lastObservedAtUtc, long droppedCommandCount, bool retentionTruncated, bool summaryMayBeIncomplete, string oldestRetainedCommandId, DateTimeOffset? oldestRetainedObservedAtUtc)
+EventDispatchRemediationRuntimeSummary(int totalCommandCount, int acceptedCount, int rejectedCount, int errorCount, int duplicateCommandCount, int reservedCount, string lastCommandId, string lastOperationId, string lastOutcome, string lastDispatchOutcome, DateTimeOffset? lastObservedAtUtc, long droppedCommandCount, bool retentionTruncated, bool summaryMayBeIncomplete, string oldestRetainedCommandId, DateTimeOffset? oldestRetainedObservedAtUtc)
 ```
 
 Creates a new remediation command summary.
@@ -46901,6 +46901,7 @@ Parameters:
 - `rejectedCount`: The number of recorded commands that were rejected.
 - `errorCount`: The number of recorded commands that carry an operator-facing error.
 - `duplicateCommandCount`: The number of recorded commands marked as duplicate command responses.
+- `reservedCount`: The number of recorded commands still reserved for mutation and not yet finalized.
 - `lastCommandId`: The most recently observed command identifier.
 - `lastOperationId`: The most recently observed remediation operation identifier.
 - `lastOutcome`: The most recently observed command outcome.
@@ -46984,6 +46985,16 @@ bool HasFailures { get; }
 
 Gets a value indicating whether any recorded command result was rejected or errored.
 
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-hasindoubtcommands"></a>
+
+##### `HasInDoubtCommands`
+
+```csharp
+bool HasInDoubtCommands { get; }
+```
+
+Gets a value indicating whether any recorded command remains reserved and therefore in doubt.
+
 <a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-lastcommandid"></a>
 
 ##### `LastCommandId`
@@ -47063,6 +47074,16 @@ int RejectedCount { get; }
 ```
 
 Gets the number of recorded commands that were rejected.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-reservedcount"></a>
+
+##### `ReservedCount`
+
+```csharp
+int ReservedCount { get; }
+```
+
+Gets the number of recorded commands still reserved for mutation and not yet finalized.
 
 <a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-retentiontruncated"></a>
 

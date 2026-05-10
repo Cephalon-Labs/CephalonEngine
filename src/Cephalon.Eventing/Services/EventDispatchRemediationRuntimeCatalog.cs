@@ -113,6 +113,8 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
             duplicateCommandCount: recordedStates.Count(static state =>
                 state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.DuplicateCommand, out var duplicateCommand) &&
                 string.Equals(duplicateCommand, "true", StringComparison.OrdinalIgnoreCase)),
+            reservedCount: recordedStates.Count(static state =>
+                string.Equals(state.Outcome, EventDispatchRemediationOutcomes.Reserved, StringComparison.OrdinalIgnoreCase)),
             lastCommandId: lastState.CommandId,
             lastOperationId: lastState.OperationId,
             lastOutcome: lastState.Outcome,

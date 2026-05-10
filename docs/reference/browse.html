@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T13:00:17.6042418+00:00",
+  "GeneratedAtUtc": "2026-05-10T13:29:50.444518+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8468,7 +8468,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 18,
+        "Properties": 20,
         "Methods": 0
       }
     },
@@ -53249,8 +53249,8 @@
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchremediationruntimesummary-ctor-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-int64-system-boolean-system-boolean-system-string-system-nullable-system-datetimeoffset",
-      "Signature": "EventDispatchRemediationRuntimeSummary(int totalCommandCount, int acceptedCount, int rejectedCount, int errorCount, int duplicateCommandCount, string lastCommandId, string lastOperationId, string lastOutcome, string lastDispatchOutcome, DateTimeOffset? lastObservedAtUtc, long droppedCommandCount, bool retentionTruncated, bool summaryMayBeIncomplete, string oldestRetainedCommandId, DateTimeOffset? oldestRetainedObservedAtUtc)",
+      "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchremediationruntimesummary-ctor-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-int64-system-boolean-system-boolean-system-string-system-nullable-system-datetimeoffset",
+      "Signature": "EventDispatchRemediationRuntimeSummary(int totalCommandCount, int acceptedCount, int rejectedCount, int errorCount, int duplicateCommandCount, int reservedCount, string lastCommandId, string lastOperationId, string lastOutcome, string lastDispatchOutcome, DateTimeOffset? lastObservedAtUtc, long droppedCommandCount, bool retentionTruncated, bool summaryMayBeIncomplete, string oldestRetainedCommandId, DateTimeOffset? oldestRetainedObservedAtUtc)",
       "Summary": "Creates a new remediation command summary."
     },
     {
@@ -64549,6 +64549,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-microsoftgraphdelivery-services-microsoftgraphinvitationdeliverymessage-hashtmlbody",
       "Signature": "bool HasHtmlBody { get; }",
       "Summary": "Gets a value indicating whether the message uses HTML content."
+    },
+    {
+      "DisplayName": "HasInDoubtCommands",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-hasindoubtcommands",
+      "Signature": "bool HasInDoubtCommands { get; }",
+      "Summary": "Gets a value indicating whether any recorded command remains reserved and therefore in doubt."
     },
     {
       "DisplayName": "HasIssuableCommand",
@@ -107817,6 +107828,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-eventdispatchremediationoutcomes-reserved",
       "Signature": "const string Reserved",
       "Summary": "The command identifier was reserved before the final command outcome was recorded."
+    },
+    {
+      "DisplayName": "ReservedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-reservedcount",
+      "Signature": "int ReservedCount { get; }",
+      "Summary": "Gets the number of recorded commands still reserved for mutation and not yet finalized."
     },
     {
       "DisplayName": "Resilience",

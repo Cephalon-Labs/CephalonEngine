@@ -349,6 +349,8 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
             duplicateCommandCount: states.Count(static state =>
                 state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.DuplicateCommand, out var duplicateCommand) &&
                 string.Equals(duplicateCommand, "true", StringComparison.OrdinalIgnoreCase)),
+            reservedCount: states.Count(static state =>
+                string.Equals(state.Outcome, EventDispatchRemediationOutcomes.Reserved, StringComparison.OrdinalIgnoreCase)),
             lastCommandId: lastState.CommandId,
             lastOperationId: lastState.OperationId,
             lastOutcome: lastState.Outcome,

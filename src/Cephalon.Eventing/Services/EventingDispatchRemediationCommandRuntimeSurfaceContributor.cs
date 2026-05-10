@@ -48,8 +48,10 @@ internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributo
             ["summaryRejectedCount"] = catalog.Summary.RejectedCount.ToString(CultureInfo.InvariantCulture),
             ["summaryErrorCount"] = catalog.Summary.ErrorCount.ToString(CultureInfo.InvariantCulture),
             ["summaryDuplicateCommandCount"] = catalog.Summary.DuplicateCommandCount.ToString(CultureInfo.InvariantCulture),
+            ["summaryReservedCount"] = catalog.Summary.ReservedCount.ToString(CultureInfo.InvariantCulture),
             ["summaryHasCommands"] = ToMetadataValue(catalog.Summary.HasCommands),
             ["summaryHasFailures"] = ToMetadataValue(catalog.Summary.HasFailures),
+            ["summaryHasInDoubtCommands"] = ToMetadataValue(catalog.Summary.HasInDoubtCommands),
             ["summaryMayBeIncomplete"] = ToMetadataValue(catalog.Summary.SummaryMayBeIncomplete),
             ["commandHistoryLimit"] = catalog.Retention.HistoryLimit.ToString(CultureInfo.InvariantCulture),
             ["retainedCommandCount"] = catalog.Retention.RetainedCommandCount.ToString(CultureInfo.InvariantCulture),
@@ -138,9 +140,14 @@ internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributo
     }
 
     private static string ResolveDescription(EventDispatchRemediationRuntimeState state) =>
-        string.Equals(state.Outcome, EventDispatchRemediationOutcomes.Accepted, StringComparison.OrdinalIgnoreCase)
-            ? "The event-dispatch remediation command was accepted and applied through the active dispatch store."
-            : "The event-dispatch remediation command was rejected before mutating dispatch-store state.";
+        state.Outcome switch
+        {
+            _ when string.Equals(state.Outcome, EventDispatchRemediationOutcomes.Accepted, StringComparison.OrdinalIgnoreCase) =>
+                "The event-dispatch remediation command was accepted and applied through the active dispatch store.",
+            _ when string.Equals(state.Outcome, EventDispatchRemediationOutcomes.Reserved, StringComparison.OrdinalIgnoreCase) =>
+                "The event-dispatch remediation command id is reserved before dispatch-store mutation and has not been finalized.",
+            _ => "The event-dispatch remediation command was rejected before mutating dispatch-store state."
+        };
 
     private static void AddOptional(
         Dictionary<string, string> metadata,
