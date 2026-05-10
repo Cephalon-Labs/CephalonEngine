@@ -36,6 +36,7 @@ internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributo
             ["commandActorRoute"] = "/engine/event-dispatch-remediation-commands/actors/{actorId}",
             ["commandMessageRoute"] = "/engine/event-dispatch-remediation-commands/messages/{messageId}",
             ["commandChannelRoute"] = "/engine/event-dispatch-remediation-commands/channels/{channelId}",
+            ["commandDispatchOutcomeRoute"] = "/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}",
             ["providerNeutral"] = "true",
             ["wolverineRequired"] = "false",
             [EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy] = "unique-command-id",

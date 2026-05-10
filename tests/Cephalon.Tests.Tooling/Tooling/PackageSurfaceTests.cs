@@ -606,6 +606,7 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(catalogType.GetMethod("GetByOperationId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(catalogType.GetMethod("GetByActorId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(catalogType.GetMethod("GetByOutcome", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetByDispatchOutcome", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

@@ -58,4 +58,11 @@ public interface IEventDispatchRemediationRuntimeCatalog
     /// <param name="outcome">The stable command outcome identifier to resolve.</param>
     /// <returns>The recorded command states for the outcome, ordered by observed time and command identifier.</returns>
     IReadOnlyList<EventDispatchRemediationRuntimeState> GetByOutcome(string outcome);
+
+    /// <summary>
+    /// Gets the remediation command-state entries recorded for one dispatch-store outcome.
+    /// </summary>
+    /// <param name="dispatchOutcome">The stable dispatch-store outcome identifier to resolve.</param>
+    /// <returns>The recorded command states for the dispatch outcome, ordered by observed time and command identifier.</returns>
+    IReadOnlyList<EventDispatchRemediationRuntimeState> GetByDispatchOutcome(string dispatchOutcome);
 }

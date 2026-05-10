@@ -1250,6 +1250,7 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/actors/{actorId}", remediationEntry.Metadata["operatorCommandActorRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/messages/{messageId}", remediationEntry.Metadata["operatorCommandMessageRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/channels/{channelId}", remediationEntry.Metadata["operatorCommandChannelRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}", remediationEntry.Metadata["operatorCommandDispatchOutcomeRoute"]);
         Assert.Equal("retry-now,retry-later,skip,quarantine,dead-letter", remediationEntry.Metadata["operatorCommandOperations"]);
         Assert.Equal("false", remediationEntry.Metadata["wolverineRequired"]);
         Assert.Equal("true", remediationEntry.Metadata["providerNeutral"]);
@@ -1356,6 +1357,8 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal(remediationCommandState, Assert.Single(remediationCommandCatalog.GetByActorId("operator-001")));
         Assert.Empty(remediationCommandCatalog.GetByActorId("operator-002"));
         Assert.Equal(remediationCommandState, Assert.Single(remediationCommandCatalog.GetByOutcome("accepted")));
+        Assert.Equal(remediationCommandState, Assert.Single(remediationCommandCatalog.GetByDispatchOutcome("retry-scheduled")));
+        Assert.Empty(remediationCommandCatalog.GetByDispatchOutcome("skipped"));
         eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
         var remediationCommandSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatch-remediation-commands");
         var remediationCommandEntry = Assert.Single(remediationCommandSurface.Entries, entry => entry.Id == "cmd-evt-020-retry");
@@ -1366,6 +1369,7 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/actors/{actorId}", remediationCommandEntry.Metadata["commandActorRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/messages/{messageId}", remediationCommandEntry.Metadata["commandMessageRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/channels/{channelId}", remediationCommandEntry.Metadata["commandChannelRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}", remediationCommandEntry.Metadata["commandDispatchOutcomeRoute"]);
         Assert.Equal("false", remediationCommandEntry.Metadata["wolverineRequired"]);
         Assert.Equal("unique-command-id", remediationCommandEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
         Assert.Equal("reject-without-mutation", remediationCommandEntry.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);

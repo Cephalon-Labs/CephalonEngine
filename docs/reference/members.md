@@ -10887,6 +10887,9 @@ Browse the published API surface by public member.
 - [GetByDependencyId](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellhealthisolationcatalog-getbydependencyid-system-string): `Methods` on `ICellHealthIsolationCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByDependencyId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets all cell health-isolation answers that reference the requested dependency.
   - `IReadOnlyList<CellHealthIsolationDescriptor> GetByDependencyId(string dependencyId)`
+- [GetByDispatchOutcome](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbydispatchoutcome-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByDispatchOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the remediation command-state entries recorded for one dispatch-store outcome.
+  - `IReadOnlyList<EventDispatchRemediationRuntimeState> GetByDispatchOutcome(string dispatchOutcome)`
 - [GetByDomainId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idataproductcatalog-getbydomainid-system-string): `Methods` on `IDataProductCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByDomainId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all data products that belong to the requested domain.
   - `IReadOnlyList<DataProductDescriptor> GetByDomainId(string domainId)`

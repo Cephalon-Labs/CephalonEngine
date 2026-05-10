@@ -102,7 +102,7 @@ The route prefix `/engine` is reserved for Cephalon engine introspection. App-ow
 | `GET /event-dispatch-runtimes` | `Cephalon.AspNetCore` | event dispatch runtime descriptors | optional |
 | `GET /event-dispatches` | `Cephalon.AspNetCore` | event dispatch states with terminal-failure and per-outbox drill-downs | optional |
 | `POST /event-dispatches/{outboxId}/commands/{operationId}` | `Cephalon.AspNetCore` | bounded event-dispatch remediation commands (`retry-now`, `retry-later`, `skip`, `quarantine`, `dead-letter`) through `IEventDispatchRemediationDispatcher`; `dead-letter` is dispatch-store terminal intent, not broker DLQ ownership; duplicate command ids are rejected without mutation | optional |
-| `GET /event-dispatch-remediation-commands*` | `Cephalon.AspNetCore` | bounded event-dispatch remediation command results with command-id, outbox, message, channel, operation, actor, outcome, and duplicate-command recovery drill-downs | optional |
+| `GET /event-dispatch-remediation-commands*` | `Cephalon.AspNetCore` | bounded event-dispatch remediation command results with command-id, outbox, message, channel, operation, actor, dispatch-outcome, command-outcome, and duplicate-command recovery drill-downs | optional |
 | `GET /event-publications/runtime` | `Cephalon.AspNetCore` | event publication runtime states with channel and per-publication drill-downs | optional |
 | `POST /event-publications` | `Cephalon.AspNetCore` | dispatch an event publication through `IEventPublicationDispatcher` | optional |
 | `GET /inboxes` | `Cephalon.AspNetCore` | inbox descriptors | optional |

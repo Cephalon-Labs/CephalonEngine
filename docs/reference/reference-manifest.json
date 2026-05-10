@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T03:41:36.7279874+00:00",
+  "GeneratedAtUtc": "2026-05-10T03:56:37.4912223+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -11051,7 +11051,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 7
+        "Methods": 8
       }
     },
     {
@@ -59204,6 +59204,17 @@
       "AnchorId": "member-m-cephalon-abstractions-technologies-icellhealthisolationcatalog-getbydependencyid-system-string",
       "Signature": "IReadOnlyList\u003CCellHealthIsolationDescriptor\u003E GetByDependencyId(string dependencyId)",
       "Summary": "Gets all cell health-isolation answers that reference the requested dependency."
+    },
+    {
+      "DisplayName": "GetByDispatchOutcome",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbydispatchoutcome-system-string",
+      "Signature": "IReadOnlyList\u003CEventDispatchRemediationRuntimeState\u003E GetByDispatchOutcome(string dispatchOutcome)",
+      "Summary": "Gets the remediation command-state entries recorded for one dispatch-store outcome."
     },
     {
       "DisplayName": "GetByDomainId",
