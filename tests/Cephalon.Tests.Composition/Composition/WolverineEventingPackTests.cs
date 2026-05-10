@@ -384,6 +384,7 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("/engine/event-dispatches/{outboxId}/commands/{operationId}", remediationEntry.Metadata["operatorCommandRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands", remediationEntry.Metadata["operatorCommandListRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", remediationEntry.Metadata["operatorCommandResultRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/in-doubt", remediationEntry.Metadata["operatorCommandInDoubtRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}", remediationEntry.Metadata["operatorCommandOutboxRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}", remediationEntry.Metadata["operatorCommandObservationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}", remediationEntry.Metadata["operatorCommandObservationSummaryRoute"]);
@@ -402,8 +403,10 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/outcomes/{outcome}", remediationEntry.Metadata["operatorCommandOutcomeRoute"]);
         Assert.Equal("limit", remediationEntry.Metadata["operatorCommandReadLimitQuery"]);
         Assert.Equal("positive-integer-newest-first", remediationEntry.Metadata["operatorCommandReadLimitPolicy"]);
+        Assert.Equal("all,in-doubt,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", remediationEntry.Metadata["operatorCommandReadLimitRoutes"]);
         Assert.Equal("pageSize,continuationToken", remediationEntry.Metadata["operatorCommandPaginationQuery"]);
         Assert.Equal("opaque-signed-route-bound-continuation-token-newest-first", remediationEntry.Metadata["operatorCommandPaginationPolicy"]);
+        Assert.Equal("all,in-doubt,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", remediationEntry.Metadata["operatorCommandPaginationRoutes"]);
         Assert.Equal("false", remediationEntry.Metadata["wolverineRequired"]);
         Assert.Equal("true", remediationEntry.Metadata["providerNeutral"]);
         Assert.Equal("unique-command-id", remediationEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);

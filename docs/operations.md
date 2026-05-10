@@ -2295,15 +2295,17 @@ Current note:
   typed command-audit read model for the active host; summary responses now expose truncation and
   incomplete-window warning flags directly, and the `/retention` readback remains the full posture
   when operators need retained/recorded/dropped counts plus latest retained command detail; use
-  `commandListRoute`, `commandResultRoute`, and `commandOutboxRoute` metadata from
+  `commandListRoute`, `commandResultRoute`, `commandInDoubtRoute`, and `commandOutboxRoute` metadata from
   `/engine/capabilities`, `/engine/technology-surfaces`, or `/engine/snapshot` to discover the root
-  list, command-id, and outbox drill-down URLs without probing routes; use
+  list, in-doubt, command-id, and outbox drill-down URLs without probing routes; use
   `commandReadLimitQuery`, `commandReadLimitPolicy`, and `commandReadLimitRoutes` metadata from
   `/engine/capabilities`, `/engine/technology-surfaces`, or `/engine/snapshot` to discover the
   read-side limit support instead of hardcoding UI assumptions; use `commandObservationWindowQuery`,
   `commandObservationWindowPolicy`, `commandObservationWindowDetailOrder`,
   `commandObservationWindowSummary`, and `commandObservationWindowInvalidBounds` metadata to discover
   retained-window query semantics and validation posture; use
+  `/engine/event-dispatch-remediation-commands/in-doubt` when operators need the retained reserved
+  commands directly; use
   `/observations?fromUtc={fromUtc}&toUtc={toUtc}` for retained incident windows, but
   do not treat it as durable compliance retention or broker replay ownership
 - `event-dispatch-remediation-commands` includes a catalog entry even when the command history is

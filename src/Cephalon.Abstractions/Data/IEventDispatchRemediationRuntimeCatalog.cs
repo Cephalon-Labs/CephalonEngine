@@ -26,6 +26,12 @@ public interface IEventDispatchRemediationRuntimeCatalog
     IReadOnlyList<EventDispatchRemediationRuntimeState> States { get; }
 
     /// <summary>
+    /// Gets remediation command-state entries that reserved a command identifier before dispatch-store mutation and have not finalized.
+    /// </summary>
+    /// <returns>The in-doubt command states, ordered by descending observed time and command identifier.</returns>
+    IReadOnlyList<EventDispatchRemediationRuntimeState> GetInDoubt();
+
+    /// <summary>
     /// Gets remediation command-state entries observed inside an optional UTC observation window.
     /// </summary>
     /// <param name="fromObservedAtUtc">The inclusive lower UTC observation bound, or <see langword="null" /> to leave the start open.</param>

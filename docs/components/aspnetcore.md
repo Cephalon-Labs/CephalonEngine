@@ -522,6 +522,7 @@ When the same runtime registers `IEventDispatchRemediationRuntimeCatalog`, the h
 `/engine/event-dispatch-remediation-commands/summary`,
 `/engine/event-dispatch-remediation-commands/latest`,
 `/engine/event-dispatch-remediation-commands/retention`,
+`/engine/event-dispatch-remediation-commands/in-doubt`,
 `/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}`,
 `/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}`,
 `/engine/event-dispatch-remediation-commands/{commandId}`,
@@ -534,7 +535,7 @@ When the same runtime registers `IEventDispatchRemediationRuntimeCatalog`, the h
 `/engine/event-dispatch-remediation-commands/reasons/{reason}`,
 `/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}`, and
 `/engine/event-dispatch-remediation-commands/outcomes/{outcome}` so operators can inspect accepted
-and rejected command results by summary, latest command, retention posture, command id, outbox id,
+and rejected command results by summary, latest command, retention posture, in-doubt reservations, command id, outbox id,
 message id, channel id, operation id, actor id, correlation id, reason, dispatch outcome, command
 outcome, inclusive observed UTC window, or observed-window summary separately from the latest per-outbox dispatch state. A
 duplicate command id does not
@@ -565,7 +566,7 @@ Those metadata blocks also publish `commandListRoute`, `commandResultRoute`, and
 host UI does not have to infer the root list, command-id, or outbox drill-down URL from route names
 or docs.
 The `event-dispatch-remediation-commands` technology surface also emits a catalog entry before any
-command result exists, with route, retention, read-limit, observed-window, idempotency,
+command result exists, with route, in-doubt route, retention, read-limit, observed-window, idempotency,
 provider-neutral, and `wolverineRequired = false` metadata, so an ASP.NET Core operator UI can bind
 to the command-result route family without waiting for command history or installing Wolverine.
 

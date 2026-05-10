@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T14:09:50.5286897+00:00",
+  "GeneratedAtUtc": "2026-05-10T15:10:28.849335+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -11156,7 +11156,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 4,
-        "Methods": 12
+        "Methods": 13
       }
     },
     {
@@ -62697,6 +62697,17 @@
       "AnchorId": "member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getfailedpublications",
       "Signature": "IReadOnlyList\u003CSagaChoreographyPublicationRuntimeState\u003E GetFailedPublications()",
       "Summary": "Gets the reported publication-state entries whose latest observation is failed."
+    },
+    {
+      "DisplayName": "GetInDoubt",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getindoubt",
+      "Signature": "IReadOnlyList\u003CEventDispatchRemediationRuntimeState\u003E GetInDoubt()",
+      "Summary": "Gets remediation command-state entries that reserved a command identifier before dispatch-store mutation and have not finalized."
     },
     {
       "DisplayName": "GetManagedConnectorCommandExecutionHistory",

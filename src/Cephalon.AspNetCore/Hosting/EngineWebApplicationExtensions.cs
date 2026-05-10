@@ -1022,6 +1022,12 @@ public static class EngineWebApplicationExtensions
 
                 return Results.Ok(retention);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/in-doubt", "GetCephalonEventDispatchRemediationInDoubtCommands", static context =>
+            {
+                var states = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?.GetInDoubt() ?? [];
+
+                return OkLimitedEventDispatchRemediationCommandStates(context, states);
+            });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/observations/summary", "GetCephalonEventDispatchRemediationCommandObservationSummary", static context =>
             {
                 if (!TryGetNullableDateTimeOffsetQueryValue(context, "fromUtc", out var fromUtc, out var error))

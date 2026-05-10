@@ -24,7 +24,7 @@ Current focus:
 - treat the relational `Cephalon.Data` provider packs as provider-managed CDC/runtime proof through the shared data contracts: SQL Server, PostgreSQL, MySQL, and Oracle can now be active together in one engine with an aggregated `data.relational-store` capability family plus `data-management` `cdc-captures` / `cdc-capture-runtimes` technology surfaces; database role and migration runtime ownership remains with `Cephalon.Data.EntityFramework` over `Engine:Databases`, not the raw relational provider packs
 - treat the core eventing execution-binding catalog, abstraction-level execution-readiness catalog, abstraction-level publication dispatcher, abstraction-level publication runtime-state catalog, abstraction-level dispatch-state/summary terminal posture, abstraction-level dispatch-remediation dispatcher, abstraction-level dispatch-remediation command-result catalog, dispatch-store `dead-letter` command intent metadata, `event-dispatch-remediations` command-readiness posture, `event-dispatch-remediation-commands` command-result posture including catalog metadata/latest/summary/retention/observed-window detail/observed-window summary/message/channel/operation/actor/correlation/reason/dispatch-outcome drill-downs, `/engine/event-subscription-readiness`, `POST /engine/event-publications`, `/engine/event-publications/runtime*`, `/engine/event-dispatches/terminal-failures`, `POST /engine/event-dispatches/{outboxId}/commands/{operationId}`, `/engine/event-dispatch-remediation-commands*`, `snapshot.EventSubscriptionExecutionReadiness`, `snapshot.EventPublicationStates`, `snapshot.EventDispatchStates`, config-driven channel descriptor discovery, code-first subscription descriptors/executors/descriptor providers, the opt-in direct in-process execution lane, bounded process-local fixed/exponential retry backoff and deterministic jitter metadata, bounded duplicate-completed execution suppression metadata, including process-local and `IInbox`-backed idempotency-store modes, config-driven event-type-to-channel publication routing metadata, and bounded process-local scheduled/delayed publication metadata, as adapter-neutral engine-owned proof, while the Wolverine-managed dispatch and event-subscription lanes remain optional provider-managed proofs instead of engine requirements
 - treat the native event-dispatch remediation command-result observation window as part of that Wolverine-free proof: `IEventDispatchRemediationRuntimeCatalog.GetByObservedAt(...)` and `/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}` provide inclusive retained-history incident timeline reads, while `IEventDispatchRemediationRuntimeCatalog.GetSummaryByObservedAt(...)` and `/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}` provide retained-window roll-ups without materializing the full list; summary responses carry dropped-command, retention-truncated, incomplete-summary, and oldest-retained cutoff evidence, `/retention` remains the full answer when bounded process-local history has dropped older records, and capability/runtime-surface metadata now advertises the `fromUtc,toUtc` query names, inclusive observed-UTC policy, latest-first detail order, summary availability, and reversed-window rejection posture
-- treat the native `event-dispatch-remediation-commands` catalog entry as the route-family discovery anchor: it must exist even when no command results have been recorded, report list/result/outbox route metadata, read-limit/window/idempotency policy plus retained/recorded/dropped counts, and keep `providerNeutral = true` / `wolverineRequired = false` visible before the first incident command
+- treat the native `event-dispatch-remediation-commands` catalog entry as the route-family discovery anchor: it must exist even when no command results have been recorded, report list/result/in-doubt/outbox route metadata, read-limit/window/idempotency policy plus retained/recorded/dropped counts, and keep `providerNeutral = true` / `wolverineRequired = false` visible before the first incident command
 - treat the native event-dispatch remediation command metadata as one Eventing-owned source truth: `eventing.dispatch-remediation`, `event-dispatch-remediations`, and `event-dispatch-remediation-commands` must use the same route, read-limit, observed-window, operation, and idempotency metadata helpers so future operator metadata changes do not drift across capability and technology surfaces
 - treat the active event-dispatch remediation command journal as the provider-neutral audit/idempotency seam: `Cephalon.Eventing` must keep a process-local fallback so Wolverine is optional, while provider packs such as `Cephalon.Data.EntityFramework` can register durable `IEventDispatchRemediationCommandJournal` implementations that the dispatcher, ASP.NET Core read routes, and `event-dispatch-remediation-commands` runtime surface prefer without forcing another string-config toggle on hot-path publish/subscribe behavior
 - treat Wolverine-class durable messaging as the eventing-family minimum benchmark: future backlog items should close provider-neutral Cephalon gaps across durable inbox/outbox, local and external transports, routing, scheduled/delayed delivery, retry/backoff/jitter, sending failure policy, dead-letter/quarantine/replay, saga/process-manager coordination, handler/subscription discovery, serialization/versioning, idempotency, multi-tenancy/correlation, observability, diagnostics, operator actions, topology/runtime introspection, governance, compliance, and provider portability through config-driven engine contracts before promoting a Wolverine-only feature as a core engine claim
@@ -5776,6 +5776,41 @@ Follow-up later:
 
 - provider-owned dashboards can add richer stuck-reservation remediation workflows once a provider package owns
   the workflow; broker replay and provider-specific dead-letter queues remain future package-owned work
+
+### ENG-582 Eventing remediation in-doubt command route
+
+Status: done
+Estimate: 1
+Issue: #1236
+Iteration: Sprint 91 follow-through
+Area: eventing / aspnetcore / data-entityframework / operations / Wolverine-free baseline
+Quality dimensions: Auditability, Usability, Reliability, Data Integrity, Compatibility, Performance, Maintainability
+
+Why:
+
+- `ENG-580` and `ENG-581` made retained reserved commands visible in aggregate summaries, but operators still
+  needed to scan all command-result detail records to retrieve the actual in-doubt commands
+- Wolverine must remain optional, so the native command-result read model needs a direct reserved-record route
+  and provider-optimized catalog method without adding host configuration or making publish/subscribe hot paths
+  config-driven
+
+Delivered:
+
+- added `IEventDispatchRemediationRuntimeCatalog.GetInDoubt()` as the host-agnostic read contract for retained
+  `reserved` remediation command records
+- implemented the direct read through both the process-local Eventing journal and the Entity Framework durable
+  command journal, with the durable lane querying reserved rows directly
+- exposed `/engine/event-dispatch-remediation-commands/in-doubt` before the `{commandId}` route, reusing the
+  existing newest-first `limit` and signed route-bound continuation-token behavior
+- projected `commandInDoubtRoute` and `operatorCommandInDoubtRoute` through the shared Eventing metadata helper
+  and included `in-doubt` in read-limit and pagination route discovery
+- updated Eventing, ASP.NET Core, compatibility, runtime-contract, maturity, roadmap, technology-pack,
+  operations, and durable project memory docs so source, docs, and planning truth move together
+
+Follow-up later:
+
+- provider-owned remediation workflows can add richer stuck-reservation actions once a package owns the workflow;
+  broker replay and provider-specific dead-letter queues remain future package-owned work
 
 ### ENG-269 Agentics tool execution operator-action baseline
 
@@ -17162,6 +17197,10 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-576 Eventing remediation route-bound continuation tokens (shipped): native continuation tokens now carry a route/filter scope hash so cross-route or changed observed-window token replay fails fast instead of returning a misleading command-result page, while the policy stays Wolverine-free and metadata-discoverable
 - ENG-577 Eventing remediation signed continuation tokens (shipped): native continuation tokens now include process-local HMAC-SHA256 integrity so tampered cursor payloads fail fast while route-bound paging remains Wolverine-free, config-light, and metadata-discoverable
 - ENG-578 Eventing durable remediation command journal suite (shipped): native remediation command idempotency and operator read routes now prefer provider-neutral `IEventDispatchRemediationCommandJournal`, keep the Eventing process-local fallback for Wolverine-free hosts, and use an EF durable cross-node journal automatically when the write `DbContext` opts into the journal context and outbox mapping
+- ENG-579 Eventing remediation in-doubt command reservation (shipped): native remediation commands reserve command ids before dispatch-store mutation, expose reserved rows as explicit in-doubt records, and reject duplicate retries without requiring Wolverine
+- ENG-580 Eventing remediation reserved summary readback (shipped): native remediation command summaries now surface reserved counts and `HasInDoubtCommands` so operators can see stuck reservations without scanning full command history
+- ENG-581 Eventing remediation oldest reserved-command summary readback (shipped): native summaries and runtime-surface metadata now surface the oldest retained reserved command id and observed time for age-based incident triage
+- ENG-582 Eventing remediation in-doubt command route (shipped, issue #1236): native command read models now expose `GetInDoubt()` and ASP.NET Core publishes `/engine/event-dispatch-remediation-commands/in-doubt` with `limit`/`pageSize` support plus discoverable in-doubt route metadata
 
 ### Sprint 88
 

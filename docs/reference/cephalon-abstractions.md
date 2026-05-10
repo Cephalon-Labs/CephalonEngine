@@ -51684,6 +51684,18 @@ Returns: The recorded command states for the reason, ordered by observed time an
 Parameters:
 - `reason`: The stable operator-facing command reason to resolve.
 
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getindoubt"></a>
+
+##### `GetInDoubt`
+
+```csharp
+IReadOnlyList<EventDispatchRemediationRuntimeState> GetInDoubt()
+```
+
+Gets remediation command-state entries that reserved a command identifier before dispatch-store mutation and have not finalized.
+
+Returns: The in-doubt command states, ordered by descending observed time and command identifier.
+
 <a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyobservedat-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset"></a>
 
 ##### `GetSummaryByObservedAt`

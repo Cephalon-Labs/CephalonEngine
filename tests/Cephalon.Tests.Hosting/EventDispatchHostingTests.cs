@@ -205,6 +205,7 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("/engine/event-dispatches/{outboxId}/commands/{operationId}", terminalRemediationEntry.Metadata["operatorCommandRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands", terminalRemediationEntry.Metadata["operatorCommandListRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", terminalRemediationEntry.Metadata["operatorCommandResultRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/in-doubt", terminalRemediationEntry.Metadata["operatorCommandInDoubtRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}", terminalRemediationEntry.Metadata["operatorCommandOutboxRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}", terminalRemediationEntry.Metadata["operatorCommandObservationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}", terminalRemediationEntry.Metadata["operatorCommandObservationSummaryRoute"]);
@@ -224,7 +225,7 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("limit", terminalRemediationEntry.Metadata["operatorCommandReadLimitQuery"]);
         Assert.Equal("positive-integer-newest-first", terminalRemediationEntry.Metadata["operatorCommandReadLimitPolicy"]);
         Assert.Equal("list-and-filter-routes", terminalRemediationEntry.Metadata["operatorCommandReadLimitAppliesTo"]);
-        Assert.Equal("all,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", terminalRemediationEntry.Metadata["operatorCommandReadLimitRoutes"]);
+        Assert.Equal("all,in-doubt,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", terminalRemediationEntry.Metadata["operatorCommandReadLimitRoutes"]);
         Assert.Equal("pageSize,continuationToken", terminalRemediationEntry.Metadata["operatorCommandPaginationQuery"]);
         Assert.Equal("opaque-signed-route-bound-continuation-token-newest-first", terminalRemediationEntry.Metadata["operatorCommandPaginationPolicy"]);
         Assert.Equal("false", terminalRemediationEntry.Metadata["wolverineRequired"]);
@@ -290,6 +291,7 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/summary", remediationCapability.Metadata["commandSummaryRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/latest", remediationCapability.Metadata["commandLatestRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/retention", remediationCapability.Metadata["commandRetentionRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/in-doubt", remediationCapability.Metadata["commandInDoubtRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}", remediationCapability.Metadata["commandOutboxRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}", remediationCapability.Metadata["commandObservationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}", remediationCapability.Metadata["commandObservationSummaryRoute"]);
@@ -309,7 +311,7 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("limit", remediationCapability.Metadata["commandReadLimitQuery"]);
         Assert.Equal("positive-integer-newest-first", remediationCapability.Metadata["commandReadLimitPolicy"]);
         Assert.Equal("list-and-filter-routes", remediationCapability.Metadata["commandReadLimitAppliesTo"]);
-        Assert.Equal("all,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", remediationCapability.Metadata["commandReadLimitRoutes"]);
+        Assert.Equal("all,in-doubt,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", remediationCapability.Metadata["commandReadLimitRoutes"]);
         Assert.Equal("pageSize,continuationToken", remediationCapability.Metadata["commandPaginationQuery"]);
         Assert.Equal("opaque-signed-route-bound-continuation-token-newest-first", remediationCapability.Metadata["commandPaginationPolicy"]);
         Assert.Equal("list-and-filter-routes", remediationCapability.Metadata["commandPaginationAppliesTo"]);
@@ -345,11 +347,14 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("/engine/event-dispatch-remediation-commands", initialCommandCatalogEntry.Metadata["commandListRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", initialCommandCatalogEntry.Metadata["commandResultRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/summary", initialCommandCatalogEntry.Metadata["commandSummaryRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/in-doubt", initialCommandCatalogEntry.Metadata["commandInDoubtRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}", initialCommandCatalogEntry.Metadata["commandOutboxRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}", initialCommandCatalogEntry.Metadata["commandObservationRoute"]);
         Assert.Equal("fromUtc,toUtc", initialCommandCatalogEntry.Metadata["commandObservationWindowQuery"]);
         Assert.Equal("positive-integer-newest-first", initialCommandCatalogEntry.Metadata["commandReadLimitPolicy"]);
+        Assert.Equal("all,in-doubt,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", initialCommandCatalogEntry.Metadata["commandReadLimitRoutes"]);
         Assert.Equal("opaque-signed-route-bound-continuation-token-newest-first", initialCommandCatalogEntry.Metadata["commandPaginationPolicy"]);
+        Assert.Equal("all,in-doubt,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", initialCommandCatalogEntry.Metadata["commandPaginationRoutes"]);
         Assert.Equal("false", initialCommandCatalogEntry.Metadata["wolverineRequired"]);
         Assert.Equal("true", initialCommandCatalogEntry.Metadata["providerNeutral"]);
         Assert.Equal("unique-command-id", initialCommandCatalogEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
@@ -357,12 +362,15 @@ public sealed class EventDispatchHostingTests
         Assert.Equal(remediationCapability.Metadata["commandListRoute"], initialCommandCatalogEntry.Metadata["commandListRoute"]);
         Assert.Equal(remediationCapability.Metadata["commandResultRoute"], initialCommandCatalogEntry.Metadata["commandResultRoute"]);
         Assert.Equal(remediationCapability.Metadata["commandSummaryRoute"], initialCommandCatalogEntry.Metadata["commandSummaryRoute"]);
+        Assert.Equal(remediationCapability.Metadata["commandInDoubtRoute"], initialCommandCatalogEntry.Metadata["commandInDoubtRoute"]);
         Assert.Equal(remediationCapability.Metadata["commandOutboxRoute"], initialCommandCatalogEntry.Metadata["commandOutboxRoute"]);
         Assert.Equal(remediationCapability.Metadata["commandObservationRoute"], initialCommandCatalogEntry.Metadata["commandObservationRoute"]);
         Assert.Equal(remediationCapability.Metadata["commandObservationWindowQuery"], initialCommandCatalogEntry.Metadata["commandObservationWindowQuery"]);
         Assert.Equal(remediationCapability.Metadata["commandReadLimitPolicy"], initialCommandCatalogEntry.Metadata["commandReadLimitPolicy"]);
+        Assert.Equal(remediationCapability.Metadata["commandReadLimitRoutes"], initialCommandCatalogEntry.Metadata["commandReadLimitRoutes"]);
         Assert.Equal(remediationCapability.Metadata["commandPaginationQuery"], initialCommandCatalogEntry.Metadata["commandPaginationQuery"]);
         Assert.Equal(remediationCapability.Metadata["commandPaginationPolicy"], initialCommandCatalogEntry.Metadata["commandPaginationPolicy"]);
+        Assert.Equal(remediationCapability.Metadata["commandPaginationRoutes"], initialCommandCatalogEntry.Metadata["commandPaginationRoutes"]);
         Assert.Equal(remediationCapability.Metadata["commandPageSizeMaximum"], initialCommandCatalogEntry.Metadata["commandPageSizeMaximum"]);
         Assert.Equal(remediationCapability.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy], initialCommandCatalogEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
         Assert.False(initialCommandCatalogEntry.Metadata.ContainsKey("latestCommandId"));
@@ -427,6 +435,7 @@ public sealed class EventDispatchHostingTests
         var commandStatesByReason = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>($"/engine/event-dispatch-remediation-commands/reasons/{Uri.EscapeDataString(retryReason)}");
         var acceptedCommandStates = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/outcomes/accepted");
         var retryScheduledCommandStates = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/dispatch-outcomes/retry-scheduled");
+        var inDoubtCommandStates = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/in-doubt");
         var commandSummary = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeSummary>("/engine/event-dispatch-remediation-commands/summary");
         var commandRetention = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeRetention>("/engine/event-dispatch-remediation-commands/retention");
         var remediatedState = await client.GetFromJsonAsync<EventDispatchRuntimeState>("/engine/event-dispatches/entity-framework-outbox");
@@ -536,6 +545,8 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("cmd-command-001-retry", Assert.Single(acceptedCommandStates).CommandId);
         Assert.NotNull(retryScheduledCommandStates);
         Assert.Equal("cmd-command-001-retry", Assert.Single(retryScheduledCommandStates).CommandId);
+        Assert.NotNull(inDoubtCommandStates);
+        Assert.Empty(inDoubtCommandStates);
         Assert.NotNull(commandSummary);
         Assert.Equal(1, commandSummary.TotalCommandCount);
         Assert.Equal(1, commandSummary.AcceptedCount);
@@ -918,6 +929,54 @@ public sealed class EventDispatchHostingTests
         Assert.False(finalCommandRetention.Truncated);
         Assert.Equal("cmd-command-001-retry", finalCommandRetention.OldestRetainedCommandId);
         Assert.Equal("cmd-command-001-retry-later-rejected", finalCommandRetention.LatestRetainedCommandId);
+
+        await using var inDoubtScope = app.Services.CreateAsyncScope();
+        var commandJournal = inDoubtScope.ServiceProvider.GetRequiredService<IEventDispatchRemediationCommandJournal>();
+        var inDoubtReservation = await commandJournal.ReserveAsync(new EventDispatchRemediationRequest(
+            outboxId: "entity-framework-outbox-in-doubt",
+            messageId: "evt-command-002",
+            channelId: "catalog-events",
+            operationId: EventDispatchRemediationOperationIds.Skip,
+            commandId: "cmd-command-002-reserved",
+            requestedAtUtc: new DateTimeOffset(2026, 04, 12, 08, 30, 0, TimeSpan.Zero),
+            reason: "Operator command reserved before process exit.",
+            actorId: "operator-003",
+            correlationId: "corr-command-operator-in-doubt"));
+        var inDoubtCommandStatesAfterReservation = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/in-doubt");
+        var limitedInDoubtCommandStates = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/in-doubt?limit=1");
+        var pagedInDoubtCommandStates = await client.GetFromJsonAsync<EventDispatchRemediationCommandPage>("/engine/event-dispatch-remediation-commands/in-doubt?pageSize=1");
+        var reservedOutcomeCommandStates = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/outcomes/reserved");
+        var inDoubtCommandStateById = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState>("/engine/event-dispatch-remediation-commands/cmd-command-002-reserved");
+        var inDoubtSummary = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeSummary>("/engine/event-dispatch-remediation-commands/summary");
+
+        Assert.True(inDoubtReservation.Reserved);
+        Assert.Null(inDoubtReservation.ExistingCommand);
+        Assert.NotNull(inDoubtCommandStatesAfterReservation);
+        var inDoubtCommandState = Assert.Single(inDoubtCommandStatesAfterReservation);
+        Assert.Equal("cmd-command-002-reserved", inDoubtCommandState.CommandId);
+        Assert.Equal(EventDispatchRemediationOutcomes.Reserved, inDoubtCommandState.Outcome);
+        Assert.Equal("pending", inDoubtCommandState.DispatchOutcome);
+        Assert.Equal("reserved", inDoubtCommandState.Metadata[EventDispatchRemediationMetadataKeys.CommandReservationState]);
+        Assert.Equal("reserve-before-mutation", inDoubtCommandState.Metadata[EventDispatchRemediationMetadataKeys.CommandReservationPolicy]);
+        Assert.NotNull(limitedInDoubtCommandStates);
+        Assert.Equal("cmd-command-002-reserved", Assert.Single(limitedInDoubtCommandStates).CommandId);
+        Assert.NotNull(pagedInDoubtCommandStates);
+        Assert.Equal(1, pagedInDoubtCommandStates.PageSize);
+        Assert.Equal(1, pagedInDoubtCommandStates.ReturnedCount);
+        Assert.Equal(1, pagedInDoubtCommandStates.TotalRetainedCount);
+        Assert.False(pagedInDoubtCommandStates.HasMore);
+        Assert.Null(pagedInDoubtCommandStates.NextContinuationToken);
+        Assert.Equal("cmd-command-002-reserved", Assert.Single(pagedInDoubtCommandStates.Items).CommandId);
+        Assert.NotNull(reservedOutcomeCommandStates);
+        Assert.Equal("cmd-command-002-reserved", Assert.Single(reservedOutcomeCommandStates).CommandId);
+        Assert.NotNull(inDoubtCommandStateById);
+        Assert.Equal("cmd-command-002-reserved", inDoubtCommandStateById.CommandId);
+        Assert.NotNull(inDoubtSummary);
+        Assert.Equal(4, inDoubtSummary.TotalCommandCount);
+        Assert.Equal(1, inDoubtSummary.ReservedCount);
+        Assert.True(inDoubtSummary.HasInDoubtCommands);
+        Assert.Equal("cmd-command-002-reserved", inDoubtSummary.OldestReservedCommandId);
+        Assert.Equal(new DateTimeOffset(2026, 04, 12, 08, 30, 0, TimeSpan.Zero), inDoubtSummary.OldestReservedObservedAtUtc);
 
         static string BuildObservationWindowRoute(
             DateTimeOffset? fromUtc,

@@ -11,6 +11,7 @@ internal static class EventDispatchRemediationCommandMetadata
     internal const string CommandSummaryRoute = "/engine/event-dispatch-remediation-commands/summary";
     internal const string CommandLatestRoute = "/engine/event-dispatch-remediation-commands/latest";
     internal const string CommandRetentionRoute = "/engine/event-dispatch-remediation-commands/retention";
+    internal const string CommandInDoubtRoute = "/engine/event-dispatch-remediation-commands/in-doubt";
     internal const string CommandOutboxRoute = "/engine/event-dispatch-remediation-commands/outboxes/{outboxId}";
     internal const string CommandObservationRoute = "/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}";
     internal const string CommandObservationSummaryRoute = "/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}";
@@ -23,7 +24,7 @@ internal static class EventDispatchRemediationCommandMetadata
     internal const string CommandDispatchOutcomeRoute = "/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}";
     internal const string CommandOutcomeRoute = "/engine/event-dispatch-remediation-commands/outcomes/{outcome}";
     internal const string CommandOperations = "retry-now,retry-later,skip,quarantine,dead-letter";
-    internal const string CommandReadLimitRoutes = "all,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes";
+    internal const string CommandReadLimitRoutes = "all,in-doubt,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes";
     internal const string CommandPaginationRoutes = CommandReadLimitRoutes;
 
     internal static void AddCommandActionRouteMetadata(
@@ -42,6 +43,7 @@ internal static class EventDispatchRemediationCommandMetadata
         metadata[$"{prefix}SummaryRoute"] = CommandSummaryRoute;
         metadata[$"{prefix}LatestRoute"] = CommandLatestRoute;
         metadata[$"{prefix}RetentionRoute"] = CommandRetentionRoute;
+        metadata[$"{prefix}InDoubtRoute"] = CommandInDoubtRoute;
         metadata[$"{prefix}OutboxRoute"] = CommandOutboxRoute;
         metadata[$"{prefix}ObservationRoute"] = CommandObservationRoute;
         metadata[$"{prefix}ObservationSummaryRoute"] = CommandObservationSummaryRoute;

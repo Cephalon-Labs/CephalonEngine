@@ -82,6 +82,18 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         }
     }
 
+    public IReadOnlyList<EventDispatchRemediationRuntimeState> GetInDoubt()
+    {
+        lock (gate)
+        {
+            return states
+                .Where(IsReservedState)
+                .OrderByDescending(static state => state.ObservedAtUtc)
+                .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+        }
+    }
+
     private static EventDispatchRemediationRuntimeSummary CreateSummary(
         List<EventDispatchRemediationRuntimeState> recordedStates,
         long droppedCommandCount = 0,
@@ -114,8 +126,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
             duplicateCommandCount: recordedStates.Count(static state =>
                 state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.DuplicateCommand, out var duplicateCommand) &&
                 string.Equals(duplicateCommand, "true", StringComparison.OrdinalIgnoreCase)),
-            reservedCount: recordedStates.Count(static state =>
-                string.Equals(state.Outcome, EventDispatchRemediationOutcomes.Reserved, StringComparison.OrdinalIgnoreCase)),
+            reservedCount: recordedStates.Count(IsReservedState),
             lastCommandId: lastState.CommandId,
             lastOperationId: lastState.OperationId,
             lastOutcome: lastState.Outcome,
@@ -179,12 +190,14 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
     private static EventDispatchRemediationRuntimeState? GetOldestReservedState(List<EventDispatchRemediationRuntimeState> recordedStates)
     {
         return recordedStates
-            .Where(static state =>
-                string.Equals(state.Outcome, EventDispatchRemediationOutcomes.Reserved, StringComparison.OrdinalIgnoreCase))
+            .Where(IsReservedState)
             .OrderBy(static state => state.ObservedAtUtc)
             .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
             .FirstOrDefault();
     }
+
+    private static bool IsReservedState(EventDispatchRemediationRuntimeState state) =>
+        string.Equals(state.Outcome, EventDispatchRemediationOutcomes.Reserved, StringComparison.OrdinalIgnoreCase);
 
     public EventDispatchRemediationRuntimeState? GetByCommandId(string commandId)
     {

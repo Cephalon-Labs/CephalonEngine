@@ -63,6 +63,11 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
 
     public IReadOnlyList<EventDispatchRemediationRuntimeState> States => ReadStates(static entries => entries);
 
+    public IReadOnlyList<EventDispatchRemediationRuntimeState> GetInDoubt()
+    {
+        return ReadStates(static entries => entries.Where(entry => entry.Outcome == EventDispatchRemediationOutcomes.Reserved));
+    }
+
     public EventDispatchRemediationRuntimeState? GetByCommandId(string commandId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(commandId);
