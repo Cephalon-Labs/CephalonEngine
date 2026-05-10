@@ -1430,7 +1430,7 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("list-and-filter-routes", remediationEntry.Metadata["operatorCommandReadLimitAppliesTo"]);
         Assert.Equal("all,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", remediationEntry.Metadata["operatorCommandReadLimitRoutes"]);
         Assert.Equal("pageSize,continuationToken", remediationEntry.Metadata["operatorCommandPaginationQuery"]);
-        Assert.Equal("opaque-continuation-token-newest-first", remediationEntry.Metadata["operatorCommandPaginationPolicy"]);
+        Assert.Equal("opaque-route-bound-continuation-token-newest-first", remediationEntry.Metadata["operatorCommandPaginationPolicy"]);
         Assert.Equal("retry-now,retry-later,skip,quarantine,dead-letter", remediationEntry.Metadata["operatorCommandOperations"]);
         Assert.Equal("false", remediationEntry.Metadata["wolverineRequired"]);
         Assert.Equal("true", remediationEntry.Metadata["providerNeutral"]);
@@ -1598,7 +1598,7 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("inclusive-observed-utc", remediationCommandCatalogEntry.Metadata["commandObservationWindowPolicy"]);
         Assert.Equal("positive-integer-newest-first", remediationCommandCatalogEntry.Metadata["commandReadLimitPolicy"]);
         Assert.Equal("pageSize,continuationToken", remediationCommandCatalogEntry.Metadata["commandPaginationQuery"]);
-        Assert.Equal("opaque-continuation-token-newest-first", remediationCommandCatalogEntry.Metadata["commandPaginationPolicy"]);
+        Assert.Equal("opaque-route-bound-continuation-token-newest-first", remediationCommandCatalogEntry.Metadata["commandPaginationPolicy"]);
         Assert.Equal("false", remediationCommandCatalogEntry.Metadata["wolverineRequired"]);
         Assert.Equal("true", remediationCommandCatalogEntry.Metadata["providerNeutral"]);
         Assert.Equal("unique-command-id", remediationCommandCatalogEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
@@ -1635,7 +1635,7 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("list-and-filter-routes", remediationCommandEntry.Metadata["commandReadLimitAppliesTo"]);
         Assert.Equal("all,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", remediationCommandEntry.Metadata["commandReadLimitRoutes"]);
         Assert.Equal("pageSize,continuationToken", remediationCommandEntry.Metadata["commandPaginationQuery"]);
-        Assert.Equal("opaque-continuation-token-newest-first", remediationCommandEntry.Metadata["commandPaginationPolicy"]);
+        Assert.Equal("opaque-route-bound-continuation-token-newest-first", remediationCommandEntry.Metadata["commandPaginationPolicy"]);
         Assert.Equal("items,pageSize,returnedCount,totalRetainedCount,continuationToken,nextContinuationToken,hasMore", remediationCommandEntry.Metadata["commandPaginationResponse"]);
         Assert.Equal("false", remediationCommandEntry.Metadata["wolverineRequired"]);
         Assert.Equal("unique-command-id", remediationCommandEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);

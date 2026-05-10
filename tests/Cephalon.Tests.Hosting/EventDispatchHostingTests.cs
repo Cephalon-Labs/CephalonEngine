@@ -226,7 +226,7 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("list-and-filter-routes", terminalRemediationEntry.Metadata["operatorCommandReadLimitAppliesTo"]);
         Assert.Equal("all,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", terminalRemediationEntry.Metadata["operatorCommandReadLimitRoutes"]);
         Assert.Equal("pageSize,continuationToken", terminalRemediationEntry.Metadata["operatorCommandPaginationQuery"]);
-        Assert.Equal("opaque-continuation-token-newest-first", terminalRemediationEntry.Metadata["operatorCommandPaginationPolicy"]);
+        Assert.Equal("opaque-route-bound-continuation-token-newest-first", terminalRemediationEntry.Metadata["operatorCommandPaginationPolicy"]);
         Assert.Equal("false", terminalRemediationEntry.Metadata["wolverineRequired"]);
         Assert.Equal("unique-command-id", terminalRemediationEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
         Assert.Equal("reject-without-mutation", terminalRemediationEntry.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
@@ -311,7 +311,7 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("list-and-filter-routes", remediationCapability.Metadata["commandReadLimitAppliesTo"]);
         Assert.Equal("all,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", remediationCapability.Metadata["commandReadLimitRoutes"]);
         Assert.Equal("pageSize,continuationToken", remediationCapability.Metadata["commandPaginationQuery"]);
-        Assert.Equal("opaque-continuation-token-newest-first", remediationCapability.Metadata["commandPaginationPolicy"]);
+        Assert.Equal("opaque-route-bound-continuation-token-newest-first", remediationCapability.Metadata["commandPaginationPolicy"]);
         Assert.Equal("list-and-filter-routes", remediationCapability.Metadata["commandPaginationAppliesTo"]);
         Assert.Equal("50", remediationCapability.Metadata["commandPageSizeDefault"]);
         Assert.Equal("500", remediationCapability.Metadata["commandPageSizeMaximum"]);
@@ -339,7 +339,7 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}", initialCommandCatalogEntry.Metadata["commandObservationRoute"]);
         Assert.Equal("fromUtc,toUtc", initialCommandCatalogEntry.Metadata["commandObservationWindowQuery"]);
         Assert.Equal("positive-integer-newest-first", initialCommandCatalogEntry.Metadata["commandReadLimitPolicy"]);
-        Assert.Equal("opaque-continuation-token-newest-first", initialCommandCatalogEntry.Metadata["commandPaginationPolicy"]);
+        Assert.Equal("opaque-route-bound-continuation-token-newest-first", initialCommandCatalogEntry.Metadata["commandPaginationPolicy"]);
         Assert.Equal("false", initialCommandCatalogEntry.Metadata["wolverineRequired"]);
         Assert.Equal("true", initialCommandCatalogEntry.Metadata["providerNeutral"]);
         Assert.Equal("unique-command-id", initialCommandCatalogEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
@@ -742,6 +742,8 @@ public sealed class EventDispatchHostingTests
         Assert.NotNull(firstCommandPage);
         var secondCommandPage = await client.GetFromJsonAsync<EventDispatchRemediationCommandPage>(
             $"/engine/event-dispatch-remediation-commands?pageSize=2&continuationToken={Uri.EscapeDataString(firstCommandPage.NextContinuationToken!)}");
+        var mismatchedCommandContinuationTokenResponse = await client.GetAsync(
+            $"/engine/event-dispatch-remediation-commands/messages/evt-command-001?pageSize=1&continuationToken={Uri.EscapeDataString(firstCommandPage.NextContinuationToken!)}");
         var firstMessageCommandPage = await client.GetFromJsonAsync<EventDispatchRemediationCommandPage>("/engine/event-dispatch-remediation-commands/messages/evt-command-001?pageSize=1");
         var invalidCommandContinuationTokenResponse = await client.GetAsync("/engine/event-dispatch-remediation-commands?pageSize=2&continuationToken=not-a-token");
         var ambiguousCommandPagingResponse = await client.GetAsync("/engine/event-dispatch-remediation-commands?limit=1&pageSize=1");
@@ -764,6 +766,9 @@ public sealed class EventDispatchHostingTests
             BuildObservationWindowRoute(deadLetterCommandState.ObservedAtUtc, rejectedCommandState.ObservedAtUtc, limit: 1));
         var firstObservationCommandPage = await client.GetFromJsonAsync<EventDispatchRemediationCommandPage>(
             BuildObservationWindowRoute(deadLetterCommandState.ObservedAtUtc, rejectedCommandState.ObservedAtUtc, pageSize: 1));
+        Assert.NotNull(firstObservationCommandPage);
+        var mismatchedObservationCommandContinuationTokenResponse = await client.GetAsync(
+            BuildObservationWindowRoute(deadLetterCommandState.ObservedAtUtc, deadLetterCommandState.ObservedAtUtc, pageSize: 1, continuationToken: firstObservationCommandPage.NextContinuationToken));
         var finalCommandObservationSummary = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeSummary>(
             BuildObservationWindowSummaryRoute(deadLetterCommandState.ObservedAtUtc, rejectedCommandState.ObservedAtUtc));
         Assert.NotNull(finalCommandStatesByObservationWindow);
@@ -772,12 +777,13 @@ public sealed class EventDispatchHostingTests
             finalCommandStatesByObservationWindow.Select(state => state.CommandId).ToArray());
         Assert.NotNull(limitedFinalCommandStatesByObservationWindow);
         Assert.Equal("cmd-command-001-retry-later-rejected", Assert.Single(limitedFinalCommandStatesByObservationWindow).CommandId);
-        Assert.NotNull(firstObservationCommandPage);
         Assert.Equal(1, firstObservationCommandPage.PageSize);
         Assert.Equal(1, firstObservationCommandPage.ReturnedCount);
         Assert.Equal(2, firstObservationCommandPage.TotalRetainedCount);
         Assert.True(firstObservationCommandPage.HasMore);
+        Assert.NotNull(firstObservationCommandPage.NextContinuationToken);
         Assert.Equal("cmd-command-001-retry-later-rejected", Assert.Single(firstObservationCommandPage.Items).CommandId);
+        Assert.Equal(HttpStatusCode.BadRequest, mismatchedObservationCommandContinuationTokenResponse.StatusCode);
         Assert.NotNull(finalCommandObservationSummary);
         Assert.Equal(2, finalCommandObservationSummary.TotalCommandCount);
         Assert.Equal(1, finalCommandObservationSummary.AcceptedCount);
@@ -845,6 +851,7 @@ public sealed class EventDispatchHostingTests
         Assert.False(secondCommandPage.HasMore);
         Assert.Null(secondCommandPage.NextContinuationToken);
         Assert.Equal("cmd-command-001-retry", Assert.Single(secondCommandPage.Items).CommandId);
+        Assert.Equal(HttpStatusCode.BadRequest, mismatchedCommandContinuationTokenResponse.StatusCode);
         Assert.NotNull(firstMessageCommandPage);
         Assert.Equal(1, firstMessageCommandPage.PageSize);
         Assert.Equal(1, firstMessageCommandPage.ReturnedCount);

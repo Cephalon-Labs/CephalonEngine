@@ -81,7 +81,7 @@ internal static class EventDispatchRemediationCommandMetadata
         string prefix = "command")
     {
         metadata[$"{prefix}PaginationQuery"] = "pageSize,continuationToken";
-        metadata[$"{prefix}PaginationPolicy"] = "opaque-continuation-token-newest-first";
+        metadata[$"{prefix}PaginationPolicy"] = "opaque-route-bound-continuation-token-newest-first";
         metadata[$"{prefix}PaginationAppliesTo"] = "list-and-filter-routes";
         metadata[$"{prefix}PaginationRoutes"] = CommandPaginationRoutes;
         metadata[$"{prefix}PaginationResponse"] = "items,pageSize,returnedCount,totalRetainedCount,continuationToken,nextContinuationToken,hasMore";

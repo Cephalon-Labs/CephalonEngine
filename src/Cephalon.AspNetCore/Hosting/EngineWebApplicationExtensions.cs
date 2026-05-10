@@ -38,6 +38,7 @@ using System.Buffers.Binary;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
@@ -61,6 +62,8 @@ public static class EngineWebApplicationExtensions
     private const string ScalarDocumentNamesToken = "__CEPHALON_SCALAR_DOCUMENT_NAMES__";
     private const string ScalarDefaultDocumentNameToken = "__CEPHALON_SCALAR_DEFAULT_DOCUMENT_NAME__";
     private const string OperatorSurfaceModeConfigurationKey = "Engine:AspNetCore:OperatorSurface:Mode";
+    private const string EventDispatchRemediationCommandContinuationTokenMagic = "CEPCMD1";
+    private const int EventDispatchRemediationCommandContinuationScopeHashLength = 32;
     private const int DefaultEventDispatchRemediationCommandPageSize = 50;
     private const int MaxEventDispatchRemediationCommandPageSize = 500;
     private static readonly string DocumentationAssetVersion = typeof(EngineWebApplicationExtensions)
@@ -2380,8 +2383,9 @@ public static class EngineWebApplicationExtensions
             return Results.BadRequest($"Query parameter 'pageSize' must be less than or equal to {MaxEventDispatchRemediationCommandPageSize.ToString(CultureInfo.InvariantCulture)}.");
         }
 
+        var continuationScopeHash = CreateEventDispatchRemediationCommandContinuationScopeHash(context);
         var rawContinuationToken = GetQueryValue(context, "continuationToken");
-        if (!TryParseEventDispatchRemediationCommandContinuationToken(rawContinuationToken, out var continuationKey, out error))
+        if (!TryParseEventDispatchRemediationCommandContinuationToken(rawContinuationToken, continuationScopeHash, out var continuationKey, out error))
         {
             return error;
         }
@@ -2407,7 +2411,7 @@ public static class EngineWebApplicationExtensions
             TotalRetainedCount = orderedStates.Length,
             ContinuationToken = string.IsNullOrWhiteSpace(rawContinuationToken) ? null : rawContinuationToken,
             NextContinuationToken = hasMore && items.Length > 0
-                ? CreateEventDispatchRemediationCommandContinuationToken(items[^1])
+                ? CreateEventDispatchRemediationCommandContinuationToken(items[^1], continuationScopeHash)
                 : null,
             HasMore = hasMore
         });
@@ -2415,6 +2419,7 @@ public static class EngineWebApplicationExtensions
 
     private static bool TryParseEventDispatchRemediationCommandContinuationToken(
         string? rawValue,
+        byte[] continuationScopeHash,
         out EventDispatchRemediationCommandContinuationKey? continuationKey,
         [NotNullWhen(false)] out IResult? error)
     {
@@ -2426,14 +2431,32 @@ public static class EngineWebApplicationExtensions
         }
 
         var payload = TryBase64UrlDecode(rawValue.Trim());
-        if (payload is null || payload.Length <= sizeof(long))
+        var magicBytes = Encoding.ASCII.GetBytes(EventDispatchRemediationCommandContinuationTokenMagic);
+        var minimumLength = magicBytes.Length + EventDispatchRemediationCommandContinuationScopeHashLength + sizeof(long);
+        if (payload is null || payload.Length <= minimumLength)
         {
             error = Results.BadRequest("Query parameter 'continuationToken' must be an opaque token returned by a previous command-result page.");
             return false;
         }
 
-        var observedAtUtcTicks = BinaryPrimitives.ReadInt64BigEndian(payload.AsSpan(0, sizeof(long)));
-        var commandId = Encoding.UTF8.GetString(payload, sizeof(long), payload.Length - sizeof(long));
+        var payloadSpan = payload.AsSpan();
+        if (!payloadSpan[..magicBytes.Length].SequenceEqual(magicBytes))
+        {
+            error = Results.BadRequest("Query parameter 'continuationToken' must be an opaque token returned by a previous command-result page.");
+            return false;
+        }
+
+        var scopeHashOffset = magicBytes.Length;
+        if (!payloadSpan.Slice(scopeHashOffset, EventDispatchRemediationCommandContinuationScopeHashLength).SequenceEqual(continuationScopeHash))
+        {
+            error = Results.BadRequest("Query parameter 'continuationToken' must belong to the current command-result route and filters.");
+            return false;
+        }
+
+        var ticksOffset = scopeHashOffset + EventDispatchRemediationCommandContinuationScopeHashLength;
+        var observedAtUtcTicks = BinaryPrimitives.ReadInt64BigEndian(payloadSpan.Slice(ticksOffset, sizeof(long)));
+        var commandIdOffset = ticksOffset + sizeof(long);
+        var commandId = Encoding.UTF8.GetString(payload, commandIdOffset, payload.Length - commandIdOffset);
         if (observedAtUtcTicks < 0 || string.IsNullOrWhiteSpace(commandId))
         {
             error = Results.BadRequest("Query parameter 'continuationToken' must be an opaque token returned by a previous command-result page.");
@@ -2455,20 +2478,61 @@ public static class EngineWebApplicationExtensions
             return observedAtUtcTicks < continuationKey.ObservedAtUtcTicks;
         }
 
-        return StringComparer.OrdinalIgnoreCase.Compare(state.CommandId, continuationKey.CommandId) > 0;
+        return StringComparer.Ordinal.Compare(state.CommandId, continuationKey.CommandId) > 0;
     }
 
     private static string CreateEventDispatchRemediationCommandContinuationToken(
-        EventDispatchRemediationRuntimeState state)
+        EventDispatchRemediationRuntimeState state,
+        byte[] continuationScopeHash)
     {
+        var magicBytes = Encoding.ASCII.GetBytes(EventDispatchRemediationCommandContinuationTokenMagic);
         var commandIdBytes = Encoding.UTF8.GetBytes(state.CommandId);
-        var payload = new byte[sizeof(long) + commandIdBytes.Length];
+        var payload = new byte[magicBytes.Length + continuationScopeHash.Length + sizeof(long) + commandIdBytes.Length];
+        magicBytes.CopyTo(payload.AsSpan(0, magicBytes.Length));
+        continuationScopeHash.CopyTo(payload.AsSpan(magicBytes.Length, continuationScopeHash.Length));
         BinaryPrimitives.WriteInt64BigEndian(
-            payload.AsSpan(0, sizeof(long)),
+            payload.AsSpan(magicBytes.Length + continuationScopeHash.Length, sizeof(long)),
             state.ObservedAtUtc.UtcDateTime.Ticks);
-        commandIdBytes.CopyTo(payload.AsSpan(sizeof(long)));
+        commandIdBytes.CopyTo(payload.AsSpan(magicBytes.Length + continuationScopeHash.Length + sizeof(long)));
 
         return Base64UrlEncode(payload);
+    }
+
+    private static byte[] CreateEventDispatchRemediationCommandContinuationScopeHash(HttpContext context)
+    {
+        var builder = new StringBuilder();
+        var path = context.Request.Path.Value ?? string.Empty;
+        AppendLengthPrefixedValue(builder, path.ToLowerInvariant());
+
+        foreach (var query in context.Request.Query
+            .Where(static pair => !IsEventDispatchRemediationCommandContinuationControlQuery(pair.Key))
+            .OrderBy(static pair => pair.Key, StringComparer.OrdinalIgnoreCase))
+        {
+            var key = query.Key.ToLowerInvariant();
+            foreach (var value in query.Value.OrderBy(static value => value, StringComparer.Ordinal))
+            {
+                AppendLengthPrefixedValue(builder, key);
+                AppendLengthPrefixedValue(builder, value ?? string.Empty);
+            }
+        }
+
+        return SHA256.HashData(Encoding.UTF8.GetBytes(builder.ToString()));
+    }
+
+    private static bool IsEventDispatchRemediationCommandContinuationControlQuery(string queryName)
+    {
+        return string.Equals(queryName, "pageSize", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(queryName, "continuationToken", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(queryName, "limit", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static void AppendLengthPrefixedValue(StringBuilder builder, string value)
+    {
+        builder
+            .Append(value.Length.ToString(CultureInfo.InvariantCulture))
+            .Append(':')
+            .Append(value)
+            .Append('|');
     }
 
     private static string Base64UrlEncode(byte[] payload)
