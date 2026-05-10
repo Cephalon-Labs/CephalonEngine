@@ -1013,6 +1013,15 @@ public static class EngineWebApplicationExtensions
 
                 return Results.Ok(states);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/actors/{actorId}", "GetCephalonEventDispatchRemediationCommandsByActor", static context =>
+            {
+                var actorId = GetRouteValue(context, "actorId");
+                var states = context.RequestServices
+                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
+                    .GetByActorId(actorId) ?? [];
+
+                return Results.Ok(states);
+            });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/outcomes/{outcome}", "GetCephalonEventDispatchRemediationCommandsByOutcome", static context =>
             {
                 var outcome = GetRouteValue(context, "outcome");

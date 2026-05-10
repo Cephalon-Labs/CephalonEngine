@@ -50845,6 +50845,21 @@ Gets the remediation command-state entries visible to the current runtime.
 
 #### Methods
 
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbyactorid-system-string"></a>
+
+##### `GetByActorId`
+
+```csharp
+IReadOnlyList<EventDispatchRemediationRuntimeState> GetByActorId(string actorId)
+```
+
+Gets the remediation command-state entries recorded for one operator actor.
+
+Returns: The recorded command states for the actor, ordered by observed time and command identifier.
+
+Parameters:
+- `actorId`: The stable operator actor identifier to resolve.
+
 <a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbycommandid-system-string"></a>
 
 ##### `GetByCommandId`

@@ -10803,6 +10803,9 @@ Browse the published API surface by public member.
 - [GetByActionId](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantgovernanceactioncatalog-getbyactionid-system-string): `Methods` on `ITenantGovernanceActionCatalog` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=GetByActionId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets governance action descriptors by action identifier across all tenants.
   - `IReadOnlyList<TenantGovernanceActionDescriptor> GetByActionId(string actionId)`
+- [GetByActorId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbyactorid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByActorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the remediation command-state entries recorded for one operator actor.
+  - `IReadOnlyList<EventDispatchRemediationRuntimeState> GetByActorId(string actorId)`
 - [GetByBehavior](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-ibehavioradvisorycatalog-getbybehavior-system-string): `Methods` on `IBehaviorAdvisoryCatalog` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByBehavior&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets advisories for a specific behavior identifier.
   - `IReadOnlyList<IBehaviorAdvisory> GetByBehavior(string behaviorId)`
@@ -19366,6 +19369,9 @@ Browse the published API surface by public member.
 - [OperatorAction](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentstates-operatoraction): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionIntentStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperatorAction&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The managed connector currently requires operator-owned follow-through because the declared control plane is not yet engine-owned.
   - `const string OperatorAction`
+- [OperatorActorId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-operatoractorid): `Fields` on `EventDispatchRemediationMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=OperatorActorId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the operator actor that requested the remediation command.
+  - `const string OperatorActorId`
 - [OperatorOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationcategories-operatoronly): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Automatic retry still remains operator-owned outside Cephalon.
   - `const string OperatorOnly`

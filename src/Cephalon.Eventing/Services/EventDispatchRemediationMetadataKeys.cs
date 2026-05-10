@@ -21,6 +21,11 @@ public static class EventDispatchRemediationMetadataKeys
     public const string DuplicateCommandPolicy = "duplicateCommandPolicy";
 
     /// <summary>
+    /// Identifies the operator actor that requested the remediation command.
+    /// </summary>
+    public const string OperatorActorId = "operatorActorId";
+
+    /// <summary>
     /// Identifies whether the current response describes a duplicate command request.
     /// </summary>
     public const string DuplicateCommand = "duplicateCommand";

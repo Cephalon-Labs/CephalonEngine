@@ -33,6 +33,7 @@ internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributo
             ["observedAtUtc"] = state.ObservedAtUtc.ToString("O", CultureInfo.InvariantCulture),
             ["commandScope"] = "dispatch-store",
             ["commandOperationRoute"] = "/engine/event-dispatch-remediation-commands/operations/{operationId}",
+            ["commandActorRoute"] = "/engine/event-dispatch-remediation-commands/actors/{actorId}",
             ["providerNeutral"] = "true",
             ["wolverineRequired"] = "false",
             [EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy] = "unique-command-id",

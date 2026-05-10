@@ -382,6 +382,7 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("/engine/event-dispatches/{outboxId}/commands/{operationId}", remediationEntry.Metadata["operatorCommandRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", remediationEntry.Metadata["operatorCommandResultRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/operations/{operationId}", remediationEntry.Metadata["operatorCommandOperationRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/actors/{actorId}", remediationEntry.Metadata["operatorCommandActorRoute"]);
         Assert.Equal("false", remediationEntry.Metadata["wolverineRequired"]);
         Assert.Equal("true", remediationEntry.Metadata["providerNeutral"]);
         Assert.Equal("unique-command-id", remediationEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);

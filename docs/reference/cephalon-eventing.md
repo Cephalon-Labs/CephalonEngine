@@ -946,6 +946,16 @@ const string ExistingCommandOutcome
 
 Identifies the outcome recorded for the first command that used the duplicate command identifier.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-operatoractorid"></a>
+
+##### `OperatorActorId`
+
+```csharp
+const string OperatorActorId
+```
+
+Identifies the operator actor that requested the remediation command.
+
 <a id="type-cephalon-eventing-services-eventdispatchruntimemetadatakeys"></a>
 
 ### `EventDispatchRuntimeMetadataKeys`

@@ -68,6 +68,23 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         }
     }
 
+    public IReadOnlyList<EventDispatchRemediationRuntimeState> GetByActorId(string actorId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(actorId);
+        var normalizedActorId = actorId.Trim();
+
+        lock (gate)
+        {
+            return states
+                .Where(state =>
+                    state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.OperatorActorId, out var recordedActorId) &&
+                    string.Equals(recordedActorId, normalizedActorId, StringComparison.OrdinalIgnoreCase))
+                .OrderByDescending(static state => state.ObservedAtUtc)
+                .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+        }
+    }
+
     public IReadOnlyList<EventDispatchRemediationRuntimeState> GetByOutcome(string outcome)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(outcome);

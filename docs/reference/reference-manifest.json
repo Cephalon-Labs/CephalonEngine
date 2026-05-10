@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T03:08:13.2975955+00:00",
+  "GeneratedAtUtc": "2026-05-10T03:25:54.8641833+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8214,7 +8214,7 @@
       "Summary": "Defines stable metadata keys used by event-dispatch remediation command results.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 7,
+        "Fields": 8,
         "Properties": 0,
         "Methods": 0
       }
@@ -11051,7 +11051,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 4
+        "Methods": 5
       }
     },
     {
@@ -58898,6 +58898,17 @@
       "Summary": "Gets governance action descriptors by action identifier across all tenants."
     },
     {
+      "DisplayName": "GetByActorId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbyactorid-system-string",
+      "Signature": "IReadOnlyList\u003CEventDispatchRemediationRuntimeState\u003E GetByActorId(string actorId)",
+      "Summary": "Gets the remediation command-state entries recorded for one operator actor."
+    },
+    {
       "DisplayName": "GetByBehavior",
       "Category": "Methods",
       "DeclaringTypeName": "IBehaviorAdvisoryCatalog",
@@ -90211,6 +90222,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionintentstates-operatoraction",
       "Signature": "const string OperatorAction",
       "Summary": "The managed connector currently requires operator-owned follow-through because the declared control plane is not yet engine-owned."
+    },
+    {
+      "DisplayName": "OperatorActorId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-operatoractorid",
+      "Signature": "const string OperatorActorId",
+      "Summary": "Identifies the operator actor that requested the remediation command."
     },
     {
       "DisplayName": "OperatorOnly",

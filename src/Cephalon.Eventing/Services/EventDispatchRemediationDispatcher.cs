@@ -210,7 +210,7 @@ internal sealed class EventDispatchRemediationDispatcher(
 
         if (!string.IsNullOrWhiteSpace(request.ActorId))
         {
-            metadata["operatorActorId"] = request.ActorId;
+            metadata[EventDispatchRemediationMetadataKeys.OperatorActorId] = request.ActorId;
         }
 
         if (!string.IsNullOrWhiteSpace(request.CorrelationId))

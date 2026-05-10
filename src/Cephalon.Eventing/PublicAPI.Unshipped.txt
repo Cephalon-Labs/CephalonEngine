@@ -7,6 +7,7 @@ const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.ExistingCo
 const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.ExistingCommandOperationId = "existingCommandOperationId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.ExistingCommandOutboxId = "existingCommandOutboxId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.ExistingCommandOutcome = "existingCommandOutcome" -> string!
+const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.OperatorActorId = "operatorActorId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerDeadLetter = "brokerDeadLetter" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DeadLetterDurability = "deadLetterDurability" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DeadLetterOutcome = "deadLetterOutcome" -> string!

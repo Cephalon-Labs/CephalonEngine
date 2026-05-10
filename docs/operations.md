@@ -2238,6 +2238,8 @@ Current payload highlights:
 - `GET /engine/event-dispatch-remediation-commands/operations/{operationId}` filters command
   results by stable remediation operation id, such as `retry-now`, `retry-later`, `skip`,
   `quarantine`, or `dead-letter`
+- `GET /engine/event-dispatch-remediation-commands/actors/{actorId}` filters command results by
+  the optional `operatorActorId` recorded with the accepted or rejected command
 - `GET /engine/event-dispatch-remediation-commands/outcomes/{outcome}` filters command results by
   command outcome, such as `accepted` or `rejected`
 - the same descriptor and state catalogs are also available through `/engine/snapshot` in
@@ -2514,8 +2516,9 @@ Current `Cephalon.Eventing` highlights:
   `handoff = outbox` and `deliveryCompletion = pending-dispatch`, keeping publication acceptance
   separate from later dispatch completion
 - `event-dispatch-remediation-commands` exposes the bounded command-result read model for
-  `retry-now`, `retry-later`, `skip`, `quarantine`, and dispatch-store `dead-letter`, while `/engine/event-dispatch-remediation-commands*`
-  provides the typed route family for operators who do not want to parse technology-surface metadata
+  `retry-now`, `retry-later`, `skip`, `quarantine`, and dispatch-store `dead-letter`, including
+  operation and actor drill-downs, while `/engine/event-dispatch-remediation-commands*` provides
+  the typed route family for operators who do not want to parse technology-surface metadata
 - Wolverine or another companion adapter can still move staged dispatch or one subscription to
   provider-managed ownership for brokered or staged dispatch scenarios; the shipped Wolverine path
   now keeps both the dispatch loop and managed subscription retry lanes bounded with max attempts,
