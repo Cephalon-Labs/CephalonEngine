@@ -559,6 +559,10 @@ through `commandObservationWindowQuery`, `commandObservationWindowPolicy`,
 `commandObservationWindowDetailOrder`, `commandObservationWindowSummary`, and
 `commandObservationWindowInvalidBounds`, so host UIs can discover the route family from
 `/engine/capabilities`, `/engine/technology-surfaces`, or `/engine/snapshot`.
+The `event-dispatch-remediation-commands` technology surface also emits a catalog entry before any
+command result exists, with route, retention, read-limit, observed-window, idempotency,
+provider-neutral, and `wolverineRequired = false` metadata, so an ASP.NET Core operator UI can bind
+to the command-result route family without waiting for command history or installing Wolverine.
 
 The host now also exposes bounded event-publication operator action and publication runtime-state
 surfaces directly. When a selected eventing pack registers `IEventPublicationDispatcher`,

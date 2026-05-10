@@ -306,6 +306,30 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("unique-command-id", remediationCapability.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
         Assert.Equal("reject-without-mutation", remediationCapability.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
 
+        var initialEventingSurfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/event-driven-integration");
+        Assert.NotNull(initialEventingSurfaces);
+        var initialCommandSurface = Assert.Single(initialEventingSurfaces, surface => surface.SurfaceId == "event-dispatch-remediation-commands");
+        var initialCommandCatalogEntry = Assert.Single(initialCommandSurface.Entries, entry => entry.Id == "event-dispatch-remediation-commands");
+        Assert.Equal("catalog", initialCommandCatalogEntry.Metadata["entryKind"]);
+        Assert.Equal("0", initialCommandCatalogEntry.Metadata["commandStateCount"]);
+        Assert.Equal("0", initialCommandCatalogEntry.Metadata["summaryTotalCommandCount"]);
+        Assert.Equal("false", initialCommandCatalogEntry.Metadata["summaryHasCommands"]);
+        Assert.Equal("256", initialCommandCatalogEntry.Metadata["commandHistoryLimit"]);
+        Assert.Equal("0", initialCommandCatalogEntry.Metadata["retainedCommandCount"]);
+        Assert.Equal("0", initialCommandCatalogEntry.Metadata["totalRecordedCommandCount"]);
+        Assert.Equal("0", initialCommandCatalogEntry.Metadata["droppedCommandCount"]);
+        Assert.Equal("false", initialCommandCatalogEntry.Metadata["retentionTruncated"]);
+        Assert.Equal("false", initialCommandCatalogEntry.Metadata["hasLatestCommand"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/summary", initialCommandCatalogEntry.Metadata["commandSummaryRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}", initialCommandCatalogEntry.Metadata["commandObservationRoute"]);
+        Assert.Equal("fromUtc,toUtc", initialCommandCatalogEntry.Metadata["commandObservationWindowQuery"]);
+        Assert.Equal("positive-integer-newest-first", initialCommandCatalogEntry.Metadata["commandReadLimitPolicy"]);
+        Assert.Equal("false", initialCommandCatalogEntry.Metadata["wolverineRequired"]);
+        Assert.Equal("true", initialCommandCatalogEntry.Metadata["providerNeutral"]);
+        Assert.Equal("unique-command-id", initialCommandCatalogEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
+        Assert.Equal("reject-without-mutation", initialCommandCatalogEntry.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
+        Assert.False(initialCommandCatalogEntry.Metadata.ContainsKey("latestCommandId"));
+
         var publicationResponse = await client.PostAsJsonAsync("/engine/event-publications", new
         {
             id = "evt-command-001",

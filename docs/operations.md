@@ -2302,6 +2302,10 @@ Current note:
   retained-window query semantics and validation posture; use
   `/observations?fromUtc={fromUtc}&toUtc={toUtc}` for retained incident windows, but
   do not treat it as durable compliance retention or broker replay ownership
+- `event-dispatch-remediation-commands` includes a catalog entry even when the command history is
+  empty; operator dashboards can use that `entryKind = catalog` entry to read command route,
+  retention, read-limit, observed-window, idempotency, provider-neutral, and Wolverine-free metadata
+  before any incident command is recorded
 - outbox-backed publication states use `accepted` to mean "staged for later dispatch"; dispatch
   completion and terminal dispatch failure remain separate event-dispatch runtime answers
 
@@ -2560,7 +2564,8 @@ Current `Cephalon.Eventing` highlights:
   separate from later dispatch completion
 - `event-dispatch-remediation-commands` exposes the bounded command-result read model for
   `retry-now`, `retry-later`, `skip`, `quarantine`, and dispatch-store `dead-letter`, including
-  latest, observed-window, message, channel, operation, actor, correlation, reason, and dispatch-outcome drill-downs, while
+  a catalog entry, latest, observed-window, message, channel, operation, actor, correlation, reason,
+  and dispatch-outcome drill-downs, while
   `/engine/event-dispatch-remediation-commands*` provides the typed route family for operators who
   do not want to parse technology-surface metadata
 - Wolverine or another companion adapter can still move staged dispatch or one subscription to

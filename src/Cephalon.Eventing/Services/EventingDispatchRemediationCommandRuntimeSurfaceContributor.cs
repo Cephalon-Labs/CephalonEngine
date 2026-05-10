@@ -7,22 +7,90 @@ namespace Cephalon.Eventing.Services;
 internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributor(
     IEventDispatchRemediationRuntimeCatalog commands) : ITechnologyRuntimeContributor
 {
+    private const string SurfaceId = "event-dispatch-remediation-commands";
+    private const string CommandSummaryRoute = "/engine/event-dispatch-remediation-commands/summary";
+    private const string CommandLatestRoute = "/engine/event-dispatch-remediation-commands/latest";
+    private const string CommandRetentionRoute = "/engine/event-dispatch-remediation-commands/retention";
+    private const string CommandObservationRoute = "/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}";
+    private const string CommandObservationSummaryRoute = "/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}";
+    private const string CommandOperationRoute = "/engine/event-dispatch-remediation-commands/operations/{operationId}";
+    private const string CommandActorRoute = "/engine/event-dispatch-remediation-commands/actors/{actorId}";
+    private const string CommandCorrelationRoute = "/engine/event-dispatch-remediation-commands/correlations/{correlationId}";
+    private const string CommandReasonRoute = "/engine/event-dispatch-remediation-commands/reasons/{reason}";
+    private const string CommandMessageRoute = "/engine/event-dispatch-remediation-commands/messages/{messageId}";
+    private const string CommandChannelRoute = "/engine/event-dispatch-remediation-commands/channels/{channelId}";
+    private const string CommandDispatchOutcomeRoute = "/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}";
+    private const string CommandOutcomeRoute = "/engine/event-dispatch-remediation-commands/outcomes/{outcome}";
+    private const string CommandReadLimitRoutes = "all,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes";
+
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
+        var entries = new List<TechnologyRuntimeEntry>(commands.States.Count + 1)
+        {
+            CreateCatalogEntry(commands)
+        };
+        entries.AddRange(commands.States.Select(CreateCommandEntry));
+
         return new TechnologyRuntimeSurface(
             technologyId: "event-driven-integration",
-            surfaceId: "event-dispatch-remediation-commands",
+            surfaceId: SurfaceId,
             displayName: "Event Dispatch Remediation Commands",
             description: "Bounded operator command results recorded by the provider-neutral event-dispatch remediation dispatcher.",
-            entries: commands.States
-                .Select(CreateEntry)
-                .ToArray());
+            entries: entries);
     }
 
-    private static TechnologyRuntimeEntry CreateEntry(EventDispatchRemediationRuntimeState state)
+    private static TechnologyRuntimeEntry CreateCatalogEntry(IEventDispatchRemediationRuntimeCatalog catalog)
     {
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
+            ["entryKind"] = "catalog",
+            ["commandStateCount"] = catalog.States.Count.ToString(CultureInfo.InvariantCulture),
+            ["summaryTotalCommandCount"] = catalog.Summary.TotalCommandCount.ToString(CultureInfo.InvariantCulture),
+            ["summaryAcceptedCount"] = catalog.Summary.AcceptedCount.ToString(CultureInfo.InvariantCulture),
+            ["summaryRejectedCount"] = catalog.Summary.RejectedCount.ToString(CultureInfo.InvariantCulture),
+            ["summaryErrorCount"] = catalog.Summary.ErrorCount.ToString(CultureInfo.InvariantCulture),
+            ["summaryDuplicateCommandCount"] = catalog.Summary.DuplicateCommandCount.ToString(CultureInfo.InvariantCulture),
+            ["summaryHasCommands"] = ToMetadataValue(catalog.Summary.HasCommands),
+            ["summaryHasFailures"] = ToMetadataValue(catalog.Summary.HasFailures),
+            ["summaryMayBeIncomplete"] = ToMetadataValue(catalog.Summary.SummaryMayBeIncomplete),
+            ["commandHistoryLimit"] = catalog.Retention.HistoryLimit.ToString(CultureInfo.InvariantCulture),
+            ["retainedCommandCount"] = catalog.Retention.RetainedCommandCount.ToString(CultureInfo.InvariantCulture),
+            ["totalRecordedCommandCount"] = catalog.Retention.TotalRecordedCommandCount.ToString(CultureInfo.InvariantCulture),
+            ["droppedCommandCount"] = catalog.Retention.DroppedCommandCount.ToString(CultureInfo.InvariantCulture),
+            ["retentionTruncated"] = ToMetadataValue(catalog.Retention.Truncated),
+            ["hasLatestCommand"] = ToMetadataValue(catalog.Latest is not null),
+            ["providerNeutral"] = "true",
+            ["wolverineRequired"] = "false"
+        };
+
+        AddCommandRouteMetadata(metadata);
+        AddCommandObservationWindowMetadata(metadata);
+        AddCommandReadLimitMetadata(metadata);
+        AddCommandIdempotencyMetadata(metadata);
+
+        AddOptional(metadata, "latestCommandId", catalog.Latest?.CommandId);
+        AddOptional(metadata, "latestOperationId", catalog.Summary.LastOperationId);
+        AddOptional(metadata, "latestOutcome", catalog.Summary.LastOutcome);
+        AddOptional(metadata, "latestDispatchOutcome", catalog.Summary.LastDispatchOutcome);
+        AddOptional(metadata, "latestObservedAtUtc", catalog.Summary.LastObservedAtUtc);
+        AddOptional(metadata, "oldestRetainedCommandId", catalog.Retention.OldestRetainedCommandId);
+        AddOptional(metadata, "oldestRetainedObservedAtUtc", catalog.Retention.OldestRetainedObservedAtUtc);
+        AddOptional(metadata, "latestRetainedCommandId", catalog.Retention.LatestRetainedCommandId);
+        AddOptional(metadata, "latestRetainedObservedAtUtc", catalog.Retention.LatestRetainedObservedAtUtc);
+
+        return new TechnologyRuntimeEntry(
+            id: SurfaceId,
+            displayName: "Event Dispatch Remediation Command Catalog",
+            description: "Route, retention, idempotency, and audit-read policy for provider-neutral event-dispatch remediation command results.",
+            metadata: metadata);
+    }
+
+    private static TechnologyRuntimeEntry CreateCommandEntry(EventDispatchRemediationRuntimeState state)
+    {
+        var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["entryKind"] = "command-result",
+            ["commandCatalogEntryId"] = SurfaceId,
             ["commandId"] = state.CommandId,
             ["outboxId"] = state.OutboxId,
             ["messageId"] = state.MessageId,
@@ -32,34 +100,15 @@ internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributo
             ["dispatchOutcome"] = state.DispatchOutcome,
             ["observedAtUtc"] = state.ObservedAtUtc.ToString("O", CultureInfo.InvariantCulture),
             ["commandScope"] = "dispatch-store",
-            ["commandSummaryRoute"] = "/engine/event-dispatch-remediation-commands/summary",
-            ["commandLatestRoute"] = "/engine/event-dispatch-remediation-commands/latest",
-            ["commandRetentionRoute"] = "/engine/event-dispatch-remediation-commands/retention",
-            ["commandObservationRoute"] = "/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}",
-            ["commandObservationSummaryRoute"] = "/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}",
-            ["commandObservationWindowQuery"] = "fromUtc,toUtc",
-            ["commandObservationWindowPolicy"] = "inclusive-observed-utc",
-            ["commandObservationWindowDetailOrder"] = "newest-first",
-            ["commandObservationWindowSummary"] = "available",
-            ["commandObservationWindowInvalidBounds"] = "reject-reversed-window",
-            ["commandOperationRoute"] = "/engine/event-dispatch-remediation-commands/operations/{operationId}",
-            ["commandActorRoute"] = "/engine/event-dispatch-remediation-commands/actors/{actorId}",
-            ["commandCorrelationRoute"] = "/engine/event-dispatch-remediation-commands/correlations/{correlationId}",
-            ["commandReasonRoute"] = "/engine/event-dispatch-remediation-commands/reasons/{reason}",
-            ["commandMessageRoute"] = "/engine/event-dispatch-remediation-commands/messages/{messageId}",
-            ["commandChannelRoute"] = "/engine/event-dispatch-remediation-commands/channels/{channelId}",
-            ["commandDispatchOutcomeRoute"] = "/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}",
-            ["commandOutcomeRoute"] = "/engine/event-dispatch-remediation-commands/outcomes/{outcome}",
-            ["commandReadLimitQuery"] = "limit",
-            ["commandReadLimitPolicy"] = "positive-integer-newest-first",
-            ["commandReadLimitAppliesTo"] = "list-and-filter-routes",
-            ["commandReadLimitRoutes"] = "all,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes",
             ["providerNeutral"] = "true",
             ["wolverineRequired"] = "false",
-            [EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy] = "unique-command-id",
-            [EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy] = "reject-without-mutation",
             ["hasError"] = string.IsNullOrWhiteSpace(state.Error) ? "false" : "true"
         };
+
+        AddCommandRouteMetadata(metadata);
+        AddCommandObservationWindowMetadata(metadata);
+        AddCommandReadLimitMetadata(metadata);
+        AddCommandIdempotencyMetadata(metadata);
 
         if (!string.IsNullOrWhiteSpace(state.Error))
         {
@@ -88,4 +137,68 @@ internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributo
         string.Equals(state.Outcome, EventDispatchRemediationOutcomes.Accepted, StringComparison.OrdinalIgnoreCase)
             ? "The event-dispatch remediation command was accepted and applied through the active dispatch store."
             : "The event-dispatch remediation command was rejected before mutating dispatch-store state.";
+
+    private static void AddCommandRouteMetadata(Dictionary<string, string> metadata)
+    {
+        metadata["commandSummaryRoute"] = CommandSummaryRoute;
+        metadata["commandLatestRoute"] = CommandLatestRoute;
+        metadata["commandRetentionRoute"] = CommandRetentionRoute;
+        metadata["commandObservationRoute"] = CommandObservationRoute;
+        metadata["commandObservationSummaryRoute"] = CommandObservationSummaryRoute;
+        metadata["commandOperationRoute"] = CommandOperationRoute;
+        metadata["commandActorRoute"] = CommandActorRoute;
+        metadata["commandCorrelationRoute"] = CommandCorrelationRoute;
+        metadata["commandReasonRoute"] = CommandReasonRoute;
+        metadata["commandMessageRoute"] = CommandMessageRoute;
+        metadata["commandChannelRoute"] = CommandChannelRoute;
+        metadata["commandDispatchOutcomeRoute"] = CommandDispatchOutcomeRoute;
+        metadata["commandOutcomeRoute"] = CommandOutcomeRoute;
+    }
+
+    private static void AddCommandObservationWindowMetadata(Dictionary<string, string> metadata)
+    {
+        metadata["commandObservationWindowQuery"] = "fromUtc,toUtc";
+        metadata["commandObservationWindowPolicy"] = "inclusive-observed-utc";
+        metadata["commandObservationWindowDetailOrder"] = "newest-first";
+        metadata["commandObservationWindowSummary"] = "available";
+        metadata["commandObservationWindowInvalidBounds"] = "reject-reversed-window";
+    }
+
+    private static void AddCommandReadLimitMetadata(Dictionary<string, string> metadata)
+    {
+        metadata["commandReadLimitQuery"] = "limit";
+        metadata["commandReadLimitPolicy"] = "positive-integer-newest-first";
+        metadata["commandReadLimitAppliesTo"] = "list-and-filter-routes";
+        metadata["commandReadLimitRoutes"] = CommandReadLimitRoutes;
+    }
+
+    private static void AddCommandIdempotencyMetadata(Dictionary<string, string> metadata)
+    {
+        metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy] = "unique-command-id";
+        metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy] = "reject-without-mutation";
+    }
+
+    private static void AddOptional(
+        Dictionary<string, string> metadata,
+        string key,
+        string? value)
+    {
+        if (!string.IsNullOrWhiteSpace(value))
+        {
+            metadata[key] = value;
+        }
+    }
+
+    private static void AddOptional(
+        Dictionary<string, string> metadata,
+        string key,
+        DateTimeOffset? value)
+    {
+        if (value.HasValue)
+        {
+            metadata[key] = value.Value.ToString("O", CultureInfo.InvariantCulture);
+        }
+    }
+
+    private static string ToMetadataValue(bool value) => value ? "true" : "false";
 }

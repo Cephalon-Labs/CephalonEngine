@@ -345,9 +345,11 @@ public sealed class WolverineEventingPackTests
         var adapterSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
         var dispatchSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatches");
         var remediationSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatch-remediations");
+        var remediationCommandSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatch-remediation-commands");
         var adapterEntry = Assert.Single(adapterSurface.Entries, entry => entry.Id == "wolverine-eventing");
         var dispatchEntry = Assert.Single(dispatchSurface.Entries, entry => entry.Id == "entity-framework-outbox");
         var remediationEntry = Assert.Single(remediationSurface.Entries, entry => entry.Id == "entity-framework-outbox:evt-500");
+        var remediationCommandCatalogEntry = Assert.Single(remediationCommandSurface.Entries, entry => entry.Id == "event-dispatch-remediation-commands");
         var runtimeDescriptor = dispatchRuntimeDescriptors.GetById(WolverineEventingRuntimeIds.DispatchRuntimeId);
         Assert.NotNull(runtimeDescriptor);
 
@@ -405,6 +407,16 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("wolverine-managed", remediationEntry.Metadata["reported.dispatchBridge"]);
         Assert.Equal("2026-04-04T14:06:00.0000000+00:00", remediationEntry.Metadata["nextRetryAtUtc"]);
         Assert.Equal("bounded-fixed-delay", remediationEntry.Metadata["retryPolicy"]);
+        Assert.Equal("catalog", remediationCommandCatalogEntry.Metadata["entryKind"]);
+        Assert.Equal("0", remediationCommandCatalogEntry.Metadata["commandStateCount"]);
+        Assert.Equal("0", remediationCommandCatalogEntry.Metadata["retainedCommandCount"]);
+        Assert.Equal("0", remediationCommandCatalogEntry.Metadata["totalRecordedCommandCount"]);
+        Assert.Equal("false", remediationCommandCatalogEntry.Metadata["hasLatestCommand"]);
+        Assert.Equal("false", remediationCommandCatalogEntry.Metadata["wolverineRequired"]);
+        Assert.Equal("true", remediationCommandCatalogEntry.Metadata["providerNeutral"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/summary", remediationCommandCatalogEntry.Metadata["commandSummaryRoute"]);
+        Assert.Equal("inclusive-observed-utc", remediationCommandCatalogEntry.Metadata["commandObservationWindowPolicy"]);
+        Assert.Equal("positive-integer-newest-first", remediationCommandCatalogEntry.Metadata["commandReadLimitPolicy"]);
         Assert.True(runtimeDescriptor!.Summary.HasReports);
         Assert.Equal(["entity-framework-outbox"], runtimeDescriptor.Summary.ReportedOutboxIds);
         Assert.Equal("entity-framework-outbox", runtimeDescriptor.Summary.LastOutboxId);
