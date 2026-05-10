@@ -50980,6 +50980,21 @@ Returns: The recorded command states for the outcome, ordered by observed time a
 Parameters:
 - `outcome`: The stable command outcome identifier to resolve.
 
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbyreason-system-string"></a>
+
+##### `GetByReason`
+
+```csharp
+IReadOnlyList<EventDispatchRemediationRuntimeState> GetByReason(string reason)
+```
+
+Gets the remediation command-state entries recorded for one operator command reason.
+
+Returns: The recorded command states for the reason, ordered by observed time and command identifier.
+
+Parameters:
+- `reason`: The stable operator-facing command reason to resolve.
+
 <a id="type-cephalon-abstractions-data-ieventdispatchruntimecatalog"></a>
 
 ### `IEventDispatchRuntimeCatalog`

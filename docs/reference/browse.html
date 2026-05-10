@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T04:07:28.8176476+00:00",
+  "GeneratedAtUtc": "2026-05-10T04:23:54.8001834+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8317,7 +8317,7 @@
       "Summary": "Defines stable metadata keys used by event-dispatch remediation command results.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 9,
+        "Fields": 10,
         "Properties": 0,
         "Methods": 0
       }
@@ -11154,7 +11154,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 9
+        "Methods": 10
       }
     },
     {
@@ -61454,6 +61454,17 @@
       "Summary": "Gets the latest reported publication state for one publication id."
     },
     {
+      "DisplayName": "GetByReason",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbyreason-system-string",
+      "Signature": "IReadOnlyList\u003CEventDispatchRemediationRuntimeState\u003E GetByReason(string reason)",
+      "Summary": "Gets the remediation command-state entries recorded for one operator command reason."
+    },
+    {
       "DisplayName": "GetByRemediationCategory",
       "Category": "Methods",
       "DeclaringTypeName": "ICdcCaptureExecutionRuntimeCatalog",
@@ -90380,6 +90391,17 @@
       "AnchorId": "member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-operatoractorid",
       "Signature": "const string OperatorActorId",
       "Summary": "Identifies the operator actor that requested the remediation command."
+    },
+    {
+      "DisplayName": "OperatorCommandReason",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-operatorcommandreason",
+      "Signature": "const string OperatorCommandReason",
+      "Summary": "Identifies the operator-facing reason attached to the remediation command."
     },
     {
       "DisplayName": "OperatorCorrelationId",

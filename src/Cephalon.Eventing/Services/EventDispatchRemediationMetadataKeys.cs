@@ -31,6 +31,11 @@ public static class EventDispatchRemediationMetadataKeys
     public const string OperatorCorrelationId = "operatorCorrelationId";
 
     /// <summary>
+    /// Identifies the operator-facing reason attached to the remediation command.
+    /// </summary>
+    public const string OperatorCommandReason = "operatorCommandReason";
+
+    /// <summary>
     /// Identifies whether the current response describes a duplicate command request.
     /// </summary>
     public const string DuplicateCommand = "duplicateCommand";

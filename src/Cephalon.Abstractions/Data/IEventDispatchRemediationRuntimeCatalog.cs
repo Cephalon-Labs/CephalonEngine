@@ -60,6 +60,13 @@ public interface IEventDispatchRemediationRuntimeCatalog
     IReadOnlyList<EventDispatchRemediationRuntimeState> GetByCorrelationId(string correlationId);
 
     /// <summary>
+    /// Gets the remediation command-state entries recorded for one operator command reason.
+    /// </summary>
+    /// <param name="reason">The stable operator-facing command reason to resolve.</param>
+    /// <returns>The recorded command states for the reason, ordered by observed time and command identifier.</returns>
+    IReadOnlyList<EventDispatchRemediationRuntimeState> GetByReason(string reason);
+
+    /// <summary>
     /// Gets the remediation command-state entries recorded for one command outcome.
     /// </summary>
     /// <param name="outcome">The stable command outcome identifier to resolve.</param>

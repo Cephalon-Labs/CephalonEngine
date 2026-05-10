@@ -205,7 +205,7 @@ internal sealed class EventDispatchRemediationDispatcher(
 
         if (!string.IsNullOrWhiteSpace(request.Reason))
         {
-            metadata["operatorCommandReason"] = request.Reason;
+            metadata[EventDispatchRemediationMetadataKeys.OperatorCommandReason] = request.Reason;
         }
 
         if (!string.IsNullOrWhiteSpace(request.ActorId))

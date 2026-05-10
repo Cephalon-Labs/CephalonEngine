@@ -11472,6 +11472,9 @@ Browse the published API surface by public member.
 - [GetByPublicationId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventpublicationruntimecatalog-getbypublicationid-system-string): `Methods` on `IEventPublicationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByPublicationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the latest reported publication state for one publication id.
   - `EventPublicationRuntimeState GetByPublicationId(string publicationId)`
+- [GetByReason](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbyreason-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByReason&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the remediation command-state entries recorded for one operator command reason.
+  - `IReadOnlyList<EventDispatchRemediationRuntimeState> GetByReason(string reason)`
 - [GetByRemediationCategory](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbyremediationcategory-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByRemediationCategory&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the CDC capture execution runtimes whose current remediation posture includes the requested category.
   - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByRemediationCategory(string remediationCategory)`
@@ -19384,6 +19387,9 @@ Browse the published API surface by public member.
 - [OperatorActorId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-operatoractorid): `Fields` on `EventDispatchRemediationMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=OperatorActorId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the operator actor that requested the remediation command.
   - `const string OperatorActorId`
+- [OperatorCommandReason](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-operatorcommandreason): `Fields` on `EventDispatchRemediationMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=OperatorCommandReason&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the operator-facing reason attached to the remediation command.
+  - `const string OperatorCommandReason`
 - [OperatorCorrelationId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-operatorcorrelationid): `Fields` on `EventDispatchRemediationMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=OperatorCorrelationId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the operator correlation identifier attached to the remediation command.
   - `const string OperatorCorrelationId`
