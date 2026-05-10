@@ -10881,6 +10881,9 @@ Browse the published API surface by public member.
 - [GetByContractId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idataproductcatalog-getbycontractid-system-string): `Methods` on `IDataProductCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByContractId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets all data products that expose the requested contract identifier.
   - `IReadOnlyList<DataProductDescriptor> GetByContractId(string contractId)`
+- [GetByCorrelationId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbycorrelationid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByCorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the remediation command-state entries recorded for one operator correlation identifier.
+  - `IReadOnlyList<EventDispatchRemediationRuntimeState> GetByCorrelationId(string correlationId)`
 - [GetByCorrelationId](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-isagachoreographypublicationruntimestatecatalog-getbycorrelationid-system-string): `Methods` on `ISagaChoreographyPublicationRuntimeStateCatalog` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByCorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the reported publication-state entries associated with one correlation identifier.
   - `IReadOnlyList<SagaChoreographyPublicationRuntimeState> GetByCorrelationId(string correlationId)`
@@ -19381,6 +19384,9 @@ Browse the published API surface by public member.
 - [OperatorActorId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-operatoractorid): `Fields` on `EventDispatchRemediationMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=OperatorActorId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the operator actor that requested the remediation command.
   - `const string OperatorActorId`
+- [OperatorCorrelationId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-operatorcorrelationid): `Fields` on `EventDispatchRemediationMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=OperatorCorrelationId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the operator correlation identifier attached to the remediation command.
+  - `const string OperatorCorrelationId`
 - [OperatorOnly](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretrycoordinationcategories-operatoronly): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryCoordinationCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=OperatorOnly&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Automatic retry still remains operator-owned outside Cephalon.
   - `const string OperatorOnly`

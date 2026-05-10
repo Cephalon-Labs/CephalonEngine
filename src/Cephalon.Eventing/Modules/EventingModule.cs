@@ -427,6 +427,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["commandResultRoute"] = "/engine/event-dispatch-remediation-commands/{commandId}",
                     ["commandOperationRoute"] = "/engine/event-dispatch-remediation-commands/operations/{operationId}",
                     ["commandActorRoute"] = "/engine/event-dispatch-remediation-commands/actors/{actorId}",
+                    ["commandCorrelationRoute"] = "/engine/event-dispatch-remediation-commands/correlations/{correlationId}",
                     ["commandMessageRoute"] = "/engine/event-dispatch-remediation-commands/messages/{messageId}",
                     ["commandChannelRoute"] = "/engine/event-dispatch-remediation-commands/channels/{channelId}",
                     ["commandDispatchOutcomeRoute"] = "/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}",

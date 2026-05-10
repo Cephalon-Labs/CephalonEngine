@@ -956,6 +956,16 @@ const string OperatorActorId
 
 Identifies the operator actor that requested the remediation command.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-operatorcorrelationid"></a>
+
+##### `OperatorCorrelationId`
+
+```csharp
+const string OperatorCorrelationId
+```
+
+Identifies the operator correlation identifier attached to the remediation command.
+
 <a id="type-cephalon-eventing-services-eventdispatchruntimemetadatakeys"></a>
 
 ### `EventDispatchRuntimeMetadataKeys`

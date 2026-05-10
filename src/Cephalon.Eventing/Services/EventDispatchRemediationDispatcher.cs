@@ -215,7 +215,7 @@ internal sealed class EventDispatchRemediationDispatcher(
 
         if (!string.IsNullOrWhiteSpace(request.CorrelationId))
         {
-            metadata["operatorCorrelationId"] = request.CorrelationId;
+            metadata[EventDispatchRemediationMetadataKeys.OperatorCorrelationId] = request.CorrelationId;
         }
 
         switch (operationId)

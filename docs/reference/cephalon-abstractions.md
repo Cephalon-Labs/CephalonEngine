@@ -50890,6 +50890,21 @@ Returns: The recorded command state, or `null` when the command has not reported
 Parameters:
 - `commandId`: The stable remediation command identifier to resolve.
 
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbycorrelationid-system-string"></a>
+
+##### `GetByCorrelationId`
+
+```csharp
+IReadOnlyList<EventDispatchRemediationRuntimeState> GetByCorrelationId(string correlationId)
+```
+
+Gets the remediation command-state entries recorded for one operator correlation identifier.
+
+Returns: The recorded command states for the correlation identifier, ordered by observed time and command identifier.
+
+Parameters:
+- `correlationId`: The stable operator correlation identifier to resolve.
+
 <a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbydispatchoutcome-system-string"></a>
 
 ##### `GetByDispatchOutcome`

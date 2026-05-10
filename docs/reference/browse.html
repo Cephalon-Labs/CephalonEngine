@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T03:56:37.4912223+00:00",
+  "GeneratedAtUtc": "2026-05-10T04:07:28.8176476+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8317,7 +8317,7 @@
       "Summary": "Defines stable metadata keys used by event-dispatch remediation command results.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 8,
+        "Fields": 9,
         "Properties": 0,
         "Methods": 0
       }
@@ -11154,7 +11154,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 8
+        "Methods": 9
       }
     },
     {
@@ -59289,6 +59289,17 @@
     {
       "DisplayName": "GetByCorrelationId",
       "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbycorrelationid-system-string",
+      "Signature": "IReadOnlyList\u003CEventDispatchRemediationRuntimeState\u003E GetByCorrelationId(string correlationId)",
+      "Summary": "Gets the remediation command-state entries recorded for one operator correlation identifier."
+    },
+    {
+      "DisplayName": "GetByCorrelationId",
+      "Category": "Methods",
       "DeclaringTypeName": "ISagaChoreographyPublicationRuntimeStateCatalog",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -90369,6 +90380,17 @@
       "AnchorId": "member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-operatoractorid",
       "Signature": "const string OperatorActorId",
       "Summary": "Identifies the operator actor that requested the remediation command."
+    },
+    {
+      "DisplayName": "OperatorCorrelationId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-operatorcorrelationid",
+      "Signature": "const string OperatorCorrelationId",
+      "Summary": "Identifies the operator correlation identifier attached to the remediation command."
     },
     {
       "DisplayName": "OperatorOnly",

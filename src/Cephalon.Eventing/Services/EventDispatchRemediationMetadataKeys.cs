@@ -26,6 +26,11 @@ public static class EventDispatchRemediationMetadataKeys
     public const string OperatorActorId = "operatorActorId";
 
     /// <summary>
+    /// Identifies the operator correlation identifier attached to the remediation command.
+    /// </summary>
+    public const string OperatorCorrelationId = "operatorCorrelationId";
+
+    /// <summary>
     /// Identifies whether the current response describes a duplicate command request.
     /// </summary>
     public const string DuplicateCommand = "duplicateCommand";

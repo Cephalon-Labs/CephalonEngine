@@ -53,6 +53,13 @@ public interface IEventDispatchRemediationRuntimeCatalog
     IReadOnlyList<EventDispatchRemediationRuntimeState> GetByActorId(string actorId);
 
     /// <summary>
+    /// Gets the remediation command-state entries recorded for one operator correlation identifier.
+    /// </summary>
+    /// <param name="correlationId">The stable operator correlation identifier to resolve.</param>
+    /// <returns>The recorded command states for the correlation identifier, ordered by observed time and command identifier.</returns>
+    IReadOnlyList<EventDispatchRemediationRuntimeState> GetByCorrelationId(string correlationId);
+
+    /// <summary>
     /// Gets the remediation command-state entries recorded for one command outcome.
     /// </summary>
     /// <param name="outcome">The stable command outcome identifier to resolve.</param>

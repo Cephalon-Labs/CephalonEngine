@@ -2244,6 +2244,8 @@ Current payload highlights:
   `quarantine`, or `dead-letter`
 - `GET /engine/event-dispatch-remediation-commands/actors/{actorId}` filters command results by
   the optional `operatorActorId` recorded with the accepted or rejected command
+- `GET /engine/event-dispatch-remediation-commands/correlations/{correlationId}` filters command
+  results by the optional `operatorCorrelationId` recorded with the accepted or rejected command
 - `GET /engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}` filters
   command results by dispatch-store outcome, such as `retry-scheduled`, `skipped`, or `failed`
 - `GET /engine/event-dispatch-remediation-commands/outcomes/{outcome}` filters command results by
@@ -2523,7 +2525,7 @@ Current `Cephalon.Eventing` highlights:
   separate from later dispatch completion
 - `event-dispatch-remediation-commands` exposes the bounded command-result read model for
   `retry-now`, `retry-later`, `skip`, `quarantine`, and dispatch-store `dead-letter`, including
-  message, channel, operation, actor, and dispatch-outcome drill-downs, while
+  message, channel, operation, actor, correlation, and dispatch-outcome drill-downs, while
   `/engine/event-dispatch-remediation-commands*` provides the typed route family for operators who
   do not want to parse technology-surface metadata
 - Wolverine or another companion adapter can still move staged dispatch or one subscription to
