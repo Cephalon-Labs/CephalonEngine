@@ -5343,6 +5343,44 @@ Follow-up later:
 - durable command-result pagination, continuation tokens, cross-node command audit search, broker
   replay, and provider-specific operator dashboards remain package-owned future work
 
+### ENG-570 Eventing remediation command read-limit metadata
+
+Status: done
+Estimate: 1
+Issue: #1224
+Iteration: Sprint 91 follow-through
+Area: eventing / operations / Wolverine-free baseline
+Quality dimensions: Usability, Auditability, Compatibility, Performance, Maintainability
+
+Why:
+
+- ENG-569 made the native command-result list/filter routes accept `?limit=...`, but operator UIs
+  should discover that support through capabilities and runtime surfaces instead of probing routes
+  or hardcoding Cephalon.AspNetCore behavior
+- the command-outcome drill-down route already existed in the ASP.NET adapter, so the native
+  metadata should advertise that route alongside dispatch-outcome and other drill-down routes
+
+Delivered:
+
+- added `commandOutcomeRoute`, `commandReadLimitQuery`, `commandReadLimitPolicy`,
+  `commandReadLimitAppliesTo`, and `commandReadLimitRoutes` metadata to the
+  `eventing.dispatch-remediation` capability
+- added matching `operatorCommandOutcomeRoute` and `operatorCommandReadLimit*` metadata to
+  `event-dispatch-remediations` runtime entries when dispatch-store commands are ready
+- added matching outcome route and read-limit metadata to `event-dispatch-remediation-commands`
+  runtime entries so recorded command results advertise the same route family
+- covered the metadata through ASP.NET hosting, Entity Framework data pack composition, and
+  optional Wolverine composition tests so Wolverine remains optional rather than the source of the
+  route contract
+- updated component docs, ASP.NET Core operations docs, runtime contract index, compatibility notes,
+  conformance/maturity rows, roadmap, and project memory so runtime introspection remains the
+  operator contract
+
+Follow-up later:
+
+- durable command-result pagination, continuation tokens, cross-node command audit search, broker
+  replay, and provider-specific operator dashboards remain package-owned future work
+
 ### ENG-269 Agentics tool execution operator-action baseline
 
 Status: done
@@ -16719,6 +16757,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-567 Eventing remediation command observation-window summary (shipped): native command-result history can now summarize retained observed UTC windows through `IEventDispatchRemediationRuntimeCatalog.GetSummaryByObservedAt(...)` and `/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}` without requiring Wolverine or materializing the full bounded history
 - ENG-568 Eventing remediation summary retention warning (shipped): native command summaries now expose dropped-command count, retention-truncated state, incomplete-summary state, and oldest retained cutoff so dashboards can warn about bounded command-history truncation without requiring Wolverine or a second retention read
 - ENG-569 Eventing remediation command read limits (shipped): native command-result list/filter routes can now return newest retained records through `?limit={positiveInteger}` without requiring Wolverine, route-specific config, or changes to summary/latest/retention/single-command contracts
+- ENG-570 Eventing remediation command read-limit metadata (shipped): native capabilities and technology surfaces now advertise the command outcome route plus positive-integer newest-first read-limit policy so operator UIs can discover the list/filter contract without route probing or Wolverine
 
 ### Sprint 88
 
@@ -17051,6 +17090,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-567 Add Eventing remediation command observation-window summary: native command-result history now has an observed-window summary seam, ASP.NET Core publishes `/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}`, and invalid dates or reversed windows fail fast while retained-window counts avoid materializing the full list. Quality dimensions: Auditability + Usability + Reliability + Performance + Compatibility (shipped)
 - ENG-568 Add Eventing remediation summary retention warning: native command summaries now expose dropped-command count, retention-truncated state, incomplete-summary state, and oldest retained cutoff directly on `EventDispatchRemediationRuntimeSummary`, including observed-window warnings when the requested lower bound crosses before retained history. Quality dimensions: Auditability + Usability + Reliability + Data Integrity + Compatibility (shipped)
 - ENG-569 Add Eventing remediation command read limits: native command-result list/filter routes now accept `?limit={positiveInteger}` for newest retained records while invalid values fail fast and summary/latest/retention/single-command reads keep their contracts. Quality dimensions: Performance + Usability + Reliability + Auditability + Compatibility (shipped)
+- ENG-570 Add Eventing remediation command read-limit metadata: native command capabilities and runtime surfaces now expose `commandReadLimit*` / `operatorCommandReadLimit*` metadata plus the command outcome route so operator UIs can discover the newest-first list/filter policy without probing routes. Quality dimensions: Usability + Auditability + Compatibility + Performance + Maintainability (shipped)
 - ENG-524 Harden deployment-mode audit-only probes: direct trim and Native AOT runs now keep the single-file release gate out of their verdict by returning `PublishProbeGate=not-applicable` when only audit-only modes are evaluated; compiler-only analyzer/source-generator `ProjectReference` entries strip app publish-mode globals through `CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove`; and `Cephalon.Analyzers`, `Cephalon.Behaviors.SourceGen`, and `Cephalon.Engine.SourceGen` localize publish/RID globals with `TreatAsLocalProperty` so publish probes reach real runtime blocker evidence instead of failing on compiler-only `netstandard2.0` drift. Release closeout also stabilized the readiness warmup hosting test, refreshed the REST projection/governance guardrail to a measured 1 s ceiling while keeping the existing 16 MB allocation ceiling, and moved the canonical full `validate-release` wall-time target to 30 minutes after the current full lane measured about 1,669.848 seconds. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability + Performance (shipped)
 - ENG-535 Close generated REST behavior source-generator adoption proof: `Cephalon.Behaviors.SourceGen` now packs its compiler assembly under `analyzers/dotnet/cs`, scaffolded REST behavior modules and template-pack REST starters reference it as `PrivateAssets=all`, generated module projects keep `Cephalon.Engine.SourceGen` in every blueprint, and the out-of-tree adoption temporary feed publishes the full generated REST behavior package closure (`Cephalon.Behaviors.SourceGen`, `Cephalon.Diagnostics`, and `Cephalon.Resilience`) so restore/build/run replay can produce the REST profile hints required by `MapProfile<TBehavior>()`. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability (shipped)
 - ENG-487 Add opt-in CDC integration baseline: `tests/Cephalon.Tests.CdcIntegration` now carries the first dedicated live CDC integration lane, proving MongoDB change streams against a disposable `EphemeralMongo7` replica set with real outbox staging, provider-native runtime binding, runtime-state reporting, execution-runtime aggregation, and checkpoint persistence; `data.slnf` now points at the split data-relevant test projects instead of the retired monolithic test project, and SQL Server/Postgres live CDC coverage stays explicitly later until an external-service/Testcontainers gate exists. Quality dimensions: Reliability + Compatibility + Auditability + Maintainability (shipped)

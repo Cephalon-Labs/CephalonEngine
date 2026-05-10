@@ -437,6 +437,11 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["commandMessageRoute"] = "/engine/event-dispatch-remediation-commands/messages/{messageId}",
                     ["commandChannelRoute"] = "/engine/event-dispatch-remediation-commands/channels/{channelId}",
                     ["commandDispatchOutcomeRoute"] = "/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}",
+                    ["commandOutcomeRoute"] = "/engine/event-dispatch-remediation-commands/outcomes/{outcome}",
+                    ["commandReadLimitQuery"] = "limit",
+                    ["commandReadLimitPolicy"] = "positive-integer-newest-first",
+                    ["commandReadLimitAppliesTo"] = "list-and-filter-routes",
+                    ["commandReadLimitRoutes"] = "all,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes",
                     ["operationIds"] = string.Join(
                         ",",
                         EventDispatchRemediationOperationIds.RetryNow,

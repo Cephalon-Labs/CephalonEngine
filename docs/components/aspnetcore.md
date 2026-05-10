@@ -552,6 +552,10 @@ The list and filter routes that return command-result arrays also accept
 `?limit={positiveInteger}` so operator dashboards can read the newest retained records first without
 materializing the full bounded history; invalid, zero, or negative limits return `400`, and summary,
 latest, retention, or single-command reads keep their existing contracts.
+The eventing capability and technology-runtime metadata advertise the same policy through
+`commandReadLimitQuery`, `commandReadLimitPolicy`, `commandReadLimitAppliesTo`, and the matching
+route list, so host UIs can discover the route family from `/engine/capabilities`,
+`/engine/technology-surfaces`, or `/engine/snapshot`.
 
 The host now also exposes bounded event-publication operator action and publication runtime-state
 surfaces directly. When a selected eventing pack registers `IEventPublicationDispatcher`,

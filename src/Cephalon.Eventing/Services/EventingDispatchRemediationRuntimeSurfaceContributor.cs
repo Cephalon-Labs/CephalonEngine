@@ -25,7 +25,10 @@ internal sealed class EventingDispatchRemediationRuntimeSurfaceContributor(
     private const string CommandMessageRoute = "/engine/event-dispatch-remediation-commands/messages/{messageId}";
     private const string CommandChannelRoute = "/engine/event-dispatch-remediation-commands/channels/{channelId}";
     private const string CommandDispatchOutcomeRoute = "/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}";
+    private const string CommandOutcomeRoute = "/engine/event-dispatch-remediation-commands/outcomes/{outcome}";
     private const string CommandOperations = "retry-now,retry-later,skip,quarantine,dead-letter";
+    private const string CommandReadLimitRoutes =
+        "all,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes";
 
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
@@ -93,6 +96,11 @@ internal sealed class EventingDispatchRemediationRuntimeSurfaceContributor(
             metadata["operatorCommandMessageRoute"] = CommandMessageRoute;
             metadata["operatorCommandChannelRoute"] = CommandChannelRoute;
             metadata["operatorCommandDispatchOutcomeRoute"] = CommandDispatchOutcomeRoute;
+            metadata["operatorCommandOutcomeRoute"] = CommandOutcomeRoute;
+            metadata["operatorCommandReadLimitQuery"] = "limit";
+            metadata["operatorCommandReadLimitPolicy"] = "positive-integer-newest-first";
+            metadata["operatorCommandReadLimitAppliesTo"] = "list-and-filter-routes";
+            metadata["operatorCommandReadLimitRoutes"] = CommandReadLimitRoutes;
             metadata["operatorCommandOperations"] = CommandOperations;
             metadata["operatorCommandScope"] = "dispatch-store";
             metadata["deadLetterCommandScope"] = "dispatch-store-terminal";

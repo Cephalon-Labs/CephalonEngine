@@ -211,6 +211,11 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/messages/{messageId}", terminalRemediationEntry.Metadata["operatorCommandMessageRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/channels/{channelId}", terminalRemediationEntry.Metadata["operatorCommandChannelRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}", terminalRemediationEntry.Metadata["operatorCommandDispatchOutcomeRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/outcomes/{outcome}", terminalRemediationEntry.Metadata["operatorCommandOutcomeRoute"]);
+        Assert.Equal("limit", terminalRemediationEntry.Metadata["operatorCommandReadLimitQuery"]);
+        Assert.Equal("positive-integer-newest-first", terminalRemediationEntry.Metadata["operatorCommandReadLimitPolicy"]);
+        Assert.Equal("list-and-filter-routes", terminalRemediationEntry.Metadata["operatorCommandReadLimitAppliesTo"]);
+        Assert.Equal("all,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", terminalRemediationEntry.Metadata["operatorCommandReadLimitRoutes"]);
         Assert.Equal("false", terminalRemediationEntry.Metadata["wolverineRequired"]);
         Assert.Equal("unique-command-id", terminalRemediationEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
         Assert.Equal("reject-without-mutation", terminalRemediationEntry.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
@@ -281,6 +286,11 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/messages/{messageId}", remediationCapability.Metadata["commandMessageRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/channels/{channelId}", remediationCapability.Metadata["commandChannelRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}", remediationCapability.Metadata["commandDispatchOutcomeRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/outcomes/{outcome}", remediationCapability.Metadata["commandOutcomeRoute"]);
+        Assert.Equal("limit", remediationCapability.Metadata["commandReadLimitQuery"]);
+        Assert.Equal("positive-integer-newest-first", remediationCapability.Metadata["commandReadLimitPolicy"]);
+        Assert.Equal("list-and-filter-routes", remediationCapability.Metadata["commandReadLimitAppliesTo"]);
+        Assert.Equal("all,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", remediationCapability.Metadata["commandReadLimitRoutes"]);
         Assert.Equal("unique-command-id", remediationCapability.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
         Assert.Equal("reject-without-mutation", remediationCapability.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
 
