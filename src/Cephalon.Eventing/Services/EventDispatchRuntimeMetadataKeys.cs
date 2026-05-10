@@ -56,6 +56,26 @@ public static class EventDispatchRuntimeMetadataKeys
     public const string TerminalFailure = "terminalFailure";
 
     /// <summary>
+    /// Identifies the dead-letter decision represented by the latest operator observation.
+    /// </summary>
+    public const string DeadLetterOutcome = "deadLetterOutcome";
+
+    /// <summary>
+    /// Identifies the scope that owns the dead-letter decision.
+    /// </summary>
+    public const string DeadLetterScope = "deadLetterScope";
+
+    /// <summary>
+    /// Identifies where the dead-letter decision is persisted.
+    /// </summary>
+    public const string DeadLetterDurability = "deadLetterDurability";
+
+    /// <summary>
+    /// Identifies whether the dead-letter decision is owned by a broker-specific dead-letter queue.
+    /// </summary>
+    public const string BrokerDeadLetter = "brokerDeadLetter";
+
+    /// <summary>
     /// Gets a value indicating whether the supplied metadata describes a terminal failure.
     /// </summary>
     /// <param name="metadata">The dispatch observation metadata to inspect.</param>

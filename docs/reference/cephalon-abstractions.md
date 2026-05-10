@@ -46046,6 +46046,16 @@ public static class EventDispatchRemediationOperationIds
 
 #### Fields
 
+<a id="member-f-cephalon-abstractions-data-eventdispatchremediationoperationids-deadletter"></a>
+
+##### `DeadLetter`
+
+```csharp
+const string DeadLetter
+```
+
+Marks a staged event as a dispatch-store-owned dead-letter intent without claiming broker dead-letter queue ownership.
+
 <a id="member-f-cephalon-abstractions-data-eventdispatchremediationoperationids-quarantine"></a>
 
 ##### `Quarantine`

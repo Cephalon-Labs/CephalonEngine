@@ -512,9 +512,10 @@ state by hand.
 When the selected eventing pack also registers `IEventDispatchRemediationDispatcher`, the host maps
 `POST /engine/event-dispatches/{outboxId}/commands/{operationId}` for bounded dispatch-store
 operator commands. The current provider-neutral operations are `retry-now`, `retry-later`, `skip`,
-and `quarantine`; the route returns `EventDispatchRemediationResult`, returns `404` when no
-dispatcher is active, returns `409` when a command is rejected by the active runtime, and keeps
-broker-specific dead-letter commands outside the claim until a companion package owns that path.
+`quarantine`, and dispatch-store `dead-letter`; the route returns `EventDispatchRemediationResult`,
+returns `404` when no dispatcher is active, returns `409` when a command is rejected by the active
+runtime, and keeps broker-specific dead-letter commands outside the claim until a companion package
+owns that path.
 When the same runtime registers `IEventDispatchRemediationRuntimeCatalog`, the host also maps
 `/engine/event-dispatch-remediation-commands`,
 `/engine/event-dispatch-remediation-commands/{commandId}`,

@@ -1,4 +1,8 @@
 #nullable enable
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerDeadLetter = "brokerDeadLetter" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DeadLetterDurability = "deadLetterDurability" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DeadLetterOutcome = "deadLetterOutcome" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DeadLetterScope = "deadLetterScope" -> string!
 Cephalon.Eventing.Hosting.EventingServiceCollectionExtensions
 static Cephalon.Eventing.Hosting.EventingServiceCollectionExtensions.AddCephalonEventSubscriptionExecutionMiddleware<TMiddleware>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static Cephalon.Eventing.Hosting.EventingServiceCollectionExtensions.AddCephalonEventSubscriptionExecutor<TExecutor>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

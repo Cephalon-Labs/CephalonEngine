@@ -24,4 +24,9 @@ public static class EventDispatchRemediationOperationIds
     /// Marks a staged event as terminally failed so it stops re-entering pending-dispatch reads.
     /// </summary>
     public const string Quarantine = "quarantine";
+
+    /// <summary>
+    /// Marks a staged event as a dispatch-store-owned dead-letter intent without claiming broker dead-letter queue ownership.
+    /// </summary>
+    public const string DeadLetter = "dead-letter";
 }

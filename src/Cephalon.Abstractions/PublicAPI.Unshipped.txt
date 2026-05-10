@@ -1,1 +1,2 @@
 #nullable enable
+const Cephalon.Abstractions.Data.EventDispatchRemediationOperationIds.DeadLetter = "dead-letter" -> string!

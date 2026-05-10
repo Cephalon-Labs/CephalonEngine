@@ -206,6 +206,16 @@ internal sealed class EventDispatchRemediationDispatcher(
                 metadata[EventDispatchRuntimeMetadataKeys.TerminalFailure] = "true";
                 break;
 
+            case EventDispatchRemediationOperationIds.DeadLetter:
+                metadata[EventDispatchRuntimeMetadataKeys.RetryOutcome] = "operator-dead-letter";
+                metadata[EventDispatchRuntimeMetadataKeys.RetryExhausted] = "true";
+                metadata[EventDispatchRuntimeMetadataKeys.TerminalFailure] = "true";
+                metadata[EventDispatchRuntimeMetadataKeys.DeadLetterOutcome] = "operator-dispatch-store-dead-letter";
+                metadata[EventDispatchRuntimeMetadataKeys.DeadLetterScope] = "dispatch-store";
+                metadata[EventDispatchRuntimeMetadataKeys.DeadLetterDurability] = "dispatch-store";
+                metadata[EventDispatchRuntimeMetadataKeys.BrokerDeadLetter] = "false";
+                break;
+
             case EventDispatchRemediationOperationIds.Skip:
                 metadata["skipOutcome"] = "operator-skip";
                 break;
@@ -226,6 +236,7 @@ internal sealed class EventDispatchRemediationDispatcher(
             EventDispatchRemediationOperationIds.RetryNow => "Operator requested immediate event-dispatch retry.",
             EventDispatchRemediationOperationIds.RetryLater => "Operator requested delayed event-dispatch retry.",
             EventDispatchRemediationOperationIds.Quarantine => "Operator quarantined event dispatch as terminal failure.",
+            EventDispatchRemediationOperationIds.DeadLetter => "Operator marked event dispatch as dispatch-store dead-letter intent.",
             EventDispatchRemediationOperationIds.Skip => "Operator skipped event dispatch.",
             _ => "Operator requested event-dispatch remediation."
         };
@@ -238,6 +249,7 @@ internal sealed class EventDispatchRemediationDispatcher(
             EventDispatchRemediationOperationIds.RetryLater => EventDispatchExecutionOutcomes.RetryScheduled,
             EventDispatchRemediationOperationIds.Skip => EventDispatchExecutionOutcomes.Skipped,
             EventDispatchRemediationOperationIds.Quarantine => EventDispatchExecutionOutcomes.Failed,
+            EventDispatchRemediationOperationIds.DeadLetter => EventDispatchExecutionOutcomes.Failed,
             _ => throw new InvalidOperationException($"Event-dispatch remediation operation '{operationId}' is not supported.")
         };
 
@@ -250,6 +262,7 @@ internal sealed class EventDispatchRemediationDispatcher(
             EventDispatchRemediationOperationIds.RetryLater => EventDispatchRemediationOperationIds.RetryLater,
             EventDispatchRemediationOperationIds.Skip => EventDispatchRemediationOperationIds.Skip,
             EventDispatchRemediationOperationIds.Quarantine => EventDispatchRemediationOperationIds.Quarantine,
+            EventDispatchRemediationOperationIds.DeadLetter => EventDispatchRemediationOperationIds.DeadLetter,
             _ => throw new ArgumentException(
                 $"Event-dispatch remediation operation '{operationId}' is not supported.",
                 nameof(operationId))

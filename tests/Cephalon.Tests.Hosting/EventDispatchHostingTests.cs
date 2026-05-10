@@ -198,6 +198,8 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("bounded-dispatch-store-command-ready", terminalRemediationEntry.Metadata["operatorCommandState"]);
         Assert.Equal("retry-now-ready", terminalRemediationEntry.Metadata["replayCommand"]);
         Assert.Equal("ready", terminalRemediationEntry.Metadata["retryLaterCommand"]);
+        Assert.Equal("dispatch-store-ready", terminalRemediationEntry.Metadata["deadLetterCommand"]);
+        Assert.Equal("not-claimed", terminalRemediationEntry.Metadata["brokerDeadLetterCommand"]);
         Assert.Equal("ready", terminalRemediationEntry.Metadata["quarantineCommand"]);
         Assert.Equal("ready", terminalRemediationEntry.Metadata["skipCommand"]);
         Assert.Equal("/engine/event-dispatches/{outboxId}/commands/{operationId}", terminalRemediationEntry.Metadata["operatorCommandRoute"]);
@@ -253,7 +255,9 @@ public sealed class EventDispatchHostingTests
         Assert.NotNull(capabilities);
         var remediationCapability = Assert.Single(capabilities, capability => capability.Key == "eventing.dispatch-remediation");
         Assert.Equal("false", remediationCapability.Metadata["wolverineRequired"]);
-        Assert.Equal("retry-now,retry-later,skip,quarantine", remediationCapability.Metadata["operationIds"]);
+        Assert.Equal("retry-now,retry-later,skip,quarantine,dead-letter", remediationCapability.Metadata["operationIds"]);
+        Assert.Equal("dispatch-store-ready", remediationCapability.Metadata["deadLetterCommand"]);
+        Assert.Equal("not-claimed", remediationCapability.Metadata["brokerDeadLetterCommand"]);
         Assert.Equal("available", remediationCapability.Metadata["commandRuntimeState"]);
         Assert.Equal("256", remediationCapability.Metadata["commandHistoryLimit"]);
 
@@ -340,6 +344,48 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("evt-command-001", pendingItem.MessageId);
         Assert.Equal(2, pendingItem.DispatchAttemptCount);
 
+        var deadLetterResponse = await client.PostAsJsonAsync(
+            "/engine/event-dispatches/entity-framework-outbox/commands/dead-letter",
+            new
+            {
+                commandId = "cmd-command-001-dead-letter",
+                messageId = "evt-command-001",
+                channelId = "catalog-events",
+                reason = "Move the poison event into dispatch-store dead-letter posture.",
+                actorId = "operator-001",
+                correlationId = "corr-command-operator-dead-letter"
+            });
+        deadLetterResponse.EnsureSuccessStatusCode();
+        var deadLetterResult = await deadLetterResponse.Content.ReadFromJsonAsync<EventDispatchRemediationResult>();
+        var deadLetterState = await client.GetFromJsonAsync<EventDispatchRuntimeState>("/engine/event-dispatches/entity-framework-outbox");
+        var deadLetterCommandState = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState>("/engine/event-dispatch-remediation-commands/cmd-command-001-dead-letter");
+        pending = await readStore.ReadPendingAsync(10);
+
+        Assert.NotNull(deadLetterResult);
+        Assert.Equal(EventDispatchRemediationOutcomes.Accepted, deadLetterResult.Outcome);
+        Assert.Equal(EventDispatchExecutionOutcomes.Failed, deadLetterResult.DispatchOutcome);
+        Assert.Equal("dead-letter", deadLetterResult.OperationId);
+        Assert.Equal("operator-dispatch-store-dead-letter", deadLetterResult.Metadata[EventDispatchRuntimeMetadataKeys.DeadLetterOutcome]);
+        Assert.Equal("dispatch-store", deadLetterResult.Metadata[EventDispatchRuntimeMetadataKeys.DeadLetterScope]);
+        Assert.Equal("dispatch-store", deadLetterResult.Metadata[EventDispatchRuntimeMetadataKeys.DeadLetterDurability]);
+        Assert.Equal("false", deadLetterResult.Metadata[EventDispatchRuntimeMetadataKeys.BrokerDeadLetter]);
+        Assert.NotNull(deadLetterCommandState);
+        Assert.Equal("cmd-command-001-dead-letter", deadLetterCommandState.CommandId);
+        Assert.Equal(EventDispatchRemediationOutcomes.Accepted, deadLetterCommandState.Outcome);
+        Assert.Equal(EventDispatchExecutionOutcomes.Failed, deadLetterCommandState.DispatchOutcome);
+        Assert.Equal("dead-letter", deadLetterCommandState.OperationId);
+        Assert.NotNull(deadLetterState);
+        Assert.Equal(EventDispatchExecutionOutcomes.Failed, deadLetterState.LastOutcome);
+        Assert.True(deadLetterState.TerminalFailure);
+        Assert.False(deadLetterState.RetryPending);
+        Assert.Equal("dead-letter", deadLetterState.Metadata["operatorCommand"]);
+        Assert.Equal("operator-dead-letter", deadLetterState.Metadata[EventDispatchRuntimeMetadataKeys.RetryOutcome]);
+        Assert.Equal("operator-dispatch-store-dead-letter", deadLetterState.Metadata[EventDispatchRuntimeMetadataKeys.DeadLetterOutcome]);
+        Assert.Equal("dispatch-store", deadLetterState.Metadata[EventDispatchRuntimeMetadataKeys.DeadLetterScope]);
+        Assert.Equal("dispatch-store", deadLetterState.Metadata[EventDispatchRuntimeMetadataKeys.DeadLetterDurability]);
+        Assert.Equal("false", deadLetterState.Metadata[EventDispatchRuntimeMetadataKeys.BrokerDeadLetter]);
+        Assert.Empty(pending);
+
         var rejectedResponse = await client.PostAsJsonAsync(
             "/engine/event-dispatches/entity-framework-outbox/commands/retry-later",
             new
@@ -366,7 +412,7 @@ public sealed class EventDispatchHostingTests
         Assert.NotNull(rejectedCommandStates);
         Assert.Equal("cmd-command-001-retry-later-rejected", Assert.Single(rejectedCommandStates).CommandId);
         Assert.NotNull(allCommandStates);
-        Assert.Equal(2, allCommandStates.Length);
+        Assert.Equal(3, allCommandStates.Length);
     }
 
     [Fact]

@@ -13,7 +13,7 @@ internal sealed class EventingDispatchRemediationRuntimeSurfaceContributor(
     private const string CommandReadyClaimPolicy = "reported-state-plus-bounded-dispatch-store-commands";
     private const string CommandRoute = "/engine/event-dispatches/{outboxId}/commands/{operationId}";
     private const string CommandResultRoute = "/engine/event-dispatch-remediation-commands/{commandId}";
-    private const string CommandOperations = "retry-now,retry-later,skip,quarantine";
+    private const string CommandOperations = "retry-now,retry-later,skip,quarantine,dead-letter";
 
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
@@ -55,7 +55,7 @@ internal sealed class EventingDispatchRemediationRuntimeSurfaceContributor(
             ["operatorCommandState"] = commandsReady ? "bounded-dispatch-store-command-ready" : "advisory-only",
             ["replayCommand"] = commandsReady ? "retry-now-ready" : "not-claimed",
             ["retryLaterCommand"] = commandsReady ? "ready" : "not-claimed",
-            ["deadLetterCommand"] = "not-claimed",
+            ["deadLetterCommand"] = commandsReady ? "dispatch-store-ready" : "not-claimed",
             ["quarantineCommand"] = commandsReady ? "ready" : "not-claimed",
             ["skipCommand"] = commandsReady ? "ready" : "not-claimed",
             ["claimPolicy"] = commandsReady ? CommandReadyClaimPolicy : AdvisoryClaimPolicy,
@@ -69,7 +69,9 @@ internal sealed class EventingDispatchRemediationRuntimeSurfaceContributor(
             metadata["operatorCommandResultRoute"] = CommandResultRoute;
             metadata["operatorCommandOperations"] = CommandOperations;
             metadata["operatorCommandScope"] = "dispatch-store";
-            metadata["deadLetterCommandReason"] = "broker-specific-dead-letter-not-owned";
+            metadata["deadLetterCommandScope"] = "dispatch-store-terminal";
+            metadata["brokerDeadLetterCommand"] = "not-claimed";
+            metadata["brokerDeadLetterCommandReason"] = "broker-specific-dead-letter-not-owned";
         }
 
         var outbox = outboxes.GetById(state.OutboxId);
@@ -108,6 +110,10 @@ internal sealed class EventingDispatchRemediationRuntimeSurfaceContributor(
         CopyReportedValue(state, metadata, EventDispatchRuntimeMetadataKeys.RetryOutcome);
         CopyReportedValue(state, metadata, EventDispatchRuntimeMetadataKeys.RetryExhausted);
         CopyReportedValue(state, metadata, EventDispatchRuntimeMetadataKeys.TerminalFailure);
+        CopyReportedValue(state, metadata, EventDispatchRuntimeMetadataKeys.DeadLetterOutcome);
+        CopyReportedValue(state, metadata, EventDispatchRuntimeMetadataKeys.DeadLetterScope);
+        CopyReportedValue(state, metadata, EventDispatchRuntimeMetadataKeys.DeadLetterDurability);
+        CopyReportedValue(state, metadata, EventDispatchRuntimeMetadataKeys.BrokerDeadLetter);
 
         if (state.Metadata.Count > 0)
         {

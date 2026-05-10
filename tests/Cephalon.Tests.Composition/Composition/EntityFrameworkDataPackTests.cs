@@ -907,7 +907,7 @@ public sealed class EntityFrameworkDataPackTests
     }
 
     [Fact]
-    public void AddEntityFrameworkDataProjectsItsOutboxThroughEventDrivenTechnologySurfaces()
+    public async Task AddEntityFrameworkDataProjectsItsOutboxThroughEventDrivenTechnologySurfaces()
     {
         var databaseName = $"cephalon-data-ef-outbox-surface-{Guid.NewGuid():N}";
         var services = new ServiceCollection();
@@ -936,7 +936,7 @@ public sealed class EntityFrameworkDataPackTests
                 configure: options => options.RegisterOutbox = true);
         });
 
-        using var provider = services.BuildServiceProvider();
+        await using var provider = services.BuildServiceProvider();
         var technologyCatalog = provider.GetRequiredService<global::Cephalon.Abstractions.Technologies.ITechnologyRuntimeCatalog>();
         var runtime = provider.GetRequiredService<Cephalon.Engine.Runtime.IRuntime>();
         var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
@@ -1158,7 +1158,7 @@ public sealed class EntityFrameworkDataPackTests
                 configure: options => options.RegisterOutbox = true);
         });
 
-        using var provider = services.BuildServiceProvider();
+        await using var provider = services.BuildServiceProvider();
         using (var publicationScope = provider.CreateScope())
         {
             var publisher = publicationScope.ServiceProvider.GetRequiredService<IEventPublisher>();
@@ -1240,12 +1240,13 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("bounded-dispatch-store-command-ready", remediationEntry.Metadata["operatorCommandState"]);
         Assert.Equal("retry-now-ready", remediationEntry.Metadata["replayCommand"]);
         Assert.Equal("ready", remediationEntry.Metadata["retryLaterCommand"]);
+        Assert.Equal("dispatch-store-ready", remediationEntry.Metadata["deadLetterCommand"]);
+        Assert.Equal("not-claimed", remediationEntry.Metadata["brokerDeadLetterCommand"]);
         Assert.Equal("ready", remediationEntry.Metadata["quarantineCommand"]);
         Assert.Equal("ready", remediationEntry.Metadata["skipCommand"]);
         Assert.Equal("/engine/event-dispatches/{outboxId}/commands/{operationId}", remediationEntry.Metadata["operatorCommandRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", remediationEntry.Metadata["operatorCommandResultRoute"]);
-        Assert.Equal("retry-now,retry-later,skip,quarantine", remediationEntry.Metadata["operatorCommandOperations"]);
-        Assert.Equal("not-claimed", remediationEntry.Metadata["deadLetterCommand"]);
+        Assert.Equal("retry-now,retry-later,skip,quarantine,dead-letter", remediationEntry.Metadata["operatorCommandOperations"]);
         Assert.Equal("false", remediationEntry.Metadata["wolverineRequired"]);
         Assert.Equal("true", remediationEntry.Metadata["providerNeutral"]);
         Assert.Equal("2026-04-04T12:06:00.0000000+00:00", remediationEntry.Metadata["nextRetryAtUtc"]);

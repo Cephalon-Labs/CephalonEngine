@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T01:53:34.9645004+00:00",
+  "GeneratedAtUtc": "2026-05-10T02:14:02.4480577+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8317,7 +8317,7 @@
       "Summary": "Defines stable event-dispatch remediation operation identifiers.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 4,
+        "Fields": 5,
         "Properties": 0,
         "Methods": 0
       }
@@ -8407,7 +8407,7 @@
       "Summary": "Defines stable metadata keys used by event-dispatch runtime observations.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 9,
+        "Fields": 13,
         "Properties": 0,
         "Methods": 1
       }
@@ -30312,6 +30312,17 @@
       "Summary": "Gets the break duration in seconds requested for the open state."
     },
     {
+      "DisplayName": "BrokerDeadLetter",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerdeadletter",
+      "Signature": "const string BrokerDeadLetter",
+      "Summary": "Identifies whether the dead-letter decision is owned by a broker-specific dead-letter queue."
+    },
+    {
       "DisplayName": "BrowserPath",
       "Category": "Properties",
       "DeclaringTypeName": "ReferenceDocsSurface",
@@ -42124,6 +42135,50 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimehostedexecutionstate-deactivatedatutc",
       "Signature": "DateTimeOffset? DeactivatedAtUtc { get; set; }",
       "Summary": "The UTC timestamp when the hosted execution most recently became inactive because the runtime stopped."
+    },
+    {
+      "DisplayName": "DeadLetter",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationOperationIds",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-f-cephalon-abstractions-data-eventdispatchremediationoperationids-deadletter",
+      "Signature": "const string DeadLetter",
+      "Summary": "Marks a staged event as a dispatch-store-owned dead-letter intent without claiming broker dead-letter queue ownership."
+    },
+    {
+      "DisplayName": "DeadLetterDurability",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-deadletterdurability",
+      "Signature": "const string DeadLetterDurability",
+      "Summary": "Identifies where the dead-letter decision is persisted."
+    },
+    {
+      "DisplayName": "DeadLetterOutcome",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-deadletteroutcome",
+      "Signature": "const string DeadLetterOutcome",
+      "Summary": "Identifies the dead-letter decision represented by the latest operator observation."
+    },
+    {
+      "DisplayName": "DeadLetterScope",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-deadletterscope",
+      "Signature": "const string DeadLetterScope",
+      "Summary": "Identifies the scope that owns the dead-letter decision."
     },
     {
       "DisplayName": "DebeziumCaptureOptions",

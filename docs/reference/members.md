@@ -2970,6 +2970,9 @@ Browse the published API surface by public member.
 - [BreakDurationSeconds](cephalon-engine.md#member-p-cephalon-engine-configuration-circuitbreakersettings-breakdurationseconds): `Properties` on `CircuitBreakerSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=BreakDurationSeconds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the break duration in seconds requested for the open state.
   - `int? BreakDurationSeconds { get; }`
+- [BrokerDeadLetter](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerdeadletter): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerDeadLetter&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether the dead-letter decision is owned by a broker-specific dead-letter queue.
+  - `const string BrokerDeadLetter`
 - [BrowserPath](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocssurface-browserpath): `Properties` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=BrowserPath&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - The hosted path to the interactive browser UI.
   - `string BrowserPath { get; set; }`
@@ -6198,6 +6201,18 @@ Browse the published API surface by public member.
 - [DeactivatedAtUtc](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimehostedexecutionstate-deactivatedatutc): `Properties` on `RuntimeHostedExecutionState` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DeactivatedAtUtc&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The UTC timestamp when the hosted execution most recently became inactive because the runtime stopped.
   - `DateTimeOffset? DeactivatedAtUtc { get; set; }`
+- [DeadLetter](cephalon-abstractions.md#member-f-cephalon-abstractions-data-eventdispatchremediationoperationids-deadletter): `Fields` on `EventDispatchRemediationOperationIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DeadLetter&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Marks a staged event as a dispatch-store-owned dead-letter intent without claiming broker dead-letter queue ownership.
+  - `const string DeadLetter`
+- [DeadLetterDurability](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-deadletterdurability): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DeadLetterDurability&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies where the dead-letter decision is persisted.
+  - `const string DeadLetterDurability`
+- [DeadLetterOutcome](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-deadletteroutcome): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DeadLetterOutcome&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the dead-letter decision represented by the latest operator observation.
+  - `const string DeadLetterOutcome`
+- [DeadLetterScope](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-deadletterscope): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DeadLetterScope&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the scope that owns the dead-letter decision.
+  - `const string DeadLetterScope`
 - [DebeziumCaptureOptions](cephalon-data-debezium.md#member-m-cephalon-data-debezium-configuration-debeziumcaptureoptions-ctor): `Constructors` on `DebeziumCaptureOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=DebeziumCaptureOptions&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
   - `DebeziumCaptureOptions()`
 - [DebeziumConnectorOptions](cephalon-data-debezium.md#member-m-cephalon-data-debezium-configuration-debeziumconnectoroptions-ctor): `Constructors` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=DebeziumConnectorOptions&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)

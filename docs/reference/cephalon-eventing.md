@@ -876,6 +876,46 @@ public static class EventDispatchRuntimeMetadataKeys
 
 #### Fields
 
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerdeadletter"></a>
+
+##### `BrokerDeadLetter`
+
+```csharp
+const string BrokerDeadLetter
+```
+
+Identifies whether the dead-letter decision is owned by a broker-specific dead-letter queue.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-deadletterdurability"></a>
+
+##### `DeadLetterDurability`
+
+```csharp
+const string DeadLetterDurability
+```
+
+Identifies where the dead-letter decision is persisted.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-deadletteroutcome"></a>
+
+##### `DeadLetterOutcome`
+
+```csharp
+const string DeadLetterOutcome
+```
+
+Identifies the dead-letter decision represented by the latest operator observation.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-deadletterscope"></a>
+
+##### `DeadLetterScope`
+
+```csharp
+const string DeadLetterScope
+```
+
+Identifies the scope that owns the dead-letter decision.
+
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-nextretryatutc"></a>
 
 ##### `NextRetryAtUtc`

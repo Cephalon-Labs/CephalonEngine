@@ -2226,7 +2226,7 @@ Current payload highlights:
   whose latest report marks the dispatch path as terminally failed
 - `POST /engine/event-dispatches/{outboxId}/commands/{operationId}` runs bounded dispatch-store
   remediation commands when `IEventDispatchRemediationDispatcher` is active; current operations are
-  `retry-now`, `retry-later`, `skip`, and `quarantine`
+  `retry-now`, `retry-later`, `skip`, `quarantine`, and dispatch-store `dead-letter`
 - `GET /engine/event-dispatch-remediation-commands` lists accepted and rejected command results
   recorded by `IEventDispatchRemediationRuntimeCatalog`
 - `GET /engine/event-dispatch-remediation-commands/{commandId}` narrows the command-result catalog
@@ -2244,7 +2244,8 @@ Current note:
   dispatch-store state; it is not a broker-specific dead-letter queue, durable inbox, generic
   inbound broker-consumption, downstream delivery-completion, or cross-node exactly-once claim
 - dispatch remediation commands apply only to the mutable dispatch store that owns the outbox; they
-  do not claim broker dead-letter/replay ownership
+  do not claim broker dead-letter/replay ownership, and `dead-letter` records terminal dispatch-store
+  intent with `brokerDeadLetter = false`
 - remediation command-result history is bounded and process-local by default; it gives operators a
   typed command-audit read model for the active host, not durable compliance retention or broker
   replay ownership
@@ -2505,7 +2506,7 @@ Current `Cephalon.Eventing` highlights:
   `handoff = outbox` and `deliveryCompletion = pending-dispatch`, keeping publication acceptance
   separate from later dispatch completion
 - `event-dispatch-remediation-commands` exposes the bounded command-result read model for
-  `retry-now`, `retry-later`, `skip`, and `quarantine`, while `/engine/event-dispatch-remediation-commands*`
+  `retry-now`, `retry-later`, `skip`, `quarantine`, and dispatch-store `dead-letter`, while `/engine/event-dispatch-remediation-commands*`
   provides the typed route family for operators who do not want to parse technology-surface metadata
 - Wolverine or another companion adapter can still move staged dispatch or one subscription to
   provider-managed ownership for brokered or staged dispatch scenarios; the shipped Wolverine path

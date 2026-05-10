@@ -131,13 +131,13 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                 CreateEntry(
                     id: "dead-letter-replay-and-remediation",
                     displayName: "Dead-letter Replay And Remediation",
-                    description: "Distinguishes terminal failures from retryable failures before claiming replay operations.",
+                    description: "Distinguishes terminal failures from retryable failures and exposes bounded dispatch-store dead-letter intent before claiming broker queue ownership.",
                     status: topology.HasOutboxPublishingPath ? "partial" : "not-claimed",
                     evidence: topology.HasOutboxPublishingPath
-                        ? "event-dispatch-remediations derives retry-pending, skipped, failed, and terminal-failure posture from reported dispatch state; supported dispatch stores expose retry-now, retry-later, skip, and quarantine commands plus bounded command-result reads."
+                        ? "event-dispatch-remediations derives retry-pending, skipped, failed, and terminal-failure posture from reported dispatch state; supported dispatch stores expose retry-now, retry-later, skip, quarantine, and dispatch-store dead-letter commands plus bounded command-result reads."
                         : "no outbox-backed dispatch reporting path is active.",
                     advantage: "The engine can explain remediation posture without depending on Wolverine, MassTransit, NServiceBus, or a broker-specific dead-letter API.",
-                    nextGap: "Ship broker dead-letter/replay ownership only when a provider companion can prove that path with audit evidence."),
+                    nextGap: "Ship broker dead-letter queue ownership only when a provider companion can prove that path with audit evidence."),
                 CreateEntry(
                     id: "observability-compliance-and-auditability",
                     displayName: "Observability Compliance And Auditability",
