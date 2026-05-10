@@ -24,6 +24,7 @@ internal static class EventDispatchRemediationCommandMetadata
     internal const string CommandOutcomeRoute = "/engine/event-dispatch-remediation-commands/outcomes/{outcome}";
     internal const string CommandOperations = "retry-now,retry-later,skip,quarantine,dead-letter";
     internal const string CommandReadLimitRoutes = "all,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes";
+    internal const string CommandPaginationRoutes = CommandReadLimitRoutes;
 
     internal static void AddCommandActionRouteMetadata(
         IDictionary<string, string> metadata,
@@ -73,6 +74,19 @@ internal static class EventDispatchRemediationCommandMetadata
         metadata[$"{prefix}ReadLimitPolicy"] = "positive-integer-newest-first";
         metadata[$"{prefix}ReadLimitAppliesTo"] = "list-and-filter-routes";
         metadata[$"{prefix}ReadLimitRoutes"] = CommandReadLimitRoutes;
+    }
+
+    internal static void AddPaginationMetadata(
+        IDictionary<string, string> metadata,
+        string prefix = "command")
+    {
+        metadata[$"{prefix}PaginationQuery"] = "pageSize,continuationToken";
+        metadata[$"{prefix}PaginationPolicy"] = "opaque-continuation-token-newest-first";
+        metadata[$"{prefix}PaginationAppliesTo"] = "list-and-filter-routes";
+        metadata[$"{prefix}PaginationRoutes"] = CommandPaginationRoutes;
+        metadata[$"{prefix}PaginationResponse"] = "items,pageSize,returnedCount,totalRetainedCount,continuationToken,nextContinuationToken,hasMore";
+        metadata[$"{prefix}PageSizeDefault"] = "50";
+        metadata[$"{prefix}PageSizeMaximum"] = "500";
     }
 
     internal static void AddIdempotencyMetadata(IDictionary<string, string> metadata)

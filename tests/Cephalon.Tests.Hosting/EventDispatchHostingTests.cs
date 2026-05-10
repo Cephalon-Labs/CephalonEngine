@@ -225,6 +225,8 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("positive-integer-newest-first", terminalRemediationEntry.Metadata["operatorCommandReadLimitPolicy"]);
         Assert.Equal("list-and-filter-routes", terminalRemediationEntry.Metadata["operatorCommandReadLimitAppliesTo"]);
         Assert.Equal("all,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", terminalRemediationEntry.Metadata["operatorCommandReadLimitRoutes"]);
+        Assert.Equal("pageSize,continuationToken", terminalRemediationEntry.Metadata["operatorCommandPaginationQuery"]);
+        Assert.Equal("opaque-continuation-token-newest-first", terminalRemediationEntry.Metadata["operatorCommandPaginationPolicy"]);
         Assert.Equal("false", terminalRemediationEntry.Metadata["wolverineRequired"]);
         Assert.Equal("unique-command-id", terminalRemediationEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
         Assert.Equal("reject-without-mutation", terminalRemediationEntry.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
@@ -308,6 +310,11 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("positive-integer-newest-first", remediationCapability.Metadata["commandReadLimitPolicy"]);
         Assert.Equal("list-and-filter-routes", remediationCapability.Metadata["commandReadLimitAppliesTo"]);
         Assert.Equal("all,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", remediationCapability.Metadata["commandReadLimitRoutes"]);
+        Assert.Equal("pageSize,continuationToken", remediationCapability.Metadata["commandPaginationQuery"]);
+        Assert.Equal("opaque-continuation-token-newest-first", remediationCapability.Metadata["commandPaginationPolicy"]);
+        Assert.Equal("list-and-filter-routes", remediationCapability.Metadata["commandPaginationAppliesTo"]);
+        Assert.Equal("50", remediationCapability.Metadata["commandPageSizeDefault"]);
+        Assert.Equal("500", remediationCapability.Metadata["commandPageSizeMaximum"]);
         Assert.Equal("unique-command-id", remediationCapability.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
         Assert.Equal("reject-without-mutation", remediationCapability.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
 
@@ -332,6 +339,7 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}", initialCommandCatalogEntry.Metadata["commandObservationRoute"]);
         Assert.Equal("fromUtc,toUtc", initialCommandCatalogEntry.Metadata["commandObservationWindowQuery"]);
         Assert.Equal("positive-integer-newest-first", initialCommandCatalogEntry.Metadata["commandReadLimitPolicy"]);
+        Assert.Equal("opaque-continuation-token-newest-first", initialCommandCatalogEntry.Metadata["commandPaginationPolicy"]);
         Assert.Equal("false", initialCommandCatalogEntry.Metadata["wolverineRequired"]);
         Assert.Equal("true", initialCommandCatalogEntry.Metadata["providerNeutral"]);
         Assert.Equal("unique-command-id", initialCommandCatalogEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
@@ -343,6 +351,9 @@ public sealed class EventDispatchHostingTests
         Assert.Equal(remediationCapability.Metadata["commandObservationRoute"], initialCommandCatalogEntry.Metadata["commandObservationRoute"]);
         Assert.Equal(remediationCapability.Metadata["commandObservationWindowQuery"], initialCommandCatalogEntry.Metadata["commandObservationWindowQuery"]);
         Assert.Equal(remediationCapability.Metadata["commandReadLimitPolicy"], initialCommandCatalogEntry.Metadata["commandReadLimitPolicy"]);
+        Assert.Equal(remediationCapability.Metadata["commandPaginationQuery"], initialCommandCatalogEntry.Metadata["commandPaginationQuery"]);
+        Assert.Equal(remediationCapability.Metadata["commandPaginationPolicy"], initialCommandCatalogEntry.Metadata["commandPaginationPolicy"]);
+        Assert.Equal(remediationCapability.Metadata["commandPageSizeMaximum"], initialCommandCatalogEntry.Metadata["commandPageSizeMaximum"]);
         Assert.Equal(remediationCapability.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy], initialCommandCatalogEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
         Assert.False(initialCommandCatalogEntry.Metadata.ContainsKey("latestCommandId"));
 
@@ -727,6 +738,13 @@ public sealed class EventDispatchHostingTests
         var limitedAllCommandStates = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands?limit=2");
         var limitedFinalCommandStatesByMessage = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/messages/evt-command-001?limit=2");
         var limitedFinalCommandStatesByOperator = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/actors/operator-001?limit=1");
+        var firstCommandPage = await client.GetFromJsonAsync<EventDispatchRemediationCommandPage>("/engine/event-dispatch-remediation-commands?pageSize=2");
+        Assert.NotNull(firstCommandPage);
+        var secondCommandPage = await client.GetFromJsonAsync<EventDispatchRemediationCommandPage>(
+            $"/engine/event-dispatch-remediation-commands?pageSize=2&continuationToken={Uri.EscapeDataString(firstCommandPage.NextContinuationToken!)}");
+        var firstMessageCommandPage = await client.GetFromJsonAsync<EventDispatchRemediationCommandPage>("/engine/event-dispatch-remediation-commands/messages/evt-command-001?pageSize=1");
+        var invalidCommandContinuationTokenResponse = await client.GetAsync("/engine/event-dispatch-remediation-commands?pageSize=2&continuationToken=not-a-token");
+        var ambiguousCommandPagingResponse = await client.GetAsync("/engine/event-dispatch-remediation-commands?limit=1&pageSize=1");
         var finalCommandSummary = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeSummary>("/engine/event-dispatch-remediation-commands/summary");
         var finalLatestCommandState = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState>("/engine/event-dispatch-remediation-commands/latest");
         var finalCommandRetention = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeRetention>("/engine/event-dispatch-remediation-commands/retention");
@@ -744,6 +762,8 @@ public sealed class EventDispatchHostingTests
             BuildObservationWindowRoute(deadLetterCommandState.ObservedAtUtc, rejectedCommandState.ObservedAtUtc));
         var limitedFinalCommandStatesByObservationWindow = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>(
             BuildObservationWindowRoute(deadLetterCommandState.ObservedAtUtc, rejectedCommandState.ObservedAtUtc, limit: 1));
+        var firstObservationCommandPage = await client.GetFromJsonAsync<EventDispatchRemediationCommandPage>(
+            BuildObservationWindowRoute(deadLetterCommandState.ObservedAtUtc, rejectedCommandState.ObservedAtUtc, pageSize: 1));
         var finalCommandObservationSummary = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeSummary>(
             BuildObservationWindowSummaryRoute(deadLetterCommandState.ObservedAtUtc, rejectedCommandState.ObservedAtUtc));
         Assert.NotNull(finalCommandStatesByObservationWindow);
@@ -752,6 +772,12 @@ public sealed class EventDispatchHostingTests
             finalCommandStatesByObservationWindow.Select(state => state.CommandId).ToArray());
         Assert.NotNull(limitedFinalCommandStatesByObservationWindow);
         Assert.Equal("cmd-command-001-retry-later-rejected", Assert.Single(limitedFinalCommandStatesByObservationWindow).CommandId);
+        Assert.NotNull(firstObservationCommandPage);
+        Assert.Equal(1, firstObservationCommandPage.PageSize);
+        Assert.Equal(1, firstObservationCommandPage.ReturnedCount);
+        Assert.Equal(2, firstObservationCommandPage.TotalRetainedCount);
+        Assert.True(firstObservationCommandPage.HasMore);
+        Assert.Equal("cmd-command-001-retry-later-rejected", Assert.Single(firstObservationCommandPage.Items).CommandId);
         Assert.NotNull(finalCommandObservationSummary);
         Assert.Equal(2, finalCommandObservationSummary.TotalCommandCount);
         Assert.Equal(1, finalCommandObservationSummary.AcceptedCount);
@@ -804,6 +830,28 @@ public sealed class EventDispatchHostingTests
             limitedFinalCommandStatesByMessage.Select(state => state.CommandId).ToArray());
         Assert.NotNull(limitedFinalCommandStatesByOperator);
         Assert.Equal("cmd-command-001-retry-later-rejected", Assert.Single(limitedFinalCommandStatesByOperator).CommandId);
+        Assert.Equal(2, firstCommandPage.PageSize);
+        Assert.Equal(2, firstCommandPage.ReturnedCount);
+        Assert.Equal(3, firstCommandPage.TotalRetainedCount);
+        Assert.True(firstCommandPage.HasMore);
+        Assert.NotNull(firstCommandPage.NextContinuationToken);
+        Assert.Equal(
+            ["cmd-command-001-retry-later-rejected", "cmd-command-001-dead-letter"],
+            firstCommandPage.Items.Select(state => state.CommandId).ToArray());
+        Assert.NotNull(secondCommandPage);
+        Assert.Equal(firstCommandPage.NextContinuationToken, secondCommandPage.ContinuationToken);
+        Assert.Equal(1, secondCommandPage.ReturnedCount);
+        Assert.Equal(3, secondCommandPage.TotalRetainedCount);
+        Assert.False(secondCommandPage.HasMore);
+        Assert.Null(secondCommandPage.NextContinuationToken);
+        Assert.Equal("cmd-command-001-retry", Assert.Single(secondCommandPage.Items).CommandId);
+        Assert.NotNull(firstMessageCommandPage);
+        Assert.Equal(1, firstMessageCommandPage.PageSize);
+        Assert.Equal(1, firstMessageCommandPage.ReturnedCount);
+        Assert.True(firstMessageCommandPage.HasMore);
+        Assert.Equal("cmd-command-001-retry-later-rejected", Assert.Single(firstMessageCommandPage.Items).CommandId);
+        Assert.Equal(HttpStatusCode.BadRequest, invalidCommandContinuationTokenResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, ambiguousCommandPagingResponse.StatusCode);
         Assert.NotNull(finalCommandSummary);
         Assert.Equal(3, finalCommandSummary.TotalCommandCount);
         Assert.Equal(2, finalCommandSummary.AcceptedCount);
@@ -829,9 +877,14 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("cmd-command-001-retry", finalCommandRetention.OldestRetainedCommandId);
         Assert.Equal("cmd-command-001-retry-later-rejected", finalCommandRetention.LatestRetainedCommandId);
 
-        static string BuildObservationWindowRoute(DateTimeOffset? fromUtc, DateTimeOffset? toUtc, int? limit = null)
+        static string BuildObservationWindowRoute(
+            DateTimeOffset? fromUtc,
+            DateTimeOffset? toUtc,
+            int? limit = null,
+            int? pageSize = null,
+            string? continuationToken = null)
         {
-            var parameters = new List<string>(capacity: 3);
+            var parameters = new List<string>(capacity: 5);
             if (fromUtc is not null)
             {
                 parameters.Add($"fromUtc={Uri.EscapeDataString(fromUtc.Value.ToString("O", CultureInfo.InvariantCulture))}");
@@ -845,6 +898,16 @@ public sealed class EventDispatchHostingTests
             if (limit is not null)
             {
                 parameters.Add($"limit={limit.Value.ToString(CultureInfo.InvariantCulture)}");
+            }
+
+            if (pageSize is not null)
+            {
+                parameters.Add($"pageSize={pageSize.Value.ToString(CultureInfo.InvariantCulture)}");
+            }
+
+            if (!string.IsNullOrWhiteSpace(continuationToken))
+            {
+                parameters.Add($"continuationToken={Uri.EscapeDataString(continuationToken)}");
             }
 
             return parameters.Count == 0

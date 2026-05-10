@@ -52,6 +52,7 @@ internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributo
         EventDispatchRemediationCommandMetadata.AddCommandResultRouteMetadata(metadata);
         EventDispatchRemediationCommandMetadata.AddObservationWindowMetadata(metadata);
         EventDispatchRemediationCommandMetadata.AddReadLimitMetadata(metadata);
+        EventDispatchRemediationCommandMetadata.AddPaginationMetadata(metadata);
         EventDispatchRemediationCommandMetadata.AddIdempotencyMetadata(metadata);
 
         AddOptional(metadata, "latestCommandId", catalog.Latest?.CommandId);
@@ -94,6 +95,7 @@ internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributo
         EventDispatchRemediationCommandMetadata.AddCommandResultRouteMetadata(metadata);
         EventDispatchRemediationCommandMetadata.AddObservationWindowMetadata(metadata);
         EventDispatchRemediationCommandMetadata.AddReadLimitMetadata(metadata);
+        EventDispatchRemediationCommandMetadata.AddPaginationMetadata(metadata);
         EventDispatchRemediationCommandMetadata.AddIdempotencyMetadata(metadata);
 
         if (!string.IsNullOrWhiteSpace(state.Error))

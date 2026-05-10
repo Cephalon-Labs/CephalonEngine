@@ -34,9 +34,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Scalar.AspNetCore;
+using System.Buffers.Binary;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 
@@ -59,6 +61,8 @@ public static class EngineWebApplicationExtensions
     private const string ScalarDocumentNamesToken = "__CEPHALON_SCALAR_DOCUMENT_NAMES__";
     private const string ScalarDefaultDocumentNameToken = "__CEPHALON_SCALAR_DEFAULT_DOCUMENT_NAME__";
     private const string OperatorSurfaceModeConfigurationKey = "Engine:AspNetCore:OperatorSurface:Mode";
+    private const int DefaultEventDispatchRemediationCommandPageSize = 50;
+    private const int MaxEventDispatchRemediationCommandPageSize = 500;
     private static readonly string DocumentationAssetVersion = typeof(EngineWebApplicationExtensions)
         .Assembly
         .ManifestModule
@@ -2326,6 +2330,13 @@ public static class EngineWebApplicationExtensions
         HttpContext context,
         IReadOnlyList<EventDispatchRemediationRuntimeState> states)
     {
+        var rawPageSize = GetQueryValue(context, "pageSize");
+        var rawContinuationToken = GetQueryValue(context, "continuationToken");
+        if (!string.IsNullOrWhiteSpace(rawPageSize) || !string.IsNullOrWhiteSpace(rawContinuationToken))
+        {
+            return OkPagedEventDispatchRemediationCommandStates(context, states);
+        }
+
         if (!TryGetNullableIntQueryValue(context, "limit", out var limit, out var error))
         {
             return error;
@@ -2343,6 +2354,161 @@ public static class EngineWebApplicationExtensions
 
         return Results.Ok(states.Take(limit.Value).ToArray());
     }
+
+    private static IResult OkPagedEventDispatchRemediationCommandStates(
+        HttpContext context,
+        IReadOnlyList<EventDispatchRemediationRuntimeState> states)
+    {
+        if (!string.IsNullOrWhiteSpace(GetQueryValue(context, "limit")))
+        {
+            return Results.BadRequest("Query parameter 'limit' cannot be combined with 'pageSize' or 'continuationToken'.");
+        }
+
+        if (!TryGetNullableIntQueryValue(context, "pageSize", out var pageSize, out var error))
+        {
+            return error;
+        }
+
+        var effectivePageSize = pageSize ?? DefaultEventDispatchRemediationCommandPageSize;
+        if (effectivePageSize < 1)
+        {
+            return Results.BadRequest("Query parameter 'pageSize' must be greater than or equal to 1.");
+        }
+
+        if (effectivePageSize > MaxEventDispatchRemediationCommandPageSize)
+        {
+            return Results.BadRequest($"Query parameter 'pageSize' must be less than or equal to {MaxEventDispatchRemediationCommandPageSize.ToString(CultureInfo.InvariantCulture)}.");
+        }
+
+        var rawContinuationToken = GetQueryValue(context, "continuationToken");
+        if (!TryParseEventDispatchRemediationCommandContinuationToken(rawContinuationToken, out var continuationKey, out error))
+        {
+            return error;
+        }
+
+        var orderedStates = states
+            .OrderByDescending(static state => state.ObservedAtUtc)
+            .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+        var candidates = continuationKey is null
+            ? orderedStates
+            : orderedStates
+                .Where(state => IsAfterEventDispatchRemediationCommandContinuationToken(state, continuationKey.Value))
+                .ToArray();
+        var buffer = candidates.Take(effectivePageSize + 1).ToArray();
+        var items = buffer.Take(effectivePageSize).ToArray();
+        var hasMore = buffer.Length > effectivePageSize;
+
+        return Results.Ok(new EventDispatchRemediationCommandPage
+        {
+            Items = items,
+            PageSize = effectivePageSize,
+            ReturnedCount = items.Length,
+            TotalRetainedCount = orderedStates.Length,
+            ContinuationToken = string.IsNullOrWhiteSpace(rawContinuationToken) ? null : rawContinuationToken,
+            NextContinuationToken = hasMore && items.Length > 0
+                ? CreateEventDispatchRemediationCommandContinuationToken(items[^1])
+                : null,
+            HasMore = hasMore
+        });
+    }
+
+    private static bool TryParseEventDispatchRemediationCommandContinuationToken(
+        string? rawValue,
+        out EventDispatchRemediationCommandContinuationKey? continuationKey,
+        [NotNullWhen(false)] out IResult? error)
+    {
+        continuationKey = null;
+        if (string.IsNullOrWhiteSpace(rawValue))
+        {
+            error = null;
+            return true;
+        }
+
+        var payload = TryBase64UrlDecode(rawValue.Trim());
+        if (payload is null || payload.Length <= sizeof(long))
+        {
+            error = Results.BadRequest("Query parameter 'continuationToken' must be an opaque token returned by a previous command-result page.");
+            return false;
+        }
+
+        var observedAtUtcTicks = BinaryPrimitives.ReadInt64BigEndian(payload.AsSpan(0, sizeof(long)));
+        var commandId = Encoding.UTF8.GetString(payload, sizeof(long), payload.Length - sizeof(long));
+        if (observedAtUtcTicks < 0 || string.IsNullOrWhiteSpace(commandId))
+        {
+            error = Results.BadRequest("Query parameter 'continuationToken' must be an opaque token returned by a previous command-result page.");
+            return false;
+        }
+
+        continuationKey = new EventDispatchRemediationCommandContinuationKey(observedAtUtcTicks, commandId);
+        error = null;
+        return true;
+    }
+
+    private static bool IsAfterEventDispatchRemediationCommandContinuationToken(
+        EventDispatchRemediationRuntimeState state,
+        EventDispatchRemediationCommandContinuationKey continuationKey)
+    {
+        var observedAtUtcTicks = state.ObservedAtUtc.UtcDateTime.Ticks;
+        if (observedAtUtcTicks != continuationKey.ObservedAtUtcTicks)
+        {
+            return observedAtUtcTicks < continuationKey.ObservedAtUtcTicks;
+        }
+
+        return StringComparer.OrdinalIgnoreCase.Compare(state.CommandId, continuationKey.CommandId) > 0;
+    }
+
+    private static string CreateEventDispatchRemediationCommandContinuationToken(
+        EventDispatchRemediationRuntimeState state)
+    {
+        var commandIdBytes = Encoding.UTF8.GetBytes(state.CommandId);
+        var payload = new byte[sizeof(long) + commandIdBytes.Length];
+        BinaryPrimitives.WriteInt64BigEndian(
+            payload.AsSpan(0, sizeof(long)),
+            state.ObservedAtUtc.UtcDateTime.Ticks);
+        commandIdBytes.CopyTo(payload.AsSpan(sizeof(long)));
+
+        return Base64UrlEncode(payload);
+    }
+
+    private static string Base64UrlEncode(byte[] payload)
+    {
+        return Convert.ToBase64String(payload)
+            .TrimEnd('=')
+            .Replace('+', '-')
+            .Replace('/', '_');
+    }
+
+    private static byte[]? TryBase64UrlDecode(string value)
+    {
+        var base64 = value.Replace('-', '+').Replace('_', '/');
+        switch (base64.Length % 4)
+        {
+            case 0:
+                break;
+            case 2:
+                base64 += "==";
+                break;
+            case 3:
+                base64 += "=";
+                break;
+            default:
+                return null;
+        }
+
+        try
+        {
+            return Convert.FromBase64String(base64);
+        }
+        catch (FormatException)
+        {
+            return null;
+        }
+    }
+
+    private readonly record struct EventDispatchRemediationCommandContinuationKey(
+        long ObservedAtUtcTicks,
+        string CommandId);
 
     private static async Task<(TValue? Value, IResult? Error)> ReadOptionalJsonBodyAsync<TValue>(
         HttpContext context,
