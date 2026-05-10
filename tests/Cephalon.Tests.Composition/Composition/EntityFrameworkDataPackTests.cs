@@ -1404,7 +1404,9 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("ready", remediationEntry.Metadata["quarantineCommand"]);
         Assert.Equal("ready", remediationEntry.Metadata["skipCommand"]);
         Assert.Equal("/engine/event-dispatches/{outboxId}/commands/{operationId}", remediationEntry.Metadata["operatorCommandRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands", remediationEntry.Metadata["operatorCommandListRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", remediationEntry.Metadata["operatorCommandResultRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}", remediationEntry.Metadata["operatorCommandOutboxRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/summary", remediationEntry.Metadata["operatorCommandSummaryRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/latest", remediationEntry.Metadata["operatorCommandLatestRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/retention", remediationEntry.Metadata["operatorCommandRetentionRoute"]);
@@ -1587,7 +1589,10 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("retry-scheduled", remediationCommandCatalogEntry.Metadata["latestDispatchOutcome"]);
         Assert.Equal("cmd-evt-020-retry", remediationCommandCatalogEntry.Metadata["oldestRetainedCommandId"]);
         Assert.Equal("cmd-evt-020-retry", remediationCommandCatalogEntry.Metadata["latestRetainedCommandId"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands", remediationCommandCatalogEntry.Metadata["commandListRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", remediationCommandCatalogEntry.Metadata["commandResultRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/summary", remediationCommandCatalogEntry.Metadata["commandSummaryRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}", remediationCommandCatalogEntry.Metadata["commandOutboxRoute"]);
         Assert.Equal("inclusive-observed-utc", remediationCommandCatalogEntry.Metadata["commandObservationWindowPolicy"]);
         Assert.Equal("positive-integer-newest-first", remediationCommandCatalogEntry.Metadata["commandReadLimitPolicy"]);
         Assert.Equal("false", remediationCommandCatalogEntry.Metadata["wolverineRequired"]);
@@ -1600,9 +1605,12 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("retry-now", remediationCommandEntry.Metadata["operationId"]);
         Assert.Equal("accepted", remediationCommandEntry.Metadata["outcome"]);
         Assert.Equal("retry-scheduled", remediationCommandEntry.Metadata["dispatchOutcome"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands", remediationCommandEntry.Metadata["commandListRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", remediationCommandEntry.Metadata["commandResultRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/summary", remediationCommandEntry.Metadata["commandSummaryRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/latest", remediationCommandEntry.Metadata["commandLatestRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/retention", remediationCommandEntry.Metadata["commandRetentionRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}", remediationCommandEntry.Metadata["commandOutboxRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}", remediationCommandEntry.Metadata["commandObservationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}", remediationCommandEntry.Metadata["commandObservationSummaryRoute"]);
         Assert.Equal("fromUtc,toUtc", remediationCommandEntry.Metadata["commandObservationWindowQuery"]);

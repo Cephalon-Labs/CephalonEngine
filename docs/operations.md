@@ -2294,6 +2294,9 @@ Current note:
   typed command-audit read model for the active host; summary responses now expose truncation and
   incomplete-window warning flags directly, and the `/retention` readback remains the full posture
   when operators need retained/recorded/dropped counts plus latest retained command detail; use
+  `commandListRoute`, `commandResultRoute`, and `commandOutboxRoute` metadata from
+  `/engine/capabilities`, `/engine/technology-surfaces`, or `/engine/snapshot` to discover the root
+  list, command-id, and outbox drill-down URLs without probing routes; use
   `commandReadLimitQuery`, `commandReadLimitPolicy`, and `commandReadLimitRoutes` metadata from
   `/engine/capabilities`, `/engine/technology-surfaces`, or `/engine/snapshot` to discover the
   read-side limit support instead of hardcoding UI assumptions; use `commandObservationWindowQuery`,

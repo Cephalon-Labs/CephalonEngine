@@ -203,7 +203,9 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("ready", terminalRemediationEntry.Metadata["quarantineCommand"]);
         Assert.Equal("ready", terminalRemediationEntry.Metadata["skipCommand"]);
         Assert.Equal("/engine/event-dispatches/{outboxId}/commands/{operationId}", terminalRemediationEntry.Metadata["operatorCommandRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands", terminalRemediationEntry.Metadata["operatorCommandListRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", terminalRemediationEntry.Metadata["operatorCommandResultRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}", terminalRemediationEntry.Metadata["operatorCommandOutboxRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}", terminalRemediationEntry.Metadata["operatorCommandObservationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}", terminalRemediationEntry.Metadata["operatorCommandObservationSummaryRoute"]);
         Assert.Equal("fromUtc,toUtc", terminalRemediationEntry.Metadata["operatorCommandObservationWindowQuery"]);
@@ -281,9 +283,12 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("not-claimed", remediationCapability.Metadata["brokerDeadLetterCommand"]);
         Assert.Equal("available", remediationCapability.Metadata["commandRuntimeState"]);
         Assert.Equal("256", remediationCapability.Metadata["commandHistoryLimit"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands", remediationCapability.Metadata["commandListRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", remediationCapability.Metadata["commandResultRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/summary", remediationCapability.Metadata["commandSummaryRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/latest", remediationCapability.Metadata["commandLatestRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/retention", remediationCapability.Metadata["commandRetentionRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}", remediationCapability.Metadata["commandOutboxRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}", remediationCapability.Metadata["commandObservationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}", remediationCapability.Metadata["commandObservationSummaryRoute"]);
         Assert.Equal("fromUtc,toUtc", remediationCapability.Metadata["commandObservationWindowQuery"]);
@@ -320,7 +325,10 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("0", initialCommandCatalogEntry.Metadata["droppedCommandCount"]);
         Assert.Equal("false", initialCommandCatalogEntry.Metadata["retentionTruncated"]);
         Assert.Equal("false", initialCommandCatalogEntry.Metadata["hasLatestCommand"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands", initialCommandCatalogEntry.Metadata["commandListRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", initialCommandCatalogEntry.Metadata["commandResultRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/summary", initialCommandCatalogEntry.Metadata["commandSummaryRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}", initialCommandCatalogEntry.Metadata["commandOutboxRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}", initialCommandCatalogEntry.Metadata["commandObservationRoute"]);
         Assert.Equal("fromUtc,toUtc", initialCommandCatalogEntry.Metadata["commandObservationWindowQuery"]);
         Assert.Equal("positive-integer-newest-first", initialCommandCatalogEntry.Metadata["commandReadLimitPolicy"]);

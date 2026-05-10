@@ -559,6 +559,10 @@ through `commandObservationWindowQuery`, `commandObservationWindowPolicy`,
 `commandObservationWindowDetailOrder`, `commandObservationWindowSummary`, and
 `commandObservationWindowInvalidBounds`, so host UIs can discover the route family from
 `/engine/capabilities`, `/engine/technology-surfaces`, or `/engine/snapshot`.
+Those metadata blocks also publish `commandListRoute`, `commandResultRoute`, and
+`commandOutboxRoute`, with `operatorCommand*` equivalents on `event-dispatch-remediations`, so a
+host UI does not have to infer the root list, command-id, or outbox drill-down URL from route names
+or docs.
 The `event-dispatch-remediation-commands` technology surface also emits a catalog entry before any
 command result exists, with route, retention, read-limit, observed-window, idempotency,
 provider-neutral, and `wolverineRequired = false` metadata, so an ASP.NET Core operator UI can bind

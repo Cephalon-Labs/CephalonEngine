@@ -8,9 +8,12 @@ internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributo
     IEventDispatchRemediationRuntimeCatalog commands) : ITechnologyRuntimeContributor
 {
     private const string SurfaceId = "event-dispatch-remediation-commands";
+    private const string CommandListRoute = "/engine/event-dispatch-remediation-commands";
+    private const string CommandResultRoute = "/engine/event-dispatch-remediation-commands/{commandId}";
     private const string CommandSummaryRoute = "/engine/event-dispatch-remediation-commands/summary";
     private const string CommandLatestRoute = "/engine/event-dispatch-remediation-commands/latest";
     private const string CommandRetentionRoute = "/engine/event-dispatch-remediation-commands/retention";
+    private const string CommandOutboxRoute = "/engine/event-dispatch-remediation-commands/outboxes/{outboxId}";
     private const string CommandObservationRoute = "/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}";
     private const string CommandObservationSummaryRoute = "/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}";
     private const string CommandOperationRoute = "/engine/event-dispatch-remediation-commands/operations/{operationId}";
@@ -140,9 +143,12 @@ internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributo
 
     private static void AddCommandRouteMetadata(Dictionary<string, string> metadata)
     {
+        metadata["commandListRoute"] = CommandListRoute;
+        metadata["commandResultRoute"] = CommandResultRoute;
         metadata["commandSummaryRoute"] = CommandSummaryRoute;
         metadata["commandLatestRoute"] = CommandLatestRoute;
         metadata["commandRetentionRoute"] = CommandRetentionRoute;
+        metadata["commandOutboxRoute"] = CommandOutboxRoute;
         metadata["commandObservationRoute"] = CommandObservationRoute;
         metadata["commandObservationSummaryRoute"] = CommandObservationSummaryRoute;
         metadata["commandOperationRoute"] = CommandOperationRoute;

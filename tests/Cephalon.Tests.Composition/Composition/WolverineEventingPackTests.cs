@@ -382,7 +382,9 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("ready", remediationEntry.Metadata["quarantineCommand"]);
         Assert.Equal("ready", remediationEntry.Metadata["skipCommand"]);
         Assert.Equal("/engine/event-dispatches/{outboxId}/commands/{operationId}", remediationEntry.Metadata["operatorCommandRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands", remediationEntry.Metadata["operatorCommandListRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", remediationEntry.Metadata["operatorCommandResultRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}", remediationEntry.Metadata["operatorCommandOutboxRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}", remediationEntry.Metadata["operatorCommandObservationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}", remediationEntry.Metadata["operatorCommandObservationSummaryRoute"]);
         Assert.Equal("fromUtc,toUtc", remediationEntry.Metadata["operatorCommandObservationWindowQuery"]);
@@ -414,7 +416,10 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("false", remediationCommandCatalogEntry.Metadata["hasLatestCommand"]);
         Assert.Equal("false", remediationCommandCatalogEntry.Metadata["wolverineRequired"]);
         Assert.Equal("true", remediationCommandCatalogEntry.Metadata["providerNeutral"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands", remediationCommandCatalogEntry.Metadata["commandListRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", remediationCommandCatalogEntry.Metadata["commandResultRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/summary", remediationCommandCatalogEntry.Metadata["commandSummaryRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}", remediationCommandCatalogEntry.Metadata["commandOutboxRoute"]);
         Assert.Equal("inclusive-observed-utc", remediationCommandCatalogEntry.Metadata["commandObservationWindowPolicy"]);
         Assert.Equal("positive-integer-newest-first", remediationCommandCatalogEntry.Metadata["commandReadLimitPolicy"]);
         Assert.True(runtimeDescriptor!.Summary.HasReports);
