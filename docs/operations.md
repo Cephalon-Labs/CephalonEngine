@@ -2234,6 +2234,9 @@ Current payload highlights:
 - `GET /engine/event-dispatch-remediation-commands/summary` returns the bounded command-result
   roll-up: total, accepted, rejected, errored, duplicate-command count, and latest command
   identity/outcome fields without scanning the full history
+- `GET /engine/event-dispatch-remediation-commands/latest` returns the newest authoritative
+  command-result record with full metadata and error payload, and duplicate command-id attempts do
+  not replace that record
 - `GET /engine/event-dispatch-remediation-commands/{commandId}` narrows the command-result catalog
   to one command and returns `404` when no command has been recorded with that id
 - `GET /engine/event-dispatch-remediation-commands/outboxes/{outboxId}` filters command results by
@@ -2267,8 +2270,9 @@ Current note:
   do not claim broker dead-letter/replay ownership, and `dead-letter` records terminal dispatch-store
   intent with `brokerDeadLetter = false` rather than a broker DLQ operation
 - command-result idempotency is intentionally fail-closed: operators should inspect
-  `/engine/event-dispatch-remediation-commands/{commandId}` after an uncertain client retry and use
-  a new command id for a new action
+  `/engine/event-dispatch-remediation-commands/{commandId}` or
+  `/engine/event-dispatch-remediation-commands/latest` after an uncertain client retry and use a new
+  command id for a new action
 - remediation command-result history is bounded and process-local by default; it gives operators a
   typed command-audit read model for the active host, not durable compliance retention or broker
   replay ownership
@@ -2530,7 +2534,7 @@ Current `Cephalon.Eventing` highlights:
   separate from later dispatch completion
 - `event-dispatch-remediation-commands` exposes the bounded command-result read model for
   `retry-now`, `retry-later`, `skip`, `quarantine`, and dispatch-store `dead-letter`, including
-  message, channel, operation, actor, correlation, reason, and dispatch-outcome drill-downs, while
+  latest, message, channel, operation, actor, correlation, reason, and dispatch-outcome drill-downs, while
   `/engine/event-dispatch-remediation-commands*` provides the typed route family for operators who
   do not want to parse technology-surface metadata
 - Wolverine or another companion adapter can still move staged dispatch or one subscription to

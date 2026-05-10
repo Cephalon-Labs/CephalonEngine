@@ -25,6 +25,17 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         }
     }
 
+    public EventDispatchRemediationRuntimeState? Latest
+    {
+        get
+        {
+            lock (gate)
+            {
+                return GetLatestState(states);
+            }
+        }
+    }
+
     public IReadOnlyList<EventDispatchRemediationRuntimeState> States
     {
         get
@@ -46,10 +57,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
             return EventDispatchRemediationRuntimeSummary.Empty;
         }
 
-        var lastState = recordedStates
-            .OrderByDescending(static state => state.ObservedAtUtc)
-            .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
-            .First();
+        var lastState = GetLatestState(recordedStates)!;
 
         return new EventDispatchRemediationRuntimeSummary(
             totalCommandCount: recordedStates.Count,
@@ -66,6 +74,14 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
             lastOutcome: lastState.Outcome,
             lastDispatchOutcome: lastState.DispatchOutcome,
             lastObservedAtUtc: lastState.ObservedAtUtc);
+    }
+
+    private static EventDispatchRemediationRuntimeState? GetLatestState(List<EventDispatchRemediationRuntimeState> recordedStates)
+    {
+        return recordedStates
+            .OrderByDescending(static state => state.ObservedAtUtc)
+            .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault();
     }
 
     public EventDispatchRemediationRuntimeState? GetByCommandId(string commandId)

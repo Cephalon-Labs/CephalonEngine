@@ -21,5 +21,6 @@ Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByDispatch
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByMessageId(string! messageId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByOperationId(string! operationId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByReason(string! reason) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.Latest.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.Summary.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
 static Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.Empty.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!

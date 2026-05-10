@@ -520,6 +520,7 @@ until a companion package owns that path.
 When the same runtime registers `IEventDispatchRemediationRuntimeCatalog`, the host also maps
 `/engine/event-dispatch-remediation-commands`,
 `/engine/event-dispatch-remediation-commands/summary`,
+`/engine/event-dispatch-remediation-commands/latest`,
 `/engine/event-dispatch-remediation-commands/{commandId}`,
 `/engine/event-dispatch-remediation-commands/outboxes/{outboxId}`,
 `/engine/event-dispatch-remediation-commands/messages/{messageId}`,
@@ -530,11 +531,11 @@ When the same runtime registers `IEventDispatchRemediationRuntimeCatalog`, the h
 `/engine/event-dispatch-remediation-commands/reasons/{reason}`,
 `/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}`, and
 `/engine/event-dispatch-remediation-commands/outcomes/{outcome}` so operators can inspect accepted
-and rejected command results by summary, command id, outbox id, message id, channel id, operation id, actor
+and rejected command results by summary, latest command, command id, outbox id, message id, channel id, operation id, actor
 id, correlation id, reason, dispatch outcome, or command outcome separately from the latest per-outbox dispatch state. A duplicate
 command id does not replace the original command-result record; callers can inspect the original
-record or the duplicate-safe roll-up through `/engine/event-dispatch-remediation-commands/{commandId}`
-and `/engine/event-dispatch-remediation-commands/summary` before issuing a new command id.
+record, the duplicate-safe latest record, or the duplicate-safe roll-up through `/engine/event-dispatch-remediation-commands/{commandId}`,
+`/engine/event-dispatch-remediation-commands/latest`, and `/engine/event-dispatch-remediation-commands/summary` before issuing a new command id.
 
 The host now also exposes bounded event-publication operator action and publication runtime-state
 surfaces directly. When a selected eventing pack registers `IEventPublicationDispatcher`,

@@ -11,6 +11,11 @@ public interface IEventDispatchRemediationRuntimeCatalog
     EventDispatchRemediationRuntimeSummary Summary { get; }
 
     /// <summary>
+    /// Gets the most recently observed remediation command-state entry visible to the current runtime.
+    /// </summary>
+    EventDispatchRemediationRuntimeState? Latest { get; }
+
+    /// <summary>
     /// Gets the remediation command-state entries visible to the current runtime.
     /// </summary>
     IReadOnlyList<EventDispatchRemediationRuntimeState> States { get; }

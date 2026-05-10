@@ -601,6 +601,7 @@ public sealed class PackageSurfaceTests
         var catalogType = typeof(global::Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog);
 
         Assert.NotNull(catalogType.GetProperty("Summary", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetProperty("Latest", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(catalogType.GetMethod("GetByCommandId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(catalogType.GetMethod("GetByOutboxId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(catalogType.GetMethod("GetByMessageId", BindingFlags.Instance | BindingFlags.Public));

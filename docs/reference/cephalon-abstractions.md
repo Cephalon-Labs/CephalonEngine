@@ -51000,6 +51000,16 @@ public interface IEventDispatchRemediationRuntimeCatalog
 
 #### Properties
 
+<a id="member-p-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-latest"></a>
+
+##### `Latest`
+
+```csharp
+EventDispatchRemediationRuntimeState Latest { get; }
+```
+
+Gets the most recently observed remediation command-state entry visible to the current runtime.
+
 <a id="member-p-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-states"></a>
 
 ##### `States`
