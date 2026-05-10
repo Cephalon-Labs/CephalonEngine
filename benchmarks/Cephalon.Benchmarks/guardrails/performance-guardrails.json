@@ -149,6 +149,41 @@
       "notes": "A compact multi-selector CDC operator drill-down over drift, dry-run, command-issuance, and materializer posture should stay below 5 us and under roughly 5 KB allocated per selector group."
     },
     {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.EventDispatchRemediationCatalogBenchmarks-report.csv",
+      "benchmark": "FilterSummaryByMessageId",
+      "maxMeanNanoseconds": 8000,
+      "maxAllocatedBytes": 512,
+      "notes": "Native event-dispatch remediation filtered message summaries should remain a single-pass retained-history aggregate, stay below 8 us, and allocate only the returned summary object rather than a matching detail list."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.EventDispatchRemediationCatalogBenchmarks-report.csv",
+      "benchmark": "FilterRetentionByMessageId",
+      "maxMeanNanoseconds": 8000,
+      "maxAllocatedBytes": 512,
+      "notes": "Native event-dispatch remediation filtered message retention should remain a single-pass retained-history aggregate, stay below 8 us, and allocate only the returned retention object rather than a matching detail list."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.EventDispatchRemediationCatalogBenchmarks-report.csv",
+      "benchmark": "FilterLatestByCorrelationId",
+      "maxMeanNanoseconds": 15000,
+      "maxAllocatedBytes": 0,
+      "notes": "Native event-dispatch remediation filtered latest reads should select one retained command in a single pass, stay below 15 us, and allocate no matching list, sort buffer, or predicate closure on the hot path."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.EventDispatchRemediationCatalogBenchmarks-report.csv",
+      "benchmark": "FilterOldestByDispatchOutcome",
+      "maxMeanNanoseconds": 2000,
+      "maxAllocatedBytes": 0,
+      "notes": "Native event-dispatch remediation filtered oldest reads should select one retained command in a single pass, stay below 2 us, and allocate no matching list, sort buffer, or predicate closure on the hot path."
+    },
+    {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.EventDispatchRemediationCatalogBenchmarks-report.csv",
+      "benchmark": "FilterOperatorDashboardSelectors",
+      "maxMeanNanoseconds": 30000,
+      "maxAllocatedBytes": 512,
+      "notes": "A compact native remediation operator dashboard drill-down over summary, retention, latest, and oldest selectors should stay below 30 us and avoid materializing any detail list for filtered read models."
+    },
+    {
       "reportFileName": "Cephalon.Benchmarks.HotPath.BehaviorDispatchBenchmarks-report.csv",
       "benchmark": "DispatchBehavior",
       "maxMeanNanoseconds": 10000,

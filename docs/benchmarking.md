@@ -16,7 +16,7 @@ It currently tracks the following benchmark lanes across composition, runtime, A
 - `Cephalon.Benchmarks.Runtime`: engine-first REST projection, governance, and runtime-catalog materialization across generated/profile/DSL precedence, grouped generated module ownership, authoring policy, suppression, override, and preserved implicit query fallback
 - `Cephalon.Benchmarks.Scaffolding`: blueprint-to-files scaffold generation
 - `Cephalon.Benchmarks.Scaffolding`: phase-8 blueprint-to-files scaffold generation with structured `Engine:*` sections, additive pack hints, and starter-test conventions
-- `Cephalon.Benchmarks.HotPath`: CDC execution-runtime catalog projections over Debezium-managed external runtimes, including repeated managed-connector operator filters against the shared versioned runtime snapshot
+- `Cephalon.Benchmarks.HotPath`: CDC execution-runtime catalog projections over Debezium-managed external runtimes plus native event-dispatch remediation filtered summary, retention, latest, oldest, and compact operator selector reads
 
 The benchmark suite now also ships a guardrail catalog at `benchmarks/Cephalon.Benchmarks/guardrails/performance-guardrails.json`.
 
@@ -35,6 +35,7 @@ That catalog is the repository baseline for the currently shipped benchmark meth
 - `EventSourcingBenchmarks`: `AppendSingleEvent`, `ReadStream`, `GetStreamVersion`
 - `OutboxStagingBenchmarks`: `StageOutboxMessage`
 - `CdcExecutionRuntimeCatalogBenchmarks`: `EnumerateRuntimes`, `FilterManagedConnectorDriftState`, `FilterManagedConnectorDryRunState`, `FilterManagedConnectorCommandIssuanceState`, `FilterManagedConnectorOperatorSelectors`
+- `EventDispatchRemediationCatalogBenchmarks`: `FilterSummaryByMessageId`, `FilterRetentionByMessageId`, `FilterLatestByCorrelationId`, `FilterOldestByDispatchOutcome`, `FilterOperatorDashboardSelectors`
 
 The composition and runtime baselines prepare configured builders, runtimes, and service providers outside the measured loop so the guardrails track `Build()` and lifecycle transition costs rather than one-time benchmark harness setup.
 That baseline now also includes the stricter trust-policy composition path, the shipped phase-8 low-ceremony companion-pack path, the bounded-truncation HTTP logging path, the engine-first REST projection/governance startup path, a concurrent logging throughput path, and the cold-start path for ASP.NET Core minimal API hosts that opt into `Engine:AspNetCore:OperatorSurface:Mode=core`, so security and startup hardening work stays measurable under both request and host-start pressure. The SRE manifest maps the ASP.NET Core request-allocation SLI to the three `AspNetCoreRequestLoggingBenchmarks` guardrail entries, so request logging allocation regressions are scorecard-visible.
@@ -42,6 +43,7 @@ That baseline now also includes the stricter trust-policy composition path, the 
 
 The stable SRE baseline manifest lives at `scripts/sre-stable-baselines.json`. It records the May 8, 2026 BenchmarkDotNet evidence for the four hot-path SLI rows that have enough evidence to promote to `stable-baseline-published`: `engine.behavior.dispatch.latency.p95`, `engine.behavior.dispatch.latency.p99`, `engine.behavior.dispatch.alloc.bytes-per-op`, and `engine.aspnetcore.request.alloc.bytes-per-op`. The same manifest also records `engine.aspnetcore.minimal-api.cold-start.p95` from `Cephalon.Benchmarks.Runtime.ColdStartBenchmarks-report.csv` as a `benchmark-mean-baseline-proxy` over `BuildStartHandleFirstRequestAspNetCore`, because the benchmark's core operator surface measured about `46.949 ms` against the 800 ms SLO target while the current short-run export does not emit percentile columns. It also records `engine.worker.cold-start.p95` from the same report as a `benchmark-mean-baseline-proxy` over `BuildStartWorkerHost`, because the measured mean remains far below the 500 ms SLO target. The manifest also records the release-validation claims-report baseline for `engine.deployment-mode-claims.truthful-fraction` plus release-validation timing baselines for `engine.dotnet.restore.wall-time.lock-mode`, `engine.reference-docs.wall-time`, and `engine.validate-release.wall-time`; only the flake-rate SLI remains pending because GitHub Actions currently has no completed run history to compute a 7-day baseline. The pending row now points at `scripts/measure-ci-flake-rate.ps1` and `artifacts/sre-ci-flake-rate/ci-flake-rate.json`; that report records Actions permission, workflow active-state, and `workflow_dispatch` readiness separately from missing run history, so promotion becomes a report-backed action once CI history exists.
 The hot-path data baseline now also includes the CDC execution-runtime catalog path that powers filter-heavy managed-connector operator surfaces, so the versioned snapshot and capture-ownership indexes remain benchmark-governed after the ENG-488 runtime fix.
+The hot-path baseline also includes `ENG-590` native event-dispatch remediation filtered reads. The process-local catalog now measures filter-summary and filter-retention as single-pass retained-history aggregates, and filter-latest / filter-oldest as single-pass single-record selectors with no matching list, sort buffer, or predicate-closure allocation on the main string filter families. A focused BenchmarkDotNet run on May 11, 2026 measured `FilterSummaryByMessageId` at `3,104.3 ns` / `176 B`, `FilterRetentionByMessageId` at `2,886.6 ns` / `112 B`, `FilterLatestByCorrelationId` at `9,694.1 ns` / `0 B`, `FilterOldestByDispatchOutcome` at `895.6 ns` / `0 B`, and `FilterOperatorDashboardSelectors` at `17,949.0 ns` / `288 B`.
 The shipped local smoke suite now uses a shared in-process short-run BenchmarkDotNet config across every benchmark class so mirrored worktree artifacts such as repo-local `.build/*` copies do not break benchmark project resolution during `validate-release`.
 
 ## Run all benchmarks
@@ -66,6 +68,7 @@ dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*Ten
 dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*EventSourcingBenchmarks*"
 dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*OutboxStagingBenchmarks*"
 dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*CdcExecutionRuntimeCatalogBenchmarks*"
+dotnet run -c Release --project benchmarks/Cephalon.Benchmarks -- --filter "*EventDispatchRemediationCatalogBenchmarks*"
 ```
 
 The phase-8 composition, runtime, and scaffolding scenarios live in the same benchmark classes as the earlier baselines, so those filters cover both the original and phase-8 paths.
@@ -100,7 +103,7 @@ pwsh ./scripts/validate-release.ps1 -SkipTests
 pwsh ./scripts/validate-release.ps1 -SkipOperationalConventions
 pwsh ./scripts/validate-release.ps1 -SkipPhase8Conventions
 pwsh ./scripts/validate-release.ps1 -SkipReferenceDocs
-pwsh ./scripts/validate-release.ps1 -BenchmarkFilters "*EngineBuilderBenchmarks*" "*EngineRuntimeBenchmarks*" "*AspNetCoreRequestLoggingBenchmarks*" "*RestEndpointProjectionGovernanceBenchmarks*" "*ScaffoldGeneratorBenchmarks*" "*DataDispatchBenchmarks*" "*BehaviorDispatchBenchmarks*" "*AuthorizationEvaluationBenchmarks*" "*TenantResolutionBenchmarks*" "*EventSourcingBenchmarks*" "*OutboxStagingBenchmarks*" "*CdcExecutionRuntimeCatalogBenchmarks*"
+pwsh ./scripts/validate-release.ps1 -BenchmarkFilters "*EngineBuilderBenchmarks*" "*EngineRuntimeBenchmarks*" "*AspNetCoreRequestLoggingBenchmarks*" "*RestEndpointProjectionGovernanceBenchmarks*" "*ScaffoldGeneratorBenchmarks*" "*DataDispatchBenchmarks*" "*BehaviorDispatchBenchmarks*" "*AuthorizationEvaluationBenchmarks*" "*TenantResolutionBenchmarks*" "*EventSourcingBenchmarks*" "*OutboxStagingBenchmarks*" "*CdcExecutionRuntimeCatalogBenchmarks*" "*EventDispatchRemediationCatalogBenchmarks*"
 ```
 
 Run only the focused health/export convention suite:

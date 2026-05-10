@@ -36,8 +36,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
                 return CreateSummary(
                     states,
                     droppedCommandCount,
-                    summaryMayBeIncomplete: droppedCommandCount > 0,
-                    oldestRetainedState: GetOldestState(states));
+                    summaryMayBeIncomplete: droppedCommandCount > 0);
             }
         }
     }
@@ -119,18 +118,10 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
     {
         lock (gate)
         {
-            var oldestState = GetOldestState(states);
-            var matchingStates = states
-                .Where(state =>
+            return CreateFilteredSummary(
+                state =>
                     IsReservedState(state) &&
-                    (beforeObservedAtUtc is null || state.ObservedAtUtc <= beforeObservedAtUtc.Value))
-                .ToList();
-
-            return CreateSummary(
-                matchingStates,
-                droppedCommandCount,
-                summaryMayBeIncomplete: droppedCommandCount > 0,
-                oldestRetainedState: oldestState);
+                    (beforeObservedAtUtc is null || state.ObservedAtUtc <= beforeObservedAtUtc.Value));
         }
     }
 
@@ -140,33 +131,42 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         bool summaryMayBeIncomplete = false,
         EventDispatchRemediationRuntimeState? oldestRetainedState = null)
     {
-        var oldestState = oldestRetainedState ?? GetOldestState(recordedStates);
-        if (recordedStates.Count == 0)
+        var aggregate = AggregateStates(recordedStates);
+        return CreateSummary(
+            aggregate,
+            droppedCommandCount,
+            summaryMayBeIncomplete,
+            oldestRetainedState ?? aggregate.OldestState);
+    }
+
+    private static EventDispatchRemediationRuntimeSummary CreateSummary(
+        RemediationStateAggregate aggregate,
+        long droppedCommandCount = 0,
+        bool summaryMayBeIncomplete = false,
+        EventDispatchRemediationRuntimeState? oldestRetainedState = null)
+    {
+        if (aggregate.Count == 0)
         {
-            return droppedCommandCount == 0 && !summaryMayBeIncomplete && oldestState is null
+            return droppedCommandCount == 0 && !summaryMayBeIncomplete && oldestRetainedState is null
                 ? EventDispatchRemediationRuntimeSummary.Empty
                 : new EventDispatchRemediationRuntimeSummary(
                     droppedCommandCount: droppedCommandCount,
                     retentionTruncated: droppedCommandCount > 0,
                     summaryMayBeIncomplete: summaryMayBeIncomplete,
-                    oldestRetainedCommandId: oldestState?.CommandId,
-                    oldestRetainedObservedAtUtc: oldestState?.ObservedAtUtc);
+                    oldestRetainedCommandId: oldestRetainedState?.CommandId,
+                    oldestRetainedObservedAtUtc: oldestRetainedState?.ObservedAtUtc);
         }
 
-        var lastState = GetLatestState(recordedStates)!;
-        var oldestReservedState = GetOldestReservedState(recordedStates);
+        var lastState = aggregate.LatestState!;
+        var oldestReservedState = aggregate.OldestReservedState;
 
         return new EventDispatchRemediationRuntimeSummary(
-            totalCommandCount: recordedStates.Count,
-            acceptedCount: recordedStates.Count(static state =>
-                string.Equals(state.Outcome, EventDispatchRemediationOutcomes.Accepted, StringComparison.OrdinalIgnoreCase)),
-            rejectedCount: recordedStates.Count(static state =>
-                string.Equals(state.Outcome, EventDispatchRemediationOutcomes.Rejected, StringComparison.OrdinalIgnoreCase)),
-            errorCount: recordedStates.Count(static state => !string.IsNullOrWhiteSpace(state.Error)),
-            duplicateCommandCount: recordedStates.Count(static state =>
-                state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.DuplicateCommand, out var duplicateCommand) &&
-                string.Equals(duplicateCommand, "true", StringComparison.OrdinalIgnoreCase)),
-            reservedCount: recordedStates.Count(IsReservedState),
+            totalCommandCount: aggregate.Count,
+            acceptedCount: aggregate.AcceptedCount,
+            rejectedCount: aggregate.RejectedCount,
+            errorCount: aggregate.ErrorCount,
+            duplicateCommandCount: aggregate.DuplicateCommandCount,
+            reservedCount: aggregate.ReservedCount,
             lastCommandId: lastState.CommandId,
             lastOperationId: lastState.OperationId,
             lastOutcome: lastState.Outcome,
@@ -175,8 +175,8 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
             droppedCommandCount: droppedCommandCount,
             retentionTruncated: droppedCommandCount > 0,
             summaryMayBeIncomplete: summaryMayBeIncomplete,
-            oldestRetainedCommandId: oldestState?.CommandId,
-            oldestRetainedObservedAtUtc: oldestState?.ObservedAtUtc,
+            oldestRetainedCommandId: oldestRetainedState?.CommandId,
+            oldestRetainedObservedAtUtc: oldestRetainedState?.ObservedAtUtc,
             oldestReservedCommandId: oldestReservedState?.CommandId,
             oldestReservedObservedAtUtc: oldestReservedState?.ObservedAtUtc);
     }
@@ -187,7 +187,20 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         long totalRecordedCommandCount,
         long droppedCommandCount)
     {
-        if (recordedStates.Count == 0)
+        return CreateRetention(
+            AggregateStates(recordedStates),
+            historyLimit,
+            totalRecordedCommandCount,
+            droppedCommandCount);
+    }
+
+    private static EventDispatchRemediationRuntimeRetention CreateRetention(
+        RemediationStateAggregate aggregate,
+        int historyLimit,
+        long totalRecordedCommandCount,
+        long droppedCommandCount)
+    {
+        if (aggregate.Count == 0)
         {
             return new EventDispatchRemediationRuntimeRetention(
                 historyLimit: historyLimit,
@@ -196,12 +209,12 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
                 truncated: droppedCommandCount > 0);
         }
 
-        var oldestState = GetOldestState(recordedStates)!;
-        var latestState = GetLatestState(recordedStates)!;
+        var oldestState = aggregate.OldestState!;
+        var latestState = aggregate.LatestState!;
 
         return new EventDispatchRemediationRuntimeRetention(
             historyLimit: historyLimit,
-            retainedCommandCount: recordedStates.Count,
+            retainedCommandCount: aggregate.Count,
             totalRecordedCommandCount: totalRecordedCommandCount,
             droppedCommandCount: droppedCommandCount,
             truncated: droppedCommandCount > 0,
@@ -213,27 +226,44 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
     private static EventDispatchRemediationRuntimeState? GetLatestState(List<EventDispatchRemediationRuntimeState> recordedStates)
     {
-        return recordedStates
-            .OrderByDescending(static state => state.ObservedAtUtc)
-            .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
-            .FirstOrDefault();
+        EventDispatchRemediationRuntimeState? latestState = null;
+        foreach (var state in recordedStates)
+        {
+            if (IsLatestCandidate(state, latestState))
+            {
+                latestState = state;
+            }
+        }
+
+        return latestState;
     }
 
     private static EventDispatchRemediationRuntimeState? GetOldestState(List<EventDispatchRemediationRuntimeState> recordedStates)
     {
-        return recordedStates
-            .OrderBy(static state => state.ObservedAtUtc)
-            .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
-            .FirstOrDefault();
+        EventDispatchRemediationRuntimeState? oldestState = null;
+        foreach (var state in recordedStates)
+        {
+            if (IsOldestCandidate(state, oldestState))
+            {
+                oldestState = state;
+            }
+        }
+
+        return oldestState;
     }
 
     private static EventDispatchRemediationRuntimeState? GetOldestReservedState(List<EventDispatchRemediationRuntimeState> recordedStates)
     {
-        return recordedStates
-            .Where(IsReservedState)
-            .OrderBy(static state => state.ObservedAtUtc)
-            .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
-            .FirstOrDefault();
+        EventDispatchRemediationRuntimeState? oldestReservedState = null;
+        foreach (var state in recordedStates)
+        {
+            if (IsReservedState(state) && IsOldestCandidate(state, oldestReservedState))
+            {
+                oldestReservedState = state;
+            }
+        }
+
+        return oldestReservedState;
     }
 
     private static bool IsReservedState(EventDispatchRemediationRuntimeState state) =>
@@ -277,61 +307,363 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return CreateFilteredSummary(
+            var filteredStates = AggregateStatesWithOldestRetained(
+                states,
                 state =>
                     (fromObservedAtUtc is null || state.ObservedAtUtc >= fromObservedAtUtc.Value) &&
-                    (toObservedAtUtc is null || state.ObservedAtUtc <= toObservedAtUtc.Value),
+                    (toObservedAtUtc is null || state.ObservedAtUtc <= toObservedAtUtc.Value));
+
+            return CreateFilteredSummary(
+                filteredStates,
                 summaryMayBeIncomplete: IsObservationWindowPotentiallyTruncated(
                     fromObservedAtUtc,
-                    GetOldestState(states),
+                    filteredStates.OldestRetainedState,
                     droppedCommandCount));
         }
+    }
+
+    private EventDispatchRemediationRuntimeSummary CreateFilteredSummary(
+        (RemediationStateAggregate Aggregate, EventDispatchRemediationRuntimeState? OldestRetainedState) filteredStates,
+        bool summaryMayBeIncomplete)
+    {
+        return CreateSummary(
+            filteredStates.Aggregate,
+            droppedCommandCount,
+            summaryMayBeIncomplete: summaryMayBeIncomplete,
+            oldestRetainedState: filteredStates.OldestRetainedState);
     }
 
     private EventDispatchRemediationRuntimeSummary CreateFilteredSummary(
         Func<EventDispatchRemediationRuntimeState, bool> predicate,
         bool? summaryMayBeIncomplete = null)
     {
-        var oldestState = GetOldestState(states);
-        var matchingStates = states.Where(predicate).ToList();
+        var filteredStates = AggregateStatesWithOldestRetained(states, predicate);
 
         return CreateSummary(
-            matchingStates,
+            filteredStates.Aggregate,
             droppedCommandCount,
             summaryMayBeIncomplete: summaryMayBeIncomplete ?? droppedCommandCount > 0,
-            oldestRetainedState: oldestState);
+            oldestRetainedState: filteredStates.OldestRetainedState);
+    }
+
+    private EventDispatchRemediationRuntimeSummary CreateFilteredSummary(
+        RemediationStateFilter filter,
+        string filterValue)
+    {
+        var filteredStates = AggregateStatesWithOldestRetained(states, filter, filterValue);
+
+        return CreateSummary(
+            filteredStates.Aggregate,
+            droppedCommandCount,
+            summaryMayBeIncomplete: droppedCommandCount > 0,
+            oldestRetainedState: filteredStates.OldestRetainedState);
     }
 
     private EventDispatchRemediationRuntimeRetention CreateFilteredRetention(
         Func<EventDispatchRemediationRuntimeState, bool> predicate)
     {
-        var matchingStates = states.Where(predicate).ToList();
+        var aggregate = AggregateStates(states, predicate);
 
         return CreateRetention(
-            matchingStates,
+            aggregate,
             options.RemediationCommandHistoryLimit,
-            matchingStates.Count + droppedCommandCount,
+            aggregate.Count + droppedCommandCount,
+            droppedCommandCount);
+    }
+
+    private EventDispatchRemediationRuntimeRetention CreateFilteredRetention(
+        RemediationStateFilter filter,
+        string filterValue)
+    {
+        var aggregate = AggregateStates(states, filter, filterValue);
+
+        return CreateRetention(
+            aggregate,
+            options.RemediationCommandHistoryLimit,
+            aggregate.Count + droppedCommandCount,
             droppedCommandCount);
     }
 
     private EventDispatchRemediationRuntimeState? GetLatestFilteredState(
         Func<EventDispatchRemediationRuntimeState, bool> predicate)
     {
-        return states
-            .Where(predicate)
-            .OrderByDescending(static state => state.ObservedAtUtc)
-            .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
-            .FirstOrDefault();
+        EventDispatchRemediationRuntimeState? latestState = null;
+        foreach (var state in states)
+        {
+            if (predicate(state) && IsLatestCandidate(state, latestState))
+            {
+                latestState = state;
+            }
+        }
+
+        return latestState;
+    }
+
+    private EventDispatchRemediationRuntimeState? GetLatestFilteredState(
+        RemediationStateFilter filter,
+        string filterValue)
+    {
+        EventDispatchRemediationRuntimeState? latestState = null;
+        foreach (var state in states)
+        {
+            if (MatchesFilter(state, filter, filterValue) && IsLatestCandidate(state, latestState))
+            {
+                latestState = state;
+            }
+        }
+
+        return latestState;
     }
 
     private EventDispatchRemediationRuntimeState? GetOldestFilteredState(
         Func<EventDispatchRemediationRuntimeState, bool> predicate)
     {
-        return states
-            .Where(predicate)
-            .OrderBy(static state => state.ObservedAtUtc)
-            .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
-            .FirstOrDefault();
+        EventDispatchRemediationRuntimeState? oldestState = null;
+        foreach (var state in states)
+        {
+            if (predicate(state) && IsOldestCandidate(state, oldestState))
+            {
+                oldestState = state;
+            }
+        }
+
+        return oldestState;
+    }
+
+    private EventDispatchRemediationRuntimeState? GetOldestFilteredState(
+        RemediationStateFilter filter,
+        string filterValue)
+    {
+        EventDispatchRemediationRuntimeState? oldestState = null;
+        foreach (var state in states)
+        {
+            if (MatchesFilter(state, filter, filterValue) && IsOldestCandidate(state, oldestState))
+            {
+                oldestState = state;
+            }
+        }
+
+        return oldestState;
+    }
+
+    private static RemediationStateAggregate AggregateStates(List<EventDispatchRemediationRuntimeState> recordedStates)
+    {
+        var aggregate = new RemediationStateAggregate();
+        foreach (var state in recordedStates)
+        {
+            aggregate.Add(state);
+        }
+
+        return aggregate;
+    }
+
+    private static RemediationStateAggregate AggregateStates(
+        List<EventDispatchRemediationRuntimeState> recordedStates,
+        Func<EventDispatchRemediationRuntimeState, bool> predicate)
+    {
+        var aggregate = new RemediationStateAggregate();
+        foreach (var state in recordedStates)
+        {
+            if (predicate(state))
+            {
+                aggregate.Add(state);
+            }
+        }
+
+        return aggregate;
+    }
+
+    private static (RemediationStateAggregate Aggregate, EventDispatchRemediationRuntimeState? OldestRetainedState)
+        AggregateStatesWithOldestRetained(
+            List<EventDispatchRemediationRuntimeState> recordedStates,
+            Func<EventDispatchRemediationRuntimeState, bool> predicate)
+    {
+        var aggregate = new RemediationStateAggregate();
+        EventDispatchRemediationRuntimeState? oldestRetainedState = null;
+        foreach (var state in recordedStates)
+        {
+            if (IsOldestCandidate(state, oldestRetainedState))
+            {
+                oldestRetainedState = state;
+            }
+
+            if (predicate(state))
+            {
+                aggregate.Add(state);
+            }
+        }
+
+        return (aggregate, oldestRetainedState);
+    }
+
+    private static RemediationStateAggregate AggregateStates(
+        List<EventDispatchRemediationRuntimeState> recordedStates,
+        RemediationStateFilter filter,
+        string filterValue)
+    {
+        var aggregate = new RemediationStateAggregate();
+        foreach (var state in recordedStates)
+        {
+            if (MatchesFilter(state, filter, filterValue))
+            {
+                aggregate.Add(state);
+            }
+        }
+
+        return aggregate;
+    }
+
+    private static (RemediationStateAggregate Aggregate, EventDispatchRemediationRuntimeState? OldestRetainedState)
+        AggregateStatesWithOldestRetained(
+            List<EventDispatchRemediationRuntimeState> recordedStates,
+            RemediationStateFilter filter,
+            string filterValue)
+    {
+        var aggregate = new RemediationStateAggregate();
+        EventDispatchRemediationRuntimeState? oldestRetainedState = null;
+        foreach (var state in recordedStates)
+        {
+            if (IsOldestCandidate(state, oldestRetainedState))
+            {
+                oldestRetainedState = state;
+            }
+
+            if (MatchesFilter(state, filter, filterValue))
+            {
+                aggregate.Add(state);
+            }
+        }
+
+        return (aggregate, oldestRetainedState);
+    }
+
+    private static bool MatchesFilter(
+        EventDispatchRemediationRuntimeState state,
+        RemediationStateFilter filter,
+        string filterValue)
+    {
+        return filter switch
+        {
+            RemediationStateFilter.OutboxId => string.Equals(state.OutboxId, filterValue, StringComparison.OrdinalIgnoreCase),
+            RemediationStateFilter.MessageId => string.Equals(state.MessageId, filterValue, StringComparison.OrdinalIgnoreCase),
+            RemediationStateFilter.ChannelId => string.Equals(state.ChannelId, filterValue, StringComparison.OrdinalIgnoreCase),
+            RemediationStateFilter.OperationId => string.Equals(state.OperationId, filterValue, StringComparison.OrdinalIgnoreCase),
+            RemediationStateFilter.ActorId => MetadataEquals(state, EventDispatchRemediationMetadataKeys.OperatorActorId, filterValue),
+            RemediationStateFilter.CorrelationId => MetadataEquals(state, EventDispatchRemediationMetadataKeys.OperatorCorrelationId, filterValue),
+            RemediationStateFilter.Reason => MetadataEquals(state, EventDispatchRemediationMetadataKeys.OperatorCommandReason, filterValue),
+            RemediationStateFilter.Outcome => string.Equals(state.Outcome, filterValue, StringComparison.OrdinalIgnoreCase),
+            RemediationStateFilter.DispatchOutcome => string.Equals(state.DispatchOutcome, filterValue, StringComparison.OrdinalIgnoreCase),
+            _ => false
+        };
+    }
+
+    private static bool MetadataEquals(
+        EventDispatchRemediationRuntimeState state,
+        string key,
+        string expectedValue)
+    {
+        return state.Metadata.TryGetValue(key, out var recordedValue) &&
+            string.Equals(recordedValue, expectedValue, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsLatestCandidate(
+        EventDispatchRemediationRuntimeState state,
+        EventDispatchRemediationRuntimeState? current)
+    {
+        if (current is null)
+        {
+            return true;
+        }
+
+        var observedAtComparison = state.ObservedAtUtc.CompareTo(current.ObservedAtUtc);
+        return observedAtComparison > 0 ||
+            observedAtComparison == 0 &&
+            string.Compare(state.CommandId, current.CommandId, StringComparison.OrdinalIgnoreCase) < 0;
+    }
+
+    private static bool IsOldestCandidate(
+        EventDispatchRemediationRuntimeState state,
+        EventDispatchRemediationRuntimeState? current)
+    {
+        if (current is null)
+        {
+            return true;
+        }
+
+        var observedAtComparison = state.ObservedAtUtc.CompareTo(current.ObservedAtUtc);
+        return observedAtComparison < 0 ||
+            observedAtComparison == 0 &&
+            string.Compare(state.CommandId, current.CommandId, StringComparison.OrdinalIgnoreCase) < 0;
+    }
+
+    private enum RemediationStateFilter
+    {
+        OutboxId,
+        MessageId,
+        ChannelId,
+        OperationId,
+        ActorId,
+        CorrelationId,
+        Reason,
+        Outcome,
+        DispatchOutcome
+    }
+
+    private struct RemediationStateAggregate
+    {
+        public int Count { get; private set; }
+        public int AcceptedCount { get; private set; }
+        public int RejectedCount { get; private set; }
+        public int ErrorCount { get; private set; }
+        public int DuplicateCommandCount { get; private set; }
+        public int ReservedCount { get; private set; }
+        public EventDispatchRemediationRuntimeState? LatestState { get; private set; }
+        public EventDispatchRemediationRuntimeState? OldestState { get; private set; }
+        public EventDispatchRemediationRuntimeState? OldestReservedState { get; private set; }
+
+        public void Add(EventDispatchRemediationRuntimeState state)
+        {
+            Count++;
+            if (string.Equals(state.Outcome, EventDispatchRemediationOutcomes.Accepted, StringComparison.OrdinalIgnoreCase))
+            {
+                AcceptedCount++;
+            }
+
+            if (string.Equals(state.Outcome, EventDispatchRemediationOutcomes.Rejected, StringComparison.OrdinalIgnoreCase))
+            {
+                RejectedCount++;
+            }
+
+            if (!string.IsNullOrWhiteSpace(state.Error))
+            {
+                ErrorCount++;
+            }
+
+            if (state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.DuplicateCommand, out var duplicateCommand) &&
+                string.Equals(duplicateCommand, "true", StringComparison.OrdinalIgnoreCase))
+            {
+                DuplicateCommandCount++;
+            }
+
+            if (IsReservedState(state))
+            {
+                ReservedCount++;
+                if (IsOldestCandidate(state, OldestReservedState))
+                {
+                    OldestReservedState = state;
+                }
+            }
+
+            if (IsLatestCandidate(state, LatestState))
+            {
+                LatestState = state;
+            }
+
+            if (IsOldestCandidate(state, OldestState))
+            {
+                OldestState = state;
+            }
+        }
     }
 
     private static bool IsObservationWindowPotentiallyTruncated(
@@ -383,8 +715,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return CreateFilteredSummary(
-                state => string.Equals(state.OutboxId, normalizedOutboxId, StringComparison.OrdinalIgnoreCase));
+            return CreateFilteredSummary(RemediationStateFilter.OutboxId, normalizedOutboxId);
         }
     }
 
@@ -395,8 +726,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return CreateFilteredRetention(
-                state => string.Equals(state.OutboxId, normalizedOutboxId, StringComparison.OrdinalIgnoreCase));
+            return CreateFilteredRetention(RemediationStateFilter.OutboxId, normalizedOutboxId);
         }
     }
 
@@ -407,8 +737,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return GetLatestFilteredState(
-                state => string.Equals(state.OutboxId, normalizedOutboxId, StringComparison.OrdinalIgnoreCase));
+            return GetLatestFilteredState(RemediationStateFilter.OutboxId, normalizedOutboxId);
         }
     }
 
@@ -419,8 +748,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return GetOldestFilteredState(
-                state => string.Equals(state.OutboxId, normalizedOutboxId, StringComparison.OrdinalIgnoreCase));
+            return GetOldestFilteredState(RemediationStateFilter.OutboxId, normalizedOutboxId);
         }
     }
 
@@ -446,8 +774,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return CreateFilteredSummary(
-                state => string.Equals(state.MessageId, normalizedMessageId, StringComparison.OrdinalIgnoreCase));
+            return CreateFilteredSummary(RemediationStateFilter.MessageId, normalizedMessageId);
         }
     }
 
@@ -458,8 +785,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return CreateFilteredRetention(
-                state => string.Equals(state.MessageId, normalizedMessageId, StringComparison.OrdinalIgnoreCase));
+            return CreateFilteredRetention(RemediationStateFilter.MessageId, normalizedMessageId);
         }
     }
 
@@ -470,8 +796,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return GetLatestFilteredState(
-                state => string.Equals(state.MessageId, normalizedMessageId, StringComparison.OrdinalIgnoreCase));
+            return GetLatestFilteredState(RemediationStateFilter.MessageId, normalizedMessageId);
         }
     }
 
@@ -482,8 +807,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return GetOldestFilteredState(
-                state => string.Equals(state.MessageId, normalizedMessageId, StringComparison.OrdinalIgnoreCase));
+            return GetOldestFilteredState(RemediationStateFilter.MessageId, normalizedMessageId);
         }
     }
 
@@ -509,8 +833,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return CreateFilteredSummary(
-                state => string.Equals(state.ChannelId, normalizedChannelId, StringComparison.OrdinalIgnoreCase));
+            return CreateFilteredSummary(RemediationStateFilter.ChannelId, normalizedChannelId);
         }
     }
 
@@ -521,8 +844,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return CreateFilteredRetention(
-                state => string.Equals(state.ChannelId, normalizedChannelId, StringComparison.OrdinalIgnoreCase));
+            return CreateFilteredRetention(RemediationStateFilter.ChannelId, normalizedChannelId);
         }
     }
 
@@ -533,8 +855,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return GetLatestFilteredState(
-                state => string.Equals(state.ChannelId, normalizedChannelId, StringComparison.OrdinalIgnoreCase));
+            return GetLatestFilteredState(RemediationStateFilter.ChannelId, normalizedChannelId);
         }
     }
 
@@ -545,8 +866,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return GetOldestFilteredState(
-                state => string.Equals(state.ChannelId, normalizedChannelId, StringComparison.OrdinalIgnoreCase));
+            return GetOldestFilteredState(RemediationStateFilter.ChannelId, normalizedChannelId);
         }
     }
 
@@ -572,8 +892,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return CreateFilteredSummary(
-                state => string.Equals(state.OperationId, normalizedOperationId, StringComparison.OrdinalIgnoreCase));
+            return CreateFilteredSummary(RemediationStateFilter.OperationId, normalizedOperationId);
         }
     }
 
@@ -584,8 +903,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return CreateFilteredRetention(
-                state => string.Equals(state.OperationId, normalizedOperationId, StringComparison.OrdinalIgnoreCase));
+            return CreateFilteredRetention(RemediationStateFilter.OperationId, normalizedOperationId);
         }
     }
 
@@ -596,8 +914,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return GetLatestFilteredState(
-                state => string.Equals(state.OperationId, normalizedOperationId, StringComparison.OrdinalIgnoreCase));
+            return GetLatestFilteredState(RemediationStateFilter.OperationId, normalizedOperationId);
         }
     }
 
@@ -608,8 +925,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return GetOldestFilteredState(
-                state => string.Equals(state.OperationId, normalizedOperationId, StringComparison.OrdinalIgnoreCase));
+            return GetOldestFilteredState(RemediationStateFilter.OperationId, normalizedOperationId);
         }
     }
 
@@ -637,10 +953,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return CreateFilteredSummary(
-                state =>
-                    state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.OperatorActorId, out var recordedActorId) &&
-                    string.Equals(recordedActorId, normalizedActorId, StringComparison.OrdinalIgnoreCase));
+            return CreateFilteredSummary(RemediationStateFilter.ActorId, normalizedActorId);
         }
     }
 
@@ -651,10 +964,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return CreateFilteredRetention(
-                state =>
-                    state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.OperatorActorId, out var recordedActorId) &&
-                    string.Equals(recordedActorId, normalizedActorId, StringComparison.OrdinalIgnoreCase));
+            return CreateFilteredRetention(RemediationStateFilter.ActorId, normalizedActorId);
         }
     }
 
@@ -665,10 +975,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return GetLatestFilteredState(
-                state =>
-                    state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.OperatorActorId, out var recordedActorId) &&
-                    string.Equals(recordedActorId, normalizedActorId, StringComparison.OrdinalIgnoreCase));
+            return GetLatestFilteredState(RemediationStateFilter.ActorId, normalizedActorId);
         }
     }
 
@@ -679,10 +986,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return GetOldestFilteredState(
-                state =>
-                    state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.OperatorActorId, out var recordedActorId) &&
-                    string.Equals(recordedActorId, normalizedActorId, StringComparison.OrdinalIgnoreCase));
+            return GetOldestFilteredState(RemediationStateFilter.ActorId, normalizedActorId);
         }
     }
 
@@ -710,10 +1014,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return CreateFilteredSummary(
-                state =>
-                    state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.OperatorCorrelationId, out var recordedCorrelationId) &&
-                    string.Equals(recordedCorrelationId, normalizedCorrelationId, StringComparison.OrdinalIgnoreCase));
+            return CreateFilteredSummary(RemediationStateFilter.CorrelationId, normalizedCorrelationId);
         }
     }
 
@@ -724,10 +1025,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return CreateFilteredRetention(
-                state =>
-                    state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.OperatorCorrelationId, out var recordedCorrelationId) &&
-                    string.Equals(recordedCorrelationId, normalizedCorrelationId, StringComparison.OrdinalIgnoreCase));
+            return CreateFilteredRetention(RemediationStateFilter.CorrelationId, normalizedCorrelationId);
         }
     }
 
@@ -738,10 +1036,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return GetLatestFilteredState(
-                state =>
-                    state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.OperatorCorrelationId, out var recordedCorrelationId) &&
-                    string.Equals(recordedCorrelationId, normalizedCorrelationId, StringComparison.OrdinalIgnoreCase));
+            return GetLatestFilteredState(RemediationStateFilter.CorrelationId, normalizedCorrelationId);
         }
     }
 
@@ -752,10 +1047,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return GetOldestFilteredState(
-                state =>
-                    state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.OperatorCorrelationId, out var recordedCorrelationId) &&
-                    string.Equals(recordedCorrelationId, normalizedCorrelationId, StringComparison.OrdinalIgnoreCase));
+            return GetOldestFilteredState(RemediationStateFilter.CorrelationId, normalizedCorrelationId);
         }
     }
 
@@ -783,10 +1075,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return CreateFilteredSummary(
-                state =>
-                    state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.OperatorCommandReason, out var recordedReason) &&
-                    string.Equals(recordedReason, normalizedReason, StringComparison.OrdinalIgnoreCase));
+            return CreateFilteredSummary(RemediationStateFilter.Reason, normalizedReason);
         }
     }
 
@@ -797,10 +1086,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return CreateFilteredRetention(
-                state =>
-                    state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.OperatorCommandReason, out var recordedReason) &&
-                    string.Equals(recordedReason, normalizedReason, StringComparison.OrdinalIgnoreCase));
+            return CreateFilteredRetention(RemediationStateFilter.Reason, normalizedReason);
         }
     }
 
@@ -811,10 +1097,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return GetLatestFilteredState(
-                state =>
-                    state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.OperatorCommandReason, out var recordedReason) &&
-                    string.Equals(recordedReason, normalizedReason, StringComparison.OrdinalIgnoreCase));
+            return GetLatestFilteredState(RemediationStateFilter.Reason, normalizedReason);
         }
     }
 
@@ -825,10 +1108,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return GetOldestFilteredState(
-                state =>
-                    state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.OperatorCommandReason, out var recordedReason) &&
-                    string.Equals(recordedReason, normalizedReason, StringComparison.OrdinalIgnoreCase));
+            return GetOldestFilteredState(RemediationStateFilter.Reason, normalizedReason);
         }
     }
 
@@ -854,8 +1134,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return CreateFilteredSummary(
-                state => string.Equals(state.Outcome, normalizedOutcome, StringComparison.OrdinalIgnoreCase));
+            return CreateFilteredSummary(RemediationStateFilter.Outcome, normalizedOutcome);
         }
     }
 
@@ -866,8 +1145,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return CreateFilteredRetention(
-                state => string.Equals(state.Outcome, normalizedOutcome, StringComparison.OrdinalIgnoreCase));
+            return CreateFilteredRetention(RemediationStateFilter.Outcome, normalizedOutcome);
         }
     }
 
@@ -878,8 +1156,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return GetLatestFilteredState(
-                state => string.Equals(state.Outcome, normalizedOutcome, StringComparison.OrdinalIgnoreCase));
+            return GetLatestFilteredState(RemediationStateFilter.Outcome, normalizedOutcome);
         }
     }
 
@@ -890,8 +1167,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return GetOldestFilteredState(
-                state => string.Equals(state.Outcome, normalizedOutcome, StringComparison.OrdinalIgnoreCase));
+            return GetOldestFilteredState(RemediationStateFilter.Outcome, normalizedOutcome);
         }
     }
 
@@ -917,8 +1193,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return CreateFilteredSummary(
-                state => string.Equals(state.DispatchOutcome, normalizedDispatchOutcome, StringComparison.OrdinalIgnoreCase));
+            return CreateFilteredSummary(RemediationStateFilter.DispatchOutcome, normalizedDispatchOutcome);
         }
     }
 
@@ -929,8 +1204,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return CreateFilteredRetention(
-                state => string.Equals(state.DispatchOutcome, normalizedDispatchOutcome, StringComparison.OrdinalIgnoreCase));
+            return CreateFilteredRetention(RemediationStateFilter.DispatchOutcome, normalizedDispatchOutcome);
         }
     }
 
@@ -941,8 +1215,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return GetLatestFilteredState(
-                state => string.Equals(state.DispatchOutcome, normalizedDispatchOutcome, StringComparison.OrdinalIgnoreCase));
+            return GetLatestFilteredState(RemediationStateFilter.DispatchOutcome, normalizedDispatchOutcome);
         }
     }
 
@@ -953,8 +1226,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
-            return GetOldestFilteredState(
-                state => string.Equals(state.DispatchOutcome, normalizedDispatchOutcome, StringComparison.OrdinalIgnoreCase));
+            return GetOldestFilteredState(RemediationStateFilter.DispatchOutcome, normalizedDispatchOutcome);
         }
     }
 
