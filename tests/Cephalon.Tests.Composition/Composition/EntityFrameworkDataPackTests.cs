@@ -951,6 +951,8 @@ public sealed class EntityFrameworkDataPackTests
         var dispatchEntry = Assert.Single(dispatchSurface.Entries);
         var remediationCommandSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatch-remediation-commands");
         var remediationCommandEntry = Assert.Single(remediationCommandSurface.Entries);
+        var profileSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile");
+        var durableAuditEntry = Assert.Single(profileSurface.Entries, entry => entry.Id == "durable-remediation-command-audit");
         Assert.Equal("entity-framework-outbox", outboxEntry.Id);
         Assert.Equal("entity-framework", outboxEntry.Metadata["provider"]);
         Assert.Equal("transactional-table", outboxEntry.Metadata["mode"]);
@@ -978,6 +980,12 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("entity-framework-table", remediationCommandEntry.Metadata["commandJournalStorage"]);
         Assert.Equal("true", remediationCommandEntry.Metadata["commandCrossNodeCommandAudit"]);
         Assert.Equal("not-claimed", remediationCommandEntry.Metadata["commandJournalReplayCursor"]);
+        Assert.Equal("claimed", durableAuditEntry.Metadata["status"]);
+        Assert.Contains("provider=Cephalon.Data.EntityFramework", durableAuditEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("durability=durable", durableAuditEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("scope=cross-node", durableAuditEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("crossNodeCommandAudit=true", durableAuditEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("replayCursor=not-claimed", durableAuditEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.publish" && capability.Metadata["runtimeState"] == "available");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.publish" && capability.Metadata["dispatchStore"] == "available");

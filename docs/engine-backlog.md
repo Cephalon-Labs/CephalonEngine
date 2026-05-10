@@ -1,6 +1,6 @@
 # Cephalon Engine Backlog
 
-Backlog status in this document reflects the repository state as of `May 10, 2026`.
+Backlog status in this document reflects the repository state as of `May 11, 2026`.
 
 ## Current planning reset (April 2026)
 
@@ -32,6 +32,7 @@ Current focus:
 - treat "better than the ecosystem" as a measurable backlog gate: every extracted capability should name the reference feature, the Cephalon-native design, the dimensions where Cephalon is expected to beat it, the validation or benchmark evidence required, and any dimensions still `partial` or `not-claimed`
 - for eventing backlog items, `eventing-superiority-profile` is now the runtime checkpoint for that gate: a capability is not complete until the profile and related docs say whether the dimension is `claimed`, `partial`, or `not-claimed` with runtime evidence
 - treat the native remediation operator-read performance profile as the first benchmark-backed superiority claim: `native-remediation-operator-read-performance` is `claimed` only for an active outbox-backed command path, stays `partial` when the path is merely available, and must keep naming the filtered-read guardrails that prove summary, retention, latest, oldest, and dashboard selector reads stay single-pass and Wolverine-free
+- treat durable remediation command audit as the next provider-neutral superiority claim: `durable-remediation-command-audit` reads the active `IEventDispatchRemediationCommandJournal` descriptor, is `claimed` only for durable cross-node command audit, stays `partial` for the native process-local fallback, and keeps durable replay cursors plus broker dead-letter ownership out of the claim until a provider owns those contracts
 - treat the `Cephalon.Behaviors.Http` profile/generated REST lane as a mixed `M2` proof: profile metadata stays application-authored and non-publishing, while explicit module-owned activation flows through Cephalon-managed materialization, governance, runtime catalogs, and ownership metadata
 - treat the `Cephalon.Agentics` dispatcher/run-state lane plus bounded process-local retry, duplicate-completed idempotency posture, approval-required filtering, terminal-failure filtering, and the abstraction-level `/engine/agent-tool-runs`, `/engine/agent-tool-runs/retry-pending`, `/engine/agent-tool-runs/idempotency-duplicates`, `/engine/agent-tool-runs/approval-required`, `/engine/agent-tool-runs/terminal-failures`, `POST /engine/agent-tools/{toolId}/runs`, and `snapshot.AgentToolRuns` seams as the first agentics-family managed/operator proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane plus the abstraction-level `/engine/knowledge-indexes`, `POST /engine/knowledge-indexes/{collectionId}/queries`, `POST /engine/knowledge-indexes/{collectionId}/reindex`, `snapshot.KnowledgeIndexes`, and opt-in background reindex scheduler seams as the first retrieval-family managed/operator proof instead of widening catalog breadth there again

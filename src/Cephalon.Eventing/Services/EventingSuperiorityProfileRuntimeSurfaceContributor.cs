@@ -1,12 +1,15 @@
+using Cephalon.Abstractions.Data;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Eventing.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
 
 namespace Cephalon.Eventing.Services;
 
 internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     EventingOptions options,
-    EventingRuntimeTopology topology) : ITechnologyRuntimeContributor
+    EventingRuntimeTopology topology,
+    IServiceScopeFactory scopeFactory) : ITechnologyRuntimeContributor
 {
     private const string ReferenceFrameworks = "MassTransit,NServiceBus,Wolverine,MediatR";
     private const string ClaimPolicy = "claimed-only-with-runtime-evidence";
@@ -25,6 +28,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var remediationReadPerformanceEvidence = topology.HasOutboxPublishingPath
             ? $"benchmarks={RemediationFilteredReadBenchmarks}; readPolicy=single-pass-retained-catalog; materialization=not-required; wolverineRequired=false"
             : $"benchmark guardrails exist for {RemediationFilteredReadBenchmarks}; no outbox-backed command path is active.";
+        var commandJournalDescriptor = ResolveCommandJournalDescriptor();
+        var durableCommandJournalStatus = ResolveDurableCommandJournalStatus(commandJournalDescriptor);
+        var durableCommandJournalEvidence = ResolveDurableCommandJournalEvidence(commandJournalDescriptor);
+        var durableCommandJournalNextGap = ResolveDurableCommandJournalNextGap(commandJournalDescriptor);
 
         return new TechnologyRuntimeSurface(
             technologyId: "event-driven-integration",
@@ -150,7 +157,15 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     status: remediationReadPerformanceStatus,
                     evidence: remediationReadPerformanceEvidence,
                     advantage: "Operator dashboards can drill into retained command posture through engine read models with guardrails, without bus-specific consoles, external dashboards, or config-driven subscription wiring.",
-                    nextGap: "Extend the same benchmark evidence to durable provider-backed journals and broker dead-letter replay ownership."),
+                    nextGap: "Extend the same benchmark evidence to broker dead-letter replay ownership."),
+                CreateEntry(
+                    id: "durable-remediation-command-audit",
+                    displayName: "Durable Remediation Command Audit",
+                    description: "Shows whether the active remediation command journal can preserve operator command audit and idempotency evidence beyond one process.",
+                    status: durableCommandJournalStatus,
+                    evidence: durableCommandJournalEvidence,
+                    advantage: "Operators can audit and de-duplicate remediation commands through a Cephalon-owned journal contract while Wolverine, MassTransit, NServiceBus, and broker consoles remain optional.",
+                    nextGap: durableCommandJournalNextGap),
                 CreateEntry(
                     id: "observability-compliance-and-auditability",
                     displayName: "Observability Compliance And Auditability",
@@ -168,6 +183,52 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     advantage: "Cephalon separates tested runtime truth from aspirational roadmap items.",
                     nextGap: "Promote repeatable cold-start, broker dispatch, durable journal, and provider-managed eventing benchmarks.")
             ]);
+    }
+
+    private EventDispatchRemediationCommandJournalDescriptor? ResolveCommandJournalDescriptor()
+    {
+        using var scope = scopeFactory.CreateScope();
+        return scope.ServiceProvider.GetService<IEventDispatchRemediationCommandJournal>()?.Descriptor;
+    }
+
+    private static string ResolveDurableCommandJournalStatus(EventDispatchRemediationCommandJournalDescriptor? descriptor)
+    {
+        if (descriptor is null)
+        {
+            return "not-claimed";
+        }
+
+        return IsDurableCrossNodeAudit(descriptor) ? "claimed" : "partial";
+    }
+
+    private static string ResolveDurableCommandJournalEvidence(EventDispatchRemediationCommandJournalDescriptor? descriptor)
+    {
+        if (descriptor is null)
+        {
+            return "no remediation command journal is active.";
+        }
+
+        var replayCursor = descriptor.DurableReplayCursor ? "durable" : "not-claimed";
+        return string.Create(
+            CultureInfo.InvariantCulture,
+            $"journalId={descriptor.JournalId}; provider={descriptor.Provider}; storage={descriptor.Storage}; durability={descriptor.Durability}; scope={descriptor.Scope}; crossNodeCommandAudit={ToMetadataValue(descriptor.CrossNodeCommandAudit)}; replayCursor={replayCursor}; wolverineRequired=false");
+    }
+
+    private static string ResolveDurableCommandJournalNextGap(EventDispatchRemediationCommandJournalDescriptor? descriptor)
+    {
+        if (descriptor is null)
+        {
+            return "Activate an outbox-backed command path before claiming remediation command audit evidence.";
+        }
+
+        if (!IsDurableCrossNodeAudit(descriptor))
+        {
+            return "Use a provider-backed durable cross-node journal before claiming durable remediation command audit.";
+        }
+
+        return descriptor.DurableReplayCursor
+            ? "Attach broker dead-letter replay ownership to the same audit trail when a provider package owns that path."
+            : "Add a durable replay cursor contract before claiming broker replay ownership.";
     }
 
     private static TechnologyRuntimeEntry CreateEntry(
@@ -193,4 +254,13 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                 ["nextGap"] = nextGap
             });
     }
+
+    private static bool IsDurableCrossNodeAudit(EventDispatchRemediationCommandJournalDescriptor descriptor)
+    {
+        return string.Equals(descriptor.Durability, "durable", StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(descriptor.Scope, "cross-node", StringComparison.OrdinalIgnoreCase) &&
+            descriptor.CrossNodeCommandAudit;
+    }
+
+    private static string ToMetadataValue(bool value) => value ? "true" : "false";
 }
