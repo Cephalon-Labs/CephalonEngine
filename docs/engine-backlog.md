@@ -23,6 +23,7 @@ Current focus:
 - treat the non-relational `Cephalon.Data` store provider packs as current provider-visible runtime truth rather than catalog-only placeholders: MongoDB, Redis, Neo4j, Cassandra, ClickHouse, Elasticsearch, OpenSearch, Qdrant, and NATS can now be active together in one engine with provider outbox/inbox descriptors, `outbox-producers` / `inbox-stores` technology surfaces, and sanitized URI capability metadata for URI-based packs; shared family capability keys such as `data.search-store` aggregate provider metadata instead of failing composition when multiple provider packs expose the same capability family
 - treat the relational `Cephalon.Data` provider packs as provider-managed CDC/runtime proof through the shared data contracts: SQL Server, PostgreSQL, MySQL, and Oracle can now be active together in one engine with an aggregated `data.relational-store` capability family plus `data-management` `cdc-captures` / `cdc-capture-runtimes` technology surfaces; database role and migration runtime ownership remains with `Cephalon.Data.EntityFramework` over `Engine:Databases`, not the raw relational provider packs
 - treat the core eventing execution-binding catalog, abstraction-level execution-readiness catalog, abstraction-level publication dispatcher, abstraction-level publication runtime-state catalog, abstraction-level dispatch-state/summary terminal posture, abstraction-level dispatch-remediation dispatcher, abstraction-level dispatch-remediation command-result catalog, dispatch-store `dead-letter` command intent metadata, `event-dispatch-remediations` command-readiness posture, `event-dispatch-remediation-commands` command-result posture including latest/summary/retention/message/channel/operation/actor/correlation/reason/dispatch-outcome drill-downs, `/engine/event-subscription-readiness`, `POST /engine/event-publications`, `/engine/event-publications/runtime*`, `/engine/event-dispatches/terminal-failures`, `POST /engine/event-dispatches/{outboxId}/commands/{operationId}`, `/engine/event-dispatch-remediation-commands*`, `snapshot.EventSubscriptionExecutionReadiness`, `snapshot.EventPublicationStates`, `snapshot.EventDispatchStates`, config-driven channel descriptor discovery, code-first subscription descriptors/executors/descriptor providers, the opt-in direct in-process execution lane, bounded process-local fixed/exponential retry backoff and deterministic jitter metadata, bounded duplicate-completed execution suppression metadata, including process-local and `IInbox`-backed idempotency-store modes, config-driven event-type-to-channel publication routing metadata, and bounded process-local scheduled/delayed publication metadata, as adapter-neutral engine-owned proof, while the Wolverine-managed dispatch and event-subscription lanes remain optional provider-managed proofs instead of engine requirements
+- treat the native event-dispatch remediation command-result observation window as part of that Wolverine-free proof: `IEventDispatchRemediationRuntimeCatalog.GetByObservedAt(...)` and `/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}` provide inclusive retained-history incident timeline reads, while `/retention` remains the explicit answer when bounded process-local history has dropped older records
 - treat Wolverine-class durable messaging as the eventing-family minimum benchmark: future backlog items should close provider-neutral Cephalon gaps across durable inbox/outbox, local and external transports, routing, scheduled/delayed delivery, retry/backoff/jitter, sending failure policy, dead-letter/quarantine/replay, saga/process-manager coordination, handler/subscription discovery, serialization/versioning, idempotency, multi-tenancy/correlation, observability, diagnostics, operator actions, topology/runtime introspection, governance, compliance, and provider portability through config-driven engine contracts before promoting a Wolverine-only feature as a core engine claim
 - treat MassTransit, NServiceBus, and MediatR as additional eventing/behavior research baselines: pull useful concepts into Cephalon-owned config, contracts, runtime truth, and validation, but do not add their packages or API shapes to the core engine unless a future item is explicitly scoped as interop or migration compatibility
 - treat "better than the ecosystem" as a measurable backlog gate: every extracted capability should name the reference feature, the Cephalon-native design, the dimensions where Cephalon is expected to beat it, the validation or benchmark evidence required, and any dimensions still `partial` or `not-claimed`
@@ -5193,6 +5194,42 @@ Follow-up later:
 
 - durable command-result retention, cross-node command analytics, and authorization-aware retention
   slices remain future package-owned work until a package truly owns those paths
+
+### ENG-566 Eventing remediation command observation-window drill-down
+
+Status: done
+Estimate: 1
+Issue: #1220
+Iteration: Sprint 91 follow-through
+Area: eventing / operations / Wolverine-free baseline
+Quality dimensions: Auditability, Usability, Reliability, Performance, Compatibility
+
+Why:
+
+- operators need to inspect command-result history by observed UTC window during incident timelines
+  without scanning the full bounded process-local command list
+- Wolverine remains optional, so the engine-owned command audit path needs provider-neutral
+  time-window filtering over authoritative retained records
+
+Delivered:
+
+- added `IEventDispatchRemediationRuntimeCatalog.GetByObservedAt(...)` and the native catalog
+  implementation with inclusive UTC bounds, latest-first ordering, and fail-fast reversed-window
+  validation
+- exposed `GET /engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}`
+  through ASP.NET Core with invalid-date and reversed-window `400` responses
+- surfaced the route through eventing capability metadata plus
+  `event-dispatch-remediations` / `event-dispatch-remediation-commands` technology surfaces
+- proved the Wolverine-free HTTP route path, direct composition catalog path, retention-bounded
+  behavior, invalid query behavior, and package-surface reflection guardrail with focused tests
+- updated component docs, ASP.NET Core operations docs, runtime contract index, maturity and
+  conformance rows, roadmap, compatibility notes, project memory, and generated reference docs so
+  observation-window command-result history is part of the human and API contract
+
+Follow-up later:
+
+- durable compliance retention, broker replay, distributed command audit storage, and
+  provider-specific operator dashboards remain package-owned future work
 
 ### ENG-269 Agentics tool execution operator-action baseline
 
@@ -16566,6 +16603,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-563 Eventing remediation command summary roll-up (shipped): native command-result history can now be summarized through `IEventDispatchRemediationRuntimeCatalog.Summary` and `/engine/event-dispatch-remediation-commands/summary` without requiring Wolverine or counting duplicate command-id retries as new command history
 - ENG-564 Eventing remediation command latest read (shipped): native command-result history can now return the newest authoritative command record through `IEventDispatchRemediationRuntimeCatalog.Latest` and `/engine/event-dispatch-remediation-commands/latest` without requiring Wolverine or letting duplicate command-id retries replace recorded command history
 - ENG-565 Eventing remediation command retention readback (shipped): native command-result history can now report bounded retention posture through `IEventDispatchRemediationRuntimeCatalog.Retention` and `/engine/event-dispatch-remediation-commands/retention` so operators can see history limit, retained/recorded/dropped counts, truncation state, oldest retained command, and latest retained command without requiring Wolverine or mistaking process-local history for durable audit storage
+- ENG-566 Eventing remediation command observation-window drill-down (shipped): native command-result history can now be filtered by inclusive observed UTC window through `IEventDispatchRemediationRuntimeCatalog.GetByObservedAt(...)` and `/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}` without requiring Wolverine or scanning the full bounded history
 
 ### Sprint 88
 
@@ -16894,6 +16932,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-563 Add Eventing remediation command summary roll-up: native command-result history now has a summary read seam, ASP.NET Core publishes `/engine/event-dispatch-remediation-commands/summary`, and duplicate command-id retries do not inflate command-result counts. Quality dimensions: Auditability + Usability + Reliability + Compatibility + Data Integrity (shipped)
 - ENG-564 Add Eventing remediation command latest read: native command-result history now has a latest-record read seam, ASP.NET Core publishes `/engine/event-dispatch-remediation-commands/latest`, and duplicate command-id retries do not replace the latest authoritative command record. Quality dimensions: Auditability + Usability + Reliability + Compatibility + Data Integrity (shipped)
 - ENG-565 Add Eventing remediation command retention readback: native command-result history now has a retention read seam, ASP.NET Core publishes `/engine/event-dispatch-remediation-commands/retention`, and bounded truncation state is explicit through retained/recorded/dropped counts plus oldest/latest retained command readback. Quality dimensions: Auditability + Usability + Reliability + Compatibility + Data Integrity (shipped)
+- ENG-566 Add Eventing remediation command observation-window drill-down: native command-result history now has an observed-window read seam, ASP.NET Core publishes `/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}`, and invalid dates or reversed windows fail fast while retained results stay latest-first. Quality dimensions: Auditability + Usability + Reliability + Performance + Compatibility (shipped)
 - ENG-524 Harden deployment-mode audit-only probes: direct trim and Native AOT runs now keep the single-file release gate out of their verdict by returning `PublishProbeGate=not-applicable` when only audit-only modes are evaluated; compiler-only analyzer/source-generator `ProjectReference` entries strip app publish-mode globals through `CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove`; and `Cephalon.Analyzers`, `Cephalon.Behaviors.SourceGen`, and `Cephalon.Engine.SourceGen` localize publish/RID globals with `TreatAsLocalProperty` so publish probes reach real runtime blocker evidence instead of failing on compiler-only `netstandard2.0` drift. Release closeout also stabilized the readiness warmup hosting test, refreshed the REST projection/governance guardrail to a measured 1 s ceiling while keeping the existing 16 MB allocation ceiling, and moved the canonical full `validate-release` wall-time target to 30 minutes after the current full lane measured about 1,669.848 seconds. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability + Performance (shipped)
 - ENG-535 Close generated REST behavior source-generator adoption proof: `Cephalon.Behaviors.SourceGen` now packs its compiler assembly under `analyzers/dotnet/cs`, scaffolded REST behavior modules and template-pack REST starters reference it as `PrivateAssets=all`, generated module projects keep `Cephalon.Engine.SourceGen` in every blueprint, and the out-of-tree adoption temporary feed publishes the full generated REST behavior package closure (`Cephalon.Behaviors.SourceGen`, `Cephalon.Diagnostics`, and `Cephalon.Resilience`) so restore/build/run replay can produce the REST profile hints required by `MapProfile<TBehavior>()`. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability (shipped)
 - ENG-487 Add opt-in CDC integration baseline: `tests/Cephalon.Tests.CdcIntegration` now carries the first dedicated live CDC integration lane, proving MongoDB change streams against a disposable `EphemeralMongo7` replica set with real outbox staging, provider-native runtime binding, runtime-state reporting, execution-runtime aggregation, and checkpoint persistence; `data.slnf` now points at the split data-relevant test projects instead of the retired monolithic test project, and SQL Server/Postgres live CDC coverage stays explicitly later until an external-service/Testcontainers gate exists. Quality dimensions: Reliability + Compatibility + Auditability + Maintainability (shipped)

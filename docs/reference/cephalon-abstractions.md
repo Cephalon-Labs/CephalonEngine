@@ -51268,6 +51268,22 @@ Returns: The recorded command states for the message, ordered by observed time a
 Parameters:
 - `messageId`: The stable event message identifier to resolve.
 
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbyobservedat-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset"></a>
+
+##### `GetByObservedAt`
+
+```csharp
+IReadOnlyList<EventDispatchRemediationRuntimeState> GetByObservedAt(DateTimeOffset? fromObservedAtUtc, DateTimeOffset? toObservedAtUtc)
+```
+
+Gets remediation command-state entries observed inside an optional UTC observation window.
+
+Returns: The recorded command states in the observation window, ordered by descending observed time and command identifier.
+
+Parameters:
+- `fromObservedAtUtc`: The inclusive lower UTC observation bound, or `null` to leave the start open.
+- `toObservedAtUtc`: The inclusive upper UTC observation bound, or `null` to leave the end open.
+
 <a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbyoperationid-system-string"></a>
 
 ##### `GetByOperationId`

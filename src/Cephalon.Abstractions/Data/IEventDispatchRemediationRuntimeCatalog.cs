@@ -26,6 +26,16 @@ public interface IEventDispatchRemediationRuntimeCatalog
     IReadOnlyList<EventDispatchRemediationRuntimeState> States { get; }
 
     /// <summary>
+    /// Gets remediation command-state entries observed inside an optional UTC observation window.
+    /// </summary>
+    /// <param name="fromObservedAtUtc">The inclusive lower UTC observation bound, or <see langword="null" /> to leave the start open.</param>
+    /// <param name="toObservedAtUtc">The inclusive upper UTC observation bound, or <see langword="null" /> to leave the end open.</param>
+    /// <returns>The recorded command states in the observation window, ordered by descending observed time and command identifier.</returns>
+    IReadOnlyList<EventDispatchRemediationRuntimeState> GetByObservedAt(
+        DateTimeOffset? fromObservedAtUtc,
+        DateTimeOffset? toObservedAtUtc);
+
+    /// <summary>
     /// Gets one remediation command-state entry by command identifier.
     /// </summary>
     /// <param name="commandId">The stable remediation command identifier to resolve.</param>

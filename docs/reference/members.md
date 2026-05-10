@@ -11433,6 +11433,9 @@ Browse the published API surface by public member.
 - [GetByModule](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellboundarycatalog-getbymodule-system-string): `Methods` on `ICellBoundaryCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets all cell boundaries that include the requested module.
   - `IReadOnlyList<CellBoundaryDescriptor> GetByModule(string moduleId)`
+- [GetByObservedAt](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbyobservedat-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByObservedAt&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets remediation command-state entries observed inside an optional UTC observation window.
+  - `IReadOnlyList<EventDispatchRemediationRuntimeState> GetByObservedAt(DateTimeOffset? fromObservedAtUtc, DateTimeOffset? toObservedAtUtc)`
 - [GetByOperationId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbyoperationid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByOperationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the remediation command-state entries recorded for one command operation.
   - `IReadOnlyList<EventDispatchRemediationRuntimeState> GetByOperationId(string operationId)`

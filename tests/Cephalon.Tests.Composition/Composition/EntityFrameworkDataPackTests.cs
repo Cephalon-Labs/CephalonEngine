@@ -1227,6 +1227,26 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal(
             ["cmd-retention-003-retry-later-rejected", "cmd-retention-002-dead-letter"],
             remediationCommandCatalog.States.Select(state => state.CommandId).ToArray());
+        Assert.Equal(
+            ["cmd-retention-003-retry-later-rejected", "cmd-retention-002-dead-letter"],
+            remediationCommandCatalog.GetByObservedAt(
+                    new DateTimeOffset(2026, 04, 13, 10, 2, 0, TimeSpan.Zero),
+                    new DateTimeOffset(2026, 04, 13, 10, 3, 0, TimeSpan.Zero))
+                .Select(state => state.CommandId)
+                .ToArray());
+        Assert.Equal(
+            ["cmd-retention-002-dead-letter"],
+            remediationCommandCatalog.GetByObservedAt(
+                    null,
+                    new DateTimeOffset(2026, 04, 13, 10, 2, 30, TimeSpan.Zero))
+                .Select(state => state.CommandId)
+                .ToArray());
+        Assert.Empty(remediationCommandCatalog.GetByObservedAt(
+            null,
+            new DateTimeOffset(2026, 04, 13, 10, 1, 30, TimeSpan.Zero)));
+        Assert.Throws<ArgumentException>(() => remediationCommandCatalog.GetByObservedAt(
+            new DateTimeOffset(2026, 04, 13, 10, 3, 0, TimeSpan.Zero),
+            new DateTimeOffset(2026, 04, 13, 10, 2, 0, TimeSpan.Zero)));
         Assert.Equal(2, remediationCommandCatalog.Summary.TotalCommandCount);
         Assert.Equal(1, remediationCommandCatalog.Summary.AcceptedCount);
         Assert.Equal(1, remediationCommandCatalog.Summary.RejectedCount);
@@ -1353,6 +1373,7 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/summary", remediationEntry.Metadata["operatorCommandSummaryRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/latest", remediationEntry.Metadata["operatorCommandLatestRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/retention", remediationEntry.Metadata["operatorCommandRetentionRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}", remediationEntry.Metadata["operatorCommandObservationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/operations/{operationId}", remediationEntry.Metadata["operatorCommandOperationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/actors/{actorId}", remediationEntry.Metadata["operatorCommandActorRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/correlations/{correlationId}", remediationEntry.Metadata["operatorCommandCorrelationRoute"]);
@@ -1508,6 +1529,7 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/summary", remediationCommandEntry.Metadata["commandSummaryRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/latest", remediationCommandEntry.Metadata["commandLatestRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/retention", remediationCommandEntry.Metadata["commandRetentionRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}", remediationCommandEntry.Metadata["commandObservationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/operations/{operationId}", remediationCommandEntry.Metadata["commandOperationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/actors/{actorId}", remediationCommandEntry.Metadata["commandActorRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/correlations/{correlationId}", remediationCommandEntry.Metadata["commandCorrelationRoute"]);

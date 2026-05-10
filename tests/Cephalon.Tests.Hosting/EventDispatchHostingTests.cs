@@ -272,6 +272,7 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/summary", remediationCapability.Metadata["commandSummaryRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/latest", remediationCapability.Metadata["commandLatestRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/retention", remediationCapability.Metadata["commandRetentionRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}", remediationCapability.Metadata["commandObservationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/operations/{operationId}", remediationCapability.Metadata["commandOperationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/actors/{actorId}", remediationCapability.Metadata["commandActorRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/correlations/{correlationId}", remediationCapability.Metadata["commandCorrelationRoute"]);
@@ -370,6 +371,22 @@ public sealed class EventDispatchHostingTests
         Assert.Equal(retryReason, commandState.Metadata[EventDispatchRemediationMetadataKeys.OperatorCommandReason]);
         Assert.Equal("unique-command-id", commandState.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
         Assert.Equal("reject-without-mutation", commandState.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
+        var commandStatesByObservationWindow = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>(
+            BuildObservationWindowRoute(
+                commandState.ObservedAtUtc.AddSeconds(-1),
+                commandState.ObservedAtUtc.AddSeconds(1)));
+        var commandStatesBeforeObservationWindow = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>(
+            BuildObservationWindowRoute(null, commandState.ObservedAtUtc.AddSeconds(-1)));
+        var invalidObservationWindowResponse = await client.GetAsync("/engine/event-dispatch-remediation-commands/observations?fromUtc=not-a-date");
+        var reversedObservationWindowResponse = await client.GetAsync(BuildObservationWindowRoute(
+            commandState.ObservedAtUtc.AddSeconds(1),
+            commandState.ObservedAtUtc.AddSeconds(-1)));
+        Assert.NotNull(commandStatesByObservationWindow);
+        Assert.Equal("cmd-command-001-retry", Assert.Single(commandStatesByObservationWindow).CommandId);
+        Assert.NotNull(commandStatesBeforeObservationWindow);
+        Assert.Empty(commandStatesBeforeObservationWindow);
+        Assert.Equal(HttpStatusCode.BadRequest, invalidObservationWindowResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, reversedObservationWindowResponse.StatusCode);
         Assert.NotNull(latestCommandState);
         Assert.Equal("cmd-command-001-retry", latestCommandState.CommandId);
         Assert.Equal(EventDispatchRemediationOutcomes.Accepted, latestCommandState.Outcome);
@@ -617,6 +634,13 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("corr-command-operator-002", rejectedCommandState.Metadata[EventDispatchRemediationMetadataKeys.OperatorCorrelationId]);
         Assert.Equal(rejectedReason, rejectedCommandState.Metadata[EventDispatchRemediationMetadataKeys.OperatorCommandReason]);
         Assert.Contains("next attempt", rejectedCommandState.Error, StringComparison.OrdinalIgnoreCase);
+        Assert.NotNull(deadLetterCommandState);
+        var finalCommandStatesByObservationWindow = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>(
+            BuildObservationWindowRoute(deadLetterCommandState.ObservedAtUtc, rejectedCommandState.ObservedAtUtc));
+        Assert.NotNull(finalCommandStatesByObservationWindow);
+        Assert.Equal(
+            ["cmd-command-001-retry-later-rejected", "cmd-command-001-dead-letter"],
+            finalCommandStatesByObservationWindow.Select(state => state.CommandId).ToArray());
         Assert.NotNull(finalLatestCommandState);
         Assert.Equal("cmd-command-001-retry-later-rejected", finalLatestCommandState.CommandId);
         Assert.Equal(EventDispatchRemediationOutcomes.Rejected, finalLatestCommandState.Outcome);
@@ -668,6 +692,24 @@ public sealed class EventDispatchHostingTests
         Assert.False(finalCommandRetention.Truncated);
         Assert.Equal("cmd-command-001-retry", finalCommandRetention.OldestRetainedCommandId);
         Assert.Equal("cmd-command-001-retry-later-rejected", finalCommandRetention.LatestRetainedCommandId);
+
+        static string BuildObservationWindowRoute(DateTimeOffset? fromUtc, DateTimeOffset? toUtc)
+        {
+            var parameters = new List<string>(capacity: 2);
+            if (fromUtc is not null)
+            {
+                parameters.Add($"fromUtc={Uri.EscapeDataString(fromUtc.Value.ToString("O", CultureInfo.InvariantCulture))}");
+            }
+
+            if (toUtc is not null)
+            {
+                parameters.Add($"toUtc={Uri.EscapeDataString(toUtc.Value.ToString("O", CultureInfo.InvariantCulture))}");
+            }
+
+            return parameters.Count == 0
+                ? "/engine/event-dispatch-remediation-commands/observations"
+                : $"/engine/event-dispatch-remediation-commands/observations?{string.Join("&", parameters)}";
+        }
     }
 
     [Fact]

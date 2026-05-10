@@ -149,6 +149,29 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         }
     }
 
+    public IReadOnlyList<EventDispatchRemediationRuntimeState> GetByObservedAt(
+        DateTimeOffset? fromObservedAtUtc,
+        DateTimeOffset? toObservedAtUtc)
+    {
+        if (fromObservedAtUtc is { } from && toObservedAtUtc is { } to && from > to)
+        {
+            throw new ArgumentException(
+                "The observation window start must be less than or equal to the end.",
+                nameof(fromObservedAtUtc));
+        }
+
+        lock (gate)
+        {
+            return states
+                .Where(state =>
+                    (fromObservedAtUtc is null || state.ObservedAtUtc >= fromObservedAtUtc.Value) &&
+                    (toObservedAtUtc is null || state.ObservedAtUtc <= toObservedAtUtc.Value))
+                .OrderByDescending(static state => state.ObservedAtUtc)
+                .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+        }
+    }
+
     public IReadOnlyList<EventDispatchRemediationRuntimeState> GetByOutboxId(string outboxId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(outboxId);

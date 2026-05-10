@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T07:00:10.9394128+00:00",
+  "GeneratedAtUtc": "2026-05-10T07:26:58.087716+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -11184,7 +11184,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 4,
-        "Methods": 10
+        "Methods": 11
       }
     },
     {
@@ -61339,6 +61339,17 @@
       "AnchorId": "member-m-cephalon-abstractions-technologies-icellboundarycatalog-getbymodule-system-string",
       "Signature": "IReadOnlyList\u003CCellBoundaryDescriptor\u003E GetByModule(string moduleId)",
       "Summary": "Gets all cell boundaries that include the requested module."
+    },
+    {
+      "DisplayName": "GetByObservedAt",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbyobservedat-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset",
+      "Signature": "IReadOnlyList\u003CEventDispatchRemediationRuntimeState\u003E GetByObservedAt(DateTimeOffset? fromObservedAtUtc, DateTimeOffset? toObservedAtUtc)",
+      "Summary": "Gets remediation command-state entries observed inside an optional UTC observation window."
     },
     {
       "DisplayName": "GetByOperationId",
