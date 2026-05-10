@@ -228,6 +228,8 @@ ENG-595 adds `broker-dead-letter-replay-ownership` to the same profile so runtim
 
 ENG-596 adds `broker-topology-materialization-ownership` to the same profile so runtime consumers can see that native route/channel governance is separate from broker exchange, queue, topic, and partition provisioning/verification.
 
+ENG-597 adds `provider-partition-ownership` to the same profile so runtime consumers can see that route and topology evidence are separate from provider partition assignment, affinity, rebalancing, and ordering guarantees.
+
 **Cells and traffic automation**
 
 `ICellBoundaryCatalog`, `ICellRouteCatalog`, `ICellHealthIsolationCatalog`, `ICellTrafficAutomationRuntimeCatalog`.

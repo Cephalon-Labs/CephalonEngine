@@ -2645,6 +2645,9 @@ Current `Cephalon.Eventing` highlights:
   profile; it stays `not-claimed` until a provider package owns broker exchange, queue, topic, or
   partition provisioning/verification, even when Cephalon-native routing has selected the effective
   channel
+- `provider-partition-ownership` is the separate provider partition boundary in that same profile;
+  it stays `not-claimed` until a provider package owns partition assignment, affinity, rebalancing,
+  and per-partition ordering semantics, even when route and broker topology evidence are present
 - Wolverine or another companion adapter can still move staged dispatch or one subscription to
   provider-managed ownership for brokered or staged dispatch scenarios; the shipped Wolverine path
   now keeps both the dispatch loop and managed subscription retry lanes bounded with max attempts,

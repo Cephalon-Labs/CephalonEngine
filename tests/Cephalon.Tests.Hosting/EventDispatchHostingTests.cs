@@ -1932,6 +1932,9 @@ public sealed class EventDispatchHostingTests
         var topologyOwnershipEntry = Assert.Single(
             eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
             entry => entry.Id == "broker-topology-materialization-ownership");
+        var partitionOwnershipEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "provider-partition-ownership");
         Assert.Equal("claimed", superiorityEntry.Metadata["status"]);
         Assert.Contains("routes=1", superiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Equal("not-claimed", topologyOwnershipEntry.Metadata["status"]);
@@ -1941,6 +1944,14 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("queueProvisioning=not-claimed", topologyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("providerOwnedTopology=not-present", topologyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", topologyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("not-claimed", partitionOwnershipEntry.Metadata["status"]);
+        Assert.Contains("routingPolicy=event-type-map", partitionOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("routes=1", partitionOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerPartitionOwnership=not-claimed", partitionOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("partitionAssignment=not-claimed", partitionOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("partitionOrderingGuarantee=not-claimed", partitionOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerOwnedPartitioning=not-present", partitionOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", partitionOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
         Assert.NotNull(snapshot);
         var snapshotPublicationState = Assert.Single(snapshot.EventPublicationStates);
@@ -1951,9 +1962,14 @@ public sealed class EventDispatchHostingTests
         var snapshotTopologyOwnershipEntry = Assert.Single(
             snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
             entry => entry.Id == "broker-topology-materialization-ownership");
+        var snapshotPartitionOwnershipEntry = Assert.Single(
+            snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "provider-partition-ownership");
         Assert.Equal("claimed", snapshotRoutingEntry.Metadata["status"]);
         Assert.Equal("not-claimed", snapshotTopologyOwnershipEntry.Metadata["status"]);
         Assert.Contains("brokerTopologyMaterialization=not-claimed", snapshotTopologyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("not-claimed", snapshotPartitionOwnershipEntry.Metadata["status"]);
+        Assert.Contains("providerPartitionOwnership=not-claimed", snapshotPartitionOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]

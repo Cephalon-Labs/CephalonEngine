@@ -96,6 +96,8 @@ ENG-595 requires `eventing-superiority-profile` to expose `broker-dead-letter-re
 
 ENG-596 requires `eventing-superiority-profile` to expose `broker-topology-materialization-ownership` as the separate routing-versus-topology boundary: native route/channel governance can be claimed through `routing-and-provider-portability`, while broker exchange, queue, topic, and partition provisioning/verification remain `not-claimed` until a provider owns that topology path.
 
+ENG-597 requires `eventing-superiority-profile` to expose `provider-partition-ownership` as the separate topology-versus-partition boundary: broker topology materialization cannot imply provider partition assignment, affinity, rebalancing, or per-partition ordering guarantees until a provider owns that partition path.
+
 ## Agentics and retrieval
 
 | Package | Maturity | Ownership | Engine routes | Snapshot keys | Catalog interfaces | Notes |

@@ -25,6 +25,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             ? $"policy={EventPublicationRoutingPolicy.GetPolicyId(options)} routes={routeCount} autoChannel={EventPublicationRoutingPolicy.GetAutoChannelId(options)}"
             : "publication routing is not enabled.";
         var brokerTopologyEvidence = ResolveBrokerTopologyEvidence(options, routeCount);
+        var providerPartitionEvidence = ResolveProviderPartitionEvidence(options, routeCount);
         var remediationReadPerformanceStatus = topology.HasOutboxPublishingPath ? "claimed" : "partial";
         var remediationReadPerformanceEvidence = topology.HasOutboxPublishingPath
             ? $"benchmarks={RemediationFilteredReadBenchmarks}; readPolicy=single-pass-retained-catalog; materialization=not-required; wolverineRequired=false"
@@ -71,6 +72,14 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     evidence: brokerTopologyEvidence,
                     advantage: "Teams can use Cephalon channel routing without assuming the engine silently provisions provider-specific topology or binds application code to a broker API.",
                     nextGap: "Add a provider-owned broker topology descriptor and validation/provisioning catalog before claiming topology materialization."),
+                CreateEntry(
+                    id: "provider-partition-ownership",
+                    displayName: "Provider Partition Ownership",
+                    description: "Makes provider-specific partition assignment, affinity, rebalancing, and ordering guarantees explicit instead of inferring them from Cephalon route or broker-topology metadata.",
+                    status: "not-claimed",
+                    evidence: providerPartitionEvidence,
+                    advantage: "Teams can route events through Cephalon without assuming the engine silently owns provider partition placement or per-partition ordering semantics.",
+                    nextGap: "Add a provider-owned partition descriptor plus assignment, rebalancing, affinity, and ordering-evidence catalog before claiming partition ownership."),
                 CreateEntry(
                     id: "native-wolverine-free-baseline",
                     displayName: "Native Wolverine-free Baseline",
@@ -230,6 +239,18 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         return string.Create(
             CultureInfo.InvariantCulture,
             $"routingPolicy={EventPublicationRoutingPolicy.GetPolicyId(options)}; routes={routeCount}; autoChannel={EventPublicationRoutingPolicy.GetAutoChannelId(options)}; brokerTopologyMaterialization=not-claimed; exchangeProvisioning=not-claimed; queueProvisioning=not-claimed; topicProvisioning=not-claimed; partitionOwnership=not-claimed; providerOwnedTopology=not-present; wolverineRequired=false");
+    }
+
+    private static string ResolveProviderPartitionEvidence(EventingOptions options, string routeCount)
+    {
+        if (!options.EnablePublicationRouting)
+        {
+            return "publication routing is not enabled; providerPartitionOwnership=not-claimed; providerOwnedPartitioning=not-present; wolverineRequired=false";
+        }
+
+        return string.Create(
+            CultureInfo.InvariantCulture,
+            $"routingPolicy={EventPublicationRoutingPolicy.GetPolicyId(options)}; routes={routeCount}; autoChannel={EventPublicationRoutingPolicy.GetAutoChannelId(options)}; providerPartitionOwnership=not-claimed; partitionAssignment=not-claimed; partitionAffinity=not-claimed; partitionRebalancing=not-claimed; partitionOrderingGuarantee=not-claimed; providerOwnedPartitioning=not-present; wolverineRequired=false");
     }
 
     private static string ResolveBrokerDeadLetterReplayEvidence(EventingRuntimeTopology topology)
