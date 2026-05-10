@@ -232,6 +232,8 @@ ENG-597 adds `provider-partition-ownership` to the same profile so runtime consu
 
 ENG-598 adds `downstream-delivery-completion-ownership` to the same profile so runtime consumers can see that publication accepted handoff, dispatch reports, routing, topology, partition, and provider-managed dispatch evidence are separate from destination delivery completion, provider delivery receipts, subscriber acknowledgement, destination commits, and exactly-once delivery guarantees.
 
+ENG-599 adds `broker-inbound-consumption-ownership` to the same profile so runtime consumers can see that declared subscriptions, direct in-process execution, inbox duplicate suppression, hosted subscription bindings, optional Wolverine bindings, routing, topology, partition, and delivery evidence are separate from provider-owned broker consumer loops, inbound acknowledgements, leases, retry/poison handling, and offset checkpoints.
+
 **Cells and traffic automation**
 
 `ICellBoundaryCatalog`, `ICellRouteCatalog`, `ICellHealthIsolationCatalog`, `ICellTrafficAutomationRuntimeCatalog`.

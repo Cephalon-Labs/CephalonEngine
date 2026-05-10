@@ -1938,6 +1938,9 @@ public sealed class EventDispatchHostingTests
         var deliveryCompletionEntry = Assert.Single(
             eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
             entry => entry.Id == "downstream-delivery-completion-ownership");
+        var inboundConsumptionEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "broker-inbound-consumption-ownership");
         Assert.Equal("claimed", superiorityEntry.Metadata["status"]);
         Assert.Contains("routes=1", superiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Equal("not-claimed", topologyOwnershipEntry.Metadata["status"]);
@@ -1962,6 +1965,13 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("subscriberAcknowledgement=not-claimed", deliveryCompletionEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("exactlyOnceDelivery=not-claimed", deliveryCompletionEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", deliveryCompletionEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("not-claimed", inboundConsumptionEntry.Metadata["status"]);
+        Assert.Contains("inProcessExecution=active", inboundConsumptionEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerInboundConsumption=not-claimed", inboundConsumptionEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerOwnedConsumer=not-present", inboundConsumptionEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("inboundAcknowledgement=not-claimed", inboundConsumptionEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("consumerOffsetCheckpoint=not-claimed", inboundConsumptionEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", inboundConsumptionEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
         Assert.NotNull(snapshot);
         var snapshotPublicationState = Assert.Single(snapshot.EventPublicationStates);
@@ -1978,6 +1988,9 @@ public sealed class EventDispatchHostingTests
         var snapshotDeliveryCompletionEntry = Assert.Single(
             snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
             entry => entry.Id == "downstream-delivery-completion-ownership");
+        var snapshotInboundConsumptionEntry = Assert.Single(
+            snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "broker-inbound-consumption-ownership");
         Assert.Equal("claimed", snapshotRoutingEntry.Metadata["status"]);
         Assert.Equal("not-claimed", snapshotTopologyOwnershipEntry.Metadata["status"]);
         Assert.Contains("brokerTopologyMaterialization=not-claimed", snapshotTopologyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
@@ -1985,6 +1998,8 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("providerPartitionOwnership=not-claimed", snapshotPartitionOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Equal("not-claimed", snapshotDeliveryCompletionEntry.Metadata["status"]);
         Assert.Contains("downstreamDeliveryCompletion=not-claimed", snapshotDeliveryCompletionEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("not-claimed", snapshotInboundConsumptionEntry.Metadata["status"]);
+        Assert.Contains("brokerInboundConsumption=not-claimed", snapshotInboundConsumptionEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]

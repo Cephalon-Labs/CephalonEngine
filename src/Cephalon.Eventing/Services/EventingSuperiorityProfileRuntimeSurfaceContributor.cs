@@ -27,6 +27,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var brokerTopologyEvidence = ResolveBrokerTopologyEvidence(options, routeCount);
         var providerPartitionEvidence = ResolveProviderPartitionEvidence(options, routeCount);
         var downstreamDeliveryCompletionEvidence = ResolveDownstreamDeliveryCompletionEvidence(topology);
+        var brokerInboundConsumptionEvidence = ResolveBrokerInboundConsumptionEvidence(topology);
         var remediationReadPerformanceStatus = topology.HasOutboxPublishingPath ? "claimed" : "partial";
         var remediationReadPerformanceEvidence = topology.HasOutboxPublishingPath
             ? $"benchmarks={RemediationFilteredReadBenchmarks}; readPolicy=single-pass-retained-catalog; materialization=not-required; wolverineRequired=false"
@@ -89,6 +90,14 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     evidence: downstreamDeliveryCompletionEvidence,
                     advantage: "Teams can read Cephalon publication and dispatch truth without assuming the engine silently proves broker/provider destination delivery or subscriber acknowledgement.",
                     nextGap: "Add a provider-owned delivery completion descriptor plus acknowledgement, receipt, and completion-evidence catalog before claiming downstream delivery completion."),
+                CreateEntry(
+                    id: "broker-inbound-consumption-ownership",
+                    displayName: "Broker Inbound Consumption Ownership",
+                    description: "Makes provider-owned inbound broker consumption, acknowledgements, and offset checkpoints explicit instead of inferring them from declared subscriptions or in-process execution.",
+                    status: "not-claimed",
+                    evidence: brokerInboundConsumptionEvidence,
+                    advantage: "Teams can use Cephalon subscription descriptors, direct in-process execution, and optional provider bindings without assuming the core pack silently owns a generic broker consumer loop.",
+                    nextGap: "Add a provider-owned inbound consumption descriptor plus acknowledgement, retry, lease, and offset-checkpoint evidence before claiming broker inbound consumption."),
                 CreateEntry(
                     id: "native-wolverine-free-baseline",
                     displayName: "Native Wolverine-free Baseline",
@@ -275,6 +284,19 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         return string.Create(
             CultureInfo.InvariantCulture,
             $"publicationPath=active; handoff={handoff}; dispatchRuntime={dispatchRuntime}; downstreamDeliveryCompletion=not-claimed; providerDeliveryReceipt=not-present; subscriberAcknowledgement=not-claimed; destinationCommit=not-claimed; exactlyOnceDelivery=not-claimed; wolverineRequired=false");
+    }
+
+    private static string ResolveBrokerInboundConsumptionEvidence(EventingRuntimeTopology topology)
+    {
+        var declaredSubscriptions = topology.HasSubscriptionContributors ? "present" : "not-present";
+        var inProcessExecution = topology.HasInProcessSubscriptionExecutionPath ? "active" : "not-active";
+        var managedSubscriptionBindings = topology.HasManagedSubscriptionExecutionBindings ? "present" : "not-present";
+        var externalManagedSubscriptionBindings = topology.HasExternalManagedSubscriptionExecutionBindings ? "present" : "not-present";
+        var inboxPath = topology.HasInboxPath ? "present" : "not-present";
+
+        return string.Create(
+            CultureInfo.InvariantCulture,
+            $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; inboxPath={inboxPath}; brokerInboundConsumption=not-claimed; brokerConsumerLoop=not-present; providerOwnedConsumer=not-present; inboundAcknowledgement=not-claimed; consumerOffsetCheckpoint=not-claimed; wolverineRequired=false");
     }
 
     private static string ResolveBrokerDeadLetterReplayEvidence(EventingRuntimeTopology topology)
