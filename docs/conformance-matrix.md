@@ -94,6 +94,8 @@ ENG-594 requires `eventing-superiority-profile` to expose `durable-command-journ
 
 ENG-595 requires `eventing-superiority-profile` to expose `broker-dead-letter-replay-ownership` as the separate broker boundary: broker dead-letter queue ownership and broker replay remain `not-claimed` until a provider owns a broker DLQ descriptor and replay action path, even when dispatch-store dead-letter intent, Wolverine-managed dispatch reports, or durable command-journal replay are active.
 
+ENG-596 requires `eventing-superiority-profile` to expose `broker-topology-materialization-ownership` as the separate routing-versus-topology boundary: native route/channel governance can be claimed through `routing-and-provider-portability`, while broker exchange, queue, topic, and partition provisioning/verification remain `not-claimed` until a provider owns that topology path.
+
 ## Agentics and retrieval
 
 | Package | Maturity | Ownership | Engine routes | Snapshot keys | Catalog interfaces | Notes |

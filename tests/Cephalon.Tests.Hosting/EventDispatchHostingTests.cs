@@ -1929,8 +1929,18 @@ public sealed class EventDispatchHostingTests
         var superiorityEntry = Assert.Single(
             eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
             entry => entry.Id == "routing-and-provider-portability");
+        var topologyOwnershipEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "broker-topology-materialization-ownership");
         Assert.Equal("claimed", superiorityEntry.Metadata["status"]);
         Assert.Contains("routes=1", superiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("not-claimed", topologyOwnershipEntry.Metadata["status"]);
+        Assert.Contains("routingPolicy=event-type-map", topologyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("routes=1", topologyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerTopologyMaterialization=not-claimed", topologyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("queueProvisioning=not-claimed", topologyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerOwnedTopology=not-present", topologyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", topologyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
         Assert.NotNull(snapshot);
         var snapshotPublicationState = Assert.Single(snapshot.EventPublicationStates);
@@ -1938,7 +1948,12 @@ public sealed class EventDispatchHostingTests
         var snapshotRoutingEntry = Assert.Single(
             snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
             entry => entry.Id == "routing-and-provider-portability");
+        var snapshotTopologyOwnershipEntry = Assert.Single(
+            snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "broker-topology-materialization-ownership");
         Assert.Equal("claimed", snapshotRoutingEntry.Metadata["status"]);
+        Assert.Equal("not-claimed", snapshotTopologyOwnershipEntry.Metadata["status"]);
+        Assert.Contains("brokerTopologyMaterialization=not-claimed", snapshotTopologyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]

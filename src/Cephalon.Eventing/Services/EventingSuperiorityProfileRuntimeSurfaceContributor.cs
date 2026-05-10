@@ -24,6 +24,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var routingEvidence = options.EnablePublicationRouting
             ? $"policy={EventPublicationRoutingPolicy.GetPolicyId(options)} routes={routeCount} autoChannel={EventPublicationRoutingPolicy.GetAutoChannelId(options)}"
             : "publication routing is not enabled.";
+        var brokerTopologyEvidence = ResolveBrokerTopologyEvidence(options, routeCount);
         var remediationReadPerformanceStatus = topology.HasOutboxPublishingPath ? "claimed" : "partial";
         var remediationReadPerformanceEvidence = topology.HasOutboxPublishingPath
             ? $"benchmarks={RemediationFilteredReadBenchmarks}; readPolicy=single-pass-retained-catalog; materialization=not-required; wolverineRequired=false"
@@ -62,6 +63,14 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     nextGap: options.EnablePublicationRouting && options.PublicationRoutes.Count > 0
                         ? "Extend this same route truth into future broker-topology and generated contract validation surfaces."
                         : "Configure Engine:Messaging:Publications:Routing:Routes before claiming routing evidence."),
+                CreateEntry(
+                    id: "broker-topology-materialization-ownership",
+                    displayName: "Broker Topology Materialization Ownership",
+                    description: "Makes broker exchange, queue, topic, and partition topology ownership explicit instead of inferring it from Cephalon publication routing.",
+                    status: "not-claimed",
+                    evidence: brokerTopologyEvidence,
+                    advantage: "Teams can use Cephalon channel routing without assuming the engine silently provisions provider-specific topology or binds application code to a broker API.",
+                    nextGap: "Add a provider-owned broker topology descriptor and validation/provisioning catalog before claiming topology materialization."),
                 CreateEntry(
                     id: "native-wolverine-free-baseline",
                     displayName: "Native Wolverine-free Baseline",
@@ -209,6 +218,18 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     {
         using var scope = scopeFactory.CreateScope();
         return scope.ServiceProvider.GetService<IEventDispatchRemediationCommandJournal>()?.Descriptor;
+    }
+
+    private static string ResolveBrokerTopologyEvidence(EventingOptions options, string routeCount)
+    {
+        if (!options.EnablePublicationRouting)
+        {
+            return "publication routing is not enabled; brokerTopologyMaterialization=not-claimed; providerOwnedTopology=not-present; wolverineRequired=false";
+        }
+
+        return string.Create(
+            CultureInfo.InvariantCulture,
+            $"routingPolicy={EventPublicationRoutingPolicy.GetPolicyId(options)}; routes={routeCount}; autoChannel={EventPublicationRoutingPolicy.GetAutoChannelId(options)}; brokerTopologyMaterialization=not-claimed; exchangeProvisioning=not-claimed; queueProvisioning=not-claimed; topicProvisioning=not-claimed; partitionOwnership=not-claimed; providerOwnedTopology=not-present; wolverineRequired=false");
     }
 
     private static string ResolveBrokerDeadLetterReplayEvidence(EventingRuntimeTopology topology)
