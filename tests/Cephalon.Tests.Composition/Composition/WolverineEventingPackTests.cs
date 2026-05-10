@@ -346,10 +346,12 @@ public sealed class WolverineEventingPackTests
         var dispatchSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatches");
         var remediationSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatch-remediations");
         var remediationCommandSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatch-remediation-commands");
+        var profileSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile");
         var adapterEntry = Assert.Single(adapterSurface.Entries, entry => entry.Id == "wolverine-eventing");
         var dispatchEntry = Assert.Single(dispatchSurface.Entries, entry => entry.Id == "entity-framework-outbox");
         var remediationEntry = Assert.Single(remediationSurface.Entries, entry => entry.Id == "entity-framework-outbox:evt-500");
         var remediationCommandCatalogEntry = Assert.Single(remediationCommandSurface.Entries, entry => entry.Id == "event-dispatch-remediation-commands");
+        var remediationReadPerformanceEntry = Assert.Single(profileSurface.Entries, entry => entry.Id == "native-remediation-operator-read-performance");
         var runtimeDescriptor = dispatchRuntimeDescriptors.GetById(WolverineEventingRuntimeIds.DispatchRuntimeId);
         Assert.NotNull(runtimeDescriptor);
 
@@ -476,6 +478,10 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("positive-integer-newest-first", remediationCommandCatalogEntry.Metadata["commandReadLimitPolicy"]);
         Assert.Equal("pageSize,continuationToken", remediationCommandCatalogEntry.Metadata["commandPaginationQuery"]);
         Assert.Equal("opaque-signed-route-bound-continuation-token-newest-first", remediationCommandCatalogEntry.Metadata["commandPaginationPolicy"]);
+        Assert.Equal("claimed", remediationReadPerformanceEntry.Metadata["status"]);
+        Assert.Contains("FilterOperatorDashboardSelectors", remediationReadPerformanceEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("materialization=not-required", remediationReadPerformanceEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", remediationReadPerformanceEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.True(runtimeDescriptor!.Summary.HasReports);
         Assert.Equal(["entity-framework-outbox"], runtimeDescriptor.Summary.ReportedOutboxIds);
         Assert.Equal("entity-framework-outbox", runtimeDescriptor.Summary.LastOutboxId);

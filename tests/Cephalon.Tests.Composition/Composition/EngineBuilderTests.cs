@@ -2280,11 +2280,14 @@ public sealed class EngineBuilderTests
         Assert.Equal("claimed", dimensions["runtime-truth-and-operator-surfaces"].Metadata["status"]);
         Assert.Equal("claimed", dimensions["recoverability-and-terminal-failure-posture"].Metadata["status"]);
         Assert.Equal("claimed", dimensions["mediator-style-in-process-low-ceremony"].Metadata["status"]);
+        Assert.Equal("partial", dimensions["native-remediation-operator-read-performance"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["durability-and-outbox-portability"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["dead-letter-replay-and-remediation"].Metadata["status"]);
         Assert.Equal("MassTransit,NServiceBus,Wolverine,MediatR", dimensions["native-wolverine-free-baseline"].Metadata["referenceFrameworks"]);
         Assert.Contains("Wolverine remains optional", dimensions["native-wolverine-free-baseline"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("EnableInProcessSubscriptionExecution=true", dimensions["mediator-style-in-process-low-ceremony"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("FilterOperatorDashboardSelectors", dimensions["native-remediation-operator-read-performance"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("no outbox-backed command path is active", dimensions["native-remediation-operator-read-performance"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]

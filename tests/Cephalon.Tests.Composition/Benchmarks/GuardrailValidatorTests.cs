@@ -15,7 +15,7 @@ public sealed class GuardrailValidatorTests
             "performance-guardrails.json"));
 
         Assert.Equal("1.0", catalog.Version);
-        Assert.Equal(31, catalog.Entries.Count);
+        Assert.Equal(36, catalog.Entries.Count);
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildRuntimeManifest");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildRuntimeManifestWithStrictTrustPolicy");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildPhase8RuntimeManifest");
@@ -37,6 +37,11 @@ public sealed class GuardrailValidatorTests
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "FilterManagedConnectorDryRunState");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "FilterManagedConnectorCommandIssuanceState");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "FilterManagedConnectorOperatorSelectors");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "FilterSummaryByMessageId");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "FilterRetentionByMessageId");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "FilterLatestByCorrelationId");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "FilterOldestByDispatchOutcome");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "FilterOperatorDashboardSelectors");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "DispatchBehavior");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "EvaluateRbacAllow");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "EvaluateRbacDeny");
@@ -98,6 +103,26 @@ ComposeEngine,11.50 μs,24.00 KB
             Assert.Equal(688_128, await benchmark.DispatchQuery());
             await benchmark.DispatchCommand();
             Assert.Equal(352_256, await benchmark.DispatchCommandWithResult());
+        }
+        finally
+        {
+            benchmark.Cleanup();
+        }
+    }
+
+    [Fact]
+    public async Task EventDispatchRemediationCatalogBenchmarksExerciseFilteredOperatorReadsUsedByGuardrails()
+    {
+        var benchmark = new EventDispatchRemediationCatalogBenchmarks();
+        await benchmark.Setup();
+
+        try
+        {
+            Assert.True(benchmark.FilterSummaryByMessageId() > 0);
+            Assert.True(benchmark.FilterRetentionByMessageId() > 0);
+            Assert.NotEqual(0, benchmark.FilterLatestByCorrelationId());
+            Assert.True(benchmark.FilterOldestByDispatchOutcome() > 0);
+            Assert.True(benchmark.FilterOperatorDashboardSelectors() > 0);
         }
         finally
         {

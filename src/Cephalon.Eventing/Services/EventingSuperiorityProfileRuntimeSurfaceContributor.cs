@@ -10,6 +10,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
 {
     private const string ReferenceFrameworks = "MassTransit,NServiceBus,Wolverine,MediatR";
     private const string ClaimPolicy = "claimed-only-with-runtime-evidence";
+    private const string RemediationFilteredReadBenchmarks = "FilterSummaryByMessageId,FilterRetentionByMessageId,FilterLatestByCorrelationId,FilterOldestByDispatchOutcome,FilterOperatorDashboardSelectors";
 
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
@@ -20,6 +21,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var routingEvidence = options.EnablePublicationRouting
             ? $"policy={EventPublicationRoutingPolicy.GetPolicyId(options)} routes={routeCount} autoChannel={EventPublicationRoutingPolicy.GetAutoChannelId(options)}"
             : "publication routing is not enabled.";
+        var remediationReadPerformanceStatus = topology.HasOutboxPublishingPath ? "claimed" : "partial";
+        var remediationReadPerformanceEvidence = topology.HasOutboxPublishingPath
+            ? $"benchmarks={RemediationFilteredReadBenchmarks}; readPolicy=single-pass-retained-catalog; materialization=not-required; wolverineRequired=false"
+            : $"benchmark guardrails exist for {RemediationFilteredReadBenchmarks}; no outbox-backed command path is active.";
 
         return new TechnologyRuntimeSurface(
             technologyId: "event-driven-integration",
@@ -134,10 +139,18 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     description: "Distinguishes terminal failures from retryable failures and exposes bounded dispatch-store dead-letter intent before claiming broker queue ownership.",
                     status: topology.HasOutboxPublishingPath ? "partial" : "not-claimed",
                     evidence: topology.HasOutboxPublishingPath
-                        ? "event-dispatch-remediations derives retry-pending, skipped, failed, and terminal-failure posture from reported dispatch state; supported dispatch stores expose retry-now, retry-later, skip, quarantine, and dispatch-store dead-letter commands plus bounded command-result reads."
+                        ? "event-dispatch-remediations derives retry-pending, skipped, failed, and terminal-failure posture from reported dispatch state; supported dispatch stores expose retry-now, retry-later, skip, quarantine, and dispatch-store dead-letter commands plus bounded command-result reads with benchmark-guarded filtered selectors."
                         : "no outbox-backed dispatch reporting path is active.",
                     advantage: "The engine can explain remediation posture without depending on Wolverine, MassTransit, NServiceBus, or a broker-specific dead-letter API.",
                     nextGap: "Ship broker dead-letter queue ownership only when a provider companion can prove that path with audit evidence."),
+                CreateEntry(
+                    id: "native-remediation-operator-read-performance",
+                    displayName: "Native Remediation Operator Read Performance",
+                    description: "Keeps remediation dashboard summary, retention, latest, oldest, and combined selector reads on Cephalon-owned single-pass catalog paths.",
+                    status: remediationReadPerformanceStatus,
+                    evidence: remediationReadPerformanceEvidence,
+                    advantage: "Operator dashboards can drill into retained command posture through engine read models with guardrails, without bus-specific consoles, external dashboards, or config-driven subscription wiring.",
+                    nextGap: "Extend the same benchmark evidence to durable provider-backed journals and broker dead-letter replay ownership."),
                 CreateEntry(
                     id: "observability-compliance-and-auditability",
                     displayName: "Observability Compliance And Auditability",
@@ -151,9 +164,9 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     displayName: "Testability And Benchmark Evidence",
                     description: "Requires every promoted capability to carry focused tests, docs, and later benchmark evidence.",
                     status: "partial",
-                    evidence: "composition and hosting tests prove current runtime surfaces; benchmark evidence is still a later promotion gate.",
+                    evidence: $"composition and hosting tests prove current runtime surfaces; remediation filtered-read guardrails now cover {RemediationFilteredReadBenchmarks}; broader native and provider-managed eventing benchmarks remain later gates.",
                     advantage: "Cephalon separates tested runtime truth from aspirational roadmap items.",
-                    nextGap: "Promote repeatable performance and cold-start benchmarks for native and provider-managed eventing paths.")
+                    nextGap: "Promote repeatable cold-start, broker dispatch, durable journal, and provider-managed eventing benchmarks.")
             ]);
     }
 
