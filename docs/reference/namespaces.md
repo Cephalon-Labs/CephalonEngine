@@ -336,6 +336,10 @@ Browse the published API surface by namespace.
 
 - [Cephalon.Eventing](cephalon-eventing.md#namespace-cephalon-eventing-configuration): 1 public types [Browse](browse.html?assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration)
 
+## `Cephalon.Eventing.Hosting`
+
+- [Cephalon.Eventing](cephalon-eventing.md#namespace-cephalon-eventing-hosting): 1 public types [Browse](browse.html?assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Hosting)
+
 ## `Cephalon.Eventing.Registration`
 
 - [Cephalon.Eventing](cephalon-eventing.md#namespace-cephalon-eventing-registration): 1 public types [Browse](browse.html?assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Registration)

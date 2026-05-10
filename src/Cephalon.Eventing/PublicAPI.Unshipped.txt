@@ -1,4 +1,7 @@
 #nullable enable
+Cephalon.Eventing.Hosting.EventingServiceCollectionExtensions
+static Cephalon.Eventing.Hosting.EventingServiceCollectionExtensions.AddCephalonEventSubscriptionExecutionMiddleware<TMiddleware>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+static Cephalon.Eventing.Hosting.EventingServiceCollectionExtensions.AddCephalonEventSubscriptionExecutor<TExecutor>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 Cephalon.Eventing.Services.EventSubscriptionExecutionStep
 virtual Cephalon.Eventing.Services.EventSubscriptionExecutionStep.Invoke(Cephalon.Eventing.Services.EventSubscriptionExecutionContext! context, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
 Cephalon.Eventing.Services.IEventSubscriptionExecutionMiddleware

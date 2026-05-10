@@ -11,14 +11,15 @@
 - channel descriptors, registries, and catalogs
 - declared subscription descriptors, registries, and catalogs
 - configuration-owned event channel descriptors through `Engine:Messaging:Channels`, loaded by `engine.AddEventingFromConfiguration(configuration)` before module contributors so host configuration can override channel metadata by id without editing application code
-- code-owned event subscription descriptors and executors through `EventingOptions.Subscriptions`, `IEventSubscriptionContributor`, `IEventSubscriptionExecutor`, and optional `IEventSubscriptionDescriptorProvider`; `Engine:Messaging:Subscriptions` and `Engine:Messaging:SubscriptionHandlers` are deliberately rejected so publish/subscribe behavior stays type-safe and fast
+- code-owned event subscription descriptors and executors through `EventingOptions.Subscriptions`, `IEventSubscriptionContributor`, `services.AddCephalonEventSubscriptionExecutor<TExecutor>()`, direct `IEventSubscriptionExecutor` registrations, and optional `IEventSubscriptionDescriptorProvider`; `Engine:Messaging:Subscriptions` and `Engine:Messaging:SubscriptionHandlers` are deliberately rejected so publish/subscribe behavior stays type-safe and fast
 - code-owned direct subscription execution middleware through `IEventSubscriptionExecutionMiddleware` and `EventSubscriptionExecutionStep`, giving modules MassTransit/NServiceBus/MediatR-style filters around the native in-process lane without making middleware binding string-config driven
+- low-ceremony DI helpers through `services.AddCephalonEventSubscriptionExecutor<TExecutor>()` and `services.AddCephalonEventSubscriptionExecutionMiddleware<TMiddleware>()` so hosts/modules can register native executor and middleware contributions without handwritten interface registration boilerplate
 - host-agnostic managed-subscription execution contracts and execution-binding vocabulary that truthful companion packs can project back into runtime introspection
 - a public `IEventSubscriptionExecutionBindingCatalog` read contract for active managed subscription bindings contributed by companion packs
 - an implementation of the abstraction-level `IEventSubscriptionExecutionReadinessCatalog` read contract that tells hosts and tooling whether each declared subscription is `runtime-bound`, `hosted-execution-linked`, `application-managed-state`, or `declared-only`
 - stable `EventSubscriptionRuntimeMetadataKeys` constants for ownership and runtime-state fields projected through the `event-subscriptions` technology surface
 - stable `EventDispatchRuntimeMetadataKeys` constants for dispatch retry, retry exhaustion, and terminal failure fields projected through dispatch runtime reports and event-dispatch surfaces
-- an opt-in Cephalon-managed in-process subscription execution baseline through `EventingOptions.EnableInProcessSubscriptionExecution`, `IEventPublisher`, and registered `IEventSubscriptionExecutor` services
+- an opt-in Cephalon-managed in-process subscription execution baseline through `EventingOptions.EnableInProcessSubscriptionExecution`, `IEventPublisher`, and `services.AddCephalonEventSubscriptionExecutor<TExecutor>()` or direct `IEventSubscriptionExecutor` services
 - bounded process-local retry for that in-process lane through `EventingOptions.InProcessSubscriptionMaxAttempts`, `InProcessSubscriptionRetryDelayMilliseconds`, `InProcessSubscriptionRetryBackoff`, `InProcessSubscriptionRetryBackoffMultiplier`, `InProcessSubscriptionRetryMaxDelayMilliseconds`, and `InProcessSubscriptionRetryJitterPercent`, with `retry-scheduled` observations, deterministic effective-delay metadata, and fixed or exponential backoff metadata when enabled
 - bounded duplicate suppression for completed in-process subscription executions through `EventingOptions.EnableInProcessSubscriptionIdempotency`, `InProcessSubscriptionIdempotencyStore`, and `InProcessSubscriptionIdempotencyRetentionMinutes`, with either process-local or registered-`IInbox` storage, `skipped` observations, and explicit idempotency store/durability/scope metadata when enabled
 - an implementation of the abstraction-level `IEventPublicationDispatcher` command seam so host adapters can request one bounded event publication without referencing `Cephalon.Eventing` implementation types
@@ -42,6 +43,7 @@
 
 - `Configuration/EventingOptions.cs`
 - `Configuration/EventingOptionsConfigurationReader.cs`
+- `Hosting/EventingServiceCollectionExtensions.cs`
 - `Modules/EventingModule.cs`
 - `Registration/EventingEngineBuilderExtensions.cs`
 - `Services/EventChannelDescriptor.cs`
@@ -106,6 +108,7 @@
 ## Source structure
 
 - `Configuration`
+- `Hosting`
 - `Modules`
 - `Registration`
 - `Services`
@@ -163,7 +166,7 @@ Native eventing reads environment-owned channel metadata, direct in-process subs
 }
 ```
 
-The matching subscription belongs in code, for example through `options.Subscriptions.Add(...)` plus an `IEventSubscriptionExecutor` registration, through a reusable module that implements `IEventSubscriptionContributor`, or by letting a registered executor also implement `IEventSubscriptionDescriptorProvider` when the executor owns its descriptor metadata. Code-owned cross-cutting steps belong in DI too, through `IEventSubscriptionExecutionMiddleware`; the native publisher runs those middleware steps before the executor and surfaces `subscriptionExecutionPipeline` metadata for operators. `Engine:Messaging:Subscriptions` and `Engine:Messaging:SubscriptionHandlers` are rejected by `AddEventingFromConfiguration` so hot-path publish/subscribe behavior stays code-first; configuration remains for runtime policy such as retry, idempotency, routing, scheduling, and channel metadata.
+The matching subscription belongs in code, for example through `options.Subscriptions.Add(...)` plus `services.AddCephalonEventSubscriptionExecutor<TExecutor>()`, through a reusable module that implements `IEventSubscriptionContributor`, or by letting the registered executor also implement `IEventSubscriptionDescriptorProvider` when it owns its descriptor metadata. Code-owned cross-cutting steps belong in DI too, through `services.AddCephalonEventSubscriptionExecutionMiddleware<TMiddleware>()` or direct `IEventSubscriptionExecutionMiddleware` registrations; the native publisher runs those middleware steps before the executor and surfaces `subscriptionExecutionPipeline` metadata for operators. `Engine:Messaging:Subscriptions` and `Engine:Messaging:SubscriptionHandlers` are rejected by `AddEventingFromConfiguration` so hot-path publish/subscribe behavior stays code-first; configuration remains for runtime policy such as retry, idempotency, routing, scheduling, and channel metadata.
 
 That same in-process retry lane keeps `retryPolicy = bounded-in-process` and now also reports `retryBackoff`, `retryBackoffMultiplier`, `retryMaxDelayMilliseconds`, `retryJitterPercent`, and `retryEffectiveDelayMilliseconds` on `retry-scheduled` observations. `fixed` preserves the original delay behavior; `exponential` multiplies each failed attempt by the configured multiplier and caps it at the configured max delay; jitter is deterministic from publication, channel, event type, subscription, and attempt metadata so retries are shaped without introducing opaque randomness into operator evidence.
 

@@ -2276,8 +2276,9 @@ Current payload highlights:
 - the route returns `404` when event publication is not active in the selected runtime or when the
   requested channel is not registered, and `400` when the publication body is invalid
 - when the core in-process lane is selected, the route triggers the active `IEventPublisher`,
-  invokes matching `IEventSubscriptionExecutor` services, and flows publication metadata back into
-  the existing subscription runtime catalog as `publicationMetadata.*`
+  invokes matching executor services added through `AddCephalonEventSubscriptionExecutor<TExecutor>()`
+  or direct `IEventSubscriptionExecutor` registrations, and flows publication metadata back into the
+  existing subscription runtime catalog as `publicationMetadata.*`
 - when native publication scheduling is enabled, request metadata can include exactly one of
   `scheduledForUtc` or `delayMilliseconds`; the route returns `accepted` immediately with
   `schedulePolicy = bounded-process-local`, `scheduleState = scheduled`, `scheduleScope = process-local`,
@@ -2456,8 +2457,9 @@ Current `Cephalon.Eventing` highlights:
   visible under the selected `EventDrivenIntegration` technology
 - `engine.AddEventingFromConfiguration(configuration)` can populate channel descriptors from
   `Engine:Messaging:Channels`; subscription descriptors and executors stay code-first through
-  `EventingOptions.Subscriptions`, `IEventSubscriptionContributor`, and `IEventSubscriptionExecutor`
-  so publish/subscribe behavior remains typed and fast
+  `EventingOptions.Subscriptions`, `IEventSubscriptionContributor`,
+  `services.AddCephalonEventSubscriptionExecutor<TExecutor>()`, optional descriptor providers, and
+  code-first middleware helpers so publish/subscribe behavior remains typed and fast
 - `Engine:Messaging:Subscriptions` and `Engine:Messaging:SubscriptionHandlers` are rejected by
   the native configuration reader; use code registration or reusable modules for subscription
   descriptors, handlers, and executors
@@ -2470,8 +2472,9 @@ Current `Cephalon.Eventing` highlights:
   and `snapshot.EventPublicationStates`, so operators can inspect the latest accepted/succeeded,
   failed, or skipped publication posture without parsing `event-publishers` metadata
 - `Cephalon.Eventing` can move a subscription to `runtime-bound` itself when
-  `EnableInProcessSubscriptionExecution` is selected and a matching `IEventSubscriptionExecutor`
-  exists; that path is `cephalon-managed`, direct, process-local, and reports
+  `EnableInProcessSubscriptionExecution` is selected and a matching
+  `AddCephalonEventSubscriptionExecutor<TExecutor>()` or `IEventSubscriptionExecutor`
+  registration exists; that path is `cephalon-managed`, direct, process-local, and reports
   `eventing.publish` / `eventing.subscribe` metadata with `retryPolicy = none` and
   `publicationRuntimeState = available` by default
 - when `InProcessSubscriptionMaxAttempts` is greater than `1`, that same core path reports

@@ -7,6 +7,7 @@ using Cephalon.AspNetCore.Hosting;
 using Cephalon.Data.EntityFramework.Registration;
 using Cephalon.Engine.Configuration;
 using Cephalon.Engine.Manifest;
+using Cephalon.Eventing.Hosting;
 using Cephalon.Eventing.Registration;
 using Cephalon.Eventing.Services;
 using Cephalon.Eventing.Wolverine.Registration;
@@ -1684,7 +1685,7 @@ public sealed class EventDispatchHostingTests
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseTestServer();
         builder.Services.AddSingleton<DescriptorProviderAuditExecutorProbe>();
-        builder.Services.AddSingleton<IEventSubscriptionExecutor, DescriptorProviderAuditExecutor>();
+        builder.Services.AddCephalonEventSubscriptionExecutor<DescriptorProviderAuditExecutor>();
         builder.AddCephalon(engine =>
         {
             engine.UseSettings(new EngineSettings(
@@ -1785,7 +1786,7 @@ public sealed class EventDispatchHostingTests
     {
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseTestServer();
-        builder.Services.AddSingleton<IEventSubscriptionExecutor, MismatchedDescriptorProviderExecutor>();
+        builder.Services.AddCephalonEventSubscriptionExecutor<MismatchedDescriptorProviderExecutor>();
         builder.AddCephalon(engine =>
         {
             engine.UseSettings(new EngineSettings(
@@ -1818,7 +1819,7 @@ public sealed class EventDispatchHostingTests
     {
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseTestServer();
-        builder.Services.AddSingleton<IEventSubscriptionExecutor, UnknownSubscriptionExecutor>();
+        builder.Services.AddCephalonEventSubscriptionExecutor<UnknownSubscriptionExecutor>();
         builder.AddCephalon(engine =>
         {
             engine.UseSettings(new EngineSettings(
@@ -1851,7 +1852,7 @@ public sealed class EventDispatchHostingTests
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseTestServer();
         builder.Services.AddSingleton<EventSubscriptionMiddlewareProbe>();
-        builder.Services.AddSingleton<IEventSubscriptionExecutionMiddleware, RecordingEventSubscriptionExecutionMiddleware>();
+        builder.Services.AddCephalonEventSubscriptionExecutionMiddleware<RecordingEventSubscriptionExecutionMiddleware>();
         builder.AddCephalon(engine =>
         {
             engine.UseSettings(new EngineSettings(

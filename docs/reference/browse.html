@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T01:10:00.2174564+00:00",
+  "GeneratedAtUtc": "2026-05-10T01:26:25.4309439+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -270,8 +270,8 @@
       "Category": "Technology Packs",
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
-      "NamespaceCount": 3,
-      "TypeCount": 35
+      "NamespaceCount": 4,
+      "TypeCount": 36
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1310,6 +1310,13 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-configuration",
+      "TypeCount": 1
+    },
+    {
+      "NamespaceName": "Cephalon.Eventing.Hosting",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "namespace-cephalon-eventing-hosting",
       "TypeCount": 1
     },
     {
@@ -8478,6 +8485,21 @@
         "Fields": 0,
         "Properties": 24,
         "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EventingServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Eventing.Hosting",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-hosting-eventingservicecollectionextensions",
+      "Declaration": "public static class EventingServiceCollectionExtensions",
+      "Summary": "Registers code-first native eventing services used by Cephalon hosts and modules.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
       }
     },
     {
@@ -22727,6 +22749,28 @@
       "AnchorId": "member-m-cephalon-eventsourcing-hosting-eventsourcingservicecollectionextensions-addcephaloneventsourcing-microsoft-extensions-dependencyinjection-iservicecollection-system-action-cephalon-eventsourcing-configuration-eventsourcingoptions",
       "Signature": "IServiceCollection AddCephalonEventSourcing(this IServiceCollection services, Action\u003CEventSourcingOptions\u003E configure)",
       "Summary": "Adds the Cephalon event-sourcing baseline services to the service collection."
+    },
+    {
+      "DisplayName": "AddCephalonEventSubscriptionExecutionMiddleware",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventingServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Eventing.Hosting",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-hosting-eventingservicecollectionextensions-addcephaloneventsubscriptionexecutionmiddleware-1-microsoft-extensions-dependencyinjection-iservicecollection",
+      "Signature": "IServiceCollection AddCephalonEventSubscriptionExecutionMiddleware\u003CTMiddleware\u003E(this IServiceCollection services)",
+      "Summary": "Registers a direct in-process subscription execution middleware step with the native eventing pack."
+    },
+    {
+      "DisplayName": "AddCephalonEventSubscriptionExecutor",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventingServiceCollectionExtensions",
+      "NamespaceName": "Cephalon.Eventing.Hosting",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-hosting-eventingservicecollectionextensions-addcephaloneventsubscriptionexecutor-1-microsoft-extensions-dependencyinjection-iservicecollection",
+      "Signature": "IServiceCollection AddCephalonEventSubscriptionExecutor\u003CTExecutor\u003E(this IServiceCollection services)",
+      "Summary": "Registers a direct in-process event subscription executor with the native eventing pack."
     },
     {
       "DisplayName": "AddCephalonEventType",

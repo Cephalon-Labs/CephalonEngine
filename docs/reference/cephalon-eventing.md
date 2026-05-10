@@ -6,6 +6,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 ## Namespaces
 
 - `Cephalon.Eventing.Configuration`
+- `Cephalon.Eventing.Hosting`
 - `Cephalon.Eventing.Registration`
 - `Cephalon.Eventing.Services`
 
@@ -313,6 +314,63 @@ IList<EventSubscriptionDescriptor> Subscriptions { get; }
 ```
 
 Gets the host-defined event subscription descriptors that should be available to the eventing runtime.
+
+<a id="namespace-cephalon-eventing-hosting"></a>
+
+## Namespace Cephalon.Eventing.Hosting
+
+<a id="type-cephalon-eventing-hosting-eventingservicecollectionextensions"></a>
+
+### `EventingServiceCollectionExtensions`
+
+Registers code-first native eventing services used by Cephalon hosts and modules.
+
+#### Declaration
+```csharp
+public static class EventingServiceCollectionExtensions
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-hosting-eventingservicecollectionextensions-addcephaloneventsubscriptionexecutionmiddleware-1-microsoft-extensions-dependencyinjection-iservicecollection"></a>
+
+##### `AddCephalonEventSubscriptionExecutionMiddleware`
+
+```csharp
+IServiceCollection AddCephalonEventSubscriptionExecutionMiddleware<TMiddleware>(this IServiceCollection services)
+```
+
+Registers a direct in-process subscription execution middleware step with the native eventing pack.
+
+Remarks: Middleware steps are registered as singleton `IEventSubscriptionExecutionMiddleware` contributions and run in dependency-injection registration order before the final subscription executor. This keeps cross-cutting subscription policy typed and code-owned instead of binding it from configuration.
+
+Returns: The same service collection for fluent registration.
+
+Type parameters:
+- `TMiddleware`: The concrete middleware implementation type.
+
+Parameters:
+- `services`: The service collection to extend.
+
+<a id="member-m-cephalon-eventing-hosting-eventingservicecollectionextensions-addcephaloneventsubscriptionexecutor-1-microsoft-extensions-dependencyinjection-iservicecollection"></a>
+
+##### `AddCephalonEventSubscriptionExecutor`
+
+```csharp
+IServiceCollection AddCephalonEventSubscriptionExecutor<TExecutor>(this IServiceCollection services)
+```
+
+Registers a direct in-process event subscription executor with the native eventing pack.
+
+Remarks: The executor is registered as a singleton `IEventSubscriptionExecutor` contribution. If the implementation also implements `IEventSubscriptionDescriptorProvider`, the native in-process lane can discover the matching subscription descriptor from the same code-owned type.
+
+Returns: The same service collection for fluent registration.
+
+Type parameters:
+- `TExecutor`: The concrete executor implementation type.
+
+Parameters:
+- `services`: The service collection to extend.
 
 <a id="namespace-cephalon-eventing-registration"></a>
 
