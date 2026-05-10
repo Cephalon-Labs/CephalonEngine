@@ -954,6 +954,7 @@ public sealed class EntityFrameworkDataPackTests
         var profileSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile");
         var durableAuditEntry = Assert.Single(profileSurface.Entries, entry => entry.Id == "durable-remediation-command-audit");
         var durableReplayCursorEntry = Assert.Single(profileSurface.Entries, entry => entry.Id == "durable-command-journal-replay-cursor");
+        var brokerReplayOwnershipEntry = Assert.Single(profileSurface.Entries, entry => entry.Id == "broker-dead-letter-replay-ownership");
         Assert.Equal("entity-framework-outbox", outboxEntry.Id);
         Assert.Equal("entity-framework", outboxEntry.Metadata["provider"]);
         Assert.Equal("transactional-table", outboxEntry.Metadata["mode"]);
@@ -996,6 +997,12 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("scope=command-journal", durableReplayCursorEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("brokerReplay=not-claimed", durableReplayCursorEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", durableReplayCursorEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("not-claimed", brokerReplayOwnershipEntry.Metadata["status"]);
+        Assert.Contains("dispatchStoreDeadLetterIntent=available", brokerReplayOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerDeadLetterQueueOwnership=not-claimed", brokerReplayOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerReplay=not-claimed", brokerReplayOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerOwnedBrokerPath=not-present", brokerReplayOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", brokerReplayOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.publish" && capability.Metadata["runtimeState"] == "available");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.publish" && capability.Metadata["dispatchStore"] == "available");

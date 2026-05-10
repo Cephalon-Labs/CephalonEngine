@@ -28,6 +28,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var remediationReadPerformanceEvidence = topology.HasOutboxPublishingPath
             ? $"benchmarks={RemediationFilteredReadBenchmarks}; readPolicy=single-pass-retained-catalog; materialization=not-required; wolverineRequired=false"
             : $"benchmark guardrails exist for {RemediationFilteredReadBenchmarks}; no outbox-backed command path is active.";
+        var brokerDeadLetterReplayEvidence = ResolveBrokerDeadLetterReplayEvidence(topology);
         var commandJournalDescriptor = ResolveCommandJournalDescriptor();
         var durableCommandJournalStatus = ResolveDurableCommandJournalStatus(commandJournalDescriptor);
         var durableCommandJournalEvidence = ResolveDurableCommandJournalEvidence(commandJournalDescriptor);
@@ -154,6 +155,14 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     advantage: "The engine can explain remediation posture without depending on Wolverine, MassTransit, NServiceBus, or a broker-specific dead-letter API.",
                     nextGap: "Ship broker dead-letter queue ownership only when a provider companion can prove that path with audit evidence."),
                 CreateEntry(
+                    id: "broker-dead-letter-replay-ownership",
+                    displayName: "Broker Dead-letter Replay Ownership",
+                    description: "Makes broker dead-letter queue ownership and broker replay support explicit instead of inferring them from dispatch-store dead-letter intent or durable command-journal replay.",
+                    status: "not-claimed",
+                    evidence: brokerDeadLetterReplayEvidence,
+                    advantage: "Operators can see that Cephalon-owned command journals and dispatch-store remediation do not silently promise broker DLQ mutation, broker replay, or a Wolverine dependency.",
+                    nextGap: "Add a provider-owned broker dead-letter descriptor and replay action catalog before claiming broker replay ownership."),
+                CreateEntry(
                     id: "native-remediation-operator-read-performance",
                     displayName: "Native Remediation Operator Read Performance",
                     description: "Keeps remediation dashboard summary, retention, latest, oldest, and combined selector reads on Cephalon-owned single-pass catalog paths.",
@@ -200,6 +209,20 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     {
         using var scope = scopeFactory.CreateScope();
         return scope.ServiceProvider.GetService<IEventDispatchRemediationCommandJournal>()?.Descriptor;
+    }
+
+    private static string ResolveBrokerDeadLetterReplayEvidence(EventingRuntimeTopology topology)
+    {
+        if (!topology.HasOutboxPublishingPath)
+        {
+            return "no outbox-backed dispatch reporting path is active; brokerDeadLetterQueueOwnership=not-claimed; brokerReplay=not-claimed; wolverineRequired=false";
+        }
+
+        var dispatchStoreDeadLetterIntent = topology.HasDispatchStore ? "available" : "not-active";
+        var dispatchRuntime = topology.HasDispatchRuntimeContributors ? "reported" : "not-reported";
+        return string.Create(
+            CultureInfo.InvariantCulture,
+            $"dispatchStoreDeadLetterIntent={dispatchStoreDeadLetterIntent}; dispatchRuntime={dispatchRuntime}; brokerDeadLetterQueueOwnership=not-claimed; brokerReplay=not-claimed; providerOwnedBrokerPath=not-present; wolverineRequired=false");
     }
 
     private static string ResolveDurableCommandJournalStatus(EventDispatchRemediationCommandJournalDescriptor? descriptor)

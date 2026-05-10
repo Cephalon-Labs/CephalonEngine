@@ -352,6 +352,7 @@ public sealed class WolverineEventingPackTests
         var remediationEntry = Assert.Single(remediationSurface.Entries, entry => entry.Id == "entity-framework-outbox:evt-500");
         var remediationCommandCatalogEntry = Assert.Single(remediationCommandSurface.Entries, entry => entry.Id == "event-dispatch-remediation-commands");
         var remediationReadPerformanceEntry = Assert.Single(profileSurface.Entries, entry => entry.Id == "native-remediation-operator-read-performance");
+        var brokerReplayOwnershipEntry = Assert.Single(profileSurface.Entries, entry => entry.Id == "broker-dead-letter-replay-ownership");
         var runtimeDescriptor = dispatchRuntimeDescriptors.GetById(WolverineEventingRuntimeIds.DispatchRuntimeId);
         Assert.NotNull(runtimeDescriptor);
 
@@ -482,6 +483,12 @@ public sealed class WolverineEventingPackTests
         Assert.Contains("FilterOperatorDashboardSelectors", remediationReadPerformanceEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("materialization=not-required", remediationReadPerformanceEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", remediationReadPerformanceEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("not-claimed", brokerReplayOwnershipEntry.Metadata["status"]);
+        Assert.Contains("dispatchStoreDeadLetterIntent=available", brokerReplayOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("dispatchRuntime=reported", brokerReplayOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerDeadLetterQueueOwnership=not-claimed", brokerReplayOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerReplay=not-claimed", brokerReplayOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", brokerReplayOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.True(runtimeDescriptor!.Summary.HasReports);
         Assert.Equal(["entity-framework-outbox"], runtimeDescriptor.Summary.ReportedOutboxIds);
         Assert.Equal("entity-framework-outbox", runtimeDescriptor.Summary.LastOutboxId);

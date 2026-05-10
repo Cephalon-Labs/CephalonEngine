@@ -92,6 +92,8 @@ Eventing's core baseline owns the native package hint, in-process execution lane
 
 ENG-594 requires `eventing-superiority-profile` to expose `durable-command-journal-replay-cursor` as a separate claim dimension: active provider-owned command-journal replay is `claimed`, active journals without a replay-cursor catalog remain `partial`, missing journals remain `not-claimed`, and broker replay ownership stays outside the claim.
 
+ENG-595 requires `eventing-superiority-profile` to expose `broker-dead-letter-replay-ownership` as the separate broker boundary: broker dead-letter queue ownership and broker replay remain `not-claimed` until a provider owns a broker DLQ descriptor and replay action path, even when dispatch-store dead-letter intent, Wolverine-managed dispatch reports, or durable command-journal replay are active.
+
 ## Agentics and retrieval
 
 | Package | Maturity | Ownership | Engine routes | Snapshot keys | Catalog interfaces | Notes |

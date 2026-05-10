@@ -224,6 +224,8 @@ ENG-593 adds the durable command-journal replay cursor seam: `IEventDispatchReme
 
 ENG-594 projects that seam into `eventing-superiority-profile` through `durable-command-journal-replay-cursor`, so runtime consumers can distinguish durable command-journal replay support from durable audit posture and broker replay ownership.
 
+ENG-595 adds `broker-dead-letter-replay-ownership` to the same profile so runtime consumers can see that broker DLQ ownership and broker replay stay `not-claimed` until a provider owns a broker descriptor and replay action path.
+
 **Cells and traffic automation**
 
 `ICellBoundaryCatalog`, `ICellRouteCatalog`, `ICellHealthIsolationCatalog`, `ICellTrafficAutomationRuntimeCatalog`.

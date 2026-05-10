@@ -2637,6 +2637,10 @@ Current `Cephalon.Eventing` highlights:
   cursor support is claimed only when the active provider exposes
   `IEventDispatchRemediationCommandReplayCursorCatalog`, and process-local audit, missing journals,
   and broker dead-letter/replay ownership remain explicit instead of implied
+- `broker-dead-letter-replay-ownership` is the separate broker boundary in that same profile; it
+  stays `not-claimed` until a provider package owns a broker DLQ descriptor and replay action path,
+  even when dispatch-store dead-letter intent, Wolverine-managed dispatch reports, or durable
+  command-journal replay are active
 - Wolverine or another companion adapter can still move staged dispatch or one subscription to
   provider-managed ownership for brokered or staged dispatch scenarios; the shipped Wolverine path
   now keeps both the dispatch loop and managed subscription retry lanes bounded with max attempts,
