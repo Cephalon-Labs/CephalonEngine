@@ -6,6 +6,11 @@ namespace Cephalon.Abstractions.Data;
 public interface IEventDispatchRemediationRuntimeCatalog
 {
     /// <summary>
+    /// Gets the aggregate remediation command-state summary visible to the current runtime.
+    /// </summary>
+    EventDispatchRemediationRuntimeSummary Summary { get; }
+
+    /// <summary>
     /// Gets the remediation command-state entries visible to the current runtime.
     /// </summary>
     IReadOnlyList<EventDispatchRemediationRuntimeState> States { get; }

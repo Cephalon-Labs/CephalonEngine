@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T04:23:54.8001834+00:00",
+  "GeneratedAtUtc": "2026-05-10T04:43:09.1674255+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8,7 +8,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 21,
-      "TypeCount": 558
+      "TypeCount": 559
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -682,7 +682,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 258
+      "TypeCount": 259
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -8295,6 +8295,21 @@
       }
     },
     {
+      "DisplayName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-eventdispatchremediationruntimesummary",
+      "Declaration": "public sealed class EventDispatchRemediationRuntimeSummary",
+      "Summary": "Describes aggregate operator-facing state recorded for event-dispatch remediation commands.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 13,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "EventDispatchRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -11050,7 +11065,7 @@
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
-        "Properties": 1,
+        "Properties": 2,
         "Methods": 10
       }
     },
@@ -19563,6 +19578,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationresult-acceptedatutc",
       "Signature": "DateTimeOffset AcceptedAtUtc { get; set; }",
       "Summary": "The UTC timestamp when the active runtime accepted the publication."
+    },
+    {
+      "DisplayName": "AcceptedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-acceptedcount",
+      "Signature": "int AcceptedCount { get; }",
+      "Summary": "Gets the number of recorded commands that were accepted."
     },
     {
       "DisplayName": "AcceptedCount",
@@ -49009,6 +49035,17 @@
       "Summary": "Identifies whether the current response describes a duplicate command request."
     },
     {
+      "DisplayName": "DuplicateCommandCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-duplicatecommandcount",
+      "Signature": "int DuplicateCommandCount { get; }",
+      "Summary": "Gets the number of recorded commands marked as duplicate command responses."
+    },
+    {
       "DisplayName": "DuplicateCommandLineage",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
@@ -50129,6 +50166,17 @@
       "AnchorId": "member-p-cephalon-engine-configuration-engineoptions-empty",
       "Signature": "EngineOptions Empty { get; }",
       "Summary": "Gets an empty options instance with no explicit overrides."
+    },
+    {
+      "DisplayName": "Empty",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-empty",
+      "Signature": "EventDispatchRemediationRuntimeSummary Empty { get; }",
+      "Summary": "Gets an empty remediation command summary when no command results have been recorded."
     },
     {
       "DisplayName": "Empty",
@@ -52419,6 +52467,17 @@
       "Summary": "The operator-facing error summary when indexing failed."
     },
     {
+      "DisplayName": "ErrorCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-errorcount",
+      "Signature": "int ErrorCount { get; }",
+      "Summary": "Gets the number of recorded commands that carry an operator-facing error."
+    },
+    {
       "DisplayName": "Errors",
       "Category": "Properties",
       "DeclaringTypeName": "ResultModel\u003CTModel\u003E",
@@ -52703,6 +52762,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchremediationruntimestate-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "EventDispatchRemediationRuntimeState(string CommandId, string OutboxId, string MessageId, string ChannelId, string OperationId, string Outcome, string DispatchOutcome, DateTimeOffset ObservedAtUtc, string Error, IReadOnlyDictionary\u003Cstring, string\u003E Metadata)",
       "Summary": "Describes the operator-facing runtime state recorded for one event-dispatch remediation command."
+    },
+    {
+      "DisplayName": "EventDispatchRemediationRuntimeSummary",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchremediationruntimesummary-ctor-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset",
+      "Signature": "EventDispatchRemediationRuntimeSummary(int totalCommandCount, int acceptedCount, int rejectedCount, int errorCount, int duplicateCommandCount, string lastCommandId, string lastOperationId, string lastOutcome, string lastDispatchOutcome, DateTimeOffset? lastObservedAtUtc)",
+      "Summary": "Creates a new remediation command summary."
     },
     {
       "DisplayName": "EventDispatchRuntimeDescriptor",
@@ -63463,6 +63533,17 @@
       "Summary": "Gets a value indicating whether the current command journal already exposes provider-owned control-plane provisioning evidence."
     },
     {
+      "DisplayName": "HasCommands",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-hascommands",
+      "Signature": "bool HasCommands { get; }",
+      "Summary": "Gets a value indicating whether the summary includes any recorded command results."
+    },
+    {
       "DisplayName": "HasCommandTarget",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeStatus",
@@ -63890,6 +63971,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventsubscriptionexecutionreadinessdescriptor-hasexecutionpath",
       "Signature": "bool HasExecutionPath { get; }",
       "Summary": "Gets a value indicating whether Cephalon can currently observe or bind an execution path for the subscription."
+    },
+    {
+      "DisplayName": "HasFailures",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-hasfailures",
+      "Signature": "bool HasFailures { get; }",
+      "Summary": "Gets a value indicating whether any recorded command result was rejected or errored."
     },
     {
       "DisplayName": "HasFreshnessWindow",
@@ -75266,6 +75358,17 @@
       "Summary": "The latest provider-facing checkpoint or cursor when one was reported."
     },
     {
+      "DisplayName": "LastCommandId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-lastcommandid",
+      "Signature": "string LastCommandId { get; }",
+      "Summary": "Gets the most recently observed command identifier when one exists."
+    },
+    {
       "DisplayName": "LastCompletedAtUtc",
       "Category": "Properties",
       "DeclaringTypeName": "TenantDomainOwnershipProofPollingRuntimeSnapshot",
@@ -75550,6 +75653,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryruntimesnapshot-lastdispatchedcount",
       "Signature": "int LastDispatchedCount { get; }",
       "Summary": "Gets the latest successfully dispatched retry-entry count."
+    },
+    {
+      "DisplayName": "LastDispatchOutcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-lastdispatchoutcome",
+      "Signature": "string LastDispatchOutcome { get; }",
+      "Summary": "Gets the most recently observed dispatch-store outcome when one exists."
     },
     {
       "DisplayName": "LastDnsTxtProofCollectedAtUtc",
@@ -76269,6 +76383,17 @@
     {
       "DisplayName": "LastObservedAtUtc",
       "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-lastobservedatutc",
+      "Signature": "DateTimeOffset? LastObservedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp for the most recent recorded command when one exists."
+    },
+    {
+      "DisplayName": "LastObservedAtUtc",
+      "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRuntimeState",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -76399,6 +76524,17 @@
       "Summary": "The last lifecycle phase recorded for the module."
     },
     {
+      "DisplayName": "LastOperationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-lastoperationid",
+      "Signature": "string LastOperationId { get; }",
+      "Summary": "Gets the most recently observed remediation operation identifier when one exists."
+    },
+    {
       "DisplayName": "LastOutboxId",
       "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRuntimeSummary",
@@ -76452,6 +76588,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-lastoutcome",
       "Signature": "string LastOutcome { get; set; }",
       "Summary": "The last reported durable-execution outcome identifier when one exists."
+    },
+    {
+      "DisplayName": "LastOutcome",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-lastoutcome",
+      "Signature": "string LastOutcome { get; }",
+      "Summary": "Gets the most recently observed command outcome when one exists."
     },
     {
       "DisplayName": "LastOutcome",
@@ -103729,6 +103876,17 @@
     },
     {
       "DisplayName": "RejectedCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-rejectedcount",
+      "Signature": "int RejectedCount { get; }",
+      "Summary": "Gets the number of recorded commands that were rejected."
+    },
+    {
+      "DisplayName": "RejectedCount",
       "Category": "Fields",
       "DeclaringTypeName": "TenantDomainOwnershipProofPollingMetadataKeys",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.Services",
@@ -119775,6 +119933,17 @@
     },
     {
       "DisplayName": "Summary",
+      "Category": "Properties",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-summary",
+      "Signature": "EventDispatchRemediationRuntimeSummary Summary { get; }",
+      "Summary": "Gets the aggregate remediation command-state summary visible to the current runtime."
+    },
+    {
+      "DisplayName": "Summary",
       "Category": "Fields",
       "DeclaringTypeName": "RestEndpointOverrideActionKind",
       "NamespaceName": "Cephalon.Abstractions.Transports",
@@ -124238,6 +124407,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureruntimestate-totalcapturedchangecount",
       "Signature": "long TotalCapturedChangeCount { get; set; }",
       "Summary": "The total number of source changes reported so far."
+    },
+    {
+      "DisplayName": "TotalCommandCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-totalcommandcount",
+      "Signature": "int TotalCommandCount { get; }",
+      "Summary": "Gets the total number of command-result records in the bounded runtime history."
     },
     {
       "DisplayName": "TotalCount",

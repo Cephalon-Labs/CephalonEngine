@@ -2231,6 +2231,9 @@ Current payload highlights:
   state or replacing the original command-result record
 - `GET /engine/event-dispatch-remediation-commands` lists accepted and rejected command results
   recorded by `IEventDispatchRemediationRuntimeCatalog`
+- `GET /engine/event-dispatch-remediation-commands/summary` returns the bounded command-result
+  roll-up: total, accepted, rejected, errored, duplicate-command count, and latest command
+  identity/outcome fields without scanning the full history
 - `GET /engine/event-dispatch-remediation-commands/{commandId}` narrows the command-result catalog
   to one command and returns `404` when no command has been recorded with that id
 - `GET /engine/event-dispatch-remediation-commands/outboxes/{outboxId}` filters command results by

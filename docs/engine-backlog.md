@@ -5086,6 +5086,42 @@ Follow-up later:
 - durable reason audit retention, cross-node reason analytics, and authorization-aware reason
   scoping remain future package-owned work until a package truly owns those paths
 
+### ENG-563 Eventing remediation command summary roll-up
+
+Status: done
+Estimate: 1
+Issue: #1217
+Iteration: Sprint 91 follow-through
+Area: eventing / operations / Wolverine-free baseline
+Quality dimensions: Auditability, Usability, Reliability, Compatibility, Data Integrity
+
+Why:
+
+- operators need a quick native roll-up for remediation command health without scanning the whole
+  bounded command-result list
+- duplicate command-id retries should not inflate command counts, otherwise operational summaries
+  would drift from the authoritative command-result record
+
+Delivered:
+
+- added `EventDispatchRemediationRuntimeSummary` and
+  `IEventDispatchRemediationRuntimeCatalog.Summary` for total, accepted, rejected, errored,
+  duplicate-command, and latest-command readback
+- exposed `GET /engine/event-dispatch-remediation-commands/summary` through ASP.NET Core before
+  the command-id route
+- surfaced the summary route through eventing capability metadata plus
+  `event-dispatch-remediations` / `event-dispatch-remediation-commands` technology surfaces
+- proved the Wolverine-free HTTP summary route, direct composition catalog summary, duplicate-safe
+  counts, and package-surface reflection guardrail with focused tests
+- updated component docs, ASP.NET Core operations docs, runtime contract index, maturity and
+  conformance rows, roadmap, compatibility notes, project memory, and generated reference docs so
+  command-result summary is part of the human and API contract
+
+Follow-up later:
+
+- durable command-result roll-ups, cross-node command analytics, and authorization-aware aggregate
+  slices remain future package-owned work until a package truly owns those paths
+
 ### ENG-269 Agentics tool execution operator-action baseline
 
 Status: done
@@ -16455,6 +16491,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-560 Eventing remediation command dispatch-outcome drill-down (shipped): native command-result history can now be filtered by dispatch-store outcome through `IEventDispatchRemediationRuntimeCatalog.GetByDispatchOutcome(...)` and `/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}` without requiring Wolverine or counting duplicate command-id retries as new dispatch-outcome history
 - ENG-561 Eventing remediation command correlation drill-down (shipped): native command-result history can now be filtered by operator correlation id through `IEventDispatchRemediationRuntimeCatalog.GetByCorrelationId(...)` and `/engine/event-dispatch-remediation-commands/correlations/{correlationId}` without requiring Wolverine or counting duplicate command-id retries as new correlation history
 - ENG-562 Eventing remediation command reason drill-down (shipped): native command-result history can now be filtered by operator reason through `IEventDispatchRemediationRuntimeCatalog.GetByReason(...)` and `/engine/event-dispatch-remediation-commands/reasons/{reason}` without requiring Wolverine or counting duplicate command-id retries as new reason history
+- ENG-563 Eventing remediation command summary roll-up (shipped): native command-result history can now be summarized through `IEventDispatchRemediationRuntimeCatalog.Summary` and `/engine/event-dispatch-remediation-commands/summary` without requiring Wolverine or counting duplicate command-id retries as new command history
 
 ### Sprint 88
 
@@ -16780,6 +16817,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-560 Add Eventing remediation command dispatch-outcome drill-down: native command-result history now has a dispatch-outcome-level read seam, ASP.NET Core publishes `/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}`, and duplicate command-id retries do not create second dispatch-outcome history entries. Quality dimensions: Auditability + Usability + Reliability + Compatibility + Data Integrity (shipped)
 - ENG-561 Add Eventing remediation command correlation drill-down: native command-result history now has a correlation-level read seam, ASP.NET Core publishes `/engine/event-dispatch-remediation-commands/correlations/{correlationId}`, and duplicate command-id retries do not create second correlation-history entries. Quality dimensions: Auditability + Usability + Reliability + Compatibility + Data Integrity (shipped)
 - ENG-562 Add Eventing remediation command reason drill-down: native command-result history now has a reason-level read seam, ASP.NET Core publishes `/engine/event-dispatch-remediation-commands/reasons/{reason}`, and duplicate command-id retries do not create second reason-history entries. Quality dimensions: Auditability + Usability + Reliability + Compatibility + Data Integrity (shipped)
+- ENG-563 Add Eventing remediation command summary roll-up: native command-result history now has a summary read seam, ASP.NET Core publishes `/engine/event-dispatch-remediation-commands/summary`, and duplicate command-id retries do not inflate command-result counts. Quality dimensions: Auditability + Usability + Reliability + Compatibility + Data Integrity (shipped)
 - ENG-524 Harden deployment-mode audit-only probes: direct trim and Native AOT runs now keep the single-file release gate out of their verdict by returning `PublishProbeGate=not-applicable` when only audit-only modes are evaluated; compiler-only analyzer/source-generator `ProjectReference` entries strip app publish-mode globals through `CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove`; and `Cephalon.Analyzers`, `Cephalon.Behaviors.SourceGen`, and `Cephalon.Engine.SourceGen` localize publish/RID globals with `TreatAsLocalProperty` so publish probes reach real runtime blocker evidence instead of failing on compiler-only `netstandard2.0` drift. Release closeout also stabilized the readiness warmup hosting test, refreshed the REST projection/governance guardrail to a measured 1 s ceiling while keeping the existing 16 MB allocation ceiling, and moved the canonical full `validate-release` wall-time target to 30 minutes after the current full lane measured about 1,669.848 seconds. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability + Performance (shipped)
 - ENG-535 Close generated REST behavior source-generator adoption proof: `Cephalon.Behaviors.SourceGen` now packs its compiler assembly under `analyzers/dotnet/cs`, scaffolded REST behavior modules and template-pack REST starters reference it as `PrivateAssets=all`, generated module projects keep `Cephalon.Engine.SourceGen` in every blueprint, and the out-of-tree adoption temporary feed publishes the full generated REST behavior package closure (`Cephalon.Behaviors.SourceGen`, `Cephalon.Diagnostics`, and `Cephalon.Resilience`) so restore/build/run replay can produce the REST profile hints required by `MapProfile<TBehavior>()`. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability (shipped)
 - ENG-487 Add opt-in CDC integration baseline: `tests/Cephalon.Tests.CdcIntegration` now carries the first dedicated live CDC integration lane, proving MongoDB change streams against a disposable `EphemeralMongo7` replica set with real outbox staging, provider-native runtime binding, runtime-state reporting, execution-runtime aggregation, and checkpoint persistence; `data.slnf` now points at the split data-relevant test projects instead of the retired monolithic test project, and SQL Server/Postgres live CDC coverage stays explicitly later until an external-service/Testcontainers gate exists. Quality dimensions: Reliability + Compatibility + Auditability + Maintainability (shipped)

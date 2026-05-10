@@ -196,7 +196,7 @@ These interfaces live in `Cephalon.Abstractions` and own the in-process truth th
 
 `IDataProductCatalog`, `IProjectionCatalog`, `IOutboxCatalog`, `IInboxCatalog`, `IEventDispatchRuntimeCatalog`, `IEventDispatchRemediationRuntimeCatalog`, `IEventPublicationRuntimeCatalog`, `IEventSubscriptionExecutionReadinessCatalog`, `ICdcCaptureCatalog`, `ICdcCaptureExecutionRuntimeCatalog`, `IDatabaseRoleCatalog`, `IDatabaseMigrationCatalog`.
 
-`Cephalon.Eventing` also contributes `eventing-superiority-profile` through `ITechnologyRuntimeCatalog` / `TechnologySurfaces`; it is intentionally a technology surface rather than a new public catalog interface because it summarizes active runtime evidence and claim maturity (`claimed`, `partial`, `not-claimed`) from the existing eventing catalogs.
+`Cephalon.Eventing` also contributes `eventing-superiority-profile` through `ITechnologyRuntimeCatalog` / `TechnologySurfaces`; it is intentionally a technology surface rather than a new public catalog interface because it summarizes active runtime evidence and claim maturity (`claimed`, `partial`, `not-claimed`) from the existing eventing catalogs. `IEventDispatchRemediationRuntimeCatalog.Summary` is the bounded remediation command-result roll-up behind `/engine/event-dispatch-remediation-commands/summary`.
 
 **Cells and traffic automation**
 

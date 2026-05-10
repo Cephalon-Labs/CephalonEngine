@@ -46551,6 +46551,173 @@ string Outcome { get; set; }
 
 The stable command outcome identifier.
 
+<a id="type-cephalon-abstractions-data-eventdispatchremediationruntimesummary"></a>
+
+### `EventDispatchRemediationRuntimeSummary`
+
+Describes aggregate operator-facing state recorded for event-dispatch remediation commands.
+
+#### Declaration
+```csharp
+public sealed class EventDispatchRemediationRuntimeSummary
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-eventdispatchremediationruntimesummary-ctor-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset"></a>
+
+##### `EventDispatchRemediationRuntimeSummary`
+
+```csharp
+EventDispatchRemediationRuntimeSummary(int totalCommandCount, int acceptedCount, int rejectedCount, int errorCount, int duplicateCommandCount, string lastCommandId, string lastOperationId, string lastOutcome, string lastDispatchOutcome, DateTimeOffset? lastObservedAtUtc)
+```
+
+Creates a new remediation command summary.
+
+Parameters:
+- `totalCommandCount`: The total number of command-result records in the bounded runtime history.
+- `acceptedCount`: The number of recorded commands that were accepted.
+- `rejectedCount`: The number of recorded commands that were rejected.
+- `errorCount`: The number of recorded commands that carry an operator-facing error.
+- `duplicateCommandCount`: The number of recorded commands marked as duplicate command responses.
+- `lastCommandId`: The most recently observed command identifier.
+- `lastOperationId`: The most recently observed remediation operation identifier.
+- `lastOutcome`: The most recently observed command outcome.
+- `lastDispatchOutcome`: The most recently observed dispatch-store outcome.
+- `lastObservedAtUtc`: The UTC timestamp for the most recent recorded command.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-acceptedcount"></a>
+
+##### `AcceptedCount`
+
+```csharp
+int AcceptedCount { get; }
+```
+
+Gets the number of recorded commands that were accepted.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-duplicatecommandcount"></a>
+
+##### `DuplicateCommandCount`
+
+```csharp
+int DuplicateCommandCount { get; }
+```
+
+Gets the number of recorded commands marked as duplicate command responses.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-empty"></a>
+
+##### `Empty`
+
+```csharp
+EventDispatchRemediationRuntimeSummary Empty { get; }
+```
+
+Gets an empty remediation command summary when no command results have been recorded.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-errorcount"></a>
+
+##### `ErrorCount`
+
+```csharp
+int ErrorCount { get; }
+```
+
+Gets the number of recorded commands that carry an operator-facing error.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-hascommands"></a>
+
+##### `HasCommands`
+
+```csharp
+bool HasCommands { get; }
+```
+
+Gets a value indicating whether the summary includes any recorded command results.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-hasfailures"></a>
+
+##### `HasFailures`
+
+```csharp
+bool HasFailures { get; }
+```
+
+Gets a value indicating whether any recorded command result was rejected or errored.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-lastcommandid"></a>
+
+##### `LastCommandId`
+
+```csharp
+string LastCommandId { get; }
+```
+
+Gets the most recently observed command identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-lastdispatchoutcome"></a>
+
+##### `LastDispatchOutcome`
+
+```csharp
+string LastDispatchOutcome { get; }
+```
+
+Gets the most recently observed dispatch-store outcome when one exists.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-lastobservedatutc"></a>
+
+##### `LastObservedAtUtc`
+
+```csharp
+DateTimeOffset? LastObservedAtUtc { get; }
+```
+
+Gets the UTC timestamp for the most recent recorded command when one exists.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-lastoperationid"></a>
+
+##### `LastOperationId`
+
+```csharp
+string LastOperationId { get; }
+```
+
+Gets the most recently observed remediation operation identifier when one exists.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-lastoutcome"></a>
+
+##### `LastOutcome`
+
+```csharp
+string LastOutcome { get; }
+```
+
+Gets the most recently observed command outcome when one exists.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-rejectedcount"></a>
+
+##### `RejectedCount`
+
+```csharp
+int RejectedCount { get; }
+```
+
+Gets the number of recorded commands that were rejected.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-totalcommandcount"></a>
+
+##### `TotalCommandCount`
+
+```csharp
+int TotalCommandCount { get; }
+```
+
+Gets the total number of command-result records in the bounded runtime history.
+
 <a id="type-cephalon-abstractions-data-eventdispatchruntimedescriptor"></a>
 
 ### `EventDispatchRuntimeDescriptor`
@@ -50842,6 +51009,16 @@ IReadOnlyList<EventDispatchRemediationRuntimeState> States { get; }
 ```
 
 Gets the remediation command-state entries visible to the current runtime.
+
+<a id="member-p-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-summary"></a>
+
+##### `Summary`
+
+```csharp
+EventDispatchRemediationRuntimeSummary Summary { get; }
+```
+
+Gets the aggregate remediation command-state summary visible to the current runtime.
 
 #### Methods
 

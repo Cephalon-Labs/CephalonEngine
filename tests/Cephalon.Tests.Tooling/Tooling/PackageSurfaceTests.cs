@@ -175,6 +175,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Abstractions.Data.EventDispatchRemediationOutcomes),
             typeof(global::Cephalon.Abstractions.Data.EventDispatchRemediationRequest),
             typeof(global::Cephalon.Abstractions.Data.EventDispatchRemediationResult),
+            typeof(global::Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary),
             typeof(global::Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState),
             typeof(global::Cephalon.Abstractions.Data.EventDispatchRuntimeDescriptor),
             typeof(global::Cephalon.Abstractions.Data.EventDispatchRuntimeSummary),
@@ -599,6 +600,7 @@ public sealed class PackageSurfaceTests
     {
         var catalogType = typeof(global::Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog);
 
+        Assert.NotNull(catalogType.GetProperty("Summary", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(catalogType.GetMethod("GetByCommandId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(catalogType.GetMethod("GetByOutboxId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(catalogType.GetMethod("GetByMessageId", BindingFlags.Instance | BindingFlags.Public));

@@ -1,5 +1,19 @@
 #nullable enable
 const Cephalon.Abstractions.Data.EventDispatchRemediationOperationIds.DeadLetter = "dead-letter" -> string!
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.AcceptedCount.get -> int
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.DuplicateCommandCount.get -> int
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.ErrorCount.get -> int
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.EventDispatchRemediationRuntimeSummary(int totalCommandCount = 0, int acceptedCount = 0, int rejectedCount = 0, int errorCount = 0, int duplicateCommandCount = 0, string? lastCommandId = null, string? lastOperationId = null, string? lastOutcome = null, string? lastDispatchOutcome = null, System.DateTimeOffset? lastObservedAtUtc = null) -> void
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.HasCommands.get -> bool
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.HasFailures.get -> bool
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.LastCommandId.get -> string?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.LastDispatchOutcome.get -> string?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.LastObservedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.LastOperationId.get -> string?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.LastOutcome.get -> string?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.RejectedCount.get -> int
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.TotalCommandCount.get -> int
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByActorId(string! actorId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByChannelId(string! channelId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByCorrelationId(string! correlationId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
@@ -7,3 +21,5 @@ Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByDispatch
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByMessageId(string! messageId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByOperationId(string! operationId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByReason(string! reason) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.Summary.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
+static Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.Empty.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!

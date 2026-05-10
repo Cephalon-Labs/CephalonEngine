@@ -14,6 +14,17 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
     private readonly Dictionary<string, EventDispatchRemediationRuntimeState> statesByCommandId = new(StringComparer.OrdinalIgnoreCase);
     private readonly List<EventDispatchRemediationRuntimeState> states = [];
 
+    public EventDispatchRemediationRuntimeSummary Summary
+    {
+        get
+        {
+            lock (gate)
+            {
+                return CreateSummary(states);
+            }
+        }
+    }
+
     public IReadOnlyList<EventDispatchRemediationRuntimeState> States
     {
         get
@@ -26,6 +37,35 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
                     .ToArray();
             }
         }
+    }
+
+    private static EventDispatchRemediationRuntimeSummary CreateSummary(List<EventDispatchRemediationRuntimeState> recordedStates)
+    {
+        if (recordedStates.Count == 0)
+        {
+            return EventDispatchRemediationRuntimeSummary.Empty;
+        }
+
+        var lastState = recordedStates
+            .OrderByDescending(static state => state.ObservedAtUtc)
+            .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
+            .First();
+
+        return new EventDispatchRemediationRuntimeSummary(
+            totalCommandCount: recordedStates.Count,
+            acceptedCount: recordedStates.Count(static state =>
+                string.Equals(state.Outcome, EventDispatchRemediationOutcomes.Accepted, StringComparison.OrdinalIgnoreCase)),
+            rejectedCount: recordedStates.Count(static state =>
+                string.Equals(state.Outcome, EventDispatchRemediationOutcomes.Rejected, StringComparison.OrdinalIgnoreCase)),
+            errorCount: recordedStates.Count(static state => !string.IsNullOrWhiteSpace(state.Error)),
+            duplicateCommandCount: recordedStates.Count(static state =>
+                state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.DuplicateCommand, out var duplicateCommand) &&
+                string.Equals(duplicateCommand, "true", StringComparison.OrdinalIgnoreCase)),
+            lastCommandId: lastState.CommandId,
+            lastOperationId: lastState.OperationId,
+            lastOutcome: lastState.Outcome,
+            lastDispatchOutcome: lastState.DispatchOutcome,
+            lastObservedAtUtc: lastState.ObservedAtUtc);
     }
 
     public EventDispatchRemediationRuntimeState? GetByCommandId(string commandId)
