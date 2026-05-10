@@ -611,6 +611,7 @@ internal sealed class InProcessEventPublisher(
             ["executionOwnership"] = "cephalon-managed",
             ["executionMode"] = "in-process-direct",
             ["deliveryMode"] = "direct",
+            ["subscriptionDescriptorDiscovery"] = GetSubscriptionDescriptorDiscovery(subscription),
             ["subscriptionExecutionPipeline"] = subscriptionExecutionPipeline,
             ["subscriptionExecutionMiddlewareCount"] = subscriptionExecutionMiddlewareCount.ToString(CultureInfo.InvariantCulture),
             ["retryPolicy"] = maxAttempts > 1 ? InProcessEventingRetryPolicy.BoundedInProcess : InProcessEventingRetryPolicy.None,
@@ -667,6 +668,14 @@ internal sealed class InProcessEventPublisher(
         }
 
         return metadata;
+    }
+
+    private static string GetSubscriptionDescriptorDiscovery(EventSubscriptionDescriptor subscription)
+    {
+        return subscription.Metadata.TryGetValue("descriptorDiscovery", out var discovery) &&
+            !string.IsNullOrWhiteSpace(discovery)
+            ? discovery
+            : "none";
     }
 
     private static Dictionary<string, string> CreateRetryScheduledMetadata(

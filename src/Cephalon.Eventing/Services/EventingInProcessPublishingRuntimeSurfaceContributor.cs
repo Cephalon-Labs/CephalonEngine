@@ -36,6 +36,11 @@ internal sealed class EventingInProcessPublishingRuntimeSurfaceContributor(
             .Select(static entry => entry.Subscription.Id)
             .OrderBy(static subscriptionId => subscriptionId, StringComparer.OrdinalIgnoreCase)
             .ToArray();
+        var discoveredSubscriptionIds = executors.Entries
+            .Where(static entry => IsDiscovered(entry.Subscription))
+            .Select(static entry => entry.Subscription.Id)
+            .OrderBy(static subscriptionId => subscriptionId, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
         var publicationStates = publicationRuntimeCatalog.States;
         var lastPublicationState = publicationStates
             .Where(static state => state.LastObservedAtUtc is not null)
@@ -101,6 +106,9 @@ internal sealed class EventingInProcessPublishingRuntimeSurfaceContributor(
                         ["idempotencyDurability"] = idempotencyDurability,
                         ["idempotencyScope"] = idempotencyScope,
                         ["inbox"] = topology.HasInboxPath ? "available" : "not-configured",
+                        ["subscriptionDescriptorDiscovery"] = topology.HasInProcessSubscriptionDescriptorDiscovery ? "code-first-executor" : "none",
+                        ["discoveredSubscriptionCount"] = discoveredSubscriptionIds.Length.ToString(CultureInfo.InvariantCulture),
+                        ["discoveredSubscriptionIds"] = string.Join(",", discoveredSubscriptionIds),
                         ["channelCount"] = channelIds.Length.ToString(CultureInfo.InvariantCulture),
                         ["channelIds"] = string.Join(",", channelIds),
                         ["subscriptionExecutorCount"] = subscriptionIds.Length.ToString(CultureInfo.InvariantCulture),
@@ -108,5 +116,11 @@ internal sealed class EventingInProcessPublishingRuntimeSurfaceContributor(
                         ["continueAfterFailure"] = options.ContinueInProcessSubscriptionExecutionAfterFailure.ToString().ToLowerInvariant()
                     })
             ]);
+    }
+
+    private static bool IsDiscovered(EventSubscriptionDescriptor subscription)
+    {
+        return subscription.Metadata.TryGetValue("descriptorDiscovery", out var discovery) &&
+            string.Equals(discovery, "code-first-executor", StringComparison.OrdinalIgnoreCase);
     }
 }

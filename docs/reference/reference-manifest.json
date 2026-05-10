@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T00:45:26.699405+00:00",
+  "GeneratedAtUtc": "2026-05-10T01:10:00.2174564+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -168,7 +168,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 3,
-      "TypeCount": 34
+      "TypeCount": 35
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1221,7 +1221,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 32
+      "TypeCount": 33
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8701,10 +8701,10 @@
       "Declaration": "public sealed class EventSubscriptionExecutionStep",
       "Summary": "Represents the next step in the code-owned event subscription execution pipeline.",
       "MemberCounts": {
-        "Constructors": 1,
+        "Constructors": 0,
         "Fields": 0,
         "Properties": 0,
-        "Methods": 3
+        "Methods": 0
       }
     },
     {
@@ -11225,6 +11225,21 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEventSubscriptionDescriptorProvider",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-ieventsubscriptiondescriptorprovider",
+      "Declaration": "public interface IEventSubscriptionDescriptorProvider",
+      "Summary": "Allows an in-process subscription executor to provide its declared subscription descriptor.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 0
       }
     },
     {
@@ -28747,16 +28762,6 @@
       "AnchorId": "member-p-cephalon-observability-opensearchdependencies-configuration-opensearchdependencydefinition-bearertoken",
       "Signature": "string BearerToken { get; set; }",
       "Summary": "Gets or sets the optional bearer token used for OpenSearch bearer-token authentication."
-    },
-    {
-      "DisplayName": "BeginInvoke",
-      "Category": "Methods",
-      "DeclaringTypeName": "EventSubscriptionExecutionStep",
-      "NamespaceName": "Cephalon.Eventing.Services",
-      "AssemblyName": "Cephalon.Eventing",
-      "FileName": "cephalon-eventing.md",
-      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionexecutionstep-begininvoke-cephalon-eventing-services-eventsubscriptionexecutioncontext-system-threading-cancellationtoken-system-asynccallback-system-object",
-      "Signature": "IAsyncResult BeginInvoke(EventSubscriptionExecutionContext context, CancellationToken cancellationToken, AsyncCallback callback, object object)"
     },
     {
       "DisplayName": "BehaviorAllowedPatternsAttribute",
@@ -51526,16 +51531,6 @@
       "Summary": "Gets or sets the optional SQL Server encryption mode such as \u0060Optional\u0060, \u0060Mandatory\u0060, or \u0060Strict\u0060."
     },
     {
-      "DisplayName": "EndInvoke",
-      "Category": "Methods",
-      "DeclaringTypeName": "EventSubscriptionExecutionStep",
-      "NamespaceName": "Cephalon.Eventing.Services",
-      "AssemblyName": "Cephalon.Eventing",
-      "FileName": "cephalon-eventing.md",
-      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionexecutionstep-endinvoke-system-iasyncresult",
-      "Signature": "ValueTask EndInvoke(IAsyncResult result)"
-    },
-    {
       "DisplayName": "Endpoint",
       "Category": "Properties",
       "DeclaringTypeName": "BackendForFrontendRestEndpointRuntimeDescriptor",
@@ -52953,16 +52948,6 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionexecutionreport-ctor-system-string-system-string-system-datetimeoffset-system-string-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "EventSubscriptionExecutionReport(string subscriptionId, string outcome, DateTimeOffset observedAtUtc, string messageId, int attempt, string error, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Creates a new execution report for a declared event subscription."
-    },
-    {
-      "DisplayName": "EventSubscriptionExecutionStep",
-      "Category": "Constructors",
-      "DeclaringTypeName": "EventSubscriptionExecutionStep",
-      "NamespaceName": "Cephalon.Eventing.Services",
-      "AssemblyName": "Cephalon.Eventing",
-      "FileName": "cephalon-eventing.md",
-      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionexecutionstep-ctor-system-object-system-intptr",
-      "Signature": "EventSubscriptionExecutionStep(object object, IntPtr method)"
     },
     {
       "DisplayName": "EventSubscriptionRuntimeState",
@@ -70717,16 +70702,6 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandexecutionresult-invocationsourceid",
       "Signature": "string InvocationSourceId { get; set; }",
       "Summary": "Gets the stable invocation-source identifier that originated the command-execution request."
-    },
-    {
-      "DisplayName": "Invoke",
-      "Category": "Methods",
-      "DeclaringTypeName": "EventSubscriptionExecutionStep",
-      "NamespaceName": "Cephalon.Eventing.Services",
-      "AssemblyName": "Cephalon.Eventing",
-      "FileName": "cephalon-eventing.md",
-      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionexecutionstep-invoke-cephalon-eventing-services-eventsubscriptionexecutioncontext-system-threading-cancellationtoken",
-      "Signature": "ValueTask Invoke(EventSubscriptionExecutionContext context, CancellationToken cancellationToken)"
     },
     {
       "DisplayName": "InvokeAsync",
@@ -118887,6 +118862,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-subscriptionconfirmationssucceeded",
       "Signature": "int SubscriptionConfirmationsSucceeded { get; }",
       "Summary": "Gets the number of subscription-confirmation attempts that succeeded."
+    },
+    {
+      "DisplayName": "SubscriptionDescriptor",
+      "Category": "Properties",
+      "DeclaringTypeName": "IEventSubscriptionDescriptorProvider",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-ieventsubscriptiondescriptorprovider-subscriptiondescriptor",
+      "Signature": "EventSubscriptionDescriptor SubscriptionDescriptor { get; }",
+      "Summary": "Gets the code-owned subscription descriptor associated with the executor."
     },
     {
       "DisplayName": "SubscriptionId",

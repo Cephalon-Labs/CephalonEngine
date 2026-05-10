@@ -96,10 +96,14 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     description: "Provides a lightweight direct execution lane for apps that need local notifications without a durable bus dependency.",
                     status: topology.HasInProcessSubscriptionExecutionPath ? "claimed" : "not-claimed",
                     evidence: topology.HasInProcessSubscriptionExecutionPath
-                        ? "EnableInProcessSubscriptionExecution=true with registered IEventSubscriptionExecutor services."
+                        ? topology.HasInProcessSubscriptionDescriptorDiscovery
+                            ? "EnableInProcessSubscriptionExecution=true with registered IEventSubscriptionExecutor services and code-first descriptor-provider discovery."
+                            : "EnableInProcessSubscriptionExecution=true with registered IEventSubscriptionExecutor services."
                         : "in-process subscription execution is not enabled.",
                     advantage: "Teams get MediatR-style local dispatch while preserving the same event catalog, readiness, diagnostics, and future provider handoff seams.",
-                    nextGap: "Add source-generated or descriptor-compiled handler discovery when the native path needs lower ceremony at larger scale."),
+                    nextGap: topology.HasInProcessSubscriptionDescriptorDiscovery
+                        ? "Add source-generated registration helpers and benchmark evidence before promoting larger-scale generated handler discovery."
+                        : "Use IEventSubscriptionDescriptorProvider on registered executors when the native path needs lower ceremony at larger scale."),
                 CreateEntry(
                     id: "code-first-subscription-execution-pipeline",
                     displayName: "Code-first Subscription Execution Pipeline",

@@ -390,6 +390,13 @@ public static class ReferenceDocsGenerator
 
     private static bool ShouldSkipGeneratedMember(MemberInfo member, string? summary)
     {
+        if (member.DeclaringType is not null &&
+            typeof(MulticastDelegate).IsAssignableFrom(member.DeclaringType) &&
+            member is ConstructorInfo or MethodInfo)
+        {
+            return true;
+        }
+
         return member.IsDefined(typeof(GeneratedCodeAttribute), inherit: false) &&
                string.IsNullOrWhiteSpace(summary);
     }

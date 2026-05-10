@@ -43,6 +43,7 @@ Current enforced baseline:
 
 - shipped `src/Cephalon.*` packages are expected to carry complete XML comments on public APIs
 - reference-doc coverage tests guard the current shipped assembly set so missing XML summaries are caught in CI before docs generation regresses
+- compiler-generated delegate infrastructure members such as delegate constructors and `BeginInvoke` / `EndInvoke` are not published as standalone member contracts; the delegate type XML comment remains the supported API explanation surface
 
 Current follow-up boundary:
 

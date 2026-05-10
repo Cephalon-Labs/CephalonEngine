@@ -22,6 +22,7 @@ Internal generation helpers:
 
 - loading compiled assemblies and XML docs for documentation generation
 - Markdown page generation for assemblies, namespaces, types, and members
+- skipping compiler-generated delegate infrastructure members while keeping delegate type declarations and XML summaries as the public contract
 - browser UI rendering assets and machine-readable manifest generation
 - filesystem writing for generated reference docs
 

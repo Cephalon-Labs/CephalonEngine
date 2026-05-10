@@ -31,6 +31,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
     private bool hasDispatchRuntimeContributors;
     private bool hasExternalManagedSubscriptionExecutionBindings;
     private bool hasInboxPath;
+    private bool hasInProcessSubscriptionDescriptorDiscovery;
     private bool hasInProcessSubscriptionExecutionPath;
     private bool hasManagedSubscriptionExecutionBindings;
     private bool hasOutboxPublishingPath;
@@ -71,10 +72,18 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
         hasExternalManagedSubscriptionExecutionBindings = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventSubscriptionExecutionBindingContributor));
         var inboxRegistrationCount = services.Count(static descriptor => descriptor.ServiceType == typeof(IInbox));
         hasInboxPath = inboxRegistrationCount > 0;
-        hasSubscriptionContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventSubscriptionContributor));
         subscriptionExecutionMiddlewareCount = services.Count(static descriptor => descriptor.ServiceType == typeof(IEventSubscriptionExecutionMiddleware));
         hasSubscriptionExecutionPipeline = subscriptionExecutionMiddlewareCount > 0;
         hasSubscriptionExecutors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventSubscriptionExecutor));
+        hasInProcessSubscriptionDescriptorDiscovery = options.EnableSubscriptions &&
+            options.EnableInProcessSubscriptionExecution &&
+            hasSubscriptionExecutors;
+        if (hasInProcessSubscriptionDescriptorDiscovery)
+        {
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventSubscriptionContributor, InProcessEventSubscriptionDescriptorContributor>());
+        }
+
+        hasSubscriptionContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventSubscriptionContributor));
         hasInProcessSubscriptionExecutionPath = options.EnableInProcessSubscriptionExecution && hasSubscriptionExecutors;
         hasManagedSubscriptionExecutionBindings = hasExternalManagedSubscriptionExecutionBindings || hasInProcessSubscriptionExecutionPath;
         services.TryAddSingleton(options);
@@ -169,6 +178,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             HasDispatchRuntimeContributors: hasDispatchRuntimeContributors,
             HasExternalManagedSubscriptionExecutionBindings: hasExternalManagedSubscriptionExecutionBindings,
             HasInboxPath: hasInboxPath,
+            HasInProcessSubscriptionDescriptorDiscovery: hasInProcessSubscriptionDescriptorDiscovery,
             HasInProcessSubscriptionExecutionPath: hasInProcessSubscriptionExecutionPath,
             HasManagedSubscriptionExecutionBindings: hasManagedSubscriptionExecutionBindings,
             HasOutboxPublishingPath: hasOutboxPublishingPath,
@@ -266,6 +276,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["dispatchRuntime"] = "cephalon-managed",
                     ["dispatchStore"] = "not-configured",
                     ["subscriptionExecution"] = "cephalon-managed",
+                    ["subscriptionDescriptorDiscovery"] = hasInProcessSubscriptionDescriptorDiscovery ? "code-first-executor" : "none",
                     ["subscriptionExecutionPipeline"] = hasSubscriptionExecutionPipeline ? "code-first" : "none",
                     ["subscriptionExecutionMiddlewareCount"] = subscriptionExecutionMiddlewareCount.ToString(CultureInfo.InvariantCulture),
                     ["executionRuntimeId"] = InProcessEventingRuntimeIds.SubscriptionExecutionRuntimeId,
@@ -355,6 +366,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["technology"] = "event-driven-integration",
                     ["dispatchRuntime"] = hasManagedSubscriptionExecutionBindings ? "configured" : "not-configured",
                     ["inbox"] = hasInboxPath ? "available" : "not-configured",
+                    ["subscriptionDescriptorDiscovery"] = hasInProcessSubscriptionDescriptorDiscovery ? "code-first-executor" : "none",
                     ["runtimeState"] = "available"
                 }));
         }
@@ -374,6 +386,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["executionMode"] = "in-process-direct",
                     ["executionRuntimeId"] = InProcessEventingRuntimeIds.SubscriptionExecutionRuntimeId,
                     ["triggerRuntimeId"] = InProcessEventingRuntimeIds.PublisherId,
+                    ["subscriptionDescriptorDiscovery"] = hasInProcessSubscriptionDescriptorDiscovery ? "code-first-executor" : "none",
                     ["subscriptionExecutionPipeline"] = hasSubscriptionExecutionPipeline ? "code-first" : "none",
                     ["subscriptionExecutionMiddlewareCount"] = subscriptionExecutionMiddlewareCount.ToString(CultureInfo.InvariantCulture),
                     ["retryPolicy"] = retryPolicy,

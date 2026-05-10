@@ -3,6 +3,8 @@ Cephalon.Eventing.Services.EventSubscriptionExecutionStep
 virtual Cephalon.Eventing.Services.EventSubscriptionExecutionStep.Invoke(Cephalon.Eventing.Services.EventSubscriptionExecutionContext! context, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
 Cephalon.Eventing.Services.IEventSubscriptionExecutionMiddleware
 Cephalon.Eventing.Services.IEventSubscriptionExecutionMiddleware.InvokeAsync(Cephalon.Eventing.Services.EventSubscriptionExecutionContext! context, Cephalon.Eventing.Services.EventSubscriptionExecutionStep! nextStep, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
+Cephalon.Eventing.Services.IEventSubscriptionDescriptorProvider
+Cephalon.Eventing.Services.IEventSubscriptionDescriptorProvider.SubscriptionDescriptor.get -> Cephalon.Eventing.Services.EventSubscriptionDescriptor!
 Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionRetryBackoff.get -> string!
 Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionRetryBackoff.set -> void
 Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionRetryBackoffMultiplier.get -> int

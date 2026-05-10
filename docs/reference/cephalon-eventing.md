@@ -1621,42 +1621,6 @@ Represents the next step in the code-owned event subscription execution pipeline
 public sealed class EventSubscriptionExecutionStep
 ```
 
-#### Constructors
-
-<a id="member-m-cephalon-eventing-services-eventsubscriptionexecutionstep-ctor-system-object-system-intptr"></a>
-
-##### `EventSubscriptionExecutionStep`
-
-```csharp
-EventSubscriptionExecutionStep(object object, IntPtr method)
-```
-
-#### Methods
-
-<a id="member-m-cephalon-eventing-services-eventsubscriptionexecutionstep-begininvoke-cephalon-eventing-services-eventsubscriptionexecutioncontext-system-threading-cancellationtoken-system-asynccallback-system-object"></a>
-
-##### `BeginInvoke`
-
-```csharp
-IAsyncResult BeginInvoke(EventSubscriptionExecutionContext context, CancellationToken cancellationToken, AsyncCallback callback, object object)
-```
-
-<a id="member-m-cephalon-eventing-services-eventsubscriptionexecutionstep-endinvoke-system-iasyncresult"></a>
-
-##### `EndInvoke`
-
-```csharp
-ValueTask EndInvoke(IAsyncResult result)
-```
-
-<a id="member-m-cephalon-eventing-services-eventsubscriptionexecutionstep-invoke-cephalon-eventing-services-eventsubscriptionexecutioncontext-system-threading-cancellationtoken"></a>
-
-##### `Invoke`
-
-```csharp
-ValueTask Invoke(EventSubscriptionExecutionContext context, CancellationToken cancellationToken)
-```
-
 <a id="type-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys"></a>
 
 ### `EventSubscriptionRuntimeMetadataKeys`
@@ -2424,6 +2388,31 @@ Registers one or more event subscription descriptors with the supplied registry.
 
 Parameters:
 - `subscriptions`: The registry that collects contributed subscription descriptors.
+
+<a id="type-cephalon-eventing-services-ieventsubscriptiondescriptorprovider"></a>
+
+### `IEventSubscriptionDescriptorProvider`
+
+Allows an in-process subscription executor to provide its declared subscription descriptor.
+
+Remarks: Implement this optional interface on an `IEventSubscriptionExecutor` when the executor owns enough code-first metadata for the native eventing pack to register its descriptor automatically. This keeps subscription authoring typed and dependency-injection owned without binding handlers from configuration.
+
+#### Declaration
+```csharp
+public interface IEventSubscriptionDescriptorProvider
+```
+
+#### Properties
+
+<a id="member-p-cephalon-eventing-services-ieventsubscriptiondescriptorprovider-subscriptiondescriptor"></a>
+
+##### `SubscriptionDescriptor`
+
+```csharp
+EventSubscriptionDescriptor SubscriptionDescriptor { get; }
+```
+
+Gets the code-owned subscription descriptor associated with the executor.
 
 <a id="type-cephalon-eventing-services-ieventsubscriptionexecutionbindingcatalog"></a>
 

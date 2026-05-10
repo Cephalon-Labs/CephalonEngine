@@ -91,6 +91,7 @@ internal sealed class InProcessEventSubscriptionExecutorCatalog : IEventSubscrip
                     ["technology"] = "event-driven-integration",
                     ["trigger"] = InProcessEventingRuntimeIds.PublisherId,
                     ["deliveryMode"] = "direct",
+                    ["subscriptionDescriptorDiscovery"] = GetSubscriptionDescriptorDiscovery(entry.Subscription),
                     ["subscriptionExecutionPipeline"] = pipelineDescriptor.PipelineId,
                     ["subscriptionExecutionMiddlewareCount"] = pipelineDescriptor.MiddlewareCount.ToString(CultureInfo.InvariantCulture),
                     ["retryPolicy"] = retryPolicy,
@@ -113,6 +114,14 @@ internal sealed class InProcessEventSubscriptionExecutorCatalog : IEventSubscrip
                     ["subscriptionTagCount"] = entry.Subscription.Tags.Count.ToString(CultureInfo.InvariantCulture)
                 }))
             .ToArray();
+    }
+
+    private static string GetSubscriptionDescriptorDiscovery(EventSubscriptionDescriptor subscription)
+    {
+        return subscription.Metadata.TryGetValue("descriptorDiscovery", out var discovery) &&
+            !string.IsNullOrWhiteSpace(discovery)
+            ? discovery
+            : "none";
     }
 
     public IReadOnlyList<ManagedSubscriptionEntry> GetByChannelId(string channelId)
