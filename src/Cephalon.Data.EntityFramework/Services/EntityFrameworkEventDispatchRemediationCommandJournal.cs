@@ -75,6 +75,19 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
             .Where(entry => beforeObservedAtUtc == null || entry.ObservedAtUtc <= beforeObservedAtUtc.Value));
     }
 
+    public EventDispatchRemediationRuntimeState? GetOldestInDoubtBefore(DateTimeOffset? beforeObservedAtUtc)
+    {
+        var entry = journalContext.EventDispatchRemediationCommandJournalEntries
+            .AsNoTracking()
+            .Where(entry => entry.Outcome == EventDispatchRemediationOutcomes.Reserved)
+            .Where(entry => beforeObservedAtUtc == null || entry.ObservedAtUtc <= beforeObservedAtUtc.Value)
+            .OrderBy(entry => entry.ObservedAtUtc)
+            .ThenBy(entry => entry.CommandId)
+            .FirstOrDefault();
+
+        return entry is null ? null : CreateState(entry);
+    }
+
     public EventDispatchRemediationRuntimeState? GetByCommandId(string commandId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(commandId);

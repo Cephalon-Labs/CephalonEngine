@@ -64,6 +64,7 @@ Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByOperatio
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByReason(string! reason) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetInDoubt() -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetInDoubtBefore(System.DateTimeOffset? beforeObservedAtUtc) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetOldestInDoubtBefore(System.DateTimeOffset? beforeObservedAtUtc) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetSummaryByObservedAt(System.DateTimeOffset? fromObservedAtUtc, System.DateTimeOffset? toObservedAtUtc) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.Latest.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.Retention.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention!

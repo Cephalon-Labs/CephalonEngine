@@ -101,6 +101,20 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         }
     }
 
+    public EventDispatchRemediationRuntimeState? GetOldestInDoubtBefore(DateTimeOffset? beforeObservedAtUtc)
+    {
+        lock (gate)
+        {
+            return states
+                .Where(state =>
+                    IsReservedState(state) &&
+                    (beforeObservedAtUtc is null || state.ObservedAtUtc <= beforeObservedAtUtc.Value))
+                .OrderBy(static state => state.ObservedAtUtc)
+                .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
+                .FirstOrDefault();
+        }
+    }
+
     private static EventDispatchRemediationRuntimeSummary CreateSummary(
         List<EventDispatchRemediationRuntimeState> recordedStates,
         long droppedCommandCount = 0,

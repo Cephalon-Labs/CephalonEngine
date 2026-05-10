@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T15:35:16.8644192+00:00",
+  "GeneratedAtUtc": "2026-05-10T15:58:38.260254+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -11259,7 +11259,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 4,
-        "Methods": 14
+        "Methods": 15
       }
     },
     {
@@ -62855,6 +62855,17 @@
       "AnchorId": "member-m-cephalon-eventsourcing-services-ieventtyperegistry-getname-cephalon-abstractions-eventsourcing-idomainevent",
       "Signature": "string GetName(IDomainEvent evt)",
       "Summary": "Gets the persisted event-type name for a domain-event instance."
+    },
+    {
+      "DisplayName": "GetOldestInDoubtBefore",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestindoubtbefore-system-nullable-system-datetimeoffset",
+      "Signature": "EventDispatchRemediationRuntimeState GetOldestInDoubtBefore(DateTimeOffset? beforeObservedAtUtc)",
+      "Summary": "Gets the oldest retained in-doubt remediation command-state entry observed at or before an optional UTC cutoff."
     },
     {
       "DisplayName": "GetPending",

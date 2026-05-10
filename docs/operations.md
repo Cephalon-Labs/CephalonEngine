@@ -2248,6 +2248,9 @@ Current payload highlights:
   `reserved` command records newest-first; omit `beforeUtc` for all retained in-doubt commands, or
   provide an inclusive UTC cutoff to retrieve stale reservations directly. Invalid cutoff values
   return `400`.
+- `GET /engine/event-dispatch-remediation-commands/in-doubt/oldest?beforeUtc={beforeUtc}` returns
+  the oldest retained `reserved` command record that matches the optional inclusive UTC cutoff,
+  returns `404` when no retained in-doubt record matches, and returns `400` for invalid cutoff values.
 - `GET /engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}`
   filters command results by inclusive observed UTC window so incident timelines can read retained
   accepted, rejected, and reserved command history without scanning the full bounded list; append
@@ -2278,8 +2281,8 @@ Current payload highlights:
 - `GET /engine/event-dispatch-remediation-commands/outcomes/{outcome}` filters command results by
   command outcome, such as `accepted` or `rejected`
 - list and filter command-result routes that return arrays reject invalid, zero, or negative
-  `limit` query values with `400`; summary, latest, retention, and single-command reads keep their
-  existing direct contracts
+  `limit` query values with `400`; summary, latest, retention, oldest-in-doubt, and single-command
+  reads keep their existing direct contracts
 - the same descriptor and state catalogs are also available through `/engine/snapshot` in
   `EventDispatchRuntimes` and `EventDispatchStates` when operators want one merged runtime answer
 
@@ -2299,11 +2302,14 @@ Current note:
   typed command-audit read model for the active host; summary responses now expose truncation and
   incomplete-window warning flags directly, and the `/retention` readback remains the full posture
   when operators need retained/recorded/dropped counts plus latest retained command detail; use
-  `commandListRoute`, `commandResultRoute`, `commandInDoubtRoute`, and `commandOutboxRoute` metadata from
+  `commandListRoute`, `commandResultRoute`, `commandInDoubtRoute`, `commandOldestInDoubtRoute`, and `commandOutboxRoute` metadata from
   `/engine/capabilities`, `/engine/technology-surfaces`, or `/engine/snapshot` to discover the root
-list, in-doubt, command-id, and outbox drill-down URLs without probing routes; use
+list, in-doubt, oldest in-doubt, command-id, and outbox drill-down URLs without probing routes; use
   `commandInDoubtQuery`, `commandInDoubtCutoffPolicy`, and `commandInDoubtInvalidCutoff` metadata
   to discover the optional stale-reservation cutoff; use
+  `commandOldestInDoubtQuery`, `commandOldestInDoubtPolicy`, and
+  `commandOldestInDoubtInvalidCutoff` metadata to discover the single oldest stale-reservation read;
+  use
   `commandReadLimitQuery`, `commandReadLimitPolicy`, and `commandReadLimitRoutes` metadata from
   `/engine/capabilities`, `/engine/technology-surfaces`, or `/engine/snapshot` to discover the
   read-side limit support instead of hardcoding UI assumptions; use `commandObservationWindowQuery`,
@@ -2312,6 +2318,8 @@ list, in-doubt, command-id, and outbox drill-down URLs without probing routes; u
   retained-window query semantics and validation posture; use
 `/engine/event-dispatch-remediation-commands/in-doubt?beforeUtc={beforeUtc}` when operators need
   the retained reserved commands directly or only stale retained reservations; use
+  `/engine/event-dispatch-remediation-commands/in-doubt/oldest?beforeUtc={beforeUtc}` when operators
+  need only the next oldest retained stale reservation; use
   `/observations?fromUtc={fromUtc}&toUtc={toUtc}` for retained incident windows, but
   do not treat it as durable compliance retention or broker replay ownership
 - `event-dispatch-remediation-commands` includes a catalog entry even when the command history is

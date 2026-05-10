@@ -11826,6 +11826,9 @@ Browse the published API surface by public member.
 - [GetName](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-ieventtyperegistry-getname-cephalon-abstractions-eventsourcing-idomainevent): `Methods` on `IEventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=GetName&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Gets the persisted event-type name for a domain-event instance.
   - `string GetName(IDomainEvent evt)`
+- [GetOldestInDoubtBefore](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestindoubtbefore-system-nullable-system-datetimeoffset): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetOldestInDoubtBefore&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the oldest retained in-doubt remediation command-state entry observed at or before an optional UTC cutoff.
+  - `EventDispatchRemediationRuntimeState GetOldestInDoubtBefore(DateTimeOffset? beforeObservedAtUtc)`
 - [GetPending](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantinvitationdeliveryretrystore-getpending-system-datetimeoffset-system-int32-system-boolean): `Methods` on `ITenantInvitationDeliveryRetryStore` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=GetPending&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets retry entries that are pending and optionally due at or before the supplied timestamp.
   - `IReadOnlyList<TenantInvitationDeliveryRetryDescriptor> GetPending(DateTimeOffset atUtc, int limit, bool dueOnly)`
