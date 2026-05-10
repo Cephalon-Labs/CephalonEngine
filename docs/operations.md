@@ -2230,7 +2230,8 @@ Current payload highlights:
   are unique, and a duplicate command id returns a rejected result without mutating dispatch-store
   state or replacing the original command-result record
 - `GET /engine/event-dispatch-remediation-commands` lists accepted and rejected command results
-  recorded by `IEventDispatchRemediationRuntimeCatalog`
+  recorded by `IEventDispatchRemediationRuntimeCatalog`; `?limit={positiveInteger}` returns only
+  the newest retained records
 - `GET /engine/event-dispatch-remediation-commands/summary` returns the bounded command-result
   roll-up: total, accepted, rejected, errored, duplicate-command count, and latest command
   identity/outcome fields without scanning the full history; it also carries dropped-command count,
@@ -2244,7 +2245,8 @@ Current payload highlights:
   history has discarded older command results
 - `GET /engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}`
   filters command results by inclusive observed UTC window so incident timelines can read retained
-  accepted and rejected command history without scanning the full bounded list
+  accepted and rejected command history without scanning the full bounded list; append
+  `&limit={positiveInteger}` to return only the newest retained records inside that window
 - `GET /engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}`
   summarizes retained command results inside the same observed UTC window so operator dashboards can
   read accepted, rejected, error, duplicate, latest-command, retention-truncated, and
@@ -2270,6 +2272,9 @@ Current payload highlights:
   command results by dispatch-store outcome, such as `retry-scheduled`, `skipped`, or `failed`
 - `GET /engine/event-dispatch-remediation-commands/outcomes/{outcome}` filters command results by
   command outcome, such as `accepted` or `rejected`
+- list and filter command-result routes that return arrays reject invalid, zero, or negative
+  `limit` query values with `400`; summary, latest, retention, and single-command reads keep their
+  existing direct contracts
 - the same descriptor and state catalogs are also available through `/engine/snapshot` in
   `EventDispatchRuntimes` and `EventDispatchStates` when operators want one merged runtime answer
 

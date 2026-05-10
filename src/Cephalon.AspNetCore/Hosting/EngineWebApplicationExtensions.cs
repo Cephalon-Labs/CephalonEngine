@@ -993,7 +993,7 @@ public static class EngineWebApplicationExtensions
                     .GetService<IEventDispatchRemediationRuntimeCatalog>()?
                     .States ?? [];
 
-                return Results.Ok(states);
+                return OkLimitedEventDispatchRemediationCommandStates(context, states);
             });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/summary", "GetCephalonEventDispatchRemediationCommandSummary", static context =>
             {
@@ -1063,7 +1063,7 @@ public static class EngineWebApplicationExtensions
                     .GetService<IEventDispatchRemediationRuntimeCatalog>()?
                     .GetByObservedAt(fromUtc, toUtc) ?? [];
 
-                return Results.Ok(states);
+                return OkLimitedEventDispatchRemediationCommandStates(context, states);
             });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/outboxes/{outboxId}", "GetCephalonEventDispatchRemediationCommandsByOutbox", static context =>
             {
@@ -1072,7 +1072,7 @@ public static class EngineWebApplicationExtensions
                     .GetService<IEventDispatchRemediationRuntimeCatalog>()?
                     .GetByOutboxId(outboxId) ?? [];
 
-                return Results.Ok(states);
+                return OkLimitedEventDispatchRemediationCommandStates(context, states);
             });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/messages/{messageId}", "GetCephalonEventDispatchRemediationCommandsByMessage", static context =>
             {
@@ -1081,7 +1081,7 @@ public static class EngineWebApplicationExtensions
                     .GetService<IEventDispatchRemediationRuntimeCatalog>()?
                     .GetByMessageId(messageId) ?? [];
 
-                return Results.Ok(states);
+                return OkLimitedEventDispatchRemediationCommandStates(context, states);
             });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/channels/{channelId}", "GetCephalonEventDispatchRemediationCommandsByChannel", static context =>
             {
@@ -1090,7 +1090,7 @@ public static class EngineWebApplicationExtensions
                     .GetService<IEventDispatchRemediationRuntimeCatalog>()?
                     .GetByChannelId(channelId) ?? [];
 
-                return Results.Ok(states);
+                return OkLimitedEventDispatchRemediationCommandStates(context, states);
             });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/operations/{operationId}", "GetCephalonEventDispatchRemediationCommandsByOperation", static context =>
             {
@@ -1099,7 +1099,7 @@ public static class EngineWebApplicationExtensions
                     .GetService<IEventDispatchRemediationRuntimeCatalog>()?
                     .GetByOperationId(operationId) ?? [];
 
-                return Results.Ok(states);
+                return OkLimitedEventDispatchRemediationCommandStates(context, states);
             });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/actors/{actorId}", "GetCephalonEventDispatchRemediationCommandsByActor", static context =>
             {
@@ -1108,7 +1108,7 @@ public static class EngineWebApplicationExtensions
                     .GetService<IEventDispatchRemediationRuntimeCatalog>()?
                     .GetByActorId(actorId) ?? [];
 
-                return Results.Ok(states);
+                return OkLimitedEventDispatchRemediationCommandStates(context, states);
             });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/correlations/{correlationId}", "GetCephalonEventDispatchRemediationCommandsByCorrelation", static context =>
             {
@@ -1117,7 +1117,7 @@ public static class EngineWebApplicationExtensions
                     .GetService<IEventDispatchRemediationRuntimeCatalog>()?
                     .GetByCorrelationId(correlationId) ?? [];
 
-                return Results.Ok(states);
+                return OkLimitedEventDispatchRemediationCommandStates(context, states);
             });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/reasons/{reason}", "GetCephalonEventDispatchRemediationCommandsByReason", static context =>
             {
@@ -1126,7 +1126,7 @@ public static class EngineWebApplicationExtensions
                     .GetService<IEventDispatchRemediationRuntimeCatalog>()?
                     .GetByReason(reason) ?? [];
 
-                return Results.Ok(states);
+                return OkLimitedEventDispatchRemediationCommandStates(context, states);
             });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/outcomes/{outcome}", "GetCephalonEventDispatchRemediationCommandsByOutcome", static context =>
             {
@@ -1135,7 +1135,7 @@ public static class EngineWebApplicationExtensions
                     .GetService<IEventDispatchRemediationRuntimeCatalog>()?
                     .GetByOutcome(outcome) ?? [];
 
-                return Results.Ok(states);
+                return OkLimitedEventDispatchRemediationCommandStates(context, states);
             });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}", "GetCephalonEventDispatchRemediationCommandsByDispatchOutcome", static context =>
             {
@@ -1144,7 +1144,7 @@ public static class EngineWebApplicationExtensions
                     .GetService<IEventDispatchRemediationRuntimeCatalog>()?
                     .GetByDispatchOutcome(dispatchOutcome) ?? [];
 
-                return Results.Ok(states);
+                return OkLimitedEventDispatchRemediationCommandStates(context, states);
             });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/{commandId}", "GetCephalonEventDispatchRemediationCommand", static context =>
             {
@@ -2320,6 +2320,28 @@ public static class EngineWebApplicationExtensions
         value = null;
         error = Results.BadRequest($"Query parameter '{name}' must be a valid date/time offset.");
         return false;
+    }
+
+    private static IResult OkLimitedEventDispatchRemediationCommandStates(
+        HttpContext context,
+        IReadOnlyList<EventDispatchRemediationRuntimeState> states)
+    {
+        if (!TryGetNullableIntQueryValue(context, "limit", out var limit, out var error))
+        {
+            return error;
+        }
+
+        if (limit.HasValue && limit.Value < 1)
+        {
+            return Results.BadRequest("Query parameter 'limit' must be greater than or equal to 1.");
+        }
+
+        if (limit is null || states.Count <= limit.Value)
+        {
+            return Results.Ok(states);
+        }
+
+        return Results.Ok(states.Take(limit.Value).ToArray());
     }
 
     private static async Task<(TValue? Value, IResult? Error)> ReadOptionalJsonBodyAsync<TValue>(

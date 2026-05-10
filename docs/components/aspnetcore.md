@@ -548,6 +548,10 @@ observation routes return `400` for invalid dates or reversed bounds; the detail
 retained command-result history latest-first, while the summary route returns the same window's
 accepted/rejected/error/duplicate counts, latest command posture, dropped-command count,
 retention-truncated flag, incomplete-summary flag, and oldest retained cutoff.
+The list and filter routes that return command-result arrays also accept
+`?limit={positiveInteger}` so operator dashboards can read the newest retained records first without
+materializing the full bounded history; invalid, zero, or negative limits return `400`, and summary,
+latest, retention, or single-command reads keep their existing contracts.
 
 The host now also exposes bounded event-publication operator action and publication runtime-state
 surfaces directly. When a selected eventing pack registers `IEventPublicationDispatcher`,

@@ -386,6 +386,8 @@ public sealed class EventDispatchHostingTests
             BuildObservationWindowSummaryRoute(null, commandState.ObservedAtUtc.AddSeconds(-1)));
         var invalidObservationWindowResponse = await client.GetAsync("/engine/event-dispatch-remediation-commands/observations?fromUtc=not-a-date");
         var invalidObservationWindowSummaryResponse = await client.GetAsync("/engine/event-dispatch-remediation-commands/observations/summary?fromUtc=not-a-date");
+        var invalidCommandReadLimitResponse = await client.GetAsync("/engine/event-dispatch-remediation-commands?limit=0");
+        var invalidCommandFilterReadLimitResponse = await client.GetAsync("/engine/event-dispatch-remediation-commands/messages/evt-command-001?limit=not-a-number");
         var reversedObservationWindowResponse = await client.GetAsync(BuildObservationWindowRoute(
             commandState.ObservedAtUtc.AddSeconds(1),
             commandState.ObservedAtUtc.AddSeconds(-1)));
@@ -417,6 +419,8 @@ public sealed class EventDispatchHostingTests
         Assert.False(commandSummaryBeforeObservationWindow.HasCommands);
         Assert.Equal(HttpStatusCode.BadRequest, invalidObservationWindowResponse.StatusCode);
         Assert.Equal(HttpStatusCode.BadRequest, invalidObservationWindowSummaryResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, invalidCommandReadLimitResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, invalidCommandFilterReadLimitResponse.StatusCode);
         Assert.Equal(HttpStatusCode.BadRequest, reversedObservationWindowResponse.StatusCode);
         Assert.Equal(HttpStatusCode.BadRequest, reversedObservationWindowSummaryResponse.StatusCode);
         Assert.NotNull(latestCommandState);
@@ -658,6 +662,9 @@ public sealed class EventDispatchHostingTests
         var rejectedCommandStatesByReason = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>($"/engine/event-dispatch-remediation-commands/reasons/{Uri.EscapeDataString(rejectedReason)}");
         var finalRetryScheduledCommandStates = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/dispatch-outcomes/retry-scheduled");
         var allCommandStates = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands");
+        var limitedAllCommandStates = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands?limit=2");
+        var limitedFinalCommandStatesByMessage = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/messages/evt-command-001?limit=2");
+        var limitedFinalCommandStatesByOperator = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/actors/operator-001?limit=1");
         var finalCommandSummary = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeSummary>("/engine/event-dispatch-remediation-commands/summary");
         var finalLatestCommandState = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState>("/engine/event-dispatch-remediation-commands/latest");
         var finalCommandRetention = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeRetention>("/engine/event-dispatch-remediation-commands/retention");
@@ -673,12 +680,16 @@ public sealed class EventDispatchHostingTests
         Assert.NotNull(deadLetterCommandState);
         var finalCommandStatesByObservationWindow = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>(
             BuildObservationWindowRoute(deadLetterCommandState.ObservedAtUtc, rejectedCommandState.ObservedAtUtc));
+        var limitedFinalCommandStatesByObservationWindow = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>(
+            BuildObservationWindowRoute(deadLetterCommandState.ObservedAtUtc, rejectedCommandState.ObservedAtUtc, limit: 1));
         var finalCommandObservationSummary = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeSummary>(
             BuildObservationWindowSummaryRoute(deadLetterCommandState.ObservedAtUtc, rejectedCommandState.ObservedAtUtc));
         Assert.NotNull(finalCommandStatesByObservationWindow);
         Assert.Equal(
             ["cmd-command-001-retry-later-rejected", "cmd-command-001-dead-letter"],
             finalCommandStatesByObservationWindow.Select(state => state.CommandId).ToArray());
+        Assert.NotNull(limitedFinalCommandStatesByObservationWindow);
+        Assert.Equal("cmd-command-001-retry-later-rejected", Assert.Single(limitedFinalCommandStatesByObservationWindow).CommandId);
         Assert.NotNull(finalCommandObservationSummary);
         Assert.Equal(2, finalCommandObservationSummary.TotalCommandCount);
         Assert.Equal(1, finalCommandObservationSummary.AcceptedCount);
@@ -721,6 +732,16 @@ public sealed class EventDispatchHostingTests
             finalRetryScheduledCommandStates.Select(state => state.CommandId).ToArray());
         Assert.NotNull(allCommandStates);
         Assert.Equal(3, allCommandStates.Length);
+        Assert.NotNull(limitedAllCommandStates);
+        Assert.Equal(
+            ["cmd-command-001-retry-later-rejected", "cmd-command-001-dead-letter"],
+            limitedAllCommandStates.Select(state => state.CommandId).ToArray());
+        Assert.NotNull(limitedFinalCommandStatesByMessage);
+        Assert.Equal(
+            ["cmd-command-001-retry-later-rejected", "cmd-command-001-dead-letter"],
+            limitedFinalCommandStatesByMessage.Select(state => state.CommandId).ToArray());
+        Assert.NotNull(limitedFinalCommandStatesByOperator);
+        Assert.Equal("cmd-command-001-retry-later-rejected", Assert.Single(limitedFinalCommandStatesByOperator).CommandId);
         Assert.NotNull(finalCommandSummary);
         Assert.Equal(3, finalCommandSummary.TotalCommandCount);
         Assert.Equal(2, finalCommandSummary.AcceptedCount);
@@ -746,9 +767,9 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("cmd-command-001-retry", finalCommandRetention.OldestRetainedCommandId);
         Assert.Equal("cmd-command-001-retry-later-rejected", finalCommandRetention.LatestRetainedCommandId);
 
-        static string BuildObservationWindowRoute(DateTimeOffset? fromUtc, DateTimeOffset? toUtc)
+        static string BuildObservationWindowRoute(DateTimeOffset? fromUtc, DateTimeOffset? toUtc, int? limit = null)
         {
-            var parameters = new List<string>(capacity: 2);
+            var parameters = new List<string>(capacity: 3);
             if (fromUtc is not null)
             {
                 parameters.Add($"fromUtc={Uri.EscapeDataString(fromUtc.Value.ToString("O", CultureInfo.InvariantCulture))}");
@@ -757,6 +778,11 @@ public sealed class EventDispatchHostingTests
             if (toUtc is not null)
             {
                 parameters.Add($"toUtc={Uri.EscapeDataString(toUtc.Value.ToString("O", CultureInfo.InvariantCulture))}");
+            }
+
+            if (limit is not null)
+            {
+                parameters.Add($"limit={limit.Value.ToString(CultureInfo.InvariantCulture)}");
             }
 
             return parameters.Count == 0
