@@ -619,6 +619,15 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(catalogType.GetMethod("GetSummaryByObservedAt", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(catalogType.GetMethod("GetByOutcome", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(catalogType.GetMethod("GetByDispatchOutcome", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetLatestByOutboxId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetLatestByMessageId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetLatestByChannelId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetLatestByOperationId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetLatestByActorId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetLatestByCorrelationId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetLatestByReason", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetLatestByOutcome", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetLatestByDispatchOutcome", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

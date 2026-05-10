@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T16:45:28.3151053+00:00",
+  "GeneratedAtUtc": "2026-05-10T17:07:25.7795863+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -11156,7 +11156,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 4,
-        "Methods": 25
+        "Methods": 34
       }
     },
     {
@@ -62730,6 +62730,105 @@
       "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getindoubtsummarybefore-system-nullable-system-datetimeoffset",
       "Signature": "EventDispatchRemediationRuntimeSummary GetInDoubtSummaryBefore(DateTimeOffset? beforeObservedAtUtc)",
       "Summary": "Summarizes retained in-doubt remediation command-state entries observed at or before an optional UTC cutoff."
+    },
+    {
+      "DisplayName": "GetLatestByActorId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getlatestbyactorid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeState GetLatestByActorId(string actorId)",
+      "Summary": "Gets the most recently observed remediation command-state entry recorded for one operator actor."
+    },
+    {
+      "DisplayName": "GetLatestByChannelId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getlatestbychannelid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeState GetLatestByChannelId(string channelId)",
+      "Summary": "Gets the most recently observed remediation command-state entry recorded for one event channel."
+    },
+    {
+      "DisplayName": "GetLatestByCorrelationId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getlatestbycorrelationid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeState GetLatestByCorrelationId(string correlationId)",
+      "Summary": "Gets the most recently observed remediation command-state entry recorded for one operator correlation identifier."
+    },
+    {
+      "DisplayName": "GetLatestByDispatchOutcome",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getlatestbydispatchoutcome-system-string",
+      "Signature": "EventDispatchRemediationRuntimeState GetLatestByDispatchOutcome(string dispatchOutcome)",
+      "Summary": "Gets the most recently observed remediation command-state entry recorded for one dispatch-store outcome."
+    },
+    {
+      "DisplayName": "GetLatestByMessageId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getlatestbymessageid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeState GetLatestByMessageId(string messageId)",
+      "Summary": "Gets the most recently observed remediation command-state entry recorded for one event message."
+    },
+    {
+      "DisplayName": "GetLatestByOperationId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getlatestbyoperationid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeState GetLatestByOperationId(string operationId)",
+      "Summary": "Gets the most recently observed remediation command-state entry recorded for one command operation."
+    },
+    {
+      "DisplayName": "GetLatestByOutboxId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getlatestbyoutboxid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeState GetLatestByOutboxId(string outboxId)",
+      "Summary": "Gets the most recently observed remediation command-state entry recorded for one outbox identifier."
+    },
+    {
+      "DisplayName": "GetLatestByOutcome",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getlatestbyoutcome-system-string",
+      "Signature": "EventDispatchRemediationRuntimeState GetLatestByOutcome(string outcome)",
+      "Summary": "Gets the most recently observed remediation command-state entry recorded for one command outcome."
+    },
+    {
+      "DisplayName": "GetLatestByReason",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getlatestbyreason-system-string",
+      "Signature": "EventDispatchRemediationRuntimeState GetLatestByReason(string reason)",
+      "Summary": "Gets the most recently observed remediation command-state entry recorded for one operator command reason."
     },
     {
       "DisplayName": "GetManagedConnectorCommandExecutionHistory",

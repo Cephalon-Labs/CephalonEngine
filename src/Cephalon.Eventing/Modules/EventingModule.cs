@@ -446,6 +446,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
         EventDispatchRemediationCommandMetadata.AddInDoubtMetadata(remediationMetadata);
         EventDispatchRemediationCommandMetadata.AddReadLimitMetadata(remediationMetadata);
         EventDispatchRemediationCommandMetadata.AddFilterSummaryMetadata(remediationMetadata);
+        EventDispatchRemediationCommandMetadata.AddFilterLatestMetadata(remediationMetadata);
         EventDispatchRemediationCommandMetadata.AddPaginationMetadata(remediationMetadata);
             EventDispatchRemediationCommandMetadata.AddIdempotencyMetadata(remediationMetadata);
 

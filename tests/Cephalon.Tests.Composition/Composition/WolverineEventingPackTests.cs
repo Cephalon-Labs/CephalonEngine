@@ -412,8 +412,14 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/outcomes/{outcome}", remediationEntry.Metadata["operatorCommandOutcomeRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}/summary", remediationEntry.Metadata["operatorCommandOutboxSummaryRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/messages/{messageId}/summary", remediationEntry.Metadata["operatorCommandMessageSummaryRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}/latest", remediationEntry.Metadata["operatorCommandOutboxLatestRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/messages/{messageId}/latest", remediationEntry.Metadata["operatorCommandMessageLatestRoute"]);
         Assert.Equal("retained-filter-server-side-aggregate", remediationEntry.Metadata["operatorCommandFilterSummaryPolicy"]);
         Assert.Equal("outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", remediationEntry.Metadata["operatorCommandFilterSummaryRoutes"]);
+        Assert.Equal("retained-filter-server-side-latest", remediationEntry.Metadata["operatorCommandFilterLatestPolicy"]);
+        Assert.Equal("outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", remediationEntry.Metadata["operatorCommandFilterLatestRoutes"]);
+        Assert.Equal(nameof(EventDispatchRemediationRuntimeState), remediationEntry.Metadata["operatorCommandFilterLatestResponse"]);
+        Assert.Equal("not-found", remediationEntry.Metadata["operatorCommandFilterLatestMissing"]);
         Assert.Equal("limit", remediationEntry.Metadata["operatorCommandReadLimitQuery"]);
         Assert.Equal("positive-integer-newest-first", remediationEntry.Metadata["operatorCommandReadLimitPolicy"]);
         Assert.Equal("all,in-doubt,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", remediationEntry.Metadata["operatorCommandReadLimitRoutes"]);
@@ -439,8 +445,13 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/summary", remediationCommandCatalogEntry.Metadata["commandSummaryRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}", remediationCommandCatalogEntry.Metadata["commandOutboxRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}/summary", remediationCommandCatalogEntry.Metadata["commandOutboxSummaryRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}/latest", remediationCommandCatalogEntry.Metadata["commandOutboxLatestRoute"]);
         Assert.Equal("retained-filter-server-side-aggregate", remediationCommandCatalogEntry.Metadata["commandFilterSummaryPolicy"]);
         Assert.Equal("outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", remediationCommandCatalogEntry.Metadata["commandFilterSummaryRoutes"]);
+        Assert.Equal("retained-filter-server-side-latest", remediationCommandCatalogEntry.Metadata["commandFilterLatestPolicy"]);
+        Assert.Equal("outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", remediationCommandCatalogEntry.Metadata["commandFilterLatestRoutes"]);
+        Assert.Equal(nameof(EventDispatchRemediationRuntimeState), remediationCommandCatalogEntry.Metadata["commandFilterLatestResponse"]);
+        Assert.Equal("not-found", remediationCommandCatalogEntry.Metadata["commandFilterLatestMissing"]);
         Assert.Equal("inclusive-observed-utc", remediationCommandCatalogEntry.Metadata["commandObservationWindowPolicy"]);
         Assert.Equal("positive-integer-newest-first", remediationCommandCatalogEntry.Metadata["commandReadLimitPolicy"]);
         Assert.Equal("pageSize,continuationToken", remediationCommandCatalogEntry.Metadata["commandPaginationQuery"]);

@@ -1505,6 +1505,16 @@ public sealed class EntityFrameworkDataPackTests
             Assert.Equal(1, journal.GetSummaryByOutcome(EventDispatchRemediationOutcomes.Accepted).AcceptedCount);
             Assert.Equal(1, journal.GetSummaryByDispatchOutcome("pending").ReservedCount);
             Assert.False(journal.GetSummaryByMessageId("missing-message").HasCommands);
+            Assert.Equal("cmd-journal-002-reserved", journal.GetLatestByOutboxId("entity-framework-outbox")?.CommandId);
+            Assert.Equal("cmd-journal-002-reserved", journal.GetLatestByMessageId("evt-journal-001")?.CommandId);
+            Assert.Equal("cmd-journal-002-reserved", journal.GetLatestByChannelId("catalog-events")?.CommandId);
+            Assert.Equal("cmd-journal-001-retry", journal.GetLatestByOperationId(EventDispatchRemediationOperationIds.RetryNow)?.CommandId);
+            Assert.Equal("cmd-journal-002-reserved", journal.GetLatestByActorId("operator-journal")?.CommandId);
+            Assert.Equal("cmd-journal-002-reserved", journal.GetLatestByCorrelationId("corr-journal-command-002")?.CommandId);
+            Assert.Equal("cmd-journal-002-reserved", journal.GetLatestByReason("Reserve before mutation.")?.CommandId);
+            Assert.Equal("cmd-journal-001-retry", journal.GetLatestByOutcome(EventDispatchRemediationOutcomes.Accepted)?.CommandId);
+            Assert.Equal("cmd-journal-002-reserved", journal.GetLatestByDispatchOutcome("pending")?.CommandId);
+            Assert.Null(journal.GetLatestByMessageId("missing-message"));
 
             var observationSummary = journal.GetSummaryByObservedAt(
                 new DateTimeOffset(2026, 04, 14, 10, 1, 0, TimeSpan.Zero),
@@ -1536,6 +1546,12 @@ public sealed class EntityFrameworkDataPackTests
             Assert.Equal("/engine/event-dispatch-remediation-commands/outcomes/{outcome}/summary", commandCatalogEntry.Metadata["commandOutcomeSummaryRoute"]);
             Assert.Equal("retained-filter-server-side-aggregate", commandCatalogEntry.Metadata["commandFilterSummaryPolicy"]);
             Assert.Equal("outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", commandCatalogEntry.Metadata["commandFilterSummaryRoutes"]);
+            Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}/latest", commandCatalogEntry.Metadata["commandOutboxLatestRoute"]);
+            Assert.Equal("/engine/event-dispatch-remediation-commands/messages/{messageId}/latest", commandCatalogEntry.Metadata["commandMessageLatestRoute"]);
+            Assert.Equal("retained-filter-server-side-latest", commandCatalogEntry.Metadata["commandFilterLatestPolicy"]);
+            Assert.Equal("outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", commandCatalogEntry.Metadata["commandFilterLatestRoutes"]);
+            Assert.Equal(nameof(EventDispatchRemediationRuntimeState), commandCatalogEntry.Metadata["commandFilterLatestResponse"]);
+            Assert.Equal("not-found", commandCatalogEntry.Metadata["commandFilterLatestMissing"]);
 
             var processLocalJournal = Assert.IsAssignableFrom<IEventDispatchRemediationCommandJournal>(processLocalCatalog);
             var processLocalReservation = await processLocalJournal.ReserveAsync(new EventDispatchRemediationRequest(
@@ -1558,6 +1574,16 @@ public sealed class EntityFrameworkDataPackTests
             Assert.Equal(1, processLocalCatalog.GetSummaryByActorId("operator-journal").ReservedCount);
             Assert.Equal(1, processLocalCatalog.GetSummaryByOutcome(EventDispatchRemediationOutcomes.Reserved).ReservedCount);
             Assert.Equal(1, processLocalCatalog.GetSummaryByDispatchOutcome("pending").ReservedCount);
+            Assert.Equal("cmd-process-local-reserved", processLocalCatalog.GetLatestByOutboxId("entity-framework-outbox")?.CommandId);
+            Assert.Equal("cmd-process-local-reserved", processLocalCatalog.GetLatestByMessageId("evt-journal-001")?.CommandId);
+            Assert.Equal("cmd-process-local-reserved", processLocalCatalog.GetLatestByChannelId("catalog-events")?.CommandId);
+            Assert.Equal("cmd-process-local-reserved", processLocalCatalog.GetLatestByOperationId(EventDispatchRemediationOperationIds.Skip)?.CommandId);
+            Assert.Equal("cmd-process-local-reserved", processLocalCatalog.GetLatestByActorId("operator-journal")?.CommandId);
+            Assert.Equal("cmd-process-local-reserved", processLocalCatalog.GetLatestByCorrelationId("corr-process-local-reserved")?.CommandId);
+            Assert.Equal("cmd-process-local-reserved", processLocalCatalog.GetLatestByReason("Process-local fallback summary proof.")?.CommandId);
+            Assert.Equal("cmd-process-local-reserved", processLocalCatalog.GetLatestByOutcome(EventDispatchRemediationOutcomes.Reserved)?.CommandId);
+            Assert.Equal("cmd-process-local-reserved", processLocalCatalog.GetLatestByDispatchOutcome("pending")?.CommandId);
+            Assert.Null(processLocalCatalog.GetLatestByActorId("missing-operator"));
             Assert.Equal("cmd-process-local-reserved", Assert.Single(processLocalCatalog.GetInDoubt()).CommandId);
             Assert.Equal("cmd-process-local-reserved", processLocalCatalog.GetOldestInDoubtBefore(null)?.CommandId);
             Assert.Equal("cmd-process-local-reserved", Assert.Single(processLocalCatalog.GetInDoubtBefore(new DateTimeOffset(2026, 04, 14, 10, 4, 0, TimeSpan.Zero))).CommandId);

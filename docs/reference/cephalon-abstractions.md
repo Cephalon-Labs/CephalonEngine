@@ -51726,6 +51726,141 @@ Returns: The aggregate in-doubt command summary for retained records at or befor
 Parameters:
 - `beforeObservedAtUtc`: The inclusive upper UTC observation cutoff, or `null` to summarize all retained in-doubt entries.
 
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getlatestbyactorid-system-string"></a>
+
+##### `GetLatestByActorId`
+
+```csharp
+EventDispatchRemediationRuntimeState GetLatestByActorId(string actorId)
+```
+
+Gets the most recently observed remediation command-state entry recorded for one operator actor.
+
+Returns: The latest matching command state, or `null` when none is retained.
+
+Parameters:
+- `actorId`: The stable operator actor identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getlatestbychannelid-system-string"></a>
+
+##### `GetLatestByChannelId`
+
+```csharp
+EventDispatchRemediationRuntimeState GetLatestByChannelId(string channelId)
+```
+
+Gets the most recently observed remediation command-state entry recorded for one event channel.
+
+Returns: The latest matching command state, or `null` when none is retained.
+
+Parameters:
+- `channelId`: The stable event channel identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getlatestbycorrelationid-system-string"></a>
+
+##### `GetLatestByCorrelationId`
+
+```csharp
+EventDispatchRemediationRuntimeState GetLatestByCorrelationId(string correlationId)
+```
+
+Gets the most recently observed remediation command-state entry recorded for one operator correlation identifier.
+
+Returns: The latest matching command state, or `null` when none is retained.
+
+Parameters:
+- `correlationId`: The stable operator correlation identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getlatestbydispatchoutcome-system-string"></a>
+
+##### `GetLatestByDispatchOutcome`
+
+```csharp
+EventDispatchRemediationRuntimeState GetLatestByDispatchOutcome(string dispatchOutcome)
+```
+
+Gets the most recently observed remediation command-state entry recorded for one dispatch-store outcome.
+
+Returns: The latest matching command state, or `null` when none is retained.
+
+Parameters:
+- `dispatchOutcome`: The stable dispatch-store outcome identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getlatestbymessageid-system-string"></a>
+
+##### `GetLatestByMessageId`
+
+```csharp
+EventDispatchRemediationRuntimeState GetLatestByMessageId(string messageId)
+```
+
+Gets the most recently observed remediation command-state entry recorded for one event message.
+
+Returns: The latest matching command state, or `null` when none is retained.
+
+Parameters:
+- `messageId`: The stable event message identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getlatestbyoperationid-system-string"></a>
+
+##### `GetLatestByOperationId`
+
+```csharp
+EventDispatchRemediationRuntimeState GetLatestByOperationId(string operationId)
+```
+
+Gets the most recently observed remediation command-state entry recorded for one command operation.
+
+Returns: The latest matching command state, or `null` when none is retained.
+
+Parameters:
+- `operationId`: The stable command operation identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getlatestbyoutboxid-system-string"></a>
+
+##### `GetLatestByOutboxId`
+
+```csharp
+EventDispatchRemediationRuntimeState GetLatestByOutboxId(string outboxId)
+```
+
+Gets the most recently observed remediation command-state entry recorded for one outbox identifier.
+
+Returns: The latest matching command state, or `null` when none is retained.
+
+Parameters:
+- `outboxId`: The stable outbox identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getlatestbyoutcome-system-string"></a>
+
+##### `GetLatestByOutcome`
+
+```csharp
+EventDispatchRemediationRuntimeState GetLatestByOutcome(string outcome)
+```
+
+Gets the most recently observed remediation command-state entry recorded for one command outcome.
+
+Returns: The latest matching command state, or `null` when none is retained.
+
+Parameters:
+- `outcome`: The stable command outcome identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getlatestbyreason-system-string"></a>
+
+##### `GetLatestByReason`
+
+```csharp
+EventDispatchRemediationRuntimeState GetLatestByReason(string reason)
+```
+
+Gets the most recently observed remediation command-state entry recorded for one operator command reason.
+
+Returns: The latest matching command state, or `null` when none is retained.
+
+Parameters:
+- `reason`: The stable operator-facing command reason to resolve.
+
 <a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestindoubtbefore-system-nullable-system-datetimeoffset"></a>
 
 ##### `GetOldestInDoubtBefore`

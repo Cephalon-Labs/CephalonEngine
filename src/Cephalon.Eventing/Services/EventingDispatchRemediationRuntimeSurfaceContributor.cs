@@ -69,6 +69,7 @@ internal sealed class EventingDispatchRemediationRuntimeSurfaceContributor(
         EventDispatchRemediationCommandMetadata.AddInDoubtMetadata(metadata, "operatorCommand");
         EventDispatchRemediationCommandMetadata.AddReadLimitMetadata(metadata, "operatorCommand");
         EventDispatchRemediationCommandMetadata.AddFilterSummaryMetadata(metadata, "operatorCommand");
+        EventDispatchRemediationCommandMetadata.AddFilterLatestMetadata(metadata, "operatorCommand");
         EventDispatchRemediationCommandMetadata.AddPaginationMetadata(metadata, "operatorCommand");
             metadata["operatorCommandOperations"] = EventDispatchRemediationCommandMetadata.CommandOperations;
             metadata["operatorCommandScope"] = "dispatch-store";

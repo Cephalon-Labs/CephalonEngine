@@ -302,6 +302,16 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
             oldestRetainedState: oldestState);
     }
 
+    private EventDispatchRemediationRuntimeState? GetLatestFilteredState(
+        Func<EventDispatchRemediationRuntimeState, bool> predicate)
+    {
+        return states
+            .Where(predicate)
+            .OrderByDescending(static state => state.ObservedAtUtc)
+            .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault();
+    }
+
     private static bool IsObservationWindowPotentiallyTruncated(
         DateTimeOffset? fromObservedAtUtc,
         EventDispatchRemediationRuntimeState? oldestRetainedState,
@@ -356,6 +366,18 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         }
     }
 
+    public EventDispatchRemediationRuntimeState? GetLatestByOutboxId(string outboxId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(outboxId);
+        var normalizedOutboxId = outboxId.Trim();
+
+        lock (gate)
+        {
+            return GetLatestFilteredState(
+                state => string.Equals(state.OutboxId, normalizedOutboxId, StringComparison.OrdinalIgnoreCase));
+        }
+    }
+
     public IReadOnlyList<EventDispatchRemediationRuntimeState> GetByMessageId(string messageId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(messageId);
@@ -379,6 +401,18 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         lock (gate)
         {
             return CreateFilteredSummary(
+                state => string.Equals(state.MessageId, normalizedMessageId, StringComparison.OrdinalIgnoreCase));
+        }
+    }
+
+    public EventDispatchRemediationRuntimeState? GetLatestByMessageId(string messageId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(messageId);
+        var normalizedMessageId = messageId.Trim();
+
+        lock (gate)
+        {
+            return GetLatestFilteredState(
                 state => string.Equals(state.MessageId, normalizedMessageId, StringComparison.OrdinalIgnoreCase));
         }
     }
@@ -410,6 +444,18 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         }
     }
 
+    public EventDispatchRemediationRuntimeState? GetLatestByChannelId(string channelId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(channelId);
+        var normalizedChannelId = channelId.Trim();
+
+        lock (gate)
+        {
+            return GetLatestFilteredState(
+                state => string.Equals(state.ChannelId, normalizedChannelId, StringComparison.OrdinalIgnoreCase));
+        }
+    }
+
     public IReadOnlyList<EventDispatchRemediationRuntimeState> GetByOperationId(string operationId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(operationId);
@@ -433,6 +479,18 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         lock (gate)
         {
             return CreateFilteredSummary(
+                state => string.Equals(state.OperationId, normalizedOperationId, StringComparison.OrdinalIgnoreCase));
+        }
+    }
+
+    public EventDispatchRemediationRuntimeState? GetLatestByOperationId(string operationId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(operationId);
+        var normalizedOperationId = operationId.Trim();
+
+        lock (gate)
+        {
+            return GetLatestFilteredState(
                 state => string.Equals(state.OperationId, normalizedOperationId, StringComparison.OrdinalIgnoreCase));
         }
     }
@@ -462,6 +520,20 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         lock (gate)
         {
             return CreateFilteredSummary(
+                state =>
+                    state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.OperatorActorId, out var recordedActorId) &&
+                    string.Equals(recordedActorId, normalizedActorId, StringComparison.OrdinalIgnoreCase));
+        }
+    }
+
+    public EventDispatchRemediationRuntimeState? GetLatestByActorId(string actorId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(actorId);
+        var normalizedActorId = actorId.Trim();
+
+        lock (gate)
+        {
+            return GetLatestFilteredState(
                 state =>
                     state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.OperatorActorId, out var recordedActorId) &&
                     string.Equals(recordedActorId, normalizedActorId, StringComparison.OrdinalIgnoreCase));
@@ -499,6 +571,20 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         }
     }
 
+    public EventDispatchRemediationRuntimeState? GetLatestByCorrelationId(string correlationId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(correlationId);
+        var normalizedCorrelationId = correlationId.Trim();
+
+        lock (gate)
+        {
+            return GetLatestFilteredState(
+                state =>
+                    state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.OperatorCorrelationId, out var recordedCorrelationId) &&
+                    string.Equals(recordedCorrelationId, normalizedCorrelationId, StringComparison.OrdinalIgnoreCase));
+        }
+    }
+
     public IReadOnlyList<EventDispatchRemediationRuntimeState> GetByReason(string reason)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(reason);
@@ -524,6 +610,20 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         lock (gate)
         {
             return CreateFilteredSummary(
+                state =>
+                    state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.OperatorCommandReason, out var recordedReason) &&
+                    string.Equals(recordedReason, normalizedReason, StringComparison.OrdinalIgnoreCase));
+        }
+    }
+
+    public EventDispatchRemediationRuntimeState? GetLatestByReason(string reason)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(reason);
+        var normalizedReason = reason.Trim();
+
+        lock (gate)
+        {
+            return GetLatestFilteredState(
                 state =>
                     state.Metadata.TryGetValue(EventDispatchRemediationMetadataKeys.OperatorCommandReason, out var recordedReason) &&
                     string.Equals(recordedReason, normalizedReason, StringComparison.OrdinalIgnoreCase));
@@ -557,6 +657,18 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         }
     }
 
+    public EventDispatchRemediationRuntimeState? GetLatestByOutcome(string outcome)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(outcome);
+        var normalizedOutcome = outcome.Trim();
+
+        lock (gate)
+        {
+            return GetLatestFilteredState(
+                state => string.Equals(state.Outcome, normalizedOutcome, StringComparison.OrdinalIgnoreCase));
+        }
+    }
+
     public IReadOnlyList<EventDispatchRemediationRuntimeState> GetByDispatchOutcome(string dispatchOutcome)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(dispatchOutcome);
@@ -580,6 +692,18 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         lock (gate)
         {
             return CreateFilteredSummary(
+                state => string.Equals(state.DispatchOutcome, normalizedDispatchOutcome, StringComparison.OrdinalIgnoreCase));
+        }
+    }
+
+    public EventDispatchRemediationRuntimeState? GetLatestByDispatchOutcome(string dispatchOutcome)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(dispatchOutcome);
+        var normalizedDispatchOutcome = dispatchOutcome.Trim();
+
+        lock (gate)
+        {
+            return GetLatestFilteredState(
                 state => string.Equals(state.DispatchOutcome, normalizedDispatchOutcome, StringComparison.OrdinalIgnoreCase));
         }
     }

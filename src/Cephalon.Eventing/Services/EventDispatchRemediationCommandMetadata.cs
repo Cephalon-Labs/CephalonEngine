@@ -19,25 +19,35 @@ internal static class EventDispatchRemediationCommandMetadata
     internal const string CommandObservationSummaryRoute = "/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}";
     internal const string CommandOperationRoute = "/engine/event-dispatch-remediation-commands/operations/{operationId}";
     internal const string CommandOperationSummaryRoute = "/engine/event-dispatch-remediation-commands/operations/{operationId}/summary";
+    internal const string CommandOperationLatestRoute = "/engine/event-dispatch-remediation-commands/operations/{operationId}/latest";
     internal const string CommandActorRoute = "/engine/event-dispatch-remediation-commands/actors/{actorId}";
     internal const string CommandActorSummaryRoute = "/engine/event-dispatch-remediation-commands/actors/{actorId}/summary";
+    internal const string CommandActorLatestRoute = "/engine/event-dispatch-remediation-commands/actors/{actorId}/latest";
     internal const string CommandCorrelationRoute = "/engine/event-dispatch-remediation-commands/correlations/{correlationId}";
     internal const string CommandCorrelationSummaryRoute = "/engine/event-dispatch-remediation-commands/correlations/{correlationId}/summary";
+    internal const string CommandCorrelationLatestRoute = "/engine/event-dispatch-remediation-commands/correlations/{correlationId}/latest";
     internal const string CommandReasonRoute = "/engine/event-dispatch-remediation-commands/reasons/{reason}";
     internal const string CommandReasonSummaryRoute = "/engine/event-dispatch-remediation-commands/reasons/{reason}/summary";
+    internal const string CommandReasonLatestRoute = "/engine/event-dispatch-remediation-commands/reasons/{reason}/latest";
     internal const string CommandMessageRoute = "/engine/event-dispatch-remediation-commands/messages/{messageId}";
     internal const string CommandMessageSummaryRoute = "/engine/event-dispatch-remediation-commands/messages/{messageId}/summary";
+    internal const string CommandMessageLatestRoute = "/engine/event-dispatch-remediation-commands/messages/{messageId}/latest";
     internal const string CommandChannelRoute = "/engine/event-dispatch-remediation-commands/channels/{channelId}";
     internal const string CommandChannelSummaryRoute = "/engine/event-dispatch-remediation-commands/channels/{channelId}/summary";
+    internal const string CommandChannelLatestRoute = "/engine/event-dispatch-remediation-commands/channels/{channelId}/latest";
     internal const string CommandDispatchOutcomeRoute = "/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}";
     internal const string CommandDispatchOutcomeSummaryRoute = "/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}/summary";
+    internal const string CommandDispatchOutcomeLatestRoute = "/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}/latest";
     internal const string CommandOutcomeRoute = "/engine/event-dispatch-remediation-commands/outcomes/{outcome}";
     internal const string CommandOutcomeSummaryRoute = "/engine/event-dispatch-remediation-commands/outcomes/{outcome}/summary";
+    internal const string CommandOutcomeLatestRoute = "/engine/event-dispatch-remediation-commands/outcomes/{outcome}/latest";
     internal const string CommandOutboxSummaryRoute = "/engine/event-dispatch-remediation-commands/outboxes/{outboxId}/summary";
+    internal const string CommandOutboxLatestRoute = "/engine/event-dispatch-remediation-commands/outboxes/{outboxId}/latest";
     internal const string CommandOperations = "retry-now,retry-later,skip,quarantine,dead-letter";
     internal const string CommandReadLimitRoutes = "all,in-doubt,observations,outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes";
     internal const string CommandPaginationRoutes = CommandReadLimitRoutes;
     internal const string CommandFilterSummaryRoutes = "outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes";
+    internal const string CommandFilterLatestRoutes = CommandFilterSummaryRoutes;
 
     internal static void AddCommandActionRouteMetadata(
         IDictionary<string, string> metadata,
@@ -63,21 +73,30 @@ internal static class EventDispatchRemediationCommandMetadata
         metadata[$"{prefix}ObservationSummaryRoute"] = CommandObservationSummaryRoute;
         metadata[$"{prefix}OperationRoute"] = CommandOperationRoute;
         metadata[$"{prefix}OperationSummaryRoute"] = CommandOperationSummaryRoute;
+        metadata[$"{prefix}OperationLatestRoute"] = CommandOperationLatestRoute;
         metadata[$"{prefix}ActorRoute"] = CommandActorRoute;
         metadata[$"{prefix}ActorSummaryRoute"] = CommandActorSummaryRoute;
+        metadata[$"{prefix}ActorLatestRoute"] = CommandActorLatestRoute;
         metadata[$"{prefix}CorrelationRoute"] = CommandCorrelationRoute;
         metadata[$"{prefix}CorrelationSummaryRoute"] = CommandCorrelationSummaryRoute;
+        metadata[$"{prefix}CorrelationLatestRoute"] = CommandCorrelationLatestRoute;
         metadata[$"{prefix}ReasonRoute"] = CommandReasonRoute;
         metadata[$"{prefix}ReasonSummaryRoute"] = CommandReasonSummaryRoute;
+        metadata[$"{prefix}ReasonLatestRoute"] = CommandReasonLatestRoute;
         metadata[$"{prefix}MessageRoute"] = CommandMessageRoute;
         metadata[$"{prefix}MessageSummaryRoute"] = CommandMessageSummaryRoute;
+        metadata[$"{prefix}MessageLatestRoute"] = CommandMessageLatestRoute;
         metadata[$"{prefix}ChannelRoute"] = CommandChannelRoute;
         metadata[$"{prefix}ChannelSummaryRoute"] = CommandChannelSummaryRoute;
+        metadata[$"{prefix}ChannelLatestRoute"] = CommandChannelLatestRoute;
         metadata[$"{prefix}DispatchOutcomeRoute"] = CommandDispatchOutcomeRoute;
         metadata[$"{prefix}DispatchOutcomeSummaryRoute"] = CommandDispatchOutcomeSummaryRoute;
+        metadata[$"{prefix}DispatchOutcomeLatestRoute"] = CommandDispatchOutcomeLatestRoute;
         metadata[$"{prefix}OutcomeRoute"] = CommandOutcomeRoute;
         metadata[$"{prefix}OutcomeSummaryRoute"] = CommandOutcomeSummaryRoute;
+        metadata[$"{prefix}OutcomeLatestRoute"] = CommandOutcomeLatestRoute;
         metadata[$"{prefix}OutboxSummaryRoute"] = CommandOutboxSummaryRoute;
+        metadata[$"{prefix}OutboxLatestRoute"] = CommandOutboxLatestRoute;
     }
 
     internal static void AddObservationWindowMetadata(
@@ -125,6 +144,17 @@ internal static class EventDispatchRemediationCommandMetadata
         metadata[$"{prefix}FilterSummaryRoutes"] = CommandFilterSummaryRoutes;
         metadata[$"{prefix}FilterSummaryResponse"] = nameof(EventDispatchRemediationRuntimeSummary);
         metadata[$"{prefix}FilterSummaryMaterialization"] = "not-required";
+    }
+
+    internal static void AddFilterLatestMetadata(
+        IDictionary<string, string> metadata,
+        string prefix = "command")
+    {
+        metadata[$"{prefix}FilterLatestPolicy"] = "retained-filter-server-side-latest";
+        metadata[$"{prefix}FilterLatestRoutes"] = CommandFilterLatestRoutes;
+        metadata[$"{prefix}FilterLatestResponse"] = nameof(EventDispatchRemediationRuntimeState);
+        metadata[$"{prefix}FilterLatestMaterialization"] = "not-required";
+        metadata[$"{prefix}FilterLatestMissing"] = "not-found";
     }
 
     internal static void AddPaginationMetadata(
