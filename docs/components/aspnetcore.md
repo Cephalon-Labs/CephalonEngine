@@ -546,7 +546,8 @@ through `/engine/event-dispatch-remediation-commands/{commandId}`,
 `/engine/event-dispatch-remediation-commands/retention` before issuing a new command id. The
 observation routes return `400` for invalid dates or reversed bounds; the detail route filters the
 retained command-result history latest-first, while the summary route returns the same window's
-accepted/rejected/error/duplicate counts and latest command posture.
+accepted/rejected/error/duplicate counts, latest command posture, dropped-command count,
+retention-truncated flag, incomplete-summary flag, and oldest retained cutoff.
 
 The host now also exposes bounded event-publication operator action and publication runtime-state
 surfaces directly. When a selected eventing pack registers `IEventPublicationDispatcher`,

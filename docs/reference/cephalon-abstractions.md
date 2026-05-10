@@ -46700,12 +46700,12 @@ public sealed class EventDispatchRemediationRuntimeSummary
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-data-eventdispatchremediationruntimesummary-ctor-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset"></a>
+<a id="member-m-cephalon-abstractions-data-eventdispatchremediationruntimesummary-ctor-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-int64-system-boolean-system-boolean-system-string-system-nullable-system-datetimeoffset"></a>
 
 ##### `EventDispatchRemediationRuntimeSummary`
 
 ```csharp
-EventDispatchRemediationRuntimeSummary(int totalCommandCount, int acceptedCount, int rejectedCount, int errorCount, int duplicateCommandCount, string lastCommandId, string lastOperationId, string lastOutcome, string lastDispatchOutcome, DateTimeOffset? lastObservedAtUtc)
+EventDispatchRemediationRuntimeSummary(int totalCommandCount, int acceptedCount, int rejectedCount, int errorCount, int duplicateCommandCount, string lastCommandId, string lastOperationId, string lastOutcome, string lastDispatchOutcome, DateTimeOffset? lastObservedAtUtc, long droppedCommandCount, bool retentionTruncated, bool summaryMayBeIncomplete, string oldestRetainedCommandId, DateTimeOffset? oldestRetainedObservedAtUtc)
 ```
 
 Creates a new remediation command summary.
@@ -46721,6 +46721,11 @@ Parameters:
 - `lastOutcome`: The most recently observed command outcome.
 - `lastDispatchOutcome`: The most recently observed dispatch-store outcome.
 - `lastObservedAtUtc`: The UTC timestamp for the most recent recorded command.
+- `droppedCommandCount`: The number of older command results dropped before this summary was calculated.
+- `retentionTruncated`: A value indicating whether the underlying bounded history has dropped older command results.
+- `summaryMayBeIncomplete`: A value indicating whether this summary may omit matching command results because retention truncated older history.
+- `oldestRetainedCommandId`: The oldest retained command identifier visible to this summary when one exists.
+- `oldestRetainedObservedAtUtc`: The UTC timestamp for the oldest retained command result visible to this summary when one exists.
 
 #### Properties
 
@@ -46733,6 +46738,16 @@ int AcceptedCount { get; }
 ```
 
 Gets the number of recorded commands that were accepted.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-droppedcommandcount"></a>
+
+##### `DroppedCommandCount`
+
+```csharp
+long DroppedCommandCount { get; }
+```
+
+Gets the number of older command results dropped before this summary was calculated.
 
 <a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-duplicatecommandcount"></a>
 
@@ -46834,6 +46849,26 @@ string LastOutcome { get; }
 
 Gets the most recently observed command outcome when one exists.
 
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-oldestretainedcommandid"></a>
+
+##### `OldestRetainedCommandId`
+
+```csharp
+string OldestRetainedCommandId { get; }
+```
+
+Gets the oldest retained command identifier visible to this summary when one exists.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-oldestretainedobservedatutc"></a>
+
+##### `OldestRetainedObservedAtUtc`
+
+```csharp
+DateTimeOffset? OldestRetainedObservedAtUtc { get; }
+```
+
+Gets the UTC timestamp for the oldest retained command result visible to this summary when one exists.
+
 <a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-rejectedcount"></a>
 
 ##### `RejectedCount`
@@ -46843,6 +46878,26 @@ int RejectedCount { get; }
 ```
 
 Gets the number of recorded commands that were rejected.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-retentiontruncated"></a>
+
+##### `RetentionTruncated`
+
+```csharp
+bool RetentionTruncated { get; }
+```
+
+Gets a value indicating whether the underlying bounded history has dropped older command results.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-summarymaybeincomplete"></a>
+
+##### `SummaryMayBeIncomplete`
+
+```csharp
+bool SummaryMayBeIncomplete { get; }
+```
+
+Gets a value indicating whether this summary may omit matching command results because retention truncated older history.
 
 <a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-totalcommandcount"></a>
 

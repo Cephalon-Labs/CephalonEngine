@@ -1242,6 +1242,11 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal(1, observationSummary.RejectedCount);
         Assert.Equal(1, observationSummary.ErrorCount);
         Assert.Equal("cmd-retention-003-retry-later-rejected", observationSummary.LastCommandId);
+        Assert.Equal(1, observationSummary.DroppedCommandCount);
+        Assert.True(observationSummary.RetentionTruncated);
+        Assert.False(observationSummary.SummaryMayBeIncomplete);
+        Assert.Equal("cmd-retention-002-dead-letter", observationSummary.OldestRetainedCommandId);
+        Assert.Equal(new DateTimeOffset(2026, 04, 13, 10, 2, 0, TimeSpan.Zero), observationSummary.OldestRetainedObservedAtUtc);
         Assert.True(observationSummary.HasCommands);
         Assert.True(observationSummary.HasFailures);
         Assert.Equal(
@@ -1258,6 +1263,11 @@ public sealed class EntityFrameworkDataPackTests
             null,
             new DateTimeOffset(2026, 04, 13, 10, 1, 30, TimeSpan.Zero));
         Assert.Equal(0, emptyObservationSummary.TotalCommandCount);
+        Assert.Equal(1, emptyObservationSummary.DroppedCommandCount);
+        Assert.True(emptyObservationSummary.RetentionTruncated);
+        Assert.True(emptyObservationSummary.SummaryMayBeIncomplete);
+        Assert.Equal("cmd-retention-002-dead-letter", emptyObservationSummary.OldestRetainedCommandId);
+        Assert.Equal(new DateTimeOffset(2026, 04, 13, 10, 2, 0, TimeSpan.Zero), emptyObservationSummary.OldestRetainedObservedAtUtc);
         Assert.False(emptyObservationSummary.HasCommands);
         Assert.False(emptyObservationSummary.HasFailures);
         Assert.Throws<ArgumentException>(() => remediationCommandCatalog.GetByObservedAt(
@@ -1266,10 +1276,16 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Throws<ArgumentException>(() => remediationCommandCatalog.GetSummaryByObservedAt(
             new DateTimeOffset(2026, 04, 13, 10, 3, 0, TimeSpan.Zero),
             new DateTimeOffset(2026, 04, 13, 10, 2, 0, TimeSpan.Zero)));
-        Assert.Equal(2, remediationCommandCatalog.Summary.TotalCommandCount);
-        Assert.Equal(1, remediationCommandCatalog.Summary.AcceptedCount);
-        Assert.Equal(1, remediationCommandCatalog.Summary.RejectedCount);
-        Assert.Equal(1, remediationCommandCatalog.Summary.ErrorCount);
+        var retainedSummary = remediationCommandCatalog.Summary;
+        Assert.Equal(2, retainedSummary.TotalCommandCount);
+        Assert.Equal(1, retainedSummary.AcceptedCount);
+        Assert.Equal(1, retainedSummary.RejectedCount);
+        Assert.Equal(1, retainedSummary.ErrorCount);
+        Assert.Equal(1, retainedSummary.DroppedCommandCount);
+        Assert.True(retainedSummary.RetentionTruncated);
+        Assert.True(retainedSummary.SummaryMayBeIncomplete);
+        Assert.Equal("cmd-retention-002-dead-letter", retainedSummary.OldestRetainedCommandId);
+        Assert.Equal(new DateTimeOffset(2026, 04, 13, 10, 2, 0, TimeSpan.Zero), retainedSummary.OldestRetainedObservedAtUtc);
     }
 
     [Fact]

@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T07:48:27.7378116+00:00",
+  "GeneratedAtUtc": "2026-05-10T08:05:38.7333319+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8320,7 +8320,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 13,
+        "Properties": 18,
         "Methods": 0
       }
     },
@@ -48819,6 +48819,17 @@
       "Summary": "Gets the number of older command results dropped because the bounded history limit was exceeded."
     },
     {
+      "DisplayName": "DroppedCommandCount",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-droppedcommandcount",
+      "Signature": "long DroppedCommandCount { get; }",
+      "Summary": "Gets the number of older command results dropped before this summary was calculated."
+    },
+    {
       "DisplayName": "DryRun",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandEnvelopeSources",
@@ -52818,8 +52829,8 @@
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchremediationruntimesummary-ctor-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset",
-      "Signature": "EventDispatchRemediationRuntimeSummary(int totalCommandCount, int acceptedCount, int rejectedCount, int errorCount, int duplicateCommandCount, string lastCommandId, string lastOperationId, string lastOutcome, string lastDispatchOutcome, DateTimeOffset? lastObservedAtUtc)",
+      "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchremediationruntimesummary-ctor-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-int64-system-boolean-system-boolean-system-string-system-nullable-system-datetimeoffset",
+      "Signature": "EventDispatchRemediationRuntimeSummary(int totalCommandCount, int acceptedCount, int rejectedCount, int errorCount, int duplicateCommandCount, string lastCommandId, string lastOperationId, string lastOutcome, string lastDispatchOutcome, DateTimeOffset? lastObservedAtUtc, long droppedCommandCount, bool retentionTruncated, bool summaryMayBeIncomplete, string oldestRetainedCommandId, DateTimeOffset? oldestRetainedObservedAtUtc)",
       "Summary": "Creates a new remediation command summary."
     },
     {
@@ -89979,6 +89990,17 @@
       "Summary": "Gets the oldest retained command identifier when one exists."
     },
     {
+      "DisplayName": "OldestRetainedCommandId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-oldestretainedcommandid",
+      "Signature": "string OldestRetainedCommandId { get; }",
+      "Summary": "Gets the oldest retained command identifier visible to this summary when one exists."
+    },
+    {
       "DisplayName": "OldestRetainedObservedAtUtc",
       "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRemediationRuntimeRetention",
@@ -89988,6 +90010,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-oldestretainedobservedatutc",
       "Signature": "DateTimeOffset? OldestRetainedObservedAtUtc { get; }",
       "Summary": "Gets the UTC timestamp for the oldest retained command result when one exists."
+    },
+    {
+      "DisplayName": "OldestRetainedObservedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-oldestretainedobservedatutc",
+      "Signature": "DateTimeOffset? OldestRetainedObservedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp for the oldest retained command result visible to this summary when one exists."
     },
     {
       "DisplayName": "OldestRetainedRecordedAtUtc",
@@ -108873,6 +108906,17 @@
       "Summary": "Gets the bounded remediation command-history retention posture visible to the current runtime."
     },
     {
+      "DisplayName": "RetentionTruncated",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-retentiontruncated",
+      "Signature": "bool RetentionTruncated { get; }",
+      "Summary": "Gets a value indicating whether the underlying bounded history has dropped older command results."
+    },
+    {
       "DisplayName": "Retried",
       "Category": "Fields",
       "DeclaringTypeName": "TenantInvitationDeliveryRetryOutcomes",
@@ -120154,6 +120198,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-summarycount",
       "Signature": "int SummaryCount { get; set; }",
       "Summary": "Gets the number of aggregate summary buckets derived from the filtered observations."
+    },
+    {
+      "DisplayName": "SummaryMayBeIncomplete",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-summarymaybeincomplete",
+      "Signature": "bool SummaryMayBeIncomplete { get; }",
+      "Summary": "Gets a value indicating whether this summary may omit matching command results because retention truncated older history."
     },
     {
       "DisplayName": "SummaryPath",

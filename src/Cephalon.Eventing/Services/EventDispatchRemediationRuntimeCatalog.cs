@@ -22,7 +22,11 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         {
             lock (gate)
             {
-                return CreateSummary(states);
+                return CreateSummary(
+                    states,
+                    droppedCommandCount,
+                    summaryMayBeIncomplete: droppedCommandCount > 0,
+                    oldestRetainedState: GetOldestState(states));
             }
         }
     }
@@ -67,11 +71,23 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         }
     }
 
-    private static EventDispatchRemediationRuntimeSummary CreateSummary(List<EventDispatchRemediationRuntimeState> recordedStates)
+    private static EventDispatchRemediationRuntimeSummary CreateSummary(
+        List<EventDispatchRemediationRuntimeState> recordedStates,
+        long droppedCommandCount = 0,
+        bool summaryMayBeIncomplete = false,
+        EventDispatchRemediationRuntimeState? oldestRetainedState = null)
     {
+        var oldestState = oldestRetainedState ?? GetOldestState(recordedStates);
         if (recordedStates.Count == 0)
         {
-            return EventDispatchRemediationRuntimeSummary.Empty;
+            return droppedCommandCount == 0 && !summaryMayBeIncomplete && oldestState is null
+                ? EventDispatchRemediationRuntimeSummary.Empty
+                : new EventDispatchRemediationRuntimeSummary(
+                    droppedCommandCount: droppedCommandCount,
+                    retentionTruncated: droppedCommandCount > 0,
+                    summaryMayBeIncomplete: summaryMayBeIncomplete,
+                    oldestRetainedCommandId: oldestState?.CommandId,
+                    oldestRetainedObservedAtUtc: oldestState?.ObservedAtUtc);
         }
 
         var lastState = GetLatestState(recordedStates)!;
@@ -90,7 +106,12 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
             lastOperationId: lastState.OperationId,
             lastOutcome: lastState.Outcome,
             lastDispatchOutcome: lastState.DispatchOutcome,
-            lastObservedAtUtc: lastState.ObservedAtUtc);
+            lastObservedAtUtc: lastState.ObservedAtUtc,
+            droppedCommandCount: droppedCommandCount,
+            retentionTruncated: droppedCommandCount > 0,
+            summaryMayBeIncomplete: summaryMayBeIncomplete,
+            oldestRetainedCommandId: oldestState?.CommandId,
+            oldestRetainedObservedAtUtc: oldestState?.ObservedAtUtc);
     }
 
     private static EventDispatchRemediationRuntimeRetention CreateRetention(
@@ -175,14 +196,37 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
         lock (gate)
         {
+            var oldestState = GetOldestState(states);
             var matchingStates = states
                 .Where(state =>
                     (fromObservedAtUtc is null || state.ObservedAtUtc >= fromObservedAtUtc.Value) &&
                     (toObservedAtUtc is null || state.ObservedAtUtc <= toObservedAtUtc.Value))
                 .ToList();
 
-            return CreateSummary(matchingStates);
+            return CreateSummary(
+                matchingStates,
+                droppedCommandCount,
+                summaryMayBeIncomplete: IsObservationWindowPotentiallyTruncated(
+                    fromObservedAtUtc,
+                    oldestState,
+                    droppedCommandCount),
+                oldestRetainedState: oldestState);
         }
+    }
+
+    private static bool IsObservationWindowPotentiallyTruncated(
+        DateTimeOffset? fromObservedAtUtc,
+        EventDispatchRemediationRuntimeState? oldestRetainedState,
+        long droppedCommandCount)
+    {
+        if (droppedCommandCount == 0)
+        {
+            return false;
+        }
+
+        return oldestRetainedState is null ||
+            fromObservedAtUtc is null ||
+            fromObservedAtUtc.Value < oldestRetainedState.ObservedAtUtc;
     }
 
     private static void ValidateObservationWindow(

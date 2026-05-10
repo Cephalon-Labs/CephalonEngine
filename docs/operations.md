@@ -2233,7 +2233,8 @@ Current payload highlights:
   recorded by `IEventDispatchRemediationRuntimeCatalog`
 - `GET /engine/event-dispatch-remediation-commands/summary` returns the bounded command-result
   roll-up: total, accepted, rejected, errored, duplicate-command count, and latest command
-  identity/outcome fields without scanning the full history
+  identity/outcome fields without scanning the full history; it also carries dropped-command count,
+  retention-truncated state, incomplete-summary warning state, and oldest retained cutoff metadata
 - `GET /engine/event-dispatch-remediation-commands/latest` returns the newest authoritative
   command-result record with full metadata and error payload, and duplicate command-id attempts do
   not replace that record
@@ -2246,7 +2247,8 @@ Current payload highlights:
   accepted and rejected command history without scanning the full bounded list
 - `GET /engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}`
   summarizes retained command results inside the same observed UTC window so operator dashboards can
-  read accepted, rejected, error, duplicate, and latest-command posture without materializing the list
+  read accepted, rejected, error, duplicate, latest-command, retention-truncated, and
+  incomplete-window posture without materializing the list
 - `GET /engine/event-dispatch-remediation-commands/{commandId}` narrows the command-result catalog
   to one command and returns `404` when no command has been recorded with that id
 - `GET /engine/event-dispatch-remediation-commands/outboxes/{outboxId}` filters command results by
@@ -2284,8 +2286,10 @@ Current note:
   `/engine/event-dispatch-remediation-commands/latest` after an uncertain client retry and use a new
   command id for a new action
 - remediation command-result history is bounded and process-local by default; it gives operators a
-  typed command-audit read model for the active host; use the `/retention` readback to identify
-  truncation and `/observations?fromUtc={fromUtc}&toUtc={toUtc}` for retained incident windows, but
+  typed command-audit read model for the active host; summary responses now expose truncation and
+  incomplete-window warning flags directly, and the `/retention` readback remains the full posture
+  when operators need retained/recorded/dropped counts plus latest retained command detail; use
+  `/observations?fromUtc={fromUtc}&toUtc={toUtc}` for retained incident windows, but
   do not treat it as durable compliance retention or broker replay ownership
 - outbox-backed publication states use `accepted` to mean "staged for later dispatch"; dispatch
   completion and terminal dispatch failure remain separate event-dispatch runtime answers

@@ -23,6 +23,11 @@ public sealed class EventDispatchRemediationRuntimeSummary
     /// <param name="lastOutcome">The most recently observed command outcome.</param>
     /// <param name="lastDispatchOutcome">The most recently observed dispatch-store outcome.</param>
     /// <param name="lastObservedAtUtc">The UTC timestamp for the most recent recorded command.</param>
+    /// <param name="droppedCommandCount">The number of older command results dropped before this summary was calculated.</param>
+    /// <param name="retentionTruncated">A value indicating whether the underlying bounded history has dropped older command results.</param>
+    /// <param name="summaryMayBeIncomplete">A value indicating whether this summary may omit matching command results because retention truncated older history.</param>
+    /// <param name="oldestRetainedCommandId">The oldest retained command identifier visible to this summary when one exists.</param>
+    /// <param name="oldestRetainedObservedAtUtc">The UTC timestamp for the oldest retained command result visible to this summary when one exists.</param>
     public EventDispatchRemediationRuntimeSummary(
         int totalCommandCount = 0,
         int acceptedCount = 0,
@@ -33,13 +38,19 @@ public sealed class EventDispatchRemediationRuntimeSummary
         string? lastOperationId = null,
         string? lastOutcome = null,
         string? lastDispatchOutcome = null,
-        DateTimeOffset? lastObservedAtUtc = null)
+        DateTimeOffset? lastObservedAtUtc = null,
+        long droppedCommandCount = 0,
+        bool retentionTruncated = false,
+        bool summaryMayBeIncomplete = false,
+        string? oldestRetainedCommandId = null,
+        DateTimeOffset? oldestRetainedObservedAtUtc = null)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(totalCommandCount);
         ArgumentOutOfRangeException.ThrowIfNegative(acceptedCount);
         ArgumentOutOfRangeException.ThrowIfNegative(rejectedCount);
         ArgumentOutOfRangeException.ThrowIfNegative(errorCount);
         ArgumentOutOfRangeException.ThrowIfNegative(duplicateCommandCount);
+        ArgumentOutOfRangeException.ThrowIfNegative(droppedCommandCount);
 
         TotalCommandCount = totalCommandCount;
         AcceptedCount = acceptedCount;
@@ -51,6 +62,13 @@ public sealed class EventDispatchRemediationRuntimeSummary
         LastOutcome = string.IsNullOrWhiteSpace(lastOutcome) ? null : lastOutcome.Trim();
         LastDispatchOutcome = string.IsNullOrWhiteSpace(lastDispatchOutcome) ? null : lastDispatchOutcome.Trim();
         LastObservedAtUtc = lastObservedAtUtc;
+        DroppedCommandCount = droppedCommandCount;
+        RetentionTruncated = retentionTruncated || droppedCommandCount > 0;
+        SummaryMayBeIncomplete = summaryMayBeIncomplete;
+        OldestRetainedCommandId = string.IsNullOrWhiteSpace(oldestRetainedCommandId)
+            ? null
+            : oldestRetainedCommandId.Trim();
+        OldestRetainedObservedAtUtc = oldestRetainedObservedAtUtc;
     }
 
     /// <summary>
@@ -102,6 +120,31 @@ public sealed class EventDispatchRemediationRuntimeSummary
     /// Gets the UTC timestamp for the most recent recorded command when one exists.
     /// </summary>
     public DateTimeOffset? LastObservedAtUtc { get; }
+
+    /// <summary>
+    /// Gets the number of older command results dropped before this summary was calculated.
+    /// </summary>
+    public long DroppedCommandCount { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the underlying bounded history has dropped older command results.
+    /// </summary>
+    public bool RetentionTruncated { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether this summary may omit matching command results because retention truncated older history.
+    /// </summary>
+    public bool SummaryMayBeIncomplete { get; }
+
+    /// <summary>
+    /// Gets the oldest retained command identifier visible to this summary when one exists.
+    /// </summary>
+    public string? OldestRetainedCommandId { get; }
+
+    /// <summary>
+    /// Gets the UTC timestamp for the oldest retained command result visible to this summary when one exists.
+    /// </summary>
+    public DateTimeOffset? OldestRetainedObservedAtUtc { get; }
 
     /// <summary>
     /// Gets a value indicating whether the summary includes any recorded command results.
