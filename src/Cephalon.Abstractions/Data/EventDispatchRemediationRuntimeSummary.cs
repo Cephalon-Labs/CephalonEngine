@@ -29,6 +29,8 @@ public sealed class EventDispatchRemediationRuntimeSummary
     /// <param name="summaryMayBeIncomplete">A value indicating whether this summary may omit matching command results because retention truncated older history.</param>
     /// <param name="oldestRetainedCommandId">The oldest retained command identifier visible to this summary when one exists.</param>
     /// <param name="oldestRetainedObservedAtUtc">The UTC timestamp for the oldest retained command result visible to this summary when one exists.</param>
+    /// <param name="oldestReservedCommandId">The oldest retained reserved command identifier visible to this summary when one exists.</param>
+    /// <param name="oldestReservedObservedAtUtc">The UTC timestamp for the oldest retained reserved command visible to this summary when one exists.</param>
     public EventDispatchRemediationRuntimeSummary(
         int totalCommandCount = 0,
         int acceptedCount = 0,
@@ -45,7 +47,9 @@ public sealed class EventDispatchRemediationRuntimeSummary
         bool retentionTruncated = false,
         bool summaryMayBeIncomplete = false,
         string? oldestRetainedCommandId = null,
-        DateTimeOffset? oldestRetainedObservedAtUtc = null)
+        DateTimeOffset? oldestRetainedObservedAtUtc = null,
+        string? oldestReservedCommandId = null,
+        DateTimeOffset? oldestReservedObservedAtUtc = null)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(totalCommandCount);
         ArgumentOutOfRangeException.ThrowIfNegative(acceptedCount);
@@ -73,6 +77,10 @@ public sealed class EventDispatchRemediationRuntimeSummary
             ? null
             : oldestRetainedCommandId.Trim();
         OldestRetainedObservedAtUtc = oldestRetainedObservedAtUtc;
+        OldestReservedCommandId = string.IsNullOrWhiteSpace(oldestReservedCommandId)
+            ? null
+            : oldestReservedCommandId.Trim();
+        OldestReservedObservedAtUtc = oldestReservedObservedAtUtc;
     }
 
     /// <summary>
@@ -154,6 +162,16 @@ public sealed class EventDispatchRemediationRuntimeSummary
     /// Gets the UTC timestamp for the oldest retained command result visible to this summary when one exists.
     /// </summary>
     public DateTimeOffset? OldestRetainedObservedAtUtc { get; }
+
+    /// <summary>
+    /// Gets the oldest retained reserved command identifier visible to this summary when one exists.
+    /// </summary>
+    public string? OldestReservedCommandId { get; }
+
+    /// <summary>
+    /// Gets the UTC timestamp for the oldest retained reserved command visible to this summary when one exists.
+    /// </summary>
+    public DateTimeOffset? OldestReservedObservedAtUtc { get; }
 
     /// <summary>
     /// Gets a value indicating whether the summary includes any recorded command results.

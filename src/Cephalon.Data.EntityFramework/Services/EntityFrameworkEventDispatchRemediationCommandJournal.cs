@@ -339,6 +339,8 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
         }
 
         var lastState = states[0];
+        var oldestState = GetOldestState(states);
+        var oldestReservedState = GetOldestReservedState(states);
         return new EventDispatchRemediationRuntimeSummary(
             totalCommandCount: states.Count,
             acceptedCount: states.Count(static state =>
@@ -359,13 +361,25 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
             droppedCommandCount: 0,
             retentionTruncated: false,
             summaryMayBeIncomplete: false,
-            oldestRetainedCommandId: GetOldestState(states)?.CommandId,
-            oldestRetainedObservedAtUtc: GetOldestState(states)?.ObservedAtUtc);
+            oldestRetainedCommandId: oldestState?.CommandId,
+            oldestRetainedObservedAtUtc: oldestState?.ObservedAtUtc,
+            oldestReservedCommandId: oldestReservedState?.CommandId,
+            oldestReservedObservedAtUtc: oldestReservedState?.ObservedAtUtc);
     }
 
     private static EventDispatchRemediationRuntimeState? GetOldestState(IReadOnlyList<EventDispatchRemediationRuntimeState> states)
     {
         return states
+            .OrderBy(static state => state.ObservedAtUtc)
+            .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault();
+    }
+
+    private static EventDispatchRemediationRuntimeState? GetOldestReservedState(IReadOnlyList<EventDispatchRemediationRuntimeState> states)
+    {
+        return states
+            .Where(static state =>
+                string.Equals(state.Outcome, EventDispatchRemediationOutcomes.Reserved, StringComparison.OrdinalIgnoreCase))
             .OrderBy(static state => state.ObservedAtUtc)
             .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
             .FirstOrDefault();

@@ -1264,6 +1264,8 @@ public sealed class EntityFrameworkDataPackTests
         Assert.False(observationSummary.SummaryMayBeIncomplete);
         Assert.Equal("cmd-retention-002-dead-letter", observationSummary.OldestRetainedCommandId);
         Assert.Equal(new DateTimeOffset(2026, 04, 13, 10, 2, 0, TimeSpan.Zero), observationSummary.OldestRetainedObservedAtUtc);
+        Assert.Null(observationSummary.OldestReservedCommandId);
+        Assert.Null(observationSummary.OldestReservedObservedAtUtc);
         Assert.True(observationSummary.HasCommands);
         Assert.True(observationSummary.HasFailures);
         Assert.False(observationSummary.HasInDoubtCommands);
@@ -1286,6 +1288,8 @@ public sealed class EntityFrameworkDataPackTests
         Assert.True(emptyObservationSummary.SummaryMayBeIncomplete);
         Assert.Equal("cmd-retention-002-dead-letter", emptyObservationSummary.OldestRetainedCommandId);
         Assert.Equal(new DateTimeOffset(2026, 04, 13, 10, 2, 0, TimeSpan.Zero), emptyObservationSummary.OldestRetainedObservedAtUtc);
+        Assert.Null(emptyObservationSummary.OldestReservedCommandId);
+        Assert.Null(emptyObservationSummary.OldestReservedObservedAtUtc);
         Assert.False(emptyObservationSummary.HasCommands);
         Assert.False(emptyObservationSummary.HasFailures);
         Assert.False(emptyObservationSummary.HasInDoubtCommands);
@@ -1306,6 +1310,8 @@ public sealed class EntityFrameworkDataPackTests
         Assert.True(retainedSummary.SummaryMayBeIncomplete);
         Assert.Equal("cmd-retention-002-dead-letter", retainedSummary.OldestRetainedCommandId);
         Assert.Equal(new DateTimeOffset(2026, 04, 13, 10, 2, 0, TimeSpan.Zero), retainedSummary.OldestRetainedObservedAtUtc);
+        Assert.Null(retainedSummary.OldestReservedCommandId);
+        Assert.Null(retainedSummary.OldestReservedObservedAtUtc);
         Assert.False(retainedSummary.HasInDoubtCommands);
     }
 
@@ -1393,6 +1399,8 @@ public sealed class EntityFrameworkDataPackTests
             Assert.Equal(EventDispatchRemediationOutcomes.Reserved, journal.GetByCommandId("cmd-journal-002-reserved")?.Outcome);
             Assert.Equal(1, journal.Summary.ReservedCount);
             Assert.True(journal.Summary.HasInDoubtCommands);
+            Assert.Equal("cmd-journal-002-reserved", journal.Summary.OldestReservedCommandId);
+            Assert.Equal(new DateTimeOffset(2026, 04, 14, 10, 1, 30, TimeSpan.Zero), journal.Summary.OldestReservedObservedAtUtc);
         }
 
         await using (var provider = BuildProvider())
@@ -1467,6 +1475,8 @@ public sealed class EntityFrameworkDataPackTests
             Assert.True(summary.HasInDoubtCommands);
             Assert.Equal("cmd-journal-002-reserved", summary.LastCommandId);
             Assert.Equal(EventDispatchRemediationOutcomes.Reserved, summary.LastOutcome);
+            Assert.Equal("cmd-journal-002-reserved", summary.OldestReservedCommandId);
+            Assert.Equal(new DateTimeOffset(2026, 04, 14, 10, 1, 30, TimeSpan.Zero), summary.OldestReservedObservedAtUtc);
 
             var observationSummary = journal.GetSummaryByObservedAt(
                 new DateTimeOffset(2026, 04, 14, 10, 1, 0, TimeSpan.Zero),
@@ -1475,6 +1485,8 @@ public sealed class EntityFrameworkDataPackTests
             Assert.Equal(1, observationSummary.AcceptedCount);
             Assert.Equal(1, observationSummary.ReservedCount);
             Assert.True(observationSummary.HasInDoubtCommands);
+            Assert.Equal("cmd-journal-002-reserved", observationSummary.OldestReservedCommandId);
+            Assert.Equal(new DateTimeOffset(2026, 04, 14, 10, 1, 30, TimeSpan.Zero), observationSummary.OldestReservedObservedAtUtc);
 
             var technologySurfaces = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
             var commandSurface = Assert.Single(
@@ -1483,6 +1495,8 @@ public sealed class EntityFrameworkDataPackTests
             var commandCatalogEntry = Assert.Single(commandSurface.Entries, entry => entry.Id == "event-dispatch-remediation-commands");
             Assert.Equal("1", commandCatalogEntry.Metadata["summaryReservedCount"]);
             Assert.Equal("true", commandCatalogEntry.Metadata["summaryHasInDoubtCommands"]);
+            Assert.Equal("cmd-journal-002-reserved", commandCatalogEntry.Metadata["summaryOldestReservedCommandId"]);
+            Assert.Equal("2026-04-14T10:01:30.0000000+00:00", commandCatalogEntry.Metadata["summaryOldestReservedObservedAtUtc"]);
 
             var processLocalJournal = Assert.IsAssignableFrom<IEventDispatchRemediationCommandJournal>(processLocalCatalog);
             var processLocalReservation = await processLocalJournal.ReserveAsync(new EventDispatchRemediationRequest(
@@ -1501,6 +1515,8 @@ public sealed class EntityFrameworkDataPackTests
             Assert.Equal(1, processLocalSummary.TotalCommandCount);
             Assert.Equal(1, processLocalSummary.ReservedCount);
             Assert.True(processLocalSummary.HasInDoubtCommands);
+            Assert.Equal("cmd-process-local-reserved", processLocalSummary.OldestReservedCommandId);
+            Assert.Equal(new DateTimeOffset(2026, 04, 14, 10, 4, 0, TimeSpan.Zero), processLocalSummary.OldestReservedObservedAtUtc);
             Assert.Equal(EventDispatchRemediationOutcomes.Reserved, processLocalSummary.LastOutcome);
         }
     }

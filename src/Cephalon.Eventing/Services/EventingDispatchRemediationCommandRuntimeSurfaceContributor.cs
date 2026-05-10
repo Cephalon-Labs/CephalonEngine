@@ -75,6 +75,8 @@ internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributo
         AddOptional(metadata, "latestOutcome", catalog.Summary.LastOutcome);
         AddOptional(metadata, "latestDispatchOutcome", catalog.Summary.LastDispatchOutcome);
         AddOptional(metadata, "latestObservedAtUtc", catalog.Summary.LastObservedAtUtc);
+        AddOptional(metadata, "summaryOldestReservedCommandId", catalog.Summary.OldestReservedCommandId);
+        AddOptional(metadata, "summaryOldestReservedObservedAtUtc", catalog.Summary.OldestReservedObservedAtUtc);
         AddOptional(metadata, "oldestRetainedCommandId", catalog.Retention.OldestRetainedCommandId);
         AddOptional(metadata, "oldestRetainedObservedAtUtc", catalog.Retention.OldestRetainedObservedAtUtc);
         AddOptional(metadata, "latestRetainedCommandId", catalog.Retention.LatestRetainedCommandId);

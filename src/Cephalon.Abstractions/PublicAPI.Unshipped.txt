@@ -32,7 +32,7 @@ Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.AcceptedCount.
 Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.DroppedCommandCount.get -> long
 Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.DuplicateCommandCount.get -> int
 Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.ErrorCount.get -> int
-Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.EventDispatchRemediationRuntimeSummary(int totalCommandCount = 0, int acceptedCount = 0, int rejectedCount = 0, int errorCount = 0, int duplicateCommandCount = 0, int reservedCount = 0, string? lastCommandId = null, string? lastOperationId = null, string? lastOutcome = null, string? lastDispatchOutcome = null, System.DateTimeOffset? lastObservedAtUtc = null, long droppedCommandCount = 0, bool retentionTruncated = false, bool summaryMayBeIncomplete = false, string? oldestRetainedCommandId = null, System.DateTimeOffset? oldestRetainedObservedAtUtc = null) -> void
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.EventDispatchRemediationRuntimeSummary(int totalCommandCount = 0, int acceptedCount = 0, int rejectedCount = 0, int errorCount = 0, int duplicateCommandCount = 0, int reservedCount = 0, string? lastCommandId = null, string? lastOperationId = null, string? lastOutcome = null, string? lastDispatchOutcome = null, System.DateTimeOffset? lastObservedAtUtc = null, long droppedCommandCount = 0, bool retentionTruncated = false, bool summaryMayBeIncomplete = false, string? oldestRetainedCommandId = null, System.DateTimeOffset? oldestRetainedObservedAtUtc = null, string? oldestReservedCommandId = null, System.DateTimeOffset? oldestReservedObservedAtUtc = null) -> void
 Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.HasCommands.get -> bool
 Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.HasFailures.get -> bool
 Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.HasInDoubtCommands.get -> bool
@@ -43,6 +43,8 @@ Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.LastOperationI
 Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.LastOutcome.get -> string?
 Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.OldestRetainedCommandId.get -> string?
 Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.OldestRetainedObservedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.OldestReservedCommandId.get -> string?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.OldestReservedObservedAtUtc.get -> System.DateTimeOffset?
 Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.RejectedCount.get -> int
 Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.ReservedCount.get -> int
 Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.RetentionTruncated.get -> bool

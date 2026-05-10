@@ -102,6 +102,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         }
 
         var lastState = GetLatestState(recordedStates)!;
+        var oldestReservedState = GetOldestReservedState(recordedStates);
 
         return new EventDispatchRemediationRuntimeSummary(
             totalCommandCount: recordedStates.Count,
@@ -124,7 +125,9 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
             retentionTruncated: droppedCommandCount > 0,
             summaryMayBeIncomplete: summaryMayBeIncomplete,
             oldestRetainedCommandId: oldestState?.CommandId,
-            oldestRetainedObservedAtUtc: oldestState?.ObservedAtUtc);
+            oldestRetainedObservedAtUtc: oldestState?.ObservedAtUtc,
+            oldestReservedCommandId: oldestReservedState?.CommandId,
+            oldestReservedObservedAtUtc: oldestReservedState?.ObservedAtUtc);
     }
 
     private static EventDispatchRemediationRuntimeRetention CreateRetention(
@@ -168,6 +171,16 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
     private static EventDispatchRemediationRuntimeState? GetOldestState(List<EventDispatchRemediationRuntimeState> recordedStates)
     {
         return recordedStates
+            .OrderBy(static state => state.ObservedAtUtc)
+            .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
+            .FirstOrDefault();
+    }
+
+    private static EventDispatchRemediationRuntimeState? GetOldestReservedState(List<EventDispatchRemediationRuntimeState> recordedStates)
+    {
+        return recordedStates
+            .Where(static state =>
+                string.Equals(state.Outcome, EventDispatchRemediationOutcomes.Reserved, StringComparison.OrdinalIgnoreCase))
             .OrderBy(static state => state.ObservedAtUtc)
             .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
             .FirstOrDefault();

@@ -5745,6 +5745,38 @@ Follow-up later:
 - provider-owned dashboards can add richer stuck-reservation remediation once a provider package owns
   the workflow; broker replay and provider-specific dead-letter queues remain future package-owned work
 
+### ENG-581 Eventing remediation oldest reserved-command summary readback
+
+Status: done
+Estimate: 1
+Issue: #1235
+Iteration: Sprint 91 follow-through
+Area: eventing / data-entityframework / operations / Wolverine-free baseline
+Quality dimensions: Auditability, Usability, Reliability, Data Integrity, Compatibility, Maintainability
+
+Why:
+
+- `ENG-580` exposed reserved-command counts and the in-doubt flag, but operators still needed to scan detail
+  records to find the oldest retained stuck reservation
+- Wolverine must remain optional, so Cephalon-owned summaries and technology-surface metadata need to expose
+  the retained reserved-command age anchor directly across process-local and durable journal lanes
+
+Delivered:
+
+- added `OldestReservedCommandId` and `OldestReservedObservedAtUtc` to
+  `EventDispatchRemediationRuntimeSummary`
+- updated the process-local Eventing journal and the Entity Framework durable journal to derive those fields
+  from authoritative retained `reserved` command records in global and observed-window summaries
+- projected `summaryOldestReservedCommandId` and `summaryOldestReservedObservedAtUtc` through the
+  `event-dispatch-remediation-commands` technology-surface catalog entry for snapshot-driven tools
+- updated Eventing, ASP.NET Core, EF data-pack, compatibility, maturity, roadmap, runtime-contract, operations,
+  and durable project memory docs so source, docs, and planning truth move together
+
+Follow-up later:
+
+- provider-owned dashboards can add richer stuck-reservation remediation workflows once a provider package owns
+  the workflow; broker replay and provider-specific dead-letter queues remain future package-owned work
+
 ### ENG-269 Agentics tool execution operator-action baseline
 
 Status: done

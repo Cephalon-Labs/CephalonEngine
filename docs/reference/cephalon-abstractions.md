@@ -46885,12 +46885,12 @@ public sealed class EventDispatchRemediationRuntimeSummary
 
 #### Constructors
 
-<a id="member-m-cephalon-abstractions-data-eventdispatchremediationruntimesummary-ctor-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-int64-system-boolean-system-boolean-system-string-system-nullable-system-datetimeoffset"></a>
+<a id="member-m-cephalon-abstractions-data-eventdispatchremediationruntimesummary-ctor-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-int64-system-boolean-system-boolean-system-string-system-nullable-system-datetimeoffset-system-string-system-nullable-system-datetimeoffset"></a>
 
 ##### `EventDispatchRemediationRuntimeSummary`
 
 ```csharp
-EventDispatchRemediationRuntimeSummary(int totalCommandCount, int acceptedCount, int rejectedCount, int errorCount, int duplicateCommandCount, int reservedCount, string lastCommandId, string lastOperationId, string lastOutcome, string lastDispatchOutcome, DateTimeOffset? lastObservedAtUtc, long droppedCommandCount, bool retentionTruncated, bool summaryMayBeIncomplete, string oldestRetainedCommandId, DateTimeOffset? oldestRetainedObservedAtUtc)
+EventDispatchRemediationRuntimeSummary(int totalCommandCount, int acceptedCount, int rejectedCount, int errorCount, int duplicateCommandCount, int reservedCount, string lastCommandId, string lastOperationId, string lastOutcome, string lastDispatchOutcome, DateTimeOffset? lastObservedAtUtc, long droppedCommandCount, bool retentionTruncated, bool summaryMayBeIncomplete, string oldestRetainedCommandId, DateTimeOffset? oldestRetainedObservedAtUtc, string oldestReservedCommandId, DateTimeOffset? oldestReservedObservedAtUtc)
 ```
 
 Creates a new remediation command summary.
@@ -46912,6 +46912,8 @@ Parameters:
 - `summaryMayBeIncomplete`: A value indicating whether this summary may omit matching command results because retention truncated older history.
 - `oldestRetainedCommandId`: The oldest retained command identifier visible to this summary when one exists.
 - `oldestRetainedObservedAtUtc`: The UTC timestamp for the oldest retained command result visible to this summary when one exists.
+- `oldestReservedCommandId`: The oldest retained reserved command identifier visible to this summary when one exists.
+- `oldestReservedObservedAtUtc`: The UTC timestamp for the oldest retained reserved command visible to this summary when one exists.
 
 #### Properties
 
@@ -47044,6 +47046,26 @@ string LastOutcome { get; }
 ```
 
 Gets the most recently observed command outcome when one exists.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-oldestreservedcommandid"></a>
+
+##### `OldestReservedCommandId`
+
+```csharp
+string OldestReservedCommandId { get; }
+```
+
+Gets the oldest retained reserved command identifier visible to this summary when one exists.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-oldestreservedobservedatutc"></a>
+
+##### `OldestReservedObservedAtUtc`
+
+```csharp
+DateTimeOffset? OldestReservedObservedAtUtc { get; }
+```
+
+Gets the UTC timestamp for the oldest retained reserved command visible to this summary when one exists.
 
 <a id="member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-oldestretainedcommandid"></a>
 

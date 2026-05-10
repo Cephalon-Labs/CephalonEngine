@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T13:29:50.444518+00:00",
+  "GeneratedAtUtc": "2026-05-10T14:09:50.5286897+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -8365,7 +8365,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 20,
+        "Properties": 22,
         "Methods": 0
       }
     },
@@ -53146,8 +53146,8 @@
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
-      "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchremediationruntimesummary-ctor-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-int64-system-boolean-system-boolean-system-string-system-nullable-system-datetimeoffset",
-      "Signature": "EventDispatchRemediationRuntimeSummary(int totalCommandCount, int acceptedCount, int rejectedCount, int errorCount, int duplicateCommandCount, int reservedCount, string lastCommandId, string lastOperationId, string lastOutcome, string lastDispatchOutcome, DateTimeOffset? lastObservedAtUtc, long droppedCommandCount, bool retentionTruncated, bool summaryMayBeIncomplete, string oldestRetainedCommandId, DateTimeOffset? oldestRetainedObservedAtUtc)",
+      "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchremediationruntimesummary-ctor-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-int64-system-boolean-system-boolean-system-string-system-nullable-system-datetimeoffset-system-string-system-nullable-system-datetimeoffset",
+      "Signature": "EventDispatchRemediationRuntimeSummary(int totalCommandCount, int acceptedCount, int rejectedCount, int errorCount, int duplicateCommandCount, int reservedCount, string lastCommandId, string lastOperationId, string lastOutcome, string lastDispatchOutcome, DateTimeOffset? lastObservedAtUtc, long droppedCommandCount, bool retentionTruncated, bool summaryMayBeIncomplete, string oldestRetainedCommandId, DateTimeOffset? oldestRetainedObservedAtUtc, string oldestReservedCommandId, DateTimeOffset? oldestReservedObservedAtUtc)",
       "Summary": "Creates a new remediation command summary."
     },
     {
@@ -90360,6 +90360,28 @@
       "AnchorId": "member-m-cephalon-abstractions-behaviors-result-ok-1-0-system-string-system-string",
       "Signature": "Result\u003CT\u003E Ok\u003CT\u003E(T value, string message, string code)",
       "Summary": "Creates a successful result with a payload value."
+    },
+    {
+      "DisplayName": "OldestReservedCommandId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-oldestreservedcommandid",
+      "Signature": "string OldestReservedCommandId { get; }",
+      "Summary": "Gets the oldest retained reserved command identifier visible to this summary when one exists."
+    },
+    {
+      "DisplayName": "OldestReservedObservedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationRuntimeSummary",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationruntimesummary-oldestreservedobservedatutc",
+      "Signature": "DateTimeOffset? OldestReservedObservedAtUtc { get; }",
+      "Summary": "Gets the UTC timestamp for the oldest retained reserved command visible to this summary when one exists."
     },
     {
       "DisplayName": "OldestRetainedAttemptId",

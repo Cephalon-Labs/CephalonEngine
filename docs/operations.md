@@ -2234,7 +2234,7 @@ Current payload highlights:
   the newest retained records
 - `GET /engine/event-dispatch-remediation-commands/summary` returns the bounded command-result
   roll-up: total, accepted, rejected, errored, duplicate-command count, reserved-command count,
-  in-doubt flag, and latest command
+  in-doubt flag, oldest reserved command id/timestamp, and latest command
   identity/outcome fields without scanning the full history; it also carries dropped-command count,
   retention-truncated state, incomplete-summary warning state, and oldest retained cutoff metadata
 - `GET /engine/event-dispatch-remediation-commands/latest` returns the newest authoritative
@@ -2250,8 +2250,8 @@ Current payload highlights:
   `&limit={positiveInteger}` to return only the newest retained records inside that window
 - `GET /engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}`
   summarizes retained command results inside the same observed UTC window so operator dashboards can
-  read accepted, rejected, reserved, error, duplicate, latest-command, in-doubt, retention-truncated, and
-  incomplete-window posture without materializing the list
+  read accepted, rejected, reserved, error, duplicate, latest-command, in-doubt, oldest-reserved,
+  retention-truncated, and incomplete-window posture without materializing the list
 - `GET /engine/event-dispatch-remediation-commands/{commandId}` narrows the command-result catalog
   to one command and returns `404` when no command has been recorded with that id
 - `GET /engine/event-dispatch-remediation-commands/outboxes/{outboxId}` filters command results by

@@ -546,8 +546,9 @@ through `/engine/event-dispatch-remediation-commands/{commandId}`,
 `/engine/event-dispatch-remediation-commands/retention` before issuing a new command id. The
 observation routes return `400` for invalid dates or reversed bounds; the detail route filters the
 retained command-result history latest-first, while the summary route returns the same window's
-accepted/rejected/reserved/error/duplicate counts, latest command posture, dropped-command count,
-retention-truncated flag, incomplete-summary flag, and oldest retained cutoff.
+accepted/rejected/reserved/error/duplicate counts, latest command posture, oldest reserved command
+posture, dropped-command count, retention-truncated flag, incomplete-summary flag, and oldest
+retained cutoff.
 The list and filter routes that return command-result arrays also accept
 `?limit={positiveInteger}` so operator dashboards can read the newest retained records first without
 materializing the full bounded history; invalid, zero, or negative limits return `400`, and summary,
