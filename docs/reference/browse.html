@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T18:09:12.4483592+00:00",
+  "GeneratedAtUtc": "2026-05-10T19:37:23.3835832+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -111,7 +111,7 @@
       "Description": "Host-agnostic contracts that module and package authors build against.",
       "FileName": "cephalon-abstractions.md",
       "NamespaceCount": 21,
-      "TypeCount": 563
+      "TypeCount": 565
     },
     {
       "AssemblyName": "Cephalon.Agentics",
@@ -785,7 +785,7 @@
       "AssemblyName": "Cephalon.Abstractions",
       "FileName": "cephalon-abstractions.md",
       "AnchorId": "namespace-cephalon-abstractions-data",
-      "TypeCount": 263
+      "TypeCount": 265
     },
     {
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
@@ -8338,6 +8338,21 @@
       }
     },
     {
+      "DisplayName": "EventDispatchRemediationCommandReplayCursor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-eventdispatchremediationcommandreplaycursor",
+      "Declaration": "public sealed class EventDispatchRemediationCommandReplayCursor",
+      "Summary": "Identifies a stable position in a remediation command journal replay stream.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 2,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "EventDispatchRemediationCommandReservation",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -11230,6 +11245,21 @@
         "Fields": 0,
         "Properties": 1,
         "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "IEventDispatchRemediationCommandReplayCursorCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "type-cephalon-abstractions-data-ieventdispatchremediationcommandreplaycursorcatalog",
+      "Declaration": "public interface IEventDispatchRemediationCommandReplayCursorCatalog",
+      "Summary": "Exposes durable replay-cursor reads over an event-dispatch remediation command journal.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 1
       }
     },
     {
@@ -36407,6 +36437,17 @@
     {
       "DisplayName": "CommandId",
       "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationCommandReplayCursor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationcommandreplaycursor-commandid",
+      "Signature": "string CommandId { get; set; }",
+      "Summary": "The command identifier of the last replayed command record."
+    },
+    {
+      "DisplayName": "CommandId",
+      "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRemediationCommandReservation",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -53188,6 +53229,17 @@
       "Summary": "Gets the durable remediation command journal rows owned by the current write-side \u0060DbContext\u0060."
     },
     {
+      "DisplayName": "EventDispatchRemediationCommandReplayCursor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventDispatchRemediationCommandReplayCursor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-eventdispatchremediationcommandreplaycursor-ctor-system-datetimeoffset-system-string",
+      "Signature": "EventDispatchRemediationCommandReplayCursor(DateTimeOffset ObservedAtUtc, string CommandId)",
+      "Summary": "Identifies a stable position in a remediation command journal replay stream."
+    },
+    {
       "DisplayName": "EventDispatchRemediationCommandReservation",
       "Category": "Constructors",
       "DeclaringTypeName": "EventDispatchRemediationCommandReservation",
@@ -59445,6 +59497,17 @@
       "AnchorId": "member-m-cephalon-multitenancy-governance-microsoftgraphdelivery-services-imicrosoftgraphinvitationdeliveryaccesstokenprovider-getaccesstokenasync-system-threading-cancellationtoken",
       "Signature": "ValueTask\u003Cstring\u003E GetAccessTokenAsync(CancellationToken cancellationToken)",
       "Summary": "Gets a bearer token that authorizes the Microsoft Graph \u0060sendMail\u0060 request."
+    },
+    {
+      "DisplayName": "GetAfterReplayCursor",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationCommandReplayCursorCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationcommandreplaycursorcatalog-getafterreplaycursor-cephalon-abstractions-data-eventdispatchremediationcommandreplaycursor-system-int32",
+      "Signature": "IReadOnlyList\u003CEventDispatchRemediationRuntimeState\u003E GetAfterReplayCursor(EventDispatchRemediationCommandReplayCursor cursor, int maxCount)",
+      "Summary": "Gets command records after an optional replay cursor in stable oldest-first order."
     },
     {
       "DisplayName": "GetByActionId",
@@ -79654,6 +79717,17 @@
       "Summary": "Gets the latest Cephalon record timestamp in the bucket."
     },
     {
+      "DisplayName": "LatestReplayCursor",
+      "Category": "Properties",
+      "DeclaringTypeName": "IEventDispatchRemediationCommandReplayCursorCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-ieventdispatchremediationcommandreplaycursorcatalog-latestreplaycursor",
+      "Signature": "EventDispatchRemediationCommandReplayCursor LatestReplayCursor { get; }",
+      "Summary": "Gets the replay cursor for the newest command record currently visible to the journal."
+    },
+    {
       "DisplayName": "LatestRetainedCommandId",
       "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRemediationRuntimeRetention",
@@ -90243,6 +90317,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventdispatchexecutionreport-observedatutc",
       "Signature": "DateTimeOffset ObservedAtUtc { get; }",
       "Summary": "Gets the UTC timestamp when the observation occurred."
+    },
+    {
+      "DisplayName": "ObservedAtUtc",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventDispatchRemediationCommandReplayCursor",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationcommandreplaycursor-observedatutc",
+      "Signature": "DateTimeOffset ObservedAtUtc { get; set; }",
+      "Summary": "The UTC observation timestamp of the last replayed command record."
     },
     {
       "DisplayName": "ObservedAtUtc",

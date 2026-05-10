@@ -261,5 +261,11 @@ internal static class EventDispatchRemediationCommandMetadata
         metadata[$"{prefix}JournalScope"] = descriptor.Scope;
         metadata[$"{prefix}CrossNodeCommandAudit"] = descriptor.CrossNodeCommandAudit ? "true" : "false";
         metadata[$"{prefix}JournalReplayCursor"] = descriptor.DurableReplayCursor ? "durable" : "not-claimed";
+        metadata[$"{prefix}JournalReplayCursorOrder"] = descriptor.DurableReplayCursor
+            ? "oldest-first-observed-utc-command-id"
+            : "not-claimed";
+        metadata[$"{prefix}JournalReplayCursorScope"] = descriptor.DurableReplayCursor
+            ? "command-journal"
+            : "not-claimed";
     }
 }

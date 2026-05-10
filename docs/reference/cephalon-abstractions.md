@@ -46137,6 +46137,55 @@ string Storage { get; set; }
 
 The storage medium used by the journal, such as memory or an Entity Framework table.
 
+<a id="type-cephalon-abstractions-data-eventdispatchremediationcommandreplaycursor"></a>
+
+### `EventDispatchRemediationCommandReplayCursor`
+
+Identifies a stable position in a remediation command journal replay stream.
+
+#### Declaration
+```csharp
+public sealed class EventDispatchRemediationCommandReplayCursor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-abstractions-data-eventdispatchremediationcommandreplaycursor-ctor-system-datetimeoffset-system-string"></a>
+
+##### `EventDispatchRemediationCommandReplayCursor`
+
+```csharp
+EventDispatchRemediationCommandReplayCursor(DateTimeOffset ObservedAtUtc, string CommandId)
+```
+
+Identifies a stable position in a remediation command journal replay stream.
+
+Parameters:
+- `ObservedAtUtc`: The UTC observation timestamp of the last replayed command record.
+- `CommandId`: The command identifier of the last replayed command record.
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationcommandreplaycursor-commandid"></a>
+
+##### `CommandId`
+
+```csharp
+string CommandId { get; set; }
+```
+
+The command identifier of the last replayed command record.
+
+<a id="member-p-cephalon-abstractions-data-eventdispatchremediationcommandreplaycursor-observedatutc"></a>
+
+##### `ObservedAtUtc`
+
+```csharp
+DateTimeOffset ObservedAtUtc { get; set; }
+```
+
+The UTC observation timestamp of the last replayed command record.
+
 <a id="type-cephalon-abstractions-data-eventdispatchremediationcommandreservation"></a>
 
 ### `EventDispatchRemediationCommandReservation`
@@ -51433,6 +51482,47 @@ Returns: A task that returns the reservation result. A duplicate or in-flight co
 Parameters:
 - `request`: The command request whose identifier should be reserved.
 - `cancellationToken`: A token that observes cancellation requests.
+
+<a id="type-cephalon-abstractions-data-ieventdispatchremediationcommandreplaycursorcatalog"></a>
+
+### `IEventDispatchRemediationCommandReplayCursorCatalog`
+
+Exposes durable replay-cursor reads over an event-dispatch remediation command journal.
+
+#### Declaration
+```csharp
+public interface IEventDispatchRemediationCommandReplayCursorCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-abstractions-data-ieventdispatchremediationcommandreplaycursorcatalog-latestreplaycursor"></a>
+
+##### `LatestReplayCursor`
+
+```csharp
+EventDispatchRemediationCommandReplayCursor LatestReplayCursor { get; }
+```
+
+Gets the replay cursor for the newest command record currently visible to the journal.
+
+#### Methods
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationcommandreplaycursorcatalog-getafterreplaycursor-cephalon-abstractions-data-eventdispatchremediationcommandreplaycursor-system-int32"></a>
+
+##### `GetAfterReplayCursor`
+
+```csharp
+IReadOnlyList<EventDispatchRemediationRuntimeState> GetAfterReplayCursor(EventDispatchRemediationCommandReplayCursor cursor, int maxCount)
+```
+
+Gets command records after an optional replay cursor in stable oldest-first order.
+
+Returns: The next command records after the cursor.
+
+Parameters:
+- `cursor`: The last replayed command cursor, or `null` to start from the oldest retained command.
+- `maxCount`: The maximum number of command records to return.
 
 <a id="type-cephalon-abstractions-data-ieventdispatchremediationdispatcher"></a>
 

@@ -2633,8 +2633,9 @@ Current `Cephalon.Eventing` highlights:
   do not want to parse technology-surface metadata
 - `eventing-superiority-profile` exposes `durable-remediation-command-audit` from the active
   command-journal descriptor; durable cross-node command audit is claimed only when the journal
-  proves it, while process-local audit, missing journals, replay cursors, and broker dead-letter
-  ownership remain explicit instead of implied
+  proves it, command-journal replay cursor support is claimed only when the active provider exposes
+  `IEventDispatchRemediationCommandReplayCursorCatalog`, and process-local audit, missing journals,
+  and broker dead-letter ownership remain explicit instead of implied
 - Wolverine or another companion adapter can still move staged dispatch or one subscription to
   provider-managed ownership for brokered or staged dispatch scenarios; the shipped Wolverine path
   now keeps both the dispatch loop and managed subscription retry lanes bounded with max attempts,

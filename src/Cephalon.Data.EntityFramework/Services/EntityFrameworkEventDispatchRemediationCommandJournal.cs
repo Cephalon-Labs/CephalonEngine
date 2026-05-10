@@ -9,7 +9,9 @@ namespace Cephalon.Data.EntityFramework.Services;
 
 internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
     DbContext dbContext,
-    IEntityFrameworkEventDispatchRemediationCommandJournalContext journalContext) : IEventDispatchRemediationCommandJournal
+    IEntityFrameworkEventDispatchRemediationCommandJournalContext journalContext) :
+    IEventDispatchRemediationCommandJournal,
+    IEventDispatchRemediationCommandReplayCursorCatalog
 {
     private const string PendingDispatchOutcome = "pending";
 
@@ -23,7 +25,7 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
         Durability: "durable",
         Scope: "cross-node",
         CrossNodeCommandAudit: true,
-        DurableReplayCursor: false);
+        DurableReplayCursor: true);
 
     public EventDispatchRemediationRuntimeSummary Summary => CreateSummary(States);
 
@@ -62,6 +64,43 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
     }
 
     public IReadOnlyList<EventDispatchRemediationRuntimeState> States => ReadStates(static entries => entries);
+
+    public EventDispatchRemediationCommandReplayCursor? LatestReplayCursor
+    {
+        get
+        {
+            var entry = journalContext.EventDispatchRemediationCommandJournalEntries
+                .AsNoTracking()
+                .OrderByDescending(entry => entry.ObservedAtUtc)
+                .ThenByDescending(entry => entry.CommandId)
+                .FirstOrDefault();
+
+            return entry is null ? null : CreateReplayCursor(entry);
+        }
+    }
+
+    public IReadOnlyList<EventDispatchRemediationRuntimeState> GetAfterReplayCursor(
+        EventDispatchRemediationCommandReplayCursor? cursor,
+        int maxCount)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maxCount);
+        if (cursor is not null)
+        {
+            ArgumentException.ThrowIfNullOrWhiteSpace(cursor.CommandId);
+        }
+
+        var entries = journalContext.EventDispatchRemediationCommandJournalEntries
+            .AsNoTracking()
+            .Where(entry => cursor == null || entry.ObservedAtUtc >= cursor.ObservedAtUtc)
+            .OrderBy(entry => entry.ObservedAtUtc)
+            .ThenBy(entry => entry.CommandId)
+            .AsEnumerable()
+            .Where(entry => cursor is null || IsAfterReplayCursor(entry, cursor))
+            .Take(maxCount)
+            .ToArray();
+
+        return entries.Select(CreateState).ToArray();
+    }
 
     public IReadOnlyList<EventDispatchRemediationRuntimeState> GetInDoubt()
     {
@@ -510,6 +549,27 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
             .ToArray();
 
         return entries.Select(CreateState).ToArray();
+    }
+
+    private static EventDispatchRemediationCommandReplayCursor CreateReplayCursor(
+        EntityFrameworkEventDispatchRemediationCommandEntry entry)
+    {
+        return new EventDispatchRemediationCommandReplayCursor(
+            ObservedAtUtc: entry.ObservedAtUtc,
+            CommandId: entry.CommandId);
+    }
+
+    private static bool IsAfterReplayCursor(
+        EntityFrameworkEventDispatchRemediationCommandEntry entry,
+        EventDispatchRemediationCommandReplayCursor cursor)
+    {
+        if (entry.ObservedAtUtc > cursor.ObservedAtUtc)
+        {
+            return true;
+        }
+
+        return entry.ObservedAtUtc == cursor.ObservedAtUtc &&
+            string.CompareOrdinal(entry.CommandId, cursor.CommandId) > 0;
     }
 
     private EventDispatchRemediationRuntimeState? ReadLatestState(

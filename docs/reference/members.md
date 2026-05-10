@@ -4602,6 +4602,9 @@ Browse the published API surface by public member.
 - [CommandId](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-commandid): `Properties` on `EntityFrameworkEventDispatchRemediationCommandEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=CommandId&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Gets or sets the stable remediation command identifier.
   - `string CommandId { get; set; }`
+- [CommandId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationcommandreplaycursor-commandid): `Properties` on `EventDispatchRemediationCommandReplayCursor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The command identifier of the last replayed command record.
+  - `string CommandId { get; set; }`
 - [CommandId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationcommandreservation-commandid): `Properties` on `EventDispatchRemediationCommandReservation` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable remediation command identifier that was reserved or detected as a duplicate.
   - `string CommandId { get; }`
@@ -9183,6 +9186,9 @@ Browse the published API surface by public member.
 - [EventDispatchRemediationCommandJournalEntries](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-ientityframeworkeventdispatchremediationcommandjournalcontext-eventdispatchremediationcommandjournalentries): `Properties` on `IEntityFrameworkEventDispatchRemediationCommandJournalContext` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=EventDispatchRemediationCommandJournalEntries&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Gets the durable remediation command journal rows owned by the current write-side `DbContext`.
   - `DbSet<EntityFrameworkEventDispatchRemediationCommandEntry> EventDispatchRemediationCommandJournalEntries { get; }`
+- [EventDispatchRemediationCommandReplayCursor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-eventdispatchremediationcommandreplaycursor-ctor-system-datetimeoffset-system-string): `Constructors` on `EventDispatchRemediationCommandReplayCursor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventDispatchRemediationCommandReplayCursor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Identifies a stable position in a remediation command journal replay stream.
+  - `EventDispatchRemediationCommandReplayCursor(DateTimeOffset ObservedAtUtc, string CommandId)`
 - [EventDispatchRemediationCommandReservation](cephalon-abstractions.md#member-m-cephalon-abstractions-data-eventdispatchremediationcommandreservation-ctor-system-string-system-boolean-cephalon-abstractions-data-eventdispatchremediationruntimestate-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventDispatchRemediationCommandReservation` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventDispatchRemediationCommandReservation&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new command-reservation result.
   - `EventDispatchRemediationCommandReservation(string commandId, bool reserved, EventDispatchRemediationRuntimeState existingCommand, IReadOnlyDictionary<string, string> metadata)`
@@ -10896,6 +10902,9 @@ Browse the published API surface by public member.
 - [GetAccessTokenAsync](cephalon-multitenancy-governance-microsoftgraphdelivery.md#member-m-cephalon-multitenancy-governance-microsoftgraphdelivery-services-imicrosoftgraphinvitationdeliveryaccesstokenprovider-getaccesstokenasync-system-threading-cancellationtoken): `Methods` on `IMicrosoftGraphInvitationDeliveryAccessTokenProvider` in `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services` (`Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery`) [Browse](browse.html?q=GetAccessTokenAsync&assembly=Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery&namespace=Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services&scope=members)
   - Gets a bearer token that authorizes the Microsoft Graph `sendMail` request.
   - `ValueTask<string> GetAccessTokenAsync(CancellationToken cancellationToken)`
+- [GetAfterReplayCursor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationcommandreplaycursorcatalog-getafterreplaycursor-cephalon-abstractions-data-eventdispatchremediationcommandreplaycursor-system-int32): `Methods` on `IEventDispatchRemediationCommandReplayCursorCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetAfterReplayCursor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets command records after an optional replay cursor in stable oldest-first order.
+  - `IReadOnlyList<EventDispatchRemediationRuntimeState> GetAfterReplayCursor(EventDispatchRemediationCommandReplayCursor cursor, int maxCount)`
 - [GetByActionId](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantgovernanceactioncatalog-getbyactionid-system-string): `Methods` on `ITenantGovernanceActionCatalog` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=GetByActionId&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets governance action descriptors by action identifier across all tenants.
   - `IReadOnlyList<TenantGovernanceActionDescriptor> GetByActionId(string actionId)`
@@ -16422,6 +16431,9 @@ Browse the published API surface by public member.
 - [LatestRecordedAtUtc](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationsummarydescriptor-latestrecordedatutc): `Properties` on `TenantInvitationDeliveryStatusObservationSummaryDescriptor` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=LatestRecordedAtUtc&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Gets the latest Cephalon record timestamp in the bucket.
   - `DateTimeOffset LatestRecordedAtUtc { get; }`
+- [LatestReplayCursor](cephalon-abstractions.md#member-p-cephalon-abstractions-data-ieventdispatchremediationcommandreplaycursorcatalog-latestreplaycursor): `Properties` on `IEventDispatchRemediationCommandReplayCursorCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestReplayCursor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the replay cursor for the newest command record currently visible to the journal.
+  - `EventDispatchRemediationCommandReplayCursor LatestReplayCursor { get; }`
 - [LatestRetainedCommandId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationruntimeretention-latestretainedcommandid): `Properties` on `EventDispatchRemediationRuntimeRetention` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=LatestRetainedCommandId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the newest retained command identifier when one exists.
   - `string LatestRetainedCommandId { get; }`
@@ -19318,6 +19330,9 @@ Browse the published API surface by public member.
 - [ObservedAtUtc](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchexecutionreport-observedatutc): `Properties` on `EventDispatchExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the UTC timestamp when the observation occurred.
   - `DateTimeOffset ObservedAtUtc { get; }`
+- [ObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationcommandreplaycursor-observedatutc): `Properties` on `EventDispatchRemediationCommandReplayCursor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - The UTC observation timestamp of the last replayed command record.
+  - `DateTimeOffset ObservedAtUtc { get; set; }`
 - [ObservedAtUtc](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationresult-observedatutc): `Properties` on `EventDispatchRemediationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ObservedAtUtc&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The UTC timestamp when the command was evaluated.
   - `DateTimeOffset ObservedAtUtc { get; set; }`

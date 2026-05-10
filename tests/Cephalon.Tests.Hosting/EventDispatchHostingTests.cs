@@ -428,7 +428,9 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("Cephalon.Data.EntityFramework", initialCommandCatalogEntry.Metadata["commandJournalProvider"]);
         Assert.Equal("entity-framework-table", initialCommandCatalogEntry.Metadata["commandJournalStorage"]);
         Assert.Equal("true", initialCommandCatalogEntry.Metadata["commandCrossNodeCommandAudit"]);
-        Assert.Equal("not-claimed", initialCommandCatalogEntry.Metadata["commandJournalReplayCursor"]);
+        Assert.Equal("durable", initialCommandCatalogEntry.Metadata["commandJournalReplayCursor"]);
+        Assert.Equal("oldest-first-observed-utc-command-id", initialCommandCatalogEntry.Metadata["commandJournalReplayCursorOrder"]);
+        Assert.Equal("command-journal", initialCommandCatalogEntry.Metadata["commandJournalReplayCursorScope"]);
         Assert.Equal("false", initialCommandCatalogEntry.Metadata["hasLatestCommand"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands", initialCommandCatalogEntry.Metadata["commandListRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", initialCommandCatalogEntry.Metadata["commandResultRoute"]);

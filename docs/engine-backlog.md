@@ -32,7 +32,7 @@ Current focus:
 - treat "better than the ecosystem" as a measurable backlog gate: every extracted capability should name the reference feature, the Cephalon-native design, the dimensions where Cephalon is expected to beat it, the validation or benchmark evidence required, and any dimensions still `partial` or `not-claimed`
 - for eventing backlog items, `eventing-superiority-profile` is now the runtime checkpoint for that gate: a capability is not complete until the profile and related docs say whether the dimension is `claimed`, `partial`, or `not-claimed` with runtime evidence
 - treat the native remediation operator-read performance profile as the first benchmark-backed superiority claim: `native-remediation-operator-read-performance` is `claimed` only for an active outbox-backed command path, stays `partial` when the path is merely available, and must keep naming the filtered-read guardrails that prove summary, retention, latest, oldest, and dashboard selector reads stay single-pass and Wolverine-free
-- treat durable remediation command audit as the next provider-neutral superiority claim: `durable-remediation-command-audit` reads the active `IEventDispatchRemediationCommandJournal` descriptor, is `claimed` only for durable cross-node command audit, stays `partial` for the native process-local fallback, and keeps durable replay cursors plus broker dead-letter ownership out of the claim until a provider owns those contracts
+- treat durable remediation command audit and replay-cursor posture as provider-neutral superiority claims: `durable-remediation-command-audit` reads the active `IEventDispatchRemediationCommandJournal` descriptor, is `claimed` only for durable cross-node command audit, stays `partial` for the native process-local fallback, and reports command-journal replay as `durable` only when the active provider exposes `IEventDispatchRemediationCommandReplayCursorCatalog`; broker dead-letter ownership remains outside the claim until a provider owns it
 - treat the `Cephalon.Behaviors.Http` profile/generated REST lane as a mixed `M2` proof: profile metadata stays application-authored and non-publishing, while explicit module-owned activation flows through Cephalon-managed materialization, governance, runtime catalogs, and ownership metadata
 - treat the `Cephalon.Agentics` dispatcher/run-state lane plus bounded process-local retry, duplicate-completed idempotency posture, approval-required filtering, terminal-failure filtering, and the abstraction-level `/engine/agent-tool-runs`, `/engine/agent-tool-runs/retry-pending`, `/engine/agent-tool-runs/idempotency-duplicates`, `/engine/agent-tool-runs/approval-required`, `/engine/agent-tool-runs/terminal-failures`, `POST /engine/agent-tools/{toolId}/runs`, and `snapshot.AgentToolRuns` seams as the first agentics-family managed/operator proof instead of widening descriptor breadth there again
 - treat the `Cephalon.Retrieval` lexical indexing/query/freshness lane plus the abstraction-level `/engine/knowledge-indexes`, `POST /engine/knowledge-indexes/{collectionId}/queries`, `POST /engine/knowledge-indexes/{collectionId}/reindex`, `snapshot.KnowledgeIndexes`, and opt-in background reindex scheduler seams as the first retrieval-family managed/operator proof instead of widening catalog breadth there again
@@ -5571,7 +5571,7 @@ Delivered:
 Follow-up later:
 
 - durable command journals, cross-node audit search, broker replay, provider-owned dashboards, and
-  cross-node replay cursors remain future package-owned work
+  provider-owned replay cursors remain future package-owned work
 
 ### ENG-576 Eventing remediation route-bound continuation tokens
 
@@ -5604,7 +5604,7 @@ Delivered:
 Follow-up later:
 
 - durable command journals, cross-node audit search, broker replay, provider-owned dashboards, and
-  durable replay cursors remain future package-owned work
+  provider-owned replay cursors remain future package-owned work
 
 ### ENG-577 Eventing remediation signed continuation tokens
 
@@ -5629,8 +5629,8 @@ Delivered:
   before returning it to operator clients
 - verified continuation-token signatures with constant-time comparison before accepting retained-order
   cursor fields
-- kept the token process-local and Wolverine-free; no new configuration is required, and durable
-  cross-node replay cursors remain future package-owned work
+- kept the token process-local and Wolverine-free; no new configuration is required, and provider-owned
+  command-journal replay cursors remain separate from route continuation tokens
 - updated command pagination metadata to `opaque-signed-route-bound-continuation-token-newest-first`
 - covered tampered-token rejection in the native ASP.NET hosting test plus composition metadata parity
   coverage
@@ -5638,7 +5638,7 @@ Delivered:
 Follow-up later:
 
 - durable command journals, cross-node audit search, broker replay, provider-owned dashboards, and
-  durable replay cursors remain future package-owned work
+  provider-owned replay cursors remain future package-owned work
 
 ### ENG-578 Eventing durable remediation command journal suite
 
@@ -5674,11 +5674,11 @@ Delivered:
   `EntityFrameworkEventDispatchRemediationCommandEntry` through
   `ConfigureCephalonEventDispatchRemediationCommandJournal()`, and the outbox path is registered
 - surfaced `commandJournal*` metadata so operators can distinguish process-local bounded history from
-  durable cross-node EF history and see that durable replay cursors remain `not-claimed`
+  durable cross-node EF history and see that command-journal replay cursor ownership remains explicit
 
 Follow-up later:
 
-- broker replay, provider-owned dashboards, and durable replay cursors remain future package-owned work
+- broker replay, provider-owned dashboards, and provider-owned replay cursors remain future package-owned work
 
 ### ENG-579 Eventing remediation command reservation idempotency
 
@@ -5714,7 +5714,7 @@ Delivered:
 
 Follow-up later:
 
-- broker replay, provider-owned dashboards, provider-specific dead-letter queues, and durable replay cursors
+- broker replay, provider-owned dashboards, provider-specific dead-letter queues, and provider-owned replay cursors
   remain future package-owned work
 
 ### ENG-580 Eventing remediation reserved-command summary posture
@@ -17293,6 +17293,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-586 Eventing remediation filtered summary reads (shipped, issue #1240): native command read models now expose retained filter-summary aggregates for outbox/message/channel/operation/actor/correlation/reason/outcome/dispatch-outcome through `GetSummaryBy*` methods and `/engine/event-dispatch-remediation-commands/{filter}/{value}/summary` routes with discoverable filter-summary metadata
 - ENG-589 Eventing remediation filtered retention reads (shipped, issue #1243): native command read models now expose retained filter-retention posture for outbox/message/channel/operation/actor/correlation/reason/outcome/dispatch-outcome through `GetRetentionBy*` methods and `/engine/event-dispatch-remediation-commands/{filter}/{value}/retention` routes with discoverable filter-retention metadata
 - ENG-591 Eventing superiority profile benchmark evidence (shipped, issue #1245): `eventing-superiority-profile` now exposes `native-remediation-operator-read-performance`, marks it `claimed` only when an outbox-backed command path is active, and lists the remediation filtered-read guardrail methods as runtime evidence
+- ENG-593 Eventing durable command journal replay cursor (shipped, issue #1247): `IEventDispatchRemediationCommandReplayCursorCatalog` now gives durable provider journals a stable `(ObservedAtUtc, CommandId)` replay cursor, EF reads command records oldest-first after a cursor, and runtime metadata reports command-journal replay as durable without claiming broker replay ownership
 
 ### Sprint 88
 
@@ -17643,6 +17644,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-589 Add Eventing remediation filtered retention reads: native command read models now expose `GetRetentionByOutboxId(...)`, `GetRetentionByMessageId(...)`, `GetRetentionByChannelId(...)`, `GetRetentionByOperationId(...)`, `GetRetentionByActorId(...)`, `GetRetentionByCorrelationId(...)`, `GetRetentionByReason(...)`, `GetRetentionByOutcome(...)`, and `GetRetentionByDispatchOutcome(...)` plus `/engine/event-dispatch-remediation-commands/{filter}/{value}/retention` routes, returning retained `EventDispatchRemediationRuntimeRetention` posture or the empty retention contract and advertising filter-retention route/policy metadata without materializing detail lists. Quality dimensions: Auditability + Usability + Reliability + Data Integrity + Compatibility + Performance + Maintainability (shipped)
 - ENG-590 Add Eventing remediation filtered read hot-path guardrail: native command-result filtered summary/retention/latest/oldest reads now scan retained history in one pass, avoid matching detail-list and sort-buffer materialization, keep latest/oldest allocation-free for main string filter families through enum-based matching, and have release-validation guardrails through `EventDispatchRemediationCatalogBenchmarks`. Quality dimensions: Performance + Reliability + Maintainability + Auditability + Usability + Compatibility (shipped)
 - ENG-591 Add Eventing superiority profile benchmark evidence: `eventing-superiority-profile` now exposes `native-remediation-operator-read-performance`, reports it as `claimed` only when an outbox-backed command path is active, reports `partial` when the benchmarked path is only available, and advertises the exact remediation filtered-read benchmark guardrail methods in runtime evidence. Quality dimensions: Performance + Auditability + Reliability + Usability + Maintainability + Compatibility (shipped)
+- ENG-593 Add Eventing durable command journal replay cursor: `IEventDispatchRemediationCommandReplayCursorCatalog` now exposes `LatestReplayCursor` and oldest-first `GetAfterReplayCursor(...)` over stable `(ObservedAtUtc, CommandId)` positions, `Cephalon.Data.EntityFramework` implements that contract for its durable command journal, and capability/runtime metadata reports `commandJournalReplayCursor = durable` while broker replay ownership remains separate. Quality dimensions: Data Integrity + Auditability + Reliability + Performance + Compatibility + Maintainability (shipped)
 - ENG-524 Harden deployment-mode audit-only probes: direct trim and Native AOT runs now keep the single-file release gate out of their verdict by returning `PublishProbeGate=not-applicable` when only audit-only modes are evaluated; compiler-only analyzer/source-generator `ProjectReference` entries strip app publish-mode globals through `CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove`; and `Cephalon.Analyzers`, `Cephalon.Behaviors.SourceGen`, and `Cephalon.Engine.SourceGen` localize publish/RID globals with `TreatAsLocalProperty` so publish probes reach real runtime blocker evidence instead of failing on compiler-only `netstandard2.0` drift. Release closeout also stabilized the readiness warmup hosting test, refreshed the REST projection/governance guardrail to a measured 1 s ceiling while keeping the existing 16 MB allocation ceiling, and moved the canonical full `validate-release` wall-time target to 30 minutes after the current full lane measured about 1,669.848 seconds. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability + Performance (shipped)
 - ENG-535 Close generated REST behavior source-generator adoption proof: `Cephalon.Behaviors.SourceGen` now packs its compiler assembly under `analyzers/dotnet/cs`, scaffolded REST behavior modules and template-pack REST starters reference it as `PrivateAssets=all`, generated module projects keep `Cephalon.Engine.SourceGen` in every blueprint, and the out-of-tree adoption temporary feed publishes the full generated REST behavior package closure (`Cephalon.Behaviors.SourceGen`, `Cephalon.Diagnostics`, and `Cephalon.Resilience`) so restore/build/run replay can produce the REST profile hints required by `MapProfile<TBehavior>()`. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability (shipped)
 - ENG-487 Add opt-in CDC integration baseline: `tests/Cephalon.Tests.CdcIntegration` now carries the first dedicated live CDC integration lane, proving MongoDB change streams against a disposable `EphemeralMongo7` replica set with real outbox staging, provider-native runtime binding, runtime-state reporting, execution-runtime aggregation, and checkpoint persistence; `data.slnf` now points at the split data-relevant test projects instead of the retired monolithic test project, and SQL Server/Postgres live CDC coverage stays explicitly later until an external-service/Testcontainers gate exists. Quality dimensions: Reliability + Compatibility + Auditability + Maintainability (shipped)

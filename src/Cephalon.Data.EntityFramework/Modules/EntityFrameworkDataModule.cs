@@ -266,7 +266,9 @@ internal sealed class EntityFrameworkDataModule<TReadDbContext, TWriteDbContext>
                     ["journalDurability"] = "durable",
                     ["journalScope"] = "cross-node",
                     ["crossNodeCommandAudit"] = "true",
-                    ["journalReplayCursor"] = "not-claimed",
+                    ["journalReplayCursor"] = "durable",
+                    ["journalReplayCursorOrder"] = "oldest-first-observed-utc-command-id",
+                    ["journalReplayCursorScope"] = "command-journal",
                     ["topologySource"] = options.UsesEngineDatabaseTopology ? "engine-databases" : "registration-callbacks"
                 }));
         }

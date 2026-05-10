@@ -16,6 +16,10 @@ Cephalon.Abstractions.Data.EventDispatchRemediationCommandJournalDescriptor.Jour
 Cephalon.Abstractions.Data.EventDispatchRemediationCommandJournalDescriptor.Provider.get -> string!
 Cephalon.Abstractions.Data.EventDispatchRemediationCommandJournalDescriptor.Scope.get -> string!
 Cephalon.Abstractions.Data.EventDispatchRemediationCommandJournalDescriptor.Storage.get -> string!
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandReplayCursor
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandReplayCursor.CommandId.get -> string!
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandReplayCursor.EventDispatchRemediationCommandReplayCursor(System.DateTimeOffset ObservedAtUtc, string! CommandId) -> void
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandReplayCursor.ObservedAtUtc.get -> System.DateTimeOffset
 Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention
 Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.DroppedCommandCount.get -> long
 Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.EventDispatchRemediationRuntimeRetention(int historyLimit = 0, int retainedCommandCount = 0, long totalRecordedCommandCount = 0, long droppedCommandCount = 0, bool truncated = false, string? oldestRetainedCommandId = null, System.DateTimeOffset? oldestRetainedObservedAtUtc = null, string? latestRetainedCommandId = null, System.DateTimeOffset? latestRetainedObservedAtUtc = null) -> void
@@ -54,6 +58,9 @@ Cephalon.Abstractions.Data.IEventDispatchRemediationCommandJournal
 Cephalon.Abstractions.Data.IEventDispatchRemediationCommandJournal.Descriptor.get -> Cephalon.Abstractions.Data.EventDispatchRemediationCommandJournalDescriptor!
 Cephalon.Abstractions.Data.IEventDispatchRemediationCommandJournal.RecordAsync(Cephalon.Abstractions.Data.EventDispatchRemediationResult! result, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
 Cephalon.Abstractions.Data.IEventDispatchRemediationCommandJournal.ReserveAsync(Cephalon.Abstractions.Data.EventDispatchRemediationRequest! request, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Cephalon.Abstractions.Data.EventDispatchRemediationCommandReservation!>
+Cephalon.Abstractions.Data.IEventDispatchRemediationCommandReplayCursorCatalog
+Cephalon.Abstractions.Data.IEventDispatchRemediationCommandReplayCursorCatalog.GetAfterReplayCursor(Cephalon.Abstractions.Data.EventDispatchRemediationCommandReplayCursor? cursor, int maxCount) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
+Cephalon.Abstractions.Data.IEventDispatchRemediationCommandReplayCursorCatalog.LatestReplayCursor.get -> Cephalon.Abstractions.Data.EventDispatchRemediationCommandReplayCursor?
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByActorId(string! actorId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByChannelId(string! channelId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByCorrelationId(string! correlationId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!

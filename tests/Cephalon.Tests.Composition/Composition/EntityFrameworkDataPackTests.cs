@@ -979,13 +979,15 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("Cephalon.Data.EntityFramework", remediationCommandEntry.Metadata["commandJournalProvider"]);
         Assert.Equal("entity-framework-table", remediationCommandEntry.Metadata["commandJournalStorage"]);
         Assert.Equal("true", remediationCommandEntry.Metadata["commandCrossNodeCommandAudit"]);
-        Assert.Equal("not-claimed", remediationCommandEntry.Metadata["commandJournalReplayCursor"]);
+        Assert.Equal("durable", remediationCommandEntry.Metadata["commandJournalReplayCursor"]);
+        Assert.Equal("oldest-first-observed-utc-command-id", remediationCommandEntry.Metadata["commandJournalReplayCursorOrder"]);
+        Assert.Equal("command-journal", remediationCommandEntry.Metadata["commandJournalReplayCursorScope"]);
         Assert.Equal("claimed", durableAuditEntry.Metadata["status"]);
         Assert.Contains("provider=Cephalon.Data.EntityFramework", durableAuditEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("durability=durable", durableAuditEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("scope=cross-node", durableAuditEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("crossNodeCommandAudit=true", durableAuditEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
-        Assert.Contains("replayCursor=not-claimed", durableAuditEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("replayCursor=durable", durableAuditEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.publish" && capability.Metadata["runtimeState"] == "available");
         Assert.Contains(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.publish" && capability.Metadata["dispatchStore"] == "available");
@@ -994,7 +996,10 @@ public sealed class EntityFrameworkDataPackTests
             capability => capability.Key == "data.entity-framework.event-dispatch-remediation-command-journal" &&
                 capability.Metadata["journalDurability"] == "durable" &&
                 capability.Metadata["journalScope"] == "cross-node" &&
-                capability.Metadata["crossNodeCommandAudit"] == "true");
+                capability.Metadata["crossNodeCommandAudit"] == "true" &&
+                capability.Metadata["journalReplayCursor"] == "durable" &&
+                capability.Metadata["journalReplayCursorOrder"] == "oldest-first-observed-utc-command-id" &&
+                capability.Metadata["journalReplayCursorScope"] == "command-journal");
     }
 
     [Fact]
@@ -1430,8 +1435,10 @@ public sealed class EntityFrameworkDataPackTests
             Assert.Equal("durable", journal.Descriptor.Durability);
             Assert.Equal("cross-node", journal.Descriptor.Scope);
             Assert.True(journal.Descriptor.CrossNodeCommandAudit);
+            Assert.True(journal.Descriptor.DurableReplayCursor);
             Assert.Empty(processLocalCatalog.States);
 
+            var replayCatalog = Assert.IsAssignableFrom<IEventDispatchRemediationCommandReplayCursorCatalog>(journal);
             var persistedState = journal.GetByCommandId("cmd-journal-001-retry");
             Assert.NotNull(persistedState);
             Assert.Equal(EventDispatchRemediationOutcomes.Accepted, persistedState.Outcome);
@@ -1453,6 +1460,13 @@ public sealed class EntityFrameworkDataPackTests
             Assert.Equal(EventDispatchRemediationOutcomes.Accepted, duplicate.Metadata[EventDispatchRemediationMetadataKeys.ExistingCommandOutcome]);
             Assert.Equal("retry-now", duplicate.Metadata[EventDispatchRemediationMetadataKeys.ExistingCommandOperationId]);
 
+            var firstReplayPage = replayCatalog.GetAfterReplayCursor(cursor: null, maxCount: 1);
+            var firstReplayState = Assert.Single(firstReplayPage);
+            Assert.Equal("cmd-journal-001-retry", firstReplayState.CommandId);
+            var replayCursor = new EventDispatchRemediationCommandReplayCursor(
+                ObservedAtUtc: firstReplayState.ObservedAtUtc,
+                CommandId: firstReplayState.CommandId);
+
             var inDoubtDuplicate = await dispatcher.DispatchAsync(new EventDispatchRemediationRequest(
                 outboxId: "entity-framework-outbox",
                 messageId: "evt-journal-001",
@@ -1469,6 +1483,15 @@ public sealed class EntityFrameworkDataPackTests
             Assert.Equal(EventDispatchRemediationOutcomes.Reserved, inDoubtDuplicate.Metadata[EventDispatchRemediationMetadataKeys.ExistingCommandOutcome]);
             Assert.Equal("duplicate", inDoubtDuplicate.Metadata[EventDispatchRemediationMetadataKeys.CommandReservationState]);
             Assert.Equal("reserve-before-mutation", inDoubtDuplicate.Metadata[EventDispatchRemediationMetadataKeys.CommandReservationPolicy]);
+
+            var secondReplayPage = replayCatalog.GetAfterReplayCursor(replayCursor, maxCount: 10);
+            var secondReplayState = Assert.Single(secondReplayPage);
+            Assert.Equal("cmd-journal-002-reserved", secondReplayState.CommandId);
+            var latestReplayCursor = replayCatalog.LatestReplayCursor;
+            Assert.NotNull(latestReplayCursor);
+            Assert.Equal("cmd-journal-002-reserved", latestReplayCursor.CommandId);
+            Assert.Empty(replayCatalog.GetAfterReplayCursor(latestReplayCursor, maxCount: 10));
+            Assert.Throws<ArgumentOutOfRangeException>(() => replayCatalog.GetAfterReplayCursor(cursor: null, maxCount: 0));
 
             var states = journal.States;
             Assert.Equal(2, states.Count);
@@ -1594,6 +1617,7 @@ public sealed class EntityFrameworkDataPackTests
             Assert.Equal("not-found", commandCatalogEntry.Metadata["commandFilterOldestMissing"]);
 
             var processLocalJournal = Assert.IsAssignableFrom<IEventDispatchRemediationCommandJournal>(processLocalCatalog);
+            Assert.False(processLocalCatalog is IEventDispatchRemediationCommandReplayCursorCatalog);
             var processLocalReservation = await processLocalJournal.ReserveAsync(new EventDispatchRemediationRequest(
                 outboxId: "entity-framework-outbox",
                 messageId: "evt-journal-001",
@@ -1970,7 +1994,9 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("Cephalon.Data.EntityFramework", remediationCommandCatalogEntry.Metadata["commandJournalProvider"]);
         Assert.Equal("entity-framework-table", remediationCommandCatalogEntry.Metadata["commandJournalStorage"]);
         Assert.Equal("true", remediationCommandCatalogEntry.Metadata["commandCrossNodeCommandAudit"]);
-        Assert.Equal("not-claimed", remediationCommandCatalogEntry.Metadata["commandJournalReplayCursor"]);
+        Assert.Equal("durable", remediationCommandCatalogEntry.Metadata["commandJournalReplayCursor"]);
+        Assert.Equal("oldest-first-observed-utc-command-id", remediationCommandCatalogEntry.Metadata["commandJournalReplayCursorOrder"]);
+        Assert.Equal("command-journal", remediationCommandCatalogEntry.Metadata["commandJournalReplayCursorScope"]);
         Assert.Equal("true", remediationCommandCatalogEntry.Metadata["hasLatestCommand"]);
         Assert.Equal("cmd-evt-020-retry", remediationCommandCatalogEntry.Metadata["latestCommandId"]);
         Assert.Equal("retry-now", remediationCommandCatalogEntry.Metadata["latestOperationId"]);
