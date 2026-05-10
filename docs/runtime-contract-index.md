@@ -236,6 +236,8 @@ ENG-599 adds `broker-inbound-consumption-ownership` to the same profile so runti
 
 ENG-600 adds `serialization-and-contract-versioning-ownership` to the same profile so runtime consumers can see that channel catalogs, subscription catalogs, route evidence, and publication runtime evidence are separate from serializer selection, wire-envelope schema, schema registry ownership, contract-version negotiation, upcaster pipelines, and compatibility validation.
 
+ENG-601 adds `tenant-and-correlation-context-ownership` to the same profile so runtime consumers can see that operator correlation metadata, diagnostics tags, channel catalogs, subscription catalogs, route evidence, and publication runtime evidence are separate from tenant context propagation, correlation/causation propagation, baggage propagation, and message-header policy.
+
 **Cells and traffic automation**
 
 `ICellBoundaryCatalog`, `ICellRouteCatalog`, `ICellHealthIsolationCatalog`, `ICellTrafficAutomationRuntimeCatalog`.

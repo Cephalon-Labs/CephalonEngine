@@ -29,6 +29,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var downstreamDeliveryCompletionEvidence = ResolveDownstreamDeliveryCompletionEvidence(topology);
         var brokerInboundConsumptionEvidence = ResolveBrokerInboundConsumptionEvidence(topology);
         var serializationVersioningEvidence = ResolveSerializationVersioningEvidence(options, topology);
+        var tenantCorrelationEvidence = ResolveTenantCorrelationEvidence(options, topology);
         var remediationReadPerformanceStatus = topology.HasOutboxPublishingPath ? "claimed" : "partial";
         var remediationReadPerformanceEvidence = topology.HasOutboxPublishingPath
             ? $"benchmarks={RemediationFilteredReadBenchmarks}; readPolicy=single-pass-retained-catalog; materialization=not-required; wolverineRequired=false"
@@ -107,6 +108,14 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     evidence: serializationVersioningEvidence,
                     advantage: "Teams can use Cephalon event catalogs, routing, and runtime publication evidence without assuming the core pack silently owns a wire schema registry or version migration pipeline.",
                     nextGap: "Add a provider-neutral serializer descriptor plus schema, version negotiation, upcaster, and compatibility validation catalog before claiming serialization and contract-version ownership."),
+                CreateEntry(
+                    id: "tenant-and-correlation-context-ownership",
+                    displayName: "Tenant And Correlation Context Ownership",
+                    description: "Makes tenant identity, correlation, causation, baggage, and message-header propagation explicit instead of inferring them from remediation command metadata, diagnostics tags, or route metadata.",
+                    status: "not-claimed",
+                    evidence: tenantCorrelationEvidence,
+                    advantage: "Teams can use Cephalon operator correlation metadata, publication routing, and diagnostic tags without assuming the core pack silently owns cross-boundary context propagation.",
+                    nextGap: "Add a provider-neutral context propagation descriptor plus tenant, correlation, causation, baggage, and header validation catalog before claiming tenant and correlation ownership."),
                 CreateEntry(
                     id: "native-wolverine-free-baseline",
                     displayName: "Native Wolverine-free Baseline",
@@ -318,6 +327,19 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         return string.Create(
             CultureInfo.InvariantCulture,
             $"channelCatalog={channelCatalog}; subscriptionCatalog={subscriptionCatalog}; publicationPath={publicationPath}; publicationRouting={publicationRouting}; serializerSelection=not-claimed; messageEnvelopeSchema=not-claimed; schemaRegistry=not-present; contractVersionNegotiation=not-claimed; upcasterPipeline=not-present; compatibilityValidation=not-claimed; wolverineRequired=false");
+    }
+
+    private static string ResolveTenantCorrelationEvidence(EventingOptions options, EventingRuntimeTopology topology)
+    {
+        var channelCatalog = topology.HasChannelContributors ? "present" : "not-present";
+        var subscriptionCatalog = topology.HasSubscriptionContributors ? "present" : "not-present";
+        var publicationPath = topology.HasPublishingPath ? "active" : "not-active";
+        var publicationRouting = options.EnablePublicationRouting ? "configured" : "not-configured";
+        var inProcessExecution = topology.HasInProcessSubscriptionExecutionPath ? "active" : "not-active";
+
+        return string.Create(
+            CultureInfo.InvariantCulture,
+            $"channelCatalog={channelCatalog}; subscriptionCatalog={subscriptionCatalog}; publicationPath={publicationPath}; publicationRouting={publicationRouting}; inProcessExecution={inProcessExecution}; operatorCorrelationMetadata=metadata-only; tenantContextPropagation=not-claimed; correlationContextPropagation=not-claimed; causationIdPropagation=not-claimed; baggagePropagation=not-claimed; messageHeaderPolicy=not-claimed; wolverineRequired=false");
     }
 
     private static string ResolveBrokerDeadLetterReplayEvidence(EventingRuntimeTopology topology)

@@ -2663,6 +2663,11 @@ Current `Cephalon.Eventing` highlights:
   selection, stable envelope/schema identity, schema registry lookup, contract-version negotiation,
   upcaster pipelines, and compatibility validation, even when event type/channel metadata,
   publication routing, subscription catalogs, or runtime publication evidence are present
+- `tenant-and-correlation-context-ownership` is the separate context-propagation boundary in that
+  same profile; it stays `not-claimed` until a provider or engine package owns tenant context
+  propagation, correlation/causation propagation, baggage propagation, and message-header policy,
+  even when operator correlation metadata, diagnostic tags, publication routing, subscription
+  catalogs, or runtime publication evidence are present
 - Wolverine or another companion adapter can still move staged dispatch or one subscription to
   provider-managed ownership for brokered or staged dispatch scenarios; the shipped Wolverine path
   now keeps both the dispatch loop and managed subscription retry lanes bounded with max attempts,
