@@ -2658,6 +2658,11 @@ Current `Cephalon.Eventing` highlights:
   acknowledgements, consumer leases, retry/poison handling, and offset/checkpoint evidence, even
   when declared subscriptions, direct in-process execution, inbox duplicate suppression, hosted
   subscription bindings, or optional Wolverine binding evidence are present
+- `serialization-and-contract-versioning-ownership` is the separate wire-contract boundary in that
+  same profile; it stays `not-claimed` until a provider or engine package owns serializer
+  selection, stable envelope/schema identity, schema registry lookup, contract-version negotiation,
+  upcaster pipelines, and compatibility validation, even when event type/channel metadata,
+  publication routing, subscription catalogs, or runtime publication evidence are present
 - Wolverine or another companion adapter can still move staged dispatch or one subscription to
   provider-managed ownership for brokered or staged dispatch scenarios; the shipped Wolverine path
   now keeps both the dispatch loop and managed subscription retry lanes bounded with max attempts,

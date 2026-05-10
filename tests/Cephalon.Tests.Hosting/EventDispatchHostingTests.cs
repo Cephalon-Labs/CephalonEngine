@@ -1941,6 +1941,9 @@ public sealed class EventDispatchHostingTests
         var inboundConsumptionEntry = Assert.Single(
             eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
             entry => entry.Id == "broker-inbound-consumption-ownership");
+        var serializationVersioningEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "serialization-and-contract-versioning-ownership");
         Assert.Equal("claimed", superiorityEntry.Metadata["status"]);
         Assert.Contains("routes=1", superiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Equal("not-claimed", topologyOwnershipEntry.Metadata["status"]);
@@ -1972,6 +1975,14 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("inboundAcknowledgement=not-claimed", inboundConsumptionEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("consumerOffsetCheckpoint=not-claimed", inboundConsumptionEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", inboundConsumptionEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("not-claimed", serializationVersioningEntry.Metadata["status"]);
+        Assert.Contains("publicationPath=active", serializationVersioningEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("publicationRouting=configured", serializationVersioningEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("serializerSelection=not-claimed", serializationVersioningEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("schemaRegistry=not-present", serializationVersioningEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("contractVersionNegotiation=not-claimed", serializationVersioningEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("upcasterPipeline=not-present", serializationVersioningEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", serializationVersioningEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
         Assert.NotNull(snapshot);
         var snapshotPublicationState = Assert.Single(snapshot.EventPublicationStates);
@@ -1991,6 +2002,9 @@ public sealed class EventDispatchHostingTests
         var snapshotInboundConsumptionEntry = Assert.Single(
             snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
             entry => entry.Id == "broker-inbound-consumption-ownership");
+        var snapshotSerializationVersioningEntry = Assert.Single(
+            snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "serialization-and-contract-versioning-ownership");
         Assert.Equal("claimed", snapshotRoutingEntry.Metadata["status"]);
         Assert.Equal("not-claimed", snapshotTopologyOwnershipEntry.Metadata["status"]);
         Assert.Contains("brokerTopologyMaterialization=not-claimed", snapshotTopologyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
@@ -2000,6 +2014,8 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("downstreamDeliveryCompletion=not-claimed", snapshotDeliveryCompletionEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Equal("not-claimed", snapshotInboundConsumptionEntry.Metadata["status"]);
         Assert.Contains("brokerInboundConsumption=not-claimed", snapshotInboundConsumptionEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("not-claimed", snapshotSerializationVersioningEntry.Metadata["status"]);
+        Assert.Contains("serializerSelection=not-claimed", snapshotSerializationVersioningEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]

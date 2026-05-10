@@ -28,6 +28,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var providerPartitionEvidence = ResolveProviderPartitionEvidence(options, routeCount);
         var downstreamDeliveryCompletionEvidence = ResolveDownstreamDeliveryCompletionEvidence(topology);
         var brokerInboundConsumptionEvidence = ResolveBrokerInboundConsumptionEvidence(topology);
+        var serializationVersioningEvidence = ResolveSerializationVersioningEvidence(options, topology);
         var remediationReadPerformanceStatus = topology.HasOutboxPublishingPath ? "claimed" : "partial";
         var remediationReadPerformanceEvidence = topology.HasOutboxPublishingPath
             ? $"benchmarks={RemediationFilteredReadBenchmarks}; readPolicy=single-pass-retained-catalog; materialization=not-required; wolverineRequired=false"
@@ -98,6 +99,14 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     evidence: brokerInboundConsumptionEvidence,
                     advantage: "Teams can use Cephalon subscription descriptors, direct in-process execution, and optional provider bindings without assuming the core pack silently owns a generic broker consumer loop.",
                     nextGap: "Add a provider-owned inbound consumption descriptor plus acknowledgement, retry, lease, and offset-checkpoint evidence before claiming broker inbound consumption."),
+                CreateEntry(
+                    id: "serialization-and-contract-versioning-ownership",
+                    displayName: "Serialization And Contract Versioning Ownership",
+                    description: "Makes serializer selection, schema registry ownership, event contract version negotiation, upcasting, and compatibility validation explicit instead of inferring them from event type or channel metadata.",
+                    status: "not-claimed",
+                    evidence: serializationVersioningEvidence,
+                    advantage: "Teams can use Cephalon event catalogs, routing, and runtime publication evidence without assuming the core pack silently owns a wire schema registry or version migration pipeline.",
+                    nextGap: "Add a provider-neutral serializer descriptor plus schema, version negotiation, upcaster, and compatibility validation catalog before claiming serialization and contract-version ownership."),
                 CreateEntry(
                     id: "native-wolverine-free-baseline",
                     displayName: "Native Wolverine-free Baseline",
@@ -297,6 +306,18 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         return string.Create(
             CultureInfo.InvariantCulture,
             $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; inboxPath={inboxPath}; brokerInboundConsumption=not-claimed; brokerConsumerLoop=not-present; providerOwnedConsumer=not-present; inboundAcknowledgement=not-claimed; consumerOffsetCheckpoint=not-claimed; wolverineRequired=false");
+    }
+
+    private static string ResolveSerializationVersioningEvidence(EventingOptions options, EventingRuntimeTopology topology)
+    {
+        var channelCatalog = topology.HasChannelContributors ? "present" : "not-present";
+        var subscriptionCatalog = topology.HasSubscriptionContributors ? "present" : "not-present";
+        var publicationPath = topology.HasPublishingPath ? "active" : "not-active";
+        var publicationRouting = options.EnablePublicationRouting ? "configured" : "not-configured";
+
+        return string.Create(
+            CultureInfo.InvariantCulture,
+            $"channelCatalog={channelCatalog}; subscriptionCatalog={subscriptionCatalog}; publicationPath={publicationPath}; publicationRouting={publicationRouting}; serializerSelection=not-claimed; messageEnvelopeSchema=not-claimed; schemaRegistry=not-present; contractVersionNegotiation=not-claimed; upcasterPipeline=not-present; compatibilityValidation=not-claimed; wolverineRequired=false");
     }
 
     private static string ResolveBrokerDeadLetterReplayEvidence(EventingRuntimeTopology topology)

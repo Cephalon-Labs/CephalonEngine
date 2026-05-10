@@ -234,6 +234,8 @@ ENG-598 adds `downstream-delivery-completion-ownership` to the same profile so r
 
 ENG-599 adds `broker-inbound-consumption-ownership` to the same profile so runtime consumers can see that declared subscriptions, direct in-process execution, inbox duplicate suppression, hosted subscription bindings, optional Wolverine bindings, routing, topology, partition, and delivery evidence are separate from provider-owned broker consumer loops, inbound acknowledgements, leases, retry/poison handling, and offset checkpoints.
 
+ENG-600 adds `serialization-and-contract-versioning-ownership` to the same profile so runtime consumers can see that channel catalogs, subscription catalogs, route evidence, and publication runtime evidence are separate from serializer selection, wire-envelope schema, schema registry ownership, contract-version negotiation, upcaster pipelines, and compatibility validation.
+
 **Cells and traffic automation**
 
 `ICellBoundaryCatalog`, `ICellRouteCatalog`, `ICellHealthIsolationCatalog`, `ICellTrafficAutomationRuntimeCatalog`.

@@ -2288,6 +2288,7 @@ public sealed class EngineBuilderTests
         Assert.Equal("not-claimed", dimensions["provider-partition-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["downstream-delivery-completion-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["broker-inbound-consumption-ownership"].Metadata["status"]);
+        Assert.Equal("not-claimed", dimensions["serialization-and-contract-versioning-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["durability-and-outbox-portability"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["dead-letter-replay-and-remediation"].Metadata["status"]);
         Assert.Equal("MassTransit,NServiceBus,Wolverine,MediatR", dimensions["native-wolverine-free-baseline"].Metadata["referenceFrameworks"]);
@@ -2313,6 +2314,10 @@ public sealed class EngineBuilderTests
         Assert.Contains("providerOwnedConsumer=not-present", dimensions["broker-inbound-consumption-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("inboundAcknowledgement=not-claimed", dimensions["broker-inbound-consumption-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", dimensions["broker-inbound-consumption-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("serializerSelection=not-claimed", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("schemaRegistry=not-present", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("contractVersionNegotiation=not-claimed", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]
