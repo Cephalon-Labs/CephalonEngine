@@ -68,6 +68,16 @@ internal static class EventDispatchRemediationCommandMetadata
         metadata[$"{prefix}ObservationWindowInvalidBounds"] = "reject-reversed-window";
     }
 
+    internal static void AddInDoubtMetadata(
+        IDictionary<string, string> metadata,
+        string prefix = "command")
+    {
+        metadata[$"{prefix}InDoubtQuery"] = "beforeUtc";
+        metadata[$"{prefix}InDoubtCutoffPolicy"] = "inclusive-observed-utc-before-or-equal";
+        metadata[$"{prefix}InDoubtDetailOrder"] = "newest-first";
+        metadata[$"{prefix}InDoubtInvalidCutoff"] = "reject-invalid-date-time-offset";
+    }
+
     internal static void AddReadLimitMetadata(
         IDictionary<string, string> metadata,
         string prefix = "command")

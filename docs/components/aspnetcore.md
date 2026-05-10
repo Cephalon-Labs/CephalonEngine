@@ -522,7 +522,7 @@ When the same runtime registers `IEventDispatchRemediationRuntimeCatalog`, the h
 `/engine/event-dispatch-remediation-commands/summary`,
 `/engine/event-dispatch-remediation-commands/latest`,
 `/engine/event-dispatch-remediation-commands/retention`,
-`/engine/event-dispatch-remediation-commands/in-doubt`,
+`/engine/event-dispatch-remediation-commands/in-doubt?beforeUtc={beforeUtc}`,
 `/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}`,
 `/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}`,
 `/engine/event-dispatch-remediation-commands/{commandId}`,
@@ -535,7 +535,7 @@ When the same runtime registers `IEventDispatchRemediationRuntimeCatalog`, the h
 `/engine/event-dispatch-remediation-commands/reasons/{reason}`,
 `/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}`, and
 `/engine/event-dispatch-remediation-commands/outcomes/{outcome}` so operators can inspect accepted
-and rejected command results by summary, latest command, retention posture, in-doubt reservations, command id, outbox id,
+and rejected command results by summary, latest command, retention posture, in-doubt reservations, stale in-doubt cutoff, command id, outbox id,
 message id, channel id, operation id, actor id, correlation id, reason, dispatch outcome, command
 outcome, inclusive observed UTC window, or observed-window summary separately from the latest per-outbox dispatch state. A
 duplicate command id does not
@@ -554,6 +554,9 @@ The list and filter routes that return command-result arrays also accept
 `?limit={positiveInteger}` so operator dashboards can read the newest retained records first without
 materializing the full bounded history; invalid, zero, or negative limits return `400`, and summary,
 latest, retention, or single-command reads keep their existing contracts.
+The `in-doubt` route accepts optional `beforeUtc={dateTimeOffset}` to return only retained
+reserved records observed at or before that inclusive UTC cutoff, and returns `400` for invalid
+cutoff values.
 The eventing capability and technology-runtime metadata advertise the same policy through
 `commandReadLimitQuery`, `commandReadLimitPolicy`, `commandReadLimitAppliesTo`, and the matching
 route list. The same metadata now also advertises observed-window query and validation semantics
@@ -561,12 +564,14 @@ through `commandObservationWindowQuery`, `commandObservationWindowPolicy`,
 `commandObservationWindowDetailOrder`, `commandObservationWindowSummary`, and
 `commandObservationWindowInvalidBounds`, so host UIs can discover the route family from
 `/engine/capabilities`, `/engine/technology-surfaces`, or `/engine/snapshot`.
-Those metadata blocks also publish `commandListRoute`, `commandResultRoute`, and
-`commandOutboxRoute`, with `operatorCommand*` equivalents on `event-dispatch-remediations`, so a
-host UI does not have to infer the root list, command-id, or outbox drill-down URL from route names
-or docs.
+Those metadata blocks also publish `commandListRoute`, `commandResultRoute`,
+`commandInDoubtRoute`, and `commandOutboxRoute`, with `operatorCommand*` equivalents on
+`event-dispatch-remediations`, so a host UI does not have to infer the root list, in-doubt list,
+command-id, or outbox drill-down URL from route names or docs. `commandInDoubtQuery`,
+`commandInDoubtCutoffPolicy`, `commandInDoubtDetailOrder`, and `commandInDoubtInvalidCutoff`
+describe the optional stale-reservation cutoff.
 The `event-dispatch-remediation-commands` technology surface also emits a catalog entry before any
-command result exists, with route, in-doubt route, retention, read-limit, observed-window, idempotency,
+command result exists, with route, in-doubt route/cutoff, retention, read-limit, observed-window, idempotency,
 provider-neutral, and `wolverineRequired = false` metadata, so an ASP.NET Core operator UI can bind
 to the command-result route family without waiting for command history or installing Wolverine.
 

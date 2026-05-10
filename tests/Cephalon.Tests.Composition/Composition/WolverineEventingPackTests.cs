@@ -385,6 +385,9 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("/engine/event-dispatch-remediation-commands", remediationEntry.Metadata["operatorCommandListRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", remediationEntry.Metadata["operatorCommandResultRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/in-doubt", remediationEntry.Metadata["operatorCommandInDoubtRoute"]);
+        Assert.Equal("beforeUtc", remediationEntry.Metadata["operatorCommandInDoubtQuery"]);
+        Assert.Equal("inclusive-observed-utc-before-or-equal", remediationEntry.Metadata["operatorCommandInDoubtCutoffPolicy"]);
+        Assert.Equal("newest-first", remediationEntry.Metadata["operatorCommandInDoubtDetailOrder"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}", remediationEntry.Metadata["operatorCommandOutboxRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}", remediationEntry.Metadata["operatorCommandObservationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}", remediationEntry.Metadata["operatorCommandObservationSummaryRoute"]);

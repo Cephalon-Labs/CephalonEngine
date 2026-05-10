@@ -1024,7 +1024,12 @@ public static class EngineWebApplicationExtensions
             });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/in-doubt", "GetCephalonEventDispatchRemediationInDoubtCommands", static context =>
             {
-                var states = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?.GetInDoubt() ?? [];
+                if (!TryGetNullableDateTimeOffsetQueryValue(context, "beforeUtc", out var beforeUtc, out var error))
+                {
+                    return error;
+                }
+
+                var states = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?.GetInDoubtBefore(beforeUtc) ?? [];
 
                 return OkLimitedEventDispatchRemediationCommandStates(context, states);
             });

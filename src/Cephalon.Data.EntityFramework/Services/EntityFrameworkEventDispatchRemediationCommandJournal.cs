@@ -65,7 +65,14 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
 
     public IReadOnlyList<EventDispatchRemediationRuntimeState> GetInDoubt()
     {
-        return ReadStates(static entries => entries.Where(entry => entry.Outcome == EventDispatchRemediationOutcomes.Reserved));
+        return GetInDoubtBefore(null);
+    }
+
+    public IReadOnlyList<EventDispatchRemediationRuntimeState> GetInDoubtBefore(DateTimeOffset? beforeObservedAtUtc)
+    {
+        return ReadStates(entries => entries
+            .Where(entry => entry.Outcome == EventDispatchRemediationOutcomes.Reserved)
+            .Where(entry => beforeObservedAtUtc == null || entry.ObservedAtUtc <= beforeObservedAtUtc.Value));
     }
 
     public EventDispatchRemediationRuntimeState? GetByCommandId(string commandId)

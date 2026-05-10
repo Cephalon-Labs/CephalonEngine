@@ -66,6 +66,7 @@ internal sealed class EventingDispatchRemediationRuntimeSurfaceContributor(
             EventDispatchRemediationCommandMetadata.AddCommandActionRouteMetadata(metadata, "operatorCommand");
             EventDispatchRemediationCommandMetadata.AddCommandResultRouteMetadata(metadata, "operatorCommand");
             EventDispatchRemediationCommandMetadata.AddObservationWindowMetadata(metadata, "operatorCommand");
+            EventDispatchRemediationCommandMetadata.AddInDoubtMetadata(metadata, "operatorCommand");
             EventDispatchRemediationCommandMetadata.AddReadLimitMetadata(metadata, "operatorCommand");
             EventDispatchRemediationCommandMetadata.AddPaginationMetadata(metadata, "operatorCommand");
             metadata["operatorCommandOperations"] = EventDispatchRemediationCommandMetadata.CommandOperations;

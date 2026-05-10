@@ -2244,6 +2244,10 @@ Current payload highlights:
   retention posture: history limit, retained count, total recorded count, dropped count, truncation
   flag, oldest retained command, and latest retained command so operators know when process-local
   history has discarded older command results
+- `GET /engine/event-dispatch-remediation-commands/in-doubt?beforeUtc={beforeUtc}` returns retained
+  `reserved` command records newest-first; omit `beforeUtc` for all retained in-doubt commands, or
+  provide an inclusive UTC cutoff to retrieve stale reservations directly. Invalid cutoff values
+  return `400`.
 - `GET /engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}`
   filters command results by inclusive observed UTC window so incident timelines can read retained
   accepted, rejected, and reserved command history without scanning the full bounded list; append
@@ -2297,15 +2301,17 @@ Current note:
   when operators need retained/recorded/dropped counts plus latest retained command detail; use
   `commandListRoute`, `commandResultRoute`, `commandInDoubtRoute`, and `commandOutboxRoute` metadata from
   `/engine/capabilities`, `/engine/technology-surfaces`, or `/engine/snapshot` to discover the root
-  list, in-doubt, command-id, and outbox drill-down URLs without probing routes; use
+list, in-doubt, command-id, and outbox drill-down URLs without probing routes; use
+  `commandInDoubtQuery`, `commandInDoubtCutoffPolicy`, and `commandInDoubtInvalidCutoff` metadata
+  to discover the optional stale-reservation cutoff; use
   `commandReadLimitQuery`, `commandReadLimitPolicy`, and `commandReadLimitRoutes` metadata from
   `/engine/capabilities`, `/engine/technology-surfaces`, or `/engine/snapshot` to discover the
   read-side limit support instead of hardcoding UI assumptions; use `commandObservationWindowQuery`,
   `commandObservationWindowPolicy`, `commandObservationWindowDetailOrder`,
   `commandObservationWindowSummary`, and `commandObservationWindowInvalidBounds` metadata to discover
   retained-window query semantics and validation posture; use
-  `/engine/event-dispatch-remediation-commands/in-doubt` when operators need the retained reserved
-  commands directly; use
+`/engine/event-dispatch-remediation-commands/in-doubt?beforeUtc={beforeUtc}` when operators need
+  the retained reserved commands directly or only stale retained reservations; use
   `/observations?fromUtc={fromUtc}&toUtc={toUtc}` for retained incident windows, but
   do not treat it as durable compliance retention or broker replay ownership
 - `event-dispatch-remediation-commands` includes a catalog entry even when the command history is

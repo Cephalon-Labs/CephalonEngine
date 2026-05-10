@@ -443,6 +443,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             EventDispatchRemediationCommandMetadata.AddCommandActionRouteMetadata(remediationMetadata);
             EventDispatchRemediationCommandMetadata.AddCommandResultRouteMetadata(remediationMetadata);
             EventDispatchRemediationCommandMetadata.AddObservationWindowMetadata(remediationMetadata);
+            EventDispatchRemediationCommandMetadata.AddInDoubtMetadata(remediationMetadata);
             EventDispatchRemediationCommandMetadata.AddReadLimitMetadata(remediationMetadata);
             EventDispatchRemediationCommandMetadata.AddPaginationMetadata(remediationMetadata);
             EventDispatchRemediationCommandMetadata.AddIdempotencyMetadata(remediationMetadata);

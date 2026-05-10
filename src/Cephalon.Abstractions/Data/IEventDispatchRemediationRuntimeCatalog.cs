@@ -32,6 +32,13 @@ public interface IEventDispatchRemediationRuntimeCatalog
     IReadOnlyList<EventDispatchRemediationRuntimeState> GetInDoubt();
 
     /// <summary>
+    /// Gets in-doubt remediation command-state entries observed at or before an optional UTC cutoff.
+    /// </summary>
+    /// <param name="beforeObservedAtUtc">The inclusive upper UTC observation cutoff, or <see langword="null" /> to return all in-doubt entries.</param>
+    /// <returns>The in-doubt command states at or before the cutoff, ordered by descending observed time and command identifier.</returns>
+    IReadOnlyList<EventDispatchRemediationRuntimeState> GetInDoubtBefore(DateTimeOffset? beforeObservedAtUtc);
+
+    /// <summary>
     /// Gets remediation command-state entries observed inside an optional UTC observation window.
     /// </summary>
     /// <param name="fromObservedAtUtc">The inclusive lower UTC observation bound, or <see langword="null" /> to leave the start open.</param>

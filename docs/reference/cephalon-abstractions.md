@@ -51696,6 +51696,21 @@ Gets remediation command-state entries that reserved a command identifier before
 
 Returns: The in-doubt command states, ordered by descending observed time and command identifier.
 
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getindoubtbefore-system-nullable-system-datetimeoffset"></a>
+
+##### `GetInDoubtBefore`
+
+```csharp
+IReadOnlyList<EventDispatchRemediationRuntimeState> GetInDoubtBefore(DateTimeOffset? beforeObservedAtUtc)
+```
+
+Gets in-doubt remediation command-state entries observed at or before an optional UTC cutoff.
+
+Returns: The in-doubt command states at or before the cutoff, ordered by descending observed time and command identifier.
+
+Parameters:
+- `beforeObservedAtUtc`: The inclusive upper UTC observation cutoff, or `null` to return all in-doubt entries.
+
 <a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyobservedat-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset"></a>
 
 ##### `GetSummaryByObservedAt`

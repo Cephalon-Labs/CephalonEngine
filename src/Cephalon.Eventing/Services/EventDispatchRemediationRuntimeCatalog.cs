@@ -84,10 +84,17 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
 
     public IReadOnlyList<EventDispatchRemediationRuntimeState> GetInDoubt()
     {
+        return GetInDoubtBefore(null);
+    }
+
+    public IReadOnlyList<EventDispatchRemediationRuntimeState> GetInDoubtBefore(DateTimeOffset? beforeObservedAtUtc)
+    {
         lock (gate)
         {
             return states
-                .Where(IsReservedState)
+                .Where(state =>
+                    IsReservedState(state) &&
+                    (beforeObservedAtUtc is null || state.ObservedAtUtc <= beforeObservedAtUtc.Value))
                 .OrderByDescending(static state => state.ObservedAtUtc)
                 .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
                 .ToArray();

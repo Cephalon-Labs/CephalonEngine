@@ -1398,6 +1398,8 @@ public sealed class EntityFrameworkDataPackTests
             Assert.Equal("reserved", reserved.Metadata[EventDispatchRemediationMetadataKeys.CommandReservationState]);
             Assert.Equal(EventDispatchRemediationOutcomes.Reserved, journal.GetByCommandId("cmd-journal-002-reserved")?.Outcome);
             Assert.Equal("cmd-journal-002-reserved", Assert.Single(journal.GetInDoubt()).CommandId);
+            Assert.Equal("cmd-journal-002-reserved", Assert.Single(journal.GetInDoubtBefore(new DateTimeOffset(2026, 04, 14, 10, 1, 30, TimeSpan.Zero))).CommandId);
+            Assert.Empty(journal.GetInDoubtBefore(new DateTimeOffset(2026, 04, 14, 10, 1, 29, TimeSpan.Zero)));
             Assert.Equal(1, journal.Summary.ReservedCount);
             Assert.True(journal.Summary.HasInDoubtCommands);
             Assert.Equal("cmd-journal-002-reserved", journal.Summary.OldestReservedCommandId);
@@ -1463,6 +1465,8 @@ public sealed class EntityFrameworkDataPackTests
             Assert.Equal(EventDispatchRemediationOutcomes.Reserved, reservedState.Outcome);
             Assert.Equal("reserved", reservedState.Metadata[EventDispatchRemediationMetadataKeys.CommandReservationState]);
             Assert.Equal("cmd-journal-002-reserved", Assert.Single(journal.GetInDoubt()).CommandId);
+            Assert.Equal("cmd-journal-002-reserved", Assert.Single(journal.GetInDoubtBefore(new DateTimeOffset(2026, 04, 14, 10, 1, 30, TimeSpan.Zero))).CommandId);
+            Assert.Empty(journal.GetInDoubtBefore(new DateTimeOffset(2026, 04, 14, 10, 1, 29, TimeSpan.Zero)));
             Assert.Empty(processLocalCatalog.States);
 
             var summary = journal.Summary;
@@ -1519,6 +1523,8 @@ public sealed class EntityFrameworkDataPackTests
             Assert.Equal(1, processLocalSummary.ReservedCount);
             Assert.True(processLocalSummary.HasInDoubtCommands);
             Assert.Equal("cmd-process-local-reserved", Assert.Single(processLocalCatalog.GetInDoubt()).CommandId);
+            Assert.Equal("cmd-process-local-reserved", Assert.Single(processLocalCatalog.GetInDoubtBefore(new DateTimeOffset(2026, 04, 14, 10, 4, 0, TimeSpan.Zero))).CommandId);
+            Assert.Empty(processLocalCatalog.GetInDoubtBefore(new DateTimeOffset(2026, 04, 14, 10, 3, 59, TimeSpan.Zero)));
             Assert.Equal("cmd-process-local-reserved", processLocalSummary.OldestReservedCommandId);
             Assert.Equal(new DateTimeOffset(2026, 04, 14, 10, 4, 0, TimeSpan.Zero), processLocalSummary.OldestReservedObservedAtUtc);
             Assert.Equal(EventDispatchRemediationOutcomes.Reserved, processLocalSummary.LastOutcome);
@@ -1648,6 +1654,9 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/latest", remediationEntry.Metadata["operatorCommandLatestRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/retention", remediationEntry.Metadata["operatorCommandRetentionRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/in-doubt", remediationEntry.Metadata["operatorCommandInDoubtRoute"]);
+        Assert.Equal("beforeUtc", remediationEntry.Metadata["operatorCommandInDoubtQuery"]);
+        Assert.Equal("inclusive-observed-utc-before-or-equal", remediationEntry.Metadata["operatorCommandInDoubtCutoffPolicy"]);
+        Assert.Equal("newest-first", remediationEntry.Metadata["operatorCommandInDoubtDetailOrder"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}", remediationEntry.Metadata["operatorCommandObservationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}", remediationEntry.Metadata["operatorCommandObservationSummaryRoute"]);
         Assert.Equal("fromUtc,toUtc", remediationEntry.Metadata["operatorCommandObservationWindowQuery"]);
@@ -1839,6 +1848,8 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", remediationCommandCatalogEntry.Metadata["commandResultRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/summary", remediationCommandCatalogEntry.Metadata["commandSummaryRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/in-doubt", remediationCommandCatalogEntry.Metadata["commandInDoubtRoute"]);
+        Assert.Equal("beforeUtc", remediationCommandCatalogEntry.Metadata["commandInDoubtQuery"]);
+        Assert.Equal("inclusive-observed-utc-before-or-equal", remediationCommandCatalogEntry.Metadata["commandInDoubtCutoffPolicy"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}", remediationCommandCatalogEntry.Metadata["commandOutboxRoute"]);
         Assert.Equal("inclusive-observed-utc", remediationCommandCatalogEntry.Metadata["commandObservationWindowPolicy"]);
         Assert.Equal("positive-integer-newest-first", remediationCommandCatalogEntry.Metadata["commandReadLimitPolicy"]);
@@ -1860,6 +1871,9 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/latest", remediationCommandEntry.Metadata["commandLatestRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/retention", remediationCommandEntry.Metadata["commandRetentionRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/in-doubt", remediationCommandEntry.Metadata["commandInDoubtRoute"]);
+        Assert.Equal("beforeUtc", remediationCommandEntry.Metadata["commandInDoubtQuery"]);
+        Assert.Equal("inclusive-observed-utc-before-or-equal", remediationCommandEntry.Metadata["commandInDoubtCutoffPolicy"]);
+        Assert.Equal("newest-first", remediationCommandEntry.Metadata["commandInDoubtDetailOrder"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}", remediationCommandEntry.Metadata["commandOutboxRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}", remediationCommandEntry.Metadata["commandObservationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}", remediationCommandEntry.Metadata["commandObservationSummaryRoute"]);
