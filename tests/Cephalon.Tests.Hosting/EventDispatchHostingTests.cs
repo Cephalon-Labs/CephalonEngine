@@ -1678,6 +1678,99 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("succeeded", snapshotSubscription.Metadata["lastOutcome"]);
     }
 
+    [Fact]
+    public async Task MapCephalonRunsCodeFirstSubscriptionExecutionMiddlewareWithoutWolverine()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Services.AddSingleton<EventSubscriptionMiddlewareProbe>();
+        builder.Services.AddSingleton<IEventSubscriptionExecutionMiddleware, RecordingEventSubscriptionExecutionMiddleware>();
+        builder.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new TechnologyPackContributionModule());
+            engine.AddEventing(options =>
+            {
+                options.EnableInProcessSubscriptionExecution = true;
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        await using (var scope = app.Services.CreateAsyncScope())
+        {
+            var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(new EventPublication(
+                id: "audit-pipeline-001",
+                channelId: "audit",
+                eventType: "audit.created",
+                payload: """{"id":"audit-pipeline-001"}""",
+                occurredAtUtc: new DateTimeOffset(2026, 05, 10, 16, 0, 0, TimeSpan.Zero),
+                contentType: "application/json",
+                correlationId: "corr-audit-pipeline-001",
+                tenantId: "tenant-pipeline-001"));
+        }
+
+        var client = app.GetTestClient();
+        var projectorProbe = app.Services.GetRequiredService<ManagedAuditProjectorProbe>();
+        var middlewareProbe = app.Services.GetRequiredService<EventSubscriptionMiddlewareProbe>();
+        var runtimeCatalog = app.Services.GetRequiredService<IEventSubscriptionRuntimeCatalog>();
+        var bindingCatalog = app.Services.GetRequiredService<IEventSubscriptionExecutionBindingCatalog>();
+        var capabilities = await client.GetFromJsonAsync<CapabilityManifest[]>("/engine/capabilities");
+        var eventingSurfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/event-driven-integration");
+
+        Assert.Equal(1, projectorProbe.TotalAttempts);
+        Assert.Equal(1, projectorProbe.SuccessfulAttempts);
+        Assert.Equal(
+            ["before:audit-projector:1", "after:audit-projector:1"],
+            middlewareProbe.Events);
+        Assert.Equal("code-first", middlewareProbe.LastPipeline);
+        Assert.Equal("1", middlewareProbe.LastMiddlewareCount);
+
+        var runtimeState = Assert.Single(runtimeCatalog.States);
+        Assert.Equal(EventSubscriptionExecutionOutcomes.Succeeded, runtimeState.LastOutcome);
+        Assert.Equal("code-first", runtimeState.Metadata["subscriptionExecutionPipeline"]);
+        Assert.Equal("1", runtimeState.Metadata["subscriptionExecutionMiddlewareCount"]);
+
+        var binding = Assert.Single(bindingCatalog.Bindings);
+        Assert.Equal("code-first", binding.Metadata["subscriptionExecutionPipeline"]);
+        Assert.Equal("1", binding.Metadata["subscriptionExecutionMiddlewareCount"]);
+
+        Assert.NotNull(capabilities);
+        var publishCapability = Assert.Single(capabilities, capability => capability.Key == "eventing.publish");
+        Assert.Equal("code-first", publishCapability.Metadata["subscriptionExecutionPipeline"]);
+        Assert.Equal("1", publishCapability.Metadata["subscriptionExecutionMiddlewareCount"]);
+        var subscribeCapability = Assert.Single(capabilities, capability => capability.Key == "eventing.subscribe");
+        Assert.Equal("code-first", subscribeCapability.Metadata["subscriptionExecutionPipeline"]);
+        Assert.Equal("1", subscribeCapability.Metadata["subscriptionExecutionMiddlewareCount"]);
+
+        Assert.NotNull(eventingSurfaces);
+        var publisherEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "event-publishers").Entries);
+        Assert.Equal("code-first", publisherEntry.Metadata["subscriptionExecutionPipeline"]);
+        Assert.Equal("1", publisherEntry.Metadata["subscriptionExecutionMiddlewareCount"]);
+
+        var subscriptionEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "event-subscriptions").Entries,
+            entry => entry.Id == "audit-projector");
+        Assert.Equal("code-first", subscriptionEntry.Metadata["binding.subscriptionExecutionPipeline"]);
+        Assert.Equal("1", subscriptionEntry.Metadata["binding.subscriptionExecutionMiddlewareCount"]);
+        Assert.Equal("code-first", subscriptionEntry.Metadata["reported.subscriptionExecutionPipeline"]);
+        Assert.Equal("1", subscriptionEntry.Metadata["reported.subscriptionExecutionMiddlewareCount"]);
+
+        var superiorityEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "code-first-subscription-execution-pipeline");
+        Assert.Equal("claimed", superiorityEntry.Metadata["status"]);
+        Assert.Contains("middlewareCount=1", superiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+    }
+
     private static async Task WaitForConditionAsync(
         Func<bool> condition,
         int timeoutMilliseconds = 3000)
@@ -1765,6 +1858,77 @@ public sealed class EventDispatchHostingTests
             }
 
             return ValueTask.CompletedTask;
+        }
+    }
+
+    private sealed class EventSubscriptionMiddlewareProbe
+    {
+        private readonly Lock gate = new();
+        private readonly List<string> events = [];
+        private string? lastMiddlewareCount;
+        private string? lastPipeline;
+
+        public IReadOnlyList<string> Events
+        {
+            get
+            {
+                lock (gate)
+                {
+                    return events.ToArray();
+                }
+            }
+        }
+
+        public string? LastMiddlewareCount
+        {
+            get
+            {
+                lock (gate)
+                {
+                    return lastMiddlewareCount;
+                }
+            }
+        }
+
+        public string? LastPipeline
+        {
+            get
+            {
+                lock (gate)
+                {
+                    return lastPipeline;
+                }
+            }
+        }
+
+        public void Record(string stage, EventSubscriptionExecutionContext context)
+        {
+            ArgumentNullException.ThrowIfNull(context);
+
+            lock (gate)
+            {
+                events.Add($"{stage}:{context.Subscription.Id}:{context.Attempt.ToString(CultureInfo.InvariantCulture)}");
+                lastPipeline = context.Metadata["subscriptionExecutionPipeline"];
+                lastMiddlewareCount = context.Metadata["subscriptionExecutionMiddlewareCount"];
+            }
+        }
+    }
+
+    private sealed class RecordingEventSubscriptionExecutionMiddleware(
+        EventSubscriptionMiddlewareProbe probe) : IEventSubscriptionExecutionMiddleware
+    {
+        public async ValueTask InvokeAsync(
+            EventSubscriptionExecutionContext context,
+            EventSubscriptionExecutionStep nextStep,
+            CancellationToken cancellationToken = default)
+        {
+            ArgumentNullException.ThrowIfNull(context);
+            ArgumentNullException.ThrowIfNull(nextStep);
+            cancellationToken.ThrowIfCancellationRequested();
+
+            probe.Record("before", context);
+            await nextStep(context, cancellationToken).ConfigureAwait(false);
+            probe.Record("after", context);
         }
     }
 }

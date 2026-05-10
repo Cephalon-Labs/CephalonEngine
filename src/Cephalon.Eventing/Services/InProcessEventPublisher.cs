@@ -17,12 +17,15 @@ internal sealed class InProcessEventPublisher(
     IEventSubscriptionRuntimeReporter runtimeReporter,
     IEventPublicationRuntimeReporter publicationRuntimeReporter,
     IEnumerable<IInbox> inboxes,
+    IEnumerable<IEventSubscriptionExecutionMiddleware>? subscriptionExecutionMiddlewares = null,
     ILoggerFactory? loggerFactory = null,
     RedactionPipeline? redactionPipeline = null) : IEventPublisher
 {
     private readonly ILogger logger = (loggerFactory ?? NullLoggerFactory.Instance)
         .CreateLogger<InProcessEventPublisher>();
     private readonly IInbox? inbox = ResolveInbox(options, inboxes);
+    private readonly IEventSubscriptionExecutionMiddleware[] executionMiddlewares =
+        subscriptionExecutionMiddlewares?.ToArray() ?? [];
 
     public async ValueTask PublishAsync(
         EventPublication publication,
@@ -66,6 +69,8 @@ internal sealed class InProcessEventPublisher(
         var idempotencyScope = InProcessEventingIdempotencyPolicy.GetScope(options);
         var idempotencyRetentionMinutes = InProcessEventingIdempotencyPolicy.GetRetentionMinutes(options);
         var inboxState = inbox is null ? "not-configured" : "available";
+        var subscriptionExecutionPipeline = executionMiddlewares.Length > 0 ? "code-first" : "none";
+        var subscriptionExecutionMiddlewareCount = executionMiddlewares.Length;
         var matchedSubscriptionCount = entries.Count;
         var startedSubscriptionCount = 0;
         var succeededSubscriptionCount = 0;
@@ -113,6 +118,8 @@ internal sealed class InProcessEventPublisher(
                         idempotencyScope,
                         inboxState,
                         idempotencyRetentionMinutes,
+                        subscriptionExecutionPipeline,
+                        subscriptionExecutionMiddlewareCount,
                         subscriptionIds,
                         skipReason: "no-matching-subscriptions")),
                 cancellationToken).ConfigureAwait(false);
@@ -164,7 +171,9 @@ internal sealed class InProcessEventPublisher(
                                 idempotencyDurability,
                                 idempotencyScope,
                                 inboxState,
-                                idempotencyRetentionMinutes),
+                                idempotencyRetentionMinutes,
+                                subscriptionExecutionPipeline,
+                                subscriptionExecutionMiddlewareCount),
                             idempotencyCheck.CompletedAtUtc,
                             idempotencyCheck.CheckedAtUtc)),
                     cancellationToken).ConfigureAwait(false);
@@ -189,7 +198,9 @@ internal sealed class InProcessEventPublisher(
                     idempotencyDurability,
                     idempotencyScope,
                     inboxState,
-                    idempotencyRetentionMinutes);
+                    idempotencyRetentionMinutes,
+                    subscriptionExecutionPipeline,
+                    subscriptionExecutionMiddlewareCount);
                 startedSubscriptionCount++;
                 await runtimeReporter.ReportAsync(
                     new EventSubscriptionExecutionReport(
@@ -203,7 +214,8 @@ internal sealed class InProcessEventPublisher(
 
                 try
                 {
-                    await entry.Executor.ExecuteAsync(
+                    await ExecuteSubscriptionAsync(
+                        entry.Executor,
                         new EventSubscriptionExecutionContext(
                             entry.Subscription,
                             publication,
@@ -337,6 +349,8 @@ internal sealed class InProcessEventPublisher(
                         idempotencyScope,
                         inboxState,
                         idempotencyRetentionMinutes,
+                        subscriptionExecutionPipeline,
+                        subscriptionExecutionMiddlewareCount,
                         subscriptionIds,
                         error: message)),
                 cancellationToken).ConfigureAwait(false);
@@ -400,6 +414,8 @@ internal sealed class InProcessEventPublisher(
                     idempotencyScope,
                     inboxState,
                     idempotencyRetentionMinutes,
+                    subscriptionExecutionPipeline,
+                    subscriptionExecutionMiddlewareCount,
                     subscriptionIds,
                     skipReason: publicationOutcome == EventPublicationRuntimeOutcomes.Skipped
                         ? "duplicate-completed-subscriptions"
@@ -411,6 +427,28 @@ internal sealed class InProcessEventPublisher(
             publication,
             publicationOutcome,
             matchedSubscriptionCount);
+    }
+
+    private ValueTask ExecuteSubscriptionAsync(
+        IEventSubscriptionExecutor executor,
+        EventSubscriptionExecutionContext context,
+        CancellationToken cancellationToken)
+    {
+        if (executionMiddlewares.Length == 0)
+        {
+            return executor.ExecuteAsync(context, cancellationToken);
+        }
+
+        EventSubscriptionExecutionStep next = executor.ExecuteAsync;
+        for (var index = executionMiddlewares.Length - 1; index >= 0; index--)
+        {
+            var middleware = executionMiddlewares[index];
+            var inner = next;
+            next = (currentContext, currentCancellationToken) =>
+                middleware.InvokeAsync(currentContext, inner, currentCancellationToken);
+        }
+
+        return next(context, cancellationToken);
     }
 
     private async ValueTask<IdempotencyCheck> CheckDuplicateAsync(
@@ -561,7 +599,9 @@ internal sealed class InProcessEventPublisher(
         string idempotencyDurability,
         string idempotencyScope,
         string inboxState,
-        int idempotencyRetentionMinutes)
+        int idempotencyRetentionMinutes,
+        string subscriptionExecutionPipeline,
+        int subscriptionExecutionMiddlewareCount)
     {
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -571,6 +611,8 @@ internal sealed class InProcessEventPublisher(
             ["executionOwnership"] = "cephalon-managed",
             ["executionMode"] = "in-process-direct",
             ["deliveryMode"] = "direct",
+            ["subscriptionExecutionPipeline"] = subscriptionExecutionPipeline,
+            ["subscriptionExecutionMiddlewareCount"] = subscriptionExecutionMiddlewareCount.ToString(CultureInfo.InvariantCulture),
             ["retryPolicy"] = maxAttempts > 1 ? InProcessEventingRetryPolicy.BoundedInProcess : InProcessEventingRetryPolicy.None,
             ["retryMaxAttempts"] = maxAttempts.ToString(CultureInfo.InvariantCulture),
             ["retryDelayMilliseconds"] = retryDelayMilliseconds.ToString(CultureInfo.InvariantCulture),
@@ -684,6 +726,8 @@ internal sealed class InProcessEventPublisher(
         string idempotencyScope,
         string inboxState,
         int idempotencyRetentionMinutes,
+        string subscriptionExecutionPipeline,
+        int subscriptionExecutionMiddlewareCount,
         IReadOnlyList<string> subscriptionIds,
         string? skipReason = null,
         string? error = null)
@@ -704,6 +748,8 @@ internal sealed class InProcessEventPublisher(
             ["subscriptionExecutionRuntimeId"] = InProcessEventingRuntimeIds.SubscriptionExecutionRuntimeId,
             ["executionMode"] = "in-process-direct",
             ["deliveryMode"] = "direct",
+            ["subscriptionExecutionPipeline"] = subscriptionExecutionPipeline,
+            ["subscriptionExecutionMiddlewareCount"] = subscriptionExecutionMiddlewareCount.ToString(CultureInfo.InvariantCulture),
             ["retryPolicy"] = maxAttempts > 1 ? InProcessEventingRetryPolicy.BoundedInProcess : InProcessEventingRetryPolicy.None,
             ["retryMaxAttempts"] = maxAttempts.ToString(CultureInfo.InvariantCulture),
             ["retryDelayMilliseconds"] = retryDelayMilliseconds.ToString(CultureInfo.InvariantCulture),

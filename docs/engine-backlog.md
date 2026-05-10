@@ -16143,6 +16143,7 @@ Upcoming sequence from the April 2026 maturity reset:
 ### Sprint 87
 
 - ENG-275 Eventing publication runtime operator-state baseline (shipped, issue #784)
+- ENG-535 Eventing code-first subscription execution middleware baseline (shipped): `Cephalon.Eventing` now exposes `IEventSubscriptionExecutionMiddleware` plus `EventSubscriptionExecutionStep` so hosts/modules can add ordered DI-owned filters around the native in-process subscription executor without binding handlers from configuration; `InProcessEventPublisher` reports `subscriptionExecutionPipeline` and `subscriptionExecutionMiddlewareCount` through runtime/capability/binding metadata and `eventing-superiority-profile`
 
 ### Sprint 88
 

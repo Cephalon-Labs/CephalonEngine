@@ -20,16 +20,20 @@ internal sealed class InProcessEventSubscriptionExecutorCatalog : IEventSubscrip
     private readonly string idempotencyScope;
     private readonly string idempotencyDurability;
     private readonly int idempotencyRetentionMinutes;
+    private readonly EventSubscriptionExecutionPipelineDescriptor pipelineDescriptor;
 
     public InProcessEventSubscriptionExecutorCatalog(
         EventingOptions options,
         IEventSubscriptionCatalog subscriptions,
-        IEnumerable<IEventSubscriptionExecutor> executors)
+        IEnumerable<IEventSubscriptionExecutor> executors,
+        EventSubscriptionExecutionPipelineDescriptor pipelineDescriptor)
     {
         ArgumentNullException.ThrowIfNull(options);
         ArgumentNullException.ThrowIfNull(subscriptions);
         ArgumentNullException.ThrowIfNull(executors);
+        ArgumentNullException.ThrowIfNull(pipelineDescriptor);
 
+        this.pipelineDescriptor = pipelineDescriptor;
         maxAttempts = InProcessEventingRetryPolicy.GetMaxAttempts(options);
         retryPolicy = InProcessEventingRetryPolicy.GetPolicyId(options);
         retryDelayMilliseconds = InProcessEventingRetryPolicy.GetRetryDelayMilliseconds(options);
@@ -87,6 +91,8 @@ internal sealed class InProcessEventSubscriptionExecutorCatalog : IEventSubscrip
                     ["technology"] = "event-driven-integration",
                     ["trigger"] = InProcessEventingRuntimeIds.PublisherId,
                     ["deliveryMode"] = "direct",
+                    ["subscriptionExecutionPipeline"] = pipelineDescriptor.PipelineId,
+                    ["subscriptionExecutionMiddlewareCount"] = pipelineDescriptor.MiddlewareCount.ToString(CultureInfo.InvariantCulture),
                     ["retryPolicy"] = retryPolicy,
                     ["retryMaxAttempts"] = maxAttempts.ToString(CultureInfo.InvariantCulture),
                     ["retryDelayMilliseconds"] = retryDelayMilliseconds.ToString(CultureInfo.InvariantCulture),

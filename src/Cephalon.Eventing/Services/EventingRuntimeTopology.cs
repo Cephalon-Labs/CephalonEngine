@@ -11,4 +11,8 @@ internal sealed record EventingRuntimeTopology(
     bool HasOutboxPublishingPath,
     bool HasPublishingPath,
     bool HasSubscriptionContributors,
-    bool HasSubscriptionExecutors);
+    bool HasSubscriptionExecutors,
+    int SubscriptionExecutionMiddlewareCount)
+{
+    public string SubscriptionExecutionPipeline => SubscriptionExecutionMiddlewareCount > 0 ? "code-first" : "none";
+}

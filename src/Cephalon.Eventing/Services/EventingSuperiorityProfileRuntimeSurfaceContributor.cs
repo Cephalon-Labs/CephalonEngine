@@ -101,6 +101,20 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     advantage: "Teams get MediatR-style local dispatch while preserving the same event catalog, readiness, diagnostics, and future provider handoff seams.",
                     nextGap: "Add source-generated or descriptor-compiled handler discovery when the native path needs lower ceremony at larger scale."),
                 CreateEntry(
+                    id: "code-first-subscription-execution-pipeline",
+                    displayName: "Code-first Subscription Execution Pipeline",
+                    description: "Lets modules and hosts add type-safe middleware around native in-process subscription execution without string configuration.",
+                    status: topology.SubscriptionExecutionMiddlewareCount > 0
+                        ? "claimed"
+                        : topology.HasInProcessSubscriptionExecutionPath ? "partial" : "not-claimed",
+                    evidence: topology.HasInProcessSubscriptionExecutionPath
+                        ? $"pipeline={topology.SubscriptionExecutionPipeline} middlewareCount={topology.SubscriptionExecutionMiddlewareCount.ToString(CultureInfo.InvariantCulture)}"
+                        : "in-process subscription execution is not enabled.",
+                    advantage: "Teams can add validation, tenancy, auditing, short-circuiting, or policy checks with MassTransit/NServiceBus-style filters while keeping publish/subscribe code-first and Wolverine-free.",
+                    nextGap: topology.SubscriptionExecutionMiddlewareCount > 0
+                        ? "Attach benchmark evidence and source-generated registration helpers before promoting lower-ceremony large-scale handler discovery."
+                        : "Register IEventSubscriptionExecutionMiddleware services in code before claiming pipeline execution evidence."),
+                CreateEntry(
                     id: "workflow-choreography-and-sagas",
                     displayName: "Workflow Choreography And Sagas",
                     description: "Keeps saga and process-manager ideas as Cephalon-owned choreography surfaces rather than bus-specific state-machine APIs.",

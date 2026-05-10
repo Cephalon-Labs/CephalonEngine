@@ -60,6 +60,8 @@ internal sealed class EventingInProcessPublishingRuntimeSurfaceContributor(
                         ["dispatchStore"] = "not-configured",
                         ["subscriptionExecution"] = "cephalon-managed",
                         ["subscriptionExecutionRuntimeId"] = InProcessEventingRuntimeIds.SubscriptionExecutionRuntimeId,
+                        ["subscriptionExecutionPipeline"] = topology.SubscriptionExecutionPipeline,
+                        ["subscriptionExecutionMiddlewareCount"] = topology.SubscriptionExecutionMiddlewareCount.ToString(CultureInfo.InvariantCulture),
                         ["publicationDispatcher"] = "available",
                         ["publicationRuntimeState"] = publicationStates.Count > 0 ? "reported" : "not-reported",
                         ["publicationSchedulingPolicy"] = EventPublicationSchedulingPolicy.GetPolicyId(options),

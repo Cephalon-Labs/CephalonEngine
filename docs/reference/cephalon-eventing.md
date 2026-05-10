@@ -1610,6 +1610,53 @@ string SubscriptionId { get; }
 
 Gets the stable declared subscription identifier.
 
+<a id="type-cephalon-eventing-services-eventsubscriptionexecutionstep"></a>
+
+### `EventSubscriptionExecutionStep`
+
+Represents the next step in the code-owned event subscription execution pipeline.
+
+#### Declaration
+```csharp
+public sealed class EventSubscriptionExecutionStep
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionexecutionstep-ctor-system-object-system-intptr"></a>
+
+##### `EventSubscriptionExecutionStep`
+
+```csharp
+EventSubscriptionExecutionStep(object object, IntPtr method)
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionexecutionstep-begininvoke-cephalon-eventing-services-eventsubscriptionexecutioncontext-system-threading-cancellationtoken-system-asynccallback-system-object"></a>
+
+##### `BeginInvoke`
+
+```csharp
+IAsyncResult BeginInvoke(EventSubscriptionExecutionContext context, CancellationToken cancellationToken, AsyncCallback callback, object object)
+```
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionexecutionstep-endinvoke-system-iasyncresult"></a>
+
+##### `EndInvoke`
+
+```csharp
+ValueTask EndInvoke(IAsyncResult result)
+```
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionexecutionstep-invoke-cephalon-eventing-services-eventsubscriptionexecutioncontext-system-threading-cancellationtoken"></a>
+
+##### `Invoke`
+
+```csharp
+ValueTask Invoke(EventSubscriptionExecutionContext context, CancellationToken cancellationToken)
+```
+
 <a id="type-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys"></a>
 
 ### `EventSubscriptionRuntimeMetadataKeys`
@@ -2460,6 +2507,38 @@ IReadOnlyList<EventSubscriptionExecutionBindingDescriptor> GetExecutionBindings(
 Returns the managed execution bindings owned by the contributor.
 
 Returns: The managed execution bindings for declared subscriptions.
+
+<a id="type-cephalon-eventing-services-ieventsubscriptionexecutionmiddleware"></a>
+
+### `IEventSubscriptionExecutionMiddleware`
+
+Adds a code-owned middleware step around direct in-process event subscription execution.
+
+Remarks: Register implementations through dependency injection when a host or module needs a type-safe subscription execution pipeline. This contract is deliberately not configuration driven so publish/subscribe hot paths stay code-owned and avoid string-based handler binding.
+
+#### Declaration
+```csharp
+public interface IEventSubscriptionExecutionMiddleware
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-ieventsubscriptionexecutionmiddleware-invokeasync-cephalon-eventing-services-eventsubscriptionexecutioncontext-cephalon-eventing-services-eventsubscriptionexecutionstep-system-threading-cancellationtoken"></a>
+
+##### `InvokeAsync`
+
+```csharp
+ValueTask InvokeAsync(EventSubscriptionExecutionContext context, EventSubscriptionExecutionStep nextStep, CancellationToken cancellationToken)
+```
+
+Invokes this middleware step and optionally forwards execution to the next step.
+
+Returns: A task that completes when this middleware step finishes.
+
+Parameters:
+- `context`: The managed subscription execution context for the current attempt.
+- `nextStep`: The next middleware or subscription executor in the pipeline.
+- `cancellationToken`: The token that cancels the execution attempt.
 
 <a id="type-cephalon-eventing-services-ieventsubscriptionexecutor"></a>
 

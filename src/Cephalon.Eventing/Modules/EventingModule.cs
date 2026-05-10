@@ -35,8 +35,10 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
     private bool hasManagedSubscriptionExecutionBindings;
     private bool hasOutboxPublishingPath;
     private bool hasSubscriptionContributors;
+    private bool hasSubscriptionExecutionPipeline;
     private bool hasSubscriptionExecutors;
     private bool hasPublishingPath;
+    private int subscriptionExecutionMiddlewareCount;
 
     public EventingModule(EventingOptions options)
     {
@@ -70,10 +72,13 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
         var inboxRegistrationCount = services.Count(static descriptor => descriptor.ServiceType == typeof(IInbox));
         hasInboxPath = inboxRegistrationCount > 0;
         hasSubscriptionContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventSubscriptionContributor));
+        subscriptionExecutionMiddlewareCount = services.Count(static descriptor => descriptor.ServiceType == typeof(IEventSubscriptionExecutionMiddleware));
+        hasSubscriptionExecutionPipeline = subscriptionExecutionMiddlewareCount > 0;
         hasSubscriptionExecutors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventSubscriptionExecutor));
         hasInProcessSubscriptionExecutionPath = options.EnableInProcessSubscriptionExecution && hasSubscriptionExecutors;
         hasManagedSubscriptionExecutionBindings = hasExternalManagedSubscriptionExecutionBindings || hasInProcessSubscriptionExecutionPath;
         services.TryAddSingleton(options);
+        services.TryAddSingleton(new EventSubscriptionExecutionPipelineDescriptor(subscriptionExecutionMiddlewareCount));
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, EventingDiagnosticsConventionContributor>());
         services.TryAddSingleton<IEventChannelCatalog, EventChannelCatalog>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingRuntimeSurfaceContributor>());
@@ -169,7 +174,8 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             HasOutboxPublishingPath: hasOutboxPublishingPath,
             HasPublishingPath: hasPublishingPath,
             HasSubscriptionContributors: hasSubscriptionContributors,
-            HasSubscriptionExecutors: hasSubscriptionExecutors));
+            HasSubscriptionExecutors: hasSubscriptionExecutors,
+            SubscriptionExecutionMiddlewareCount: subscriptionExecutionMiddlewareCount));
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingSuperiorityProfileRuntimeSurfaceContributor>());
         if (hasInProcessSubscriptionExecutionPath)
         {
@@ -260,6 +266,8 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["dispatchRuntime"] = "cephalon-managed",
                     ["dispatchStore"] = "not-configured",
                     ["subscriptionExecution"] = "cephalon-managed",
+                    ["subscriptionExecutionPipeline"] = hasSubscriptionExecutionPipeline ? "code-first" : "none",
+                    ["subscriptionExecutionMiddlewareCount"] = subscriptionExecutionMiddlewareCount.ToString(CultureInfo.InvariantCulture),
                     ["executionRuntimeId"] = InProcessEventingRuntimeIds.SubscriptionExecutionRuntimeId,
                     ["triggerRuntimeId"] = InProcessEventingRuntimeIds.PublisherId,
                     ["publicationDispatcher"] = "available",
@@ -366,6 +374,8 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["executionMode"] = "in-process-direct",
                     ["executionRuntimeId"] = InProcessEventingRuntimeIds.SubscriptionExecutionRuntimeId,
                     ["triggerRuntimeId"] = InProcessEventingRuntimeIds.PublisherId,
+                    ["subscriptionExecutionPipeline"] = hasSubscriptionExecutionPipeline ? "code-first" : "none",
+                    ["subscriptionExecutionMiddlewareCount"] = subscriptionExecutionMiddlewareCount.ToString(CultureInfo.InvariantCulture),
                     ["retryPolicy"] = retryPolicy,
                     ["retryMaxAttempts"] = InProcessEventingRetryPolicy.GetMaxAttempts(options).ToString(CultureInfo.InvariantCulture),
                     ["retryDelayMilliseconds"] = InProcessEventingRetryPolicy.GetRetryDelayMilliseconds(options).ToString(CultureInfo.InvariantCulture),
