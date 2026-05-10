@@ -2458,6 +2458,11 @@ Current `Cephalon.Eventing` highlights:
   `Engine:Messaging:Channels` and `Engine:Messaging:Subscriptions`; configured subscriptions
   carry `descriptorSource = configuration` and `configurationPath` metadata, and configuration
   wins over module-contributed defaults with the same descriptor id
+- configured subscriptions can also carry `HandlerType`, or a host can use
+  `Engine:Messaging:SubscriptionHandlers`, to bind a declared subscription to an
+  `IEventSubscriptionHandler` type; the native in-process lane adapts that handler into an
+  executor and projects `binding.handlerBindingSource`, `binding.handlerType`, and
+  `binding.configurationPath` metadata
 - `event-subscriptions` now projects execution readiness through stable metadata keys such as
   `executionReadiness`, `executionPath`, and `executionReadinessReasons`
 - the typed readiness answer is also available through `/engine/event-subscription-readiness` and

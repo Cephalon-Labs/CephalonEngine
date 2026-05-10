@@ -4896,6 +4896,9 @@ Browse the published API surface by public member.
 - [Configuration](cephalon-referencedocs.md#member-p-cephalon-referencedocs-generation-referencedocsrequest-configuration): `Properties` on `ReferenceDocsRequest` in `Cephalon.ReferenceDocs.Generation` (`Cephalon.ReferenceDocs`) [Browse](browse.html?q=Configuration&assembly=Cephalon.ReferenceDocs&namespace=Cephalon.ReferenceDocs.Generation&scope=members)
   - Gets the build configuration to read from.
   - `string Configuration { get; }`
+- [ConfigurationPath](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionhandlerdescriptor-configurationpath): `Properties` on `EventSubscriptionHandlerDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ConfigurationPath&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the configuration path that declared the handler binding, when known.
+  - `string ConfigurationPath { get; }`
 - [ConfigurationSetName](cephalon-multitenancy-governance-amazonsesdelivery.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-services-amazonsesinvitationdeliverymessage-configurationsetname): `Properties` on `AmazonSesInvitationDeliveryMessage` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery`) [Browse](browse.html?q=ConfigurationSetName&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.Services&scope=members)
   - Gets the optional SES configuration set name attached to the request.
   - `string ConfigurationSetName { get; }`
@@ -9189,6 +9192,9 @@ Browse the published API surface by public member.
 - [EventSubscriptionExecutionReport](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionexecutionreport-ctor-system-string-system-string-system-datetimeoffset-system-string-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventSubscriptionExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventSubscriptionExecutionReport&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a new execution report for a declared event subscription.
   - `EventSubscriptionExecutionReport(string subscriptionId, string outcome, DateTimeOffset observedAtUtc, string messageId, int attempt, string error, IReadOnlyDictionary<string, string> metadata)`
+- [EventSubscriptionHandlerDescriptor](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionhandlerdescriptor-ctor-system-string-system-string-system-string-system-string): `Constructors` on `EventSubscriptionHandlerDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventSubscriptionHandlerDescriptor&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates a new configured subscription handler descriptor.
+  - `EventSubscriptionHandlerDescriptor(string subscriptionId, string handlerTypeName, string source, string configurationPath)`
 - [EventSubscriptionRuntimeState](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionruntimestate-ctor-system-string-system-string-system-nullable-system-datetimeoffset-system-string-system-int32-system-int32-system-int32-system-int32-system-int32-system-int32-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventSubscriptionRuntimeState&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Describes the latest operator-facing runtime state reported for one declared event subscription.
   - `EventSubscriptionRuntimeState(string SubscriptionId, string LastOutcome, DateTimeOffset? LastObservedAtUtc, string LastMessageId, int LastAttempt, int StartedCount, int SucceededCount, int FailedCount, int RetryScheduledCount, int SkippedCount, string LastError, IReadOnlyDictionary<string, string> Metadata)`
@@ -11871,6 +11877,9 @@ Browse the published API surface by public member.
 - [HandleAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icommandhandler-1-handleasync-0-system-threading-cancellationtoken): `Methods` on `ICommandHandler<TCommand>` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HandleAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Handles the supplied command.
   - `ValueTask HandleAsync(TCommand command, CancellationToken cancellationToken)`
+- [HandleAsync](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventsubscriptionhandler-handleasync-cephalon-eventing-services-eventsubscriptionexecutioncontext-system-threading-cancellationtoken): `Methods` on `IEventSubscriptionHandler` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=HandleAsync&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Handles the current event subscription execution attempt.
+  - `ValueTask HandleAsync(EventSubscriptionExecutionContext context, CancellationToken cancellationToken)`
 - [HandleAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-iqueryhandler-2-handleasync-0-system-threading-cancellationtoken): `Methods` on `IQueryHandler<TQuery, TResult>` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HandleAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Handles the supplied query.
   - `ValueTask<TResult> HandleAsync(TQuery query, CancellationToken cancellationToken)`
@@ -11880,6 +11889,9 @@ Browse the published API surface by public member.
 - [HandlerId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-handlerid): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=HandlerId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the logical handler or consumer declared for the subscription.
   - `const string HandlerId`
+- [HandlerTypeName](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionhandlerdescriptor-handlertypename): `Properties` on `EventSubscriptionHandlerDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=HandlerTypeName&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the fully qualified or assembly-qualified handler type name.
+  - `string HandlerTypeName { get; }`
 - [HasActiveReporter](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-hasactivereporter): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HasActiveReporter&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the coordination answer currently has one active reporter owner.
   - `bool HasActiveReporter { get; }`
@@ -25973,6 +25985,9 @@ Browse the published API surface by public member.
 - [Source](cephalon-engine.md#member-p-cephalon-engine-diagnostics-diagnosticsconvention-source): `Properties` on `DiagnosticsConvention` in `Cephalon.Engine.Diagnostics` (`Cephalon.Engine`) [Browse](browse.html?q=Source&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Diagnostics&scope=members)
   - The stable package or subsystem identifier that owns the convention.
   - `string Source { get; set; }`
+- [Source](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionhandlerdescriptor-source): `Properties` on `EventSubscriptionHandlerDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Source&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the descriptor source, such as `configuration` or `code`.
+  - `string Source { get; }`
 - [Source](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-services-httpinvitationdeliverypayload-source): `Properties` on `HttpInvitationDeliveryPayload` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Services` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=Source&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Services&scope=members)
   - Gets or sets the dispatch source.
   - `string Source { get; set; }`
@@ -27198,6 +27213,9 @@ Browse the published API surface by public member.
 - [SubscriptionConfirmationsSucceeded](cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-hosting-amazonsesinvitationdeliverystatuscallbackresult-subscriptionconfirmationssucceeded): `Properties` on `AmazonSesInvitationDeliveryStatusCallbackResult` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore`) [Browse](browse.html?q=SubscriptionConfirmationsSucceeded&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Hosting&scope=members)
   - Gets the number of subscription-confirmation attempts that succeeded.
   - `int SubscriptionConfirmationsSucceeded { get; }`
+- [SubscriptionHandlers](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-subscriptionhandlers): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=SubscriptionHandlers&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
+  - Gets the host-defined subscription handler bindings that the native in-process executor should adapt.
+  - `IList<EventSubscriptionHandlerDescriptor> SubscriptionHandlers { get; }`
 - [SubscriptionId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutionbindingdescriptor-subscriptionid): `Properties` on `EventSubscriptionExecutionBindingDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SubscriptionId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable declared subscription identifier.
   - `string SubscriptionId { get; }`
@@ -27206,6 +27224,9 @@ Browse the published API surface by public member.
   - `string SubscriptionId { get; }`
 - [SubscriptionId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionexecutionreport-subscriptionid): `Properties` on `EventSubscriptionExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SubscriptionId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable declared subscription identifier.
+  - `string SubscriptionId { get; }`
+- [SubscriptionId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionhandlerdescriptor-subscriptionid): `Properties` on `EventSubscriptionHandlerDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SubscriptionId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the declared subscription identifier executed by the handler.
   - `string SubscriptionId { get; }`
 - [SubscriptionId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionruntimestate-subscriptionid): `Properties` on `EventSubscriptionRuntimeState` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SubscriptionId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - The stable declared subscription identifier.

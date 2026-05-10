@@ -721,6 +721,129 @@ public sealed class EventDispatchHostingTests
     }
 
     [Fact]
+    public async Task MapCephalonExecutesConfiguredSubscriptionHandlerWithoutWolverine()
+    {
+        var handlerTypeName = typeof(ConfiguredAuditProjectorHandler).AssemblyQualifiedName!;
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Services.AddSingleton<ManagedAuditProjectorProbe>();
+        builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
+        {
+            ["Engine:Messaging:InProcessSubscriptions:EnableExecution"] = "true",
+            ["Engine:Messaging:Channels:audit:DisplayName"] = "Configured Audit",
+            ["Engine:Messaging:Channels:audit:Description"] = "Audit events declared by host configuration.",
+            ["Engine:Messaging:Subscriptions:audit-projector:DisplayName"] = "Configured Audit Projector",
+            ["Engine:Messaging:Subscriptions:audit-projector:Description"] = "Projects configured audit events through a configured handler type.",
+            ["Engine:Messaging:Subscriptions:audit-projector:ChannelId"] = "audit",
+            ["Engine:Messaging:Subscriptions:audit-projector:HandlerId"] = "configured-audit-projector",
+            ["Engine:Messaging:Subscriptions:audit-projector:DeliveryMode"] = "message-handler",
+            ["Engine:Messaging:Subscriptions:audit-projector:HandlerType"] = handlerTypeName
+        });
+        builder.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddEventingFromConfiguration(builder.Configuration);
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+
+        await using (var scope = app.Services.CreateAsyncScope())
+        {
+            var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(new EventPublication(
+                id: "audit-configured-handler-001",
+                channelId: "audit",
+                eventType: "audit.created",
+                payload: """{"id":"audit-configured-handler-001"}""",
+                occurredAtUtc: new DateTimeOffset(2026, 05, 10, 17, 0, 0, TimeSpan.Zero),
+                contentType: "application/json",
+                correlationId: "corr-audit-configured-handler-001",
+                tenantId: "tenant-configured-handler-001"));
+        }
+
+        var client = app.GetTestClient();
+        var probe = app.Services.GetRequiredService<ManagedAuditProjectorProbe>();
+        var executors = app.Services.GetServices<IEventSubscriptionExecutor>().ToArray();
+        var bindingCatalog = app.Services.GetRequiredService<IEventSubscriptionExecutionBindingCatalog>();
+        var eventingSurfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/event-driven-integration");
+
+        Assert.Equal(1, probe.TotalAttempts);
+        Assert.Equal(1, probe.SuccessfulAttempts);
+        Assert.Equal("audit-configured-handler-001", probe.LastMessageId);
+
+        var executor = Assert.Single(executors);
+        Assert.Equal("audit-projector", executor.SubscriptionId);
+
+        var binding = Assert.Single(bindingCatalog.Bindings);
+        Assert.Equal("audit-projector", binding.SubscriptionId);
+        Assert.Equal("cephalon-managed", binding.ExecutionOwnership);
+        Assert.Equal("in-process-direct", binding.ExecutionMode);
+        Assert.Equal("configuration", binding.Metadata["handlerBindingSource"]);
+        Assert.Equal(handlerTypeName, binding.Metadata["handlerType"]);
+        Assert.Equal(typeof(ConfiguredAuditProjectorHandler).FullName, binding.Metadata["handlerRuntimeType"]);
+        Assert.Equal("Engine:Messaging:Subscriptions:audit-projector", binding.Metadata["configurationPath"]);
+
+        Assert.NotNull(eventingSurfaces);
+        var subscriptionEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "event-subscriptions").Entries,
+            entry => entry.Id == "audit-projector");
+        Assert.Equal("runtime-bound", subscriptionEntry.Metadata["subscriptionRuntime"]);
+        Assert.Equal("cephalon-managed", subscriptionEntry.Metadata["executionOwnership"]);
+        Assert.Equal("configuration", subscriptionEntry.Metadata["binding.handlerBindingSource"]);
+        Assert.Equal(handlerTypeName, subscriptionEntry.Metadata["binding.handlerType"]);
+        Assert.Equal("Engine:Messaging:Subscriptions:audit-projector", subscriptionEntry.Metadata["binding.configurationPath"]);
+        Assert.Equal("reported", subscriptionEntry.Metadata["runtimeState"]);
+        Assert.Equal("succeeded", subscriptionEntry.Metadata["lastOutcome"]);
+
+        var superiorityEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "mediator-style-in-process-low-ceremony");
+        Assert.Equal("claimed", superiorityEntry.Metadata["status"]);
+        Assert.Contains("subscription handler bindings", superiorityEntry.Metadata["runtimeEvidence"], StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void BuildRejectsConfiguredSubscriptionHandlerTypeThatDoesNotImplementContract()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
+        {
+            ["Engine:Messaging:InProcessSubscriptions:EnableExecution"] = "true",
+            ["Engine:Messaging:Channels:audit:DisplayName"] = "Configured Audit",
+            ["Engine:Messaging:Channels:audit:Description"] = "Audit events declared by host configuration.",
+            ["Engine:Messaging:Subscriptions:audit-projector:DisplayName"] = "Configured Audit Projector",
+            ["Engine:Messaging:Subscriptions:audit-projector:Description"] = "Projects configured audit events through a configured handler type.",
+            ["Engine:Messaging:Subscriptions:audit-projector:ChannelId"] = "audit",
+            ["Engine:Messaging:Subscriptions:audit-projector:HandlerType"] = typeof(string).AssemblyQualifiedName
+        });
+        builder.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddEventingFromConfiguration(builder.Configuration);
+        });
+
+        using var app = builder.Build();
+        app.MapCephalon();
+
+        var exception = Assert.Throws<InvalidOperationException>(
+            () => app.Services.GetRequiredService<IEventSubscriptionExecutionBindingCatalog>());
+        Assert.Contains("must implement", exception.Message, StringComparison.Ordinal);
+        Assert.Contains(nameof(IEventSubscriptionHandler), exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task MapCephalonRoutesCoreInProcessEventPublicationFromConfigurationWithoutWolverine()
     {
         var builder = WebApplication.CreateSlimBuilder();
@@ -1725,5 +1848,18 @@ public sealed class EventDispatchHostingTests
 
             return ValueTask.CompletedTask;
         }
+    }
+}
+
+internal sealed class ConfiguredAuditProjectorHandler(ManagedAuditProjectorProbe probe) : IEventSubscriptionHandler
+{
+    public ValueTask HandleAsync(
+        EventSubscriptionExecutionContext context,
+        CancellationToken cancellationToken = default)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        probe.RecordAttempt(context, succeeded: true);
+        return ValueTask.CompletedTask;
     }
 }

@@ -34,6 +34,8 @@ internal static class EventingOptionsConfigurationReader
         ReadChannels(messagingSection.GetSection("EventChannels"), options, $"{messagingPath}:EventChannels");
         ReadSubscriptions(messagingSection.GetSection("Subscriptions"), options, $"{messagingPath}:Subscriptions");
         ReadSubscriptions(messagingSection.GetSection("EventSubscriptions"), options, $"{messagingPath}:EventSubscriptions");
+        ReadSubscriptionHandlers(messagingSection.GetSection("SubscriptionHandlers"), options, $"{messagingPath}:SubscriptionHandlers");
+        ReadSubscriptionHandlers(messagingSection.GetSection("EventSubscriptionHandlers"), options, $"{messagingPath}:EventSubscriptionHandlers");
 
         ReadBoolean(section, options, static (target, value) => target.EnableInProcessSubscriptionExecution = value, "EnableExecution", "Enabled");
         ReadInteger(section, options, static (target, value) => target.InProcessSubscriptionMaxAttempts = value, "MaxAttempts");
@@ -181,7 +183,83 @@ internal static class EventingOptionsConfigurationReader
                 deliveryMode,
                 ReadStringList(child.GetSection("Tags")),
                 metadata));
+
+            ReadSubscriptionHandler(child, options, id, $"{path}:{child.Key}");
         }
+    }
+
+    private static void ReadSubscriptionHandlers(
+        IConfiguration configuration,
+        EventingOptions options,
+        string path)
+    {
+        foreach (var child in configuration.GetChildren())
+        {
+            var subscriptionId = ReadSubscriptionHandlerSubscriptionId(child, path);
+            var handlerTypeName = ReadRequiredString(
+                child,
+                path,
+                subscriptionId,
+                "subscription handler",
+                "HandlerType",
+                "HandlerTypeName",
+                "Type",
+                "TypeName",
+                "ExecutorType",
+                "ExecutorTypeName");
+
+            options.SubscriptionHandlers.Add(new EventSubscriptionHandlerDescriptor(
+                subscriptionId,
+                handlerTypeName,
+                source: "configuration",
+                configurationPath: $"{path}:{child.Key}"));
+        }
+    }
+
+    private static void ReadSubscriptionHandler(
+        IConfiguration configuration,
+        EventingOptions options,
+        string subscriptionId,
+        string path)
+    {
+        var handlerTypeName = ReadOptionalString(
+            configuration,
+            "HandlerType",
+            "HandlerTypeName",
+            "ExecutorType",
+            "ExecutorTypeName");
+        handlerTypeName ??= ReadOptionalString(configuration.GetSection("Handler"), "Type", "TypeName");
+        handlerTypeName ??= ReadOptionalString(configuration.GetSection("Executor"), "Type", "TypeName");
+
+        if (string.IsNullOrWhiteSpace(handlerTypeName))
+        {
+            return;
+        }
+
+        options.SubscriptionHandlers.Add(new EventSubscriptionHandlerDescriptor(
+            subscriptionId,
+            handlerTypeName,
+            source: "configuration",
+            configurationPath: path));
+    }
+
+    private static string ReadSubscriptionHandlerSubscriptionId(
+        IConfigurationSection configuration,
+        string path)
+    {
+        var subscriptionId = ReadOptionalString(configuration, "SubscriptionId", "Subscription");
+        if (!string.IsNullOrWhiteSpace(subscriptionId))
+        {
+            return subscriptionId;
+        }
+
+        if (int.TryParse(configuration.Key, NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
+        {
+            throw new FormatException(
+                $"Eventing subscription handler configuration entry '{path}:{configuration.Key}' must provide a 'SubscriptionId' value when entries are represented as an array.");
+        }
+
+        return configuration.Key;
     }
 
     private static string ReadDescriptorId(

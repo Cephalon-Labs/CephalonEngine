@@ -81,32 +81,50 @@ internal sealed class InProcessEventSubscriptionExecutorCatalog : IEventSubscrip
                 executionRuntimeId: InProcessEventingRuntimeIds.SubscriptionExecutionRuntimeId,
                 executionOwnership: "cephalon-managed",
                 executionMode: "in-process-direct",
-                metadata: new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-                {
-                    ["adapter"] = "none",
-                    ["technology"] = "event-driven-integration",
-                    ["trigger"] = InProcessEventingRuntimeIds.PublisherId,
-                    ["deliveryMode"] = "direct",
-                    ["retryPolicy"] = retryPolicy,
-                    ["retryMaxAttempts"] = maxAttempts.ToString(CultureInfo.InvariantCulture),
-                    ["retryDelayMilliseconds"] = retryDelayMilliseconds.ToString(CultureInfo.InvariantCulture),
-                    ["retryBackoff"] = retryBackoff,
-                    ["retryBackoffMultiplier"] = retryBackoffMultiplier.ToString(CultureInfo.InvariantCulture),
-                    ["retryMaxDelayMilliseconds"] = retryMaxDelayMilliseconds.ToString(CultureInfo.InvariantCulture),
-                    ["retryJitterPercent"] = retryJitterPercent.ToString(CultureInfo.InvariantCulture),
-                    ["retryDurability"] = "none",
-                    ["retryScope"] = "process-local",
-                    ["idempotencyPolicy"] = idempotencyPolicy,
-                    ["idempotencyKey"] = idempotencyKey,
-                    ["idempotencyStore"] = idempotencyStore,
-                    ["idempotencyRetentionMinutes"] = idempotencyRetentionMinutes.ToString(CultureInfo.InvariantCulture),
-                    ["idempotencyDurability"] = idempotencyDurability,
-                    ["idempotencyScope"] = idempotencyScope,
-                    ["channelId"] = entry.Subscription.ChannelId,
-                    ["handlerId"] = entry.Subscription.HandlerId,
-                    ["subscriptionTagCount"] = entry.Subscription.Tags.Count.ToString(CultureInfo.InvariantCulture)
-                }))
+                metadata: CreateBindingMetadata(entry)))
             .ToArray();
+    }
+
+    private Dictionary<string, string> CreateBindingMetadata(ManagedSubscriptionEntry entry)
+    {
+        var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["adapter"] = "none",
+            ["technology"] = "event-driven-integration",
+            ["trigger"] = InProcessEventingRuntimeIds.PublisherId,
+            ["deliveryMode"] = "direct",
+            ["retryPolicy"] = retryPolicy,
+            ["retryMaxAttempts"] = maxAttempts.ToString(CultureInfo.InvariantCulture),
+            ["retryDelayMilliseconds"] = retryDelayMilliseconds.ToString(CultureInfo.InvariantCulture),
+            ["retryBackoff"] = retryBackoff,
+            ["retryBackoffMultiplier"] = retryBackoffMultiplier.ToString(CultureInfo.InvariantCulture),
+            ["retryMaxDelayMilliseconds"] = retryMaxDelayMilliseconds.ToString(CultureInfo.InvariantCulture),
+            ["retryJitterPercent"] = retryJitterPercent.ToString(CultureInfo.InvariantCulture),
+            ["retryDurability"] = "none",
+            ["retryScope"] = "process-local",
+            ["idempotencyPolicy"] = idempotencyPolicy,
+            ["idempotencyKey"] = idempotencyKey,
+            ["idempotencyStore"] = idempotencyStore,
+            ["idempotencyRetentionMinutes"] = idempotencyRetentionMinutes.ToString(CultureInfo.InvariantCulture),
+            ["idempotencyDurability"] = idempotencyDurability,
+            ["idempotencyScope"] = idempotencyScope,
+            ["channelId"] = entry.Subscription.ChannelId,
+            ["handlerId"] = entry.Subscription.HandlerId,
+            ["subscriptionTagCount"] = entry.Subscription.Tags.Count.ToString(CultureInfo.InvariantCulture)
+        };
+
+        if (entry.Executor is ConfiguredEventSubscriptionExecutor configured)
+        {
+            metadata["handlerBindingSource"] = configured.Source;
+            metadata["handlerType"] = configured.HandlerTypeName;
+            metadata["handlerRuntimeType"] = configured.HandlerType.FullName ?? configured.HandlerType.Name;
+            if (!string.IsNullOrWhiteSpace(configured.ConfigurationPath))
+            {
+                metadata["configurationPath"] = configured.ConfigurationPath;
+            }
+        }
+
+        return metadata;
     }
 
     public IReadOnlyList<ManagedSubscriptionEntry> GetByChannelId(string channelId)

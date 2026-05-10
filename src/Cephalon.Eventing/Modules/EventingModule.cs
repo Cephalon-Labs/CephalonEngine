@@ -30,6 +30,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
     private bool hasDispatchStore;
     private bool hasDispatchRuntimeContributors;
     private bool hasExternalManagedSubscriptionExecutionBindings;
+    private bool hasConfiguredSubscriptionHandlers;
     private bool hasInboxPath;
     private bool hasInProcessSubscriptionExecutionPath;
     private bool hasManagedSubscriptionExecutionBindings;
@@ -61,6 +62,17 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
         if (!technologies.IsSelected("event-driven-integration"))
         {
             return;
+        }
+
+        hasConfiguredSubscriptionHandlers = options.SubscriptionHandlers.Count > 0;
+        if (hasConfiguredSubscriptionHandlers)
+        {
+            foreach (var handler in options.SubscriptionHandlers)
+            {
+                services.AddSingleton<IEventSubscriptionExecutor>(provider => new ConfiguredEventSubscriptionExecutor(
+                    handler,
+                    provider.GetRequiredService<IServiceScopeFactory>()));
+            }
         }
 
         hasChannelContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventChannelContributor));
@@ -163,6 +175,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             HasDispatchStore: hasDispatchStore,
             HasDispatchRuntimeContributors: hasDispatchRuntimeContributors,
             HasExternalManagedSubscriptionExecutionBindings: hasExternalManagedSubscriptionExecutionBindings,
+            HasConfiguredSubscriptionHandlers: hasConfiguredSubscriptionHandlers,
             HasInboxPath: hasInboxPath,
             HasInProcessSubscriptionExecutionPath: hasInProcessSubscriptionExecutionPath,
             HasManagedSubscriptionExecutionBindings: hasManagedSubscriptionExecutionBindings,

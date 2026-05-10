@@ -1,4 +1,13 @@
 #nullable enable
+Cephalon.Eventing.Configuration.EventingOptions.SubscriptionHandlers.get -> System.Collections.Generic.IList<Cephalon.Eventing.Services.EventSubscriptionHandlerDescriptor!>!
+Cephalon.Eventing.Services.EventSubscriptionHandlerDescriptor
+Cephalon.Eventing.Services.EventSubscriptionHandlerDescriptor.ConfigurationPath.get -> string!
+Cephalon.Eventing.Services.EventSubscriptionHandlerDescriptor.EventSubscriptionHandlerDescriptor(string! subscriptionId, string! handlerTypeName, string? source = "code", string? configurationPath = null) -> void
+Cephalon.Eventing.Services.EventSubscriptionHandlerDescriptor.HandlerTypeName.get -> string!
+Cephalon.Eventing.Services.EventSubscriptionHandlerDescriptor.Source.get -> string!
+Cephalon.Eventing.Services.EventSubscriptionHandlerDescriptor.SubscriptionId.get -> string!
+Cephalon.Eventing.Services.IEventSubscriptionHandler
+Cephalon.Eventing.Services.IEventSubscriptionHandler.HandleAsync(Cephalon.Eventing.Services.EventSubscriptionExecutionContext! context, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
 Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionRetryBackoff.get -> string!
 Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionRetryBackoff.set -> void
 Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionRetryBackoffMultiplier.get -> int

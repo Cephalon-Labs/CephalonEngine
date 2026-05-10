@@ -96,10 +96,14 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     description: "Provides a lightweight direct execution lane for apps that need local notifications without a durable bus dependency.",
                     status: topology.HasInProcessSubscriptionExecutionPath ? "claimed" : "not-claimed",
                     evidence: topology.HasInProcessSubscriptionExecutionPath
-                        ? "EnableInProcessSubscriptionExecution=true with registered IEventSubscriptionExecutor services."
+                        ? topology.HasConfiguredSubscriptionHandlers
+                            ? "EnableInProcessSubscriptionExecution=true with Engine:Messaging subscription handler bindings adapted into managed executors."
+                            : "EnableInProcessSubscriptionExecution=true with registered IEventSubscriptionExecutor services."
                         : "in-process subscription execution is not enabled.",
                     advantage: "Teams get MediatR-style local dispatch while preserving the same event catalog, readiness, diagnostics, and future provider handoff seams.",
-                    nextGap: "Add source-generated or descriptor-compiled handler discovery when the native path needs lower ceremony at larger scale."),
+                    nextGap: topology.HasConfiguredSubscriptionHandlers
+                        ? "Promote source-generated or descriptor-compiled handler binding when the native path needs stronger trimming, AOT, and cold-start posture."
+                        : "Add configuration-owned handler bindings when the native path needs lower ceremony at larger scale."),
                 CreateEntry(
                     id: "workflow-choreography-and-sagas",
                     displayName: "Workflow Choreography And Sagas",
