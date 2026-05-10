@@ -33,6 +33,7 @@ Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByMessageI
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByObservedAt(System.DateTimeOffset? fromObservedAtUtc, System.DateTimeOffset? toObservedAtUtc) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByOperationId(string! operationId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByReason(string! reason) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetSummaryByObservedAt(System.DateTimeOffset? fromObservedAtUtc, System.DateTimeOffset? toObservedAtUtc) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.Latest.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.Retention.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention!
 Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.Summary.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!

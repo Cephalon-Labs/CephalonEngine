@@ -2244,6 +2244,9 @@ Current payload highlights:
 - `GET /engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}`
   filters command results by inclusive observed UTC window so incident timelines can read retained
   accepted and rejected command history without scanning the full bounded list
+- `GET /engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}`
+  summarizes retained command results inside the same observed UTC window so operator dashboards can
+  read accepted, rejected, error, duplicate, and latest-command posture without materializing the list
 - `GET /engine/event-dispatch-remediation-commands/{commandId}` narrows the command-result catalog
   to one command and returns `404` when no command has been recorded with that id
 - `GET /engine/event-dispatch-remediation-commands/outboxes/{outboxId}` filters command results by

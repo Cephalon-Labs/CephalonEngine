@@ -273,6 +273,7 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/latest", remediationCapability.Metadata["commandLatestRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/retention", remediationCapability.Metadata["commandRetentionRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}", remediationCapability.Metadata["commandObservationRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}", remediationCapability.Metadata["commandObservationSummaryRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/operations/{operationId}", remediationCapability.Metadata["commandOperationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/actors/{actorId}", remediationCapability.Metadata["commandActorRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/correlations/{correlationId}", remediationCapability.Metadata["commandCorrelationRoute"]);
@@ -375,18 +376,40 @@ public sealed class EventDispatchHostingTests
             BuildObservationWindowRoute(
                 commandState.ObservedAtUtc.AddSeconds(-1),
                 commandState.ObservedAtUtc.AddSeconds(1)));
+        var commandObservationSummary = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeSummary>(
+            BuildObservationWindowSummaryRoute(
+                commandState.ObservedAtUtc.AddSeconds(-1),
+                commandState.ObservedAtUtc.AddSeconds(1)));
         var commandStatesBeforeObservationWindow = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>(
             BuildObservationWindowRoute(null, commandState.ObservedAtUtc.AddSeconds(-1)));
+        var commandSummaryBeforeObservationWindow = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeSummary>(
+            BuildObservationWindowSummaryRoute(null, commandState.ObservedAtUtc.AddSeconds(-1)));
         var invalidObservationWindowResponse = await client.GetAsync("/engine/event-dispatch-remediation-commands/observations?fromUtc=not-a-date");
+        var invalidObservationWindowSummaryResponse = await client.GetAsync("/engine/event-dispatch-remediation-commands/observations/summary?fromUtc=not-a-date");
         var reversedObservationWindowResponse = await client.GetAsync(BuildObservationWindowRoute(
+            commandState.ObservedAtUtc.AddSeconds(1),
+            commandState.ObservedAtUtc.AddSeconds(-1)));
+        var reversedObservationWindowSummaryResponse = await client.GetAsync(BuildObservationWindowSummaryRoute(
             commandState.ObservedAtUtc.AddSeconds(1),
             commandState.ObservedAtUtc.AddSeconds(-1)));
         Assert.NotNull(commandStatesByObservationWindow);
         Assert.Equal("cmd-command-001-retry", Assert.Single(commandStatesByObservationWindow).CommandId);
+        Assert.NotNull(commandObservationSummary);
+        Assert.Equal(1, commandObservationSummary.TotalCommandCount);
+        Assert.Equal(1, commandObservationSummary.AcceptedCount);
+        Assert.Equal(0, commandObservationSummary.RejectedCount);
+        Assert.Equal("cmd-command-001-retry", commandObservationSummary.LastCommandId);
+        Assert.True(commandObservationSummary.HasCommands);
+        Assert.False(commandObservationSummary.HasFailures);
         Assert.NotNull(commandStatesBeforeObservationWindow);
         Assert.Empty(commandStatesBeforeObservationWindow);
+        Assert.NotNull(commandSummaryBeforeObservationWindow);
+        Assert.Equal(0, commandSummaryBeforeObservationWindow.TotalCommandCount);
+        Assert.False(commandSummaryBeforeObservationWindow.HasCommands);
         Assert.Equal(HttpStatusCode.BadRequest, invalidObservationWindowResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, invalidObservationWindowSummaryResponse.StatusCode);
         Assert.Equal(HttpStatusCode.BadRequest, reversedObservationWindowResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, reversedObservationWindowSummaryResponse.StatusCode);
         Assert.NotNull(latestCommandState);
         Assert.Equal("cmd-command-001-retry", latestCommandState.CommandId);
         Assert.Equal(EventDispatchRemediationOutcomes.Accepted, latestCommandState.Outcome);
@@ -637,10 +660,20 @@ public sealed class EventDispatchHostingTests
         Assert.NotNull(deadLetterCommandState);
         var finalCommandStatesByObservationWindow = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>(
             BuildObservationWindowRoute(deadLetterCommandState.ObservedAtUtc, rejectedCommandState.ObservedAtUtc));
+        var finalCommandObservationSummary = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeSummary>(
+            BuildObservationWindowSummaryRoute(deadLetterCommandState.ObservedAtUtc, rejectedCommandState.ObservedAtUtc));
         Assert.NotNull(finalCommandStatesByObservationWindow);
         Assert.Equal(
             ["cmd-command-001-retry-later-rejected", "cmd-command-001-dead-letter"],
             finalCommandStatesByObservationWindow.Select(state => state.CommandId).ToArray());
+        Assert.NotNull(finalCommandObservationSummary);
+        Assert.Equal(2, finalCommandObservationSummary.TotalCommandCount);
+        Assert.Equal(1, finalCommandObservationSummary.AcceptedCount);
+        Assert.Equal(1, finalCommandObservationSummary.RejectedCount);
+        Assert.Equal(1, finalCommandObservationSummary.ErrorCount);
+        Assert.Equal("cmd-command-001-retry-later-rejected", finalCommandObservationSummary.LastCommandId);
+        Assert.True(finalCommandObservationSummary.HasCommands);
+        Assert.True(finalCommandObservationSummary.HasFailures);
         Assert.NotNull(finalLatestCommandState);
         Assert.Equal("cmd-command-001-retry-later-rejected", finalLatestCommandState.CommandId);
         Assert.Equal(EventDispatchRemediationOutcomes.Rejected, finalLatestCommandState.Outcome);
@@ -709,6 +742,15 @@ public sealed class EventDispatchHostingTests
             return parameters.Count == 0
                 ? "/engine/event-dispatch-remediation-commands/observations"
                 : $"/engine/event-dispatch-remediation-commands/observations?{string.Join("&", parameters)}";
+        }
+
+        static string BuildObservationWindowSummaryRoute(DateTimeOffset? fromUtc, DateTimeOffset? toUtc)
+        {
+            var observationsRoute = BuildObservationWindowRoute(fromUtc, toUtc);
+            return observationsRoute.Replace(
+                "/engine/event-dispatch-remediation-commands/observations",
+                "/engine/event-dispatch-remediation-commands/observations/summary",
+                StringComparison.Ordinal);
         }
     }
 

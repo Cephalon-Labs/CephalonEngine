@@ -153,12 +153,7 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         DateTimeOffset? fromObservedAtUtc,
         DateTimeOffset? toObservedAtUtc)
     {
-        if (fromObservedAtUtc is { } from && toObservedAtUtc is { } to && from > to)
-        {
-            throw new ArgumentException(
-                "The observation window start must be less than or equal to the end.",
-                nameof(fromObservedAtUtc));
-        }
+        ValidateObservationWindow(fromObservedAtUtc, toObservedAtUtc);
 
         lock (gate)
         {
@@ -169,6 +164,36 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
                 .OrderByDescending(static state => state.ObservedAtUtc)
                 .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
                 .ToArray();
+        }
+    }
+
+    public EventDispatchRemediationRuntimeSummary GetSummaryByObservedAt(
+        DateTimeOffset? fromObservedAtUtc,
+        DateTimeOffset? toObservedAtUtc)
+    {
+        ValidateObservationWindow(fromObservedAtUtc, toObservedAtUtc);
+
+        lock (gate)
+        {
+            var matchingStates = states
+                .Where(state =>
+                    (fromObservedAtUtc is null || state.ObservedAtUtc >= fromObservedAtUtc.Value) &&
+                    (toObservedAtUtc is null || state.ObservedAtUtc <= toObservedAtUtc.Value))
+                .ToList();
+
+            return CreateSummary(matchingStates);
+        }
+    }
+
+    private static void ValidateObservationWindow(
+        DateTimeOffset? fromObservedAtUtc,
+        DateTimeOffset? toObservedAtUtc)
+    {
+        if (fromObservedAtUtc is { } from && toObservedAtUtc is { } to && from > to)
+        {
+            throw new ArgumentException(
+                "The observation window start must be less than or equal to the end.",
+                nameof(fromObservedAtUtc));
         }
     }
 

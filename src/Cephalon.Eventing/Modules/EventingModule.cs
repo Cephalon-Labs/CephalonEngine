@@ -429,6 +429,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["commandLatestRoute"] = "/engine/event-dispatch-remediation-commands/latest",
                     ["commandRetentionRoute"] = "/engine/event-dispatch-remediation-commands/retention",
                     ["commandObservationRoute"] = "/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}",
+                    ["commandObservationSummaryRoute"] = "/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}",
                     ["commandOperationRoute"] = "/engine/event-dispatch-remediation-commands/operations/{operationId}",
                     ["commandActorRoute"] = "/engine/event-dispatch-remediation-commands/actors/{actorId}",
                     ["commandCorrelationRoute"] = "/engine/event-dispatch-remediation-commands/correlations/{correlationId}",

@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T07:26:58.087716+00:00",
+  "GeneratedAtUtc": "2026-05-10T07:48:27.7378116+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -11184,7 +11184,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 4,
-        "Methods": 11
+        "Methods": 12
       }
     },
     {
@@ -62527,6 +62527,17 @@
       "AnchorId": "member-m-cephalon-engine-localization-localizedtextcatalog-getresources-system-string",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E GetResources(string culture)",
       "Summary": "Gets the merged resources visible for the specified culture."
+    },
+    {
+      "DisplayName": "GetSummaryByObservedAt",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyobservedat-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset",
+      "Signature": "EventDispatchRemediationRuntimeSummary GetSummaryByObservedAt(DateTimeOffset? fromObservedAtUtc, DateTimeOffset? toObservedAtUtc)",
+      "Summary": "Summarizes remediation command-state entries observed inside an optional UTC observation window."
     },
     {
       "DisplayName": "GetVersionAsync",

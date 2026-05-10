@@ -613,6 +613,7 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(catalogType.GetMethod("GetByCorrelationId", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(catalogType.GetMethod("GetByReason", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(catalogType.GetMethod("GetByObservedAt", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetSummaryByObservedAt", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(catalogType.GetMethod("GetByOutcome", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(catalogType.GetMethod("GetByDispatchOutcome", BindingFlags.Instance | BindingFlags.Public));
     }

@@ -523,6 +523,7 @@ When the same runtime registers `IEventDispatchRemediationRuntimeCatalog`, the h
 `/engine/event-dispatch-remediation-commands/latest`,
 `/engine/event-dispatch-remediation-commands/retention`,
 `/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}`,
+`/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}`,
 `/engine/event-dispatch-remediation-commands/{commandId}`,
 `/engine/event-dispatch-remediation-commands/outboxes/{outboxId}`,
 `/engine/event-dispatch-remediation-commands/messages/{messageId}`,
@@ -535,7 +536,7 @@ When the same runtime registers `IEventDispatchRemediationRuntimeCatalog`, the h
 `/engine/event-dispatch-remediation-commands/outcomes/{outcome}` so operators can inspect accepted
 and rejected command results by summary, latest command, retention posture, command id, outbox id,
 message id, channel id, operation id, actor id, correlation id, reason, dispatch outcome, command
-outcome, or inclusive observed UTC window separately from the latest per-outbox dispatch state. A
+outcome, inclusive observed UTC window, or observed-window summary separately from the latest per-outbox dispatch state. A
 duplicate command id does not
 replace the original command-result record; callers can inspect the original record, the
 duplicate-safe latest record, the duplicate-safe roll-up, or the bounded-history truncation posture
@@ -543,8 +544,9 @@ through `/engine/event-dispatch-remediation-commands/{commandId}`,
 `/engine/event-dispatch-remediation-commands/latest`,
 `/engine/event-dispatch-remediation-commands/summary`, and
 `/engine/event-dispatch-remediation-commands/retention` before issuing a new command id. The
-observations route returns `400` for invalid dates or reversed bounds and otherwise filters the
-retained command-result history latest-first.
+observation routes return `400` for invalid dates or reversed bounds; the detail route filters the
+retained command-result history latest-first, while the summary route returns the same window's
+accepted/rejected/error/duplicate counts and latest command posture.
 
 The host now also exposes bounded event-publication operator action and publication runtime-state
 surfaces directly. When a selected eventing pack registers `IEventPublicationDispatcher`,

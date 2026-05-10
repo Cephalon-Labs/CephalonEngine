@@ -1019,6 +1019,29 @@ public static class EngineWebApplicationExtensions
 
                 return Results.Ok(retention);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/observations/summary", "GetCephalonEventDispatchRemediationCommandObservationSummary", static context =>
+            {
+                if (!TryGetNullableDateTimeOffsetQueryValue(context, "fromUtc", out var fromUtc, out var error))
+                {
+                    return error;
+                }
+
+                if (!TryGetNullableDateTimeOffsetQueryValue(context, "toUtc", out var toUtc, out error))
+                {
+                    return error;
+                }
+
+                if (fromUtc is { } from && toUtc is { } to && from > to)
+                {
+                    return Results.BadRequest("Query parameter 'fromUtc' must be less than or equal to 'toUtc'.");
+                }
+
+                var summary = context.RequestServices
+                    .GetService<IEventDispatchRemediationRuntimeCatalog>()?
+                    .GetSummaryByObservedAt(fromUtc, toUtc) ?? EventDispatchRemediationRuntimeSummary.Empty;
+
+                return Results.Ok(summary);
+            });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/observations", "GetCephalonEventDispatchRemediationCommandsByObservationWindow", static context =>
             {
                 if (!TryGetNullableDateTimeOffsetQueryValue(context, "fromUtc", out var fromUtc, out var error))

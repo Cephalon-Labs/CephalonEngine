@@ -51344,6 +51344,22 @@ Returns: The recorded command states for the reason, ordered by observed time an
 Parameters:
 - `reason`: The stable operator-facing command reason to resolve.
 
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyobservedat-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset"></a>
+
+##### `GetSummaryByObservedAt`
+
+```csharp
+EventDispatchRemediationRuntimeSummary GetSummaryByObservedAt(DateTimeOffset? fromObservedAtUtc, DateTimeOffset? toObservedAtUtc)
+```
+
+Summarizes remediation command-state entries observed inside an optional UTC observation window.
+
+Returns: The aggregate remediation command summary for retained records in the observation window.
+
+Parameters:
+- `fromObservedAtUtc`: The inclusive lower UTC observation bound, or `null` to leave the start open.
+- `toObservedAtUtc`: The inclusive upper UTC observation bound, or `null` to leave the end open.
+
 <a id="type-cephalon-abstractions-data-ieventdispatchruntimecatalog"></a>
 
 ### `IEventDispatchRuntimeCatalog`
