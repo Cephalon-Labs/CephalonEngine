@@ -68,6 +68,7 @@ internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributo
         EventDispatchRemediationCommandMetadata.AddInDoubtMetadata(metadata);
         EventDispatchRemediationCommandMetadata.AddReadLimitMetadata(metadata);
         EventDispatchRemediationCommandMetadata.AddFilterSummaryMetadata(metadata);
+        EventDispatchRemediationCommandMetadata.AddFilterRetentionMetadata(metadata);
         EventDispatchRemediationCommandMetadata.AddFilterLatestMetadata(metadata);
         EventDispatchRemediationCommandMetadata.AddFilterOldestMetadata(metadata);
         EventDispatchRemediationCommandMetadata.AddPaginationMetadata(metadata);
@@ -120,6 +121,7 @@ internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributo
         EventDispatchRemediationCommandMetadata.AddInDoubtMetadata(metadata);
         EventDispatchRemediationCommandMetadata.AddReadLimitMetadata(metadata);
         EventDispatchRemediationCommandMetadata.AddFilterSummaryMetadata(metadata);
+        EventDispatchRemediationCommandMetadata.AddFilterRetentionMetadata(metadata);
         EventDispatchRemediationCommandMetadata.AddFilterLatestMetadata(metadata);
         EventDispatchRemediationCommandMetadata.AddFilterOldestMetadata(metadata);
         EventDispatchRemediationCommandMetadata.AddPaginationMetadata(metadata);

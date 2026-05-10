@@ -11895,6 +11895,33 @@ Browse the published API surface by public member.
 - [GetResources](cephalon-engine.md#member-m-cephalon-engine-localization-localizedtextcatalog-getresources-system-string): `Methods` on `LocalizedTextCatalog` in `Cephalon.Engine.Localization` (`Cephalon.Engine`) [Browse](browse.html?q=GetResources&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Localization&scope=members)
   - Gets the merged resources visible for the specified culture.
   - `IReadOnlyDictionary<string, string> GetResources(string culture)`
+- [GetRetentionByActorId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbyactorid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetRetentionByActorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the retained remediation command-history posture recorded for one operator actor.
+  - `EventDispatchRemediationRuntimeRetention GetRetentionByActorId(string actorId)`
+- [GetRetentionByChannelId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbychannelid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetRetentionByChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the retained remediation command-history posture recorded for one event channel.
+  - `EventDispatchRemediationRuntimeRetention GetRetentionByChannelId(string channelId)`
+- [GetRetentionByCorrelationId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbycorrelationid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetRetentionByCorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the retained remediation command-history posture recorded for one operator correlation identifier.
+  - `EventDispatchRemediationRuntimeRetention GetRetentionByCorrelationId(string correlationId)`
+- [GetRetentionByDispatchOutcome](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbydispatchoutcome-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetRetentionByDispatchOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the retained remediation command-history posture recorded for one dispatch-store outcome.
+  - `EventDispatchRemediationRuntimeRetention GetRetentionByDispatchOutcome(string dispatchOutcome)`
+- [GetRetentionByMessageId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbymessageid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetRetentionByMessageId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the retained remediation command-history posture recorded for one event message.
+  - `EventDispatchRemediationRuntimeRetention GetRetentionByMessageId(string messageId)`
+- [GetRetentionByOperationId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbyoperationid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetRetentionByOperationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the retained remediation command-history posture recorded for one command operation.
+  - `EventDispatchRemediationRuntimeRetention GetRetentionByOperationId(string operationId)`
+- [GetRetentionByOutboxId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbyoutboxid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetRetentionByOutboxId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the retained remediation command-history posture recorded for one outbox identifier.
+  - `EventDispatchRemediationRuntimeRetention GetRetentionByOutboxId(string outboxId)`
+- [GetRetentionByOutcome](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbyoutcome-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetRetentionByOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the retained remediation command-history posture recorded for one command outcome.
+  - `EventDispatchRemediationRuntimeRetention GetRetentionByOutcome(string outcome)`
+- [GetRetentionByReason](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbyreason-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetRetentionByReason&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the retained remediation command-history posture recorded for one operator command reason.
+  - `EventDispatchRemediationRuntimeRetention GetRetentionByReason(string reason)`
 - [GetSummaryByActorId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyactorid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetSummaryByActorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Summarizes remediation command-state entries recorded for one operator actor.
   - `EventDispatchRemediationRuntimeSummary GetSummaryByActorId(string actorId)`

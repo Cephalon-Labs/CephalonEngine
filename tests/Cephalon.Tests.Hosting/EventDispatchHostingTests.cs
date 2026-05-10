@@ -232,12 +232,19 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}", terminalRemediationEntry.Metadata["operatorCommandDispatchOutcomeRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/outcomes/{outcome}", terminalRemediationEntry.Metadata["operatorCommandOutcomeRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}/summary", terminalRemediationEntry.Metadata["operatorCommandOutboxSummaryRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}/retention", terminalRemediationEntry.Metadata["operatorCommandOutboxRetentionRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/messages/{messageId}/summary", terminalRemediationEntry.Metadata["operatorCommandMessageSummaryRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/messages/{messageId}/retention", terminalRemediationEntry.Metadata["operatorCommandMessageRetentionRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}/summary", terminalRemediationEntry.Metadata["operatorCommandDispatchOutcomeSummaryRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}/retention", terminalRemediationEntry.Metadata["operatorCommandDispatchOutcomeRetentionRoute"]);
         Assert.Equal("retained-filter-server-side-aggregate", terminalRemediationEntry.Metadata["operatorCommandFilterSummaryPolicy"]);
         Assert.Equal("outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", terminalRemediationEntry.Metadata["operatorCommandFilterSummaryRoutes"]);
         Assert.Equal(nameof(EventDispatchRemediationRuntimeSummary), terminalRemediationEntry.Metadata["operatorCommandFilterSummaryResponse"]);
         Assert.Equal("not-required", terminalRemediationEntry.Metadata["operatorCommandFilterSummaryMaterialization"]);
+        Assert.Equal("retained-filter-server-side-retention", terminalRemediationEntry.Metadata["operatorCommandFilterRetentionPolicy"]);
+        Assert.Equal("outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", terminalRemediationEntry.Metadata["operatorCommandFilterRetentionRoutes"]);
+        Assert.Equal(nameof(EventDispatchRemediationRuntimeRetention), terminalRemediationEntry.Metadata["operatorCommandFilterRetentionResponse"]);
+        Assert.Equal("not-required", terminalRemediationEntry.Metadata["operatorCommandFilterRetentionMaterialization"]);
         Assert.Equal("limit", terminalRemediationEntry.Metadata["operatorCommandReadLimitQuery"]);
         Assert.Equal("positive-integer-newest-first", terminalRemediationEntry.Metadata["operatorCommandReadLimitPolicy"]);
         Assert.Equal("list-and-filter-routes", terminalRemediationEntry.Metadata["operatorCommandReadLimitAppliesTo"]);
@@ -342,6 +349,15 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/reasons/{reason}/summary", remediationCapability.Metadata["commandReasonSummaryRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}/summary", remediationCapability.Metadata["commandDispatchOutcomeSummaryRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/outcomes/{outcome}/summary", remediationCapability.Metadata["commandOutcomeSummaryRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}/retention", remediationCapability.Metadata["commandOutboxRetentionRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/messages/{messageId}/retention", remediationCapability.Metadata["commandMessageRetentionRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/channels/{channelId}/retention", remediationCapability.Metadata["commandChannelRetentionRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/operations/{operationId}/retention", remediationCapability.Metadata["commandOperationRetentionRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/actors/{actorId}/retention", remediationCapability.Metadata["commandActorRetentionRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/correlations/{correlationId}/retention", remediationCapability.Metadata["commandCorrelationRetentionRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/reasons/{reason}/retention", remediationCapability.Metadata["commandReasonRetentionRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}/retention", remediationCapability.Metadata["commandDispatchOutcomeRetentionRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/outcomes/{outcome}/retention", remediationCapability.Metadata["commandOutcomeRetentionRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}/latest", remediationCapability.Metadata["commandOutboxLatestRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/messages/{messageId}/latest", remediationCapability.Metadata["commandMessageLatestRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/channels/{channelId}/latest", remediationCapability.Metadata["commandChannelLatestRoute"]);
@@ -364,6 +380,10 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", remediationCapability.Metadata["commandFilterSummaryRoutes"]);
         Assert.Equal(nameof(EventDispatchRemediationRuntimeSummary), remediationCapability.Metadata["commandFilterSummaryResponse"]);
         Assert.Equal("not-required", remediationCapability.Metadata["commandFilterSummaryMaterialization"]);
+        Assert.Equal("retained-filter-server-side-retention", remediationCapability.Metadata["commandFilterRetentionPolicy"]);
+        Assert.Equal("outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", remediationCapability.Metadata["commandFilterRetentionRoutes"]);
+        Assert.Equal(nameof(EventDispatchRemediationRuntimeRetention), remediationCapability.Metadata["commandFilterRetentionResponse"]);
+        Assert.Equal("not-required", remediationCapability.Metadata["commandFilterRetentionMaterialization"]);
         Assert.Equal("retained-filter-server-side-latest", remediationCapability.Metadata["commandFilterLatestPolicy"]);
         Assert.Equal("outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", remediationCapability.Metadata["commandFilterLatestRoutes"]);
         Assert.Equal(nameof(EventDispatchRemediationRuntimeState), remediationCapability.Metadata["commandFilterLatestResponse"]);
@@ -427,10 +447,15 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}", initialCommandCatalogEntry.Metadata["commandObservationRoute"]);
         Assert.Equal("fromUtc,toUtc", initialCommandCatalogEntry.Metadata["commandObservationWindowQuery"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}/summary", initialCommandCatalogEntry.Metadata["commandOutboxSummaryRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}/retention", initialCommandCatalogEntry.Metadata["commandOutboxRetentionRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}/latest", initialCommandCatalogEntry.Metadata["commandOutboxLatestRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/outboxes/{outboxId}/oldest", initialCommandCatalogEntry.Metadata["commandOutboxOldestRoute"]);
         Assert.Equal("retained-filter-server-side-aggregate", initialCommandCatalogEntry.Metadata["commandFilterSummaryPolicy"]);
         Assert.Equal("outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", initialCommandCatalogEntry.Metadata["commandFilterSummaryRoutes"]);
+        Assert.Equal("retained-filter-server-side-retention", initialCommandCatalogEntry.Metadata["commandFilterRetentionPolicy"]);
+        Assert.Equal("outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", initialCommandCatalogEntry.Metadata["commandFilterRetentionRoutes"]);
+        Assert.Equal(nameof(EventDispatchRemediationRuntimeRetention), initialCommandCatalogEntry.Metadata["commandFilterRetentionResponse"]);
+        Assert.Equal("not-required", initialCommandCatalogEntry.Metadata["commandFilterRetentionMaterialization"]);
         Assert.Equal("retained-filter-server-side-latest", initialCommandCatalogEntry.Metadata["commandFilterLatestPolicy"]);
         Assert.Equal("outboxes,messages,channels,operations,actors,correlations,reasons,dispatch-outcomes,outcomes", initialCommandCatalogEntry.Metadata["commandFilterLatestRoutes"]);
         Assert.Equal(nameof(EventDispatchRemediationRuntimeState), initialCommandCatalogEntry.Metadata["commandFilterLatestResponse"]);
@@ -462,6 +487,11 @@ public sealed class EventDispatchHostingTests
         Assert.Equal(remediationCapability.Metadata["commandOutboxRoute"], initialCommandCatalogEntry.Metadata["commandOutboxRoute"]);
         Assert.Equal(remediationCapability.Metadata["commandObservationRoute"], initialCommandCatalogEntry.Metadata["commandObservationRoute"]);
         Assert.Equal(remediationCapability.Metadata["commandObservationWindowQuery"], initialCommandCatalogEntry.Metadata["commandObservationWindowQuery"]);
+        Assert.Equal(remediationCapability.Metadata["commandOutboxRetentionRoute"], initialCommandCatalogEntry.Metadata["commandOutboxRetentionRoute"]);
+        Assert.Equal(remediationCapability.Metadata["commandFilterRetentionPolicy"], initialCommandCatalogEntry.Metadata["commandFilterRetentionPolicy"]);
+        Assert.Equal(remediationCapability.Metadata["commandFilterRetentionRoutes"], initialCommandCatalogEntry.Metadata["commandFilterRetentionRoutes"]);
+        Assert.Equal(remediationCapability.Metadata["commandFilterRetentionResponse"], initialCommandCatalogEntry.Metadata["commandFilterRetentionResponse"]);
+        Assert.Equal(remediationCapability.Metadata["commandFilterRetentionMaterialization"], initialCommandCatalogEntry.Metadata["commandFilterRetentionMaterialization"]);
         Assert.Equal(remediationCapability.Metadata["commandOutboxLatestRoute"], initialCommandCatalogEntry.Metadata["commandOutboxLatestRoute"]);
         Assert.Equal(remediationCapability.Metadata["commandOutboxOldestRoute"], initialCommandCatalogEntry.Metadata["commandOutboxOldestRoute"]);
         Assert.Equal(remediationCapability.Metadata["commandFilterLatestPolicy"], initialCommandCatalogEntry.Metadata["commandFilterLatestPolicy"]);
@@ -561,8 +591,18 @@ public sealed class EventDispatchHostingTests
         var oldestCommandByReason = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState>($"/engine/event-dispatch-remediation-commands/reasons/{Uri.EscapeDataString(retryReason)}/oldest");
         var oldestCommandByOutcome = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState>("/engine/event-dispatch-remediation-commands/outcomes/accepted/oldest");
         var oldestCommandByDispatchOutcome = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState>("/engine/event-dispatch-remediation-commands/dispatch-outcomes/retry-scheduled/oldest");
+        var retentionByOutbox = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeRetention>("/engine/event-dispatch-remediation-commands/outboxes/entity-framework-outbox/retention");
+        var retentionByMessage = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeRetention>("/engine/event-dispatch-remediation-commands/messages/evt-command-001/retention");
+        var retentionByChannel = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeRetention>("/engine/event-dispatch-remediation-commands/channels/catalog-events/retention");
+        var retentionByOperation = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeRetention>("/engine/event-dispatch-remediation-commands/operations/retry-now/retention");
+        var retentionByActor = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeRetention>("/engine/event-dispatch-remediation-commands/actors/operator-001/retention");
+        var retentionByCorrelation = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeRetention>("/engine/event-dispatch-remediation-commands/correlations/corr-command-operator-001/retention");
+        var retentionByReason = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeRetention>($"/engine/event-dispatch-remediation-commands/reasons/{Uri.EscapeDataString(retryReason)}/retention");
+        var retentionByOutcome = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeRetention>("/engine/event-dispatch-remediation-commands/outcomes/accepted/retention");
+        var retentionByDispatchOutcome = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeRetention>("/engine/event-dispatch-remediation-commands/dispatch-outcomes/retry-scheduled/retention");
         var missingLatestCommandByMessageResponse = await client.GetAsync("/engine/event-dispatch-remediation-commands/messages/missing-message/latest");
         var missingOldestCommandByMessageResponse = await client.GetAsync("/engine/event-dispatch-remediation-commands/messages/missing-message/oldest");
+        var missingRetentionByMessage = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeRetention>("/engine/event-dispatch-remediation-commands/messages/missing-message/retention");
         var inDoubtCommandStates = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/in-doubt");
         var commandSummary = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeSummary>("/engine/event-dispatch-remediation-commands/summary");
         var commandRetention = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeRetention>("/engine/event-dispatch-remediation-commands/retention");
@@ -691,8 +731,18 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("cmd-command-001-retry", oldestCommandByReason?.CommandId);
         Assert.Equal("cmd-command-001-retry", oldestCommandByOutcome?.CommandId);
         Assert.Equal("cmd-command-001-retry", oldestCommandByDispatchOutcome?.CommandId);
+        AssertRetention(retentionByOutbox, 1, "cmd-command-001-retry", "cmd-command-001-retry");
+        AssertRetention(retentionByMessage, 1, "cmd-command-001-retry", "cmd-command-001-retry");
+        AssertRetention(retentionByChannel, 1, "cmd-command-001-retry", "cmd-command-001-retry");
+        AssertRetention(retentionByOperation, 1, "cmd-command-001-retry", "cmd-command-001-retry");
+        AssertRetention(retentionByActor, 1, "cmd-command-001-retry", "cmd-command-001-retry");
+        AssertRetention(retentionByCorrelation, 1, "cmd-command-001-retry", "cmd-command-001-retry");
+        AssertRetention(retentionByReason, 1, "cmd-command-001-retry", "cmd-command-001-retry");
+        AssertRetention(retentionByOutcome, 1, "cmd-command-001-retry", "cmd-command-001-retry");
+        AssertRetention(retentionByDispatchOutcome, 1, "cmd-command-001-retry", "cmd-command-001-retry");
         Assert.Equal(HttpStatusCode.NotFound, missingLatestCommandByMessageResponse.StatusCode);
         Assert.Equal(HttpStatusCode.NotFound, missingOldestCommandByMessageResponse.StatusCode);
+        AssertRetention(missingRetentionByMessage, 0, null, null);
         Assert.NotNull(inDoubtCommandStates);
         Assert.Empty(inDoubtCommandStates);
         Assert.NotNull(commandSummary);
@@ -944,6 +994,15 @@ public sealed class EventDispatchHostingTests
         var rejectedCommandOldestByReason = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState>($"/engine/event-dispatch-remediation-commands/reasons/{Uri.EscapeDataString(rejectedReason)}/oldest");
         var finalRetryScheduledCommandOldest = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState>("/engine/event-dispatch-remediation-commands/dispatch-outcomes/retry-scheduled/oldest");
         var rejectedOutcomeCommandOldest = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState>("/engine/event-dispatch-remediation-commands/outcomes/rejected/oldest");
+        var finalCommandRetentionByOutbox = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeRetention>("/engine/event-dispatch-remediation-commands/outboxes/entity-framework-outbox/retention");
+        var finalCommandRetentionByMessage = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeRetention>("/engine/event-dispatch-remediation-commands/messages/evt-command-001/retention");
+        var finalCommandRetentionByChannel = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeRetention>("/engine/event-dispatch-remediation-commands/channels/catalog-events/retention");
+        var rejectedCommandRetentionByOperation = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeRetention>("/engine/event-dispatch-remediation-commands/operations/retry-later/retention");
+        var finalCommandRetentionByOperator = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeRetention>("/engine/event-dispatch-remediation-commands/actors/operator-001/retention");
+        var rejectedCommandRetentionByCorrelation = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeRetention>("/engine/event-dispatch-remediation-commands/correlations/corr-command-operator-002/retention");
+        var rejectedCommandRetentionByReason = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeRetention>($"/engine/event-dispatch-remediation-commands/reasons/{Uri.EscapeDataString(rejectedReason)}/retention");
+        var finalRetryScheduledCommandRetention = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeRetention>("/engine/event-dispatch-remediation-commands/dispatch-outcomes/retry-scheduled/retention");
+        var rejectedOutcomeCommandRetention = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeRetention>("/engine/event-dispatch-remediation-commands/outcomes/rejected/retention");
         var allCommandStates = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands");
         var limitedAllCommandStates = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands?limit=2");
         var limitedFinalCommandStatesByMessage = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/messages/evt-command-001?limit=2");
@@ -1085,6 +1144,15 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("cmd-command-001-retry-later-rejected", rejectedCommandOldestByReason?.CommandId);
         Assert.Equal("cmd-command-001-retry", finalRetryScheduledCommandOldest?.CommandId);
         Assert.Equal("cmd-command-001-retry-later-rejected", rejectedOutcomeCommandOldest?.CommandId);
+        AssertRetention(finalCommandRetentionByOutbox, 3, "cmd-command-001-retry", "cmd-command-001-retry-later-rejected");
+        AssertRetention(finalCommandRetentionByMessage, 3, "cmd-command-001-retry", "cmd-command-001-retry-later-rejected");
+        AssertRetention(finalCommandRetentionByChannel, 3, "cmd-command-001-retry", "cmd-command-001-retry-later-rejected");
+        AssertRetention(rejectedCommandRetentionByOperation, 1, "cmd-command-001-retry-later-rejected", "cmd-command-001-retry-later-rejected");
+        AssertRetention(finalCommandRetentionByOperator, 3, "cmd-command-001-retry", "cmd-command-001-retry-later-rejected");
+        AssertRetention(rejectedCommandRetentionByCorrelation, 1, "cmd-command-001-retry-later-rejected", "cmd-command-001-retry-later-rejected");
+        AssertRetention(rejectedCommandRetentionByReason, 1, "cmd-command-001-retry-later-rejected", "cmd-command-001-retry-later-rejected");
+        AssertRetention(finalRetryScheduledCommandRetention, 2, "cmd-command-001-retry", "cmd-command-001-retry-later-rejected");
+        AssertRetention(rejectedOutcomeCommandRetention, 1, "cmd-command-001-retry-later-rejected", "cmd-command-001-retry-later-rejected");
         Assert.NotNull(allCommandStates);
         Assert.Equal(3, allCommandStates.Length);
         Assert.NotNull(limitedAllCommandStates);
@@ -1241,6 +1309,22 @@ public sealed class EventDispatchHostingTests
         Assert.True(inDoubtSummary.HasInDoubtCommands);
         Assert.Equal("cmd-command-002-reserved", inDoubtSummary.OldestReservedCommandId);
         Assert.Equal(new DateTimeOffset(2026, 04, 12, 08, 30, 0, TimeSpan.Zero), inDoubtSummary.OldestReservedObservedAtUtc);
+
+        static void AssertRetention(
+            EventDispatchRemediationRuntimeRetention? retention,
+            int expectedCount,
+            string? expectedOldestCommandId,
+            string? expectedLatestCommandId)
+        {
+            Assert.NotNull(retention);
+            Assert.Equal(0, retention.HistoryLimit);
+            Assert.Equal(expectedCount, retention.RetainedCommandCount);
+            Assert.Equal(expectedCount, retention.TotalRecordedCommandCount);
+            Assert.Equal(0, retention.DroppedCommandCount);
+            Assert.False(retention.Truncated);
+            Assert.Equal(expectedOldestCommandId, retention.OldestRetainedCommandId);
+            Assert.Equal(expectedLatestCommandId, retention.LatestRetainedCommandId);
+        }
 
         static string BuildObservationWindowRoute(
             DateTimeOffset? fromUtc,

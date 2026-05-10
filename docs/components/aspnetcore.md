@@ -530,43 +530,52 @@ When the same runtime registers `IEventDispatchRemediationRuntimeCatalog`, the h
 `/engine/event-dispatch-remediation-commands/{commandId}`,
 `/engine/event-dispatch-remediation-commands/outboxes/{outboxId}`,
 `/engine/event-dispatch-remediation-commands/outboxes/{outboxId}/summary`,
+`/engine/event-dispatch-remediation-commands/outboxes/{outboxId}/retention`,
 `/engine/event-dispatch-remediation-commands/outboxes/{outboxId}/latest`,
 `/engine/event-dispatch-remediation-commands/outboxes/{outboxId}/oldest`,
 `/engine/event-dispatch-remediation-commands/messages/{messageId}`,
 `/engine/event-dispatch-remediation-commands/messages/{messageId}/summary`,
+`/engine/event-dispatch-remediation-commands/messages/{messageId}/retention`,
 `/engine/event-dispatch-remediation-commands/messages/{messageId}/latest`,
 `/engine/event-dispatch-remediation-commands/messages/{messageId}/oldest`,
 `/engine/event-dispatch-remediation-commands/channels/{channelId}`,
 `/engine/event-dispatch-remediation-commands/channels/{channelId}/summary`,
+`/engine/event-dispatch-remediation-commands/channels/{channelId}/retention`,
 `/engine/event-dispatch-remediation-commands/channels/{channelId}/latest`,
 `/engine/event-dispatch-remediation-commands/channels/{channelId}/oldest`,
 `/engine/event-dispatch-remediation-commands/operations/{operationId}`,
 `/engine/event-dispatch-remediation-commands/operations/{operationId}/summary`,
+`/engine/event-dispatch-remediation-commands/operations/{operationId}/retention`,
 `/engine/event-dispatch-remediation-commands/operations/{operationId}/latest`,
 `/engine/event-dispatch-remediation-commands/operations/{operationId}/oldest`,
 `/engine/event-dispatch-remediation-commands/actors/{actorId}`,
 `/engine/event-dispatch-remediation-commands/actors/{actorId}/summary`,
+`/engine/event-dispatch-remediation-commands/actors/{actorId}/retention`,
 `/engine/event-dispatch-remediation-commands/actors/{actorId}/latest`,
 `/engine/event-dispatch-remediation-commands/actors/{actorId}/oldest`,
 `/engine/event-dispatch-remediation-commands/correlations/{correlationId}`,
 `/engine/event-dispatch-remediation-commands/correlations/{correlationId}/summary`,
+`/engine/event-dispatch-remediation-commands/correlations/{correlationId}/retention`,
 `/engine/event-dispatch-remediation-commands/correlations/{correlationId}/latest`,
 `/engine/event-dispatch-remediation-commands/correlations/{correlationId}/oldest`,
 `/engine/event-dispatch-remediation-commands/reasons/{reason}`,
 `/engine/event-dispatch-remediation-commands/reasons/{reason}/summary`,
+`/engine/event-dispatch-remediation-commands/reasons/{reason}/retention`,
 `/engine/event-dispatch-remediation-commands/reasons/{reason}/latest`,
 `/engine/event-dispatch-remediation-commands/reasons/{reason}/oldest`,
 `/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}`,
 `/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}/summary`,
+`/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}/retention`,
 `/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}/latest`,
 `/engine/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}/oldest`,
 `/engine/event-dispatch-remediation-commands/outcomes/{outcome}`, and
 `/engine/event-dispatch-remediation-commands/outcomes/{outcome}/summary`,
+`/engine/event-dispatch-remediation-commands/outcomes/{outcome}/retention`,
 `/engine/event-dispatch-remediation-commands/outcomes/{outcome}/latest`, and
 `/engine/event-dispatch-remediation-commands/outcomes/{outcome}/oldest` so operators can inspect accepted
-and rejected command results by summary, latest command, oldest command, retention posture, in-doubt reservations, stale in-doubt summary, stale in-doubt cutoff, oldest stale in-doubt command, command id, outbox id,
+and rejected command results by summary, latest command, oldest command, retention posture, filtered retention posture, in-doubt reservations, stale in-doubt summary, stale in-doubt cutoff, oldest stale in-doubt command, command id, outbox id,
 message id, channel id, operation id, actor id, correlation id, reason, dispatch outcome, command
-outcome, inclusive observed UTC window, observed-window summary, filter-specific summary, filter-specific latest command, or filter-specific oldest command separately from the latest per-outbox dispatch state. A
+outcome, inclusive observed UTC window, observed-window summary, filter-specific summary, filter-specific retention, filter-specific latest command, or filter-specific oldest command separately from the latest per-outbox dispatch state. A
 duplicate command id does not
 replace the original command-result record; callers can inspect the original record, the
 duplicate-safe latest record, the duplicate-safe roll-up, or the bounded-history truncation posture
@@ -584,6 +593,10 @@ records matching one outbox, message, channel, operation, actor, correlation id,
 outcome, or command outcome. They deliberately do not accept `limit`, `pageSize`, or continuation
 tokens because the host performs one aggregate read through the active catalog or journal; missing
 matches return the empty summary contract rather than a synthetic command record.
+The filter-retention routes return `EventDispatchRemediationRuntimeRetention` for retained command
+records matching the same dimensions. They deliberately do not accept `limit`, `pageSize`, or
+continuation tokens because the host performs one retention-posture read through the active catalog
+or journal; missing matches return the empty retention contract rather than `404`.
 The filter-latest routes return the newest retained `EventDispatchRemediationRuntimeState` for the
 same filter dimensions and return `404` when no retained command matches. They also stay outside
 `limit`, `pageSize`, and continuation-token contracts because the catalog or journal performs one
@@ -595,7 +608,7 @@ single-record read.
 The list and filter routes that return command-result arrays also accept
 `?limit={positiveInteger}` so operator dashboards can read the newest retained records first without
 materializing the full bounded history; invalid, zero, or negative limits return `400`, and summary,
-latest, retention, in-doubt-summary, oldest-in-doubt, filter-summary, filter-latest, filter-oldest, or single-command reads keep their existing contracts.
+latest, retention, in-doubt-summary, oldest-in-doubt, filter-summary, filter-retention, filter-latest, filter-oldest, or single-command reads keep their existing contracts.
 The `in-doubt` route accepts optional `beforeUtc={dateTimeOffset}` to return only retained
 reserved records observed at or before that inclusive UTC cutoff, and returns `400` for invalid
 cutoff values.
@@ -616,7 +629,11 @@ Those metadata blocks also publish `commandListRoute`, `commandResultRoute`,
 summary route keys such as `commandOutboxSummaryRoute`, `commandMessageSummaryRoute`,
 `commandChannelSummaryRoute`, `commandOperationSummaryRoute`, `commandActorSummaryRoute`,
 `commandCorrelationSummaryRoute`, `commandReasonSummaryRoute`, `commandDispatchOutcomeSummaryRoute`,
-and `commandOutcomeSummaryRoute`, and the matching latest route keys such as
+and `commandOutcomeSummaryRoute`, the matching retention route keys such as
+`commandOutboxRetentionRoute`, `commandMessageRetentionRoute`, `commandChannelRetentionRoute`,
+`commandOperationRetentionRoute`, `commandActorRetentionRoute`, `commandCorrelationRetentionRoute`,
+`commandReasonRetentionRoute`, `commandDispatchOutcomeRetentionRoute`, and
+`commandOutcomeRetentionRoute`, and the matching latest route keys such as
 `commandOutboxLatestRoute`, `commandMessageLatestRoute`, `commandChannelLatestRoute`,
 `commandOperationLatestRoute`, `commandActorLatestRoute`, `commandCorrelationLatestRoute`,
 `commandReasonLatestRoute`, `commandDispatchOutcomeLatestRoute`, and `commandOutcomeLatestRoute`,
@@ -626,10 +643,13 @@ and the matching oldest route keys such as `commandOutboxOldestRoute`, `commandM
 and `commandOutcomeOldestRoute`,
 with `operatorCommand*` equivalents on
 `event-dispatch-remediations`, so a host UI does not have to infer the root list, in-doubt list,
-in-doubt summary, command-id, outbox drill-down, filtered summary, filtered latest, or filtered oldest URL from route names or docs.
+in-doubt summary, command-id, outbox drill-down, filtered summary, filtered retention, filtered latest, or filtered oldest URL from route names or docs.
 `commandFilterSummaryPolicy`, `commandFilterSummaryRoutes`, `commandFilterSummaryResponse`, and
 `commandFilterSummaryMaterialization` advertise that filtered roll-ups are retained-record aggregate
 reads that return `EventDispatchRemediationRuntimeSummary` without materializing the detail list.
+`commandFilterRetentionPolicy`, `commandFilterRetentionRoutes`, `commandFilterRetentionResponse`,
+and `commandFilterRetentionMaterialization` advertise the matching retained-history posture read
+that returns `EventDispatchRemediationRuntimeRetention` without materializing the detail list.
 `commandFilterLatestPolicy`, `commandFilterLatestRoutes`, `commandFilterLatestResponse`,
 `commandFilterLatestMaterialization`, and `commandFilterLatestMissing` advertise the matching
 single-record read that returns `EventDispatchRemediationRuntimeState` or `404` without materializing
@@ -646,7 +666,7 @@ reservation summary; `commandOldestInDoubtQuery`,
 `commandOldestInDoubtPolicy`, and `commandOldestInDoubtInvalidCutoff` describe the direct oldest
 stale-reservation read.
 The `event-dispatch-remediation-commands` technology surface also emits a catalog entry before any
-command result exists, with route, in-doubt route/cutoff, in-doubt summary, oldest in-doubt route/cutoff, filter-summary route/policy, filter-latest route/policy, filter-oldest route/policy, retention, read-limit, observed-window, idempotency,
+command result exists, with route, in-doubt route/cutoff, in-doubt summary, oldest in-doubt route/cutoff, filter-summary route/policy, filter-retention route/policy, filter-latest route/policy, filter-oldest route/policy, retention, read-limit, observed-window, idempotency,
 provider-neutral, and `wolverineRequired = false` metadata, so an ASP.NET Core operator UI can bind
 to the command-result route family without waiting for command history or installing Wolverine.
 

@@ -637,6 +637,15 @@ public sealed class PackageSurfaceTests
         Assert.NotNull(catalogType.GetMethod("GetOldestByReason", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(catalogType.GetMethod("GetOldestByOutcome", BindingFlags.Instance | BindingFlags.Public));
         Assert.NotNull(catalogType.GetMethod("GetOldestByDispatchOutcome", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetRetentionByOutboxId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetRetentionByMessageId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetRetentionByChannelId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetRetentionByOperationId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetRetentionByActorId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetRetentionByCorrelationId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetRetentionByReason", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetRetentionByOutcome", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetRetentionByDispatchOutcome", BindingFlags.Instance | BindingFlags.Public));
     }
 
     [Fact]

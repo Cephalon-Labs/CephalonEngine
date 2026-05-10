@@ -65,13 +65,14 @@ internal sealed class EventingDispatchRemediationRuntimeSurfaceContributor(
         {
             EventDispatchRemediationCommandMetadata.AddCommandActionRouteMetadata(metadata, "operatorCommand");
             EventDispatchRemediationCommandMetadata.AddCommandResultRouteMetadata(metadata, "operatorCommand");
-        EventDispatchRemediationCommandMetadata.AddObservationWindowMetadata(metadata, "operatorCommand");
-        EventDispatchRemediationCommandMetadata.AddInDoubtMetadata(metadata, "operatorCommand");
-        EventDispatchRemediationCommandMetadata.AddReadLimitMetadata(metadata, "operatorCommand");
-        EventDispatchRemediationCommandMetadata.AddFilterSummaryMetadata(metadata, "operatorCommand");
-        EventDispatchRemediationCommandMetadata.AddFilterLatestMetadata(metadata, "operatorCommand");
-        EventDispatchRemediationCommandMetadata.AddFilterOldestMetadata(metadata, "operatorCommand");
-        EventDispatchRemediationCommandMetadata.AddPaginationMetadata(metadata, "operatorCommand");
+            EventDispatchRemediationCommandMetadata.AddObservationWindowMetadata(metadata, "operatorCommand");
+            EventDispatchRemediationCommandMetadata.AddInDoubtMetadata(metadata, "operatorCommand");
+            EventDispatchRemediationCommandMetadata.AddReadLimitMetadata(metadata, "operatorCommand");
+            EventDispatchRemediationCommandMetadata.AddFilterSummaryMetadata(metadata, "operatorCommand");
+            EventDispatchRemediationCommandMetadata.AddFilterRetentionMetadata(metadata, "operatorCommand");
+            EventDispatchRemediationCommandMetadata.AddFilterLatestMetadata(metadata, "operatorCommand");
+            EventDispatchRemediationCommandMetadata.AddFilterOldestMetadata(metadata, "operatorCommand");
+            EventDispatchRemediationCommandMetadata.AddPaginationMetadata(metadata, "operatorCommand");
             metadata["operatorCommandOperations"] = EventDispatchRemediationCommandMetadata.CommandOperations;
             metadata["operatorCommandScope"] = "dispatch-store";
             metadata["deadLetterCommandScope"] = "dispatch-store-terminal";

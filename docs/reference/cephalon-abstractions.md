@@ -52011,6 +52011,141 @@ Returns: The oldest matching in-doubt command state, or `null` when none is reta
 Parameters:
 - `beforeObservedAtUtc`: The inclusive upper UTC observation cutoff, or `null` to search all retained in-doubt entries.
 
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbyactorid-system-string"></a>
+
+##### `GetRetentionByActorId`
+
+```csharp
+EventDispatchRemediationRuntimeRetention GetRetentionByActorId(string actorId)
+```
+
+Gets the retained remediation command-history posture recorded for one operator actor.
+
+Returns: The retained command-history posture for the actor.
+
+Parameters:
+- `actorId`: The stable operator actor identifier to inspect.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbychannelid-system-string"></a>
+
+##### `GetRetentionByChannelId`
+
+```csharp
+EventDispatchRemediationRuntimeRetention GetRetentionByChannelId(string channelId)
+```
+
+Gets the retained remediation command-history posture recorded for one event channel.
+
+Returns: The retained command-history posture for the channel.
+
+Parameters:
+- `channelId`: The stable event channel identifier to inspect.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbycorrelationid-system-string"></a>
+
+##### `GetRetentionByCorrelationId`
+
+```csharp
+EventDispatchRemediationRuntimeRetention GetRetentionByCorrelationId(string correlationId)
+```
+
+Gets the retained remediation command-history posture recorded for one operator correlation identifier.
+
+Returns: The retained command-history posture for the correlation identifier.
+
+Parameters:
+- `correlationId`: The stable operator correlation identifier to inspect.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbydispatchoutcome-system-string"></a>
+
+##### `GetRetentionByDispatchOutcome`
+
+```csharp
+EventDispatchRemediationRuntimeRetention GetRetentionByDispatchOutcome(string dispatchOutcome)
+```
+
+Gets the retained remediation command-history posture recorded for one dispatch-store outcome.
+
+Returns: The retained command-history posture for the dispatch-store outcome.
+
+Parameters:
+- `dispatchOutcome`: The stable dispatch-store outcome identifier to inspect.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbymessageid-system-string"></a>
+
+##### `GetRetentionByMessageId`
+
+```csharp
+EventDispatchRemediationRuntimeRetention GetRetentionByMessageId(string messageId)
+```
+
+Gets the retained remediation command-history posture recorded for one event message.
+
+Returns: The retained command-history posture for the message.
+
+Parameters:
+- `messageId`: The stable event message identifier to inspect.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbyoperationid-system-string"></a>
+
+##### `GetRetentionByOperationId`
+
+```csharp
+EventDispatchRemediationRuntimeRetention GetRetentionByOperationId(string operationId)
+```
+
+Gets the retained remediation command-history posture recorded for one command operation.
+
+Returns: The retained command-history posture for the operation.
+
+Parameters:
+- `operationId`: The stable command operation identifier to inspect.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbyoutboxid-system-string"></a>
+
+##### `GetRetentionByOutboxId`
+
+```csharp
+EventDispatchRemediationRuntimeRetention GetRetentionByOutboxId(string outboxId)
+```
+
+Gets the retained remediation command-history posture recorded for one outbox identifier.
+
+Returns: The retained command-history posture for the outbox.
+
+Parameters:
+- `outboxId`: The stable outbox identifier to inspect.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbyoutcome-system-string"></a>
+
+##### `GetRetentionByOutcome`
+
+```csharp
+EventDispatchRemediationRuntimeRetention GetRetentionByOutcome(string outcome)
+```
+
+Gets the retained remediation command-history posture recorded for one command outcome.
+
+Returns: The retained command-history posture for the command outcome.
+
+Parameters:
+- `outcome`: The stable command outcome identifier to inspect.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbyreason-system-string"></a>
+
+##### `GetRetentionByReason`
+
+```csharp
+EventDispatchRemediationRuntimeRetention GetRetentionByReason(string reason)
+```
+
+Gets the retained remediation command-history posture recorded for one operator command reason.
+
+Returns: The retained command-history posture for the reason.
+
+Parameters:
+- `reason`: The stable operator-facing command reason to inspect.
+
 <a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getsummarybyactorid-system-string"></a>
 
 ##### `GetSummaryByActorId`

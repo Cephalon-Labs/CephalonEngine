@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T17:34:50.6815105+00:00",
+  "GeneratedAtUtc": "2026-05-10T18:09:12.4483592+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -11259,7 +11259,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 4,
-        "Methods": 43
+        "Methods": 52
       }
     },
     {
@@ -63108,6 +63108,105 @@
       "AnchorId": "member-m-cephalon-engine-localization-localizedtextcatalog-getresources-system-string",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E GetResources(string culture)",
       "Summary": "Gets the merged resources visible for the specified culture."
+    },
+    {
+      "DisplayName": "GetRetentionByActorId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbyactorid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeRetention GetRetentionByActorId(string actorId)",
+      "Summary": "Gets the retained remediation command-history posture recorded for one operator actor."
+    },
+    {
+      "DisplayName": "GetRetentionByChannelId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbychannelid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeRetention GetRetentionByChannelId(string channelId)",
+      "Summary": "Gets the retained remediation command-history posture recorded for one event channel."
+    },
+    {
+      "DisplayName": "GetRetentionByCorrelationId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbycorrelationid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeRetention GetRetentionByCorrelationId(string correlationId)",
+      "Summary": "Gets the retained remediation command-history posture recorded for one operator correlation identifier."
+    },
+    {
+      "DisplayName": "GetRetentionByDispatchOutcome",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbydispatchoutcome-system-string",
+      "Signature": "EventDispatchRemediationRuntimeRetention GetRetentionByDispatchOutcome(string dispatchOutcome)",
+      "Summary": "Gets the retained remediation command-history posture recorded for one dispatch-store outcome."
+    },
+    {
+      "DisplayName": "GetRetentionByMessageId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbymessageid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeRetention GetRetentionByMessageId(string messageId)",
+      "Summary": "Gets the retained remediation command-history posture recorded for one event message."
+    },
+    {
+      "DisplayName": "GetRetentionByOperationId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbyoperationid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeRetention GetRetentionByOperationId(string operationId)",
+      "Summary": "Gets the retained remediation command-history posture recorded for one command operation."
+    },
+    {
+      "DisplayName": "GetRetentionByOutboxId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbyoutboxid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeRetention GetRetentionByOutboxId(string outboxId)",
+      "Summary": "Gets the retained remediation command-history posture recorded for one outbox identifier."
+    },
+    {
+      "DisplayName": "GetRetentionByOutcome",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbyoutcome-system-string",
+      "Signature": "EventDispatchRemediationRuntimeRetention GetRetentionByOutcome(string outcome)",
+      "Summary": "Gets the retained remediation command-history posture recorded for one command outcome."
+    },
+    {
+      "DisplayName": "GetRetentionByReason",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getretentionbyreason-system-string",
+      "Signature": "EventDispatchRemediationRuntimeRetention GetRetentionByReason(string reason)",
+      "Summary": "Gets the retained remediation command-history posture recorded for one operator command reason."
     },
     {
       "DisplayName": "GetSummaryByActorId",

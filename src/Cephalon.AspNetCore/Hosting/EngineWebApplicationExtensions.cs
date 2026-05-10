@@ -1109,6 +1109,11 @@ public static class EngineWebApplicationExtensions
 
                 return Results.Ok(summary);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/outboxes/{outboxId}/retention", "GetCephalonEventDispatchRemediationCommandRetentionByOutbox", static context =>
+            OkEventDispatchRemediationCommandRetention(
+                context,
+                "outboxId",
+                static (catalog, outboxId) => catalog.GetRetentionByOutboxId(outboxId)));
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/outboxes/{outboxId}/latest", "GetCephalonEventDispatchRemediationLatestCommandByOutbox", static context =>
             {
                 var outboxId = GetRouteValue(context, "outboxId");
@@ -1141,6 +1146,11 @@ public static class EngineWebApplicationExtensions
 
                 return Results.Ok(summary);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/messages/{messageId}/retention", "GetCephalonEventDispatchRemediationCommandRetentionByMessage", static context =>
+            OkEventDispatchRemediationCommandRetention(
+                context,
+                "messageId",
+                static (catalog, messageId) => catalog.GetRetentionByMessageId(messageId)));
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/messages/{messageId}/latest", "GetCephalonEventDispatchRemediationLatestCommandByMessage", static context =>
             {
                 var messageId = GetRouteValue(context, "messageId");
@@ -1173,6 +1183,11 @@ public static class EngineWebApplicationExtensions
 
                 return Results.Ok(summary);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/channels/{channelId}/retention", "GetCephalonEventDispatchRemediationCommandRetentionByChannel", static context =>
+            OkEventDispatchRemediationCommandRetention(
+                context,
+                "channelId",
+                static (catalog, channelId) => catalog.GetRetentionByChannelId(channelId)));
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/channels/{channelId}/latest", "GetCephalonEventDispatchRemediationLatestCommandByChannel", static context =>
             {
                 var channelId = GetRouteValue(context, "channelId");
@@ -1205,6 +1220,11 @@ public static class EngineWebApplicationExtensions
 
                 return Results.Ok(summary);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/operations/{operationId}/retention", "GetCephalonEventDispatchRemediationCommandRetentionByOperation", static context =>
+            OkEventDispatchRemediationCommandRetention(
+                context,
+                "operationId",
+                static (catalog, operationId) => catalog.GetRetentionByOperationId(operationId)));
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/operations/{operationId}/latest", "GetCephalonEventDispatchRemediationLatestCommandByOperation", static context =>
             {
                 var operationId = GetRouteValue(context, "operationId");
@@ -1237,6 +1257,11 @@ public static class EngineWebApplicationExtensions
 
                 return Results.Ok(summary);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/actors/{actorId}/retention", "GetCephalonEventDispatchRemediationCommandRetentionByActor", static context =>
+            OkEventDispatchRemediationCommandRetention(
+                context,
+                "actorId",
+                static (catalog, actorId) => catalog.GetRetentionByActorId(actorId)));
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/actors/{actorId}/latest", "GetCephalonEventDispatchRemediationLatestCommandByActor", static context =>
             {
                 var actorId = GetRouteValue(context, "actorId");
@@ -1269,6 +1294,11 @@ public static class EngineWebApplicationExtensions
 
                 return Results.Ok(summary);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/correlations/{correlationId}/retention", "GetCephalonEventDispatchRemediationCommandRetentionByCorrelation", static context =>
+            OkEventDispatchRemediationCommandRetention(
+                context,
+                "correlationId",
+                static (catalog, correlationId) => catalog.GetRetentionByCorrelationId(correlationId)));
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/correlations/{correlationId}/latest", "GetCephalonEventDispatchRemediationLatestCommandByCorrelation", static context =>
             {
                 var correlationId = GetRouteValue(context, "correlationId");
@@ -1301,6 +1331,11 @@ public static class EngineWebApplicationExtensions
 
                 return Results.Ok(summary);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/reasons/{reason}/retention", "GetCephalonEventDispatchRemediationCommandRetentionByReason", static context =>
+            OkEventDispatchRemediationCommandRetention(
+                context,
+                "reason",
+                static (catalog, reason) => catalog.GetRetentionByReason(reason)));
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/reasons/{reason}/latest", "GetCephalonEventDispatchRemediationLatestCommandByReason", static context =>
             {
                 var reason = GetRouteValue(context, "reason");
@@ -1333,6 +1368,11 @@ public static class EngineWebApplicationExtensions
 
                 return Results.Ok(summary);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/outcomes/{outcome}/retention", "GetCephalonEventDispatchRemediationCommandRetentionByOutcome", static context =>
+            OkEventDispatchRemediationCommandRetention(
+                context,
+                "outcome",
+                static (catalog, outcome) => catalog.GetRetentionByOutcome(outcome)));
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/outcomes/{outcome}/latest", "GetCephalonEventDispatchRemediationLatestCommandByOutcome", static context =>
             {
                 var outcome = GetRouteValue(context, "outcome");
@@ -1365,6 +1405,11 @@ public static class EngineWebApplicationExtensions
 
                 return Results.Ok(summary);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}/retention", "GetCephalonEventDispatchRemediationCommandRetentionByDispatchOutcome", static context =>
+            OkEventDispatchRemediationCommandRetention(
+                context,
+                "dispatchOutcome",
+                static (catalog, dispatchOutcome) => catalog.GetRetentionByDispatchOutcome(dispatchOutcome)));
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}/latest", "GetCephalonEventDispatchRemediationLatestCommandByDispatchOutcome", static context =>
             {
                 var dispatchOutcome = GetRouteValue(context, "dispatchOutcome");
@@ -2591,6 +2636,19 @@ public static class EngineWebApplicationExtensions
         }
 
         return Results.Ok(states.Take(limit.Value).ToArray());
+    }
+
+    private static IResult OkEventDispatchRemediationCommandRetention(
+        HttpContext context,
+        string routeValueName,
+        Func<IEventDispatchRemediationRuntimeCatalog, string, EventDispatchRemediationRuntimeRetention> readRetention)
+    {
+        var routeValue = GetRouteValue(context, routeValueName);
+        var retention = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices) is { } catalog
+            ? readRetention(catalog, routeValue)
+            : EventDispatchRemediationRuntimeRetention.Empty;
+
+        return Results.Ok(retention);
     }
 
     private static IEventDispatchRemediationRuntimeCatalog? ResolveEventDispatchRemediationCommandReadModel(IServiceProvider services)
