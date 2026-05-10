@@ -51861,6 +51861,141 @@ Returns: The latest matching command state, or `null` when none is retained.
 Parameters:
 - `reason`: The stable operator-facing command reason to resolve.
 
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbyactorid-system-string"></a>
+
+##### `GetOldestByActorId`
+
+```csharp
+EventDispatchRemediationRuntimeState GetOldestByActorId(string actorId)
+```
+
+Gets the oldest retained remediation command-state entry recorded for one operator actor.
+
+Returns: The oldest matching command state, or `null` when none is retained.
+
+Parameters:
+- `actorId`: The stable operator actor identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbychannelid-system-string"></a>
+
+##### `GetOldestByChannelId`
+
+```csharp
+EventDispatchRemediationRuntimeState GetOldestByChannelId(string channelId)
+```
+
+Gets the oldest retained remediation command-state entry recorded for one event channel.
+
+Returns: The oldest matching command state, or `null` when none is retained.
+
+Parameters:
+- `channelId`: The stable event channel identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbycorrelationid-system-string"></a>
+
+##### `GetOldestByCorrelationId`
+
+```csharp
+EventDispatchRemediationRuntimeState GetOldestByCorrelationId(string correlationId)
+```
+
+Gets the oldest retained remediation command-state entry recorded for one operator correlation identifier.
+
+Returns: The oldest matching command state, or `null` when none is retained.
+
+Parameters:
+- `correlationId`: The stable operator correlation identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbydispatchoutcome-system-string"></a>
+
+##### `GetOldestByDispatchOutcome`
+
+```csharp
+EventDispatchRemediationRuntimeState GetOldestByDispatchOutcome(string dispatchOutcome)
+```
+
+Gets the oldest retained remediation command-state entry recorded for one dispatch-store outcome.
+
+Returns: The oldest matching command state, or `null` when none is retained.
+
+Parameters:
+- `dispatchOutcome`: The stable dispatch-store outcome identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbymessageid-system-string"></a>
+
+##### `GetOldestByMessageId`
+
+```csharp
+EventDispatchRemediationRuntimeState GetOldestByMessageId(string messageId)
+```
+
+Gets the oldest retained remediation command-state entry recorded for one event message.
+
+Returns: The oldest matching command state, or `null` when none is retained.
+
+Parameters:
+- `messageId`: The stable event message identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbyoperationid-system-string"></a>
+
+##### `GetOldestByOperationId`
+
+```csharp
+EventDispatchRemediationRuntimeState GetOldestByOperationId(string operationId)
+```
+
+Gets the oldest retained remediation command-state entry recorded for one command operation.
+
+Returns: The oldest matching command state, or `null` when none is retained.
+
+Parameters:
+- `operationId`: The stable command operation identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbyoutboxid-system-string"></a>
+
+##### `GetOldestByOutboxId`
+
+```csharp
+EventDispatchRemediationRuntimeState GetOldestByOutboxId(string outboxId)
+```
+
+Gets the oldest retained remediation command-state entry recorded for one outbox identifier.
+
+Returns: The oldest matching command state, or `null` when none is retained.
+
+Parameters:
+- `outboxId`: The stable outbox identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbyoutcome-system-string"></a>
+
+##### `GetOldestByOutcome`
+
+```csharp
+EventDispatchRemediationRuntimeState GetOldestByOutcome(string outcome)
+```
+
+Gets the oldest retained remediation command-state entry recorded for one command outcome.
+
+Returns: The oldest matching command state, or `null` when none is retained.
+
+Parameters:
+- `outcome`: The stable command outcome identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbyreason-system-string"></a>
+
+##### `GetOldestByReason`
+
+```csharp
+EventDispatchRemediationRuntimeState GetOldestByReason(string reason)
+```
+
+Gets the oldest retained remediation command-state entry recorded for one operator command reason.
+
+Returns: The oldest matching command state, or `null` when none is retained.
+
+Parameters:
+- `reason`: The stable operator-facing command reason to resolve.
+
 <a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestindoubtbefore-system-nullable-system-datetimeoffset"></a>
 
 ##### `GetOldestInDoubtBefore`

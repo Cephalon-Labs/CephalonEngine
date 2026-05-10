@@ -11856,6 +11856,33 @@ Browse the published API surface by public member.
 - [GetName](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-ieventtyperegistry-getname-cephalon-abstractions-eventsourcing-idomainevent): `Methods` on `IEventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=GetName&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Gets the persisted event-type name for a domain-event instance.
   - `string GetName(IDomainEvent evt)`
+- [GetOldestByActorId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbyactorid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetOldestByActorId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the oldest retained remediation command-state entry recorded for one operator actor.
+  - `EventDispatchRemediationRuntimeState GetOldestByActorId(string actorId)`
+- [GetOldestByChannelId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbychannelid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetOldestByChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the oldest retained remediation command-state entry recorded for one event channel.
+  - `EventDispatchRemediationRuntimeState GetOldestByChannelId(string channelId)`
+- [GetOldestByCorrelationId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbycorrelationid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetOldestByCorrelationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the oldest retained remediation command-state entry recorded for one operator correlation identifier.
+  - `EventDispatchRemediationRuntimeState GetOldestByCorrelationId(string correlationId)`
+- [GetOldestByDispatchOutcome](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbydispatchoutcome-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetOldestByDispatchOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the oldest retained remediation command-state entry recorded for one dispatch-store outcome.
+  - `EventDispatchRemediationRuntimeState GetOldestByDispatchOutcome(string dispatchOutcome)`
+- [GetOldestByMessageId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbymessageid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetOldestByMessageId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the oldest retained remediation command-state entry recorded for one event message.
+  - `EventDispatchRemediationRuntimeState GetOldestByMessageId(string messageId)`
+- [GetOldestByOperationId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbyoperationid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetOldestByOperationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the oldest retained remediation command-state entry recorded for one command operation.
+  - `EventDispatchRemediationRuntimeState GetOldestByOperationId(string operationId)`
+- [GetOldestByOutboxId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbyoutboxid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetOldestByOutboxId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the oldest retained remediation command-state entry recorded for one outbox identifier.
+  - `EventDispatchRemediationRuntimeState GetOldestByOutboxId(string outboxId)`
+- [GetOldestByOutcome](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbyoutcome-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetOldestByOutcome&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the oldest retained remediation command-state entry recorded for one command outcome.
+  - `EventDispatchRemediationRuntimeState GetOldestByOutcome(string outcome)`
+- [GetOldestByReason](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbyreason-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetOldestByReason&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the oldest retained remediation command-state entry recorded for one operator command reason.
+  - `EventDispatchRemediationRuntimeState GetOldestByReason(string reason)`
 - [GetOldestInDoubtBefore](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestindoubtbefore-system-nullable-system-datetimeoffset): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetOldestInDoubtBefore&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the oldest retained in-doubt remediation command-state entry observed at or before an optional UTC cutoff.
   - `EventDispatchRemediationRuntimeState GetOldestInDoubtBefore(DateTimeOffset? beforeObservedAtUtc)`

@@ -1117,6 +1117,14 @@ public static class EngineWebApplicationExtensions
 
                 return state is null ? Results.NotFound() : Results.Ok(state);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/outboxes/{outboxId}/oldest", "GetCephalonEventDispatchRemediationOldestCommandByOutbox", static context =>
+            {
+                var outboxId = GetRouteValue(context, "outboxId");
+                var state = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
+                    .GetOldestByOutboxId(outboxId);
+
+                return state is null ? Results.NotFound() : Results.Ok(state);
+            });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/outboxes/{outboxId}", "GetCephalonEventDispatchRemediationCommandsByOutbox", static context =>
             {
                 var outboxId = GetRouteValue(context, "outboxId");
@@ -1138,6 +1146,14 @@ public static class EngineWebApplicationExtensions
                 var messageId = GetRouteValue(context, "messageId");
                 var state = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
                     .GetLatestByMessageId(messageId);
+
+                return state is null ? Results.NotFound() : Results.Ok(state);
+            });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/messages/{messageId}/oldest", "GetCephalonEventDispatchRemediationOldestCommandByMessage", static context =>
+            {
+                var messageId = GetRouteValue(context, "messageId");
+                var state = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
+                    .GetOldestByMessageId(messageId);
 
                 return state is null ? Results.NotFound() : Results.Ok(state);
             });
@@ -1165,6 +1181,14 @@ public static class EngineWebApplicationExtensions
 
                 return state is null ? Results.NotFound() : Results.Ok(state);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/channels/{channelId}/oldest", "GetCephalonEventDispatchRemediationOldestCommandByChannel", static context =>
+            {
+                var channelId = GetRouteValue(context, "channelId");
+                var state = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
+                    .GetOldestByChannelId(channelId);
+
+                return state is null ? Results.NotFound() : Results.Ok(state);
+            });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/channels/{channelId}", "GetCephalonEventDispatchRemediationCommandsByChannel", static context =>
             {
                 var channelId = GetRouteValue(context, "channelId");
@@ -1186,6 +1210,14 @@ public static class EngineWebApplicationExtensions
                 var operationId = GetRouteValue(context, "operationId");
                 var state = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
                     .GetLatestByOperationId(operationId);
+
+                return state is null ? Results.NotFound() : Results.Ok(state);
+            });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/operations/{operationId}/oldest", "GetCephalonEventDispatchRemediationOldestCommandByOperation", static context =>
+            {
+                var operationId = GetRouteValue(context, "operationId");
+                var state = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
+                    .GetOldestByOperationId(operationId);
 
                 return state is null ? Results.NotFound() : Results.Ok(state);
             });
@@ -1213,6 +1245,14 @@ public static class EngineWebApplicationExtensions
 
                 return state is null ? Results.NotFound() : Results.Ok(state);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/actors/{actorId}/oldest", "GetCephalonEventDispatchRemediationOldestCommandByActor", static context =>
+            {
+                var actorId = GetRouteValue(context, "actorId");
+                var state = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
+                    .GetOldestByActorId(actorId);
+
+                return state is null ? Results.NotFound() : Results.Ok(state);
+            });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/actors/{actorId}", "GetCephalonEventDispatchRemediationCommandsByActor", static context =>
             {
                 var actorId = GetRouteValue(context, "actorId");
@@ -1234,6 +1274,14 @@ public static class EngineWebApplicationExtensions
                 var correlationId = GetRouteValue(context, "correlationId");
                 var state = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
                     .GetLatestByCorrelationId(correlationId);
+
+                return state is null ? Results.NotFound() : Results.Ok(state);
+            });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/correlations/{correlationId}/oldest", "GetCephalonEventDispatchRemediationOldestCommandByCorrelation", static context =>
+            {
+                var correlationId = GetRouteValue(context, "correlationId");
+                var state = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
+                    .GetOldestByCorrelationId(correlationId);
 
                 return state is null ? Results.NotFound() : Results.Ok(state);
             });
@@ -1261,6 +1309,14 @@ public static class EngineWebApplicationExtensions
 
                 return state is null ? Results.NotFound() : Results.Ok(state);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/reasons/{reason}/oldest", "GetCephalonEventDispatchRemediationOldestCommandByReason", static context =>
+            {
+                var reason = GetRouteValue(context, "reason");
+                var state = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
+                    .GetOldestByReason(reason);
+
+                return state is null ? Results.NotFound() : Results.Ok(state);
+            });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/reasons/{reason}", "GetCephalonEventDispatchRemediationCommandsByReason", static context =>
             {
                 var reason = GetRouteValue(context, "reason");
@@ -1285,6 +1341,14 @@ public static class EngineWebApplicationExtensions
 
                 return state is null ? Results.NotFound() : Results.Ok(state);
             });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/outcomes/{outcome}/oldest", "GetCephalonEventDispatchRemediationOldestCommandByOutcome", static context =>
+            {
+                var outcome = GetRouteValue(context, "outcome");
+                var state = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
+                    .GetOldestByOutcome(outcome);
+
+                return state is null ? Results.NotFound() : Results.Ok(state);
+            });
         MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/outcomes/{outcome}", "GetCephalonEventDispatchRemediationCommandsByOutcome", static context =>
             {
                 var outcome = GetRouteValue(context, "outcome");
@@ -1306,6 +1370,14 @@ public static class EngineWebApplicationExtensions
                 var dispatchOutcome = GetRouteValue(context, "dispatchOutcome");
                 var state = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
                     .GetLatestByDispatchOutcome(dispatchOutcome);
+
+                return state is null ? Results.NotFound() : Results.Ok(state);
+            });
+        MapGetResultRequestDelegate(engineGroup, "/event-dispatch-remediation-commands/dispatch-outcomes/{dispatchOutcome}/oldest", "GetCephalonEventDispatchRemediationOldestCommandByDispatchOutcome", static context =>
+            {
+                var dispatchOutcome = GetRouteValue(context, "dispatchOutcome");
+                var state = ResolveEventDispatchRemediationCommandReadModel(context.RequestServices)?
+                    .GetOldestByDispatchOutcome(dispatchOutcome);
 
                 return state is null ? Results.NotFound() : Results.Ok(state);
             });

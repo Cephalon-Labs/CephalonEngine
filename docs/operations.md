@@ -2287,9 +2287,13 @@ Current payload highlights:
   retained command-result state for the same outbox, message, channel, operation, actor,
   correlation, reason, dispatch-outcome, and outcome filter families, and returns `404` when no
   retained command matches
+- `GET /engine/event-dispatch-remediation-commands/{filter}/{value}/oldest` returns the oldest
+  retained command-result state for the same outbox, message, channel, operation, actor,
+  correlation, reason, dispatch-outcome, and outcome filter families, and returns `404` when no
+  retained command matches
 - list and filter command-result routes that return arrays reject invalid, zero, or negative
   `limit` query values with `400`; summary, latest, retention, in-doubt-summary, oldest-in-doubt,
-  filter-summary, filter-latest, and single-command reads keep their existing direct contracts
+  filter-summary, filter-latest, filter-oldest, and single-command reads keep their existing direct contracts
 - the same descriptor and state catalogs are also available through `/engine/snapshot` in
   `EventDispatchRuntimes` and `EventDispatchStates` when operators want one merged runtime answer
 
@@ -2326,6 +2330,10 @@ list, in-doubt, in-doubt summary, oldest in-doubt, command-id, and outbox drill-
   `commandFilterLatestResponse`, `commandFilterLatestMaterialization`, and
   `commandFilterLatestMissing` metadata to discover the matching newest-retained-command reads
   without materializing the detail list;
+  use `commandFilterOldestPolicy`, `commandFilterOldestRoutes`,
+  `commandFilterOldestResponse`, `commandFilterOldestMaterialization`, and
+  `commandFilterOldestMissing` metadata to discover the matching oldest-retained-command reads
+  without materializing the detail list;
   use
   `commandReadLimitQuery`, `commandReadLimitPolicy`, and `commandReadLimitRoutes` metadata from
   `/engine/capabilities`, `/engine/technology-surfaces`, or `/engine/snapshot` to discover the
@@ -2344,11 +2352,13 @@ list, in-doubt, in-doubt summary, oldest in-doubt, command-id, and outbox drill-
   outcomes without materializing the matching detail list; use
   `/engine/event-dispatch-remediation-commands/{filter}/{value}/latest` for the newest retained
   matching command or `404` when no retained command exists; use
+  `/engine/event-dispatch-remediation-commands/{filter}/{value}/oldest` for the oldest retained
+  matching command or `404` when no retained command exists; use
   `/observations?fromUtc={fromUtc}&toUtc={toUtc}` for retained incident windows, but
   do not treat it as durable compliance retention or broker replay ownership
 - `event-dispatch-remediation-commands` includes a catalog entry even when the command history is
   empty; operator dashboards can use that `entryKind = catalog` entry to read command route,
-  retention, in-doubt summary, filter-summary, filter-latest, read-limit, observed-window, idempotency, provider-neutral, and Wolverine-free metadata
+  retention, in-doubt summary, filter-summary, filter-latest, filter-oldest, read-limit, observed-window, idempotency, provider-neutral, and Wolverine-free metadata
   before any incident command is recorded
 - outbox-backed publication states use `accepted` to mean "staged for later dispatch"; dispatch
   completion and terminal dispatch failure remain separate event-dispatch runtime answers

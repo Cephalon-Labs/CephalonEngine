@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T17:07:25.7795863+00:00",
+  "GeneratedAtUtc": "2026-05-10T17:34:50.6815105+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -11156,7 +11156,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 4,
-        "Methods": 34
+        "Methods": 43
       }
     },
     {
@@ -62862,6 +62862,105 @@
       "AnchorId": "member-m-cephalon-eventsourcing-services-ieventtyperegistry-getname-cephalon-abstractions-eventsourcing-idomainevent",
       "Signature": "string GetName(IDomainEvent evt)",
       "Summary": "Gets the persisted event-type name for a domain-event instance."
+    },
+    {
+      "DisplayName": "GetOldestByActorId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbyactorid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeState GetOldestByActorId(string actorId)",
+      "Summary": "Gets the oldest retained remediation command-state entry recorded for one operator actor."
+    },
+    {
+      "DisplayName": "GetOldestByChannelId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbychannelid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeState GetOldestByChannelId(string channelId)",
+      "Summary": "Gets the oldest retained remediation command-state entry recorded for one event channel."
+    },
+    {
+      "DisplayName": "GetOldestByCorrelationId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbycorrelationid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeState GetOldestByCorrelationId(string correlationId)",
+      "Summary": "Gets the oldest retained remediation command-state entry recorded for one operator correlation identifier."
+    },
+    {
+      "DisplayName": "GetOldestByDispatchOutcome",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbydispatchoutcome-system-string",
+      "Signature": "EventDispatchRemediationRuntimeState GetOldestByDispatchOutcome(string dispatchOutcome)",
+      "Summary": "Gets the oldest retained remediation command-state entry recorded for one dispatch-store outcome."
+    },
+    {
+      "DisplayName": "GetOldestByMessageId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbymessageid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeState GetOldestByMessageId(string messageId)",
+      "Summary": "Gets the oldest retained remediation command-state entry recorded for one event message."
+    },
+    {
+      "DisplayName": "GetOldestByOperationId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbyoperationid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeState GetOldestByOperationId(string operationId)",
+      "Summary": "Gets the oldest retained remediation command-state entry recorded for one command operation."
+    },
+    {
+      "DisplayName": "GetOldestByOutboxId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbyoutboxid-system-string",
+      "Signature": "EventDispatchRemediationRuntimeState GetOldestByOutboxId(string outboxId)",
+      "Summary": "Gets the oldest retained remediation command-state entry recorded for one outbox identifier."
+    },
+    {
+      "DisplayName": "GetOldestByOutcome",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbyoutcome-system-string",
+      "Signature": "EventDispatchRemediationRuntimeState GetOldestByOutcome(string outcome)",
+      "Summary": "Gets the oldest retained remediation command-state entry recorded for one command outcome."
+    },
+    {
+      "DisplayName": "GetOldestByReason",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getoldestbyreason-system-string",
+      "Signature": "EventDispatchRemediationRuntimeState GetOldestByReason(string reason)",
+      "Summary": "Gets the oldest retained remediation command-state entry recorded for one operator command reason."
     },
     {
       "DisplayName": "GetOldestInDoubtBefore",

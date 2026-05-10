@@ -101,6 +101,13 @@ public interface IEventDispatchRemediationRuntimeCatalog
     EventDispatchRemediationRuntimeState? GetLatestByOutboxId(string outboxId);
 
     /// <summary>
+    /// Gets the oldest retained remediation command-state entry recorded for one outbox identifier.
+    /// </summary>
+    /// <param name="outboxId">The stable outbox identifier to resolve.</param>
+    /// <returns>The oldest matching command state, or <see langword="null" /> when none is retained.</returns>
+    EventDispatchRemediationRuntimeState? GetOldestByOutboxId(string outboxId);
+
+    /// <summary>
     /// Gets the remediation command-state entries recorded for one event message.
     /// </summary>
     /// <param name="messageId">The stable event message identifier to resolve.</param>
@@ -120,6 +127,13 @@ public interface IEventDispatchRemediationRuntimeCatalog
     /// <param name="messageId">The stable event message identifier to resolve.</param>
     /// <returns>The latest matching command state, or <see langword="null" /> when none is retained.</returns>
     EventDispatchRemediationRuntimeState? GetLatestByMessageId(string messageId);
+
+    /// <summary>
+    /// Gets the oldest retained remediation command-state entry recorded for one event message.
+    /// </summary>
+    /// <param name="messageId">The stable event message identifier to resolve.</param>
+    /// <returns>The oldest matching command state, or <see langword="null" /> when none is retained.</returns>
+    EventDispatchRemediationRuntimeState? GetOldestByMessageId(string messageId);
 
     /// <summary>
     /// Gets the remediation command-state entries recorded for one event channel.
@@ -143,6 +157,13 @@ public interface IEventDispatchRemediationRuntimeCatalog
     EventDispatchRemediationRuntimeState? GetLatestByChannelId(string channelId);
 
     /// <summary>
+    /// Gets the oldest retained remediation command-state entry recorded for one event channel.
+    /// </summary>
+    /// <param name="channelId">The stable event channel identifier to resolve.</param>
+    /// <returns>The oldest matching command state, or <see langword="null" /> when none is retained.</returns>
+    EventDispatchRemediationRuntimeState? GetOldestByChannelId(string channelId);
+
+    /// <summary>
     /// Gets the remediation command-state entries recorded for one command operation.
     /// </summary>
     /// <param name="operationId">The stable command operation identifier to resolve.</param>
@@ -162,6 +183,13 @@ public interface IEventDispatchRemediationRuntimeCatalog
     /// <param name="operationId">The stable command operation identifier to resolve.</param>
     /// <returns>The latest matching command state, or <see langword="null" /> when none is retained.</returns>
     EventDispatchRemediationRuntimeState? GetLatestByOperationId(string operationId);
+
+    /// <summary>
+    /// Gets the oldest retained remediation command-state entry recorded for one command operation.
+    /// </summary>
+    /// <param name="operationId">The stable command operation identifier to resolve.</param>
+    /// <returns>The oldest matching command state, or <see langword="null" /> when none is retained.</returns>
+    EventDispatchRemediationRuntimeState? GetOldestByOperationId(string operationId);
 
     /// <summary>
     /// Gets the remediation command-state entries recorded for one operator actor.
@@ -185,6 +213,13 @@ public interface IEventDispatchRemediationRuntimeCatalog
     EventDispatchRemediationRuntimeState? GetLatestByActorId(string actorId);
 
     /// <summary>
+    /// Gets the oldest retained remediation command-state entry recorded for one operator actor.
+    /// </summary>
+    /// <param name="actorId">The stable operator actor identifier to resolve.</param>
+    /// <returns>The oldest matching command state, or <see langword="null" /> when none is retained.</returns>
+    EventDispatchRemediationRuntimeState? GetOldestByActorId(string actorId);
+
+    /// <summary>
     /// Gets the remediation command-state entries recorded for one operator correlation identifier.
     /// </summary>
     /// <param name="correlationId">The stable operator correlation identifier to resolve.</param>
@@ -204,6 +239,13 @@ public interface IEventDispatchRemediationRuntimeCatalog
     /// <param name="correlationId">The stable operator correlation identifier to resolve.</param>
     /// <returns>The latest matching command state, or <see langword="null" /> when none is retained.</returns>
     EventDispatchRemediationRuntimeState? GetLatestByCorrelationId(string correlationId);
+
+    /// <summary>
+    /// Gets the oldest retained remediation command-state entry recorded for one operator correlation identifier.
+    /// </summary>
+    /// <param name="correlationId">The stable operator correlation identifier to resolve.</param>
+    /// <returns>The oldest matching command state, or <see langword="null" /> when none is retained.</returns>
+    EventDispatchRemediationRuntimeState? GetOldestByCorrelationId(string correlationId);
 
     /// <summary>
     /// Gets the remediation command-state entries recorded for one operator command reason.
@@ -227,6 +269,13 @@ public interface IEventDispatchRemediationRuntimeCatalog
     EventDispatchRemediationRuntimeState? GetLatestByReason(string reason);
 
     /// <summary>
+    /// Gets the oldest retained remediation command-state entry recorded for one operator command reason.
+    /// </summary>
+    /// <param name="reason">The stable operator-facing command reason to resolve.</param>
+    /// <returns>The oldest matching command state, or <see langword="null" /> when none is retained.</returns>
+    EventDispatchRemediationRuntimeState? GetOldestByReason(string reason);
+
+    /// <summary>
     /// Gets the remediation command-state entries recorded for one command outcome.
     /// </summary>
     /// <param name="outcome">The stable command outcome identifier to resolve.</param>
@@ -248,6 +297,13 @@ public interface IEventDispatchRemediationRuntimeCatalog
     EventDispatchRemediationRuntimeState? GetLatestByOutcome(string outcome);
 
     /// <summary>
+    /// Gets the oldest retained remediation command-state entry recorded for one command outcome.
+    /// </summary>
+    /// <param name="outcome">The stable command outcome identifier to resolve.</param>
+    /// <returns>The oldest matching command state, or <see langword="null" /> when none is retained.</returns>
+    EventDispatchRemediationRuntimeState? GetOldestByOutcome(string outcome);
+
+    /// <summary>
     /// Gets the remediation command-state entries recorded for one dispatch-store outcome.
     /// </summary>
     /// <param name="dispatchOutcome">The stable dispatch-store outcome identifier to resolve.</param>
@@ -267,4 +323,11 @@ public interface IEventDispatchRemediationRuntimeCatalog
     /// <param name="dispatchOutcome">The stable dispatch-store outcome identifier to resolve.</param>
     /// <returns>The latest matching command state, or <see langword="null" /> when none is retained.</returns>
     EventDispatchRemediationRuntimeState? GetLatestByDispatchOutcome(string dispatchOutcome);
+
+    /// <summary>
+    /// Gets the oldest retained remediation command-state entry recorded for one dispatch-store outcome.
+    /// </summary>
+    /// <param name="dispatchOutcome">The stable dispatch-store outcome identifier to resolve.</param>
+    /// <returns>The oldest matching command state, or <see langword="null" /> when none is retained.</returns>
+    EventDispatchRemediationRuntimeState? GetOldestByDispatchOutcome(string dispatchOutcome);
 }

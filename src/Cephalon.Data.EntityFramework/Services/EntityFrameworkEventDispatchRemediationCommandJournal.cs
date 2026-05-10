@@ -142,6 +142,13 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
         return ReadLatestState(entries => entries.Where(entry => entry.OutboxId == normalizedOutboxId));
     }
 
+    public EventDispatchRemediationRuntimeState? GetOldestByOutboxId(string outboxId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(outboxId);
+        var normalizedOutboxId = outboxId.Trim();
+        return ReadOldestState(entries => entries.Where(entry => entry.OutboxId == normalizedOutboxId));
+    }
+
     public IReadOnlyList<EventDispatchRemediationRuntimeState> GetByMessageId(string messageId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(messageId);
@@ -161,6 +168,13 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
         ArgumentException.ThrowIfNullOrWhiteSpace(messageId);
         var normalizedMessageId = messageId.Trim();
         return ReadLatestState(entries => entries.Where(entry => entry.MessageId == normalizedMessageId));
+    }
+
+    public EventDispatchRemediationRuntimeState? GetOldestByMessageId(string messageId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(messageId);
+        var normalizedMessageId = messageId.Trim();
+        return ReadOldestState(entries => entries.Where(entry => entry.MessageId == normalizedMessageId));
     }
 
     public IReadOnlyList<EventDispatchRemediationRuntimeState> GetByChannelId(string channelId)
@@ -184,6 +198,13 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
         return ReadLatestState(entries => entries.Where(entry => entry.ChannelId == normalizedChannelId));
     }
 
+    public EventDispatchRemediationRuntimeState? GetOldestByChannelId(string channelId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(channelId);
+        var normalizedChannelId = channelId.Trim();
+        return ReadOldestState(entries => entries.Where(entry => entry.ChannelId == normalizedChannelId));
+    }
+
     public IReadOnlyList<EventDispatchRemediationRuntimeState> GetByOperationId(string operationId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(operationId);
@@ -203,6 +224,13 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
         ArgumentException.ThrowIfNullOrWhiteSpace(operationId);
         var normalizedOperationId = operationId.Trim();
         return ReadLatestState(entries => entries.Where(entry => entry.OperationId == normalizedOperationId));
+    }
+
+    public EventDispatchRemediationRuntimeState? GetOldestByOperationId(string operationId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(operationId);
+        var normalizedOperationId = operationId.Trim();
+        return ReadOldestState(entries => entries.Where(entry => entry.OperationId == normalizedOperationId));
     }
 
     public IReadOnlyList<EventDispatchRemediationRuntimeState> GetByActorId(string actorId)
@@ -226,6 +254,13 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
         return ReadLatestState(entries => entries.Where(entry => entry.ActorId == normalizedActorId));
     }
 
+    public EventDispatchRemediationRuntimeState? GetOldestByActorId(string actorId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(actorId);
+        var normalizedActorId = actorId.Trim();
+        return ReadOldestState(entries => entries.Where(entry => entry.ActorId == normalizedActorId));
+    }
+
     public IReadOnlyList<EventDispatchRemediationRuntimeState> GetByCorrelationId(string correlationId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(correlationId);
@@ -245,6 +280,13 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
         ArgumentException.ThrowIfNullOrWhiteSpace(correlationId);
         var normalizedCorrelationId = correlationId.Trim();
         return ReadLatestState(entries => entries.Where(entry => entry.CorrelationId == normalizedCorrelationId));
+    }
+
+    public EventDispatchRemediationRuntimeState? GetOldestByCorrelationId(string correlationId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(correlationId);
+        var normalizedCorrelationId = correlationId.Trim();
+        return ReadOldestState(entries => entries.Where(entry => entry.CorrelationId == normalizedCorrelationId));
     }
 
     public IReadOnlyList<EventDispatchRemediationRuntimeState> GetByReason(string reason)
@@ -268,6 +310,13 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
         return ReadLatestState(entries => entries.Where(entry => entry.Reason == normalizedReason));
     }
 
+    public EventDispatchRemediationRuntimeState? GetOldestByReason(string reason)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(reason);
+        var normalizedReason = reason.Trim();
+        return ReadOldestState(entries => entries.Where(entry => entry.Reason == normalizedReason));
+    }
+
     public IReadOnlyList<EventDispatchRemediationRuntimeState> GetByOutcome(string outcome)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(outcome);
@@ -289,6 +338,13 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
         return ReadLatestState(entries => entries.Where(entry => entry.Outcome == normalizedOutcome));
     }
 
+    public EventDispatchRemediationRuntimeState? GetOldestByOutcome(string outcome)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(outcome);
+        var normalizedOutcome = outcome.Trim();
+        return ReadOldestState(entries => entries.Where(entry => entry.Outcome == normalizedOutcome));
+    }
+
     public IReadOnlyList<EventDispatchRemediationRuntimeState> GetByDispatchOutcome(string dispatchOutcome)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(dispatchOutcome);
@@ -308,6 +364,13 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
         ArgumentException.ThrowIfNullOrWhiteSpace(dispatchOutcome);
         var normalizedDispatchOutcome = dispatchOutcome.Trim();
         return ReadLatestState(entries => entries.Where(entry => entry.DispatchOutcome == normalizedDispatchOutcome));
+    }
+
+    public EventDispatchRemediationRuntimeState? GetOldestByDispatchOutcome(string dispatchOutcome)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(dispatchOutcome);
+        var normalizedDispatchOutcome = dispatchOutcome.Trim();
+        return ReadOldestState(entries => entries.Where(entry => entry.DispatchOutcome == normalizedDispatchOutcome));
     }
 
     public async ValueTask<EventDispatchRemediationCommandReservation> ReserveAsync(
@@ -391,6 +454,17 @@ internal sealed class EntityFrameworkEventDispatchRemediationCommandJournal(
     {
         var entry = shape(journalContext.EventDispatchRemediationCommandJournalEntries.AsNoTracking())
             .OrderByDescending(entry => entry.ObservedAtUtc)
+            .ThenBy(entry => entry.CommandId)
+            .FirstOrDefault();
+
+        return entry is null ? null : CreateState(entry);
+    }
+
+    private EventDispatchRemediationRuntimeState? ReadOldestState(
+        Func<IQueryable<EntityFrameworkEventDispatchRemediationCommandEntry>, IQueryable<EntityFrameworkEventDispatchRemediationCommandEntry>> shape)
+    {
+        var entry = shape(journalContext.EventDispatchRemediationCommandJournalEntries.AsNoTracking())
+            .OrderBy(entry => entry.ObservedAtUtc)
             .ThenBy(entry => entry.CommandId)
             .FirstOrDefault();
 
