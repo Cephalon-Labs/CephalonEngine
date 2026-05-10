@@ -30,17 +30,6 @@ public sealed class EventingOptions
     public IList<EventSubscriptionDescriptor> Subscriptions { get; } = [];
 
     /// <summary>
-    /// Gets the host-defined subscription handler bindings that the native in-process executor should adapt.
-    /// </summary>
-    /// <remarks>
-    /// These descriptors let configuration bind a declared subscription to an
-    /// <see cref="IEventSubscriptionHandler" /> type without requiring application code to implement
-    /// <see cref="IEventSubscriptionExecutor" /> directly. The resulting execution remains an opt-in,
-    /// process-local Cephalon-managed path.
-    /// </remarks>
-    public IList<EventSubscriptionHandlerDescriptor> SubscriptionHandlers { get; } = [];
-
-    /// <summary>
     /// Gets or sets a value indicating whether publishing features are enabled.
     /// </summary>
     public bool EnablePublishing { get; set; } = true;

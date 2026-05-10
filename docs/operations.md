@@ -2454,15 +2454,13 @@ Current `Cephalon.Eventing` highlights:
 
 - `event-channels` and `event-subscriptions` keep channel and declared subscription descriptors
   visible under the selected `EventDrivenIntegration` technology
-- `engine.AddEventingFromConfiguration(configuration)` can now populate those descriptors from
-  `Engine:Messaging:Channels` and `Engine:Messaging:Subscriptions`; configured subscriptions
-  carry `descriptorSource = configuration` and `configurationPath` metadata, and configuration
-  wins over module-contributed defaults with the same descriptor id
-- configured subscriptions can also carry `HandlerType`, or a host can use
-  `Engine:Messaging:SubscriptionHandlers`, to bind a declared subscription to an
-  `IEventSubscriptionHandler` type; the native in-process lane adapts that handler into an
-  executor and projects `binding.handlerBindingSource`, `binding.handlerType`, and
-  `binding.configurationPath` metadata
+- `engine.AddEventingFromConfiguration(configuration)` can populate channel descriptors from
+  `Engine:Messaging:Channels`; subscription descriptors and executors stay code-first through
+  `EventingOptions.Subscriptions`, `IEventSubscriptionContributor`, and `IEventSubscriptionExecutor`
+  so publish/subscribe behavior remains typed and fast
+- `Engine:Messaging:Subscriptions` and `Engine:Messaging:SubscriptionHandlers` are rejected by
+  the native configuration reader; use code registration or reusable modules for subscription
+  descriptors, handlers, and executors
 - `event-subscriptions` now projects execution readiness through stable metadata keys such as
   `executionReadiness`, `executionPath`, and `executionReadinessReasons`
 - the typed readiness answer is also available through `/engine/event-subscription-readiness` and

@@ -304,18 +304,6 @@ Gets or sets the maximum number of event-dispatch remediation command results re
 
 Remarks: The default value is `256`. Set the value to `0` to disable the process-local remediation command history while keeping the command dispatcher itself available. The catalog is an operator-audit read model, not a durable compliance store; hosts that need long-term retention should also persist command results.
 
-<a id="member-p-cephalon-eventing-configuration-eventingoptions-subscriptionhandlers"></a>
-
-##### `SubscriptionHandlers`
-
-```csharp
-IList<EventSubscriptionHandlerDescriptor> SubscriptionHandlers { get; }
-```
-
-Gets the host-defined subscription handler bindings that the native in-process executor should adapt.
-
-Remarks: These descriptors let configuration bind a declared subscription to an `IEventSubscriptionHandler` type without requiring application code to implement `IEventSubscriptionExecutor` directly. The resulting execution remains an opt-in, process-local Cephalon-managed path.
-
 <a id="member-p-cephalon-eventing-configuration-eventingoptions-subscriptions"></a>
 
 ##### `Subscriptions`
@@ -367,13 +355,13 @@ Parameters:
 EngineBuilder AddEventingFromConfiguration(this EngineBuilder builder, IConfiguration configuration)
 ```
 
-Adds the eventing runtime pack to the engine and reads host-owned native eventing descriptors and settings from configuration.
+Adds the eventing runtime pack to the engine and reads host-owned native eventing settings from configuration.
 
 Returns: The same engine builder for fluent composition.
 
 Parameters:
 - `builder`: The engine builder to extend.
-- `configuration`: The host configuration that contains the `Engine:Messaging` section, including optional `Channels`, `Subscriptions`, `SubscriptionHandlers`, `InProcessSubscriptions`, and publication settings.
+- `configuration`: The host configuration that contains the `Engine:Messaging` section, including optional `Channels`, `InProcessSubscriptions`, and publication policy settings.
 
 <a id="member-m-cephalon-eventing-registration-eventingenginebuilderextensions-addeventingfromconfiguration-cephalon-engine-composition-enginebuilder-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-eventing-configuration-eventingoptions"></a>
 
@@ -383,14 +371,14 @@ Parameters:
 EngineBuilder AddEventingFromConfiguration(this EngineBuilder builder, IConfiguration configuration, Action<EventingOptions> configure)
 ```
 
-Adds the eventing runtime pack to the engine and reads host-owned native eventing descriptors and settings from configuration.
+Adds the eventing runtime pack to the engine and reads host-owned native eventing settings from configuration.
 
 Returns: The same engine builder for fluent composition.
 
 Parameters:
 - `builder`: The engine builder to extend.
-- `configuration`: The host configuration that contains the `Engine:Messaging` section, including optional `Channels`, `Subscriptions`, `SubscriptionHandlers`, `InProcessSubscriptions`, and publication settings.
-- `configure`: A callback that can add channels, subscriptions, or deliberate overrides after configuration is read.
+- `configuration`: The host configuration that contains the `Engine:Messaging` section, including optional `Channels`, `InProcessSubscriptions`, and publication policy settings.
+- `configure`: A callback that can add channels, subscriptions, or deliberate code-owned overrides after configuration is read.
 
 <a id="namespace-cephalon-eventing-services"></a>
 
@@ -1622,77 +1610,6 @@ string SubscriptionId { get; }
 
 Gets the stable declared subscription identifier.
 
-<a id="type-cephalon-eventing-services-eventsubscriptionhandlerdescriptor"></a>
-
-### `EventSubscriptionHandlerDescriptor`
-
-Describes a configured handler type that should execute a declared event subscription.
-
-#### Declaration
-```csharp
-public sealed class EventSubscriptionHandlerDescriptor
-```
-
-#### Constructors
-
-<a id="member-m-cephalon-eventing-services-eventsubscriptionhandlerdescriptor-ctor-system-string-system-string-system-string-system-string"></a>
-
-##### `EventSubscriptionHandlerDescriptor`
-
-```csharp
-EventSubscriptionHandlerDescriptor(string subscriptionId, string handlerTypeName, string source, string configurationPath)
-```
-
-Creates a new configured subscription handler descriptor.
-
-Parameters:
-- `subscriptionId`: The declared subscription identifier executed by the handler.
-- `handlerTypeName`: The fully qualified or assembly-qualified handler type name.
-- `source`: The descriptor source, such as `configuration` or `code`.
-- `configurationPath`: The configuration path that declared the handler binding, when known.
-
-#### Properties
-
-<a id="member-p-cephalon-eventing-services-eventsubscriptionhandlerdescriptor-configurationpath"></a>
-
-##### `ConfigurationPath`
-
-```csharp
-string ConfigurationPath { get; }
-```
-
-Gets the configuration path that declared the handler binding, when known.
-
-<a id="member-p-cephalon-eventing-services-eventsubscriptionhandlerdescriptor-handlertypename"></a>
-
-##### `HandlerTypeName`
-
-```csharp
-string HandlerTypeName { get; }
-```
-
-Gets the fully qualified or assembly-qualified handler type name.
-
-<a id="member-p-cephalon-eventing-services-eventsubscriptionhandlerdescriptor-source"></a>
-
-##### `Source`
-
-```csharp
-string Source { get; }
-```
-
-Gets the descriptor source, such as `configuration` or `code`.
-
-<a id="member-p-cephalon-eventing-services-eventsubscriptionhandlerdescriptor-subscriptionid"></a>
-
-##### `SubscriptionId`
-
-```csharp
-string SubscriptionId { get; }
-```
-
-Gets the declared subscription identifier executed by the handler.
-
 <a id="type-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys"></a>
 
 ### `EventSubscriptionRuntimeMetadataKeys`
@@ -2583,37 +2500,6 @@ Returns: A task that completes when the managed subscription attempt finishes.
 
 Parameters:
 - `context`: The host-agnostic execution context for the current subscription attempt.
-- `cancellationToken`: The cancellation token for the current execution attempt.
-
-<a id="type-cephalon-eventing-services-ieventsubscriptionhandler"></a>
-
-### `IEventSubscriptionHandler`
-
-Handles one configured event subscription without directly implementing the executor contract.
-
-Remarks: The native eventing pack adapts these handlers into `IEventSubscriptionExecutor` instances when a host declares handler bindings through configuration. This keeps the consumer type focused on business handling while the subscription id and runtime binding stay configuration-owned.
-
-#### Declaration
-```csharp
-public interface IEventSubscriptionHandler
-```
-
-#### Methods
-
-<a id="member-m-cephalon-eventing-services-ieventsubscriptionhandler-handleasync-cephalon-eventing-services-eventsubscriptionexecutioncontext-system-threading-cancellationtoken"></a>
-
-##### `HandleAsync`
-
-```csharp
-ValueTask HandleAsync(EventSubscriptionExecutionContext context, CancellationToken cancellationToken)
-```
-
-Handles the current event subscription execution attempt.
-
-Returns: A task that completes when the handler attempt finishes.
-
-Parameters:
-- `context`: The host-agnostic event subscription execution context.
 - `cancellationToken`: The cancellation token for the current execution attempt.
 
 <a id="type-cephalon-eventing-services-ieventsubscriptionregistry"></a>

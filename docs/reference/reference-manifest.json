@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T00:11:23.995795+00:00",
+  "GeneratedAtUtc": "2026-05-10T00:27:39.7130984+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -168,7 +168,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 3,
-      "TypeCount": 34
+      "TypeCount": 32
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1221,7 +1221,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 32
+      "TypeCount": 30
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8373,7 +8373,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 25,
+        "Properties": 24,
         "Methods": 0
       }
     },
@@ -8689,21 +8689,6 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 7,
-        "Methods": 0
-      }
-    },
-    {
-      "DisplayName": "EventSubscriptionHandlerDescriptor",
-      "NamespaceName": "Cephalon.Eventing.Services",
-      "AssemblyName": "Cephalon.Eventing",
-      "FileName": "cephalon-eventing.md",
-      "AnchorId": "type-cephalon-eventing-services-eventsubscriptionhandlerdescriptor",
-      "Declaration": "public sealed class EventSubscriptionHandlerDescriptor",
-      "Summary": "Describes a configured handler type that should execute a declared event subscription.",
-      "MemberCounts": {
-        "Constructors": 1,
-        "Fields": 0,
-        "Properties": 4,
         "Methods": 0
       }
     },
@@ -11284,21 +11269,6 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 1
-      }
-    },
-    {
-      "DisplayName": "IEventSubscriptionHandler",
-      "NamespaceName": "Cephalon.Eventing.Services",
-      "AssemblyName": "Cephalon.Eventing",
-      "FileName": "cephalon-eventing.md",
-      "AnchorId": "type-cephalon-eventing-services-ieventsubscriptionhandler",
-      "Declaration": "public interface IEventSubscriptionHandler",
-      "Summary": "Handles one configured event subscription without directly implementing the executor contract.",
-      "MemberCounts": {
-        "Constructors": 0,
-        "Fields": 0,
-        "Properties": 0,
         "Methods": 1
       }
     },
@@ -23466,7 +23436,7 @@
       "FileName": "cephalon-eventing.md",
       "AnchorId": "member-m-cephalon-eventing-registration-eventingenginebuilderextensions-addeventingfromconfiguration-cephalon-engine-composition-enginebuilder-microsoft-extensions-configuration-iconfiguration",
       "Signature": "EngineBuilder AddEventingFromConfiguration(this EngineBuilder builder, IConfiguration configuration)",
-      "Summary": "Adds the eventing runtime pack to the engine and reads host-owned native eventing descriptors and settings from configuration."
+      "Summary": "Adds the eventing runtime pack to the engine and reads host-owned native eventing settings from configuration."
     },
     {
       "DisplayName": "AddEventingFromConfiguration",
@@ -23477,7 +23447,7 @@
       "FileName": "cephalon-eventing.md",
       "AnchorId": "member-m-cephalon-eventing-registration-eventingenginebuilderextensions-addeventingfromconfiguration-cephalon-engine-composition-enginebuilder-microsoft-extensions-configuration-iconfiguration-system-action-cephalon-eventing-configuration-eventingoptions",
       "Signature": "EngineBuilder AddEventingFromConfiguration(this EngineBuilder builder, IConfiguration configuration, Action\u003CEventingOptions\u003E configure)",
-      "Summary": "Adds the eventing runtime pack to the engine and reads host-owned native eventing descriptors and settings from configuration."
+      "Summary": "Adds the eventing runtime pack to the engine and reads host-owned native eventing settings from configuration."
     },
     {
       "DisplayName": "AddEventSourcing",
@@ -37206,17 +37176,6 @@
       "AnchorId": "member-p-cephalon-referencedocs-generation-referencedocsrequest-configuration",
       "Signature": "string Configuration { get; }",
       "Summary": "Gets the build configuration to read from."
-    },
-    {
-      "DisplayName": "ConfigurationPath",
-      "Category": "Properties",
-      "DeclaringTypeName": "EventSubscriptionHandlerDescriptor",
-      "NamespaceName": "Cephalon.Eventing.Services",
-      "AssemblyName": "Cephalon.Eventing",
-      "FileName": "cephalon-eventing.md",
-      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionhandlerdescriptor-configurationpath",
-      "Signature": "string ConfigurationPath { get; }",
-      "Summary": "Gets the configuration path that declared the handler binding, when known."
     },
     {
       "DisplayName": "ConfigurationSetName",
@@ -52946,17 +52905,6 @@
       "Summary": "Creates a new execution report for a declared event subscription."
     },
     {
-      "DisplayName": "EventSubscriptionHandlerDescriptor",
-      "Category": "Constructors",
-      "DeclaringTypeName": "EventSubscriptionHandlerDescriptor",
-      "NamespaceName": "Cephalon.Eventing.Services",
-      "AssemblyName": "Cephalon.Eventing",
-      "FileName": "cephalon-eventing.md",
-      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionhandlerdescriptor-ctor-system-string-system-string-system-string-system-string",
-      "Signature": "EventSubscriptionHandlerDescriptor(string subscriptionId, string handlerTypeName, string source, string configurationPath)",
-      "Summary": "Creates a new configured subscription handler descriptor."
-    },
-    {
       "DisplayName": "EventSubscriptionRuntimeState",
       "Category": "Constructors",
       "DeclaringTypeName": "EventSubscriptionRuntimeState",
@@ -62760,17 +62708,6 @@
     {
       "DisplayName": "HandleAsync",
       "Category": "Methods",
-      "DeclaringTypeName": "IEventSubscriptionHandler",
-      "NamespaceName": "Cephalon.Eventing.Services",
-      "AssemblyName": "Cephalon.Eventing",
-      "FileName": "cephalon-eventing.md",
-      "AnchorId": "member-m-cephalon-eventing-services-ieventsubscriptionhandler-handleasync-cephalon-eventing-services-eventsubscriptionexecutioncontext-system-threading-cancellationtoken",
-      "Signature": "ValueTask HandleAsync(EventSubscriptionExecutionContext context, CancellationToken cancellationToken)",
-      "Summary": "Handles the current event subscription execution attempt."
-    },
-    {
-      "DisplayName": "HandleAsync",
-      "Category": "Methods",
       "DeclaringTypeName": "IQueryHandler\u003CTQuery, TResult\u003E",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -62800,17 +62737,6 @@
       "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-handlerid",
       "Signature": "const string HandlerId",
       "Summary": "Identifies the logical handler or consumer declared for the subscription."
-    },
-    {
-      "DisplayName": "HandlerTypeName",
-      "Category": "Properties",
-      "DeclaringTypeName": "EventSubscriptionHandlerDescriptor",
-      "NamespaceName": "Cephalon.Eventing.Services",
-      "AssemblyName": "Cephalon.Eventing",
-      "FileName": "cephalon-eventing.md",
-      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionhandlerdescriptor-handlertypename",
-      "Signature": "string HandlerTypeName { get; }",
-      "Summary": "Gets the fully qualified or assembly-qualified handler type name."
     },
     {
       "DisplayName": "HasActiveReporter",
@@ -114387,17 +114313,6 @@
     {
       "DisplayName": "Source",
       "Category": "Properties",
-      "DeclaringTypeName": "EventSubscriptionHandlerDescriptor",
-      "NamespaceName": "Cephalon.Eventing.Services",
-      "AssemblyName": "Cephalon.Eventing",
-      "FileName": "cephalon-eventing.md",
-      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionhandlerdescriptor-source",
-      "Signature": "string Source { get; }",
-      "Summary": "Gets the descriptor source, such as \u0060configuration\u0060 or \u0060code\u0060."
-    },
-    {
-      "DisplayName": "Source",
-      "Category": "Properties",
       "DeclaringTypeName": "HttpInvitationDeliveryPayload",
       "NamespaceName": "Cephalon.MultiTenancy.Governance.HttpDelivery.Services",
       "AssemblyName": "Cephalon.MultiTenancy.Governance.HttpDelivery",
@@ -118893,17 +118808,6 @@
       "Summary": "Gets the number of subscription-confirmation attempts that succeeded."
     },
     {
-      "DisplayName": "SubscriptionHandlers",
-      "Category": "Properties",
-      "DeclaringTypeName": "EventingOptions",
-      "NamespaceName": "Cephalon.Eventing.Configuration",
-      "AssemblyName": "Cephalon.Eventing",
-      "FileName": "cephalon-eventing.md",
-      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-subscriptionhandlers",
-      "Signature": "IList\u003CEventSubscriptionHandlerDescriptor\u003E SubscriptionHandlers { get; }",
-      "Summary": "Gets the host-defined subscription handler bindings that the native in-process executor should adapt."
-    },
-    {
       "DisplayName": "SubscriptionId",
       "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionExecutionBindingDescriptor",
@@ -118935,17 +118839,6 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionexecutionreport-subscriptionid",
       "Signature": "string SubscriptionId { get; }",
       "Summary": "Gets the stable declared subscription identifier."
-    },
-    {
-      "DisplayName": "SubscriptionId",
-      "Category": "Properties",
-      "DeclaringTypeName": "EventSubscriptionHandlerDescriptor",
-      "NamespaceName": "Cephalon.Eventing.Services",
-      "AssemblyName": "Cephalon.Eventing",
-      "FileName": "cephalon-eventing.md",
-      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionhandlerdescriptor-subscriptionid",
-      "Signature": "string SubscriptionId { get; }",
-      "Summary": "Gets the declared subscription identifier executed by the handler."
     },
     {
       "DisplayName": "SubscriptionId",

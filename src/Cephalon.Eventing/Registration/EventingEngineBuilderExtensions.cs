@@ -32,13 +32,12 @@ public static class EventingEngineBuilderExtensions
     }
 
     /// <summary>
-    /// Adds the eventing runtime pack to the engine and reads host-owned native eventing descriptors and settings from configuration.
+    /// Adds the eventing runtime pack to the engine and reads host-owned native eventing settings from configuration.
     /// </summary>
     /// <param name="builder">The engine builder to extend.</param>
     /// <param name="configuration">
     /// The host configuration that contains the <c>Engine:Messaging</c> section, including optional
-    /// <c>Channels</c>, <c>Subscriptions</c>, <c>SubscriptionHandlers</c>,
-    /// <c>InProcessSubscriptions</c>, and publication settings.
+    /// <c>Channels</c>, <c>InProcessSubscriptions</c>, and publication policy settings.
     /// </param>
     /// <returns>The same engine builder for fluent composition.</returns>
     public static EngineBuilder AddEventingFromConfiguration(
@@ -49,16 +48,15 @@ public static class EventingEngineBuilderExtensions
     }
 
     /// <summary>
-    /// Adds the eventing runtime pack to the engine and reads host-owned native eventing descriptors and settings from configuration.
+    /// Adds the eventing runtime pack to the engine and reads host-owned native eventing settings from configuration.
     /// </summary>
     /// <param name="builder">The engine builder to extend.</param>
     /// <param name="configuration">
     /// The host configuration that contains the <c>Engine:Messaging</c> section, including optional
-    /// <c>Channels</c>, <c>Subscriptions</c>, <c>SubscriptionHandlers</c>,
-    /// <c>InProcessSubscriptions</c>, and publication settings.
+    /// <c>Channels</c>, <c>InProcessSubscriptions</c>, and publication policy settings.
     /// </param>
     /// <param name="configure">
-    /// A callback that can add channels, subscriptions, or deliberate overrides after configuration is read.
+    /// A callback that can add channels, subscriptions, or deliberate code-owned overrides after configuration is read.
     /// </param>
     /// <returns>The same engine builder for fluent composition.</returns>
     public static EngineBuilder AddEventingFromConfiguration(

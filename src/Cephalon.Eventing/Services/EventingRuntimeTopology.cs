@@ -5,7 +5,6 @@ internal sealed record EventingRuntimeTopology(
     bool HasDispatchStore,
     bool HasDispatchRuntimeContributors,
     bool HasExternalManagedSubscriptionExecutionBindings,
-    bool HasConfiguredSubscriptionHandlers,
     bool HasInboxPath,
     bool HasInProcessSubscriptionExecutionPath,
     bool HasManagedSubscriptionExecutionBindings,

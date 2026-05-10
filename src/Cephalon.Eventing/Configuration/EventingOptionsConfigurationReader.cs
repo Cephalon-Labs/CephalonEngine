@@ -32,10 +32,22 @@ internal static class EventingOptionsConfigurationReader
 
         ReadChannels(messagingSection.GetSection("Channels"), options, $"{messagingPath}:Channels");
         ReadChannels(messagingSection.GetSection("EventChannels"), options, $"{messagingPath}:EventChannels");
-        ReadSubscriptions(messagingSection.GetSection("Subscriptions"), options, $"{messagingPath}:Subscriptions");
-        ReadSubscriptions(messagingSection.GetSection("EventSubscriptions"), options, $"{messagingPath}:EventSubscriptions");
-        ReadSubscriptionHandlers(messagingSection.GetSection("SubscriptionHandlers"), options, $"{messagingPath}:SubscriptionHandlers");
-        ReadSubscriptionHandlers(messagingSection.GetSection("EventSubscriptionHandlers"), options, $"{messagingPath}:EventSubscriptionHandlers");
+        RejectCodeOwnedSection(
+            messagingSection.GetSection("Subscriptions"),
+            $"{messagingPath}:Subscriptions",
+            "event subscription descriptors");
+        RejectCodeOwnedSection(
+            messagingSection.GetSection("EventSubscriptions"),
+            $"{messagingPath}:EventSubscriptions",
+            "event subscription descriptors");
+        RejectCodeOwnedSection(
+            messagingSection.GetSection("SubscriptionHandlers"),
+            $"{messagingPath}:SubscriptionHandlers",
+            "event subscription handler bindings");
+        RejectCodeOwnedSection(
+            messagingSection.GetSection("EventSubscriptionHandlers"),
+            $"{messagingPath}:EventSubscriptionHandlers",
+            "event subscription handler bindings");
 
         ReadBoolean(section, options, static (target, value) => target.EnableInProcessSubscriptionExecution = value, "EnableExecution", "Enabled");
         ReadInteger(section, options, static (target, value) => target.InProcessSubscriptionMaxAttempts = value, "MaxAttempts");
@@ -157,109 +169,19 @@ internal static class EventingOptionsConfigurationReader
         }
     }
 
-    private static void ReadSubscriptions(
-        IConfiguration configuration,
-        EventingOptions options,
-        string path)
+    private static void RejectCodeOwnedSection(
+        IConfigurationSection configuration,
+        string path,
+        string descriptorKind)
     {
-        foreach (var child in configuration.GetChildren())
-        {
-            var id = ReadDescriptorId(child, path, "subscription");
-            var displayName = ReadOptionalString(child, "DisplayName", "Name") ?? id;
-            var description = ReadOptionalString(child, "Description") ?? $"{displayName} event subscription.";
-            var channelId = ReadRequiredString(child, path, id, "subscription", "ChannelId", "Channel");
-            var handlerId = ReadOptionalString(child, "HandlerId", "Handler", "ExecutorId", "ConsumerId") ?? id;
-            var deliveryMode = ReadOptionalString(child, "DeliveryMode", "Mode") ?? "message-handler";
-            var metadata = ReadMetadata(child.GetSection("Metadata"));
-            metadata.TryAdd("descriptorSource", "configuration");
-            metadata.TryAdd("configurationPath", $"{path}:{child.Key}");
-
-            options.Subscriptions.Add(new EventSubscriptionDescriptor(
-                id,
-                displayName,
-                description,
-                channelId,
-                handlerId,
-                deliveryMode,
-                ReadStringList(child.GetSection("Tags")),
-                metadata));
-
-            ReadSubscriptionHandler(child, options, id, $"{path}:{child.Key}");
-        }
-    }
-
-    private static void ReadSubscriptionHandlers(
-        IConfiguration configuration,
-        EventingOptions options,
-        string path)
-    {
-        foreach (var child in configuration.GetChildren())
-        {
-            var subscriptionId = ReadSubscriptionHandlerSubscriptionId(child, path);
-            var handlerTypeName = ReadRequiredString(
-                child,
-                path,
-                subscriptionId,
-                "subscription handler",
-                "HandlerType",
-                "HandlerTypeName",
-                "Type",
-                "TypeName",
-                "ExecutorType",
-                "ExecutorTypeName");
-
-            options.SubscriptionHandlers.Add(new EventSubscriptionHandlerDescriptor(
-                subscriptionId,
-                handlerTypeName,
-                source: "configuration",
-                configurationPath: $"{path}:{child.Key}"));
-        }
-    }
-
-    private static void ReadSubscriptionHandler(
-        IConfiguration configuration,
-        EventingOptions options,
-        string subscriptionId,
-        string path)
-    {
-        var handlerTypeName = ReadOptionalString(
-            configuration,
-            "HandlerType",
-            "HandlerTypeName",
-            "ExecutorType",
-            "ExecutorTypeName");
-        handlerTypeName ??= ReadOptionalString(configuration.GetSection("Handler"), "Type", "TypeName");
-        handlerTypeName ??= ReadOptionalString(configuration.GetSection("Executor"), "Type", "TypeName");
-
-        if (string.IsNullOrWhiteSpace(handlerTypeName))
+        if (string.IsNullOrWhiteSpace(configuration.Value) &&
+            !configuration.GetChildren().Any())
         {
             return;
         }
 
-        options.SubscriptionHandlers.Add(new EventSubscriptionHandlerDescriptor(
-            subscriptionId,
-            handlerTypeName,
-            source: "configuration",
-            configurationPath: path));
-    }
-
-    private static string ReadSubscriptionHandlerSubscriptionId(
-        IConfigurationSection configuration,
-        string path)
-    {
-        var subscriptionId = ReadOptionalString(configuration, "SubscriptionId", "Subscription");
-        if (!string.IsNullOrWhiteSpace(subscriptionId))
-        {
-            return subscriptionId;
-        }
-
-        if (int.TryParse(configuration.Key, NumberStyles.Integer, CultureInfo.InvariantCulture, out _))
-        {
-            throw new FormatException(
-                $"Eventing subscription handler configuration entry '{path}:{configuration.Key}' must provide a 'SubscriptionId' value when entries are represented as an array.");
-        }
-
-        return configuration.Key;
+        throw new InvalidOperationException(
+            $"Eventing {descriptorKind} are code-owned for performance and type safety. Do not configure '{path}'; register subscriptions and executors in code through AddEventing(...), IEventSubscriptionContributor, and IEventSubscriptionExecutor.");
     }
 
     private static string ReadDescriptorId(
@@ -280,23 +202,6 @@ internal static class EventingOptionsConfigurationReader
         }
 
         return configuration.Key;
-    }
-
-    private static string ReadRequiredString(
-        IConfiguration configuration,
-        string path,
-        string id,
-        string descriptorKind,
-        params string[] keys)
-    {
-        var value = ReadOptionalString(configuration, keys);
-        if (!string.IsNullOrWhiteSpace(value))
-        {
-            return value;
-        }
-
-        throw new FormatException(
-            $"Eventing {descriptorKind} configuration entry '{path}:{id}' must provide '{string.Join("' or '", keys)}'.");
     }
 
     private static string? ReadOptionalString(
@@ -325,20 +230,6 @@ internal static class EventingOptionsConfigurationReader
         }
 
         return values;
-    }
-
-    private static Dictionary<string, string> ReadMetadata(IConfiguration configuration)
-    {
-        var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        foreach (var child in configuration.GetChildren())
-        {
-            if (!string.IsNullOrWhiteSpace(child.Key) && !string.IsNullOrWhiteSpace(child.Value))
-            {
-                metadata[child.Key.Trim()] = child.Value.Trim();
-            }
-        }
-
-        return metadata;
     }
 
     private static bool TryGetValue(
