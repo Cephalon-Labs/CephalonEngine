@@ -403,7 +403,7 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("limit", remediationEntry.Metadata["operatorCommandReadLimitQuery"]);
         Assert.Equal("positive-integer-newest-first", remediationEntry.Metadata["operatorCommandReadLimitPolicy"]);
         Assert.Equal("pageSize,continuationToken", remediationEntry.Metadata["operatorCommandPaginationQuery"]);
-        Assert.Equal("opaque-route-bound-continuation-token-newest-first", remediationEntry.Metadata["operatorCommandPaginationPolicy"]);
+        Assert.Equal("opaque-signed-route-bound-continuation-token-newest-first", remediationEntry.Metadata["operatorCommandPaginationPolicy"]);
         Assert.Equal("false", remediationEntry.Metadata["wolverineRequired"]);
         Assert.Equal("true", remediationEntry.Metadata["providerNeutral"]);
         Assert.Equal("unique-command-id", remediationEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
@@ -425,7 +425,7 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("inclusive-observed-utc", remediationCommandCatalogEntry.Metadata["commandObservationWindowPolicy"]);
         Assert.Equal("positive-integer-newest-first", remediationCommandCatalogEntry.Metadata["commandReadLimitPolicy"]);
         Assert.Equal("pageSize,continuationToken", remediationCommandCatalogEntry.Metadata["commandPaginationQuery"]);
-        Assert.Equal("opaque-route-bound-continuation-token-newest-first", remediationCommandCatalogEntry.Metadata["commandPaginationPolicy"]);
+        Assert.Equal("opaque-signed-route-bound-continuation-token-newest-first", remediationCommandCatalogEntry.Metadata["commandPaginationPolicy"]);
         Assert.True(runtimeDescriptor!.Summary.HasReports);
         Assert.Equal(["entity-framework-outbox"], runtimeDescriptor.Summary.ReportedOutboxIds);
         Assert.Equal("entity-framework-outbox", runtimeDescriptor.Summary.LastOutboxId);

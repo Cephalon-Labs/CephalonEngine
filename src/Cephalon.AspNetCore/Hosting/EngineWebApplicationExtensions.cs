@@ -64,8 +64,10 @@ public static class EngineWebApplicationExtensions
     private const string OperatorSurfaceModeConfigurationKey = "Engine:AspNetCore:OperatorSurface:Mode";
     private const string EventDispatchRemediationCommandContinuationTokenMagic = "CEPCMD1";
     private const int EventDispatchRemediationCommandContinuationScopeHashLength = 32;
+    private const int EventDispatchRemediationCommandContinuationSignatureLength = 32;
     private const int DefaultEventDispatchRemediationCommandPageSize = 50;
     private const int MaxEventDispatchRemediationCommandPageSize = 500;
+    private static readonly byte[] EventDispatchRemediationCommandContinuationSigningKey = RandomNumberGenerator.GetBytes(32);
     private static readonly string DocumentationAssetVersion = typeof(EngineWebApplicationExtensions)
         .Assembly
         .ManifestModule
@@ -2432,7 +2434,10 @@ public static class EngineWebApplicationExtensions
 
         var payload = TryBase64UrlDecode(rawValue.Trim());
         var magicBytes = Encoding.ASCII.GetBytes(EventDispatchRemediationCommandContinuationTokenMagic);
-        var minimumLength = magicBytes.Length + EventDispatchRemediationCommandContinuationScopeHashLength + sizeof(long);
+        var minimumLength = magicBytes.Length
+            + EventDispatchRemediationCommandContinuationScopeHashLength
+            + sizeof(long)
+            + EventDispatchRemediationCommandContinuationSignatureLength;
         if (payload is null || payload.Length <= minimumLength)
         {
             error = Results.BadRequest("Query parameter 'continuationToken' must be an opaque token returned by a previous command-result page.");
@@ -2446,17 +2451,27 @@ public static class EngineWebApplicationExtensions
             return false;
         }
 
+        var signatureOffset = payload.Length - EventDispatchRemediationCommandContinuationSignatureLength;
+        var unsignedPayload = payloadSpan[..signatureOffset];
+        var signature = payloadSpan[signatureOffset..];
+        var expectedSignature = HMACSHA256.HashData(EventDispatchRemediationCommandContinuationSigningKey, unsignedPayload);
+        if (!CryptographicOperations.FixedTimeEquals(signature, expectedSignature))
+        {
+            error = Results.BadRequest("Query parameter 'continuationToken' must be an opaque token returned by a previous command-result page.");
+            return false;
+        }
+
         var scopeHashOffset = magicBytes.Length;
-        if (!payloadSpan.Slice(scopeHashOffset, EventDispatchRemediationCommandContinuationScopeHashLength).SequenceEqual(continuationScopeHash))
+        if (!unsignedPayload.Slice(scopeHashOffset, EventDispatchRemediationCommandContinuationScopeHashLength).SequenceEqual(continuationScopeHash))
         {
             error = Results.BadRequest("Query parameter 'continuationToken' must belong to the current command-result route and filters.");
             return false;
         }
 
         var ticksOffset = scopeHashOffset + EventDispatchRemediationCommandContinuationScopeHashLength;
-        var observedAtUtcTicks = BinaryPrimitives.ReadInt64BigEndian(payloadSpan.Slice(ticksOffset, sizeof(long)));
+        var observedAtUtcTicks = BinaryPrimitives.ReadInt64BigEndian(unsignedPayload.Slice(ticksOffset, sizeof(long)));
         var commandIdOffset = ticksOffset + sizeof(long);
-        var commandId = Encoding.UTF8.GetString(payload, commandIdOffset, payload.Length - commandIdOffset);
+        var commandId = Encoding.UTF8.GetString(payload, commandIdOffset, signatureOffset - commandIdOffset);
         if (observedAtUtcTicks < 0 || string.IsNullOrWhiteSpace(commandId))
         {
             error = Results.BadRequest("Query parameter 'continuationToken' must be an opaque token returned by a previous command-result page.");
@@ -2487,13 +2502,18 @@ public static class EngineWebApplicationExtensions
     {
         var magicBytes = Encoding.ASCII.GetBytes(EventDispatchRemediationCommandContinuationTokenMagic);
         var commandIdBytes = Encoding.UTF8.GetBytes(state.CommandId);
-        var payload = new byte[magicBytes.Length + continuationScopeHash.Length + sizeof(long) + commandIdBytes.Length];
-        magicBytes.CopyTo(payload.AsSpan(0, magicBytes.Length));
-        continuationScopeHash.CopyTo(payload.AsSpan(magicBytes.Length, continuationScopeHash.Length));
+        var unsignedPayload = new byte[magicBytes.Length + continuationScopeHash.Length + sizeof(long) + commandIdBytes.Length];
+        magicBytes.CopyTo(unsignedPayload.AsSpan(0, magicBytes.Length));
+        continuationScopeHash.CopyTo(unsignedPayload.AsSpan(magicBytes.Length, continuationScopeHash.Length));
         BinaryPrimitives.WriteInt64BigEndian(
-            payload.AsSpan(magicBytes.Length + continuationScopeHash.Length, sizeof(long)),
+            unsignedPayload.AsSpan(magicBytes.Length + continuationScopeHash.Length, sizeof(long)),
             state.ObservedAtUtc.UtcDateTime.Ticks);
-        commandIdBytes.CopyTo(payload.AsSpan(magicBytes.Length + continuationScopeHash.Length + sizeof(long)));
+        commandIdBytes.CopyTo(unsignedPayload.AsSpan(magicBytes.Length + continuationScopeHash.Length + sizeof(long)));
+
+        var signature = HMACSHA256.HashData(EventDispatchRemediationCommandContinuationSigningKey, unsignedPayload);
+        var payload = new byte[unsignedPayload.Length + signature.Length];
+        unsignedPayload.CopyTo(payload.AsSpan(0, unsignedPayload.Length));
+        signature.CopyTo(payload.AsSpan(unsignedPayload.Length, signature.Length));
 
         return Base64UrlEncode(payload);
     }

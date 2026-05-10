@@ -5602,6 +5602,40 @@ Follow-up later:
 - durable command journals, cross-node audit search, broker replay, provider-owned dashboards, and
   durable replay cursors remain future package-owned work
 
+### ENG-577 Eventing remediation signed continuation tokens
+
+Status: done
+Estimate: 1
+Issue: #1231
+Iteration: Sprint 91 follow-through
+Area: eventing / operations / Wolverine-free baseline
+Quality dimensions: Security, Data Integrity, Auditability, Reliability, Usability, Compatibility, Maintainability
+
+Why:
+
+- after `ENG-576`, native command-result continuation tokens were route/filter-bound but still needed
+  an explicit integrity proof so clients could not edit cursor bytes inside the same route and receive
+  a misleading retained-history page
+- Wolverine remains optional, so the native ASP.NET Core operator cursor should fail closed without
+  requiring a provider-managed bus or extra host configuration
+
+Delivered:
+
+- signed the ASP.NET Core command-result continuation payload with a process-local HMAC-SHA256 key
+  before returning it to operator clients
+- verified continuation-token signatures with constant-time comparison before accepting retained-order
+  cursor fields
+- kept the token process-local and Wolverine-free; no new configuration is required, and durable
+  cross-node replay cursors remain future package-owned work
+- updated command pagination metadata to `opaque-signed-route-bound-continuation-token-newest-first`
+- covered tampered-token rejection in the native ASP.NET hosting test plus composition metadata parity
+  coverage
+
+Follow-up later:
+
+- durable command journals, cross-node audit search, broker replay, provider-owned dashboards, and
+  durable replay cursors remain future package-owned work
+
 ### ENG-269 Agentics tool execution operator-action baseline
 
 Status: done
@@ -16985,6 +17019,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-574 Eventing remediation command metadata source truth (shipped): native capability and technology surfaces now populate command action/result routes, operation ids, observed-window policy, read-limit policy, and command-idempotency metadata through one Eventing-owned helper so future Wolverine-free operator metadata changes do not drift between surfaces
 - ENG-575 Eventing remediation command continuation tokens (shipped): native command-result list/filter and observation-window routes now expose optional `pageSize` plus opaque `continuationToken` cursor reads with discoverable page-size and response metadata, while legacy `limit` reads keep their array contract and Wolverine remains optional
 - ENG-576 Eventing remediation route-bound continuation tokens (shipped): native continuation tokens now carry a route/filter scope hash so cross-route or changed observed-window token replay fails fast instead of returning a misleading command-result page, while the policy stays Wolverine-free and metadata-discoverable
+- ENG-577 Eventing remediation signed continuation tokens (shipped): native continuation tokens now include process-local HMAC-SHA256 integrity so tampered cursor payloads fail fast while route-bound paging remains Wolverine-free, config-light, and metadata-discoverable
 
 ### Sprint 88
 
@@ -17324,6 +17359,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-574 Add Eventing remediation command metadata source truth: native command capabilities and runtime surfaces now use one Eventing-owned helper for command routes, operation ids, observed-window metadata, read-limit metadata, and command-idempotency policy so future route-family changes stay synchronized. Quality dimensions: Maintainability + Compatibility + Usability + Auditability + Reliability (shipped)
 - ENG-575 Add Eventing remediation command continuation tokens: native command-result list/filter and observation-window routes now accept `pageSize` plus opaque `continuationToken` for newest-first cursor reads, return a page envelope with retained-count and `hasMore` truth, and advertise pagination policy/page-size metadata through the shared Eventing helper while keeping `limit` as the legacy array cap. Quality dimensions: Usability + Performance + Auditability + Compatibility + Reliability + Maintainability (shipped)
 - ENG-576 Add Eventing remediation route-bound continuation tokens: native command-result continuation tokens now include a versioned route/filter scope hash, reject cross-route or changed observed-window token replay with `400 Bad Request`, and advertise `opaque-route-bound-continuation-token-newest-first` metadata so operator UIs can trust cursor reads without installing Wolverine. Quality dimensions: Data Integrity + Auditability + Reliability + Usability + Compatibility + Maintainability (shipped)
+- ENG-577 Add Eventing remediation signed continuation tokens: native command-result continuation tokens now include process-local HMAC-SHA256 integrity, reject tampered cursor payloads with `400 Bad Request`, and advertise `opaque-signed-route-bound-continuation-token-newest-first` metadata so operator UIs can trust cursor reads without installing Wolverine or adding host config. Quality dimensions: Security + Data Integrity + Auditability + Reliability + Usability + Compatibility + Maintainability (shipped)
 - ENG-524 Harden deployment-mode audit-only probes: direct trim and Native AOT runs now keep the single-file release gate out of their verdict by returning `PublishProbeGate=not-applicable` when only audit-only modes are evaluated; compiler-only analyzer/source-generator `ProjectReference` entries strip app publish-mode globals through `CephalonCompilerOnlyProjectReferenceGlobalPropertiesToRemove`; and `Cephalon.Analyzers`, `Cephalon.Behaviors.SourceGen`, and `Cephalon.Engine.SourceGen` localize publish/RID globals with `TreatAsLocalProperty` so publish probes reach real runtime blocker evidence instead of failing on compiler-only `netstandard2.0` drift. Release closeout also stabilized the readiness warmup hosting test, refreshed the REST projection/governance guardrail to a measured 1 s ceiling while keeping the existing 16 MB allocation ceiling, and moved the canonical full `validate-release` wall-time target to 30 minutes after the current full lane measured about 1,669.848 seconds. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability + Performance (shipped)
 - ENG-535 Close generated REST behavior source-generator adoption proof: `Cephalon.Behaviors.SourceGen` now packs its compiler assembly under `analyzers/dotnet/cs`, scaffolded REST behavior modules and template-pack REST starters reference it as `PrivateAssets=all`, generated module projects keep `Cephalon.Engine.SourceGen` in every blueprint, and the out-of-tree adoption temporary feed publishes the full generated REST behavior package closure (`Cephalon.Behaviors.SourceGen`, `Cephalon.Diagnostics`, and `Cephalon.Resilience`) so restore/build/run replay can produce the REST profile hints required by `MapProfile<TBehavior>()`. Quality dimensions: Compatibility + Reliability + Auditability + Maintainability + Usability (shipped)
 - ENG-487 Add opt-in CDC integration baseline: `tests/Cephalon.Tests.CdcIntegration` now carries the first dedicated live CDC integration lane, proving MongoDB change streams against a disposable `EphemeralMongo7` replica set with real outbox staging, provider-native runtime binding, runtime-state reporting, execution-runtime aggregation, and checkpoint persistence; `data.slnf` now points at the split data-relevant test projects instead of the retired monolithic test project, and SQL Server/Postgres live CDC coverage stays explicitly later until an external-service/Testcontainers gate exists. Quality dimensions: Reliability + Compatibility + Auditability + Maintainability (shipped)
