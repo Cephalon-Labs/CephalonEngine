@@ -41,6 +41,7 @@ internal sealed class EventingInProcessPublishingRuntimeSurfaceContributor(
             .Select(static entry => entry.Subscription.Id)
             .OrderBy(static subscriptionId => subscriptionId, StringComparer.OrdinalIgnoreCase)
             .ToArray();
+        var subscriptionDescriptorDiscovery = GetSubscriptionDescriptorDiscovery(executors.Entries);
         var publicationStates = publicationRuntimeCatalog.States;
         var lastPublicationState = publicationStates
             .Where(static state => state.LastObservedAtUtc is not null)
@@ -106,7 +107,7 @@ internal sealed class EventingInProcessPublishingRuntimeSurfaceContributor(
                         ["idempotencyDurability"] = idempotencyDurability,
                         ["idempotencyScope"] = idempotencyScope,
                         ["inbox"] = topology.HasInboxPath ? "available" : "not-configured",
-                        ["subscriptionDescriptorDiscovery"] = topology.HasInProcessSubscriptionDescriptorDiscovery ? "code-first-executor" : "none",
+                        ["subscriptionDescriptorDiscovery"] = subscriptionDescriptorDiscovery,
                         ["discoveredSubscriptionCount"] = discoveredSubscriptionIds.Length.ToString(CultureInfo.InvariantCulture),
                         ["discoveredSubscriptionIds"] = string.Join(",", discoveredSubscriptionIds),
                         ["channelCount"] = channelIds.Length.ToString(CultureInfo.InvariantCulture),
@@ -121,6 +122,29 @@ internal sealed class EventingInProcessPublishingRuntimeSurfaceContributor(
     private static bool IsDiscovered(EventSubscriptionDescriptor subscription)
     {
         return subscription.Metadata.TryGetValue("descriptorDiscovery", out var discovery) &&
-            string.Equals(discovery, "code-first-executor", StringComparison.OrdinalIgnoreCase);
+            !string.IsNullOrWhiteSpace(discovery) &&
+            !string.Equals(discovery, "none", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private string GetSubscriptionDescriptorDiscovery(
+        IReadOnlyList<InProcessEventSubscriptionExecutorCatalog.ManagedSubscriptionEntry> entries)
+    {
+        var discoveries = entries
+            .Select(static entry => entry.Subscription.Metadata.TryGetValue("descriptorDiscovery", out var discovery)
+                ? discovery
+                : "none")
+            .Where(static discovery => !string.IsNullOrWhiteSpace(discovery) &&
+                !string.Equals(discovery, "none", StringComparison.OrdinalIgnoreCase))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToArray();
+
+        return discoveries.Length switch
+        {
+            0 => topology.HasInProcessSubscriptionDescriptorDiscovery
+                ? topology.InProcessSubscriptionDescriptorDiscoveryMode
+                : "none",
+            1 => discoveries[0],
+            _ => "code-first-mixed"
+        };
     }
 }

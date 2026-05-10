@@ -39,6 +39,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
     private bool hasSubscriptionExecutionPipeline;
     private bool hasSubscriptionExecutors;
     private bool hasPublishingPath;
+    private string inProcessSubscriptionDescriptorDiscoveryMode = "none";
     private int subscriptionExecutionMiddlewareCount;
 
     public EventingModule(EventingOptions options)
@@ -78,6 +79,9 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
         hasInProcessSubscriptionDescriptorDiscovery = options.EnableSubscriptions &&
             options.EnableInProcessSubscriptionExecution &&
             hasSubscriptionExecutors;
+        inProcessSubscriptionDescriptorDiscoveryMode = hasInProcessSubscriptionDescriptorDiscovery
+            ? GetInProcessSubscriptionDescriptorDiscoveryMode(services)
+            : "none";
         if (hasInProcessSubscriptionDescriptorDiscovery)
         {
             services.TryAddEnumerable(ServiceDescriptor.Singleton<IEventSubscriptionContributor, InProcessEventSubscriptionDescriptorContributor>());
@@ -179,6 +183,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             HasExternalManagedSubscriptionExecutionBindings: hasExternalManagedSubscriptionExecutionBindings,
             HasInboxPath: hasInboxPath,
             HasInProcessSubscriptionDescriptorDiscovery: hasInProcessSubscriptionDescriptorDiscovery,
+            InProcessSubscriptionDescriptorDiscoveryMode: inProcessSubscriptionDescriptorDiscoveryMode,
             HasInProcessSubscriptionExecutionPath: hasInProcessSubscriptionExecutionPath,
             HasManagedSubscriptionExecutionBindings: hasManagedSubscriptionExecutionBindings,
             HasOutboxPublishingPath: hasOutboxPublishingPath,
@@ -276,7 +281,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["dispatchRuntime"] = "cephalon-managed",
                     ["dispatchStore"] = "not-configured",
                     ["subscriptionExecution"] = "cephalon-managed",
-                    ["subscriptionDescriptorDiscovery"] = hasInProcessSubscriptionDescriptorDiscovery ? "code-first-executor" : "none",
+                    ["subscriptionDescriptorDiscovery"] = inProcessSubscriptionDescriptorDiscoveryMode,
                     ["subscriptionExecutionPipeline"] = hasSubscriptionExecutionPipeline ? "code-first" : "none",
                     ["subscriptionExecutionMiddlewareCount"] = subscriptionExecutionMiddlewareCount.ToString(CultureInfo.InvariantCulture),
                     ["executionRuntimeId"] = InProcessEventingRuntimeIds.SubscriptionExecutionRuntimeId,
@@ -366,7 +371,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["technology"] = "event-driven-integration",
                     ["dispatchRuntime"] = hasManagedSubscriptionExecutionBindings ? "configured" : "not-configured",
                     ["inbox"] = hasInboxPath ? "available" : "not-configured",
-                    ["subscriptionDescriptorDiscovery"] = hasInProcessSubscriptionDescriptorDiscovery ? "code-first-executor" : "none",
+                    ["subscriptionDescriptorDiscovery"] = inProcessSubscriptionDescriptorDiscoveryMode,
                     ["runtimeState"] = "available"
                 }));
         }
@@ -386,7 +391,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["executionMode"] = "in-process-direct",
                     ["executionRuntimeId"] = InProcessEventingRuntimeIds.SubscriptionExecutionRuntimeId,
                     ["triggerRuntimeId"] = InProcessEventingRuntimeIds.PublisherId,
-                    ["subscriptionDescriptorDiscovery"] = hasInProcessSubscriptionDescriptorDiscovery ? "code-first-executor" : "none",
+                    ["subscriptionDescriptorDiscovery"] = inProcessSubscriptionDescriptorDiscoveryMode,
                     ["subscriptionExecutionPipeline"] = hasSubscriptionExecutionPipeline ? "code-first" : "none",
                     ["subscriptionExecutionMiddlewareCount"] = subscriptionExecutionMiddlewareCount.ToString(CultureInfo.InvariantCulture),
                     ["retryPolicy"] = retryPolicy,
@@ -451,5 +456,49 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["channelCount"] = options.Channels.Count.ToString(CultureInfo.InvariantCulture)
                 }));
         }
+    }
+
+    private static string GetInProcessSubscriptionDescriptorDiscoveryMode(IServiceCollection services)
+    {
+        var hasAttributeDescriptor = false;
+        var hasProviderDescriptor = false;
+        var hasUnknownDescriptorShape = false;
+
+        foreach (var descriptor in services.Where(static descriptor => descriptor.ServiceType == typeof(IEventSubscriptionExecutor)))
+        {
+            var executorType = descriptor.ImplementationType ?? descriptor.ImplementationInstance?.GetType();
+            if (executorType is null)
+            {
+                hasUnknownDescriptorShape = true;
+                continue;
+            }
+
+            if (executorType.IsDefined(typeof(EventSubscriptionAttribute), inherit: false))
+            {
+                hasAttributeDescriptor = true;
+            }
+
+            if (typeof(IEventSubscriptionDescriptorProvider).IsAssignableFrom(executorType))
+            {
+                hasProviderDescriptor = true;
+            }
+        }
+
+        if (hasAttributeDescriptor && !hasProviderDescriptor && !hasUnknownDescriptorShape)
+        {
+            return "code-first-attribute";
+        }
+
+        if (hasProviderDescriptor && !hasAttributeDescriptor && !hasUnknownDescriptorShape)
+        {
+            return "code-first-executor";
+        }
+
+        if (hasAttributeDescriptor || hasProviderDescriptor)
+        {
+            return "code-first-mixed";
+        }
+
+        return hasUnknownDescriptorShape ? "code-first-executor" : "none";
     }
 }

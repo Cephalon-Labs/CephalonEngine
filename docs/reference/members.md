@@ -4059,6 +4059,9 @@ Browse the published API surface by public member.
 - [ChannelId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationresult-channelid): `Properties` on `EventPublicationResult` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The logical channel or destination identifier.
   - `string ChannelId { get; set; }`
+- [ChannelId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionattribute-channelid): `Properties` on `EventSubscriptionAttribute` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the logical event channel that the subscription consumes.
+  - `string ChannelId { get; }`
 - [ChannelId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptiondescriptor-channelid): `Properties` on `EventSubscriptionDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ChannelId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the logical event channel that the subscription consumes.
   - `string ChannelId { get; }`
@@ -6480,6 +6483,9 @@ Browse the published API surface by public member.
 - [DeliveryFailed](cephalon-multitenancy-governance-aspnetcore.md#member-f-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationattentioncategories-deliveryfailed): `Fields` on `TenantInvitationDeliveryStatusObservationAttentionCategories` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=DeliveryFailed&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - The observation reports a failed or bounced delivery status.
   - `const string DeliveryFailed`
+- [DeliveryMode](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionattribute-deliverymode): `Properties` on `EventSubscriptionAttribute` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DeliveryMode&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the declared delivery mode for the subscription.
+  - `string DeliveryMode { get; }`
 - [DeliveryMode](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptiondescriptor-deliverymode): `Properties` on `EventSubscriptionDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DeliveryMode&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the declared delivery mode for the subscription.
   - `string DeliveryMode { get; }`
@@ -6992,6 +6998,9 @@ Browse the published API surface by public member.
   - `string Description { get; }`
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-description): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the normalized human-readable description.
+  - `string Description { get; }`
+- [Description](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionattribute-description): `Properties` on `EventSubscriptionAttribute` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Description&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the human-readable description of the subscription.
   - `string Description { get; }`
 - [Description](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptiondescriptor-description): `Properties` on `EventSubscriptionDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Description&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the human-readable description of the subscription.
@@ -7511,6 +7520,9 @@ Browse the published API surface by public member.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-displayname): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the normalized operator-facing name.
+  - `string DisplayName { get; }`
+- [DisplayName](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionattribute-displayname): `Properties` on `EventSubscriptionAttribute` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the operator-facing display name for the subscription.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptiondescriptor-displayname): `Properties` on `EventSubscriptionDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the operator-facing display name for the subscription.
@@ -9177,6 +9189,9 @@ Browse the published API surface by public member.
 - [EventStreamRegistry](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventstreamregistry-ctor): `Constructors` on `EventStreamRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=EventStreamRegistry&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Initializes a new instance of the `EventStreamRegistry` class.
   - `EventStreamRegistry()`
+- [EventSubscriptionAttribute](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionattribute-ctor-system-string-system-string-system-string-system-string-system-string-system-string): `Constructors` on `EventSubscriptionAttribute` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventSubscriptionAttribute&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates a new event subscription descriptor attribute.
+  - `EventSubscriptionAttribute(string id, string displayName, string description, string channelId, string handlerId, string deliveryMode)`
 - [EventSubscriptionDescriptor](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptiondescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventSubscriptionDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventSubscriptionDescriptor&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a new event subscription descriptor.
   - `EventSubscriptionDescriptor(string id, string displayName, string description, string channelId, string handlerId, string deliveryMode, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
@@ -11880,6 +11895,9 @@ Browse the published API surface by public member.
 - [HandleAsync](cephalon-abstractions.md#member-m-cephalon-abstractions-data-iqueryhandler-2-handleasync-0-system-threading-cancellationtoken): `Methods` on `IQueryHandler<TQuery, TResult>` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=HandleAsync&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Handles the supplied query.
   - `ValueTask<TResult> HandleAsync(TQuery query, CancellationToken cancellationToken)`
+- [HandlerId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionattribute-handlerid): `Properties` on `EventSubscriptionAttribute` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=HandlerId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the logical handler or consumer identifier that receives the event.
+  - `string HandlerId { get; }`
 - [HandlerId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptiondescriptor-handlerid): `Properties` on `EventSubscriptionDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=HandlerId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the logical handler or consumer identifier that receives the event.
   - `string HandlerId { get; }`
@@ -13268,6 +13286,9 @@ Browse the published API surface by public member.
   - `string Id { get; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-id): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the normalized event-stream identifier.
+  - `string Id { get; }`
+- [Id](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionattribute-id): `Properties` on `EventSubscriptionAttribute` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Id&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the stable subscription identifier.
   - `string Id { get; }`
 - [Id](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptiondescriptor-id): `Properties` on `EventSubscriptionDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Id&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable subscription identifier.
@@ -27576,6 +27597,9 @@ Browse the published API surface by public member.
 - [Tags](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-tags): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Tags&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the normalized descriptive tags associated with the stream.
   - `IReadOnlyList<string> Tags { get; }`
+- [Tags](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptionattribute-tags): `Properties` on `EventSubscriptionAttribute` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Tags&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets or sets optional tags that classify the subscription.
+  - `string[] Tags { get; set; }`
 - [Tags](cephalon-eventing.md#member-p-cephalon-eventing-services-eventsubscriptiondescriptor-tags): `Properties` on `EventSubscriptionDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Tags&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the normalized tag set associated with the subscription.
   - `IReadOnlyList<string> Tags { get; }`

@@ -362,7 +362,7 @@ IServiceCollection AddCephalonEventSubscriptionExecutor<TExecutor>(this IService
 
 Registers a direct in-process event subscription executor with the native eventing pack.
 
-Remarks: The executor is registered as a singleton `IEventSubscriptionExecutor` contribution. If the implementation also implements `IEventSubscriptionDescriptorProvider`, the native in-process lane can discover the matching subscription descriptor from the same code-owned type.
+Remarks: The executor is registered as a singleton `IEventSubscriptionExecutor` contribution. If the implementation is annotated with `EventSubscriptionAttribute` or implements `IEventSubscriptionDescriptorProvider`, the native in-process lane can discover the matching subscription descriptor from the same code-owned type.
 
 Returns: The same service collection for fluent registration.
 
@@ -1232,6 +1232,111 @@ string TenantId { get; }
 ```
 
 Gets the tenant identifier associated with the event.
+
+<a id="type-cephalon-eventing-services-eventsubscriptionattribute"></a>
+
+### `EventSubscriptionAttribute`
+
+Declares the subscription descriptor owned by an in-process event subscription executor.
+
+Remarks: Apply this attribute to a concrete `IEventSubscriptionExecutor` implementation when the subscription metadata is static and can be discovered from code at startup. Richer dynamic descriptor metadata can still be supplied by implementing `IEventSubscriptionDescriptorProvider` directly.
+
+#### Declaration
+```csharp
+public sealed class EventSubscriptionAttribute
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionattribute-ctor-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `EventSubscriptionAttribute`
+
+```csharp
+EventSubscriptionAttribute(string id, string displayName, string description, string channelId, string handlerId, string deliveryMode)
+```
+
+Creates a new event subscription descriptor attribute.
+
+Parameters:
+- `id`: The stable subscription identifier.
+- `displayName`: The operator-facing subscription name.
+- `description`: The human-readable description of the subscription.
+- `channelId`: The logical event channel that the subscription consumes.
+- `handlerId`: The logical handler or consumer identifier that receives the event.
+- `deliveryMode`: The declared delivery mode for the subscription.
+
+#### Properties
+
+<a id="member-p-cephalon-eventing-services-eventsubscriptionattribute-channelid"></a>
+
+##### `ChannelId`
+
+```csharp
+string ChannelId { get; }
+```
+
+Gets the logical event channel that the subscription consumes.
+
+<a id="member-p-cephalon-eventing-services-eventsubscriptionattribute-deliverymode"></a>
+
+##### `DeliveryMode`
+
+```csharp
+string DeliveryMode { get; }
+```
+
+Gets the declared delivery mode for the subscription.
+
+<a id="member-p-cephalon-eventing-services-eventsubscriptionattribute-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable description of the subscription.
+
+<a id="member-p-cephalon-eventing-services-eventsubscriptionattribute-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing display name for the subscription.
+
+<a id="member-p-cephalon-eventing-services-eventsubscriptionattribute-handlerid"></a>
+
+##### `HandlerId`
+
+```csharp
+string HandlerId { get; }
+```
+
+Gets the logical handler or consumer identifier that receives the event.
+
+<a id="member-p-cephalon-eventing-services-eventsubscriptionattribute-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable subscription identifier.
+
+<a id="member-p-cephalon-eventing-services-eventsubscriptionattribute-tags"></a>
+
+##### `Tags`
+
+```csharp
+string[] Tags { get; set; }
+```
+
+Gets or sets optional tags that classify the subscription.
 
 <a id="type-cephalon-eventing-services-eventsubscriptiondescriptor"></a>
 

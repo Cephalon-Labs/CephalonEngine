@@ -97,13 +97,13 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     status: topology.HasInProcessSubscriptionExecutionPath ? "claimed" : "not-claimed",
                     evidence: topology.HasInProcessSubscriptionExecutionPath
                         ? topology.HasInProcessSubscriptionDescriptorDiscovery
-                            ? "EnableInProcessSubscriptionExecution=true with registered IEventSubscriptionExecutor services and code-first descriptor-provider discovery."
+                            ? "EnableInProcessSubscriptionExecution=true with registered IEventSubscriptionExecutor services and code-first descriptor discovery."
                             : "EnableInProcessSubscriptionExecution=true with registered IEventSubscriptionExecutor services."
                         : "in-process subscription execution is not enabled.",
                     advantage: "Teams get MediatR-style local dispatch while preserving the same event catalog, readiness, diagnostics, and future provider handoff seams.",
                     nextGap: topology.HasInProcessSubscriptionDescriptorDiscovery
                         ? "Add source-generated registration helpers and benchmark evidence before promoting larger-scale generated handler discovery."
-                        : "Use IEventSubscriptionDescriptorProvider on registered executors when the native path needs lower ceremony at larger scale."),
+                        : "Use EventSubscriptionAttribute or IEventSubscriptionDescriptorProvider on registered executors when the native path needs lower ceremony at larger scale."),
                 CreateEntry(
                     id: "code-first-subscription-execution-pipeline",
                     displayName: "Code-first Subscription Execution Pipeline",

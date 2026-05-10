@@ -7,6 +7,7 @@ internal sealed record EventingRuntimeTopology(
     bool HasExternalManagedSubscriptionExecutionBindings,
     bool HasInboxPath,
     bool HasInProcessSubscriptionDescriptorDiscovery,
+    string InProcessSubscriptionDescriptorDiscoveryMode,
     bool HasInProcessSubscriptionExecutionPath,
     bool HasManagedSubscriptionExecutionBindings,
     bool HasOutboxPublishingPath,

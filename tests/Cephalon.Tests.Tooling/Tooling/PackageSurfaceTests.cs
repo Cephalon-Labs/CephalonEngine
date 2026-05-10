@@ -963,6 +963,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Eventing.Services.EventChannelDescriptor),
             typeof(global::Cephalon.Eventing.Services.EventSubscriptionExecutionOutcomes),
             typeof(global::Cephalon.Eventing.Services.EventSubscriptionExecutionReport),
+            typeof(global::Cephalon.Eventing.Services.EventSubscriptionAttribute),
             typeof(global::Cephalon.Eventing.Services.EventSubscriptionDescriptor),
             typeof(global::Cephalon.Eventing.Services.EventingDiagnostics),
             typeof(global::Cephalon.Eventing.Hosting.EventingServiceCollectionExtensions),

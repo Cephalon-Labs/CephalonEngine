@@ -1773,12 +1773,108 @@ public sealed class EventDispatchHostingTests
             eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
             entry => entry.Id == "mediator-style-in-process-low-ceremony");
         Assert.Equal("claimed", lowCeremonyEntry.Metadata["status"]);
-        Assert.Contains("descriptor-provider discovery", lowCeremonyEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("code-first descriptor discovery", lowCeremonyEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
         Assert.NotNull(readiness);
         var discoveredReadiness = Assert.Single(readiness);
         Assert.Equal("discovered-audit-projector", discoveredReadiness.SubscriptionId);
         Assert.Equal(EventSubscriptionExecutionReadinessStates.RuntimeBound, discoveredReadiness.ReadinessState);
+    }
+
+    [Fact]
+    public async Task MapCephalonDiscoversInProcessSubscriptionDescriptorFromExecutorAttributeWithoutWolverine()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Services.AddSingleton<DescriptorProviderAuditExecutorProbe>();
+        builder.Services.AddCephalonEventSubscriptionExecutor<AttributeAuditExecutor>();
+        builder.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddEventing(options =>
+            {
+                options.EnableInProcessSubscriptionExecution = true;
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "audit",
+                    displayName: "Audit",
+                    description: "Audit integration events."));
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        await app.StartAsync();
+        await using (var scope = app.Services.CreateAsyncScope())
+        {
+            var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+            await publisher.PublishAsync(new EventPublication(
+                id: "audit-attribute-001",
+                channelId: "audit",
+                eventType: "audit.created",
+                payload: """{"id":"audit-attribute-001"}""",
+                occurredAtUtc: new DateTimeOffset(2026, 05, 10, 18, 0, 0, TimeSpan.Zero),
+                contentType: "application/json",
+                correlationId: "corr-audit-attribute-001",
+                tenantId: "tenant-attribute-001"));
+        }
+
+        var client = app.GetTestClient();
+        var probe = app.Services.GetRequiredService<DescriptorProviderAuditExecutorProbe>();
+        var subscriptionCatalog = app.Services.GetRequiredService<IEventSubscriptionCatalog>();
+        var runtimeCatalog = app.Services.GetRequiredService<IEventSubscriptionRuntimeCatalog>();
+        var bindingCatalog = app.Services.GetRequiredService<IEventSubscriptionExecutionBindingCatalog>();
+        var capabilities = await client.GetFromJsonAsync<CapabilityManifest[]>("/engine/capabilities");
+        var eventingSurfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/event-driven-integration");
+
+        Assert.Equal(1, probe.TotalAttempts);
+        Assert.Equal("audit-attribute-001", probe.LastMessageId);
+
+        Assert.True(subscriptionCatalog.TryGet("attribute-audit-projector", out var subscription));
+        Assert.Equal("Attribute Audit Projector", subscription.DisplayName);
+        Assert.Equal("attribute-audit-projector", subscription.HandlerId);
+        Assert.Equal("executor-attribute", subscription.Metadata["descriptorSource"]);
+        Assert.Equal("code-first-attribute", subscription.Metadata["descriptorDiscovery"]);
+        Assert.Contains(nameof(AttributeAuditExecutor), subscription.Metadata["descriptorProvider"], StringComparison.Ordinal);
+        Assert.Contains(nameof(EventSubscriptionAttribute), subscription.Metadata["descriptorAttribute"], StringComparison.Ordinal);
+        Assert.Contains("attribute", subscription.Tags);
+
+        var binding = Assert.Single(bindingCatalog.Bindings);
+        Assert.Equal("attribute-audit-projector", binding.SubscriptionId);
+        Assert.Equal("code-first-attribute", binding.Metadata["subscriptionDescriptorDiscovery"]);
+
+        var runtimeState = Assert.Single(runtimeCatalog.States);
+        Assert.Equal(EventSubscriptionExecutionOutcomes.Succeeded, runtimeState.LastOutcome);
+        Assert.Equal("code-first-attribute", runtimeState.Metadata["subscriptionDescriptorDiscovery"]);
+
+        Assert.NotNull(capabilities);
+        var subscribeCapability = Assert.Single(capabilities, capability => capability.Key == "eventing.subscribe");
+        Assert.Equal("code-first-attribute", subscribeCapability.Metadata["subscriptionDescriptorDiscovery"]);
+
+        Assert.NotNull(eventingSurfaces);
+        var publisherEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "event-publishers").Entries);
+        Assert.Equal("code-first-attribute", publisherEntry.Metadata["subscriptionDescriptorDiscovery"]);
+        Assert.Equal("1", publisherEntry.Metadata["discoveredSubscriptionCount"]);
+        Assert.Equal("attribute-audit-projector", publisherEntry.Metadata["discoveredSubscriptionIds"]);
+
+        var subscriptionEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "event-subscriptions").Entries,
+            entry => entry.Id == "attribute-audit-projector");
+        Assert.Equal("executor-attribute", subscriptionEntry.Metadata["descriptorSource"]);
+        Assert.Equal("code-first-attribute", subscriptionEntry.Metadata["descriptorDiscovery"]);
+        Assert.Equal("code-first-attribute", subscriptionEntry.Metadata["binding.subscriptionDescriptorDiscovery"]);
+        Assert.Equal("code-first-attribute", subscriptionEntry.Metadata["reported.subscriptionDescriptorDiscovery"]);
+
+        var lowCeremonyEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "mediator-style-in-process-low-ceremony");
+        Assert.Equal("claimed", lowCeremonyEntry.Metadata["status"]);
+        Assert.Contains("code-first descriptor discovery", lowCeremonyEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]
@@ -1812,6 +1908,39 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("provides descriptor", exception.Message, StringComparison.Ordinal);
         Assert.Contains("mismatched-descriptor", exception.Message, StringComparison.Ordinal);
         Assert.Contains("mismatched-executor", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task BuildRejectsDescriptorAttributeWhenExecutorSubscriptionIdDoesNotMatchDescriptor()
+    {
+        var builder = WebApplication.CreateSlimBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Services.AddCephalonEventSubscriptionExecutor<MismatchedDescriptorAttributeExecutor>();
+        builder.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddEventing(options =>
+            {
+                options.EnableInProcessSubscriptionExecution = true;
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "audit",
+                    displayName: "Audit",
+                    description: "Audit integration events."));
+            });
+        });
+
+        await using var app = builder.Build();
+        app.MapCephalon();
+
+        var exception = Assert.Throws<InvalidOperationException>(
+            () => app.Services.GetRequiredService<IEventSubscriptionCatalog>());
+        Assert.Contains("declares attribute descriptor", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("mismatched-attribute-descriptor", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("mismatched-attribute-executor", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -2093,6 +2222,29 @@ public sealed class EventDispatchHostingTests
         }
     }
 
+    [EventSubscription(
+        id: "attribute-audit-projector",
+        displayName: "Attribute Audit Projector",
+        description: "Projects audit events through an attribute-bearing executor.",
+        channelId: "audit",
+        handlerId: "attribute-audit-projector",
+        deliveryMode: "in-process-direct",
+        Tags = new[] { "audit", "attribute" })]
+    private sealed class AttributeAuditExecutor(
+        DescriptorProviderAuditExecutorProbe probe) : IEventSubscriptionExecutor
+    {
+        public string SubscriptionId => "attribute-audit-projector";
+
+        public ValueTask ExecuteAsync(
+            EventSubscriptionExecutionContext context,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            probe.Record(context);
+            return ValueTask.CompletedTask;
+        }
+    }
+
     private sealed class MismatchedDescriptorProviderExecutor : IEventSubscriptionExecutor, IEventSubscriptionDescriptorProvider
     {
         public string SubscriptionId => "mismatched-executor";
@@ -2104,6 +2256,26 @@ public sealed class EventDispatchHostingTests
             channelId: "audit",
             handlerId: "mismatched-handler",
             deliveryMode: "in-process-direct");
+
+        public ValueTask ExecuteAsync(
+            EventSubscriptionExecutionContext context,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            return ValueTask.CompletedTask;
+        }
+    }
+
+    [EventSubscription(
+        id: "mismatched-attribute-descriptor",
+        displayName: "Mismatched Attribute Descriptor",
+        description: "Intentionally mismatches the executor id from an attribute.",
+        channelId: "audit",
+        handlerId: "mismatched-attribute-handler",
+        deliveryMode: "in-process-direct")]
+    private sealed class MismatchedDescriptorAttributeExecutor : IEventSubscriptionExecutor
+    {
+        public string SubscriptionId => "mismatched-attribute-executor";
 
         public ValueTask ExecuteAsync(
             EventSubscriptionExecutionContext context,

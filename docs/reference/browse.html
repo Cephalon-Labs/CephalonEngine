@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T01:26:25.4309439+00:00",
+  "GeneratedAtUtc": "2026-05-10T01:53:34.9645004+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -271,7 +271,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 36
+      "TypeCount": 37
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1331,7 +1331,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 33
+      "TypeCount": 34
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8710,6 +8710,21 @@
         "Fields": 0,
         "Properties": 0,
         "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "EventSubscriptionAttribute",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventsubscriptionattribute",
+      "Declaration": "public sealed class EventSubscriptionAttribute",
+      "Summary": "Declares the subscription descriptor owned by an in-process event subscription executor.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 7,
+        "Methods": 0
       }
     },
     {
@@ -34281,6 +34296,17 @@
     {
       "DisplayName": "ChannelId",
       "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionAttribute",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionattribute-channelid",
+      "Signature": "string ChannelId { get; }",
+      "Summary": "Gets the logical event channel that the subscription consumes."
+    },
+    {
+      "DisplayName": "ChannelId",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionDescriptor",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -43155,6 +43181,17 @@
     {
       "DisplayName": "DeliveryMode",
       "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionAttribute",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionattribute-deliverymode",
+      "Signature": "string DeliveryMode { get; }",
+      "Summary": "Gets the declared delivery mode for the subscription."
+    },
+    {
+      "DisplayName": "DeliveryMode",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionDescriptor",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -45032,6 +45069,17 @@
       "AnchorId": "member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-description",
       "Signature": "string Description { get; }",
       "Summary": "Gets the normalized human-readable description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionAttribute",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionattribute-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable description of the subscription."
     },
     {
       "DisplayName": "Description",
@@ -46935,6 +46983,17 @@
       "AnchorId": "member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the normalized operator-facing name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionAttribute",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionattribute-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing display name for the subscription."
     },
     {
       "DisplayName": "DisplayName",
@@ -53029,6 +53088,17 @@
       "AnchorId": "member-m-cephalon-eventsourcing-services-eventstreamregistry-ctor",
       "Signature": "EventStreamRegistry()",
       "Summary": "Initializes a new instance of the \u0060EventStreamRegistry\u0060 class."
+    },
+    {
+      "DisplayName": "EventSubscriptionAttribute",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventSubscriptionAttribute",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionattribute-ctor-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "EventSubscriptionAttribute(string id, string displayName, string description, string channelId, string handlerId, string deliveryMode)",
+      "Summary": "Creates a new event subscription descriptor attribute."
     },
     {
       "DisplayName": "EventSubscriptionDescriptor",
@@ -62911,6 +62981,17 @@
     {
       "DisplayName": "HandlerId",
       "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionAttribute",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionattribute-handlerid",
+      "Signature": "string HandlerId { get; }",
+      "Summary": "Gets the logical handler or consumer identifier that receives the event."
+    },
+    {
+      "DisplayName": "HandlerId",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSubscriptionDescriptor",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -67989,6 +68070,17 @@
       "AnchorId": "member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the normalized event-stream identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionAttribute",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionattribute-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable subscription identifier."
     },
     {
       "DisplayName": "Id",
@@ -120351,6 +120443,17 @@
       "AnchorId": "member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-tags",
       "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
       "Summary": "Gets the normalized descriptive tags associated with the stream."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSubscriptionAttribute",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionattribute-tags",
+      "Signature": "string[] Tags { get; set; }",
+      "Summary": "Gets or sets optional tags that classify the subscription."
     },
     {
       "DisplayName": "Tags",

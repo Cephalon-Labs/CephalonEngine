@@ -2,6 +2,16 @@
 Cephalon.Eventing.Hosting.EventingServiceCollectionExtensions
 static Cephalon.Eventing.Hosting.EventingServiceCollectionExtensions.AddCephalonEventSubscriptionExecutionMiddleware<TMiddleware>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static Cephalon.Eventing.Hosting.EventingServiceCollectionExtensions.AddCephalonEventSubscriptionExecutor<TExecutor>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
+Cephalon.Eventing.Services.EventSubscriptionAttribute
+Cephalon.Eventing.Services.EventSubscriptionAttribute.ChannelId.get -> string!
+Cephalon.Eventing.Services.EventSubscriptionAttribute.DeliveryMode.get -> string!
+Cephalon.Eventing.Services.EventSubscriptionAttribute.Description.get -> string!
+Cephalon.Eventing.Services.EventSubscriptionAttribute.DisplayName.get -> string!
+Cephalon.Eventing.Services.EventSubscriptionAttribute.EventSubscriptionAttribute(string! id, string! displayName, string! description, string! channelId, string! handlerId, string! deliveryMode) -> void
+Cephalon.Eventing.Services.EventSubscriptionAttribute.HandlerId.get -> string!
+Cephalon.Eventing.Services.EventSubscriptionAttribute.Id.get -> string!
+Cephalon.Eventing.Services.EventSubscriptionAttribute.Tags.get -> string![]!
+Cephalon.Eventing.Services.EventSubscriptionAttribute.Tags.set -> void
 Cephalon.Eventing.Services.EventSubscriptionExecutionStep
 virtual Cephalon.Eventing.Services.EventSubscriptionExecutionStep.Invoke(Cephalon.Eventing.Services.EventSubscriptionExecutionContext! context, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
 Cephalon.Eventing.Services.IEventSubscriptionExecutionMiddleware

@@ -17,8 +17,9 @@ public static class EventingServiceCollectionExtensions
     /// <returns>The same service collection for fluent registration.</returns>
     /// <remarks>
     /// The executor is registered as a singleton <see cref="IEventSubscriptionExecutor" /> contribution.
-    /// If the implementation also implements <see cref="IEventSubscriptionDescriptorProvider" />, the native
-    /// in-process lane can discover the matching subscription descriptor from the same code-owned type.
+    /// If the implementation is annotated with <see cref="EventSubscriptionAttribute" /> or implements
+    /// <see cref="IEventSubscriptionDescriptorProvider" />, the native in-process lane can discover the
+    /// matching subscription descriptor from the same code-owned type.
     /// </remarks>
     public static IServiceCollection AddCephalonEventSubscriptionExecutor<TExecutor>(
         this IServiceCollection services)

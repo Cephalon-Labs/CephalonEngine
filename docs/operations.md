@@ -2458,8 +2458,9 @@ Current `Cephalon.Eventing` highlights:
 - `engine.AddEventingFromConfiguration(configuration)` can populate channel descriptors from
   `Engine:Messaging:Channels`; subscription descriptors and executors stay code-first through
   `EventingOptions.Subscriptions`, `IEventSubscriptionContributor`,
-  `services.AddCephalonEventSubscriptionExecutor<TExecutor>()`, optional descriptor providers, and
-  code-first middleware helpers so publish/subscribe behavior remains typed and fast
+  `services.AddCephalonEventSubscriptionExecutor<TExecutor>()`, `EventSubscriptionAttribute`,
+  optional descriptor providers, and code-first middleware helpers so publish/subscribe behavior
+  remains typed and fast
 - `Engine:Messaging:Subscriptions` and `Engine:Messaging:SubscriptionHandlers` are rejected by
   the native configuration reader; use code registration or reusable modules for subscription
   descriptors, handlers, and executors
