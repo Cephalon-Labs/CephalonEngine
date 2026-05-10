@@ -4599,6 +4599,9 @@ Browse the published API surface by public member.
 - [CommandId](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationruntimestate-commandid): `Properties` on `EventDispatchRemediationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The stable remediation command identifier.
   - `string CommandId { get; set; }`
+- [CommandIdempotencyPolicy](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-commandidempotencypolicy): `Fields` on `EventDispatchRemediationMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CommandIdempotencyPolicy&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the command idempotency policy enforced by the active remediation dispatcher.
+  - `const string CommandIdempotencyPolicy`
 - [CommandIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommandbatch-commandids): `Properties` on `DatabaseMigrationOperationalExecutionGroupCommandBatch` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CommandIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable command identifiers represented in this batch, in encounter order.
   - `IReadOnlyList<string> CommandIds { get; }`
@@ -8091,9 +8094,15 @@ Browse the published API surface by public member.
 - [DuplicateCommand](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-duplicatecommand): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DuplicateCommand&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Replaying the current retry-execution policy would duplicate a previously recorded command.
   - `const string DuplicateCommand`
+- [DuplicateCommand](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-duplicatecommand): `Fields` on `EventDispatchRemediationMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DuplicateCommand&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether the current response describes a duplicate command request.
+  - `const string DuplicateCommand`
 - [DuplicateCommandLineage](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-duplicatecommandlineage): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DuplicateCommandLineage&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Retained history currently contains duplicated command lineage for the current retry posture.
   - `const string DuplicateCommandLineage`
+- [DuplicateCommandPolicy](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-duplicatecommandpolicy): `Fields` on `EventDispatchRemediationMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DuplicateCommandPolicy&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies how the active remediation dispatcher handles a duplicate command identifier.
+  - `const string DuplicateCommandPolicy`
 - [DuplicateCompleted](cephalon-abstractions.md#member-p-cephalon-abstractions-agentics-agenttoolrunstate-duplicatecompleted): `Properties` on `AgentToolRunState` in `Cephalon.Abstractions.Agentics` (`Cephalon.Abstractions`) [Browse](browse.html?q=DuplicateCompleted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Agentics&scope=members)
   - Gets a value indicating whether the latest report represents a process-local duplicate-completed suppression.
   - `bool DuplicateCompleted { get; }`
@@ -9921,6 +9930,18 @@ Browse the published API surface by public member.
 - [ExhaustedCount](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-exhaustedcount): `Properties` on `TenantInvitationDeliveryRetryResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ExhaustedCount&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the number of attempted entries that exhausted their retry budget.
   - `int ExhaustedCount { get; }`
+- [ExistingCommandObservedAtUtc](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-existingcommandobservedatutc): `Fields` on `EventDispatchRemediationMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ExistingCommandObservedAtUtc&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the UTC timestamp recorded for the first command that used the duplicate command identifier.
+  - `const string ExistingCommandObservedAtUtc`
+- [ExistingCommandOperationId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-existingcommandoperationid): `Fields` on `EventDispatchRemediationMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ExistingCommandOperationId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the operation recorded for the first command that used the duplicate command identifier.
+  - `const string ExistingCommandOperationId`
+- [ExistingCommandOutboxId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-existingcommandoutboxid): `Fields` on `EventDispatchRemediationMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ExistingCommandOutboxId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the outbox recorded for the first command that used the duplicate command identifier.
+  - `const string ExistingCommandOutboxId`
+- [ExistingCommandOutcome](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-existingcommandoutcome): `Fields` on `EventDispatchRemediationMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ExistingCommandOutcome&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the outcome recorded for the first command that used the duplicate command identifier.
+  - `const string ExistingCommandOutcome`
 - [ExitAfterApply](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasemigrationdescriptor-exitafterapply): `Properties` on `DatabaseMigrationDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExitAfterApply&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the host exits after startup execution completes.
   - `bool ExitAfterApply { get; }`

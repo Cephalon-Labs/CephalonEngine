@@ -382,6 +382,8 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("/engine/event-dispatches/{outboxId}/commands/{operationId}", remediationEntry.Metadata["operatorCommandRoute"]);
         Assert.Equal("false", remediationEntry.Metadata["wolverineRequired"]);
         Assert.Equal("true", remediationEntry.Metadata["providerNeutral"]);
+        Assert.Equal("unique-command-id", remediationEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
+        Assert.Equal("reject-without-mutation", remediationEntry.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
         Assert.Equal("wolverine-managed", remediationEntry.Metadata["reported.dispatchBridge"]);
         Assert.Equal("2026-04-04T14:06:00.0000000+00:00", remediationEntry.Metadata["nextRetryAtUtc"]);
         Assert.Equal("bounded-fixed-delay", remediationEntry.Metadata["retryPolicy"]);

@@ -205,6 +205,8 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("/engine/event-dispatches/{outboxId}/commands/{operationId}", terminalRemediationEntry.Metadata["operatorCommandRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", terminalRemediationEntry.Metadata["operatorCommandResultRoute"]);
         Assert.Equal("false", terminalRemediationEntry.Metadata["wolverineRequired"]);
+        Assert.Equal("unique-command-id", terminalRemediationEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
+        Assert.Equal("reject-without-mutation", terminalRemediationEntry.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
         var terminalRuntimeSurface = Assert.Single(terminalEventingSurfaces, surface => surface.SurfaceId == "event-dispatch-runtimes");
         var terminalRuntimeEntry = Assert.Single(terminalRuntimeSurface.Entries, entry => entry.Id == "wolverine-dispatch-loop");
         Assert.Equal("1", terminalRuntimeEntry.Metadata["reportedTerminalFailureCount"]);
@@ -260,6 +262,8 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("not-claimed", remediationCapability.Metadata["brokerDeadLetterCommand"]);
         Assert.Equal("available", remediationCapability.Metadata["commandRuntimeState"]);
         Assert.Equal("256", remediationCapability.Metadata["commandHistoryLimit"]);
+        Assert.Equal("unique-command-id", remediationCapability.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
+        Assert.Equal("reject-without-mutation", remediationCapability.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
 
         var publicationResponse = await client.PostAsJsonAsync("/engine/event-publications", new
         {
@@ -322,6 +326,8 @@ public sealed class EventDispatchHostingTests
         Assert.Equal(EventDispatchExecutionOutcomes.RetryScheduled, commandResult.DispatchOutcome);
         Assert.Equal("cmd-command-001-retry", commandResult.CommandId);
         Assert.Equal("operator-001", commandResult.Metadata["operatorActorId"]);
+        Assert.Equal("unique-command-id", commandResult.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
+        Assert.Equal("reject-without-mutation", commandResult.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
         Assert.NotNull(commandStates);
         var listedCommandState = Assert.Single(commandStates);
         Assert.Equal("cmd-command-001-retry", listedCommandState.CommandId);
@@ -330,6 +336,8 @@ public sealed class EventDispatchHostingTests
         Assert.Equal(EventDispatchRemediationOutcomes.Accepted, commandState.Outcome);
         Assert.Equal(EventDispatchExecutionOutcomes.RetryScheduled, commandState.DispatchOutcome);
         Assert.Equal("operator-001", commandState.Metadata["operatorActorId"]);
+        Assert.Equal("unique-command-id", commandState.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
+        Assert.Equal("reject-without-mutation", commandState.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
         Assert.NotNull(commandStatesByOutbox);
         Assert.Equal("cmd-command-001-retry", Assert.Single(commandStatesByOutbox).CommandId);
         Assert.NotNull(acceptedCommandStates);
@@ -343,6 +351,42 @@ public sealed class EventDispatchHostingTests
         var pendingItem = Assert.Single(pending);
         Assert.Equal("evt-command-001", pendingItem.MessageId);
         Assert.Equal(2, pendingItem.DispatchAttemptCount);
+
+        var duplicateCommandResponse = await client.PostAsJsonAsync(
+            "/engine/event-dispatches/entity-framework-outbox/commands/skip",
+            new
+            {
+                commandId = "cmd-command-001-retry",
+                messageId = "evt-command-001",
+                channelId = "catalog-events",
+                reason = "Accidental duplicate command id with a different operation.",
+                actorId = "operator-002",
+                correlationId = "corr-command-operator-duplicate"
+            });
+        Assert.Equal(HttpStatusCode.Conflict, duplicateCommandResponse.StatusCode);
+        var duplicateCommandResult = await duplicateCommandResponse.Content.ReadFromJsonAsync<EventDispatchRemediationResult>();
+        var originalCommandStateAfterDuplicate = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState>("/engine/event-dispatch-remediation-commands/cmd-command-001-retry");
+        var commandStatesAfterDuplicate = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands");
+        var remediatedStateAfterDuplicate = await client.GetFromJsonAsync<EventDispatchRuntimeState>("/engine/event-dispatches/entity-framework-outbox");
+        pending = await readStore.ReadPendingAsync(10);
+
+        Assert.NotNull(duplicateCommandResult);
+        Assert.Equal(EventDispatchRemediationOutcomes.Rejected, duplicateCommandResult.Outcome);
+        Assert.Equal("skip", duplicateCommandResult.OperationId);
+        Assert.Equal("true", duplicateCommandResult.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommand]);
+        Assert.Equal(EventDispatchRemediationOutcomes.Accepted, duplicateCommandResult.Metadata[EventDispatchRemediationMetadataKeys.ExistingCommandOutcome]);
+        Assert.Equal("retry-now", duplicateCommandResult.Metadata[EventDispatchRemediationMetadataKeys.ExistingCommandOperationId]);
+        Assert.Equal("entity-framework-outbox", duplicateCommandResult.Metadata[EventDispatchRemediationMetadataKeys.ExistingCommandOutboxId]);
+        Assert.Contains("already recorded", duplicateCommandResult.Error, StringComparison.OrdinalIgnoreCase);
+        Assert.NotNull(originalCommandStateAfterDuplicate);
+        Assert.Equal(EventDispatchRemediationOutcomes.Accepted, originalCommandStateAfterDuplicate.Outcome);
+        Assert.Equal("retry-now", originalCommandStateAfterDuplicate.OperationId);
+        Assert.NotNull(commandStatesAfterDuplicate);
+        Assert.Single(commandStatesAfterDuplicate);
+        Assert.NotNull(remediatedStateAfterDuplicate);
+        Assert.Equal(EventDispatchExecutionOutcomes.RetryScheduled, remediatedStateAfterDuplicate.LastOutcome);
+        Assert.Equal("retry-now", remediatedStateAfterDuplicate.Metadata["operatorCommand"]);
+        Assert.Single(pending);
 
         var deadLetterResponse = await client.PostAsJsonAsync(
             "/engine/event-dispatches/entity-framework-outbox/commands/dead-letter",

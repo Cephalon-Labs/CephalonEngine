@@ -34,6 +34,8 @@ internal sealed class EventingDispatchRemediationCommandRuntimeSurfaceContributo
             ["commandScope"] = "dispatch-store",
             ["providerNeutral"] = "true",
             ["wolverineRequired"] = "false",
+            [EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy] = "unique-command-id",
+            [EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy] = "reject-without-mutation",
             ["hasError"] = string.IsNullOrWhiteSpace(state.Error) ? "false" : "true"
         };
 

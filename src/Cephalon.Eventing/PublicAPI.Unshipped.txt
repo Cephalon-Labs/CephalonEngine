@@ -1,4 +1,12 @@
 #nullable enable
+Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys
+const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy = "commandIdempotencyPolicy" -> string!
+const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.DuplicateCommand = "duplicateCommand" -> string!
+const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy = "duplicateCommandPolicy" -> string!
+const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.ExistingCommandObservedAtUtc = "existingCommandObservedAtUtc" -> string!
+const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.ExistingCommandOperationId = "existingCommandOperationId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.ExistingCommandOutboxId = "existingCommandOutboxId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.ExistingCommandOutcome = "existingCommandOutcome" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerDeadLetter = "brokerDeadLetter" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DeadLetterDurability = "deadLetterDurability" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DeadLetterOutcome = "deadLetterOutcome" -> string!

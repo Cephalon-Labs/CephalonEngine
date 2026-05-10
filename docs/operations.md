@@ -2226,7 +2226,9 @@ Current payload highlights:
   whose latest report marks the dispatch path as terminally failed
 - `POST /engine/event-dispatches/{outboxId}/commands/{operationId}` runs bounded dispatch-store
   remediation commands when `IEventDispatchRemediationDispatcher` is active; current operations are
-  `retry-now`, `retry-later`, `skip`, `quarantine`, and dispatch-store `dead-letter`
+  `retry-now`, `retry-later`, `skip`, `quarantine`, and dispatch-store `dead-letter`; command ids
+  are unique, and a duplicate command id returns a rejected result without mutating dispatch-store
+  state or replacing the original command-result record
 - `GET /engine/event-dispatch-remediation-commands` lists accepted and rejected command results
   recorded by `IEventDispatchRemediationRuntimeCatalog`
 - `GET /engine/event-dispatch-remediation-commands/{commandId}` narrows the command-result catalog
@@ -2245,7 +2247,10 @@ Current note:
   inbound broker-consumption, downstream delivery-completion, or cross-node exactly-once claim
 - dispatch remediation commands apply only to the mutable dispatch store that owns the outbox; they
   do not claim broker dead-letter/replay ownership, and `dead-letter` records terminal dispatch-store
-  intent with `brokerDeadLetter = false`
+  intent with `brokerDeadLetter = false` rather than a broker DLQ operation
+- command-result idempotency is intentionally fail-closed: operators should inspect
+  `/engine/event-dispatch-remediation-commands/{commandId}` after an uncertain client retry and use
+  a new command id for a new action
 - remediation command-result history is bounded and process-local by default; it gives operators a
   typed command-audit read model for the active host, not durable compliance retention or broker
   replay ownership

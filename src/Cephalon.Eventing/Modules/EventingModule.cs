@@ -439,6 +439,8 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["quarantineCommand"] = "ready",
                     ["deadLetterCommand"] = "dispatch-store-ready",
                     ["brokerDeadLetterCommand"] = "not-claimed",
+                    [EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy] = "unique-command-id",
+                    [EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy] = "reject-without-mutation",
                     ["commandRuntimeState"] = "available",
                     ["commandHistoryLimit"] = options.RemediationCommandHistoryLimit.ToString(CultureInfo.InvariantCulture),
                     ["wolverineRequired"] = "false",

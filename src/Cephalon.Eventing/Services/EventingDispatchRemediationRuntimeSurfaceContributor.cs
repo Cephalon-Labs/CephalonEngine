@@ -60,7 +60,9 @@ internal sealed class EventingDispatchRemediationRuntimeSurfaceContributor(
             ["skipCommand"] = commandsReady ? "ready" : "not-claimed",
             ["claimPolicy"] = commandsReady ? CommandReadyClaimPolicy : AdvisoryClaimPolicy,
             ["providerNeutral"] = "true",
-            ["wolverineRequired"] = "false"
+            ["wolverineRequired"] = "false",
+            [EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy] = "unique-command-id",
+            [EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy] = "reject-without-mutation"
         };
 
         if (commandsReady)

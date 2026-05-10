@@ -1293,6 +1293,8 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("max-attempts-exhausted", remediationEntry.Metadata["retryOutcome"]);
         Assert.Equal("true", remediationEntry.Metadata["retryExhausted"]);
         Assert.Equal("true", remediationEntry.Metadata["reported.terminalFailure"]);
+        Assert.Equal("unique-command-id", remediationEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
+        Assert.Equal("reject-without-mutation", remediationEntry.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
 
         using (var commandScope = provider.CreateScope())
         {
@@ -1311,6 +1313,24 @@ public sealed class EntityFrameworkDataPackTests
             Assert.Equal(EventDispatchRemediationOutcomes.Accepted, commandResult.Outcome);
             Assert.Equal(EventDispatchExecutionOutcomes.RetryScheduled, commandResult.DispatchOutcome);
             Assert.Equal("operator-001", commandResult.Metadata["operatorActorId"]);
+            Assert.Equal("unique-command-id", commandResult.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
+            Assert.Equal("reject-without-mutation", commandResult.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
+
+            var duplicateResult = await dispatcher.DispatchAsync(new EventDispatchRemediationRequest(
+                outboxId: "entity-framework-outbox",
+                messageId: "evt-020",
+                channelId: "catalog-events",
+                operationId: EventDispatchRemediationOperationIds.Skip,
+                commandId: "cmd-evt-020-retry",
+                requestedAtUtc: new DateTimeOffset(2026, 04, 04, 12, 13, 0, TimeSpan.Zero),
+                reason: "Duplicate command id should not mutate dispatch state.",
+                actorId: "operator-002",
+                correlationId: "corr-command-020-duplicate"));
+
+            Assert.Equal(EventDispatchRemediationOutcomes.Rejected, duplicateResult.Outcome);
+            Assert.Equal("true", duplicateResult.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommand]);
+            Assert.Equal(EventDispatchRemediationOutcomes.Accepted, duplicateResult.Metadata[EventDispatchRemediationMetadataKeys.ExistingCommandOutcome]);
+            Assert.Equal("retry-now", duplicateResult.Metadata[EventDispatchRemediationMetadataKeys.ExistingCommandOperationId]);
         }
 
         var remediationCommandState = Assert.Single(remediationCommandCatalog.States);
@@ -1319,6 +1339,8 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal(EventDispatchRemediationOutcomes.Accepted, remediationCommandState.Outcome);
         Assert.Equal(EventDispatchExecutionOutcomes.RetryScheduled, remediationCommandState.DispatchOutcome);
         Assert.Equal("operator-001", remediationCommandState.Metadata["operatorActorId"]);
+        Assert.Equal("unique-command-id", remediationCommandState.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
+        Assert.Equal("reject-without-mutation", remediationCommandState.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
         Assert.Equal(remediationCommandState, remediationCommandCatalog.GetByCommandId("cmd-evt-020-retry"));
         Assert.Equal(remediationCommandState, Assert.Single(remediationCommandCatalog.GetByOutboxId("entity-framework-outbox")));
         Assert.Equal(remediationCommandState, Assert.Single(remediationCommandCatalog.GetByOutcome("accepted")));
@@ -1329,6 +1351,8 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("accepted", remediationCommandEntry.Metadata["outcome"]);
         Assert.Equal("retry-scheduled", remediationCommandEntry.Metadata["dispatchOutcome"]);
         Assert.Equal("false", remediationCommandEntry.Metadata["wolverineRequired"]);
+        Assert.Equal("unique-command-id", remediationCommandEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
+        Assert.Equal("reject-without-mutation", remediationCommandEntry.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
 
         var commandState = Assert.Single(runtimeCatalog.States);
         Assert.Equal(EventDispatchExecutionOutcomes.RetryScheduled, commandState.LastOutcome);

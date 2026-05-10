@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T02:14:02.4480577+00:00",
+  "GeneratedAtUtc": "2026-05-10T02:47:32.2752464+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -271,7 +271,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 37
+      "TypeCount": 38
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1331,7 +1331,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 34
+      "TypeCount": 35
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8304,6 +8304,21 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 13,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EventDispatchRemediationMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventdispatchremediationmetadatakeys",
+      "Declaration": "public static class EventDispatchRemediationMetadataKeys",
+      "Summary": "Defines stable metadata keys used by event-dispatch remediation command results.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 7,
+        "Properties": 0,
         "Methods": 0
       }
     },
@@ -36274,6 +36289,17 @@
       "Summary": "The stable remediation command identifier."
     },
     {
+      "DisplayName": "CommandIdempotencyPolicy",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-commandidempotencypolicy",
+      "Signature": "const string CommandIdempotencyPolicy",
+      "Summary": "Identifies the command idempotency policy enforced by the active remediation dispatcher."
+    },
+    {
       "DisplayName": "CommandIds",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseMigrationOperationalExecutionGroupCommandBatch",
@@ -49075,6 +49101,17 @@
       "Summary": "Replaying the current retry-execution policy would duplicate a previously recorded command."
     },
     {
+      "DisplayName": "DuplicateCommand",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-duplicatecommand",
+      "Signature": "const string DuplicateCommand",
+      "Summary": "Identifies whether the current response describes a duplicate command request."
+    },
+    {
       "DisplayName": "DuplicateCommandLineage",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
@@ -49084,6 +49121,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-duplicatecommandlineage",
       "Signature": "const string DuplicateCommandLineage",
       "Summary": "Retained history currently contains duplicated command lineage for the current retry posture."
+    },
+    {
+      "DisplayName": "DuplicateCommandPolicy",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-duplicatecommandpolicy",
+      "Signature": "const string DuplicateCommandPolicy",
+      "Summary": "Identifies how the active remediation dispatcher handles a duplicate command identifier."
     },
     {
       "DisplayName": "DuplicateCompleted",
@@ -55772,6 +55820,50 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationdeliveryretryresult-exhaustedcount",
       "Signature": "int ExhaustedCount { get; }",
       "Summary": "Gets the number of attempted entries that exhausted their retry budget."
+    },
+    {
+      "DisplayName": "ExistingCommandObservedAtUtc",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-existingcommandobservedatutc",
+      "Signature": "const string ExistingCommandObservedAtUtc",
+      "Summary": "Identifies the UTC timestamp recorded for the first command that used the duplicate command identifier."
+    },
+    {
+      "DisplayName": "ExistingCommandOperationId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-existingcommandoperationid",
+      "Signature": "const string ExistingCommandOperationId",
+      "Summary": "Identifies the operation recorded for the first command that used the duplicate command identifier."
+    },
+    {
+      "DisplayName": "ExistingCommandOutboxId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-existingcommandoutboxid",
+      "Signature": "const string ExistingCommandOutboxId",
+      "Summary": "Identifies the outbox recorded for the first command that used the duplicate command identifier."
+    },
+    {
+      "DisplayName": "ExistingCommandOutcome",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRemediationMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-existingcommandoutcome",
+      "Signature": "const string ExistingCommandOutcome",
+      "Summary": "Identifies the outcome recorded for the first command that used the duplicate command identifier."
     },
     {
       "DisplayName": "ExitAfterApply",

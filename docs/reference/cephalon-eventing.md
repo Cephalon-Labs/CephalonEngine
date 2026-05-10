@@ -861,6 +861,91 @@ string TenantId { get; }
 
 Gets the tenant identifier associated with the message.
 
+<a id="type-cephalon-eventing-services-eventdispatchremediationmetadatakeys"></a>
+
+### `EventDispatchRemediationMetadataKeys`
+
+Defines stable metadata keys used by event-dispatch remediation command results.
+
+Remarks: These keys appear in command-result records, remediation runtime surfaces, and rejected duplicate command responses so operators can reason about command idempotency without parsing provider-specific metadata.
+
+#### Declaration
+```csharp
+public static class EventDispatchRemediationMetadataKeys
+```
+
+#### Fields
+
+<a id="member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-commandidempotencypolicy"></a>
+
+##### `CommandIdempotencyPolicy`
+
+```csharp
+const string CommandIdempotencyPolicy
+```
+
+Identifies the command idempotency policy enforced by the active remediation dispatcher.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-duplicatecommand"></a>
+
+##### `DuplicateCommand`
+
+```csharp
+const string DuplicateCommand
+```
+
+Identifies whether the current response describes a duplicate command request.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-duplicatecommandpolicy"></a>
+
+##### `DuplicateCommandPolicy`
+
+```csharp
+const string DuplicateCommandPolicy
+```
+
+Identifies how the active remediation dispatcher handles a duplicate command identifier.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-existingcommandobservedatutc"></a>
+
+##### `ExistingCommandObservedAtUtc`
+
+```csharp
+const string ExistingCommandObservedAtUtc
+```
+
+Identifies the UTC timestamp recorded for the first command that used the duplicate command identifier.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-existingcommandoperationid"></a>
+
+##### `ExistingCommandOperationId`
+
+```csharp
+const string ExistingCommandOperationId
+```
+
+Identifies the operation recorded for the first command that used the duplicate command identifier.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-existingcommandoutboxid"></a>
+
+##### `ExistingCommandOutboxId`
+
+```csharp
+const string ExistingCommandOutboxId
+```
+
+Identifies the outbox recorded for the first command that used the duplicate command identifier.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchremediationmetadatakeys-existingcommandoutcome"></a>
+
+##### `ExistingCommandOutcome`
+
+```csharp
+const string ExistingCommandOutcome
+```
+
+Identifies the outcome recorded for the first command that used the duplicate command identifier.
+
 <a id="type-cephalon-eventing-services-eventdispatchruntimemetadatakeys"></a>
 
 ### `EventDispatchRuntimeMetadataKeys`

@@ -29,6 +29,18 @@ internal sealed class EventDispatchRemediationDispatcher(
             1,
             (runtimeCatalog.GetByOutboxId(request.OutboxId)?.LastAttempt ?? 0) + 1);
 
+        var existingCommand = commandCatalog.GetByCommandId(request.CommandId);
+        if (existingCommand is not null)
+        {
+            return CreateDuplicateCommandResult(
+                request,
+                operationId,
+                dispatchOutcome,
+                observedAtUtc,
+                metadata,
+                existingCommand);
+        }
+
         var dispatchStore = ResolveDispatchStore(request.OutboxId);
         if (dispatchStore is null)
         {
@@ -150,6 +162,30 @@ internal sealed class EventDispatchRemediationDispatcher(
             Metadata: metadata);
     }
 
+    private static EventDispatchRemediationResult CreateDuplicateCommandResult(
+        EventDispatchRemediationRequest request,
+        string operationId,
+        string dispatchOutcome,
+        DateTimeOffset observedAtUtc,
+        Dictionary<string, string> metadata,
+        EventDispatchRemediationRuntimeState existingCommand)
+    {
+        metadata[EventDispatchRemediationMetadataKeys.DuplicateCommand] = "true";
+        metadata[EventDispatchRemediationMetadataKeys.ExistingCommandOutcome] = existingCommand.Outcome;
+        metadata[EventDispatchRemediationMetadataKeys.ExistingCommandOperationId] = existingCommand.OperationId;
+        metadata[EventDispatchRemediationMetadataKeys.ExistingCommandOutboxId] = existingCommand.OutboxId;
+        metadata[EventDispatchRemediationMetadataKeys.ExistingCommandObservedAtUtc] =
+            existingCommand.ObservedAtUtc.ToString("O", CultureInfo.InvariantCulture);
+
+        return CreateRejectedResult(
+            request,
+            operationId,
+            dispatchOutcome,
+            observedAtUtc,
+            $"Event-dispatch remediation command id '{request.CommandId}' was already recorded; inspect the existing command result before issuing another command.",
+            metadata);
+    }
+
     private static Dictionary<string, string> CreateMetadata(
         EventDispatchRemediationRequest request,
         string operationId,
@@ -162,7 +198,9 @@ internal sealed class EventDispatchRemediationDispatcher(
             ["operatorCommand"] = operationId,
             ["operatorCommandSource"] = CommandSource,
             ["operatorCommandOutcome"] = dispatchOutcome,
-            ["operatorCommandRequestedAtUtc"] = observedAtUtc.ToString("O", CultureInfo.InvariantCulture)
+            ["operatorCommandRequestedAtUtc"] = observedAtUtc.ToString("O", CultureInfo.InvariantCulture),
+            [EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy] = "unique-command-id",
+            [EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy] = "reject-without-mutation"
         };
 
         if (!string.IsNullOrWhiteSpace(request.Reason))
