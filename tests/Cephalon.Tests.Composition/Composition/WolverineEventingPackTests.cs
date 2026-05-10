@@ -381,6 +381,13 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("ready", remediationEntry.Metadata["skipCommand"]);
         Assert.Equal("/engine/event-dispatches/{outboxId}/commands/{operationId}", remediationEntry.Metadata["operatorCommandRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", remediationEntry.Metadata["operatorCommandResultRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}", remediationEntry.Metadata["operatorCommandObservationRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}", remediationEntry.Metadata["operatorCommandObservationSummaryRoute"]);
+        Assert.Equal("fromUtc,toUtc", remediationEntry.Metadata["operatorCommandObservationWindowQuery"]);
+        Assert.Equal("inclusive-observed-utc", remediationEntry.Metadata["operatorCommandObservationWindowPolicy"]);
+        Assert.Equal("newest-first", remediationEntry.Metadata["operatorCommandObservationWindowDetailOrder"]);
+        Assert.Equal("available", remediationEntry.Metadata["operatorCommandObservationWindowSummary"]);
+        Assert.Equal("reject-reversed-window", remediationEntry.Metadata["operatorCommandObservationWindowInvalidBounds"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/operations/{operationId}", remediationEntry.Metadata["operatorCommandOperationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/actors/{actorId}", remediationEntry.Metadata["operatorCommandActorRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/correlations/{correlationId}", remediationEntry.Metadata["operatorCommandCorrelationRoute"]);

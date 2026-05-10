@@ -204,6 +204,13 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("ready", terminalRemediationEntry.Metadata["skipCommand"]);
         Assert.Equal("/engine/event-dispatches/{outboxId}/commands/{operationId}", terminalRemediationEntry.Metadata["operatorCommandRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", terminalRemediationEntry.Metadata["operatorCommandResultRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}", terminalRemediationEntry.Metadata["operatorCommandObservationRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}", terminalRemediationEntry.Metadata["operatorCommandObservationSummaryRoute"]);
+        Assert.Equal("fromUtc,toUtc", terminalRemediationEntry.Metadata["operatorCommandObservationWindowQuery"]);
+        Assert.Equal("inclusive-observed-utc", terminalRemediationEntry.Metadata["operatorCommandObservationWindowPolicy"]);
+        Assert.Equal("newest-first", terminalRemediationEntry.Metadata["operatorCommandObservationWindowDetailOrder"]);
+        Assert.Equal("available", terminalRemediationEntry.Metadata["operatorCommandObservationWindowSummary"]);
+        Assert.Equal("reject-reversed-window", terminalRemediationEntry.Metadata["operatorCommandObservationWindowInvalidBounds"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/operations/{operationId}", terminalRemediationEntry.Metadata["operatorCommandOperationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/actors/{actorId}", terminalRemediationEntry.Metadata["operatorCommandActorRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/correlations/{correlationId}", terminalRemediationEntry.Metadata["operatorCommandCorrelationRoute"]);
@@ -279,6 +286,11 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/retention", remediationCapability.Metadata["commandRetentionRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations?fromUtc={fromUtc}&toUtc={toUtc}", remediationCapability.Metadata["commandObservationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/observations/summary?fromUtc={fromUtc}&toUtc={toUtc}", remediationCapability.Metadata["commandObservationSummaryRoute"]);
+        Assert.Equal("fromUtc,toUtc", remediationCapability.Metadata["commandObservationWindowQuery"]);
+        Assert.Equal("inclusive-observed-utc", remediationCapability.Metadata["commandObservationWindowPolicy"]);
+        Assert.Equal("newest-first", remediationCapability.Metadata["commandObservationWindowDetailOrder"]);
+        Assert.Equal("available", remediationCapability.Metadata["commandObservationWindowSummary"]);
+        Assert.Equal("reject-reversed-window", remediationCapability.Metadata["commandObservationWindowInvalidBounds"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/operations/{operationId}", remediationCapability.Metadata["commandOperationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/actors/{actorId}", remediationCapability.Metadata["commandActorRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/correlations/{correlationId}", remediationCapability.Metadata["commandCorrelationRoute"]);

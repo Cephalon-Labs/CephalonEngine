@@ -89,6 +89,11 @@ internal sealed class EventingDispatchRemediationRuntimeSurfaceContributor(
             metadata["operatorCommandRetentionRoute"] = CommandRetentionRoute;
             metadata["operatorCommandObservationRoute"] = CommandObservationRoute;
             metadata["operatorCommandObservationSummaryRoute"] = CommandObservationSummaryRoute;
+            metadata["operatorCommandObservationWindowQuery"] = "fromUtc,toUtc";
+            metadata["operatorCommandObservationWindowPolicy"] = "inclusive-observed-utc";
+            metadata["operatorCommandObservationWindowDetailOrder"] = "newest-first";
+            metadata["operatorCommandObservationWindowSummary"] = "available";
+            metadata["operatorCommandObservationWindowInvalidBounds"] = "reject-reversed-window";
             metadata["operatorCommandOperationRoute"] = CommandOperationRoute;
             metadata["operatorCommandActorRoute"] = CommandActorRoute;
             metadata["operatorCommandCorrelationRoute"] = CommandCorrelationRoute;

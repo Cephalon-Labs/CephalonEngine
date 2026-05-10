@@ -554,8 +554,11 @@ materializing the full bounded history; invalid, zero, or negative limits return
 latest, retention, or single-command reads keep their existing contracts.
 The eventing capability and technology-runtime metadata advertise the same policy through
 `commandReadLimitQuery`, `commandReadLimitPolicy`, `commandReadLimitAppliesTo`, and the matching
-route list, so host UIs can discover the route family from `/engine/capabilities`,
-`/engine/technology-surfaces`, or `/engine/snapshot`.
+route list. The same metadata now also advertises observed-window query and validation semantics
+through `commandObservationWindowQuery`, `commandObservationWindowPolicy`,
+`commandObservationWindowDetailOrder`, `commandObservationWindowSummary`, and
+`commandObservationWindowInvalidBounds`, so host UIs can discover the route family from
+`/engine/capabilities`, `/engine/technology-surfaces`, or `/engine/snapshot`.
 
 The host now also exposes bounded event-publication operator action and publication runtime-state
 surfaces directly. When a selected eventing pack registers `IEventPublicationDispatcher`,

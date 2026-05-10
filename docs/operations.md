@@ -2296,7 +2296,10 @@ Current note:
   when operators need retained/recorded/dropped counts plus latest retained command detail; use
   `commandReadLimitQuery`, `commandReadLimitPolicy`, and `commandReadLimitRoutes` metadata from
   `/engine/capabilities`, `/engine/technology-surfaces`, or `/engine/snapshot` to discover the
-  read-side limit support instead of hardcoding UI assumptions; use
+  read-side limit support instead of hardcoding UI assumptions; use `commandObservationWindowQuery`,
+  `commandObservationWindowPolicy`, `commandObservationWindowDetailOrder`,
+  `commandObservationWindowSummary`, and `commandObservationWindowInvalidBounds` metadata to discover
+  retained-window query semantics and validation posture; use
   `/observations?fromUtc={fromUtc}&toUtc={toUtc}` for retained incident windows, but
   do not treat it as durable compliance retention or broker replay ownership
 - outbox-backed publication states use `accepted` to mean "staged for later dispatch"; dispatch
