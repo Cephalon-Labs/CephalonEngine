@@ -53,6 +53,36 @@ internal sealed class EventDispatchRemediationRuntimeCatalog(
         }
     }
 
+    public IReadOnlyList<EventDispatchRemediationRuntimeState> GetByMessageId(string messageId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(messageId);
+        var normalizedMessageId = messageId.Trim();
+
+        lock (gate)
+        {
+            return states
+                .Where(state => string.Equals(state.MessageId, normalizedMessageId, StringComparison.OrdinalIgnoreCase))
+                .OrderByDescending(static state => state.ObservedAtUtc)
+                .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+        }
+    }
+
+    public IReadOnlyList<EventDispatchRemediationRuntimeState> GetByChannelId(string channelId)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(channelId);
+        var normalizedChannelId = channelId.Trim();
+
+        lock (gate)
+        {
+            return states
+                .Where(state => string.Equals(state.ChannelId, normalizedChannelId, StringComparison.OrdinalIgnoreCase))
+                .OrderByDescending(static state => state.ObservedAtUtc)
+                .ThenBy(static state => state.CommandId, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+        }
+    }
+
     public IReadOnlyList<EventDispatchRemediationRuntimeState> GetByOperationId(string operationId)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(operationId);

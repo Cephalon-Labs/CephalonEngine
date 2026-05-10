@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T03:25:54.8641833+00:00",
+  "GeneratedAtUtc": "2026-05-10T03:41:36.7279874+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -11051,7 +11051,7 @@
         "Constructors": 0,
         "Fields": 0,
         "Properties": 1,
-        "Methods": 5
+        "Methods": 7
       }
     },
     {
@@ -59043,6 +59043,17 @@
     {
       "DisplayName": "GetByChannelId",
       "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbychannelid-system-string",
+      "Signature": "IReadOnlyList\u003CEventDispatchRemediationRuntimeState\u003E GetByChannelId(string channelId)",
+      "Summary": "Gets the remediation command-state entries recorded for one event channel."
+    },
+    {
+      "DisplayName": "GetByChannelId",
+      "Category": "Methods",
       "DeclaringTypeName": "IEventPublicationRuntimeCatalog",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -61052,6 +61063,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorwritepathreadinessstate-system-string",
       "Signature": "IReadOnlyList\u003CCdcCaptureExecutionRuntimeDescriptor\u003E GetByManagedConnectorWritePathReadinessState(string readinessState)",
       "Summary": "Gets the CDC capture execution runtimes whose current managed-connector write-path readiness answer matches the requested state."
+    },
+    {
+      "DisplayName": "GetByMessageId",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchRemediationRuntimeCatalog",
+      "NamespaceName": "Cephalon.Abstractions.Data",
+      "AssemblyName": "Cephalon.Abstractions",
+      "FileName": "cephalon-abstractions.md",
+      "AnchorId": "member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbymessageid-system-string",
+      "Signature": "IReadOnlyList\u003CEventDispatchRemediationRuntimeState\u003E GetByMessageId(string messageId)",
+      "Summary": "Gets the remediation command-state entries recorded for one event message."
     },
     {
       "DisplayName": "GetByMode",

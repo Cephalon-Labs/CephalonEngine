@@ -25,6 +25,20 @@ public interface IEventDispatchRemediationRuntimeCatalog
     IReadOnlyList<EventDispatchRemediationRuntimeState> GetByOutboxId(string outboxId);
 
     /// <summary>
+    /// Gets the remediation command-state entries recorded for one event message.
+    /// </summary>
+    /// <param name="messageId">The stable event message identifier to resolve.</param>
+    /// <returns>The recorded command states for the message, ordered by observed time and command identifier.</returns>
+    IReadOnlyList<EventDispatchRemediationRuntimeState> GetByMessageId(string messageId);
+
+    /// <summary>
+    /// Gets the remediation command-state entries recorded for one event channel.
+    /// </summary>
+    /// <param name="channelId">The stable event channel identifier to resolve.</param>
+    /// <returns>The recorded command states for the channel, ordered by observed time and command identifier.</returns>
+    IReadOnlyList<EventDispatchRemediationRuntimeState> GetByChannelId(string channelId);
+
+    /// <summary>
     /// Gets the remediation command-state entries recorded for one command operation.
     /// </summary>
     /// <param name="operationId">The stable command operation identifier to resolve.</param>

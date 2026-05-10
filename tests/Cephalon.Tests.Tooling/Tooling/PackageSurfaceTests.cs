@@ -595,6 +595,20 @@ public sealed class PackageSurfaceTests
     }
 
     [Fact]
+    public void EventDispatchRemediationRuntimeCatalogSurfaceKeepsDrillDownFiltersExplicit()
+    {
+        var catalogType = typeof(global::Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog);
+
+        Assert.NotNull(catalogType.GetMethod("GetByCommandId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetByOutboxId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetByMessageId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetByChannelId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetByOperationId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetByActorId", BindingFlags.Instance | BindingFlags.Public));
+        Assert.NotNull(catalogType.GetMethod("GetByOutcome", BindingFlags.Instance | BindingFlags.Public));
+    }
+
+    [Fact]
     public void AspNetCoreAssemblyExposesOnlyTheDocumentedHostContracts()
     {
         AssertExportedTypes(

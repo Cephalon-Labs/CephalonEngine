@@ -50860,6 +50860,21 @@ Returns: The recorded command states for the actor, ordered by observed time and
 Parameters:
 - `actorId`: The stable operator actor identifier to resolve.
 
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbychannelid-system-string"></a>
+
+##### `GetByChannelId`
+
+```csharp
+IReadOnlyList<EventDispatchRemediationRuntimeState> GetByChannelId(string channelId)
+```
+
+Gets the remediation command-state entries recorded for one event channel.
+
+Returns: The recorded command states for the channel, ordered by observed time and command identifier.
+
+Parameters:
+- `channelId`: The stable event channel identifier to resolve.
+
 <a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbycommandid-system-string"></a>
 
 ##### `GetByCommandId`
@@ -50874,6 +50889,21 @@ Returns: The recorded command state, or `null` when the command has not reported
 
 Parameters:
 - `commandId`: The stable remediation command identifier to resolve.
+
+<a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbymessageid-system-string"></a>
+
+##### `GetByMessageId`
+
+```csharp
+IReadOnlyList<EventDispatchRemediationRuntimeState> GetByMessageId(string messageId)
+```
+
+Gets the remediation command-state entries recorded for one event message.
+
+Returns: The recorded command states for the message, ordered by observed time and command identifier.
+
+Parameters:
+- `messageId`: The stable event message identifier to resolve.
 
 <a id="member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbyoperationid-system-string"></a>
 

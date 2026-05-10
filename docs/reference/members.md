@@ -10842,6 +10842,9 @@ Browse the published API surface by public member.
 - [GetByCellId](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icellhealthisolationcatalog-getbycellid-system-string): `Methods` on `ICellHealthIsolationCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByCellId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets all cell health-isolation answers that govern the requested cell.
   - `IReadOnlyList<CellHealthIsolationDescriptor> GetByCellId(string cellId)`
+- [GetByChannelId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbychannelid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the remediation command-state entries recorded for one event channel.
+  - `IReadOnlyList<EventDispatchRemediationRuntimeState> GetByChannelId(string channelId)`
 - [GetByChannelId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventpublicationruntimecatalog-getbychannelid-system-string): `Methods` on `IEventPublicationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByChannelId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the reported publication states for one channel identifier.
   - `IReadOnlyList<EventPublicationRuntimeState> GetByChannelId(string channelId)`
@@ -11391,6 +11394,9 @@ Browse the published API surface by public member.
 - [GetByManagedConnectorWritePathReadinessState](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureexecutionruntimecatalog-getbymanagedconnectorwritepathreadinessstate-system-string): `Methods` on `ICdcCaptureExecutionRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByManagedConnectorWritePathReadinessState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the CDC capture execution runtimes whose current managed-connector write-path readiness answer matches the requested state.
   - `IReadOnlyList<CdcCaptureExecutionRuntimeDescriptor> GetByManagedConnectorWritePathReadinessState(string readinessState)`
+- [GetByMessageId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventdispatchremediationruntimecatalog-getbymessageid-system-string): `Methods` on `IEventDispatchRemediationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByMessageId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
+  - Gets the remediation command-state entries recorded for one event message.
+  - `IReadOnlyList<EventDispatchRemediationRuntimeState> GetByMessageId(string messageId)`
 - [GetByMode](cephalon-abstractions.md#member-m-cephalon-abstractions-authorization-iauthorizationpolicycatalog-getbymode-cephalon-abstractions-authorization-authorizationmode): `Methods` on `IAuthorizationPolicyCatalog` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByMode&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets all authorization policies that support the requested mode.
   - `IReadOnlyList<AuthorizationPolicyDescriptor> GetByMode(AuthorizationMode mode)`

@@ -15,6 +15,8 @@ internal sealed class EventingDispatchRemediationRuntimeSurfaceContributor(
     private const string CommandResultRoute = "/engine/event-dispatch-remediation-commands/{commandId}";
     private const string CommandOperationRoute = "/engine/event-dispatch-remediation-commands/operations/{operationId}";
     private const string CommandActorRoute = "/engine/event-dispatch-remediation-commands/actors/{actorId}";
+    private const string CommandMessageRoute = "/engine/event-dispatch-remediation-commands/messages/{messageId}";
+    private const string CommandChannelRoute = "/engine/event-dispatch-remediation-commands/channels/{channelId}";
     private const string CommandOperations = "retry-now,retry-later,skip,quarantine,dead-letter";
 
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
@@ -73,6 +75,8 @@ internal sealed class EventingDispatchRemediationRuntimeSurfaceContributor(
             metadata["operatorCommandResultRoute"] = CommandResultRoute;
             metadata["operatorCommandOperationRoute"] = CommandOperationRoute;
             metadata["operatorCommandActorRoute"] = CommandActorRoute;
+            metadata["operatorCommandMessageRoute"] = CommandMessageRoute;
+            metadata["operatorCommandChannelRoute"] = CommandChannelRoute;
             metadata["operatorCommandOperations"] = CommandOperations;
             metadata["operatorCommandScope"] = "dispatch-store";
             metadata["deadLetterCommandScope"] = "dispatch-store-terminal";

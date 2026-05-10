@@ -427,6 +427,8 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["commandResultRoute"] = "/engine/event-dispatch-remediation-commands/{commandId}",
                     ["commandOperationRoute"] = "/engine/event-dispatch-remediation-commands/operations/{operationId}",
                     ["commandActorRoute"] = "/engine/event-dispatch-remediation-commands/actors/{actorId}",
+                    ["commandMessageRoute"] = "/engine/event-dispatch-remediation-commands/messages/{messageId}",
+                    ["commandChannelRoute"] = "/engine/event-dispatch-remediation-commands/channels/{channelId}",
                     ["operationIds"] = string.Join(
                         ",",
                         EventDispatchRemediationOperationIds.RetryNow,

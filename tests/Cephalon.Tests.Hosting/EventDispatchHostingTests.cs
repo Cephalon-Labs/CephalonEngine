@@ -206,6 +206,8 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", terminalRemediationEntry.Metadata["operatorCommandResultRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/operations/{operationId}", terminalRemediationEntry.Metadata["operatorCommandOperationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/actors/{actorId}", terminalRemediationEntry.Metadata["operatorCommandActorRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/messages/{messageId}", terminalRemediationEntry.Metadata["operatorCommandMessageRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/channels/{channelId}", terminalRemediationEntry.Metadata["operatorCommandChannelRoute"]);
         Assert.Equal("false", terminalRemediationEntry.Metadata["wolverineRequired"]);
         Assert.Equal("unique-command-id", terminalRemediationEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
         Assert.Equal("reject-without-mutation", terminalRemediationEntry.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
@@ -266,6 +268,8 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("256", remediationCapability.Metadata["commandHistoryLimit"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/operations/{operationId}", remediationCapability.Metadata["commandOperationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/actors/{actorId}", remediationCapability.Metadata["commandActorRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/messages/{messageId}", remediationCapability.Metadata["commandMessageRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/channels/{channelId}", remediationCapability.Metadata["commandChannelRoute"]);
         Assert.Equal("unique-command-id", remediationCapability.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
         Assert.Equal("reject-without-mutation", remediationCapability.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
 
@@ -319,6 +323,8 @@ public sealed class EventDispatchHostingTests
         var commandStates = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands");
         var commandState = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState>("/engine/event-dispatch-remediation-commands/cmd-command-001-retry");
         var commandStatesByOutbox = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/outboxes/entity-framework-outbox");
+        var commandStatesByMessage = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/messages/evt-command-001");
+        var commandStatesByChannel = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/channels/catalog-events");
         var commandStatesByRetryNowOperation = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/operations/retry-now");
         var commandStatesByOperator = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/actors/operator-001");
         var acceptedCommandStates = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/outcomes/accepted");
@@ -346,6 +352,10 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("reject-without-mutation", commandState.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
         Assert.NotNull(commandStatesByOutbox);
         Assert.Equal("cmd-command-001-retry", Assert.Single(commandStatesByOutbox).CommandId);
+        Assert.NotNull(commandStatesByMessage);
+        Assert.Equal("cmd-command-001-retry", Assert.Single(commandStatesByMessage).CommandId);
+        Assert.NotNull(commandStatesByChannel);
+        Assert.Equal("cmd-command-001-retry", Assert.Single(commandStatesByChannel).CommandId);
         Assert.NotNull(commandStatesByRetryNowOperation);
         Assert.Equal("cmd-command-001-retry", Assert.Single(commandStatesByRetryNowOperation).CommandId);
         Assert.NotNull(commandStatesByOperator);
@@ -377,6 +387,8 @@ public sealed class EventDispatchHostingTests
         var duplicateCommandResult = await duplicateCommandResponse.Content.ReadFromJsonAsync<EventDispatchRemediationResult>();
         var originalCommandStateAfterDuplicate = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState>("/engine/event-dispatch-remediation-commands/cmd-command-001-retry");
         var commandStatesAfterDuplicate = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands");
+        var commandStatesByMessageAfterDuplicate = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/messages/evt-command-001");
+        var commandStatesByChannelAfterDuplicate = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/channels/catalog-events");
         var commandStatesBySkipOperation = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/operations/skip");
         var commandStatesByDuplicateActor = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/actors/operator-002");
         var remediatedStateAfterDuplicate = await client.GetFromJsonAsync<EventDispatchRuntimeState>("/engine/event-dispatches/entity-framework-outbox");
@@ -395,6 +407,10 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("retry-now", originalCommandStateAfterDuplicate.OperationId);
         Assert.NotNull(commandStatesAfterDuplicate);
         Assert.Single(commandStatesAfterDuplicate);
+        Assert.NotNull(commandStatesByMessageAfterDuplicate);
+        Assert.Equal("cmd-command-001-retry", Assert.Single(commandStatesByMessageAfterDuplicate).CommandId);
+        Assert.NotNull(commandStatesByChannelAfterDuplicate);
+        Assert.Equal("cmd-command-001-retry", Assert.Single(commandStatesByChannelAfterDuplicate).CommandId);
         Assert.NotNull(commandStatesBySkipOperation);
         Assert.Empty(commandStatesBySkipOperation);
         Assert.NotNull(commandStatesByDuplicateActor);
@@ -419,6 +435,8 @@ public sealed class EventDispatchHostingTests
         var deadLetterResult = await deadLetterResponse.Content.ReadFromJsonAsync<EventDispatchRemediationResult>();
         var deadLetterState = await client.GetFromJsonAsync<EventDispatchRuntimeState>("/engine/event-dispatches/entity-framework-outbox");
         var deadLetterCommandState = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState>("/engine/event-dispatch-remediation-commands/cmd-command-001-dead-letter");
+        var commandStatesByMessageAfterDeadLetter = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/messages/evt-command-001");
+        var commandStatesByChannelAfterDeadLetter = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/channels/catalog-events");
         var commandStatesByDeadLetterOperation = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/operations/dead-letter");
         var commandStatesByOperatorAfterDeadLetter = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/actors/operator-001");
         pending = await readStore.ReadPendingAsync(10);
@@ -436,6 +454,14 @@ public sealed class EventDispatchHostingTests
         Assert.Equal(EventDispatchRemediationOutcomes.Accepted, deadLetterCommandState.Outcome);
         Assert.Equal(EventDispatchExecutionOutcomes.Failed, deadLetterCommandState.DispatchOutcome);
         Assert.Equal("dead-letter", deadLetterCommandState.OperationId);
+        Assert.NotNull(commandStatesByMessageAfterDeadLetter);
+        Assert.Equal(
+            ["cmd-command-001-dead-letter", "cmd-command-001-retry"],
+            commandStatesByMessageAfterDeadLetter.Select(state => state.CommandId).ToArray());
+        Assert.NotNull(commandStatesByChannelAfterDeadLetter);
+        Assert.Equal(
+            ["cmd-command-001-dead-letter", "cmd-command-001-retry"],
+            commandStatesByChannelAfterDeadLetter.Select(state => state.CommandId).ToArray());
         Assert.NotNull(commandStatesByDeadLetterOperation);
         Assert.Equal("cmd-command-001-dead-letter", Assert.Single(commandStatesByDeadLetterOperation).CommandId);
         Assert.NotNull(commandStatesByOperatorAfterDeadLetter);
@@ -469,6 +495,8 @@ public sealed class EventDispatchHostingTests
         var rejectedResult = await rejectedResponse.Content.ReadFromJsonAsync<EventDispatchRemediationResult>();
         var rejectedCommandState = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState>("/engine/event-dispatch-remediation-commands/cmd-command-001-retry-later-rejected");
         var rejectedCommandStates = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/outcomes/rejected");
+        var finalCommandStatesByMessage = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/messages/evt-command-001");
+        var finalCommandStatesByChannel = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/channels/catalog-events");
         var rejectedCommandStatesByOperation = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/operations/retry-later");
         var finalCommandStatesByOperator = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands/actors/operator-001");
         var allCommandStates = await client.GetFromJsonAsync<EventDispatchRemediationRuntimeState[]>("/engine/event-dispatch-remediation-commands");
@@ -481,6 +509,14 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("next attempt", rejectedCommandState.Error, StringComparison.OrdinalIgnoreCase);
         Assert.NotNull(rejectedCommandStates);
         Assert.Equal("cmd-command-001-retry-later-rejected", Assert.Single(rejectedCommandStates).CommandId);
+        Assert.NotNull(finalCommandStatesByMessage);
+        Assert.Equal(
+            ["cmd-command-001-retry-later-rejected", "cmd-command-001-dead-letter", "cmd-command-001-retry"],
+            finalCommandStatesByMessage.Select(state => state.CommandId).ToArray());
+        Assert.NotNull(finalCommandStatesByChannel);
+        Assert.Equal(
+            ["cmd-command-001-retry-later-rejected", "cmd-command-001-dead-letter", "cmd-command-001-retry"],
+            finalCommandStatesByChannel.Select(state => state.CommandId).ToArray());
         Assert.NotNull(rejectedCommandStatesByOperation);
         Assert.Equal("cmd-command-001-retry-later-rejected", Assert.Single(rejectedCommandStatesByOperation).CommandId);
         Assert.NotNull(finalCommandStatesByOperator);

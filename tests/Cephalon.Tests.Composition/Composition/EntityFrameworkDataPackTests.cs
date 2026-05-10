@@ -1248,6 +1248,8 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("/engine/event-dispatch-remediation-commands/{commandId}", remediationEntry.Metadata["operatorCommandResultRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/operations/{operationId}", remediationEntry.Metadata["operatorCommandOperationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/actors/{actorId}", remediationEntry.Metadata["operatorCommandActorRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/messages/{messageId}", remediationEntry.Metadata["operatorCommandMessageRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/channels/{channelId}", remediationEntry.Metadata["operatorCommandChannelRoute"]);
         Assert.Equal("retry-now,retry-later,skip,quarantine,dead-letter", remediationEntry.Metadata["operatorCommandOperations"]);
         Assert.Equal("false", remediationEntry.Metadata["wolverineRequired"]);
         Assert.Equal("true", remediationEntry.Metadata["providerNeutral"]);
@@ -1345,6 +1347,10 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("reject-without-mutation", remediationCommandState.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
         Assert.Equal(remediationCommandState, remediationCommandCatalog.GetByCommandId("cmd-evt-020-retry"));
         Assert.Equal(remediationCommandState, Assert.Single(remediationCommandCatalog.GetByOutboxId("entity-framework-outbox")));
+        Assert.Equal(remediationCommandState, Assert.Single(remediationCommandCatalog.GetByMessageId("evt-020")));
+        Assert.Empty(remediationCommandCatalog.GetByMessageId("evt-missing"));
+        Assert.Equal(remediationCommandState, Assert.Single(remediationCommandCatalog.GetByChannelId("catalog-events")));
+        Assert.Empty(remediationCommandCatalog.GetByChannelId("billing-events"));
         Assert.Equal(remediationCommandState, Assert.Single(remediationCommandCatalog.GetByOperationId("retry-now")));
         Assert.Empty(remediationCommandCatalog.GetByOperationId("skip"));
         Assert.Equal(remediationCommandState, Assert.Single(remediationCommandCatalog.GetByActorId("operator-001")));
@@ -1358,6 +1364,8 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("retry-scheduled", remediationCommandEntry.Metadata["dispatchOutcome"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/operations/{operationId}", remediationCommandEntry.Metadata["commandOperationRoute"]);
         Assert.Equal("/engine/event-dispatch-remediation-commands/actors/{actorId}", remediationCommandEntry.Metadata["commandActorRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/messages/{messageId}", remediationCommandEntry.Metadata["commandMessageRoute"]);
+        Assert.Equal("/engine/event-dispatch-remediation-commands/channels/{channelId}", remediationCommandEntry.Metadata["commandChannelRoute"]);
         Assert.Equal("false", remediationCommandEntry.Metadata["wolverineRequired"]);
         Assert.Equal("unique-command-id", remediationCommandEntry.Metadata[EventDispatchRemediationMetadataKeys.CommandIdempotencyPolicy]);
         Assert.Equal("reject-without-mutation", remediationCommandEntry.Metadata[EventDispatchRemediationMetadataKeys.DuplicateCommandPolicy]);
