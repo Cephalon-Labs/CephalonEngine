@@ -230,6 +230,8 @@ ENG-596 adds `broker-topology-materialization-ownership` to the same profile so 
 
 ENG-597 adds `provider-partition-ownership` to the same profile so runtime consumers can see that route and topology evidence are separate from provider partition assignment, affinity, rebalancing, and ordering guarantees.
 
+ENG-598 adds `downstream-delivery-completion-ownership` to the same profile so runtime consumers can see that publication accepted handoff, dispatch reports, routing, topology, partition, and provider-managed dispatch evidence are separate from destination delivery completion, provider delivery receipts, subscriber acknowledgement, destination commits, and exactly-once delivery guarantees.
+
 **Cells and traffic automation**
 
 `ICellBoundaryCatalog`, `ICellRouteCatalog`, `ICellHealthIsolationCatalog`, `ICellTrafficAutomationRuntimeCatalog`.

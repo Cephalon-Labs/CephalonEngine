@@ -2286,6 +2286,7 @@ public sealed class EngineBuilderTests
         Assert.Equal("not-claimed", dimensions["broker-dead-letter-replay-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["broker-topology-materialization-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["provider-partition-ownership"].Metadata["status"]);
+        Assert.Equal("not-claimed", dimensions["downstream-delivery-completion-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["durability-and-outbox-portability"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["dead-letter-replay-and-remediation"].Metadata["status"]);
         Assert.Equal("MassTransit,NServiceBus,Wolverine,MediatR", dimensions["native-wolverine-free-baseline"].Metadata["referenceFrameworks"]);
@@ -2304,6 +2305,9 @@ public sealed class EngineBuilderTests
         Assert.Contains("providerPartitionOwnership=not-claimed", dimensions["provider-partition-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("providerOwnedPartitioning=not-present", dimensions["provider-partition-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", dimensions["provider-partition-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("downstreamDeliveryCompletion=not-claimed", dimensions["downstream-delivery-completion-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerDeliveryReceipt=not-present", dimensions["downstream-delivery-completion-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", dimensions["downstream-delivery-completion-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]

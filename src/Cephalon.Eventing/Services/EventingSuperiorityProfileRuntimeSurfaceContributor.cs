@@ -26,6 +26,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             : "publication routing is not enabled.";
         var brokerTopologyEvidence = ResolveBrokerTopologyEvidence(options, routeCount);
         var providerPartitionEvidence = ResolveProviderPartitionEvidence(options, routeCount);
+        var downstreamDeliveryCompletionEvidence = ResolveDownstreamDeliveryCompletionEvidence(topology);
         var remediationReadPerformanceStatus = topology.HasOutboxPublishingPath ? "claimed" : "partial";
         var remediationReadPerformanceEvidence = topology.HasOutboxPublishingPath
             ? $"benchmarks={RemediationFilteredReadBenchmarks}; readPolicy=single-pass-retained-catalog; materialization=not-required; wolverineRequired=false"
@@ -80,6 +81,14 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     evidence: providerPartitionEvidence,
                     advantage: "Teams can route events through Cephalon without assuming the engine silently owns provider partition placement or per-partition ordering semantics.",
                     nextGap: "Add a provider-owned partition descriptor plus assignment, rebalancing, affinity, and ordering-evidence catalog before claiming partition ownership."),
+                CreateEntry(
+                    id: "downstream-delivery-completion-ownership",
+                    displayName: "Downstream Delivery Completion Ownership",
+                    description: "Makes provider destination delivery completion, subscriber acknowledgements, and exactly-once completion explicit instead of inferring them from outbox accepted handoff or dispatch reports.",
+                    status: "not-claimed",
+                    evidence: downstreamDeliveryCompletionEvidence,
+                    advantage: "Teams can read Cephalon publication and dispatch truth without assuming the engine silently proves broker/provider destination delivery or subscriber acknowledgement.",
+                    nextGap: "Add a provider-owned delivery completion descriptor plus acknowledgement, receipt, and completion-evidence catalog before claiming downstream delivery completion."),
                 CreateEntry(
                     id: "native-wolverine-free-baseline",
                     displayName: "Native Wolverine-free Baseline",
@@ -251,6 +260,21 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         return string.Create(
             CultureInfo.InvariantCulture,
             $"routingPolicy={EventPublicationRoutingPolicy.GetPolicyId(options)}; routes={routeCount}; autoChannel={EventPublicationRoutingPolicy.GetAutoChannelId(options)}; providerPartitionOwnership=not-claimed; partitionAssignment=not-claimed; partitionAffinity=not-claimed; partitionRebalancing=not-claimed; partitionOrderingGuarantee=not-claimed; providerOwnedPartitioning=not-present; wolverineRequired=false");
+    }
+
+    private static string ResolveDownstreamDeliveryCompletionEvidence(EventingRuntimeTopology topology)
+    {
+        if (!topology.HasPublishingPath)
+        {
+            return "no publication path is active; downstreamDeliveryCompletion=not-claimed; providerDeliveryReceipt=not-present; subscriberAcknowledgement=not-claimed; destinationCommit=not-claimed; exactlyOnceDelivery=not-claimed; wolverineRequired=false";
+        }
+
+        var handoff = topology.HasOutboxPublishingPath ? "outbox-accepted" : "direct-or-provider-publisher";
+        var dispatchRuntime = topology.HasDispatchRuntimeContributors ? "reported" : "not-reported";
+
+        return string.Create(
+            CultureInfo.InvariantCulture,
+            $"publicationPath=active; handoff={handoff}; dispatchRuntime={dispatchRuntime}; downstreamDeliveryCompletion=not-claimed; providerDeliveryReceipt=not-present; subscriberAcknowledgement=not-claimed; destinationCommit=not-claimed; exactlyOnceDelivery=not-claimed; wolverineRequired=false");
     }
 
     private static string ResolveBrokerDeadLetterReplayEvidence(EventingRuntimeTopology topology)

@@ -2648,6 +2648,11 @@ Current `Cephalon.Eventing` highlights:
 - `provider-partition-ownership` is the separate provider partition boundary in that same profile;
   it stays `not-claimed` until a provider package owns partition assignment, affinity, rebalancing,
   and per-partition ordering semantics, even when route and broker topology evidence are present
+- `downstream-delivery-completion-ownership` is the separate delivery-completion boundary in that
+  same profile; it stays `not-claimed` until a provider package owns destination delivery receipts,
+  subscriber acknowledgement, destination commits, and exactly-once completion evidence, even when
+  publication accepted handoff, dispatch reports, Wolverine-managed dispatch, route, topology, or
+  partition evidence are present
 - Wolverine or another companion adapter can still move staged dispatch or one subscription to
   provider-managed ownership for brokered or staged dispatch scenarios; the shipped Wolverine path
   now keeps both the dispatch loop and managed subscription retry lanes bounded with max attempts,
