@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-11T21:55:09.0530634+00:00",
+  "GeneratedAtUtc": "2026-05-11T22:19:29.9319784+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -271,7 +271,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 42
+      "TypeCount": 46
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1331,7 +1331,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 39
+      "TypeCount": 43
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8603,7 +8603,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 25,
+        "Properties": 26,
         "Methods": 0
       }
     },
@@ -8724,6 +8724,21 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 20,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EventSerializerDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventserializerdescriptor",
+      "Declaration": "public sealed class EventSerializerDescriptor",
+      "Summary": "Describes a provider-neutral serializer runtime that can be selected by event contracts.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 11,
         "Methods": 0
       }
     },
@@ -11480,6 +11495,51 @@
       "AnchorId": "type-cephalon-eventing-services-ieventpublisher",
       "Declaration": "public interface IEventPublisher",
       "Summary": "Accepts integration events for the active eventing runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEventSerializerCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-ieventserializercatalog",
+      "Declaration": "public interface IEventSerializerCatalog",
+      "Summary": "Provides the merged event serializer descriptors visible to the active eventing runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 3
+      }
+    },
+    {
+      "DisplayName": "IEventSerializerContributor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-ieventserializercontributor",
+      "Declaration": "public interface IEventSerializerContributor",
+      "Summary": "Allows a module to contribute event serializer metadata into the active eventing runtime pack.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEventSerializerRegistry",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-ieventserializerregistry",
+      "Declaration": "public interface IEventSerializerRegistry",
+      "Summary": "Collects event serializer descriptors contributed by a host or module.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -22406,6 +22466,17 @@
     {
       "DisplayName": "Add",
       "Category": "Methods",
+      "DeclaringTypeName": "IEventSerializerRegistry",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventserializerregistry-add-cephalon-eventing-services-eventserializerdescriptor",
+      "Signature": "void Add(EventSerializerDescriptor serializer)",
+      "Summary": "Adds one event serializer descriptor to the active eventing catalog."
+    },
+    {
+      "DisplayName": "Add",
+      "Category": "Methods",
       "DeclaringTypeName": "IEventSubscriptionRegistry",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -31347,6 +31418,17 @@
       "Summary": "Gets a value indicating whether the current node can exercise the current provider-owned control-plane provisioning answer safely."
     },
     {
+      "DisplayName": "CanRead",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSerializerDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventserializerdescriptor-canread",
+      "Signature": "bool CanRead { get; }",
+      "Summary": "Gets a value indicating whether the serializer can deserialize payloads."
+    },
+    {
       "DisplayName": "CanRequestApproval",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus",
@@ -31521,6 +31603,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-canuseproviderspecificcontrolplanematerializeroncurrentnode",
       "Signature": "bool CanUseProviderSpecificControlPlaneMaterializerOnCurrentNode { get; set; }",
       "Summary": "Gets a value indicating whether the current node can use the selected provider-specific control-plane materializer safely."
+    },
+    {
+      "DisplayName": "CanWrite",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSerializerDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventserializerdescriptor-canwrite",
+      "Signature": "bool CanWrite { get; }",
+      "Summary": "Gets a value indicating whether the serializer can serialize payloads."
     },
     {
       "DisplayName": "Capabilities",
@@ -39258,6 +39351,17 @@
     {
       "DisplayName": "ContentType",
       "Category": "Properties",
+      "DeclaringTypeName": "EventSerializerDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventserializerdescriptor-contenttype",
+      "Signature": "string ContentType { get; }",
+      "Summary": "Gets the primary wire content type produced or consumed by the serializer."
+    },
+    {
+      "DisplayName": "ContentType",
+      "Category": "Properties",
       "DeclaringTypeName": "InboxMessage",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -45569,6 +45673,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "EventSerializerDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventserializerdescriptor-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable serializer description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "EventStreamDescriptor",
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
       "AssemblyName": "Cephalon.Abstractions",
@@ -47512,6 +47627,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimedescriptor-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the operator-facing dispatch-runtime name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSerializerDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventserializerdescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing display name for the serializer."
     },
     {
       "DisplayName": "DisplayName",
@@ -53740,6 +53866,17 @@
       "Summary": "Gets per-event translation and reconciliation results."
     },
     {
+      "DisplayName": "EventSerializerDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventSerializerDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventserializerdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "EventSerializerDescriptor(string id, string displayName, string description, string contentType, string format, string runtimeKind, bool canRead, bool canWrite, bool requiresSchemaRegistry, IReadOnlyList\u003Cstring\u003E tags, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new event serializer descriptor."
+    },
+    {
       "DisplayName": "EventSourcingEnabled",
       "Category": "Properties",
       "DeclaringTypeName": "BehaviorTopologyDescriptor",
@@ -58151,6 +58288,17 @@
       "Summary": "Creates a forbidden result for the specified payload type."
     },
     {
+      "DisplayName": "Format",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSerializerDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventserializerdescriptor-format",
+      "Signature": "string Format { get; }",
+      "Summary": "Gets the provider-neutral serialization format."
+    },
+    {
       "DisplayName": "Foundation",
       "Category": "Fields",
       "DeclaringTypeName": "PatternKind",
@@ -59964,6 +60112,17 @@
       "AnchorId": "member-m-cephalon-abstractions-execution-idurableexecutionruntimestatecatalog-getbycompensationactionid-system-string",
       "Signature": "IReadOnlyList\u003CDurableExecutionRuntimeState\u003E GetByCompensationActionId(string compensationActionId)",
       "Summary": "Gets the reported durable-execution state entries that currently include the requested compensation action."
+    },
+    {
+      "DisplayName": "GetByContentType",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventSerializerCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventserializercatalog-getbycontenttype-system-string",
+      "Signature": "IReadOnlyList\u003CEventSerializerDescriptor\u003E GetByContentType(string contentType)",
+      "Summary": "Gets all serializer descriptors registered for the supplied content type."
     },
     {
       "DisplayName": "GetByContractId",
@@ -69501,6 +69660,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationrequest-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable publication identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSerializerDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventserializerdescriptor-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable serializer identifier used by event contracts."
     },
     {
       "DisplayName": "Id",
@@ -84879,6 +85049,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationruntimestate-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; set; }",
       "Summary": "The operator-facing metadata captured by the latest publication observation."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSerializerDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventserializerdescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets normalized metadata associated with the serializer."
     },
     {
       "DisplayName": "Metadata",
@@ -104906,6 +105087,17 @@
       "Summary": "Registers one or more event contract descriptors with the supplied registry."
     },
     {
+      "DisplayName": "RegisterEventSerializers",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventSerializerContributor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventserializercontributor-registereventserializers-cephalon-eventing-services-ieventserializerregistry",
+      "Signature": "void RegisterEventSerializers(IEventSerializerRegistry serializers)",
+      "Summary": "Registers one or more event serializer descriptors with the supplied registry."
+    },
+    {
       "DisplayName": "RegisterExecutionGraphs",
       "Category": "Methods",
       "DeclaringTypeName": "IExecutionGraphContributor",
@@ -108391,6 +108583,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimesummary-requiresremediation",
       "Signature": "bool RequiresRemediation { get; }",
       "Summary": "Gets a value indicating whether the execution runtime currently requires operator remediation."
+    },
+    {
+      "DisplayName": "RequiresSchemaRegistry",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSerializerDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventserializerdescriptor-requiresschemaregistry",
+      "Signature": "bool RequiresSchemaRegistry { get; }",
+      "Summary": "Gets a value indicating whether the serializer needs schema-registry support before use."
     },
     {
       "DisplayName": "RequiresTakeover",
@@ -112683,6 +112886,17 @@
       "Summary": "Combines the main operator-facing runtime views into a single payload."
     },
     {
+      "DisplayName": "RuntimeKind",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSerializerDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventserializerdescriptor-runtimekind",
+      "Signature": "string RuntimeKind { get; }",
+      "Summary": "Gets the serializer runtime implementation kind."
+    },
+    {
       "DisplayName": "RuntimeLifecycleEvent",
       "Category": "Constructors",
       "DeclaringTypeName": "RuntimeLifecycleEvent",
@@ -114936,6 +115150,28 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventcontractdescriptor-serializerid",
       "Signature": "string SerializerId { get; }",
       "Summary": "Gets the provider-neutral serializer identifier selected by the contract."
+    },
+    {
+      "DisplayName": "Serializers",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-serializers",
+      "Signature": "IList\u003CEventSerializerDescriptor\u003E Serializers { get; }",
+      "Summary": "Gets the host-defined event serializer descriptors that should be available to the eventing runtime."
+    },
+    {
+      "DisplayName": "Serializers",
+      "Category": "Properties",
+      "DeclaringTypeName": "IEventSerializerCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-ieventserializercatalog-serializers",
+      "Signature": "IReadOnlyList\u003CEventSerializerDescriptor\u003E Serializers { get; }",
+      "Summary": "Gets all registered event serializer descriptors."
     },
     {
       "DisplayName": "ServerId",
@@ -122384,6 +122620,17 @@
     {
       "DisplayName": "Tags",
       "Category": "Properties",
+      "DeclaringTypeName": "EventSerializerDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventserializerdescriptor-tags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
+      "Summary": "Gets the normalized tag set associated with the serializer."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
       "DeclaringTypeName": "EventStreamDescriptor",
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
       "AssemblyName": "Cephalon.Abstractions",
@@ -127202,6 +127449,17 @@
     {
       "DisplayName": "TryGet",
       "Category": "Methods",
+      "DeclaringTypeName": "IEventSerializerCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventserializercatalog-tryget-system-string-cephalon-eventing-services-eventserializerdescriptor",
+      "Signature": "bool TryGet(string serializerId, out EventSerializerDescriptor serializer)",
+      "Summary": "Attempts to resolve a serializer by its stable identifier."
+    },
+    {
+      "DisplayName": "TryGet",
+      "Category": "Methods",
       "DeclaringTypeName": "IEventSubscriptionCatalog",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -127341,6 +127599,17 @@
       "AnchorId": "member-m-cephalon-abstractions-modules-modulediscoveryregistry-trygetdescriptors-system-reflection-assembly-system-collections-generic-ireadonlylist-cephalon-abstractions-modules-modulediscoverydescriptor",
       "Signature": "bool TryGetDescriptors(Assembly assembly, out IReadOnlyList\u003CModuleDiscoveryDescriptor\u003E descriptors)",
       "Summary": "Tries to get registered module descriptors for an assembly."
+    },
+    {
+      "DisplayName": "TryGetForContract",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventSerializerCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventserializercatalog-trygetforcontract-cephalon-eventing-services-eventcontractdescriptor-cephalon-eventing-services-eventserializerdescriptor",
+      "Signature": "bool TryGetForContract(EventContractDescriptor contract, out EventSerializerDescriptor serializer)",
+      "Summary": "Attempts to resolve the serializer selected by an event contract."
     },
     {
       "DisplayName": "TryGetSelected",

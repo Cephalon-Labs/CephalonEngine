@@ -2465,8 +2465,10 @@ public sealed class EngineBuilderTests
             .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
         Assert.Equal("partial", dimensions["serialization-and-contract-versioning-ownership"].Metadata["status"]);
         Assert.Contains("eventContractCatalog=present", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("eventSerializerCatalog=not-present", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("eventContractCount=2", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("serializerDescriptors=2", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("serializerRuntimeCount=0", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("serializerSelection=descriptor-backed", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("messageEnvelopeSchema=descriptor-backed", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("contractVersionNegotiation=descriptor-backed", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
@@ -2477,6 +2479,98 @@ public sealed class EngineBuilderTests
         var capability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.contracts");
         Assert.Equal("event-contracts", capability.Metadata["surfaceId"]);
         Assert.Equal("options-and-contributors", capability.Metadata["contractSource"]);
+        Assert.Equal("false", capability.Metadata["wolverineRequired"]);
+    }
+
+    [Fact]
+    public void AddEventingProjectsSerializerCatalogProfileEvidenceWithoutWolverine()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<IEventContractContributor, ContractTestEventContributor>();
+        services.AddSingleton<IEventSerializerContributor, SerializerTestEventContributor>();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddEventing(options =>
+            {
+                options.Contracts.Add(new EventContractDescriptor(
+                    id: "audit.recorded.v1",
+                    eventType: "audit.recorded",
+                    displayName: "Audit Recorded",
+                    description: "Audit event emitted when an auditable action is recorded.",
+                    version: "1",
+                    contentType: "application/vnd.cephalon.audit.recorded.v1+json",
+                    serializerId: "system-text-json-sourcegen"));
+                options.Serializers.Add(new EventSerializerDescriptor(
+                    id: "system-text-json-sourcegen",
+                    displayName: "System.Text.Json Source Generated",
+                    description: "Source-generated System.Text.Json serializer registered by the host.",
+                    contentType: "application/json",
+                    format: "json",
+                    runtimeKind: "source-generated",
+                    metadata: new Dictionary<string, string>
+                    {
+                        ["owner"] = "platform"
+                    }));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var runtime = provider.GetRequiredService<IRuntime>();
+        var contractCatalog = provider.GetRequiredService<IEventContractCatalog>();
+        var serializerCatalog = provider.GetRequiredService<IEventSerializerCatalog>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        Assert.Equal(2, serializerCatalog.Serializers.Count);
+        Assert.True(serializerCatalog.TryGet("system-text-json-sourcegen", out var jsonSerializer));
+        Assert.Equal("json", jsonSerializer.Format);
+        Assert.Equal("source-generated", jsonSerializer.RuntimeKind);
+        Assert.True(jsonSerializer.CanRead);
+        Assert.True(jsonSerializer.CanWrite);
+        Assert.False(jsonSerializer.RequiresSchemaRegistry);
+        Assert.Single(serializerCatalog.GetByContentType("application/json"));
+        Assert.True(contractCatalog.TryGet("audit.recorded.v1", out var auditContract));
+        Assert.True(serializerCatalog.TryGetForContract(auditContract, out var auditSerializer));
+        Assert.Equal("system-text-json-sourcegen", auditSerializer.Id);
+
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var serializerSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-serializers");
+        Assert.Contains(
+            serializerSurface.Entries,
+            entry => entry.Id == "system-text-json-sourcegen" &&
+                entry.Metadata["contentType"] == "application/json" &&
+                entry.Metadata["format"] == "json" &&
+                entry.Metadata["runtimeKind"] == "source-generated" &&
+                entry.Metadata["canRead"] == "true" &&
+                entry.Metadata["canWrite"] == "true" &&
+                entry.Metadata["requiresSchemaRegistry"] == "false" &&
+                entry.Metadata["matchingContractCount"] == "2" &&
+                entry.Metadata["wolverineRequired"] == "false");
+
+        var dimensions = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        Assert.Equal("partial", dimensions["serialization-and-contract-versioning-ownership"].Metadata["status"]);
+        Assert.Contains("eventContractCatalog=present", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("eventSerializerCatalog=present", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("eventContractCount=2", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("serializerRuntimeCount=2", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("resolvedSerializerContracts=2", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("unresolvedSerializerContracts=0", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("serializerSelection=catalog-backed", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wireSerializationRuntime=serializer-catalog-declared", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("schemaRegistry=not-present", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("upcasterPipeline=not-present", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+
+        var capability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.serializers");
+        Assert.Equal("event-serializers", capability.Metadata["surfaceId"]);
+        Assert.Equal("options-and-contributors", capability.Metadata["serializerSource"]);
         Assert.Equal("false", capability.Metadata["wolverineRequired"]);
     }
 
@@ -4239,6 +4333,22 @@ public sealed class EngineBuilderTests
                 contentType: "application/vnd.cephalon.inventory.item-reserved.v1+json",
                 serializerId: "system-text-json-sourcegen",
                 tags: ["inventory", "contract"]));
+        }
+    }
+
+    private sealed class SerializerTestEventContributor : IEventSerializerContributor
+    {
+        public void RegisterEventSerializers(IEventSerializerRegistry serializers)
+        {
+            serializers.Add(new EventSerializerDescriptor(
+                id: "cephalon-protobuf",
+                displayName: "Cephalon Protobuf",
+                description: "Provider-neutral protobuf serializer descriptor registered by a module.",
+                contentType: "application/x-protobuf",
+                format: "protobuf",
+                runtimeKind: "custom",
+                requiresSchemaRegistry: true,
+                tags: ["binary", "contract"]));
         }
     }
 }

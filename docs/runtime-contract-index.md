@@ -238,6 +238,8 @@ ENG-600 adds `serialization-and-contract-versioning-ownership` to the same profi
 
 ENG-609 adds `IEventContractCatalog`, `event-contracts`, and `eventing.contracts` as the descriptor-backed contract catalog layer under that boundary. Runtime consumers can now distinguish no contract evidence from `partial` descriptor evidence for event type, version, content type, serializer id, envelope schema, and compatibility policy while still seeing wire serialization runtime, schema registry, and upcaster execution as unclaimed.
 
+ENG-610 adds `IEventSerializerCatalog`, `event-serializers`, and `eventing.serializers` as the descriptor-backed serializer catalog layer under that boundary. Runtime consumers can now distinguish contract descriptors whose serializer ids resolve against cataloged serializer availability from unresolved serializer references, while executable payload serialization, schema registry lookup, upcaster execution, and provider-owned compatibility validation remain unclaimed until a provider or engine package owns those paths.
+
 ENG-601 adds `tenant-and-correlation-context-ownership` to the same profile so runtime consumers can see that operator correlation metadata, diagnostics tags, channel catalogs, subscription catalogs, route evidence, and publication runtime evidence are separate from tenant context propagation, correlation/causation propagation, baggage propagation, and message-header policy.
 
 ENG-602 adds `scheduled-and-delayed-delivery-ownership` to the same profile so runtime consumers can see that bounded process-local delayed publication acceptance is separate from durable scheduled delivery, provider delay queues, broker scheduled delivery, cross-node schedule coordination, and schedule recovery.

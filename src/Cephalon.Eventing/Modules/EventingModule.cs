@@ -31,6 +31,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
     private bool hasDispatchRuntimeContributors;
     private bool hasExternalManagedSubscriptionExecutionBindings;
     private bool hasContractContributors;
+    private bool hasSerializerContributors;
     private bool hasInboxPath;
     private bool hasInProcessSubscriptionDescriptorDiscovery;
     private bool hasInProcessSubscriptionExecutionPath;
@@ -71,6 +72,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
 
         hasChannelContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventChannelContributor));
         hasContractContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventContractContributor));
+        hasSerializerContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventSerializerContributor));
         hasDispatchStore = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchStore));
         hasDispatchRuntimeContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchRuntimeContributor));
         hasExternalRemediationCommandJournal = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchRemediationCommandJournal));
@@ -103,6 +105,12 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
         if (options.Contracts.Count > 0 || hasContractContributors)
         {
             services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingContractRuntimeSurfaceContributor>());
+        }
+
+        services.TryAddSingleton<IEventSerializerCatalog, EventSerializerCatalog>();
+        if (options.Serializers.Count > 0 || hasSerializerContributors)
+        {
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingSerializerRuntimeSurfaceContributor>());
         }
 
         if (options.EnableSubscriptions)
@@ -285,6 +293,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             var publicationRoutingRequireMatchedRoute = options.PublicationRoutingRequireMatchedRoute.ToString().ToLowerInvariant();
             var publicationRoutingRejectMismatchedExplicitChannel = options.PublicationRoutingRejectMismatchedExplicitChannel.ToString().ToLowerInvariant();
             var eventContractCatalog = options.Contracts.Count > 0 || hasContractContributors ? "available" : "not-configured";
+            var eventSerializerCatalog = options.Serializers.Count > 0 || hasSerializerContributors ? "available" : "not-configured";
             var publishMetadata = hasInProcessSubscriptionExecutionPath
                 ? new Dictionary<string, string>
                 {
@@ -327,6 +336,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["publicationRoutingRequireMatchedRoute"] = publicationRoutingRequireMatchedRoute,
                     ["publicationRoutingRejectMismatchedExplicitChannel"] = publicationRoutingRejectMismatchedExplicitChannel,
                     ["eventContractCatalog"] = eventContractCatalog,
+                    ["eventSerializerCatalog"] = eventSerializerCatalog,
                     ["runtimeState"] = "available"
                 }
                 : new Dictionary<string, string>
@@ -348,6 +358,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["publicationRoutingRequireMatchedRoute"] = publicationRoutingRequireMatchedRoute,
                     ["publicationRoutingRejectMismatchedExplicitChannel"] = publicationRoutingRejectMismatchedExplicitChannel,
                     ["eventContractCatalog"] = eventContractCatalog,
+                    ["eventSerializerCatalog"] = eventSerializerCatalog,
                     ["runtimeState"] = "available"
                 };
 
@@ -405,6 +416,26 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                         ? "options-and-contributors"
                         : options.Contracts.Count > 0 ? "options" : "contributors",
                     ["configuredContractCount"] = options.Contracts.Count.ToString(CultureInfo.InvariantCulture),
+                    ["wolverineRequired"] = "false",
+                    ["runtimeState"] = "available"
+                }));
+        }
+
+        if (options.Serializers.Count > 0 || hasSerializerContributors)
+        {
+            capabilities.Add(new Capability(
+                key: "eventing.serializers",
+                displayName: "Event Serializer Catalog",
+                description: "Exposes provider-neutral event serializer descriptors without requiring Wolverine or a broker-specific serializer package.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["technology"] = "event-driven-integration",
+                    ["surfaceId"] = "event-serializers",
+                    ["serializerCatalog"] = "available",
+                    ["serializerSource"] = options.Serializers.Count > 0 && hasSerializerContributors
+                        ? "options-and-contributors"
+                        : options.Serializers.Count > 0 ? "options" : "contributors",
+                    ["configuredSerializerCount"] = options.Serializers.Count.ToString(CultureInfo.InvariantCulture),
                     ["wolverineRequired"] = "false",
                     ["runtimeState"] = "available"
                 }));

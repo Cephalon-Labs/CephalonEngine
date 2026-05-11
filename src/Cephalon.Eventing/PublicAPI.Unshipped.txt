@@ -89,5 +89,28 @@ Cephalon.Eventing.Services.IEventContractContributor
 Cephalon.Eventing.Services.IEventContractContributor.RegisterEventContracts(Cephalon.Eventing.Services.IEventContractRegistry! contracts) -> void
 Cephalon.Eventing.Services.IEventContractRegistry
 Cephalon.Eventing.Services.IEventContractRegistry.Add(Cephalon.Eventing.Services.EventContractDescriptor! contract) -> void
+Cephalon.Eventing.Configuration.EventingOptions.Serializers.get -> System.Collections.Generic.IList<Cephalon.Eventing.Services.EventSerializerDescriptor!>!
+Cephalon.Eventing.Services.EventSerializerDescriptor
+Cephalon.Eventing.Services.EventSerializerDescriptor.CanRead.get -> bool
+Cephalon.Eventing.Services.EventSerializerDescriptor.CanWrite.get -> bool
+Cephalon.Eventing.Services.EventSerializerDescriptor.ContentType.get -> string!
+Cephalon.Eventing.Services.EventSerializerDescriptor.Description.get -> string!
+Cephalon.Eventing.Services.EventSerializerDescriptor.DisplayName.get -> string!
+Cephalon.Eventing.Services.EventSerializerDescriptor.EventSerializerDescriptor(string! id, string! displayName, string! description, string! contentType, string! format, string! runtimeKind = "code-first", bool canRead = true, bool canWrite = true, bool requiresSchemaRegistry = false, System.Collections.Generic.IReadOnlyList<string!>? tags = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Eventing.Services.EventSerializerDescriptor.Format.get -> string!
+Cephalon.Eventing.Services.EventSerializerDescriptor.Id.get -> string!
+Cephalon.Eventing.Services.EventSerializerDescriptor.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Eventing.Services.EventSerializerDescriptor.RequiresSchemaRegistry.get -> bool
+Cephalon.Eventing.Services.EventSerializerDescriptor.RuntimeKind.get -> string!
+Cephalon.Eventing.Services.EventSerializerDescriptor.Tags.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Eventing.Services.IEventSerializerCatalog
+Cephalon.Eventing.Services.IEventSerializerCatalog.GetByContentType(string! contentType) -> System.Collections.Generic.IReadOnlyList<Cephalon.Eventing.Services.EventSerializerDescriptor!>!
+Cephalon.Eventing.Services.IEventSerializerCatalog.Serializers.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Eventing.Services.EventSerializerDescriptor!>!
+Cephalon.Eventing.Services.IEventSerializerCatalog.TryGet(string! serializerId, out Cephalon.Eventing.Services.EventSerializerDescriptor! serializer) -> bool
+Cephalon.Eventing.Services.IEventSerializerCatalog.TryGetForContract(Cephalon.Eventing.Services.EventContractDescriptor! contract, out Cephalon.Eventing.Services.EventSerializerDescriptor! serializer) -> bool
+Cephalon.Eventing.Services.IEventSerializerContributor
+Cephalon.Eventing.Services.IEventSerializerContributor.RegisterEventSerializers(Cephalon.Eventing.Services.IEventSerializerRegistry! serializers) -> void
+Cephalon.Eventing.Services.IEventSerializerRegistry
+Cephalon.Eventing.Services.IEventSerializerRegistry.Add(Cephalon.Eventing.Services.EventSerializerDescriptor! serializer) -> void
 static Cephalon.Eventing.Registration.EventingEngineBuilderExtensions.AddEventingFromConfiguration(this Cephalon.Engine.Composition.EngineBuilder! builder, Microsoft.Extensions.Configuration.IConfiguration! configuration) -> Cephalon.Engine.Composition.EngineBuilder!
 static Cephalon.Eventing.Registration.EventingEngineBuilderExtensions.AddEventingFromConfiguration(this Cephalon.Engine.Composition.EngineBuilder! builder, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.Eventing.Configuration.EventingOptions!>! configure) -> Cephalon.Engine.Composition.EngineBuilder!

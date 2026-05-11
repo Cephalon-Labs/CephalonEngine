@@ -13,6 +13,7 @@
 - configuration-owned event channel descriptors through `Engine:Messaging:Channels`, loaded by `engine.AddEventingFromConfiguration(configuration)` before module contributors so host configuration can override channel metadata by id without editing application code
 - code-owned event subscription descriptors and executors through `EventingOptions.Subscriptions`, `IEventSubscriptionContributor`, `services.AddCephalonEventSubscriptionExecutor<TExecutor>()`, direct `IEventSubscriptionExecutor` registrations, `EventSubscriptionAttribute`, and optional `IEventSubscriptionDescriptorProvider`; `Engine:Messaging:Subscriptions` and `Engine:Messaging:SubscriptionHandlers` are deliberately rejected so publish/subscribe behavior stays type-safe and fast
 - code-owned direct subscription execution middleware through `IEventSubscriptionExecutionMiddleware` and `EventSubscriptionExecutionStep`, giving modules MassTransit/NServiceBus/MediatR-style filters around the native in-process lane without making middleware binding string-config driven
+- code-owned event contract and serializer descriptors through `EventingOptions.Contracts`, `EventingOptions.Serializers`, `IEventContractContributor`, and `IEventSerializerContributor`, projected through `IEventContractCatalog`, `IEventSerializerCatalog`, `event-contracts`, `event-serializers`, `eventing.contracts`, and `eventing.serializers` without making publish/subscribe hot paths config lookups
 - low-ceremony DI helpers through `services.AddCephalonEventSubscriptionExecutor<TExecutor>()` and `services.AddCephalonEventSubscriptionExecutionMiddleware<TMiddleware>()` so hosts/modules can register native executor and middleware contributions without handwritten interface registration boilerplate
 - host-agnostic managed-subscription execution contracts and execution-binding vocabulary that truthful companion packs can project back into runtime introspection
 - a public `IEventSubscriptionExecutionBindingCatalog` read contract for active managed subscription bindings contributed by companion packs
@@ -69,6 +70,20 @@
 - `Services/EventDispatchItem.cs`
 - `Services/EventDispatchExecutionReport.cs`
 - `Services/EventDispatchRuntimeMetadataKeys.cs`
+- `Services/EventContractDescriptor.cs`
+- `Services/EventContractRegistry.cs`
+- `Services/EventContractCatalog.cs`
+- `Services/EventingContractRuntimeSurfaceContributor.cs`
+- `Services/IEventContractContributor.cs`
+- `Services/IEventContractCatalog.cs`
+- `Services/IEventContractRegistry.cs`
+- `Services/EventSerializerDescriptor.cs`
+- `Services/EventSerializerRegistry.cs`
+- `Services/EventSerializerCatalog.cs`
+- `Services/EventingSerializerRuntimeSurfaceContributor.cs`
+- `Services/IEventSerializerContributor.cs`
+- `Services/IEventSerializerCatalog.cs`
+- `Services/IEventSerializerRegistry.cs`
 - `Services/IEventSubscriptionContributor.cs`
 - `Services/IEventSubscriptionCatalog.cs`
 - `Services/IEventSubscriptionDescriptorProvider.cs`
@@ -164,6 +179,8 @@ ENG-599 projects inbound broker consumption into the same profile as `broker-inb
 ENG-600 projects serialization and contract-version ownership into the same profile as `serialization-and-contract-versioning-ownership`. Without event contract descriptors that entry stays `not-claimed` until a provider or engine package owns serializer selection, a stable wire-envelope schema, schema registry identity, event contract-version negotiation, upcaster pipelines, and compatibility validation. Its runtime evidence reports channel catalog, subscription catalog, publication path, and publication routing posture beside `serializerSelection=not-claimed`, `messageEnvelopeSchema=not-claimed`, `schemaRegistry=not-present`, `contractVersionNegotiation=not-claimed`, `upcasterPipeline=not-present`, `compatibilityValidation=not-claimed`, and `wolverineRequired=false`, so event type names, route metadata, subscription descriptors, and publication observations cannot be mistaken for wire-contract ownership.
 
 ENG-609 adds the provider-neutral event contract catalog as the first positive proof under that same boundary. Hosts and modules can register code-first `EventContractDescriptor` instances through `EventingOptions.Contracts` or `IEventContractContributor`, and the pack exposes them through `IEventContractCatalog`, the `event-contracts` technology surface, and the `eventing.contracts` capability. When descriptors are present, `serialization-and-contract-versioning-ownership` moves to `partial` with `serializerSelection=descriptor-backed`, `messageEnvelopeSchema=descriptor-backed`, `contractVersionNegotiation=descriptor-backed`, and `compatibilityValidation=descriptor-backed`; `wireSerializationRuntime`, `schemaRegistry`, and `upcasterPipeline` remain explicitly not claimed until a provider or engine package owns execution. The descriptor catalog is code-owned rather than string-config-driven publish/subscribe binding, so hot-path publication and subscription code remains direct and Wolverine remains optional.
+
+ENG-610 adds the provider-neutral event serializer catalog as the next positive proof under that boundary. Hosts and modules can register code-first `EventSerializerDescriptor` instances through `EventingOptions.Serializers` or `IEventSerializerContributor`, and the pack exposes them through `IEventSerializerCatalog`, the `event-serializers` technology surface, and the `eventing.serializers` capability. When contract serializer ids resolve against the serializer catalog, `serialization-and-contract-versioning-ownership` moves to `serializerSelection=catalog-backed` and `wireSerializationRuntime=serializer-catalog-declared`, with explicit resolved/unresolved serializer-contract counts. That proves cataloged serializer availability without requiring Wolverine, without moving publish/subscribe binding into string config, and without claiming executable payload serialization, schema registry ownership, upcaster pipelines, or compatibility validation until a provider or engine package owns those paths.
 
 ENG-601 projects tenant and correlation context ownership into the same profile as `tenant-and-correlation-context-ownership`. That entry stays `not-claimed` until a provider or engine package owns tenant context propagation, correlation context propagation, causation identifiers, baggage propagation, and message-header policy. Its runtime evidence reports channel catalog, subscription catalog, publication path, publication routing, and in-process execution posture beside `operatorCorrelationMetadata=metadata-only`, `tenantContextPropagation=not-claimed`, `correlationContextPropagation=not-claimed`, `causationIdPropagation=not-claimed`, `baggagePropagation=not-claimed`, `messageHeaderPolicy=not-claimed`, and `wolverineRequired=false`, so remediation command actor/correlation fields, diagnostic tags, route metadata, subscription descriptors, and publication observations cannot be mistaken for context propagation ownership.
 

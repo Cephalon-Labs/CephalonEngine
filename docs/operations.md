@@ -2662,12 +2662,15 @@ Current `Cephalon.Eventing` highlights:
   when declared subscriptions, direct in-process execution, inbox duplicate suppression, hosted
   subscription bindings, or optional Wolverine binding evidence are present
 - `serialization-and-contract-versioning-ownership` is the separate wire-contract boundary in that
-  same profile; it stays `not-claimed` until code-first event contract descriptors are present, can
-  report `partial` when `EventingOptions.Contracts` or `IEventContractContributor` populate
-  `IEventContractCatalog`, `event-contracts`, and `eventing.contracts` with descriptor-backed event
-  type, version, content type, serializer id, envelope schema, and compatibility policy metadata,
-  and still keeps wire serialization runtime, schema registry lookup, upcaster pipelines, and
-  provider-owned compatibility validation unclaimed until a provider or engine package owns them
+  same profile; it stays `not-claimed` until code-first event contract or serializer descriptors are
+  present, can report `partial` when `EventingOptions.Contracts` / `IEventContractContributor` and
+  optional `EventingOptions.Serializers` / `IEventSerializerContributor` populate
+  `IEventContractCatalog`, `IEventSerializerCatalog`, `event-contracts`, `event-serializers`,
+  `eventing.contracts`, and `eventing.serializers` with descriptor-backed event type, version,
+  content type, serializer id, serializer availability, envelope schema, and compatibility policy
+  metadata, and still keeps executable payload serialization, schema registry lookup, upcaster
+  pipelines, and provider-owned compatibility validation unclaimed until a provider or engine
+  package owns them
 - `tenant-and-correlation-context-ownership` is the separate context-propagation boundary in that
   same profile; it stays `not-claimed` until a provider or engine package owns tenant context
   propagation, correlation/causation propagation, baggage propagation, and message-header policy,

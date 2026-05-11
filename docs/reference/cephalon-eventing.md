@@ -20,7 +20,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 
 Configures the built-in eventing runtime pack.
 
-Remarks: These options seed the host-owned part of the eventing runtime. Installed modules can still contribute additional channels through `IEventChannelContributor` and additional subscription descriptors through `IEventSubscriptionContributor`.
+Remarks: These options seed the host-owned part of the eventing runtime. Installed modules can still contribute additional channels through `IEventChannelContributor` and additional subscription, contract, and serializer descriptors through `IEventSubscriptionContributor`, `IEventContractContributor`, and `IEventSerializerContributor`.
 
 #### Declaration
 ```csharp
@@ -316,6 +316,18 @@ int RemediationCommandHistoryLimit { get; set; }
 Gets or sets the maximum number of event-dispatch remediation command results retained in memory for operator reads.
 
 Remarks: The default value is `256`. Set the value to `0` to disable the process-local remediation command history while keeping the command dispatcher itself available. The catalog is an operator-audit read model, not a durable compliance store; hosts that need long-term retention should also persist command results.
+
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-serializers"></a>
+
+##### `Serializers`
+
+```csharp
+IList<EventSerializerDescriptor> Serializers { get; }
+```
+
+Gets the host-defined event serializer descriptors that should be available to the eventing runtime.
+
+Remarks: These descriptors are code-owned serializer availability metadata. They do not make publish or subscription execution perform config lookups on the hot path.
 
 <a id="member-p-cephalon-eventing-configuration-eventingoptions-subscriptions"></a>
 
@@ -1609,6 +1621,156 @@ string TenantId { get; }
 ```
 
 Gets the tenant identifier associated with the event.
+
+<a id="type-cephalon-eventing-services-eventserializerdescriptor"></a>
+
+### `EventSerializerDescriptor`
+
+Describes a provider-neutral serializer runtime that can be selected by event contracts.
+
+Remarks: The descriptor is intentionally code-first. It lets modules, source generators, or hosts declare serializer availability without forcing publish or subscription handler selection through string configuration.
+
+#### Declaration
+```csharp
+public sealed class EventSerializerDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-eventing-services-eventserializerdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `EventSerializerDescriptor`
+
+```csharp
+EventSerializerDescriptor(string id, string displayName, string description, string contentType, string format, string runtimeKind, bool canRead, bool canWrite, bool requiresSchemaRegistry, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new event serializer descriptor.
+
+Parameters:
+- `id`: The stable serializer identifier used by event contracts.
+- `displayName`: The operator-facing serializer name.
+- `description`: The human-readable serializer description.
+- `contentType`: The primary wire content type produced or consumed by the serializer.
+- `format`: The provider-neutral serialization format, such as `json`, `protobuf`, or `avro`.
+- `runtimeKind`: The runtime implementation kind, such as `source-generated` or `custom`.
+- `canRead`: Whether the serializer can deserialize payloads.
+- `canWrite`: Whether the serializer can serialize payloads.
+- `requiresSchemaRegistry`: Whether the serializer requires a schema registry before it can be used safely.
+- `tags`: Optional tags that classify the serializer.
+- `metadata`: Optional serializer metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-eventing-services-eventserializerdescriptor-canread"></a>
+
+##### `CanRead`
+
+```csharp
+bool CanRead { get; }
+```
+
+Gets a value indicating whether the serializer can deserialize payloads.
+
+<a id="member-p-cephalon-eventing-services-eventserializerdescriptor-canwrite"></a>
+
+##### `CanWrite`
+
+```csharp
+bool CanWrite { get; }
+```
+
+Gets a value indicating whether the serializer can serialize payloads.
+
+<a id="member-p-cephalon-eventing-services-eventserializerdescriptor-contenttype"></a>
+
+##### `ContentType`
+
+```csharp
+string ContentType { get; }
+```
+
+Gets the primary wire content type produced or consumed by the serializer.
+
+<a id="member-p-cephalon-eventing-services-eventserializerdescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable serializer description.
+
+<a id="member-p-cephalon-eventing-services-eventserializerdescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing display name for the serializer.
+
+<a id="member-p-cephalon-eventing-services-eventserializerdescriptor-format"></a>
+
+##### `Format`
+
+```csharp
+string Format { get; }
+```
+
+Gets the provider-neutral serialization format.
+
+<a id="member-p-cephalon-eventing-services-eventserializerdescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable serializer identifier used by event contracts.
+
+<a id="member-p-cephalon-eventing-services-eventserializerdescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets normalized metadata associated with the serializer.
+
+<a id="member-p-cephalon-eventing-services-eventserializerdescriptor-requiresschemaregistry"></a>
+
+##### `RequiresSchemaRegistry`
+
+```csharp
+bool RequiresSchemaRegistry { get; }
+```
+
+Gets a value indicating whether the serializer needs schema-registry support before use.
+
+<a id="member-p-cephalon-eventing-services-eventserializerdescriptor-runtimekind"></a>
+
+##### `RuntimeKind`
+
+```csharp
+string RuntimeKind { get; }
+```
+
+Gets the serializer runtime implementation kind.
+
+<a id="member-p-cephalon-eventing-services-eventserializerdescriptor-tags"></a>
+
+##### `Tags`
+
+```csharp
+IReadOnlyList<string> Tags { get; }
+```
+
+Gets the normalized tag set associated with the serializer.
 
 <a id="type-cephalon-eventing-services-eventsubscriptionattribute"></a>
 
@@ -2971,6 +3133,130 @@ Returns: A task that completes when the publication has been accepted by the run
 Parameters:
 - `publication`: The publication request to handle.
 - `cancellationToken`: The token that cancels the operation.
+
+<a id="type-cephalon-eventing-services-ieventserializercatalog"></a>
+
+### `IEventSerializerCatalog`
+
+Provides the merged event serializer descriptors visible to the active eventing runtime.
+
+#### Declaration
+```csharp
+public interface IEventSerializerCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-eventing-services-ieventserializercatalog-serializers"></a>
+
+##### `Serializers`
+
+```csharp
+IReadOnlyList<EventSerializerDescriptor> Serializers { get; }
+```
+
+Gets all registered event serializer descriptors.
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-ieventserializercatalog-getbycontenttype-system-string"></a>
+
+##### `GetByContentType`
+
+```csharp
+IReadOnlyList<EventSerializerDescriptor> GetByContentType(string contentType)
+```
+
+Gets all serializer descriptors registered for the supplied content type.
+
+Returns: The matching serializer descriptors ordered by identifier.
+
+Parameters:
+- `contentType`: The wire content type.
+
+<a id="member-m-cephalon-eventing-services-ieventserializercatalog-tryget-system-string-cephalon-eventing-services-eventserializerdescriptor"></a>
+
+##### `TryGet`
+
+```csharp
+bool TryGet(string serializerId, out EventSerializerDescriptor serializer)
+```
+
+Attempts to resolve a serializer by its stable identifier.
+
+Returns: `true` when a serializer with the identifier exists.
+
+Parameters:
+- `serializerId`: The stable serializer identifier.
+- `serializer`: When found, the matching serializer descriptor.
+
+<a id="member-m-cephalon-eventing-services-ieventserializercatalog-trygetforcontract-cephalon-eventing-services-eventcontractdescriptor-cephalon-eventing-services-eventserializerdescriptor"></a>
+
+##### `TryGetForContract`
+
+```csharp
+bool TryGetForContract(EventContractDescriptor contract, out EventSerializerDescriptor serializer)
+```
+
+Attempts to resolve the serializer selected by an event contract.
+
+Returns: `true` when the contract's serializer identifier is available.
+
+Parameters:
+- `contract`: The event contract descriptor.
+- `serializer`: When found, the matching serializer descriptor.
+
+<a id="type-cephalon-eventing-services-ieventserializercontributor"></a>
+
+### `IEventSerializerContributor`
+
+Allows a module to contribute event serializer metadata into the active eventing runtime pack.
+
+#### Declaration
+```csharp
+public interface IEventSerializerContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-ieventserializercontributor-registereventserializers-cephalon-eventing-services-ieventserializerregistry"></a>
+
+##### `RegisterEventSerializers`
+
+```csharp
+void RegisterEventSerializers(IEventSerializerRegistry serializers)
+```
+
+Registers one or more event serializer descriptors with the supplied registry.
+
+Parameters:
+- `serializers`: The registry that collects contributed event serializer descriptors.
+
+<a id="type-cephalon-eventing-services-ieventserializerregistry"></a>
+
+### `IEventSerializerRegistry`
+
+Collects event serializer descriptors contributed by a host or module.
+
+#### Declaration
+```csharp
+public interface IEventSerializerRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-ieventserializerregistry-add-cephalon-eventing-services-eventserializerdescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(EventSerializerDescriptor serializer)
+```
+
+Adds one event serializer descriptor to the active eventing catalog.
+
+Parameters:
+- `serializer`: The serializer descriptor to add.
 
 <a id="type-cephalon-eventing-services-ieventsubscriptioncatalog"></a>
 

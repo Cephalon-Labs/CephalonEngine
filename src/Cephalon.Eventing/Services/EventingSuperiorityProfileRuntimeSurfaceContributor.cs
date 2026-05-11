@@ -441,12 +441,19 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     {
         using var scope = scopeFactory.CreateScope();
         var contractCatalog = scope.ServiceProvider.GetService<IEventContractCatalog>();
+        var serializerCatalog = scope.ServiceProvider.GetService<IEventSerializerCatalog>();
         var contracts = contractCatalog?.Contracts ?? [];
+        var serializers = serializerCatalog?.Serializers ?? [];
         var contractCount = contracts.Count;
+        var serializerRuntimeCount = serializers.Count;
         var contractCountText = contractCount.ToString(CultureInfo.InvariantCulture);
         var versionedContractCount = contracts.Count(static contract => !string.IsNullOrWhiteSpace(contract.Version));
         var contentTypeContractCount = contracts.Count(static contract => !string.IsNullOrWhiteSpace(contract.ContentType));
-        var serializerDescriptorCount = contracts.Count(static contract => !string.IsNullOrWhiteSpace(contract.SerializerId));
+        var serializerReferenceCount = contracts.Count(static contract => !string.IsNullOrWhiteSpace(contract.SerializerId));
+        var resolvedSerializerContractCount = serializerCatalog is null
+            ? 0
+            : contracts.Count(contract => serializerCatalog.TryGetForContract(contract, out _));
+        var unresolvedSerializerContractCount = serializerReferenceCount - resolvedSerializerContractCount;
         var envelopeSchemaCount = contracts
             .Select(static contract => contract.EnvelopeSchema)
             .Where(static schema => !string.IsNullOrWhiteSpace(schema))
@@ -462,18 +469,24 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var publicationPath = topology.HasPublishingPath ? "active" : "not-active";
         var publicationRouting = options.EnablePublicationRouting ? "configured" : "not-configured";
         var eventContractCatalog = contractCatalog is null ? "not-present" : "present";
-        var serializerSelection = serializerDescriptorCount > 0 ? "descriptor-backed" : "not-claimed";
+        var eventSerializerCatalog = serializerRuntimeCount > 0 ? "present" : "not-present";
+        var serializerSelection = resolvedSerializerContractCount > 0
+            ? "catalog-backed"
+            : serializerReferenceCount > 0 ? "descriptor-backed" : "not-claimed";
+        var wireSerializationRuntime = serializerRuntimeCount > 0 ? "serializer-catalog-declared" : "not-claimed";
         var messageEnvelopeSchema = envelopeSchemaCount > 0 ? "descriptor-backed" : "not-claimed";
         var contractVersionNegotiation = versionedContractCount > 0 ? "descriptor-backed" : "not-claimed";
         var compatibilityValidation = compatibilityPolicyCount > 0 ? "descriptor-backed" : "not-claimed";
-        var status = contractCount > 0 ? "partial" : "not-claimed";
-        var nextGap = contractCount > 0
-            ? "Add provider-neutral serializer runtime, schema registry, upcaster pipeline, and compatibility validation execution before claiming full serialization and contract-version ownership."
-            : "Register code-first event contract descriptors before claiming contract-version evidence.";
+        var status = contractCount > 0 || serializerRuntimeCount > 0 ? "partial" : "not-claimed";
+        var nextGap = serializerRuntimeCount > 0
+            ? "Add executable payload serialization, schema registry, upcaster pipeline, and compatibility validation execution before claiming full serialization and contract-version ownership."
+            : contractCount > 0
+                ? "Register code-first event serializer descriptors that satisfy the declared contract serializer ids before claiming serializer runtime evidence."
+                : "Register code-first event contract and serializer descriptors before claiming contract-version evidence.";
 
         var evidence = string.Create(
             CultureInfo.InvariantCulture,
-            $"channelCatalog={channelCatalog}; subscriptionCatalog={subscriptionCatalog}; publicationPath={publicationPath}; publicationRouting={publicationRouting}; eventContractCatalog={eventContractCatalog}; eventContractCount={contractCountText}; versionedContracts={versionedContractCount.ToString(CultureInfo.InvariantCulture)}; contentTypeContracts={contentTypeContractCount.ToString(CultureInfo.InvariantCulture)}; serializerDescriptors={serializerDescriptorCount.ToString(CultureInfo.InvariantCulture)}; envelopeSchemas={envelopeSchemaCount.ToString(CultureInfo.InvariantCulture)}; compatibilityPolicies={compatibilityPolicyCount.ToString(CultureInfo.InvariantCulture)}; serializerSelection={serializerSelection}; messageEnvelopeSchema={messageEnvelopeSchema}; schemaRegistry=not-present; contractVersionNegotiation={contractVersionNegotiation}; upcasterPipeline=not-present; compatibilityValidation={compatibilityValidation}; wireSerializationRuntime=not-claimed; wolverineRequired=false");
+            $"channelCatalog={channelCatalog}; subscriptionCatalog={subscriptionCatalog}; publicationPath={publicationPath}; publicationRouting={publicationRouting}; eventContractCatalog={eventContractCatalog}; eventSerializerCatalog={eventSerializerCatalog}; eventContractCount={contractCountText}; versionedContracts={versionedContractCount.ToString(CultureInfo.InvariantCulture)}; contentTypeContracts={contentTypeContractCount.ToString(CultureInfo.InvariantCulture)}; serializerDescriptors={serializerReferenceCount.ToString(CultureInfo.InvariantCulture)}; serializerRuntimeCount={serializerRuntimeCount.ToString(CultureInfo.InvariantCulture)}; resolvedSerializerContracts={resolvedSerializerContractCount.ToString(CultureInfo.InvariantCulture)}; unresolvedSerializerContracts={unresolvedSerializerContractCount.ToString(CultureInfo.InvariantCulture)}; envelopeSchemas={envelopeSchemaCount.ToString(CultureInfo.InvariantCulture)}; compatibilityPolicies={compatibilityPolicyCount.ToString(CultureInfo.InvariantCulture)}; serializerSelection={serializerSelection}; wireSerializationRuntime={wireSerializationRuntime}; messageEnvelopeSchema={messageEnvelopeSchema}; schemaRegistry=not-present; contractVersionNegotiation={contractVersionNegotiation}; upcasterPipeline=not-present; compatibilityValidation={compatibilityValidation}; wolverineRequired=false");
 
         return new SerializationVersioningProfile(status, evidence, nextGap);
     }
