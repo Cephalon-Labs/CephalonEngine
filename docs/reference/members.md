@@ -747,6 +747,9 @@ Browse the published API surface by public member.
 - [Add](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventchannelregistry-add-cephalon-eventing-services-eventchanneldescriptor): `Methods` on `IEventChannelRegistry` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Add&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Adds an event channel descriptor to the registry.
   - `void Add(EventChannelDescriptor channel)`
+- [Add](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventcontextpolicyregistry-add-cephalon-eventing-services-eventcontextpolicydescriptor): `Methods` on `IEventContextPolicyRegistry` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Add&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Adds an event context policy descriptor to the registry.
+  - `void Add(EventContextPolicyDescriptor policy)`
 - [Add](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventcontractregistry-add-cephalon-eventing-services-eventcontractdescriptor): `Methods` on `IEventContractRegistry` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Add&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Adds one event contract descriptor to the active eventing catalog.
   - `void Add(EventContractDescriptor contract)`
@@ -5394,6 +5397,9 @@ Browse the published API surface by public member.
 - [ContextAttributePrefix](cephalon-identity.md#member-f-cephalon-identity-policies-identitypolicymetadatakeys-contextattributeprefix): `Fields` on `IdentityPolicyMetadataKeys` in `Cephalon.Identity.Policies` (`Cephalon.Identity`) [Browse](browse.html?q=ContextAttributePrefix&assembly=Cephalon.Identity&namespace=Cephalon.Identity.Policies&scope=members)
   - The metadata key prefix for required evaluation-context attributes.
   - `const string ContextAttributePrefix`
+- [ContextPolicies](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-contextpolicies): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=ContextPolicies&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
+  - Gets the host-defined event context policy descriptors that should be available to the eventing runtime.
+  - `IList<EventContextPolicyDescriptor> ContextPolicies { get; }`
 - [ContinuationCount](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-continuationcount): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=ContinuationCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The number of `continuation-staged` observations reported so far.
   - `int ContinuationCount { get; set; }`
@@ -6375,6 +6381,18 @@ Browse the published API surface by public member.
 - [DeclaredTaskIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplanedependencyawareprovisioningandmutationhardeningstatus-declaredtaskids): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneDependencyAwareProvisioningAndMutationHardeningStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DeclaredTaskIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the declared connector task identifiers when one baseline exists.
   - `IReadOnlyList<string> DeclaredTaskIds { get; set; }`
+- [DeclaresBaggage](cephalon-eventing.md#member-p-cephalon-eventing-services-eventcontextpolicydescriptor-declaresbaggage): `Properties` on `EventContextPolicyDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DeclaresBaggage&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets a value indicating whether the policy declares baggage propagation metadata.
+  - `bool DeclaresBaggage { get; }`
+- [DeclaresCausationId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventcontextpolicydescriptor-declarescausationid): `Properties` on `EventContextPolicyDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DeclaresCausationId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets a value indicating whether the policy declares causation-id propagation metadata.
+  - `bool DeclaresCausationId { get; }`
+- [DeclaresCorrelationId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventcontextpolicydescriptor-declarescorrelationid): `Properties` on `EventContextPolicyDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DeclaresCorrelationId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets a value indicating whether the policy declares correlation-id propagation metadata.
+  - `bool DeclaresCorrelationId { get; }`
+- [DeclaresTenantContext](cephalon-eventing.md#member-p-cephalon-eventing-services-eventcontextpolicydescriptor-declarestenantcontext): `Properties` on `EventContextPolicyDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DeclaresTenantContext&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets a value indicating whether the policy declares tenant-context propagation metadata.
+  - `bool DeclaresTenantContext { get; }`
 - [Default](cephalon-engine.md#member-p-cephalon-engine-configuration-failurepolicy-default): `Properties` on `FailurePolicy` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Default&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the default failure policy used when no explicit configuration is supplied.
   - `FailurePolicy Default { get; }`
@@ -7098,6 +7116,9 @@ Browse the published API surface by public member.
 - [Description](cephalon-eventing.md#member-p-cephalon-eventing-services-eventchanneldescriptor-description): `Properties` on `EventChannelDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Description&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the human-readable description of the channel.
   - `string Description { get; }`
+- [Description](cephalon-eventing.md#member-p-cephalon-eventing-services-eventcontextpolicydescriptor-description): `Properties` on `EventContextPolicyDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Description&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the human-readable context policy description.
+  - `string Description { get; }`
 - [Description](cephalon-eventing.md#member-p-cephalon-eventing-services-eventcontractdescriptor-description): `Properties` on `EventContractDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Description&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the human-readable contract description.
   - `string Description { get; }`
@@ -7637,6 +7658,9 @@ Browse the published API surface by public member.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-eventing.md#member-p-cephalon-eventing-services-eventchanneldescriptor-displayname): `Properties` on `EventChannelDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the operator-facing display name for the channel.
+  - `string DisplayName { get; }`
+- [DisplayName](cephalon-eventing.md#member-p-cephalon-eventing-services-eventcontextpolicydescriptor-displayname): `Properties` on `EventContextPolicyDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the operator-facing display name for the context policy.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-eventing.md#member-p-cephalon-eventing-services-eventcontractdescriptor-displayname): `Properties` on `EventContractDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the operator-facing display name for the contract.
@@ -9246,6 +9270,9 @@ Browse the published API surface by public member.
 - [EventChannelDescriptor](cephalon-eventing.md#member-m-cephalon-eventing-services-eventchanneldescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string): `Constructors` on `EventChannelDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventChannelDescriptor&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a new event channel descriptor.
   - `EventChannelDescriptor(string id, string displayName, string description, IReadOnlyList<string> tags)`
+- [EventContextPolicyDescriptor](cephalon-eventing.md#member-m-cephalon-eventing-services-eventcontextpolicydescriptor-ctor-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventContextPolicyDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventContextPolicyDescriptor&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates a new event context policy descriptor.
+  - `EventContextPolicyDescriptor(string id, string displayName, string description, string runtimeKind, bool declaresTenantContext, bool declaresCorrelationId, bool declaresCausationId, bool declaresBaggage, bool validatesMessageHeaders, IReadOnlyList<string> headerNames, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
 - [EventContractDescriptor](cephalon-eventing.md#member-m-cephalon-eventing-services-eventcontractdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventContractDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventContractDescriptor&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a new event contract descriptor.
   - `EventContractDescriptor(string id, string eventType, string displayName, string description, string version, string contentType, string serializerId, string envelopeSchema, string compatibilityPolicy, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
@@ -11130,6 +11157,9 @@ Browse the published API surface by public member.
 - [GetByFormat](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventschemaregistrycatalog-getbyformat-system-string): `Methods` on `IEventSchemaRegistryCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=GetByFormat&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets all schema registries registered for the supplied serialization format.
   - `IReadOnlyList<EventSchemaRegistryDescriptor> GetByFormat(string format)`
+- [GetByHeaderName](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventcontextpolicycatalog-getbyheadername-system-string): `Methods` on `IEventContextPolicyCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=GetByHeaderName&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the context policies that cover a specific message-header name.
+  - `IReadOnlyList<EventContextPolicyDescriptor> GetByHeaderName(string headerName)`
 - [GetByHealthIsolationId](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbyhealthisolationid-system-string): `Methods` on `ICellTrafficAutomationRuntimeCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByHealthIsolationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets all effective cell traffic-automation answers that reference the requested health-isolation identifier.
   - `IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetByHealthIsolationId(string healthIsolationId)`
@@ -13101,6 +13131,9 @@ Browse the published API surface by public member.
 - [Header](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointbindingsource-header): `Fields` on `RestEndpointBindingSource` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=Header&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - Reads the value from an HTTP header.
   - `const RestEndpointBindingSource Header`
+- [HeaderNames](cephalon-eventing.md#member-p-cephalon-eventing-services-eventcontextpolicydescriptor-headernames): `Properties` on `EventContextPolicyDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=HeaderNames&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the normalized message-header names covered by the policy.
+  - `IReadOnlyList<string> HeaderNames { get; }`
 - [Headers](cephalon-observability-digitalocean.md#member-p-cephalon-observability-digitalocean-configuration-digitaloceantelemetryexportoptions-headers): `Properties` on `DigitalOceanTelemetryExportOptions` in `Cephalon.Observability.DigitalOcean.Configuration` (`Cephalon.Observability.DigitalOcean`) [Browse](browse.html?q=Headers&assembly=Cephalon.Observability.DigitalOcean&namespace=Cephalon.Observability.DigitalOcean.Configuration&scope=members)
   - Gets or sets the raw OTLP headers string added to collector requests.
   - `string Headers { get; set; }`
@@ -13685,6 +13718,9 @@ Browse the published API surface by public member.
   - `string Id { get; set; }`
 - [Id](cephalon-eventing.md#member-p-cephalon-eventing-services-eventchanneldescriptor-id): `Properties` on `EventChannelDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Id&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable channel identifier.
+  - `string Id { get; }`
+- [Id](cephalon-eventing.md#member-p-cephalon-eventing-services-eventcontextpolicydescriptor-id): `Properties` on `EventContextPolicyDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Id&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the stable context policy identifier.
   - `string Id { get; }`
 - [Id](cephalon-eventing.md#member-p-cephalon-eventing-services-eventcontractdescriptor-id): `Properties` on `EventContractDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Id&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable contract identifier.
@@ -17874,6 +17910,9 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-metadata): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The operator-facing metadata captured by the latest report.
   - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
+- [Metadata](cephalon-eventing.md#member-p-cephalon-eventing-services-eventcontextpolicydescriptor-metadata): `Properties` on `EventContextPolicyDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets normalized metadata associated with the context policy.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-eventing.md#member-p-cephalon-eventing-services-eventcontractdescriptor-metadata): `Properties` on `EventContractDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets normalized metadata associated with the contract.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -20966,6 +21005,9 @@ Browse the published API surface by public member.
 - [Policies](cephalon-abstractions.md#member-p-cephalon-abstractions-resilience-ibehaviorresilienceruntimecatalog-policies): `Properties` on `IBehaviorResilienceRuntimeCatalog` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Policies&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - Gets all behavior-execution resilience policies visible to the current runtime.
   - `IReadOnlyList<BehaviorResilienceRuntimeDescriptor> Policies { get; }`
+- [Policies](cephalon-eventing.md#member-p-cephalon-eventing-services-ieventcontextpolicycatalog-policies): `Properties` on `IEventContextPolicyCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Policies&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets all context policy descriptors available to the active eventing runtime.
+  - `IReadOnlyList<EventContextPolicyDescriptor> Policies { get; }`
 - [Policies](cephalon-abstractions.md#member-p-cephalon-abstractions-data-ioutboxdispatchpolicycatalog-policies): `Properties` on `IOutboxDispatchPolicyCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Policies&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the effective dispatch policies visible to the current runtime.
   - `IReadOnlyList<OutboxDispatchPolicyDescriptor> Policies { get; }`
@@ -23397,6 +23439,9 @@ Browse the published API surface by public member.
 - [RegisterDomainOwnerships](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-itenantdomainownershipcontributor-registerdomainownerships-cephalon-multitenancy-governance-services-itenantdomainownershipregistry): `Methods` on `ITenantDomainOwnershipContributor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=RegisterDomainOwnerships&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Registers one or more tenant-domain ownership descriptors with the supplied registry.
   - `void RegisterDomainOwnerships(ITenantDomainOwnershipRegistry domainOwnerships)`
+- [RegisterEventContextPolicies](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventcontextpolicycontributor-registereventcontextpolicies-cephalon-eventing-services-ieventcontextpolicyregistry): `Methods` on `IEventContextPolicyContributor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RegisterEventContextPolicies&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Registers one or more event context policy descriptors with the supplied registry.
+  - `void RegisterEventContextPolicies(IEventContextPolicyRegistry policies)`
 - [RegisterEventContracts](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventcontractcontributor-registereventcontracts-cephalon-eventing-services-ieventcontractregistry): `Methods` on `IEventContractContributor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RegisterEventContracts&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Registers one or more event contract descriptors with the supplied registry.
   - `void RegisterEventContracts(IEventContractRegistry contracts)`
@@ -25536,6 +25581,9 @@ Browse the published API surface by public member.
 - [RuntimeIntrospectionSnapshot](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimeintrospectionsnapshot-ctor-cephalon-engine-manifest-runtimemanifest-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-executiongraphdescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologyruntimesurface-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticsconvention-cephalon-engine-runtime-runtimeoperationalstory): `Constructors` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeIntrospectionSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Combines the main operator-facing runtime views into a single payload.
   - `RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Status, IReadOnlyList<ExecutionGraphDescriptor> ExecutionGraphs, IReadOnlyList<TechnologyRuntimeSurface> TechnologySurfaces, IReadOnlyList<DiagnosticsConvention> DiagnosticsConventions, RuntimeOperationalStory OperationalStory)`
+- [RuntimeKind](cephalon-eventing.md#member-p-cephalon-eventing-services-eventcontextpolicydescriptor-runtimekind): `Properties` on `EventContextPolicyDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RuntimeKind&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the context policy runtime implementation kind.
+  - `string RuntimeKind { get; }`
 - [RuntimeKind](cephalon-eventing.md#member-p-cephalon-eventing-services-eventschemaregistrydescriptor-runtimekind): `Properties` on `EventSchemaRegistryDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RuntimeKind&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the registry runtime implementation kind.
   - `string RuntimeKind { get; }`
@@ -28206,6 +28254,9 @@ Browse the published API surface by public member.
 - [Tags](cephalon-eventing.md#member-p-cephalon-eventing-services-eventchanneldescriptor-tags): `Properties` on `EventChannelDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Tags&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the normalized tag set associated with the channel.
   - `IReadOnlyList<string> Tags { get; }`
+- [Tags](cephalon-eventing.md#member-p-cephalon-eventing-services-eventcontextpolicydescriptor-tags): `Properties` on `EventContextPolicyDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Tags&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the normalized tag set associated with the context policy.
+  - `IReadOnlyList<string> Tags { get; }`
 - [Tags](cephalon-eventing.md#member-p-cephalon-eventing-services-eventcontractdescriptor-tags): `Properties` on `EventContractDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Tags&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the normalized tag set associated with the contract.
   - `IReadOnlyList<string> Tags { get; }`
@@ -29526,6 +29577,9 @@ Browse the published API surface by public member.
 - [TryGet](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventchannelcatalog-tryget-system-string-cephalon-eventing-services-eventchanneldescriptor): `Methods` on `IEventChannelCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Attempts to resolve an event channel descriptor by identifier.
   - `bool TryGet(string channelId, out EventChannelDescriptor channel)`
+- [TryGet](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventcontextpolicycatalog-tryget-system-string-cephalon-eventing-services-eventcontextpolicydescriptor): `Methods` on `IEventContextPolicyCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Tries to get a context policy by identifier.
+  - `bool TryGet(string policyId, out EventContextPolicyDescriptor policy)`
 - [TryGet](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventcontractcatalog-tryget-system-string-cephalon-eventing-services-eventcontractdescriptor): `Methods` on `IEventContractCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Attempts to resolve a contract by its stable identifier.
   - `bool TryGet(string contractId, out EventContractDescriptor contract)`
@@ -30165,6 +30219,9 @@ Browse the published API surface by public member.
 - [ValidatesCompatibility](cephalon-eventing.md#member-p-cephalon-eventing-services-eventschemaregistrydescriptor-validatescompatibility): `Properties` on `EventSchemaRegistryDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ValidatesCompatibility&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets a value indicating whether the registry runtime validates compatibility.
   - `bool ValidatesCompatibility { get; }`
+- [ValidatesMessageHeaders](cephalon-eventing.md#member-p-cephalon-eventing-services-eventcontextpolicydescriptor-validatesmessageheaders): `Properties` on `EventContextPolicyDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ValidatesMessageHeaders&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets a value indicating whether the policy declares message-header validation metadata.
+  - `bool ValidatesMessageHeaders { get; }`
 - [ValidateSnsSigningCertificateChain](cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-validatesnssigningcertificatechain): `Properties` on `AmazonSesInvitationDeliveryAspNetCoreOptions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore`) [Browse](browse.html?q=ValidateSnsSigningCertificateChain&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration&scope=members)
   - Gets or sets a value indicating whether the SNS signing certificate chain and validity window should be checked.
   - `bool ValidateSnsSigningCertificateChain { get; set; }`

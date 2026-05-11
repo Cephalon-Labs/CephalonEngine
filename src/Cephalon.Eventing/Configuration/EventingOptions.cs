@@ -8,12 +8,13 @@ namespace Cephalon.Eventing.Configuration;
 /// <remarks>
 /// These options seed the host-owned part of the eventing runtime. Installed modules can still
 /// contribute additional channels through <see cref="Services.IEventChannelContributor" /> and
-/// additional subscription, contract, serializer, schema registry, and upcaster descriptors through
+/// additional subscription, contract, serializer, schema registry, upcaster, and context policy descriptors through
 /// <see cref="Services.IEventSubscriptionContributor" />,
 /// <see cref="Services.IEventContractContributor" />,
 /// <see cref="Services.IEventSerializerContributor" />,
-/// <see cref="Services.IEventSchemaRegistryContributor" />, and
-/// <see cref="Services.IEventUpcasterContributor" />.
+/// <see cref="Services.IEventSchemaRegistryContributor" />,
+/// <see cref="Services.IEventUpcasterContributor" />, and
+/// <see cref="Services.IEventContextPolicyContributor" />.
 /// </remarks>
 public sealed class EventingOptions
 {
@@ -69,6 +70,16 @@ public sealed class EventingOptions
     /// subscription execution perform upcaster lookups on the hot path.
     /// </remarks>
     public IList<EventUpcasterDescriptor> Upcasters { get; } = [];
+
+    /// <summary>
+    /// Gets the host-defined event context policy descriptors that should be available to the eventing runtime.
+    /// </summary>
+    /// <remarks>
+    /// These descriptors are code-owned tenant, correlation, causation, baggage, and message-header
+    /// policy metadata. They do not make publish or subscription execution perform context propagation
+    /// lookups on the hot path.
+    /// </remarks>
+    public IList<EventContextPolicyDescriptor> ContextPolicies { get; } = [];
 
     /// <summary>
     /// Gets or sets a value indicating whether publishing features are enabled.

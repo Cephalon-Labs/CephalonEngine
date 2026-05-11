@@ -30,7 +30,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var downstreamDeliveryCompletionEvidence = ResolveDownstreamDeliveryCompletionEvidence(topology);
         var brokerInboundConsumptionEvidence = ResolveBrokerInboundConsumptionEvidence(topology);
         var serializationVersioning = ResolveSerializationVersioningProfile();
-        var tenantCorrelationEvidence = ResolveTenantCorrelationEvidence(options, topology);
+        var tenantCorrelation = ResolveTenantCorrelationProfile();
         var scheduledDeliveryStatus = options.EnablePublicationScheduling ? "partial" : "not-claimed";
         var scheduledDeliveryEvidence = ResolveScheduledDeliveryEvidence(options, topology);
         var durableRetryQueueEvidence = ResolveDurableRetryQueueEvidence(options, topology);
@@ -122,10 +122,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     id: "tenant-and-correlation-context-ownership",
                     displayName: "Tenant And Correlation Context Ownership",
                     description: "Makes tenant identity, correlation, causation, baggage, and message-header propagation explicit instead of inferring them from remediation command metadata, diagnostics tags, or route metadata.",
-                    status: "not-claimed",
-                    evidence: tenantCorrelationEvidence,
+                    status: tenantCorrelation.Status,
+                    evidence: tenantCorrelation.Evidence,
                     advantage: "Teams can use Cephalon operator correlation metadata, publication routing, and diagnostic tags without assuming the core pack silently owns cross-boundary context propagation.",
-                    nextGap: "Add a provider-neutral context propagation descriptor plus tenant, correlation, causation, baggage, and header validation catalog before claiming tenant and correlation ownership."),
+                    nextGap: tenantCorrelation.NextGap),
                 CreateEntry(
                     id: "scheduled-and-delayed-delivery-ownership",
                     displayName: "Scheduled And Delayed Delivery Ownership",
@@ -526,17 +526,42 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         return new SerializationVersioningProfile(status, evidence, nextGap);
     }
 
-    private static string ResolveTenantCorrelationEvidence(EventingOptions options, EventingRuntimeTopology topology)
+    private TenantCorrelationProfile ResolveTenantCorrelationProfile()
     {
+        using var scope = scopeFactory.CreateScope();
+        var contextPolicyCatalog = scope.ServiceProvider.GetService<IEventContextPolicyCatalog>();
+        var policies = contextPolicyCatalog?.Policies ?? [];
+        var policyCount = policies.Count;
+        var tenantPolicyCount = policies.Count(static policy => policy.DeclaresTenantContext);
+        var correlationPolicyCount = policies.Count(static policy => policy.DeclaresCorrelationId);
+        var causationPolicyCount = policies.Count(static policy => policy.DeclaresCausationId);
+        var baggagePolicyCount = policies.Count(static policy => policy.DeclaresBaggage);
+        var headerValidationPolicyCount = policies.Count(static policy => policy.ValidatesMessageHeaders);
+        var declaredHeaderCount = policies
+            .SelectMany(static policy => policy.HeaderNames)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Count();
         var channelCatalog = topology.HasChannelContributors ? "present" : "not-present";
         var subscriptionCatalog = topology.HasSubscriptionContributors ? "present" : "not-present";
         var publicationPath = topology.HasPublishingPath ? "active" : "not-active";
         var publicationRouting = options.EnablePublicationRouting ? "configured" : "not-configured";
         var inProcessExecution = topology.HasInProcessSubscriptionExecutionPath ? "active" : "not-active";
+        var eventContextPolicyCatalog = policyCount > 0 ? "present" : "not-present";
+        var tenantContextPropagation = tenantPolicyCount > 0 ? "policy-declared" : "not-claimed";
+        var correlationContextPropagation = correlationPolicyCount > 0 ? "policy-declared" : "not-claimed";
+        var causationIdPropagation = causationPolicyCount > 0 ? "policy-declared" : "not-claimed";
+        var baggagePropagation = baggagePolicyCount > 0 ? "policy-declared" : "not-claimed";
+        var messageHeaderPolicy = headerValidationPolicyCount > 0 || declaredHeaderCount > 0 ? "policy-declared" : "not-claimed";
+        var status = policyCount > 0 ? "partial" : "not-claimed";
 
-        return string.Create(
+        var evidence = string.Create(
             CultureInfo.InvariantCulture,
-            $"channelCatalog={channelCatalog}; subscriptionCatalog={subscriptionCatalog}; publicationPath={publicationPath}; publicationRouting={publicationRouting}; inProcessExecution={inProcessExecution}; operatorCorrelationMetadata=metadata-only; tenantContextPropagation=not-claimed; correlationContextPropagation=not-claimed; causationIdPropagation=not-claimed; baggagePropagation=not-claimed; messageHeaderPolicy=not-claimed; wolverineRequired=false");
+            $"channelCatalog={channelCatalog}; subscriptionCatalog={subscriptionCatalog}; publicationPath={publicationPath}; publicationRouting={publicationRouting}; inProcessExecution={inProcessExecution}; operatorCorrelationMetadata=metadata-only; eventContextPolicyCatalog={eventContextPolicyCatalog}; contextPolicyCount={policyCount.ToString(CultureInfo.InvariantCulture)}; tenantPolicyCount={tenantPolicyCount.ToString(CultureInfo.InvariantCulture)}; correlationPolicyCount={correlationPolicyCount.ToString(CultureInfo.InvariantCulture)}; causationPolicyCount={causationPolicyCount.ToString(CultureInfo.InvariantCulture)}; baggagePolicyCount={baggagePolicyCount.ToString(CultureInfo.InvariantCulture)}; headerValidationPolicyCount={headerValidationPolicyCount.ToString(CultureInfo.InvariantCulture)}; declaredHeaderCount={declaredHeaderCount.ToString(CultureInfo.InvariantCulture)}; tenantContextPropagation={tenantContextPropagation}; correlationContextPropagation={correlationContextPropagation}; causationIdPropagation={causationIdPropagation}; baggagePropagation={baggagePropagation}; messageHeaderPolicy={messageHeaderPolicy}; executablePropagation=not-claimed; wolverineRequired=false");
+        var nextGap = policyCount > 0
+            ? "Add executable tenant, correlation, causation, baggage, and message-header propagation plus validation before claiming full tenant and correlation ownership."
+            : "Add code-first event context policy descriptors before claiming context propagation policy evidence.";
+
+        return new TenantCorrelationProfile(status, evidence, nextGap);
     }
 
     private static string ResolveScheduledDeliveryEvidence(EventingOptions options, EventingRuntimeTopology topology)
@@ -762,4 +787,6 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private sealed record ChoreographyHandoffProfile(string Status, string Evidence, string NextGap);
 
     private sealed record SerializationVersioningProfile(string Status, string Evidence, string NextGap);
+
+    private sealed record TenantCorrelationProfile(string Status, string Evidence, string NextGap);
 }

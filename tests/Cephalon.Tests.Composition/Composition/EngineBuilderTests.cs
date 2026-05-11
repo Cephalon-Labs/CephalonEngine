@@ -2817,6 +2817,101 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public void AddEventingProjectsContextPolicyCatalogProfileEvidenceWithoutWolverine()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<IEventContextPolicyContributor, ContextPolicyTestEventContributor>();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddEventing(options =>
+            {
+                options.ContextPolicies.Add(new EventContextPolicyDescriptor(
+                    id: "platform-context",
+                    displayName: "Platform Context",
+                    description: "Platform-owned event context policy registered by the host.",
+                    runtimeKind: "code-first",
+                    declaresTenantContext: true,
+                    declaresCorrelationId: true,
+                    declaresCausationId: true,
+                    declaresBaggage: true,
+                    validatesMessageHeaders: true,
+                    headerNames:
+                    [
+                        "cephalon-tenant-id",
+                        "cephalon-correlation-id",
+                        "cephalon-causation-id"
+                    ],
+                    metadata: new Dictionary<string, string>
+                    {
+                        ["owner"] = "platform"
+                    }));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var runtime = provider.GetRequiredService<IRuntime>();
+        var contextPolicyCatalog = provider.GetRequiredService<IEventContextPolicyCatalog>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        Assert.Equal(2, contextPolicyCatalog.Policies.Count);
+        Assert.True(contextPolicyCatalog.TryGet("platform-context", out var platformPolicy));
+        Assert.Equal("Platform Context", platformPolicy.DisplayName);
+        Assert.True(platformPolicy.DeclaresTenantContext);
+        Assert.True(platformPolicy.DeclaresCorrelationId);
+        Assert.True(platformPolicy.DeclaresCausationId);
+        Assert.True(platformPolicy.DeclaresBaggage);
+        Assert.True(platformPolicy.ValidatesMessageHeaders);
+        Assert.Contains("cephalon-tenant-id", platformPolicy.HeaderNames);
+        Assert.Single(contextPolicyCatalog.GetByHeaderName("cephalon-tenant-id"));
+        Assert.Single(contextPolicyCatalog.GetByHeaderName("cephalon-message-id"));
+
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var contextPolicySurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-context-policies");
+        Assert.Contains(
+            contextPolicySurface.Entries,
+            entry => entry.Id == "platform-context" &&
+                entry.Metadata["runtimeKind"] == "code-first" &&
+                entry.Metadata["declaresTenantContext"] == "true" &&
+                entry.Metadata["declaresCorrelationId"] == "true" &&
+                entry.Metadata["declaresCausationId"] == "true" &&
+                entry.Metadata["declaresBaggage"] == "true" &&
+                entry.Metadata["validatesMessageHeaders"] == "true" &&
+                entry.Metadata["headerNames"] == "cephalon-causation-id,cephalon-correlation-id,cephalon-tenant-id" &&
+                entry.Metadata["wolverineRequired"] == "false");
+
+        var dimensions = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        Assert.Equal("partial", dimensions["tenant-and-correlation-context-ownership"].Metadata["status"]);
+        Assert.Contains("eventContextPolicyCatalog=present", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("contextPolicyCount=2", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("tenantPolicyCount=2", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("correlationPolicyCount=2", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("causationPolicyCount=1", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("baggagePolicyCount=1", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("headerValidationPolicyCount=1", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("declaredHeaderCount=4", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("tenantContextPropagation=policy-declared", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("correlationContextPropagation=policy-declared", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("causationIdPropagation=policy-declared", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("baggagePropagation=policy-declared", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("messageHeaderPolicy=policy-declared", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("executablePropagation=not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+
+        var capability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.context-policies");
+        Assert.Equal("event-context-policies", capability.Metadata["surfaceId"]);
+        Assert.Equal("options-and-contributors", capability.Metadata["contextPolicySource"]);
+        Assert.Equal("false", capability.Metadata["wolverineRequired"]);
+    }
+
+    [Fact]
     public async Task AddRetrievalRunsOptInBackgroundReindexScheduler()
     {
         var services = new ServiceCollection();
@@ -4643,6 +4738,25 @@ public sealed class EngineBuilderTests
                 toVersion: "2",
                 runtimeKind: "code-first",
                 tags: ["inventory", "contract"]));
+        }
+    }
+
+    private sealed class ContextPolicyTestEventContributor : IEventContextPolicyContributor
+    {
+        public void RegisterEventContextPolicies(IEventContextPolicyRegistry policies)
+        {
+            policies.Add(new EventContextPolicyDescriptor(
+                id: "module-context",
+                displayName: "Module Context",
+                description: "Module-owned context policy descriptor registered by a module.",
+                runtimeKind: "code-first",
+                declaresTenantContext: true,
+                declaresCorrelationId: true,
+                declaresCausationId: false,
+                declaresBaggage: false,
+                validatesMessageHeaders: false,
+                headerNames: ["cephalon-message-id"],
+                tags: ["context", "module"]));
         }
     }
 }

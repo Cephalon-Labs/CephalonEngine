@@ -20,7 +20,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 
 Configures the built-in eventing runtime pack.
 
-Remarks: These options seed the host-owned part of the eventing runtime. Installed modules can still contribute additional channels through `IEventChannelContributor` and additional subscription, contract, serializer, schema registry, and upcaster descriptors through `IEventSubscriptionContributor`, `IEventContractContributor`, `IEventSerializerContributor`, `IEventSchemaRegistryContributor`, and `IEventUpcasterContributor`.
+Remarks: These options seed the host-owned part of the eventing runtime. Installed modules can still contribute additional channels through `IEventChannelContributor` and additional subscription, contract, serializer, schema registry, upcaster, and context policy descriptors through `IEventSubscriptionContributor`, `IEventContractContributor`, `IEventSerializerContributor`, `IEventSchemaRegistryContributor`, `IEventUpcasterContributor`, and `IEventContextPolicyContributor`.
 
 #### Declaration
 ```csharp
@@ -50,6 +50,18 @@ IList<EventChannelDescriptor> Channels { get; }
 ```
 
 Gets the host-defined event channels that should be available to the eventing runtime.
+
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-contextpolicies"></a>
+
+##### `ContextPolicies`
+
+```csharp
+IList<EventContextPolicyDescriptor> ContextPolicies { get; }
+```
+
+Gets the host-defined event context policy descriptors that should be available to the eventing runtime.
+
+Remarks: These descriptors are code-owned tenant, correlation, causation, baggage, and message-header policy metadata. They do not make publish or subscription execution perform context propagation lookups on the hot path.
 
 <a id="member-p-cephalon-eventing-configuration-eventingoptions-continueinprocesssubscriptionexecutionafterfailure"></a>
 
@@ -560,6 +572,167 @@ IReadOnlyList<string> Tags { get; }
 ```
 
 Gets the normalized tag set associated with the channel.
+
+<a id="type-cephalon-eventing-services-eventcontextpolicydescriptor"></a>
+
+### `EventContextPolicyDescriptor`
+
+Describes provider-neutral event context policy metadata for tenant, correlation, causation, baggage, and header propagation.
+
+Remarks: The descriptor is intentionally metadata-only. It lets hosts and modules expose context-policy ownership without putting tenant, correlation, baggage, or header propagation work on the publication or subscription hot path.
+
+#### Declaration
+```csharp
+public sealed class EventContextPolicyDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-eventing-services-eventcontextpolicydescriptor-ctor-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `EventContextPolicyDescriptor`
+
+```csharp
+EventContextPolicyDescriptor(string id, string displayName, string description, string runtimeKind, bool declaresTenantContext, bool declaresCorrelationId, bool declaresCausationId, bool declaresBaggage, bool validatesMessageHeaders, IReadOnlyList<string> headerNames, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new event context policy descriptor.
+
+Parameters:
+- `id`: The stable context policy identifier.
+- `displayName`: The operator-facing context policy name.
+- `description`: The human-readable context policy description.
+- `runtimeKind`: The runtime implementation kind, such as `code-first` or `provider-managed`.
+- `declaresTenantContext`: Whether the policy declares tenant-context propagation metadata.
+- `declaresCorrelationId`: Whether the policy declares correlation-id propagation metadata.
+- `declaresCausationId`: Whether the policy declares causation-id propagation metadata.
+- `declaresBaggage`: Whether the policy declares baggage propagation metadata.
+- `validatesMessageHeaders`: Whether the policy declares message-header validation metadata.
+- `headerNames`: Optional stable message-header names covered by the policy.
+- `tags`: Optional tags that classify the context policy.
+- `metadata`: Optional context policy metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-eventing-services-eventcontextpolicydescriptor-declaresbaggage"></a>
+
+##### `DeclaresBaggage`
+
+```csharp
+bool DeclaresBaggage { get; }
+```
+
+Gets a value indicating whether the policy declares baggage propagation metadata.
+
+<a id="member-p-cephalon-eventing-services-eventcontextpolicydescriptor-declarescausationid"></a>
+
+##### `DeclaresCausationId`
+
+```csharp
+bool DeclaresCausationId { get; }
+```
+
+Gets a value indicating whether the policy declares causation-id propagation metadata.
+
+<a id="member-p-cephalon-eventing-services-eventcontextpolicydescriptor-declarescorrelationid"></a>
+
+##### `DeclaresCorrelationId`
+
+```csharp
+bool DeclaresCorrelationId { get; }
+```
+
+Gets a value indicating whether the policy declares correlation-id propagation metadata.
+
+<a id="member-p-cephalon-eventing-services-eventcontextpolicydescriptor-declarestenantcontext"></a>
+
+##### `DeclaresTenantContext`
+
+```csharp
+bool DeclaresTenantContext { get; }
+```
+
+Gets a value indicating whether the policy declares tenant-context propagation metadata.
+
+<a id="member-p-cephalon-eventing-services-eventcontextpolicydescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable context policy description.
+
+<a id="member-p-cephalon-eventing-services-eventcontextpolicydescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing display name for the context policy.
+
+<a id="member-p-cephalon-eventing-services-eventcontextpolicydescriptor-headernames"></a>
+
+##### `HeaderNames`
+
+```csharp
+IReadOnlyList<string> HeaderNames { get; }
+```
+
+Gets the normalized message-header names covered by the policy.
+
+<a id="member-p-cephalon-eventing-services-eventcontextpolicydescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable context policy identifier.
+
+<a id="member-p-cephalon-eventing-services-eventcontextpolicydescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets normalized metadata associated with the context policy.
+
+<a id="member-p-cephalon-eventing-services-eventcontextpolicydescriptor-runtimekind"></a>
+
+##### `RuntimeKind`
+
+```csharp
+string RuntimeKind { get; }
+```
+
+Gets the context policy runtime implementation kind.
+
+<a id="member-p-cephalon-eventing-services-eventcontextpolicydescriptor-tags"></a>
+
+##### `Tags`
+
+```csharp
+IReadOnlyList<string> Tags { get; }
+```
+
+Gets the normalized tag set associated with the context policy.
+
+<a id="member-p-cephalon-eventing-services-eventcontextpolicydescriptor-validatesmessageheaders"></a>
+
+##### `ValidatesMessageHeaders`
+
+```csharp
+bool ValidatesMessageHeaders { get; }
+```
+
+Gets a value indicating whether the policy declares message-header validation metadata.
 
 <a id="type-cephalon-eventing-services-eventcontractdescriptor"></a>
 
@@ -3174,6 +3347,114 @@ Adds an event channel descriptor to the registry.
 
 Parameters:
 - `channel`: The channel descriptor to contribute.
+
+<a id="type-cephalon-eventing-services-ieventcontextpolicycatalog"></a>
+
+### `IEventContextPolicyCatalog`
+
+Provides read access to provider-neutral event context policy descriptors.
+
+#### Declaration
+```csharp
+public interface IEventContextPolicyCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-eventing-services-ieventcontextpolicycatalog-policies"></a>
+
+##### `Policies`
+
+```csharp
+IReadOnlyList<EventContextPolicyDescriptor> Policies { get; }
+```
+
+Gets all context policy descriptors available to the active eventing runtime.
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-ieventcontextpolicycatalog-getbyheadername-system-string"></a>
+
+##### `GetByHeaderName`
+
+```csharp
+IReadOnlyList<EventContextPolicyDescriptor> GetByHeaderName(string headerName)
+```
+
+Gets the context policies that cover a specific message-header name.
+
+Returns: The matching context policies, or an empty list when no policy covers the header.
+
+Parameters:
+- `headerName`: The message-header name to match.
+
+<a id="member-m-cephalon-eventing-services-ieventcontextpolicycatalog-tryget-system-string-cephalon-eventing-services-eventcontextpolicydescriptor"></a>
+
+##### `TryGet`
+
+```csharp
+bool TryGet(string policyId, out EventContextPolicyDescriptor policy)
+```
+
+Tries to get a context policy by identifier.
+
+Returns: `true` when the context policy was found; otherwise `false`.
+
+Parameters:
+- `policyId`: The context policy identifier.
+- `policy`: When this method returns, contains the matched context policy.
+
+<a id="type-cephalon-eventing-services-ieventcontextpolicycontributor"></a>
+
+### `IEventContextPolicyContributor`
+
+Allows a module to contribute event context policy metadata into the active eventing runtime pack.
+
+#### Declaration
+```csharp
+public interface IEventContextPolicyContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-ieventcontextpolicycontributor-registereventcontextpolicies-cephalon-eventing-services-ieventcontextpolicyregistry"></a>
+
+##### `RegisterEventContextPolicies`
+
+```csharp
+void RegisterEventContextPolicies(IEventContextPolicyRegistry policies)
+```
+
+Registers one or more event context policy descriptors with the supplied registry.
+
+Parameters:
+- `policies`: The registry that collects contributed event context policy descriptors.
+
+<a id="type-cephalon-eventing-services-ieventcontextpolicyregistry"></a>
+
+### `IEventContextPolicyRegistry`
+
+Collects event context policy descriptors contributed by modules or hosts.
+
+#### Declaration
+```csharp
+public interface IEventContextPolicyRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-ieventcontextpolicyregistry-add-cephalon-eventing-services-eventcontextpolicydescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(EventContextPolicyDescriptor policy)
+```
+
+Adds an event context policy descriptor to the registry.
+
+Parameters:
+- `policy`: The context policy descriptor to add.
 
 <a id="type-cephalon-eventing-services-ieventcontractcatalog"></a>
 

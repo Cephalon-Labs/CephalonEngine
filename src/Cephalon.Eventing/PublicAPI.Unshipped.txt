@@ -67,8 +67,23 @@ Cephalon.Eventing.Configuration.EventingOptions.PublicationRoutingRequireMatched
 Cephalon.Eventing.Configuration.EventingOptions.RemediationCommandHistoryLimit.get -> int
 Cephalon.Eventing.Configuration.EventingOptions.RemediationCommandHistoryLimit.set -> void
 Cephalon.Eventing.Configuration.EventingOptions.Contracts.get -> System.Collections.Generic.IList<Cephalon.Eventing.Services.EventContractDescriptor!>!
+Cephalon.Eventing.Configuration.EventingOptions.ContextPolicies.get -> System.Collections.Generic.IList<Cephalon.Eventing.Services.EventContextPolicyDescriptor!>!
 Cephalon.Eventing.Configuration.EventingOptions.SchemaRegistries.get -> System.Collections.Generic.IList<Cephalon.Eventing.Services.EventSchemaRegistryDescriptor!>!
 Cephalon.Eventing.Configuration.EventingOptions.Upcasters.get -> System.Collections.Generic.IList<Cephalon.Eventing.Services.EventUpcasterDescriptor!>!
+Cephalon.Eventing.Services.EventContextPolicyDescriptor
+Cephalon.Eventing.Services.EventContextPolicyDescriptor.DeclaresBaggage.get -> bool
+Cephalon.Eventing.Services.EventContextPolicyDescriptor.DeclaresCausationId.get -> bool
+Cephalon.Eventing.Services.EventContextPolicyDescriptor.DeclaresCorrelationId.get -> bool
+Cephalon.Eventing.Services.EventContextPolicyDescriptor.DeclaresTenantContext.get -> bool
+Cephalon.Eventing.Services.EventContextPolicyDescriptor.Description.get -> string!
+Cephalon.Eventing.Services.EventContextPolicyDescriptor.DisplayName.get -> string!
+Cephalon.Eventing.Services.EventContextPolicyDescriptor.EventContextPolicyDescriptor(string! id, string! displayName, string! description, string! runtimeKind = "code-first", bool declaresTenantContext = true, bool declaresCorrelationId = true, bool declaresCausationId = true, bool declaresBaggage = false, bool validatesMessageHeaders = false, System.Collections.Generic.IReadOnlyList<string!>? headerNames = null, System.Collections.Generic.IReadOnlyList<string!>? tags = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Eventing.Services.EventContextPolicyDescriptor.HeaderNames.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Eventing.Services.EventContextPolicyDescriptor.Id.get -> string!
+Cephalon.Eventing.Services.EventContextPolicyDescriptor.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Eventing.Services.EventContextPolicyDescriptor.RuntimeKind.get -> string!
+Cephalon.Eventing.Services.EventContextPolicyDescriptor.Tags.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Eventing.Services.EventContextPolicyDescriptor.ValidatesMessageHeaders.get -> bool
 Cephalon.Eventing.Services.EventContractDescriptor
 Cephalon.Eventing.Services.EventContractDescriptor.CompatibilityPolicy.get -> string!
 Cephalon.Eventing.Services.EventContractDescriptor.ContentType.get -> string!
@@ -91,6 +106,14 @@ Cephalon.Eventing.Services.IEventContractContributor
 Cephalon.Eventing.Services.IEventContractContributor.RegisterEventContracts(Cephalon.Eventing.Services.IEventContractRegistry! contracts) -> void
 Cephalon.Eventing.Services.IEventContractRegistry
 Cephalon.Eventing.Services.IEventContractRegistry.Add(Cephalon.Eventing.Services.EventContractDescriptor! contract) -> void
+Cephalon.Eventing.Services.IEventContextPolicyCatalog
+Cephalon.Eventing.Services.IEventContextPolicyCatalog.GetByHeaderName(string! headerName) -> System.Collections.Generic.IReadOnlyList<Cephalon.Eventing.Services.EventContextPolicyDescriptor!>!
+Cephalon.Eventing.Services.IEventContextPolicyCatalog.Policies.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Eventing.Services.EventContextPolicyDescriptor!>!
+Cephalon.Eventing.Services.IEventContextPolicyCatalog.TryGet(string! policyId, out Cephalon.Eventing.Services.EventContextPolicyDescriptor! policy) -> bool
+Cephalon.Eventing.Services.IEventContextPolicyContributor
+Cephalon.Eventing.Services.IEventContextPolicyContributor.RegisterEventContextPolicies(Cephalon.Eventing.Services.IEventContextPolicyRegistry! policies) -> void
+Cephalon.Eventing.Services.IEventContextPolicyRegistry
+Cephalon.Eventing.Services.IEventContextPolicyRegistry.Add(Cephalon.Eventing.Services.EventContextPolicyDescriptor! policy) -> void
 Cephalon.Eventing.Services.EventSchemaRegistryDescriptor
 Cephalon.Eventing.Services.EventSchemaRegistryDescriptor.CanReadSchemas.get -> bool
 Cephalon.Eventing.Services.EventSchemaRegistryDescriptor.CanWriteSchemas.get -> bool

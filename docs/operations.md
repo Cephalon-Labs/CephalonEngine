@@ -2677,10 +2677,12 @@ Current `Cephalon.Eventing` highlights:
   serialization, executable schema lookup, executable upcaster execution, and provider-owned
   compatibility validation unclaimed until a provider or engine package owns them
 - `tenant-and-correlation-context-ownership` is the separate context-propagation boundary in that
-  same profile; it stays `not-claimed` until a provider or engine package owns tenant context
-  propagation, correlation/causation propagation, baggage propagation, and message-header policy,
-  even when operator correlation metadata, diagnostic tags, publication routing, subscription
-  catalogs, or runtime publication evidence are present
+  same profile; it stays `not-claimed` until code-first context policy descriptors are present, can
+  report `partial` when `EventingOptions.ContextPolicies` / `IEventContextPolicyContributor`
+  populate `IEventContextPolicyCatalog`, `event-context-policies`, and
+  `eventing.context-policies` with descriptor-backed tenant, correlation, causation, baggage, and
+  message-header policy metadata, and still keeps executable tenant/correlation/baggage/header
+  propagation and validation unclaimed until a provider or engine package owns them
 - `scheduled-and-delayed-delivery-ownership` is the separate scheduled-delivery boundary in that
   same profile; it reports the bounded process-local scheduler as `partial` only when enabled and
   keeps durable scheduled delivery, provider delay queues, broker scheduled delivery, cross-node

@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-11T23:03:22.5928672+00:00",
+  "GeneratedAtUtc": "2026-05-11T23:27:42.1320779+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -271,7 +271,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 54
+      "TypeCount": 58
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1331,7 +1331,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 51
+      "TypeCount": 55
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8278,6 +8278,21 @@
       }
     },
     {
+      "DisplayName": "EventContextPolicyDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventcontextpolicydescriptor",
+      "Declaration": "public sealed class EventContextPolicyDescriptor",
+      "Summary": "Describes provider-neutral event context policy metadata for tenant, correlation, causation, baggage, and header propagation.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 12,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "EventContractDescriptor",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -8603,7 +8618,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 28,
+        "Properties": 29,
         "Methods": 0
       }
     },
@@ -11285,6 +11300,51 @@
       "AnchorId": "type-cephalon-eventing-services-ieventchannelregistry",
       "Declaration": "public interface IEventChannelRegistry",
       "Summary": "Collects event channel descriptors contributed to the active eventing runtime pack.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEventContextPolicyCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-ieventcontextpolicycatalog",
+      "Declaration": "public interface IEventContextPolicyCatalog",
+      "Summary": "Provides read access to provider-neutral event context policy descriptors.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 2
+      }
+    },
+    {
+      "DisplayName": "IEventContextPolicyContributor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-ieventcontextpolicycontributor",
+      "Declaration": "public interface IEventContextPolicyContributor",
+      "Summary": "Allows a module to contribute event context policy metadata into the active eventing runtime pack.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEventContextPolicyRegistry",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-ieventcontextpolicyregistry",
+      "Declaration": "public interface IEventContextPolicyRegistry",
+      "Summary": "Collects event context policy descriptors contributed by modules or hosts.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -22560,6 +22620,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-ieventchannelregistry-add-cephalon-eventing-services-eventchanneldescriptor",
       "Signature": "void Add(EventChannelDescriptor channel)",
       "Summary": "Adds an event channel descriptor to the registry."
+    },
+    {
+      "DisplayName": "Add",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventContextPolicyRegistry",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventcontextpolicyregistry-add-cephalon-eventing-services-eventcontextpolicydescriptor",
+      "Signature": "void Add(EventContextPolicyDescriptor policy)",
+      "Summary": "Adds an event context policy descriptor to the registry."
     },
     {
       "DisplayName": "Add",
@@ -39579,6 +39650,17 @@
       "Summary": "The metadata key prefix for required evaluation-context attributes."
     },
     {
+      "DisplayName": "ContextPolicies",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-contextpolicies",
+      "Signature": "IList\u003CEventContextPolicyDescriptor\u003E ContextPolicies { get; }",
+      "Summary": "Gets the host-defined event context policy descriptors that should be available to the eventing runtime."
+    },
+    {
       "DisplayName": "ContinuationCount",
       "Category": "Properties",
       "DeclaringTypeName": "DurableExecutionRuntimeState",
@@ -43173,6 +43255,50 @@
       "Summary": "Gets the declared connector task identifiers when one baseline exists."
     },
     {
+      "DisplayName": "DeclaresBaggage",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventContextPolicyDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventcontextpolicydescriptor-declaresbaggage",
+      "Signature": "bool DeclaresBaggage { get; }",
+      "Summary": "Gets a value indicating whether the policy declares baggage propagation metadata."
+    },
+    {
+      "DisplayName": "DeclaresCausationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventContextPolicyDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventcontextpolicydescriptor-declarescausationid",
+      "Signature": "bool DeclaresCausationId { get; }",
+      "Summary": "Gets a value indicating whether the policy declares causation-id propagation metadata."
+    },
+    {
+      "DisplayName": "DeclaresCorrelationId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventContextPolicyDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventcontextpolicydescriptor-declarescorrelationid",
+      "Signature": "bool DeclaresCorrelationId { get; }",
+      "Summary": "Gets a value indicating whether the policy declares correlation-id propagation metadata."
+    },
+    {
+      "DisplayName": "DeclaresTenantContext",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventContextPolicyDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventcontextpolicydescriptor-declarestenantcontext",
+      "Signature": "bool DeclaresTenantContext { get; }",
+      "Summary": "Gets a value indicating whether the policy declares tenant-context propagation metadata."
+    },
+    {
       "DisplayName": "Default",
       "Category": "Properties",
       "DeclaringTypeName": "FailurePolicy",
@@ -45826,6 +45952,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "EventContextPolicyDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventcontextpolicydescriptor-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable context policy description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "EventContractDescriptor",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -47802,6 +47939,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventchanneldescriptor-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the operator-facing display name for the channel."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventContextPolicyDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventcontextpolicydescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing display name for the context policy."
     },
     {
       "DisplayName": "DisplayName",
@@ -53687,6 +53835,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventchanneldescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string",
       "Signature": "EventChannelDescriptor(string id, string displayName, string description, IReadOnlyList\u003Cstring\u003E tags)",
       "Summary": "Creates a new event channel descriptor."
+    },
+    {
+      "DisplayName": "EventContextPolicyDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventContextPolicyDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventcontextpolicydescriptor-ctor-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "EventContextPolicyDescriptor(string id, string displayName, string description, string runtimeKind, bool declaresTenantContext, bool declaresCorrelationId, bool declaresCausationId, bool declaresBaggage, bool validatesMessageHeaders, IReadOnlyList\u003Cstring\u003E headerNames, IReadOnlyList\u003Cstring\u003E tags, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new event context policy descriptor."
     },
     {
       "DisplayName": "EventContractDescriptor",
@@ -60573,6 +60732,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-ieventschemaregistrycatalog-getbyformat-system-string",
       "Signature": "IReadOnlyList\u003CEventSchemaRegistryDescriptor\u003E GetByFormat(string format)",
       "Summary": "Gets all schema registries registered for the supplied serialization format."
+    },
+    {
+      "DisplayName": "GetByHeaderName",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventContextPolicyCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventcontextpolicycatalog-getbyheadername-system-string",
+      "Signature": "IReadOnlyList\u003CEventContextPolicyDescriptor\u003E GetByHeaderName(string headerName)",
+      "Summary": "Gets the context policies that cover a specific message-header name."
     },
     {
       "DisplayName": "GetByHealthIsolationId",
@@ -67791,6 +67961,17 @@
       "Summary": "Reads the value from an HTTP header."
     },
     {
+      "DisplayName": "HeaderNames",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventContextPolicyDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventcontextpolicydescriptor-headernames",
+      "Signature": "IReadOnlyList\u003Cstring\u003E HeaderNames { get; }",
+      "Summary": "Gets the normalized message-header names covered by the policy."
+    },
+    {
       "DisplayName": "Headers",
       "Category": "Properties",
       "DeclaringTypeName": "DigitalOceanTelemetryExportOptions",
@@ -69923,6 +70104,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventchanneldescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable channel identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventContextPolicyDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventcontextpolicydescriptor-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable context policy identifier."
     },
     {
       "DisplayName": "Id",
@@ -85239,6 +85431,17 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "EventContextPolicyDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventcontextpolicydescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets normalized metadata associated with the context policy."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "EventContractDescriptor",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -96554,6 +96757,17 @@
     {
       "DisplayName": "Policies",
       "Category": "Properties",
+      "DeclaringTypeName": "IEventContextPolicyCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-ieventcontextpolicycatalog-policies",
+      "Signature": "IReadOnlyList\u003CEventContextPolicyDescriptor\u003E Policies { get; }",
+      "Summary": "Gets all context policy descriptors available to the active eventing runtime."
+    },
+    {
+      "DisplayName": "Policies",
+      "Category": "Properties",
       "DeclaringTypeName": "IOutboxDispatchPolicyCatalog",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -105449,6 +105663,17 @@
       "Summary": "Registers one or more tenant-domain ownership descriptors with the supplied registry."
     },
     {
+      "DisplayName": "RegisterEventContextPolicies",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventContextPolicyContributor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventcontextpolicycontributor-registereventcontextpolicies-cephalon-eventing-services-ieventcontextpolicyregistry",
+      "Signature": "void RegisterEventContextPolicies(IEventContextPolicyRegistry policies)",
+      "Summary": "Registers one or more event context policy descriptors with the supplied registry."
+    },
+    {
       "DisplayName": "RegisterEventContracts",
       "Category": "Methods",
       "DeclaringTypeName": "IEventContractContributor",
@@ -113290,6 +113515,17 @@
       "AnchorId": "member-m-cephalon-engine-runtime-runtimeintrospectionsnapshot-ctor-cephalon-engine-manifest-runtimemanifest-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-executiongraphdescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologyruntimesurface-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticsconvention-cephalon-engine-runtime-runtimeoperationalstory",
       "Signature": "RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Status, IReadOnlyList\u003CExecutionGraphDescriptor\u003E ExecutionGraphs, IReadOnlyList\u003CTechnologyRuntimeSurface\u003E TechnologySurfaces, IReadOnlyList\u003CDiagnosticsConvention\u003E DiagnosticsConventions, RuntimeOperationalStory OperationalStory)",
       "Summary": "Combines the main operator-facing runtime views into a single payload."
+    },
+    {
+      "DisplayName": "RuntimeKind",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventContextPolicyDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventcontextpolicydescriptor-runtimekind",
+      "Signature": "string RuntimeKind { get; }",
+      "Summary": "Gets the context policy runtime implementation kind."
     },
     {
       "DisplayName": "RuntimeKind",
@@ -123070,6 +123306,17 @@
     {
       "DisplayName": "Tags",
       "Category": "Properties",
+      "DeclaringTypeName": "EventContextPolicyDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventcontextpolicydescriptor-tags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
+      "Summary": "Gets the normalized tag set associated with the context policy."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
       "DeclaringTypeName": "EventContractDescriptor",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -127910,6 +128157,17 @@
     {
       "DisplayName": "TryGet",
       "Category": "Methods",
+      "DeclaringTypeName": "IEventContextPolicyCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventcontextpolicycatalog-tryget-system-string-cephalon-eventing-services-eventcontextpolicydescriptor",
+      "Signature": "bool TryGet(string policyId, out EventContextPolicyDescriptor policy)",
+      "Summary": "Tries to get a context policy by identifier."
+    },
+    {
+      "DisplayName": "TryGet",
+      "Category": "Methods",
       "DeclaringTypeName": "IEventContractCatalog",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -130227,6 +130485,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventschemaregistrydescriptor-validatescompatibility",
       "Signature": "bool ValidatesCompatibility { get; }",
       "Summary": "Gets a value indicating whether the registry runtime validates compatibility."
+    },
+    {
+      "DisplayName": "ValidatesMessageHeaders",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventContextPolicyDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventcontextpolicydescriptor-validatesmessageheaders",
+      "Signature": "bool ValidatesMessageHeaders { get; }",
+      "Summary": "Gets a value indicating whether the policy declares message-header validation metadata."
     },
     {
       "DisplayName": "ValidateSnsSigningCertificateChain",
