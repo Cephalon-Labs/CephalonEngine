@@ -20,7 +20,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 
 Configures the built-in eventing runtime pack.
 
-Remarks: These options seed the host-owned part of the eventing runtime. Installed modules can still contribute additional channels through `IEventChannelContributor` and additional subscription, contract, and serializer descriptors through `IEventSubscriptionContributor`, `IEventContractContributor`, and `IEventSerializerContributor`.
+Remarks: These options seed the host-owned part of the eventing runtime. Installed modules can still contribute additional channels through `IEventChannelContributor` and additional subscription, contract, and serializer descriptors through `IEventSubscriptionContributor`, `IEventContractContributor`, and `IEventSerializerContributor`, plus schema registry descriptors through `IEventSchemaRegistryContributor`.
 
 #### Declaration
 ```csharp
@@ -316,6 +316,18 @@ int RemediationCommandHistoryLimit { get; set; }
 Gets or sets the maximum number of event-dispatch remediation command results retained in memory for operator reads.
 
 Remarks: The default value is `256`. Set the value to `0` to disable the process-local remediation command history while keeping the command dispatcher itself available. The catalog is an operator-audit read model, not a durable compliance store; hosts that need long-term retention should also persist command results.
+
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-schemaregistries"></a>
+
+##### `SchemaRegistries`
+
+```csharp
+IList<EventSchemaRegistryDescriptor> SchemaRegistries { get; }
+```
+
+Gets the host-defined event schema registry descriptors that should be available to the eventing runtime.
+
+Remarks: These descriptors are code-owned registry availability metadata. They do not make publish or subscription execution perform registry lookups on the hot path.
 
 <a id="member-p-cephalon-eventing-configuration-eventingoptions-serializers"></a>
 
@@ -1622,6 +1634,167 @@ string TenantId { get; }
 
 Gets the tenant identifier associated with the event.
 
+<a id="type-cephalon-eventing-services-eventschemaregistrydescriptor"></a>
+
+### `EventSchemaRegistryDescriptor`
+
+Describes provider-neutral schema registry availability for event serializers.
+
+Remarks: The descriptor is intentionally metadata-only. It lets hosts and modules expose schema registry availability without putting schema lookup, payload serialization, or compatibility validation on the publication hot path.
+
+#### Declaration
+```csharp
+public sealed class EventSchemaRegistryDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-eventing-services-eventschemaregistrydescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `EventSchemaRegistryDescriptor`
+
+```csharp
+EventSchemaRegistryDescriptor(string id, string displayName, string description, string provider, string endpointKind, string runtimeKind, bool canReadSchemas, bool canWriteSchemas, bool validatesCompatibility, IReadOnlyList<string> supportedFormats, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new event schema registry descriptor.
+
+Parameters:
+- `id`: The stable schema registry identifier used by serializers.
+- `displayName`: The operator-facing schema registry name.
+- `description`: The human-readable schema registry description.
+- `provider`: The provider or product family for the registry.
+- `endpointKind`: The endpoint kind, such as `managed`, `embedded`, or `external`.
+- `runtimeKind`: The runtime implementation kind, such as `code-first` or `provider-managed`.
+- `canReadSchemas`: Whether the runtime can read schemas from the registry.
+- `canWriteSchemas`: Whether the runtime can write schemas to the registry.
+- `validatesCompatibility`: Whether the runtime validates schema compatibility.
+- `supportedFormats`: Optional serialization formats supported by the registry.
+- `tags`: Optional tags that classify the registry.
+- `metadata`: Optional schema registry metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-eventing-services-eventschemaregistrydescriptor-canreadschemas"></a>
+
+##### `CanReadSchemas`
+
+```csharp
+bool CanReadSchemas { get; }
+```
+
+Gets a value indicating whether schemas can be read from the registry.
+
+<a id="member-p-cephalon-eventing-services-eventschemaregistrydescriptor-canwriteschemas"></a>
+
+##### `CanWriteSchemas`
+
+```csharp
+bool CanWriteSchemas { get; }
+```
+
+Gets a value indicating whether schemas can be written to the registry.
+
+<a id="member-p-cephalon-eventing-services-eventschemaregistrydescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable registry description.
+
+<a id="member-p-cephalon-eventing-services-eventschemaregistrydescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing display name for the registry.
+
+<a id="member-p-cephalon-eventing-services-eventschemaregistrydescriptor-endpointkind"></a>
+
+##### `EndpointKind`
+
+```csharp
+string EndpointKind { get; }
+```
+
+Gets the endpoint kind exposed by the registry.
+
+<a id="member-p-cephalon-eventing-services-eventschemaregistrydescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable schema registry identifier used by serializers.
+
+<a id="member-p-cephalon-eventing-services-eventschemaregistrydescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets normalized metadata associated with the registry.
+
+<a id="member-p-cephalon-eventing-services-eventschemaregistrydescriptor-provider"></a>
+
+##### `Provider`
+
+```csharp
+string Provider { get; }
+```
+
+Gets the provider or product family for the registry.
+
+<a id="member-p-cephalon-eventing-services-eventschemaregistrydescriptor-runtimekind"></a>
+
+##### `RuntimeKind`
+
+```csharp
+string RuntimeKind { get; }
+```
+
+Gets the registry runtime implementation kind.
+
+<a id="member-p-cephalon-eventing-services-eventschemaregistrydescriptor-supportedformats"></a>
+
+##### `SupportedFormats`
+
+```csharp
+IReadOnlyList<string> SupportedFormats { get; }
+```
+
+Gets the normalized serialization formats supported by the registry.
+
+<a id="member-p-cephalon-eventing-services-eventschemaregistrydescriptor-tags"></a>
+
+##### `Tags`
+
+```csharp
+IReadOnlyList<string> Tags { get; }
+```
+
+Gets the normalized tag set associated with the registry.
+
+<a id="member-p-cephalon-eventing-services-eventschemaregistrydescriptor-validatescompatibility"></a>
+
+##### `ValidatesCompatibility`
+
+```csharp
+bool ValidatesCompatibility { get; }
+```
+
+Gets a value indicating whether the registry runtime validates compatibility.
+
 <a id="type-cephalon-eventing-services-eventserializerdescriptor"></a>
 
 ### `EventSerializerDescriptor`
@@ -1637,12 +1810,12 @@ public sealed class EventSerializerDescriptor
 
 #### Constructors
 
-<a id="member-m-cephalon-eventing-services-eventserializerdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+<a id="member-m-cephalon-eventing-services-eventserializerdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-boolean-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
 
 ##### `EventSerializerDescriptor`
 
 ```csharp
-EventSerializerDescriptor(string id, string displayName, string description, string contentType, string format, string runtimeKind, bool canRead, bool canWrite, bool requiresSchemaRegistry, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)
+EventSerializerDescriptor(string id, string displayName, string description, string contentType, string format, string runtimeKind, bool canRead, bool canWrite, bool requiresSchemaRegistry, string schemaRegistryId, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)
 ```
 
 Creates a new event serializer descriptor.
@@ -1657,6 +1830,7 @@ Parameters:
 - `canRead`: Whether the serializer can deserialize payloads.
 - `canWrite`: Whether the serializer can serialize payloads.
 - `requiresSchemaRegistry`: Whether the serializer requires a schema registry before it can be used safely.
+- `schemaRegistryId`: The optional schema registry identifier required by the serializer.
 - `tags`: Optional tags that classify the serializer.
 - `metadata`: Optional serializer metadata.
 
@@ -1761,6 +1935,16 @@ string RuntimeKind { get; }
 ```
 
 Gets the serializer runtime implementation kind.
+
+<a id="member-p-cephalon-eventing-services-eventserializerdescriptor-schemaregistryid"></a>
+
+##### `SchemaRegistryId`
+
+```csharp
+string SchemaRegistryId { get; }
+```
+
+Gets the optional schema registry identifier required by the serializer.
 
 <a id="member-p-cephalon-eventing-services-eventserializerdescriptor-tags"></a>
 
@@ -3133,6 +3317,145 @@ Returns: A task that completes when the publication has been accepted by the run
 Parameters:
 - `publication`: The publication request to handle.
 - `cancellationToken`: The token that cancels the operation.
+
+<a id="type-cephalon-eventing-services-ieventschemaregistrycatalog"></a>
+
+### `IEventSchemaRegistryCatalog`
+
+Provides the merged event schema registry descriptors visible to the active eventing runtime.
+
+#### Declaration
+```csharp
+public interface IEventSchemaRegistryCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-eventing-services-ieventschemaregistrycatalog-registries"></a>
+
+##### `Registries`
+
+```csharp
+IReadOnlyList<EventSchemaRegistryDescriptor> Registries { get; }
+```
+
+Gets all registered event schema registry descriptors.
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-ieventschemaregistrycatalog-getbyformat-system-string"></a>
+
+##### `GetByFormat`
+
+```csharp
+IReadOnlyList<EventSchemaRegistryDescriptor> GetByFormat(string format)
+```
+
+Gets all schema registries registered for the supplied serialization format.
+
+Returns: The matching schema registries ordered by identifier.
+
+Parameters:
+- `format`: The serialization format.
+
+<a id="member-m-cephalon-eventing-services-ieventschemaregistrycatalog-getbyprovider-system-string"></a>
+
+##### `GetByProvider`
+
+```csharp
+IReadOnlyList<EventSchemaRegistryDescriptor> GetByProvider(string provider)
+```
+
+Gets all schema registries registered for the supplied provider.
+
+Returns: The matching schema registries ordered by identifier.
+
+Parameters:
+- `provider`: The provider or product family.
+
+<a id="member-m-cephalon-eventing-services-ieventschemaregistrycatalog-tryget-system-string-cephalon-eventing-services-eventschemaregistrydescriptor"></a>
+
+##### `TryGet`
+
+```csharp
+bool TryGet(string schemaRegistryId, out EventSchemaRegistryDescriptor registry)
+```
+
+Attempts to resolve a schema registry by its stable identifier.
+
+Returns: `true` when a registry with the identifier exists.
+
+Parameters:
+- `schemaRegistryId`: The stable schema registry identifier.
+- `registry`: When found, the matching schema registry descriptor.
+
+<a id="member-m-cephalon-eventing-services-ieventschemaregistrycatalog-trygetforserializer-cephalon-eventing-services-eventserializerdescriptor-cephalon-eventing-services-eventschemaregistrydescriptor"></a>
+
+##### `TryGetForSerializer`
+
+```csharp
+bool TryGetForSerializer(EventSerializerDescriptor serializer, out EventSchemaRegistryDescriptor registry)
+```
+
+Attempts to resolve the schema registry selected by an event serializer.
+
+Returns: `true` when the serializer's schema registry identifier is available.
+
+Parameters:
+- `serializer`: The event serializer descriptor.
+- `registry`: When found, the matching schema registry descriptor.
+
+<a id="type-cephalon-eventing-services-ieventschemaregistrycontributor"></a>
+
+### `IEventSchemaRegistryContributor`
+
+Allows a module to contribute event schema registry metadata into the active eventing runtime pack.
+
+#### Declaration
+```csharp
+public interface IEventSchemaRegistryContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-ieventschemaregistrycontributor-registereventschemaregistries-cephalon-eventing-services-ieventschemaregistryregistry"></a>
+
+##### `RegisterEventSchemaRegistries`
+
+```csharp
+void RegisterEventSchemaRegistries(IEventSchemaRegistryRegistry registries)
+```
+
+Registers one or more event schema registry descriptors with the supplied registry.
+
+Parameters:
+- `registries`: The registry that collects contributed event schema registry descriptors.
+
+<a id="type-cephalon-eventing-services-ieventschemaregistryregistry"></a>
+
+### `IEventSchemaRegistryRegistry`
+
+Collects event schema registry descriptors contributed by a host or module.
+
+#### Declaration
+```csharp
+public interface IEventSchemaRegistryRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-ieventschemaregistryregistry-add-cephalon-eventing-services-eventschemaregistrydescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(EventSchemaRegistryDescriptor registry)
+```
+
+Adds one event schema registry descriptor to the active eventing catalog.
+
+Parameters:
+- `registry`: The schema registry descriptor to add.
 
 <a id="type-cephalon-eventing-services-ieventserializercatalog"></a>
 

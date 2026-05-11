@@ -67,6 +67,7 @@ Cephalon.Eventing.Configuration.EventingOptions.PublicationRoutingRequireMatched
 Cephalon.Eventing.Configuration.EventingOptions.RemediationCommandHistoryLimit.get -> int
 Cephalon.Eventing.Configuration.EventingOptions.RemediationCommandHistoryLimit.set -> void
 Cephalon.Eventing.Configuration.EventingOptions.Contracts.get -> System.Collections.Generic.IList<Cephalon.Eventing.Services.EventContractDescriptor!>!
+Cephalon.Eventing.Configuration.EventingOptions.SchemaRegistries.get -> System.Collections.Generic.IList<Cephalon.Eventing.Services.EventSchemaRegistryDescriptor!>!
 Cephalon.Eventing.Services.EventContractDescriptor
 Cephalon.Eventing.Services.EventContractDescriptor.CompatibilityPolicy.get -> string!
 Cephalon.Eventing.Services.EventContractDescriptor.ContentType.get -> string!
@@ -89,6 +90,30 @@ Cephalon.Eventing.Services.IEventContractContributor
 Cephalon.Eventing.Services.IEventContractContributor.RegisterEventContracts(Cephalon.Eventing.Services.IEventContractRegistry! contracts) -> void
 Cephalon.Eventing.Services.IEventContractRegistry
 Cephalon.Eventing.Services.IEventContractRegistry.Add(Cephalon.Eventing.Services.EventContractDescriptor! contract) -> void
+Cephalon.Eventing.Services.EventSchemaRegistryDescriptor
+Cephalon.Eventing.Services.EventSchemaRegistryDescriptor.CanReadSchemas.get -> bool
+Cephalon.Eventing.Services.EventSchemaRegistryDescriptor.CanWriteSchemas.get -> bool
+Cephalon.Eventing.Services.EventSchemaRegistryDescriptor.Description.get -> string!
+Cephalon.Eventing.Services.EventSchemaRegistryDescriptor.DisplayName.get -> string!
+Cephalon.Eventing.Services.EventSchemaRegistryDescriptor.EndpointKind.get -> string!
+Cephalon.Eventing.Services.EventSchemaRegistryDescriptor.EventSchemaRegistryDescriptor(string! id, string! displayName, string! description, string! provider, string! endpointKind, string! runtimeKind = "code-first", bool canReadSchemas = true, bool canWriteSchemas = false, bool validatesCompatibility = false, System.Collections.Generic.IReadOnlyList<string!>? supportedFormats = null, System.Collections.Generic.IReadOnlyList<string!>? tags = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Eventing.Services.EventSchemaRegistryDescriptor.Id.get -> string!
+Cephalon.Eventing.Services.EventSchemaRegistryDescriptor.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Eventing.Services.EventSchemaRegistryDescriptor.Provider.get -> string!
+Cephalon.Eventing.Services.EventSchemaRegistryDescriptor.RuntimeKind.get -> string!
+Cephalon.Eventing.Services.EventSchemaRegistryDescriptor.SupportedFormats.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Eventing.Services.EventSchemaRegistryDescriptor.Tags.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Eventing.Services.EventSchemaRegistryDescriptor.ValidatesCompatibility.get -> bool
+Cephalon.Eventing.Services.IEventSchemaRegistryCatalog
+Cephalon.Eventing.Services.IEventSchemaRegistryCatalog.GetByFormat(string! format) -> System.Collections.Generic.IReadOnlyList<Cephalon.Eventing.Services.EventSchemaRegistryDescriptor!>!
+Cephalon.Eventing.Services.IEventSchemaRegistryCatalog.GetByProvider(string! provider) -> System.Collections.Generic.IReadOnlyList<Cephalon.Eventing.Services.EventSchemaRegistryDescriptor!>!
+Cephalon.Eventing.Services.IEventSchemaRegistryCatalog.Registries.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Eventing.Services.EventSchemaRegistryDescriptor!>!
+Cephalon.Eventing.Services.IEventSchemaRegistryCatalog.TryGet(string! schemaRegistryId, out Cephalon.Eventing.Services.EventSchemaRegistryDescriptor! registry) -> bool
+Cephalon.Eventing.Services.IEventSchemaRegistryCatalog.TryGetForSerializer(Cephalon.Eventing.Services.EventSerializerDescriptor! serializer, out Cephalon.Eventing.Services.EventSchemaRegistryDescriptor! registry) -> bool
+Cephalon.Eventing.Services.IEventSchemaRegistryContributor
+Cephalon.Eventing.Services.IEventSchemaRegistryContributor.RegisterEventSchemaRegistries(Cephalon.Eventing.Services.IEventSchemaRegistryRegistry! registries) -> void
+Cephalon.Eventing.Services.IEventSchemaRegistryRegistry
+Cephalon.Eventing.Services.IEventSchemaRegistryRegistry.Add(Cephalon.Eventing.Services.EventSchemaRegistryDescriptor! registry) -> void
 Cephalon.Eventing.Configuration.EventingOptions.Serializers.get -> System.Collections.Generic.IList<Cephalon.Eventing.Services.EventSerializerDescriptor!>!
 Cephalon.Eventing.Services.EventSerializerDescriptor
 Cephalon.Eventing.Services.EventSerializerDescriptor.CanRead.get -> bool
@@ -96,12 +121,13 @@ Cephalon.Eventing.Services.EventSerializerDescriptor.CanWrite.get -> bool
 Cephalon.Eventing.Services.EventSerializerDescriptor.ContentType.get -> string!
 Cephalon.Eventing.Services.EventSerializerDescriptor.Description.get -> string!
 Cephalon.Eventing.Services.EventSerializerDescriptor.DisplayName.get -> string!
-Cephalon.Eventing.Services.EventSerializerDescriptor.EventSerializerDescriptor(string! id, string! displayName, string! description, string! contentType, string! format, string! runtimeKind = "code-first", bool canRead = true, bool canWrite = true, bool requiresSchemaRegistry = false, System.Collections.Generic.IReadOnlyList<string!>? tags = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Eventing.Services.EventSerializerDescriptor.EventSerializerDescriptor(string! id, string! displayName, string! description, string! contentType, string! format, string! runtimeKind = "code-first", bool canRead = true, bool canWrite = true, bool requiresSchemaRegistry = false, string! schemaRegistryId = "", System.Collections.Generic.IReadOnlyList<string!>? tags = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
 Cephalon.Eventing.Services.EventSerializerDescriptor.Format.get -> string!
 Cephalon.Eventing.Services.EventSerializerDescriptor.Id.get -> string!
 Cephalon.Eventing.Services.EventSerializerDescriptor.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
 Cephalon.Eventing.Services.EventSerializerDescriptor.RequiresSchemaRegistry.get -> bool
 Cephalon.Eventing.Services.EventSerializerDescriptor.RuntimeKind.get -> string!
+Cephalon.Eventing.Services.EventSerializerDescriptor.SchemaRegistryId.get -> string!
 Cephalon.Eventing.Services.EventSerializerDescriptor.Tags.get -> System.Collections.Generic.IReadOnlyList<string!>!
 Cephalon.Eventing.Services.IEventSerializerCatalog
 Cephalon.Eventing.Services.IEventSerializerCatalog.GetByContentType(string! contentType) -> System.Collections.Generic.IReadOnlyList<Cephalon.Eventing.Services.EventSerializerDescriptor!>!

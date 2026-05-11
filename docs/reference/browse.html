@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-11T22:19:29.9319784+00:00",
+  "GeneratedAtUtc": "2026-05-11T22:41:34.3101662+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -271,7 +271,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 46
+      "TypeCount": 50
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1331,7 +1331,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 43
+      "TypeCount": 47
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8603,7 +8603,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 26,
+        "Properties": 27,
         "Methods": 0
       }
     },
@@ -8728,6 +8728,21 @@
       }
     },
     {
+      "DisplayName": "EventSchemaRegistryDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventschemaregistrydescriptor",
+      "Declaration": "public sealed class EventSchemaRegistryDescriptor",
+      "Summary": "Describes provider-neutral schema registry availability for event serializers.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 12,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "EventSerializerDescriptor",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -8738,7 +8753,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 11,
+        "Properties": 12,
         "Methods": 0
       }
     },
@@ -11495,6 +11510,51 @@
       "AnchorId": "type-cephalon-eventing-services-ieventpublisher",
       "Declaration": "public interface IEventPublisher",
       "Summary": "Accepts integration events for the active eventing runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEventSchemaRegistryCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-ieventschemaregistrycatalog",
+      "Declaration": "public interface IEventSchemaRegistryCatalog",
+      "Summary": "Provides the merged event schema registry descriptors visible to the active eventing runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 4
+      }
+    },
+    {
+      "DisplayName": "IEventSchemaRegistryContributor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-ieventschemaregistrycontributor",
+      "Declaration": "public interface IEventSchemaRegistryContributor",
+      "Summary": "Allows a module to contribute event schema registry metadata into the active eventing runtime pack.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEventSchemaRegistryRegistry",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-ieventschemaregistryregistry",
+      "Declaration": "public interface IEventSchemaRegistryRegistry",
+      "Summary": "Collects event schema registry descriptors contributed by a host or module.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -22466,6 +22526,17 @@
     {
       "DisplayName": "Add",
       "Category": "Methods",
+      "DeclaringTypeName": "IEventSchemaRegistryRegistry",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventschemaregistryregistry-add-cephalon-eventing-services-eventschemaregistrydescriptor",
+      "Signature": "void Add(EventSchemaRegistryDescriptor registry)",
+      "Summary": "Adds one event schema registry descriptor to the active eventing catalog."
+    },
+    {
+      "DisplayName": "Add",
+      "Category": "Methods",
       "DeclaringTypeName": "IEventSerializerRegistry",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -31429,6 +31500,17 @@
       "Summary": "Gets a value indicating whether the serializer can deserialize payloads."
     },
     {
+      "DisplayName": "CanReadSchemas",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSchemaRegistryDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventschemaregistrydescriptor-canreadschemas",
+      "Signature": "bool CanReadSchemas { get; }",
+      "Summary": "Gets a value indicating whether schemas can be read from the registry."
+    },
+    {
       "DisplayName": "CanRequestApproval",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus",
@@ -31614,6 +31696,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventserializerdescriptor-canwrite",
       "Signature": "bool CanWrite { get; }",
       "Summary": "Gets a value indicating whether the serializer can serialize payloads."
+    },
+    {
+      "DisplayName": "CanWriteSchemas",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSchemaRegistryDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventschemaregistrydescriptor-canwriteschemas",
+      "Signature": "bool CanWriteSchemas { get; }",
+      "Summary": "Gets a value indicating whether schemas can be written to the registry."
     },
     {
       "DisplayName": "Capabilities",
@@ -45673,6 +45766,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "EventSchemaRegistryDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventschemaregistrydescriptor-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable registry description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSerializerDescriptor",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -47627,6 +47731,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimedescriptor-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the operator-facing dispatch-runtime name."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSchemaRegistryDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventschemaregistrydescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing display name for the registry."
     },
     {
       "DisplayName": "DisplayName",
@@ -52601,6 +52716,17 @@
       "Summary": "Gets or sets the target export endpoint, if one is configured. Companion packages interpret this as the base collector endpoint for the selected export protocol."
     },
     {
+      "DisplayName": "EndpointKind",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSchemaRegistryDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventschemaregistrydescriptor-endpointkind",
+      "Signature": "string EndpointKind { get; }",
+      "Summary": "Gets the endpoint kind exposed by the registry."
+    },
+    {
       "DisplayName": "EndpointName",
       "Category": "Fields",
       "DeclaringTypeName": "RestEndpointOverrideActionKind",
@@ -53866,14 +53992,25 @@
       "Summary": "Gets per-event translation and reconciliation results."
     },
     {
+      "DisplayName": "EventSchemaRegistryDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventSchemaRegistryDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventschemaregistrydescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "EventSchemaRegistryDescriptor(string id, string displayName, string description, string provider, string endpointKind, string runtimeKind, bool canReadSchemas, bool canWriteSchemas, bool validatesCompatibility, IReadOnlyList\u003Cstring\u003E supportedFormats, IReadOnlyList\u003Cstring\u003E tags, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new event schema registry descriptor."
+    },
+    {
       "DisplayName": "EventSerializerDescriptor",
       "Category": "Constructors",
       "DeclaringTypeName": "EventSerializerDescriptor",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
-      "AnchorId": "member-m-cephalon-eventing-services-eventserializerdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
-      "Signature": "EventSerializerDescriptor(string id, string displayName, string description, string contentType, string format, string runtimeKind, bool canRead, bool canWrite, bool requiresSchemaRegistry, IReadOnlyList\u003Cstring\u003E tags, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "AnchorId": "member-m-cephalon-eventing-services-eventserializerdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-boolean-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "EventSerializerDescriptor(string id, string displayName, string description, string contentType, string format, string runtimeKind, bool canRead, bool canWrite, bool requiresSchemaRegistry, string schemaRegistryId, IReadOnlyList\u003Cstring\u003E tags, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Creates a new event serializer descriptor."
     },
     {
@@ -60279,6 +60416,17 @@
       "Summary": "Gets the CDC runtime-state entries currently owned by the requested execution runtime."
     },
     {
+      "DisplayName": "GetByFormat",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventSchemaRegistryCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventschemaregistrycatalog-getbyformat-system-string",
+      "Signature": "IReadOnlyList\u003CEventSchemaRegistryDescriptor\u003E GetByFormat(string format)",
+      "Summary": "Gets all schema registries registered for the supplied serialization format."
+    },
+    {
       "DisplayName": "GetByHealthIsolationId",
       "Category": "Methods",
       "DeclaringTypeName": "ICellTrafficAutomationRuntimeCatalog",
@@ -62279,6 +62427,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-idatabaserolecatalog-getbyprovider-system-string",
       "Signature": "IReadOnlyList\u003CDatabaseRoleDescriptor\u003E GetByProvider(string provider)",
       "Summary": "Gets every database role backed by the supplied provider identifier."
+    },
+    {
+      "DisplayName": "GetByProvider",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventSchemaRegistryCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventschemaregistrycatalog-getbyprovider-system-string",
+      "Signature": "IReadOnlyList\u003CEventSchemaRegistryDescriptor\u003E GetByProvider(string provider)",
+      "Summary": "Gets all schema registries registered for the supplied provider."
     },
     {
       "DisplayName": "GetByProvider",
@@ -69660,6 +69819,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventpublicationrequest-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable publication identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSchemaRegistryDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventschemaregistrydescriptor-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable schema registry identifier used by serializers."
     },
     {
       "DisplayName": "Id",
@@ -85053,6 +85223,17 @@
     {
       "DisplayName": "Metadata",
       "Category": "Properties",
+      "DeclaringTypeName": "EventSchemaRegistryDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventschemaregistrydescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets normalized metadata associated with the registry."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSerializerDescriptor",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -98302,6 +98483,17 @@
     {
       "DisplayName": "Provider",
       "Category": "Properties",
+      "DeclaringTypeName": "EventSchemaRegistryDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventschemaregistrydescriptor-provider",
+      "Signature": "string Provider { get; }",
+      "Summary": "Gets the provider or product family for the registry."
+    },
+    {
+      "DisplayName": "Provider",
+      "Category": "Properties",
       "DeclaringTypeName": "EventStreamDescriptor",
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
       "AssemblyName": "Cephalon.Abstractions",
@@ -105087,6 +105279,17 @@
       "Summary": "Registers one or more event contract descriptors with the supplied registry."
     },
     {
+      "DisplayName": "RegisterEventSchemaRegistries",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventSchemaRegistryContributor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventschemaregistrycontributor-registereventschemaregistries-cephalon-eventing-services-ieventschemaregistryregistry",
+      "Signature": "void RegisterEventSchemaRegistries(IEventSchemaRegistryRegistry registries)",
+      "Summary": "Registers one or more event schema registry descriptors with the supplied registry."
+    },
+    {
       "DisplayName": "RegisterEventSerializers",
       "Category": "Methods",
       "DeclaringTypeName": "IEventSerializerContributor",
@@ -105382,6 +105585,17 @@
       "AnchorId": "member-p-cephalon-abstractions-behaviors-containsbehaviorsattribute-registrationtype",
       "Signature": "Type RegistrationType { get; }",
       "Summary": "Gets the generated registration class type emitted by the source generator."
+    },
+    {
+      "DisplayName": "Registries",
+      "Category": "Properties",
+      "DeclaringTypeName": "IEventSchemaRegistryCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-ieventschemaregistrycatalog-registries",
+      "Signature": "IReadOnlyList\u003CEventSchemaRegistryDescriptor\u003E Registries { get; }",
+      "Summary": "Gets all registered event schema registry descriptors."
     },
     {
       "DisplayName": "Reject",
@@ -112888,6 +113102,17 @@
     {
       "DisplayName": "RuntimeKind",
       "Category": "Properties",
+      "DeclaringTypeName": "EventSchemaRegistryDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventschemaregistrydescriptor-runtimekind",
+      "Signature": "string RuntimeKind { get; }",
+      "Summary": "Gets the registry runtime implementation kind."
+    },
+    {
+      "DisplayName": "RuntimeKind",
+      "Category": "Properties",
       "DeclaringTypeName": "EventSerializerDescriptor",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -114072,6 +114297,28 @@
       "AnchorId": "member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-schema",
       "Signature": "string Schema { get; }",
       "Summary": "Gets the selected schema override, if one was declared."
+    },
+    {
+      "DisplayName": "SchemaRegistries",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-schemaregistries",
+      "Signature": "IList\u003CEventSchemaRegistryDescriptor\u003E SchemaRegistries { get; }",
+      "Summary": "Gets the host-defined event schema registry descriptors that should be available to the eventing runtime."
+    },
+    {
+      "DisplayName": "SchemaRegistryId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSerializerDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventserializerdescriptor-schemaregistryid",
+      "Signature": "string SchemaRegistryId { get; }",
+      "Summary": "Gets the optional schema registry identifier required by the serializer."
     },
     {
       "DisplayName": "Scheme",
@@ -121969,6 +122216,17 @@
       "Summary": "Gets the supported cultures available from the merged resource catalog."
     },
     {
+      "DisplayName": "SupportedFormats",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSchemaRegistryDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventschemaregistrydescriptor-supportedformats",
+      "Signature": "IReadOnlyList\u003Cstring\u003E SupportedFormats { get; }",
+      "Summary": "Gets the normalized serialization formats supported by the registry."
+    },
+    {
       "DisplayName": "SupportedTargetFrameworks",
       "Category": "Properties",
       "DeclaringTypeName": "PackageManifest",
@@ -122616,6 +122874,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventcontractdescriptor-tags",
       "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
       "Summary": "Gets the normalized tag set associated with the contract."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSchemaRegistryDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventschemaregistrydescriptor-tags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
+      "Summary": "Gets the normalized tag set associated with the registry."
     },
     {
       "DisplayName": "Tags",
@@ -127449,6 +127718,17 @@
     {
       "DisplayName": "TryGet",
       "Category": "Methods",
+      "DeclaringTypeName": "IEventSchemaRegistryCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventschemaregistrycatalog-tryget-system-string-cephalon-eventing-services-eventschemaregistrydescriptor",
+      "Signature": "bool TryGet(string schemaRegistryId, out EventSchemaRegistryDescriptor registry)",
+      "Summary": "Attempts to resolve a schema registry by its stable identifier."
+    },
+    {
+      "DisplayName": "TryGet",
+      "Category": "Methods",
       "DeclaringTypeName": "IEventSerializerCatalog",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -127610,6 +127890,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-ieventserializercatalog-trygetforcontract-cephalon-eventing-services-eventcontractdescriptor-cephalon-eventing-services-eventserializerdescriptor",
       "Signature": "bool TryGetForContract(EventContractDescriptor contract, out EventSerializerDescriptor serializer)",
       "Summary": "Attempts to resolve the serializer selected by an event contract."
+    },
+    {
+      "DisplayName": "TryGetForSerializer",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventSchemaRegistryCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventschemaregistrycatalog-trygetforserializer-cephalon-eventing-services-eventserializerdescriptor-cephalon-eventing-services-eventschemaregistrydescriptor",
+      "Signature": "bool TryGetForSerializer(EventSerializerDescriptor serializer, out EventSchemaRegistryDescriptor registry)",
+      "Summary": "Attempts to resolve the schema registry selected by an event serializer."
     },
     {
       "DisplayName": "TryGetSelected",
@@ -129656,6 +129947,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-validatedatutc",
       "Signature": "DateTimeOffset ValidatedAtUtc { get; }",
       "Summary": "Gets the UTC timestamp when validation executed."
+    },
+    {
+      "DisplayName": "ValidatesCompatibility",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventSchemaRegistryDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventschemaregistrydescriptor-validatescompatibility",
+      "Signature": "bool ValidatesCompatibility { get; }",
+      "Summary": "Gets a value indicating whether the registry runtime validates compatibility."
     },
     {
       "DisplayName": "ValidateSnsSigningCertificateChain",

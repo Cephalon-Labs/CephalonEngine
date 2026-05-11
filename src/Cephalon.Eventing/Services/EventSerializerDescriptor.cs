@@ -21,6 +21,7 @@ public sealed class EventSerializerDescriptor
     /// <param name="canRead">Whether the serializer can deserialize payloads.</param>
     /// <param name="canWrite">Whether the serializer can serialize payloads.</param>
     /// <param name="requiresSchemaRegistry">Whether the serializer requires a schema registry before it can be used safely.</param>
+    /// <param name="schemaRegistryId">The optional schema registry identifier required by the serializer.</param>
     /// <param name="tags">Optional tags that classify the serializer.</param>
     /// <param name="metadata">Optional serializer metadata.</param>
     public EventSerializerDescriptor(
@@ -33,6 +34,7 @@ public sealed class EventSerializerDescriptor
         bool canRead = true,
         bool canWrite = true,
         bool requiresSchemaRegistry = false,
+        string schemaRegistryId = "",
         IReadOnlyList<string>? tags = null,
         IReadOnlyDictionary<string, string>? metadata = null)
     {
@@ -75,6 +77,7 @@ public sealed class EventSerializerDescriptor
         CanRead = canRead;
         CanWrite = canWrite;
         RequiresSchemaRegistry = requiresSchemaRegistry;
+        SchemaRegistryId = schemaRegistryId?.Trim() ?? string.Empty;
         Tags = tags?
             .Where(static tag => !string.IsNullOrWhiteSpace(tag))
             .Select(static tag => tag.Trim())
@@ -136,6 +139,11 @@ public sealed class EventSerializerDescriptor
     /// Gets a value indicating whether the serializer needs schema-registry support before use.
     /// </summary>
     public bool RequiresSchemaRegistry { get; }
+
+    /// <summary>
+    /// Gets the optional schema registry identifier required by the serializer.
+    /// </summary>
+    public string SchemaRegistryId { get; }
 
     /// <summary>
     /// Gets the normalized tag set associated with the serializer.

@@ -113,7 +113,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                 CreateEntry(
                     id: "serialization-and-contract-versioning-ownership",
                     displayName: "Serialization And Contract Versioning Ownership",
-                    description: "Makes serializer selection, schema registry ownership, event contract version negotiation, upcasting, and compatibility validation explicit instead of inferring them from event type or channel metadata.",
+                    description: "Makes serializer selection, schema registry availability, event contract version negotiation, upcasting, and compatibility validation explicit instead of inferring them from event type or channel metadata.",
                     status: serializationVersioning.Status,
                     evidence: serializationVersioning.Evidence,
                     advantage: "Teams can use Cephalon event catalogs, routing, and runtime publication evidence without assuming the core pack silently owns a wire schema registry or version migration pipeline.",
@@ -442,10 +442,13 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         using var scope = scopeFactory.CreateScope();
         var contractCatalog = scope.ServiceProvider.GetService<IEventContractCatalog>();
         var serializerCatalog = scope.ServiceProvider.GetService<IEventSerializerCatalog>();
+        var schemaRegistryCatalog = scope.ServiceProvider.GetService<IEventSchemaRegistryCatalog>();
         var contracts = contractCatalog?.Contracts ?? [];
         var serializers = serializerCatalog?.Serializers ?? [];
+        var schemaRegistries = schemaRegistryCatalog?.Registries ?? [];
         var contractCount = contracts.Count;
         var serializerRuntimeCount = serializers.Count;
+        var schemaRegistryRuntimeCount = schemaRegistries.Count;
         var contractCountText = contractCount.ToString(CultureInfo.InvariantCulture);
         var versionedContractCount = contracts.Count(static contract => !string.IsNullOrWhiteSpace(contract.Version));
         var contentTypeContractCount = contracts.Count(static contract => !string.IsNullOrWhiteSpace(contract.ContentType));
@@ -454,6 +457,12 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             ? 0
             : contracts.Count(contract => serializerCatalog.TryGetForContract(contract, out _));
         var unresolvedSerializerContractCount = serializerReferenceCount - resolvedSerializerContractCount;
+        var schemaRegistryReferenceCount = serializers.Count(static serializer => !string.IsNullOrWhiteSpace(serializer.SchemaRegistryId));
+        var schemaRegistryRequiredSerializerCount = serializers.Count(static serializer => serializer.RequiresSchemaRegistry);
+        var resolvedSchemaRegistrySerializerCount = schemaRegistryCatalog is null
+            ? 0
+            : serializers.Count(serializer => schemaRegistryCatalog.TryGetForSerializer(serializer, out _));
+        var unresolvedSchemaRegistrySerializerCount = schemaRegistryReferenceCount - resolvedSchemaRegistrySerializerCount;
         var envelopeSchemaCount = contracts
             .Select(static contract => contract.EnvelopeSchema)
             .Where(static schema => !string.IsNullOrWhiteSpace(schema))
@@ -470,15 +479,21 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var publicationRouting = options.EnablePublicationRouting ? "configured" : "not-configured";
         var eventContractCatalog = contractCatalog is null ? "not-present" : "present";
         var eventSerializerCatalog = serializerRuntimeCount > 0 ? "present" : "not-present";
+        var eventSchemaRegistryCatalog = schemaRegistryRuntimeCount > 0 ? "present" : "not-present";
         var serializerSelection = resolvedSerializerContractCount > 0
             ? "catalog-backed"
             : serializerReferenceCount > 0 ? "descriptor-backed" : "not-claimed";
         var wireSerializationRuntime = serializerRuntimeCount > 0 ? "serializer-catalog-declared" : "not-claimed";
         var messageEnvelopeSchema = envelopeSchemaCount > 0 ? "descriptor-backed" : "not-claimed";
+        var schemaRegistry = resolvedSchemaRegistrySerializerCount > 0
+            ? "catalog-backed"
+            : schemaRegistryReferenceCount > 0 ? "descriptor-backed" : schemaRegistryRuntimeCount > 0 ? "catalog-declared" : "not-present";
         var contractVersionNegotiation = versionedContractCount > 0 ? "descriptor-backed" : "not-claimed";
         var compatibilityValidation = compatibilityPolicyCount > 0 ? "descriptor-backed" : "not-claimed";
-        var status = contractCount > 0 || serializerRuntimeCount > 0 ? "partial" : "not-claimed";
-        var nextGap = serializerRuntimeCount > 0
+        var status = contractCount > 0 || serializerRuntimeCount > 0 || schemaRegistryRuntimeCount > 0 ? "partial" : "not-claimed";
+        var nextGap = schemaRegistryRuntimeCount > 0
+            ? "Add executable payload serialization, schema lookup, upcaster pipeline, and compatibility validation execution before claiming full serialization and contract-version ownership."
+            : serializerRuntimeCount > 0
             ? "Add executable payload serialization, schema registry, upcaster pipeline, and compatibility validation execution before claiming full serialization and contract-version ownership."
             : contractCount > 0
                 ? "Register code-first event serializer descriptors that satisfy the declared contract serializer ids before claiming serializer runtime evidence."
@@ -486,7 +501,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
 
         var evidence = string.Create(
             CultureInfo.InvariantCulture,
-            $"channelCatalog={channelCatalog}; subscriptionCatalog={subscriptionCatalog}; publicationPath={publicationPath}; publicationRouting={publicationRouting}; eventContractCatalog={eventContractCatalog}; eventSerializerCatalog={eventSerializerCatalog}; eventContractCount={contractCountText}; versionedContracts={versionedContractCount.ToString(CultureInfo.InvariantCulture)}; contentTypeContracts={contentTypeContractCount.ToString(CultureInfo.InvariantCulture)}; serializerDescriptors={serializerReferenceCount.ToString(CultureInfo.InvariantCulture)}; serializerRuntimeCount={serializerRuntimeCount.ToString(CultureInfo.InvariantCulture)}; resolvedSerializerContracts={resolvedSerializerContractCount.ToString(CultureInfo.InvariantCulture)}; unresolvedSerializerContracts={unresolvedSerializerContractCount.ToString(CultureInfo.InvariantCulture)}; envelopeSchemas={envelopeSchemaCount.ToString(CultureInfo.InvariantCulture)}; compatibilityPolicies={compatibilityPolicyCount.ToString(CultureInfo.InvariantCulture)}; serializerSelection={serializerSelection}; wireSerializationRuntime={wireSerializationRuntime}; messageEnvelopeSchema={messageEnvelopeSchema}; schemaRegistry=not-present; contractVersionNegotiation={contractVersionNegotiation}; upcasterPipeline=not-present; compatibilityValidation={compatibilityValidation}; wolverineRequired=false");
+            $"channelCatalog={channelCatalog}; subscriptionCatalog={subscriptionCatalog}; publicationPath={publicationPath}; publicationRouting={publicationRouting}; eventContractCatalog={eventContractCatalog}; eventSerializerCatalog={eventSerializerCatalog}; eventSchemaRegistryCatalog={eventSchemaRegistryCatalog}; eventContractCount={contractCountText}; versionedContracts={versionedContractCount.ToString(CultureInfo.InvariantCulture)}; contentTypeContracts={contentTypeContractCount.ToString(CultureInfo.InvariantCulture)}; serializerDescriptors={serializerReferenceCount.ToString(CultureInfo.InvariantCulture)}; serializerRuntimeCount={serializerRuntimeCount.ToString(CultureInfo.InvariantCulture)}; resolvedSerializerContracts={resolvedSerializerContractCount.ToString(CultureInfo.InvariantCulture)}; unresolvedSerializerContracts={unresolvedSerializerContractCount.ToString(CultureInfo.InvariantCulture)}; schemaRegistryRuntimeCount={schemaRegistryRuntimeCount.ToString(CultureInfo.InvariantCulture)}; schemaRegistryReferences={schemaRegistryReferenceCount.ToString(CultureInfo.InvariantCulture)}; schemaRegistryRequiredSerializers={schemaRegistryRequiredSerializerCount.ToString(CultureInfo.InvariantCulture)}; resolvedSchemaRegistrySerializers={resolvedSchemaRegistrySerializerCount.ToString(CultureInfo.InvariantCulture)}; unresolvedSchemaRegistrySerializers={unresolvedSchemaRegistrySerializerCount.ToString(CultureInfo.InvariantCulture)}; envelopeSchemas={envelopeSchemaCount.ToString(CultureInfo.InvariantCulture)}; compatibilityPolicies={compatibilityPolicyCount.ToString(CultureInfo.InvariantCulture)}; serializerSelection={serializerSelection}; wireSerializationRuntime={wireSerializationRuntime}; messageEnvelopeSchema={messageEnvelopeSchema}; schemaRegistry={schemaRegistry}; contractVersionNegotiation={contractVersionNegotiation}; upcasterPipeline=not-present; compatibilityValidation={compatibilityValidation}; wolverineRequired=false");
 
         return new SerializationVersioningProfile(status, evidence, nextGap);
     }

@@ -8,10 +8,11 @@ namespace Cephalon.Eventing.Configuration;
 /// <remarks>
 /// These options seed the host-owned part of the eventing runtime. Installed modules can still
 /// contribute additional channels through <see cref="Services.IEventChannelContributor" /> and
-/// additional subscription, contract, and serializer descriptors through
-/// <see cref="Services.IEventSubscriptionContributor" />,
-/// <see cref="Services.IEventContractContributor" />, and
-/// <see cref="Services.IEventSerializerContributor" />.
+    /// additional subscription, contract, and serializer descriptors through
+    /// <see cref="Services.IEventSubscriptionContributor" />,
+    /// <see cref="Services.IEventContractContributor" />, and
+    /// <see cref="Services.IEventSerializerContributor" />, plus schema registry descriptors through
+    /// <see cref="Services.IEventSchemaRegistryContributor" />.
 /// </remarks>
 public sealed class EventingOptions
 {
@@ -49,6 +50,15 @@ public sealed class EventingOptions
     /// subscription execution perform config lookups on the hot path.
     /// </remarks>
     public IList<EventSerializerDescriptor> Serializers { get; } = [];
+
+    /// <summary>
+    /// Gets the host-defined event schema registry descriptors that should be available to the eventing runtime.
+    /// </summary>
+    /// <remarks>
+    /// These descriptors are code-owned registry availability metadata. They do not make publish or
+    /// subscription execution perform registry lookups on the hot path.
+    /// </remarks>
+    public IList<EventSchemaRegistryDescriptor> SchemaRegistries { get; } = [];
 
     /// <summary>
     /// Gets or sets a value indicating whether publishing features are enabled.

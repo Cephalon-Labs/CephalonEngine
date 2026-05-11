@@ -753,6 +753,9 @@ Browse the published API surface by public member.
 - [Add](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventdispatchruntimeregistry-add-cephalon-abstractions-data-eventdispatchruntimedescriptor): `Methods` on `IEventDispatchRuntimeRegistry` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Add&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Adds one dispatch runtime to the current eventing technology composition.
   - `void Add(EventDispatchRuntimeDescriptor dispatchRuntime)`
+- [Add](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventschemaregistryregistry-add-cephalon-eventing-services-eventschemaregistrydescriptor): `Methods` on `IEventSchemaRegistryRegistry` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Add&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Adds one event schema registry descriptor to the active eventing catalog.
+  - `void Add(EventSchemaRegistryDescriptor registry)`
 - [Add](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventserializerregistry-add-cephalon-eventing-services-eventserializerdescriptor): `Methods` on `IEventSerializerRegistry` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Add&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Adds one event serializer descriptor to the active eventing catalog.
   - `void Add(EventSerializerDescriptor serializer)`
@@ -3204,6 +3207,9 @@ Browse the published API surface by public member.
 - [CanRead](cephalon-eventing.md#member-p-cephalon-eventing-services-eventserializerdescriptor-canread): `Properties` on `EventSerializerDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CanRead&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets a value indicating whether the serializer can deserialize payloads.
   - `bool CanRead { get; }`
+- [CanReadSchemas](cephalon-eventing.md#member-p-cephalon-eventing-services-eventschemaregistrydescriptor-canreadschemas): `Properties` on `EventSchemaRegistryDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CanReadSchemas&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets a value indicating whether schemas can be read from the registry.
+  - `bool CanReadSchemas { get; }`
 - [CanRequestApproval](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorexecutionapprovalstatus-canrequestapproval): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorExecutionApprovalStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CanRequestApproval&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the managed connector can currently enter a future approval workflow.
   - `bool CanRequestApproval { get; }`
@@ -3255,6 +3261,9 @@ Browse the published API surface by public member.
 - [CanWrite](cephalon-eventing.md#member-p-cephalon-eventing-services-eventserializerdescriptor-canwrite): `Properties` on `EventSerializerDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CanWrite&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets a value indicating whether the serializer can serialize payloads.
   - `bool CanWrite { get; }`
+- [CanWriteSchemas](cephalon-eventing.md#member-p-cephalon-eventing-services-eventschemaregistrydescriptor-canwriteschemas): `Properties` on `EventSchemaRegistryDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CanWriteSchemas&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets a value indicating whether schemas can be written to the registry.
+  - `bool CanWriteSchemas { get; }`
 - [Capabilities](cephalon-engine.md#member-p-cephalon-engine-configuration-engineoptions-capabilities): `Properties` on `EngineOptions` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Capabilities&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets capability enablement overrides keyed by capability key.
   - `IReadOnlyDictionary<string, bool> Capabilities { get; }`
@@ -7089,6 +7098,9 @@ Browse the published API surface by public member.
 - [Description](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimedescriptor-description): `Properties` on `EventDispatchRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Description&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the human-readable dispatch-runtime description.
   - `string Description { get; }`
+- [Description](cephalon-eventing.md#member-p-cephalon-eventing-services-eventschemaregistrydescriptor-description): `Properties` on `EventSchemaRegistryDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Description&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the human-readable registry description.
+  - `string Description { get; }`
 - [Description](cephalon-eventing.md#member-p-cephalon-eventing-services-eventserializerdescriptor-description): `Properties` on `EventSerializerDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Description&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the human-readable serializer description.
   - `string Description { get; }`
@@ -7622,6 +7634,9 @@ Browse the published API surface by public member.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimedescriptor-displayname): `Properties` on `EventDispatchRuntimeDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the operator-facing dispatch-runtime name.
+  - `string DisplayName { get; }`
+- [DisplayName](cephalon-eventing.md#member-p-cephalon-eventing-services-eventschemaregistrydescriptor-displayname): `Properties` on `EventSchemaRegistryDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the operator-facing display name for the registry.
   - `string DisplayName { get; }`
 - [DisplayName](cephalon-eventing.md#member-p-cephalon-eventing-services-eventserializerdescriptor-displayname): `Properties` on `EventSerializerDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DisplayName&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the operator-facing display name for the serializer.
@@ -8982,6 +8997,9 @@ Browse the published API surface by public member.
 - [Endpoint](cephalon-observability.md#member-p-cephalon-observability-configuration-telemetryexportoptions-endpoint): `Properties` on `TelemetryExportOptions` in `Cephalon.Observability.Configuration` (`Cephalon.Observability`) [Browse](browse.html?q=Endpoint&assembly=Cephalon.Observability&namespace=Cephalon.Observability.Configuration&scope=members)
   - Gets or sets the target export endpoint, if one is configured. Companion packages interpret this as the base collector endpoint for the selected export protocol.
   - `string Endpoint { get; set; }`
+- [EndpointKind](cephalon-eventing.md#member-p-cephalon-eventing-services-eventschemaregistrydescriptor-endpointkind): `Properties` on `EventSchemaRegistryDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EndpointKind&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the endpoint kind exposed by the registry.
+  - `string EndpointKind { get; }`
 - [EndpointName](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-endpointname): `Fields` on `RestEndpointOverrideActionKind` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=EndpointName&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - The rule changes the effective endpoint name.
   - `const RestEndpointOverrideActionKind EndpointName`
@@ -9327,9 +9345,12 @@ Browse the published API surface by public member.
 - [Events](cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackresult-events): `Properties` on `SendGridInvitationDeliveryStatusCallbackResult` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`) [Browse](browse.html?q=Events&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting&scope=members)
   - Gets per-event translation and reconciliation results.
   - `IReadOnlyList<SendGridInvitationDeliveryStatusCallbackEventResult> Events { get; }`
-- [EventSerializerDescriptor](cephalon-eventing.md#member-m-cephalon-eventing-services-eventserializerdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventSerializerDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventSerializerDescriptor&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+- [EventSchemaRegistryDescriptor](cephalon-eventing.md#member-m-cephalon-eventing-services-eventschemaregistrydescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventSchemaRegistryDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventSchemaRegistryDescriptor&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates a new event schema registry descriptor.
+  - `EventSchemaRegistryDescriptor(string id, string displayName, string description, string provider, string endpointKind, string runtimeKind, bool canReadSchemas, bool canWriteSchemas, bool validatesCompatibility, IReadOnlyList<string> supportedFormats, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
+- [EventSerializerDescriptor](cephalon-eventing.md#member-m-cephalon-eventing-services-eventserializerdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-boolean-system-boolean-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `EventSerializerDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=EventSerializerDescriptor&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a new event serializer descriptor.
-  - `EventSerializerDescriptor(string id, string displayName, string description, string contentType, string format, string runtimeKind, bool canRead, bool canWrite, bool requiresSchemaRegistry, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
+  - `EventSerializerDescriptor(string id, string displayName, string description, string contentType, string format, string runtimeKind, bool canRead, bool canWrite, bool requiresSchemaRegistry, string schemaRegistryId, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
 - [EventSourcingEnabled](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-behaviortopologydescriptor-eventsourcingenabled): `Properties` on `BehaviorTopologyDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=EventSourcingEnabled&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets a value indicating whether event sourcing is wired into the behavior context.
   - `bool EventSourcingEnabled { get; }`
@@ -11082,6 +11103,9 @@ Browse the published API surface by public member.
 - [GetByExecutionRuntimeId](cephalon-abstractions.md#member-m-cephalon-abstractions-data-icdccaptureruntimestatecatalog-getbyexecutionruntimeid-system-string): `Methods` on `ICdcCaptureRuntimeStateCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByExecutionRuntimeId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the CDC runtime-state entries currently owned by the requested execution runtime.
   - `IReadOnlyList<CdcCaptureRuntimeState> GetByExecutionRuntimeId(string executionRuntimeId)`
+- [GetByFormat](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventschemaregistrycatalog-getbyformat-system-string): `Methods` on `IEventSchemaRegistryCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=GetByFormat&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets all schema registries registered for the supplied serialization format.
+  - `IReadOnlyList<EventSchemaRegistryDescriptor> GetByFormat(string format)`
 - [GetByHealthIsolationId](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbyhealthisolationid-system-string): `Methods` on `ICellTrafficAutomationRuntimeCatalog` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByHealthIsolationId&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Gets all effective cell traffic-automation answers that reference the requested health-isolation identifier.
   - `IReadOnlyList<CellTrafficAutomationRuntimeDescriptor> GetByHealthIsolationId(string healthIsolationId)`
@@ -11628,6 +11652,9 @@ Browse the published API surface by public member.
 - [GetByProvider](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idatabaserolecatalog-getbyprovider-system-string): `Methods` on `IDatabaseRoleCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByProvider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets every database role backed by the supplied provider identifier.
   - `IReadOnlyList<DatabaseRoleDescriptor> GetByProvider(string provider)`
+- [GetByProvider](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventschemaregistrycatalog-getbyprovider-system-string): `Methods` on `IEventSchemaRegistryCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=GetByProvider&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets all schema registries registered for the supplied provider.
+  - `IReadOnlyList<EventSchemaRegistryDescriptor> GetByProvider(string provider)`
 - [GetByProvider](cephalon-abstractions.md#member-m-cephalon-abstractions-eventsourcing-ieventstorecatalog-getbyprovider-system-string): `Methods` on `IEventStoreCatalog` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=GetByProvider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets all event streams backed by the requested provider identifier.
   - `IReadOnlyList<EventStreamDescriptor> GetByProvider(string provider)`
@@ -13646,6 +13673,9 @@ Browse the published API surface by public member.
   - `string Id { get; set; }`
 - [Id](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationrequest-id): `Properties` on `EventPublicationRequest` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Id&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable publication identifier.
+  - `string Id { get; }`
+- [Id](cephalon-eventing.md#member-p-cephalon-eventing-services-eventschemaregistrydescriptor-id): `Properties` on `EventSchemaRegistryDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Id&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the stable schema registry identifier used by serializers.
   - `string Id { get; }`
 - [Id](cephalon-eventing.md#member-p-cephalon-eventing-services-eventserializerdescriptor-id): `Properties` on `EventSerializerDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Id&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable serializer identifier used by event contracts.
@@ -17856,6 +17886,9 @@ Browse the published API surface by public member.
 - [Metadata](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventpublicationruntimestate-metadata): `Properties` on `EventPublicationRuntimeState` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The operator-facing metadata captured by the latest publication observation.
   - `IReadOnlyDictionary<string, string> Metadata { get; set; }`
+- [Metadata](cephalon-eventing.md#member-p-cephalon-eventing-services-eventschemaregistrydescriptor-metadata): `Properties` on `EventSchemaRegistryDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets normalized metadata associated with the registry.
+  - `IReadOnlyDictionary<string, string> Metadata { get; }`
 - [Metadata](cephalon-eventing.md#member-p-cephalon-eventing-services-eventserializerdescriptor-metadata): `Properties` on `EventSerializerDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Metadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets normalized metadata associated with the serializer.
   - `IReadOnlyDictionary<string, string> Metadata { get; }`
@@ -21474,6 +21507,9 @@ Browse the published API surface by public member.
 - [Provider](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor-provider): `Properties` on `EventDispatchRemediationCommandJournalDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Provider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The provider or companion package that owns the journal implementation.
   - `string Provider { get; set; }`
+- [Provider](cephalon-eventing.md#member-p-cephalon-eventing-services-eventschemaregistrydescriptor-provider): `Properties` on `EventSchemaRegistryDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Provider&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the provider or product family for the registry.
+  - `string Provider { get; }`
 - [Provider](cephalon-abstractions.md#member-p-cephalon-abstractions-eventsourcing-eventstreamdescriptor-provider): `Properties` on `EventStreamDescriptor` in `Cephalon.Abstractions.EventSourcing` (`Cephalon.Abstractions`) [Browse](browse.html?q=Provider&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.EventSourcing&scope=members)
   - Gets the normalized provider identifier.
   - `string Provider { get; }`
@@ -23331,6 +23367,9 @@ Browse the published API surface by public member.
 - [RegisterEventContracts](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventcontractcontributor-registereventcontracts-cephalon-eventing-services-ieventcontractregistry): `Methods` on `IEventContractContributor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RegisterEventContracts&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Registers one or more event contract descriptors with the supplied registry.
   - `void RegisterEventContracts(IEventContractRegistry contracts)`
+- [RegisterEventSchemaRegistries](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventschemaregistrycontributor-registereventschemaregistries-cephalon-eventing-services-ieventschemaregistryregistry): `Methods` on `IEventSchemaRegistryContributor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RegisterEventSchemaRegistries&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Registers one or more event schema registry descriptors with the supplied registry.
+  - `void RegisterEventSchemaRegistries(IEventSchemaRegistryRegistry registries)`
 - [RegisterEventSerializers](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventserializercontributor-registereventserializers-cephalon-eventing-services-ieventserializerregistry): `Methods` on `IEventSerializerContributor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RegisterEventSerializers&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Registers one or more event serializer descriptors with the supplied registry.
   - `void RegisterEventSerializers(IEventSerializerRegistry serializers)`
@@ -23412,6 +23451,9 @@ Browse the published API surface by public member.
 - [RegistrationType](cephalon-abstractions.md#member-p-cephalon-abstractions-behaviors-containsbehaviorsattribute-registrationtype): `Properties` on `ContainsBehaviorsAttribute` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=RegistrationType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Gets the generated registration class type emitted by the source generator.
   - `Type RegistrationType { get; }`
+- [Registries](cephalon-eventing.md#member-p-cephalon-eventing-services-ieventschemaregistrycatalog-registries): `Properties` on `IEventSchemaRegistryCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Registries&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets all registered event schema registry descriptors.
+  - `IReadOnlyList<EventSchemaRegistryDescriptor> Registries { get; }`
 - [Reject](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowcommands-reject): `Fields` on `TenantDomainOwnershipVerificationWorkflowCommands` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Reject&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Rejects a pending tenant-domain ownership declaration.
   - `const string Reject`
@@ -25458,6 +25500,9 @@ Browse the published API surface by public member.
 - [RuntimeIntrospectionSnapshot](cephalon-engine.md#member-m-cephalon-engine-runtime-runtimeintrospectionsnapshot-ctor-cephalon-engine-manifest-runtimemanifest-cephalon-engine-runtime-runtimestatussnapshot-system-collections-generic-ireadonlylist-cephalon-abstractions-execution-executiongraphdescriptor-system-collections-generic-ireadonlylist-cephalon-abstractions-technologies-technologyruntimesurface-system-collections-generic-ireadonlylist-cephalon-engine-diagnostics-diagnosticsconvention-cephalon-engine-runtime-runtimeoperationalstory): `Constructors` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=RuntimeIntrospectionSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Combines the main operator-facing runtime views into a single payload.
   - `RuntimeIntrospectionSnapshot(RuntimeManifest Manifest, RuntimeStatusSnapshot Status, IReadOnlyList<ExecutionGraphDescriptor> ExecutionGraphs, IReadOnlyList<TechnologyRuntimeSurface> TechnologySurfaces, IReadOnlyList<DiagnosticsConvention> DiagnosticsConventions, RuntimeOperationalStory OperationalStory)`
+- [RuntimeKind](cephalon-eventing.md#member-p-cephalon-eventing-services-eventschemaregistrydescriptor-runtimekind): `Properties` on `EventSchemaRegistryDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RuntimeKind&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the registry runtime implementation kind.
+  - `string RuntimeKind { get; }`
 - [RuntimeKind](cephalon-eventing.md#member-p-cephalon-eventing-services-eventserializerdescriptor-runtimekind): `Properties` on `EventSerializerDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RuntimeKind&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the serializer runtime implementation kind.
   - `string RuntimeKind { get; }`
@@ -25785,6 +25830,12 @@ Browse the published API surface by public member.
 - [Schema](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-schema): `Properties` on `EntityFrameworkDatabaseRoleContext` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=Schema&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Gets the selected schema override, if one was declared.
   - `string Schema { get; }`
+- [SchemaRegistries](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-schemaregistries): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=SchemaRegistries&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
+  - Gets the host-defined event schema registry descriptors that should be available to the eventing runtime.
+  - `IList<EventSchemaRegistryDescriptor> SchemaRegistries { get; }`
+- [SchemaRegistryId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventserializerdescriptor-schemaregistryid): `Properties` on `EventSerializerDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SchemaRegistryId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the optional schema registry identifier required by the serializer.
+  - `string SchemaRegistryId { get; }`
 - [Scheme](cephalon-observability-neo4jdependencies.md#member-p-cephalon-observability-neo4jdependencies-configuration-neo4jdependencydefinition-scheme): `Properties` on `Neo4jDependencyDefinition` in `Cephalon.Observability.Neo4jDependencies.Configuration` (`Cephalon.Observability.Neo4jDependencies`) [Browse](browse.html?q=Scheme&assembly=Cephalon.Observability.Neo4jDependencies&namespace=Cephalon.Observability.Neo4jDependencies.Configuration&scope=members)
   - Gets or sets the URI scheme used when building a discrete endpoint, such as `neo4j`, `neo4j+s`, `bolt`, or `bolt+s`.
   - `string Scheme { get; set; }`
@@ -27936,6 +27987,9 @@ Browse the published API surface by public member.
 - [SupportedCultures](cephalon-engine.md#member-p-cephalon-engine-localization-localizedtextcatalog-supportedcultures): `Properties` on `LocalizedTextCatalog` in `Cephalon.Engine.Localization` (`Cephalon.Engine`) [Browse](browse.html?q=SupportedCultures&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Localization&scope=members)
   - Gets the supported cultures available from the merged resource catalog.
   - `IReadOnlyList<string> SupportedCultures { get; }`
+- [SupportedFormats](cephalon-eventing.md#member-p-cephalon-eventing-services-eventschemaregistrydescriptor-supportedformats): `Properties` on `EventSchemaRegistryDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SupportedFormats&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the normalized serialization formats supported by the registry.
+  - `IReadOnlyList<string> SupportedFormats { get; }`
 - [SupportedTargetFrameworks](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-supportedtargetframeworks): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=SupportedTargetFrameworks&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets the target frameworks declared as compatible by the package manifest.
   - `IReadOnlyList<string> SupportedTargetFrameworks { get; }`
@@ -28115,6 +28169,9 @@ Browse the published API surface by public member.
   - `IReadOnlyList<string> Tags { get; }`
 - [Tags](cephalon-eventing.md#member-p-cephalon-eventing-services-eventcontractdescriptor-tags): `Properties` on `EventContractDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Tags&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the normalized tag set associated with the contract.
+  - `IReadOnlyList<string> Tags { get; }`
+- [Tags](cephalon-eventing.md#member-p-cephalon-eventing-services-eventschemaregistrydescriptor-tags): `Properties` on `EventSchemaRegistryDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Tags&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets the normalized tag set associated with the registry.
   - `IReadOnlyList<string> Tags { get; }`
 - [Tags](cephalon-eventing.md#member-p-cephalon-eventing-services-eventserializerdescriptor-tags): `Properties` on `EventSerializerDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Tags&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the normalized tag set associated with the serializer.
@@ -29433,6 +29490,9 @@ Browse the published API surface by public member.
 - [TryGet](cephalon-abstractions.md#member-m-cephalon-abstractions-data-ieventpublicationruntimecatalog-tryget-system-string-cephalon-abstractions-data-eventpublicationruntimestate): `Methods` on `IEventPublicationRuntimeCatalog` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Tries to get the latest reported publication state for one publication id.
   - `bool TryGet(string publicationId, out EventPublicationRuntimeState state)`
+- [TryGet](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventschemaregistrycatalog-tryget-system-string-cephalon-eventing-services-eventschemaregistrydescriptor): `Methods` on `IEventSchemaRegistryCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Attempts to resolve a schema registry by its stable identifier.
+  - `bool TryGet(string schemaRegistryId, out EventSchemaRegistryDescriptor registry)`
 - [TryGet](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventserializercatalog-tryget-system-string-cephalon-eventing-services-eventserializerdescriptor): `Methods` on `IEventSerializerCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryGet&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Attempts to resolve a serializer by its stable identifier.
   - `bool TryGet(string serializerId, out EventSerializerDescriptor serializer)`
@@ -29478,6 +29538,9 @@ Browse the published API surface by public member.
 - [TryGetForContract](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventserializercatalog-trygetforcontract-cephalon-eventing-services-eventcontractdescriptor-cephalon-eventing-services-eventserializerdescriptor): `Methods` on `IEventSerializerCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryGetForContract&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Attempts to resolve the serializer selected by an event contract.
   - `bool TryGetForContract(EventContractDescriptor contract, out EventSerializerDescriptor serializer)`
+- [TryGetForSerializer](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventschemaregistrycatalog-trygetforserializer-cephalon-eventing-services-eventserializerdescriptor-cephalon-eventing-services-eventschemaregistrydescriptor): `Methods` on `IEventSchemaRegistryCatalog` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryGetForSerializer&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Attempts to resolve the schema registry selected by an event serializer.
+  - `bool TryGetForSerializer(EventSerializerDescriptor serializer, out EventSchemaRegistryDescriptor registry)`
 - [TryGetSelected](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-technologyselection-trygetselected-system-string-cephalon-abstractions-technologies-technologydescriptor): `Methods` on `TechnologySelection` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=TryGetSelected&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Attempts to resolve one selected technology.
   - `bool TryGetSelected(string value, out TechnologyDescriptor technology)`
@@ -30042,6 +30105,9 @@ Browse the published API surface by public member.
 - [ValidatedAtUtc](cephalon-multitenancy-governance.md#member-p-cephalon-multitenancy-governance-services-tenantinvitationvalidationresult-validatedatutc): `Properties` on `TenantInvitationValidationResult` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=ValidatedAtUtc&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Gets the UTC timestamp when validation executed.
   - `DateTimeOffset ValidatedAtUtc { get; }`
+- [ValidatesCompatibility](cephalon-eventing.md#member-p-cephalon-eventing-services-eventschemaregistrydescriptor-validatescompatibility): `Properties` on `EventSchemaRegistryDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ValidatesCompatibility&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets a value indicating whether the registry runtime validates compatibility.
+  - `bool ValidatesCompatibility { get; }`
 - [ValidateSnsSigningCertificateChain](cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore.md#member-p-cephalon-multitenancy-governance-amazonsesdelivery-aspnetcore-configuration-amazonsesinvitationdeliveryaspnetcoreoptions-validatesnssigningcertificatechain): `Properties` on `AmazonSesInvitationDeliveryAspNetCoreOptions` in `Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration` (`Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore`) [Browse](browse.html?q=ValidateSnsSigningCertificateChain&assembly=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AmazonSesDelivery.AspNetCore.Configuration&scope=members)
   - Gets or sets a value indicating whether the SNS signing certificate chain and validity window should be checked.
   - `bool ValidateSnsSigningCertificateChain { get; set; }`

@@ -2575,6 +2575,114 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public void AddEventingProjectsSchemaRegistryCatalogProfileEvidenceWithoutWolverine()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<IEventSerializerContributor, SchemaRegistrySerializerTestEventContributor>();
+        services.AddSingleton<IEventSchemaRegistryContributor, SchemaRegistryTestEventContributor>();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddEventing(options =>
+            {
+                options.Contracts.Add(new EventContractDescriptor(
+                    id: "audit.recorded.v1",
+                    eventType: "audit.recorded",
+                    displayName: "Audit Recorded",
+                    description: "Audit event emitted when an auditable action is recorded.",
+                    version: "1",
+                    contentType: "application/vnd.cephalon.audit.recorded.v1+json",
+                    serializerId: "system-text-json-sourcegen"));
+                options.Serializers.Add(new EventSerializerDescriptor(
+                    id: "system-text-json-sourcegen",
+                    displayName: "System.Text.Json Source Generated",
+                    description: "Source-generated System.Text.Json serializer registered by the host.",
+                    contentType: "application/json",
+                    format: "json",
+                    runtimeKind: "source-generated",
+                    requiresSchemaRegistry: true,
+                    schemaRegistryId: "cephalon-json-schema-registry"));
+                options.SchemaRegistries.Add(new EventSchemaRegistryDescriptor(
+                    id: "cephalon-json-schema-registry",
+                    displayName: "Cephalon JSON Schema Registry",
+                    description: "Provider-neutral JSON schema registry descriptor registered by the host.",
+                    provider: "cephalon",
+                    endpointKind: "embedded",
+                    runtimeKind: "code-first",
+                    canReadSchemas: true,
+                    canWriteSchemas: true,
+                    validatesCompatibility: false,
+                    supportedFormats: ["json"],
+                    metadata: new Dictionary<string, string>
+                    {
+                        ["owner"] = "platform"
+                    }));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var runtime = provider.GetRequiredService<IRuntime>();
+        var serializerCatalog = provider.GetRequiredService<IEventSerializerCatalog>();
+        var schemaRegistryCatalog = provider.GetRequiredService<IEventSchemaRegistryCatalog>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        Assert.Equal(2, schemaRegistryCatalog.Registries.Count);
+        Assert.True(schemaRegistryCatalog.TryGet("cephalon-json-schema-registry", out var jsonRegistry));
+        Assert.Equal("cephalon", jsonRegistry.Provider);
+        Assert.Equal("embedded", jsonRegistry.EndpointKind);
+        Assert.True(jsonRegistry.CanReadSchemas);
+        Assert.True(jsonRegistry.CanWriteSchemas);
+        Assert.False(jsonRegistry.ValidatesCompatibility);
+        Assert.Single(schemaRegistryCatalog.GetByProvider("cephalon"));
+        Assert.Single(schemaRegistryCatalog.GetByFormat("json"));
+        Assert.True(serializerCatalog.TryGet("system-text-json-sourcegen", out var jsonSerializer));
+        Assert.True(schemaRegistryCatalog.TryGetForSerializer(jsonSerializer, out var serializerRegistry));
+        Assert.Equal("cephalon-json-schema-registry", serializerRegistry.Id);
+
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var schemaRegistrySurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-schema-registries");
+        Assert.Contains(
+            schemaRegistrySurface.Entries,
+            entry => entry.Id == "cephalon-json-schema-registry" &&
+                entry.Metadata["provider"] == "cephalon" &&
+                entry.Metadata["endpointKind"] == "embedded" &&
+                entry.Metadata["runtimeKind"] == "code-first" &&
+                entry.Metadata["canReadSchemas"] == "true" &&
+                entry.Metadata["canWriteSchemas"] == "true" &&
+                entry.Metadata["validatesCompatibility"] == "false" &&
+                entry.Metadata["supportedFormats"] == "json" &&
+                entry.Metadata["matchingSerializerCount"] == "1" &&
+                entry.Metadata["wolverineRequired"] == "false");
+
+        var dimensions = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        Assert.Equal("partial", dimensions["serialization-and-contract-versioning-ownership"].Metadata["status"]);
+        Assert.Contains("eventContractCatalog=present", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("eventSerializerCatalog=present", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("eventSchemaRegistryCatalog=present", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("serializerRuntimeCount=2", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("schemaRegistryRuntimeCount=2", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("schemaRegistryReferences=2", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("resolvedSchemaRegistrySerializers=2", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("unresolvedSchemaRegistrySerializers=0", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("schemaRegistry=catalog-backed", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wireSerializationRuntime=serializer-catalog-declared", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("upcasterPipeline=not-present", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+
+        var capability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.schema-registries");
+        Assert.Equal("event-schema-registries", capability.Metadata["surfaceId"]);
+        Assert.Equal("options-and-contributors", capability.Metadata["schemaRegistrySource"]);
+        Assert.Equal("false", capability.Metadata["wolverineRequired"]);
+    }
+
+    [Fact]
     public async Task AddRetrievalRunsOptInBackgroundReindexScheduler()
     {
         var services = new ServiceCollection();
@@ -4348,6 +4456,42 @@ public sealed class EngineBuilderTests
                 format: "protobuf",
                 runtimeKind: "custom",
                 requiresSchemaRegistry: true,
+                tags: ["binary", "contract"]));
+        }
+    }
+
+    private sealed class SchemaRegistrySerializerTestEventContributor : IEventSerializerContributor
+    {
+        public void RegisterEventSerializers(IEventSerializerRegistry serializers)
+        {
+            serializers.Add(new EventSerializerDescriptor(
+                id: "cephalon-avro",
+                displayName: "Cephalon Avro",
+                description: "Provider-neutral Avro serializer descriptor registered by a module.",
+                contentType: "application/avro",
+                format: "avro",
+                runtimeKind: "custom",
+                requiresSchemaRegistry: true,
+                schemaRegistryId: "module-avro-schema-registry",
+                tags: ["binary", "contract"]));
+        }
+    }
+
+    private sealed class SchemaRegistryTestEventContributor : IEventSchemaRegistryContributor
+    {
+        public void RegisterEventSchemaRegistries(IEventSchemaRegistryRegistry registries)
+        {
+            registries.Add(new EventSchemaRegistryDescriptor(
+                id: "module-avro-schema-registry",
+                displayName: "Module Avro Schema Registry",
+                description: "Provider-neutral Avro schema registry descriptor registered by a module.",
+                provider: "module",
+                endpointKind: "external",
+                runtimeKind: "code-first",
+                canReadSchemas: true,
+                canWriteSchemas: false,
+                validatesCompatibility: false,
+                supportedFormats: ["avro"],
                 tags: ["binary", "contract"]));
         }
     }

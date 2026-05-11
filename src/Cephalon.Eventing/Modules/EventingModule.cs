@@ -32,6 +32,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
     private bool hasExternalManagedSubscriptionExecutionBindings;
     private bool hasContractContributors;
     private bool hasSerializerContributors;
+    private bool hasSchemaRegistryContributors;
     private bool hasInboxPath;
     private bool hasInProcessSubscriptionDescriptorDiscovery;
     private bool hasInProcessSubscriptionExecutionPath;
@@ -73,6 +74,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
         hasChannelContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventChannelContributor));
         hasContractContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventContractContributor));
         hasSerializerContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventSerializerContributor));
+        hasSchemaRegistryContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventSchemaRegistryContributor));
         hasDispatchStore = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchStore));
         hasDispatchRuntimeContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchRuntimeContributor));
         hasExternalRemediationCommandJournal = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchRemediationCommandJournal));
@@ -111,6 +113,12 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
         if (options.Serializers.Count > 0 || hasSerializerContributors)
         {
             services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingSerializerRuntimeSurfaceContributor>());
+        }
+
+        services.TryAddSingleton<IEventSchemaRegistryCatalog, EventSchemaRegistryCatalog>();
+        if (options.SchemaRegistries.Count > 0 || hasSchemaRegistryContributors)
+        {
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingSchemaRegistryRuntimeSurfaceContributor>());
         }
 
         if (options.EnableSubscriptions)
@@ -436,6 +444,26 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                         ? "options-and-contributors"
                         : options.Serializers.Count > 0 ? "options" : "contributors",
                     ["configuredSerializerCount"] = options.Serializers.Count.ToString(CultureInfo.InvariantCulture),
+                    ["wolverineRequired"] = "false",
+                    ["runtimeState"] = "available"
+                }));
+        }
+
+        if (options.SchemaRegistries.Count > 0 || hasSchemaRegistryContributors)
+        {
+            capabilities.Add(new Capability(
+                key: "eventing.schema-registries",
+                displayName: "Event Schema Registry Catalog",
+                description: "Exposes provider-neutral event schema registry descriptors without requiring Wolverine or a broker-specific schema package.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["technology"] = "event-driven-integration",
+                    ["surfaceId"] = "event-schema-registries",
+                    ["schemaRegistryCatalog"] = "available",
+                    ["schemaRegistrySource"] = options.SchemaRegistries.Count > 0 && hasSchemaRegistryContributors
+                        ? "options-and-contributors"
+                        : options.SchemaRegistries.Count > 0 ? "options" : "contributors",
+                    ["configuredSchemaRegistryCount"] = options.SchemaRegistries.Count.ToString(CultureInfo.InvariantCulture),
                     ["wolverineRequired"] = "false",
                     ["runtimeState"] = "available"
                 }));
