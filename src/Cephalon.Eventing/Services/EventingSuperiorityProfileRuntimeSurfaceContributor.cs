@@ -547,17 +547,33 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var publicationRouting = options.EnablePublicationRouting ? "configured" : "not-configured";
         var inProcessExecution = topology.HasInProcessSubscriptionExecutionPath ? "active" : "not-active";
         var eventContextPolicyCatalog = policyCount > 0 ? "present" : "not-present";
-        var tenantContextPropagation = tenantPolicyCount > 0 ? "policy-declared" : "not-claimed";
-        var correlationContextPropagation = correlationPolicyCount > 0 ? "policy-declared" : "not-claimed";
-        var causationIdPropagation = causationPolicyCount > 0 ? "policy-declared" : "not-claimed";
-        var baggagePropagation = baggagePolicyCount > 0 ? "policy-declared" : "not-claimed";
-        var messageHeaderPolicy = headerValidationPolicyCount > 0 || declaredHeaderCount > 0 ? "policy-declared" : "not-claimed";
+        var hasInProcessContextExecution = policyCount > 0 && topology.HasInProcessSubscriptionExecutionPath;
+        var hasPublisherContextValidation = headerValidationPolicyCount > 0 && topology.HasPublishingPath;
+        var tenantContextPropagation = tenantPolicyCount > 0
+            ? hasInProcessContextExecution ? "in-process-direct" : "policy-declared"
+            : "not-claimed";
+        var correlationContextPropagation = correlationPolicyCount > 0
+            ? hasInProcessContextExecution ? "in-process-direct" : "policy-declared"
+            : "not-claimed";
+        var causationIdPropagation = causationPolicyCount > 0
+            ? hasInProcessContextExecution ? "in-process-direct" : "policy-declared"
+            : "not-claimed";
+        var baggagePropagation = baggagePolicyCount > 0
+            ? hasInProcessContextExecution ? "in-process-direct" : "policy-declared"
+            : "not-claimed";
+        var messageHeaderPolicy = headerValidationPolicyCount > 0
+            ? hasPublisherContextValidation ? "publisher-enforced" : "policy-declared"
+            : declaredHeaderCount > 0 ? "policy-declared" : "not-claimed";
+        var executablePropagation = hasInProcessContextExecution ? "in-process-direct" : "not-claimed";
+        var executableValidation = hasPublisherContextValidation ? "publisher-enforced" : "not-claimed";
         var status = policyCount > 0 ? "partial" : "not-claimed";
 
         var evidence = string.Create(
             CultureInfo.InvariantCulture,
-            $"channelCatalog={channelCatalog}; subscriptionCatalog={subscriptionCatalog}; publicationPath={publicationPath}; publicationRouting={publicationRouting}; inProcessExecution={inProcessExecution}; operatorCorrelationMetadata=metadata-only; eventContextPolicyCatalog={eventContextPolicyCatalog}; contextPolicyCount={policyCount.ToString(CultureInfo.InvariantCulture)}; tenantPolicyCount={tenantPolicyCount.ToString(CultureInfo.InvariantCulture)}; correlationPolicyCount={correlationPolicyCount.ToString(CultureInfo.InvariantCulture)}; causationPolicyCount={causationPolicyCount.ToString(CultureInfo.InvariantCulture)}; baggagePolicyCount={baggagePolicyCount.ToString(CultureInfo.InvariantCulture)}; headerValidationPolicyCount={headerValidationPolicyCount.ToString(CultureInfo.InvariantCulture)}; declaredHeaderCount={declaredHeaderCount.ToString(CultureInfo.InvariantCulture)}; tenantContextPropagation={tenantContextPropagation}; correlationContextPropagation={correlationContextPropagation}; causationIdPropagation={causationIdPropagation}; baggagePropagation={baggagePropagation}; messageHeaderPolicy={messageHeaderPolicy}; executablePropagation=not-claimed; wolverineRequired=false");
-        var nextGap = policyCount > 0
+            $"channelCatalog={channelCatalog}; subscriptionCatalog={subscriptionCatalog}; publicationPath={publicationPath}; publicationRouting={publicationRouting}; inProcessExecution={inProcessExecution}; operatorCorrelationMetadata=metadata-only; eventContextPolicyCatalog={eventContextPolicyCatalog}; contextPolicyCount={policyCount.ToString(CultureInfo.InvariantCulture)}; tenantPolicyCount={tenantPolicyCount.ToString(CultureInfo.InvariantCulture)}; correlationPolicyCount={correlationPolicyCount.ToString(CultureInfo.InvariantCulture)}; causationPolicyCount={causationPolicyCount.ToString(CultureInfo.InvariantCulture)}; baggagePolicyCount={baggagePolicyCount.ToString(CultureInfo.InvariantCulture)}; headerValidationPolicyCount={headerValidationPolicyCount.ToString(CultureInfo.InvariantCulture)}; declaredHeaderCount={declaredHeaderCount.ToString(CultureInfo.InvariantCulture)}; tenantContextPropagation={tenantContextPropagation}; correlationContextPropagation={correlationContextPropagation}; causationIdPropagation={causationIdPropagation}; baggagePropagation={baggagePropagation}; messageHeaderPolicy={messageHeaderPolicy}; executablePropagation={executablePropagation}; executableValidation={executableValidation}; wolverineRequired=false");
+        var nextGap = hasInProcessContextExecution || hasPublisherContextValidation
+            ? "Extend executable context propagation and validation into durable outbox dispatch, provider, and broker handoff paths before claiming full tenant and correlation ownership."
+            : policyCount > 0
             ? "Add executable tenant, correlation, causation, baggage, and message-header propagation plus validation before claiming full tenant and correlation ownership."
             : "Add code-first event context policy descriptors before claiming context propagation policy evidence.";
 

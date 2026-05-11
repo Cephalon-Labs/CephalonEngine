@@ -12,6 +12,7 @@ namespace Cephalon.Eventing.Services;
 internal sealed class InProcessEventPublisher(
     EventingOptions options,
     IEventChannelCatalog channels,
+    IEventContextPolicyCatalog contextPolicyCatalog,
     InProcessEventSubscriptionExecutorCatalog executors,
     InProcessEventSubscriptionIdempotencyTracker idempotencyTracker,
     IEventSubscriptionRuntimeReporter runtimeReporter,
@@ -81,6 +82,56 @@ internal sealed class InProcessEventPublisher(
             .Select(static entry => entry.Subscription.Id)
             .OrderBy(static subscriptionId => subscriptionId, StringComparer.OrdinalIgnoreCase)
             .ToArray();
+        var contextPolicyEvaluation = EventContextPolicyEvaluation.Evaluate(contextPolicyCatalog, publication);
+
+        if (!contextPolicyEvaluation.IsValid)
+        {
+            var validationError = contextPolicyEvaluation.CreateValidationFailureMessage(publication);
+            await publicationRuntimeReporter.ReportAsync(
+                new EventPublicationRuntimeReport(
+                    publicationId: publication.Id,
+                    channelId: publication.ChannelId,
+                    eventType: publication.EventType,
+                    outcome: EventPublicationRuntimeOutcomes.Failed,
+                    observedAtUtc: DateTimeOffset.UtcNow,
+                    matchedSubscriptionCount: matchedSubscriptionCount,
+                    error: validationError,
+                    metadata: CreatePublicationRuntimeMetadata(
+                        publication,
+                        EventPublicationRuntimeOutcomes.Failed,
+                        matchedSubscriptionCount,
+                        startedSubscriptionCount: 0,
+                        succeededSubscriptionCount: 0,
+                        failedSubscriptionCount: 0,
+                        retryScheduledSubscriptionCount: 0,
+                        skippedSubscriptionCount: 0,
+                        maxAttempts,
+                        retryDelayMilliseconds,
+                        retryBackoff,
+                        retryBackoffMultiplier,
+                        retryMaxDelayMilliseconds,
+                        retryJitterPercent,
+                        idempotencyPolicy,
+                        idempotencyStore,
+                        idempotencyDurability,
+                        idempotencyScope,
+                        inboxState,
+                        idempotencyRetentionMinutes,
+                        subscriptionExecutionPipeline,
+                        subscriptionExecutionMiddlewareCount,
+                        subscriptionIds,
+                        contextPolicyEvaluation,
+                        error: validationError)),
+                cancellationToken).ConfigureAwait(false);
+            CompleteDispatchActivity(
+                dispatchActivity,
+                publication,
+                EventPublicationRuntimeOutcomes.Failed,
+                matchedSubscriptionCount,
+                error: validationError);
+
+            throw new InvalidOperationException(validationError);
+        }
 
         if (entries.Count == 0)
         {
@@ -121,6 +172,7 @@ internal sealed class InProcessEventPublisher(
                         subscriptionExecutionPipeline,
                         subscriptionExecutionMiddlewareCount,
                         subscriptionIds,
+                        contextPolicyEvaluation,
                         skipReason: "no-matching-subscriptions")),
                 cancellationToken).ConfigureAwait(false);
             CompleteDispatchActivity(
@@ -173,7 +225,8 @@ internal sealed class InProcessEventPublisher(
                                 inboxState,
                                 idempotencyRetentionMinutes,
                                 subscriptionExecutionPipeline,
-                                subscriptionExecutionMiddlewareCount),
+                                subscriptionExecutionMiddlewareCount,
+                                contextPolicyEvaluation),
                             idempotencyCheck.CompletedAtUtc,
                             idempotencyCheck.CheckedAtUtc)),
                     cancellationToken).ConfigureAwait(false);
@@ -200,7 +253,8 @@ internal sealed class InProcessEventPublisher(
                     inboxState,
                     idempotencyRetentionMinutes,
                     subscriptionExecutionPipeline,
-                    subscriptionExecutionMiddlewareCount);
+                    subscriptionExecutionMiddlewareCount,
+                    contextPolicyEvaluation);
                 startedSubscriptionCount++;
                 await runtimeReporter.ReportAsync(
                     new EventSubscriptionExecutionReport(
@@ -352,6 +406,7 @@ internal sealed class InProcessEventPublisher(
                         subscriptionExecutionPipeline,
                         subscriptionExecutionMiddlewareCount,
                         subscriptionIds,
+                        contextPolicyEvaluation,
                         error: message)),
                 cancellationToken).ConfigureAwait(false);
 
@@ -417,6 +472,7 @@ internal sealed class InProcessEventPublisher(
                     subscriptionExecutionPipeline,
                     subscriptionExecutionMiddlewareCount,
                     subscriptionIds,
+                    contextPolicyEvaluation,
                     skipReason: publicationOutcome == EventPublicationRuntimeOutcomes.Skipped
                         ? "duplicate-completed-subscriptions"
                         : null)),
@@ -601,7 +657,8 @@ internal sealed class InProcessEventPublisher(
         string inboxState,
         int idempotencyRetentionMinutes,
         string subscriptionExecutionPipeline,
-        int subscriptionExecutionMiddlewareCount)
+        int subscriptionExecutionMiddlewareCount,
+        EventContextPolicyEvaluation contextPolicyEvaluation)
     {
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -643,6 +700,8 @@ internal sealed class InProcessEventPublisher(
             ["headerCount"] = publication.Headers.Count.ToString(CultureInfo.InvariantCulture),
             ["publicationMetadataCount"] = publication.Metadata.Count.ToString(CultureInfo.InvariantCulture)
         };
+
+        contextPolicyEvaluation.ApplyMetadata(metadata);
 
         if (!string.IsNullOrWhiteSpace(publication.ContentType))
         {
@@ -738,6 +797,7 @@ internal sealed class InProcessEventPublisher(
         string subscriptionExecutionPipeline,
         int subscriptionExecutionMiddlewareCount,
         IReadOnlyList<string> subscriptionIds,
+        EventContextPolicyEvaluation contextPolicyEvaluation,
         string? skipReason = null,
         string? error = null)
     {
@@ -787,6 +847,8 @@ internal sealed class InProcessEventPublisher(
             ["headerCount"] = publication.Headers.Count.ToString(CultureInfo.InvariantCulture),
             ["publicationMetadataCount"] = publication.Metadata.Count.ToString(CultureInfo.InvariantCulture)
         };
+
+        contextPolicyEvaluation.ApplyMetadata(metadata);
 
         if (!string.IsNullOrWhiteSpace(skipReason))
         {

@@ -2583,6 +2583,9 @@ Browse the published API surface by public member.
 - [Backoff](cephalon-engine.md#member-p-cephalon-engine-configuration-retrysettings-backoff): `Properties` on `RetrySettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=Backoff&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the requested backoff mode, such as `Exponential` or `Linear`.
   - `string Backoff { get; }`
+- [Baggage](cephalon-eventing.md#member-f-cephalon-eventing-services-eventcontextheadernames-baggage): `Fields` on `EventContextHeaderNames` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Baggage&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Carries provider-neutral baggage associated with an event publication.
+  - `const string Baggage`
 - [BaseDelayMilliseconds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-retryselection-basedelaymilliseconds): `Properties` on `RetrySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=BaseDelayMilliseconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the base delay in milliseconds used by the retry policy.
   - `int? BaseDelayMilliseconds { get; }`
@@ -3588,6 +3591,9 @@ Browse the published API surface by public member.
 - [CategoryIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-categoryids): `Properties` on `CdcCaptureExecutionRuntimeRemediationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable remediation categories currently active for the execution runtime.
   - `IReadOnlyList<string> CategoryIds { get; set; }`
+- [CausationId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventcontextheadernames-causationid): `Fields` on `EventContextHeaderNames` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CausationId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the causation id associated with an event publication.
+  - `const string CausationId`
 - [CdcCaptureDescriptor](cephalon-abstractions.md#member-m-cephalon-abstractions-data-cdccapturedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `CdcCaptureDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CdcCaptureDescriptor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates a new CDC capture descriptor.
   - `CdcCaptureDescriptor(string id, string displayName, string description, string sourceModuleId, string provider, string sourceId, string outboxId, string mode, string eventFormat, IReadOnlyList<string> resourceIds, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)`
@@ -5667,6 +5673,9 @@ Browse the published API surface by public member.
 - [CorrelationId](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-entityframeworkoutboxentry-correlationid): `Properties` on `EntityFrameworkOutboxEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Gets or sets the correlation identifier associated with the message.
   - `string CorrelationId { get; set; }`
+- [CorrelationId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventcontextheadernames-correlationid): `Fields` on `EventContextHeaderNames` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the correlation id associated with an event publication.
+  - `const string CorrelationId`
 - [CorrelationId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchitem-correlationid): `Properties` on `EventDispatchItem` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the correlation identifier associated with the message.
   - `string CorrelationId { get; }`
@@ -17664,6 +17673,9 @@ Browse the published API surface by public member.
 - [MessageId](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-entityframeworkeventdispatchremediationcommandentry-messageid): `Properties` on `EntityFrameworkEventDispatchRemediationCommandEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=MessageId&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Gets or sets the staged event message identifier targeted by the command.
   - `string MessageId { get; set; }`
+- [MessageId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventcontextheadernames-messageid): `Fields` on `EventContextHeaderNames` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=MessageId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the source event message when a policy needs a header-level message identity.
+  - `const string MessageId`
 - [MessageId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchexecutionreport-messageid): `Properties` on `EventDispatchExecutionReport` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=MessageId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the stable outbound message identifier when one was reported.
   - `string MessageId { get; }`
@@ -28680,6 +28692,9 @@ Browse the published API surface by public member.
 - [TenantId](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-modeling-entityframeworkoutboxentry-tenantid): `Properties` on `EntityFrameworkOutboxEntry` in `Cephalon.Data.EntityFramework.Modeling` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Modeling&scope=members)
   - Gets or sets the tenant identifier associated with the message.
   - `string TenantId { get; set; }`
+- [TenantId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventcontextheadernames-tenantid): `Fields` on `EventContextHeaderNames` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the tenant associated with an event publication.
+  - `const string TenantId`
 - [TenantId](cephalon-eventing.md#member-p-cephalon-eventing-services-eventdispatchitem-tenantid): `Properties` on `EventDispatchItem` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TenantId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the tenant identifier associated with the message.
   - `string TenantId { get; }`

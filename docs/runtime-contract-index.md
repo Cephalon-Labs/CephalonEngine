@@ -246,7 +246,9 @@ ENG-612 adds `IEventUpcasterCatalog`, `event-upcasters`, and `eventing.upcasters
 
 ENG-601 adds `tenant-and-correlation-context-ownership` to the same profile so runtime consumers can see that operator correlation metadata, diagnostics tags, channel catalogs, subscription catalogs, route evidence, and publication runtime evidence are separate from tenant context propagation, correlation/causation propagation, baggage propagation, and message-header policy.
 
-ENG-613 adds `IEventContextPolicyCatalog`, `event-context-policies`, and `eventing.context-policies` as the descriptor-backed context policy catalog layer under that boundary. Runtime consumers can now distinguish no context evidence from `partial` policy-declared evidence for tenant context, correlation ids, causation ids, baggage, and message-header policy while still seeing executable context propagation and validation as unclaimed.
+ENG-613 adds `IEventContextPolicyCatalog`, `event-context-policies`, and `eventing.context-policies` as the descriptor-backed context policy catalog layer under that boundary. Runtime consumers can now distinguish no context evidence from `partial` policy-declared evidence for tenant context, correlation ids, causation ids, baggage, and message-header policy.
+
+ENG-614 adds publisher-path context policy enforcement under that same boundary. Runtime consumers can now distinguish policy-declared evidence from publisher-enforced header validation through `EventContextHeaderNames`, `contextHeaderValidation`, `contextMissingHeaders`, `messageHeaderPolicy`, and `executableContextPolicy = publisher-enforced`; direct in-process subscription observations can report forwarded tenant/correlation/causation/baggage metadata, while durable dispatch, provider/broker headers, consumer-side extraction, and cross-node context handoff remain unclaimed.
 
 ENG-602 adds `scheduled-and-delayed-delivery-ownership` to the same profile so runtime consumers can see that bounded process-local delayed publication acceptance is separate from durable scheduled delivery, provider delay queues, broker scheduled delivery, cross-node schedule coordination, and schedule recovery.
 

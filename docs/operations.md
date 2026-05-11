@@ -2681,8 +2681,11 @@ Current `Cephalon.Eventing` highlights:
   report `partial` when `EventingOptions.ContextPolicies` / `IEventContextPolicyContributor`
   populate `IEventContextPolicyCatalog`, `event-context-policies`, and
   `eventing.context-policies` with descriptor-backed tenant, correlation, causation, baggage, and
-  message-header policy metadata, and still keeps executable tenant/correlation/baggage/header
-  propagation and validation unclaimed until a provider or engine package owns them
+  message-header policy metadata, now reports publisher-enforced validation when native publisher
+  paths enforce required `EventContextHeaderNames` headers, and can report direct in-process
+  propagation metadata while keeping durable dispatch, provider/broker header propagation,
+  consumer-side extraction, and cross-node context handoff unclaimed until a provider or engine
+  package owns them
 - `scheduled-and-delayed-delivery-ownership` is the separate scheduled-delivery boundary in that
   same profile; it reports the bounded process-local scheduler as `partial` only when enabled and
   keeps durable scheduled delivery, provider delay queues, broker scheduled delivery, cross-node
@@ -3645,7 +3648,7 @@ It executes a curated suite that validates:
 - structured `Engine:Data`, `Engine:Identity`, `Engine:Tenancy`, `Engine:Audit`, and `Engine:Messaging` settings plus phase-8 app-profile truth
 - host-agnostic phase-8 contracts, runtime catalogs, and runtime-snapshot answers for data products, projections, inboxes, outboxes, audit stores, and authorization policies
 - `Cephalon.Data`, `Cephalon.Data.EntityFramework`, and `Cephalon.Ids.Sfid` through the shipped relational-first CQRS, inbox, outbox, and `Sfid` baseline
-- `Cephalon.Eventing` plus optional `Cephalon.Eventing.Wolverine` through the staged publication, declarative subscription, public execution-binding catalog, public execution-readiness catalog, runtime-reporting, native bounded process-local retry/idempotency/scheduled-publication proofs, bounded Wolverine managed-dispatch retry, bounded Wolverine managed-subscription retry, terminal exhausted-attempt failure posture, dispatch-store terminal failure behavior, and adapter-surface path
+- `Cephalon.Eventing` plus optional `Cephalon.Eventing.Wolverine` through the staged publication, declarative subscription, public execution-binding catalog, public execution-readiness catalog, runtime-reporting, native context-policy header validation, native bounded process-local retry/idempotency/scheduled-publication proofs, bounded Wolverine managed-dispatch retry, bounded Wolverine managed-subscription retry, terminal exhausted-attempt failure posture, dispatch-store terminal failure behavior, and adapter-surface path
 - `Cephalon.Identity`, `Cephalon.Identity.AspNetCore`, `Cephalon.MultiTenancy`, and `Cephalon.Audit` through their runtime surfaces, adapter behavior, and package/reference-doc truth
 - low-ceremony starter output across `Cephalon.Scaffolding`, `Cephalon.Cli`, `Cephalon.TemplatePack`, adoption docs, and starter samples so generated apps stay aligned with the runtime story
 

@@ -1,12 +1,12 @@
 namespace Cephalon.Eventing.Services;
 
 /// <summary>
-/// Describes provider-neutral event context policy metadata for tenant, correlation, causation, baggage, and header propagation.
+/// Describes provider-neutral event context policy metadata and publisher validation hints for tenant, correlation, causation, baggage, and header propagation.
 /// </summary>
 /// <remarks>
-/// The descriptor is intentionally metadata-only. It lets hosts and modules expose context-policy
-/// ownership without putting tenant, correlation, baggage, or header propagation work on the
-/// publication or subscription hot path.
+/// The descriptor is intentionally code-first. It lets hosts and modules expose context-policy
+/// ownership, require stable publication headers, and project validation evidence without putting
+/// publish/subscribe binding behind string configuration.
 /// </remarks>
 public sealed class EventContextPolicyDescriptor
 {

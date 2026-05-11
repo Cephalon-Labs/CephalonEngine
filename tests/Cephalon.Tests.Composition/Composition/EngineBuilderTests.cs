@@ -2912,6 +2912,136 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public async Task AddEventingEnforcesContextPolicyHeadersWithoutWolverine()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<ContextPolicyExecutionProbe>();
+        services.AddSingleton<IEventSubscriptionExecutor, ContextPolicyAuditExecutor>();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddEventing(options =>
+            {
+                options.EnableInProcessSubscriptionExecution = true;
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "audit",
+                    displayName: "Audit",
+                    description: "Audit integration events.",
+                    tags: ["audit"]));
+                options.Subscriptions.Add(new EventSubscriptionDescriptor(
+                    id: "context-audit",
+                    displayName: "Context Audit",
+                    description: "Consumes context policy enforcement test publications.",
+                    channelId: "audit",
+                    handlerId: "context-audit-handler",
+                    deliveryMode: "direct"));
+                options.ContextPolicies.Add(new EventContextPolicyDescriptor(
+                    id: "platform-context-enforcement",
+                    displayName: "Platform Context Enforcement",
+                    description: "Enforces required Cephalon context headers before direct execution.",
+                    declaresTenantContext: true,
+                    declaresCorrelationId: true,
+                    declaresCausationId: true,
+                    declaresBaggage: true,
+                    validatesMessageHeaders: true,
+                    headerNames:
+                    [
+                        EventContextHeaderNames.CausationId,
+                        EventContextHeaderNames.Baggage
+                    ]));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+        var probe = provider.GetRequiredService<ContextPolicyExecutionProbe>();
+        var publicationRuntimeCatalog = provider.GetRequiredService<IEventPublicationRuntimeCatalog>();
+        var subscriptionRuntimeCatalog = provider.GetRequiredService<IEventSubscriptionRuntimeCatalog>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        await publisher.PublishAsync(new EventPublication(
+            id: "context-msg-001",
+            channelId: "audit",
+            eventType: "audit.context",
+            payload: "{}",
+            occurredAtUtc: new DateTimeOffset(2026, 05, 12, 9, 0, 0, TimeSpan.Zero),
+            contentType: "application/json",
+            correlationId: "corr-001",
+            tenantId: "tenant-001",
+            headers: new Dictionary<string, string>
+            {
+                [EventContextHeaderNames.CausationId] = "cause-001",
+                [EventContextHeaderNames.Baggage] = "tier=gold"
+            }));
+
+        Assert.NotNull(probe.LastContext);
+        Assert.Equal("tenant-001", probe.LastContext.Publication.TenantId);
+        Assert.Equal("corr-001", probe.LastContext.Publication.CorrelationId);
+        Assert.Equal("validated", probe.LastContext.Metadata["contextHeaderValidation"]);
+        Assert.Equal("publisher-enforced", probe.LastContext.Metadata["executableContextPolicy"]);
+        Assert.Equal("publication-field-forwarded", probe.LastContext.Metadata["tenantContextPropagation"]);
+        Assert.Equal("publication-field-forwarded", probe.LastContext.Metadata["correlationContextPropagation"]);
+        Assert.Equal("header-forwarded", probe.LastContext.Metadata["causationIdPropagation"]);
+        Assert.Equal("header-forwarded", probe.LastContext.Metadata["baggagePropagation"]);
+        Assert.Equal("validated", probe.LastContext.Metadata["messageHeaderPolicy"]);
+        Assert.Equal("false", probe.LastContext.Metadata["wolverineRequired"]);
+
+        var succeededPublication = publicationRuntimeCatalog.GetByPublicationId("context-msg-001");
+        Assert.NotNull(succeededPublication);
+        Assert.Equal(EventPublicationRuntimeOutcomes.Succeeded, succeededPublication.LastOutcome);
+        Assert.Equal("validated", succeededPublication.Metadata["contextHeaderValidation"]);
+        Assert.Equal("0", succeededPublication.Metadata["contextMissingHeaderCount"]);
+        var succeededSubscription = subscriptionRuntimeCatalog.GetById("context-audit");
+        Assert.NotNull(succeededSubscription);
+        Assert.Equal(EventSubscriptionExecutionOutcomes.Succeeded, succeededSubscription.LastOutcome);
+        Assert.Equal("publisher-enforced", succeededSubscription.Metadata["executableContextPolicy"]);
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+            await publisher.PublishAsync(new EventPublication(
+                id: "context-msg-002",
+                channelId: "audit",
+                eventType: "audit.context",
+                payload: "{}",
+                occurredAtUtc: new DateTimeOffset(2026, 05, 12, 9, 1, 0, TimeSpan.Zero),
+                contentType: "application/json",
+                correlationId: "corr-002",
+                tenantId: "tenant-002",
+                headers: new Dictionary<string, string>
+                {
+                    [EventContextHeaderNames.CausationId] = "cause-002"
+                })));
+        Assert.Contains(EventContextHeaderNames.Baggage, exception.Message, StringComparison.Ordinal);
+
+        var failedPublication = publicationRuntimeCatalog.GetByPublicationId("context-msg-002");
+        Assert.NotNull(failedPublication);
+        Assert.Equal(EventPublicationRuntimeOutcomes.Failed, failedPublication.LastOutcome);
+        Assert.Equal("failed", failedPublication.Metadata["contextHeaderValidation"]);
+        Assert.Equal("1", failedPublication.Metadata["contextMissingHeaderCount"]);
+        Assert.Equal(EventContextHeaderNames.Baggage, failedPublication.Metadata["contextMissingHeaders"]);
+        Assert.Equal("validation-failed", failedPublication.Metadata["messageHeaderPolicy"]);
+
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var dimensions = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        Assert.Equal("partial", dimensions["tenant-and-correlation-context-ownership"].Metadata["status"]);
+        Assert.Contains("tenantContextPropagation=in-process-direct", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("correlationContextPropagation=in-process-direct", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("causationIdPropagation=in-process-direct", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("baggagePropagation=in-process-direct", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("messageHeaderPolicy=publisher-enforced", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("executablePropagation=in-process-direct", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("executableValidation=publisher-enforced", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task AddRetrievalRunsOptInBackgroundReindexScheduler()
     {
         var services = new ServiceCollection();
@@ -4757,6 +4887,30 @@ public sealed class EngineBuilderTests
                 validatesMessageHeaders: false,
                 headerNames: ["cephalon-message-id"],
                 tags: ["context", "module"]));
+        }
+    }
+
+    private sealed class ContextPolicyExecutionProbe
+    {
+        public EventSubscriptionExecutionContext LastContext { get; private set; } = null!;
+
+        public void Record(EventSubscriptionExecutionContext context)
+        {
+            LastContext = context;
+        }
+    }
+
+    private sealed class ContextPolicyAuditExecutor(ContextPolicyExecutionProbe probe) : IEventSubscriptionExecutor
+    {
+        public string SubscriptionId => "context-audit";
+
+        public ValueTask ExecuteAsync(
+            EventSubscriptionExecutionContext context,
+            CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            probe.Record(context);
+            return ValueTask.CompletedTask;
         }
     }
 }

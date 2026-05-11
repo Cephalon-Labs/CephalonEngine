@@ -1174,6 +1174,115 @@ public sealed class EntityFrameworkDataPackTests
     }
 
     [Fact]
+    public async Task AddEventingEnforcesContextPolicyHeadersBeforeEntityFrameworkOutboxEnqueueWithoutWolverine()
+    {
+        var databaseName = $"cephalon-data-ef-context-policy-outbox-{Guid.NewGuid():N}";
+        var services = new ServiceCollection();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "ModularVerticalSlice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"],
+                data: new DataSettings(
+                    provider: "EntityFramework",
+                    outboxEnabled: true),
+                messaging: new MessagingSettings(provider: "InMemoryChannels")));
+            engine.AddModule(new PlatformTestModule());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "catalog-events",
+                    displayName: "Catalog Events",
+                    description: "Catalog integration events."));
+                options.ContextPolicies.Add(new EventContextPolicyDescriptor(
+                    id: "catalog-context",
+                    displayName: "Catalog Context",
+                    description: "Requires catalog publications to carry Cephalon context headers.",
+                    declaresTenantContext: true,
+                    declaresCorrelationId: true,
+                    declaresCausationId: true,
+                    declaresBaggage: true,
+                    validatesMessageHeaders: true,
+                    headerNames:
+                    [
+                        EventContextHeaderNames.CausationId,
+                        EventContextHeaderNames.Baggage
+                    ]));
+            });
+            engine.AddEntityFrameworkData<OutboxCatalogDbContext>(
+                options => options.UseInMemoryDatabase(databaseName),
+                configure: options => options.RegisterOutbox = true);
+        });
+
+        await using var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
+        var dbContext = scope.ServiceProvider.GetRequiredService<OutboxCatalogDbContext>();
+        var publicationRuntimeCatalog = provider.GetRequiredService<IEventPublicationRuntimeCatalog>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        await publisher.PublishAsync(new EventPublication(
+            id: "evt-context-outbox-001",
+            channelId: "catalog-events",
+            eventType: "catalog.item.created",
+            payload: "{\"id\":\"item-context-001\"}",
+            occurredAtUtc: new DateTimeOffset(2026, 05, 12, 10, 0, 0, TimeSpan.Zero),
+            correlationId: "corr-context-001",
+            tenantId: "tenant-context-001",
+            headers: new Dictionary<string, string>
+            {
+                [EventContextHeaderNames.CausationId] = "cause-context-001",
+                [EventContextHeaderNames.Baggage] = "tier=gold"
+            }));
+
+        var acceptedState = publicationRuntimeCatalog.GetByPublicationId("evt-context-outbox-001");
+        Assert.NotNull(acceptedState);
+        Assert.Equal(EventPublicationRuntimeOutcomes.Accepted, acceptedState.LastOutcome);
+        Assert.Equal("validated", acceptedState.Metadata["contextHeaderValidation"]);
+        Assert.Equal("pending-dispatch", acceptedState.Metadata["deliveryCompletion"]);
+        Assert.Equal("publisher-enforced", acceptedState.Metadata["executableContextPolicy"]);
+        Assert.Equal("false", acceptedState.Metadata["wolverineRequired"]);
+        Assert.Equal(1, await dbContext.OutboxMessages.CountAsync());
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
+            await publisher.PublishAsync(new EventPublication(
+                id: "evt-context-outbox-002",
+                channelId: "catalog-events",
+                eventType: "catalog.item.created",
+                payload: "{\"id\":\"item-context-002\"}",
+                occurredAtUtc: new DateTimeOffset(2026, 05, 12, 10, 1, 0, TimeSpan.Zero),
+                correlationId: "corr-context-002",
+                tenantId: "tenant-context-002",
+                headers: new Dictionary<string, string>
+                {
+                    [EventContextHeaderNames.CausationId] = "cause-context-002"
+                })));
+        Assert.Contains(EventContextHeaderNames.Baggage, exception.Message, StringComparison.Ordinal);
+        Assert.Equal(1, await dbContext.OutboxMessages.CountAsync());
+
+        var failedState = publicationRuntimeCatalog.GetByPublicationId("evt-context-outbox-002");
+        Assert.NotNull(failedState);
+        Assert.Equal(EventPublicationRuntimeOutcomes.Failed, failedState.LastOutcome);
+        Assert.Equal("failed", failedState.Metadata["contextHeaderValidation"]);
+        Assert.Equal(EventContextHeaderNames.Baggage, failedState.Metadata["contextMissingHeaders"]);
+        Assert.Equal("not-enqueued", failedState.Metadata["deliveryCompletion"]);
+        Assert.Equal("validation-failed", failedState.Metadata["messageHeaderPolicy"]);
+
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var dimensions = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        Assert.Equal("partial", dimensions["tenant-and-correlation-context-ownership"].Metadata["status"]);
+        Assert.Contains("messageHeaderPolicy=publisher-enforced", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("executableValidation=publisher-enforced", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("executablePropagation=not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+    }
+
+    [Fact]
     public async Task AddEventingReportsEventDispatchRemediationCommandRetentionTruncation()
     {
         var databaseName = $"cephalon-data-ef-event-dispatch-command-retention-{Guid.NewGuid():N}";

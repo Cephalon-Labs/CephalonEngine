@@ -70,6 +70,12 @@ Cephalon.Eventing.Configuration.EventingOptions.Contracts.get -> System.Collecti
 Cephalon.Eventing.Configuration.EventingOptions.ContextPolicies.get -> System.Collections.Generic.IList<Cephalon.Eventing.Services.EventContextPolicyDescriptor!>!
 Cephalon.Eventing.Configuration.EventingOptions.SchemaRegistries.get -> System.Collections.Generic.IList<Cephalon.Eventing.Services.EventSchemaRegistryDescriptor!>!
 Cephalon.Eventing.Configuration.EventingOptions.Upcasters.get -> System.Collections.Generic.IList<Cephalon.Eventing.Services.EventUpcasterDescriptor!>!
+Cephalon.Eventing.Services.EventContextHeaderNames
+const Cephalon.Eventing.Services.EventContextHeaderNames.Baggage = "cephalon-baggage" -> string!
+const Cephalon.Eventing.Services.EventContextHeaderNames.CausationId = "cephalon-causation-id" -> string!
+const Cephalon.Eventing.Services.EventContextHeaderNames.CorrelationId = "cephalon-correlation-id" -> string!
+const Cephalon.Eventing.Services.EventContextHeaderNames.MessageId = "cephalon-message-id" -> string!
+const Cephalon.Eventing.Services.EventContextHeaderNames.TenantId = "cephalon-tenant-id" -> string!
 Cephalon.Eventing.Services.EventContextPolicyDescriptor
 Cephalon.Eventing.Services.EventContextPolicyDescriptor.DeclaresBaggage.get -> bool
 Cephalon.Eventing.Services.EventContextPolicyDescriptor.DeclaresCausationId.get -> bool

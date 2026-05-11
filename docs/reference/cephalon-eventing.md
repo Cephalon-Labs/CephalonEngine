@@ -573,13 +573,76 @@ IReadOnlyList<string> Tags { get; }
 
 Gets the normalized tag set associated with the channel.
 
+<a id="type-cephalon-eventing-services-eventcontextheadernames"></a>
+
+### `EventContextHeaderNames`
+
+Defines the stable Cephalon event context header names used by provider-neutral eventing policies.
+
+#### Declaration
+```csharp
+public static class EventContextHeaderNames
+```
+
+#### Fields
+
+<a id="member-f-cephalon-eventing-services-eventcontextheadernames-baggage"></a>
+
+##### `Baggage`
+
+```csharp
+const string Baggage
+```
+
+Carries provider-neutral baggage associated with an event publication.
+
+<a id="member-f-cephalon-eventing-services-eventcontextheadernames-causationid"></a>
+
+##### `CausationId`
+
+```csharp
+const string CausationId
+```
+
+Identifies the causation id associated with an event publication.
+
+<a id="member-f-cephalon-eventing-services-eventcontextheadernames-correlationid"></a>
+
+##### `CorrelationId`
+
+```csharp
+const string CorrelationId
+```
+
+Identifies the correlation id associated with an event publication.
+
+<a id="member-f-cephalon-eventing-services-eventcontextheadernames-messageid"></a>
+
+##### `MessageId`
+
+```csharp
+const string MessageId
+```
+
+Identifies the source event message when a policy needs a header-level message identity.
+
+<a id="member-f-cephalon-eventing-services-eventcontextheadernames-tenantid"></a>
+
+##### `TenantId`
+
+```csharp
+const string TenantId
+```
+
+Identifies the tenant associated with an event publication.
+
 <a id="type-cephalon-eventing-services-eventcontextpolicydescriptor"></a>
 
 ### `EventContextPolicyDescriptor`
 
-Describes provider-neutral event context policy metadata for tenant, correlation, causation, baggage, and header propagation.
+Describes provider-neutral event context policy metadata and publisher validation hints for tenant, correlation, causation, baggage, and header propagation.
 
-Remarks: The descriptor is intentionally metadata-only. It lets hosts and modules expose context-policy ownership without putting tenant, correlation, baggage, or header propagation work on the publication or subscription hot path.
+Remarks: The descriptor is intentionally code-first. It lets hosts and modules expose context-policy ownership, require stable publication headers, and project validation evidence without putting publish/subscribe binding behind string configuration.
 
 #### Declaration
 ```csharp

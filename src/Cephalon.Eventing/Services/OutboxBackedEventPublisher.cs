@@ -7,6 +7,7 @@ namespace Cephalon.Eventing.Services;
 internal sealed class OutboxBackedEventPublisher(
     IOutbox outbox,
     IEventChannelCatalog channels,
+    IEventContextPolicyCatalog contextPolicyCatalog,
     IEventPublicationRuntimeReporter publicationRuntimeReporter,
     ILoggerFactory? loggerFactory = null) : IEventPublisher
 {
@@ -23,6 +24,24 @@ internal sealed class OutboxBackedEventPublisher(
         {
             throw new InvalidOperationException(
                 $"Event channel '{publication.ChannelId}' is not registered in the active eventing runtime.");
+        }
+
+        var contextPolicyEvaluation = EventContextPolicyEvaluation.Evaluate(contextPolicyCatalog, publication);
+        if (!contextPolicyEvaluation.IsValid)
+        {
+            var validationError = contextPolicyEvaluation.CreateValidationFailureMessage(publication);
+            await publicationRuntimeReporter.ReportAsync(
+                new EventPublicationRuntimeReport(
+                    publicationId: publication.Id,
+                    channelId: publication.ChannelId,
+                    eventType: publication.EventType,
+                    outcome: EventPublicationRuntimeOutcomes.Failed,
+                    observedAtUtc: DateTimeOffset.UtcNow,
+                    error: validationError,
+                    metadata: CreateRuntimeMetadata(publication, outbox.OutboxId, contextPolicyEvaluation, validationError)),
+                cancellationToken).ConfigureAwait(false);
+
+            throw new InvalidOperationException(validationError);
         }
 
         await outbox.EnqueueAsync(
@@ -48,20 +67,24 @@ internal sealed class OutboxBackedEventPublisher(
                 eventType: publication.EventType,
                 outcome: EventPublicationRuntimeOutcomes.Accepted,
                 observedAtUtc: DateTimeOffset.UtcNow,
-                metadata: CreateRuntimeMetadata(publication, outbox.OutboxId)),
+                metadata: CreateRuntimeMetadata(publication, outbox.OutboxId, contextPolicyEvaluation)),
             cancellationToken).ConfigureAwait(false);
     }
 
     private static Dictionary<string, string> CreateRuntimeMetadata(
         EventPublication publication,
-        string outboxId)
+        string outboxId,
+        EventContextPolicyEvaluation contextPolicyEvaluation,
+        string? error = null)
     {
         var metadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["publisherId"] = "outbox-backed-publisher",
             ["trigger"] = "outbox-backed-publisher",
             ["publicationRuntimeState"] = "reported",
-            ["publicationOutcome"] = EventPublicationRuntimeOutcomes.Accepted,
+            ["publicationOutcome"] = string.IsNullOrWhiteSpace(error)
+                ? EventPublicationRuntimeOutcomes.Accepted
+                : EventPublicationRuntimeOutcomes.Failed,
             ["publicationId"] = publication.Id,
             ["channelId"] = publication.ChannelId,
             ["eventType"] = publication.EventType,
@@ -69,7 +92,7 @@ internal sealed class OutboxBackedEventPublisher(
             ["dispatchRuntime"] = "configured",
             ["dispatchStore"] = "available",
             ["outboxId"] = outboxId,
-            ["deliveryCompletion"] = "pending-dispatch",
+            ["deliveryCompletion"] = string.IsNullOrWhiteSpace(error) ? "pending-dispatch" : "not-enqueued",
             ["matchedSubscriptionCount"] = "0",
             ["startedSubscriptionCount"] = "0",
             ["succeededSubscriptionCount"] = "0",
@@ -79,6 +102,13 @@ internal sealed class OutboxBackedEventPublisher(
             ["headerCount"] = publication.Headers.Count.ToString(System.Globalization.CultureInfo.InvariantCulture),
             ["publicationMetadataCount"] = publication.Metadata.Count.ToString(System.Globalization.CultureInfo.InvariantCulture)
         };
+
+        contextPolicyEvaluation.ApplyMetadata(metadata);
+
+        if (!string.IsNullOrWhiteSpace(error))
+        {
+            metadata["error"] = error;
+        }
 
         if (!string.IsNullOrWhiteSpace(publication.ContentType))
         {
