@@ -68,6 +68,7 @@ Cephalon.Eventing.Configuration.EventingOptions.RemediationCommandHistoryLimit.g
 Cephalon.Eventing.Configuration.EventingOptions.RemediationCommandHistoryLimit.set -> void
 Cephalon.Eventing.Configuration.EventingOptions.Contracts.get -> System.Collections.Generic.IList<Cephalon.Eventing.Services.EventContractDescriptor!>!
 Cephalon.Eventing.Configuration.EventingOptions.SchemaRegistries.get -> System.Collections.Generic.IList<Cephalon.Eventing.Services.EventSchemaRegistryDescriptor!>!
+Cephalon.Eventing.Configuration.EventingOptions.Upcasters.get -> System.Collections.Generic.IList<Cephalon.Eventing.Services.EventUpcasterDescriptor!>!
 Cephalon.Eventing.Services.EventContractDescriptor
 Cephalon.Eventing.Services.EventContractDescriptor.CompatibilityPolicy.get -> string!
 Cephalon.Eventing.Services.EventContractDescriptor.ContentType.get -> string!
@@ -114,6 +115,28 @@ Cephalon.Eventing.Services.IEventSchemaRegistryContributor
 Cephalon.Eventing.Services.IEventSchemaRegistryContributor.RegisterEventSchemaRegistries(Cephalon.Eventing.Services.IEventSchemaRegistryRegistry! registries) -> void
 Cephalon.Eventing.Services.IEventSchemaRegistryRegistry
 Cephalon.Eventing.Services.IEventSchemaRegistryRegistry.Add(Cephalon.Eventing.Services.EventSchemaRegistryDescriptor! registry) -> void
+Cephalon.Eventing.Services.EventUpcasterDescriptor
+Cephalon.Eventing.Services.EventUpcasterDescriptor.CanUpcast.get -> bool
+Cephalon.Eventing.Services.EventUpcasterDescriptor.Description.get -> string!
+Cephalon.Eventing.Services.EventUpcasterDescriptor.DisplayName.get -> string!
+Cephalon.Eventing.Services.EventUpcasterDescriptor.EventType.get -> string!
+Cephalon.Eventing.Services.EventUpcasterDescriptor.EventUpcasterDescriptor(string! id, string! eventType, string! displayName, string! description, string! fromVersion, string! toVersion, string! runtimeKind = "code-first", bool canUpcast = true, System.Collections.Generic.IReadOnlyList<string!>? tags = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Eventing.Services.EventUpcasterDescriptor.FromVersion.get -> string!
+Cephalon.Eventing.Services.EventUpcasterDescriptor.Id.get -> string!
+Cephalon.Eventing.Services.EventUpcasterDescriptor.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Eventing.Services.EventUpcasterDescriptor.RuntimeKind.get -> string!
+Cephalon.Eventing.Services.EventUpcasterDescriptor.Tags.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Eventing.Services.EventUpcasterDescriptor.ToVersion.get -> string!
+Cephalon.Eventing.Services.IEventUpcasterCatalog
+Cephalon.Eventing.Services.IEventUpcasterCatalog.GetByEventType(string! eventType) -> System.Collections.Generic.IReadOnlyList<Cephalon.Eventing.Services.EventUpcasterDescriptor!>!
+Cephalon.Eventing.Services.IEventUpcasterCatalog.GetBySourceVersion(string! eventType, string! fromVersion) -> System.Collections.Generic.IReadOnlyList<Cephalon.Eventing.Services.EventUpcasterDescriptor!>!
+Cephalon.Eventing.Services.IEventUpcasterCatalog.TryGet(string! upcasterId, out Cephalon.Eventing.Services.EventUpcasterDescriptor! upcaster) -> bool
+Cephalon.Eventing.Services.IEventUpcasterCatalog.TryGetTransition(string! eventType, string! fromVersion, string! toVersion, out Cephalon.Eventing.Services.EventUpcasterDescriptor! upcaster) -> bool
+Cephalon.Eventing.Services.IEventUpcasterCatalog.Upcasters.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Eventing.Services.EventUpcasterDescriptor!>!
+Cephalon.Eventing.Services.IEventUpcasterContributor
+Cephalon.Eventing.Services.IEventUpcasterContributor.RegisterEventUpcasters(Cephalon.Eventing.Services.IEventUpcasterRegistry! upcasters) -> void
+Cephalon.Eventing.Services.IEventUpcasterRegistry
+Cephalon.Eventing.Services.IEventUpcasterRegistry.Add(Cephalon.Eventing.Services.EventUpcasterDescriptor! upcaster) -> void
 Cephalon.Eventing.Configuration.EventingOptions.Serializers.get -> System.Collections.Generic.IList<Cephalon.Eventing.Services.EventSerializerDescriptor!>!
 Cephalon.Eventing.Services.EventSerializerDescriptor
 Cephalon.Eventing.Services.EventSerializerDescriptor.CanRead.get -> bool

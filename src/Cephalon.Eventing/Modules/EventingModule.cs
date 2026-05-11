@@ -33,6 +33,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
     private bool hasContractContributors;
     private bool hasSerializerContributors;
     private bool hasSchemaRegistryContributors;
+    private bool hasUpcasterContributors;
     private bool hasInboxPath;
     private bool hasInProcessSubscriptionDescriptorDiscovery;
     private bool hasInProcessSubscriptionExecutionPath;
@@ -75,6 +76,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
         hasContractContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventContractContributor));
         hasSerializerContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventSerializerContributor));
         hasSchemaRegistryContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventSchemaRegistryContributor));
+        hasUpcasterContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventUpcasterContributor));
         hasDispatchStore = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchStore));
         hasDispatchRuntimeContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchRuntimeContributor));
         hasExternalRemediationCommandJournal = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchRemediationCommandJournal));
@@ -119,6 +121,12 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
         if (options.SchemaRegistries.Count > 0 || hasSchemaRegistryContributors)
         {
             services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingSchemaRegistryRuntimeSurfaceContributor>());
+        }
+
+        services.TryAddSingleton<IEventUpcasterCatalog, EventUpcasterCatalog>();
+        if (options.Upcasters.Count > 0 || hasUpcasterContributors)
+        {
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingUpcasterRuntimeSurfaceContributor>());
         }
 
         if (options.EnableSubscriptions)
@@ -302,6 +310,8 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             var publicationRoutingRejectMismatchedExplicitChannel = options.PublicationRoutingRejectMismatchedExplicitChannel.ToString().ToLowerInvariant();
             var eventContractCatalog = options.Contracts.Count > 0 || hasContractContributors ? "available" : "not-configured";
             var eventSerializerCatalog = options.Serializers.Count > 0 || hasSerializerContributors ? "available" : "not-configured";
+            var eventSchemaRegistryCatalog = options.SchemaRegistries.Count > 0 || hasSchemaRegistryContributors ? "available" : "not-configured";
+            var eventUpcasterCatalog = options.Upcasters.Count > 0 || hasUpcasterContributors ? "available" : "not-configured";
             var publishMetadata = hasInProcessSubscriptionExecutionPath
                 ? new Dictionary<string, string>
                 {
@@ -345,6 +355,8 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["publicationRoutingRejectMismatchedExplicitChannel"] = publicationRoutingRejectMismatchedExplicitChannel,
                     ["eventContractCatalog"] = eventContractCatalog,
                     ["eventSerializerCatalog"] = eventSerializerCatalog,
+                    ["eventSchemaRegistryCatalog"] = eventSchemaRegistryCatalog,
+                    ["eventUpcasterCatalog"] = eventUpcasterCatalog,
                     ["runtimeState"] = "available"
                 }
                 : new Dictionary<string, string>
@@ -367,6 +379,8 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["publicationRoutingRejectMismatchedExplicitChannel"] = publicationRoutingRejectMismatchedExplicitChannel,
                     ["eventContractCatalog"] = eventContractCatalog,
                     ["eventSerializerCatalog"] = eventSerializerCatalog,
+                    ["eventSchemaRegistryCatalog"] = eventSchemaRegistryCatalog,
+                    ["eventUpcasterCatalog"] = eventUpcasterCatalog,
                     ["runtimeState"] = "available"
                 };
 
@@ -464,6 +478,26 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                         ? "options-and-contributors"
                         : options.SchemaRegistries.Count > 0 ? "options" : "contributors",
                     ["configuredSchemaRegistryCount"] = options.SchemaRegistries.Count.ToString(CultureInfo.InvariantCulture),
+                    ["wolverineRequired"] = "false",
+                    ["runtimeState"] = "available"
+                }));
+        }
+
+        if (options.Upcasters.Count > 0 || hasUpcasterContributors)
+        {
+            capabilities.Add(new Capability(
+                key: "eventing.upcasters",
+                displayName: "Event Upcaster Catalog",
+                description: "Exposes provider-neutral event upcaster descriptors without requiring Wolverine or a broker-specific versioning package.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["technology"] = "event-driven-integration",
+                    ["surfaceId"] = "event-upcasters",
+                    ["upcasterCatalog"] = "available",
+                    ["upcasterSource"] = options.Upcasters.Count > 0 && hasUpcasterContributors
+                        ? "options-and-contributors"
+                        : options.Upcasters.Count > 0 ? "options" : "contributors",
+                    ["configuredUpcasterCount"] = options.Upcasters.Count.ToString(CultureInfo.InvariantCulture),
                     ["wolverineRequired"] = "false",
                     ["runtimeState"] = "available"
                 }));

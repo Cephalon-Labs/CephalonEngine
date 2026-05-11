@@ -2683,6 +2683,140 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public void AddEventingProjectsUpcasterCatalogProfileEvidenceWithoutWolverine()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<IEventContractContributor, ContractTestEventContributor>();
+        services.AddSingleton<IEventSerializerContributor, SchemaRegistrySerializerTestEventContributor>();
+        services.AddSingleton<IEventSchemaRegistryContributor, SchemaRegistryTestEventContributor>();
+        services.AddSingleton<IEventUpcasterContributor, UpcasterTestEventContributor>();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddEventing(options =>
+            {
+                options.Contracts.Add(new EventContractDescriptor(
+                    id: "audit.recorded.v1",
+                    eventType: "audit.recorded",
+                    displayName: "Audit Recorded V1",
+                    description: "Initial audit event contract.",
+                    version: "1",
+                    contentType: "application/vnd.cephalon.audit.recorded.v1+json",
+                    serializerId: "system-text-json-sourcegen"));
+                options.Contracts.Add(new EventContractDescriptor(
+                    id: "audit.recorded.v2",
+                    eventType: "audit.recorded",
+                    displayName: "Audit Recorded V2",
+                    description: "Audit event contract with normalized actor metadata.",
+                    version: "2",
+                    contentType: "application/vnd.cephalon.audit.recorded.v2+json",
+                    serializerId: "system-text-json-sourcegen"));
+                options.Contracts.Add(new EventContractDescriptor(
+                    id: "inventory.item.reserved.v2",
+                    eventType: "inventory.item.reserved",
+                    displayName: "Inventory Item Reserved V2",
+                    description: "Inventory event contract with reservation source metadata.",
+                    version: "2",
+                    contentType: "application/vnd.cephalon.inventory.item-reserved.v2+json",
+                    serializerId: "system-text-json-sourcegen"));
+                options.Serializers.Add(new EventSerializerDescriptor(
+                    id: "system-text-json-sourcegen",
+                    displayName: "System.Text.Json Source Generated",
+                    description: "Source-generated System.Text.Json serializer registered by the host.",
+                    contentType: "application/json",
+                    format: "json",
+                    runtimeKind: "source-generated",
+                    requiresSchemaRegistry: true,
+                    schemaRegistryId: "cephalon-json-schema-registry"));
+                options.SchemaRegistries.Add(new EventSchemaRegistryDescriptor(
+                    id: "cephalon-json-schema-registry",
+                    displayName: "Cephalon JSON Schema Registry",
+                    description: "Provider-neutral JSON schema registry descriptor registered by the host.",
+                    provider: "cephalon",
+                    endpointKind: "embedded",
+                    runtimeKind: "code-first",
+                    canReadSchemas: true,
+                    canWriteSchemas: true,
+                    validatesCompatibility: false,
+                    supportedFormats: ["json"]));
+                options.Upcasters.Add(new EventUpcasterDescriptor(
+                    id: "audit-recorded-v1-to-v2",
+                    eventType: "audit.recorded",
+                    displayName: "Audit Recorded V1 To V2",
+                    description: "Provider-neutral audit event version transition registered by the host.",
+                    fromVersion: "1",
+                    toVersion: "2",
+                    runtimeKind: "code-first",
+                    metadata: new Dictionary<string, string>
+                    {
+                        ["owner"] = "platform"
+                    }));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var runtime = provider.GetRequiredService<IRuntime>();
+        var upcasterCatalog = provider.GetRequiredService<IEventUpcasterCatalog>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        Assert.Equal(2, upcasterCatalog.Upcasters.Count);
+        Assert.True(upcasterCatalog.TryGet("audit-recorded-v1-to-v2", out var auditUpcaster));
+        Assert.Equal("audit.recorded", auditUpcaster.EventType);
+        Assert.Equal("1", auditUpcaster.FromVersion);
+        Assert.Equal("2", auditUpcaster.ToVersion);
+        Assert.Equal("code-first", auditUpcaster.RuntimeKind);
+        Assert.True(auditUpcaster.CanUpcast);
+        Assert.Single(upcasterCatalog.GetByEventType("audit.recorded"));
+        Assert.Single(upcasterCatalog.GetBySourceVersion("audit.recorded", "1"));
+        Assert.True(upcasterCatalog.TryGetTransition("audit.recorded", "1", "2", out var auditTransition));
+        Assert.Equal("audit-recorded-v1-to-v2", auditTransition.Id);
+
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var upcasterSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-upcasters");
+        Assert.Contains(
+            upcasterSurface.Entries,
+            entry => entry.Id == "audit-recorded-v1-to-v2" &&
+                entry.Metadata["eventType"] == "audit.recorded" &&
+                entry.Metadata["fromVersion"] == "1" &&
+                entry.Metadata["toVersion"] == "2" &&
+                entry.Metadata["runtimeKind"] == "code-first" &&
+                entry.Metadata["canUpcast"] == "true" &&
+                entry.Metadata["sourceContractResolved"] == "true" &&
+                entry.Metadata["targetContractResolved"] == "true" &&
+                entry.Metadata["wolverineRequired"] == "false");
+
+        var dimensions = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        Assert.Equal("partial", dimensions["serialization-and-contract-versioning-ownership"].Metadata["status"]);
+        Assert.Contains("eventContractCatalog=present", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("eventSerializerCatalog=present", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("eventSchemaRegistryCatalog=present", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("eventUpcasterCatalog=present", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("eventContractCount=4", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("serializerRuntimeCount=2", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("schemaRegistryRuntimeCount=2", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("upcasterRuntimeCount=2", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("upcasterTransitions=2", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("resolvedUpcasterSourceContracts=2", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("resolvedUpcasterTargetContracts=2", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("resolvedUpcasterTransitions=2", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("schemaRegistry=catalog-backed", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("upcasterPipeline=catalog-declared", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+
+        var capability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.upcasters");
+        Assert.Equal("event-upcasters", capability.Metadata["surfaceId"]);
+        Assert.Equal("options-and-contributors", capability.Metadata["upcasterSource"]);
+        Assert.Equal("false", capability.Metadata["wolverineRequired"]);
+    }
+
+    [Fact]
     public async Task AddRetrievalRunsOptInBackgroundReindexScheduler()
     {
         var services = new ServiceCollection();
@@ -4493,6 +4627,22 @@ public sealed class EngineBuilderTests
                 validatesCompatibility: false,
                 supportedFormats: ["avro"],
                 tags: ["binary", "contract"]));
+        }
+    }
+
+    private sealed class UpcasterTestEventContributor : IEventUpcasterContributor
+    {
+        public void RegisterEventUpcasters(IEventUpcasterRegistry upcasters)
+        {
+            upcasters.Add(new EventUpcasterDescriptor(
+                id: "inventory-item-reserved-v1-to-v2",
+                eventType: "inventory.item.reserved",
+                displayName: "Inventory Item Reserved V1 To V2",
+                description: "Provider-neutral inventory event version transition registered by a module.",
+                fromVersion: "1",
+                toVersion: "2",
+                runtimeKind: "code-first",
+                tags: ["inventory", "contract"]));
         }
     }
 }

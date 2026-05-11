@@ -8,11 +8,12 @@ namespace Cephalon.Eventing.Configuration;
 /// <remarks>
 /// These options seed the host-owned part of the eventing runtime. Installed modules can still
 /// contribute additional channels through <see cref="Services.IEventChannelContributor" /> and
-    /// additional subscription, contract, and serializer descriptors through
-    /// <see cref="Services.IEventSubscriptionContributor" />,
-    /// <see cref="Services.IEventContractContributor" />, and
-    /// <see cref="Services.IEventSerializerContributor" />, plus schema registry descriptors through
-    /// <see cref="Services.IEventSchemaRegistryContributor" />.
+/// additional subscription, contract, serializer, schema registry, and upcaster descriptors through
+/// <see cref="Services.IEventSubscriptionContributor" />,
+/// <see cref="Services.IEventContractContributor" />,
+/// <see cref="Services.IEventSerializerContributor" />,
+/// <see cref="Services.IEventSchemaRegistryContributor" />, and
+/// <see cref="Services.IEventUpcasterContributor" />.
 /// </remarks>
 public sealed class EventingOptions
 {
@@ -59,6 +60,15 @@ public sealed class EventingOptions
     /// subscription execution perform registry lookups on the hot path.
     /// </remarks>
     public IList<EventSchemaRegistryDescriptor> SchemaRegistries { get; } = [];
+
+    /// <summary>
+    /// Gets the host-defined event upcaster descriptors that should be available to the eventing runtime.
+    /// </summary>
+    /// <remarks>
+    /// These descriptors are code-owned version-transition metadata. They do not make publish or
+    /// subscription execution perform upcaster lookups on the hot path.
+    /// </remarks>
+    public IList<EventUpcasterDescriptor> Upcasters { get; } = [];
 
     /// <summary>
     /// Gets or sets a value indicating whether publishing features are enabled.

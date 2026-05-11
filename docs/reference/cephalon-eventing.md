@@ -20,7 +20,7 @@ Generated from XML comments and the public API surface of the compiled assembly.
 
 Configures the built-in eventing runtime pack.
 
-Remarks: These options seed the host-owned part of the eventing runtime. Installed modules can still contribute additional channels through `IEventChannelContributor` and additional subscription, contract, and serializer descriptors through `IEventSubscriptionContributor`, `IEventContractContributor`, and `IEventSerializerContributor`, plus schema registry descriptors through `IEventSchemaRegistryContributor`.
+Remarks: These options seed the host-owned part of the eventing runtime. Installed modules can still contribute additional channels through `IEventChannelContributor` and additional subscription, contract, serializer, schema registry, and upcaster descriptors through `IEventSubscriptionContributor`, `IEventContractContributor`, `IEventSerializerContributor`, `IEventSchemaRegistryContributor`, and `IEventUpcasterContributor`.
 
 #### Declaration
 ```csharp
@@ -350,6 +350,18 @@ IList<EventSubscriptionDescriptor> Subscriptions { get; }
 ```
 
 Gets the host-defined event subscription descriptors that should be available to the eventing runtime.
+
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-upcasters"></a>
+
+##### `Upcasters`
+
+```csharp
+IList<EventUpcasterDescriptor> Upcasters { get; }
+```
+
+Gets the host-defined event upcaster descriptors that should be available to the eventing runtime.
+
+Remarks: These descriptors are code-owned version-transition metadata. They do not make publish or subscription execution perform upcaster lookups on the hot path.
 
 <a id="namespace-cephalon-eventing-hosting"></a>
 
@@ -2931,6 +2943,145 @@ int TotalReports { get; }
 
 Gets the total number of observations reported for this subscription.
 
+<a id="type-cephalon-eventing-services-eventupcasterdescriptor"></a>
+
+### `EventUpcasterDescriptor`
+
+Describes provider-neutral event upcaster availability for one event type version transition.
+
+Remarks: The descriptor is intentionally metadata-only. It lets hosts and modules expose version transition ownership without putting payload deserialization, schema lookup, or upcaster execution on the publication or subscription hot path.
+
+#### Declaration
+```csharp
+public sealed class EventUpcasterDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-eventing-services-eventupcasterdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `EventUpcasterDescriptor`
+
+```csharp
+EventUpcasterDescriptor(string id, string eventType, string displayName, string description, string fromVersion, string toVersion, string runtimeKind, bool canUpcast, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new event upcaster descriptor.
+
+Parameters:
+- `id`: The stable upcaster identifier.
+- `eventType`: The logical event type identifier handled by the upcaster.
+- `displayName`: The operator-facing upcaster name.
+- `description`: The human-readable upcaster description.
+- `fromVersion`: The source event contract version.
+- `toVersion`: The target event contract version.
+- `runtimeKind`: The runtime implementation kind, such as `code-first` or `provider-managed`.
+- `canUpcast`: Whether the runtime declares that this transition can be upcast.
+- `tags`: Optional tags that classify the upcaster.
+- `metadata`: Optional upcaster metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-eventing-services-eventupcasterdescriptor-canupcast"></a>
+
+##### `CanUpcast`
+
+```csharp
+bool CanUpcast { get; }
+```
+
+Gets a value indicating whether the runtime declares that this transition can be upcast.
+
+<a id="member-p-cephalon-eventing-services-eventupcasterdescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable upcaster description.
+
+<a id="member-p-cephalon-eventing-services-eventupcasterdescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing display name for the upcaster.
+
+<a id="member-p-cephalon-eventing-services-eventupcasterdescriptor-eventtype"></a>
+
+##### `EventType`
+
+```csharp
+string EventType { get; }
+```
+
+Gets the logical event type identifier handled by the upcaster.
+
+<a id="member-p-cephalon-eventing-services-eventupcasterdescriptor-fromversion"></a>
+
+##### `FromVersion`
+
+```csharp
+string FromVersion { get; }
+```
+
+Gets the source event contract version.
+
+<a id="member-p-cephalon-eventing-services-eventupcasterdescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable upcaster identifier.
+
+<a id="member-p-cephalon-eventing-services-eventupcasterdescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets normalized metadata associated with the upcaster.
+
+<a id="member-p-cephalon-eventing-services-eventupcasterdescriptor-runtimekind"></a>
+
+##### `RuntimeKind`
+
+```csharp
+string RuntimeKind { get; }
+```
+
+Gets the upcaster runtime implementation kind.
+
+<a id="member-p-cephalon-eventing-services-eventupcasterdescriptor-tags"></a>
+
+##### `Tags`
+
+```csharp
+IReadOnlyList<string> Tags { get; }
+```
+
+Gets the normalized tag set associated with the upcaster.
+
+<a id="member-p-cephalon-eventing-services-eventupcasterdescriptor-toversion"></a>
+
+##### `ToVersion`
+
+```csharp
+string ToVersion { get; }
+```
+
+Gets the target event contract version.
+
 <a id="type-cephalon-eventing-services-ieventchannelcatalog"></a>
 
 ### `IEventChannelCatalog`
@@ -3954,3 +4105,145 @@ Returns: A task that completes when the observation has been recorded.
 Parameters:
 - `report`: The runtime observation to record.
 - `cancellationToken`: The token that cancels the operation.
+
+<a id="type-cephalon-eventing-services-ieventupcastercatalog"></a>
+
+### `IEventUpcasterCatalog`
+
+Provides the merged event upcaster descriptors visible to the active eventing runtime.
+
+#### Declaration
+```csharp
+public interface IEventUpcasterCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-eventing-services-ieventupcastercatalog-upcasters"></a>
+
+##### `Upcasters`
+
+```csharp
+IReadOnlyList<EventUpcasterDescriptor> Upcasters { get; }
+```
+
+Gets all registered event upcaster descriptors.
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-ieventupcastercatalog-getbyeventtype-system-string"></a>
+
+##### `GetByEventType`
+
+```csharp
+IReadOnlyList<EventUpcasterDescriptor> GetByEventType(string eventType)
+```
+
+Gets all upcaster descriptors registered for the supplied event type.
+
+Returns: The matching upcaster descriptors ordered by source version, target version, and identifier.
+
+Parameters:
+- `eventType`: The logical event type identifier.
+
+<a id="member-m-cephalon-eventing-services-ieventupcastercatalog-getbysourceversion-system-string-system-string"></a>
+
+##### `GetBySourceVersion`
+
+```csharp
+IReadOnlyList<EventUpcasterDescriptor> GetBySourceVersion(string eventType, string fromVersion)
+```
+
+Gets all upcaster descriptors registered for the supplied event type and source version.
+
+Returns: The matching upcaster descriptors ordered by target version and identifier.
+
+Parameters:
+- `eventType`: The logical event type identifier.
+- `fromVersion`: The source event contract version.
+
+<a id="member-m-cephalon-eventing-services-ieventupcastercatalog-tryget-system-string-cephalon-eventing-services-eventupcasterdescriptor"></a>
+
+##### `TryGet`
+
+```csharp
+bool TryGet(string upcasterId, out EventUpcasterDescriptor upcaster)
+```
+
+Attempts to resolve an upcaster by its stable identifier.
+
+Returns: `true` when an upcaster with the identifier exists.
+
+Parameters:
+- `upcasterId`: The stable upcaster identifier.
+- `upcaster`: When found, the matching upcaster descriptor.
+
+<a id="member-m-cephalon-eventing-services-ieventupcastercatalog-trygettransition-system-string-system-string-system-string-cephalon-eventing-services-eventupcasterdescriptor"></a>
+
+##### `TryGetTransition`
+
+```csharp
+bool TryGetTransition(string eventType, string fromVersion, string toVersion, out EventUpcasterDescriptor upcaster)
+```
+
+Attempts to resolve an upcaster for a specific event type version transition.
+
+Returns: `true` when an upcaster with the event type and version transition exists.
+
+Parameters:
+- `eventType`: The logical event type identifier.
+- `fromVersion`: The source event contract version.
+- `toVersion`: The target event contract version.
+- `upcaster`: When found, the matching upcaster descriptor.
+
+<a id="type-cephalon-eventing-services-ieventupcastercontributor"></a>
+
+### `IEventUpcasterContributor`
+
+Allows a module to contribute event upcaster metadata into the active eventing runtime pack.
+
+#### Declaration
+```csharp
+public interface IEventUpcasterContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-ieventupcastercontributor-registereventupcasters-cephalon-eventing-services-ieventupcasterregistry"></a>
+
+##### `RegisterEventUpcasters`
+
+```csharp
+void RegisterEventUpcasters(IEventUpcasterRegistry upcasters)
+```
+
+Registers one or more event upcaster descriptors with the supplied registry.
+
+Parameters:
+- `upcasters`: The registry that collects contributed event upcaster descriptors.
+
+<a id="type-cephalon-eventing-services-ieventupcasterregistry"></a>
+
+### `IEventUpcasterRegistry`
+
+Collects event upcaster descriptors contributed by a host or module.
+
+#### Declaration
+```csharp
+public interface IEventUpcasterRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-ieventupcasterregistry-add-cephalon-eventing-services-eventupcasterdescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(EventUpcasterDescriptor upcaster)
+```
+
+Adds one event upcaster descriptor to the active eventing catalog.
+
+Parameters:
+- `upcaster`: The upcaster descriptor to add.

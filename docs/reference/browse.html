@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-11T22:41:34.3101662+00:00",
+  "GeneratedAtUtc": "2026-05-11T23:03:22.5928672+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -271,7 +271,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 50
+      "TypeCount": 54
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1331,7 +1331,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 47
+      "TypeCount": 51
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8603,7 +8603,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 27,
+        "Properties": 28,
         "Methods": 0
       }
     },
@@ -9055,6 +9055,21 @@
         "Fields": 0,
         "Properties": 2,
         "Methods": 5
+      }
+    },
+    {
+      "DisplayName": "EventUpcasterDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventupcasterdescriptor",
+      "Declaration": "public sealed class EventUpcasterDescriptor",
+      "Summary": "Describes provider-neutral event upcaster availability for one event type version transition.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 10,
+        "Methods": 0
       }
     },
     {
@@ -11860,6 +11875,51 @@
         "Fields": 0,
         "Properties": 1,
         "Methods": 5
+      }
+    },
+    {
+      "DisplayName": "IEventUpcasterCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-ieventupcastercatalog",
+      "Declaration": "public interface IEventUpcasterCatalog",
+      "Summary": "Provides the merged event upcaster descriptors visible to the active eventing runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 4
+      }
+    },
+    {
+      "DisplayName": "IEventUpcasterContributor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-ieventupcastercontributor",
+      "Declaration": "public interface IEventUpcasterContributor",
+      "Summary": "Allows a module to contribute event upcaster metadata into the active eventing runtime pack.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEventUpcasterRegistry",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-ieventupcasterregistry",
+      "Declaration": "public interface IEventUpcasterRegistry",
+      "Summary": "Collects event upcaster descriptors contributed by a host or module.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
       }
     },
     {
@@ -22559,6 +22619,17 @@
     {
       "DisplayName": "Add",
       "Category": "Methods",
+      "DeclaringTypeName": "IEventUpcasterRegistry",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventupcasterregistry-add-cephalon-eventing-services-eventupcasterdescriptor",
+      "Signature": "void Add(EventUpcasterDescriptor upcaster)",
+      "Summary": "Adds one event upcaster descriptor to the active eventing catalog."
+    },
+    {
+      "DisplayName": "Add",
+      "Category": "Methods",
       "DeclaringTypeName": "IExecutionGraphRegistry",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -31663,6 +31734,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstatus-canscheduleautomaticretryoncurrentnode",
       "Signature": "bool CanScheduleAutomaticRetryOnCurrentNode { get; set; }",
       "Summary": "Gets a value indicating whether the current node can currently keep one bounded automatic retry scheduled."
+    },
+    {
+      "DisplayName": "CanUpcast",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventUpcasterDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventupcasterdescriptor-canupcast",
+      "Signature": "bool CanUpcast { get; }",
+      "Summary": "Gets a value indicating whether the runtime declares that this transition can be upcast."
     },
     {
       "DisplayName": "CanUseProviderExecutionAdapter",
@@ -45821,6 +45903,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "EventUpcasterDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventupcasterdescriptor-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable upcaster description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "ExecutionGraphDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -47786,6 +47879,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptiondescriptor-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the operator-facing display name for the subscription."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventUpcasterDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventupcasterdescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing display name for the upcaster."
     },
     {
       "DisplayName": "DisplayName",
@@ -54302,6 +54406,17 @@
     {
       "DisplayName": "EventType",
       "Category": "Properties",
+      "DeclaringTypeName": "EventUpcasterDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventupcasterdescriptor-eventtype",
+      "Signature": "string EventType { get; }",
+      "Summary": "Gets the logical event type identifier handled by the upcaster."
+    },
+    {
+      "DisplayName": "EventType",
+      "Category": "Properties",
       "DeclaringTypeName": "SagaChoreographyPublicationRuntimeState",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -54342,6 +54457,17 @@
       "AnchorId": "member-f-cephalon-eventing-services-eventingdiagnostics-eventtypetag",
       "Signature": "const string EventTypeTag",
       "Summary": "Stable Cephalon-prefix tag carrying the event type emitted on the activity."
+    },
+    {
+      "DisplayName": "EventUpcasterDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventUpcasterDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventupcasterdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "EventUpcasterDescriptor(string id, string eventType, string displayName, string description, string fromVersion, string toVersion, string runtimeKind, bool canUpcast, IReadOnlyList\u003Cstring\u003E tags, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new event upcaster descriptor."
     },
     {
       "DisplayName": "Evidence",
@@ -59701,6 +59827,17 @@
       "Summary": "Reads one route-specific strangler-fig migration-policy override from configuration."
     },
     {
+      "DisplayName": "FromVersion",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventUpcasterDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventupcasterdescriptor-fromversion",
+      "Signature": "string FromVersion { get; }",
+      "Summary": "Gets the source event contract version."
+    },
+    {
       "DisplayName": "FullyReported",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeReportingCoverageStates",
@@ -60381,6 +60518,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-ieventcontractcatalog-getbyeventtype-system-string",
       "Signature": "IReadOnlyList\u003CEventContractDescriptor\u003E GetByEventType(string eventType)",
       "Summary": "Gets all contract descriptors registered for the supplied event type."
+    },
+    {
+      "DisplayName": "GetByEventType",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventUpcasterCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventupcastercatalog-getbyeventtype-system-string",
+      "Signature": "IReadOnlyList\u003CEventUpcasterDescriptor\u003E GetByEventType(string eventType)",
+      "Summary": "Gets all upcaster descriptors registered for the supplied event type."
     },
     {
       "DisplayName": "GetByExecutionGraph",
@@ -62999,6 +63147,17 @@
       "AnchorId": "member-m-cephalon-abstractions-patterns-istranglerfigruntimecatalog-getbysourcemodule-system-string",
       "Signature": "IReadOnlyList\u003CStranglerFigRouteDescriptor\u003E GetBySourceModule(string sourceModuleId)",
       "Summary": "Gets all strangler-fig routes owned by the requested module."
+    },
+    {
+      "DisplayName": "GetBySourceVersion",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventUpcasterCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventupcastercatalog-getbysourceversion-system-string-system-string",
+      "Signature": "IReadOnlyList\u003CEventUpcasterDescriptor\u003E GetBySourceVersion(string eventType, string fromVersion)",
+      "Summary": "Gets all upcaster descriptors registered for the supplied event type and source version."
     },
     {
       "DisplayName": "GetByStreamId",
@@ -69874,6 +70033,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptiondescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable subscription identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventUpcasterDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventupcasterdescriptor-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable upcaster identifier."
     },
     {
       "DisplayName": "Id",
@@ -85318,6 +85488,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventsubscriptionruntimestate-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; set; }",
       "Summary": "The operator-facing metadata captured by the latest report."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventUpcasterDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventupcasterdescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets normalized metadata associated with the upcaster."
     },
     {
       "DisplayName": "Metadata",
@@ -105301,6 +105482,17 @@
       "Summary": "Registers one or more event serializer descriptors with the supplied registry."
     },
     {
+      "DisplayName": "RegisterEventUpcasters",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventUpcasterContributor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventupcastercontributor-registereventupcasters-cephalon-eventing-services-ieventupcasterregistry",
+      "Signature": "void RegisterEventUpcasters(IEventUpcasterRegistry upcasters)",
+      "Summary": "Registers one or more event upcaster descriptors with the supplied registry."
+    },
+    {
       "DisplayName": "RegisterExecutionGraphs",
       "Category": "Methods",
       "DeclaringTypeName": "IExecutionGraphContributor",
@@ -113120,6 +113312,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventserializerdescriptor-runtimekind",
       "Signature": "string RuntimeKind { get; }",
       "Summary": "Gets the serializer runtime implementation kind."
+    },
+    {
+      "DisplayName": "RuntimeKind",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventUpcasterDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventupcasterdescriptor-runtimekind",
+      "Signature": "string RuntimeKind { get; }",
+      "Summary": "Gets the upcaster runtime implementation kind."
     },
     {
       "DisplayName": "RuntimeLifecycleEvent",
@@ -122933,6 +123136,17 @@
     {
       "DisplayName": "Tags",
       "Category": "Properties",
+      "DeclaringTypeName": "EventUpcasterDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventupcasterdescriptor-tags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
+      "Summary": "Gets the normalized tag set associated with the upcaster."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
       "DeclaringTypeName": "ExecutionGraphDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Execution",
       "AssemblyName": "Cephalon.Abstractions",
@@ -126825,6 +127039,17 @@
       "Summary": "Gets the overall timeout in seconds requested for an execution."
     },
     {
+      "DisplayName": "ToVersion",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventUpcasterDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventupcasterdescriptor-toversion",
+      "Signature": "string ToVersion { get; }",
+      "Summary": "Gets the target event contract version."
+    },
+    {
       "DisplayName": "Trace",
       "Category": "Fields",
       "DeclaringTypeName": "DiagnosticSeverity",
@@ -127784,6 +128009,17 @@
     {
       "DisplayName": "TryGet",
       "Category": "Methods",
+      "DeclaringTypeName": "IEventUpcasterCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventupcastercatalog-tryget-system-string-cephalon-eventing-services-eventupcasterdescriptor",
+      "Signature": "bool TryGet(string upcasterId, out EventUpcasterDescriptor upcaster)",
+      "Summary": "Attempts to resolve an upcaster by its stable identifier."
+    },
+    {
+      "DisplayName": "TryGet",
+      "Category": "Methods",
       "DeclaringTypeName": "IKnowledgeCatalog",
       "NamespaceName": "Cephalon.Retrieval.Services",
       "AssemblyName": "Cephalon.Retrieval",
@@ -127912,6 +128148,17 @@
       "AnchorId": "member-m-cephalon-abstractions-technologies-technologyselection-trygetselected-system-string-cephalon-abstractions-technologies-technologydescriptor",
       "Signature": "bool TryGetSelected(string value, out TechnologyDescriptor technology)",
       "Summary": "Attempts to resolve one selected technology."
+    },
+    {
+      "DisplayName": "TryGetTransition",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventUpcasterCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventupcastercatalog-trygettransition-system-string-system-string-system-string-cephalon-eventing-services-eventupcasterdescriptor",
+      "Signature": "bool TryGetTransition(string eventType, string fromVersion, string toVersion, out EventUpcasterDescriptor upcaster)",
+      "Summary": "Attempts to resolve an upcaster for a specific event type version transition."
     },
     {
       "DisplayName": "TryGetVersion",
@@ -129045,6 +129292,28 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-unsupportedverificationmethod",
       "Signature": "const string UnsupportedVerificationMethod",
       "Summary": "The requested verification method is not supported by the runner."
+    },
+    {
+      "DisplayName": "Upcasters",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-upcasters",
+      "Signature": "IList\u003CEventUpcasterDescriptor\u003E Upcasters { get; }",
+      "Summary": "Gets the host-defined event upcaster descriptors that should be available to the eventing runtime."
+    },
+    {
+      "DisplayName": "Upcasters",
+      "Category": "Properties",
+      "DeclaringTypeName": "IEventUpcasterCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-ieventupcastercatalog-upcasters",
+      "Signature": "IReadOnlyList\u003CEventUpcasterDescriptor\u003E Upcasters { get; }",
+      "Summary": "Gets all registered event upcaster descriptors."
     },
     {
       "DisplayName": "Upsert",
