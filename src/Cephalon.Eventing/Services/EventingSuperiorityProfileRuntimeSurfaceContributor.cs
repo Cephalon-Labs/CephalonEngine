@@ -29,7 +29,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var providerPartitionEvidence = ResolveProviderPartitionEvidence(options, routeCount);
         var downstreamDeliveryCompletionEvidence = ResolveDownstreamDeliveryCompletionEvidence(topology);
         var brokerInboundConsumptionEvidence = ResolveBrokerInboundConsumptionEvidence(topology);
-        var serializationVersioningEvidence = ResolveSerializationVersioningEvidence(options, topology);
+        var serializationVersioning = ResolveSerializationVersioningProfile();
         var tenantCorrelationEvidence = ResolveTenantCorrelationEvidence(options, topology);
         var scheduledDeliveryStatus = options.EnablePublicationScheduling ? "partial" : "not-claimed";
         var scheduledDeliveryEvidence = ResolveScheduledDeliveryEvidence(options, topology);
@@ -114,10 +114,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     id: "serialization-and-contract-versioning-ownership",
                     displayName: "Serialization And Contract Versioning Ownership",
                     description: "Makes serializer selection, schema registry ownership, event contract version negotiation, upcasting, and compatibility validation explicit instead of inferring them from event type or channel metadata.",
-                    status: "not-claimed",
-                    evidence: serializationVersioningEvidence,
+                    status: serializationVersioning.Status,
+                    evidence: serializationVersioning.Evidence,
                     advantage: "Teams can use Cephalon event catalogs, routing, and runtime publication evidence without assuming the core pack silently owns a wire schema registry or version migration pipeline.",
-                    nextGap: "Add a provider-neutral serializer descriptor plus schema, version negotiation, upcaster, and compatibility validation catalog before claiming serialization and contract-version ownership."),
+                    nextGap: serializationVersioning.NextGap),
                 CreateEntry(
                     id: "tenant-and-correlation-context-ownership",
                     displayName: "Tenant And Correlation Context Ownership",
@@ -437,16 +437,45 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; inboxPath={inboxPath}; brokerInboundConsumption=not-claimed; brokerConsumerLoop=not-present; providerOwnedConsumer=not-present; inboundAcknowledgement=not-claimed; consumerOffsetCheckpoint=not-claimed; wolverineRequired=false");
     }
 
-    private static string ResolveSerializationVersioningEvidence(EventingOptions options, EventingRuntimeTopology topology)
+    private SerializationVersioningProfile ResolveSerializationVersioningProfile()
     {
+        using var scope = scopeFactory.CreateScope();
+        var contractCatalog = scope.ServiceProvider.GetService<IEventContractCatalog>();
+        var contracts = contractCatalog?.Contracts ?? [];
+        var contractCount = contracts.Count;
+        var contractCountText = contractCount.ToString(CultureInfo.InvariantCulture);
+        var versionedContractCount = contracts.Count(static contract => !string.IsNullOrWhiteSpace(contract.Version));
+        var contentTypeContractCount = contracts.Count(static contract => !string.IsNullOrWhiteSpace(contract.ContentType));
+        var serializerDescriptorCount = contracts.Count(static contract => !string.IsNullOrWhiteSpace(contract.SerializerId));
+        var envelopeSchemaCount = contracts
+            .Select(static contract => contract.EnvelopeSchema)
+            .Where(static schema => !string.IsNullOrWhiteSpace(schema))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Count();
+        var compatibilityPolicyCount = contracts
+            .Select(static contract => contract.CompatibilityPolicy)
+            .Where(static policy => !string.IsNullOrWhiteSpace(policy))
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .Count();
         var channelCatalog = topology.HasChannelContributors ? "present" : "not-present";
         var subscriptionCatalog = topology.HasSubscriptionContributors ? "present" : "not-present";
         var publicationPath = topology.HasPublishingPath ? "active" : "not-active";
         var publicationRouting = options.EnablePublicationRouting ? "configured" : "not-configured";
+        var eventContractCatalog = contractCatalog is null ? "not-present" : "present";
+        var serializerSelection = serializerDescriptorCount > 0 ? "descriptor-backed" : "not-claimed";
+        var messageEnvelopeSchema = envelopeSchemaCount > 0 ? "descriptor-backed" : "not-claimed";
+        var contractVersionNegotiation = versionedContractCount > 0 ? "descriptor-backed" : "not-claimed";
+        var compatibilityValidation = compatibilityPolicyCount > 0 ? "descriptor-backed" : "not-claimed";
+        var status = contractCount > 0 ? "partial" : "not-claimed";
+        var nextGap = contractCount > 0
+            ? "Add provider-neutral serializer runtime, schema registry, upcaster pipeline, and compatibility validation execution before claiming full serialization and contract-version ownership."
+            : "Register code-first event contract descriptors before claiming contract-version evidence.";
 
-        return string.Create(
+        var evidence = string.Create(
             CultureInfo.InvariantCulture,
-            $"channelCatalog={channelCatalog}; subscriptionCatalog={subscriptionCatalog}; publicationPath={publicationPath}; publicationRouting={publicationRouting}; serializerSelection=not-claimed; messageEnvelopeSchema=not-claimed; schemaRegistry=not-present; contractVersionNegotiation=not-claimed; upcasterPipeline=not-present; compatibilityValidation=not-claimed; wolverineRequired=false");
+            $"channelCatalog={channelCatalog}; subscriptionCatalog={subscriptionCatalog}; publicationPath={publicationPath}; publicationRouting={publicationRouting}; eventContractCatalog={eventContractCatalog}; eventContractCount={contractCountText}; versionedContracts={versionedContractCount.ToString(CultureInfo.InvariantCulture)}; contentTypeContracts={contentTypeContractCount.ToString(CultureInfo.InvariantCulture)}; serializerDescriptors={serializerDescriptorCount.ToString(CultureInfo.InvariantCulture)}; envelopeSchemas={envelopeSchemaCount.ToString(CultureInfo.InvariantCulture)}; compatibilityPolicies={compatibilityPolicyCount.ToString(CultureInfo.InvariantCulture)}; serializerSelection={serializerSelection}; messageEnvelopeSchema={messageEnvelopeSchema}; schemaRegistry=not-present; contractVersionNegotiation={contractVersionNegotiation}; upcasterPipeline=not-present; compatibilityValidation={compatibilityValidation}; wireSerializationRuntime=not-claimed; wolverineRequired=false");
+
+        return new SerializationVersioningProfile(status, evidence, nextGap);
     }
 
     private static string ResolveTenantCorrelationEvidence(EventingOptions options, EventingRuntimeTopology topology)
@@ -683,4 +712,6 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private static string ToMetadataValue(bool value) => value ? "true" : "false";
 
     private sealed record ChoreographyHandoffProfile(string Status, string Evidence, string NextGap);
+
+    private sealed record SerializationVersioningProfile(string Status, string Evidence, string NextGap);
 }

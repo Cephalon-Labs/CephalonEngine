@@ -66,5 +66,28 @@ Cephalon.Eventing.Configuration.EventingOptions.PublicationRoutingRequireMatched
 Cephalon.Eventing.Configuration.EventingOptions.PublicationRoutingRequireMatchedRoute.set -> void
 Cephalon.Eventing.Configuration.EventingOptions.RemediationCommandHistoryLimit.get -> int
 Cephalon.Eventing.Configuration.EventingOptions.RemediationCommandHistoryLimit.set -> void
+Cephalon.Eventing.Configuration.EventingOptions.Contracts.get -> System.Collections.Generic.IList<Cephalon.Eventing.Services.EventContractDescriptor!>!
+Cephalon.Eventing.Services.EventContractDescriptor
+Cephalon.Eventing.Services.EventContractDescriptor.CompatibilityPolicy.get -> string!
+Cephalon.Eventing.Services.EventContractDescriptor.ContentType.get -> string!
+Cephalon.Eventing.Services.EventContractDescriptor.Description.get -> string!
+Cephalon.Eventing.Services.EventContractDescriptor.DisplayName.get -> string!
+Cephalon.Eventing.Services.EventContractDescriptor.EnvelopeSchema.get -> string!
+Cephalon.Eventing.Services.EventContractDescriptor.EventContractDescriptor(string! id, string! eventType, string! displayName, string! description, string! version, string! contentType, string! serializerId, string! envelopeSchema = "cephalon.event-envelope.v1", string! compatibilityPolicy = "backward-compatible", System.Collections.Generic.IReadOnlyList<string!>? tags = null, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? metadata = null) -> void
+Cephalon.Eventing.Services.EventContractDescriptor.EventType.get -> string!
+Cephalon.Eventing.Services.EventContractDescriptor.Id.get -> string!
+Cephalon.Eventing.Services.EventContractDescriptor.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Eventing.Services.EventContractDescriptor.SerializerId.get -> string!
+Cephalon.Eventing.Services.EventContractDescriptor.Tags.get -> System.Collections.Generic.IReadOnlyList<string!>!
+Cephalon.Eventing.Services.EventContractDescriptor.Version.get -> string!
+Cephalon.Eventing.Services.IEventContractCatalog
+Cephalon.Eventing.Services.IEventContractCatalog.Contracts.get -> System.Collections.Generic.IReadOnlyList<Cephalon.Eventing.Services.EventContractDescriptor!>!
+Cephalon.Eventing.Services.IEventContractCatalog.GetByEventType(string! eventType) -> System.Collections.Generic.IReadOnlyList<Cephalon.Eventing.Services.EventContractDescriptor!>!
+Cephalon.Eventing.Services.IEventContractCatalog.TryGet(string! contractId, out Cephalon.Eventing.Services.EventContractDescriptor! contract) -> bool
+Cephalon.Eventing.Services.IEventContractCatalog.TryGetVersion(string! eventType, string! version, out Cephalon.Eventing.Services.EventContractDescriptor! contract) -> bool
+Cephalon.Eventing.Services.IEventContractContributor
+Cephalon.Eventing.Services.IEventContractContributor.RegisterEventContracts(Cephalon.Eventing.Services.IEventContractRegistry! contracts) -> void
+Cephalon.Eventing.Services.IEventContractRegistry
+Cephalon.Eventing.Services.IEventContractRegistry.Add(Cephalon.Eventing.Services.EventContractDescriptor! contract) -> void
 static Cephalon.Eventing.Registration.EventingEngineBuilderExtensions.AddEventingFromConfiguration(this Cephalon.Engine.Composition.EngineBuilder! builder, Microsoft.Extensions.Configuration.IConfiguration! configuration) -> Cephalon.Engine.Composition.EngineBuilder!
 static Cephalon.Eventing.Registration.EventingEngineBuilderExtensions.AddEventingFromConfiguration(this Cephalon.Engine.Composition.EngineBuilder! builder, Microsoft.Extensions.Configuration.IConfiguration! configuration, System.Action<Cephalon.Eventing.Configuration.EventingOptions!>! configure) -> Cephalon.Engine.Composition.EngineBuilder!

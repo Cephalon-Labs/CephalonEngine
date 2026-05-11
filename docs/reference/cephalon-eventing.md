@@ -63,6 +63,18 @@ Gets or sets a value indicating whether the in-process publisher should continue
 
 Remarks: The publisher still reports failed subscriptions and throws after the publication attempt finishes. This setting only controls whether independent subscriptions on the same channel get a chance to run before the failure is returned to the caller.
 
+<a id="member-p-cephalon-eventing-configuration-eventingoptions-contracts"></a>
+
+##### `Contracts`
+
+```csharp
+IList<EventContractDescriptor> Contracts { get; }
+```
+
+Gets the host-defined event contract descriptors that should be available to the eventing runtime.
+
+Remarks: These descriptors are code-owned contract metadata. They do not make publish or subscription execution perform config lookups on the hot path.
+
 <a id="member-p-cephalon-eventing-configuration-eventingoptions-enableinprocesssubscriptionexecution"></a>
 
 ##### `EnableInProcessSubscriptionExecution`
@@ -512,6 +524,156 @@ IReadOnlyList<string> Tags { get; }
 ```
 
 Gets the normalized tag set associated with the channel.
+
+<a id="type-cephalon-eventing-services-eventcontractdescriptor"></a>
+
+### `EventContractDescriptor`
+
+Describes the provider-neutral contract metadata for one event type and version.
+
+Remarks: The descriptor is intentionally code-first and runtime-neutral. Modules, source generators, and hosts can register event contract truth without putting serializer or handler lookup on the publication hot path.
+
+#### Declaration
+```csharp
+public sealed class EventContractDescriptor
+```
+
+#### Constructors
+
+<a id="member-m-cephalon-eventing-services-eventcontractdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `EventContractDescriptor`
+
+```csharp
+EventContractDescriptor(string id, string eventType, string displayName, string description, string version, string contentType, string serializerId, string envelopeSchema, string compatibilityPolicy, IReadOnlyList<string> tags, IReadOnlyDictionary<string, string> metadata)
+```
+
+Creates a new event contract descriptor.
+
+Parameters:
+- `id`: The stable contract identifier.
+- `eventType`: The logical event type identifier.
+- `displayName`: The operator-facing event contract name.
+- `description`: The human-readable event contract description.
+- `version`: The event contract version.
+- `contentType`: The wire content type expected for the event payload.
+- `serializerId`: The provider-neutral serializer identifier selected by the contract.
+- `envelopeSchema`: The event envelope schema identifier used by the contract.
+- `compatibilityPolicy`: The compatibility policy declared for the contract.
+- `tags`: Optional tags that classify the contract.
+- `metadata`: Optional contract metadata.
+
+#### Properties
+
+<a id="member-p-cephalon-eventing-services-eventcontractdescriptor-compatibilitypolicy"></a>
+
+##### `CompatibilityPolicy`
+
+```csharp
+string CompatibilityPolicy { get; }
+```
+
+Gets the declared compatibility policy for the event contract.
+
+<a id="member-p-cephalon-eventing-services-eventcontractdescriptor-contenttype"></a>
+
+##### `ContentType`
+
+```csharp
+string ContentType { get; }
+```
+
+Gets the wire content type expected for the event payload.
+
+<a id="member-p-cephalon-eventing-services-eventcontractdescriptor-description"></a>
+
+##### `Description`
+
+```csharp
+string Description { get; }
+```
+
+Gets the human-readable contract description.
+
+<a id="member-p-cephalon-eventing-services-eventcontractdescriptor-displayname"></a>
+
+##### `DisplayName`
+
+```csharp
+string DisplayName { get; }
+```
+
+Gets the operator-facing display name for the contract.
+
+<a id="member-p-cephalon-eventing-services-eventcontractdescriptor-envelopeschema"></a>
+
+##### `EnvelopeSchema`
+
+```csharp
+string EnvelopeSchema { get; }
+```
+
+Gets the event envelope schema identifier used by the contract.
+
+<a id="member-p-cephalon-eventing-services-eventcontractdescriptor-eventtype"></a>
+
+##### `EventType`
+
+```csharp
+string EventType { get; }
+```
+
+Gets the logical event type identifier.
+
+<a id="member-p-cephalon-eventing-services-eventcontractdescriptor-id"></a>
+
+##### `Id`
+
+```csharp
+string Id { get; }
+```
+
+Gets the stable contract identifier.
+
+<a id="member-p-cephalon-eventing-services-eventcontractdescriptor-metadata"></a>
+
+##### `Metadata`
+
+```csharp
+IReadOnlyDictionary<string, string> Metadata { get; }
+```
+
+Gets normalized metadata associated with the contract.
+
+<a id="member-p-cephalon-eventing-services-eventcontractdescriptor-serializerid"></a>
+
+##### `SerializerId`
+
+```csharp
+string SerializerId { get; }
+```
+
+Gets the provider-neutral serializer identifier selected by the contract.
+
+<a id="member-p-cephalon-eventing-services-eventcontractdescriptor-tags"></a>
+
+##### `Tags`
+
+```csharp
+IReadOnlyList<string> Tags { get; }
+```
+
+Gets the normalized tag set associated with the contract.
+
+<a id="member-p-cephalon-eventing-services-eventcontractdescriptor-version"></a>
+
+##### `Version`
+
+```csharp
+string Version { get; }
+```
+
+Gets the event contract version.
 
 <a id="type-cephalon-eventing-services-eventdispatchexecutionoutcomes"></a>
 
@@ -2515,6 +2677,131 @@ Adds an event channel descriptor to the registry.
 
 Parameters:
 - `channel`: The channel descriptor to contribute.
+
+<a id="type-cephalon-eventing-services-ieventcontractcatalog"></a>
+
+### `IEventContractCatalog`
+
+Provides the merged event contract descriptors visible to the active eventing runtime.
+
+#### Declaration
+```csharp
+public interface IEventContractCatalog
+```
+
+#### Properties
+
+<a id="member-p-cephalon-eventing-services-ieventcontractcatalog-contracts"></a>
+
+##### `Contracts`
+
+```csharp
+IReadOnlyList<EventContractDescriptor> Contracts { get; }
+```
+
+Gets all registered event contract descriptors.
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-ieventcontractcatalog-getbyeventtype-system-string"></a>
+
+##### `GetByEventType`
+
+```csharp
+IReadOnlyList<EventContractDescriptor> GetByEventType(string eventType)
+```
+
+Gets all contract descriptors registered for the supplied event type.
+
+Returns: The matching contract descriptors ordered by version.
+
+Parameters:
+- `eventType`: The logical event type identifier.
+
+<a id="member-m-cephalon-eventing-services-ieventcontractcatalog-tryget-system-string-cephalon-eventing-services-eventcontractdescriptor"></a>
+
+##### `TryGet`
+
+```csharp
+bool TryGet(string contractId, out EventContractDescriptor contract)
+```
+
+Attempts to resolve a contract by its stable identifier.
+
+Returns: `true` when a contract with the identifier exists.
+
+Parameters:
+- `contractId`: The stable contract identifier.
+- `contract`: When found, the matching contract descriptor.
+
+<a id="member-m-cephalon-eventing-services-ieventcontractcatalog-trygetversion-system-string-system-string-cephalon-eventing-services-eventcontractdescriptor"></a>
+
+##### `TryGetVersion`
+
+```csharp
+bool TryGetVersion(string eventType, string version, out EventContractDescriptor contract)
+```
+
+Attempts to resolve a specific contract version for an event type.
+
+Returns: `true` when a contract with the event type and version exists.
+
+Parameters:
+- `eventType`: The logical event type identifier.
+- `version`: The event contract version.
+- `contract`: When found, the matching contract descriptor.
+
+<a id="type-cephalon-eventing-services-ieventcontractcontributor"></a>
+
+### `IEventContractContributor`
+
+Allows a module to contribute event contract metadata into the active eventing runtime pack.
+
+#### Declaration
+```csharp
+public interface IEventContractContributor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-ieventcontractcontributor-registereventcontracts-cephalon-eventing-services-ieventcontractregistry"></a>
+
+##### `RegisterEventContracts`
+
+```csharp
+void RegisterEventContracts(IEventContractRegistry contracts)
+```
+
+Registers one or more event contract descriptors with the supplied registry.
+
+Parameters:
+- `contracts`: The registry that collects contributed event contract descriptors.
+
+<a id="type-cephalon-eventing-services-ieventcontractregistry"></a>
+
+### `IEventContractRegistry`
+
+Collects event contract descriptors contributed by a host or module.
+
+#### Declaration
+```csharp
+public interface IEventContractRegistry
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-ieventcontractregistry-add-cephalon-eventing-services-eventcontractdescriptor"></a>
+
+##### `Add`
+
+```csharp
+void Add(EventContractDescriptor contract)
+```
+
+Adds one event contract descriptor to the active eventing catalog.
+
+Parameters:
+- `contract`: The contract descriptor to add.
 
 <a id="type-cephalon-eventing-services-ieventdispatchruntimecontributor"></a>
 

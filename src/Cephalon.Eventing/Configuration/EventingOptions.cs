@@ -30,6 +30,15 @@ public sealed class EventingOptions
     public IList<EventSubscriptionDescriptor> Subscriptions { get; } = [];
 
     /// <summary>
+    /// Gets the host-defined event contract descriptors that should be available to the eventing runtime.
+    /// </summary>
+    /// <remarks>
+    /// These descriptors are code-owned contract metadata. They do not make publish or subscription
+    /// execution perform config lookups on the hot path.
+    /// </remarks>
+    public IList<EventContractDescriptor> Contracts { get; } = [];
+
+    /// <summary>
     /// Gets or sets a value indicating whether publishing features are enabled.
     /// </summary>
     public bool EnablePublishing { get; set; } = true;

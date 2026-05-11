@@ -2405,6 +2405,82 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public void AddEventingProjectsContractCatalogProfileEvidenceWithoutWolverine()
+    {
+        var services = new ServiceCollection();
+        services.AddSingleton<IEventContractContributor, ContractTestEventContributor>();
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddEventing(options =>
+            {
+                options.Contracts.Add(new EventContractDescriptor(
+                    id: "audit.recorded.v1",
+                    eventType: "audit.recorded",
+                    displayName: "Audit Recorded",
+                    description: "Audit event emitted when an auditable action is recorded.",
+                    version: "1",
+                    contentType: "application/vnd.cephalon.audit.recorded.v1+json",
+                    serializerId: "system-text-json-sourcegen",
+                    metadata: new Dictionary<string, string>
+                    {
+                        ["owner"] = "platform"
+                    }));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var runtime = provider.GetRequiredService<IRuntime>();
+        var contractCatalog = provider.GetRequiredService<IEventContractCatalog>();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        Assert.Equal(2, contractCatalog.Contracts.Count);
+        Assert.True(contractCatalog.TryGet("audit.recorded.v1", out var auditContract));
+        Assert.Equal("audit.recorded", auditContract.EventType);
+        Assert.Equal("application/vnd.cephalon.audit.recorded.v1+json", auditContract.ContentType);
+        Assert.Equal("system-text-json-sourcegen", auditContract.SerializerId);
+        Assert.True(contractCatalog.TryGetVersion("inventory.item.reserved", "1", out var inventoryContract));
+        Assert.Equal("inventory.item.reserved.v1", inventoryContract.Id);
+        Assert.Single(contractCatalog.GetByEventType("inventory.item.reserved"));
+
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var contractSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-contracts");
+        Assert.Contains(
+            contractSurface.Entries,
+            entry => entry.Id == "audit.recorded.v1" &&
+                entry.Metadata["eventType"] == "audit.recorded" &&
+                entry.Metadata["version"] == "1" &&
+                entry.Metadata["serializerId"] == "system-text-json-sourcegen" &&
+                entry.Metadata["envelopeSchema"] == "cephalon.event-envelope.v1" &&
+                entry.Metadata["compatibilityPolicy"] == "backward-compatible" &&
+                entry.Metadata["wolverineRequired"] == "false");
+
+        var dimensions = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        Assert.Equal("partial", dimensions["serialization-and-contract-versioning-ownership"].Metadata["status"]);
+        Assert.Contains("eventContractCatalog=present", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("eventContractCount=2", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("serializerDescriptors=2", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("serializerSelection=descriptor-backed", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("messageEnvelopeSchema=descriptor-backed", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("contractVersionNegotiation=descriptor-backed", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("compatibilityValidation=descriptor-backed", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wireSerializationRuntime=not-claimed", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", dimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+
+        var capability = Assert.Single(runtime.Manifest.Capabilities, capability => capability.Key == "eventing.contracts");
+        Assert.Equal("event-contracts", capability.Metadata["surfaceId"]);
+        Assert.Equal("options-and-contributors", capability.Metadata["contractSource"]);
+        Assert.Equal("false", capability.Metadata["wolverineRequired"]);
+    }
+
+    [Fact]
     public async Task AddRetrievalRunsOptInBackgroundReindexScheduler()
     {
         var services = new ServiceCollection();
@@ -4147,6 +4223,22 @@ public sealed class EngineBuilderTests
                     ["executor"] = nameof(CountingAgentToolExecutor),
                     ["observedAttempt"] = context.Attempt.ToString(CultureInfo.InvariantCulture)
                 }));
+        }
+    }
+
+    private sealed class ContractTestEventContributor : IEventContractContributor
+    {
+        public void RegisterEventContracts(IEventContractRegistry contracts)
+        {
+            contracts.Add(new EventContractDescriptor(
+                id: "inventory.item.reserved.v1",
+                eventType: "inventory.item.reserved",
+                displayName: "Inventory Item Reserved",
+                description: "Inventory event emitted when stock is reserved.",
+                version: "1",
+                contentType: "application/vnd.cephalon.inventory.item-reserved.v1+json",
+                serializerId: "system-text-json-sourcegen",
+                tags: ["inventory", "contract"]));
         }
     }
 }

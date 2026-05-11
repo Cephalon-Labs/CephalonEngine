@@ -30,6 +30,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
     private bool hasDispatchStore;
     private bool hasDispatchRuntimeContributors;
     private bool hasExternalManagedSubscriptionExecutionBindings;
+    private bool hasContractContributors;
     private bool hasInboxPath;
     private bool hasInProcessSubscriptionDescriptorDiscovery;
     private bool hasInProcessSubscriptionExecutionPath;
@@ -69,6 +70,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
         }
 
         hasChannelContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventChannelContributor));
+        hasContractContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventContractContributor));
         hasDispatchStore = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchStore));
         hasDispatchRuntimeContributors = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchRuntimeContributor));
         hasExternalRemediationCommandJournal = services.Any(static descriptor => descriptor.ServiceType == typeof(IEventDispatchRemediationCommandJournal));
@@ -97,6 +99,12 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IDiagnosticsConventionContributor, EventingDiagnosticsConventionContributor>());
         services.TryAddSingleton<IEventChannelCatalog, EventChannelCatalog>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingRuntimeSurfaceContributor>());
+        services.TryAddSingleton<IEventContractCatalog, EventContractCatalog>();
+        if (options.Contracts.Count > 0 || hasContractContributors)
+        {
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, EventingContractRuntimeSurfaceContributor>());
+        }
+
         if (options.EnableSubscriptions)
         {
             services.TryAddSingleton<IEventSubscriptionCatalog, EventSubscriptionCatalog>();
@@ -276,6 +284,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
             var publicationRoutingAutoChannelId = EventPublicationRoutingPolicy.GetAutoChannelId(options);
             var publicationRoutingRequireMatchedRoute = options.PublicationRoutingRequireMatchedRoute.ToString().ToLowerInvariant();
             var publicationRoutingRejectMismatchedExplicitChannel = options.PublicationRoutingRejectMismatchedExplicitChannel.ToString().ToLowerInvariant();
+            var eventContractCatalog = options.Contracts.Count > 0 || hasContractContributors ? "available" : "not-configured";
             var publishMetadata = hasInProcessSubscriptionExecutionPath
                 ? new Dictionary<string, string>
                 {
@@ -317,6 +326,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["publicationRoutingAutoChannelId"] = publicationRoutingAutoChannelId,
                     ["publicationRoutingRequireMatchedRoute"] = publicationRoutingRequireMatchedRoute,
                     ["publicationRoutingRejectMismatchedExplicitChannel"] = publicationRoutingRejectMismatchedExplicitChannel,
+                    ["eventContractCatalog"] = eventContractCatalog,
                     ["runtimeState"] = "available"
                 }
                 : new Dictionary<string, string>
@@ -337,6 +347,7 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["publicationRoutingAutoChannelId"] = publicationRoutingAutoChannelId,
                     ["publicationRoutingRequireMatchedRoute"] = publicationRoutingRequireMatchedRoute,
                     ["publicationRoutingRejectMismatchedExplicitChannel"] = publicationRoutingRejectMismatchedExplicitChannel,
+                    ["eventContractCatalog"] = eventContractCatalog,
                     ["runtimeState"] = "available"
                 };
 
@@ -375,6 +386,26 @@ internal sealed class EventingModule : ModuleBase, ITechnologyServiceContributor
                     ["dispatchRuntime"] = hasManagedSubscriptionExecutionBindings ? "configured" : "not-configured",
                     ["inbox"] = hasInboxPath ? "available" : "not-configured",
                     ["subscriptionDescriptorDiscovery"] = inProcessSubscriptionDescriptorDiscoveryMode,
+                    ["runtimeState"] = "available"
+                }));
+        }
+
+        if (options.Contracts.Count > 0 || hasContractContributors)
+        {
+            capabilities.Add(new Capability(
+                key: "eventing.contracts",
+                displayName: "Event Contract Catalog",
+                description: "Exposes provider-neutral event contract descriptors without requiring Wolverine or a broker-specific serializer package.",
+                metadata: new Dictionary<string, string>
+                {
+                    ["technology"] = "event-driven-integration",
+                    ["surfaceId"] = "event-contracts",
+                    ["contractCatalog"] = "available",
+                    ["contractSource"] = options.Contracts.Count > 0 && hasContractContributors
+                        ? "options-and-contributors"
+                        : options.Contracts.Count > 0 ? "options" : "contributors",
+                    ["configuredContractCount"] = options.Contracts.Count.ToString(CultureInfo.InvariantCulture),
+                    ["wolverineRequired"] = "false",
                     ["runtimeState"] = "available"
                 }));
         }

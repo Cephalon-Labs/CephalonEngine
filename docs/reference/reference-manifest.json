@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-10T19:37:23.3835832+00:00",
+  "GeneratedAtUtc": "2026-05-11T21:55:09.0530634+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -168,7 +168,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 38
+      "TypeCount": 42
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1228,7 +1228,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 35
+      "TypeCount": 39
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8175,6 +8175,21 @@
       }
     },
     {
+      "DisplayName": "EventContractDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventcontractdescriptor",
+      "Declaration": "public sealed class EventContractDescriptor",
+      "Summary": "Describes the provider-neutral contract metadata for one event type and version.",
+      "MemberCounts": {
+        "Constructors": 1,
+        "Fields": 0,
+        "Properties": 11,
+        "Methods": 0
+      }
+    },
+    {
       "DisplayName": "EventDispatchExecutionOutcomes",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -8485,7 +8500,7 @@
       "MemberCounts": {
         "Constructors": 1,
         "Fields": 0,
-        "Properties": 24,
+        "Properties": 25,
         "Methods": 0
       }
     },
@@ -11122,6 +11137,51 @@
       "AnchorId": "type-cephalon-eventing-services-ieventchannelregistry",
       "Declaration": "public interface IEventChannelRegistry",
       "Summary": "Collects event channel descriptors contributed to the active eventing runtime pack.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEventContractCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-ieventcontractcatalog",
+      "Declaration": "public interface IEventContractCatalog",
+      "Summary": "Provides the merged event contract descriptors visible to the active eventing runtime.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 1,
+        "Methods": 3
+      }
+    },
+    {
+      "DisplayName": "IEventContractContributor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-ieventcontractcontributor",
+      "Declaration": "public interface IEventContractContributor",
+      "Summary": "Allows a module to contribute event contract metadata into the active eventing runtime pack.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEventContractRegistry",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-ieventcontractregistry",
+      "Declaration": "public interface IEventContractRegistry",
+      "Summary": "Collects event contract descriptors contributed by a host or module.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -22217,6 +22277,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-ieventchannelregistry-add-cephalon-eventing-services-eventchanneldescriptor",
       "Signature": "void Add(EventChannelDescriptor channel)",
       "Summary": "Adds an event channel descriptor to the registry."
+    },
+    {
+      "DisplayName": "Add",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventContractRegistry",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventcontractregistry-add-cephalon-eventing-services-eventcontractdescriptor",
+      "Signature": "void Add(EventContractDescriptor contract)",
+      "Summary": "Adds one event contract descriptor to the active eventing catalog."
     },
     {
       "DisplayName": "Add",
@@ -37377,6 +37448,17 @@
       "Summary": "Gets the command timeout in seconds when one was configured."
     },
     {
+      "DisplayName": "CompatibilityPolicy",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventContractDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventcontractdescriptor-compatibilitypolicy",
+      "Signature": "string CompatibilityPolicy { get; }",
+      "Summary": "Gets the declared compatibility policy for the event contract."
+    },
+    {
       "DisplayName": "CompensationActions",
       "Category": "Properties",
       "DeclaringTypeName": "DurableExecutionRuntimeState",
@@ -39018,6 +39100,17 @@
     {
       "DisplayName": "ContentType",
       "Category": "Properties",
+      "DeclaringTypeName": "EventContractDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventcontractdescriptor-contenttype",
+      "Signature": "string ContentType { get; }",
+      "Summary": "Gets the wire content type expected for the event payload."
+    },
+    {
+      "DisplayName": "ContentType",
+      "Category": "Properties",
       "DeclaringTypeName": "EventDispatchItem",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -39146,6 +39239,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-dataproductdescriptor-contractid",
       "Signature": "string ContractId { get; }",
       "Summary": "Gets the stable query or contract identifier exposed by the data product."
+    },
+    {
+      "DisplayName": "Contracts",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventingOptions",
+      "NamespaceName": "Cephalon.Eventing.Configuration",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-contracts",
+      "Signature": "IList\u003CEventContractDescriptor\u003E Contracts { get; }",
+      "Summary": "Gets the host-defined event contract descriptors that should be available to the eventing runtime."
+    },
+    {
+      "DisplayName": "Contracts",
+      "Category": "Properties",
+      "DeclaringTypeName": "IEventContractCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-ieventcontractcatalog-contracts",
+      "Signature": "IReadOnlyList\u003CEventContractDescriptor\u003E Contracts { get; }",
+      "Summary": "Gets all registered event contract descriptors."
     },
     {
       "DisplayName": "Contracts",
@@ -45329,6 +45444,17 @@
     {
       "DisplayName": "Description",
       "Category": "Properties",
+      "DeclaringTypeName": "EventContractDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventcontractdescriptor-description",
+      "Signature": "string Description { get; }",
+      "Summary": "Gets the human-readable contract description."
+    },
+    {
+      "DisplayName": "Description",
+      "Category": "Properties",
       "DeclaringTypeName": "EventDispatchRuntimeDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -47261,6 +47387,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventchanneldescriptor-displayname",
       "Signature": "string DisplayName { get; }",
       "Summary": "Gets the operator-facing display name for the channel."
+    },
+    {
+      "DisplayName": "DisplayName",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventContractDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventcontractdescriptor-displayname",
+      "Signature": "string DisplayName { get; }",
+      "Summary": "Gets the operator-facing display name for the contract."
     },
     {
       "DisplayName": "DisplayName",
@@ -52653,6 +52790,17 @@
       "Summary": "Gets the default Traefik entry points applied when a route-level override is absent."
     },
     {
+      "DisplayName": "EnvelopeSchema",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventContractDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventcontractdescriptor-envelopeschema",
+      "Signature": "string EnvelopeSchema { get; }",
+      "Summary": "Gets the event envelope schema identifier used by the contract."
+    },
+    {
       "DisplayName": "EnvironmentName",
       "Category": "Properties",
       "DeclaringTypeName": "FeatureFlagEvaluationContext",
@@ -53080,6 +53228,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventchanneldescriptor-ctor-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string",
       "Signature": "EventChannelDescriptor(string id, string displayName, string description, IReadOnlyList\u003Cstring\u003E tags)",
       "Summary": "Creates a new event channel descriptor."
+    },
+    {
+      "DisplayName": "EventContractDescriptor",
+      "Category": "Constructors",
+      "DeclaringTypeName": "EventContractDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventcontractdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "EventContractDescriptor(string id, string eventType, string displayName, string description, string version, string contentType, string serializerId, string envelopeSchema, string compatibilityPolicy, IReadOnlyList\u003Cstring\u003E tags, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Creates a new event contract descriptor."
     },
     {
       "DisplayName": "EventDispatchExecutionReport",
@@ -53685,6 +53844,17 @@
       "AnchorId": "member-p-cephalon-eventsourcing-entityframework-entityframeworkevententry-eventtype",
       "Signature": "string EventType { get; set; }",
       "Summary": "Gets or sets the stable Cephalon event-type registry name."
+    },
+    {
+      "DisplayName": "EventType",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventContractDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventcontractdescriptor-eventtype",
+      "Signature": "string EventType { get; }",
+      "Summary": "Gets the logical event type identifier."
     },
     {
       "DisplayName": "EventType",
@@ -59801,6 +59971,17 @@
       "AnchorId": "member-m-cephalon-abstractions-technologies-icelltrafficautomationruntimecatalog-getbyedgenodeid-system-string",
       "Signature": "IReadOnlyList\u003CCellTrafficAutomationRuntimeDescriptor\u003E GetByEdgeNodeId(string edgeNodeId)",
       "Summary": "Gets all effective cell traffic-automation answers that target the requested edge node."
+    },
+    {
+      "DisplayName": "GetByEventType",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventContractCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventcontractcatalog-getbyeventtype-system-string",
+      "Signature": "IReadOnlyList\u003CEventContractDescriptor\u003E GetByEventType(string eventType)",
+      "Summary": "Gets all contract descriptors registered for the supplied event type."
     },
     {
       "DisplayName": "GetByExecutionGraph",
@@ -69162,6 +69343,17 @@
       "AnchorId": "member-p-cephalon-eventing-services-eventchanneldescriptor-id",
       "Signature": "string Id { get; }",
       "Summary": "Gets the stable channel identifier."
+    },
+    {
+      "DisplayName": "Id",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventContractDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventcontractdescriptor-id",
+      "Signature": "string Id { get; }",
+      "Summary": "Gets the stable contract identifier."
     },
     {
       "DisplayName": "Id",
@@ -84430,6 +84622,17 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-metadata",
       "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; set; }",
       "Summary": "The operator-facing metadata captured by the latest report."
+    },
+    {
+      "DisplayName": "Metadata",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventContractDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventcontractdescriptor-metadata",
+      "Signature": "IReadOnlyDictionary\u003Cstring, string\u003E Metadata { get; }",
+      "Summary": "Gets normalized metadata associated with the contract."
     },
     {
       "DisplayName": "Metadata",
@@ -104589,6 +104792,17 @@
       "Summary": "Registers one or more tenant-domain ownership descriptors with the supplied registry."
     },
     {
+      "DisplayName": "RegisterEventContracts",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventContractContributor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventcontractcontributor-registereventcontracts-cephalon-eventing-services-ieventcontractregistry",
+      "Signature": "void RegisterEventContracts(IEventContractRegistry contracts)",
+      "Summary": "Registers one or more event contract descriptors with the supplied registry."
+    },
+    {
       "DisplayName": "RegisterExecutionGraphs",
       "Category": "Methods",
       "DeclaringTypeName": "IExecutionGraphContributor",
@@ -114610,6 +114824,17 @@
       "Summary": "Serializes a domain-event payload using the descriptor registered for its concrete event type."
     },
     {
+      "DisplayName": "SerializerId",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventContractDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventcontractdescriptor-serializerid",
+      "Signature": "string SerializerId { get; }",
+      "Summary": "Gets the provider-neutral serializer identifier selected by the contract."
+    },
+    {
       "DisplayName": "ServerId",
       "Category": "Properties",
       "DeclaringTypeName": "MySqlBinlogCaptureOptions",
@@ -122045,6 +122270,17 @@
     {
       "DisplayName": "Tags",
       "Category": "Properties",
+      "DeclaringTypeName": "EventContractDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventcontractdescriptor-tags",
+      "Signature": "IReadOnlyList\u003Cstring\u003E Tags { get; }",
+      "Summary": "Gets the normalized tag set associated with the contract."
+    },
+    {
+      "DisplayName": "Tags",
+      "Category": "Properties",
       "DeclaringTypeName": "EventStreamDescriptor",
       "NamespaceName": "Cephalon.Abstractions.EventSourcing",
       "AssemblyName": "Cephalon.Abstractions",
@@ -126830,6 +127066,17 @@
     {
       "DisplayName": "TryGet",
       "Category": "Methods",
+      "DeclaringTypeName": "IEventContractCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventcontractcatalog-tryget-system-string-cephalon-eventing-services-eventcontractdescriptor",
+      "Signature": "bool TryGet(string contractId, out EventContractDescriptor contract)",
+      "Summary": "Attempts to resolve a contract by its stable identifier."
+    },
+    {
+      "DisplayName": "TryGet",
+      "Category": "Methods",
       "DeclaringTypeName": "IEventDispatchRuntimeCatalog",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -127002,6 +127249,17 @@
       "AnchorId": "member-m-cephalon-abstractions-technologies-technologyselection-trygetselected-system-string-cephalon-abstractions-technologies-technologydescriptor",
       "Signature": "bool TryGetSelected(string value, out TechnologyDescriptor technology)",
       "Summary": "Attempts to resolve one selected technology."
+    },
+    {
+      "DisplayName": "TryGetVersion",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventContractCatalog",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventcontractcatalog-trygetversion-system-string-system-string-cephalon-eventing-services-eventcontractdescriptor",
+      "Signature": "bool TryGetVersion(string eventType, string version, out EventContractDescriptor contract)",
+      "Summary": "Attempts to resolve a specific contract version for an event type."
     },
     {
       "DisplayName": "TryParseWireName",
@@ -129499,6 +129757,17 @@
       "AnchorId": "member-m-cephalon-multitenancy-governance-services-itenantdomainownershipproofverificationrunner-verifyasync-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationrequest-system-threading-cancellationtoken",
       "Signature": "ValueTask\u003CTenantDomainOwnershipProofVerificationResult\u003E VerifyAsync(TenantDomainOwnershipProofVerificationRequest request, CancellationToken cancellationToken)",
       "Summary": "Runs one tenant-domain ownership proof verification attempt."
+    },
+    {
+      "DisplayName": "Version",
+      "Category": "Properties",
+      "DeclaringTypeName": "EventContractDescriptor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-p-cephalon-eventing-services-eventcontractdescriptor-version",
+      "Signature": "string Version { get; }",
+      "Summary": "Gets the event contract version."
     },
     {
       "DisplayName": "Version",

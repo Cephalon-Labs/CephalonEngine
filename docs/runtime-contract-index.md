@@ -236,6 +236,8 @@ ENG-599 adds `broker-inbound-consumption-ownership` to the same profile so runti
 
 ENG-600 adds `serialization-and-contract-versioning-ownership` to the same profile so runtime consumers can see that channel catalogs, subscription catalogs, route evidence, and publication runtime evidence are separate from serializer selection, wire-envelope schema, schema registry ownership, contract-version negotiation, upcaster pipelines, and compatibility validation.
 
+ENG-609 adds `IEventContractCatalog`, `event-contracts`, and `eventing.contracts` as the descriptor-backed contract catalog layer under that boundary. Runtime consumers can now distinguish no contract evidence from `partial` descriptor evidence for event type, version, content type, serializer id, envelope schema, and compatibility policy while still seeing wire serialization runtime, schema registry, and upcaster execution as unclaimed.
+
 ENG-601 adds `tenant-and-correlation-context-ownership` to the same profile so runtime consumers can see that operator correlation metadata, diagnostics tags, channel catalogs, subscription catalogs, route evidence, and publication runtime evidence are separate from tenant context propagation, correlation/causation propagation, baggage propagation, and message-header policy.
 
 ENG-602 adds `scheduled-and-delayed-delivery-ownership` to the same profile so runtime consumers can see that bounded process-local delayed publication acceptance is separate from durable scheduled delivery, provider delay queues, broker scheduled delivery, cross-node schedule coordination, and schedule recovery.
