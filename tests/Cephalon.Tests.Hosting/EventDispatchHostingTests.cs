@@ -1962,6 +1962,9 @@ public sealed class EventDispatchHostingTests
         var subscriptionOrderingEntry = Assert.Single(
             eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
             entry => entry.Id == "subscription-ordering-ownership");
+        var processManagerStateEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "process-manager-state-ownership");
         Assert.Equal("claimed", superiorityEntry.Metadata["status"]);
         Assert.Contains("routes=1", superiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Equal("not-claimed", topologyOwnershipEntry.Metadata["status"]);
@@ -2057,6 +2060,19 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("causalOrdering=not-claimed", subscriptionOrderingEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("crossNodeOrdering=not-claimed", subscriptionOrderingEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", subscriptionOrderingEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("not-claimed", processManagerStateEntry.Metadata["status"]);
+        Assert.Contains("publicationPath=active", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("declaredSubscriptions=present", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("inProcessExecution=active", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("subscriptionExecutionPipeline=none", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("processManagerState=not-claimed", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("sagaStatePersistence=not-claimed", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("sagaCorrelation=not-claimed", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("sagaTimeouts=not-claimed", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("compensationWorkflow=not-claimed", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("processManagerRecovery=not-claimed", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerProcessManager=not-present", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
         Assert.NotNull(snapshot);
         var snapshotPublicationState = Assert.Single(snapshot.EventPublicationStates);
@@ -2097,6 +2113,9 @@ public sealed class EventDispatchHostingTests
         var snapshotSubscriptionOrderingEntry = Assert.Single(
             snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
             entry => entry.Id == "subscription-ordering-ownership");
+        var snapshotProcessManagerStateEntry = Assert.Single(
+            snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "process-manager-state-ownership");
         Assert.Equal("claimed", snapshotRoutingEntry.Metadata["status"]);
         Assert.Equal("not-claimed", snapshotTopologyOwnershipEntry.Metadata["status"]);
         Assert.Contains("brokerTopologyMaterialization=not-claimed", snapshotTopologyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
@@ -2132,6 +2151,11 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("partitionOrdering=not-claimed", snapshotSubscriptionOrderingEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("crossNodeOrdering=not-claimed", snapshotSubscriptionOrderingEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", snapshotSubscriptionOrderingEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("not-claimed", snapshotProcessManagerStateEntry.Metadata["status"]);
+        Assert.Contains("processManagerState=not-claimed", snapshotProcessManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("sagaStatePersistence=not-claimed", snapshotProcessManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("processManagerRecovery=not-claimed", snapshotProcessManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", snapshotProcessManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]
@@ -3402,6 +3426,16 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("handlerOrderingGuarantee=not-claimed", subscriptionOrderingEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("localFanOutOrdering=not-claimed", subscriptionOrderingEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", subscriptionOrderingEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        var processManagerStateEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "process-manager-state-ownership");
+        Assert.Equal("not-claimed", processManagerStateEntry.Metadata["status"]);
+        Assert.Contains("subscriptionExecutionPipeline=code-first", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("subscriptionExecutionMiddlewareCount=1", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("processManagerState=not-claimed", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("sagaStatePersistence=not-claimed", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("compensationWorkflow=not-claimed", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     private static async Task WaitForConditionAsync(

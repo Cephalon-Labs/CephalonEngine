@@ -37,6 +37,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var idempotencyOwnershipEvidence = ResolveIdempotencyOwnershipEvidence(options, topology);
         var subscriptionConcurrencyEvidence = ResolveSubscriptionConcurrencyEvidence(topology);
         var subscriptionOrderingEvidence = ResolveSubscriptionOrderingEvidence(topology);
+        var processManagerStateEvidence = ResolveProcessManagerStateEvidence(topology);
         var remediationReadPerformanceStatus = topology.HasOutboxPublishingPath ? "claimed" : "partial";
         var remediationReadPerformanceEvidence = topology.HasOutboxPublishingPath
             ? $"benchmarks={RemediationFilteredReadBenchmarks}; readPolicy=single-pass-retained-catalog; materialization=not-required; wolverineRequired=false"
@@ -167,6 +168,14 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     evidence: subscriptionOrderingEvidence,
                     advantage: "Teams can use Cephalon's Wolverine-free direct execution path without assuming local fan-out or provider bindings silently create ordering guarantees.",
                     nextGap: "Add a provider-neutral subscription ordering descriptor plus local, per-key, partition, causal, replay, and cross-node ordering evidence before claiming subscription ordering ownership."),
+                CreateEntry(
+                    id: "process-manager-state-ownership",
+                    displayName: "Process Manager State Ownership",
+                    description: "Makes declared subscriptions, direct execution, choreography bridge handoff, and outbox publication separate from durable saga or process-manager state ownership.",
+                    status: "not-claimed",
+                    evidence: processManagerStateEvidence,
+                    advantage: "Teams can compose Cephalon subscriptions and choreography handoff without assuming the core eventing pack silently owns a saga state machine, timeout scheduler, or recovery journal.",
+                    nextGap: "Add a provider-neutral process-manager descriptor plus state persistence, correlation, timeout, compensation, concurrency, and recovery evidence before claiming process-manager ownership."),
                 CreateEntry(
                     id: "native-wolverine-free-baseline",
                     displayName: "Native Wolverine-free Baseline",
@@ -470,6 +479,21 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         return string.Create(
             CultureInfo.InvariantCulture,
             $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; subscriptionOrdering=not-claimed; handlerOrderingGuarantee=not-claimed; localFanOutOrdering=not-claimed; perKeyOrdering=not-claimed; partitionOrdering=not-claimed; causalOrdering=not-claimed; replayOrdering=not-claimed; crossNodeOrdering=not-claimed; providerOrdering=not-present; wolverineRequired=false");
+    }
+
+    private static string ResolveProcessManagerStateEvidence(EventingRuntimeTopology topology)
+    {
+        var publicationPath = topology.HasPublishingPath ? "active" : "not-active";
+        var declaredSubscriptions = topology.HasSubscriptionContributors ? "present" : "not-present";
+        var inProcessExecution = topology.HasInProcessSubscriptionExecutionPath ? "active" : "not-active";
+        var managedSubscriptionBindings = topology.HasManagedSubscriptionExecutionBindings ? "present" : "not-present";
+        var externalManagedSubscriptionBindings = topology.HasExternalManagedSubscriptionExecutionBindings ? "present" : "not-present";
+        var outboxHandoff = topology.HasOutboxPublishingPath ? "available" : "not-active";
+        var middlewareCount = topology.SubscriptionExecutionMiddlewareCount.ToString(CultureInfo.InvariantCulture);
+
+        return string.Create(
+            CultureInfo.InvariantCulture,
+            $"publicationPath={publicationPath}; declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; outboxHandoff={outboxHandoff}; processManagerState=not-claimed; sagaStatePersistence=not-claimed; sagaCorrelation=not-claimed; sagaTimeouts=not-claimed; compensationWorkflow=not-claimed; processManagerConcurrency=not-claimed; processManagerRecovery=not-claimed; providerProcessManager=not-present; wolverineRequired=false");
     }
 
     private static string ResolveBrokerDeadLetterReplayEvidence(EventingRuntimeTopology topology)

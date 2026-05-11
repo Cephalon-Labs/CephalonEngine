@@ -2295,6 +2295,7 @@ public sealed class EngineBuilderTests
         Assert.Equal("partial", dimensions["idempotency-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["subscription-concurrency-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["subscription-ordering-ownership"].Metadata["status"]);
+        Assert.Equal("not-claimed", dimensions["process-manager-state-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["durability-and-outbox-portability"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["dead-letter-replay-and-remediation"].Metadata["status"]);
         Assert.Equal("MassTransit,NServiceBus,Wolverine,MediatR", dimensions["native-wolverine-free-baseline"].Metadata["referenceFrameworks"]);
@@ -2381,6 +2382,19 @@ public sealed class EngineBuilderTests
         Assert.Contains("crossNodeOrdering=not-claimed", dimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("providerOrdering=not-present", dimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", dimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("publicationPath=active", dimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("declaredSubscriptions=present", dimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("inProcessExecution=active", dimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("subscriptionExecutionPipeline=none", dimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("processManagerState=not-claimed", dimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("sagaStatePersistence=not-claimed", dimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("sagaCorrelation=not-claimed", dimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("sagaTimeouts=not-claimed", dimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("compensationWorkflow=not-claimed", dimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("processManagerConcurrency=not-claimed", dimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("processManagerRecovery=not-claimed", dimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerProcessManager=not-present", dimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", dimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]
