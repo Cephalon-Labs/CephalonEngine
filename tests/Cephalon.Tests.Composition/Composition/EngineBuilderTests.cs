@@ -2296,6 +2296,7 @@ public sealed class EngineBuilderTests
         Assert.Equal("not-claimed", dimensions["subscription-concurrency-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["subscription-ordering-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["process-manager-state-ownership"].Metadata["status"]);
+        Assert.Equal("not-claimed", dimensions["choreography-handoff-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["durability-and-outbox-portability"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["dead-letter-replay-and-remediation"].Metadata["status"]);
         Assert.Equal("MassTransit,NServiceBus,Wolverine,MediatR", dimensions["native-wolverine-free-baseline"].Metadata["referenceFrameworks"]);
@@ -2395,6 +2396,12 @@ public sealed class EngineBuilderTests
         Assert.Contains("processManagerRecovery=not-claimed", dimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("providerProcessManager=not-present", dimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", dimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("choreographyCatalog=not-present", dimensions["choreography-handoff-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("publicationStateCatalog=not-present", dimensions["choreography-handoff-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("eventingBridge=not-active", dimensions["choreography-handoff-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("handoffDurability=not-active", dimensions["choreography-handoff-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("processManagerState=not-claimed", dimensions["choreography-handoff-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", dimensions["choreography-handoff-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]

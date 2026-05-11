@@ -118,6 +118,8 @@ ENG-606 requires `eventing-superiority-profile` to expose `subscription-ordering
 
 ENG-607 requires `eventing-superiority-profile` to expose `process-manager-state-ownership` as the separate choreography-handoff-versus-state boundary: declared subscriptions, direct in-process execution, code-first middleware, choreography bridge handoff, outbox publication, hosted bindings, optional provider bindings, or Wolverine binding evidence cannot imply durable saga/process-manager state, correlation, timeout scheduling, compensation workflow, concurrency, or recovery until a provider or engine package owns that path.
 
+ENG-608 requires `eventing-superiority-profile` to expose `choreography-handoff-ownership` as the separate behavior-choreography-versus-state boundary: behavior choreography catalogs, publication-state observations, explicit Eventing bridge activation, accepted/failed/compensation handoff counts, outbox-backed handoff, optional provider bindings, or Wolverine binding evidence cannot imply durable saga/process-manager state, timeout ownership, concurrency, or recovery until a provider or engine package owns that path.
+
 ## Agentics and retrieval
 
 | Package | Maturity | Ownership | Engine routes | Snapshot keys | Catalog interfaces | Notes |

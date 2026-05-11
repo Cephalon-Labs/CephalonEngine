@@ -1965,6 +1965,9 @@ public sealed class EventDispatchHostingTests
         var processManagerStateEntry = Assert.Single(
             eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
             entry => entry.Id == "process-manager-state-ownership");
+        var choreographyHandoffEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "choreography-handoff-ownership");
         Assert.Equal("claimed", superiorityEntry.Metadata["status"]);
         Assert.Contains("routes=1", superiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Equal("not-claimed", topologyOwnershipEntry.Metadata["status"]);
@@ -2073,6 +2076,13 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("processManagerRecovery=not-claimed", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("providerProcessManager=not-present", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("not-claimed", choreographyHandoffEntry.Metadata["status"]);
+        Assert.Contains("choreographyCatalog=not-present", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("publicationStateCatalog=not-present", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("eventingBridge=not-active", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("outboxHandoff=not-active", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("handoffDurability=not-active", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
         Assert.NotNull(snapshot);
         var snapshotPublicationState = Assert.Single(snapshot.EventPublicationStates);
@@ -2116,6 +2126,9 @@ public sealed class EventDispatchHostingTests
         var snapshotProcessManagerStateEntry = Assert.Single(
             snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
             entry => entry.Id == "process-manager-state-ownership");
+        var snapshotChoreographyHandoffEntry = Assert.Single(
+            snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "choreography-handoff-ownership");
         Assert.Equal("claimed", snapshotRoutingEntry.Metadata["status"]);
         Assert.Equal("not-claimed", snapshotTopologyOwnershipEntry.Metadata["status"]);
         Assert.Contains("brokerTopologyMaterialization=not-claimed", snapshotTopologyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
@@ -2156,6 +2169,10 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("sagaStatePersistence=not-claimed", snapshotProcessManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("processManagerRecovery=not-claimed", snapshotProcessManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", snapshotProcessManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("not-claimed", snapshotChoreographyHandoffEntry.Metadata["status"]);
+        Assert.Contains("choreographyCatalog=not-present", snapshotChoreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("eventingBridge=not-active", snapshotChoreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", snapshotChoreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]
@@ -3436,6 +3453,13 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("sagaStatePersistence=not-claimed", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("compensationWorkflow=not-claimed", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", processManagerStateEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        var choreographyHandoffEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "choreography-handoff-ownership");
+        Assert.Equal("not-claimed", choreographyHandoffEntry.Metadata["status"]);
+        Assert.Contains("eventingBridge=not-active", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("handoffDurability=not-active", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     private static async Task WaitForConditionAsync(

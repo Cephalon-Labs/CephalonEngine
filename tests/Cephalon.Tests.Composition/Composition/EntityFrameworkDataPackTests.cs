@@ -2289,6 +2289,7 @@ public sealed class EntityFrameworkDataPackTests
         using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();
         var runtime = scope.ServiceProvider.GetRequiredService<IRuntime>();
+        var technologyRuntimeCatalog = scope.ServiceProvider.GetRequiredService<ITechnologyRuntimeCatalog>();
         var publisher = scope.ServiceProvider.GetRequiredService<ISagaChoreographyPublisher>();
         var dbContext = scope.ServiceProvider.GetRequiredService<OutboxCatalogDbContext>();
 
@@ -2330,6 +2331,19 @@ public sealed class EntityFrameworkDataPackTests
             runtime.Manifest.Capabilities,
             capability => capability.Key == "eventing.behaviors.saga-choreography" &&
                 capability.Metadata["handoff"] == "eventing.publish");
+        var choreographyHandoffEntry = Assert.Single(
+            technologyRuntimeCatalog.GetByTechnology("event-driven-integration")
+                .Single(surface => surface.SurfaceId == "eventing-superiority-profile")
+                .Entries,
+            entry => entry.Id == "choreography-handoff-ownership");
+        Assert.Equal("claimed", choreographyHandoffEntry.Metadata["status"]);
+        Assert.Contains("choreographyCatalog=present", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("publicationStateCatalog=present", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("eventingBridge=active", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("outboxHandoff=available", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("handoffDurability=outbox-backed", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("processManagerState=not-claimed", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", choreographyHandoffEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]

@@ -1,4 +1,5 @@
 using Cephalon.Abstractions.Data;
+using Cephalon.Abstractions.Execution;
 using Cephalon.Abstractions.Technologies;
 using Cephalon.Eventing.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -38,6 +39,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var subscriptionConcurrencyEvidence = ResolveSubscriptionConcurrencyEvidence(topology);
         var subscriptionOrderingEvidence = ResolveSubscriptionOrderingEvidence(topology);
         var processManagerStateEvidence = ResolveProcessManagerStateEvidence(topology);
+        var choreographyHandoff = ResolveChoreographyHandoffEvidence();
         var remediationReadPerformanceStatus = topology.HasOutboxPublishingPath ? "claimed" : "partial";
         var remediationReadPerformanceEvidence = topology.HasOutboxPublishingPath
             ? $"benchmarks={RemediationFilteredReadBenchmarks}; readPolicy=single-pass-retained-catalog; materialization=not-required; wolverineRequired=false"
@@ -176,6 +178,14 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     evidence: processManagerStateEvidence,
                     advantage: "Teams can compose Cephalon subscriptions and choreography handoff without assuming the core eventing pack silently owns a saga state machine, timeout scheduler, or recovery journal.",
                     nextGap: "Add a provider-neutral process-manager descriptor plus state persistence, correlation, timeout, compensation, concurrency, and recovery evidence before claiming process-manager ownership."),
+                CreateEntry(
+                    id: "choreography-handoff-ownership",
+                    displayName: "Choreography Handoff Ownership",
+                    description: "Makes behavior-owned choreography catalogs, live publication observations, optional Eventing bridge handoff, and outbox-backed publication separate from saga state ownership.",
+                    status: choreographyHandoff.Status,
+                    evidence: choreographyHandoff.Evidence,
+                    advantage: "Teams can see whether choreography handoff is local, observed, or outbox-backed without adopting Wolverine or assuming a process-manager state machine exists.",
+                    nextGap: choreographyHandoff.NextGap),
                 CreateEntry(
                     id: "native-wolverine-free-baseline",
                     displayName: "Native Wolverine-free Baseline",
@@ -323,6 +333,56 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     {
         using var scope = scopeFactory.CreateScope();
         return scope.ServiceProvider.GetService<IEventDispatchRemediationCommandJournal>()?.Descriptor;
+    }
+
+    private ChoreographyHandoffProfile ResolveChoreographyHandoffEvidence()
+    {
+        using var scope = scopeFactory.CreateScope();
+        var choreographyCatalog = scope.ServiceProvider.GetService<ISagaChoreographyRuntimeCatalog>();
+        var publicationStateCatalog = scope.ServiceProvider.GetService<ISagaChoreographyPublicationRuntimeStateCatalog>();
+        var eventingBridgeConfigured = IsEventingBehaviorBridgeConfigured(scope.ServiceProvider);
+
+        var choreographies = choreographyCatalog?.SagaChoreographies ?? [];
+        var publicationStates = publicationStateCatalog?.States ?? [];
+        var choreographyCount = choreographies.Count.ToString(CultureInfo.InvariantCulture);
+        var publicationStateCount = publicationStates.Count.ToString(CultureInfo.InvariantCulture);
+        var acceptedHandoffs = publicationStates.Sum(static state => state.AcceptedCount).ToString(CultureInfo.InvariantCulture);
+        var failedHandoffs = publicationStates.Sum(static state => state.FailedCount).ToString(CultureInfo.InvariantCulture);
+        var compensationHandoffs = publicationStates.Count(static state => state.IsCompensation).ToString(CultureInfo.InvariantCulture);
+        var choreographyCatalogState = choreographyCatalog is null ? "not-present" : "present";
+        var publicationStateCatalogState = publicationStateCatalog is null ? "not-present" : "present";
+        var eventingBridge = eventingBridgeConfigured && topology.HasOutboxPublishingPath
+            ? "active"
+            : eventingBridgeConfigured ? "blocked" : "not-active";
+        var outboxHandoff = topology.HasOutboxPublishingPath ? "available" : "not-active";
+        var handoffDurability = eventingBridgeConfigured && topology.HasOutboxPublishingPath
+            ? "outbox-backed"
+            : eventingBridgeConfigured ? "missing-outbox" : "not-active";
+        var status = eventingBridgeConfigured && topology.HasOutboxPublishingPath
+            ? "claimed"
+            : choreographyCatalog is not null || publicationStateCatalog is not null
+                ? "partial"
+                : "not-claimed";
+        var nextGap = eventingBridgeConfigured && topology.HasOutboxPublishingPath
+            ? "Add provider-neutral process-manager state ownership only through the separate process-manager dimension."
+            : choreographyCatalog is not null || publicationStateCatalog is not null
+                ? "Activate the explicit Eventing behavior bridge with an outbox-backed publish path before claiming choreography handoff ownership."
+                : "Activate behavior choreography catalogs and the explicit Eventing bridge before claiming choreography handoff ownership.";
+
+        var evidence = string.Create(
+            CultureInfo.InvariantCulture,
+            $"choreographyCatalog={choreographyCatalogState}; choreographyCount={choreographyCount}; publicationStateCatalog={publicationStateCatalogState}; publicationStateCount={publicationStateCount}; acceptedHandoffs={acceptedHandoffs}; failedHandoffs={failedHandoffs}; compensationHandoffs={compensationHandoffs}; eventingBridge={eventingBridge}; outboxHandoff={outboxHandoff}; handoffDurability={handoffDurability}; processManagerState=not-claimed; sagaStatePersistence=not-claimed; wolverineRequired=false");
+
+        return new ChoreographyHandoffProfile(status, evidence, nextGap);
+    }
+
+    private static bool IsEventingBehaviorBridgeConfigured(IServiceProvider serviceProvider)
+    {
+        return serviceProvider.GetServices<ITechnologyRuntimeContributor>().Any(
+            static contributor => string.Equals(
+                contributor.GetType().FullName,
+                "Cephalon.Eventing.Behaviors.Services.BehaviorEventingRuntimeSurfaceContributor",
+                StringComparison.Ordinal));
     }
 
     private static string ResolveBrokerTopologyEvidence(EventingOptions options, string routeCount)
@@ -621,4 +681,6 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     }
 
     private static string ToMetadataValue(bool value) => value ? "true" : "false";
+
+    private sealed record ChoreographyHandoffProfile(string Status, string Evidence, string NextGap);
 }

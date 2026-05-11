@@ -2700,6 +2700,10 @@ Current `Cephalon.Eventing` highlights:
   process-manager state, correlation, timeout scheduling, compensation workflow, concurrency, and
   recovery, even when subscriptions, direct execution, choreography bridge handoff, outbox
   publication, hosted bindings, or optional provider binding evidence are present
+- `choreography-handoff-ownership` is the separate positive choreography-handoff proof in that
+  same profile; it is `claimed` only when behavior choreography catalogs, publication-state truth,
+  the explicit Eventing behavior bridge, and an outbox-backed publish path line up, while durable
+  saga/process-manager state stays governed by `process-manager-state-ownership`
 - Wolverine or another companion adapter can still move staged dispatch or one subscription to
   provider-managed ownership for brokered or staged dispatch scenarios; the shipped Wolverine path
   now keeps both the dispatch loop and managed subscription retry lanes bounded with max attempts,
