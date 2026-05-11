@@ -2294,6 +2294,7 @@ public sealed class EngineBuilderTests
         Assert.Equal("not-claimed", dimensions["durable-retry-queue-ownership"].Metadata["status"]);
         Assert.Equal("partial", dimensions["idempotency-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["subscription-concurrency-ownership"].Metadata["status"]);
+        Assert.Equal("not-claimed", dimensions["subscription-ordering-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["durability-and-outbox-portability"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["dead-letter-replay-and-remediation"].Metadata["status"]);
         Assert.Equal("MassTransit,NServiceBus,Wolverine,MediatR", dimensions["native-wolverine-free-baseline"].Metadata["referenceFrameworks"]);
@@ -2367,6 +2368,19 @@ public sealed class EngineBuilderTests
         Assert.Contains("consumerLease=not-claimed", dimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("workStealing=not-claimed", dimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", dimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("inProcessExecution=active", dimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("subscriptionExecutionPipeline=none", dimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("subscriptionExecutionMiddlewareCount=0", dimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("subscriptionOrdering=not-claimed", dimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("handlerOrderingGuarantee=not-claimed", dimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("localFanOutOrdering=not-claimed", dimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("perKeyOrdering=not-claimed", dimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("partitionOrdering=not-claimed", dimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("causalOrdering=not-claimed", dimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("replayOrdering=not-claimed", dimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("crossNodeOrdering=not-claimed", dimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerOrdering=not-present", dimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", dimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]

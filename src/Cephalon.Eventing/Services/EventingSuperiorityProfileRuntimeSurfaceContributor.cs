@@ -36,6 +36,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var idempotencyOwnershipStatus = options.EnableInProcessSubscriptionIdempotency ? "partial" : "not-claimed";
         var idempotencyOwnershipEvidence = ResolveIdempotencyOwnershipEvidence(options, topology);
         var subscriptionConcurrencyEvidence = ResolveSubscriptionConcurrencyEvidence(topology);
+        var subscriptionOrderingEvidence = ResolveSubscriptionOrderingEvidence(topology);
         var remediationReadPerformanceStatus = topology.HasOutboxPublishingPath ? "claimed" : "partial";
         var remediationReadPerformanceEvidence = topology.HasOutboxPublishingPath
             ? $"benchmarks={RemediationFilteredReadBenchmarks}; readPolicy=single-pass-retained-catalog; materialization=not-required; wolverineRequired=false"
@@ -158,6 +159,14 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     evidence: subscriptionConcurrencyEvidence,
                     advantage: "Teams can use Cephalon's Wolverine-free direct execution path without assuming the core pack silently owns provider-grade concurrency, prefetch, or backpressure controls.",
                     nextGap: "Add a provider-neutral subscription concurrency descriptor plus per-subscription limits, prefetch, backpressure, lease, and work-sharing evidence before claiming subscription concurrency ownership."),
+                CreateEntry(
+                    id: "subscription-ordering-ownership",
+                    displayName: "Subscription Ordering Ownership",
+                    description: "Makes direct in-process subscription execution and code-first middleware separate from handler ordering, per-key ordering, partition ordering, causal ordering, replay ordering, and cross-node ordering guarantees.",
+                    status: "not-claimed",
+                    evidence: subscriptionOrderingEvidence,
+                    advantage: "Teams can use Cephalon's Wolverine-free direct execution path without assuming local fan-out or provider bindings silently create ordering guarantees.",
+                    nextGap: "Add a provider-neutral subscription ordering descriptor plus local, per-key, partition, causal, replay, and cross-node ordering evidence before claiming subscription ordering ownership."),
                 CreateEntry(
                     id: "native-wolverine-free-baseline",
                     displayName: "Native Wolverine-free Baseline",
@@ -448,6 +457,19 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         return string.Create(
             CultureInfo.InvariantCulture,
             $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; subscriptionConcurrency=not-claimed; perSubscriptionConcurrencyLimit=not-claimed; parallelHandlerExecution=not-claimed; consumerPrefetch=not-claimed; backpressure=not-claimed; providerConcurrency=not-present; consumerLease=not-claimed; workStealing=not-claimed; distributedWorkSharing=not-claimed; wolverineRequired=false");
+    }
+
+    private static string ResolveSubscriptionOrderingEvidence(EventingRuntimeTopology topology)
+    {
+        var declaredSubscriptions = topology.HasSubscriptionContributors ? "present" : "not-present";
+        var inProcessExecution = topology.HasInProcessSubscriptionExecutionPath ? "active" : "not-active";
+        var managedSubscriptionBindings = topology.HasManagedSubscriptionExecutionBindings ? "present" : "not-present";
+        var externalManagedSubscriptionBindings = topology.HasExternalManagedSubscriptionExecutionBindings ? "present" : "not-present";
+        var middlewareCount = topology.SubscriptionExecutionMiddlewareCount.ToString(CultureInfo.InvariantCulture);
+
+        return string.Create(
+            CultureInfo.InvariantCulture,
+            $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; subscriptionOrdering=not-claimed; handlerOrderingGuarantee=not-claimed; localFanOutOrdering=not-claimed; perKeyOrdering=not-claimed; partitionOrdering=not-claimed; causalOrdering=not-claimed; replayOrdering=not-claimed; crossNodeOrdering=not-claimed; providerOrdering=not-present; wolverineRequired=false");
     }
 
     private static string ResolveBrokerDeadLetterReplayEvidence(EventingRuntimeTopology topology)
