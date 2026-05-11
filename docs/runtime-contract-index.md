@@ -238,6 +238,8 @@ ENG-600 adds `serialization-and-contract-versioning-ownership` to the same profi
 
 ENG-601 adds `tenant-and-correlation-context-ownership` to the same profile so runtime consumers can see that operator correlation metadata, diagnostics tags, channel catalogs, subscription catalogs, route evidence, and publication runtime evidence are separate from tenant context propagation, correlation/causation propagation, baggage propagation, and message-header policy.
 
+ENG-602 adds `scheduled-and-delayed-delivery-ownership` to the same profile so runtime consumers can see that bounded process-local delayed publication acceptance is separate from durable scheduled delivery, provider delay queues, broker scheduled delivery, cross-node schedule coordination, and schedule recovery.
+
 **Cells and traffic automation**
 
 `ICellBoundaryCatalog`, `ICellRouteCatalog`, `ICellHealthIsolationCatalog`, `ICellTrafficAutomationRuntimeCatalog`.

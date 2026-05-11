@@ -2290,6 +2290,7 @@ public sealed class EngineBuilderTests
         Assert.Equal("not-claimed", dimensions["broker-inbound-consumption-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["serialization-and-contract-versioning-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["status"]);
+        Assert.Equal("not-claimed", dimensions["scheduled-and-delayed-delivery-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["durability-and-outbox-portability"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["dead-letter-replay-and-remediation"].Metadata["status"]);
         Assert.Equal("MassTransit,NServiceBus,Wolverine,MediatR", dimensions["native-wolverine-free-baseline"].Metadata["referenceFrameworks"]);
@@ -2325,6 +2326,12 @@ public sealed class EngineBuilderTests
         Assert.Contains("causationIdPropagation=not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("baggagePropagation=not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("publicationScheduling=not-configured", dimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("durableScheduledDelivery=not-claimed", dimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerDelayQueue=not-present", dimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("crossNodeScheduleCoordination=not-claimed", dimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("scheduleRecovery=not-claimed", dimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", dimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]

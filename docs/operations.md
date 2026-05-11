@@ -2668,6 +2668,10 @@ Current `Cephalon.Eventing` highlights:
   propagation, correlation/causation propagation, baggage propagation, and message-header policy,
   even when operator correlation metadata, diagnostic tags, publication routing, subscription
   catalogs, or runtime publication evidence are present
+- `scheduled-and-delayed-delivery-ownership` is the separate scheduled-delivery boundary in that
+  same profile; it reports the bounded process-local scheduler as `partial` only when enabled and
+  keeps durable scheduled delivery, provider delay queues, broker scheduled delivery, cross-node
+  schedule coordination, and schedule recovery `not-claimed`
 - Wolverine or another companion adapter can still move staged dispatch or one subscription to
   provider-managed ownership for brokered or staged dispatch scenarios; the shipped Wolverine path
   now keeps both the dispatch loop and managed subscription retry lanes bounded with max attempts,

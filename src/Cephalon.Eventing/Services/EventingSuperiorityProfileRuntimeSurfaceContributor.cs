@@ -30,6 +30,8 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var brokerInboundConsumptionEvidence = ResolveBrokerInboundConsumptionEvidence(topology);
         var serializationVersioningEvidence = ResolveSerializationVersioningEvidence(options, topology);
         var tenantCorrelationEvidence = ResolveTenantCorrelationEvidence(options, topology);
+        var scheduledDeliveryStatus = options.EnablePublicationScheduling ? "partial" : "not-claimed";
+        var scheduledDeliveryEvidence = ResolveScheduledDeliveryEvidence(options, topology);
         var remediationReadPerformanceStatus = topology.HasOutboxPublishingPath ? "claimed" : "partial";
         var remediationReadPerformanceEvidence = topology.HasOutboxPublishingPath
             ? $"benchmarks={RemediationFilteredReadBenchmarks}; readPolicy=single-pass-retained-catalog; materialization=not-required; wolverineRequired=false"
@@ -116,6 +118,16 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     evidence: tenantCorrelationEvidence,
                     advantage: "Teams can use Cephalon operator correlation metadata, publication routing, and diagnostic tags without assuming the core pack silently owns cross-boundary context propagation.",
                     nextGap: "Add a provider-neutral context propagation descriptor plus tenant, correlation, causation, baggage, and header validation catalog before claiming tenant and correlation ownership."),
+                CreateEntry(
+                    id: "scheduled-and-delayed-delivery-ownership",
+                    displayName: "Scheduled And Delayed Delivery Ownership",
+                    description: "Makes bounded process-local delayed publication acceptance separate from durable scheduled delivery, broker delay queues, provider-owned scheduler recovery, and cross-node coordination.",
+                    status: scheduledDeliveryStatus,
+                    evidence: scheduledDeliveryEvidence,
+                    advantage: "Teams can use Cephalon's Wolverine-free delayed-publication acceptance without assuming the core pack silently owns durable cross-node scheduling or broker-native delayed delivery.",
+                    nextGap: options.EnablePublicationScheduling
+                        ? "Add a provider-neutral scheduler descriptor plus durable queue, broker-delay, recovery, and cross-node coordination evidence before claiming scheduled/delayed delivery ownership."
+                        : "Enable bounded process-local publication scheduling before claiming even partial scheduled/delayed delivery evidence."),
                 CreateEntry(
                     id: "native-wolverine-free-baseline",
                     displayName: "Native Wolverine-free Baseline",
@@ -340,6 +352,22 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         return string.Create(
             CultureInfo.InvariantCulture,
             $"channelCatalog={channelCatalog}; subscriptionCatalog={subscriptionCatalog}; publicationPath={publicationPath}; publicationRouting={publicationRouting}; inProcessExecution={inProcessExecution}; operatorCorrelationMetadata=metadata-only; tenantContextPropagation=not-claimed; correlationContextPropagation=not-claimed; causationIdPropagation=not-claimed; baggagePropagation=not-claimed; messageHeaderPolicy=not-claimed; wolverineRequired=false");
+    }
+
+    private static string ResolveScheduledDeliveryEvidence(EventingOptions options, EventingRuntimeTopology topology)
+    {
+        var publicationPath = topology.HasPublishingPath ? "active" : "not-active";
+
+        if (!options.EnablePublicationScheduling)
+        {
+            return string.Create(
+                CultureInfo.InvariantCulture,
+                $"publicationPath={publicationPath}; publicationScheduling=not-configured; processLocalScheduleQueue=not-active; scheduleDurability=none; durableScheduledDelivery=not-claimed; providerDelayQueue=not-present; brokerScheduledDelivery=not-claimed; crossNodeScheduleCoordination=not-claimed; scheduleRecovery=not-claimed; wolverineRequired=false");
+        }
+
+        return string.Create(
+            CultureInfo.InvariantCulture,
+            $"publicationPath={publicationPath}; publicationScheduling=configured; schedulePolicy={EventPublicationSchedulingPolicy.GetPolicyId(options)}; processLocalScheduleQueue=active; maxDelayMilliseconds={options.PublicationSchedulingMaxDelayMilliseconds.ToString(CultureInfo.InvariantCulture)}; maxPendingCount={options.PublicationSchedulingMaxPendingCount.ToString(CultureInfo.InvariantCulture)}; scheduleDurability={EventPublicationSchedulingPolicy.GetDurability(options)}; scheduleScope={EventPublicationSchedulingPolicy.GetScope(options)}; durableScheduledDelivery=not-claimed; providerDelayQueue=not-present; brokerScheduledDelivery=not-claimed; crossNodeScheduleCoordination=not-claimed; scheduleRecovery=not-claimed; wolverineRequired=false");
     }
 
     private static string ResolveBrokerDeadLetterReplayEvidence(EventingRuntimeTopology topology)

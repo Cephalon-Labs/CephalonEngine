@@ -1947,6 +1947,9 @@ public sealed class EventDispatchHostingTests
         var tenantCorrelationEntry = Assert.Single(
             eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
             entry => entry.Id == "tenant-and-correlation-context-ownership");
+        var scheduledDeliveryEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "scheduled-and-delayed-delivery-ownership");
         Assert.Equal("claimed", superiorityEntry.Metadata["status"]);
         Assert.Contains("routes=1", superiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Equal("not-claimed", topologyOwnershipEntry.Metadata["status"]);
@@ -1994,6 +1997,14 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("correlationContextPropagation=not-claimed", tenantCorrelationEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("messageHeaderPolicy=not-claimed", tenantCorrelationEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", tenantCorrelationEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("not-claimed", scheduledDeliveryEntry.Metadata["status"]);
+        Assert.Contains("publicationPath=active", scheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("publicationScheduling=not-configured", scheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("durableScheduledDelivery=not-claimed", scheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerDelayQueue=not-present", scheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("crossNodeScheduleCoordination=not-claimed", scheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("scheduleRecovery=not-claimed", scheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", scheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
         Assert.NotNull(snapshot);
         var snapshotPublicationState = Assert.Single(snapshot.EventPublicationStates);
@@ -2019,6 +2030,9 @@ public sealed class EventDispatchHostingTests
         var snapshotTenantCorrelationEntry = Assert.Single(
             snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
             entry => entry.Id == "tenant-and-correlation-context-ownership");
+        var snapshotScheduledDeliveryEntry = Assert.Single(
+            snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "scheduled-and-delayed-delivery-ownership");
         Assert.Equal("claimed", snapshotRoutingEntry.Metadata["status"]);
         Assert.Equal("not-claimed", snapshotTopologyOwnershipEntry.Metadata["status"]);
         Assert.Contains("brokerTopologyMaterialization=not-claimed", snapshotTopologyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
@@ -2033,6 +2047,9 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("not-claimed", snapshotTenantCorrelationEntry.Metadata["status"]);
         Assert.Contains("tenantContextPropagation=not-claimed", snapshotTenantCorrelationEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("correlationContextPropagation=not-claimed", snapshotTenantCorrelationEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("not-claimed", snapshotScheduledDeliveryEntry.Metadata["status"]);
+        Assert.Contains("durableScheduledDelivery=not-claimed", snapshotScheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", snapshotScheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]
@@ -2158,11 +2175,25 @@ public sealed class EventDispatchHostingTests
         Assert.NotNull(pendingSurfaces);
         var pendingPublisherEntry = Assert.Single(
             pendingSurfaces.Single(surface => surface.SurfaceId == "event-publishers").Entries);
+        var pendingScheduledDeliveryEntry = Assert.Single(
+            pendingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "scheduled-and-delayed-delivery-ownership");
         Assert.Equal("bounded-process-local", pendingPublisherEntry.Metadata["publicationSchedulingPolicy"]);
         Assert.Equal("process-local", pendingPublisherEntry.Metadata["publicationSchedulingScope"]);
         Assert.Equal("none", pendingPublisherEntry.Metadata["publicationSchedulingDurability"]);
         Assert.Equal("4", pendingPublisherEntry.Metadata["publicationSchedulingMaxPendingCount"]);
         Assert.Equal("1", pendingPublisherEntry.Metadata["scheduledPublicationPendingCount"]);
+        Assert.Equal("partial", pendingScheduledDeliveryEntry.Metadata["status"]);
+        Assert.Contains("publicationScheduling=configured", pendingScheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("schedulePolicy=bounded-process-local", pendingScheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("processLocalScheduleQueue=active", pendingScheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("scheduleDurability=none", pendingScheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("scheduleScope=process-local", pendingScheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("maxDelayMilliseconds=5000", pendingScheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("maxPendingCount=4", pendingScheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("durableScheduledDelivery=not-claimed", pendingScheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerDelayQueue=not-present", pendingScheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", pendingScheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
         await WaitForConditionAsync(() => probe.SuccessfulAttempts == 1, timeoutMilliseconds: 5000);
 
