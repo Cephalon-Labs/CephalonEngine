@@ -242,6 +242,8 @@ ENG-602 adds `scheduled-and-delayed-delivery-ownership` to the same profile so r
 
 ENG-603 adds `durable-retry-queue-ownership` to the same profile so runtime consumers can see that bounded in-process retry, dispatch runtime reports, and provider-managed retry observations are separate from durable retry queues, retry persistence, broker error queues, poison queue ownership, cross-node retry coordination, and retry leases.
 
+ENG-604 adds `idempotency-ownership` to the same profile so runtime consumers can see that process-local or inbox-backed completed-execution duplicate suppression is separate from broker deduplication, exactly-once delivery, durable inbox command ownership, generic inbox command ownership, provider idempotency semantics, and cross-node idempotency leases.
+
 **Cells and traffic automation**
 
 `ICellBoundaryCatalog`, `ICellRouteCatalog`, `ICellHealthIsolationCatalog`, `ICellTrafficAutomationRuntimeCatalog`.

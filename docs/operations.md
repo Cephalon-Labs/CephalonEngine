@@ -2610,7 +2610,10 @@ Current `Cephalon.Eventing` highlights:
   retention window, reports `skipped`, and projects `idempotencyPolicy = completed-publication`,
   `idempotencyKey = subscription-publication`, `idempotencyRetentionMinutes`,
   `idempotencyDurability = none`, and `idempotencyScope = process-local` through capabilities,
-  bindings, `event-publishers`, `event-subscriptions`, and `reported.*` metadata
+  bindings, `event-publishers`, `event-subscriptions`, `eventing-superiority-profile`, and
+  `reported.*` metadata; this is duplicate-completed suppression, not broker deduplication,
+  exactly-once delivery, durable inbox command ownership, provider-owned idempotency, or a
+  cross-node idempotency lease
 - when `EnablePublicationScheduling` is enabled, the publication dispatcher accepts bounded delayed
   publication requests over `scheduledForUtc` or `delayMilliseconds` metadata, reports
   `schedulePolicy = bounded-process-local`, `scheduleScope = process-local`,
@@ -2676,6 +2679,11 @@ Current `Cephalon.Eventing` highlights:
   it stays `not-claimed` until a provider or engine package owns durable retry queues, retry
   persistence, broker error queues, poison queue ownership, cross-node retry coordination, and retry
   leases, even when bounded in-process retry or provider-managed retry observations are present
+- `idempotency-ownership` is the separate idempotency boundary in that same profile; it reports
+  process-local or inbox-backed completed-execution duplicate suppression as `partial` only when
+  enabled and keeps broker deduplication, exactly-once delivery, durable inbox command ownership,
+  generic inbox command ownership, provider-owned idempotency semantics, and cross-node
+  idempotency leases `not-claimed`
 - Wolverine or another companion adapter can still move staged dispatch or one subscription to
   provider-managed ownership for brokered or staged dispatch scenarios; the shipped Wolverine path
   now keeps both the dispatch loop and managed subscription retry lanes bounded with max attempts,

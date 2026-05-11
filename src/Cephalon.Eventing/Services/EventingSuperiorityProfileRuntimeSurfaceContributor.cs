@@ -33,6 +33,8 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var scheduledDeliveryStatus = options.EnablePublicationScheduling ? "partial" : "not-claimed";
         var scheduledDeliveryEvidence = ResolveScheduledDeliveryEvidence(options, topology);
         var durableRetryQueueEvidence = ResolveDurableRetryQueueEvidence(options, topology);
+        var idempotencyOwnershipStatus = options.EnableInProcessSubscriptionIdempotency ? "partial" : "not-claimed";
+        var idempotencyOwnershipEvidence = ResolveIdempotencyOwnershipEvidence(options, topology);
         var remediationReadPerformanceStatus = topology.HasOutboxPublishingPath ? "claimed" : "partial";
         var remediationReadPerformanceEvidence = topology.HasOutboxPublishingPath
             ? $"benchmarks={RemediationFilteredReadBenchmarks}; readPolicy=single-pass-retained-catalog; materialization=not-required; wolverineRequired=false"
@@ -137,6 +139,16 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     evidence: durableRetryQueueEvidence,
                     advantage: "Teams can use Cephalon retry metadata and Wolverine-free in-process retry without assuming the core pack silently owns a durable retry queue, broker error queue, or cross-node retry scheduler.",
                     nextGap: "Add a provider-neutral durable retry queue descriptor plus retry persistence, broker error queue, poison queue, and cross-node coordination evidence before claiming durable retry queue ownership."),
+                CreateEntry(
+                    id: "idempotency-ownership",
+                    displayName: "Idempotency Ownership",
+                    description: "Makes process-local and inbox-backed completed-execution duplicate suppression separate from broker deduplication, exactly-once delivery, durable inbox command ownership, and cross-node idempotency leases.",
+                    status: idempotencyOwnershipStatus,
+                    evidence: idempotencyOwnershipEvidence,
+                    advantage: "Teams can use Cephalon's Wolverine-free duplicate-completed suppression metadata without assuming the core pack silently owns broker deduplication, exactly-once delivery, or a generic durable inbox command processor.",
+                    nextGap: options.EnableInProcessSubscriptionIdempotency
+                        ? "Add a provider-neutral idempotency descriptor plus broker deduplication, exactly-once delivery, durable inbox command ownership, provider idempotency, and cross-node lease evidence before claiming full idempotency ownership."
+                        : "Enable completed-publication duplicate suppression before claiming even partial idempotency ownership evidence."),
                 CreateEntry(
                     id: "native-wolverine-free-baseline",
                     displayName: "Native Wolverine-free Baseline",
@@ -392,6 +404,28 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         return string.Create(
             CultureInfo.InvariantCulture,
             $"publicationPath={publicationPath}; inProcessExecution={inProcessExecution}; inProcessRetryPolicy={inProcessRetryPolicy}; inProcessRetryMaxAttempts={inProcessRetryAttempts}; dispatchRuntime={dispatchRuntime}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; retryDurability=none-or-provider-reported; durableRetryQueue=not-claimed; retryPersistence=not-claimed; brokerErrorQueue=not-claimed; poisonQueueOwnership=not-claimed; crossNodeRetryCoordination=not-claimed; retryLease=not-claimed; wolverineRequired=false");
+    }
+
+    private static string ResolveIdempotencyOwnershipEvidence(EventingOptions options, EventingRuntimeTopology topology)
+    {
+        var publicationPath = topology.HasPublishingPath ? "active" : "not-active";
+        var inProcessExecution = topology.HasInProcessSubscriptionExecutionPath ? "active" : "not-active";
+        var idempotencyPolicy = InProcessEventingIdempotencyPolicy.GetPolicyId(options);
+        var idempotencyStore = InProcessEventingIdempotencyPolicy.GetStore(options);
+        var idempotencyScope = InProcessEventingIdempotencyPolicy.GetScope(options);
+        var idempotencyDurability = InProcessEventingIdempotencyPolicy.GetDurability(options);
+        var idempotencyKeyShape = InProcessEventingIdempotencyPolicy.GetKeyShape(options);
+        var idempotencyRetentionMinutes = InProcessEventingIdempotencyPolicy.IsEnabled(options)
+            ? InProcessEventingIdempotencyPolicy.GetRetentionMinutes(options).ToString(CultureInfo.InvariantCulture)
+            : "none";
+        var completedExecutionDuplicateSuppression = InProcessEventingIdempotencyPolicy.IsEnabled(options) ? "active" : "not-active";
+        var inboxPath = topology.HasInboxPath ? "present" : "not-present";
+        var managedSubscriptionBindings = topology.HasManagedSubscriptionExecutionBindings ? "present" : "not-present";
+        var externalManagedSubscriptionBindings = topology.HasExternalManagedSubscriptionExecutionBindings ? "present" : "not-present";
+
+        return string.Create(
+            CultureInfo.InvariantCulture,
+            $"publicationPath={publicationPath}; inProcessExecution={inProcessExecution}; idempotencyPolicy={idempotencyPolicy}; idempotencyStore={idempotencyStore}; idempotencyScope={idempotencyScope}; idempotencyDurability={idempotencyDurability}; idempotencyKeyShape={idempotencyKeyShape}; idempotencyRetentionMinutes={idempotencyRetentionMinutes}; inboxPath={inboxPath}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; completedExecutionDuplicateSuppression={completedExecutionDuplicateSuppression}; messageDeduplication=completed-execution-only; brokerDeduplication=not-claimed; exactlyOnceDelivery=not-claimed; durableInboxCommandOwnership=not-claimed; genericInboxCommandOwnership=not-claimed; crossNodeIdempotencyLease=not-claimed; providerIdempotency=not-claimed; wolverineRequired=false");
     }
 
     private static string ResolveBrokerDeadLetterReplayEvidence(EventingRuntimeTopology topology)

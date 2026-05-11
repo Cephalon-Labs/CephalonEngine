@@ -1953,6 +1953,9 @@ public sealed class EventDispatchHostingTests
         var durableRetryQueueEntry = Assert.Single(
             eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
             entry => entry.Id == "durable-retry-queue-ownership");
+        var idempotencyOwnershipEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "idempotency-ownership");
         Assert.Equal("claimed", superiorityEntry.Metadata["status"]);
         Assert.Contains("routes=1", superiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Equal("not-claimed", topologyOwnershipEntry.Metadata["status"]);
@@ -2016,6 +2019,14 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("brokerErrorQueue=not-claimed", durableRetryQueueEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("crossNodeRetryCoordination=not-claimed", durableRetryQueueEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", durableRetryQueueEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("not-claimed", idempotencyOwnershipEntry.Metadata["status"]);
+        Assert.Contains("idempotencyPolicy=none", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("completedExecutionDuplicateSuppression=not-active", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerDeduplication=not-claimed", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("exactlyOnceDelivery=not-claimed", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("durableInboxCommandOwnership=not-claimed", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("crossNodeIdempotencyLease=not-claimed", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
         Assert.NotNull(snapshot);
         var snapshotPublicationState = Assert.Single(snapshot.EventPublicationStates);
@@ -2047,6 +2058,9 @@ public sealed class EventDispatchHostingTests
         var snapshotDurableRetryQueueEntry = Assert.Single(
             snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
             entry => entry.Id == "durable-retry-queue-ownership");
+        var snapshotIdempotencyOwnershipEntry = Assert.Single(
+            snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "idempotency-ownership");
         Assert.Equal("claimed", snapshotRoutingEntry.Metadata["status"]);
         Assert.Equal("not-claimed", snapshotTopologyOwnershipEntry.Metadata["status"]);
         Assert.Contains("brokerTopologyMaterialization=not-claimed", snapshotTopologyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
@@ -2068,6 +2082,10 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("durableRetryQueue=not-claimed", snapshotDurableRetryQueueEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("brokerErrorQueue=not-claimed", snapshotDurableRetryQueueEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", snapshotDurableRetryQueueEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("not-claimed", snapshotIdempotencyOwnershipEntry.Metadata["status"]);
+        Assert.Contains("brokerDeduplication=not-claimed", snapshotIdempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("exactlyOnceDelivery=not-claimed", snapshotIdempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", snapshotIdempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]
@@ -2620,6 +2638,23 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("1", subscriptionEntry.Metadata["skippedCount"]);
         Assert.Equal("completed-publication", subscriptionEntry.Metadata["reported.idempotencyPolicy"]);
         Assert.Equal("duplicate-skipped", subscriptionEntry.Metadata["reported.idempotencyOutcome"]);
+
+        var idempotencyOwnershipEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "idempotency-ownership");
+        Assert.Equal("partial", idempotencyOwnershipEntry.Metadata["status"]);
+        Assert.Contains("idempotencyPolicy=completed-publication", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("idempotencyStore=process-local", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("idempotencyScope=process-local", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("idempotencyDurability=none", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("idempotencyRetentionMinutes=30", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("completedExecutionDuplicateSuppression=active", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("messageDeduplication=completed-execution-only", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerDeduplication=not-claimed", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("exactlyOnceDelivery=not-claimed", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("crossNodeIdempotencyLease=not-claimed", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerIdempotency=not-claimed", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]
@@ -2750,6 +2785,22 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("inbox", subscriptionEntry.Metadata["reported.idempotencyDurability"]);
         Assert.Equal("durable-store", subscriptionEntry.Metadata["reported.idempotencyScope"]);
         Assert.Equal("duplicate-skipped", subscriptionEntry.Metadata["reported.idempotencyOutcome"]);
+
+        var idempotencyOwnershipEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "idempotency-ownership");
+        Assert.Equal("partial", idempotencyOwnershipEntry.Metadata["status"]);
+        Assert.Contains("idempotencyPolicy=completed-publication", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("idempotencyStore=inbox", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("idempotencyScope=durable-store", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("idempotencyDurability=inbox", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("idempotencyRetentionMinutes=45", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("inboxPath=present", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("completedExecutionDuplicateSuppression=active", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("durableInboxCommandOwnership=not-claimed", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("genericInboxCommandOwnership=not-claimed", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("exactlyOnceDelivery=not-claimed", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]

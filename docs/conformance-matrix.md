@@ -110,6 +110,8 @@ ENG-602 requires `eventing-superiority-profile` to expose `scheduled-and-delayed
 
 ENG-603 requires `eventing-superiority-profile` to expose `durable-retry-queue-ownership` as the separate retry-metadata-versus-durable-queue boundary: bounded in-process retry, dispatch runtime reports, and provider-managed retry observations cannot imply durable retry queues, retry persistence, broker error queues, poison queue ownership, cross-node retry coordination, or retry leases until a provider or engine package owns that path.
 
+ENG-604 requires `eventing-superiority-profile` to expose `idempotency-ownership` as the separate duplicate-suppression-versus-idempotency boundary: process-local and inbox-backed completed-execution duplicate suppression cannot imply broker deduplication, exactly-once delivery, durable inbox command ownership, generic inbox command processing, provider-owned idempotency semantics, or cross-node idempotency leases until a provider or engine package owns that path.
+
 ## Agentics and retrieval
 
 | Package | Maturity | Ownership | Engine routes | Snapshot keys | Catalog interfaces | Notes |

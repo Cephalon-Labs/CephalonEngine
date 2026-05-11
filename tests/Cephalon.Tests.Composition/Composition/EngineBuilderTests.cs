@@ -2292,6 +2292,7 @@ public sealed class EngineBuilderTests
         Assert.Equal("not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["scheduled-and-delayed-delivery-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["durable-retry-queue-ownership"].Metadata["status"]);
+        Assert.Equal("partial", dimensions["idempotency-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["durability-and-outbox-portability"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["dead-letter-replay-and-remediation"].Metadata["status"]);
         Assert.Equal("MassTransit,NServiceBus,Wolverine,MediatR", dimensions["native-wolverine-free-baseline"].Metadata["referenceFrameworks"]);
@@ -2341,6 +2342,18 @@ public sealed class EngineBuilderTests
         Assert.Contains("crossNodeRetryCoordination=not-claimed", dimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("retryLease=not-claimed", dimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", dimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("idempotencyPolicy=completed-publication", dimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("idempotencyStore=process-local", dimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("idempotencyScope=process-local", dimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("idempotencyDurability=none", dimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("idempotencyKeyShape=subscription-publication", dimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("completedExecutionDuplicateSuppression=active", dimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerDeduplication=not-claimed", dimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("exactlyOnceDelivery=not-claimed", dimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("durableInboxCommandOwnership=not-claimed", dimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("crossNodeIdempotencyLease=not-claimed", dimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerIdempotency=not-claimed", dimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", dimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]
