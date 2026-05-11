@@ -2684,6 +2684,12 @@ Current `Cephalon.Eventing` highlights:
   enabled and keeps broker deduplication, exactly-once delivery, durable inbox command ownership,
   generic inbox command ownership, provider-owned idempotency semantics, and cross-node
   idempotency leases `not-claimed`
+- `subscription-concurrency-ownership` is the separate subscription concurrency boundary in that
+  same profile; it stays `not-claimed` until a provider or engine package owns per-subscription
+  concurrency limits, parallel handler execution, consumer prefetch, backpressure, provider
+  concurrency, consumer leases, and distributed work sharing, even when declared subscriptions,
+  direct in-process execution, code-first middleware, hosted bindings, or optional provider binding
+  evidence are present
 - Wolverine or another companion adapter can still move staged dispatch or one subscription to
   provider-managed ownership for brokered or staged dispatch scenarios; the shipped Wolverine path
   now keeps both the dispatch loop and managed subscription retry lanes bounded with max attempts,

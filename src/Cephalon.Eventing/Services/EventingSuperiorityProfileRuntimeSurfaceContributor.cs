@@ -35,6 +35,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var durableRetryQueueEvidence = ResolveDurableRetryQueueEvidence(options, topology);
         var idempotencyOwnershipStatus = options.EnableInProcessSubscriptionIdempotency ? "partial" : "not-claimed";
         var idempotencyOwnershipEvidence = ResolveIdempotencyOwnershipEvidence(options, topology);
+        var subscriptionConcurrencyEvidence = ResolveSubscriptionConcurrencyEvidence(topology);
         var remediationReadPerformanceStatus = topology.HasOutboxPublishingPath ? "claimed" : "partial";
         var remediationReadPerformanceEvidence = topology.HasOutboxPublishingPath
             ? $"benchmarks={RemediationFilteredReadBenchmarks}; readPolicy=single-pass-retained-catalog; materialization=not-required; wolverineRequired=false"
@@ -149,6 +150,14 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     nextGap: options.EnableInProcessSubscriptionIdempotency
                         ? "Add a provider-neutral idempotency descriptor plus broker deduplication, exactly-once delivery, durable inbox command ownership, provider idempotency, and cross-node lease evidence before claiming full idempotency ownership."
                         : "Enable completed-publication duplicate suppression before claiming even partial idempotency ownership evidence."),
+                CreateEntry(
+                    id: "subscription-concurrency-ownership",
+                    displayName: "Subscription Concurrency Ownership",
+                    description: "Makes direct in-process subscription execution and code-first middleware separate from handler concurrency limits, consumer prefetch, backpressure, leases, and distributed work sharing.",
+                    status: "not-claimed",
+                    evidence: subscriptionConcurrencyEvidence,
+                    advantage: "Teams can use Cephalon's Wolverine-free direct execution path without assuming the core pack silently owns provider-grade concurrency, prefetch, or backpressure controls.",
+                    nextGap: "Add a provider-neutral subscription concurrency descriptor plus per-subscription limits, prefetch, backpressure, lease, and work-sharing evidence before claiming subscription concurrency ownership."),
                 CreateEntry(
                     id: "native-wolverine-free-baseline",
                     displayName: "Native Wolverine-free Baseline",
@@ -426,6 +435,19 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         return string.Create(
             CultureInfo.InvariantCulture,
             $"publicationPath={publicationPath}; inProcessExecution={inProcessExecution}; idempotencyPolicy={idempotencyPolicy}; idempotencyStore={idempotencyStore}; idempotencyScope={idempotencyScope}; idempotencyDurability={idempotencyDurability}; idempotencyKeyShape={idempotencyKeyShape}; idempotencyRetentionMinutes={idempotencyRetentionMinutes}; inboxPath={inboxPath}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; completedExecutionDuplicateSuppression={completedExecutionDuplicateSuppression}; messageDeduplication=completed-execution-only; brokerDeduplication=not-claimed; exactlyOnceDelivery=not-claimed; durableInboxCommandOwnership=not-claimed; genericInboxCommandOwnership=not-claimed; crossNodeIdempotencyLease=not-claimed; providerIdempotency=not-claimed; wolverineRequired=false");
+    }
+
+    private static string ResolveSubscriptionConcurrencyEvidence(EventingRuntimeTopology topology)
+    {
+        var declaredSubscriptions = topology.HasSubscriptionContributors ? "present" : "not-present";
+        var inProcessExecution = topology.HasInProcessSubscriptionExecutionPath ? "active" : "not-active";
+        var managedSubscriptionBindings = topology.HasManagedSubscriptionExecutionBindings ? "present" : "not-present";
+        var externalManagedSubscriptionBindings = topology.HasExternalManagedSubscriptionExecutionBindings ? "present" : "not-present";
+        var middlewareCount = topology.SubscriptionExecutionMiddlewareCount.ToString(CultureInfo.InvariantCulture);
+
+        return string.Create(
+            CultureInfo.InvariantCulture,
+            $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; subscriptionConcurrency=not-claimed; perSubscriptionConcurrencyLimit=not-claimed; parallelHandlerExecution=not-claimed; consumerPrefetch=not-claimed; backpressure=not-claimed; providerConcurrency=not-present; consumerLease=not-claimed; workStealing=not-claimed; distributedWorkSharing=not-claimed; wolverineRequired=false");
     }
 
     private static string ResolveBrokerDeadLetterReplayEvidence(EventingRuntimeTopology topology)

@@ -1956,6 +1956,9 @@ public sealed class EventDispatchHostingTests
         var idempotencyOwnershipEntry = Assert.Single(
             eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
             entry => entry.Id == "idempotency-ownership");
+        var subscriptionConcurrencyEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "subscription-concurrency-ownership");
         Assert.Equal("claimed", superiorityEntry.Metadata["status"]);
         Assert.Contains("routes=1", superiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Equal("not-claimed", topologyOwnershipEntry.Metadata["status"]);
@@ -2027,6 +2030,19 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("durableInboxCommandOwnership=not-claimed", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("crossNodeIdempotencyLease=not-claimed", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", idempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("not-claimed", subscriptionConcurrencyEntry.Metadata["status"]);
+        Assert.Contains("inProcessExecution=active", subscriptionConcurrencyEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("subscriptionExecutionPipeline=none", subscriptionConcurrencyEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("subscriptionExecutionMiddlewareCount=0", subscriptionConcurrencyEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("subscriptionConcurrency=not-claimed", subscriptionConcurrencyEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("perSubscriptionConcurrencyLimit=not-claimed", subscriptionConcurrencyEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("parallelHandlerExecution=not-claimed", subscriptionConcurrencyEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("consumerPrefetch=not-claimed", subscriptionConcurrencyEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("backpressure=not-claimed", subscriptionConcurrencyEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerConcurrency=not-present", subscriptionConcurrencyEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("consumerLease=not-claimed", subscriptionConcurrencyEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("workStealing=not-claimed", subscriptionConcurrencyEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", subscriptionConcurrencyEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
         Assert.NotNull(snapshot);
         var snapshotPublicationState = Assert.Single(snapshot.EventPublicationStates);
@@ -2061,6 +2077,9 @@ public sealed class EventDispatchHostingTests
         var snapshotIdempotencyOwnershipEntry = Assert.Single(
             snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
             entry => entry.Id == "idempotency-ownership");
+        var snapshotSubscriptionConcurrencyEntry = Assert.Single(
+            snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "subscription-concurrency-ownership");
         Assert.Equal("claimed", snapshotRoutingEntry.Metadata["status"]);
         Assert.Equal("not-claimed", snapshotTopologyOwnershipEntry.Metadata["status"]);
         Assert.Contains("brokerTopologyMaterialization=not-claimed", snapshotTopologyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
@@ -2086,6 +2105,11 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("brokerDeduplication=not-claimed", snapshotIdempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("exactlyOnceDelivery=not-claimed", snapshotIdempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", snapshotIdempotencyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("not-claimed", snapshotSubscriptionConcurrencyEntry.Metadata["status"]);
+        Assert.Contains("subscriptionConcurrency=not-claimed", snapshotSubscriptionConcurrencyEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("consumerPrefetch=not-claimed", snapshotSubscriptionConcurrencyEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("backpressure=not-claimed", snapshotSubscriptionConcurrencyEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", snapshotSubscriptionConcurrencyEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]
@@ -3338,6 +3362,14 @@ public sealed class EventDispatchHostingTests
             entry => entry.Id == "code-first-subscription-execution-pipeline");
         Assert.Equal("claimed", superiorityEntry.Metadata["status"]);
         Assert.Contains("middlewareCount=1", superiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        var subscriptionConcurrencyEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "subscription-concurrency-ownership");
+        Assert.Equal("not-claimed", subscriptionConcurrencyEntry.Metadata["status"]);
+        Assert.Contains("subscriptionExecutionPipeline=code-first", subscriptionConcurrencyEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("subscriptionExecutionMiddlewareCount=1", subscriptionConcurrencyEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("backpressure=not-claimed", subscriptionConcurrencyEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", subscriptionConcurrencyEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     private static async Task WaitForConditionAsync(
