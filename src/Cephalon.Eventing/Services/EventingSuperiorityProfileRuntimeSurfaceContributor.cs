@@ -32,6 +32,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var tenantCorrelationEvidence = ResolveTenantCorrelationEvidence(options, topology);
         var scheduledDeliveryStatus = options.EnablePublicationScheduling ? "partial" : "not-claimed";
         var scheduledDeliveryEvidence = ResolveScheduledDeliveryEvidence(options, topology);
+        var durableRetryQueueEvidence = ResolveDurableRetryQueueEvidence(options, topology);
         var remediationReadPerformanceStatus = topology.HasOutboxPublishingPath ? "claimed" : "partial";
         var remediationReadPerformanceEvidence = topology.HasOutboxPublishingPath
             ? $"benchmarks={RemediationFilteredReadBenchmarks}; readPolicy=single-pass-retained-catalog; materialization=not-required; wolverineRequired=false"
@@ -128,6 +129,14 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     nextGap: options.EnablePublicationScheduling
                         ? "Add a provider-neutral scheduler descriptor plus durable queue, broker-delay, recovery, and cross-node coordination evidence before claiming scheduled/delayed delivery ownership."
                         : "Enable bounded process-local publication scheduling before claiming even partial scheduled/delayed delivery evidence."),
+                CreateEntry(
+                    id: "durable-retry-queue-ownership",
+                    displayName: "Durable Retry Queue Ownership",
+                    description: "Makes bounded in-process retry, dispatch retry reports, and provider-managed retry observations separate from durable retry queues, broker error queues, retry persistence, and cross-node retry coordination.",
+                    status: "not-claimed",
+                    evidence: durableRetryQueueEvidence,
+                    advantage: "Teams can use Cephalon retry metadata and Wolverine-free in-process retry without assuming the core pack silently owns a durable retry queue, broker error queue, or cross-node retry scheduler.",
+                    nextGap: "Add a provider-neutral durable retry queue descriptor plus retry persistence, broker error queue, poison queue, and cross-node coordination evidence before claiming durable retry queue ownership."),
                 CreateEntry(
                     id: "native-wolverine-free-baseline",
                     displayName: "Native Wolverine-free Baseline",
@@ -368,6 +377,21 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         return string.Create(
             CultureInfo.InvariantCulture,
             $"publicationPath={publicationPath}; publicationScheduling=configured; schedulePolicy={EventPublicationSchedulingPolicy.GetPolicyId(options)}; processLocalScheduleQueue=active; maxDelayMilliseconds={options.PublicationSchedulingMaxDelayMilliseconds.ToString(CultureInfo.InvariantCulture)}; maxPendingCount={options.PublicationSchedulingMaxPendingCount.ToString(CultureInfo.InvariantCulture)}; scheduleDurability={EventPublicationSchedulingPolicy.GetDurability(options)}; scheduleScope={EventPublicationSchedulingPolicy.GetScope(options)}; durableScheduledDelivery=not-claimed; providerDelayQueue=not-present; brokerScheduledDelivery=not-claimed; crossNodeScheduleCoordination=not-claimed; scheduleRecovery=not-claimed; wolverineRequired=false");
+    }
+
+    private static string ResolveDurableRetryQueueEvidence(EventingOptions options, EventingRuntimeTopology topology)
+    {
+        var publicationPath = topology.HasPublishingPath ? "active" : "not-active";
+        var inProcessExecution = topology.HasInProcessSubscriptionExecutionPath ? "active" : "not-active";
+        var inProcessRetryPolicy = InProcessEventingRetryPolicy.GetPolicyId(options);
+        var inProcessRetryAttempts = InProcessEventingRetryPolicy.GetMaxAttempts(options).ToString(CultureInfo.InvariantCulture);
+        var dispatchRuntime = topology.HasDispatchRuntimeContributors ? "reported" : "not-reported";
+        var managedSubscriptionBindings = topology.HasManagedSubscriptionExecutionBindings ? "present" : "not-present";
+        var externalManagedSubscriptionBindings = topology.HasExternalManagedSubscriptionExecutionBindings ? "present" : "not-present";
+
+        return string.Create(
+            CultureInfo.InvariantCulture,
+            $"publicationPath={publicationPath}; inProcessExecution={inProcessExecution}; inProcessRetryPolicy={inProcessRetryPolicy}; inProcessRetryMaxAttempts={inProcessRetryAttempts}; dispatchRuntime={dispatchRuntime}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; retryDurability=none-or-provider-reported; durableRetryQueue=not-claimed; retryPersistence=not-claimed; brokerErrorQueue=not-claimed; poisonQueueOwnership=not-claimed; crossNodeRetryCoordination=not-claimed; retryLease=not-claimed; wolverineRequired=false");
     }
 
     private static string ResolveBrokerDeadLetterReplayEvidence(EventingRuntimeTopology topology)

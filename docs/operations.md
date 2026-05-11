@@ -2672,6 +2672,10 @@ Current `Cephalon.Eventing` highlights:
   same profile; it reports the bounded process-local scheduler as `partial` only when enabled and
   keeps durable scheduled delivery, provider delay queues, broker scheduled delivery, cross-node
   schedule coordination, and schedule recovery `not-claimed`
+- `durable-retry-queue-ownership` is the separate retry-durability boundary in that same profile;
+  it stays `not-claimed` until a provider or engine package owns durable retry queues, retry
+  persistence, broker error queues, poison queue ownership, cross-node retry coordination, and retry
+  leases, even when bounded in-process retry or provider-managed retry observations are present
 - Wolverine or another companion adapter can still move staged dispatch or one subscription to
   provider-managed ownership for brokered or staged dispatch scenarios; the shipped Wolverine path
   now keeps both the dispatch loop and managed subscription retry lanes bounded with max attempts,

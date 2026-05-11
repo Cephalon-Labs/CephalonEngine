@@ -2291,6 +2291,7 @@ public sealed class EngineBuilderTests
         Assert.Equal("not-claimed", dimensions["serialization-and-contract-versioning-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["scheduled-and-delayed-delivery-ownership"].Metadata["status"]);
+        Assert.Equal("not-claimed", dimensions["durable-retry-queue-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["durability-and-outbox-portability"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["dead-letter-replay-and-remediation"].Metadata["status"]);
         Assert.Equal("MassTransit,NServiceBus,Wolverine,MediatR", dimensions["native-wolverine-free-baseline"].Metadata["referenceFrameworks"]);
@@ -2332,6 +2333,14 @@ public sealed class EngineBuilderTests
         Assert.Contains("crossNodeScheduleCoordination=not-claimed", dimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("scheduleRecovery=not-claimed", dimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", dimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("inProcessRetryPolicy=bounded-in-process", dimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("inProcessRetryMaxAttempts=2", dimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("durableRetryQueue=not-claimed", dimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("retryPersistence=not-claimed", dimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerErrorQueue=not-claimed", dimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("crossNodeRetryCoordination=not-claimed", dimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("retryLease=not-claimed", dimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", dimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]

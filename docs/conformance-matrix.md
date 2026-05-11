@@ -108,6 +108,8 @@ ENG-601 requires `eventing-superiority-profile` to expose `tenant-and-correlatio
 
 ENG-602 requires `eventing-superiority-profile` to expose `scheduled-and-delayed-delivery-ownership` as the separate process-local-scheduling-versus-durable-delivery boundary: bounded local delayed publication acceptance cannot imply durable scheduled delivery, provider delay queues, broker scheduled delivery, cross-node schedule coordination, or schedule recovery until a provider or engine package owns that path.
 
+ENG-603 requires `eventing-superiority-profile` to expose `durable-retry-queue-ownership` as the separate retry-metadata-versus-durable-queue boundary: bounded in-process retry, dispatch runtime reports, and provider-managed retry observations cannot imply durable retry queues, retry persistence, broker error queues, poison queue ownership, cross-node retry coordination, or retry leases until a provider or engine package owns that path.
+
 ## Agentics and retrieval
 
 | Package | Maturity | Ownership | Engine routes | Snapshot keys | Catalog interfaces | Notes |

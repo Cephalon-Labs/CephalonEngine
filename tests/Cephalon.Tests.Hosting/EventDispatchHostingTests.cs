@@ -1950,6 +1950,9 @@ public sealed class EventDispatchHostingTests
         var scheduledDeliveryEntry = Assert.Single(
             eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
             entry => entry.Id == "scheduled-and-delayed-delivery-ownership");
+        var durableRetryQueueEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "durable-retry-queue-ownership");
         Assert.Equal("claimed", superiorityEntry.Metadata["status"]);
         Assert.Contains("routes=1", superiorityEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Equal("not-claimed", topologyOwnershipEntry.Metadata["status"]);
@@ -2005,6 +2008,14 @@ public sealed class EventDispatchHostingTests
         Assert.Contains("crossNodeScheduleCoordination=not-claimed", scheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("scheduleRecovery=not-claimed", scheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", scheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("not-claimed", durableRetryQueueEntry.Metadata["status"]);
+        Assert.Contains("publicationPath=active", durableRetryQueueEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("inProcessExecution=active", durableRetryQueueEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("inProcessRetryPolicy=none", durableRetryQueueEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("durableRetryQueue=not-claimed", durableRetryQueueEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerErrorQueue=not-claimed", durableRetryQueueEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("crossNodeRetryCoordination=not-claimed", durableRetryQueueEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", durableRetryQueueEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
         Assert.NotNull(snapshot);
         var snapshotPublicationState = Assert.Single(snapshot.EventPublicationStates);
@@ -2033,6 +2044,9 @@ public sealed class EventDispatchHostingTests
         var snapshotScheduledDeliveryEntry = Assert.Single(
             snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
             entry => entry.Id == "scheduled-and-delayed-delivery-ownership");
+        var snapshotDurableRetryQueueEntry = Assert.Single(
+            snapshot.TechnologySurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "durable-retry-queue-ownership");
         Assert.Equal("claimed", snapshotRoutingEntry.Metadata["status"]);
         Assert.Equal("not-claimed", snapshotTopologyOwnershipEntry.Metadata["status"]);
         Assert.Contains("brokerTopologyMaterialization=not-claimed", snapshotTopologyOwnershipEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
@@ -2050,6 +2064,10 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("not-claimed", snapshotScheduledDeliveryEntry.Metadata["status"]);
         Assert.Contains("durableScheduledDelivery=not-claimed", snapshotScheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", snapshotScheduledDeliveryEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("not-claimed", snapshotDurableRetryQueueEntry.Metadata["status"]);
+        Assert.Contains("durableRetryQueue=not-claimed", snapshotDurableRetryQueueEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerErrorQueue=not-claimed", snapshotDurableRetryQueueEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", snapshotDurableRetryQueueEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]
@@ -2366,6 +2384,18 @@ public sealed class EventDispatchHostingTests
         Assert.Equal("1", subscriptionEntry.Metadata["retryScheduledCount"]);
         Assert.Equal("bounded-in-process", subscriptionEntry.Metadata["reported.retryPolicy"]);
         Assert.Equal("process-local", subscriptionEntry.Metadata["reported.retryScope"]);
+
+        var durableRetryQueueEntry = Assert.Single(
+            eventingSurfaces.Single(surface => surface.SurfaceId == "eventing-superiority-profile").Entries,
+            entry => entry.Id == "durable-retry-queue-ownership");
+        Assert.Equal("not-claimed", durableRetryQueueEntry.Metadata["status"]);
+        Assert.Contains("inProcessRetryPolicy=bounded-in-process", durableRetryQueueEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("inProcessRetryMaxAttempts=2", durableRetryQueueEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("durableRetryQueue=not-claimed", durableRetryQueueEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("retryPersistence=not-claimed", durableRetryQueueEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerErrorQueue=not-claimed", durableRetryQueueEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("crossNodeRetryCoordination=not-claimed", durableRetryQueueEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", durableRetryQueueEntry.Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]

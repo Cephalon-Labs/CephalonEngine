@@ -240,6 +240,8 @@ ENG-601 adds `tenant-and-correlation-context-ownership` to the same profile so r
 
 ENG-602 adds `scheduled-and-delayed-delivery-ownership` to the same profile so runtime consumers can see that bounded process-local delayed publication acceptance is separate from durable scheduled delivery, provider delay queues, broker scheduled delivery, cross-node schedule coordination, and schedule recovery.
 
+ENG-603 adds `durable-retry-queue-ownership` to the same profile so runtime consumers can see that bounded in-process retry, dispatch runtime reports, and provider-managed retry observations are separate from durable retry queues, retry persistence, broker error queues, poison queue ownership, cross-node retry coordination, and retry leases.
+
 **Cells and traffic automation**
 
 `ICellBoundaryCatalog`, `ICellRouteCatalog`, `ICellHealthIsolationCatalog`, `ICellTrafficAutomationRuntimeCatalog`.
