@@ -1,6 +1,8 @@
 using System.Net;
+using System.Net.Http.Json;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
+using Cephalon.Abstractions.Resilience;
 using Cephalon.AspNetCore.Grpc.Contracts.Discovery;
 using Cephalon.AspNetCore.Grpc.Hosting;
 using Cephalon.AspNetCore.Grpc.Modules;
@@ -72,6 +74,33 @@ public sealed class GrpcTransportErrorAndStreamingHostingTests
         var reply = await client.SayHelloAsync(new HelloRequest { Name = "ok" });
 
         Assert.Equal("ok", reply.Message);
+    }
+
+    [Fact]
+    public async Task GrpcTransport_AppliesCephalonRateLimitingAndReportsRuntimeCatalog()
+    {
+        await using var host = await BuildGrpcHostAsync(enableTightRateLimiting: true);
+        var httpClient = host.GetTestClient();
+        var client = CreateGrpcClient(host);
+
+        var policies = await httpClient.GetFromJsonAsync<RateLimitingRuntimeDescriptor[]>("/engine/rate-limiting");
+        var policy = Assert.Single(policies ?? []);
+
+        Assert.Contains("grpc", policy.TransportIds);
+        Assert.Equal("aspnetcore-endpoint-policy", policy.ExecutionMode);
+        Assert.Equal("request-response", policy.Metadata["transportKind"]);
+        Assert.Equal("request-entry-rate", policy.Metadata["transportSemantics"]);
+        Assert.Equal("checked-on-request-entry", policy.Metadata["enforcementMoment"]);
+
+        var firstReply = await client.SayHelloAsync(new HelloRequest { Name = "ok" });
+        var exception = await Assert.ThrowsAsync<RpcException>(async () =>
+        {
+            await client.SayHelloAsync(new HelloRequest { Name = "ok" });
+        });
+
+        Assert.Equal("ok", firstReply.Message);
+        Assert.Equal(StatusCode.ResourceExhausted, exception.StatusCode);
+        Assert.Contains("rate limit", exception.Status.Detail, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]
@@ -202,12 +231,21 @@ public sealed class GrpcTransportErrorAndStreamingHostingTests
         return new Metadata { { ScenarioHeader, scenario } };
     }
 
-    private static async Task<WebApplication> BuildGrpcHostAsync()
+    private static async Task<WebApplication> BuildGrpcHostAsync(bool enableTightRateLimiting = false)
     {
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseTestServer();
         builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
         builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "Grpc";
+        if (enableTightRateLimiting)
+        {
+            builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:Enabled"] = "true";
+            builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:Algorithm"] = "FixedWindow";
+            builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:PermitLimit"] = "1";
+            builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:QueueLimit"] = "0";
+            builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:WindowSeconds"] = "60";
+        }
+
         builder.AddGrpcTransport();
         builder.AddCephalon(engine =>
         {

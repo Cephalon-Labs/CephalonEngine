@@ -357,6 +357,12 @@ public static class EngineWebApplicationBuilderExtensions
             context.HttpContext.Response.Headers.RetryAfter = retryAfterSeconds.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
         }
 
+        if (IsGrpcRequest(context.HttpContext))
+        {
+            WriteGrpcRateLimitRejectedResponse(context.HttpContext, retryAfterSeconds);
+            return;
+        }
+
         if (useResultModelEnvelope)
         {
             var details = retryAfterSeconds.HasValue
@@ -404,6 +410,55 @@ public static class EngineWebApplicationBuilderExtensions
                 contentType: "application/problem+json")
             .ExecuteAsync(context.HttpContext)
             .ConfigureAwait(false);
+    }
+
+    private static bool IsGrpcRequest(HttpContext context)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+
+        return context.Request.ContentType?.StartsWith("application/grpc", StringComparison.OrdinalIgnoreCase) == true;
+    }
+
+    private static void WriteGrpcRateLimitRejectedResponse(HttpContext context, int? retryAfterSeconds)
+    {
+        ArgumentNullException.ThrowIfNull(context);
+
+        const string statusCodeResourceExhausted = "8";
+        const string grpcMessage = "The request exceeded the configured Cephalon rate limit.";
+
+        var response = context.Response;
+        response.StatusCode = StatusCodes.Status200OK;
+        response.ContentType = "application/grpc";
+        response.ContentLength = 0;
+
+        if (response.SupportsTrailers())
+        {
+            response.DeclareTrailer("grpc-status");
+            response.DeclareTrailer("grpc-message");
+            if (retryAfterSeconds.HasValue)
+            {
+                response.DeclareTrailer("cephalon-retry-after-seconds");
+            }
+
+            response.AppendTrailer("grpc-status", statusCodeResourceExhausted);
+            response.AppendTrailer("grpc-message", Uri.EscapeDataString(grpcMessage));
+            if (retryAfterSeconds.HasValue)
+            {
+                response.AppendTrailer(
+                    "cephalon-retry-after-seconds",
+                    retryAfterSeconds.Value.ToString(System.Globalization.CultureInfo.InvariantCulture));
+            }
+
+            return;
+        }
+
+        response.Headers["grpc-status"] = statusCodeResourceExhausted;
+        response.Headers["grpc-message"] = Uri.EscapeDataString(grpcMessage);
+        if (retryAfterSeconds.HasValue)
+        {
+            response.Headers["cephalon-retry-after-seconds"] =
+                retryAfterSeconds.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        }
     }
 
     private static int? TryResolveRetryAfterSeconds(OnRejectedContext context)

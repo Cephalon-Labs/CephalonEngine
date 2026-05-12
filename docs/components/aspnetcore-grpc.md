@@ -9,6 +9,7 @@
 - gRPC service registration
 - gRPC module contract for host modules
 - gRPC route mapping
+- Cephalon endpoint rate-limiting participation for the public gRPC route group
 - shared proto contracts used by the sample/runtime surface
 
 ## Main surfaces
@@ -28,6 +29,8 @@
 ## How it fits
 
 Use this package when a host selects the `Grpc` transport. Unary, server-streaming, and duplex-streaming support all live behind this adapter package rather than the engine core.
+
+When `Engine:Resilience:RateLimiting:Enabled=true`, the adapter applies the effective Cephalon ASP.NET Core endpoint policy to the configured gRPC prefix. `/engine/rate-limiting` reports the covered `grpc` transport id with request-response semantics, and rejected gRPC calls receive a gRPC-native `ResourceExhausted` status instead of a JSON ProblemDetails or result-envelope payload. Operator and documentation routes remain excluded by the shared ASP.NET Core host policy.
 
 ## Related docs
 

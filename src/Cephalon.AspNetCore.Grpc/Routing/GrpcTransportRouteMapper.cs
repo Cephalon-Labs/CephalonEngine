@@ -20,7 +20,8 @@ internal sealed class GrpcTransportRouteMapper : ITransportRouteMapper
 
     public void MapRoutes(WebApplication app, IRuntime runtime)
     {
-        var grpcGroup = app.MapGroup(options.GrpcPrefix);
+        var grpcGroup = app.MapGroup(options.GrpcPrefix)
+            .ApplyCephalonRateLimiting(app.Services, TransportId);
         foreach (var module in runtime.Modules.OfType<IGrpcModule>())
         {
             module.MapGrpcEndpoints(grpcGroup);

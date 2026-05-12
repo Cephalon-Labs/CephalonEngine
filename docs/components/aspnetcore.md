@@ -402,12 +402,13 @@ such as open/half-open/closed state plus retry-after timing, and `/engine/snapsh
 answers through `RateLimitingPolicies` plus `BehaviorResiliencePolicies`.
 
 The first shipped runtime follow-through uses `Microsoft.AspNetCore.RateLimiting` as the ASP.NET Core
-enforcement primitive for public Cephalon HTTP endpoints while intentionally excluding `/engine`,
+enforcement primitive for public Cephalon HTTP endpoints, including gRPC, while intentionally excluding `/engine`,
 `/health`, `/openapi`, the configured Scalar route prefix, `/favicon.ico`, and hosted reference-doc
 routes so operator and documentation surfaces remain available under pressure. The same ASP.NET Core
 runtime now also keeps long-lived HTTP transport truth visible for stream and connection surfaces in
 `/engine/rate-limiting` rather than treating GraphQL-SSE, GraphQL-WS, SSE, and WebSocket routes as
-undifferentiated request-response endpoints. The behavior-pipeline
+undifferentiated request-response endpoints. gRPC endpoint-policy rejections are surfaced as
+gRPC-native `ResourceExhausted` responses rather than REST-shaped JSON envelopes. The behavior-pipeline
 follow-through now adds a shared behavior-dispatch middleware in `Cephalon.Behaviors` so retry,
 timeout, circuit-breaker, bulkhead, and rate-limiting enforcement apply consistently across transports, resolves narrower
 `Engine:Resilience:BehaviorExecution:Overrides` entries with

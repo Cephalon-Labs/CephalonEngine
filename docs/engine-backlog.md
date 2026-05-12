@@ -240,6 +240,33 @@ Validation:
 - `dotnet test tests\Cephalon.Tests.Tooling\Cephalon.Tests.Tooling.csproj -c Release --no-restore --filter "FullyQualifiedName~OutOfTreePackageAdoptionAssetsTests|FullyQualifiedName~CompletionScorecardDocsStayAlignedWithDoctorSummary"`
 - `pwsh ./scripts/validate-out-of-tree-package-adoption.ps1 -ReportPath artifacts/adoption-smoke-smoke/out-of-tree-package-adoption.json`
 
+### ENG-635 gRPC public transport rate-limiting envelope
+
+Status: done
+Estimate: 0.5
+Iteration: Sprint 125
+Area: phase-11 / resilience / ASP.NET Core gRPC
+Quality dimensions: Reliability, Availability, Usability, Auditability, Maintainability
+
+Why:
+
+- Phase 11 already had ASP.NET Core endpoint rate limiting for public HTTP routes and protocol-native behavior-dispatch envelopes for generic behavior HTTP transports, but the standalone gRPC adapter did not yet apply the effective endpoint policy to its public route group
+- operators could see `grpc` in the rate-limiting support model, but the route mapper did not enforce that policy, leaving a gap between runtime catalog truth and actual gRPC request handling
+- gRPC callers need transport-native rejection semantics, not REST ProblemDetails or result-envelope payloads, when endpoint pressure rejects a call before the service handler executes
+
+Delivered:
+
+- `Cephalon.AspNetCore.Grpc` now applies the effective Cephalon endpoint rate-limiting policy to the configured gRPC prefix
+- the shared ASP.NET Core rate-limiter rejection path now detects `application/grpc` requests and returns a gRPC-native `ResourceExhausted` status with safe retry metadata instead of JSON envelopes
+- `/engine/rate-limiting` and `RuntimeIntrospectionSnapshot.RateLimitingPolicies` keep reporting request-response `grpc` coverage, transport semantics, and enforcement moment metadata for operator tooling
+- component docs, app-model docs, roadmap, and project memory now distinguish gRPC endpoint-policy coverage from broader future non-REST timeout and circuit-breaker envelope work
+
+Validation:
+
+- `dotnet test tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --filter "GrpcTransport_AppliesCephalonRateLimitingAndReportsRuntimeCatalog"`
+- `dotnet test tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-build --filter "FullyQualifiedName~GrpcTransportErrorAndStreamingHostingTests|FullyQualifiedName~MapCephalonAppliesConfiguredRateLimitingOnlyToPublicHttpEndpoints|FullyQualifiedName~MapCephalonExposesBehaviorResiliencePoliciesAcrossEndpointAndSnapshot"`
+- `dotnet build CephalonEngine.slnx --no-restore -m:1`
+
 ### ENG-552 SRE flake-rate Actions readiness evidence
 
 Status: done
