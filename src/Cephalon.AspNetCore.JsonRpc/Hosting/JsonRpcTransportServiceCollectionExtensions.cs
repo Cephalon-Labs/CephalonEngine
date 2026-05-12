@@ -1,5 +1,7 @@
 using Cephalon.AspNetCore.Hosting;
 using Cephalon.AspNetCore.JsonRpc.Routing;
+using Cephalon.Abstractions.Technologies;
+using Cephalon.Engine.Manifest;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -20,7 +22,14 @@ public static class JsonRpcTransportServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
+        services.TryAddSingleton(serviceProvider =>
+            JsonRpcDirectModuleResilienceOptions.FromManifest(
+                serviceProvider.GetService<RuntimeManifest>()));
+        services.TryAddSingleton<JsonRpcDirectModuleCircuitBreakerState>();
+        services.TryAddSingleton<JsonRpcDirectModuleBulkheadState>();
+        services.TryAddTransient<JsonRpcDirectModuleResilienceFilter>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportRouteMapper, JsonRpcTransportRouteMapper>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, JsonRpcDirectModuleResilienceRuntimeContributor>());
         return services;
     }
 

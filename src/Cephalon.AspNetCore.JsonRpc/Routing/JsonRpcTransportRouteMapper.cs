@@ -1,4 +1,5 @@
 using Cephalon.AspNetCore.Hosting;
+using Cephalon.AspNetCore.JsonRpc.Hosting;
 using Cephalon.AspNetCore.JsonRpc.Modules;
 using Cephalon.Engine.Runtime;
 using Microsoft.AspNetCore.Builder;
@@ -23,6 +24,7 @@ internal sealed class JsonRpcTransportRouteMapper : ITransportRouteMapper
     {
         var rpcGroup = app.MapGroup(options.JsonRpcPrefix)
             .ApplyCephalonRateLimiting(app.Services, TransportId);
+        rpcGroup.AddEndpointFilter<JsonRpcDirectModuleResilienceFilter>();
         rpcGroup.ExcludeFromDescription();
         foreach (var module in runtime.Modules.OfType<IJsonRpcModule>())
         {
