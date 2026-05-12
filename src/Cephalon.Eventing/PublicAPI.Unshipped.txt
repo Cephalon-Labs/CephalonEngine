@@ -19,6 +19,8 @@ const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.OperatorCo
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerDeadLetter = "brokerDeadLetter" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerErrorQueue = "brokerErrorQueue" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerErrorQueueId = "brokerErrorQueueId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerScheduledDelivery = "brokerScheduledDelivery" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerScheduledDeliveryId = "brokerScheduledDeliveryId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerTopologyMaterialization = "brokerTopologyMaterialization" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerTopologyMaterializationSource = "brokerTopologyMaterializationSource" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ConsumerContextExtraction = "consumerContextExtraction" -> string!
@@ -29,6 +31,7 @@ const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.CrossNodeConte
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffProducerNodeId = "crossNodeContextHandoffProducerNodeId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffSource = "crossNodeContextHandoffSource" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.CrossNodeRetryCoordination = "crossNodeRetryCoordination" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.CrossNodeScheduleCoordination = "crossNodeScheduleCoordination" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DeadLetterDurability = "deadLetterDurability" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DeadLetterOutcome = "deadLetterOutcome" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DeadLetterScope = "deadLetterScope" -> string!
@@ -43,6 +46,8 @@ const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DurableDispatc
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DurableRetryQueue = "durableRetryQueue" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DurableRetryQueueId = "durableRetryQueueId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DurableRetryQueueSource = "durableRetryQueueSource" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DurableScheduledDelivery = "durableScheduledDelivery" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DurableScheduledDeliveryId = "durableScheduledDeliveryId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ExactlyOnceDelivery = "exactlyOnceDelivery" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ExactlyOnceDeliveryProofId = "exactlyOnceDeliveryProofId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ExactlyOnceDeliverySource = "exactlyOnceDeliverySource" -> string!
@@ -63,6 +68,8 @@ const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBroker
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderNames = "providerBrokerContextHeaderNames" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderProjection = "providerBrokerContextHeaderProjection" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders = "providerBrokerContextHeaders" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderDelayQueue = "providerDelayQueue" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderDelayQueueId = "providerDelayQueueId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderDeliveryReceipt = "providerDeliveryReceipt" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderDeliveryReceiptId = "providerDeliveryReceiptId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderOwnedPartitioning = "providerOwnedPartitioning" -> string!
@@ -84,6 +91,13 @@ const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.RetryLease = "
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.RetryLeaseId = "retryLeaseId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.RetryPersistence = "retryPersistence" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.RetryPersistenceId = "retryPersistenceId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ScheduleCoordinationId = "scheduleCoordinationId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ScheduleDurability = "scheduleDurability" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ScheduleRecovery = "scheduleRecovery" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ScheduleRecoveryId = "scheduleRecoveryId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ScheduleScope = "scheduleScope" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ScheduledDeliveryOwnership = "scheduledDeliveryOwnership" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ScheduledDeliveryOwnershipSource = "scheduledDeliveryOwnershipSource" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.SubscriberAcknowledgement = "subscriberAcknowledgement" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.SubscriberAcknowledgementId = "subscriberAcknowledgementId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.TopicProvisioning = "topicProvisioning" -> string!
@@ -120,6 +134,11 @@ static Cephalon.Eventing.Services.EventDispatchProviderPartitionMetadata.CreateM
 static Cephalon.Eventing.Services.EventDispatchProviderPartitionMetadata.CreateReport(Cephalon.Eventing.Services.EventDispatchExecutionReport! report, string! source, string! partitionAssignmentId, string! partitionAffinityId, string! partitionRebalancingId, string! partitionOrderingGuaranteeId, string! providerPartitioningId) -> Cephalon.Eventing.Services.EventDispatchExecutionReport!
 static Cephalon.Eventing.Services.EventDispatchProviderPartitionMetadata.IsPartitionOwnershipProven(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> bool
 static Cephalon.Eventing.Services.EventDispatchProviderPartitionMetadata.TryApplyMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, string! outcome, string! source, string! partitionAssignmentId, string! partitionAffinityId, string! partitionRebalancingId, string! partitionOrderingGuaranteeId, string! providerPartitioningId) -> bool
+Cephalon.Eventing.Services.EventDispatchScheduledDeliveryMetadata
+static Cephalon.Eventing.Services.EventDispatchScheduledDeliveryMetadata.CreateMetadata(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata, string! outcome, string! source, string! durableScheduledDeliveryId, string! providerDelayQueueId, string! brokerScheduledDeliveryId, string! scheduleCoordinationId, string! scheduleRecoveryId) -> System.Collections.Generic.Dictionary<string!, string!>!
+static Cephalon.Eventing.Services.EventDispatchScheduledDeliveryMetadata.CreateReport(Cephalon.Eventing.Services.EventDispatchExecutionReport! report, string! source, string! durableScheduledDeliveryId, string! providerDelayQueueId, string! brokerScheduledDeliveryId, string! scheduleCoordinationId, string! scheduleRecoveryId) -> Cephalon.Eventing.Services.EventDispatchExecutionReport!
+static Cephalon.Eventing.Services.EventDispatchScheduledDeliveryMetadata.IsScheduledDeliveryProven(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> bool
+static Cephalon.Eventing.Services.EventDispatchScheduledDeliveryMetadata.TryApplyMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, string! outcome, string! source, string! durableScheduledDeliveryId, string! providerDelayQueueId, string! brokerScheduledDeliveryId, string! scheduleCoordinationId, string! scheduleRecoveryId) -> bool
 Cephalon.Eventing.Services.EventSubscriptionBrokerInboundConsumptionMetadata
 static Cephalon.Eventing.Services.EventSubscriptionBrokerInboundConsumptionMetadata.CreateMetadata(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata, string! outcome, string! source, string! consumerLoopId, string! acknowledgementId, string! leaseId, string! retryPolicy, string! poisonMessageHandling, string! offsetCheckpointId) -> System.Collections.Generic.Dictionary<string!, string!>!
 static Cephalon.Eventing.Services.EventSubscriptionBrokerInboundConsumptionMetadata.CreateReport(Cephalon.Eventing.Services.EventSubscriptionExecutionReport! report, string! source, string! consumerLoopId, string! acknowledgementId, string! leaseId, string! retryPolicy, string! poisonMessageHandling, string! offsetCheckpointId) -> Cephalon.Eventing.Services.EventSubscriptionExecutionReport!

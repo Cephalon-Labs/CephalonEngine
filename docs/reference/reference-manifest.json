@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-12T19:20:20.0584431+00:00",
+  "GeneratedAtUtc": "2026-05-12T19:56:24.9415165+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -168,7 +168,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 76
+      "TypeCount": 77
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1228,7 +1228,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 73
+      "TypeCount": 74
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8619,7 +8619,7 @@
       "Summary": "Defines stable metadata keys used by event-dispatch runtime observations.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 83,
+        "Fields": 97,
         "Properties": 0,
         "Methods": 1
       }
@@ -8652,6 +8652,21 @@
         "Fields": 0,
         "Properties": 21,
         "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EventDispatchScheduledDeliveryMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventdispatchscheduleddeliverymetadata",
+      "Declaration": "public static class EventDispatchScheduledDeliveryMetadata",
+      "Summary": "Builds provider-reported scheduled and delayed delivery proof metadata for successful dispatch reports.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 4
       }
     },
     {
@@ -31171,6 +31186,28 @@
       "Summary": "Identifies the provider or runtime source that reported inbound broker consumption."
     },
     {
+      "DisplayName": "BrokerScheduledDelivery",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerscheduleddelivery",
+      "Signature": "const string BrokerScheduledDelivery",
+      "Summary": "Identifies whether broker-native scheduled delivery was reported for the dispatch."
+    },
+    {
+      "DisplayName": "BrokerScheduledDeliveryId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerscheduleddeliveryid",
+      "Signature": "const string BrokerScheduledDeliveryId",
+      "Summary": "Identifies the broker-native scheduled delivery proof id."
+    },
+    {
       "DisplayName": "BrokerTopologyMaterialization",
       "Category": "Fields",
       "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
@@ -42063,6 +42100,17 @@
     {
       "DisplayName": "CreateMetadata",
       "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchScheduledDeliveryMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchscheduleddeliverymetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "Dictionary\u003Cstring, string\u003E CreateMetadata(IReadOnlyDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string durableScheduledDeliveryId, string providerDelayQueueId, string brokerScheduledDeliveryId, string scheduleCoordinationId, string scheduleRecoveryId)",
+      "Summary": "Creates a metadata copy enriched with provider-reported scheduled delivery proof when the inputs support it."
+    },
+    {
+      "DisplayName": "CreateMetadata",
+      "Category": "Methods",
       "DeclaringTypeName": "EventSubscriptionBrokerInboundConsumptionMetadata",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -42224,6 +42272,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventdispatchproviderpartitionmetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string",
       "Signature": "EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string partitionAssignmentId, string partitionAffinityId, string partitionRebalancingId, string partitionOrderingGuaranteeId, string providerPartitioningId)",
       "Summary": "Creates a dispatch report copy enriched with provider-reported partition ownership proof when the inputs support it."
+    },
+    {
+      "DisplayName": "CreateReport",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchScheduledDeliveryMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchscheduleddeliverymetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string durableScheduledDeliveryId, string providerDelayQueueId, string brokerScheduledDeliveryId, string scheduleCoordinationId, string scheduleRecoveryId)",
+      "Summary": "Creates a dispatch report copy enriched with provider-reported scheduled delivery proof when the inputs support it."
     },
     {
       "DisplayName": "CreateReport",
@@ -42642,6 +42701,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-crossnoderuntime",
       "Signature": "const string CrossNodeRuntime",
       "Summary": "The runtime depends on cross-node idempotency evidence before automatic retry should execute."
+    },
+    {
+      "DisplayName": "CrossNodeScheduleCoordination",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-crossnodeschedulecoordination",
+      "Signature": "const string CrossNodeScheduleCoordination",
+      "Summary": "Identifies whether cross-node schedule coordination was reported for the dispatch."
     },
     {
       "DisplayName": "Current",
@@ -51648,6 +51718,28 @@
       "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-durableretryqueuesource",
       "Signature": "const string DurableRetryQueueSource",
       "Summary": "Identifies the provider or runtime source that reported durable retry queue ownership."
+    },
+    {
+      "DisplayName": "DurableScheduledDelivery",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-durablescheduleddelivery",
+      "Signature": "const string DurableScheduledDelivery",
+      "Summary": "Identifies whether durable scheduled delivery was reported for the dispatch."
+    },
+    {
+      "DisplayName": "DurableScheduledDeliveryId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-durablescheduleddeliveryid",
+      "Signature": "const string DurableScheduledDeliveryId",
+      "Summary": "Identifies the durable scheduled delivery proof id."
     },
     {
       "DisplayName": "DurableSharedScheduler",
@@ -77302,6 +77394,17 @@
       "Summary": "Gets a value indicating whether durable shared scheduler orchestration can currently keep one bounded retry scheduled on the current node."
     },
     {
+      "DisplayName": "IsScheduledDeliveryProven",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchScheduledDeliveryMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchscheduleddeliverymetadata-isscheduleddeliveryproven-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "bool IsScheduledDeliveryProven(IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Gets a value indicating whether the metadata contains complete provider-reported scheduled delivery proof."
+    },
+    {
       "DisplayName": "IsSchedulerConflicted",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationStatus",
@@ -101507,6 +101610,28 @@
       "Summary": "Stable Cephalon-prefix tag carrying the provider count consulted during the indexing run."
     },
     {
+      "DisplayName": "ProviderDelayQueue",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerdelayqueue",
+      "Signature": "const string ProviderDelayQueue",
+      "Summary": "Identifies whether a provider-owned delay queue was reported for the dispatch."
+    },
+    {
+      "DisplayName": "ProviderDelayQueueId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerdelayqueueid",
+      "Signature": "const string ProviderDelayQueueId",
+      "Summary": "Identifies the provider-owned delay queue proof id."
+    },
+    {
       "DisplayName": "ProviderDeliveryReceipt",
       "Category": "Fields",
       "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
@@ -116478,6 +116603,17 @@
       "Summary": "Gets or sets the route prefix used by the Scalar UI."
     },
     {
+      "DisplayName": "ScheduleCoordinationId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-schedulecoordinationid",
+      "Signature": "const string ScheduleCoordinationId",
+      "Summary": "Identifies the cross-node schedule coordination proof id."
+    },
+    {
       "DisplayName": "Scheduled",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationStates",
@@ -116509,6 +116645,39 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationstates-scheduled",
       "Signature": "const string Scheduled",
       "Summary": "Durable shared scheduler orchestration can currently keep one bounded automatic retry scheduled on the current node."
+    },
+    {
+      "DisplayName": "ScheduledDeliveryOwnership",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-scheduleddeliveryownership",
+      "Signature": "const string ScheduledDeliveryOwnership",
+      "Summary": "Identifies whether a provider or runtime reported scheduled delivery ownership."
+    },
+    {
+      "DisplayName": "ScheduledDeliveryOwnershipSource",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-scheduleddeliveryownershipsource",
+      "Signature": "const string ScheduledDeliveryOwnershipSource",
+      "Summary": "Identifies the provider or runtime source that reported scheduled delivery ownership."
+    },
+    {
+      "DisplayName": "ScheduleDurability",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-scheduledurability",
+      "Signature": "const string ScheduleDurability",
+      "Summary": "Identifies where scheduled delivery state is persisted."
     },
     {
       "DisplayName": "SchedulerConflicted",
@@ -116597,6 +116766,28 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-schedulerdisabled",
       "Signature": "const string SchedulerDisabled",
       "Summary": "The shared bounded retry scheduler is currently disabled for the runtime."
+    },
+    {
+      "DisplayName": "ScheduleRecovery",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-schedulerecovery",
+      "Signature": "const string ScheduleRecovery",
+      "Summary": "Identifies whether scheduled-delivery recovery was reported for the dispatch."
+    },
+    {
+      "DisplayName": "ScheduleRecoveryId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-schedulerecoveryid",
+      "Signature": "const string ScheduleRecoveryId",
+      "Summary": "Identifies the scheduled-delivery recovery proof id."
     },
     {
       "DisplayName": "SchedulerEnabled",
@@ -116960,6 +117151,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningcategories-schedulerunscheduled",
       "Signature": "const string SchedulerUnscheduled",
       "Summary": "The durable shared scheduler currently does not need to keep the runtime scheduled."
+    },
+    {
+      "DisplayName": "ScheduleScope",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-schedulescope",
+      "Signature": "const string ScheduleScope",
+      "Summary": "Identifies the scheduler coordination boundary."
     },
     {
       "DisplayName": "Schema",
@@ -130542,6 +130744,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventdispatchproviderpartitionmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
       "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string partitionAssignmentId, string partitionAffinityId, string partitionRebalancingId, string partitionOrderingGuaranteeId, string providerPartitioningId)",
       "Summary": "Applies provider-reported partition ownership proof to an existing dispatch metadata dictionary when the inputs support it."
+    },
+    {
+      "DisplayName": "TryApplyMetadata",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchScheduledDeliveryMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchscheduleddeliverymetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string durableScheduledDeliveryId, string providerDelayQueueId, string brokerScheduledDeliveryId, string scheduleCoordinationId, string scheduleRecoveryId)",
+      "Summary": "Applies provider-reported scheduled delivery proof to an existing dispatch metadata dictionary when the inputs support it."
     },
     {
       "DisplayName": "TryApplyMetadata",

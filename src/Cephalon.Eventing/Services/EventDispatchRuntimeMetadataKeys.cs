@@ -186,6 +186,76 @@ public static class EventDispatchRuntimeMetadataKeys
     public const string DurableRetryQueueId = "durableRetryQueueId";
 
     /// <summary>
+    /// Identifies whether a provider or runtime reported scheduled delivery ownership.
+    /// </summary>
+    public const string ScheduledDeliveryOwnership = "scheduledDeliveryOwnership";
+
+    /// <summary>
+    /// Identifies the provider or runtime source that reported scheduled delivery ownership.
+    /// </summary>
+    public const string ScheduledDeliveryOwnershipSource = "scheduledDeliveryOwnershipSource";
+
+    /// <summary>
+    /// Identifies where scheduled delivery state is persisted.
+    /// </summary>
+    public const string ScheduleDurability = "scheduleDurability";
+
+    /// <summary>
+    /// Identifies the scheduler coordination boundary.
+    /// </summary>
+    public const string ScheduleScope = "scheduleScope";
+
+    /// <summary>
+    /// Identifies whether durable scheduled delivery was reported for the dispatch.
+    /// </summary>
+    public const string DurableScheduledDelivery = "durableScheduledDelivery";
+
+    /// <summary>
+    /// Identifies the durable scheduled delivery proof id.
+    /// </summary>
+    public const string DurableScheduledDeliveryId = "durableScheduledDeliveryId";
+
+    /// <summary>
+    /// Identifies whether a provider-owned delay queue was reported for the dispatch.
+    /// </summary>
+    public const string ProviderDelayQueue = "providerDelayQueue";
+
+    /// <summary>
+    /// Identifies the provider-owned delay queue proof id.
+    /// </summary>
+    public const string ProviderDelayQueueId = "providerDelayQueueId";
+
+    /// <summary>
+    /// Identifies whether broker-native scheduled delivery was reported for the dispatch.
+    /// </summary>
+    public const string BrokerScheduledDelivery = "brokerScheduledDelivery";
+
+    /// <summary>
+    /// Identifies the broker-native scheduled delivery proof id.
+    /// </summary>
+    public const string BrokerScheduledDeliveryId = "brokerScheduledDeliveryId";
+
+    /// <summary>
+    /// Identifies whether cross-node schedule coordination was reported for the dispatch.
+    /// </summary>
+    public const string CrossNodeScheduleCoordination = "crossNodeScheduleCoordination";
+
+    /// <summary>
+    /// Identifies the cross-node schedule coordination proof id.
+    /// </summary>
+    public const string ScheduleCoordinationId = "scheduleCoordinationId";
+
+    /// <summary>
+    /// Identifies whether scheduled-delivery recovery was reported for the dispatch.
+    /// </summary>
+    public const string ScheduleRecovery = "scheduleRecovery";
+
+    /// <summary>
+    /// Identifies the scheduled-delivery recovery proof id.
+    /// </summary>
+    public const string ScheduleRecoveryId = "scheduleRecoveryId";
+
+    /// <summary>
     /// Identifies whether retry persistence was reported for the dispatch.
     /// </summary>
     public const string RetryPersistence = "retryPersistence";

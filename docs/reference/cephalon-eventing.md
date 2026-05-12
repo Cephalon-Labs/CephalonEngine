@@ -2397,6 +2397,26 @@ const string BrokerErrorQueueId
 
 Identifies the broker error queue id reported for the dispatch.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerscheduleddelivery"></a>
+
+##### `BrokerScheduledDelivery`
+
+```csharp
+const string BrokerScheduledDelivery
+```
+
+Identifies whether broker-native scheduled delivery was reported for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerscheduleddeliveryid"></a>
+
+##### `BrokerScheduledDeliveryId`
+
+```csharp
+const string BrokerScheduledDeliveryId
+```
+
+Identifies the broker-native scheduled delivery proof id.
+
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokertopologymaterialization"></a>
 
 ##### `BrokerTopologyMaterialization`
@@ -2496,6 +2516,16 @@ const string CrossNodeRetryCoordination
 ```
 
 Identifies whether cross-node retry coordination was reported for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-crossnodeschedulecoordination"></a>
+
+##### `CrossNodeScheduleCoordination`
+
+```csharp
+const string CrossNodeScheduleCoordination
+```
+
+Identifies whether cross-node schedule coordination was reported for the dispatch.
 
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-deadletterdurability"></a>
 
@@ -2636,6 +2666,26 @@ const string DurableRetryQueueSource
 ```
 
 Identifies the provider or runtime source that reported durable retry queue ownership.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-durablescheduleddelivery"></a>
+
+##### `DurableScheduledDelivery`
+
+```csharp
+const string DurableScheduledDelivery
+```
+
+Identifies whether durable scheduled delivery was reported for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-durablescheduleddeliveryid"></a>
+
+##### `DurableScheduledDeliveryId`
+
+```csharp
+const string DurableScheduledDeliveryId
+```
+
+Identifies the durable scheduled delivery proof id.
 
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-exactlyoncedelivery"></a>
 
@@ -2866,6 +2916,26 @@ const string ProviderBrokerContextHeaders
 ```
 
 Identifies whether provider or broker headers carry the same context beyond Cephalon dispatch metadata.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerdelayqueue"></a>
+
+##### `ProviderDelayQueue`
+
+```csharp
+const string ProviderDelayQueue
+```
+
+Identifies whether a provider-owned delay queue was reported for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerdelayqueueid"></a>
+
+##### `ProviderDelayQueueId`
+
+```csharp
+const string ProviderDelayQueueId
+```
+
+Identifies the provider-owned delay queue proof id.
 
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerdeliveryreceipt"></a>
 
@@ -3127,6 +3197,76 @@ const string RetryScope
 
 Identifies who owns the retry policy.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-schedulecoordinationid"></a>
+
+##### `ScheduleCoordinationId`
+
+```csharp
+const string ScheduleCoordinationId
+```
+
+Identifies the cross-node schedule coordination proof id.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-scheduleddeliveryownership"></a>
+
+##### `ScheduledDeliveryOwnership`
+
+```csharp
+const string ScheduledDeliveryOwnership
+```
+
+Identifies whether a provider or runtime reported scheduled delivery ownership.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-scheduleddeliveryownershipsource"></a>
+
+##### `ScheduledDeliveryOwnershipSource`
+
+```csharp
+const string ScheduledDeliveryOwnershipSource
+```
+
+Identifies the provider or runtime source that reported scheduled delivery ownership.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-scheduledurability"></a>
+
+##### `ScheduleDurability`
+
+```csharp
+const string ScheduleDurability
+```
+
+Identifies where scheduled delivery state is persisted.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-schedulerecovery"></a>
+
+##### `ScheduleRecovery`
+
+```csharp
+const string ScheduleRecovery
+```
+
+Identifies whether scheduled-delivery recovery was reported for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-schedulerecoveryid"></a>
+
+##### `ScheduleRecoveryId`
+
+```csharp
+const string ScheduleRecoveryId
+```
+
+Identifies the scheduled-delivery recovery proof id.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-schedulescope"></a>
+
+##### `ScheduleScope`
+
+```csharp
+const string ScheduleScope
+```
+
+Identifies the scheduler coordination boundary.
+
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-subscriberacknowledgement"></a>
 
 ##### `SubscriberAcknowledgement`
@@ -3213,6 +3353,101 @@ Returns: `true` when either `TerminalFailure` or `RetryExhausted` is set to `tru
 
 Parameters:
 - `metadata`: The dispatch observation metadata to inspect.
+
+<a id="type-cephalon-eventing-services-eventdispatchscheduleddeliverymetadata"></a>
+
+### `EventDispatchScheduledDeliveryMetadata`
+
+Builds provider-reported scheduled and delayed delivery proof metadata for successful dispatch reports.
+
+Remarks: Cephalon's process-local publication scheduler proves only bounded delayed acceptance. This helper records a stronger provider-scheduler claim only when a provider/runtime reports successful dispatch evidence with durable scheduled delivery, provider delay queue, broker scheduling, cross-node coordination, and recovery proof ids.
+
+#### Declaration
+```csharp
+public static class EventDispatchScheduledDeliveryMetadata
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-eventdispatchscheduleddeliverymetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateMetadata`
+
+```csharp
+Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string durableScheduledDeliveryId, string providerDelayQueueId, string brokerScheduledDeliveryId, string scheduleCoordinationId, string scheduleRecoveryId)
+```
+
+Creates a metadata copy enriched with provider-reported scheduled delivery proof when the inputs support it.
+
+Returns: A case-insensitive metadata dictionary containing the original values plus scheduled delivery proof when applicable.
+
+Parameters:
+- `metadata`: The dispatch report metadata to copy.
+- `outcome`: The dispatch report outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported scheduled delivery ownership.
+- `durableScheduledDeliveryId`: The durable scheduled delivery proof id.
+- `providerDelayQueueId`: The provider-owned delay queue proof id.
+- `brokerScheduledDeliveryId`: The broker-native scheduled delivery proof id.
+- `scheduleCoordinationId`: The cross-node schedule coordination proof id.
+- `scheduleRecoveryId`: The scheduled-delivery recovery proof id.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchscheduleddeliverymetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateReport`
+
+```csharp
+EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string durableScheduledDeliveryId, string providerDelayQueueId, string brokerScheduledDeliveryId, string scheduleCoordinationId, string scheduleRecoveryId)
+```
+
+Creates a dispatch report copy enriched with provider-reported scheduled delivery proof when the inputs support it.
+
+Returns: A dispatch report containing the original metadata plus scheduled delivery proof when applicable.
+
+Parameters:
+- `report`: The successful dispatch report to copy.
+- `source`: The stable provider or runtime source that reported scheduled delivery ownership.
+- `durableScheduledDeliveryId`: The durable scheduled delivery proof id.
+- `providerDelayQueueId`: The provider-owned delay queue proof id.
+- `brokerScheduledDeliveryId`: The broker-native scheduled delivery proof id.
+- `scheduleCoordinationId`: The cross-node schedule coordination proof id.
+- `scheduleRecoveryId`: The scheduled-delivery recovery proof id.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchscheduleddeliverymetadata-isscheduleddeliveryproven-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `IsScheduledDeliveryProven`
+
+```csharp
+bool IsScheduledDeliveryProven(IReadOnlyDictionary<string, string> metadata)
+```
+
+Gets a value indicating whether the metadata contains complete provider-reported scheduled delivery proof.
+
+Returns: `true` when complete scheduled delivery proof is present; otherwise, `false`.
+
+Parameters:
+- `metadata`: The dispatch metadata dictionary to inspect.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchscheduleddeliverymetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `TryApplyMetadata`
+
+```csharp
+bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string durableScheduledDeliveryId, string providerDelayQueueId, string brokerScheduledDeliveryId, string scheduleCoordinationId, string scheduleRecoveryId)
+```
+
+Applies provider-reported scheduled delivery proof to an existing dispatch metadata dictionary when the inputs support it.
+
+Returns: `true` when scheduled delivery proof was applied; otherwise, `false`.
+
+Parameters:
+- `metadata`: The dispatch metadata dictionary to enrich.
+- `outcome`: The dispatch report outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported scheduled delivery ownership.
+- `durableScheduledDeliveryId`: The durable scheduled delivery proof id.
+- `providerDelayQueueId`: The provider-owned delay queue proof id.
+- `brokerScheduledDeliveryId`: The broker-native scheduled delivery proof id.
+- `scheduleCoordinationId`: The cross-node schedule coordination proof id.
+- `scheduleRecoveryId`: The scheduled-delivery recovery proof id.
 
 <a id="type-cephalon-eventing-services-eventingdiagnostics"></a>
 

@@ -1800,6 +1800,98 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("lastOutcome=succeeded", providerPartitionDimensions["provider-partition-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", providerPartitionDimensions["provider-partition-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
+        var incompleteScheduledDeliveryReport = EventDispatchScheduledDeliveryMetadata.CreateReport(
+            crossNodeReport,
+            source: "provider-scheduler-observer",
+            durableScheduledDeliveryId: "durable-schedule-001",
+            providerDelayQueueId: "provider-delay-queue-001",
+            brokerScheduledDeliveryId: "broker-schedule-001",
+            scheduleCoordinationId: "schedule-coordination-001",
+            scheduleRecoveryId: "schedule-recovery-001");
+        Assert.False(EventDispatchScheduledDeliveryMetadata.IsScheduledDeliveryProven(incompleteScheduledDeliveryReport.Metadata));
+        Assert.DoesNotContain(EventDispatchRuntimeMetadataKeys.ScheduledDeliveryOwnership, incompleteScheduledDeliveryReport.Metadata.Keys);
+
+        var scheduledDeliveryReport = EventDispatchScheduledDeliveryMetadata.CreateReport(
+            providerPartitionReport,
+            source: "provider-scheduler-observer",
+            durableScheduledDeliveryId: "durable-schedule-001",
+            providerDelayQueueId: "provider-delay-queue-001",
+            brokerScheduledDeliveryId: "broker-schedule-001",
+            scheduleCoordinationId: "schedule-coordination-001",
+            scheduleRecoveryId: "schedule-recovery-001");
+        Assert.True(EventDispatchScheduledDeliveryMetadata.IsScheduledDeliveryProven(scheduledDeliveryReport.Metadata));
+        Assert.Equal("provider-reported", scheduledDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.ScheduledDeliveryOwnership]);
+        Assert.Equal("provider-scheduler-observer", scheduledDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.ScheduledDeliveryOwnershipSource]);
+        Assert.Equal("durable", scheduledDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.ScheduleDurability]);
+        Assert.Equal("cross-node", scheduledDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.ScheduleScope]);
+        Assert.Equal("reported", scheduledDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.DurableScheduledDelivery]);
+        Assert.Equal("durable-schedule-001", scheduledDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.DurableScheduledDeliveryId]);
+        Assert.Equal("reported", scheduledDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.ProviderDelayQueue]);
+        Assert.Equal("provider-delay-queue-001", scheduledDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.ProviderDelayQueueId]);
+        Assert.Equal("reported", scheduledDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.BrokerScheduledDelivery]);
+        Assert.Equal("broker-schedule-001", scheduledDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.BrokerScheduledDeliveryId]);
+        Assert.Equal("reported", scheduledDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.CrossNodeScheduleCoordination]);
+        Assert.Equal("schedule-coordination-001", scheduledDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.ScheduleCoordinationId]);
+        Assert.Equal("reported", scheduledDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.ScheduleRecovery]);
+        Assert.Equal("schedule-recovery-001", scheduledDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.ScheduleRecoveryId]);
+
+        await dispatchRuntimeReporter.ReportAsync(scheduledDeliveryReport);
+
+        var scheduledDeliveryDispatchState = dispatchRuntimeCatalog.GetByOutboxId("entity-framework-outbox");
+        Assert.NotNull(scheduledDeliveryDispatchState);
+        Assert.Equal(EventDispatchExecutionOutcomes.Succeeded, scheduledDeliveryDispatchState.LastOutcome);
+        Assert.Equal("provider-reported", scheduledDeliveryDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.ScheduledDeliveryOwnership]);
+        Assert.Equal("durable-schedule-001", scheduledDeliveryDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.DurableScheduledDeliveryId]);
+        Assert.Equal("provider-delay-queue-001", scheduledDeliveryDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.ProviderDelayQueueId]);
+        Assert.Equal("broker-schedule-001", scheduledDeliveryDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.BrokerScheduledDeliveryId]);
+        Assert.Equal("schedule-coordination-001", scheduledDeliveryDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.ScheduleCoordinationId]);
+        Assert.Equal("schedule-recovery-001", scheduledDeliveryDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.ScheduleRecoveryId]);
+
+        var scheduledDeliveryEventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        var scheduledDeliveryDispatchSurface = Assert.Single(scheduledDeliveryEventingSurfaces, surface => surface.SurfaceId == "event-dispatches");
+        var scheduledDeliveryDispatchEntry = Assert.Single(scheduledDeliveryDispatchSurface.Entries, entry => entry.Id == "entity-framework-outbox");
+        Assert.Equal(
+            "provider-reported",
+            scheduledDeliveryDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.ScheduledDeliveryOwnership}"]);
+        Assert.Equal(
+            "provider-scheduler-observer",
+            scheduledDeliveryDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.ScheduledDeliveryOwnershipSource}"]);
+        Assert.Equal(
+            "durable-schedule-001",
+            scheduledDeliveryDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.DurableScheduledDeliveryId}"]);
+        Assert.Equal(
+            "provider-delay-queue-001",
+            scheduledDeliveryDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.ProviderDelayQueueId}"]);
+        Assert.Equal(
+            "broker-schedule-001",
+            scheduledDeliveryDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.BrokerScheduledDeliveryId}"]);
+        Assert.Equal(
+            "schedule-coordination-001",
+            scheduledDeliveryDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.ScheduleCoordinationId}"]);
+        Assert.Equal(
+            "schedule-recovery-001",
+            scheduledDeliveryDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.ScheduleRecoveryId}"]);
+        var scheduledDeliveryDimensions = Assert.Single(scheduledDeliveryEventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        Assert.Equal("claimed", scheduledDeliveryDimensions["scheduled-and-delayed-delivery-ownership"].Metadata["status"]);
+        Assert.Contains("scheduledDeliveryOwnership=provider-reported", scheduledDeliveryDimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("scheduledDeliveryOwnershipSource=provider-scheduler-observer", scheduledDeliveryDimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("scheduleDurability=durable", scheduledDeliveryDimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("scheduleScope=cross-node", scheduledDeliveryDimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("durableScheduledDelivery=reported", scheduledDeliveryDimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("durableScheduledDeliveryId=durable-schedule-001", scheduledDeliveryDimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerDelayQueue=reported", scheduledDeliveryDimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerDelayQueueId=provider-delay-queue-001", scheduledDeliveryDimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerScheduledDelivery=reported", scheduledDeliveryDimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerScheduledDeliveryId=broker-schedule-001", scheduledDeliveryDimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("crossNodeScheduleCoordination=reported", scheduledDeliveryDimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("scheduleCoordinationId=schedule-coordination-001", scheduledDeliveryDimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("scheduleRecovery=reported", scheduledDeliveryDimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("scheduleRecoveryId=schedule-recovery-001", scheduledDeliveryDimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("lastOutcome=succeeded", scheduledDeliveryDimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", scheduledDeliveryDimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+
         var startedInboundReport = EventSubscriptionBrokerInboundConsumptionMetadata.CreateReport(
             new EventSubscriptionExecutionReport(
                 subscriptionId: "catalog-broker-consumer",

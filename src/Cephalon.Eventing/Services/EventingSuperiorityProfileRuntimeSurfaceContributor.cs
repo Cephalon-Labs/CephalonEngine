@@ -31,8 +31,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var brokerInboundConsumption = ResolveBrokerInboundConsumptionProfile();
         var serializationVersioning = ResolveSerializationVersioningProfile();
         var tenantCorrelation = ResolveTenantCorrelationProfile();
-        var scheduledDeliveryStatus = options.EnablePublicationScheduling ? "partial" : "not-claimed";
-        var scheduledDeliveryEvidence = ResolveScheduledDeliveryEvidence(options, topology);
+        var scheduledDelivery = ResolveScheduledDeliveryProfile();
         var durableRetryQueue = ResolveDurableRetryQueueProfile();
         var idempotencyOwnership = ResolveIdempotencyOwnershipProfile();
         var subscriptionConcurrency = ResolveSubscriptionConcurrencyProfile();
@@ -129,12 +128,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     id: "scheduled-and-delayed-delivery-ownership",
                     displayName: "Scheduled And Delayed Delivery Ownership",
                     description: "Makes bounded process-local delayed publication acceptance separate from durable scheduled delivery, broker delay queues, provider-owned scheduler recovery, and cross-node coordination.",
-                    status: scheduledDeliveryStatus,
-                    evidence: scheduledDeliveryEvidence,
+                    status: scheduledDelivery.Status,
+                    evidence: scheduledDelivery.Evidence,
                     advantage: "Teams can use Cephalon's Wolverine-free delayed-publication acceptance without assuming the core pack silently owns durable cross-node scheduling or broker-native delayed delivery.",
-                    nextGap: options.EnablePublicationScheduling
-                        ? "Add a provider-neutral scheduler descriptor plus durable queue, broker-delay, recovery, and cross-node coordination evidence before claiming scheduled/delayed delivery ownership."
-                        : "Enable bounded process-local publication scheduling before claiming even partial scheduled/delayed delivery evidence."),
+                    nextGap: scheduledDelivery.NextGap),
                 CreateEntry(
                     id: "durable-retry-queue-ownership",
                     displayName: "Durable Retry Queue Ownership",
@@ -963,20 +960,123 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         return new TenantCorrelationProfile(status, evidence, nextGap);
     }
 
-    private static string ResolveScheduledDeliveryEvidence(EventingOptions options, EventingRuntimeTopology topology)
+    private ScheduledDeliveryProfile ResolveScheduledDeliveryProfile()
     {
         var publicationPath = topology.HasPublishingPath ? "active" : "not-active";
+        var publicationScheduling = options.EnablePublicationScheduling ? "configured" : "not-configured";
+        var processLocalScheduleQueue = options.EnablePublicationScheduling ? "active" : "not-active";
+        var schedulePolicy = options.EnablePublicationScheduling
+            ? EventPublicationSchedulingPolicy.GetPolicyId(options)
+            : "not-enabled";
+        var maxDelayMilliseconds = options.EnablePublicationScheduling
+            ? options.PublicationSchedulingMaxDelayMilliseconds.ToString(CultureInfo.InvariantCulture)
+            : "not-configured";
+        var maxPendingCount = options.EnablePublicationScheduling
+            ? options.PublicationSchedulingMaxPendingCount.ToString(CultureInfo.InvariantCulture)
+            : "not-configured";
+        var fallbackScheduleDurability = options.EnablePublicationScheduling
+            ? EventPublicationSchedulingPolicy.GetDurability(options)
+            : "none";
+        var fallbackScheduleScope = options.EnablePublicationScheduling
+            ? EventPublicationSchedulingPolicy.GetScope(options)
+            : "not-active";
+
+        using var scope = scopeFactory.CreateScope();
+        var dispatchRuntimeCatalog = scope.ServiceProvider.GetService<IEventDispatchRuntimeCatalog>();
+        var scheduledDeliveryState = dispatchRuntimeCatalog?.States.FirstOrDefault(static state =>
+            state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.ScheduledDeliveryOwnership, out var value) &&
+            string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase));
+
+        if (scheduledDeliveryState is not null)
+        {
+            var metadata = scheduledDeliveryState.Metadata;
+            var scheduledDeliveryOwnership = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ScheduledDeliveryOwnership,
+                "not-claimed");
+            var scheduledDeliveryOwnershipSource = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ScheduledDeliveryOwnershipSource,
+                "not-reported");
+            var scheduleDurability = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ScheduleDurability,
+                fallbackScheduleDurability);
+            var scheduleScope = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ScheduleScope,
+                fallbackScheduleScope);
+            var durableScheduledDelivery = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.DurableScheduledDelivery,
+                "not-claimed");
+            var durableScheduledDeliveryId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.DurableScheduledDeliveryId,
+                "not-reported");
+            var providerDelayQueue = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ProviderDelayQueue,
+                "not-present");
+            var providerDelayQueueId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ProviderDelayQueueId,
+                "not-reported");
+            var brokerScheduledDelivery = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.BrokerScheduledDelivery,
+                "not-claimed");
+            var brokerScheduledDeliveryId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.BrokerScheduledDeliveryId,
+                "not-reported");
+            var crossNodeScheduleCoordination = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.CrossNodeScheduleCoordination,
+                "not-claimed");
+            var scheduleCoordinationId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ScheduleCoordinationId,
+                "not-reported");
+            var scheduleRecovery = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ScheduleRecovery,
+                "not-claimed");
+            var scheduleRecoveryId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ScheduleRecoveryId,
+                "not-reported");
+            var status = EventDispatchScheduledDeliveryMetadata.IsScheduledDeliveryProven(metadata)
+                ? "claimed"
+                : "partial";
+            var nextGap = status == "claimed"
+                ? "Keep durable scheduled delivery, provider delay queue, broker scheduling, cross-node coordination, and recovery proof covered by provider integration tests."
+                : "Complete durable scheduled delivery, provider delay queue, broker scheduling, cross-node coordination, and recovery evidence before claiming scheduled/delayed delivery ownership.";
+
+            return new ScheduledDeliveryProfile(
+                status,
+                string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"publicationPath={publicationPath}; publicationScheduling={publicationScheduling}; schedulePolicy={schedulePolicy}; processLocalScheduleQueue={processLocalScheduleQueue}; maxDelayMilliseconds={maxDelayMilliseconds}; maxPendingCount={maxPendingCount}; scheduleDurability={scheduleDurability}; scheduleScope={scheduleScope}; scheduledDeliveryOwnership={scheduledDeliveryOwnership}; scheduledDeliveryOwnershipSource={scheduledDeliveryOwnershipSource}; durableScheduledDelivery={durableScheduledDelivery}; durableScheduledDeliveryId={durableScheduledDeliveryId}; providerDelayQueue={providerDelayQueue}; providerDelayQueueId={providerDelayQueueId}; brokerScheduledDelivery={brokerScheduledDelivery}; brokerScheduledDeliveryId={brokerScheduledDeliveryId}; crossNodeScheduleCoordination={crossNodeScheduleCoordination}; scheduleCoordinationId={scheduleCoordinationId}; scheduleRecovery={scheduleRecovery}; scheduleRecoveryId={scheduleRecoveryId}; outboxId={scheduledDeliveryState.OutboxId}; lastOutcome={scheduledDeliveryState.LastOutcome ?? "unknown"}; wolverineRequired=false"),
+                nextGap);
+        }
 
         if (!options.EnablePublicationScheduling)
         {
-            return string.Create(
-                CultureInfo.InvariantCulture,
-                $"publicationPath={publicationPath}; publicationScheduling=not-configured; processLocalScheduleQueue=not-active; scheduleDurability=none; durableScheduledDelivery=not-claimed; providerDelayQueue=not-present; brokerScheduledDelivery=not-claimed; crossNodeScheduleCoordination=not-claimed; scheduleRecovery=not-claimed; wolverineRequired=false");
+            return new ScheduledDeliveryProfile(
+                "not-claimed",
+                string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"publicationPath={publicationPath}; publicationScheduling={publicationScheduling}; processLocalScheduleQueue={processLocalScheduleQueue}; scheduleDurability={fallbackScheduleDurability}; scheduledDeliveryOwnership=not-claimed; scheduledDeliveryOwnershipSource=not-reported; durableScheduledDelivery=not-claimed; durableScheduledDeliveryId=not-reported; providerDelayQueue=not-present; providerDelayQueueId=not-reported; brokerScheduledDelivery=not-claimed; brokerScheduledDeliveryId=not-reported; crossNodeScheduleCoordination=not-claimed; scheduleCoordinationId=not-reported; scheduleRecovery=not-claimed; scheduleRecoveryId=not-reported; wolverineRequired=false"),
+                "Enable bounded process-local publication scheduling or supply complete provider scheduled-delivery proof before claiming scheduled/delayed delivery evidence.");
         }
 
-        return string.Create(
-            CultureInfo.InvariantCulture,
-            $"publicationPath={publicationPath}; publicationScheduling=configured; schedulePolicy={EventPublicationSchedulingPolicy.GetPolicyId(options)}; processLocalScheduleQueue=active; maxDelayMilliseconds={options.PublicationSchedulingMaxDelayMilliseconds.ToString(CultureInfo.InvariantCulture)}; maxPendingCount={options.PublicationSchedulingMaxPendingCount.ToString(CultureInfo.InvariantCulture)}; scheduleDurability={EventPublicationSchedulingPolicy.GetDurability(options)}; scheduleScope={EventPublicationSchedulingPolicy.GetScope(options)}; durableScheduledDelivery=not-claimed; providerDelayQueue=not-present; brokerScheduledDelivery=not-claimed; crossNodeScheduleCoordination=not-claimed; scheduleRecovery=not-claimed; wolverineRequired=false");
+        return new ScheduledDeliveryProfile(
+            "partial",
+            string.Create(
+                CultureInfo.InvariantCulture,
+                $"publicationPath={publicationPath}; publicationScheduling={publicationScheduling}; schedulePolicy={schedulePolicy}; processLocalScheduleQueue={processLocalScheduleQueue}; maxDelayMilliseconds={maxDelayMilliseconds}; maxPendingCount={maxPendingCount}; scheduleDurability={fallbackScheduleDurability}; scheduleScope={fallbackScheduleScope}; scheduledDeliveryOwnership=not-claimed; scheduledDeliveryOwnershipSource=not-reported; durableScheduledDelivery=not-claimed; durableScheduledDeliveryId=not-reported; providerDelayQueue=not-present; providerDelayQueueId=not-reported; brokerScheduledDelivery=not-claimed; brokerScheduledDeliveryId=not-reported; crossNodeScheduleCoordination=not-claimed; scheduleCoordinationId=not-reported; scheduleRecovery=not-claimed; scheduleRecoveryId=not-reported; wolverineRequired=false"),
+            "Add provider-reported durable scheduled delivery, provider delay queue, broker scheduling, recovery, and cross-node coordination evidence before claiming scheduled/delayed delivery ownership.");
     }
 
     private DurableRetryQueueProfile ResolveDurableRetryQueueProfile()
@@ -1662,6 +1762,8 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private sealed record DownstreamDeliveryCompletionProfile(string Status, string Evidence, string NextGap);
 
     private sealed record BrokerInboundConsumptionProfile(string Status, string Evidence, string NextGap);
+
+    private sealed record ScheduledDeliveryProfile(string Status, string Evidence, string NextGap);
 
     private sealed record DurableRetryQueueProfile(string Status, string Evidence, string NextGap);
 

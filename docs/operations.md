@@ -2693,8 +2693,9 @@ Current `Cephalon.Eventing` highlights:
   provider or engine package owns them
 - `scheduled-and-delayed-delivery-ownership` is the separate scheduled-delivery boundary in that
   same profile; it reports the bounded process-local scheduler as `partial` only when enabled and
-  keeps durable scheduled delivery, provider delay queues, broker scheduled delivery, cross-node
-  schedule coordination, and schedule recovery `not-claimed`
+  becomes `claimed` only when a successful provider/runtime dispatch report supplies complete
+  `EventDispatchScheduledDeliveryMetadata` proof for durable scheduled delivery, provider delay
+  queues, broker scheduled delivery, cross-node schedule coordination, and schedule recovery
 - `durable-retry-queue-ownership` is the separate retry-durability boundary in that same profile;
   it stays `not-claimed` until a provider or engine package owns durable retry queues, retry
   persistence, broker error queues, poison queue ownership, cross-node retry coordination, and retry
