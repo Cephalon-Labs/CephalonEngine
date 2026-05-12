@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-12T14:21:26.7829524+00:00",
+  "GeneratedAtUtc": "2026-05-12T14:58:57.2371054+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -168,7 +168,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 68
+      "TypeCount": 69
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1228,7 +1228,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 65
+      "TypeCount": 66
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8925,6 +8925,21 @@
       }
     },
     {
+      "DisplayName": "EventSubscriptionBrokerInboundConsumptionMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata",
+      "Declaration": "public static class EventSubscriptionBrokerInboundConsumptionMetadata",
+      "Summary": "Builds provider-reported broker inbound-consumption proof metadata for successful subscription reports.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 4
+      }
+    },
+    {
       "DisplayName": "EventSubscriptionDescriptor",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -9054,7 +9069,7 @@
       "Summary": "Defines stable metadata keys used by the event-subscriptions runtime surface.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 27,
+        "Fields": 39,
         "Properties": 0,
         "Methods": 0
       }
@@ -30930,6 +30945,28 @@
       "Summary": "Gets the break duration in seconds requested for the open state."
     },
     {
+      "DisplayName": "BrokerConsumerLoop",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerconsumerloop",
+      "Signature": "const string BrokerConsumerLoop",
+      "Summary": "Identifies whether a provider-owned broker consumer loop was reported."
+    },
+    {
+      "DisplayName": "BrokerConsumerLoopId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerconsumerloopid",
+      "Signature": "const string BrokerConsumerLoopId",
+      "Summary": "Identifies the provider consumer-loop proof id reported for broker inbound consumption."
+    },
+    {
       "DisplayName": "BrokerDeadLetter",
       "Category": "Fields",
       "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
@@ -30939,6 +30976,28 @@
       "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerdeadletter",
       "Signature": "const string BrokerDeadLetter",
       "Summary": "Identifies whether the dead-letter decision is owned by a broker-specific dead-letter queue."
+    },
+    {
+      "DisplayName": "BrokerInboundConsumption",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerinboundconsumption",
+      "Signature": "const string BrokerInboundConsumption",
+      "Summary": "Identifies whether a provider or runtime reports ownership of inbound broker consumption."
+    },
+    {
+      "DisplayName": "BrokerInboundConsumptionSource",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerinboundconsumptionsource",
+      "Signature": "const string BrokerInboundConsumptionSource",
+      "Summary": "Identifies the provider or runtime source that reported inbound broker consumption."
     },
     {
       "DisplayName": "BrowserPath",
@@ -39576,6 +39635,50 @@
       "Summary": "Identifies the comma-separated Cephalon context header names extracted before executing the consumer."
     },
     {
+      "DisplayName": "ConsumerLease",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumerlease",
+      "Signature": "const string ConsumerLease",
+      "Summary": "Identifies whether a consumer lease or ownership token was reported for broker consumption."
+    },
+    {
+      "DisplayName": "ConsumerLeaseId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumerleaseid",
+      "Signature": "const string ConsumerLeaseId",
+      "Summary": "Identifies the consumer lease or ownership-token proof id reported for broker consumption."
+    },
+    {
+      "DisplayName": "ConsumerOffsetCheckpoint",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumeroffsetcheckpoint",
+      "Signature": "const string ConsumerOffsetCheckpoint",
+      "Summary": "Identifies whether a consumer offset checkpoint was reported for broker consumption."
+    },
+    {
+      "DisplayName": "ConsumerOffsetCheckpointId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumeroffsetcheckpointid",
+      "Signature": "const string ConsumerOffsetCheckpointId",
+      "Summary": "Identifies the consumer offset-checkpoint proof id reported for broker consumption."
+    },
+    {
       "DisplayName": "Consumers",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseRoleDescriptor",
@@ -41666,6 +41769,17 @@
       "Summary": "Creates a metadata copy enriched with provider-side context-persistence proof when the source metadata supports it."
     },
     {
+      "DisplayName": "CreateMetadata",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventSubscriptionBrokerInboundConsumptionMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "Dictionary\u003Cstring, string\u003E CreateMetadata(IReadOnlyDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string consumerLoopId, string acknowledgementId, string leaseId, string retryPolicy, string poisonMessageHandling, string offsetCheckpointId)",
+      "Summary": "Creates a metadata copy enriched with provider-reported broker inbound-consumption proof when the inputs support it."
+    },
+    {
       "DisplayName": "CreateModule",
       "Category": "Methods",
       "DeclaringTypeName": "ModuleDiscoveryDescriptor",
@@ -41741,6 +41855,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventdispatchprovidercontextpersistencemetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string",
       "Signature": "EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source)",
       "Summary": "Creates a dispatch report copy enriched with provider-side context-persistence proof when the source metadata supports it."
+    },
+    {
+      "DisplayName": "CreateReport",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventSubscriptionBrokerInboundConsumptionMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-createreport-cephalon-eventing-services-eventsubscriptionexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "EventSubscriptionExecutionReport CreateReport(EventSubscriptionExecutionReport report, string source, string consumerLoopId, string acknowledgementId, string leaseId, string retryPolicy, string poisonMessageHandling, string offsetCheckpointId)",
+      "Summary": "Creates a subscription report copy enriched with provider-reported broker inbound-consumption proof when the inputs support it."
     },
     {
       "DisplayName": "CreateSlotIfMissing",
@@ -71484,6 +71609,39 @@
       "Summary": "Ignore the exception for resilience accounting."
     },
     {
+      "DisplayName": "InboundAcknowledgement",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-inboundacknowledgement",
+      "Signature": "const string InboundAcknowledgement",
+      "Summary": "Identifies whether inbound acknowledgement proof was reported for broker consumption."
+    },
+    {
+      "DisplayName": "InboundAcknowledgementId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-inboundacknowledgementid",
+      "Signature": "const string InboundAcknowledgementId",
+      "Summary": "Identifies the inbound acknowledgement proof id reported for broker consumption."
+    },
+    {
+      "DisplayName": "InboundRetryPolicy",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-inboundretrypolicy",
+      "Signature": "const string InboundRetryPolicy",
+      "Summary": "Identifies the provider retry policy reported for inbound broker consumption."
+    },
+    {
       "DisplayName": "Inbox",
       "Category": "Fields",
       "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
@@ -74089,6 +74247,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-isbounded",
       "Signature": "bool IsBounded { get; }",
       "Summary": "Gets a value indicating whether the bounded command journal currently retains enough evidence for operator-facing automation answers."
+    },
+    {
+      "DisplayName": "IsBrokerConsumed",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventSubscriptionBrokerInboundConsumptionMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-isbrokerconsumed-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "bool IsBrokerConsumed(IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Gets a value indicating whether the metadata contains complete provider-reported broker inbound-consumption proof."
     },
     {
       "DisplayName": "IsCapabilityEnabled",
@@ -97328,6 +97497,17 @@
       "AnchorId": "member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-poduid",
       "Signature": "string PodUid { get; set; }",
       "Summary": "Gets or sets the pod UID to stamp onto exported resources."
+    },
+    {
+      "DisplayName": "PoisonMessageHandling",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-poisonmessagehandling",
+      "Signature": "const string PoisonMessageHandling",
+      "Summary": "Identifies the poison-message handling posture reported for inbound broker consumption."
     },
     {
       "DisplayName": "Policies",
@@ -128904,6 +129084,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventdispatchprovidercontextpersistencemetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string",
       "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, string source)",
       "Summary": "Applies provider-side context-persistence proof to an existing metadata dictionary when projected context headers are present."
+    },
+    {
+      "DisplayName": "TryApplyMetadata",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventSubscriptionBrokerInboundConsumptionMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string consumerLoopId, string acknowledgementId, string leaseId, string retryPolicy, string poisonMessageHandling, string offsetCheckpointId)",
+      "Summary": "Applies provider-reported broker inbound-consumption proof to an existing subscription metadata dictionary when the inputs support it."
     },
     {
       "DisplayName": "TryFindByName",

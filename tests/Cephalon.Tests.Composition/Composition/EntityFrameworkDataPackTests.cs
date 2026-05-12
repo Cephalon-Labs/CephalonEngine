@@ -1196,6 +1196,13 @@ public sealed class EntityFrameworkDataPackTests
                     id: "catalog-events",
                     displayName: "Catalog Events",
                     description: "Catalog integration events."));
+                options.Subscriptions.Add(new EventSubscriptionDescriptor(
+                    id: "catalog-broker-consumer",
+                    displayName: "Catalog Broker Consumer",
+                    description: "Consumes catalog events through a provider-owned broker loop.",
+                    channelId: "catalog-events",
+                    handlerId: "catalog-broker-handler",
+                    deliveryMode: "broker"));
                 options.ContextPolicies.Add(new EventContextPolicyDescriptor(
                     id: "catalog-context",
                     displayName: "Catalog Context",
@@ -1222,7 +1229,9 @@ public sealed class EntityFrameworkDataPackTests
         var dbContext = scope.ServiceProvider.GetRequiredService<OutboxCatalogDbContext>();
         var dispatchStore = scope.ServiceProvider.GetRequiredService<IEventDispatchStore>();
         var dispatchRuntimeReporter = scope.ServiceProvider.GetRequiredService<IEventDispatchRuntimeReporter>();
+        var subscriptionRuntimeReporter = scope.ServiceProvider.GetRequiredService<IEventSubscriptionRuntimeReporter>();
         var dispatchRuntimeCatalog = provider.GetRequiredService<IEventDispatchRuntimeCatalog>();
+        var subscriptionRuntimeCatalog = provider.GetRequiredService<IEventSubscriptionRuntimeCatalog>();
         var publicationRuntimeCatalog = provider.GetRequiredService<IEventPublicationRuntimeCatalog>();
         var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
 
@@ -1439,6 +1448,8 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("executableValidation=publisher-enforced", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("executablePropagation=not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("not-claimed", dimensions["broker-inbound-consumption-ownership"].Metadata["status"]);
+        Assert.Contains("brokerInboundConsumption=not-claimed", dimensions["broker-inbound-consumption-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
         var consumerContextHeaderNames =
             $"{EventContextHeaderNames.Baggage},{EventContextHeaderNames.CausationId},{EventContextHeaderNames.CorrelationId},{EventContextHeaderNames.MessageId},{EventContextHeaderNames.TenantId}";
@@ -1600,6 +1611,97 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("exactlyOnceDelivery=provider-proven", exactlyOnceDimensions["downstream-delivery-completion-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("exactlyOnceDeliveryProofId=exactly-once-proof-001", exactlyOnceDimensions["downstream-delivery-completion-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("exactlyOnceDeliveryStrategy=provider-deduplication-and-commit", exactlyOnceDimensions["downstream-delivery-completion-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+
+        var startedInboundReport = EventSubscriptionBrokerInboundConsumptionMetadata.CreateReport(
+            new EventSubscriptionExecutionReport(
+                subscriptionId: "catalog-broker-consumer",
+                outcome: EventSubscriptionExecutionOutcomes.Started,
+                observedAtUtc: new DateTimeOffset(2026, 05, 12, 10, 4, 0, TimeSpan.Zero),
+                messageId: "evt-context-outbox-001",
+                attempt: 1),
+            source: "provider-broker-consumer",
+            consumerLoopId: "consumer-loop-001",
+            acknowledgementId: "ack-001",
+            leaseId: "lease-001",
+            retryPolicy: "provider-bounded-retry",
+            poisonMessageHandling: "dead-letter-and-replay",
+            offsetCheckpointId: "offset-checkpoint-001");
+        Assert.False(EventSubscriptionBrokerInboundConsumptionMetadata.IsBrokerConsumed(startedInboundReport.Metadata));
+        Assert.DoesNotContain(EventSubscriptionRuntimeMetadataKeys.BrokerInboundConsumption, startedInboundReport.Metadata.Keys);
+
+        var brokerInboundReport = EventSubscriptionBrokerInboundConsumptionMetadata.CreateReport(
+            new EventSubscriptionExecutionReport(
+                subscriptionId: "catalog-broker-consumer",
+                outcome: EventSubscriptionExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 12, 10, 5, 0, TimeSpan.Zero),
+                messageId: "evt-context-outbox-001",
+                attempt: 1),
+            source: "provider-broker-consumer",
+            consumerLoopId: "consumer-loop-001",
+            acknowledgementId: "ack-001",
+            leaseId: "lease-001",
+            retryPolicy: "provider-bounded-retry",
+            poisonMessageHandling: "dead-letter-and-replay",
+            offsetCheckpointId: "offset-checkpoint-001");
+        Assert.True(EventSubscriptionBrokerInboundConsumptionMetadata.IsBrokerConsumed(brokerInboundReport.Metadata));
+        Assert.Equal("provider-reported", brokerInboundReport.Metadata[EventSubscriptionRuntimeMetadataKeys.BrokerInboundConsumption]);
+        Assert.Equal("provider-broker-consumer", brokerInboundReport.Metadata[EventSubscriptionRuntimeMetadataKeys.BrokerInboundConsumptionSource]);
+        Assert.Equal("reported", brokerInboundReport.Metadata[EventSubscriptionRuntimeMetadataKeys.BrokerConsumerLoop]);
+        Assert.Equal("consumer-loop-001", brokerInboundReport.Metadata[EventSubscriptionRuntimeMetadataKeys.BrokerConsumerLoopId]);
+        Assert.Equal("reported", brokerInboundReport.Metadata[EventSubscriptionRuntimeMetadataKeys.InboundAcknowledgement]);
+        Assert.Equal("ack-001", brokerInboundReport.Metadata[EventSubscriptionRuntimeMetadataKeys.InboundAcknowledgementId]);
+        Assert.Equal("reported", brokerInboundReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ConsumerLease]);
+        Assert.Equal("lease-001", brokerInboundReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ConsumerLeaseId]);
+        Assert.Equal("provider-bounded-retry", brokerInboundReport.Metadata[EventSubscriptionRuntimeMetadataKeys.InboundRetryPolicy]);
+        Assert.Equal("dead-letter-and-replay", brokerInboundReport.Metadata[EventSubscriptionRuntimeMetadataKeys.PoisonMessageHandling]);
+        Assert.Equal("reported", brokerInboundReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ConsumerOffsetCheckpoint]);
+        Assert.Equal("offset-checkpoint-001", brokerInboundReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ConsumerOffsetCheckpointId]);
+
+        await subscriptionRuntimeReporter.ReportAsync(brokerInboundReport);
+
+        var subscriptionState = subscriptionRuntimeCatalog.GetById("catalog-broker-consumer");
+        Assert.NotNull(subscriptionState);
+        Assert.Equal(EventSubscriptionExecutionOutcomes.Succeeded, subscriptionState.LastOutcome);
+        Assert.Equal("provider-reported", subscriptionState.Metadata[EventSubscriptionRuntimeMetadataKeys.BrokerInboundConsumption]);
+        Assert.Equal("consumer-loop-001", subscriptionState.Metadata[EventSubscriptionRuntimeMetadataKeys.BrokerConsumerLoopId]);
+        Assert.Equal("ack-001", subscriptionState.Metadata[EventSubscriptionRuntimeMetadataKeys.InboundAcknowledgementId]);
+        Assert.Equal("lease-001", subscriptionState.Metadata[EventSubscriptionRuntimeMetadataKeys.ConsumerLeaseId]);
+        Assert.Equal("offset-checkpoint-001", subscriptionState.Metadata[EventSubscriptionRuntimeMetadataKeys.ConsumerOffsetCheckpointId]);
+
+        var brokerInboundEventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        var subscriptionSurface = Assert.Single(brokerInboundEventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
+        var subscriptionEntry = Assert.Single(subscriptionSurface.Entries, entry => entry.Id == "catalog-broker-consumer");
+        Assert.Equal(
+            "provider-reported",
+            subscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.BrokerInboundConsumption}"]);
+        Assert.Equal(
+            "provider-broker-consumer",
+            subscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.BrokerInboundConsumptionSource}"]);
+        Assert.Equal(
+            "consumer-loop-001",
+            subscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.BrokerConsumerLoopId}"]);
+        Assert.Equal(
+            "ack-001",
+            subscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.InboundAcknowledgementId}"]);
+        Assert.Equal(
+            "offset-checkpoint-001",
+            subscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.ConsumerOffsetCheckpointId}"]);
+        var brokerInboundDimensions = Assert.Single(brokerInboundEventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        Assert.Equal("claimed", brokerInboundDimensions["broker-inbound-consumption-ownership"].Metadata["status"]);
+        Assert.Contains("brokerInboundConsumption=provider-reported", brokerInboundDimensions["broker-inbound-consumption-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerConsumerLoop=reported", brokerInboundDimensions["broker-inbound-consumption-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerConsumerLoopId=consumer-loop-001", brokerInboundDimensions["broker-inbound-consumption-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("inboundAcknowledgement=reported", brokerInboundDimensions["broker-inbound-consumption-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("inboundAcknowledgementId=ack-001", brokerInboundDimensions["broker-inbound-consumption-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("consumerLease=reported", brokerInboundDimensions["broker-inbound-consumption-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("consumerLeaseId=lease-001", brokerInboundDimensions["broker-inbound-consumption-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("inboundRetryPolicy=provider-bounded-retry", brokerInboundDimensions["broker-inbound-consumption-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("poisonMessageHandling=dead-letter-and-replay", brokerInboundDimensions["broker-inbound-consumption-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("consumerOffsetCheckpoint=reported", brokerInboundDimensions["broker-inbound-consumption-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("consumerOffsetCheckpointId=offset-checkpoint-001", brokerInboundDimensions["broker-inbound-consumption-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", brokerInboundDimensions["broker-inbound-consumption-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]

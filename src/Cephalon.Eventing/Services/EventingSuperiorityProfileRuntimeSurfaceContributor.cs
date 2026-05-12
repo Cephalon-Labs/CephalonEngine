@@ -28,7 +28,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var brokerTopologyEvidence = ResolveBrokerTopologyEvidence(options, routeCount);
         var providerPartitionEvidence = ResolveProviderPartitionEvidence(options, routeCount);
         var downstreamDeliveryCompletion = ResolveDownstreamDeliveryCompletionProfile();
-        var brokerInboundConsumptionEvidence = ResolveBrokerInboundConsumptionEvidence(topology);
+        var brokerInboundConsumption = ResolveBrokerInboundConsumptionProfile();
         var serializationVersioning = ResolveSerializationVersioningProfile();
         var tenantCorrelation = ResolveTenantCorrelationProfile();
         var scheduledDeliveryStatus = options.EnablePublicationScheduling ? "partial" : "not-claimed";
@@ -106,10 +106,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     id: "broker-inbound-consumption-ownership",
                     displayName: "Broker Inbound Consumption Ownership",
                     description: "Makes provider-owned inbound broker consumption, acknowledgements, and offset checkpoints explicit instead of inferring them from declared subscriptions or in-process execution.",
-                    status: "not-claimed",
-                    evidence: brokerInboundConsumptionEvidence,
+                    status: brokerInboundConsumption.Status,
+                    evidence: brokerInboundConsumption.Evidence,
                     advantage: "Teams can use Cephalon subscription descriptors, direct in-process execution, and optional provider bindings without assuming the core pack silently owns a generic broker consumer loop.",
-                    nextGap: "Add a provider-owned inbound consumption descriptor plus acknowledgement, retry, lease, and offset-checkpoint evidence before claiming broker inbound consumption."),
+                    nextGap: brokerInboundConsumption.NextGap),
                 CreateEntry(
                     id: "serialization-and-contract-versioning-ownership",
                     displayName: "Serialization And Contract Versioning Ownership",
@@ -498,17 +498,87 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             "Add a provider-owned delivery completion descriptor plus acknowledgement, receipt, and completion-evidence catalog before claiming downstream delivery completion.");
     }
 
-    private static string ResolveBrokerInboundConsumptionEvidence(EventingRuntimeTopology topology)
+    private BrokerInboundConsumptionProfile ResolveBrokerInboundConsumptionProfile()
     {
         var declaredSubscriptions = topology.HasSubscriptionContributors ? "present" : "not-present";
         var inProcessExecution = topology.HasInProcessSubscriptionExecutionPath ? "active" : "not-active";
         var managedSubscriptionBindings = topology.HasManagedSubscriptionExecutionBindings ? "present" : "not-present";
         var externalManagedSubscriptionBindings = topology.HasExternalManagedSubscriptionExecutionBindings ? "present" : "not-present";
         var inboxPath = topology.HasInboxPath ? "present" : "not-present";
+        using var scope = scopeFactory.CreateScope();
+        var subscriptionRuntimeCatalog = scope.ServiceProvider.GetService<IEventSubscriptionRuntimeCatalog>();
+        var brokerConsumedState = subscriptionRuntimeCatalog?.States.FirstOrDefault(static state =>
+            state.Metadata.TryGetValue(EventSubscriptionRuntimeMetadataKeys.BrokerInboundConsumption, out var value) &&
+            string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase));
 
-        return string.Create(
-            CultureInfo.InvariantCulture,
-            $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; inboxPath={inboxPath}; brokerInboundConsumption=not-claimed; brokerConsumerLoop=not-present; providerOwnedConsumer=not-present; inboundAcknowledgement=not-claimed; consumerOffsetCheckpoint=not-claimed; wolverineRequired=false");
+        if (brokerConsumedState is not null)
+        {
+            var metadata = brokerConsumedState.Metadata;
+            var source = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.BrokerInboundConsumptionSource,
+                "not-reported");
+            var brokerConsumerLoop = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.BrokerConsumerLoop,
+                "not-present");
+            var brokerConsumerLoopId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.BrokerConsumerLoopId,
+                "not-reported");
+            var inboundAcknowledgement = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.InboundAcknowledgement,
+                "not-claimed");
+            var inboundAcknowledgementId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.InboundAcknowledgementId,
+                "not-reported");
+            var consumerLease = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ConsumerLease,
+                "not-claimed");
+            var consumerLeaseId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ConsumerLeaseId,
+                "not-reported");
+            var inboundRetryPolicy = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.InboundRetryPolicy,
+                "not-claimed");
+            var poisonMessageHandling = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.PoisonMessageHandling,
+                "not-claimed");
+            var consumerOffsetCheckpoint = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ConsumerOffsetCheckpoint,
+                "not-claimed");
+            var consumerOffsetCheckpointId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ConsumerOffsetCheckpointId,
+                "not-reported");
+            var status = EventSubscriptionBrokerInboundConsumptionMetadata.IsBrokerConsumed(metadata)
+                ? "claimed"
+                : "partial";
+            var nextGap = status == "claimed"
+                ? "Keep provider consumer-loop, acknowledgement, lease, retry/poison, and offset-checkpoint proof covered by provider integration tests."
+                : "Complete provider consumer-loop, acknowledgement, lease, retry/poison, and offset-checkpoint evidence before claiming broker inbound consumption.";
+
+            return new BrokerInboundConsumptionProfile(
+                status,
+                string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; inboxPath={inboxPath}; brokerInboundConsumption=provider-reported; brokerInboundConsumptionSource={source}; brokerConsumerLoop={brokerConsumerLoop}; brokerConsumerLoopId={brokerConsumerLoopId}; providerOwnedConsumer=reported; inboundAcknowledgement={inboundAcknowledgement}; inboundAcknowledgementId={inboundAcknowledgementId}; consumerLease={consumerLease}; consumerLeaseId={consumerLeaseId}; inboundRetryPolicy={inboundRetryPolicy}; poisonMessageHandling={poisonMessageHandling}; consumerOffsetCheckpoint={consumerOffsetCheckpoint}; consumerOffsetCheckpointId={consumerOffsetCheckpointId}; subscriptionId={brokerConsumedState.SubscriptionId}; lastOutcome={brokerConsumedState.LastOutcome ?? "unknown"}; wolverineRequired=false"),
+                nextGap);
+        }
+
+        return new BrokerInboundConsumptionProfile(
+            "not-claimed",
+            string.Create(
+                CultureInfo.InvariantCulture,
+                $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; inboxPath={inboxPath}; brokerInboundConsumption=not-claimed; brokerInboundConsumptionSource=not-reported; brokerConsumerLoop=not-present; brokerConsumerLoopId=not-reported; providerOwnedConsumer=not-present; inboundAcknowledgement=not-claimed; inboundAcknowledgementId=not-reported; consumerLease=not-claimed; consumerLeaseId=not-reported; inboundRetryPolicy=not-claimed; poisonMessageHandling=not-claimed; consumerOffsetCheckpoint=not-claimed; consumerOffsetCheckpointId=not-reported; wolverineRequired=false"),
+            "Add a provider-owned inbound consumption descriptor plus acknowledgement, retry, lease, poison handling, and offset-checkpoint evidence before claiming broker inbound consumption.");
     }
 
     private static string GetMetadataValue(IReadOnlyDictionary<string, string> metadata, string key, string fallback) =>
@@ -937,4 +1007,6 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private sealed record TenantCorrelationProfile(string Status, string Evidence, string NextGap);
 
     private sealed record DownstreamDeliveryCompletionProfile(string Status, string Evidence, string NextGap);
+
+    private sealed record BrokerInboundConsumptionProfile(string Status, string Evidence, string NextGap);
 }

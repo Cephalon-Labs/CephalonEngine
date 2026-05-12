@@ -116,6 +116,66 @@ public static class EventSubscriptionRuntimeMetadataKeys
     public const string LastOutcome = "lastOutcome";
 
     /// <summary>
+    /// Identifies whether a provider or runtime reports ownership of inbound broker consumption.
+    /// </summary>
+    public const string BrokerInboundConsumption = "brokerInboundConsumption";
+
+    /// <summary>
+    /// Identifies the provider or runtime source that reported inbound broker consumption.
+    /// </summary>
+    public const string BrokerInboundConsumptionSource = "brokerInboundConsumptionSource";
+
+    /// <summary>
+    /// Identifies whether a provider-owned broker consumer loop was reported.
+    /// </summary>
+    public const string BrokerConsumerLoop = "brokerConsumerLoop";
+
+    /// <summary>
+    /// Identifies the provider consumer-loop proof id reported for broker inbound consumption.
+    /// </summary>
+    public const string BrokerConsumerLoopId = "brokerConsumerLoopId";
+
+    /// <summary>
+    /// Identifies whether inbound acknowledgement proof was reported for broker consumption.
+    /// </summary>
+    public const string InboundAcknowledgement = "inboundAcknowledgement";
+
+    /// <summary>
+    /// Identifies the inbound acknowledgement proof id reported for broker consumption.
+    /// </summary>
+    public const string InboundAcknowledgementId = "inboundAcknowledgementId";
+
+    /// <summary>
+    /// Identifies whether a consumer lease or ownership token was reported for broker consumption.
+    /// </summary>
+    public const string ConsumerLease = "consumerLease";
+
+    /// <summary>
+    /// Identifies the consumer lease or ownership-token proof id reported for broker consumption.
+    /// </summary>
+    public const string ConsumerLeaseId = "consumerLeaseId";
+
+    /// <summary>
+    /// Identifies the provider retry policy reported for inbound broker consumption.
+    /// </summary>
+    public const string InboundRetryPolicy = "inboundRetryPolicy";
+
+    /// <summary>
+    /// Identifies the poison-message handling posture reported for inbound broker consumption.
+    /// </summary>
+    public const string PoisonMessageHandling = "poisonMessageHandling";
+
+    /// <summary>
+    /// Identifies whether a consumer offset checkpoint was reported for broker consumption.
+    /// </summary>
+    public const string ConsumerOffsetCheckpoint = "consumerOffsetCheckpoint";
+
+    /// <summary>
+    /// Identifies the consumer offset-checkpoint proof id reported for broker consumption.
+    /// </summary>
+    public const string ConsumerOffsetCheckpointId = "consumerOffsetCheckpointId";
+
+    /// <summary>
     /// Identifies whether the latest runtime observation says a retry is pending.
     /// </summary>
     public const string RetryPending = "retryPending";

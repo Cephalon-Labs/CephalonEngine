@@ -3210,6 +3210,104 @@ string[] Tags { get; set; }
 
 Gets or sets optional tags that classify the subscription.
 
+<a id="type-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata"></a>
+
+### `EventSubscriptionBrokerInboundConsumptionMetadata`
+
+Builds provider-reported broker inbound-consumption proof metadata for successful subscription reports.
+
+Remarks: Declared subscriptions, direct in-process execution, hosted execution bindings, and optional provider adapters do not automatically prove that Cephalon owns a broker consumer loop. This helper records that stronger claim only when a provider/runtime reports a successful subscription observation with consumer-loop, acknowledgement, lease, retry/poison, and offset-checkpoint proof.
+
+#### Declaration
+```csharp
+public static class EventSubscriptionBrokerInboundConsumptionMetadata
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateMetadata`
+
+```csharp
+Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string consumerLoopId, string acknowledgementId, string leaseId, string retryPolicy, string poisonMessageHandling, string offsetCheckpointId)
+```
+
+Creates a metadata copy enriched with provider-reported broker inbound-consumption proof when the inputs support it.
+
+Returns: A case-insensitive metadata dictionary containing the original values plus broker inbound-consumption proof when applicable.
+
+Parameters:
+- `metadata`: The subscription execution metadata to copy.
+- `outcome`: The subscription execution outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported broker inbound consumption.
+- `consumerLoopId`: The provider consumer-loop proof id.
+- `acknowledgementId`: The inbound acknowledgement proof id.
+- `leaseId`: The consumer lease or ownership-token proof id.
+- `retryPolicy`: The provider retry policy reported for inbound consumption.
+- `poisonMessageHandling`: The poison-message handling posture reported by the provider.
+- `offsetCheckpointId`: The consumer offset-checkpoint proof id.
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-createreport-cephalon-eventing-services-eventsubscriptionexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateReport`
+
+```csharp
+EventSubscriptionExecutionReport CreateReport(EventSubscriptionExecutionReport report, string source, string consumerLoopId, string acknowledgementId, string leaseId, string retryPolicy, string poisonMessageHandling, string offsetCheckpointId)
+```
+
+Creates a subscription report copy enriched with provider-reported broker inbound-consumption proof when the inputs support it.
+
+Returns: A subscription report containing the original metadata plus broker inbound-consumption proof when applicable.
+
+Parameters:
+- `report`: The successful subscription execution report to copy.
+- `source`: The stable provider or runtime source that reported broker inbound consumption.
+- `consumerLoopId`: The provider consumer-loop proof id.
+- `acknowledgementId`: The inbound acknowledgement proof id.
+- `leaseId`: The consumer lease or ownership-token proof id.
+- `retryPolicy`: The provider retry policy reported for inbound consumption.
+- `poisonMessageHandling`: The poison-message handling posture reported by the provider.
+- `offsetCheckpointId`: The consumer offset-checkpoint proof id.
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-isbrokerconsumed-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `IsBrokerConsumed`
+
+```csharp
+bool IsBrokerConsumed(IReadOnlyDictionary<string, string> metadata)
+```
+
+Gets a value indicating whether the metadata contains complete provider-reported broker inbound-consumption proof.
+
+Returns: `true` when complete broker inbound-consumption proof is present; otherwise, `false`.
+
+Parameters:
+- `metadata`: The subscription metadata dictionary to inspect.
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `TryApplyMetadata`
+
+```csharp
+bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string consumerLoopId, string acknowledgementId, string leaseId, string retryPolicy, string poisonMessageHandling, string offsetCheckpointId)
+```
+
+Applies provider-reported broker inbound-consumption proof to an existing subscription metadata dictionary when the inputs support it.
+
+Returns: `true` when broker inbound-consumption proof was applied; otherwise, `false`.
+
+Parameters:
+- `metadata`: The subscription metadata dictionary to enrich.
+- `outcome`: The subscription execution outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported broker inbound consumption.
+- `consumerLoopId`: The provider consumer-loop proof id.
+- `acknowledgementId`: The inbound acknowledgement proof id.
+- `leaseId`: The consumer lease or ownership-token proof id.
+- `retryPolicy`: The provider retry policy reported for inbound consumption.
+- `poisonMessageHandling`: The poison-message handling posture reported by the provider.
+- `offsetCheckpointId`: The consumer offset-checkpoint proof id.
+
 <a id="type-cephalon-eventing-services-eventsubscriptiondescriptor"></a>
 
 ### `EventSubscriptionDescriptor`
@@ -3691,6 +3789,46 @@ const string BindingMetadataPrefix
 
 Prefix for individual managed execution-binding metadata entries.
 
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerconsumerloop"></a>
+
+##### `BrokerConsumerLoop`
+
+```csharp
+const string BrokerConsumerLoop
+```
+
+Identifies whether a provider-owned broker consumer loop was reported.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerconsumerloopid"></a>
+
+##### `BrokerConsumerLoopId`
+
+```csharp
+const string BrokerConsumerLoopId
+```
+
+Identifies the provider consumer-loop proof id reported for broker inbound consumption.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerinboundconsumption"></a>
+
+##### `BrokerInboundConsumption`
+
+```csharp
+const string BrokerInboundConsumption
+```
+
+Identifies whether a provider or runtime reports ownership of inbound broker consumption.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerinboundconsumptionsource"></a>
+
+##### `BrokerInboundConsumptionSource`
+
+```csharp
+const string BrokerInboundConsumptionSource
+```
+
+Identifies the provider or runtime source that reported inbound broker consumption.
+
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-channelid"></a>
 
 ##### `ChannelId`
@@ -3740,6 +3878,46 @@ const string ConsumerContextHeaderNames
 ```
 
 Identifies the comma-separated Cephalon context header names extracted before executing the consumer.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumerlease"></a>
+
+##### `ConsumerLease`
+
+```csharp
+const string ConsumerLease
+```
+
+Identifies whether a consumer lease or ownership token was reported for broker consumption.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumerleaseid"></a>
+
+##### `ConsumerLeaseId`
+
+```csharp
+const string ConsumerLeaseId
+```
+
+Identifies the consumer lease or ownership-token proof id reported for broker consumption.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumeroffsetcheckpoint"></a>
+
+##### `ConsumerOffsetCheckpoint`
+
+```csharp
+const string ConsumerOffsetCheckpoint
+```
+
+Identifies whether a consumer offset checkpoint was reported for broker consumption.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumeroffsetcheckpointid"></a>
+
+##### `ConsumerOffsetCheckpointId`
+
+```csharp
+const string ConsumerOffsetCheckpointId
+```
+
+Identifies the consumer offset-checkpoint proof id reported for broker consumption.
 
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-deliverymode"></a>
 
@@ -3861,6 +4039,36 @@ const string HostedExecutionIds
 
 Identifies all hosted executions linked to the declared subscription.
 
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-inboundacknowledgement"></a>
+
+##### `InboundAcknowledgement`
+
+```csharp
+const string InboundAcknowledgement
+```
+
+Identifies whether inbound acknowledgement proof was reported for broker consumption.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-inboundacknowledgementid"></a>
+
+##### `InboundAcknowledgementId`
+
+```csharp
+const string InboundAcknowledgementId
+```
+
+Identifies the inbound acknowledgement proof id reported for broker consumption.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-inboundretrypolicy"></a>
+
+##### `InboundRetryPolicy`
+
+```csharp
+const string InboundRetryPolicy
+```
+
+Identifies the provider retry policy reported for inbound broker consumption.
+
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-inbox"></a>
 
 ##### `Inbox`
@@ -3900,6 +4108,16 @@ const string LastOutcome
 ```
 
 Identifies the latest reported subscription execution outcome.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-poisonmessagehandling"></a>
+
+##### `PoisonMessageHandling`
+
+```csharp
+const string PoisonMessageHandling
+```
+
+Identifies the poison-message handling posture reported for inbound broker consumption.
 
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-reportedmetadataprefix"></a>
 

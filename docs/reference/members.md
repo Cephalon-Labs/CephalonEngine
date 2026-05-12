@@ -3003,9 +3003,21 @@ Browse the published API surface by public member.
 - [BreakDurationSeconds](cephalon-engine.md#member-p-cephalon-engine-configuration-circuitbreakersettings-breakdurationseconds): `Properties` on `CircuitBreakerSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=BreakDurationSeconds&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the break duration in seconds requested for the open state.
   - `int? BreakDurationSeconds { get; }`
+- [BrokerConsumerLoop](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerconsumerloop): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerConsumerLoop&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether a provider-owned broker consumer loop was reported.
+  - `const string BrokerConsumerLoop`
+- [BrokerConsumerLoopId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerconsumerloopid): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerConsumerLoopId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the provider consumer-loop proof id reported for broker inbound consumption.
+  - `const string BrokerConsumerLoopId`
 - [BrokerDeadLetter](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerdeadletter): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerDeadLetter&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies whether the dead-letter decision is owned by a broker-specific dead-letter queue.
   - `const string BrokerDeadLetter`
+- [BrokerInboundConsumption](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerinboundconsumption): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerInboundConsumption&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether a provider or runtime reports ownership of inbound broker consumption.
+  - `const string BrokerInboundConsumption`
+- [BrokerInboundConsumptionSource](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerinboundconsumptionsource): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerInboundConsumptionSource&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the provider or runtime source that reported inbound broker consumption.
+  - `const string BrokerInboundConsumptionSource`
 - [BrowserPath](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocssurface-browserpath): `Properties` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=BrowserPath&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - The hosted path to the interactive browser UI.
   - `string BrowserPath { get; set; }`
@@ -5364,6 +5376,18 @@ Browse the published API surface by public member.
 - [ConsumerContextHeaderNames](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumercontextheadernames): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ConsumerContextHeaderNames&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the comma-separated Cephalon context header names extracted before executing the consumer.
   - `const string ConsumerContextHeaderNames`
+- [ConsumerLease](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumerlease): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ConsumerLease&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether a consumer lease or ownership token was reported for broker consumption.
+  - `const string ConsumerLease`
+- [ConsumerLeaseId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumerleaseid): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ConsumerLeaseId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the consumer lease or ownership-token proof id reported for broker consumption.
+  - `const string ConsumerLeaseId`
+- [ConsumerOffsetCheckpoint](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumeroffsetcheckpoint): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ConsumerOffsetCheckpoint&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether a consumer offset checkpoint was reported for broker consumption.
+  - `const string ConsumerOffsetCheckpoint`
+- [ConsumerOffsetCheckpointId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumeroffsetcheckpointid): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ConsumerOffsetCheckpointId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the consumer offset-checkpoint proof id reported for broker consumption.
+  - `const string ConsumerOffsetCheckpointId`
 - [Consumers](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-consumers): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Consumers&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the logical engine features that explicitly target this role.
   - `IReadOnlyList<string> Consumers { get; }`
@@ -5934,6 +5958,9 @@ Browse the published API surface by public member.
 - [CreateMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchprovidercontextpersistencemetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string): `Methods` on `EventDispatchProviderContextPersistenceMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a metadata copy enriched with provider-side context-persistence proof when the source metadata supports it.
   - `Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string source)`
+- [CreateMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventSubscriptionBrokerInboundConsumptionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates a metadata copy enriched with provider-reported broker inbound-consumption proof when the inputs support it.
+  - `Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string consumerLoopId, string acknowledgementId, string leaseId, string retryPolicy, string poisonMessageHandling, string offsetCheckpointId)`
 - [CreateModule](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-modulediscoverydescriptor-createmodule): `Methods` on `ModuleDiscoveryDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=CreateModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
   - Creates a module instance using the generated or explicitly registered factory.
   - `IModule CreateModule()`
@@ -5955,6 +5982,9 @@ Browse the published API surface by public member.
 - [CreateReport](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchprovidercontextpersistencemetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string): `Methods` on `EventDispatchProviderContextPersistenceMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateReport&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a dispatch report copy enriched with provider-side context-persistence proof when the source metadata supports it.
   - `EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source)`
+- [CreateReport](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-createreport-cephalon-eventing-services-eventsubscriptionexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventSubscriptionBrokerInboundConsumptionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateReport&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates a subscription report copy enriched with provider-reported broker inbound-consumption proof when the inputs support it.
+  - `EventSubscriptionExecutionReport CreateReport(EventSubscriptionExecutionReport report, string source, string consumerLoopId, string acknowledgementId, string leaseId, string retryPolicy, string poisonMessageHandling, string offsetCheckpointId)`
 - [CreateSlotIfMissing](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-createslotifmissing): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=CreateSlotIfMissing&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
   - Gets or sets a value indicating whether the pack should create the logical replication slot when it does not exist yet.
   - `bool CreateSlotIfMissing { get; set; }`
@@ -14082,6 +14112,15 @@ Browse the published API surface by public member.
 - [Ignore](cephalon-abstractions.md#member-f-cephalon-abstractions-resilience-behaviorresilienceexceptionhandling-ignore): `Fields` on `BehaviorResilienceExceptionHandling` in `Cephalon.Abstractions.Resilience` (`Cephalon.Abstractions`) [Browse](browse.html?q=Ignore&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Resilience&scope=members)
   - Ignore the exception for resilience accounting.
   - `const BehaviorResilienceExceptionHandling Ignore`
+- [InboundAcknowledgement](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-inboundacknowledgement): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=InboundAcknowledgement&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether inbound acknowledgement proof was reported for broker consumption.
+  - `const string InboundAcknowledgement`
+- [InboundAcknowledgementId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-inboundacknowledgementid): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=InboundAcknowledgementId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the inbound acknowledgement proof id reported for broker consumption.
+  - `const string InboundAcknowledgementId`
+- [InboundRetryPolicy](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-inboundretrypolicy): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=InboundRetryPolicy&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the provider retry policy reported for inbound broker consumption.
+  - `const string InboundRetryPolicy`
 - [Inbox](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-inbox): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Inbox&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies whether an inbox is available for the subscription's channel.
   - `const string Inbox`
@@ -14793,6 +14832,9 @@ Browse the published API surface by public member.
 - [IsBounded](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-isbounded): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsBounded&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the bounded command journal currently retains enough evidence for operator-facing automation answers.
   - `bool IsBounded { get; }`
+- [IsBrokerConsumed](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-isbrokerconsumed-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `EventSubscriptionBrokerInboundConsumptionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=IsBrokerConsumed&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets a value indicating whether the metadata contains complete provider-reported broker inbound-consumption proof.
+  - `bool IsBrokerConsumed(IReadOnlyDictionary<string, string> metadata)`
 - [IsCapabilityEnabled](cephalon-engine.md#member-m-cephalon-engine-configuration-engineoptions-iscapabilityenabled-system-string): `Methods` on `EngineOptions` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IsCapabilityEnabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Determines whether a capability is enabled under the current option set.
   - `bool IsCapabilityEnabled(string capabilityKey)`
@@ -21149,6 +21191,9 @@ Browse the published API surface by public member.
 - [PodUid](cephalon-observability-kubernetes.md#member-p-cephalon-observability-kubernetes-configuration-kubernetestelemetryexportoptions-poduid): `Properties` on `KubernetesTelemetryExportOptions` in `Cephalon.Observability.Kubernetes.Configuration` (`Cephalon.Observability.Kubernetes`) [Browse](browse.html?q=PodUid&assembly=Cephalon.Observability.Kubernetes&namespace=Cephalon.Observability.Kubernetes.Configuration&scope=members)
   - Gets or sets the pod UID to stamp onto exported resources.
   - `string PodUid { get; set; }`
+- [PoisonMessageHandling](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-poisonmessagehandling): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PoisonMessageHandling&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the poison-message handling posture reported for inbound broker consumption.
+  - `const string PoisonMessageHandling`
 - [Policies](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-iauthorizationpolicycatalog-policies): `Properties` on `IAuthorizationPolicyCatalog` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Policies&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets all authorization policies visible to the current runtime.
   - `IReadOnlyList<AuthorizationPolicyDescriptor> Policies { get; }`
@@ -29769,6 +29814,9 @@ Browse the published API surface by public member.
 - [TryApplyMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchprovidercontextpersistencemetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string): `Methods` on `EventDispatchProviderContextPersistenceMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryApplyMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Applies provider-side context-persistence proof to an existing metadata dictionary when projected context headers are present.
   - `bool TryApplyMetadata(IDictionary<string, string> metadata, string source)`
+- [TryApplyMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventSubscriptionBrokerInboundConsumptionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryApplyMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Applies provider-reported broker inbound-consumption proof to an existing subscription metadata dictionary when the inputs support it.
+  - `bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string consumerLoopId, string acknowledgementId, string leaseId, string retryPolicy, string poisonMessageHandling, string offsetCheckpointId)`
 - [TryFindByName](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventtyperegistry-tryfindbyname-system-string-cephalon-eventsourcing-services-eventtypedescriptor): `Methods` on `EventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=TryFindByName&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Attempts to find a descriptor by persisted event-type name or alias.
   - `bool TryFindByName(string eventTypeName, out EventTypeDescriptor descriptor)`

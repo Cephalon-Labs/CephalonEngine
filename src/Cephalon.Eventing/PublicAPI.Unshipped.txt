@@ -66,6 +66,11 @@ static Cephalon.Eventing.Services.EventDispatchExactlyOnceDeliveryProofMetadata.
 static Cephalon.Eventing.Services.EventDispatchExactlyOnceDeliveryProofMetadata.CreateReport(Cephalon.Eventing.Services.EventDispatchExecutionReport! report, string! source, string! providerReceiptId, string! subscriberAcknowledgementId, string! destinationCommitId, string! exactlyOnceProofId, string? strategy = null) -> Cephalon.Eventing.Services.EventDispatchExecutionReport!
 static Cephalon.Eventing.Services.EventDispatchExactlyOnceDeliveryProofMetadata.IsProviderProven(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> bool
 static Cephalon.Eventing.Services.EventDispatchExactlyOnceDeliveryProofMetadata.TryApplyMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, string! outcome, string! source, string! providerReceiptId, string! subscriberAcknowledgementId, string! destinationCommitId, string! exactlyOnceProofId, string? strategy = null) -> bool
+Cephalon.Eventing.Services.EventSubscriptionBrokerInboundConsumptionMetadata
+static Cephalon.Eventing.Services.EventSubscriptionBrokerInboundConsumptionMetadata.CreateMetadata(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata, string! outcome, string! source, string! consumerLoopId, string! acknowledgementId, string! leaseId, string! retryPolicy, string! poisonMessageHandling, string! offsetCheckpointId) -> System.Collections.Generic.Dictionary<string!, string!>!
+static Cephalon.Eventing.Services.EventSubscriptionBrokerInboundConsumptionMetadata.CreateReport(Cephalon.Eventing.Services.EventSubscriptionExecutionReport! report, string! source, string! consumerLoopId, string! acknowledgementId, string! leaseId, string! retryPolicy, string! poisonMessageHandling, string! offsetCheckpointId) -> Cephalon.Eventing.Services.EventSubscriptionExecutionReport!
+static Cephalon.Eventing.Services.EventSubscriptionBrokerInboundConsumptionMetadata.IsBrokerConsumed(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> bool
+static Cephalon.Eventing.Services.EventSubscriptionBrokerInboundConsumptionMetadata.TryApplyMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, string! outcome, string! source, string! consumerLoopId, string! acknowledgementId, string! leaseId, string! retryPolicy, string! poisonMessageHandling, string! offsetCheckpointId) -> bool
 Cephalon.Eventing.Services.EventDispatchContextReportMetadata
 static Cephalon.Eventing.Services.EventDispatchContextReportMetadata.Create(Cephalon.Eventing.Services.EventDispatchItem! dispatchItem, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? additionalMetadata = null) -> System.Collections.Generic.Dictionary<string!, string!>!
 Cephalon.Eventing.Services.EventDispatchProviderBrokerContextHeaders
@@ -102,6 +107,18 @@ const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ConsumerCo
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ConsumerContextExtractionSource = "consumerContextExtractionSource" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ConsumerContextHeaderCount = "consumerContextHeaderCount" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ConsumerContextHeaderNames = "consumerContextHeaderNames" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.BrokerConsumerLoop = "brokerConsumerLoop" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.BrokerConsumerLoopId = "brokerConsumerLoopId" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.BrokerInboundConsumption = "brokerInboundConsumption" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.BrokerInboundConsumptionSource = "brokerInboundConsumptionSource" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ConsumerLease = "consumerLease" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ConsumerLeaseId = "consumerLeaseId" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ConsumerOffsetCheckpoint = "consumerOffsetCheckpoint" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ConsumerOffsetCheckpointId = "consumerOffsetCheckpointId" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.InboundAcknowledgement = "inboundAcknowledgement" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.InboundAcknowledgementId = "inboundAcknowledgementId" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.InboundRetryPolicy = "inboundRetryPolicy" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.PoisonMessageHandling = "poisonMessageHandling" -> string!
 Cephalon.Eventing.Services.IEventSubscriptionDescriptorProvider
 Cephalon.Eventing.Services.IEventSubscriptionDescriptorProvider.SubscriptionDescriptor.get -> Cephalon.Eventing.Services.EventSubscriptionDescriptor!
 Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionRetryBackoff.get -> string!
