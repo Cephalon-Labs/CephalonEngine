@@ -26,7 +26,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             ? $"policy={EventPublicationRoutingPolicy.GetPolicyId(options)} routes={routeCount} autoChannel={EventPublicationRoutingPolicy.GetAutoChannelId(options)}"
             : "publication routing is not enabled.";
         var brokerTopology = ResolveBrokerTopologyProfile(routeCount);
-        var providerPartitionEvidence = ResolveProviderPartitionEvidence(options, routeCount);
+        var providerPartition = ResolveProviderPartitionProfile(routeCount);
         var downstreamDeliveryCompletion = ResolveDownstreamDeliveryCompletionProfile();
         var brokerInboundConsumption = ResolveBrokerInboundConsumptionProfile();
         var serializationVersioning = ResolveSerializationVersioningProfile();
@@ -89,10 +89,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     id: "provider-partition-ownership",
                     displayName: "Provider Partition Ownership",
                     description: "Makes provider-specific partition assignment, affinity, rebalancing, and ordering guarantees explicit instead of inferring them from Cephalon route or broker-topology metadata.",
-                    status: "not-claimed",
-                    evidence: providerPartitionEvidence,
+                    status: providerPartition.Status,
+                    evidence: providerPartition.Evidence,
                     advantage: "Teams can route events through Cephalon without assuming the engine silently owns provider partition placement or per-partition ordering semantics.",
-                    nextGap: "Add a provider-owned partition descriptor plus assignment, rebalancing, affinity, and ordering-evidence catalog before claiming partition ownership."),
+                    nextGap: providerPartition.NextGap),
                 CreateEntry(
                     id: "downstream-delivery-completion-ownership",
                     displayName: "Downstream Delivery Completion Ownership",
@@ -491,16 +491,105 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             "Add a provider-owned broker topology descriptor plus exchange, queue, topic, partition, and verification evidence before claiming topology materialization.");
     }
 
-    private static string ResolveProviderPartitionEvidence(EventingOptions options, string routeCount)
+    private ProviderPartitionProfile ResolveProviderPartitionProfile(string routeCount)
     {
-        if (!options.EnablePublicationRouting)
+        var publicationPath = topology.HasPublishingPath ? "active" : "not-active";
+        var dispatchRuntime = topology.HasDispatchRuntimeContributors ? "reported" : "not-reported";
+        var routingPolicy = options.EnablePublicationRouting
+            ? EventPublicationRoutingPolicy.GetPolicyId(options)
+            : "not-enabled";
+        var autoChannel = options.EnablePublicationRouting
+            ? EventPublicationRoutingPolicy.GetAutoChannelId(options)
+            : "not-configured";
+
+        if (!topology.HasPublishingPath)
         {
-            return "publication routing is not enabled; providerPartitionOwnership=not-claimed; providerOwnedPartitioning=not-present; wolverineRequired=false";
+            return new ProviderPartitionProfile(
+                "not-claimed",
+                string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"publicationPath={publicationPath}; routingPolicy={routingPolicy}; routes={routeCount}; autoChannel={autoChannel}; dispatchRuntime={dispatchRuntime}; providerPartitionOwnership=not-claimed; providerPartitionOwnershipSource=not-reported; partitionAssignment=not-claimed; partitionAssignmentId=not-reported; partitionAffinity=not-claimed; partitionAffinityId=not-reported; partitionRebalancing=not-claimed; partitionRebalancingId=not-reported; partitionOrderingGuarantee=not-claimed; partitionOrderingGuaranteeId=not-reported; providerOwnedPartitioning=not-present; providerPartitioningId=not-reported; wolverineRequired=false"),
+                "Add a publishing path plus provider-owned partition proof before claiming provider partition ownership.");
         }
 
-        return string.Create(
-            CultureInfo.InvariantCulture,
-            $"routingPolicy={EventPublicationRoutingPolicy.GetPolicyId(options)}; routes={routeCount}; autoChannel={EventPublicationRoutingPolicy.GetAutoChannelId(options)}; providerPartitionOwnership=not-claimed; partitionAssignment=not-claimed; partitionAffinity=not-claimed; partitionRebalancing=not-claimed; partitionOrderingGuarantee=not-claimed; providerOwnedPartitioning=not-present; wolverineRequired=false");
+        using var scope = scopeFactory.CreateScope();
+        var dispatchRuntimeCatalog = scope.ServiceProvider.GetService<IEventDispatchRuntimeCatalog>();
+        var partitionState = dispatchRuntimeCatalog?.States.FirstOrDefault(static state =>
+            state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.ProviderPartitionOwnership, out var value) &&
+            string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase));
+
+        if (partitionState is not null)
+        {
+            var metadata = partitionState.Metadata;
+            var source = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ProviderPartitionOwnershipSource,
+                "not-reported");
+            var providerPartitionOwnership = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ProviderPartitionOwnership,
+                "not-claimed");
+            var partitionAssignment = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.PartitionAssignment,
+                "not-claimed");
+            var partitionAssignmentId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.PartitionAssignmentId,
+                "not-reported");
+            var partitionAffinity = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.PartitionAffinity,
+                "not-claimed");
+            var partitionAffinityId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.PartitionAffinityId,
+                "not-reported");
+            var partitionRebalancing = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.PartitionRebalancing,
+                "not-claimed");
+            var partitionRebalancingId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.PartitionRebalancingId,
+                "not-reported");
+            var partitionOrderingGuarantee = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.PartitionOrderingGuarantee,
+                "not-claimed");
+            var partitionOrderingGuaranteeId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.PartitionOrderingGuaranteeId,
+                "not-reported");
+            var providerOwnedPartitioning = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ProviderOwnedPartitioning,
+                "not-present");
+            var providerPartitioningId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ProviderPartitioningId,
+                "not-reported");
+            var status = EventDispatchProviderPartitionMetadata.IsPartitionOwnershipProven(metadata)
+                ? "claimed"
+                : "partial";
+            var nextGap = status == "claimed"
+                ? "Keep provider partition assignment, affinity, rebalancing, and ordering proof covered by provider integration tests."
+                : "Complete assignment, affinity, rebalancing, ordering, and provider-owned partition evidence before claiming provider partition ownership.";
+
+            return new ProviderPartitionProfile(
+                status,
+                string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"publicationPath=active; routingPolicy={routingPolicy}; routes={routeCount}; autoChannel={autoChannel}; dispatchRuntime={dispatchRuntime}; providerPartitionOwnership={providerPartitionOwnership}; providerPartitionOwnershipSource={source}; partitionAssignment={partitionAssignment}; partitionAssignmentId={partitionAssignmentId}; partitionAffinity={partitionAffinity}; partitionAffinityId={partitionAffinityId}; partitionRebalancing={partitionRebalancing}; partitionRebalancingId={partitionRebalancingId}; partitionOrderingGuarantee={partitionOrderingGuarantee}; partitionOrderingGuaranteeId={partitionOrderingGuaranteeId}; providerOwnedPartitioning={providerOwnedPartitioning}; providerPartitioningId={providerPartitioningId}; outboxId={partitionState.OutboxId}; lastOutcome={partitionState.LastOutcome ?? "unknown"}; wolverineRequired=false"),
+                nextGap);
+        }
+
+        return new ProviderPartitionProfile(
+            "not-claimed",
+            string.Create(
+                CultureInfo.InvariantCulture,
+                $"publicationPath=active; routingPolicy={routingPolicy}; routes={routeCount}; autoChannel={autoChannel}; dispatchRuntime={dispatchRuntime}; providerPartitionOwnership=not-claimed; providerPartitionOwnershipSource=not-reported; partitionAssignment=not-claimed; partitionAssignmentId=not-reported; partitionAffinity=not-claimed; partitionAffinityId=not-reported; partitionRebalancing=not-claimed; partitionRebalancingId=not-reported; partitionOrderingGuarantee=not-claimed; partitionOrderingGuaranteeId=not-reported; providerOwnedPartitioning=not-present; providerPartitioningId=not-reported; wolverineRequired=false"),
+            "Add a provider-owned partition descriptor plus assignment, affinity, rebalancing, and ordering evidence before claiming provider partition ownership.");
     }
 
     private DownstreamDeliveryCompletionProfile ResolveDownstreamDeliveryCompletionProfile()
@@ -1561,6 +1650,8 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private static string ToMetadataValue(bool value) => value ? "true" : "false";
 
     private sealed record BrokerTopologyProfile(string Status, string Evidence, string NextGap);
+
+    private sealed record ProviderPartitionProfile(string Status, string Evidence, string NextGap);
 
     private sealed record ChoreographyHandoffProfile(string Status, string Evidence, string NextGap);
 

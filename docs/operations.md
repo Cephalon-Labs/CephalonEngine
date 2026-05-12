@@ -2650,8 +2650,10 @@ Current `Cephalon.Eventing` highlights:
   provisioning, topic provisioning, partition provisioning, topology verification, and provider
   topology ownership, even when Cephalon-native routing has selected the effective channel
 - `provider-partition-ownership` is the separate provider partition boundary in that same profile;
-  it stays `not-claimed` until a provider package owns partition assignment, affinity, rebalancing,
-  and per-partition ordering semantics, even when route and broker topology evidence are present
+  it stays `not-claimed` until a successful provider/runtime dispatch report supplies complete
+  `EventDispatchProviderPartitionMetadata` proof for partition assignment, affinity, rebalancing,
+  ordering guarantee, and provider partitioning ownership, even when route and broker topology
+  evidence are present
 - `downstream-delivery-completion-ownership` is the separate delivery-completion boundary in that
   same profile; it stays `not-claimed` until a provider package owns destination delivery receipts,
   subscriber acknowledgement, destination commits, and exactly-once completion evidence, even when

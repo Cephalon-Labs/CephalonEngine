@@ -6006,6 +6006,9 @@ Browse the published API surface by public member.
 - [CreateMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchprovidercontextpersistencemetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string): `Methods` on `EventDispatchProviderContextPersistenceMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a metadata copy enriched with provider-side context-persistence proof when the source metadata supports it.
   - `Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string source)`
+- [CreateMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchproviderpartitionmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchProviderPartitionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates a metadata copy enriched with provider-reported partition ownership proof when the inputs support it.
+  - `Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string partitionAssignmentId, string partitionAffinityId, string partitionRebalancingId, string partitionOrderingGuaranteeId, string providerPartitioningId)`
 - [CreateMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventSubscriptionBrokerInboundConsumptionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a metadata copy enriched with provider-reported broker inbound-consumption proof when the inputs support it.
   - `Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string consumerLoopId, string acknowledgementId, string leaseId, string retryPolicy, string poisonMessageHandling, string offsetCheckpointId)`
@@ -6048,6 +6051,9 @@ Browse the published API surface by public member.
 - [CreateReport](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchprovidercontextpersistencemetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string): `Methods` on `EventDispatchProviderContextPersistenceMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateReport&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a dispatch report copy enriched with provider-side context-persistence proof when the source metadata supports it.
   - `EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source)`
+- [CreateReport](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchproviderpartitionmetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchProviderPartitionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateReport&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates a dispatch report copy enriched with provider-reported partition ownership proof when the inputs support it.
+  - `EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string partitionAssignmentId, string partitionAffinityId, string partitionRebalancingId, string partitionOrderingGuaranteeId, string providerPartitioningId)`
 - [CreateReport](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-createreport-cephalon-eventing-services-eventsubscriptionexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventSubscriptionBrokerInboundConsumptionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateReport&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a subscription report copy enriched with provider-reported broker inbound-consumption proof when the inputs support it.
   - `EventSubscriptionExecutionReport CreateReport(EventSubscriptionExecutionReport report, string source, string consumerLoopId, string acknowledgementId, string leaseId, string retryPolicy, string poisonMessageHandling, string offsetCheckpointId)`
@@ -15477,6 +15483,9 @@ Browse the published API surface by public member.
 - [IsOwnershipRisk](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneownershipstatus-isownershiprisk): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneOwnershipStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsOwnershipRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether provider-owned control-plane ownership currently remains risky.
   - `bool IsOwnershipRisk { get; }`
+- [IsPartitionOwnershipProven](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchproviderpartitionmetadata-ispartitionownershipproven-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `EventDispatchProviderPartitionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=IsPartitionOwnershipProven&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets a value indicating whether the metadata contains complete provider-reported partition ownership proof.
+  - `bool IsPartitionOwnershipProven(IReadOnlyDictionary<string, string> metadata)`
 - [IsPersisted](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-ispersisted): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsPersisted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the current durability answer reports healthy persisted storage.
   - `bool IsPersisted { get; }`
@@ -20984,9 +20993,27 @@ Browse the published API surface by public member.
 - [ParticipantCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccapturereportercoordinationstatus-participantcount): `Properties` on `CdcCaptureReporterCoordinationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ParticipantCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the total number of reporter participants currently visible in the coordination story.
   - `int ParticipantCount { get; }`
+- [PartitionAffinity](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionaffinity): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PartitionAffinity&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether provider partition affinity was reported.
+  - `const string PartitionAffinity`
+- [PartitionAffinityId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionaffinityid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PartitionAffinityId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the provider partition affinity proof id.
+  - `const string PartitionAffinityId`
+- [PartitionAssignment](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionassignment): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PartitionAssignment&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether provider partition assignment was reported.
+  - `const string PartitionAssignment`
+- [PartitionAssignmentId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionassignmentid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PartitionAssignmentId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the provider partition assignment proof id.
+  - `const string PartitionAssignmentId`
 - [PartitionOrdering](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-partitionordering): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PartitionOrdering&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies whether partition ordering proof was reported for a subscription.
   - `const string PartitionOrdering`
+- [PartitionOrderingGuarantee](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionorderingguarantee): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PartitionOrderingGuarantee&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether provider partition ordering guarantees were reported.
+  - `const string PartitionOrderingGuarantee`
+- [PartitionOrderingGuaranteeId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionorderingguaranteeid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PartitionOrderingGuaranteeId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the provider partition ordering guarantee proof id.
+  - `const string PartitionOrderingGuaranteeId`
 - [PartitionOrderingId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-partitionorderingid): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PartitionOrderingId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the partition ordering proof id.
   - `const string PartitionOrderingId`
@@ -20996,6 +21023,12 @@ Browse the published API surface by public member.
 - [PartitionProvisioningId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionprovisioningid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PartitionProvisioningId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the broker partition provisioning proof id.
   - `const string PartitionProvisioningId`
+- [PartitionRebalancing](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionrebalancing): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PartitionRebalancing&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether provider partition rebalancing was reported.
+  - `const string PartitionRebalancing`
+- [PartitionRebalancingId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionrebalancingid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PartitionRebalancingId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the provider partition rebalancing proof id.
+  - `const string PartitionRebalancingId`
 - [PassHostHeader](cephalon-edge-traefik.md#member-p-cephalon-edge-traefik-configuration-traefikingressrouteoptions-passhostheader): `Properties` on `TraefikIngressRouteOptions` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=PassHostHeader&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
   - Gets or sets the optional pass-host-header posture applied to the projected backend Service reference.
   - `bool? PassHostHeader { get; set; }`
@@ -22740,6 +22773,9 @@ Browse the published API surface by public member.
 - [ProviderOwnedExecuting](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstates-providerownedexecuting): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedExecuting&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned write-path execution already translated one provider-facing command shape.
   - `const string ProviderOwnedExecuting`
+- [ProviderOwnedPartitioning](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerownedpartitioning): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ProviderOwnedPartitioning&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether provider-owned partitioning proof was reported.
+  - `const string ProviderOwnedPartitioning`
 - [ProviderOwnedRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providerownedrisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned write-path execution currently remains risky.
   - `const string ProviderOwnedRisk`
@@ -22818,6 +22854,15 @@ Browse the published API surface by public member.
 - [ProviderOwnedWritePathExecutionState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-providerownedwritepathexecutionstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedWritePathExecutionState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current provider-owned write-path execution state that informed provider-specific materialization.
   - `string ProviderOwnedWritePathExecutionState { get; set; }`
+- [ProviderPartitioningId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerpartitioningid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ProviderPartitioningId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the provider-owned partitioning proof id.
+  - `const string ProviderPartitioningId`
+- [ProviderPartitionOwnership](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerpartitionownership): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ProviderPartitionOwnership&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether a provider or runtime reported provider partition ownership.
+  - `const string ProviderPartitionOwnership`
+- [ProviderPartitionOwnershipSource](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerpartitionownershipsource): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ProviderPartitionOwnershipSource&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the provider or runtime source that reported provider partition ownership.
+  - `const string ProviderPartitionOwnershipSource`
 - [ProviderProcessManager](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-providerprocessmanager): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ProviderProcessManager&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies whether provider-owned process-manager coordination was reported.
   - `const string ProviderProcessManager`
@@ -30135,6 +30180,9 @@ Browse the published API surface by public member.
 - [TryApplyMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchprovidercontextpersistencemetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string): `Methods` on `EventDispatchProviderContextPersistenceMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryApplyMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Applies provider-side context-persistence proof to an existing metadata dictionary when projected context headers are present.
   - `bool TryApplyMetadata(IDictionary<string, string> metadata, string source)`
+- [TryApplyMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchproviderpartitionmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchProviderPartitionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryApplyMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Applies provider-reported partition ownership proof to an existing dispatch metadata dictionary when the inputs support it.
+  - `bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string partitionAssignmentId, string partitionAffinityId, string partitionRebalancingId, string partitionOrderingGuaranteeId, string providerPartitioningId)`
 - [TryApplyMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventSubscriptionBrokerInboundConsumptionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryApplyMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Applies provider-reported broker inbound-consumption proof to an existing subscription metadata dictionary when the inputs support it.
   - `bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string consumerLoopId, string acknowledgementId, string leaseId, string retryPolicy, string poisonMessageHandling, string offsetCheckpointId)`

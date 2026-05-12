@@ -2082,6 +2082,101 @@ Parameters:
 - `metadata`: The metadata dictionary to enrich.
 - `source`: The stable dispatch-store or provider identifier that persisted the context proof.
 
+<a id="type-cephalon-eventing-services-eventdispatchproviderpartitionmetadata"></a>
+
+### `EventDispatchProviderPartitionMetadata`
+
+Builds provider-reported partition ownership proof metadata for successful dispatch reports.
+
+Remarks: Cephalon publication routing proves logical channel selection, not provider partition placement. This helper records the stronger provider partition claim only when a provider/runtime reports successful dispatch evidence with assignment, affinity, rebalancing, ordering, and provider-owned partitioning proof ids.
+
+#### Declaration
+```csharp
+public static class EventDispatchProviderPartitionMetadata
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-eventdispatchproviderpartitionmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateMetadata`
+
+```csharp
+Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string partitionAssignmentId, string partitionAffinityId, string partitionRebalancingId, string partitionOrderingGuaranteeId, string providerPartitioningId)
+```
+
+Creates a metadata copy enriched with provider-reported partition ownership proof when the inputs support it.
+
+Returns: A case-insensitive metadata dictionary containing the original values plus provider partition proof when applicable.
+
+Parameters:
+- `metadata`: The dispatch report metadata to copy.
+- `outcome`: The dispatch report outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported provider partition ownership.
+- `partitionAssignmentId`: The provider partition assignment proof id.
+- `partitionAffinityId`: The provider partition affinity proof id.
+- `partitionRebalancingId`: The provider partition rebalancing proof id.
+- `partitionOrderingGuaranteeId`: The provider partition ordering guarantee proof id.
+- `providerPartitioningId`: The provider-owned partitioning proof id.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchproviderpartitionmetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateReport`
+
+```csharp
+EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string partitionAssignmentId, string partitionAffinityId, string partitionRebalancingId, string partitionOrderingGuaranteeId, string providerPartitioningId)
+```
+
+Creates a dispatch report copy enriched with provider-reported partition ownership proof when the inputs support it.
+
+Returns: A dispatch report containing the original metadata plus provider partition proof when applicable.
+
+Parameters:
+- `report`: The successful dispatch report to copy.
+- `source`: The stable provider or runtime source that reported provider partition ownership.
+- `partitionAssignmentId`: The provider partition assignment proof id.
+- `partitionAffinityId`: The provider partition affinity proof id.
+- `partitionRebalancingId`: The provider partition rebalancing proof id.
+- `partitionOrderingGuaranteeId`: The provider partition ordering guarantee proof id.
+- `providerPartitioningId`: The provider-owned partitioning proof id.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchproviderpartitionmetadata-ispartitionownershipproven-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `IsPartitionOwnershipProven`
+
+```csharp
+bool IsPartitionOwnershipProven(IReadOnlyDictionary<string, string> metadata)
+```
+
+Gets a value indicating whether the metadata contains complete provider-reported partition ownership proof.
+
+Returns: `true` when complete provider partition proof is present; otherwise, `false`.
+
+Parameters:
+- `metadata`: The dispatch metadata dictionary to inspect.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchproviderpartitionmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `TryApplyMetadata`
+
+```csharp
+bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string partitionAssignmentId, string partitionAffinityId, string partitionRebalancingId, string partitionOrderingGuaranteeId, string providerPartitioningId)
+```
+
+Applies provider-reported partition ownership proof to an existing dispatch metadata dictionary when the inputs support it.
+
+Returns: `true` when provider partition proof was applied; otherwise, `false`.
+
+Parameters:
+- `metadata`: The dispatch metadata dictionary to enrich.
+- `outcome`: The dispatch report outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported provider partition ownership.
+- `partitionAssignmentId`: The provider partition assignment proof id.
+- `partitionAffinityId`: The provider partition affinity proof id.
+- `partitionRebalancingId`: The provider partition rebalancing proof id.
+- `partitionOrderingGuaranteeId`: The provider partition ordering guarantee proof id.
+- `providerPartitioningId`: The provider-owned partitioning proof id.
+
 <a id="type-cephalon-eventing-services-eventdispatchremediationmetadatakeys"></a>
 
 ### `EventDispatchRemediationMetadataKeys`
@@ -2612,6 +2707,66 @@ const string NextRetryAtUtc
 
 Identifies the next UTC time when a retryable dispatch failure should become eligible again.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionaffinity"></a>
+
+##### `PartitionAffinity`
+
+```csharp
+const string PartitionAffinity
+```
+
+Identifies whether provider partition affinity was reported.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionaffinityid"></a>
+
+##### `PartitionAffinityId`
+
+```csharp
+const string PartitionAffinityId
+```
+
+Identifies the provider partition affinity proof id.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionassignment"></a>
+
+##### `PartitionAssignment`
+
+```csharp
+const string PartitionAssignment
+```
+
+Identifies whether provider partition assignment was reported.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionassignmentid"></a>
+
+##### `PartitionAssignmentId`
+
+```csharp
+const string PartitionAssignmentId
+```
+
+Identifies the provider partition assignment proof id.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionorderingguarantee"></a>
+
+##### `PartitionOrderingGuarantee`
+
+```csharp
+const string PartitionOrderingGuarantee
+```
+
+Identifies whether provider partition ordering guarantees were reported.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionorderingguaranteeid"></a>
+
+##### `PartitionOrderingGuaranteeId`
+
+```csharp
+const string PartitionOrderingGuaranteeId
+```
+
+Identifies the provider partition ordering guarantee proof id.
+
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionprovisioning"></a>
 
 ##### `PartitionProvisioning`
@@ -2631,6 +2786,26 @@ const string PartitionProvisioningId
 ```
 
 Identifies the broker partition provisioning proof id.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionrebalancing"></a>
+
+##### `PartitionRebalancing`
+
+```csharp
+const string PartitionRebalancing
+```
+
+Identifies whether provider partition rebalancing was reported.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionrebalancingid"></a>
+
+##### `PartitionRebalancingId`
+
+```csharp
+const string PartitionRebalancingId
+```
+
+Identifies the provider partition rebalancing proof id.
 
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-poisonqueueid"></a>
 
@@ -2712,6 +2887,16 @@ const string ProviderDeliveryReceiptId
 
 Identifies the provider delivery receipt id reported for the dispatch.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerownedpartitioning"></a>
+
+##### `ProviderOwnedPartitioning`
+
+```csharp
+const string ProviderOwnedPartitioning
+```
+
+Identifies whether provider-owned partitioning proof was reported.
+
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerownedtopology"></a>
 
 ##### `ProviderOwnedTopology`
@@ -2721,6 +2906,36 @@ const string ProviderOwnedTopology
 ```
 
 Identifies whether provider-owned broker topology proof was reported.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerpartitioningid"></a>
+
+##### `ProviderPartitioningId`
+
+```csharp
+const string ProviderPartitioningId
+```
+
+Identifies the provider-owned partitioning proof id.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerpartitionownership"></a>
+
+##### `ProviderPartitionOwnership`
+
+```csharp
+const string ProviderPartitionOwnership
+```
+
+Identifies whether a provider or runtime reported provider partition ownership.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerpartitionownershipsource"></a>
+
+##### `ProviderPartitionOwnershipSource`
+
+```csharp
+const string ProviderPartitionOwnershipSource
+```
+
+Identifies the provider or runtime source that reported provider partition ownership.
 
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providersidecontextpersistence"></a>
 

@@ -49,15 +49,27 @@ const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ExactlyOnceDel
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ExactlyOnceDeliveryStrategy = "exactlyOnceDeliveryStrategy" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ExchangeProvisioning = "exchangeProvisioning" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ExchangeProvisioningId = "exchangeProvisioningId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.PartitionAffinity = "partitionAffinity" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.PartitionAffinityId = "partitionAffinityId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.PartitionAssignment = "partitionAssignment" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.PartitionAssignmentId = "partitionAssignmentId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.PartitionOrderingGuarantee = "partitionOrderingGuarantee" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.PartitionOrderingGuaranteeId = "partitionOrderingGuaranteeId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.PartitionProvisioning = "partitionProvisioning" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.PartitionProvisioningId = "partitionProvisioningId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.PartitionRebalancing = "partitionRebalancing" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.PartitionRebalancingId = "partitionRebalancingId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderCount = "providerBrokerContextHeaderCount" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderNames = "providerBrokerContextHeaderNames" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderProjection = "providerBrokerContextHeaderProjection" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders = "providerBrokerContextHeaders" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderDeliveryReceipt = "providerDeliveryReceipt" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderDeliveryReceiptId = "providerDeliveryReceiptId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderOwnedPartitioning = "providerOwnedPartitioning" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderOwnedTopology = "providerOwnedTopology" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderPartitioningId = "providerPartitioningId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderPartitionOwnership = "providerPartitionOwnership" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderPartitionOwnershipSource = "providerPartitionOwnershipSource" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistence = "providerSideContextPersistence" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceHeaderCount = "providerSideContextPersistenceHeaderCount" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceHeaderNames = "providerSideContextPersistenceHeaderNames" -> string!
@@ -103,6 +115,11 @@ static Cephalon.Eventing.Services.EventDispatchExactlyOnceDeliveryProofMetadata.
 static Cephalon.Eventing.Services.EventDispatchExactlyOnceDeliveryProofMetadata.CreateReport(Cephalon.Eventing.Services.EventDispatchExecutionReport! report, string! source, string! providerReceiptId, string! subscriberAcknowledgementId, string! destinationCommitId, string! exactlyOnceProofId, string? strategy = null) -> Cephalon.Eventing.Services.EventDispatchExecutionReport!
 static Cephalon.Eventing.Services.EventDispatchExactlyOnceDeliveryProofMetadata.IsProviderProven(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> bool
 static Cephalon.Eventing.Services.EventDispatchExactlyOnceDeliveryProofMetadata.TryApplyMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, string! outcome, string! source, string! providerReceiptId, string! subscriberAcknowledgementId, string! destinationCommitId, string! exactlyOnceProofId, string? strategy = null) -> bool
+Cephalon.Eventing.Services.EventDispatchProviderPartitionMetadata
+static Cephalon.Eventing.Services.EventDispatchProviderPartitionMetadata.CreateMetadata(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata, string! outcome, string! source, string! partitionAssignmentId, string! partitionAffinityId, string! partitionRebalancingId, string! partitionOrderingGuaranteeId, string! providerPartitioningId) -> System.Collections.Generic.Dictionary<string!, string!>!
+static Cephalon.Eventing.Services.EventDispatchProviderPartitionMetadata.CreateReport(Cephalon.Eventing.Services.EventDispatchExecutionReport! report, string! source, string! partitionAssignmentId, string! partitionAffinityId, string! partitionRebalancingId, string! partitionOrderingGuaranteeId, string! providerPartitioningId) -> Cephalon.Eventing.Services.EventDispatchExecutionReport!
+static Cephalon.Eventing.Services.EventDispatchProviderPartitionMetadata.IsPartitionOwnershipProven(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> bool
+static Cephalon.Eventing.Services.EventDispatchProviderPartitionMetadata.TryApplyMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, string! outcome, string! source, string! partitionAssignmentId, string! partitionAffinityId, string! partitionRebalancingId, string! partitionOrderingGuaranteeId, string! providerPartitioningId) -> bool
 Cephalon.Eventing.Services.EventSubscriptionBrokerInboundConsumptionMetadata
 static Cephalon.Eventing.Services.EventSubscriptionBrokerInboundConsumptionMetadata.CreateMetadata(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata, string! outcome, string! source, string! consumerLoopId, string! acknowledgementId, string! leaseId, string! retryPolicy, string! poisonMessageHandling, string! offsetCheckpointId) -> System.Collections.Generic.Dictionary<string!, string!>!
 static Cephalon.Eventing.Services.EventSubscriptionBrokerInboundConsumptionMetadata.CreateReport(Cephalon.Eventing.Services.EventSubscriptionExecutionReport! report, string! source, string! consumerLoopId, string! acknowledgementId, string! leaseId, string! retryPolicy, string! poisonMessageHandling, string! offsetCheckpointId) -> Cephalon.Eventing.Services.EventSubscriptionExecutionReport!

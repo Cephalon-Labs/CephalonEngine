@@ -111,6 +111,66 @@ public static class EventDispatchRuntimeMetadataKeys
     public const string ProviderTopologyId = "providerTopologyId";
 
     /// <summary>
+    /// Identifies whether a provider or runtime reported provider partition ownership.
+    /// </summary>
+    public const string ProviderPartitionOwnership = "providerPartitionOwnership";
+
+    /// <summary>
+    /// Identifies the provider or runtime source that reported provider partition ownership.
+    /// </summary>
+    public const string ProviderPartitionOwnershipSource = "providerPartitionOwnershipSource";
+
+    /// <summary>
+    /// Identifies whether provider partition assignment was reported.
+    /// </summary>
+    public const string PartitionAssignment = "partitionAssignment";
+
+    /// <summary>
+    /// Identifies the provider partition assignment proof id.
+    /// </summary>
+    public const string PartitionAssignmentId = "partitionAssignmentId";
+
+    /// <summary>
+    /// Identifies whether provider partition affinity was reported.
+    /// </summary>
+    public const string PartitionAffinity = "partitionAffinity";
+
+    /// <summary>
+    /// Identifies the provider partition affinity proof id.
+    /// </summary>
+    public const string PartitionAffinityId = "partitionAffinityId";
+
+    /// <summary>
+    /// Identifies whether provider partition rebalancing was reported.
+    /// </summary>
+    public const string PartitionRebalancing = "partitionRebalancing";
+
+    /// <summary>
+    /// Identifies the provider partition rebalancing proof id.
+    /// </summary>
+    public const string PartitionRebalancingId = "partitionRebalancingId";
+
+    /// <summary>
+    /// Identifies whether provider partition ordering guarantees were reported.
+    /// </summary>
+    public const string PartitionOrderingGuarantee = "partitionOrderingGuarantee";
+
+    /// <summary>
+    /// Identifies the provider partition ordering guarantee proof id.
+    /// </summary>
+    public const string PartitionOrderingGuaranteeId = "partitionOrderingGuaranteeId";
+
+    /// <summary>
+    /// Identifies whether provider-owned partitioning proof was reported.
+    /// </summary>
+    public const string ProviderOwnedPartitioning = "providerOwnedPartitioning";
+
+    /// <summary>
+    /// Identifies the provider-owned partitioning proof id.
+    /// </summary>
+    public const string ProviderPartitioningId = "providerPartitioningId";
+
+    /// <summary>
     /// Identifies whether a provider or runtime reported durable retry queue ownership.
     /// </summary>
     public const string DurableRetryQueue = "durableRetryQueue";

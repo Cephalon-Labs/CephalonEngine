@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-12T18:44:44.8969592+00:00",
+  "GeneratedAtUtc": "2026-05-12T19:20:20.0584431+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -168,7 +168,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 75
+      "TypeCount": 76
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1228,7 +1228,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 72
+      "TypeCount": 73
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8415,6 +8415,21 @@
       }
     },
     {
+      "DisplayName": "EventDispatchProviderPartitionMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventdispatchproviderpartitionmetadata",
+      "Declaration": "public static class EventDispatchProviderPartitionMetadata",
+      "Summary": "Builds provider-reported partition ownership proof metadata for successful dispatch reports.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 4
+      }
+    },
+    {
       "DisplayName": "EventDispatchRemediationCommandJournalDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -8604,7 +8619,7 @@
       "Summary": "Defines stable metadata keys used by event-dispatch runtime observations.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 71,
+        "Fields": 83,
         "Properties": 0,
         "Methods": 1
       }
@@ -42037,6 +42052,17 @@
     {
       "DisplayName": "CreateMetadata",
       "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchProviderPartitionMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchproviderpartitionmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "Dictionary\u003Cstring, string\u003E CreateMetadata(IReadOnlyDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string partitionAssignmentId, string partitionAffinityId, string partitionRebalancingId, string partitionOrderingGuaranteeId, string providerPartitioningId)",
+      "Summary": "Creates a metadata copy enriched with provider-reported partition ownership proof when the inputs support it."
+    },
+    {
+      "DisplayName": "CreateMetadata",
+      "Category": "Methods",
       "DeclaringTypeName": "EventSubscriptionBrokerInboundConsumptionMetadata",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -42187,6 +42213,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventdispatchprovidercontextpersistencemetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string",
       "Signature": "EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source)",
       "Summary": "Creates a dispatch report copy enriched with provider-side context-persistence proof when the source metadata supports it."
+    },
+    {
+      "DisplayName": "CreateReport",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchProviderPartitionMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchproviderpartitionmetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string partitionAssignmentId, string partitionAffinityId, string partitionRebalancingId, string partitionOrderingGuaranteeId, string providerPartitioningId)",
+      "Summary": "Creates a dispatch report copy enriched with provider-reported partition ownership proof when the inputs support it."
     },
     {
       "DisplayName": "CreateReport",
@@ -76704,6 +76741,17 @@
       "Summary": "Gets a value indicating whether provider-owned control-plane ownership currently remains risky."
     },
     {
+      "DisplayName": "IsPartitionOwnershipProven",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchProviderPartitionMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchproviderpartitionmetadata-ispartitionownershipproven-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "bool IsPartitionOwnershipProven(IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Gets a value indicating whether the metadata contains complete provider-reported partition ownership proof."
+    },
+    {
       "DisplayName": "IsPersisted",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
@@ -96830,6 +96878,50 @@
       "Summary": "Gets the total number of reporter participants currently visible in the coordination story."
     },
     {
+      "DisplayName": "PartitionAffinity",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionaffinity",
+      "Signature": "const string PartitionAffinity",
+      "Summary": "Identifies whether provider partition affinity was reported."
+    },
+    {
+      "DisplayName": "PartitionAffinityId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionaffinityid",
+      "Signature": "const string PartitionAffinityId",
+      "Summary": "Identifies the provider partition affinity proof id."
+    },
+    {
+      "DisplayName": "PartitionAssignment",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionassignment",
+      "Signature": "const string PartitionAssignment",
+      "Summary": "Identifies whether provider partition assignment was reported."
+    },
+    {
+      "DisplayName": "PartitionAssignmentId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionassignmentid",
+      "Signature": "const string PartitionAssignmentId",
+      "Summary": "Identifies the provider partition assignment proof id."
+    },
+    {
       "DisplayName": "PartitionOrdering",
       "Category": "Fields",
       "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
@@ -96839,6 +96931,28 @@
       "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-partitionordering",
       "Signature": "const string PartitionOrdering",
       "Summary": "Identifies whether partition ordering proof was reported for a subscription."
+    },
+    {
+      "DisplayName": "PartitionOrderingGuarantee",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionorderingguarantee",
+      "Signature": "const string PartitionOrderingGuarantee",
+      "Summary": "Identifies whether provider partition ordering guarantees were reported."
+    },
+    {
+      "DisplayName": "PartitionOrderingGuaranteeId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionorderingguaranteeid",
+      "Signature": "const string PartitionOrderingGuaranteeId",
+      "Summary": "Identifies the provider partition ordering guarantee proof id."
     },
     {
       "DisplayName": "PartitionOrderingId",
@@ -96872,6 +96986,28 @@
       "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionprovisioningid",
       "Signature": "const string PartitionProvisioningId",
       "Summary": "Identifies the broker partition provisioning proof id."
+    },
+    {
+      "DisplayName": "PartitionRebalancing",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionrebalancing",
+      "Signature": "const string PartitionRebalancing",
+      "Summary": "Identifies whether provider partition rebalancing was reported."
+    },
+    {
+      "DisplayName": "PartitionRebalancingId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionrebalancingid",
+      "Signature": "const string PartitionRebalancingId",
+      "Summary": "Identifies the provider partition rebalancing proof id."
     },
     {
       "DisplayName": "PassHostHeader",
@@ -103274,6 +103410,17 @@
       "Summary": "Provider-owned write-path execution already translated one provider-facing command shape."
     },
     {
+      "DisplayName": "ProviderOwnedPartitioning",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerownedpartitioning",
+      "Signature": "const string ProviderOwnedPartitioning",
+      "Summary": "Identifies whether provider-owned partitioning proof was reported."
+    },
+    {
       "DisplayName": "ProviderOwnedRisk",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
@@ -103558,6 +103705,39 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-providerownedwritepathexecutionstate",
       "Signature": "string ProviderOwnedWritePathExecutionState { get; set; }",
       "Summary": "Gets the current provider-owned write-path execution state that informed provider-specific materialization."
+    },
+    {
+      "DisplayName": "ProviderPartitioningId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerpartitioningid",
+      "Signature": "const string ProviderPartitioningId",
+      "Summary": "Identifies the provider-owned partitioning proof id."
+    },
+    {
+      "DisplayName": "ProviderPartitionOwnership",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerpartitionownership",
+      "Signature": "const string ProviderPartitionOwnership",
+      "Summary": "Identifies whether a provider or runtime reported provider partition ownership."
+    },
+    {
+      "DisplayName": "ProviderPartitionOwnershipSource",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerpartitionownershipsource",
+      "Signature": "const string ProviderPartitionOwnershipSource",
+      "Summary": "Identifies the provider or runtime source that reported provider partition ownership."
     },
     {
       "DisplayName": "ProviderProcessManager",
@@ -130351,6 +130531,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventdispatchprovidercontextpersistencemetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string",
       "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, string source)",
       "Summary": "Applies provider-side context-persistence proof to an existing metadata dictionary when projected context headers are present."
+    },
+    {
+      "DisplayName": "TryApplyMetadata",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchProviderPartitionMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchproviderpartitionmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string partitionAssignmentId, string partitionAffinityId, string partitionRebalancingId, string partitionOrderingGuaranteeId, string providerPartitioningId)",
+      "Summary": "Applies provider-reported partition ownership proof to an existing dispatch metadata dictionary when the inputs support it."
     },
     {
       "DisplayName": "TryApplyMetadata",

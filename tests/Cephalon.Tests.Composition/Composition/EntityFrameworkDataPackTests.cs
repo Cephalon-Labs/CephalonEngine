@@ -1712,6 +1712,94 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("lastOutcome=succeeded", brokerTopologyDimensions["broker-topology-materialization-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", brokerTopologyDimensions["broker-topology-materialization-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
+        var incompleteProviderPartitionReport = EventDispatchProviderPartitionMetadata.CreateReport(
+            crossNodeReport,
+            source: "provider-partition-observer",
+            partitionAssignmentId: "partition-assignment-001",
+            partitionAffinityId: "partition-affinity-001",
+            partitionRebalancingId: "partition-rebalancing-001",
+            partitionOrderingGuaranteeId: "partition-ordering-001",
+            providerPartitioningId: "provider-partitioning-001");
+        Assert.False(EventDispatchProviderPartitionMetadata.IsPartitionOwnershipProven(incompleteProviderPartitionReport.Metadata));
+        Assert.DoesNotContain(EventDispatchRuntimeMetadataKeys.ProviderPartitionOwnership, incompleteProviderPartitionReport.Metadata.Keys);
+
+        var providerPartitionReport = EventDispatchProviderPartitionMetadata.CreateReport(
+            brokerTopologyReport,
+            source: "provider-partition-observer",
+            partitionAssignmentId: "partition-assignment-001",
+            partitionAffinityId: "partition-affinity-001",
+            partitionRebalancingId: "partition-rebalancing-001",
+            partitionOrderingGuaranteeId: "partition-ordering-001",
+            providerPartitioningId: "provider-partitioning-001");
+        Assert.True(EventDispatchProviderPartitionMetadata.IsPartitionOwnershipProven(providerPartitionReport.Metadata));
+        Assert.Equal("provider-reported", providerPartitionReport.Metadata[EventDispatchRuntimeMetadataKeys.ProviderPartitionOwnership]);
+        Assert.Equal("provider-partition-observer", providerPartitionReport.Metadata[EventDispatchRuntimeMetadataKeys.ProviderPartitionOwnershipSource]);
+        Assert.Equal("reported", providerPartitionReport.Metadata[EventDispatchRuntimeMetadataKeys.PartitionAssignment]);
+        Assert.Equal("partition-assignment-001", providerPartitionReport.Metadata[EventDispatchRuntimeMetadataKeys.PartitionAssignmentId]);
+        Assert.Equal("reported", providerPartitionReport.Metadata[EventDispatchRuntimeMetadataKeys.PartitionAffinity]);
+        Assert.Equal("partition-affinity-001", providerPartitionReport.Metadata[EventDispatchRuntimeMetadataKeys.PartitionAffinityId]);
+        Assert.Equal("reported", providerPartitionReport.Metadata[EventDispatchRuntimeMetadataKeys.PartitionRebalancing]);
+        Assert.Equal("partition-rebalancing-001", providerPartitionReport.Metadata[EventDispatchRuntimeMetadataKeys.PartitionRebalancingId]);
+        Assert.Equal("reported", providerPartitionReport.Metadata[EventDispatchRuntimeMetadataKeys.PartitionOrderingGuarantee]);
+        Assert.Equal("partition-ordering-001", providerPartitionReport.Metadata[EventDispatchRuntimeMetadataKeys.PartitionOrderingGuaranteeId]);
+        Assert.Equal("reported", providerPartitionReport.Metadata[EventDispatchRuntimeMetadataKeys.ProviderOwnedPartitioning]);
+        Assert.Equal("provider-partitioning-001", providerPartitionReport.Metadata[EventDispatchRuntimeMetadataKeys.ProviderPartitioningId]);
+
+        await dispatchRuntimeReporter.ReportAsync(providerPartitionReport);
+
+        var providerPartitionDispatchState = dispatchRuntimeCatalog.GetByOutboxId("entity-framework-outbox");
+        Assert.NotNull(providerPartitionDispatchState);
+        Assert.Equal(EventDispatchExecutionOutcomes.Succeeded, providerPartitionDispatchState.LastOutcome);
+        Assert.Equal("provider-reported", providerPartitionDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.ProviderPartitionOwnership]);
+        Assert.Equal("partition-assignment-001", providerPartitionDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.PartitionAssignmentId]);
+        Assert.Equal("partition-affinity-001", providerPartitionDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.PartitionAffinityId]);
+        Assert.Equal("partition-rebalancing-001", providerPartitionDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.PartitionRebalancingId]);
+        Assert.Equal("partition-ordering-001", providerPartitionDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.PartitionOrderingGuaranteeId]);
+        Assert.Equal("provider-partitioning-001", providerPartitionDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.ProviderPartitioningId]);
+
+        var providerPartitionEventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        var providerPartitionDispatchSurface = Assert.Single(providerPartitionEventingSurfaces, surface => surface.SurfaceId == "event-dispatches");
+        var providerPartitionDispatchEntry = Assert.Single(providerPartitionDispatchSurface.Entries, entry => entry.Id == "entity-framework-outbox");
+        Assert.Equal(
+            "provider-reported",
+            providerPartitionDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.ProviderPartitionOwnership}"]);
+        Assert.Equal(
+            "provider-partition-observer",
+            providerPartitionDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.ProviderPartitionOwnershipSource}"]);
+        Assert.Equal(
+            "partition-assignment-001",
+            providerPartitionDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.PartitionAssignmentId}"]);
+        Assert.Equal(
+            "partition-affinity-001",
+            providerPartitionDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.PartitionAffinityId}"]);
+        Assert.Equal(
+            "partition-rebalancing-001",
+            providerPartitionDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.PartitionRebalancingId}"]);
+        Assert.Equal(
+            "partition-ordering-001",
+            providerPartitionDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.PartitionOrderingGuaranteeId}"]);
+        Assert.Equal(
+            "provider-partitioning-001",
+            providerPartitionDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.ProviderPartitioningId}"]);
+        var providerPartitionDimensions = Assert.Single(providerPartitionEventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        Assert.Equal("claimed", providerPartitionDimensions["provider-partition-ownership"].Metadata["status"]);
+        Assert.Contains("providerPartitionOwnership=provider-reported", providerPartitionDimensions["provider-partition-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerPartitionOwnershipSource=provider-partition-observer", providerPartitionDimensions["provider-partition-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("partitionAssignment=reported", providerPartitionDimensions["provider-partition-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("partitionAssignmentId=partition-assignment-001", providerPartitionDimensions["provider-partition-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("partitionAffinity=reported", providerPartitionDimensions["provider-partition-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("partitionAffinityId=partition-affinity-001", providerPartitionDimensions["provider-partition-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("partitionRebalancing=reported", providerPartitionDimensions["provider-partition-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("partitionRebalancingId=partition-rebalancing-001", providerPartitionDimensions["provider-partition-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("partitionOrderingGuarantee=reported", providerPartitionDimensions["provider-partition-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("partitionOrderingGuaranteeId=partition-ordering-001", providerPartitionDimensions["provider-partition-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerOwnedPartitioning=reported", providerPartitionDimensions["provider-partition-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerPartitioningId=provider-partitioning-001", providerPartitionDimensions["provider-partition-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("lastOutcome=succeeded", providerPartitionDimensions["provider-partition-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", providerPartitionDimensions["provider-partition-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+
         var startedInboundReport = EventSubscriptionBrokerInboundConsumptionMetadata.CreateReport(
             new EventSubscriptionExecutionReport(
                 subscriptionId: "catalog-broker-consumer",
