@@ -41,6 +41,71 @@ public static class EventDispatchRuntimeMetadataKeys
     public const string RetryScope = "retryScope";
 
     /// <summary>
+    /// Identifies whether a provider or runtime reported durable retry queue ownership.
+    /// </summary>
+    public const string DurableRetryQueue = "durableRetryQueue";
+
+    /// <summary>
+    /// Identifies the provider or runtime source that reported durable retry queue ownership.
+    /// </summary>
+    public const string DurableRetryQueueSource = "durableRetryQueueSource";
+
+    /// <summary>
+    /// Identifies the durable retry queue id reported for the dispatch.
+    /// </summary>
+    public const string DurableRetryQueueId = "durableRetryQueueId";
+
+    /// <summary>
+    /// Identifies whether retry persistence was reported for the dispatch.
+    /// </summary>
+    public const string RetryPersistence = "retryPersistence";
+
+    /// <summary>
+    /// Identifies the retry persistence record or store id reported for the dispatch.
+    /// </summary>
+    public const string RetryPersistenceId = "retryPersistenceId";
+
+    /// <summary>
+    /// Identifies whether a broker error queue was reported for the dispatch.
+    /// </summary>
+    public const string BrokerErrorQueue = "brokerErrorQueue";
+
+    /// <summary>
+    /// Identifies the broker error queue id reported for the dispatch.
+    /// </summary>
+    public const string BrokerErrorQueueId = "brokerErrorQueueId";
+
+    /// <summary>
+    /// Identifies whether poison queue ownership was reported for the dispatch.
+    /// </summary>
+    public const string PoisonQueueOwnership = "poisonQueueOwnership";
+
+    /// <summary>
+    /// Identifies the poison queue id reported for the dispatch.
+    /// </summary>
+    public const string PoisonQueueId = "poisonQueueId";
+
+    /// <summary>
+    /// Identifies whether cross-node retry coordination was reported for the dispatch.
+    /// </summary>
+    public const string CrossNodeRetryCoordination = "crossNodeRetryCoordination";
+
+    /// <summary>
+    /// Identifies the cross-node retry coordination id reported for the dispatch.
+    /// </summary>
+    public const string RetryCoordinationId = "retryCoordinationId";
+
+    /// <summary>
+    /// Identifies whether a retry lease was reported for the dispatch.
+    /// </summary>
+    public const string RetryLease = "retryLease";
+
+    /// <summary>
+    /// Identifies the retry lease id reported for the dispatch.
+    /// </summary>
+    public const string RetryLeaseId = "retryLeaseId";
+
+    /// <summary>
     /// Identifies the retry decision represented by the latest observation.
     /// </summary>
     public const string RetryOutcome = "retryOutcome";

@@ -1321,6 +1321,104 @@ Parameters:
 - `subscriberAcknowledgementId`: An optional subscriber acknowledgement id.
 - `destinationCommitId`: An optional destination commit id.
 
+<a id="type-cephalon-eventing-services-eventdispatchdurableretryqueuemetadata"></a>
+
+### `EventDispatchDurableRetryQueueMetadata`
+
+Builds provider-reported durable retry queue proof metadata for retry-scheduled dispatch reports.
+
+Remarks: Retry-scheduled dispatch observations only say the active dispatcher decided to retry. This helper records a stronger, provider-reported durable retry proof only when the report outcome is `retry-scheduled` and the provider supplies queue, persistence, broker error queue, poison queue, coordination, and lease evidence. Cephalon carries the proof without making Wolverine or any other provider package part of the core surface.
+
+#### Declaration
+```csharp
+public static class EventDispatchDurableRetryQueueMetadata
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-eventdispatchdurableretryqueuemetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateMetadata`
+
+```csharp
+Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string durableRetryQueueId, string retryPersistenceId, string brokerErrorQueueId, string poisonQueueId, string retryCoordinationId, string retryLeaseId)
+```
+
+Creates a metadata copy enriched with provider-reported durable retry queue proof when the inputs support it.
+
+Returns: A case-insensitive metadata dictionary containing the original values plus durable retry queue proof when applicable.
+
+Parameters:
+- `metadata`: The dispatch report metadata to copy.
+- `outcome`: The dispatch report outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported durable retry queue ownership.
+- `durableRetryQueueId`: The durable retry queue id.
+- `retryPersistenceId`: The retry persistence record or store id.
+- `brokerErrorQueueId`: The broker error queue id.
+- `poisonQueueId`: The poison queue id.
+- `retryCoordinationId`: The cross-node retry coordination id.
+- `retryLeaseId`: The retry lease id.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchdurableretryqueuemetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateReport`
+
+```csharp
+EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string durableRetryQueueId, string retryPersistenceId, string brokerErrorQueueId, string poisonQueueId, string retryCoordinationId, string retryLeaseId)
+```
+
+Creates a dispatch report copy enriched with provider-reported durable retry queue proof when the inputs support it.
+
+Returns: A dispatch report containing the original metadata plus durable retry queue proof when applicable.
+
+Parameters:
+- `report`: The retry-scheduled dispatch report to copy.
+- `source`: The stable provider or runtime source that reported durable retry queue ownership.
+- `durableRetryQueueId`: The durable retry queue id.
+- `retryPersistenceId`: The retry persistence record or store id.
+- `brokerErrorQueueId`: The broker error queue id.
+- `poisonQueueId`: The poison queue id.
+- `retryCoordinationId`: The cross-node retry coordination id.
+- `retryLeaseId`: The retry lease id.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchdurableretryqueuemetadata-isdurableretryqueueproven-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `IsDurableRetryQueueProven`
+
+```csharp
+bool IsDurableRetryQueueProven(IReadOnlyDictionary<string, string> metadata)
+```
+
+Gets a value indicating whether the metadata contains provider-reported durable retry queue proof.
+
+Returns: `true` when complete durable retry queue proof is present; otherwise, `false`.
+
+Parameters:
+- `metadata`: The dispatch metadata dictionary to inspect.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchdurableretryqueuemetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `TryApplyMetadata`
+
+```csharp
+bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string durableRetryQueueId, string retryPersistenceId, string brokerErrorQueueId, string poisonQueueId, string retryCoordinationId, string retryLeaseId)
+```
+
+Applies provider-reported durable retry queue proof to an existing dispatch metadata dictionary when the inputs support it.
+
+Returns: `true` when durable retry queue proof was applied; otherwise, `false`.
+
+Parameters:
+- `metadata`: The dispatch metadata dictionary to enrich.
+- `outcome`: The dispatch report outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported durable retry queue ownership.
+- `durableRetryQueueId`: The durable retry queue id.
+- `retryPersistenceId`: The retry persistence record or store id.
+- `brokerErrorQueueId`: The broker error queue id.
+- `poisonQueueId`: The poison queue id.
+- `retryCoordinationId`: The cross-node retry coordination id.
+- `retryLeaseId`: The retry lease id.
+
 <a id="type-cephalon-eventing-services-eventdispatchexactlyoncedeliveryproofmetadata"></a>
 
 ### `EventDispatchExactlyOnceDeliveryProofMetadata`
@@ -2086,6 +2184,26 @@ const string BrokerDeadLetter
 
 Identifies whether the dead-letter decision is owned by a broker-specific dead-letter queue.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokererrorqueue"></a>
+
+##### `BrokerErrorQueue`
+
+```csharp
+const string BrokerErrorQueue
+```
+
+Identifies whether a broker error queue was reported for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokererrorqueueid"></a>
+
+##### `BrokerErrorQueueId`
+
+```csharp
+const string BrokerErrorQueueId
+```
+
+Identifies the broker error queue id reported for the dispatch.
+
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-consumercontextextraction"></a>
 
 ##### `ConsumerContextExtraction`
@@ -2155,6 +2273,16 @@ const string CrossNodeContextHandoffSource
 ```
 
 Identifies the provider or runtime observation source that proved cross-node context handoff.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-crossnoderetrycoordination"></a>
+
+##### `CrossNodeRetryCoordination`
+
+```csharp
+const string CrossNodeRetryCoordination
+```
+
+Identifies whether cross-node retry coordination was reported for the dispatch.
 
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-deadletterdurability"></a>
 
@@ -2266,6 +2394,36 @@ const string DurableDispatchContextPropagation
 
 Identifies the durable dispatch context propagation boundary proven by the latest runtime observation.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-durableretryqueue"></a>
+
+##### `DurableRetryQueue`
+
+```csharp
+const string DurableRetryQueue
+```
+
+Identifies whether a provider or runtime reported durable retry queue ownership.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-durableretryqueueid"></a>
+
+##### `DurableRetryQueueId`
+
+```csharp
+const string DurableRetryQueueId
+```
+
+Identifies the durable retry queue id reported for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-durableretryqueuesource"></a>
+
+##### `DurableRetryQueueSource`
+
+```csharp
+const string DurableRetryQueueSource
+```
+
+Identifies the provider or runtime source that reported durable retry queue ownership.
+
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-exactlyoncedelivery"></a>
 
 ##### `ExactlyOnceDelivery`
@@ -2315,6 +2473,26 @@ const string NextRetryAtUtc
 ```
 
 Identifies the next UTC time when a retryable dispatch failure should become eligible again.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-poisonqueueid"></a>
+
+##### `PoisonQueueId`
+
+```csharp
+const string PoisonQueueId
+```
+
+Identifies the poison queue id reported for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-poisonqueueownership"></a>
+
+##### `PoisonQueueOwnership`
+
+```csharp
+const string PoisonQueueOwnership
+```
+
+Identifies whether poison queue ownership was reported for the dispatch.
 
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerbrokercontextheadercount"></a>
 
@@ -2416,6 +2594,16 @@ const string ProviderSideContextPersistenceSource
 
 Identifies the provider-side dispatch store that persisted the projected Cephalon context proof.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrycoordinationid"></a>
+
+##### `RetryCoordinationId`
+
+```csharp
+const string RetryCoordinationId
+```
+
+Identifies the cross-node retry coordination id reported for the dispatch.
+
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrydelayseconds"></a>
 
 ##### `RetryDelaySeconds`
@@ -2446,6 +2634,26 @@ const string RetryExhausted
 
 Identifies whether the retry budget was exhausted for the latest observation.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrylease"></a>
+
+##### `RetryLease`
+
+```csharp
+const string RetryLease
+```
+
+Identifies whether a retry lease was reported for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retryleaseid"></a>
+
+##### `RetryLeaseId`
+
+```csharp
+const string RetryLeaseId
+```
+
+Identifies the retry lease id reported for the dispatch.
+
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrymaxattempts"></a>
 
 ##### `RetryMaxAttempts`
@@ -2465,6 +2673,26 @@ const string RetryOutcome
 ```
 
 Identifies the retry decision represented by the latest observation.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrypersistence"></a>
+
+##### `RetryPersistence`
+
+```csharp
+const string RetryPersistence
+```
+
+Identifies whether retry persistence was reported for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrypersistenceid"></a>
+
+##### `RetryPersistenceId`
+
+```csharp
+const string RetryPersistenceId
+```
+
+Identifies the retry persistence record or store id reported for the dispatch.
 
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrypolicy"></a>
 

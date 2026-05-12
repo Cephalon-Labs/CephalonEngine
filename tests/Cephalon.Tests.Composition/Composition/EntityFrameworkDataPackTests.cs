@@ -1702,6 +1702,115 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("consumerOffsetCheckpoint=reported", brokerInboundDimensions["broker-inbound-consumption-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("consumerOffsetCheckpointId=offset-checkpoint-001", brokerInboundDimensions["broker-inbound-consumption-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", brokerInboundDimensions["broker-inbound-consumption-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+
+        var incompleteDurableRetryReport = EventDispatchDurableRetryQueueMetadata.CreateReport(
+            exactlyOnceDeliveryReport,
+            source: "provider-retry-scheduler",
+            durableRetryQueueId: "durable-retry-queue-001",
+            retryPersistenceId: "retry-persistence-001",
+            brokerErrorQueueId: "broker-error-queue-001",
+            poisonQueueId: "poison-queue-001",
+            retryCoordinationId: "retry-coordination-001",
+            retryLeaseId: "retry-lease-001");
+        Assert.False(EventDispatchDurableRetryQueueMetadata.IsDurableRetryQueueProven(incompleteDurableRetryReport.Metadata));
+        Assert.DoesNotContain(EventDispatchRuntimeMetadataKeys.DurableRetryQueue, incompleteDurableRetryReport.Metadata.Keys);
+
+        var retryScheduledReport = new EventDispatchExecutionReport(
+            outboxId: crossNodeReport.OutboxId,
+            channelId: crossNodeReport.ChannelId,
+            outcome: EventDispatchExecutionOutcomes.RetryScheduled,
+            observedAtUtc: new DateTimeOffset(2026, 05, 12, 10, 6, 0, TimeSpan.Zero),
+            messageId: crossNodeReport.MessageId,
+            attempt: 2,
+            error: "Provider accepted retry into a durable retry queue.",
+            metadata: crossNodeReport.Metadata);
+        var durableRetryReport = EventDispatchDurableRetryQueueMetadata.CreateReport(
+            retryScheduledReport,
+            source: "provider-retry-scheduler",
+            durableRetryQueueId: "durable-retry-queue-001",
+            retryPersistenceId: "retry-persistence-001",
+            brokerErrorQueueId: "broker-error-queue-001",
+            poisonQueueId: "poison-queue-001",
+            retryCoordinationId: "retry-coordination-001",
+            retryLeaseId: "retry-lease-001");
+        Assert.True(EventDispatchDurableRetryQueueMetadata.IsDurableRetryQueueProven(durableRetryReport.Metadata));
+        Assert.Equal("provider-reported", durableRetryReport.Metadata[EventDispatchRuntimeMetadataKeys.DurableRetryQueue]);
+        Assert.Equal("provider-retry-scheduler", durableRetryReport.Metadata[EventDispatchRuntimeMetadataKeys.DurableRetryQueueSource]);
+        Assert.Equal("durable-retry-queue-001", durableRetryReport.Metadata[EventDispatchRuntimeMetadataKeys.DurableRetryQueueId]);
+        Assert.Equal("durable", durableRetryReport.Metadata[EventDispatchRuntimeMetadataKeys.RetryDurability]);
+        Assert.Equal("cross-node", durableRetryReport.Metadata[EventDispatchRuntimeMetadataKeys.RetryScope]);
+        Assert.Equal("reported", durableRetryReport.Metadata[EventDispatchRuntimeMetadataKeys.RetryPersistence]);
+        Assert.Equal("retry-persistence-001", durableRetryReport.Metadata[EventDispatchRuntimeMetadataKeys.RetryPersistenceId]);
+        Assert.Equal("reported", durableRetryReport.Metadata[EventDispatchRuntimeMetadataKeys.BrokerErrorQueue]);
+        Assert.Equal("broker-error-queue-001", durableRetryReport.Metadata[EventDispatchRuntimeMetadataKeys.BrokerErrorQueueId]);
+        Assert.Equal("reported", durableRetryReport.Metadata[EventDispatchRuntimeMetadataKeys.PoisonQueueOwnership]);
+        Assert.Equal("poison-queue-001", durableRetryReport.Metadata[EventDispatchRuntimeMetadataKeys.PoisonQueueId]);
+        Assert.Equal("reported", durableRetryReport.Metadata[EventDispatchRuntimeMetadataKeys.CrossNodeRetryCoordination]);
+        Assert.Equal("retry-coordination-001", durableRetryReport.Metadata[EventDispatchRuntimeMetadataKeys.RetryCoordinationId]);
+        Assert.Equal("reported", durableRetryReport.Metadata[EventDispatchRuntimeMetadataKeys.RetryLease]);
+        Assert.Equal("retry-lease-001", durableRetryReport.Metadata[EventDispatchRuntimeMetadataKeys.RetryLeaseId]);
+
+        await dispatchRuntimeReporter.ReportAsync(durableRetryReport);
+
+        var durableRetryDispatchState = dispatchRuntimeCatalog.GetByOutboxId("entity-framework-outbox");
+        Assert.NotNull(durableRetryDispatchState);
+        Assert.Equal(EventDispatchExecutionOutcomes.RetryScheduled, durableRetryDispatchState.LastOutcome);
+        Assert.Equal("provider-reported", durableRetryDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.DurableRetryQueue]);
+        Assert.Equal("durable-retry-queue-001", durableRetryDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.DurableRetryQueueId]);
+        Assert.Equal("retry-persistence-001", durableRetryDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.RetryPersistenceId]);
+        Assert.Equal("broker-error-queue-001", durableRetryDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.BrokerErrorQueueId]);
+        Assert.Equal("poison-queue-001", durableRetryDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.PoisonQueueId]);
+        Assert.Equal("retry-coordination-001", durableRetryDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.RetryCoordinationId]);
+        Assert.Equal("retry-lease-001", durableRetryDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.RetryLeaseId]);
+
+        var durableRetryEventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        var durableRetryDispatchSurface = Assert.Single(durableRetryEventingSurfaces, surface => surface.SurfaceId == "event-dispatches");
+        var durableRetryDispatchEntry = Assert.Single(durableRetryDispatchSurface.Entries, entry => entry.Id == "entity-framework-outbox");
+        Assert.Equal(
+            "provider-reported",
+            durableRetryDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.DurableRetryQueue}"]);
+        Assert.Equal(
+            "provider-retry-scheduler",
+            durableRetryDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.DurableRetryQueueSource}"]);
+        Assert.Equal(
+            "durable-retry-queue-001",
+            durableRetryDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.DurableRetryQueueId}"]);
+        Assert.Equal(
+            "retry-persistence-001",
+            durableRetryDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.RetryPersistenceId}"]);
+        Assert.Equal(
+            "broker-error-queue-001",
+            durableRetryDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.BrokerErrorQueueId}"]);
+        Assert.Equal(
+            "poison-queue-001",
+            durableRetryDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.PoisonQueueId}"]);
+        Assert.Equal(
+            "retry-coordination-001",
+            durableRetryDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.RetryCoordinationId}"]);
+        Assert.Equal(
+            "retry-lease-001",
+            durableRetryDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.RetryLeaseId}"]);
+        var durableRetryDimensions = Assert.Single(durableRetryEventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        Assert.Equal("claimed", durableRetryDimensions["durable-retry-queue-ownership"].Metadata["status"]);
+        Assert.Contains("durableRetryQueue=provider-reported", durableRetryDimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("durableRetryQueueSource=provider-retry-scheduler", durableRetryDimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("durableRetryQueueId=durable-retry-queue-001", durableRetryDimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("retryDurability=durable", durableRetryDimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("retryScope=cross-node", durableRetryDimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("retryPersistence=reported", durableRetryDimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("retryPersistenceId=retry-persistence-001", durableRetryDimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerErrorQueue=reported", durableRetryDimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerErrorQueueId=broker-error-queue-001", durableRetryDimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("poisonQueueOwnership=reported", durableRetryDimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("poisonQueueId=poison-queue-001", durableRetryDimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("crossNodeRetryCoordination=reported", durableRetryDimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("retryCoordinationId=retry-coordination-001", durableRetryDimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("retryLease=reported", durableRetryDimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("retryLeaseId=retry-lease-001", durableRetryDimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("lastOutcome=retry-scheduled", durableRetryDimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", durableRetryDimensions["durable-retry-queue-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]

@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-12T14:58:57.2371054+00:00",
+  "GeneratedAtUtc": "2026-05-12T15:35:41.3600959+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -168,7 +168,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 69
+      "TypeCount": 70
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1228,7 +1228,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 66
+      "TypeCount": 67
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8295,6 +8295,21 @@
       }
     },
     {
+      "DisplayName": "EventDispatchDurableRetryQueueMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventdispatchdurableretryqueuemetadata",
+      "Declaration": "public static class EventDispatchDurableRetryQueueMetadata",
+      "Summary": "Builds provider-reported durable retry queue proof metadata for retry-scheduled dispatch reports.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 4
+      }
+    },
+    {
       "DisplayName": "EventDispatchExactlyOnceDeliveryProofMetadata",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -8574,7 +8589,7 @@
       "Summary": "Defines stable metadata keys used by event-dispatch runtime observations.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 44,
+        "Fields": 57,
         "Properties": 0,
         "Methods": 1
       }
@@ -30978,6 +30993,28 @@
       "Summary": "Identifies whether the dead-letter decision is owned by a broker-specific dead-letter queue."
     },
     {
+      "DisplayName": "BrokerErrorQueue",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokererrorqueue",
+      "Signature": "const string BrokerErrorQueue",
+      "Summary": "Identifies whether a broker error queue was reported for the dispatch."
+    },
+    {
+      "DisplayName": "BrokerErrorQueueId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokererrorqueueid",
+      "Signature": "const string BrokerErrorQueueId",
+      "Summary": "Identifies the broker error queue id reported for the dispatch."
+    },
+    {
       "DisplayName": "BrokerInboundConsumption",
       "Category": "Fields",
       "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
@@ -41749,6 +41786,17 @@
     {
       "DisplayName": "CreateMetadata",
       "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchDurableRetryQueueMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchdurableretryqueuemetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "Dictionary\u003Cstring, string\u003E CreateMetadata(IReadOnlyDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string durableRetryQueueId, string retryPersistenceId, string brokerErrorQueueId, string poisonQueueId, string retryCoordinationId, string retryLeaseId)",
+      "Summary": "Creates a metadata copy enriched with provider-reported durable retry queue proof when the inputs support it."
+    },
+    {
+      "DisplayName": "CreateMetadata",
+      "Category": "Methods",
       "DeclaringTypeName": "EventDispatchExactlyOnceDeliveryProofMetadata",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -41833,6 +41881,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventdispatchdeliverycompletionmetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string",
       "Signature": "EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string providerReceiptId, string subscriberAcknowledgementId, string destinationCommitId)",
       "Summary": "Creates a dispatch report copy enriched with provider-reported delivery-completion proof when the inputs support it."
+    },
+    {
+      "DisplayName": "CreateReport",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchDurableRetryQueueMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchdurableretryqueuemetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string durableRetryQueueId, string retryPersistenceId, string brokerErrorQueueId, string poisonQueueId, string retryCoordinationId, string retryLeaseId)",
+      "Summary": "Creates a dispatch report copy enriched with provider-reported durable retry queue proof when the inputs support it."
     },
     {
       "DisplayName": "CreateReport",
@@ -42163,6 +42222,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-crossnodeidempotentsafe",
       "Signature": "const string CrossNodeIdempotentSafe",
       "Summary": "Cross-node idempotency currently looks safe for the current multi-node lease posture."
+    },
+    {
+      "DisplayName": "CrossNodeRetryCoordination",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-crossnoderetrycoordination",
+      "Signature": "const string CrossNodeRetryCoordination",
+      "Summary": "Identifies whether cross-node retry coordination was reported for the dispatch."
     },
     {
       "DisplayName": "CrossNodeRuntime",
@@ -51103,6 +51173,39 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor-durablereplaycursor",
       "Signature": "bool DurableReplayCursor { get; set; }",
       "Summary": "A value indicating whether the journal exposes a durable replay cursor contract."
+    },
+    {
+      "DisplayName": "DurableRetryQueue",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-durableretryqueue",
+      "Signature": "const string DurableRetryQueue",
+      "Summary": "Identifies whether a provider or runtime reported durable retry queue ownership."
+    },
+    {
+      "DisplayName": "DurableRetryQueueId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-durableretryqueueid",
+      "Signature": "const string DurableRetryQueueId",
+      "Summary": "Identifies the durable retry queue id reported for the dispatch."
+    },
+    {
+      "DisplayName": "DurableRetryQueueSource",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-durableretryqueuesource",
+      "Signature": "const string DurableRetryQueueSource",
+      "Summary": "Identifies the provider or runtime source that reported durable retry queue ownership."
     },
     {
       "DisplayName": "DurableSharedScheduler",
@@ -74953,6 +75056,17 @@
       "Summary": "Gets a value indicating whether the underlying observation store survives process restarts."
     },
     {
+      "DisplayName": "IsDurableRetryQueueProven",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchDurableRetryQueueMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchdurableretryqueuemetadata-isdurableretryqueueproven-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "bool IsDurableRetryQueueProven(IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Gets a value indicating whether the metadata contains provider-reported durable retry queue proof."
+    },
+    {
       "DisplayName": "IsEligible",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus",
@@ -97510,6 +97624,28 @@
       "Summary": "Identifies the poison-message handling posture reported for inbound broker consumption."
     },
     {
+      "DisplayName": "PoisonQueueId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-poisonqueueid",
+      "Signature": "const string PoisonQueueId",
+      "Summary": "Identifies the poison queue id reported for the dispatch."
+    },
+    {
+      "DisplayName": "PoisonQueueOwnership",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-poisonqueueownership",
+      "Signature": "const string PoisonQueueOwnership",
+      "Summary": "Identifies whether poison queue ownership was reported for the dispatch."
+    },
+    {
       "DisplayName": "Policies",
       "Category": "Properties",
       "DeclaringTypeName": "IAuthorizationPolicyCatalog",
@@ -112193,6 +112329,17 @@
       "Summary": "The current shared runtime truth exposes one safe retry candidate."
     },
     {
+      "DisplayName": "RetryCoordinationId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrycoordinationid",
+      "Signature": "const string RetryCoordinationId",
+      "Summary": "Identifies the cross-node retry coordination id reported for the dispatch."
+    },
+    {
       "DisplayName": "RetryDelayMilliseconds",
       "Category": "Properties",
       "DeclaringTypeName": "HttpInvitationDeliveryOptions",
@@ -112809,6 +112956,28 @@
       "Summary": "Makes a staged event eligible for another dispatch attempt at a later time."
     },
     {
+      "DisplayName": "RetryLease",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrylease",
+      "Signature": "const string RetryLease",
+      "Summary": "Identifies whether a retry lease was reported for the dispatch."
+    },
+    {
+      "DisplayName": "RetryLeaseId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retryleaseid",
+      "Signature": "const string RetryLeaseId",
+      "Summary": "Identifies the retry lease id reported for the dispatch."
+    },
+    {
       "DisplayName": "RetryMaxAttempts",
       "Category": "Fields",
       "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
@@ -112906,6 +113075,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchruntimesummary-retrypendingcount",
       "Signature": "int RetryPendingCount { get; }",
       "Summary": "Gets the number of owned outboxes whose latest report still says another retry is pending."
+    },
+    {
+      "DisplayName": "RetryPersistence",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrypersistence",
+      "Signature": "const string RetryPersistence",
+      "Summary": "Identifies whether retry persistence was reported for the dispatch."
+    },
+    {
+      "DisplayName": "RetryPersistenceId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrypersistenceid",
+      "Signature": "const string RetryPersistenceId",
+      "Summary": "Identifies the retry persistence record or store id reported for the dispatch."
     },
     {
       "DisplayName": "RetryPolicy",
@@ -129062,6 +129253,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventdispatchdeliverycompletionmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
       "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string providerReceiptId, string subscriberAcknowledgementId, string destinationCommitId)",
       "Summary": "Applies provider-reported delivery-completion proof to an existing dispatch metadata dictionary when the inputs support it."
+    },
+    {
+      "DisplayName": "TryApplyMetadata",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchDurableRetryQueueMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchdurableretryqueuemetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string durableRetryQueueId, string retryPersistenceId, string brokerErrorQueueId, string poisonQueueId, string retryCoordinationId, string retryLeaseId)",
+      "Summary": "Applies provider-reported durable retry queue proof to an existing dispatch metadata dictionary when the inputs support it."
     },
     {
       "DisplayName": "TryApplyMetadata",

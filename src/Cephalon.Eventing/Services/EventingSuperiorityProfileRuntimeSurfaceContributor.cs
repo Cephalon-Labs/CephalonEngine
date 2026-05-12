@@ -33,7 +33,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var tenantCorrelation = ResolveTenantCorrelationProfile();
         var scheduledDeliveryStatus = options.EnablePublicationScheduling ? "partial" : "not-claimed";
         var scheduledDeliveryEvidence = ResolveScheduledDeliveryEvidence(options, topology);
-        var durableRetryQueueEvidence = ResolveDurableRetryQueueEvidence(options, topology);
+        var durableRetryQueue = ResolveDurableRetryQueueProfile();
         var idempotencyOwnershipStatus = options.EnableInProcessSubscriptionIdempotency ? "partial" : "not-claimed";
         var idempotencyOwnershipEvidence = ResolveIdempotencyOwnershipEvidence(options, topology);
         var subscriptionConcurrencyEvidence = ResolveSubscriptionConcurrencyEvidence(topology);
@@ -140,10 +140,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     id: "durable-retry-queue-ownership",
                     displayName: "Durable Retry Queue Ownership",
                     description: "Makes bounded in-process retry, dispatch retry reports, and provider-managed retry observations separate from durable retry queues, broker error queues, retry persistence, and cross-node retry coordination.",
-                    status: "not-claimed",
-                    evidence: durableRetryQueueEvidence,
+                    status: durableRetryQueue.Status,
+                    evidence: durableRetryQueue.Evidence,
                     advantage: "Teams can use Cephalon retry metadata and Wolverine-free in-process retry without assuming the core pack silently owns a durable retry queue, broker error queue, or cross-node retry scheduler.",
-                    nextGap: "Add a provider-neutral durable retry queue descriptor plus retry persistence, broker error queue, poison queue, and cross-node coordination evidence before claiming durable retry queue ownership."),
+                    nextGap: durableRetryQueue.NextGap),
                 CreateEntry(
                     id: "idempotency-ownership",
                     displayName: "Idempotency Ownership",
@@ -796,7 +796,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             $"publicationPath={publicationPath}; publicationScheduling=configured; schedulePolicy={EventPublicationSchedulingPolicy.GetPolicyId(options)}; processLocalScheduleQueue=active; maxDelayMilliseconds={options.PublicationSchedulingMaxDelayMilliseconds.ToString(CultureInfo.InvariantCulture)}; maxPendingCount={options.PublicationSchedulingMaxPendingCount.ToString(CultureInfo.InvariantCulture)}; scheduleDurability={EventPublicationSchedulingPolicy.GetDurability(options)}; scheduleScope={EventPublicationSchedulingPolicy.GetScope(options)}; durableScheduledDelivery=not-claimed; providerDelayQueue=not-present; brokerScheduledDelivery=not-claimed; crossNodeScheduleCoordination=not-claimed; scheduleRecovery=not-claimed; wolverineRequired=false");
     }
 
-    private static string ResolveDurableRetryQueueEvidence(EventingOptions options, EventingRuntimeTopology topology)
+    private DurableRetryQueueProfile ResolveDurableRetryQueueProfile()
     {
         var publicationPath = topology.HasPublishingPath ? "active" : "not-active";
         var inProcessExecution = topology.HasInProcessSubscriptionExecutionPath ? "active" : "not-active";
@@ -806,9 +806,106 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var managedSubscriptionBindings = topology.HasManagedSubscriptionExecutionBindings ? "present" : "not-present";
         var externalManagedSubscriptionBindings = topology.HasExternalManagedSubscriptionExecutionBindings ? "present" : "not-present";
 
-        return string.Create(
-            CultureInfo.InvariantCulture,
-            $"publicationPath={publicationPath}; inProcessExecution={inProcessExecution}; inProcessRetryPolicy={inProcessRetryPolicy}; inProcessRetryMaxAttempts={inProcessRetryAttempts}; dispatchRuntime={dispatchRuntime}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; retryDurability=none-or-provider-reported; durableRetryQueue=not-claimed; retryPersistence=not-claimed; brokerErrorQueue=not-claimed; poisonQueueOwnership=not-claimed; crossNodeRetryCoordination=not-claimed; retryLease=not-claimed; wolverineRequired=false");
+        if (!topology.HasPublishingPath)
+        {
+            return new DurableRetryQueueProfile(
+                "not-claimed",
+                string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"publicationPath={publicationPath}; inProcessExecution={inProcessExecution}; inProcessRetryPolicy={inProcessRetryPolicy}; inProcessRetryMaxAttempts={inProcessRetryAttempts}; dispatchRuntime={dispatchRuntime}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; retryDurability=none-or-provider-reported; durableRetryQueue=not-claimed; durableRetryQueueSource=not-reported; durableRetryQueueId=not-reported; retryPersistence=not-claimed; retryPersistenceId=not-reported; brokerErrorQueue=not-claimed; brokerErrorQueueId=not-reported; poisonQueueOwnership=not-claimed; poisonQueueId=not-reported; crossNodeRetryCoordination=not-claimed; retryCoordinationId=not-reported; retryLease=not-claimed; retryLeaseId=not-reported; wolverineRequired=false"),
+                "Add a publishing path before claiming durable retry queue evidence.");
+        }
+
+        using var scope = scopeFactory.CreateScope();
+        var dispatchRuntimeCatalog = scope.ServiceProvider.GetService<IEventDispatchRuntimeCatalog>();
+        var durableRetryState = dispatchRuntimeCatalog?.States.FirstOrDefault(static state =>
+            state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.DurableRetryQueue, out var value) &&
+            string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase));
+
+        if (durableRetryState is not null)
+        {
+            var metadata = durableRetryState.Metadata;
+            var source = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.DurableRetryQueueSource,
+                "not-reported");
+            var durableRetryQueue = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.DurableRetryQueue,
+                "not-claimed");
+            var durableRetryQueueId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.DurableRetryQueueId,
+                "not-reported");
+            var retryDurability = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.RetryDurability,
+                "none-or-provider-reported");
+            var retryScope = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.RetryScope,
+                "not-claimed");
+            var retryPersistence = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.RetryPersistence,
+                "not-claimed");
+            var retryPersistenceId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.RetryPersistenceId,
+                "not-reported");
+            var brokerErrorQueue = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.BrokerErrorQueue,
+                "not-claimed");
+            var brokerErrorQueueId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.BrokerErrorQueueId,
+                "not-reported");
+            var poisonQueueOwnership = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.PoisonQueueOwnership,
+                "not-claimed");
+            var poisonQueueId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.PoisonQueueId,
+                "not-reported");
+            var crossNodeRetryCoordination = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.CrossNodeRetryCoordination,
+                "not-claimed");
+            var retryCoordinationId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.RetryCoordinationId,
+                "not-reported");
+            var retryLease = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.RetryLease,
+                "not-claimed");
+            var retryLeaseId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.RetryLeaseId,
+                "not-reported");
+            var status = EventDispatchDurableRetryQueueMetadata.IsDurableRetryQueueProven(metadata)
+                ? "claimed"
+                : "partial";
+            var nextGap = status == "claimed"
+                ? "Keep provider durable retry queue, persistence, broker error queue, poison queue, coordination, and lease proof covered by provider integration tests."
+                : "Complete provider durable retry queue, persistence, broker error queue, poison queue, coordination, and lease evidence before claiming durable retry queue ownership.";
+
+            return new DurableRetryQueueProfile(
+                status,
+                string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"publicationPath=active; inProcessExecution={inProcessExecution}; inProcessRetryPolicy={inProcessRetryPolicy}; inProcessRetryMaxAttempts={inProcessRetryAttempts}; dispatchRuntime={dispatchRuntime}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; retryDurability={retryDurability}; retryScope={retryScope}; durableRetryQueue={durableRetryQueue}; durableRetryQueueSource={source}; durableRetryQueueId={durableRetryQueueId}; retryPersistence={retryPersistence}; retryPersistenceId={retryPersistenceId}; brokerErrorQueue={brokerErrorQueue}; brokerErrorQueueId={brokerErrorQueueId}; poisonQueueOwnership={poisonQueueOwnership}; poisonQueueId={poisonQueueId}; crossNodeRetryCoordination={crossNodeRetryCoordination}; retryCoordinationId={retryCoordinationId}; retryLease={retryLease}; retryLeaseId={retryLeaseId}; outboxId={durableRetryState.OutboxId}; lastOutcome={durableRetryState.LastOutcome ?? "unknown"}; wolverineRequired=false"),
+                nextGap);
+        }
+
+        return new DurableRetryQueueProfile(
+            "not-claimed",
+            string.Create(
+                CultureInfo.InvariantCulture,
+                $"publicationPath=active; inProcessExecution={inProcessExecution}; inProcessRetryPolicy={inProcessRetryPolicy}; inProcessRetryMaxAttempts={inProcessRetryAttempts}; dispatchRuntime={dispatchRuntime}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; retryDurability=none-or-provider-reported; durableRetryQueue=not-claimed; durableRetryQueueSource=not-reported; durableRetryQueueId=not-reported; retryPersistence=not-claimed; retryPersistenceId=not-reported; brokerErrorQueue=not-claimed; brokerErrorQueueId=not-reported; poisonQueueOwnership=not-claimed; poisonQueueId=not-reported; crossNodeRetryCoordination=not-claimed; retryCoordinationId=not-reported; retryLease=not-claimed; retryLeaseId=not-reported; wolverineRequired=false"),
+            "Add a provider-owned durable retry queue descriptor plus retry persistence, broker error queue, poison queue, cross-node coordination, and lease evidence before claiming durable retry queue ownership.");
     }
 
     private static string ResolveIdempotencyOwnershipEvidence(EventingOptions options, EventingRuntimeTopology topology)
@@ -1009,4 +1106,6 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private sealed record DownstreamDeliveryCompletionProfile(string Status, string Evidence, string NextGap);
 
     private sealed record BrokerInboundConsumptionProfile(string Status, string Evidence, string NextGap);
+
+    private sealed record DurableRetryQueueProfile(string Status, string Evidence, string NextGap);
 }

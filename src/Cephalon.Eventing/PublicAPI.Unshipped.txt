@@ -17,6 +17,8 @@ const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.OperatorAc
 const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.OperatorCommandReason = "operatorCommandReason" -> string!
 const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.OperatorCorrelationId = "operatorCorrelationId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerDeadLetter = "brokerDeadLetter" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerErrorQueue = "brokerErrorQueue" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerErrorQueueId = "brokerErrorQueueId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ConsumerContextExtraction = "consumerContextExtraction" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoff = "crossNodeContextHandoff" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffConsumerNodeId = "crossNodeContextHandoffConsumerNodeId" -> string!
@@ -24,6 +26,7 @@ const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.CrossNodeConte
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffHeaderNames = "crossNodeContextHandoffHeaderNames" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffProducerNodeId = "crossNodeContextHandoffProducerNodeId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffSource = "crossNodeContextHandoffSource" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.CrossNodeRetryCoordination = "crossNodeRetryCoordination" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DeadLetterDurability = "deadLetterDurability" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DeadLetterOutcome = "deadLetterOutcome" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DeadLetterScope = "deadLetterScope" -> string!
@@ -35,6 +38,9 @@ const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DispatchContex
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DownstreamDeliveryCompletion = "downstreamDeliveryCompletion" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DownstreamDeliveryCompletionSource = "downstreamDeliveryCompletionSource" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DurableDispatchContextPropagation = "durableDispatchContextPropagation" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DurableRetryQueue = "durableRetryQueue" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DurableRetryQueueId = "durableRetryQueueId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DurableRetryQueueSource = "durableRetryQueueSource" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ExactlyOnceDelivery = "exactlyOnceDelivery" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ExactlyOnceDeliveryProofId = "exactlyOnceDeliveryProofId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ExactlyOnceDeliverySource = "exactlyOnceDeliverySource" -> string!
@@ -49,6 +55,13 @@ const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderSideCo
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceHeaderCount = "providerSideContextPersistenceHeaderCount" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceHeaderNames = "providerSideContextPersistenceHeaderNames" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceSource = "providerSideContextPersistenceSource" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.PoisonQueueId = "poisonQueueId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.PoisonQueueOwnership = "poisonQueueOwnership" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.RetryCoordinationId = "retryCoordinationId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.RetryLease = "retryLease" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.RetryLeaseId = "retryLeaseId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.RetryPersistence = "retryPersistence" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.RetryPersistenceId = "retryPersistenceId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.SubscriberAcknowledgement = "subscriberAcknowledgement" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.SubscriberAcknowledgementId = "subscriberAcknowledgementId" -> string!
 Cephalon.Eventing.Services.EventDispatchCrossNodeContextHandoffMetadata
@@ -61,6 +74,11 @@ static Cephalon.Eventing.Services.EventDispatchDeliveryCompletionMetadata.Create
 static Cephalon.Eventing.Services.EventDispatchDeliveryCompletionMetadata.CreateReport(Cephalon.Eventing.Services.EventDispatchExecutionReport! report, string! source, string! providerReceiptId, string? subscriberAcknowledgementId = null, string? destinationCommitId = null) -> Cephalon.Eventing.Services.EventDispatchExecutionReport!
 static Cephalon.Eventing.Services.EventDispatchDeliveryCompletionMetadata.IsCompleted(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> bool
 static Cephalon.Eventing.Services.EventDispatchDeliveryCompletionMetadata.TryApplyMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, string! outcome, string! source, string! providerReceiptId, string? subscriberAcknowledgementId = null, string? destinationCommitId = null) -> bool
+Cephalon.Eventing.Services.EventDispatchDurableRetryQueueMetadata
+static Cephalon.Eventing.Services.EventDispatchDurableRetryQueueMetadata.CreateMetadata(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata, string! outcome, string! source, string! durableRetryQueueId, string! retryPersistenceId, string! brokerErrorQueueId, string! poisonQueueId, string! retryCoordinationId, string! retryLeaseId) -> System.Collections.Generic.Dictionary<string!, string!>!
+static Cephalon.Eventing.Services.EventDispatchDurableRetryQueueMetadata.CreateReport(Cephalon.Eventing.Services.EventDispatchExecutionReport! report, string! source, string! durableRetryQueueId, string! retryPersistenceId, string! brokerErrorQueueId, string! poisonQueueId, string! retryCoordinationId, string! retryLeaseId) -> Cephalon.Eventing.Services.EventDispatchExecutionReport!
+static Cephalon.Eventing.Services.EventDispatchDurableRetryQueueMetadata.IsDurableRetryQueueProven(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> bool
+static Cephalon.Eventing.Services.EventDispatchDurableRetryQueueMetadata.TryApplyMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, string! outcome, string! source, string! durableRetryQueueId, string! retryPersistenceId, string! brokerErrorQueueId, string! poisonQueueId, string! retryCoordinationId, string! retryLeaseId) -> bool
 Cephalon.Eventing.Services.EventDispatchExactlyOnceDeliveryProofMetadata
 static Cephalon.Eventing.Services.EventDispatchExactlyOnceDeliveryProofMetadata.CreateMetadata(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata, string! outcome, string! source, string! providerReceiptId, string! subscriberAcknowledgementId, string! destinationCommitId, string! exactlyOnceProofId, string? strategy = null) -> System.Collections.Generic.Dictionary<string!, string!>!
 static Cephalon.Eventing.Services.EventDispatchExactlyOnceDeliveryProofMetadata.CreateReport(Cephalon.Eventing.Services.EventDispatchExecutionReport! report, string! source, string! providerReceiptId, string! subscriberAcknowledgementId, string! destinationCommitId, string! exactlyOnceProofId, string? strategy = null) -> Cephalon.Eventing.Services.EventDispatchExecutionReport!

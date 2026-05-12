@@ -3012,6 +3012,12 @@ Browse the published API surface by public member.
 - [BrokerDeadLetter](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerdeadletter): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerDeadLetter&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies whether the dead-letter decision is owned by a broker-specific dead-letter queue.
   - `const string BrokerDeadLetter`
+- [BrokerErrorQueue](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokererrorqueue): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerErrorQueue&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether a broker error queue was reported for the dispatch.
+  - `const string BrokerErrorQueue`
+- [BrokerErrorQueueId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokererrorqueueid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerErrorQueueId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the broker error queue id reported for the dispatch.
+  - `const string BrokerErrorQueueId`
 - [BrokerInboundConsumption](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerinboundconsumption): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerInboundConsumption&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies whether a provider or runtime reports ownership of inbound broker consumption.
   - `const string BrokerInboundConsumption`
@@ -5952,6 +5958,9 @@ Browse the published API surface by public member.
 - [CreateMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchdeliverycompletionmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchDeliveryCompletionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a metadata copy enriched with provider-reported delivery-completion proof when the inputs support it.
   - `Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string providerReceiptId, string subscriberAcknowledgementId, string destinationCommitId)`
+- [CreateMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchdurableretryqueuemetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchDurableRetryQueueMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates a metadata copy enriched with provider-reported durable retry queue proof when the inputs support it.
+  - `Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string durableRetryQueueId, string retryPersistenceId, string brokerErrorQueueId, string poisonQueueId, string retryCoordinationId, string retryLeaseId)`
 - [CreateMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchexactlyoncedeliveryproofmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchExactlyOnceDeliveryProofMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a metadata copy enriched with provider-reported exactly-once delivery proof when the inputs support it.
   - `Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string providerReceiptId, string subscriberAcknowledgementId, string destinationCommitId, string exactlyOnceProofId, string strategy)`
@@ -5976,6 +5985,9 @@ Browse the published API surface by public member.
 - [CreateReport](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchdeliverycompletionmetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchDeliveryCompletionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateReport&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a dispatch report copy enriched with provider-reported delivery-completion proof when the inputs support it.
   - `EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string providerReceiptId, string subscriberAcknowledgementId, string destinationCommitId)`
+- [CreateReport](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchdurableretryqueuemetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchDurableRetryQueueMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateReport&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates a dispatch report copy enriched with provider-reported durable retry queue proof when the inputs support it.
+  - `EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string durableRetryQueueId, string retryPersistenceId, string brokerErrorQueueId, string poisonQueueId, string retryCoordinationId, string retryLeaseId)`
 - [CreateReport](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchexactlyoncedeliveryproofmetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchExactlyOnceDeliveryProofMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateReport&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a dispatch report copy enriched with provider-reported exactly-once delivery proof when the inputs support it.
   - `EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string providerReceiptId, string subscriberAcknowledgementId, string destinationCommitId, string exactlyOnceProofId, string strategy)`
@@ -6066,6 +6078,9 @@ Browse the published API surface by public member.
 - [CrossNodeIdempotentSafe](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-crossnodeidempotentsafe): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CrossNodeIdempotentSafe&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Cross-node idempotency currently looks safe for the current multi-node lease posture.
   - `const string CrossNodeIdempotentSafe`
+- [CrossNodeRetryCoordination](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-crossnoderetrycoordination): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CrossNodeRetryCoordination&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether cross-node retry coordination was reported for the dispatch.
+  - `const string CrossNodeRetryCoordination`
 - [CrossNodeRuntime](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-crossnoderuntime): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CrossNodeRuntime&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The runtime depends on cross-node idempotency evidence before automatic retry should execute.
   - `const string CrossNodeRuntime`
@@ -8505,6 +8520,15 @@ Browse the published API surface by public member.
 - [DurableReplayCursor](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor-durablereplaycursor): `Properties` on `EventDispatchRemediationCommandJournalDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableReplayCursor&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - A value indicating whether the journal exposes a durable replay cursor contract.
   - `bool DurableReplayCursor { get; set; }`
+- [DurableRetryQueue](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-durableretryqueue): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DurableRetryQueue&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether a provider or runtime reported durable retry queue ownership.
+  - `const string DurableRetryQueue`
+- [DurableRetryQueueId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-durableretryqueueid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DurableRetryQueueId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the durable retry queue id reported for the dispatch.
+  - `const string DurableRetryQueueId`
+- [DurableRetryQueueSource](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-durableretryqueuesource): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DurableRetryQueueSource&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the provider or runtime source that reported durable retry queue ownership.
+  - `const string DurableRetryQueueSource`
 - [DurableSharedScheduler](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordurablesharedschedulerorchestrationcategories-durablesharedscheduler): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDurableSharedSchedulerOrchestrationCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableSharedScheduler&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The runtime participates in the durable shared scheduler-orchestration lane.
   - `const string DurableSharedScheduler`
@@ -15024,6 +15048,9 @@ Browse the published API surface by public member.
 - [IsDurable](cephalon-multitenancy-governance-aspnetcore.md#member-p-cephalon-multitenancy-governance-aspnetcore-hosting-tenantinvitationdeliverystatusobservationqueryresult-isdurable): `Properties` on `TenantInvitationDeliveryStatusObservationQueryResult` in `Cephalon.MultiTenancy.Governance.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.AspNetCore`) [Browse](browse.html?q=IsDurable&assembly=Cephalon.MultiTenancy.Governance.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.AspNetCore.Hosting&scope=members)
   - Gets a value indicating whether the underlying observation store survives process restarts.
   - `bool IsDurable { get; set; }`
+- [IsDurableRetryQueueProven](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchdurableretryqueuemetadata-isdurableretryqueueproven-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `EventDispatchDurableRetryQueueMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=IsDurableRetryQueueProven&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets a value indicating whether the metadata contains provider-reported durable retry queue proof.
+  - `bool IsDurableRetryQueueProven(IReadOnlyDictionary<string, string> metadata)`
 - [IsEligible](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorautomaticretryexecutionstatus-iseligible): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsEligible&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether automatic background retry execution is currently eligible to run one shared retry attempt.
   - `bool IsEligible { get; }`
@@ -21194,6 +21221,12 @@ Browse the published API surface by public member.
 - [PoisonMessageHandling](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-poisonmessagehandling): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PoisonMessageHandling&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the poison-message handling posture reported for inbound broker consumption.
   - `const string PoisonMessageHandling`
+- [PoisonQueueId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-poisonqueueid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PoisonQueueId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the poison queue id reported for the dispatch.
+  - `const string PoisonQueueId`
+- [PoisonQueueOwnership](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-poisonqueueownership): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PoisonQueueOwnership&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether poison queue ownership was reported for the dispatch.
+  - `const string PoisonQueueOwnership`
 - [Policies](cephalon-abstractions.md#member-p-cephalon-abstractions-authorization-iauthorizationpolicycatalog-policies): `Properties` on `IAuthorizationPolicyCatalog` in `Cephalon.Abstractions.Authorization` (`Cephalon.Abstractions`) [Browse](browse.html?q=Policies&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Authorization&scope=members)
   - Gets all authorization policies visible to the current runtime.
   - `IReadOnlyList<AuthorizationPolicyDescriptor> Policies { get; }`
@@ -25203,6 +25236,9 @@ Browse the published API surface by public member.
 - [RetryCandidate](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicycategories-retrycandidate): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryCandidate&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The current shared runtime truth exposes one safe retry candidate.
   - `const string RetryCandidate`
+- [RetryCoordinationId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrycoordinationid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryCoordinationId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the cross-node retry coordination id reported for the dispatch.
+  - `const string RetryCoordinationId`
 - [RetryDelayMilliseconds](cephalon-multitenancy-governance-httpdelivery.md#member-p-cephalon-multitenancy-governance-httpdelivery-configuration-httpinvitationdeliveryoptions-retrydelaymilliseconds): `Properties` on `HttpInvitationDeliveryOptions` in `Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration` (`Cephalon.MultiTenancy.Governance.HttpDelivery`) [Browse](browse.html?q=RetryDelayMilliseconds&assembly=Cephalon.MultiTenancy.Governance.HttpDelivery&namespace=Cephalon.MultiTenancy.Governance.HttpDelivery.Configuration&scope=members)
   - Gets or sets the fixed delay, in milliseconds, between retry attempts.
   - `int RetryDelayMilliseconds { get; set; }`
@@ -25371,6 +25407,12 @@ Browse the published API surface by public member.
 - [RetryLater](cephalon-abstractions.md#member-f-cephalon-abstractions-data-eventdispatchremediationoperationids-retrylater): `Fields` on `EventDispatchRemediationOperationIds` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryLater&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Makes a staged event eligible for another dispatch attempt at a later time.
   - `const string RetryLater`
+- [RetryLease](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrylease): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryLease&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether a retry lease was reported for the dispatch.
+  - `const string RetryLease`
+- [RetryLeaseId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retryleaseid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryLeaseId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the retry lease id reported for the dispatch.
+  - `const string RetryLeaseId`
 - [RetryMaxAttempts](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrymaxattempts): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryMaxAttempts&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the maximum number of dispatch attempts allowed for one staged message.
   - `const string RetryMaxAttempts`
@@ -25398,6 +25440,12 @@ Browse the published API surface by public member.
 - [RetryPendingCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchruntimesummary-retrypendingcount): `Properties` on `EventDispatchRuntimeSummary` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=RetryPendingCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the number of owned outboxes whose latest report still says another retry is pending.
   - `int RetryPendingCount { get; }`
+- [RetryPersistence](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrypersistence): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryPersistence&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether retry persistence was reported for the dispatch.
+  - `const string RetryPersistence`
+- [RetryPersistenceId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrypersistenceid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryPersistenceId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the retry persistence record or store id reported for the dispatch.
+  - `const string RetryPersistenceId`
 - [RetryPolicy](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrypolicy): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RetryPolicy&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the retry policy applied by the active dispatch runtime.
   - `const string RetryPolicy`
@@ -29808,6 +29856,9 @@ Browse the published API surface by public member.
 - [TryApplyMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchdeliverycompletionmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchDeliveryCompletionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryApplyMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Applies provider-reported delivery-completion proof to an existing dispatch metadata dictionary when the inputs support it.
   - `bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string providerReceiptId, string subscriberAcknowledgementId, string destinationCommitId)`
+- [TryApplyMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchdurableretryqueuemetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchDurableRetryQueueMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryApplyMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Applies provider-reported durable retry queue proof to an existing dispatch metadata dictionary when the inputs support it.
+  - `bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string durableRetryQueueId, string retryPersistenceId, string brokerErrorQueueId, string poisonQueueId, string retryCoordinationId, string retryLeaseId)`
 - [TryApplyMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchexactlyoncedeliveryproofmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchExactlyOnceDeliveryProofMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryApplyMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Applies provider-reported exactly-once delivery proof to an existing dispatch metadata dictionary when the inputs support it.
   - `bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string providerReceiptId, string subscriberAcknowledgementId, string destinationCommitId, string exactlyOnceProofId, string strategy)`
