@@ -1114,6 +1114,104 @@ string Version { get; }
 
 Gets the event contract version.
 
+<a id="type-cephalon-eventing-services-eventdispatchbrokertopologymetadata"></a>
+
+### `EventDispatchBrokerTopologyMetadata`
+
+Builds provider-reported broker topology materialization proof metadata for successful dispatch reports.
+
+Remarks: Cephalon publication routing proves logical channel selection, not broker provisioning. This helper records the stronger broker topology claim only when a provider/runtime reports successful dispatch evidence with exchange, queue, topic, partition, verification, and provider-owned topology proof ids.
+
+#### Declaration
+```csharp
+public static class EventDispatchBrokerTopologyMetadata
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-eventdispatchbrokertopologymetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateMetadata`
+
+```csharp
+Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string exchangeProvisioningId, string queueProvisioningId, string topicProvisioningId, string partitionProvisioningId, string topologyVerificationId, string providerTopologyId)
+```
+
+Creates a metadata copy enriched with provider-reported broker topology proof when the inputs support it.
+
+Returns: A case-insensitive metadata dictionary containing the original values plus broker topology proof when applicable.
+
+Parameters:
+- `metadata`: The dispatch report metadata to copy.
+- `outcome`: The dispatch report outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported broker topology materialization.
+- `exchangeProvisioningId`: The exchange provisioning proof id.
+- `queueProvisioningId`: The queue provisioning proof id.
+- `topicProvisioningId`: The topic provisioning proof id.
+- `partitionProvisioningId`: The partition provisioning proof id.
+- `topologyVerificationId`: The topology verification proof id.
+- `providerTopologyId`: The provider-owned topology proof id.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchbrokertopologymetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateReport`
+
+```csharp
+EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string exchangeProvisioningId, string queueProvisioningId, string topicProvisioningId, string partitionProvisioningId, string topologyVerificationId, string providerTopologyId)
+```
+
+Creates a dispatch report copy enriched with provider-reported broker topology proof when the inputs support it.
+
+Returns: A dispatch report containing the original metadata plus broker topology proof when applicable.
+
+Parameters:
+- `report`: The successful dispatch report to copy.
+- `source`: The stable provider or runtime source that reported broker topology materialization.
+- `exchangeProvisioningId`: The exchange provisioning proof id.
+- `queueProvisioningId`: The queue provisioning proof id.
+- `topicProvisioningId`: The topic provisioning proof id.
+- `partitionProvisioningId`: The partition provisioning proof id.
+- `topologyVerificationId`: The topology verification proof id.
+- `providerTopologyId`: The provider-owned topology proof id.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchbrokertopologymetadata-istopologymaterialized-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `IsTopologyMaterialized`
+
+```csharp
+bool IsTopologyMaterialized(IReadOnlyDictionary<string, string> metadata)
+```
+
+Gets a value indicating whether the metadata contains complete provider-reported broker topology proof.
+
+Returns: `true` when complete broker topology proof is present; otherwise, `false`.
+
+Parameters:
+- `metadata`: The dispatch metadata dictionary to inspect.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchbrokertopologymetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `TryApplyMetadata`
+
+```csharp
+bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string exchangeProvisioningId, string queueProvisioningId, string topicProvisioningId, string partitionProvisioningId, string topologyVerificationId, string providerTopologyId)
+```
+
+Applies provider-reported broker topology proof to an existing dispatch metadata dictionary when the inputs support it.
+
+Returns: `true` when broker topology proof was applied; otherwise, `false`.
+
+Parameters:
+- `metadata`: The dispatch metadata dictionary to enrich.
+- `outcome`: The dispatch report outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported broker topology materialization.
+- `exchangeProvisioningId`: The exchange provisioning proof id.
+- `queueProvisioningId`: The queue provisioning proof id.
+- `topicProvisioningId`: The topic provisioning proof id.
+- `partitionProvisioningId`: The partition provisioning proof id.
+- `topologyVerificationId`: The topology verification proof id.
+- `providerTopologyId`: The provider-owned topology proof id.
+
 <a id="type-cephalon-eventing-services-eventdispatchcontextreportmetadata"></a>
 
 ### `EventDispatchContextReportMetadata`
@@ -2204,6 +2302,26 @@ const string BrokerErrorQueueId
 
 Identifies the broker error queue id reported for the dispatch.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokertopologymaterialization"></a>
+
+##### `BrokerTopologyMaterialization`
+
+```csharp
+const string BrokerTopologyMaterialization
+```
+
+Identifies whether a provider or runtime reported broker topology materialization ownership.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokertopologymaterializationsource"></a>
+
+##### `BrokerTopologyMaterializationSource`
+
+```csharp
+const string BrokerTopologyMaterializationSource
+```
+
+Identifies the provider or runtime source that reported broker topology materialization ownership.
+
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-consumercontextextraction"></a>
 
 ##### `ConsumerContextExtraction`
@@ -2464,6 +2582,26 @@ const string ExactlyOnceDeliveryStrategy
 
 Identifies the provider exactly-once delivery strategy reported for the dispatch.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-exchangeprovisioning"></a>
+
+##### `ExchangeProvisioning`
+
+```csharp
+const string ExchangeProvisioning
+```
+
+Identifies whether broker exchange provisioning was reported.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-exchangeprovisioningid"></a>
+
+##### `ExchangeProvisioningId`
+
+```csharp
+const string ExchangeProvisioningId
+```
+
+Identifies the broker exchange provisioning proof id.
+
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-nextretryatutc"></a>
 
 ##### `NextRetryAtUtc`
@@ -2473,6 +2611,26 @@ const string NextRetryAtUtc
 ```
 
 Identifies the next UTC time when a retryable dispatch failure should become eligible again.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionprovisioning"></a>
+
+##### `PartitionProvisioning`
+
+```csharp
+const string PartitionProvisioning
+```
+
+Identifies whether broker partition provisioning was reported.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionprovisioningid"></a>
+
+##### `PartitionProvisioningId`
+
+```csharp
+const string PartitionProvisioningId
+```
+
+Identifies the broker partition provisioning proof id.
 
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-poisonqueueid"></a>
 
@@ -2554,6 +2712,16 @@ const string ProviderDeliveryReceiptId
 
 Identifies the provider delivery receipt id reported for the dispatch.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerownedtopology"></a>
+
+##### `ProviderOwnedTopology`
+
+```csharp
+const string ProviderOwnedTopology
+```
+
+Identifies whether provider-owned broker topology proof was reported.
+
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providersidecontextpersistence"></a>
 
 ##### `ProviderSideContextPersistence`
@@ -2593,6 +2761,36 @@ const string ProviderSideContextPersistenceSource
 ```
 
 Identifies the provider-side dispatch store that persisted the projected Cephalon context proof.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providertopologyid"></a>
+
+##### `ProviderTopologyId`
+
+```csharp
+const string ProviderTopologyId
+```
+
+Identifies the provider-owned broker topology proof id.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-queueprovisioning"></a>
+
+##### `QueueProvisioning`
+
+```csharp
+const string QueueProvisioning
+```
+
+Identifies whether broker queue provisioning was reported.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-queueprovisioningid"></a>
+
+##### `QueueProvisioningId`
+
+```csharp
+const string QueueProvisioningId
+```
+
+Identifies the broker queue provisioning proof id.
 
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrycoordinationid"></a>
 
@@ -2743,6 +2941,46 @@ const string TerminalFailure
 ```
 
 Identifies whether the latest failure should stop re-entering pending-dispatch reads.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-topicprovisioning"></a>
+
+##### `TopicProvisioning`
+
+```csharp
+const string TopicProvisioning
+```
+
+Identifies whether broker topic provisioning was reported.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-topicprovisioningid"></a>
+
+##### `TopicProvisioningId`
+
+```csharp
+const string TopicProvisioningId
+```
+
+Identifies the broker topic provisioning proof id.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-topologyverification"></a>
+
+##### `TopologyVerification`
+
+```csharp
+const string TopologyVerification
+```
+
+Identifies whether provider topology verification was reported.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-topologyverificationid"></a>
+
+##### `TopologyVerificationId`
+
+```csharp
+const string TopologyVerificationId
+```
+
+Identifies the provider topology verification proof id.
 
 #### Methods
 

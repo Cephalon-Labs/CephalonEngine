@@ -41,6 +41,76 @@ public static class EventDispatchRuntimeMetadataKeys
     public const string RetryScope = "retryScope";
 
     /// <summary>
+    /// Identifies whether a provider or runtime reported broker topology materialization ownership.
+    /// </summary>
+    public const string BrokerTopologyMaterialization = "brokerTopologyMaterialization";
+
+    /// <summary>
+    /// Identifies the provider or runtime source that reported broker topology materialization ownership.
+    /// </summary>
+    public const string BrokerTopologyMaterializationSource = "brokerTopologyMaterializationSource";
+
+    /// <summary>
+    /// Identifies whether broker exchange provisioning was reported.
+    /// </summary>
+    public const string ExchangeProvisioning = "exchangeProvisioning";
+
+    /// <summary>
+    /// Identifies the broker exchange provisioning proof id.
+    /// </summary>
+    public const string ExchangeProvisioningId = "exchangeProvisioningId";
+
+    /// <summary>
+    /// Identifies whether broker queue provisioning was reported.
+    /// </summary>
+    public const string QueueProvisioning = "queueProvisioning";
+
+    /// <summary>
+    /// Identifies the broker queue provisioning proof id.
+    /// </summary>
+    public const string QueueProvisioningId = "queueProvisioningId";
+
+    /// <summary>
+    /// Identifies whether broker topic provisioning was reported.
+    /// </summary>
+    public const string TopicProvisioning = "topicProvisioning";
+
+    /// <summary>
+    /// Identifies the broker topic provisioning proof id.
+    /// </summary>
+    public const string TopicProvisioningId = "topicProvisioningId";
+
+    /// <summary>
+    /// Identifies whether broker partition provisioning was reported.
+    /// </summary>
+    public const string PartitionProvisioning = "partitionProvisioning";
+
+    /// <summary>
+    /// Identifies the broker partition provisioning proof id.
+    /// </summary>
+    public const string PartitionProvisioningId = "partitionProvisioningId";
+
+    /// <summary>
+    /// Identifies whether provider topology verification was reported.
+    /// </summary>
+    public const string TopologyVerification = "topologyVerification";
+
+    /// <summary>
+    /// Identifies the provider topology verification proof id.
+    /// </summary>
+    public const string TopologyVerificationId = "topologyVerificationId";
+
+    /// <summary>
+    /// Identifies whether provider-owned broker topology proof was reported.
+    /// </summary>
+    public const string ProviderOwnedTopology = "providerOwnedTopology";
+
+    /// <summary>
+    /// Identifies the provider-owned broker topology proof id.
+    /// </summary>
+    public const string ProviderTopologyId = "providerTopologyId";
+
+    /// <summary>
     /// Identifies whether a provider or runtime reported durable retry queue ownership.
     /// </summary>
     public const string DurableRetryQueue = "durableRetryQueue";

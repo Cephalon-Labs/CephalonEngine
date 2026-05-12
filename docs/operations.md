@@ -2645,9 +2645,10 @@ Current `Cephalon.Eventing` highlights:
   even when dispatch-store dead-letter intent, Wolverine-managed dispatch reports, or durable
   command-journal replay are active
 - `broker-topology-materialization-ownership` is the matching topology boundary in that same
-  profile; it stays `not-claimed` until a provider package owns broker exchange, queue, topic, or
-  partition provisioning/verification, even when Cephalon-native routing has selected the effective
-  channel
+  profile; it stays `not-claimed` until a successful provider/runtime dispatch report supplies
+  complete `EventDispatchBrokerTopologyMetadata` proof for exchange provisioning, queue
+  provisioning, topic provisioning, partition provisioning, topology verification, and provider
+  topology ownership, even when Cephalon-native routing has selected the effective channel
 - `provider-partition-ownership` is the separate provider partition boundary in that same profile;
   it stays `not-claimed` until a provider package owns partition assignment, affinity, rebalancing,
   and per-partition ordering semantics, even when route and broker topology evidence are present

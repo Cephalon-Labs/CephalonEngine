@@ -19,6 +19,8 @@ const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.OperatorCo
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerDeadLetter = "brokerDeadLetter" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerErrorQueue = "brokerErrorQueue" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerErrorQueueId = "brokerErrorQueueId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerTopologyMaterialization = "brokerTopologyMaterialization" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerTopologyMaterializationSource = "brokerTopologyMaterializationSource" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ConsumerContextExtraction = "consumerContextExtraction" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoff = "crossNodeContextHandoff" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffConsumerNodeId = "crossNodeContextHandoffConsumerNodeId" -> string!
@@ -45,18 +47,26 @@ const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ExactlyOnceDel
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ExactlyOnceDeliveryProofId = "exactlyOnceDeliveryProofId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ExactlyOnceDeliverySource = "exactlyOnceDeliverySource" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ExactlyOnceDeliveryStrategy = "exactlyOnceDeliveryStrategy" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ExchangeProvisioning = "exchangeProvisioning" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ExchangeProvisioningId = "exchangeProvisioningId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.PartitionProvisioning = "partitionProvisioning" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.PartitionProvisioningId = "partitionProvisioningId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderCount = "providerBrokerContextHeaderCount" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderNames = "providerBrokerContextHeaderNames" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderProjection = "providerBrokerContextHeaderProjection" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders = "providerBrokerContextHeaders" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderDeliveryReceipt = "providerDeliveryReceipt" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderDeliveryReceiptId = "providerDeliveryReceiptId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderOwnedTopology = "providerOwnedTopology" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistence = "providerSideContextPersistence" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceHeaderCount = "providerSideContextPersistenceHeaderCount" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceHeaderNames = "providerSideContextPersistenceHeaderNames" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceSource = "providerSideContextPersistenceSource" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderTopologyId = "providerTopologyId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.PoisonQueueId = "poisonQueueId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.PoisonQueueOwnership = "poisonQueueOwnership" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.QueueProvisioning = "queueProvisioning" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.QueueProvisioningId = "queueProvisioningId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.RetryCoordinationId = "retryCoordinationId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.RetryLease = "retryLease" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.RetryLeaseId = "retryLeaseId" -> string!
@@ -64,6 +74,15 @@ const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.RetryPersisten
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.RetryPersistenceId = "retryPersistenceId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.SubscriberAcknowledgement = "subscriberAcknowledgement" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.SubscriberAcknowledgementId = "subscriberAcknowledgementId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.TopicProvisioning = "topicProvisioning" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.TopicProvisioningId = "topicProvisioningId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.TopologyVerification = "topologyVerification" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.TopologyVerificationId = "topologyVerificationId" -> string!
+Cephalon.Eventing.Services.EventDispatchBrokerTopologyMetadata
+static Cephalon.Eventing.Services.EventDispatchBrokerTopologyMetadata.CreateMetadata(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata, string! outcome, string! source, string! exchangeProvisioningId, string! queueProvisioningId, string! topicProvisioningId, string! partitionProvisioningId, string! topologyVerificationId, string! providerTopologyId) -> System.Collections.Generic.Dictionary<string!, string!>!
+static Cephalon.Eventing.Services.EventDispatchBrokerTopologyMetadata.CreateReport(Cephalon.Eventing.Services.EventDispatchExecutionReport! report, string! source, string! exchangeProvisioningId, string! queueProvisioningId, string! topicProvisioningId, string! partitionProvisioningId, string! topologyVerificationId, string! providerTopologyId) -> Cephalon.Eventing.Services.EventDispatchExecutionReport!
+static Cephalon.Eventing.Services.EventDispatchBrokerTopologyMetadata.IsTopologyMaterialized(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> bool
+static Cephalon.Eventing.Services.EventDispatchBrokerTopologyMetadata.TryApplyMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, string! outcome, string! source, string! exchangeProvisioningId, string! queueProvisioningId, string! topicProvisioningId, string! partitionProvisioningId, string! topologyVerificationId, string! providerTopologyId) -> bool
 Cephalon.Eventing.Services.EventDispatchCrossNodeContextHandoffMetadata
 static Cephalon.Eventing.Services.EventDispatchCrossNodeContextHandoffMetadata.CreateMetadata(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! consumerContextMetadata, string! source, string! producerNodeId, string! consumerNodeId) -> System.Collections.Generic.Dictionary<string!, string!>!
 static Cephalon.Eventing.Services.EventDispatchCrossNodeContextHandoffMetadata.CreateReport(Cephalon.Eventing.Services.EventDispatchExecutionReport! report, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! consumerContextMetadata, string! source, string! producerNodeId, string! consumerNodeId) -> Cephalon.Eventing.Services.EventDispatchExecutionReport!

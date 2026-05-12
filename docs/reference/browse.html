@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-12T18:05:40.0783574+00:00",
+  "GeneratedAtUtc": "2026-05-12T18:44:44.8969592+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -271,7 +271,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 74
+      "TypeCount": 75
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1331,7 +1331,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 71
+      "TypeCount": 72
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8353,6 +8353,21 @@
       }
     },
     {
+      "DisplayName": "EventDispatchBrokerTopologyMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventdispatchbrokertopologymetadata",
+      "Declaration": "public static class EventDispatchBrokerTopologyMetadata",
+      "Summary": "Builds provider-reported broker topology materialization proof metadata for successful dispatch reports.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 4
+      }
+    },
+    {
       "DisplayName": "EventDispatchContextReportMetadata",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -8692,7 +8707,7 @@
       "Summary": "Defines stable metadata keys used by event-dispatch runtime observations.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 57,
+        "Fields": 71,
         "Properties": 0,
         "Methods": 1
       }
@@ -31244,6 +31259,28 @@
       "Summary": "Identifies the provider or runtime source that reported inbound broker consumption."
     },
     {
+      "DisplayName": "BrokerTopologyMaterialization",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokertopologymaterialization",
+      "Signature": "const string BrokerTopologyMaterialization",
+      "Summary": "Identifies whether a provider or runtime reported broker topology materialization ownership."
+    },
+    {
+      "DisplayName": "BrokerTopologyMaterializationSource",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokertopologymaterializationsource",
+      "Signature": "const string BrokerTopologyMaterializationSource",
+      "Summary": "Identifies the provider or runtime source that reported broker topology materialization ownership."
+    },
+    {
       "DisplayName": "BrowserPath",
       "Category": "Properties",
       "DeclaringTypeName": "ReferenceDocsSurface",
@@ -42037,6 +42074,17 @@
     {
       "DisplayName": "CreateMetadata",
       "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchBrokerTopologyMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchbrokertopologymetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "Dictionary\u003Cstring, string\u003E CreateMetadata(IReadOnlyDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string exchangeProvisioningId, string queueProvisioningId, string topicProvisioningId, string partitionProvisioningId, string topologyVerificationId, string providerTopologyId)",
+      "Summary": "Creates a metadata copy enriched with provider-reported broker topology proof when the inputs support it."
+    },
+    {
+      "DisplayName": "CreateMetadata",
+      "Category": "Methods",
       "DeclaringTypeName": "EventDispatchCrossNodeContextHandoffMetadata",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -42176,6 +42224,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-idatabasemigrationoperationalplaybookprovider-createplaybook",
       "Signature": "DatabaseMigrationOperationalPlaybook CreatePlaybook()",
       "Summary": "Creates the current database-migration playbook."
+    },
+    {
+      "DisplayName": "CreateReport",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchBrokerTopologyMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchbrokertopologymetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string exchangeProvisioningId, string queueProvisioningId, string topicProvisioningId, string partitionProvisioningId, string topologyVerificationId, string providerTopologyId)",
+      "Summary": "Creates a dispatch report copy enriched with provider-reported broker topology proof when the inputs support it."
     },
     {
       "DisplayName": "CreateReport",
@@ -55945,6 +56004,28 @@
       "AnchorId": "member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-exchangegreetings-grpc-core-metadata-system-nullable-system-datetime-system-threading-cancellationtoken",
       "Signature": "AsyncDuplexStreamingCall\u003CHelloRequest, HelloReply\u003E ExchangeGreetings(Metadata headers, DateTime? deadline, CancellationToken cancellationToken)",
       "Summary": "Exchanges greeting messages bidirectionally to validate duplex streaming support."
+    },
+    {
+      "DisplayName": "ExchangeProvisioning",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-exchangeprovisioning",
+      "Signature": "const string ExchangeProvisioning",
+      "Summary": "Identifies whether broker exchange provisioning was reported."
+    },
+    {
+      "DisplayName": "ExchangeProvisioningId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-exchangeprovisioningid",
+      "Signature": "const string ExchangeProvisioningId",
+      "Summary": "Identifies the broker exchange provisioning proof id."
     },
     {
       "DisplayName": "ExcludedBehaviorIds",
@@ -77661,6 +77742,17 @@
       "Summary": "Gets a value indicating whether the supplied metadata describes a terminal failure."
     },
     {
+      "DisplayName": "IsTopologyMaterialized",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchBrokerTopologyMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchbrokertopologymetadata-istopologymaterialized-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "bool IsTopologyMaterialized(IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Gets a value indicating whether the metadata contains complete provider-reported broker topology proof."
+    },
+    {
       "DisplayName": "IsTruncated",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus",
@@ -96863,6 +96955,28 @@
       "Summary": "Identifies the partition ordering proof id."
     },
     {
+      "DisplayName": "PartitionProvisioning",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionprovisioning",
+      "Signature": "const string PartitionProvisioning",
+      "Summary": "Identifies whether broker partition provisioning was reported."
+    },
+    {
+      "DisplayName": "PartitionProvisioningId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionprovisioningid",
+      "Signature": "const string PartitionProvisioningId",
+      "Summary": "Identifies the broker partition provisioning proof id."
+    },
+    {
       "DisplayName": "PassHostHeader",
       "Category": "Properties",
       "DeclaringTypeName": "TraefikIngressRouteOptions",
@@ -103340,6 +103454,17 @@
       "Summary": "Provider-owned write-path execution currently remains risky because broader shared runtime truth is not safe enough yet."
     },
     {
+      "DisplayName": "ProviderOwnedTopology",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerownedtopology",
+      "Signature": "const string ProviderOwnedTopology",
+      "Summary": "Identifies whether provider-owned broker topology proof was reported."
+    },
+    {
       "DisplayName": "ProviderOwnedWritePathExecution",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationSources",
@@ -103701,6 +103826,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-providersurfaceready",
       "Signature": "const string ProviderSurfaceReady",
       "Summary": "The runtime currently exposes one provider-facing surface identifier for provider-specific materialization."
+    },
+    {
+      "DisplayName": "ProviderTopologyId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providertopologyid",
+      "Signature": "const string ProviderTopologyId",
+      "Summary": "Identifies the provider-owned broker topology proof id."
     },
     {
       "DisplayName": "ProvisioningBlocked",
@@ -104790,6 +104926,28 @@
       "AnchorId": "member-p-cephalon-engine-configuration-ratelimitingsettings-queuelimit",
       "Signature": "int? QueueLimit { get; }",
       "Summary": "Gets the maximum queued requests allowed before rejection."
+    },
+    {
+      "DisplayName": "QueueProvisioning",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-queueprovisioning",
+      "Signature": "const string QueueProvisioning",
+      "Summary": "Identifies whether broker queue provisioning was reported."
+    },
+    {
+      "DisplayName": "QueueProvisioningId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-queueprovisioningid",
+      "Signature": "const string QueueProvisioningId",
+      "Summary": "Identifies the broker queue provisioning proof id."
     },
     {
       "DisplayName": "QuotaProjectId",
@@ -129099,6 +129257,50 @@
       "Summary": "Gets or sets the Debezium topic prefix when the connector fans out into one or more topics."
     },
     {
+      "DisplayName": "TopicProvisioning",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-topicprovisioning",
+      "Signature": "const string TopicProvisioning",
+      "Summary": "Identifies whether broker topic provisioning was reported."
+    },
+    {
+      "DisplayName": "TopicProvisioningId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-topicprovisioningid",
+      "Signature": "const string TopicProvisioningId",
+      "Summary": "Identifies the broker topic provisioning proof id."
+    },
+    {
+      "DisplayName": "TopologyVerification",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-topologyverification",
+      "Signature": "const string TopologyVerification",
+      "Summary": "Identifies whether provider topology verification was reported."
+    },
+    {
+      "DisplayName": "TopologyVerificationId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-topologyverificationid",
+      "Signature": "const string TopologyVerificationId",
+      "Summary": "Identifies the provider topology verification proof id."
+    },
+    {
       "DisplayName": "TotalActionCount",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseTopologyOperationalActionPlan",
@@ -130186,6 +130388,17 @@
       "AnchorId": "member-m-cephalon-engine-trust-trustsnapshot-ctor-cephalon-engine-configuration-trustpolicy-system-collections-generic-ireadonlylist-cephalon-engine-trust-packagetrustdecision-system-collections-generic-ireadonlylist-cephalon-engine-trust-capabilitypolicydecision",
       "Signature": "TrustSnapshot(TrustPolicy Policy, IReadOnlyList\u003CPackageTrustDecision\u003E Packages, IReadOnlyList\u003CCapabilityPolicyDecision\u003E Capabilities)",
       "Summary": "Captures the effective trust policy together with evaluated package and capability decisions."
+    },
+    {
+      "DisplayName": "TryApplyMetadata",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchBrokerTopologyMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchbrokertopologymetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string exchangeProvisioningId, string queueProvisioningId, string topicProvisioningId, string partitionProvisioningId, string topologyVerificationId, string providerTopologyId)",
+      "Summary": "Applies provider-reported broker topology proof to an existing dispatch metadata dictionary when the inputs support it."
     },
     {
       "DisplayName": "TryApplyMetadata",

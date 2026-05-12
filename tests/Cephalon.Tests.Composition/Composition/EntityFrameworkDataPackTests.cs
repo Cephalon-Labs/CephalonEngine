@@ -1448,6 +1448,8 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("executableValidation=publisher-enforced", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("executablePropagation=not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Equal("not-claimed", dimensions["broker-topology-materialization-ownership"].Metadata["status"]);
+        Assert.Contains("brokerTopologyMaterialization=not-claimed", dimensions["broker-topology-materialization-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Equal("not-claimed", dimensions["broker-inbound-consumption-ownership"].Metadata["status"]);
         Assert.Contains("brokerInboundConsumption=not-claimed", dimensions["broker-inbound-consumption-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
@@ -1611,6 +1613,104 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("exactlyOnceDelivery=provider-proven", exactlyOnceDimensions["downstream-delivery-completion-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("exactlyOnceDeliveryProofId=exactly-once-proof-001", exactlyOnceDimensions["downstream-delivery-completion-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("exactlyOnceDeliveryStrategy=provider-deduplication-and-commit", exactlyOnceDimensions["downstream-delivery-completion-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+
+        var incompleteBrokerTopologyReport = EventDispatchBrokerTopologyMetadata.CreateReport(
+            crossNodeReport,
+            source: "provider-topology-observer",
+            exchangeProvisioningId: "exchange-provisioning-001",
+            queueProvisioningId: "queue-provisioning-001",
+            topicProvisioningId: "topic-provisioning-001",
+            partitionProvisioningId: "partition-provisioning-001",
+            topologyVerificationId: "topology-verification-001",
+            providerTopologyId: "provider-topology-001");
+        Assert.False(EventDispatchBrokerTopologyMetadata.IsTopologyMaterialized(incompleteBrokerTopologyReport.Metadata));
+        Assert.DoesNotContain(EventDispatchRuntimeMetadataKeys.BrokerTopologyMaterialization, incompleteBrokerTopologyReport.Metadata.Keys);
+
+        var brokerTopologyReport = EventDispatchBrokerTopologyMetadata.CreateReport(
+            exactlyOnceDeliveryReport,
+            source: "provider-topology-observer",
+            exchangeProvisioningId: "exchange-provisioning-001",
+            queueProvisioningId: "queue-provisioning-001",
+            topicProvisioningId: "topic-provisioning-001",
+            partitionProvisioningId: "partition-provisioning-001",
+            topologyVerificationId: "topology-verification-001",
+            providerTopologyId: "provider-topology-001");
+        Assert.True(EventDispatchBrokerTopologyMetadata.IsTopologyMaterialized(brokerTopologyReport.Metadata));
+        Assert.Equal("provider-reported", brokerTopologyReport.Metadata[EventDispatchRuntimeMetadataKeys.BrokerTopologyMaterialization]);
+        Assert.Equal("provider-topology-observer", brokerTopologyReport.Metadata[EventDispatchRuntimeMetadataKeys.BrokerTopologyMaterializationSource]);
+        Assert.Equal("reported", brokerTopologyReport.Metadata[EventDispatchRuntimeMetadataKeys.ExchangeProvisioning]);
+        Assert.Equal("exchange-provisioning-001", brokerTopologyReport.Metadata[EventDispatchRuntimeMetadataKeys.ExchangeProvisioningId]);
+        Assert.Equal("reported", brokerTopologyReport.Metadata[EventDispatchRuntimeMetadataKeys.QueueProvisioning]);
+        Assert.Equal("queue-provisioning-001", brokerTopologyReport.Metadata[EventDispatchRuntimeMetadataKeys.QueueProvisioningId]);
+        Assert.Equal("reported", brokerTopologyReport.Metadata[EventDispatchRuntimeMetadataKeys.TopicProvisioning]);
+        Assert.Equal("topic-provisioning-001", brokerTopologyReport.Metadata[EventDispatchRuntimeMetadataKeys.TopicProvisioningId]);
+        Assert.Equal("reported", brokerTopologyReport.Metadata[EventDispatchRuntimeMetadataKeys.PartitionProvisioning]);
+        Assert.Equal("partition-provisioning-001", brokerTopologyReport.Metadata[EventDispatchRuntimeMetadataKeys.PartitionProvisioningId]);
+        Assert.Equal("reported", brokerTopologyReport.Metadata[EventDispatchRuntimeMetadataKeys.TopologyVerification]);
+        Assert.Equal("topology-verification-001", brokerTopologyReport.Metadata[EventDispatchRuntimeMetadataKeys.TopologyVerificationId]);
+        Assert.Equal("reported", brokerTopologyReport.Metadata[EventDispatchRuntimeMetadataKeys.ProviderOwnedTopology]);
+        Assert.Equal("provider-topology-001", brokerTopologyReport.Metadata[EventDispatchRuntimeMetadataKeys.ProviderTopologyId]);
+
+        await dispatchRuntimeReporter.ReportAsync(brokerTopologyReport);
+
+        var brokerTopologyDispatchState = dispatchRuntimeCatalog.GetByOutboxId("entity-framework-outbox");
+        Assert.NotNull(brokerTopologyDispatchState);
+        Assert.Equal(EventDispatchExecutionOutcomes.Succeeded, brokerTopologyDispatchState.LastOutcome);
+        Assert.Equal("provider-reported", brokerTopologyDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.BrokerTopologyMaterialization]);
+        Assert.Equal("exchange-provisioning-001", brokerTopologyDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.ExchangeProvisioningId]);
+        Assert.Equal("queue-provisioning-001", brokerTopologyDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.QueueProvisioningId]);
+        Assert.Equal("topic-provisioning-001", brokerTopologyDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.TopicProvisioningId]);
+        Assert.Equal("partition-provisioning-001", brokerTopologyDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.PartitionProvisioningId]);
+        Assert.Equal("topology-verification-001", brokerTopologyDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.TopologyVerificationId]);
+        Assert.Equal("provider-topology-001", brokerTopologyDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.ProviderTopologyId]);
+
+        var brokerTopologyEventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        var brokerTopologyDispatchSurface = Assert.Single(brokerTopologyEventingSurfaces, surface => surface.SurfaceId == "event-dispatches");
+        var brokerTopologyDispatchEntry = Assert.Single(brokerTopologyDispatchSurface.Entries, entry => entry.Id == "entity-framework-outbox");
+        Assert.Equal(
+            "provider-reported",
+            brokerTopologyDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.BrokerTopologyMaterialization}"]);
+        Assert.Equal(
+            "provider-topology-observer",
+            brokerTopologyDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.BrokerTopologyMaterializationSource}"]);
+        Assert.Equal(
+            "exchange-provisioning-001",
+            brokerTopologyDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.ExchangeProvisioningId}"]);
+        Assert.Equal(
+            "queue-provisioning-001",
+            brokerTopologyDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.QueueProvisioningId}"]);
+        Assert.Equal(
+            "topic-provisioning-001",
+            brokerTopologyDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.TopicProvisioningId}"]);
+        Assert.Equal(
+            "partition-provisioning-001",
+            brokerTopologyDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.PartitionProvisioningId}"]);
+        Assert.Equal(
+            "topology-verification-001",
+            brokerTopologyDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.TopologyVerificationId}"]);
+        Assert.Equal(
+            "provider-topology-001",
+            brokerTopologyDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.ProviderTopologyId}"]);
+        var brokerTopologyDimensions = Assert.Single(brokerTopologyEventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        Assert.Equal("claimed", brokerTopologyDimensions["broker-topology-materialization-ownership"].Metadata["status"]);
+        Assert.Contains("brokerTopologyMaterialization=provider-reported", brokerTopologyDimensions["broker-topology-materialization-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerTopologyMaterializationSource=provider-topology-observer", brokerTopologyDimensions["broker-topology-materialization-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("exchangeProvisioning=reported", brokerTopologyDimensions["broker-topology-materialization-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("exchangeProvisioningId=exchange-provisioning-001", brokerTopologyDimensions["broker-topology-materialization-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("queueProvisioning=reported", brokerTopologyDimensions["broker-topology-materialization-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("queueProvisioningId=queue-provisioning-001", brokerTopologyDimensions["broker-topology-materialization-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("topicProvisioning=reported", brokerTopologyDimensions["broker-topology-materialization-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("topicProvisioningId=topic-provisioning-001", brokerTopologyDimensions["broker-topology-materialization-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("partitionProvisioning=reported", brokerTopologyDimensions["broker-topology-materialization-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("partitionProvisioningId=partition-provisioning-001", brokerTopologyDimensions["broker-topology-materialization-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("topologyVerification=reported", brokerTopologyDimensions["broker-topology-materialization-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("topologyVerificationId=topology-verification-001", brokerTopologyDimensions["broker-topology-materialization-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerOwnedTopology=reported", brokerTopologyDimensions["broker-topology-materialization-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerTopologyId=provider-topology-001", brokerTopologyDimensions["broker-topology-materialization-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("lastOutcome=succeeded", brokerTopologyDimensions["broker-topology-materialization-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", brokerTopologyDimensions["broker-topology-materialization-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
         var startedInboundReport = EventSubscriptionBrokerInboundConsumptionMetadata.CreateReport(
             new EventSubscriptionExecutionReport(

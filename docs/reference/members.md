@@ -3036,6 +3036,12 @@ Browse the published API surface by public member.
 - [BrokerInboundConsumptionSource](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerinboundconsumptionsource): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerInboundConsumptionSource&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the provider or runtime source that reported inbound broker consumption.
   - `const string BrokerInboundConsumptionSource`
+- [BrokerTopologyMaterialization](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokertopologymaterialization): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerTopologyMaterialization&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether a provider or runtime reported broker topology materialization ownership.
+  - `const string BrokerTopologyMaterialization`
+- [BrokerTopologyMaterializationSource](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokertopologymaterializationsource): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerTopologyMaterializationSource&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the provider or runtime source that reported broker topology materialization ownership.
+  - `const string BrokerTopologyMaterializationSource`
 - [BrowserPath](cephalon-aspnetcore.md#member-p-cephalon-aspnetcore-documentation-referencedocssurface-browserpath): `Properties` on `ReferenceDocsSurface` in `Cephalon.AspNetCore.Documentation` (`Cephalon.AspNetCore`) [Browse](browse.html?q=BrowserPath&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Documentation&scope=members)
   - The hosted path to the interactive browser UI.
   - `string BrowserPath { get; set; }`
@@ -5982,6 +5988,9 @@ Browse the published API surface by public member.
 - [CreateInstance](cephalon-identity-aspnetcore.md#member-m-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-createinstance-system-iserviceprovider): `Methods` on `RequireCephalonAuthorizationAttribute` in `Cephalon.Identity.AspNetCore.Transports.Rest` (`Cephalon.Identity.AspNetCore`) [Browse](browse.html?q=CreateInstance&assembly=Cephalon.Identity.AspNetCore&namespace=Cephalon.Identity.AspNetCore.Transports.Rest&scope=members)
   - Creates the MVC authorization filter that evaluates the current request through the shared Cephalon boundary executor.
   - `IFilterMetadata CreateInstance(IServiceProvider serviceProvider)`
+- [CreateMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchbrokertopologymetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchBrokerTopologyMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates a metadata copy enriched with provider-reported broker topology proof when the inputs support it.
+  - `Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string exchangeProvisioningId, string queueProvisioningId, string topicProvisioningId, string partitionProvisioningId, string topologyVerificationId, string providerTopologyId)`
 - [CreateMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchcrossnodecontexthandoffmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchCrossNodeContextHandoffMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a metadata copy enriched with provider-reported cross-node handoff proof when the inputs support it.
   - `Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, IReadOnlyDictionary<string, string> consumerContextMetadata, string source, string producerNodeId, string consumerNodeId)`
@@ -6021,6 +6030,9 @@ Browse the published API surface by public member.
 - [CreatePlaybook](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idatabasemigrationoperationalplaybookprovider-createplaybook): `Methods` on `IDatabaseMigrationOperationalPlaybookProvider` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CreatePlaybook&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates the current database-migration playbook.
   - `DatabaseMigrationOperationalPlaybook CreatePlaybook()`
+- [CreateReport](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchbrokertopologymetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchBrokerTopologyMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateReport&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates a dispatch report copy enriched with provider-reported broker topology proof when the inputs support it.
+  - `EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string exchangeProvisioningId, string queueProvisioningId, string topicProvisioningId, string partitionProvisioningId, string topologyVerificationId, string providerTopologyId)`
 - [CreateReport](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchcrossnodecontexthandoffmetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchCrossNodeContextHandoffMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateReport&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a dispatch report copy enriched with provider-reported cross-node handoff proof when the inputs support it.
   - `EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, IReadOnlyDictionary<string, string> consumerContextMetadata, string source, string producerNodeId, string consumerNodeId)`
@@ -9780,6 +9792,12 @@ Browse the published API surface by public member.
 - [ExchangeGreetings](cephalon-aspnetcore-grpc.md#member-m-cephalon-aspnetcore-grpc-contracts-discovery-discoveryservice-discoveryserviceclient-exchangegreetings-grpc-core-metadata-system-nullable-system-datetime-system-threading-cancellationtoken): `Methods` on `DiscoveryServiceClient` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=ExchangeGreetings&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Exchanges greeting messages bidirectionally to validate duplex streaming support.
   - `AsyncDuplexStreamingCall<HelloRequest, HelloReply> ExchangeGreetings(Metadata headers, DateTime? deadline, CancellationToken cancellationToken)`
+- [ExchangeProvisioning](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-exchangeprovisioning): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ExchangeProvisioning&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether broker exchange provisioning was reported.
+  - `const string ExchangeProvisioning`
+- [ExchangeProvisioningId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-exchangeprovisioningid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ExchangeProvisioningId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the broker exchange provisioning proof id.
+  - `const string ExchangeProvisioningId`
 - [ExcludedBehaviorIds](cephalon-abstractions.md#member-p-cephalon-abstractions-patterns-backendforfrontendbehaviorfilterdescriptor-excludedbehaviorids): `Properties` on `BackendForFrontendBehaviorFilterDescriptor` in `Cephalon.Abstractions.Patterns` (`Cephalon.Abstractions`) [Browse](browse.html?q=ExcludedBehaviorIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Patterns&scope=members)
   - Gets the explicit behavior identifiers that should be hidden from the client.
   - `IReadOnlyList<string> ExcludedBehaviorIds { get; }`
@@ -15714,6 +15732,9 @@ Browse the published API surface by public member.
 - [IsTerminalFailure](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchruntimemetadatakeys-isterminalfailure-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=IsTerminalFailure&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets a value indicating whether the supplied metadata describes a terminal failure.
   - `bool IsTerminalFailure(IReadOnlyDictionary<string, string> metadata)`
+- [IsTopologyMaterialized](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchbrokertopologymetadata-istopologymaterialized-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `EventDispatchBrokerTopologyMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=IsTopologyMaterialized&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets a value indicating whether the metadata contains complete provider-reported broker topology proof.
+  - `bool IsTopologyMaterialized(IReadOnlyDictionary<string, string> metadata)`
 - [IsTruncated](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournalstatus-istruncated): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorCommandJournalStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsTruncated&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether the bounded command journal has truncated older entries.
   - `bool IsTruncated { get; }`
@@ -20969,6 +20990,12 @@ Browse the published API surface by public member.
 - [PartitionOrderingId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-partitionorderingid): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PartitionOrderingId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the partition ordering proof id.
   - `const string PartitionOrderingId`
+- [PartitionProvisioning](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionprovisioning): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PartitionProvisioning&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether broker partition provisioning was reported.
+  - `const string PartitionProvisioning`
+- [PartitionProvisioningId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-partitionprovisioningid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PartitionProvisioningId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the broker partition provisioning proof id.
+  - `const string PartitionProvisioningId`
 - [PassHostHeader](cephalon-edge-traefik.md#member-p-cephalon-edge-traefik-configuration-traefikingressrouteoptions-passhostheader): `Properties` on `TraefikIngressRouteOptions` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=PassHostHeader&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
   - Gets or sets the optional pass-host-header posture applied to the projected backend Service reference.
   - `bool? PassHostHeader { get; set; }`
@@ -22734,6 +22761,9 @@ Browse the published API surface by public member.
 - [ProviderOwnedRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstates-providerownedrisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned write-path execution currently remains risky because broader shared runtime truth is not safe enough yet.
   - `const string ProviderOwnedRisk`
+- [ProviderOwnedTopology](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerownedtopology): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ProviderOwnedTopology&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether provider-owned broker topology proof was reported.
+  - `const string ProviderOwnedTopology`
 - [ProviderOwnedWritePathExecution](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationsources-providerownedwritepathexecution): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderOwnedWritePathExecution&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The provider execution-orchestration answer was derived primarily from provider-owned write-path execution truth.
   - `const string ProviderOwnedWritePathExecution`
@@ -22833,6 +22863,9 @@ Browse the published API surface by public member.
 - [ProviderSurfaceReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializercategories-providersurfaceready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneMaterializerCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderSurfaceReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The runtime currently exposes one provider-facing surface identifier for provider-specific materialization.
   - `const string ProviderSurfaceReady`
+- [ProviderTopologyId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providertopologyid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ProviderTopologyId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the provider-owned broker topology proof id.
+  - `const string ProviderTopologyId`
 - [ProvisioningBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedcontrolplaneapplyandreconcileexecutioncategories-provisioningblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedControlPlaneApplyAndReconcileExecutionCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProvisioningBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Broader provider-owned control-plane provisioning remains blocked.
   - `const string ProvisioningBlocked`
@@ -23133,6 +23166,12 @@ Browse the published API surface by public member.
 - [QueueLimit](cephalon-engine.md#member-p-cephalon-engine-configuration-ratelimitingsettings-queuelimit): `Properties` on `RateLimitingSettings` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=QueueLimit&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Gets the maximum queued requests allowed before rejection.
   - `int? QueueLimit { get; }`
+- [QueueProvisioning](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-queueprovisioning): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=QueueProvisioning&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether broker queue provisioning was reported.
+  - `const string QueueProvisioning`
+- [QueueProvisioningId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-queueprovisioningid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=QueueProvisioningId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the broker queue provisioning proof id.
+  - `const string QueueProvisioningId`
 - [QuotaProjectId](cephalon-observability-gcp.md#member-p-cephalon-observability-gcp-configuration-gcptelemetryexportoptions-quotaprojectid): `Properties` on `GcpTelemetryExportOptions` in `Cephalon.Observability.Gcp.Configuration` (`Cephalon.Observability.Gcp`) [Browse](browse.html?q=QuotaProjectId&assembly=Cephalon.Observability.Gcp&namespace=Cephalon.Observability.Gcp.Configuration&scope=members)
   - Gets or sets the optional quota project header used for Google-managed ingestion requests.
   - `string QuotaProjectId { get; set; }`
@@ -29769,6 +29808,18 @@ Browse the published API surface by public member.
 - [TopicPrefix](cephalon-data-debezium.md#member-p-cephalon-data-debezium-configuration-debeziumconnectoroptions-topicprefix): `Properties` on `DebeziumConnectorOptions` in `Cephalon.Data.Debezium.Configuration` (`Cephalon.Data.Debezium`) [Browse](browse.html?q=TopicPrefix&assembly=Cephalon.Data.Debezium&namespace=Cephalon.Data.Debezium.Configuration&scope=members)
   - Gets or sets the Debezium topic prefix when the connector fans out into one or more topics.
   - `string TopicPrefix { get; set; }`
+- [TopicProvisioning](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-topicprovisioning): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TopicProvisioning&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether broker topic provisioning was reported.
+  - `const string TopicProvisioning`
+- [TopicProvisioningId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-topicprovisioningid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TopicProvisioningId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the broker topic provisioning proof id.
+  - `const string TopicProvisioningId`
+- [TopologyVerification](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-topologyverification): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TopologyVerification&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether provider topology verification was reported.
+  - `const string TopologyVerification`
+- [TopologyVerificationId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-topologyverificationid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TopologyVerificationId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the provider topology verification proof id.
+  - `const string TopologyVerificationId`
 - [TotalActionCount](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databasetopologyoperationalactionplan-totalactioncount): `Properties` on `DatabaseTopologyOperationalActionPlan` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=TotalActionCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the total number of operator actions in the plan.
   - `int TotalActionCount { get; }`
@@ -30066,6 +30117,9 @@ Browse the published API surface by public member.
 - [TrustSnapshot](cephalon-engine.md#member-m-cephalon-engine-trust-trustsnapshot-ctor-cephalon-engine-configuration-trustpolicy-system-collections-generic-ireadonlylist-cephalon-engine-trust-packagetrustdecision-system-collections-generic-ireadonlylist-cephalon-engine-trust-capabilitypolicydecision): `Constructors` on `TrustSnapshot` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=TrustSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - Captures the effective trust policy together with evaluated package and capability decisions.
   - `TrustSnapshot(TrustPolicy Policy, IReadOnlyList<PackageTrustDecision> Packages, IReadOnlyList<CapabilityPolicyDecision> Capabilities)`
+- [TryApplyMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchbrokertopologymetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchBrokerTopologyMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryApplyMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Applies provider-reported broker topology proof to an existing dispatch metadata dictionary when the inputs support it.
+  - `bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string exchangeProvisioningId, string queueProvisioningId, string topicProvisioningId, string partitionProvisioningId, string topologyVerificationId, string providerTopologyId)`
 - [TryApplyMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchcrossnodecontexthandoffmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchCrossNodeContextHandoffMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryApplyMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Applies provider-reported cross-node handoff proof to an existing dispatch metadata dictionary when the inputs support it.
   - `bool TryApplyMetadata(IDictionary<string, string> metadata, IReadOnlyDictionary<string, string> consumerContextMetadata, string source, string producerNodeId, string consumerNodeId)`

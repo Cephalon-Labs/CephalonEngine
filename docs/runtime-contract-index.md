@@ -228,6 +228,8 @@ ENG-595 adds `broker-dead-letter-replay-ownership` to the same profile so runtim
 
 ENG-596 adds `broker-topology-materialization-ownership` to the same profile so runtime consumers can see that native route/channel governance is separate from broker exchange, queue, topic, and partition provisioning/verification.
 
+ENG-630 adds provider-reported broker topology proof under that same Eventing honesty boundary. Runtime consumers can now distinguish route/channel governance, accepted outbox handoff, dispatch reports, optional Wolverine dispatch, and provider partition evidence from complete broker topology materialization because `EventDispatchBrokerTopologyMetadata` adds `brokerTopologyMaterialization=provider-reported`, proof source, exchange provisioning id, queue provisioning id, topic provisioning id, partition provisioning id, topology verification id, and provider topology id only when a successful dispatch report carries provider proof; `broker-topology-materialization-ownership` becomes claimed only from that complete proof set.
+
 ENG-597 adds `provider-partition-ownership` to the same profile so runtime consumers can see that route and topology evidence are separate from provider partition assignment, affinity, rebalancing, and ordering guarantees.
 
 ENG-598 adds `downstream-delivery-completion-ownership` to the same profile so runtime consumers can see that publication accepted handoff, dispatch reports, routing, topology, partition, and provider-managed dispatch evidence are separate from destination delivery completion, provider delivery receipts, subscriber acknowledgement, destination commits, and exactly-once delivery guarantees.
