@@ -34,6 +34,7 @@ public static class CephalonRateLimitingEndpointConventionBuilderExtensions
             : RateLimitingEndpointPolicyResolution.None;
         if (resolution.Mode == RateLimitingEndpointPolicyMode.Require)
         {
+            builder.WithMetadata(new CephalonRateLimitingTransportMetadata(transportId));
             return builder.RequireRateLimiting(resolution.Policy!.Id);
         }
 

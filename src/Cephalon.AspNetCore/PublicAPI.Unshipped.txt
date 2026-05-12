@@ -1,1 +1,4 @@
 #nullable enable
+Cephalon.AspNetCore.Hosting.CephalonRateLimitingTransportMetadata
+Cephalon.AspNetCore.Hosting.CephalonRateLimitingTransportMetadata.CephalonRateLimitingTransportMetadata(string! transportId) -> void
+Cephalon.AspNetCore.Hosting.CephalonRateLimitingTransportMetadata.TransportId.get -> string!

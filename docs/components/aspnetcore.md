@@ -408,9 +408,11 @@ routes so operator and documentation surfaces remain available under pressure. T
 runtime now also keeps long-lived HTTP transport truth visible for stream and connection surfaces in
 `/engine/rate-limiting` rather than treating GraphQL-SSE, GraphQL-WS, SSE, and WebSocket routes as
 undifferentiated request-response endpoints. gRPC endpoint-policy rejections are surfaced as
-gRPC-native `ResourceExhausted` responses rather than REST-shaped JSON envelopes, and direct gRPC module
-timeout or open-circuit faults are translated to `DeadlineExceeded` / `Unavailable` with Cephalon
-metadata trailers instead of leaking as generic `Unknown` failures. The behavior-pipeline
+gRPC-native `ResourceExhausted` responses rather than REST-shaped JSON envelopes, and JSON-RPC
+endpoint-policy rejections are surfaced as JSON-RPC 2.0 `-32029 "Too many requests"` envelopes
+(over HTTP `200 OK`, with `id: null` and a `data` hint) rather than REST-shaped JSON envelopes;
+direct gRPC module timeout or open-circuit faults are translated to `DeadlineExceeded` / `Unavailable`
+with Cephalon metadata trailers instead of leaking as generic `Unknown` failures. The behavior-pipeline
 follow-through now adds a shared behavior-dispatch middleware in `Cephalon.Behaviors` so retry,
 timeout, circuit-breaker, bulkhead, and rate-limiting enforcement apply consistently across transports, resolves narrower
 `Engine:Resilience:BehaviorExecution:Overrides` entries with

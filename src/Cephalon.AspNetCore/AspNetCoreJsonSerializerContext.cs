@@ -29,6 +29,7 @@ namespace Cephalon.AspNetCore;
 [JsonSerializable(typeof(AuditHistoryEntry))]
 [JsonSerializable(typeof(StranglerFigUnsupportedEndpointProblem))]
 [JsonSerializable(typeof(RateLimitRejectionProblem))]
+[JsonSerializable(typeof(JsonRpcRateLimitRejectionEnvelope))]
 [JsonSerializable(typeof(CdcCaptureRuntimeObservation[]))]
 [JsonSerializable(typeof(CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionRequest))]
 [JsonSerializable(typeof(EventPublicationHttpRequest))]
