@@ -3012,6 +3012,12 @@ Browse the published API surface by public member.
 - [BrokerDeadLetter](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerdeadletter): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerDeadLetter&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies whether the dead-letter decision is owned by a broker-specific dead-letter queue.
   - `const string BrokerDeadLetter`
+- [BrokerDeduplication](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerdeduplication): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerDeduplication&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether broker deduplication proof was reported for subscription processing.
+  - `const string BrokerDeduplication`
+- [BrokerDeduplicationId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerdeduplicationid): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerDeduplicationId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the broker deduplication proof id reported for subscription processing.
+  - `const string BrokerDeduplicationId`
 - [BrokerErrorQueue](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokererrorqueue): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerErrorQueue&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies whether a broker error queue was reported for the dispatch.
   - `const string BrokerErrorQueue`
@@ -5970,6 +5976,9 @@ Browse the published API surface by public member.
 - [CreateMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventSubscriptionBrokerInboundConsumptionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a metadata copy enriched with provider-reported broker inbound-consumption proof when the inputs support it.
   - `Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string consumerLoopId, string acknowledgementId, string leaseId, string retryPolicy, string poisonMessageHandling, string offsetCheckpointId)`
+- [CreateMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionprovideridempotencymetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventSubscriptionProviderIdempotencyMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates a metadata copy enriched with provider-reported idempotency proof when the inputs support it.
+  - `Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string providerIdempotencyKey, string brokerDeduplicationId, string exactlyOnceProofId, string durableInboxCommandId, string genericInboxCommandId, string idempotencyLeaseId)`
 - [CreateModule](cephalon-abstractions.md#member-m-cephalon-abstractions-modules-modulediscoverydescriptor-createmodule): `Methods` on `ModuleDiscoveryDescriptor` in `Cephalon.Abstractions.Modules` (`Cephalon.Abstractions`) [Browse](browse.html?q=CreateModule&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Modules&scope=members)
   - Creates a module instance using the generated or explicitly registered factory.
   - `IModule CreateModule()`
@@ -5997,6 +6006,9 @@ Browse the published API surface by public member.
 - [CreateReport](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-createreport-cephalon-eventing-services-eventsubscriptionexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventSubscriptionBrokerInboundConsumptionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateReport&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a subscription report copy enriched with provider-reported broker inbound-consumption proof when the inputs support it.
   - `EventSubscriptionExecutionReport CreateReport(EventSubscriptionExecutionReport report, string source, string consumerLoopId, string acknowledgementId, string leaseId, string retryPolicy, string poisonMessageHandling, string offsetCheckpointId)`
+- [CreateReport](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionprovideridempotencymetadata-createreport-cephalon-eventing-services-eventsubscriptionexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventSubscriptionProviderIdempotencyMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateReport&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates a subscription report copy enriched with provider-reported idempotency proof when the inputs support it.
+  - `EventSubscriptionExecutionReport CreateReport(EventSubscriptionExecutionReport report, string source, string providerIdempotencyKey, string brokerDeduplicationId, string exactlyOnceProofId, string durableInboxCommandId, string genericInboxCommandId, string idempotencyLeaseId)`
 - [CreateSlotIfMissing](cephalon-data-postgres.md#member-p-cephalon-data-postgres-configuration-postgreslogicalreplicationcaptureoptions-createslotifmissing): `Properties` on `PostgresLogicalReplicationCaptureOptions` in `Cephalon.Data.Postgres.Configuration` (`Cephalon.Data.Postgres`) [Browse](browse.html?q=CreateSlotIfMissing&assembly=Cephalon.Data.Postgres&namespace=Cephalon.Data.Postgres.Configuration&scope=members)
   - Gets or sets a value indicating whether the pack should create the logical replication slot when it does not exist yet.
   - `bool CreateSlotIfMissing { get; set; }`
@@ -6060,6 +6072,12 @@ Browse the published API surface by public member.
 - [CrossNodeIdempotencyHardeningState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-crossnodeidempotencyhardeningstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorMultiNodeLeaseExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CrossNodeIdempotencyHardeningState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector cross-node idempotency-hardening state that informed broader multi-node lease execution.
   - `string CrossNodeIdempotencyHardeningState { get; set; }`
+- [CrossNodeIdempotencyLease](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-crossnodeidempotencylease): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CrossNodeIdempotencyLease&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether cross-node idempotency lease proof was reported for subscription processing.
+  - `const string CrossNodeIdempotencyLease`
+- [CrossNodeIdempotencyLeaseId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-crossnodeidempotencyleaseid): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CrossNodeIdempotencyLeaseId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the cross-node idempotency lease proof id reported for subscription processing.
+  - `const string CrossNodeIdempotencyLeaseId`
 - [CrossNodeIdempotencyRisk](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryleasecategories-crossnodeidempotencyrisk): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryLeaseCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CrossNodeIdempotencyRisk&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Cross-node idempotency currently remains risky for automatic retry.
   - `const string CrossNodeIdempotencyRisk`
@@ -8469,6 +8487,12 @@ Browse the published API surface by public member.
 - [DurableExecutionStates](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimeintrospectionsnapshot-durableexecutionstates): `Properties` on `RuntimeIntrospectionSnapshot` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=DurableExecutionStates&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - Gets the latest reported durable-execution runtime state entries visible to the runtime at the time the snapshot was created.
   - `IReadOnlyList<DurableExecutionRuntimeState> DurableExecutionStates { get; set; }`
+- [DurableInboxCommandId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-durableinboxcommandid): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DurableInboxCommandId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the durable inbox command proof id reported for subscription processing.
+  - `const string DurableInboxCommandId`
+- [DurableInboxCommandOwnership](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-durableinboxcommandownership): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DurableInboxCommandOwnership&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether durable inbox command ownership proof was reported for subscription processing.
+  - `const string DurableInboxCommandOwnership`
 - [DurableJournalConfigured](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcrossnodeidempotencyhardeningcategories-durablejournalconfigured): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableJournalConfigured&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - A durable command-journal store is configured for the runtime.
   - `const string DurableJournalConfigured`
@@ -9669,8 +9693,14 @@ Browse the published API surface by public member.
 - [ExactlyOnceDelivery](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-exactlyoncedelivery): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ExactlyOnceDelivery&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies whether exactly-once delivery proof was reported for the dispatch.
   - `const string ExactlyOnceDelivery`
+- [ExactlyOnceDelivery](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-exactlyoncedelivery): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ExactlyOnceDelivery&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether exactly-once subscription processing proof was reported.
+  - `const string ExactlyOnceDelivery`
 - [ExactlyOnceDeliveryProofId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-exactlyoncedeliveryproofid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ExactlyOnceDeliveryProofId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the provider exactly-once delivery proof id reported for the dispatch.
+  - `const string ExactlyOnceDeliveryProofId`
+- [ExactlyOnceDeliveryProofId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-exactlyoncedeliveryproofid): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ExactlyOnceDeliveryProofId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the exactly-once subscription processing proof id.
   - `const string ExactlyOnceDeliveryProofId`
 - [ExactlyOnceDeliverySource](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-exactlyoncedeliverysource): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ExactlyOnceDeliverySource&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the provider or runtime source that reported exactly-once delivery proof.
@@ -11211,6 +11241,12 @@ Browse the published API surface by public member.
 - [GeneratedAtUtcFieldNumber](cephalon-aspnetcore-grpc.md#member-f-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-generatedatutcfieldnumber): `Fields` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=GeneratedAtUtcFieldNumber&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Field number for the "generated_at_utc" field.
   - `const int GeneratedAtUtcFieldNumber`
+- [GenericInboxCommandId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-genericinboxcommandid): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=GenericInboxCommandId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the generic inbox command proof id reported for subscription processing.
+  - `const string GenericInboxCommandId`
+- [GenericInboxCommandOwnership](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-genericinboxcommandownership): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=GenericInboxCommandOwnership&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether generic inbox command ownership proof was reported for subscription processing.
+  - `const string GenericInboxCommandOwnership`
 - [GetAccessTokenAsync](cephalon-multitenancy-governance-microsoftgraphdelivery.md#member-m-cephalon-multitenancy-governance-microsoftgraphdelivery-services-imicrosoftgraphinvitationdeliveryaccesstokenprovider-getaccesstokenasync-system-threading-cancellationtoken): `Methods` on `IMicrosoftGraphInvitationDeliveryAccessTokenProvider` in `Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services` (`Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery`) [Browse](browse.html?q=GetAccessTokenAsync&assembly=Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery&namespace=Cephalon.MultiTenancy.Governance.MicrosoftGraphDelivery.Services&scope=members)
   - Gets a bearer token that authorizes the Microsoft Graph `sendMail` request.
   - `ValueTask<string> GetAccessTokenAsync(CancellationToken cancellationToken)`
@@ -15378,6 +15414,9 @@ Browse the published API surface by public member.
 - [IsProviderExecutable](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-isproviderexecutable): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsProviderExecutable&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether provider-owned write-path execution is currently ready.
   - `bool IsProviderExecutable { get; }`
+- [IsProviderIdempotencyProven](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionprovideridempotencymetadata-isprovideridempotencyproven-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `EventSubscriptionProviderIdempotencyMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=IsProviderIdempotencyProven&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets a value indicating whether the metadata contains complete provider-reported idempotency proof.
+  - `bool IsProviderIdempotencyProven(IReadOnlyDictionary<string, string> metadata)`
 - [IsProviderOwnedCompleted](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-isproviderownedcompleted): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsProviderOwnedCompleted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets a value indicating whether provider-owned write-path execution no longer needs another provider command.
   - `bool IsProviderOwnedCompleted { get; }`
@@ -17868,6 +17907,9 @@ Browse the published API surface by public member.
 - [Message](cephalon-engine.md#member-p-cephalon-engine-runtime-runtimelifecycleevent-message): `Properties` on `RuntimeLifecycleEvent` in `Cephalon.Engine.Runtime` (`Cephalon.Engine`) [Browse](browse.html?q=Message&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Runtime&scope=members)
   - The operator-facing narrative for the event.
   - `string Message { get; set; }`
+- [MessageDeduplication](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-messagededuplication): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=MessageDeduplication&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether message deduplication was proven by completed execution or provider-owned idempotency.
+  - `const string MessageDeduplication`
 - [MessageFieldNumber](cephalon-aspnetcore-grpc.md#member-f-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-messagefieldnumber): `Fields` on `HelloReply` in `Cephalon.AspNetCore.Grpc.Contracts.Discovery` (`Cephalon.AspNetCore.Grpc`) [Browse](browse.html?q=MessageFieldNumber&assembly=Cephalon.AspNetCore.Grpc&namespace=Cephalon.AspNetCore.Grpc.Contracts.Discovery&scope=members)
   - Field number for the "message" field.
   - `const int MessageFieldNumber`
@@ -22260,6 +22302,15 @@ Browse the published API surface by public member.
 - [ProviderId](cephalon-edge-traefik.md#member-p-cephalon-edge-traefik-configuration-traefiktrafficmaterializeroptions-providerid): `Properties` on `TraefikTrafficMaterializerOptions` in `Cephalon.Edge.Traefik.Configuration` (`Cephalon.Edge.Traefik`) [Browse](browse.html?q=ProviderId&assembly=Cephalon.Edge.Traefik&namespace=Cephalon.Edge.Traefik.Configuration&scope=members)
   - Gets or sets the provider identifier that the materializer owns.
   - `string ProviderId { get; set; }`
+- [ProviderIdempotency](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-provideridempotency): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ProviderIdempotency&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether a provider or runtime reports ownership of subscription idempotency.
+  - `const string ProviderIdempotency`
+- [ProviderIdempotencyKey](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-provideridempotencykey): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ProviderIdempotencyKey&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the provider idempotency key used to prove subscription duplicate suppression.
+  - `const string ProviderIdempotencyKey`
+- [ProviderIdempotencySource](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-provideridempotencysource): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ProviderIdempotencySource&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the provider or runtime source that reported subscription idempotency proof.
+  - `const string ProviderIdempotencySource`
 - [ProviderIdentityReady](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanedependencyawareteardownandmutationexecutionhardeningcategories-provideridentityready): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderIdentityReady&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The runtime currently exposes one provider identifier.
   - `const string ProviderIdentityReady`
@@ -29868,6 +29919,9 @@ Browse the published API surface by public member.
 - [TryApplyMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventSubscriptionBrokerInboundConsumptionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryApplyMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Applies provider-reported broker inbound-consumption proof to an existing subscription metadata dictionary when the inputs support it.
   - `bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string consumerLoopId, string acknowledgementId, string leaseId, string retryPolicy, string poisonMessageHandling, string offsetCheckpointId)`
+- [TryApplyMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionprovideridempotencymetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventSubscriptionProviderIdempotencyMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryApplyMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Applies provider-reported idempotency proof to an existing subscription metadata dictionary when the inputs support it.
+  - `bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string providerIdempotencyKey, string brokerDeduplicationId, string exactlyOnceProofId, string durableInboxCommandId, string genericInboxCommandId, string idempotencyLeaseId)`
 - [TryFindByName](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventtyperegistry-tryfindbyname-system-string-cephalon-eventsourcing-services-eventtypedescriptor): `Methods` on `EventTypeRegistry` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=TryFindByName&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Attempts to find a descriptor by persisted event-type name or alias.
   - `bool TryFindByName(string eventTypeName, out EventTypeDescriptor descriptor)`

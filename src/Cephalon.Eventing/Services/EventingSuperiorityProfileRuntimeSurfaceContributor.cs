@@ -34,8 +34,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var scheduledDeliveryStatus = options.EnablePublicationScheduling ? "partial" : "not-claimed";
         var scheduledDeliveryEvidence = ResolveScheduledDeliveryEvidence(options, topology);
         var durableRetryQueue = ResolveDurableRetryQueueProfile();
-        var idempotencyOwnershipStatus = options.EnableInProcessSubscriptionIdempotency ? "partial" : "not-claimed";
-        var idempotencyOwnershipEvidence = ResolveIdempotencyOwnershipEvidence(options, topology);
+        var idempotencyOwnership = ResolveIdempotencyOwnershipProfile();
         var subscriptionConcurrencyEvidence = ResolveSubscriptionConcurrencyEvidence(topology);
         var subscriptionOrderingEvidence = ResolveSubscriptionOrderingEvidence(topology);
         var processManagerStateEvidence = ResolveProcessManagerStateEvidence(topology);
@@ -148,12 +147,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     id: "idempotency-ownership",
                     displayName: "Idempotency Ownership",
                     description: "Makes process-local and inbox-backed completed-execution duplicate suppression separate from broker deduplication, exactly-once delivery, durable inbox command ownership, and cross-node idempotency leases.",
-                    status: idempotencyOwnershipStatus,
-                    evidence: idempotencyOwnershipEvidence,
+                    status: idempotencyOwnership.Status,
+                    evidence: idempotencyOwnership.Evidence,
                     advantage: "Teams can use Cephalon's Wolverine-free duplicate-completed suppression metadata without assuming the core pack silently owns broker deduplication, exactly-once delivery, or a generic durable inbox command processor.",
-                    nextGap: options.EnableInProcessSubscriptionIdempotency
-                        ? "Add a provider-neutral idempotency descriptor plus broker deduplication, exactly-once delivery, durable inbox command ownership, provider idempotency, and cross-node lease evidence before claiming full idempotency ownership."
-                        : "Enable completed-publication duplicate suppression before claiming even partial idempotency ownership evidence."),
+                    nextGap: idempotencyOwnership.NextGap),
                 CreateEntry(
                     id: "subscription-concurrency-ownership",
                     displayName: "Subscription Concurrency Ownership",
@@ -908,7 +905,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             "Add a provider-owned durable retry queue descriptor plus retry persistence, broker error queue, poison queue, cross-node coordination, and lease evidence before claiming durable retry queue ownership.");
     }
 
-    private static string ResolveIdempotencyOwnershipEvidence(EventingOptions options, EventingRuntimeTopology topology)
+    private IdempotencyOwnershipProfile ResolveIdempotencyOwnershipProfile()
     {
         var publicationPath = topology.HasPublishingPath ? "active" : "not-active";
         var inProcessExecution = topology.HasInProcessSubscriptionExecutionPath ? "active" : "not-active";
@@ -925,9 +922,97 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var managedSubscriptionBindings = topology.HasManagedSubscriptionExecutionBindings ? "present" : "not-present";
         var externalManagedSubscriptionBindings = topology.HasExternalManagedSubscriptionExecutionBindings ? "present" : "not-present";
 
-        return string.Create(
-            CultureInfo.InvariantCulture,
-            $"publicationPath={publicationPath}; inProcessExecution={inProcessExecution}; idempotencyPolicy={idempotencyPolicy}; idempotencyStore={idempotencyStore}; idempotencyScope={idempotencyScope}; idempotencyDurability={idempotencyDurability}; idempotencyKeyShape={idempotencyKeyShape}; idempotencyRetentionMinutes={idempotencyRetentionMinutes}; inboxPath={inboxPath}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; completedExecutionDuplicateSuppression={completedExecutionDuplicateSuppression}; messageDeduplication=completed-execution-only; brokerDeduplication=not-claimed; exactlyOnceDelivery=not-claimed; durableInboxCommandOwnership=not-claimed; genericInboxCommandOwnership=not-claimed; crossNodeIdempotencyLease=not-claimed; providerIdempotency=not-claimed; wolverineRequired=false");
+        using var scope = scopeFactory.CreateScope();
+        var subscriptionRuntimeCatalog = scope.ServiceProvider.GetService<IEventSubscriptionRuntimeCatalog>();
+        var providerIdempotencyState = subscriptionRuntimeCatalog?.States.FirstOrDefault(static state =>
+            state.Metadata.TryGetValue(EventSubscriptionRuntimeMetadataKeys.ProviderIdempotency, out var value) &&
+            string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase));
+
+        if (providerIdempotencyState is not null)
+        {
+            var metadata = providerIdempotencyState.Metadata;
+            var messageDeduplication = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.MessageDeduplication,
+                "not-claimed");
+            var providerIdempotency = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ProviderIdempotency,
+                "not-claimed");
+            var providerIdempotencySource = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ProviderIdempotencySource,
+                "not-reported");
+            var providerIdempotencyKey = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ProviderIdempotencyKey,
+                "not-reported");
+            var brokerDeduplication = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.BrokerDeduplication,
+                "not-claimed");
+            var brokerDeduplicationId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.BrokerDeduplicationId,
+                "not-reported");
+            var exactlyOnceDelivery = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ExactlyOnceDelivery,
+                "not-claimed");
+            var exactlyOnceProofId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ExactlyOnceDeliveryProofId,
+                "not-reported");
+            var durableInboxCommandOwnership = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.DurableInboxCommandOwnership,
+                "not-claimed");
+            var durableInboxCommandId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.DurableInboxCommandId,
+                "not-reported");
+            var genericInboxCommandOwnership = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.GenericInboxCommandOwnership,
+                "not-claimed");
+            var genericInboxCommandId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.GenericInboxCommandId,
+                "not-reported");
+            var crossNodeIdempotencyLease = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.CrossNodeIdempotencyLease,
+                "not-claimed");
+            var crossNodeIdempotencyLeaseId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.CrossNodeIdempotencyLeaseId,
+                "not-reported");
+            var status = EventSubscriptionProviderIdempotencyMetadata.IsProviderIdempotencyProven(metadata)
+                ? "claimed"
+                : "partial";
+            var nextGap = status == "claimed"
+                ? "Keep provider idempotency, broker deduplication, exactly-once processing, inbox command, and cross-node lease proof covered by provider integration tests."
+                : "Complete provider idempotency, broker deduplication, exactly-once processing, inbox command, and cross-node lease evidence before claiming idempotency ownership.";
+
+            return new IdempotencyOwnershipProfile(
+                status,
+                string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"publicationPath={publicationPath}; inProcessExecution={inProcessExecution}; idempotencyPolicy={idempotencyPolicy}; idempotencyStore={idempotencyStore}; idempotencyScope={idempotencyScope}; idempotencyDurability={idempotencyDurability}; idempotencyKeyShape={idempotencyKeyShape}; idempotencyRetentionMinutes={idempotencyRetentionMinutes}; inboxPath={inboxPath}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; completedExecutionDuplicateSuppression={completedExecutionDuplicateSuppression}; messageDeduplication={messageDeduplication}; brokerDeduplication={brokerDeduplication}; brokerDeduplicationId={brokerDeduplicationId}; exactlyOnceDelivery={exactlyOnceDelivery}; exactlyOnceDeliveryProofId={exactlyOnceProofId}; durableInboxCommandOwnership={durableInboxCommandOwnership}; durableInboxCommandId={durableInboxCommandId}; genericInboxCommandOwnership={genericInboxCommandOwnership}; genericInboxCommandId={genericInboxCommandId}; crossNodeIdempotencyLease={crossNodeIdempotencyLease}; crossNodeIdempotencyLeaseId={crossNodeIdempotencyLeaseId}; providerIdempotency={providerIdempotency}; providerIdempotencySource={providerIdempotencySource}; providerIdempotencyKey={providerIdempotencyKey}; subscriptionId={providerIdempotencyState.SubscriptionId}; lastOutcome={providerIdempotencyState.LastOutcome ?? "unknown"}; wolverineRequired=false"),
+                nextGap);
+        }
+
+        var statusWithoutProviderProof = options.EnableInProcessSubscriptionIdempotency ? "partial" : "not-claimed";
+        var nextGapWithoutProviderProof = options.EnableInProcessSubscriptionIdempotency
+            ? "Add provider idempotency, broker deduplication, exactly-once processing, durable inbox command, generic inbox command, and cross-node lease evidence before claiming full idempotency ownership."
+            : "Enable completed-publication duplicate suppression or supply provider idempotency proof before claiming idempotency ownership evidence.";
+
+        return new IdempotencyOwnershipProfile(
+            statusWithoutProviderProof,
+            string.Create(
+                CultureInfo.InvariantCulture,
+                $"publicationPath={publicationPath}; inProcessExecution={inProcessExecution}; idempotencyPolicy={idempotencyPolicy}; idempotencyStore={idempotencyStore}; idempotencyScope={idempotencyScope}; idempotencyDurability={idempotencyDurability}; idempotencyKeyShape={idempotencyKeyShape}; idempotencyRetentionMinutes={idempotencyRetentionMinutes}; inboxPath={inboxPath}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; completedExecutionDuplicateSuppression={completedExecutionDuplicateSuppression}; messageDeduplication=completed-execution-only; brokerDeduplication=not-claimed; brokerDeduplicationId=not-reported; exactlyOnceDelivery=not-claimed; exactlyOnceDeliveryProofId=not-reported; durableInboxCommandOwnership=not-claimed; durableInboxCommandId=not-reported; genericInboxCommandOwnership=not-claimed; genericInboxCommandId=not-reported; crossNodeIdempotencyLease=not-claimed; crossNodeIdempotencyLeaseId=not-reported; providerIdempotency=not-claimed; providerIdempotencySource=not-reported; providerIdempotencyKey=not-reported; wolverineRequired=false"),
+            nextGapWithoutProviderProof);
     }
 
     private static string ResolveSubscriptionConcurrencyEvidence(EventingRuntimeTopology topology)
@@ -1108,4 +1193,6 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private sealed record BrokerInboundConsumptionProfile(string Status, string Evidence, string NextGap);
 
     private sealed record DurableRetryQueueProfile(string Status, string Evidence, string NextGap);
+
+    private sealed record IdempotencyOwnershipProfile(string Status, string Evidence, string NextGap);
 }

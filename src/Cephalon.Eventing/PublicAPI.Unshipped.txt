@@ -89,6 +89,11 @@ static Cephalon.Eventing.Services.EventSubscriptionBrokerInboundConsumptionMetad
 static Cephalon.Eventing.Services.EventSubscriptionBrokerInboundConsumptionMetadata.CreateReport(Cephalon.Eventing.Services.EventSubscriptionExecutionReport! report, string! source, string! consumerLoopId, string! acknowledgementId, string! leaseId, string! retryPolicy, string! poisonMessageHandling, string! offsetCheckpointId) -> Cephalon.Eventing.Services.EventSubscriptionExecutionReport!
 static Cephalon.Eventing.Services.EventSubscriptionBrokerInboundConsumptionMetadata.IsBrokerConsumed(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> bool
 static Cephalon.Eventing.Services.EventSubscriptionBrokerInboundConsumptionMetadata.TryApplyMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, string! outcome, string! source, string! consumerLoopId, string! acknowledgementId, string! leaseId, string! retryPolicy, string! poisonMessageHandling, string! offsetCheckpointId) -> bool
+Cephalon.Eventing.Services.EventSubscriptionProviderIdempotencyMetadata
+static Cephalon.Eventing.Services.EventSubscriptionProviderIdempotencyMetadata.CreateMetadata(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata, string! outcome, string! source, string! providerIdempotencyKey, string! brokerDeduplicationId, string! exactlyOnceProofId, string! durableInboxCommandId, string! genericInboxCommandId, string! idempotencyLeaseId) -> System.Collections.Generic.Dictionary<string!, string!>!
+static Cephalon.Eventing.Services.EventSubscriptionProviderIdempotencyMetadata.CreateReport(Cephalon.Eventing.Services.EventSubscriptionExecutionReport! report, string! source, string! providerIdempotencyKey, string! brokerDeduplicationId, string! exactlyOnceProofId, string! durableInboxCommandId, string! genericInboxCommandId, string! idempotencyLeaseId) -> Cephalon.Eventing.Services.EventSubscriptionExecutionReport!
+static Cephalon.Eventing.Services.EventSubscriptionProviderIdempotencyMetadata.IsProviderIdempotencyProven(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> bool
+static Cephalon.Eventing.Services.EventSubscriptionProviderIdempotencyMetadata.TryApplyMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, string! outcome, string! source, string! providerIdempotencyKey, string! brokerDeduplicationId, string! exactlyOnceProofId, string! durableInboxCommandId, string! genericInboxCommandId, string! idempotencyLeaseId) -> bool
 Cephalon.Eventing.Services.EventDispatchContextReportMetadata
 static Cephalon.Eventing.Services.EventDispatchContextReportMetadata.Create(Cephalon.Eventing.Services.EventDispatchItem! dispatchItem, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? additionalMetadata = null) -> System.Collections.Generic.Dictionary<string!, string!>!
 Cephalon.Eventing.Services.EventDispatchProviderBrokerContextHeaders
@@ -125,18 +130,32 @@ const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ConsumerCo
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ConsumerContextExtractionSource = "consumerContextExtractionSource" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ConsumerContextHeaderCount = "consumerContextHeaderCount" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ConsumerContextHeaderNames = "consumerContextHeaderNames" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.BrokerDeduplication = "brokerDeduplication" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.BrokerDeduplicationId = "brokerDeduplicationId" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.BrokerConsumerLoop = "brokerConsumerLoop" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.BrokerConsumerLoopId = "brokerConsumerLoopId" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.BrokerInboundConsumption = "brokerInboundConsumption" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.BrokerInboundConsumptionSource = "brokerInboundConsumptionSource" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.CrossNodeIdempotencyLease = "crossNodeIdempotencyLease" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.CrossNodeIdempotencyLeaseId = "crossNodeIdempotencyLeaseId" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ConsumerLease = "consumerLease" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ConsumerLeaseId = "consumerLeaseId" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ConsumerOffsetCheckpoint = "consumerOffsetCheckpoint" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ConsumerOffsetCheckpointId = "consumerOffsetCheckpointId" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.DurableInboxCommandId = "durableInboxCommandId" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.DurableInboxCommandOwnership = "durableInboxCommandOwnership" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ExactlyOnceDelivery = "exactlyOnceDelivery" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ExactlyOnceDeliveryProofId = "exactlyOnceDeliveryProofId" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.GenericInboxCommandId = "genericInboxCommandId" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.GenericInboxCommandOwnership = "genericInboxCommandOwnership" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.InboundAcknowledgement = "inboundAcknowledgement" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.InboundAcknowledgementId = "inboundAcknowledgementId" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.InboundRetryPolicy = "inboundRetryPolicy" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.MessageDeduplication = "messageDeduplication" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.PoisonMessageHandling = "poisonMessageHandling" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProviderIdempotency = "providerIdempotency" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProviderIdempotencyKey = "providerIdempotencyKey" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProviderIdempotencySource = "providerIdempotencySource" -> string!
 Cephalon.Eventing.Services.IEventSubscriptionDescriptorProvider
 Cephalon.Eventing.Services.IEventSubscriptionDescriptorProvider.SubscriptionDescriptor.get -> Cephalon.Eventing.Services.EventSubscriptionDescriptor!
 Cephalon.Eventing.Configuration.EventingOptions.InProcessSubscriptionRetryBackoff.get -> string!

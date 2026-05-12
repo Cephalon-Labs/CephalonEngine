@@ -176,6 +176,76 @@ public static class EventSubscriptionRuntimeMetadataKeys
     public const string ConsumerOffsetCheckpointId = "consumerOffsetCheckpointId";
 
     /// <summary>
+    /// Identifies whether message deduplication was proven by completed execution or provider-owned idempotency.
+    /// </summary>
+    public const string MessageDeduplication = "messageDeduplication";
+
+    /// <summary>
+    /// Identifies whether a provider or runtime reports ownership of subscription idempotency.
+    /// </summary>
+    public const string ProviderIdempotency = "providerIdempotency";
+
+    /// <summary>
+    /// Identifies the provider or runtime source that reported subscription idempotency proof.
+    /// </summary>
+    public const string ProviderIdempotencySource = "providerIdempotencySource";
+
+    /// <summary>
+    /// Identifies the provider idempotency key used to prove subscription duplicate suppression.
+    /// </summary>
+    public const string ProviderIdempotencyKey = "providerIdempotencyKey";
+
+    /// <summary>
+    /// Identifies whether broker deduplication proof was reported for subscription processing.
+    /// </summary>
+    public const string BrokerDeduplication = "brokerDeduplication";
+
+    /// <summary>
+    /// Identifies the broker deduplication proof id reported for subscription processing.
+    /// </summary>
+    public const string BrokerDeduplicationId = "brokerDeduplicationId";
+
+    /// <summary>
+    /// Identifies whether exactly-once subscription processing proof was reported.
+    /// </summary>
+    public const string ExactlyOnceDelivery = "exactlyOnceDelivery";
+
+    /// <summary>
+    /// Identifies the exactly-once subscription processing proof id.
+    /// </summary>
+    public const string ExactlyOnceDeliveryProofId = "exactlyOnceDeliveryProofId";
+
+    /// <summary>
+    /// Identifies whether durable inbox command ownership proof was reported for subscription processing.
+    /// </summary>
+    public const string DurableInboxCommandOwnership = "durableInboxCommandOwnership";
+
+    /// <summary>
+    /// Identifies the durable inbox command proof id reported for subscription processing.
+    /// </summary>
+    public const string DurableInboxCommandId = "durableInboxCommandId";
+
+    /// <summary>
+    /// Identifies whether generic inbox command ownership proof was reported for subscription processing.
+    /// </summary>
+    public const string GenericInboxCommandOwnership = "genericInboxCommandOwnership";
+
+    /// <summary>
+    /// Identifies the generic inbox command proof id reported for subscription processing.
+    /// </summary>
+    public const string GenericInboxCommandId = "genericInboxCommandId";
+
+    /// <summary>
+    /// Identifies whether cross-node idempotency lease proof was reported for subscription processing.
+    /// </summary>
+    public const string CrossNodeIdempotencyLease = "crossNodeIdempotencyLease";
+
+    /// <summary>
+    /// Identifies the cross-node idempotency lease proof id reported for subscription processing.
+    /// </summary>
+    public const string CrossNodeIdempotencyLeaseId = "crossNodeIdempotencyLeaseId";
+
+    /// <summary>
     /// Identifies whether the latest runtime observation says a retry is pending.
     /// </summary>
     public const string RetryPending = "retryPending";

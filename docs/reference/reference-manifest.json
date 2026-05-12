@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-12T15:35:41.3600959+00:00",
+  "GeneratedAtUtc": "2026-05-12T16:10:34.2240177+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -168,7 +168,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 70
+      "TypeCount": 71
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1228,7 +1228,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 67
+      "TypeCount": 68
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -9075,6 +9075,21 @@
       }
     },
     {
+      "DisplayName": "EventSubscriptionProviderIdempotencyMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventsubscriptionprovideridempotencymetadata",
+      "Declaration": "public static class EventSubscriptionProviderIdempotencyMetadata",
+      "Summary": "Builds provider-reported subscription idempotency proof metadata for successful subscription reports.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 4
+      }
+    },
+    {
       "DisplayName": "EventSubscriptionRuntimeMetadataKeys",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -9084,7 +9099,7 @@
       "Summary": "Defines stable metadata keys used by the event-subscriptions runtime surface.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 39,
+        "Fields": 53,
         "Properties": 0,
         "Methods": 0
       }
@@ -30993,6 +31008,28 @@
       "Summary": "Identifies whether the dead-letter decision is owned by a broker-specific dead-letter queue."
     },
     {
+      "DisplayName": "BrokerDeduplication",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerdeduplication",
+      "Signature": "const string BrokerDeduplication",
+      "Summary": "Identifies whether broker deduplication proof was reported for subscription processing."
+    },
+    {
+      "DisplayName": "BrokerDeduplicationId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerdeduplicationid",
+      "Signature": "const string BrokerDeduplicationId",
+      "Summary": "Identifies the broker deduplication proof id reported for subscription processing."
+    },
+    {
       "DisplayName": "BrokerErrorQueue",
       "Category": "Fields",
       "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
@@ -41828,6 +41865,17 @@
       "Summary": "Creates a metadata copy enriched with provider-reported broker inbound-consumption proof when the inputs support it."
     },
     {
+      "DisplayName": "CreateMetadata",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventSubscriptionProviderIdempotencyMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionprovideridempotencymetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "Dictionary\u003Cstring, string\u003E CreateMetadata(IReadOnlyDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string providerIdempotencyKey, string brokerDeduplicationId, string exactlyOnceProofId, string durableInboxCommandId, string genericInboxCommandId, string idempotencyLeaseId)",
+      "Summary": "Creates a metadata copy enriched with provider-reported idempotency proof when the inputs support it."
+    },
+    {
       "DisplayName": "CreateModule",
       "Category": "Methods",
       "DeclaringTypeName": "ModuleDiscoveryDescriptor",
@@ -41925,6 +41973,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-createreport-cephalon-eventing-services-eventsubscriptionexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
       "Signature": "EventSubscriptionExecutionReport CreateReport(EventSubscriptionExecutionReport report, string source, string consumerLoopId, string acknowledgementId, string leaseId, string retryPolicy, string poisonMessageHandling, string offsetCheckpointId)",
       "Summary": "Creates a subscription report copy enriched with provider-reported broker inbound-consumption proof when the inputs support it."
+    },
+    {
+      "DisplayName": "CreateReport",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventSubscriptionProviderIdempotencyMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionprovideridempotencymetadata-createreport-cephalon-eventing-services-eventsubscriptionexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "EventSubscriptionExecutionReport CreateReport(EventSubscriptionExecutionReport report, string source, string providerIdempotencyKey, string brokerDeduplicationId, string exactlyOnceProofId, string durableInboxCommandId, string genericInboxCommandId, string idempotencyLeaseId)",
+      "Summary": "Creates a subscription report copy enriched with provider-reported idempotency proof when the inputs support it."
     },
     {
       "DisplayName": "CreateSlotIfMissing",
@@ -42156,6 +42215,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutionstatus-crossnodeidempotencyhardeningstate",
       "Signature": "string CrossNodeIdempotencyHardeningState { get; set; }",
       "Summary": "Gets the current managed-connector cross-node idempotency-hardening state that informed broader multi-node lease execution."
+    },
+    {
+      "DisplayName": "CrossNodeIdempotencyLease",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-crossnodeidempotencylease",
+      "Signature": "const string CrossNodeIdempotencyLease",
+      "Summary": "Identifies whether cross-node idempotency lease proof was reported for subscription processing."
+    },
+    {
+      "DisplayName": "CrossNodeIdempotencyLeaseId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-crossnodeidempotencyleaseid",
+      "Signature": "const string CrossNodeIdempotencyLeaseId",
+      "Summary": "Identifies the cross-node idempotency lease proof id reported for subscription processing."
     },
     {
       "DisplayName": "CrossNodeIdempotencyRisk",
@@ -50988,6 +51069,28 @@
       "Summary": "Gets the latest reported durable-execution runtime state entries visible to the runtime at the time the snapshot was created."
     },
     {
+      "DisplayName": "DurableInboxCommandId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-durableinboxcommandid",
+      "Signature": "const string DurableInboxCommandId",
+      "Summary": "Identifies the durable inbox command proof id reported for subscription processing."
+    },
+    {
+      "DisplayName": "DurableInboxCommandOwnership",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-durableinboxcommandownership",
+      "Signature": "const string DurableInboxCommandOwnership",
+      "Summary": "Identifies whether durable inbox command ownership proof was reported for subscription processing."
+    },
+    {
       "DisplayName": "DurableJournalConfigured",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCrossNodeIdempotencyHardeningCategories",
@@ -55377,6 +55480,17 @@
       "Summary": "Identifies whether exactly-once delivery proof was reported for the dispatch."
     },
     {
+      "DisplayName": "ExactlyOnceDelivery",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-exactlyoncedelivery",
+      "Signature": "const string ExactlyOnceDelivery",
+      "Summary": "Identifies whether exactly-once subscription processing proof was reported."
+    },
+    {
       "DisplayName": "ExactlyOnceDeliveryProofId",
       "Category": "Fields",
       "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
@@ -55386,6 +55500,17 @@
       "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-exactlyoncedeliveryproofid",
       "Signature": "const string ExactlyOnceDeliveryProofId",
       "Summary": "Identifies the provider exactly-once delivery proof id reported for the dispatch."
+    },
+    {
+      "DisplayName": "ExactlyOnceDeliveryProofId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-exactlyoncedeliveryproofid",
+      "Signature": "const string ExactlyOnceDeliveryProofId",
+      "Summary": "Identifies the exactly-once subscription processing proof id."
     },
     {
       "DisplayName": "ExactlyOnceDeliverySource",
@@ -61007,6 +61132,28 @@
       "AnchorId": "member-f-cephalon-aspnetcore-grpc-contracts-discovery-helloreply-generatedatutcfieldnumber",
       "Signature": "const int GeneratedAtUtcFieldNumber",
       "Summary": "Field number for the \u0022generated_at_utc\u0022 field."
+    },
+    {
+      "DisplayName": "GenericInboxCommandId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-genericinboxcommandid",
+      "Signature": "const string GenericInboxCommandId",
+      "Summary": "Identifies the generic inbox command proof id reported for subscription processing."
+    },
+    {
+      "DisplayName": "GenericInboxCommandOwnership",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-genericinboxcommandownership",
+      "Signature": "const string GenericInboxCommandOwnership",
+      "Summary": "Identifies whether generic inbox command ownership proof was reported for subscription processing."
     },
     {
       "DisplayName": "GetAccessTokenAsync",
@@ -76266,6 +76413,17 @@
       "Summary": "Gets a value indicating whether provider-owned write-path execution is currently ready."
     },
     {
+      "DisplayName": "IsProviderIdempotencyProven",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventSubscriptionProviderIdempotencyMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionprovideridempotencymetadata-isprovideridempotencyproven-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "bool IsProviderIdempotencyProven(IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Gets a value indicating whether the metadata contains complete provider-reported idempotency proof."
+    },
+    {
       "DisplayName": "IsProviderOwnedCompleted",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus",
@@ -85350,6 +85508,17 @@
       "AnchorId": "member-p-cephalon-engine-runtime-runtimelifecycleevent-message",
       "Signature": "string Message { get; set; }",
       "Summary": "The operator-facing narrative for the event."
+    },
+    {
+      "DisplayName": "MessageDeduplication",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-messagededuplication",
+      "Signature": "const string MessageDeduplication",
+      "Summary": "Identifies whether message deduplication was proven by completed execution or provider-owned idempotency."
     },
     {
       "DisplayName": "MessageFieldNumber",
@@ -101437,6 +101606,39 @@
       "AnchorId": "member-p-cephalon-edge-traefik-configuration-traefiktrafficmaterializeroptions-providerid",
       "Signature": "string ProviderId { get; set; }",
       "Summary": "Gets or sets the provider identifier that the materializer owns."
+    },
+    {
+      "DisplayName": "ProviderIdempotency",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-provideridempotency",
+      "Signature": "const string ProviderIdempotency",
+      "Summary": "Identifies whether a provider or runtime reports ownership of subscription idempotency."
+    },
+    {
+      "DisplayName": "ProviderIdempotencyKey",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-provideridempotencykey",
+      "Signature": "const string ProviderIdempotencyKey",
+      "Summary": "Identifies the provider idempotency key used to prove subscription duplicate suppression."
+    },
+    {
+      "DisplayName": "ProviderIdempotencySource",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-provideridempotencysource",
+      "Signature": "const string ProviderIdempotencySource",
+      "Summary": "Identifies the provider or runtime source that reported subscription idempotency proof."
     },
     {
       "DisplayName": "ProviderIdentityReady",
@@ -129297,6 +129499,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
       "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string consumerLoopId, string acknowledgementId, string leaseId, string retryPolicy, string poisonMessageHandling, string offsetCheckpointId)",
       "Summary": "Applies provider-reported broker inbound-consumption proof to an existing subscription metadata dictionary when the inputs support it."
+    },
+    {
+      "DisplayName": "TryApplyMetadata",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventSubscriptionProviderIdempotencyMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionprovideridempotencymetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string providerIdempotencyKey, string brokerDeduplicationId, string exactlyOnceProofId, string durableInboxCommandId, string genericInboxCommandId, string idempotencyLeaseId)",
+      "Summary": "Applies provider-reported idempotency proof to an existing subscription metadata dictionary when the inputs support it."
     },
     {
       "DisplayName": "TryFindByName",

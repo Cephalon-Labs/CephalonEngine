@@ -1703,6 +1703,94 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("consumerOffsetCheckpointId=offset-checkpoint-001", brokerInboundDimensions["broker-inbound-consumption-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", brokerInboundDimensions["broker-inbound-consumption-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
+        var incompleteProviderIdempotencyReport = EventSubscriptionProviderIdempotencyMetadata.CreateReport(
+            startedInboundReport,
+            source: "provider-idempotency-ledger",
+            providerIdempotencyKey: "catalog-broker-consumer:evt-context-outbox-001",
+            brokerDeduplicationId: "broker-dedup-001",
+            exactlyOnceProofId: "consumer-exactly-once-001",
+            durableInboxCommandId: "durable-inbox-command-001",
+            genericInboxCommandId: "generic-inbox-command-001",
+            idempotencyLeaseId: "idempotency-lease-001");
+        Assert.False(EventSubscriptionProviderIdempotencyMetadata.IsProviderIdempotencyProven(incompleteProviderIdempotencyReport.Metadata));
+        Assert.DoesNotContain(EventSubscriptionRuntimeMetadataKeys.ProviderIdempotency, incompleteProviderIdempotencyReport.Metadata.Keys);
+
+        var providerIdempotencyReport = EventSubscriptionProviderIdempotencyMetadata.CreateReport(
+            brokerInboundReport,
+            source: "provider-idempotency-ledger",
+            providerIdempotencyKey: "catalog-broker-consumer:evt-context-outbox-001",
+            brokerDeduplicationId: "broker-dedup-001",
+            exactlyOnceProofId: "consumer-exactly-once-001",
+            durableInboxCommandId: "durable-inbox-command-001",
+            genericInboxCommandId: "generic-inbox-command-001",
+            idempotencyLeaseId: "idempotency-lease-001");
+        Assert.True(EventSubscriptionProviderIdempotencyMetadata.IsProviderIdempotencyProven(providerIdempotencyReport.Metadata));
+        Assert.Equal("provider-deduplicated", providerIdempotencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.MessageDeduplication]);
+        Assert.Equal("provider-reported", providerIdempotencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ProviderIdempotency]);
+        Assert.Equal("provider-idempotency-ledger", providerIdempotencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ProviderIdempotencySource]);
+        Assert.Equal("catalog-broker-consumer:evt-context-outbox-001", providerIdempotencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ProviderIdempotencyKey]);
+        Assert.Equal("reported", providerIdempotencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.BrokerDeduplication]);
+        Assert.Equal("broker-dedup-001", providerIdempotencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.BrokerDeduplicationId]);
+        Assert.Equal("provider-proven", providerIdempotencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ExactlyOnceDelivery]);
+        Assert.Equal("consumer-exactly-once-001", providerIdempotencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ExactlyOnceDeliveryProofId]);
+        Assert.Equal("reported", providerIdempotencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.DurableInboxCommandOwnership]);
+        Assert.Equal("durable-inbox-command-001", providerIdempotencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.DurableInboxCommandId]);
+        Assert.Equal("reported", providerIdempotencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.GenericInboxCommandOwnership]);
+        Assert.Equal("generic-inbox-command-001", providerIdempotencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.GenericInboxCommandId]);
+        Assert.Equal("reported", providerIdempotencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.CrossNodeIdempotencyLease]);
+        Assert.Equal("idempotency-lease-001", providerIdempotencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.CrossNodeIdempotencyLeaseId]);
+
+        await subscriptionRuntimeReporter.ReportAsync(providerIdempotencyReport);
+
+        var providerIdempotencyState = subscriptionRuntimeCatalog.GetById("catalog-broker-consumer");
+        Assert.NotNull(providerIdempotencyState);
+        Assert.Equal(EventSubscriptionExecutionOutcomes.Succeeded, providerIdempotencyState.LastOutcome);
+        Assert.Equal("provider-reported", providerIdempotencyState.Metadata[EventSubscriptionRuntimeMetadataKeys.ProviderIdempotency]);
+        Assert.Equal("broker-dedup-001", providerIdempotencyState.Metadata[EventSubscriptionRuntimeMetadataKeys.BrokerDeduplicationId]);
+        Assert.Equal("consumer-exactly-once-001", providerIdempotencyState.Metadata[EventSubscriptionRuntimeMetadataKeys.ExactlyOnceDeliveryProofId]);
+        Assert.Equal("durable-inbox-command-001", providerIdempotencyState.Metadata[EventSubscriptionRuntimeMetadataKeys.DurableInboxCommandId]);
+        Assert.Equal("generic-inbox-command-001", providerIdempotencyState.Metadata[EventSubscriptionRuntimeMetadataKeys.GenericInboxCommandId]);
+        Assert.Equal("idempotency-lease-001", providerIdempotencyState.Metadata[EventSubscriptionRuntimeMetadataKeys.CrossNodeIdempotencyLeaseId]);
+
+        var idempotencyEventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        var idempotencySubscriptionSurface = Assert.Single(idempotencyEventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
+        var idempotencySubscriptionEntry = Assert.Single(idempotencySubscriptionSurface.Entries, entry => entry.Id == "catalog-broker-consumer");
+        Assert.Equal(
+            "provider-reported",
+            idempotencySubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.ProviderIdempotency}"]);
+        Assert.Equal(
+            "provider-idempotency-ledger",
+            idempotencySubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.ProviderIdempotencySource}"]);
+        Assert.Equal(
+            "broker-dedup-001",
+            idempotencySubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.BrokerDeduplicationId}"]);
+        Assert.Equal(
+            "consumer-exactly-once-001",
+            idempotencySubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.ExactlyOnceDeliveryProofId}"]);
+        Assert.Equal(
+            "idempotency-lease-001",
+            idempotencySubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.CrossNodeIdempotencyLeaseId}"]);
+        var idempotencyDimensions = Assert.Single(idempotencyEventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        Assert.Equal("claimed", idempotencyDimensions["idempotency-ownership"].Metadata["status"]);
+        Assert.Contains("messageDeduplication=provider-deduplicated", idempotencyDimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerDeduplication=reported", idempotencyDimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerDeduplicationId=broker-dedup-001", idempotencyDimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("exactlyOnceDelivery=provider-proven", idempotencyDimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("exactlyOnceDeliveryProofId=consumer-exactly-once-001", idempotencyDimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("durableInboxCommandOwnership=reported", idempotencyDimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("durableInboxCommandId=durable-inbox-command-001", idempotencyDimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("genericInboxCommandOwnership=reported", idempotencyDimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("genericInboxCommandId=generic-inbox-command-001", idempotencyDimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("crossNodeIdempotencyLease=reported", idempotencyDimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("crossNodeIdempotencyLeaseId=idempotency-lease-001", idempotencyDimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerIdempotency=provider-reported", idempotencyDimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerIdempotencySource=provider-idempotency-ledger", idempotencyDimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerIdempotencyKey=catalog-broker-consumer:evt-context-outbox-001", idempotencyDimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("lastOutcome=succeeded", idempotencyDimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", idempotencyDimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+
         var incompleteDurableRetryReport = EventDispatchDurableRetryQueueMetadata.CreateReport(
             exactlyOnceDeliveryReport,
             source: "provider-retry-scheduler",

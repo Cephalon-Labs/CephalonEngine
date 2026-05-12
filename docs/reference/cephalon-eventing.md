@@ -3982,6 +3982,104 @@ Represents the next step in the code-owned event subscription execution pipeline
 public sealed class EventSubscriptionExecutionStep
 ```
 
+<a id="type-cephalon-eventing-services-eventsubscriptionprovideridempotencymetadata"></a>
+
+### `EventSubscriptionProviderIdempotencyMetadata`
+
+Builds provider-reported subscription idempotency proof metadata for successful subscription reports.
+
+Remarks: Process-local completed-execution suppression and inbox-backed duplicate-completed checks do not automatically prove broker deduplication, exactly-once processing, durable inbox command ownership, generic inbox command ownership, or cross-node idempotency leases. This helper records that stronger provider/runtime proof only when a successful subscription observation supplies the complete idempotency proof set.
+
+#### Declaration
+```csharp
+public static class EventSubscriptionProviderIdempotencyMetadata
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionprovideridempotencymetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateMetadata`
+
+```csharp
+Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string providerIdempotencyKey, string brokerDeduplicationId, string exactlyOnceProofId, string durableInboxCommandId, string genericInboxCommandId, string idempotencyLeaseId)
+```
+
+Creates a metadata copy enriched with provider-reported idempotency proof when the inputs support it.
+
+Returns: A case-insensitive metadata dictionary containing the original values plus provider idempotency proof when applicable.
+
+Parameters:
+- `metadata`: The subscription execution metadata to copy.
+- `outcome`: The subscription execution outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported subscription idempotency proof.
+- `providerIdempotencyKey`: The provider idempotency key used to prove duplicate suppression.
+- `brokerDeduplicationId`: The broker deduplication proof id.
+- `exactlyOnceProofId`: The exactly-once subscription processing proof id.
+- `durableInboxCommandId`: The durable inbox command proof id.
+- `genericInboxCommandId`: The generic inbox command proof id.
+- `idempotencyLeaseId`: The cross-node idempotency lease proof id.
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionprovideridempotencymetadata-createreport-cephalon-eventing-services-eventsubscriptionexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateReport`
+
+```csharp
+EventSubscriptionExecutionReport CreateReport(EventSubscriptionExecutionReport report, string source, string providerIdempotencyKey, string brokerDeduplicationId, string exactlyOnceProofId, string durableInboxCommandId, string genericInboxCommandId, string idempotencyLeaseId)
+```
+
+Creates a subscription report copy enriched with provider-reported idempotency proof when the inputs support it.
+
+Returns: A subscription report containing the original metadata plus provider idempotency proof when applicable.
+
+Parameters:
+- `report`: The successful subscription execution report to copy.
+- `source`: The stable provider or runtime source that reported subscription idempotency proof.
+- `providerIdempotencyKey`: The provider idempotency key used to prove duplicate suppression.
+- `brokerDeduplicationId`: The broker deduplication proof id.
+- `exactlyOnceProofId`: The exactly-once subscription processing proof id.
+- `durableInboxCommandId`: The durable inbox command proof id.
+- `genericInboxCommandId`: The generic inbox command proof id.
+- `idempotencyLeaseId`: The cross-node idempotency lease proof id.
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionprovideridempotencymetadata-isprovideridempotencyproven-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `IsProviderIdempotencyProven`
+
+```csharp
+bool IsProviderIdempotencyProven(IReadOnlyDictionary<string, string> metadata)
+```
+
+Gets a value indicating whether the metadata contains complete provider-reported idempotency proof.
+
+Returns: `true` when complete provider idempotency proof is present; otherwise, `false`.
+
+Parameters:
+- `metadata`: The subscription metadata dictionary to inspect.
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionprovideridempotencymetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `TryApplyMetadata`
+
+```csharp
+bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string providerIdempotencyKey, string brokerDeduplicationId, string exactlyOnceProofId, string durableInboxCommandId, string genericInboxCommandId, string idempotencyLeaseId)
+```
+
+Applies provider-reported idempotency proof to an existing subscription metadata dictionary when the inputs support it.
+
+Returns: `true` when provider idempotency proof was applied; otherwise, `false`.
+
+Parameters:
+- `metadata`: The subscription metadata dictionary to enrich.
+- `outcome`: The subscription execution outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported subscription idempotency proof.
+- `providerIdempotencyKey`: The provider idempotency key used to prove duplicate suppression.
+- `brokerDeduplicationId`: The broker deduplication proof id.
+- `exactlyOnceProofId`: The exactly-once subscription processing proof id.
+- `durableInboxCommandId`: The durable inbox command proof id.
+- `genericInboxCommandId`: The generic inbox command proof id.
+- `idempotencyLeaseId`: The cross-node idempotency lease proof id.
+
 <a id="type-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys"></a>
 
 ### `EventSubscriptionRuntimeMetadataKeys`
@@ -4036,6 +4134,26 @@ const string BrokerConsumerLoopId
 ```
 
 Identifies the provider consumer-loop proof id reported for broker inbound consumption.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerdeduplication"></a>
+
+##### `BrokerDeduplication`
+
+```csharp
+const string BrokerDeduplication
+```
+
+Identifies whether broker deduplication proof was reported for subscription processing.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerdeduplicationid"></a>
+
+##### `BrokerDeduplicationId`
+
+```csharp
+const string BrokerDeduplicationId
+```
+
+Identifies the broker deduplication proof id reported for subscription processing.
 
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerinboundconsumption"></a>
 
@@ -4147,6 +4265,26 @@ const string ConsumerOffsetCheckpointId
 
 Identifies the consumer offset-checkpoint proof id reported for broker consumption.
 
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-crossnodeidempotencylease"></a>
+
+##### `CrossNodeIdempotencyLease`
+
+```csharp
+const string CrossNodeIdempotencyLease
+```
+
+Identifies whether cross-node idempotency lease proof was reported for subscription processing.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-crossnodeidempotencyleaseid"></a>
+
+##### `CrossNodeIdempotencyLeaseId`
+
+```csharp
+const string CrossNodeIdempotencyLeaseId
+```
+
+Identifies the cross-node idempotency lease proof id reported for subscription processing.
+
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-deliverymode"></a>
 
 ##### `DeliveryMode`
@@ -4166,6 +4304,46 @@ const string DispatchRuntime
 ```
 
 Identifies who owns the dispatch path feeding subscription execution.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-durableinboxcommandid"></a>
+
+##### `DurableInboxCommandId`
+
+```csharp
+const string DurableInboxCommandId
+```
+
+Identifies the durable inbox command proof id reported for subscription processing.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-durableinboxcommandownership"></a>
+
+##### `DurableInboxCommandOwnership`
+
+```csharp
+const string DurableInboxCommandOwnership
+```
+
+Identifies whether durable inbox command ownership proof was reported for subscription processing.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-exactlyoncedelivery"></a>
+
+##### `ExactlyOnceDelivery`
+
+```csharp
+const string ExactlyOnceDelivery
+```
+
+Identifies whether exactly-once subscription processing proof was reported.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-exactlyoncedeliveryproofid"></a>
+
+##### `ExactlyOnceDeliveryProofId`
+
+```csharp
+const string ExactlyOnceDeliveryProofId
+```
+
+Identifies the exactly-once subscription processing proof id.
 
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-executiongraphid"></a>
 
@@ -4236,6 +4414,26 @@ const string ExecutionRuntimeId
 ```
 
 Identifies the managed execution-runtime identifier bound to the subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-genericinboxcommandid"></a>
+
+##### `GenericInboxCommandId`
+
+```csharp
+const string GenericInboxCommandId
+```
+
+Identifies the generic inbox command proof id reported for subscription processing.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-genericinboxcommandownership"></a>
+
+##### `GenericInboxCommandOwnership`
+
+```csharp
+const string GenericInboxCommandOwnership
+```
+
+Identifies whether generic inbox command ownership proof was reported for subscription processing.
 
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-handlerid"></a>
 
@@ -4337,6 +4535,16 @@ const string LastOutcome
 
 Identifies the latest reported subscription execution outcome.
 
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-messagededuplication"></a>
+
+##### `MessageDeduplication`
+
+```csharp
+const string MessageDeduplication
+```
+
+Identifies whether message deduplication was proven by completed execution or provider-owned idempotency.
+
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-poisonmessagehandling"></a>
 
 ##### `PoisonMessageHandling`
@@ -4346,6 +4554,36 @@ const string PoisonMessageHandling
 ```
 
 Identifies the poison-message handling posture reported for inbound broker consumption.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-provideridempotency"></a>
+
+##### `ProviderIdempotency`
+
+```csharp
+const string ProviderIdempotency
+```
+
+Identifies whether a provider or runtime reports ownership of subscription idempotency.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-provideridempotencykey"></a>
+
+##### `ProviderIdempotencyKey`
+
+```csharp
+const string ProviderIdempotencyKey
+```
+
+Identifies the provider idempotency key used to prove subscription duplicate suppression.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-provideridempotencysource"></a>
+
+##### `ProviderIdempotencySource`
+
+```csharp
+const string ProviderIdempotencySource
+```
+
+Identifies the provider or runtime source that reported subscription idempotency proof.
 
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-reportedmetadataprefix"></a>
 
