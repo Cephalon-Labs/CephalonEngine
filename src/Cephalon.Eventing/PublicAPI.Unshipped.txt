@@ -19,6 +19,11 @@ const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.OperatorCo
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerDeadLetter = "brokerDeadLetter" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ConsumerContextExtraction = "consumerContextExtraction" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoff = "crossNodeContextHandoff" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffConsumerNodeId = "crossNodeContextHandoffConsumerNodeId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffHeaderCount = "crossNodeContextHandoffHeaderCount" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffHeaderNames = "crossNodeContextHandoffHeaderNames" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffProducerNodeId = "crossNodeContextHandoffProducerNodeId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffSource = "crossNodeContextHandoffSource" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DeadLetterDurability = "deadLetterDurability" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DeadLetterOutcome = "deadLetterOutcome" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DeadLetterScope = "deadLetterScope" -> string!
@@ -34,6 +39,11 @@ const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderSideCo
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceHeaderCount = "providerSideContextPersistenceHeaderCount" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceHeaderNames = "providerSideContextPersistenceHeaderNames" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceSource = "providerSideContextPersistenceSource" -> string!
+Cephalon.Eventing.Services.EventDispatchCrossNodeContextHandoffMetadata
+static Cephalon.Eventing.Services.EventDispatchCrossNodeContextHandoffMetadata.CreateMetadata(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! consumerContextMetadata, string! source, string! producerNodeId, string! consumerNodeId) -> System.Collections.Generic.Dictionary<string!, string!>!
+static Cephalon.Eventing.Services.EventDispatchCrossNodeContextHandoffMetadata.CreateReport(Cephalon.Eventing.Services.EventDispatchExecutionReport! report, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! consumerContextMetadata, string! source, string! producerNodeId, string! consumerNodeId) -> Cephalon.Eventing.Services.EventDispatchExecutionReport!
+static Cephalon.Eventing.Services.EventDispatchCrossNodeContextHandoffMetadata.IsHandoffProven(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> bool
+static Cephalon.Eventing.Services.EventDispatchCrossNodeContextHandoffMetadata.TryApplyMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! consumerContextMetadata, string! source, string! producerNodeId, string! consumerNodeId) -> bool
 Cephalon.Eventing.Services.EventDispatchContextReportMetadata
 static Cephalon.Eventing.Services.EventDispatchContextReportMetadata.Create(Cephalon.Eventing.Services.EventDispatchItem! dispatchItem, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? additionalMetadata = null) -> System.Collections.Generic.Dictionary<string!, string!>!
 Cephalon.Eventing.Services.EventDispatchProviderBrokerContextHeaders

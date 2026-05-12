@@ -1145,6 +1145,93 @@ Parameters:
 - `dispatchItem`: The pending dispatch item whose staged context should be carried into the report.
 - `additionalMetadata`: Optional runtime-specific metadata to add after the provider-neutral context markers.
 
+<a id="type-cephalon-eventing-services-eventdispatchcrossnodecontexthandoffmetadata"></a>
+
+### `EventDispatchCrossNodeContextHandoffMetadata`
+
+Builds provider-reported cross-node context-handoff metadata for dispatch reports.
+
+Remarks: Cross-node handoff is only marked when provider-side context persistence has already been proven on the dispatch metadata, consumer-side extraction metadata is present, and the reported producer and consumer node ids are distinct. This keeps local dispatch-store persistence and local subscription extraction from being mistaken for a distributed handoff.
+
+#### Declaration
+```csharp
+public static class EventDispatchCrossNodeContextHandoffMetadata
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-eventdispatchcrossnodecontexthandoffmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateMetadata`
+
+```csharp
+Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, IReadOnlyDictionary<string, string> consumerContextMetadata, string source, string producerNodeId, string consumerNodeId)
+```
+
+Creates a metadata copy enriched with provider-reported cross-node handoff proof when the inputs support it.
+
+Returns: A case-insensitive metadata dictionary containing the original values plus handoff proof when applicable.
+
+Parameters:
+- `metadata`: The provider-side dispatch report metadata to copy.
+- `consumerContextMetadata`: The consumer-side context extraction metadata observed by the provider or runtime.
+- `source`: The stable provider or runtime source that observed the cross-node handoff.
+- `producerNodeId`: The producer-side node identifier.
+- `consumerNodeId`: The consumer-side node identifier.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchcrossnodecontexthandoffmetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateReport`
+
+```csharp
+EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, IReadOnlyDictionary<string, string> consumerContextMetadata, string source, string producerNodeId, string consumerNodeId)
+```
+
+Creates a dispatch report copy enriched with provider-reported cross-node handoff proof when the inputs support it.
+
+Returns: A dispatch report containing the original metadata plus cross-node handoff proof when applicable.
+
+Parameters:
+- `report`: The provider-side dispatch report to copy.
+- `consumerContextMetadata`: The consumer-side context extraction metadata observed by the provider or runtime.
+- `source`: The stable provider or runtime source that observed the cross-node handoff.
+- `producerNodeId`: The producer-side node identifier.
+- `consumerNodeId`: The consumer-side node identifier.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchcrossnodecontexthandoffmetadata-ishandoffproven-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `IsHandoffProven`
+
+```csharp
+bool IsHandoffProven(IReadOnlyDictionary<string, string> metadata)
+```
+
+Gets a value indicating whether the metadata contains provider-reported cross-node context handoff proof.
+
+Returns: `true` when provider-reported cross-node handoff proof is present; otherwise, `false`.
+
+Parameters:
+- `metadata`: The dispatch metadata dictionary to inspect.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchcrossnodecontexthandoffmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `TryApplyMetadata`
+
+```csharp
+bool TryApplyMetadata(IDictionary<string, string> metadata, IReadOnlyDictionary<string, string> consumerContextMetadata, string source, string producerNodeId, string consumerNodeId)
+```
+
+Applies provider-reported cross-node handoff proof to an existing dispatch metadata dictionary when the inputs support it.
+
+Returns: `true` when cross-node handoff proof was applied; otherwise, `false`.
+
+Parameters:
+- `metadata`: The provider-side dispatch metadata dictionary to enrich.
+- `consumerContextMetadata`: The consumer-side context extraction metadata observed by the provider or runtime.
+- `source`: The stable provider or runtime source that observed the cross-node handoff.
+- `producerNodeId`: The producer-side node identifier.
+- `consumerNodeId`: The consumer-side node identifier.
+
 <a id="type-cephalon-eventing-services-eventdispatchexecutionoutcomes"></a>
 
 ### `EventDispatchExecutionOutcomes`
@@ -1834,6 +1921,56 @@ const string CrossNodeContextHandoff
 ```
 
 Identifies whether cross-node context handoff has been proven for the dispatched context.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-crossnodecontexthandoffconsumernodeid"></a>
+
+##### `CrossNodeContextHandoffConsumerNodeId`
+
+```csharp
+const string CrossNodeContextHandoffConsumerNodeId
+```
+
+Identifies the consumer-side node observed for a proven cross-node context handoff.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-crossnodecontexthandoffheadercount"></a>
+
+##### `CrossNodeContextHandoffHeaderCount`
+
+```csharp
+const string CrossNodeContextHandoffHeaderCount
+```
+
+Identifies the number of Cephalon context headers observed during a proven cross-node handoff.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-crossnodecontexthandoffheadernames"></a>
+
+##### `CrossNodeContextHandoffHeaderNames`
+
+```csharp
+const string CrossNodeContextHandoffHeaderNames
+```
+
+Identifies the comma-separated Cephalon context header names observed during a proven cross-node handoff.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-crossnodecontexthandoffproducernodeid"></a>
+
+##### `CrossNodeContextHandoffProducerNodeId`
+
+```csharp
+const string CrossNodeContextHandoffProducerNodeId
+```
+
+Identifies the producer-side node observed for a proven cross-node context handoff.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-crossnodecontexthandoffsource"></a>
+
+##### `CrossNodeContextHandoffSource`
+
+```csharp
+const string CrossNodeContextHandoffSource
+```
+
+Identifies the provider or runtime observation source that proved cross-node context handoff.
 
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-deadletterdurability"></a>
 

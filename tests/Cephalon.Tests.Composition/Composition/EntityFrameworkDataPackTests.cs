@@ -1439,6 +1439,57 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("executableValidation=publisher-enforced", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("executablePropagation=not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+
+        var consumerContextHeaderNames =
+            $"{EventContextHeaderNames.Baggage},{EventContextHeaderNames.CausationId},{EventContextHeaderNames.CorrelationId},{EventContextHeaderNames.MessageId},{EventContextHeaderNames.TenantId}";
+        var consumerContextMetadata = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            [EventSubscriptionRuntimeMetadataKeys.ConsumerContextExtraction] = "extracted",
+            [EventSubscriptionRuntimeMetadataKeys.ConsumerContextExtractionSource] = "provider-observed-consumer",
+            [EventSubscriptionRuntimeMetadataKeys.ConsumerContextHeaderCount] = "5",
+            [EventSubscriptionRuntimeMetadataKeys.ConsumerContextHeaderNames] = consumerContextHeaderNames
+        };
+        var sameNodeReport = EventDispatchCrossNodeContextHandoffMetadata.CreateReport(
+            persistedDispatchReport,
+            consumerContextMetadata,
+            source: "provider-observed-consumer",
+            producerNodeId: "node-a",
+            consumerNodeId: "node-a");
+        Assert.Equal("not-claimed", sameNodeReport.Metadata[EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoff]);
+
+        var crossNodeReport = EventDispatchCrossNodeContextHandoffMetadata.CreateReport(
+            persistedDispatchReport,
+            consumerContextMetadata,
+            source: "provider-observed-consumer",
+            producerNodeId: "node-a",
+            consumerNodeId: "node-b");
+        Assert.Equal("provider-reported", crossNodeReport.Metadata[EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoff]);
+        Assert.Equal("provider-observed-consumer", crossNodeReport.Metadata[EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffSource]);
+        Assert.Equal("node-a", crossNodeReport.Metadata[EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffProducerNodeId]);
+        Assert.Equal("node-b", crossNodeReport.Metadata[EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffConsumerNodeId]);
+        Assert.Equal("5", crossNodeReport.Metadata[EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffHeaderCount]);
+        Assert.Equal(consumerContextHeaderNames, crossNodeReport.Metadata[EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffHeaderNames]);
+
+        await dispatchRuntimeReporter.ReportAsync(crossNodeReport);
+
+        var crossNodeDispatchState = dispatchRuntimeCatalog.GetByOutboxId("entity-framework-outbox");
+        Assert.NotNull(crossNodeDispatchState);
+        Assert.Equal("provider-reported", crossNodeDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoff]);
+        Assert.Equal("provider-observed-consumer", crossNodeDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffSource]);
+        Assert.Equal("node-a", crossNodeDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffProducerNodeId]);
+        Assert.Equal("node-b", crossNodeDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffConsumerNodeId]);
+
+        var crossNodeEventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        var crossNodeDispatchSurface = Assert.Single(crossNodeEventingSurfaces, surface => surface.SurfaceId == "event-dispatches");
+        var crossNodeDispatchEntry = Assert.Single(crossNodeDispatchSurface.Entries, entry => entry.Id == "entity-framework-outbox");
+        Assert.Equal("provider-reported", crossNodeDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoff}"]);
+        Assert.Equal(
+            "provider-observed-consumer",
+            crossNodeDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoffSource}"]);
+        var crossNodeDimensions = Assert.Single(crossNodeEventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        Assert.Contains("crossNodeContextHandoff=provider-reported", crossNodeDimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]

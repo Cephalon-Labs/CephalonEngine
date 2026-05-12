@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-12T12:47:36.680315+00:00",
+  "GeneratedAtUtc": "2026-05-12T13:21:37.6682215+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -271,7 +271,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 65
+      "TypeCount": 66
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1331,7 +1331,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 62
+      "TypeCount": 63
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8368,6 +8368,21 @@
       }
     },
     {
+      "DisplayName": "EventDispatchCrossNodeContextHandoffMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventdispatchcrossnodecontexthandoffmetadata",
+      "Declaration": "public static class EventDispatchCrossNodeContextHandoffMetadata",
+      "Summary": "Builds provider-reported cross-node context-handoff metadata for dispatch reports.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 4
+      }
+    },
+    {
       "DisplayName": "EventDispatchExecutionOutcomes",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -8632,7 +8647,7 @@
       "Summary": "Defines stable metadata keys used by event-dispatch runtime observations.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 27,
+        "Fields": 32,
         "Properties": 0,
         "Methods": 1
       }
@@ -41682,6 +41697,17 @@
     {
       "DisplayName": "CreateMetadata",
       "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchCrossNodeContextHandoffMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchcrossnodecontexthandoffmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "Dictionary\u003Cstring, string\u003E CreateMetadata(IReadOnlyDictionary\u003Cstring, string\u003E metadata, IReadOnlyDictionary\u003Cstring, string\u003E consumerContextMetadata, string source, string producerNodeId, string consumerNodeId)",
+      "Summary": "Creates a metadata copy enriched with provider-reported cross-node handoff proof when the inputs support it."
+    },
+    {
+      "DisplayName": "CreateMetadata",
+      "Category": "Methods",
       "DeclaringTypeName": "EventDispatchProviderContextPersistenceMetadata",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -41722,6 +41748,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-idatabasemigrationoperationalplaybookprovider-createplaybook",
       "Signature": "DatabaseMigrationOperationalPlaybook CreatePlaybook()",
       "Summary": "Creates the current database-migration playbook."
+    },
+    {
+      "DisplayName": "CreateReport",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchCrossNodeContextHandoffMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchcrossnodecontexthandoffmetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, IReadOnlyDictionary\u003Cstring, string\u003E consumerContextMetadata, string source, string producerNodeId, string consumerNodeId)",
+      "Summary": "Creates a dispatch report copy enriched with provider-reported cross-node handoff proof when the inputs support it."
     },
     {
       "DisplayName": "CreateReport",
@@ -41876,6 +41913,61 @@
       "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-crossnodecontexthandoff",
       "Signature": "const string CrossNodeContextHandoff",
       "Summary": "Identifies whether cross-node context handoff has been proven for the dispatched context."
+    },
+    {
+      "DisplayName": "CrossNodeContextHandoffConsumerNodeId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-crossnodecontexthandoffconsumernodeid",
+      "Signature": "const string CrossNodeContextHandoffConsumerNodeId",
+      "Summary": "Identifies the consumer-side node observed for a proven cross-node context handoff."
+    },
+    {
+      "DisplayName": "CrossNodeContextHandoffHeaderCount",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-crossnodecontexthandoffheadercount",
+      "Signature": "const string CrossNodeContextHandoffHeaderCount",
+      "Summary": "Identifies the number of Cephalon context headers observed during a proven cross-node handoff."
+    },
+    {
+      "DisplayName": "CrossNodeContextHandoffHeaderNames",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-crossnodecontexthandoffheadernames",
+      "Signature": "const string CrossNodeContextHandoffHeaderNames",
+      "Summary": "Identifies the comma-separated Cephalon context header names observed during a proven cross-node handoff."
+    },
+    {
+      "DisplayName": "CrossNodeContextHandoffProducerNodeId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-crossnodecontexthandoffproducernodeid",
+      "Signature": "const string CrossNodeContextHandoffProducerNodeId",
+      "Summary": "Identifies the producer-side node observed for a proven cross-node context handoff."
+    },
+    {
+      "DisplayName": "CrossNodeContextHandoffSource",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-crossnodecontexthandoffsource",
+      "Signature": "const string CrossNodeContextHandoffSource",
+      "Summary": "Identifies the provider or runtime observation source that proved cross-node context handoff."
     },
     {
       "DisplayName": "CrossNodeIdempotencyHardening",
@@ -74774,6 +74866,17 @@
       "AnchorId": "member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-isfallback",
       "Signature": "bool IsFallback { get; }",
       "Summary": "Gets a value indicating whether the requested role resolved through another configured role."
+    },
+    {
+      "DisplayName": "IsHandoffProven",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchCrossNodeContextHandoffMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchcrossnodecontexthandoffmetadata-ishandoffproven-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "bool IsHandoffProven(IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Gets a value indicating whether the metadata contains provider-reported cross-node context handoff proof."
     },
     {
       "DisplayName": "IsHealthy",
@@ -128632,6 +128735,17 @@
       "AnchorId": "member-m-cephalon-engine-trust-trustsnapshot-ctor-cephalon-engine-configuration-trustpolicy-system-collections-generic-ireadonlylist-cephalon-engine-trust-packagetrustdecision-system-collections-generic-ireadonlylist-cephalon-engine-trust-capabilitypolicydecision",
       "Signature": "TrustSnapshot(TrustPolicy Policy, IReadOnlyList\u003CPackageTrustDecision\u003E Packages, IReadOnlyList\u003CCapabilityPolicyDecision\u003E Capabilities)",
       "Summary": "Captures the effective trust policy together with evaluated package and capability decisions."
+    },
+    {
+      "DisplayName": "TryApplyMetadata",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchCrossNodeContextHandoffMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchcrossnodecontexthandoffmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, IReadOnlyDictionary\u003Cstring, string\u003E consumerContextMetadata, string source, string producerNodeId, string consumerNodeId)",
+      "Summary": "Applies provider-reported cross-node handoff proof to an existing dispatch metadata dictionary when the inputs support it."
     },
     {
       "DisplayName": "TryApplyMetadata",

@@ -131,6 +131,31 @@ public static class EventDispatchRuntimeMetadataKeys
     public const string CrossNodeContextHandoff = "crossNodeContextHandoff";
 
     /// <summary>
+    /// Identifies the provider or runtime observation source that proved cross-node context handoff.
+    /// </summary>
+    public const string CrossNodeContextHandoffSource = "crossNodeContextHandoffSource";
+
+    /// <summary>
+    /// Identifies the producer-side node observed for a proven cross-node context handoff.
+    /// </summary>
+    public const string CrossNodeContextHandoffProducerNodeId = "crossNodeContextHandoffProducerNodeId";
+
+    /// <summary>
+    /// Identifies the consumer-side node observed for a proven cross-node context handoff.
+    /// </summary>
+    public const string CrossNodeContextHandoffConsumerNodeId = "crossNodeContextHandoffConsumerNodeId";
+
+    /// <summary>
+    /// Identifies the number of Cephalon context headers observed during a proven cross-node handoff.
+    /// </summary>
+    public const string CrossNodeContextHandoffHeaderCount = "crossNodeContextHandoffHeaderCount";
+
+    /// <summary>
+    /// Identifies the comma-separated Cephalon context header names observed during a proven cross-node handoff.
+    /// </summary>
+    public const string CrossNodeContextHandoffHeaderNames = "crossNodeContextHandoffHeaderNames";
+
+    /// <summary>
     /// Identifies whether the latest dispatch runtime observation includes Cephalon context metadata.
     /// </summary>
     public const string DispatchContextMetadata = "dispatchContextMetadata";
