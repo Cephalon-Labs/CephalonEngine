@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-12T13:56:24.0856082+00:00",
+  "GeneratedAtUtc": "2026-05-12T14:21:26.7829524+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -271,7 +271,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 67
+      "TypeCount": 68
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1331,7 +1331,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 64
+      "TypeCount": 65
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8398,6 +8398,21 @@
       }
     },
     {
+      "DisplayName": "EventDispatchExactlyOnceDeliveryProofMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventdispatchexactlyoncedeliveryproofmetadata",
+      "Declaration": "public static class EventDispatchExactlyOnceDeliveryProofMetadata",
+      "Summary": "Builds provider-reported exactly-once delivery proof metadata for successful dispatch reports.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 4
+      }
+    },
+    {
       "DisplayName": "EventDispatchExecutionOutcomes",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -8662,7 +8677,7 @@
       "Summary": "Defines stable metadata keys used by event-dispatch runtime observations.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 41,
+        "Fields": 44,
         "Properties": 0,
         "Methods": 1
       }
@@ -41734,6 +41749,17 @@
     {
       "DisplayName": "CreateMetadata",
       "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchExactlyOnceDeliveryProofMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchexactlyoncedeliveryproofmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "Dictionary\u003Cstring, string\u003E CreateMetadata(IReadOnlyDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string providerReceiptId, string subscriberAcknowledgementId, string destinationCommitId, string exactlyOnceProofId, string strategy)",
+      "Summary": "Creates a metadata copy enriched with provider-reported exactly-once delivery proof when the inputs support it."
+    },
+    {
+      "DisplayName": "CreateMetadata",
+      "Category": "Methods",
       "DeclaringTypeName": "EventDispatchProviderContextPersistenceMetadata",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -41796,6 +41822,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventdispatchdeliverycompletionmetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string",
       "Signature": "EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string providerReceiptId, string subscriberAcknowledgementId, string destinationCommitId)",
       "Summary": "Creates a dispatch report copy enriched with provider-reported delivery-completion proof when the inputs support it."
+    },
+    {
+      "DisplayName": "CreateReport",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchExactlyOnceDeliveryProofMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchexactlyoncedeliveryproofmetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string providerReceiptId, string subscriberAcknowledgementId, string destinationCommitId, string exactlyOnceProofId, string strategy)",
+      "Summary": "Creates a dispatch report copy enriched with provider-reported exactly-once delivery proof when the inputs support it."
     },
     {
       "DisplayName": "CreateReport",
@@ -55213,6 +55250,39 @@
       "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-exactlyoncedelivery",
       "Signature": "const string ExactlyOnceDelivery",
       "Summary": "Identifies whether exactly-once delivery proof was reported for the dispatch."
+    },
+    {
+      "DisplayName": "ExactlyOnceDeliveryProofId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-exactlyoncedeliveryproofid",
+      "Signature": "const string ExactlyOnceDeliveryProofId",
+      "Summary": "Identifies the provider exactly-once delivery proof id reported for the dispatch."
+    },
+    {
+      "DisplayName": "ExactlyOnceDeliverySource",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-exactlyoncedeliverysource",
+      "Signature": "const string ExactlyOnceDeliverySource",
+      "Summary": "Identifies the provider or runtime source that reported exactly-once delivery proof."
+    },
+    {
+      "DisplayName": "ExactlyOnceDeliveryStrategy",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-exactlyoncedeliverystrategy",
+      "Signature": "const string ExactlyOnceDeliveryStrategy",
+      "Summary": "Identifies the provider exactly-once delivery strategy reported for the dispatch."
     },
     {
       "DisplayName": "Exception",
@@ -76047,6 +76117,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstatus-isproviderownedrisk",
       "Signature": "bool IsProviderOwnedRisk { get; }",
       "Summary": "Gets a value indicating whether provider-owned write-path execution currently remains risky."
+    },
+    {
+      "DisplayName": "IsProviderProven",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchExactlyOnceDeliveryProofMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchexactlyoncedeliveryproofmetadata-isproviderproven-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "bool IsProviderProven(IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Gets a value indicating whether the metadata contains provider-proven exactly-once delivery proof."
     },
     {
       "DisplayName": "IsProvisioningBlocked",
@@ -128904,6 +128985,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventdispatchdeliverycompletionmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
       "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string providerReceiptId, string subscriberAcknowledgementId, string destinationCommitId)",
       "Summary": "Applies provider-reported delivery-completion proof to an existing dispatch metadata dictionary when the inputs support it."
+    },
+    {
+      "DisplayName": "TryApplyMetadata",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchExactlyOnceDeliveryProofMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchexactlyoncedeliveryproofmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string providerReceiptId, string subscriberAcknowledgementId, string destinationCommitId, string exactlyOnceProofId, string strategy)",
+      "Summary": "Applies provider-reported exactly-once delivery proof to an existing dispatch metadata dictionary when the inputs support it."
     },
     {
       "DisplayName": "TryApplyMetadata",

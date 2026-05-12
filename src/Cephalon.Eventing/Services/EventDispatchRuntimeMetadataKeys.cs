@@ -201,6 +201,21 @@ public static class EventDispatchRuntimeMetadataKeys
     public const string ExactlyOnceDelivery = "exactlyOnceDelivery";
 
     /// <summary>
+    /// Identifies the provider or runtime source that reported exactly-once delivery proof.
+    /// </summary>
+    public const string ExactlyOnceDeliverySource = "exactlyOnceDeliverySource";
+
+    /// <summary>
+    /// Identifies the provider exactly-once delivery proof id reported for the dispatch.
+    /// </summary>
+    public const string ExactlyOnceDeliveryProofId = "exactlyOnceDeliveryProofId";
+
+    /// <summary>
+    /// Identifies the provider exactly-once delivery strategy reported for the dispatch.
+    /// </summary>
+    public const string ExactlyOnceDeliveryStrategy = "exactlyOnceDeliveryStrategy";
+
+    /// <summary>
     /// Identifies whether the latest dispatch runtime observation includes Cephalon context metadata.
     /// </summary>
     public const string DispatchContextMetadata = "dispatchContextMetadata";

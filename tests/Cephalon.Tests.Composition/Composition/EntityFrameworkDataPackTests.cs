@@ -1555,6 +1555,51 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("destinationCommit=not-claimed", completedDimensions["downstream-delivery-completion-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("exactlyOnceDelivery=not-claimed", completedDimensions["downstream-delivery-completion-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("downstreamDeliveryCompletion=provider-reported", completedDimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+
+        var incompleteExactlyOnceProof = EventDispatchExactlyOnceDeliveryProofMetadata.CreateReport(
+            crossNodeReport,
+            source: "provider-exactly-once-observer",
+            providerReceiptId: "provider-receipt-001",
+            subscriberAcknowledgementId: "subscriber-ack-001",
+            destinationCommitId: "destination-commit-001",
+            exactlyOnceProofId: "exactly-once-proof-001",
+            strategy: "provider-deduplication-and-commit");
+        Assert.False(EventDispatchExactlyOnceDeliveryProofMetadata.IsProviderProven(incompleteExactlyOnceProof.Metadata));
+
+        var exactlyOnceDeliveryReport = EventDispatchExactlyOnceDeliveryProofMetadata.CreateReport(
+            completedDeliveryReport,
+            source: "provider-exactly-once-observer",
+            providerReceiptId: "provider-receipt-001",
+            subscriberAcknowledgementId: "subscriber-ack-001",
+            destinationCommitId: "destination-commit-001",
+            exactlyOnceProofId: "exactly-once-proof-001",
+            strategy: "provider-deduplication-and-commit");
+        Assert.True(EventDispatchExactlyOnceDeliveryProofMetadata.IsProviderProven(exactlyOnceDeliveryReport.Metadata));
+        Assert.Equal("reported", exactlyOnceDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.DestinationCommit]);
+        Assert.Equal("destination-commit-001", exactlyOnceDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.DestinationCommitId]);
+        Assert.Equal("provider-proven", exactlyOnceDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.ExactlyOnceDelivery]);
+        Assert.Equal("provider-exactly-once-observer", exactlyOnceDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.ExactlyOnceDeliverySource]);
+        Assert.Equal("exactly-once-proof-001", exactlyOnceDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.ExactlyOnceDeliveryProofId]);
+        Assert.Equal("provider-deduplication-and-commit", exactlyOnceDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.ExactlyOnceDeliveryStrategy]);
+
+        await dispatchRuntimeReporter.ReportAsync(exactlyOnceDeliveryReport);
+
+        var exactlyOnceDispatchState = dispatchRuntimeCatalog.GetByOutboxId("entity-framework-outbox");
+        Assert.NotNull(exactlyOnceDispatchState);
+        Assert.Equal(EventDispatchExecutionOutcomes.Succeeded, exactlyOnceDispatchState.LastOutcome);
+        Assert.Equal("provider-proven", exactlyOnceDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.ExactlyOnceDelivery]);
+        Assert.Equal("exactly-once-proof-001", exactlyOnceDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.ExactlyOnceDeliveryProofId]);
+
+        var exactlyOnceEventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        var exactlyOnceDimensions = Assert.Single(exactlyOnceEventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        Assert.Equal("claimed", exactlyOnceDimensions["downstream-delivery-completion-ownership"].Metadata["status"]);
+        Assert.Contains("destinationCommit=reported", exactlyOnceDimensions["downstream-delivery-completion-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("destinationCommitId=destination-commit-001", exactlyOnceDimensions["downstream-delivery-completion-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("exactlyOnceDelivery=provider-proven", exactlyOnceDimensions["downstream-delivery-completion-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("exactlyOnceDeliveryProofId=exactly-once-proof-001", exactlyOnceDimensions["downstream-delivery-completion-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("exactlyOnceDeliveryStrategy=provider-deduplication-and-commit", exactlyOnceDimensions["downstream-delivery-completion-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]

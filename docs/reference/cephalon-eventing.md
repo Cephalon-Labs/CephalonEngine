@@ -1321,6 +1321,101 @@ Parameters:
 - `subscriberAcknowledgementId`: An optional subscriber acknowledgement id.
 - `destinationCommitId`: An optional destination commit id.
 
+<a id="type-cephalon-eventing-services-eventdispatchexactlyoncedeliveryproofmetadata"></a>
+
+### `EventDispatchExactlyOnceDeliveryProofMetadata`
+
+Builds provider-reported exactly-once delivery proof metadata for successful dispatch reports.
+
+Remarks: Exactly-once delivery is a stronger claim than dispatch success, provider receipt, subscriber acknowledgement, or destination commit by themselves. This helper records the claim only when a provider/runtime supplies all completion evidence plus an explicit exactly-once proof id. Cephalon carries the proof without making any provider package, including Wolverine, part of the core authoring surface.
+
+#### Declaration
+```csharp
+public static class EventDispatchExactlyOnceDeliveryProofMetadata
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-eventdispatchexactlyoncedeliveryproofmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateMetadata`
+
+```csharp
+Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string providerReceiptId, string subscriberAcknowledgementId, string destinationCommitId, string exactlyOnceProofId, string strategy)
+```
+
+Creates a metadata copy enriched with provider-reported exactly-once delivery proof when the inputs support it.
+
+Returns: A case-insensitive metadata dictionary containing the original values plus exactly-once proof when applicable.
+
+Parameters:
+- `metadata`: The dispatch report metadata to copy.
+- `outcome`: The dispatch report outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported the exactly-once proof.
+- `providerReceiptId`: The provider delivery receipt id.
+- `subscriberAcknowledgementId`: The subscriber acknowledgement id.
+- `destinationCommitId`: The destination commit id.
+- `exactlyOnceProofId`: The provider exactly-once delivery proof id.
+- `strategy`: An optional provider strategy name for the exactly-once proof.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchexactlyoncedeliveryproofmetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateReport`
+
+```csharp
+EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string providerReceiptId, string subscriberAcknowledgementId, string destinationCommitId, string exactlyOnceProofId, string strategy)
+```
+
+Creates a dispatch report copy enriched with provider-reported exactly-once delivery proof when the inputs support it.
+
+Returns: A dispatch report containing the original metadata plus exactly-once proof when applicable.
+
+Parameters:
+- `report`: The successful dispatch report to copy.
+- `source`: The stable provider or runtime source that reported the exactly-once proof.
+- `providerReceiptId`: The provider delivery receipt id.
+- `subscriberAcknowledgementId`: The subscriber acknowledgement id.
+- `destinationCommitId`: The destination commit id.
+- `exactlyOnceProofId`: The provider exactly-once delivery proof id.
+- `strategy`: An optional provider strategy name for the exactly-once proof.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchexactlyoncedeliveryproofmetadata-isproviderproven-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `IsProviderProven`
+
+```csharp
+bool IsProviderProven(IReadOnlyDictionary<string, string> metadata)
+```
+
+Gets a value indicating whether the metadata contains provider-proven exactly-once delivery proof.
+
+Returns: `true` when provider-proven exactly-once proof is present; otherwise, `false`.
+
+Parameters:
+- `metadata`: The dispatch metadata dictionary to inspect.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchexactlyoncedeliveryproofmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `TryApplyMetadata`
+
+```csharp
+bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string providerReceiptId, string subscriberAcknowledgementId, string destinationCommitId, string exactlyOnceProofId, string strategy)
+```
+
+Applies provider-reported exactly-once delivery proof to an existing dispatch metadata dictionary when the inputs support it.
+
+Returns: `true` when exactly-once proof was applied; otherwise, `false`.
+
+Parameters:
+- `metadata`: The dispatch metadata dictionary to enrich.
+- `outcome`: The dispatch report outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported the exactly-once proof.
+- `providerReceiptId`: The provider delivery receipt id.
+- `subscriberAcknowledgementId`: The subscriber acknowledgement id.
+- `destinationCommitId`: The destination commit id.
+- `exactlyOnceProofId`: The provider exactly-once delivery proof id.
+- `strategy`: An optional provider strategy name for the exactly-once proof.
+
 <a id="type-cephalon-eventing-services-eventdispatchexecutionoutcomes"></a>
 
 ### `EventDispatchExecutionOutcomes`
@@ -2180,6 +2275,36 @@ const string ExactlyOnceDelivery
 ```
 
 Identifies whether exactly-once delivery proof was reported for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-exactlyoncedeliveryproofid"></a>
+
+##### `ExactlyOnceDeliveryProofId`
+
+```csharp
+const string ExactlyOnceDeliveryProofId
+```
+
+Identifies the provider exactly-once delivery proof id reported for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-exactlyoncedeliverysource"></a>
+
+##### `ExactlyOnceDeliverySource`
+
+```csharp
+const string ExactlyOnceDeliverySource
+```
+
+Identifies the provider or runtime source that reported exactly-once delivery proof.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-exactlyoncedeliverystrategy"></a>
+
+##### `ExactlyOnceDeliveryStrategy`
+
+```csharp
+const string ExactlyOnceDeliveryStrategy
+```
+
+Identifies the provider exactly-once delivery strategy reported for the dispatch.
 
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-nextretryatutc"></a>
 

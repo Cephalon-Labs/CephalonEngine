@@ -36,6 +36,9 @@ const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DownstreamDeli
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DownstreamDeliveryCompletionSource = "downstreamDeliveryCompletionSource" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DurableDispatchContextPropagation = "durableDispatchContextPropagation" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ExactlyOnceDelivery = "exactlyOnceDelivery" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ExactlyOnceDeliveryProofId = "exactlyOnceDeliveryProofId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ExactlyOnceDeliverySource = "exactlyOnceDeliverySource" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ExactlyOnceDeliveryStrategy = "exactlyOnceDeliveryStrategy" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderCount = "providerBrokerContextHeaderCount" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderNames = "providerBrokerContextHeaderNames" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderProjection = "providerBrokerContextHeaderProjection" -> string!
@@ -58,6 +61,11 @@ static Cephalon.Eventing.Services.EventDispatchDeliveryCompletionMetadata.Create
 static Cephalon.Eventing.Services.EventDispatchDeliveryCompletionMetadata.CreateReport(Cephalon.Eventing.Services.EventDispatchExecutionReport! report, string! source, string! providerReceiptId, string? subscriberAcknowledgementId = null, string? destinationCommitId = null) -> Cephalon.Eventing.Services.EventDispatchExecutionReport!
 static Cephalon.Eventing.Services.EventDispatchDeliveryCompletionMetadata.IsCompleted(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> bool
 static Cephalon.Eventing.Services.EventDispatchDeliveryCompletionMetadata.TryApplyMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, string! outcome, string! source, string! providerReceiptId, string? subscriberAcknowledgementId = null, string? destinationCommitId = null) -> bool
+Cephalon.Eventing.Services.EventDispatchExactlyOnceDeliveryProofMetadata
+static Cephalon.Eventing.Services.EventDispatchExactlyOnceDeliveryProofMetadata.CreateMetadata(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata, string! outcome, string! source, string! providerReceiptId, string! subscriberAcknowledgementId, string! destinationCommitId, string! exactlyOnceProofId, string? strategy = null) -> System.Collections.Generic.Dictionary<string!, string!>!
+static Cephalon.Eventing.Services.EventDispatchExactlyOnceDeliveryProofMetadata.CreateReport(Cephalon.Eventing.Services.EventDispatchExecutionReport! report, string! source, string! providerReceiptId, string! subscriberAcknowledgementId, string! destinationCommitId, string! exactlyOnceProofId, string? strategy = null) -> Cephalon.Eventing.Services.EventDispatchExecutionReport!
+static Cephalon.Eventing.Services.EventDispatchExactlyOnceDeliveryProofMetadata.IsProviderProven(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> bool
+static Cephalon.Eventing.Services.EventDispatchExactlyOnceDeliveryProofMetadata.TryApplyMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, string! outcome, string! source, string! providerReceiptId, string! subscriberAcknowledgementId, string! destinationCommitId, string! exactlyOnceProofId, string? strategy = null) -> bool
 Cephalon.Eventing.Services.EventDispatchContextReportMetadata
 static Cephalon.Eventing.Services.EventDispatchContextReportMetadata.Create(Cephalon.Eventing.Services.EventDispatchItem! dispatchItem, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? additionalMetadata = null) -> System.Collections.Generic.Dictionary<string!, string!>!
 Cephalon.Eventing.Services.EventDispatchProviderBrokerContextHeaders

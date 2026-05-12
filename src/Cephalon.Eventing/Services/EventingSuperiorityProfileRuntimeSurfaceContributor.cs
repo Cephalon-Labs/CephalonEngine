@@ -461,19 +461,32 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                 metadata,
                 EventDispatchRuntimeMetadataKeys.DestinationCommitId,
                 "not-reported");
+            var exactlyOnceDeliverySource = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ExactlyOnceDeliverySource,
+                "not-reported");
+            var exactlyOnceDeliveryProofId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ExactlyOnceDeliveryProofId,
+                "not-reported");
+            var exactlyOnceDeliveryStrategy = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.ExactlyOnceDeliveryStrategy,
+                "not-reported");
             var status = string.Equals(exactlyOnceDelivery, "provider-proven", StringComparison.OrdinalIgnoreCase) &&
-                string.Equals(destinationCommit, "reported", StringComparison.OrdinalIgnoreCase)
+                string.Equals(destinationCommit, "reported", StringComparison.OrdinalIgnoreCase) &&
+                !string.Equals(exactlyOnceDeliveryProofId, "not-reported", StringComparison.OrdinalIgnoreCase)
                     ? "claimed"
                     : "partial";
             var nextGap = status == "claimed"
-                ? "Keep provider completion, subscriber acknowledgement, destination commit, and exactly-once evidence covered by provider integration tests."
+                ? "Keep provider completion, subscriber acknowledgement, destination commit, and exactly-once proof covered by provider integration tests."
                 : "Add subscriber acknowledgement, destination commit, and exactly-once proof before claiming full downstream delivery completion ownership.";
 
             return new DownstreamDeliveryCompletionProfile(
                 status,
                 string.Create(
                     CultureInfo.InvariantCulture,
-                    $"publicationPath=active; handoff={handoff}; dispatchRuntime={dispatchRuntime}; downstreamDeliveryCompletion=provider-reported; downstreamDeliveryCompletionSource={source}; providerDeliveryReceipt={providerReceipt}; providerDeliveryReceiptId={receiptId}; subscriberAcknowledgement={subscriberAcknowledgement}; subscriberAcknowledgementId={subscriberAcknowledgementId}; destinationCommit={destinationCommit}; destinationCommitId={destinationCommitId}; exactlyOnceDelivery={exactlyOnceDelivery}; wolverineRequired=false"),
+                    $"publicationPath=active; handoff={handoff}; dispatchRuntime={dispatchRuntime}; downstreamDeliveryCompletion=provider-reported; downstreamDeliveryCompletionSource={source}; providerDeliveryReceipt={providerReceipt}; providerDeliveryReceiptId={receiptId}; subscriberAcknowledgement={subscriberAcknowledgement}; subscriberAcknowledgementId={subscriberAcknowledgementId}; destinationCommit={destinationCommit}; destinationCommitId={destinationCommitId}; exactlyOnceDelivery={exactlyOnceDelivery}; exactlyOnceDeliverySource={exactlyOnceDeliverySource}; exactlyOnceDeliveryProofId={exactlyOnceDeliveryProofId}; exactlyOnceDeliveryStrategy={exactlyOnceDeliveryStrategy}; wolverineRequired=false"),
                 nextGap);
         }
 
