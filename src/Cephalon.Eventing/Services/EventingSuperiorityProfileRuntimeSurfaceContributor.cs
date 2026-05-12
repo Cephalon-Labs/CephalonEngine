@@ -837,9 +837,20 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var compatibilityValidation = compatibilityPolicyCount > 0 ? "descriptor-backed" : "not-claimed";
 
         var dispatchRuntimeCatalog = scope.ServiceProvider.GetService<IEventDispatchRuntimeCatalog>();
-        var serializationExecutionState = dispatchRuntimeCatalog?.States.FirstOrDefault(static state =>
-            state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.SerializationExecutionOwnership, out var value) &&
-            string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase));
+        var wireContractState = dispatchRuntimeCatalog?.States
+            .Where(static state => state.Metadata.ContainsKey(EventDispatchRuntimeMetadataKeys.WireContractOwnership))
+            .OrderByDescending(static state =>
+                string.Equals(state.LastOutcome, EventDispatchExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
+                EventDispatchWireContractMetadata.IsWireContractProven(state.Metadata))
+            .FirstOrDefault();
+        var serializationExecutionState = wireContractState ?? dispatchRuntimeCatalog?.States
+            .Where(static state =>
+                state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.SerializationExecutionOwnership, out var value) &&
+                string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase))
+            .OrderByDescending(static state =>
+                string.Equals(state.LastOutcome, EventDispatchExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
+                EventDispatchSerializationExecutionMetadata.IsSerializationExecutionProven(state.Metadata))
+            .FirstOrDefault();
 
         var serializationExecutionOwnership = "not-claimed";
         var serializationExecutionOwnershipSource = "not-reported";
@@ -858,11 +869,25 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var serializationExecutionOutboxId = "not-reported";
         var serializationExecutionLastOutcome = "not-reported";
         var serializationExecutionProven = false;
+        var wireContractOwnership = "not-claimed";
+        var wireContractOwnershipSource = "not-reported";
+        var wireEnvelopeSchemaExecution = "not-claimed";
+        var wireEnvelopeSchemaExecutionId = "not-reported";
+        var contractVersionNegotiationExecution = "not-claimed";
+        var contractVersionNegotiationExecutionId = "not-reported";
+        var wireContractProofId = "not-reported";
+        var wireContractOutboxId = "not-reported";
+        var wireContractLastOutcome = "not-reported";
+        var wireContractProven = false;
 
         if (serializationExecutionState is not null)
         {
             var metadata = serializationExecutionState.Metadata;
-            serializationExecutionProven = EventDispatchSerializationExecutionMetadata.IsSerializationExecutionProven(metadata);
+            serializationExecutionProven = string.Equals(
+                serializationExecutionState.LastOutcome,
+                EventDispatchExecutionOutcomes.Succeeded,
+                StringComparison.OrdinalIgnoreCase) &&
+                EventDispatchSerializationExecutionMetadata.IsSerializationExecutionProven(metadata);
             serializationExecutionOwnership = GetMetadataValue(metadata, EventDispatchRuntimeMetadataKeys.SerializationExecutionOwnership, "not-claimed");
             serializationExecutionOwnershipSource = GetMetadataValue(metadata, EventDispatchRuntimeMetadataKeys.SerializationExecutionOwnershipSource, "not-reported");
             serializationDurability = GetMetadataValue(metadata, EventDispatchRuntimeMetadataKeys.SerializationDurability, "not-claimed");
@@ -881,13 +906,34 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             serializationExecutionLastOutcome = serializationExecutionState.LastOutcome ?? "unknown";
         }
 
-        var status = serializationExecutionProven
+        if (wireContractState is not null)
+        {
+            var metadata = wireContractState.Metadata;
+            wireContractProven = string.Equals(
+                wireContractState.LastOutcome,
+                EventDispatchExecutionOutcomes.Succeeded,
+                StringComparison.OrdinalIgnoreCase) &&
+                EventDispatchWireContractMetadata.IsWireContractProven(metadata);
+            wireContractOwnership = GetMetadataValue(metadata, EventDispatchRuntimeMetadataKeys.WireContractOwnership, "not-claimed");
+            wireContractOwnershipSource = GetMetadataValue(metadata, EventDispatchRuntimeMetadataKeys.WireContractOwnershipSource, "not-reported");
+            wireEnvelopeSchemaExecution = GetMetadataValue(metadata, EventDispatchRuntimeMetadataKeys.WireEnvelopeSchemaExecution, "not-claimed");
+            wireEnvelopeSchemaExecutionId = GetMetadataValue(metadata, EventDispatchRuntimeMetadataKeys.WireEnvelopeSchemaExecutionId, "not-reported");
+            contractVersionNegotiationExecution = GetMetadataValue(metadata, EventDispatchRuntimeMetadataKeys.ContractVersionNegotiationExecution, "not-claimed");
+            contractVersionNegotiationExecutionId = GetMetadataValue(metadata, EventDispatchRuntimeMetadataKeys.ContractVersionNegotiationExecutionId, "not-reported");
+            wireContractProofId = GetMetadataValue(metadata, EventDispatchRuntimeMetadataKeys.WireContractProofId, "not-reported");
+            wireContractOutboxId = wireContractState.OutboxId;
+            wireContractLastOutcome = wireContractState.LastOutcome ?? "unknown";
+        }
+
+        var status = wireContractProven
             ? "claimed"
-            : contractCount > 0 || serializerRuntimeCount > 0 || schemaRegistryRuntimeCount > 0 || upcasterRuntimeCount > 0
+            : serializationExecutionProven || contractCount > 0 || serializerRuntimeCount > 0 || schemaRegistryRuntimeCount > 0 || upcasterRuntimeCount > 0
                 ? "partial"
                 : "not-claimed";
-        var nextGap = serializationExecutionProven
-            ? "Keep payload serialization, schema lookup, upcaster execution, compatibility validation, and provider serialization proof covered by provider integration tests."
+        var nextGap = wireContractProven
+            ? "Keep payload serialization, wire-envelope schema, schema lookup, contract-version negotiation, upcaster execution, compatibility validation, provider serialization, and wire-contract proof covered by provider or engine integration tests."
+            : serializationExecutionProven
+            ? "Add executable wire-envelope schema and contract-version negotiation proof before claiming full serialization and contract-version ownership."
             : upcasterRuntimeCount > 0
             ? "Add executable payload serialization, executable schema lookup, upcaster execution, and provider-owned compatibility validation before claiming full serialization and contract-version ownership."
             : schemaRegistryRuntimeCount > 0
@@ -900,7 +946,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
 
         var evidence = string.Create(
             CultureInfo.InvariantCulture,
-            $"channelCatalog={channelCatalog}; subscriptionCatalog={subscriptionCatalog}; publicationPath={publicationPath}; publicationRouting={publicationRouting}; eventContractCatalog={eventContractCatalog}; eventSerializerCatalog={eventSerializerCatalog}; eventSchemaRegistryCatalog={eventSchemaRegistryCatalog}; eventUpcasterCatalog={eventUpcasterCatalog}; eventContractCount={contractCountText}; versionedContracts={versionedContractCount.ToString(CultureInfo.InvariantCulture)}; contentTypeContracts={contentTypeContractCount.ToString(CultureInfo.InvariantCulture)}; serializerDescriptors={serializerReferenceCount.ToString(CultureInfo.InvariantCulture)}; serializerRuntimeCount={serializerRuntimeCount.ToString(CultureInfo.InvariantCulture)}; resolvedSerializerContracts={resolvedSerializerContractCount.ToString(CultureInfo.InvariantCulture)}; unresolvedSerializerContracts={unresolvedSerializerContractCount.ToString(CultureInfo.InvariantCulture)}; schemaRegistryRuntimeCount={schemaRegistryRuntimeCount.ToString(CultureInfo.InvariantCulture)}; schemaRegistryReferences={schemaRegistryReferenceCount.ToString(CultureInfo.InvariantCulture)}; schemaRegistryRequiredSerializers={schemaRegistryRequiredSerializerCount.ToString(CultureInfo.InvariantCulture)}; resolvedSchemaRegistrySerializers={resolvedSchemaRegistrySerializerCount.ToString(CultureInfo.InvariantCulture)}; unresolvedSchemaRegistrySerializers={unresolvedSchemaRegistrySerializerCount.ToString(CultureInfo.InvariantCulture)}; upcasterRuntimeCount={upcasterRuntimeCount.ToString(CultureInfo.InvariantCulture)}; upcasterTransitions={upcasterRuntimeCount.ToString(CultureInfo.InvariantCulture)}; resolvedUpcasterSourceContracts={resolvedUpcasterSourceContractCount.ToString(CultureInfo.InvariantCulture)}; resolvedUpcasterTargetContracts={resolvedUpcasterTargetContractCount.ToString(CultureInfo.InvariantCulture)}; resolvedUpcasterTransitions={resolvedUpcasterTransitionCount.ToString(CultureInfo.InvariantCulture)}; envelopeSchemas={envelopeSchemaCount.ToString(CultureInfo.InvariantCulture)}; compatibilityPolicies={compatibilityPolicyCount.ToString(CultureInfo.InvariantCulture)}; serializerSelection={serializerSelection}; wireSerializationRuntime={wireSerializationRuntime}; messageEnvelopeSchema={messageEnvelopeSchema}; schemaRegistry={schemaRegistry}; contractVersionNegotiation={contractVersionNegotiation}; upcasterPipeline={upcasterPipeline}; compatibilityValidation={compatibilityValidation}; serializationExecutionOwnership={serializationExecutionOwnership}; serializationExecutionOwnershipSource={serializationExecutionOwnershipSource}; serializationDurability={serializationDurability}; serializationScope={serializationScope}; payloadSerializationExecution={payloadSerializationExecution}; payloadSerializationExecutionId={payloadSerializationExecutionId}; schemaLookupExecution={schemaLookupExecution}; schemaLookupExecutionId={schemaLookupExecutionId}; upcasterExecution={upcasterExecution}; upcasterExecutionId={upcasterExecutionId}; compatibilityValidationExecution={compatibilityValidationExecution}; compatibilityValidationExecutionId={compatibilityValidationExecutionId}; providerSerialization={providerSerialization}; providerSerializationId={providerSerializationId}; serializationExecutionOutboxId={serializationExecutionOutboxId}; serializationExecutionLastOutcome={serializationExecutionLastOutcome}; wolverineRequired=false");
+            $"channelCatalog={channelCatalog}; subscriptionCatalog={subscriptionCatalog}; publicationPath={publicationPath}; publicationRouting={publicationRouting}; eventContractCatalog={eventContractCatalog}; eventSerializerCatalog={eventSerializerCatalog}; eventSchemaRegistryCatalog={eventSchemaRegistryCatalog}; eventUpcasterCatalog={eventUpcasterCatalog}; eventContractCount={contractCountText}; versionedContracts={versionedContractCount.ToString(CultureInfo.InvariantCulture)}; contentTypeContracts={contentTypeContractCount.ToString(CultureInfo.InvariantCulture)}; serializerDescriptors={serializerReferenceCount.ToString(CultureInfo.InvariantCulture)}; serializerRuntimeCount={serializerRuntimeCount.ToString(CultureInfo.InvariantCulture)}; resolvedSerializerContracts={resolvedSerializerContractCount.ToString(CultureInfo.InvariantCulture)}; unresolvedSerializerContracts={unresolvedSerializerContractCount.ToString(CultureInfo.InvariantCulture)}; schemaRegistryRuntimeCount={schemaRegistryRuntimeCount.ToString(CultureInfo.InvariantCulture)}; schemaRegistryReferences={schemaRegistryReferenceCount.ToString(CultureInfo.InvariantCulture)}; schemaRegistryRequiredSerializers={schemaRegistryRequiredSerializerCount.ToString(CultureInfo.InvariantCulture)}; resolvedSchemaRegistrySerializers={resolvedSchemaRegistrySerializerCount.ToString(CultureInfo.InvariantCulture)}; unresolvedSchemaRegistrySerializers={unresolvedSchemaRegistrySerializerCount.ToString(CultureInfo.InvariantCulture)}; upcasterRuntimeCount={upcasterRuntimeCount.ToString(CultureInfo.InvariantCulture)}; upcasterTransitions={upcasterRuntimeCount.ToString(CultureInfo.InvariantCulture)}; resolvedUpcasterSourceContracts={resolvedUpcasterSourceContractCount.ToString(CultureInfo.InvariantCulture)}; resolvedUpcasterTargetContracts={resolvedUpcasterTargetContractCount.ToString(CultureInfo.InvariantCulture)}; resolvedUpcasterTransitions={resolvedUpcasterTransitionCount.ToString(CultureInfo.InvariantCulture)}; envelopeSchemas={envelopeSchemaCount.ToString(CultureInfo.InvariantCulture)}; compatibilityPolicies={compatibilityPolicyCount.ToString(CultureInfo.InvariantCulture)}; serializerSelection={serializerSelection}; wireSerializationRuntime={wireSerializationRuntime}; messageEnvelopeSchema={messageEnvelopeSchema}; schemaRegistry={schemaRegistry}; contractVersionNegotiation={contractVersionNegotiation}; upcasterPipeline={upcasterPipeline}; compatibilityValidation={compatibilityValidation}; serializationExecutionOwnership={serializationExecutionOwnership}; serializationExecutionOwnershipSource={serializationExecutionOwnershipSource}; serializationDurability={serializationDurability}; serializationScope={serializationScope}; payloadSerializationExecution={payloadSerializationExecution}; payloadSerializationExecutionId={payloadSerializationExecutionId}; schemaLookupExecution={schemaLookupExecution}; schemaLookupExecutionId={schemaLookupExecutionId}; upcasterExecution={upcasterExecution}; upcasterExecutionId={upcasterExecutionId}; compatibilityValidationExecution={compatibilityValidationExecution}; compatibilityValidationExecutionId={compatibilityValidationExecutionId}; providerSerialization={providerSerialization}; providerSerializationId={providerSerializationId}; serializationExecutionOutboxId={serializationExecutionOutboxId}; serializationExecutionLastOutcome={serializationExecutionLastOutcome}; wireContractOwnership={wireContractOwnership}; wireContractOwnershipSource={wireContractOwnershipSource}; wireEnvelopeSchemaExecution={wireEnvelopeSchemaExecution}; wireEnvelopeSchemaExecutionId={wireEnvelopeSchemaExecutionId}; contractVersionNegotiationExecution={contractVersionNegotiationExecution}; contractVersionNegotiationExecutionId={contractVersionNegotiationExecutionId}; wireContractProofId={wireContractProofId}; wireContractOutboxId={wireContractOutboxId}; wireContractLastOutcome={wireContractLastOutcome}; wolverineRequired=false");
 
         return new SerializationVersioningProfile(status, evidence, nextGap);
     }

@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-12T20:48:08.7588631+00:00",
+  "GeneratedAtUtc": "2026-05-12T21:14:03.8766864+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -271,7 +271,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 79
+      "TypeCount": 80
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1331,7 +1331,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 76
+      "TypeCount": 77
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8737,7 +8737,7 @@
       "Summary": "Defines stable metadata keys used by event-dispatch runtime observations.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 123,
+        "Fields": 130,
         "Properties": 0,
         "Methods": 1
       }
@@ -8795,6 +8795,21 @@
       "AnchorId": "type-cephalon-eventing-services-eventdispatchserializationexecutionmetadata",
       "Declaration": "public static class EventDispatchSerializationExecutionMetadata",
       "Summary": "Builds provider-reported executable serialization proof metadata for successful dispatch reports.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 4
+      }
+    },
+    {
+      "DisplayName": "EventDispatchWireContractMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventdispatchwirecontractmetadata",
+      "Declaration": "public static class EventDispatchWireContractMetadata",
+      "Summary": "Builds executable wire-contract proof metadata for successful dispatch reports.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -40614,6 +40629,28 @@
       "Summary": "Identifies the contracts project."
     },
     {
+      "DisplayName": "ContractVersionNegotiationExecution",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-contractversionnegotiationexecution",
+      "Signature": "const string ContractVersionNegotiationExecution",
+      "Summary": "Identifies whether executable contract-version negotiation was reported."
+    },
+    {
+      "DisplayName": "ContractVersionNegotiationExecutionId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-contractversionnegotiationexecutionid",
+      "Signature": "const string ContractVersionNegotiationExecutionId",
+      "Summary": "Identifies the executable contract-version negotiation proof id."
+    },
+    {
       "DisplayName": "Contribute",
       "Category": "Methods",
       "DeclaringTypeName": "EventStreamRegistry",
@@ -42420,6 +42457,17 @@
     {
       "DisplayName": "CreateMetadata",
       "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchWireContractMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchwirecontractmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "Dictionary\u003Cstring, string\u003E CreateMetadata(IReadOnlyDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string payloadSerializationExecutionId, string wireEnvelopeSchemaExecutionId, string schemaLookupExecutionId, string contractVersionNegotiationExecutionId, string upcasterExecutionId, string compatibilityValidationExecutionId, string providerSerializationId, string wireContractProofId)",
+      "Summary": "Creates a metadata copy enriched with executable wire-contract proof when the inputs support it."
+    },
+    {
+      "DisplayName": "CreateMetadata",
+      "Category": "Methods",
       "DeclaringTypeName": "EventSubscriptionBrokerInboundConsumptionMetadata",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -42614,6 +42662,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventdispatchserializationexecutionmetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string",
       "Signature": "EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string payloadSerializationExecutionId, string schemaLookupExecutionId, string upcasterExecutionId, string compatibilityValidationExecutionId, string providerSerializationId)",
       "Summary": "Creates a dispatch report copy enriched with provider-reported serialization execution proof when the inputs support it."
+    },
+    {
+      "DisplayName": "CreateReport",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchWireContractMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchwirecontractmetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string payloadSerializationExecutionId, string wireEnvelopeSchemaExecutionId, string schemaLookupExecutionId, string contractVersionNegotiationExecutionId, string upcasterExecutionId, string compatibilityValidationExecutionId, string providerSerializationId, string wireContractProofId)",
+      "Summary": "Creates a dispatch report copy enriched with executable wire-contract proof when the inputs support it."
     },
     {
       "DisplayName": "CreateReport",
@@ -78284,6 +78343,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectoractionplanstatus-iswaiting",
       "Signature": "bool IsWaiting { get; }",
       "Summary": "Gets a value indicating whether the managed connector is currently waiting for more runtime truth."
+    },
+    {
+      "DisplayName": "IsWireContractProven",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchWireContractMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchwirecontractmetadata-iswirecontractproven-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "bool IsWireContractProven(IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Gets a value indicating whether the metadata contains complete executable wire-contract proof."
     },
     {
       "DisplayName": "IsWouldChange",
@@ -131244,6 +131314,17 @@
     {
       "DisplayName": "TryApplyMetadata",
       "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchWireContractMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchwirecontractmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string payloadSerializationExecutionId, string wireEnvelopeSchemaExecutionId, string schemaLookupExecutionId, string contractVersionNegotiationExecutionId, string upcasterExecutionId, string compatibilityValidationExecutionId, string providerSerializationId, string wireContractProofId)",
+      "Summary": "Applies executable wire-contract proof to an existing dispatch metadata dictionary when the inputs support it."
+    },
+    {
+      "DisplayName": "TryApplyMetadata",
+      "Category": "Methods",
       "DeclaringTypeName": "EventSubscriptionBrokerInboundConsumptionMetadata",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -134584,6 +134665,61 @@
       "AnchorId": "member-p-cephalon-abstractions-transports-restendpointpublicationgroupdescriptor-winningprecedencerank",
       "Signature": "int? WinningPrecedenceRank { get; }",
       "Summary": "Gets the winning precedence rank for the published candidates when one or more remain published."
+    },
+    {
+      "DisplayName": "WireContractOwnership",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-wirecontractownership",
+      "Signature": "const string WireContractOwnership",
+      "Summary": "Identifies whether a provider or engine runtime reported executable wire-contract ownership."
+    },
+    {
+      "DisplayName": "WireContractOwnershipSource",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-wirecontractownershipsource",
+      "Signature": "const string WireContractOwnershipSource",
+      "Summary": "Identifies the provider or engine runtime source that reported executable wire-contract ownership."
+    },
+    {
+      "DisplayName": "WireContractProofId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-wirecontractproofid",
+      "Signature": "const string WireContractProofId",
+      "Summary": "Identifies the complete executable wire-contract proof id."
+    },
+    {
+      "DisplayName": "WireEnvelopeSchemaExecution",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-wireenvelopeschemaexecution",
+      "Signature": "const string WireEnvelopeSchemaExecution",
+      "Summary": "Identifies whether executable wire-envelope schema materialization was reported."
+    },
+    {
+      "DisplayName": "WireEnvelopeSchemaExecutionId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-wireenvelopeschemaexecutionid",
+      "Signature": "const string WireEnvelopeSchemaExecutionId",
+      "Summary": "Identifies the executable wire-envelope schema proof id."
     },
     {
       "DisplayName": "WithApiSurface",

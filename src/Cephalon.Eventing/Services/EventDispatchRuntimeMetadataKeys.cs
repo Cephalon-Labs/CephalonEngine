@@ -111,6 +111,41 @@ public static class EventDispatchRuntimeMetadataKeys
     public const string ProviderTopologyId = "providerTopologyId";
 
     /// <summary>
+    /// Identifies whether a provider or engine runtime reported executable wire-contract ownership.
+    /// </summary>
+    public const string WireContractOwnership = "wireContractOwnership";
+
+    /// <summary>
+    /// Identifies the provider or engine runtime source that reported executable wire-contract ownership.
+    /// </summary>
+    public const string WireContractOwnershipSource = "wireContractOwnershipSource";
+
+    /// <summary>
+    /// Identifies whether executable wire-envelope schema materialization was reported.
+    /// </summary>
+    public const string WireEnvelopeSchemaExecution = "wireEnvelopeSchemaExecution";
+
+    /// <summary>
+    /// Identifies the executable wire-envelope schema proof id.
+    /// </summary>
+    public const string WireEnvelopeSchemaExecutionId = "wireEnvelopeSchemaExecutionId";
+
+    /// <summary>
+    /// Identifies whether executable contract-version negotiation was reported.
+    /// </summary>
+    public const string ContractVersionNegotiationExecution = "contractVersionNegotiationExecution";
+
+    /// <summary>
+    /// Identifies the executable contract-version negotiation proof id.
+    /// </summary>
+    public const string ContractVersionNegotiationExecutionId = "contractVersionNegotiationExecutionId";
+
+    /// <summary>
+    /// Identifies the complete executable wire-contract proof id.
+    /// </summary>
+    public const string WireContractProofId = "wireContractProofId";
+
+    /// <summary>
     /// Identifies whether a provider or runtime reported provider partition ownership.
     /// </summary>
     public const string ProviderPartitionOwnership = "providerPartitionOwnership";
