@@ -94,6 +94,11 @@ static Cephalon.Eventing.Services.EventSubscriptionConcurrencyMetadata.CreateMet
 static Cephalon.Eventing.Services.EventSubscriptionConcurrencyMetadata.CreateReport(Cephalon.Eventing.Services.EventSubscriptionExecutionReport! report, string! source, int perSubscriptionConcurrencyLimit, int consumerPrefetchCount, string! backpressureStrategy, string! providerConcurrencyId, string! consumerLeaseId, string! workStealingId, string! distributedWorkSharingId, bool parallelHandlerExecution = true) -> Cephalon.Eventing.Services.EventSubscriptionExecutionReport!
 static Cephalon.Eventing.Services.EventSubscriptionConcurrencyMetadata.IsConcurrencyProven(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> bool
 static Cephalon.Eventing.Services.EventSubscriptionConcurrencyMetadata.TryApplyMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, string! outcome, string! source, int perSubscriptionConcurrencyLimit, int consumerPrefetchCount, string! backpressureStrategy, string! providerConcurrencyId, string! consumerLeaseId, string! workStealingId, string! distributedWorkSharingId, bool parallelHandlerExecution = true) -> bool
+Cephalon.Eventing.Services.EventSubscriptionOrderingMetadata
+static Cephalon.Eventing.Services.EventSubscriptionOrderingMetadata.CreateMetadata(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata, string! outcome, string! source, string! handlerOrderingGuaranteeId, string! localFanOutOrderingId, string! perKeyOrderingKey, string! partitionOrderingId, string! causalOrderingId, string! replayOrderingCursorId, string! crossNodeOrderingId, string! providerOrderingId, bool crossNodeOrdering = true) -> System.Collections.Generic.Dictionary<string!, string!>!
+static Cephalon.Eventing.Services.EventSubscriptionOrderingMetadata.CreateReport(Cephalon.Eventing.Services.EventSubscriptionExecutionReport! report, string! source, string! handlerOrderingGuaranteeId, string! localFanOutOrderingId, string! perKeyOrderingKey, string! partitionOrderingId, string! causalOrderingId, string! replayOrderingCursorId, string! crossNodeOrderingId, string! providerOrderingId, bool crossNodeOrdering = true) -> Cephalon.Eventing.Services.EventSubscriptionExecutionReport!
+static Cephalon.Eventing.Services.EventSubscriptionOrderingMetadata.IsOrderingProven(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> bool
+static Cephalon.Eventing.Services.EventSubscriptionOrderingMetadata.TryApplyMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, string! outcome, string! source, string! handlerOrderingGuaranteeId, string! localFanOutOrderingId, string! perKeyOrderingKey, string! partitionOrderingId, string! causalOrderingId, string! replayOrderingCursorId, string! crossNodeOrderingId, string! providerOrderingId, bool crossNodeOrdering = true) -> bool
 Cephalon.Eventing.Services.EventSubscriptionProviderIdempotencyMetadata
 static Cephalon.Eventing.Services.EventSubscriptionProviderIdempotencyMetadata.CreateMetadata(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata, string! outcome, string! source, string! providerIdempotencyKey, string! brokerDeduplicationId, string! exactlyOnceProofId, string! durableInboxCommandId, string! genericInboxCommandId, string! idempotencyLeaseId) -> System.Collections.Generic.Dictionary<string!, string!>!
 static Cephalon.Eventing.Services.EventSubscriptionProviderIdempotencyMetadata.CreateReport(Cephalon.Eventing.Services.EventSubscriptionExecutionReport! report, string! source, string! providerIdempotencyKey, string! brokerDeduplicationId, string! exactlyOnceProofId, string! durableInboxCommandId, string! genericInboxCommandId, string! idempotencyLeaseId) -> Cephalon.Eventing.Services.EventSubscriptionExecutionReport!
@@ -151,6 +156,8 @@ const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ConsumerOf
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ConsumerOffsetCheckpointId = "consumerOffsetCheckpointId" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ConsumerPrefetch = "consumerPrefetch" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ConsumerPrefetchCount = "consumerPrefetchCount" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.CrossNodeOrdering = "crossNodeOrdering" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.CrossNodeOrderingId = "crossNodeOrderingId" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.DistributedWorkSharing = "distributedWorkSharing" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.DistributedWorkSharingId = "distributedWorkSharingId" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.DurableInboxCommandId = "durableInboxCommandId" -> string!
@@ -159,11 +166,19 @@ const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ExactlyOnc
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ExactlyOnceDeliveryProofId = "exactlyOnceDeliveryProofId" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.GenericInboxCommandId = "genericInboxCommandId" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.GenericInboxCommandOwnership = "genericInboxCommandOwnership" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.HandlerOrderingGuarantee = "handlerOrderingGuarantee" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.HandlerOrderingGuaranteeId = "handlerOrderingGuaranteeId" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.InboundAcknowledgement = "inboundAcknowledgement" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.InboundAcknowledgementId = "inboundAcknowledgementId" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.InboundRetryPolicy = "inboundRetryPolicy" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.LocalFanOutOrdering = "localFanOutOrdering" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.LocalFanOutOrderingId = "localFanOutOrderingId" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.MessageDeduplication = "messageDeduplication" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ParallelHandlerExecution = "parallelHandlerExecution" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.PartitionOrdering = "partitionOrdering" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.PartitionOrderingId = "partitionOrderingId" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.PerKeyOrdering = "perKeyOrdering" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.PerKeyOrderingKey = "perKeyOrderingKey" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.PerSubscriptionConcurrencyLimit = "perSubscriptionConcurrencyLimit" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.PoisonMessageHandling = "poisonMessageHandling" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProviderConcurrency = "providerConcurrency" -> string!
@@ -171,8 +186,16 @@ const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProviderCo
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProviderIdempotency = "providerIdempotency" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProviderIdempotencyKey = "providerIdempotencyKey" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProviderIdempotencySource = "providerIdempotencySource" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProviderOrdering = "providerOrdering" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProviderOrderingId = "providerOrderingId" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ReplayOrdering = "replayOrdering" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ReplayOrderingCursorId = "replayOrderingCursorId" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.SubscriptionConcurrency = "subscriptionConcurrency" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.SubscriptionConcurrencySource = "subscriptionConcurrencySource" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.SubscriptionOrdering = "subscriptionOrdering" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.SubscriptionOrderingSource = "subscriptionOrderingSource" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.CausalOrdering = "causalOrdering" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.CausalOrderingId = "causalOrderingId" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.WorkStealing = "workStealing" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.WorkStealingId = "workStealingId" -> string!
 Cephalon.Eventing.Services.IEventSubscriptionDescriptorProvider

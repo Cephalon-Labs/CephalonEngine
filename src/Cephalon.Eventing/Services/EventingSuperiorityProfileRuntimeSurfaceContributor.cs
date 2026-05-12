@@ -36,7 +36,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var durableRetryQueue = ResolveDurableRetryQueueProfile();
         var idempotencyOwnership = ResolveIdempotencyOwnershipProfile();
         var subscriptionConcurrency = ResolveSubscriptionConcurrencyProfile();
-        var subscriptionOrderingEvidence = ResolveSubscriptionOrderingEvidence(topology);
+        var subscriptionOrdering = ResolveSubscriptionOrderingProfile();
         var processManagerStateEvidence = ResolveProcessManagerStateEvidence(topology);
         var choreographyHandoff = ResolveChoreographyHandoffEvidence();
         var remediationReadPerformanceStatus = topology.HasOutboxPublishingPath ? "claimed" : "partial";
@@ -163,10 +163,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     id: "subscription-ordering-ownership",
                     displayName: "Subscription Ordering Ownership",
                     description: "Makes direct in-process subscription execution and code-first middleware separate from handler ordering, per-key ordering, partition ordering, causal ordering, replay ordering, and cross-node ordering guarantees.",
-                    status: "not-claimed",
-                    evidence: subscriptionOrderingEvidence,
+                    status: subscriptionOrdering.Status,
+                    evidence: subscriptionOrdering.Evidence,
                     advantage: "Teams can use Cephalon's Wolverine-free direct execution path without assuming local fan-out or provider bindings silently create ordering guarantees.",
-                    nextGap: "Add a provider-neutral subscription ordering descriptor plus local, per-key, partition, causal, replay, and cross-node ordering evidence before claiming subscription ordering ownership."),
+                    nextGap: subscriptionOrdering.NextGap),
                 CreateEntry(
                     id: "process-manager-state-ownership",
                     displayName: "Process Manager State Ownership",
@@ -1119,7 +1119,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             "Add provider-neutral subscription concurrency proof metadata plus per-subscription limits, prefetch, backpressure, lease, and work-sharing evidence before claiming subscription concurrency ownership.");
     }
 
-    private static string ResolveSubscriptionOrderingEvidence(EventingRuntimeTopology topology)
+    private SubscriptionOrderingProfile ResolveSubscriptionOrderingProfile()
     {
         var declaredSubscriptions = topology.HasSubscriptionContributors ? "present" : "not-present";
         var inProcessExecution = topology.HasInProcessSubscriptionExecutionPath ? "active" : "not-active";
@@ -1127,9 +1127,108 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var externalManagedSubscriptionBindings = topology.HasExternalManagedSubscriptionExecutionBindings ? "present" : "not-present";
         var middlewareCount = topology.SubscriptionExecutionMiddlewareCount.ToString(CultureInfo.InvariantCulture);
 
-        return string.Create(
-            CultureInfo.InvariantCulture,
-            $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; subscriptionOrdering=not-claimed; handlerOrderingGuarantee=not-claimed; localFanOutOrdering=not-claimed; perKeyOrdering=not-claimed; partitionOrdering=not-claimed; causalOrdering=not-claimed; replayOrdering=not-claimed; crossNodeOrdering=not-claimed; providerOrdering=not-present; wolverineRequired=false");
+        using var scope = scopeFactory.CreateScope();
+        var subscriptionRuntimeCatalog = scope.ServiceProvider.GetService<IEventSubscriptionRuntimeCatalog>();
+        var orderingState = subscriptionRuntimeCatalog?.States.FirstOrDefault(static state =>
+            state.Metadata.TryGetValue(EventSubscriptionRuntimeMetadataKeys.SubscriptionOrdering, out var value) &&
+            string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase));
+
+        if (orderingState is not null)
+        {
+            var metadata = orderingState.Metadata;
+            var subscriptionOrdering = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.SubscriptionOrdering,
+                "not-claimed");
+            var subscriptionOrderingSource = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.SubscriptionOrderingSource,
+                "not-reported");
+            var handlerOrderingGuarantee = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.HandlerOrderingGuarantee,
+                "not-claimed");
+            var handlerOrderingGuaranteeId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.HandlerOrderingGuaranteeId,
+                "not-reported");
+            var localFanOutOrdering = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.LocalFanOutOrdering,
+                "not-claimed");
+            var localFanOutOrderingId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.LocalFanOutOrderingId,
+                "not-reported");
+            var perKeyOrdering = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.PerKeyOrdering,
+                "not-claimed");
+            var perKeyOrderingKey = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.PerKeyOrderingKey,
+                "not-reported");
+            var partitionOrdering = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.PartitionOrdering,
+                "not-claimed");
+            var partitionOrderingId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.PartitionOrderingId,
+                "not-reported");
+            var causalOrdering = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.CausalOrdering,
+                "not-claimed");
+            var causalOrderingId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.CausalOrderingId,
+                "not-reported");
+            var replayOrdering = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ReplayOrdering,
+                "not-claimed");
+            var replayOrderingCursorId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ReplayOrderingCursorId,
+                "not-reported");
+            var crossNodeOrdering = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.CrossNodeOrdering,
+                "not-claimed");
+            var crossNodeOrderingId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.CrossNodeOrderingId,
+                "not-reported");
+            var providerOrdering = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ProviderOrdering,
+                "not-present");
+            var providerOrderingId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ProviderOrderingId,
+                "not-reported");
+            var status = EventSubscriptionOrderingMetadata.IsOrderingProven(metadata)
+                ? "claimed"
+                : "partial";
+            var nextGap = status == "claimed"
+                ? "Keep handler, local fan-out, per-key, partition, causal, replay, cross-node, and provider ordering proof covered by provider integration tests."
+                : "Complete handler, local fan-out, per-key, partition, causal, replay, cross-node, and provider ordering evidence before claiming subscription ordering ownership.";
+
+            return new SubscriptionOrderingProfile(
+                status,
+                string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; subscriptionOrdering={subscriptionOrdering}; subscriptionOrderingSource={subscriptionOrderingSource}; handlerOrderingGuarantee={handlerOrderingGuarantee}; handlerOrderingGuaranteeId={handlerOrderingGuaranteeId}; localFanOutOrdering={localFanOutOrdering}; localFanOutOrderingId={localFanOutOrderingId}; perKeyOrdering={perKeyOrdering}; perKeyOrderingKey={perKeyOrderingKey}; partitionOrdering={partitionOrdering}; partitionOrderingId={partitionOrderingId}; causalOrdering={causalOrdering}; causalOrderingId={causalOrderingId}; replayOrdering={replayOrdering}; replayOrderingCursorId={replayOrderingCursorId}; crossNodeOrdering={crossNodeOrdering}; crossNodeOrderingId={crossNodeOrderingId}; providerOrdering={providerOrdering}; providerOrderingId={providerOrderingId}; subscriptionId={orderingState.SubscriptionId}; lastOutcome={orderingState.LastOutcome ?? "unknown"}; wolverineRequired=false"),
+                nextGap);
+        }
+
+        return new SubscriptionOrderingProfile(
+            "not-claimed",
+            string.Create(
+                CultureInfo.InvariantCulture,
+                $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; subscriptionOrdering=not-claimed; subscriptionOrderingSource=not-reported; handlerOrderingGuarantee=not-claimed; handlerOrderingGuaranteeId=not-reported; localFanOutOrdering=not-claimed; localFanOutOrderingId=not-reported; perKeyOrdering=not-claimed; perKeyOrderingKey=not-reported; partitionOrdering=not-claimed; partitionOrderingId=not-reported; causalOrdering=not-claimed; causalOrderingId=not-reported; replayOrdering=not-claimed; replayOrderingCursorId=not-reported; crossNodeOrdering=not-claimed; crossNodeOrderingId=not-reported; providerOrdering=not-present; providerOrderingId=not-reported; wolverineRequired=false"),
+            "Add provider-neutral subscription ordering proof metadata plus local, per-key, partition, causal, replay, cross-node, and provider ordering evidence before claiming subscription ordering ownership.");
     }
 
     private static string ResolveProcessManagerStateEvidence(EventingRuntimeTopology topology)
@@ -1288,4 +1387,6 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private sealed record IdempotencyOwnershipProfile(string Status, string Evidence, string NextGap);
 
     private sealed record SubscriptionConcurrencyProfile(string Status, string Evidence, string NextGap);
+
+    private sealed record SubscriptionOrderingProfile(string Status, string Evidence, string NextGap);
 }

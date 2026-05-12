@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-12T16:57:12.3224772+00:00",
+  "GeneratedAtUtc": "2026-05-12T17:32:44.1336154+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -271,7 +271,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 72
+      "TypeCount": 73
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1331,7 +1331,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 69
+      "TypeCount": 70
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -9193,6 +9193,21 @@
       }
     },
     {
+      "DisplayName": "EventSubscriptionOrderingMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventsubscriptionorderingmetadata",
+      "Declaration": "public static class EventSubscriptionOrderingMetadata",
+      "Summary": "Builds provider-reported subscription ordering proof metadata for successful subscription reports.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 4
+      }
+    },
+    {
       "DisplayName": "EventSubscriptionProviderIdempotencyMetadata",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -9217,7 +9232,7 @@
       "Summary": "Defines stable metadata keys used by the event-subscriptions runtime surface.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 67,
+        "Fields": 85,
         "Properties": 0,
         "Methods": 0
       }
@@ -33381,6 +33396,28 @@
       "Summary": "Gets the stable remediation categories currently active for the execution runtime."
     },
     {
+      "DisplayName": "CausalOrdering",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-causalordering",
+      "Signature": "const string CausalOrdering",
+      "Summary": "Identifies whether causal ordering proof was reported for a subscription."
+    },
+    {
+      "DisplayName": "CausalOrderingId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-causalorderingid",
+      "Signature": "const string CausalOrderingId",
+      "Summary": "Identifies the causal ordering proof id."
+    },
+    {
       "DisplayName": "CausationContextPropagation",
       "Category": "Fields",
       "DeclaringTypeName": "EventContextHandoffMetadataKeys",
@@ -42040,6 +42077,17 @@
     {
       "DisplayName": "CreateMetadata",
       "Category": "Methods",
+      "DeclaringTypeName": "EventSubscriptionOrderingMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionorderingmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean",
+      "Signature": "Dictionary\u003Cstring, string\u003E CreateMetadata(IReadOnlyDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string handlerOrderingGuaranteeId, string localFanOutOrderingId, string perKeyOrderingKey, string partitionOrderingId, string causalOrderingId, string replayOrderingCursorId, string crossNodeOrderingId, string providerOrderingId, bool crossNodeOrdering)",
+      "Summary": "Creates a metadata copy enriched with provider-reported ordering proof when the inputs support it."
+    },
+    {
+      "DisplayName": "CreateMetadata",
+      "Category": "Methods",
       "DeclaringTypeName": "EventSubscriptionProviderIdempotencyMetadata",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -42157,6 +42205,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionconcurrencymetadata-createreport-cephalon-eventing-services-eventsubscriptionexecutionreport-system-string-system-int32-system-int32-system-string-system-string-system-string-system-string-system-string-system-boolean",
       "Signature": "EventSubscriptionExecutionReport CreateReport(EventSubscriptionExecutionReport report, string source, int perSubscriptionConcurrencyLimit, int consumerPrefetchCount, string backpressureStrategy, string providerConcurrencyId, string consumerLeaseId, string workStealingId, string distributedWorkSharingId, bool parallelHandlerExecution)",
       "Summary": "Creates a subscription report copy enriched with provider-reported concurrency proof when the inputs support it."
+    },
+    {
+      "DisplayName": "CreateReport",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventSubscriptionOrderingMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionorderingmetadata-createreport-cephalon-eventing-services-eventsubscriptionexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean",
+      "Signature": "EventSubscriptionExecutionReport CreateReport(EventSubscriptionExecutionReport report, string source, string handlerOrderingGuaranteeId, string localFanOutOrderingId, string perKeyOrderingKey, string partitionOrderingId, string causalOrderingId, string replayOrderingCursorId, string crossNodeOrderingId, string providerOrderingId, bool crossNodeOrdering)",
+      "Summary": "Creates a subscription report copy enriched with provider-reported ordering proof when the inputs support it."
     },
     {
       "DisplayName": "CreateReport",
@@ -42487,6 +42546,28 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectormultinodeleaseexecutioncategories-crossnodeidempotentsafe",
       "Signature": "const string CrossNodeIdempotentSafe",
       "Summary": "Cross-node idempotency currently looks safe for the current multi-node lease posture."
+    },
+    {
+      "DisplayName": "CrossNodeOrdering",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-crossnodeordering",
+      "Signature": "const string CrossNodeOrdering",
+      "Summary": "Identifies whether cross-node ordering proof was reported for a subscription."
+    },
+    {
+      "DisplayName": "CrossNodeOrderingId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-crossnodeorderingid",
+      "Signature": "const string CrossNodeOrderingId",
+      "Summary": "Identifies the cross-node ordering proof id."
     },
     {
       "DisplayName": "CrossNodeRetryCoordination",
@@ -66169,6 +66250,28 @@
       "Summary": "Identifies the logical handler or consumer declared for the subscription."
     },
     {
+      "DisplayName": "HandlerOrderingGuarantee",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-handlerorderingguarantee",
+      "Signature": "const string HandlerOrderingGuarantee",
+      "Summary": "Identifies whether handler ordering guarantee proof was reported for a subscription."
+    },
+    {
+      "DisplayName": "HandlerOrderingGuaranteeId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-handlerorderingguaranteeid",
+      "Signature": "const string HandlerOrderingGuaranteeId",
+      "Summary": "Identifies the handler ordering guarantee proof id."
+    },
+    {
       "DisplayName": "HasActiveReporter",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureReporterCoordinationStatus",
@@ -76487,6 +76590,17 @@
       "Summary": "Gets a value indicating whether provider execution orchestration currently remains risky."
     },
     {
+      "DisplayName": "IsOrderingProven",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventSubscriptionOrderingMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionorderingmetadata-isorderingproven-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "bool IsOrderingProven(IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Gets a value indicating whether the metadata contains complete provider-reported subscription ordering proof."
+    },
+    {
       "DisplayName": "IsOutOfPolicy",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorGovernanceStatus",
@@ -82546,6 +82660,28 @@
       "AnchorId": "member-m-cephalon-abstractions-eventsourcing-isnapshotstore-loadsnapshotasync-1-system-string-system-threading-cancellationtoken",
       "Signature": "Task\u003CValueTuple\u003CTState, long\u003E\u003E LoadSnapshotAsync\u003CTState\u003E(string streamId, CancellationToken cancellationToken)",
       "Summary": "Loads the latest snapshot for the requested stream."
+    },
+    {
+      "DisplayName": "LocalFanOutOrdering",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-localfanoutordering",
+      "Signature": "const string LocalFanOutOrdering",
+      "Summary": "Identifies whether local fan-out ordering proof was reported for a subscription."
+    },
+    {
+      "DisplayName": "LocalFanOutOrderingId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-localfanoutorderingid",
+      "Signature": "const string LocalFanOutOrderingId",
+      "Summary": "Identifies the local fan-out ordering proof id."
     },
     {
       "DisplayName": "Localization",
@@ -96635,6 +96771,28 @@
       "Summary": "Gets the total number of reporter participants currently visible in the coordination story."
     },
     {
+      "DisplayName": "PartitionOrdering",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-partitionordering",
+      "Signature": "const string PartitionOrdering",
+      "Summary": "Identifies whether partition ordering proof was reported for a subscription."
+    },
+    {
+      "DisplayName": "PartitionOrderingId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-partitionorderingid",
+      "Signature": "const string PartitionOrderingId",
+      "Summary": "Identifies the partition ordering proof id."
+    },
+    {
       "DisplayName": "PassHostHeader",
       "Category": "Properties",
       "DeclaringTypeName": "TraefikIngressRouteOptions",
@@ -97502,6 +97660,28 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-durableexecutionruntimestate-pendingtimers",
       "Signature": "IReadOnlyList\u003CDurableExecutionPendingTimer\u003E PendingTimers { get; set; }",
       "Summary": "The durable timers that are currently pending for this stream."
+    },
+    {
+      "DisplayName": "PerKeyOrdering",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-perkeyordering",
+      "Signature": "const string PerKeyOrdering",
+      "Summary": "Identifies whether per-key ordering proof was reported for a subscription."
+    },
+    {
+      "DisplayName": "PerKeyOrderingKey",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-perkeyorderingkey",
+      "Signature": "const string PerKeyOrderingKey",
+      "Summary": "Identifies the key shape used to prove per-key ordering."
     },
     {
       "DisplayName": "PermitLimit",
@@ -102153,6 +102333,28 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliverystatusreconciliationoutcomes-providermessagemissing",
       "Signature": "const string ProviderMessageMissing",
       "Summary": "The invitation has a recorded provider message identifier, but the reconciliation request did not provide one."
+    },
+    {
+      "DisplayName": "ProviderOrdering",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-providerordering",
+      "Signature": "const string ProviderOrdering",
+      "Summary": "Identifies whether provider-owned ordering coordination was reported for a subscription."
+    },
+    {
+      "DisplayName": "ProviderOrderingId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-providerorderingid",
+      "Signature": "const string ProviderOrderingId",
+      "Summary": "Identifies the provider ordering proof id."
     },
     {
       "DisplayName": "ProviderOwnedCompleted",
@@ -108313,6 +108515,28 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstates-replaying",
       "Signature": "const string Replaying",
       "Summary": "Scheduler recovery is currently replaying bounded execution evidence on the current node."
+    },
+    {
+      "DisplayName": "ReplayOrdering",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-replayordering",
+      "Signature": "const string ReplayOrdering",
+      "Summary": "Identifies whether replay ordering proof was reported for a subscription."
+    },
+    {
+      "DisplayName": "ReplayOrderingCursorId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-replayorderingcursorid",
+      "Signature": "const string ReplayOrderingCursorId",
+      "Summary": "Identifies the replay ordering cursor proof id."
     },
     {
       "DisplayName": "ReplayWindowRisk",
@@ -123657,6 +123881,28 @@
       "Summary": "Gets or sets the maximum number of Wolverine-managed execution attempts for one declared subscription message."
     },
     {
+      "DisplayName": "SubscriptionOrdering",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-subscriptionordering",
+      "Signature": "const string SubscriptionOrdering",
+      "Summary": "Identifies whether a provider or runtime reports ownership of subscription ordering controls."
+    },
+    {
+      "DisplayName": "SubscriptionOrderingSource",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-subscriptionorderingsource",
+      "Signature": "const string SubscriptionOrderingSource",
+      "Summary": "Identifies the provider or runtime source that reported subscription ordering proof."
+    },
+    {
       "DisplayName": "SubscriptionRetryDelaySeconds",
       "Category": "Properties",
       "DeclaringTypeName": "WolverineEventingOptions",
@@ -129793,6 +130039,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionconcurrencymetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-int32-system-int32-system-string-system-string-system-string-system-string-system-string-system-boolean",
       "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, string outcome, string source, int perSubscriptionConcurrencyLimit, int consumerPrefetchCount, string backpressureStrategy, string providerConcurrencyId, string consumerLeaseId, string workStealingId, string distributedWorkSharingId, bool parallelHandlerExecution)",
       "Summary": "Applies provider-reported concurrency proof to an existing subscription metadata dictionary when the inputs support it."
+    },
+    {
+      "DisplayName": "TryApplyMetadata",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventSubscriptionOrderingMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionorderingmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean",
+      "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string handlerOrderingGuaranteeId, string localFanOutOrderingId, string perKeyOrderingKey, string partitionOrderingId, string causalOrderingId, string replayOrderingCursorId, string crossNodeOrderingId, string providerOrderingId, bool crossNodeOrdering)",
+      "Summary": "Applies provider-reported ordering proof to an existing subscription metadata dictionary when the inputs support it."
     },
     {
       "DisplayName": "TryApplyMetadata",

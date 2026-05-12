@@ -2709,10 +2709,11 @@ Current `Cephalon.Eventing` highlights:
   even when declared subscriptions, direct in-process execution, code-first middleware, hosted
   bindings, or optional provider binding evidence are present
 - `subscription-ordering-ownership` is the separate subscription ordering boundary in that same
-  profile; it stays `not-claimed` until a provider or engine package owns handler ordering, local
-  fan-out ordering, per-key ordering, partition ordering, causal ordering, replay ordering, and
-  cross-node ordering, even when declared subscriptions, direct in-process execution, code-first
-  middleware, hosted bindings, or optional provider binding evidence are present
+  profile; it stays `not-claimed` until live `EventSubscriptionOrderingMetadata` proof supplies
+  handler ordering, local fan-out ordering, per-key ordering, partition ordering, causal ordering,
+  replay ordering, cross-node ordering, and provider ordering evidence, even when declared
+  subscriptions, direct in-process execution, code-first middleware, hosted bindings, or optional
+  provider binding evidence are present
 - `process-manager-state-ownership` is the separate saga/process-manager state boundary in that
   same profile; it stays `not-claimed` until a provider or engine package owns durable
   process-manager state, correlation, timeout scheduling, compensation workflow, concurrency, and

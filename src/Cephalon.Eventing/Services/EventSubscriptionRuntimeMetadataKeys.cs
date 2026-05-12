@@ -316,6 +316,96 @@ public static class EventSubscriptionRuntimeMetadataKeys
     public const string DistributedWorkSharingId = "distributedWorkSharingId";
 
     /// <summary>
+    /// Identifies whether a provider or runtime reports ownership of subscription ordering controls.
+    /// </summary>
+    public const string SubscriptionOrdering = "subscriptionOrdering";
+
+    /// <summary>
+    /// Identifies the provider or runtime source that reported subscription ordering proof.
+    /// </summary>
+    public const string SubscriptionOrderingSource = "subscriptionOrderingSource";
+
+    /// <summary>
+    /// Identifies whether handler ordering guarantee proof was reported for a subscription.
+    /// </summary>
+    public const string HandlerOrderingGuarantee = "handlerOrderingGuarantee";
+
+    /// <summary>
+    /// Identifies the handler ordering guarantee proof id.
+    /// </summary>
+    public const string HandlerOrderingGuaranteeId = "handlerOrderingGuaranteeId";
+
+    /// <summary>
+    /// Identifies whether local fan-out ordering proof was reported for a subscription.
+    /// </summary>
+    public const string LocalFanOutOrdering = "localFanOutOrdering";
+
+    /// <summary>
+    /// Identifies the local fan-out ordering proof id.
+    /// </summary>
+    public const string LocalFanOutOrderingId = "localFanOutOrderingId";
+
+    /// <summary>
+    /// Identifies whether per-key ordering proof was reported for a subscription.
+    /// </summary>
+    public const string PerKeyOrdering = "perKeyOrdering";
+
+    /// <summary>
+    /// Identifies the key shape used to prove per-key ordering.
+    /// </summary>
+    public const string PerKeyOrderingKey = "perKeyOrderingKey";
+
+    /// <summary>
+    /// Identifies whether partition ordering proof was reported for a subscription.
+    /// </summary>
+    public const string PartitionOrdering = "partitionOrdering";
+
+    /// <summary>
+    /// Identifies the partition ordering proof id.
+    /// </summary>
+    public const string PartitionOrderingId = "partitionOrderingId";
+
+    /// <summary>
+    /// Identifies whether causal ordering proof was reported for a subscription.
+    /// </summary>
+    public const string CausalOrdering = "causalOrdering";
+
+    /// <summary>
+    /// Identifies the causal ordering proof id.
+    /// </summary>
+    public const string CausalOrderingId = "causalOrderingId";
+
+    /// <summary>
+    /// Identifies whether replay ordering proof was reported for a subscription.
+    /// </summary>
+    public const string ReplayOrdering = "replayOrdering";
+
+    /// <summary>
+    /// Identifies the replay ordering cursor proof id.
+    /// </summary>
+    public const string ReplayOrderingCursorId = "replayOrderingCursorId";
+
+    /// <summary>
+    /// Identifies whether cross-node ordering proof was reported for a subscription.
+    /// </summary>
+    public const string CrossNodeOrdering = "crossNodeOrdering";
+
+    /// <summary>
+    /// Identifies the cross-node ordering proof id.
+    /// </summary>
+    public const string CrossNodeOrderingId = "crossNodeOrderingId";
+
+    /// <summary>
+    /// Identifies whether provider-owned ordering coordination was reported for a subscription.
+    /// </summary>
+    public const string ProviderOrdering = "providerOrdering";
+
+    /// <summary>
+    /// Identifies the provider ordering proof id.
+    /// </summary>
+    public const string ProviderOrderingId = "providerOrderingId";
+
+    /// <summary>
     /// Identifies whether the latest runtime observation says a retry is pending.
     /// </summary>
     public const string RetryPending = "retryPending";

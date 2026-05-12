@@ -1905,6 +1905,141 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("lastOutcome=succeeded", concurrencyDimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", concurrencyDimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
+        var incompleteOrderingReport = EventSubscriptionOrderingMetadata.CreateReport(
+            startedInboundReport,
+            source: "provider-ordering-coordinator",
+            handlerOrderingGuaranteeId: "handler-ordering-001",
+            localFanOutOrderingId: "local-fanout-ordering-001",
+            perKeyOrderingKey: "tenant:catalog",
+            partitionOrderingId: "partition-ordering-001",
+            causalOrderingId: "causal-ordering-001",
+            replayOrderingCursorId: "replay-cursor-001",
+            crossNodeOrderingId: "cross-node-ordering-001",
+            providerOrderingId: "provider-ordering-001");
+        Assert.False(EventSubscriptionOrderingMetadata.IsOrderingProven(incompleteOrderingReport.Metadata));
+        Assert.DoesNotContain(EventSubscriptionRuntimeMetadataKeys.SubscriptionOrdering, incompleteOrderingReport.Metadata.Keys);
+
+        var partialOrderingReport = EventSubscriptionOrderingMetadata.CreateReport(
+            concurrencyReport,
+            source: "provider-ordering-coordinator",
+            handlerOrderingGuaranteeId: "handler-ordering-001",
+            localFanOutOrderingId: "local-fanout-ordering-001",
+            perKeyOrderingKey: "tenant:catalog",
+            partitionOrderingId: "partition-ordering-001",
+            causalOrderingId: "causal-ordering-001",
+            replayOrderingCursorId: "replay-cursor-001",
+            crossNodeOrderingId: "cross-node-ordering-001",
+            providerOrderingId: "provider-ordering-001",
+            crossNodeOrdering: false);
+        Assert.False(EventSubscriptionOrderingMetadata.IsOrderingProven(partialOrderingReport.Metadata));
+        Assert.Equal("provider-reported", partialOrderingReport.Metadata[EventSubscriptionRuntimeMetadataKeys.SubscriptionOrdering]);
+        Assert.Equal("not-claimed", partialOrderingReport.Metadata[EventSubscriptionRuntimeMetadataKeys.CrossNodeOrdering]);
+
+        var orderingReport = EventSubscriptionOrderingMetadata.CreateReport(
+            concurrencyReport,
+            source: "provider-ordering-coordinator",
+            handlerOrderingGuaranteeId: "handler-ordering-001",
+            localFanOutOrderingId: "local-fanout-ordering-001",
+            perKeyOrderingKey: "tenant:catalog",
+            partitionOrderingId: "partition-ordering-001",
+            causalOrderingId: "causal-ordering-001",
+            replayOrderingCursorId: "replay-cursor-001",
+            crossNodeOrderingId: "cross-node-ordering-001",
+            providerOrderingId: "provider-ordering-001");
+        Assert.True(EventSubscriptionOrderingMetadata.IsOrderingProven(orderingReport.Metadata));
+        Assert.Equal("provider-reported", orderingReport.Metadata[EventSubscriptionRuntimeMetadataKeys.SubscriptionOrdering]);
+        Assert.Equal("provider-ordering-coordinator", orderingReport.Metadata[EventSubscriptionRuntimeMetadataKeys.SubscriptionOrderingSource]);
+        Assert.Equal("reported", orderingReport.Metadata[EventSubscriptionRuntimeMetadataKeys.HandlerOrderingGuarantee]);
+        Assert.Equal("handler-ordering-001", orderingReport.Metadata[EventSubscriptionRuntimeMetadataKeys.HandlerOrderingGuaranteeId]);
+        Assert.Equal("reported", orderingReport.Metadata[EventSubscriptionRuntimeMetadataKeys.LocalFanOutOrdering]);
+        Assert.Equal("local-fanout-ordering-001", orderingReport.Metadata[EventSubscriptionRuntimeMetadataKeys.LocalFanOutOrderingId]);
+        Assert.Equal("reported", orderingReport.Metadata[EventSubscriptionRuntimeMetadataKeys.PerKeyOrdering]);
+        Assert.Equal("tenant:catalog", orderingReport.Metadata[EventSubscriptionRuntimeMetadataKeys.PerKeyOrderingKey]);
+        Assert.Equal("reported", orderingReport.Metadata[EventSubscriptionRuntimeMetadataKeys.PartitionOrdering]);
+        Assert.Equal("partition-ordering-001", orderingReport.Metadata[EventSubscriptionRuntimeMetadataKeys.PartitionOrderingId]);
+        Assert.Equal("reported", orderingReport.Metadata[EventSubscriptionRuntimeMetadataKeys.CausalOrdering]);
+        Assert.Equal("causal-ordering-001", orderingReport.Metadata[EventSubscriptionRuntimeMetadataKeys.CausalOrderingId]);
+        Assert.Equal("reported", orderingReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ReplayOrdering]);
+        Assert.Equal("replay-cursor-001", orderingReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ReplayOrderingCursorId]);
+        Assert.Equal("reported", orderingReport.Metadata[EventSubscriptionRuntimeMetadataKeys.CrossNodeOrdering]);
+        Assert.Equal("cross-node-ordering-001", orderingReport.Metadata[EventSubscriptionRuntimeMetadataKeys.CrossNodeOrderingId]);
+        Assert.Equal("reported", orderingReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ProviderOrdering]);
+        Assert.Equal("provider-ordering-001", orderingReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ProviderOrderingId]);
+
+        await subscriptionRuntimeReporter.ReportAsync(orderingReport);
+
+        var orderingState = subscriptionRuntimeCatalog.GetById("catalog-broker-consumer");
+        Assert.NotNull(orderingState);
+        Assert.Equal(EventSubscriptionExecutionOutcomes.Succeeded, orderingState.LastOutcome);
+        Assert.Equal("provider-reported", orderingState.Metadata[EventSubscriptionRuntimeMetadataKeys.SubscriptionOrdering]);
+        Assert.Equal("provider-ordering-coordinator", orderingState.Metadata[EventSubscriptionRuntimeMetadataKeys.SubscriptionOrderingSource]);
+        Assert.Equal("handler-ordering-001", orderingState.Metadata[EventSubscriptionRuntimeMetadataKeys.HandlerOrderingGuaranteeId]);
+        Assert.Equal("local-fanout-ordering-001", orderingState.Metadata[EventSubscriptionRuntimeMetadataKeys.LocalFanOutOrderingId]);
+        Assert.Equal("tenant:catalog", orderingState.Metadata[EventSubscriptionRuntimeMetadataKeys.PerKeyOrderingKey]);
+        Assert.Equal("partition-ordering-001", orderingState.Metadata[EventSubscriptionRuntimeMetadataKeys.PartitionOrderingId]);
+        Assert.Equal("causal-ordering-001", orderingState.Metadata[EventSubscriptionRuntimeMetadataKeys.CausalOrderingId]);
+        Assert.Equal("replay-cursor-001", orderingState.Metadata[EventSubscriptionRuntimeMetadataKeys.ReplayOrderingCursorId]);
+        Assert.Equal("cross-node-ordering-001", orderingState.Metadata[EventSubscriptionRuntimeMetadataKeys.CrossNodeOrderingId]);
+        Assert.Equal("provider-ordering-001", orderingState.Metadata[EventSubscriptionRuntimeMetadataKeys.ProviderOrderingId]);
+
+        var orderingEventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        var orderingSubscriptionSurface = Assert.Single(orderingEventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
+        var orderingSubscriptionEntry = Assert.Single(orderingSubscriptionSurface.Entries, entry => entry.Id == "catalog-broker-consumer");
+        Assert.Equal(
+            "provider-reported",
+            orderingSubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.SubscriptionOrdering}"]);
+        Assert.Equal(
+            "provider-ordering-coordinator",
+            orderingSubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.SubscriptionOrderingSource}"]);
+        Assert.Equal(
+            "handler-ordering-001",
+            orderingSubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.HandlerOrderingGuaranteeId}"]);
+        Assert.Equal(
+            "local-fanout-ordering-001",
+            orderingSubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.LocalFanOutOrderingId}"]);
+        Assert.Equal(
+            "tenant:catalog",
+            orderingSubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.PerKeyOrderingKey}"]);
+        Assert.Equal(
+            "partition-ordering-001",
+            orderingSubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.PartitionOrderingId}"]);
+        Assert.Equal(
+            "causal-ordering-001",
+            orderingSubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.CausalOrderingId}"]);
+        Assert.Equal(
+            "replay-cursor-001",
+            orderingSubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.ReplayOrderingCursorId}"]);
+        Assert.Equal(
+            "cross-node-ordering-001",
+            orderingSubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.CrossNodeOrderingId}"]);
+        Assert.Equal(
+            "provider-ordering-001",
+            orderingSubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.ProviderOrderingId}"]);
+        var orderingDimensions = Assert.Single(orderingEventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        Assert.Equal("claimed", orderingDimensions["subscription-ordering-ownership"].Metadata["status"]);
+        Assert.Contains("subscriptionOrdering=provider-reported", orderingDimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("subscriptionOrderingSource=provider-ordering-coordinator", orderingDimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("handlerOrderingGuarantee=reported", orderingDimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("handlerOrderingGuaranteeId=handler-ordering-001", orderingDimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("localFanOutOrdering=reported", orderingDimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("localFanOutOrderingId=local-fanout-ordering-001", orderingDimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("perKeyOrdering=reported", orderingDimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("perKeyOrderingKey=tenant:catalog", orderingDimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("partitionOrdering=reported", orderingDimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("partitionOrderingId=partition-ordering-001", orderingDimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("causalOrdering=reported", orderingDimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("causalOrderingId=causal-ordering-001", orderingDimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("replayOrdering=reported", orderingDimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("replayOrderingCursorId=replay-cursor-001", orderingDimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("crossNodeOrdering=reported", orderingDimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("crossNodeOrderingId=cross-node-ordering-001", orderingDimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerOrdering=reported", orderingDimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerOrderingId=provider-ordering-001", orderingDimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("lastOutcome=succeeded", orderingDimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", orderingDimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+
         var incompleteDurableRetryReport = EventDispatchDurableRetryQueueMetadata.CreateReport(
             exactlyOnceDeliveryReport,
             source: "provider-retry-scheduler",

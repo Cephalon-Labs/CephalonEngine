@@ -4086,6 +4086,113 @@ Represents the next step in the code-owned event subscription execution pipeline
 public sealed class EventSubscriptionExecutionStep
 ```
 
+<a id="type-cephalon-eventing-services-eventsubscriptionorderingmetadata"></a>
+
+### `EventSubscriptionOrderingMetadata`
+
+Builds provider-reported subscription ordering proof metadata for successful subscription reports.
+
+Remarks: Declared subscriptions, direct in-process execution, middleware, hosted execution links, and provider bindings do not automatically prove handler, fan-out, per-key, partition, causal, replay, or cross-node ordering. This helper records that stronger proof only when a successful subscription observation supplies the complete ordering proof set.
+
+#### Declaration
+```csharp
+public static class EventSubscriptionOrderingMetadata
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionorderingmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean"></a>
+
+##### `CreateMetadata`
+
+```csharp
+Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string handlerOrderingGuaranteeId, string localFanOutOrderingId, string perKeyOrderingKey, string partitionOrderingId, string causalOrderingId, string replayOrderingCursorId, string crossNodeOrderingId, string providerOrderingId, bool crossNodeOrdering)
+```
+
+Creates a metadata copy enriched with provider-reported ordering proof when the inputs support it.
+
+Returns: A case-insensitive metadata dictionary containing the original values plus subscription ordering proof when applicable.
+
+Parameters:
+- `metadata`: The subscription execution metadata to copy.
+- `outcome`: The subscription execution outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported subscription ordering proof.
+- `handlerOrderingGuaranteeId`: The handler ordering guarantee proof id.
+- `localFanOutOrderingId`: The local fan-out ordering proof id.
+- `perKeyOrderingKey`: The key shape used to prove per-key ordering.
+- `partitionOrderingId`: The partition ordering proof id.
+- `causalOrderingId`: The causal ordering proof id.
+- `replayOrderingCursorId`: The replay ordering cursor proof id.
+- `crossNodeOrderingId`: The cross-node ordering proof id.
+- `providerOrderingId`: The provider ordering proof id.
+- `crossNodeOrdering`: A value indicating whether the provider reported cross-node ordering.
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionorderingmetadata-createreport-cephalon-eventing-services-eventsubscriptionexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean"></a>
+
+##### `CreateReport`
+
+```csharp
+EventSubscriptionExecutionReport CreateReport(EventSubscriptionExecutionReport report, string source, string handlerOrderingGuaranteeId, string localFanOutOrderingId, string perKeyOrderingKey, string partitionOrderingId, string causalOrderingId, string replayOrderingCursorId, string crossNodeOrderingId, string providerOrderingId, bool crossNodeOrdering)
+```
+
+Creates a subscription report copy enriched with provider-reported ordering proof when the inputs support it.
+
+Returns: A subscription report containing the original metadata plus subscription ordering proof when applicable.
+
+Parameters:
+- `report`: The successful subscription execution report to copy.
+- `source`: The stable provider or runtime source that reported subscription ordering proof.
+- `handlerOrderingGuaranteeId`: The handler ordering guarantee proof id.
+- `localFanOutOrderingId`: The local fan-out ordering proof id.
+- `perKeyOrderingKey`: The key shape used to prove per-key ordering.
+- `partitionOrderingId`: The partition ordering proof id.
+- `causalOrderingId`: The causal ordering proof id.
+- `replayOrderingCursorId`: The replay ordering cursor proof id.
+- `crossNodeOrderingId`: The cross-node ordering proof id.
+- `providerOrderingId`: The provider ordering proof id.
+- `crossNodeOrdering`: A value indicating whether the provider reported cross-node ordering.
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionorderingmetadata-isorderingproven-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `IsOrderingProven`
+
+```csharp
+bool IsOrderingProven(IReadOnlyDictionary<string, string> metadata)
+```
+
+Gets a value indicating whether the metadata contains complete provider-reported subscription ordering proof.
+
+Returns: `true` when complete subscription ordering proof is present; otherwise, `false`.
+
+Parameters:
+- `metadata`: The subscription metadata dictionary to inspect.
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionorderingmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean"></a>
+
+##### `TryApplyMetadata`
+
+```csharp
+bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string handlerOrderingGuaranteeId, string localFanOutOrderingId, string perKeyOrderingKey, string partitionOrderingId, string causalOrderingId, string replayOrderingCursorId, string crossNodeOrderingId, string providerOrderingId, bool crossNodeOrdering)
+```
+
+Applies provider-reported ordering proof to an existing subscription metadata dictionary when the inputs support it.
+
+Returns: `true` when subscription ordering proof was applied; otherwise, `false`.
+
+Parameters:
+- `metadata`: The subscription metadata dictionary to enrich.
+- `outcome`: The subscription execution outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported subscription ordering proof.
+- `handlerOrderingGuaranteeId`: The handler ordering guarantee proof id.
+- `localFanOutOrderingId`: The local fan-out ordering proof id.
+- `perKeyOrderingKey`: The key shape used to prove per-key ordering.
+- `partitionOrderingId`: The partition ordering proof id.
+- `causalOrderingId`: The causal ordering proof id.
+- `replayOrderingCursorId`: The replay ordering cursor proof id.
+- `crossNodeOrderingId`: The cross-node ordering proof id.
+- `providerOrderingId`: The provider ordering proof id.
+- `crossNodeOrdering`: A value indicating whether the provider reported cross-node ordering.
+
 <a id="type-cephalon-eventing-services-eventsubscriptionprovideridempotencymetadata"></a>
 
 ### `EventSubscriptionProviderIdempotencyMetadata`
@@ -4299,6 +4406,26 @@ const string BrokerInboundConsumptionSource
 
 Identifies the provider or runtime source that reported inbound broker consumption.
 
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-causalordering"></a>
+
+##### `CausalOrdering`
+
+```csharp
+const string CausalOrdering
+```
+
+Identifies whether causal ordering proof was reported for a subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-causalorderingid"></a>
+
+##### `CausalOrderingId`
+
+```csharp
+const string CausalOrderingId
+```
+
+Identifies the causal ordering proof id.
+
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-channelid"></a>
 
 ##### `ChannelId`
@@ -4428,6 +4555,26 @@ const string CrossNodeIdempotencyLeaseId
 ```
 
 Identifies the cross-node idempotency lease proof id reported for subscription processing.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-crossnodeordering"></a>
+
+##### `CrossNodeOrdering`
+
+```csharp
+const string CrossNodeOrdering
+```
+
+Identifies whether cross-node ordering proof was reported for a subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-crossnodeorderingid"></a>
+
+##### `CrossNodeOrderingId`
+
+```csharp
+const string CrossNodeOrderingId
+```
+
+Identifies the cross-node ordering proof id.
 
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-deliverymode"></a>
 
@@ -4609,6 +4756,26 @@ const string HandlerId
 
 Identifies the logical handler or consumer declared for the subscription.
 
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-handlerorderingguarantee"></a>
+
+##### `HandlerOrderingGuarantee`
+
+```csharp
+const string HandlerOrderingGuarantee
+```
+
+Identifies whether handler ordering guarantee proof was reported for a subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-handlerorderingguaranteeid"></a>
+
+##### `HandlerOrderingGuaranteeId`
+
+```csharp
+const string HandlerOrderingGuaranteeId
+```
+
+Identifies the handler ordering guarantee proof id.
+
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-hostedexecutionid"></a>
 
 ##### `HostedExecutionId`
@@ -4699,6 +4866,26 @@ const string LastOutcome
 
 Identifies the latest reported subscription execution outcome.
 
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-localfanoutordering"></a>
+
+##### `LocalFanOutOrdering`
+
+```csharp
+const string LocalFanOutOrdering
+```
+
+Identifies whether local fan-out ordering proof was reported for a subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-localfanoutorderingid"></a>
+
+##### `LocalFanOutOrderingId`
+
+```csharp
+const string LocalFanOutOrderingId
+```
+
+Identifies the local fan-out ordering proof id.
+
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-messagededuplication"></a>
 
 ##### `MessageDeduplication`
@@ -4718,6 +4905,46 @@ const string ParallelHandlerExecution
 ```
 
 Identifies whether parallel handler execution is reported for a subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-partitionordering"></a>
+
+##### `PartitionOrdering`
+
+```csharp
+const string PartitionOrdering
+```
+
+Identifies whether partition ordering proof was reported for a subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-partitionorderingid"></a>
+
+##### `PartitionOrderingId`
+
+```csharp
+const string PartitionOrderingId
+```
+
+Identifies the partition ordering proof id.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-perkeyordering"></a>
+
+##### `PerKeyOrdering`
+
+```csharp
+const string PerKeyOrdering
+```
+
+Identifies whether per-key ordering proof was reported for a subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-perkeyorderingkey"></a>
+
+##### `PerKeyOrderingKey`
+
+```csharp
+const string PerKeyOrderingKey
+```
+
+Identifies the key shape used to prove per-key ordering.
 
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-persubscriptionconcurrencylimit"></a>
 
@@ -4789,6 +5016,46 @@ const string ProviderIdempotencySource
 
 Identifies the provider or runtime source that reported subscription idempotency proof.
 
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-providerordering"></a>
+
+##### `ProviderOrdering`
+
+```csharp
+const string ProviderOrdering
+```
+
+Identifies whether provider-owned ordering coordination was reported for a subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-providerorderingid"></a>
+
+##### `ProviderOrderingId`
+
+```csharp
+const string ProviderOrderingId
+```
+
+Identifies the provider ordering proof id.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-replayordering"></a>
+
+##### `ReplayOrdering`
+
+```csharp
+const string ReplayOrdering
+```
+
+Identifies whether replay ordering proof was reported for a subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-replayorderingcursorid"></a>
+
+##### `ReplayOrderingCursorId`
+
+```csharp
+const string ReplayOrderingCursorId
+```
+
+Identifies the replay ordering cursor proof id.
+
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-reportedmetadataprefix"></a>
 
 ##### `ReportedMetadataPrefix`
@@ -4838,6 +5105,26 @@ const string SubscriptionConcurrencySource
 ```
 
 Identifies the provider or runtime source that reported subscription concurrency proof.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-subscriptionordering"></a>
+
+##### `SubscriptionOrdering`
+
+```csharp
+const string SubscriptionOrdering
+```
+
+Identifies whether a provider or runtime reports ownership of subscription ordering controls.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-subscriptionorderingsource"></a>
+
+##### `SubscriptionOrderingSource`
+
+```csharp
+const string SubscriptionOrderingSource
+```
+
+Identifies the provider or runtime source that reported subscription ordering proof.
 
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-subscriptionruntime"></a>
 
