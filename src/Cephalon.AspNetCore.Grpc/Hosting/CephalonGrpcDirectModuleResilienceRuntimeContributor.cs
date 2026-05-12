@@ -5,7 +5,8 @@ namespace Cephalon.AspNetCore.Grpc.Hosting;
 
 internal sealed class CephalonGrpcDirectModuleResilienceRuntimeContributor(
     CephalonGrpcDirectModuleResilienceOptions options,
-    CephalonGrpcDirectModuleCircuitBreakerState circuitBreakerState) : ITechnologyRuntimeContributor
+    CephalonGrpcDirectModuleCircuitBreakerState circuitBreakerState,
+    CephalonGrpcDirectModuleBulkheadState bulkheadState) : ITechnologyRuntimeContributor
 {
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
@@ -34,10 +35,20 @@ internal sealed class CephalonGrpcDirectModuleResilienceRuntimeContributor(
             ["circuitBreakerMinimumThroughput"] = options.CircuitBreakerMinimumThroughput.ToString(CultureInfo.InvariantCulture),
             ["circuitBreakerSamplingDurationSeconds"] = options.CircuitBreakerSamplingDuration.TotalSeconds.ToString(CultureInfo.InvariantCulture),
             ["circuitBreakerBreakDurationSeconds"] = options.CircuitBreakerBreakDuration.TotalSeconds.ToString(CultureInfo.InvariantCulture),
-            ["circuitBreakerOpenStatusCode"] = "Unavailable"
+            ["circuitBreakerOpenStatusCode"] = "Unavailable",
+            ["bulkheadEnabled"] = options.BulkheadEnabled.ToString(CultureInfo.InvariantCulture),
+            ["bulkheadMaxConcurrentExecutions"] = options.BulkheadMaxConcurrentExecutions.ToString(CultureInfo.InvariantCulture),
+            ["bulkheadMaxQueuedActions"] = options.BulkheadMaxQueuedActions.ToString(CultureInfo.InvariantCulture),
+            ["bulkheadQueueingMode"] = options.BulkheadMaxQueuedActions > 0 ? "bounded-queue" : "disabled-reject-on-entry",
+            ["bulkheadRejectedStatusCode"] = "ResourceExhausted"
         };
 
         foreach (var entry in circuitBreakerState.CreateMetadata())
+        {
+            metadata[entry.Key] = entry.Value;
+        }
+
+        foreach (var entry in bulkheadState.CreateMetadata())
         {
             metadata[entry.Key] = entry.Value;
         }
@@ -46,13 +57,13 @@ internal sealed class CephalonGrpcDirectModuleResilienceRuntimeContributor(
             technologyId: "grpc",
             surfaceId: "grpc-direct-module-resilience",
             displayName: "gRPC Direct Module Resilience",
-            description: "Host-enforced timeout and circuit-breaker posture for direct gRPC module endpoints.",
+            description: "Host-enforced timeout, circuit-breaker, and bulkhead posture for direct gRPC module endpoints.",
             entries:
             [
                 new TechnologyRuntimeEntry(
                     id: "grpc-direct-module-resilience",
                     displayName: "gRPC Direct Module Resilience",
-                    description: "Applies configured Engine:Resilience timeout and circuit-breaker policy to direct gRPC module calls without Wolverine or consumer interceptor code.",
+                    description: "Applies configured Engine:Resilience timeout, circuit-breaker, and bulkhead policy to direct gRPC module calls without Wolverine or consumer interceptor code.",
                     metadata: metadata)
             ]);
     }

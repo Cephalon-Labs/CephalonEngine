@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
 using Cephalon.Abstractions.Capabilities;
@@ -159,11 +160,89 @@ public sealed class GrpcTransportErrorAndStreamingHostingTests
     }
 
     [Fact]
+    public async Task SayHello_EnforcesConfiguredGrpcDirectModuleBulkhead()
+    {
+        await using var host = await BuildGrpcHostAsync(enableDirectGrpcBulkhead: true);
+        var httpClient = host.GetTestClient();
+        var client = CreateGrpcClient(host);
+        var gate = host.Services.GetRequiredService<GrpcBulkheadTestGate>();
+
+        using var heldCall = client.SayHelloAsync(new HelloRequest { Name = "bulkhead-hold" });
+        await gate.WaitUntilStartedAsync();
+
+        var rejected = await Assert.ThrowsAsync<RpcException>(async () =>
+        {
+            await client.SayHelloAsync(new HelloRequest { Name = "ok" });
+        });
+
+        gate.Release();
+        var heldReply = await heldCall.ResponseAsync;
+
+        Assert.Equal("held", heldReply.Message);
+        Assert.Equal(StatusCode.ResourceExhausted, rejected.StatusCode);
+        Assert.Contains("bulkhead", rejected.Status.Detail, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(rejected.Trailers, entry =>
+            string.Equals(entry.Key, "cephalon-code", StringComparison.Ordinal) &&
+            string.Equals(entry.Value, "grpc_bulkhead_rejected", StringComparison.Ordinal));
+
+        var surfaces = await httpClient.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/grpc");
+        var entry = Assert.Single(Assert.Single(surfaces ?? []).Entries);
+        Assert.Equal("True", entry.Metadata["bulkheadEnabled"]);
+        Assert.Equal("1", entry.Metadata["bulkheadMaxConcurrentExecutions"]);
+        Assert.Equal("0", entry.Metadata["bulkheadMaxQueuedActions"]);
+        Assert.Equal("disabled-reject-on-entry", entry.Metadata["bulkheadQueueingMode"]);
+        Assert.Equal("ResourceExhausted", entry.Metadata["bulkheadRejectedStatusCode"]);
+        Assert.Equal("1", entry.Metadata["bulkheadRejectedCount"]);
+        Assert.Equal("1", entry.Metadata["bulkheadAcceptedCount"]);
+        Assert.Equal("1", entry.Metadata["bulkheadMaxObservedConcurrency"]);
+    }
+
+    [Fact]
+    public async Task SayHello_HonorsConfiguredGrpcDirectModuleBulkheadQueue()
+    {
+        await using var host = await BuildGrpcHostAsync(
+            enableDirectGrpcBulkhead: true,
+            directGrpcBulkheadMaxQueuedActions: 1);
+        var httpClient = host.GetTestClient();
+        var client = CreateGrpcClient(host);
+        var gate = host.Services.GetRequiredService<GrpcBulkheadTestGate>();
+
+        using var heldCall = client.SayHelloAsync(new HelloRequest { Name = "bulkhead-hold" });
+        await gate.WaitUntilStartedAsync();
+
+        using var queuedCall = client.SayHelloAsync(new HelloRequest { Name = "ok" });
+        await WaitForGrpcResilienceEntryAsync(httpClient, static entry =>
+            string.Equals(entry.Metadata.GetValueOrDefault("bulkheadQueuedCount"), "1", StringComparison.Ordinal));
+
+        var rejected = await Assert.ThrowsAsync<RpcException>(async () =>
+        {
+            await client.SayHelloAsync(new HelloRequest { Name = "ok" });
+        });
+
+        gate.Release();
+        var heldReply = await heldCall.ResponseAsync;
+        var queuedReply = await queuedCall.ResponseAsync;
+
+        Assert.Equal("held", heldReply.Message);
+        Assert.Equal("ok", queuedReply.Message);
+        Assert.Equal(StatusCode.ResourceExhausted, rejected.StatusCode);
+
+        var entry = await WaitForGrpcResilienceEntryAsync(httpClient, static candidate =>
+            string.Equals(candidate.Metadata.GetValueOrDefault("bulkheadRejectedCount"), "1", StringComparison.Ordinal) &&
+            string.Equals(candidate.Metadata.GetValueOrDefault("bulkheadAcceptedCount"), "2", StringComparison.Ordinal));
+
+        Assert.Equal("bounded-queue", entry.Metadata["bulkheadQueueingMode"]);
+        Assert.Equal("1", entry.Metadata["bulkheadMaxQueuedActions"]);
+        Assert.Equal("1", entry.Metadata["bulkheadMaxObservedQueueLength"]);
+    }
+
+    [Fact]
     public async Task GrpcTransport_ReportsDirectModuleResilienceRuntimeSurface()
     {
         await using var host = await BuildGrpcHostAsync(
             enableDirectGrpcTimeout: true,
-            enableDirectGrpcCircuitBreaker: true);
+            enableDirectGrpcCircuitBreaker: true,
+            enableDirectGrpcBulkhead: true);
         var httpClient = host.GetTestClient();
 
         var surfaces = await httpClient.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/grpc");
@@ -180,6 +259,9 @@ public sealed class GrpcTransportErrorAndStreamingHostingTests
         Assert.Equal("1", entry.Metadata["timeoutSeconds"]);
         Assert.Equal("True", entry.Metadata["circuitBreakerEnabled"]);
         Assert.Equal("Unavailable", entry.Metadata["circuitBreakerOpenStatusCode"]);
+        Assert.Equal("True", entry.Metadata["bulkheadEnabled"]);
+        Assert.Equal("1", entry.Metadata["bulkheadMaxConcurrentExecutions"]);
+        Assert.Equal("ResourceExhausted", entry.Metadata["bulkheadRejectedStatusCode"]);
     }
 
     [Fact]
@@ -351,7 +433,9 @@ public sealed class GrpcTransportErrorAndStreamingHostingTests
     private static async Task<WebApplication> BuildGrpcHostAsync(
         bool enableTightRateLimiting = false,
         bool enableDirectGrpcTimeout = false,
-        bool enableDirectGrpcCircuitBreaker = false)
+        bool enableDirectGrpcCircuitBreaker = false,
+        bool enableDirectGrpcBulkhead = false,
+        int directGrpcBulkheadMaxQueuedActions = 0)
     {
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseTestServer();
@@ -379,6 +463,13 @@ public sealed class GrpcTransportErrorAndStreamingHostingTests
             builder.Configuration[$"{EngineSettings.SectionName}:Resilience:CircuitBreaker:MinimumThroughput"] = "1";
             builder.Configuration[$"{EngineSettings.SectionName}:Resilience:CircuitBreaker:SamplingDurationSeconds"] = "60";
             builder.Configuration[$"{EngineSettings.SectionName}:Resilience:CircuitBreaker:BreakDurationSeconds"] = "60";
+        }
+
+        if (enableDirectGrpcBulkhead)
+        {
+            builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Bulkhead:Enabled"] = "true";
+            builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Bulkhead:MaxConcurrentExecutions"] = "1";
+            builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Bulkhead:MaxQueuedActions"] = directGrpcBulkheadMaxQueuedActions.ToString(CultureInfo.InvariantCulture);
         }
 
         builder.AddGrpcTransport();
@@ -411,6 +502,25 @@ public sealed class GrpcTransportErrorAndStreamingHostingTests
         });
 
         return new DiscoveryService.DiscoveryServiceClient(channel);
+    }
+
+    private static async Task<TechnologyRuntimeEntry> WaitForGrpcResilienceEntryAsync(
+        HttpClient httpClient,
+        Func<TechnologyRuntimeEntry, bool> predicate)
+    {
+        for (var attempt = 0; attempt < 50; attempt++)
+        {
+            var surfaces = await httpClient.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/grpc");
+            var entry = surfaces?.SingleOrDefault()?.Entries.SingleOrDefault();
+            if (entry is not null && predicate(entry))
+            {
+                return entry;
+            }
+
+            await Task.Delay(TimeSpan.FromMilliseconds(50));
+        }
+
+        throw new TimeoutException("Timed out waiting for the gRPC resilience runtime entry to reach the expected state.");
     }
 
     private sealed class GrpcSubdirectoryHandler : DelegatingHandler
@@ -465,6 +575,7 @@ internal sealed class GrpcStreamingAndErrorModesTestModule : ModuleBase, IGrpcMo
 
     public override void ConfigureServices(IServiceCollection services)
     {
+        services.AddSingleton<GrpcBulkheadTestGate>();
         services.AddTransient<GrpcStreamingAndErrorModesService>();
     }
 
@@ -482,7 +593,33 @@ internal sealed class GrpcStreamingAndErrorModesTestModule : ModuleBase, IGrpcMo
     }
 }
 
-internal sealed class GrpcStreamingAndErrorModesService : DiscoveryService.DiscoveryServiceBase
+internal sealed class GrpcBulkheadTestGate
+{
+    private readonly TaskCompletionSource started = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private readonly TaskCompletionSource released = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+    public void MarkStarted()
+    {
+        started.TrySetResult();
+    }
+
+    public Task WaitUntilStartedAsync()
+    {
+        return started.Task.WaitAsync(TimeSpan.FromSeconds(5));
+    }
+
+    public Task WaitUntilReleasedAsync(CancellationToken cancellationToken)
+    {
+        return released.Task.WaitAsync(cancellationToken);
+    }
+
+    public void Release()
+    {
+        released.TrySetResult();
+    }
+}
+
+internal sealed class GrpcStreamingAndErrorModesService(GrpcBulkheadTestGate bulkheadGate) : DiscoveryService.DiscoveryServiceBase
 {
     private const string ScenarioHeader = "test-scenario";
 
@@ -524,6 +661,10 @@ internal sealed class GrpcStreamingAndErrorModesService : DiscoveryService.Disco
             case "host-timeout":
                 await Task.Delay(TimeSpan.FromMilliseconds(1500), context.CancellationToken);
                 return new HelloReply { Message = "late" };
+            case "bulkhead-hold":
+                bulkheadGate.MarkStarted();
+                await bulkheadGate.WaitUntilReleasedAsync(context.CancellationToken);
+                return new HelloReply { Message = "held" };
             case "delay":
                 // Reserved for future deadline / cancellation coverage; under
                 // Microsoft.AspNetCore.TestHost the in-memory pipe does not propagate the

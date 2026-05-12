@@ -26,6 +26,7 @@ public static class GrpcTransportServiceCollectionExtensions
             CephalonGrpcDirectModuleResilienceOptions.FromManifest(
                 serviceProvider.GetService<RuntimeManifest>()));
         services.TryAddSingleton<CephalonGrpcDirectModuleCircuitBreakerState>();
+        services.TryAddSingleton<CephalonGrpcDirectModuleBulkheadState>();
         services.TryAddTransient<CephalonGrpcResilienceInterceptor>();
         services.AddGrpc(static options =>
         {

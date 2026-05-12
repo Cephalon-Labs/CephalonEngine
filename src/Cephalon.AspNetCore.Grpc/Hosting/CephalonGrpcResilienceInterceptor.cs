@@ -5,12 +5,14 @@ namespace Cephalon.AspNetCore.Grpc.Hosting;
 
 internal sealed class CephalonGrpcResilienceInterceptor(
     CephalonGrpcDirectModuleResilienceOptions options,
-    CephalonGrpcDirectModuleCircuitBreakerState circuitBreakerState) : Interceptor
+    CephalonGrpcDirectModuleCircuitBreakerState circuitBreakerState,
+    CephalonGrpcDirectModuleBulkheadState bulkheadState) : Interceptor
 {
     private const string BrokenCircuitExceptionTypeName = "Polly.CircuitBreaker.BrokenCircuitException";
     private const string TimeoutRejectedExceptionTypeName = "Polly.Timeout.TimeoutRejectedException";
     private const string TimeoutCode = "grpc_execution_timeout";
     private const string CircuitBreakerOpenCode = "grpc_circuit_breaker_open";
+    private const string BulkheadRejectedCode = "grpc_bulkhead_rejected";
 
     public override Task<TResponse> UnaryServerHandler<TRequest, TResponse>(
         TRequest request,
@@ -71,6 +73,28 @@ internal sealed class CephalonGrpcResilienceInterceptor(
             throw CreateCircuitBreakerException();
         }
 
+        CephalonGrpcDirectModuleBulkheadState.Lease bulkheadLease = default;
+        if (options.BulkheadEnabled)
+        {
+            var lease = await bulkheadState.TryEnterAsync(context.CancellationToken).ConfigureAwait(false);
+            if (lease is null)
+            {
+                throw CreateBulkheadRejectedException();
+            }
+
+            bulkheadLease = lease.Value;
+        }
+
+        using (bulkheadLease)
+        {
+            return await ExecuteAfterAdmissionAsync(execute, context).ConfigureAwait(false);
+        }
+    }
+
+    private async Task<TResponse> ExecuteAfterAdmissionAsync<TResponse>(
+        Func<Task<TResponse>> execute,
+        ServerCallContext context)
+    {
         try
         {
             var response = await ExecuteWithTimeoutAsync(execute, context).ConfigureAwait(false);
@@ -112,6 +136,28 @@ internal sealed class CephalonGrpcResilienceInterceptor(
             throw CreateCircuitBreakerException();
         }
 
+        CephalonGrpcDirectModuleBulkheadState.Lease bulkheadLease = default;
+        if (options.BulkheadEnabled)
+        {
+            var lease = await bulkheadState.TryEnterAsync(context.CancellationToken).ConfigureAwait(false);
+            if (lease is null)
+            {
+                throw CreateBulkheadRejectedException();
+            }
+
+            bulkheadLease = lease.Value;
+        }
+
+        using (bulkheadLease)
+        {
+            await ExecuteAfterAdmissionAsync(execute, context).ConfigureAwait(false);
+        }
+    }
+
+    private async Task ExecuteAfterAdmissionAsync(
+        Func<Task> execute,
+        ServerCallContext context)
+    {
         try
         {
             await ExecuteWithTimeoutAsync(execute, context).ConfigureAwait(false);
@@ -219,6 +265,13 @@ internal sealed class CephalonGrpcResilienceInterceptor(
                 StatusCode.Unavailable,
                 "The gRPC request was rejected because the configured Cephalon circuit breaker is open."),
             CreateTrailers(CircuitBreakerOpenCode));
+
+    private static RpcException CreateBulkheadRejectedException()
+        => new(
+            new Status(
+                StatusCode.ResourceExhausted,
+                "The gRPC request was rejected because the configured Cephalon bulkhead concurrency limit is full."),
+            CreateTrailers(BulkheadRejectedCode));
 
     private static Metadata CreateTrailers(string code)
         => new()

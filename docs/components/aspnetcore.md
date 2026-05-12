@@ -32,7 +32,7 @@ See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), 
 - reporter-, edge-, coordination-, remediation-, and governance-aware CDC drill-downs under the existing `/engine/cdc-captures/runtime/*` and `/engine/cdc-capture-runtimes/*` route families when the shared external CDC operator-story catalog is active
 - `/engine/cdc-capture-runtimes/{executionRuntimeId}/reports` when the opt-in external CDC runtime report sink is active
 - `/engine/rate-limiting` when ASP.NET Core rate-limiting enforcement is active
-- companion gRPC direct-module resilience runtime truth through `/engine/technology-surfaces` when `Cephalon.AspNetCore.Grpc` enforces `Engine:Resilience` timeout or circuit-breaker policy for direct `IGrpcModule` endpoints
+- companion gRPC direct-module resilience runtime truth through `/engine/technology-surfaces` when `Cephalon.AspNetCore.Grpc` enforces `Engine:Resilience` timeout, circuit-breaker, or bulkhead policy for direct `IGrpcModule` endpoints
 - `/engine/rest-endpoint-candidates` when the module-owned REST candidate catalog is active
 - `/engine/rest-endpoint-publication-groups` when grouped module-owned REST publication visibility and authoring-policy state are active
 - `/engine/rest-endpoint-authoring-policies` when behavior-level REST authoring-policy runtime answers are active
@@ -410,7 +410,7 @@ runtime now also keeps long-lived HTTP transport truth visible for stream and co
 `/engine/rate-limiting` rather than treating GraphQL-SSE, GraphQL-WS, SSE, and WebSocket routes as
 undifferentiated request-response endpoints. gRPC endpoint-policy rejections are surfaced as
 gRPC-native `ResourceExhausted` responses rather than REST-shaped JSON envelopes, and direct gRPC module
-timeout or open-circuit faults are translated to `DeadlineExceeded` / `Unavailable` with Cephalon
+timeout, open-circuit, or bulkhead faults are translated to `DeadlineExceeded` / `Unavailable` / `ResourceExhausted` with Cephalon
 metadata trailers instead of leaking as generic `Unknown` failures. The behavior-pipeline
 follow-through now adds a shared behavior-dispatch middleware in `Cephalon.Behaviors` so retry,
 timeout, circuit-breaker, bulkhead, and rate-limiting enforcement apply consistently across transports, resolves narrower

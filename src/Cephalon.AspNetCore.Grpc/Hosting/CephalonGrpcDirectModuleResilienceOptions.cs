@@ -10,6 +10,8 @@ internal sealed class CephalonGrpcDirectModuleResilienceOptions
     private const int DefaultCircuitBreakerMinimumThroughput = 100;
     private const int DefaultCircuitBreakerSamplingDurationSeconds = 30;
     private const int DefaultCircuitBreakerBreakDurationSeconds = 5;
+    private const int DefaultBulkheadMaxConcurrentExecutions = 64;
+    private const int DefaultBulkheadMaxQueuedActions = 0;
 
     private CephalonGrpcDirectModuleResilienceOptions(
         bool timeoutEnabled,
@@ -18,7 +20,10 @@ internal sealed class CephalonGrpcDirectModuleResilienceOptions
         decimal circuitBreakerFailureRatio,
         int circuitBreakerMinimumThroughput,
         TimeSpan circuitBreakerSamplingDuration,
-        TimeSpan circuitBreakerBreakDuration)
+        TimeSpan circuitBreakerBreakDuration,
+        bool bulkheadEnabled,
+        int bulkheadMaxConcurrentExecutions,
+        int bulkheadMaxQueuedActions)
     {
         TimeoutEnabled = timeoutEnabled;
         Timeout = timeout;
@@ -27,6 +32,9 @@ internal sealed class CephalonGrpcDirectModuleResilienceOptions
         CircuitBreakerMinimumThroughput = circuitBreakerMinimumThroughput;
         CircuitBreakerSamplingDuration = circuitBreakerSamplingDuration;
         CircuitBreakerBreakDuration = circuitBreakerBreakDuration;
+        BulkheadEnabled = bulkheadEnabled;
+        BulkheadMaxConcurrentExecutions = bulkheadMaxConcurrentExecutions;
+        BulkheadMaxQueuedActions = bulkheadMaxQueuedActions;
     }
 
     public static CephalonGrpcDirectModuleResilienceOptions Empty { get; } = new(
@@ -36,7 +44,10 @@ internal sealed class CephalonGrpcDirectModuleResilienceOptions
         circuitBreakerFailureRatio: DefaultCircuitBreakerFailureRatio,
         circuitBreakerMinimumThroughput: DefaultCircuitBreakerMinimumThroughput,
         circuitBreakerSamplingDuration: TimeSpan.FromSeconds(DefaultCircuitBreakerSamplingDurationSeconds),
-        circuitBreakerBreakDuration: TimeSpan.FromSeconds(DefaultCircuitBreakerBreakDurationSeconds));
+        circuitBreakerBreakDuration: TimeSpan.FromSeconds(DefaultCircuitBreakerBreakDurationSeconds),
+        bulkheadEnabled: false,
+        bulkheadMaxConcurrentExecutions: DefaultBulkheadMaxConcurrentExecutions,
+        bulkheadMaxQueuedActions: DefaultBulkheadMaxQueuedActions);
 
     public bool TimeoutEnabled { get; }
 
@@ -52,7 +63,13 @@ internal sealed class CephalonGrpcDirectModuleResilienceOptions
 
     public TimeSpan CircuitBreakerBreakDuration { get; }
 
-    public bool HasEnforcedStrategies => TimeoutEnabled || CircuitBreakerEnabled;
+    public bool BulkheadEnabled { get; }
+
+    public int BulkheadMaxConcurrentExecutions { get; }
+
+    public int BulkheadMaxQueuedActions { get; }
+
+    public bool HasEnforcedStrategies => TimeoutEnabled || CircuitBreakerEnabled || BulkheadEnabled;
 
     public static CephalonGrpcDirectModuleResilienceOptions FromManifest(RuntimeManifest? manifest)
     {
@@ -63,6 +80,7 @@ internal sealed class CephalonGrpcDirectModuleResilienceOptions
 
         var timeout = ResolveTimeout(manifest.AppProfile.Resilience.Timeout);
         var circuitBreaker = ResolveCircuitBreaker(manifest.AppProfile.Resilience.CircuitBreaker);
+        var bulkhead = ResolveBulkhead(manifest.AppProfile.Resilience.Bulkhead);
 
         return new CephalonGrpcDirectModuleResilienceOptions(
             timeout.Enabled,
@@ -71,7 +89,10 @@ internal sealed class CephalonGrpcDirectModuleResilienceOptions
             circuitBreaker.FailureRatio,
             circuitBreaker.MinimumThroughput,
             circuitBreaker.SamplingDuration,
-            circuitBreaker.BreakDuration);
+            circuitBreaker.BreakDuration,
+            bulkhead.Enabled,
+            bulkhead.MaxConcurrentExecutions,
+            bulkhead.MaxQueuedActions);
     }
 
     private static ResolvedTimeout ResolveTimeout(TimeoutSelection selection)
@@ -130,6 +151,28 @@ internal sealed class CephalonGrpcDirectModuleResilienceOptions
             TimeSpan.FromSeconds(Math.Max(1, breakDurationSeconds)));
     }
 
+    private static ResolvedBulkhead ResolveBulkhead(BulkheadSelection selection)
+    {
+        ArgumentNullException.ThrowIfNull(selection);
+
+        if (selection.Enabled == false)
+        {
+            return ResolvedBulkhead.Disabled;
+        }
+
+        if (selection.Enabled != true &&
+            !selection.MaxConcurrentExecutions.HasValue &&
+            !selection.MaxQueuedActions.HasValue)
+        {
+            return ResolvedBulkhead.Disabled;
+        }
+
+        return new ResolvedBulkhead(
+            true,
+            Math.Max(1, selection.MaxConcurrentExecutions ?? DefaultBulkheadMaxConcurrentExecutions),
+            Math.Max(0, selection.MaxQueuedActions ?? DefaultBulkheadMaxQueuedActions));
+    }
+
     private readonly record struct ResolvedTimeout(bool Enabled, TimeSpan? Timeout);
 
     private readonly record struct ResolvedCircuitBreaker(
@@ -145,5 +188,16 @@ internal sealed class CephalonGrpcDirectModuleResilienceOptions
             DefaultCircuitBreakerMinimumThroughput,
             TimeSpan.FromSeconds(DefaultCircuitBreakerSamplingDurationSeconds),
             TimeSpan.FromSeconds(DefaultCircuitBreakerBreakDurationSeconds));
+    }
+
+    private readonly record struct ResolvedBulkhead(
+        bool Enabled,
+        int MaxConcurrentExecutions,
+        int MaxQueuedActions)
+    {
+        public static ResolvedBulkhead Disabled { get; } = new(
+            false,
+            DefaultBulkheadMaxConcurrentExecutions,
+            DefaultBulkheadMaxQueuedActions);
     }
 }
