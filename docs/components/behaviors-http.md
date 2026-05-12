@@ -1287,6 +1287,10 @@ separate concerns:
   JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings keep their native error envelopes
   while surfacing the shared Cephalon limiter code plus `429` metadata instead of flattening the
   rejection into a generic transport failure
+- when behavior-owned execution bulkhead saturation rejects a generic behavior HTTP request,
+  GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings keep their native
+  error envelopes while surfacing the shared `behavior_execution_rejected` code plus `429` metadata
+  instead of flattening the rejection into a generic transport failure
 - when behavior-owned execution timeout rejects a generic behavior HTTP request, GraphQL HTTP,
   JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings keep their native error envelopes
   while surfacing the shared `behavior_execution_timeout` code plus `503` metadata instead of

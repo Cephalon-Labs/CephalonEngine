@@ -357,6 +357,35 @@ Validation:
 - `dotnet test tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-build --filter "FullyQualifiedName~GrpcTransportErrorAndStreamingHostingTests|FullyQualifiedName~MapCephalonAppliesConfiguredRateLimitingOnlyToPublicHttpEndpoints|FullyQualifiedName~MapCephalonExposesBehaviorResiliencePoliciesAcrossEndpointAndSnapshot|FullyQualifiedName~BehaviorResilienceRestHostingTests|FullyQualifiedName~BehaviorHttpTransportResilienceHostingTests"`
 - `dotnet build CephalonEngine.slnx --no-restore -m:1`
 
+### ENG-639 generic behavior HTTP bulkhead envelopes
+
+Status: done
+Estimate: 0.5
+Iteration: Sprint 125
+Area: phase-11 / resilience / behavior HTTP
+Quality dimensions: Reliability, Availability, Usability, Compatibility, Maintainability, Performance, Auditability
+
+Why:
+
+- `ENG-099` proved protocol-native generic behavior HTTP `429` envelopes for behavior-execution rate limiting and `ENG-100` proved `503` timeout/open-circuit envelopes, but bulkhead saturation still needed explicit cross-transport proof
+- behavior-dispatch bulkheads are already config-driven through `Engine:Resilience:Bulkhead`; generic behavior HTTP adopters should not need Wolverine, consumer middleware, or transport-specific catch blocks to get truthful saturation answers
+- GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket should keep native protocol shapes rather than collapsing bulkhead rejections into generic transport failures or REST `ResultModel` envelopes
+
+Delivered:
+
+- `Cephalon.Behaviors.Http` now has hosting proof that behavior-execution bulkhead saturation reaches all six generic behavior HTTP bindings through native protocol envelopes
+- GraphQL HTTP, GraphQL-SSE, and GraphQL-WS surface `behavior_execution_rejected` through GraphQL `errors[].extensions` with `statusCode = 429`
+- JSON-RPC surfaces the same stable Cephalon code in `error.data` with the dedicated `-32029` too-many-requests server error
+- SSE and WebSocket surface the same `behavior_execution_rejected` plus `statusCode = 429` streaming error payload
+- component docs, app-model docs, architecture guidance, roadmap, backlog, and project memory now agree that generic behavior HTTP bulkhead envelopes are shipped
+
+Validation:
+
+- `dotnet test tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-restore --filter "FullyQualifiedName~BehaviorHttpTransportResilienceHostingTests" --logger "console;verbosity=minimal"`
+- `dotnet test tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-build --filter "FullyQualifiedName~GrpcTransportErrorAndStreamingHostingTests|FullyQualifiedName~MapCephalonAppliesConfiguredRateLimitingOnlyToPublicHttpEndpoints|FullyQualifiedName~MapCephalonExposesBehaviorResiliencePoliciesAcrossEndpointAndSnapshot|FullyQualifiedName~BehaviorResilienceRestHostingTests|FullyQualifiedName~BehaviorHttpTransportResilienceHostingTests" --logger "console;verbosity=minimal"`
+- `dotnet build CephalonEngine.slnx --no-restore -m:1`
+- `git diff --check`
+
 ### ENG-552 SRE flake-rate Actions readiness evidence
 
 Status: done
@@ -1290,7 +1319,7 @@ Delivered:
 - added XML remarks that explain the full operator route surface still uses dynamic Minimal API delegate binding
 - added `Cephalon.AspNetCore` to `scripts/deployment-mode-support.json` as a high-tier, unclaimed dynamic route-binding boundary
 - added the dispatch-ready `IBehaviorCollectionBuilder.Register<TBehavior, TInput, TOutput>(JsonTypeInfo<TInput>, configureTopology)` fluent registration path so manual generic behavior HTTP registrations can materialize JSON payloads through explicit metadata instead of reflection fallback
-- refreshed the behavior HTTP resilience proof so GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket all prove protocol-native rate-limit, timeout, and circuit-breaker envelopes against real dispatch
+- refreshed the behavior HTTP resilience proof so GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket all prove protocol-native rate-limit, timeout, and circuit-breaker envelopes against real dispatch; `ENG-639` later adds the matching bulkhead-saturation proof
 - refreshed deployment-mode docs, trim/AOT inventory, compatibility, `.NET 11` readiness, component docs, roadmap, backlog, project memory, scorecard tests, and release-validation fixtures to read back 9 package entries / 3 known-hazard packages / 15 hazard entries without promoting global support
 - closed the release publish-probe NuGet audit failure by updating the MongoDB-family runtime dependency baseline to `MongoDB.Driver` 3.8.0 and pinning `SharpCompress` 0.48.0 directly in the MongoDB-facing packages instead of suppressing NU1902
 
@@ -18313,6 +18342,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-098 behavior-execution rate-limiting baseline: `Cephalon.Abstractions` now extends `BehaviorExecutionResilienceSelection` plus `BehaviorExecutionResilienceOverrideSelection` with rate-limiting inputs, `Cephalon.Engine` now binds and validates behavior-execution rate-limiting overrides, `Cephalon.Behaviors` now enforces shared execution rate limiting in the behavior-dispatch middleware while publishing truthful rate-limiting metadata through `/engine/behavior-resilience` plus `snapshot.BehaviorResiliencePolicies`, and `Cephalon.Behaviors.Http` now proves both REST `429` precedence paths: the host-owned ASP.NET Core limiter wins when both layers are active, while `Engine:Resilience:RateLimiting:Overrides` can disable the endpoint policy for a targeted behavior/transport pair so the behavior-owned `429` answer surfaces without breaking OpenAPI or runtime truth — **Shipped** · targeted composition tests 16/16 + hosting tests 8/8 + package-surface tests 153/153
 - ENG-099 generic behavior HTTP transport-native rate-limit envelopes: `Cephalon.Behaviors.Http` now shares one limiter-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution limiter rejections keep protocol-native error shapes with stable Cephalon codes plus `429` metadata instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned rate limiting — **Shipped** · targeted hosting tests 13/13 + composition tests 28/28 + package-surface tests 153/153
 - ENG-100 generic behavior HTTP transport-native timeout and circuit-breaker envelopes: `Cephalon.Behaviors.Http` now shares one resilience-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution timeout and open-circuit rejections keep protocol-native error shapes with stable Cephalon codes plus `503` metadata and optional retry-after timing instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned timeout and circuit-breaker policy — **Shipped** · targeted hosting tests 25/25 + composition tests 28/28 + package-surface tests 153/153
+- ENG-639 generic behavior HTTP bulkhead envelopes: `Cephalon.Behaviors.Http` now proves behavior-execution bulkhead saturation across GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket, preserving protocol-native `429` envelopes with `behavior_execution_rejected` instead of generic transport failures or REST `ResultModel` payloads — **Shipped** · targeted hosting tests 24/24
 - ENG-101 phase 12 strangler-fig migration policy and progress baseline: `Cephalon.Abstractions` now exposes `IStranglerFigMigrationRuntimeCatalog` plus `StranglerFigMigrationRuntimeDescriptor`, `Cephalon.Engine` now binds deterministic `Engine:Migration:StranglerFig` default plus per-route overlays into `snapshot.StranglerFigRoutePolicies`, and `Cephalon.AspNetCore` now exposes `/engine/strangler-fig/runtime` plus `/engine/strangler-fig/runtime/{routeId}` while host-level cutover remains later — **Shipped** · composition tests 4/4 + hosting tests 1/1 + package-surface tests 153/153
 - ENG-102 phase 12 ASP.NET Core strangler-fig cutover runtime: `Cephalon.AspNetCore` now derives host cutover execution from `IStranglerFigMigrationRuntimeCatalog`, exposes `/engine/strangler-fig/cutover` plus `/engine/strangler-fig/cutover/resolve`, rewrites rooted local targets in-process, redirects or proxies absolute HTTP or HTTPS targets through `Engine:Migration:StranglerFig:AspNetCore`, and rejects unsupported selected endpoints truthfully with `502` while broader provider-specific ingress or edge automation remains later — **Shipped** · hosting tests 5/5 + composition tests 4/4 + package-surface tests 153/153
 - ENG-131 phase 13 CDC execution ownership binding baseline: `Cephalon.Abstractions` now exposes `CdcCaptureExecutionBindingDescriptor`, `CdcCaptureDescriptor` plus `CdcCaptureRuntimeState` now carry `ExecutionBinding`, `Cephalon.Data` now resolves authored/requested/effective ownership deterministically while rejecting ambiguous competing runtime claims and scoping the shared pump to captures effectively owned by `data-cdc-capture-pump`, and `Cephalon.AspNetCore` now exposes `/engine/cdc-captures/execution-runtimes/{executionRuntimeId}` plus `/engine/cdc-captures/runtime/execution-runtimes/{executionRuntimeId}` so capture-first and runtime-first CDC ownership views stay on the same truth — **Shipped** · GitHub issue `#556` · composition tests 12/12 + hosting tests 1/1 + tooling tests 171/171 + reference docs publish script

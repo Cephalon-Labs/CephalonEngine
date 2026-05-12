@@ -17,9 +17,11 @@ namespace Cephalon.Tests.Hosting;
 
 public sealed partial class BehaviorHttpTransportResilienceHostingTests
 {
+    private const string BulkheadBehaviorId = "tests.bulkhead";
     private const string CircuitBreakerBehaviorId = "tests.circuit-breaker";
     private const string RateLimitedBehaviorId = "tests.rate-limited";
     private const int JsonRpcServiceUnavailableCode = -32053;
+    private const int JsonRpcTooManyRequestsCode = -32029;
     private const string TimeoutBehaviorId = "tests.timeout";
 
     [Fact]
@@ -285,6 +287,50 @@ public sealed partial class BehaviorHttpTransportResilienceHostingTests
         await AssertCircuitBreakerTransportEnvelopeAsync(transportId);
     }
 
+    [Theory]
+    [InlineData("http.graphql")]
+    [InlineData("http.jsonrpc")]
+    [InlineData("http.graphql-sse")]
+    [InlineData("http.graphql-ws")]
+    [InlineData("http.sse")]
+    [InlineData("http.ws")]
+    public async Task BehaviorHttpTransportsReturnProtocolBulkheadEnvelopeWhenBehaviorExecutionBulkheadSaturates(string transportId)
+    {
+        await AssertBulkheadTransportEnvelopeAsync(transportId);
+    }
+
+    private static async Task<WebApplication> BuildBulkheadBehaviorHttpAppAsync(string transportId)
+    {
+        BulkheadProbe.Reset();
+
+        var builder = WebApplication.CreateBuilder();
+        builder.WebHost.UseTestServer();
+        builder.Configuration[$"{EngineSettings.SectionName}:Blueprint"] = "ModularMonolith";
+        builder.Configuration[$"{EngineSettings.SectionName}:Transports:0"] = "BehaviorHttp";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Bulkhead:Enabled"] = "true";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Bulkhead:MaxConcurrentExecutions"] = "1";
+        builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Bulkhead:MaxQueuedActions"] = "0";
+        builder.AddCephalon(engine =>
+        {
+            engine.AddBehaviors(options => options.AutoRegister = false, behaviors =>
+            {
+                behaviors.AddHttpBehaviorBindings();
+                behaviors.Register<BulkheadBehavior, BulkheadInput, BulkheadOutput>(
+                    BehaviorHttpTransportJsonSerializerContext.Default.BulkheadInput,
+                    topology =>
+                {
+                    topology.AsDirect();
+                    ConfigureTransport(topology, transportId);
+                });
+            });
+        });
+
+        var app = builder.Build();
+        app.MapCephalon();
+        await app.StartAsync();
+        return app;
+    }
+
     private static async Task<WebApplication> BuildTimeoutBehaviorHttpAppAsync(string transportId)
     {
         var builder = WebApplication.CreateBuilder();
@@ -373,6 +419,264 @@ public sealed partial class BehaviorHttpTransportResilienceHostingTests
             case "http.ws":
                 topology.ViaWebSocket();
                 break;
+            default:
+                throw new InvalidOperationException($"Unsupported behavior HTTP transport '{transportId}'.");
+        }
+    }
+
+    private static async Task AssertBulkheadTransportEnvelopeAsync(string transportId)
+    {
+        switch (transportId)
+        {
+            case "http.graphql":
+            {
+                await using var app = await BuildBulkheadBehaviorHttpAppAsync(transportId);
+                var client = app.GetTestClient();
+                var firstRequest = client.PostAsJsonAsync("/graphql/v1/tests/bulkhead", CreateGraphqlRequest("alpha"));
+                await BulkheadProbe.WaitUntilStartedAsync();
+
+                try
+                {
+                    var rejectedResponse = await client.PostAsJsonAsync(
+                        "/graphql/v1/tests/bulkhead",
+                        CreateGraphqlRequest("beta"));
+                    var rejectedPayload = await rejectedResponse.Content.ReadFromJsonAsync<JsonElement>();
+
+                    Assert.Equal(HttpStatusCode.OK, rejectedResponse.StatusCode);
+                    AssertGraphqlError(
+                        Assert.Single(rejectedPayload.GetProperty("errors").EnumerateArray()),
+                        "behavior_execution_rejected",
+                        429,
+                        "concurrency");
+                }
+                finally
+                {
+                    BulkheadProbe.Release();
+                }
+
+                var firstResponse = await firstRequest;
+                var firstPayload = await firstResponse.Content.ReadFromJsonAsync<JsonElement>();
+                Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+                Assert.Equal("alpha", firstPayload.GetProperty("data").GetProperty("value").GetString());
+                break;
+            }
+            case "http.jsonrpc":
+            {
+                await using var app = await BuildBulkheadBehaviorHttpAppAsync(transportId);
+                var client = app.GetTestClient();
+                var firstRequest = client.PostAsJsonAsync(
+                    "/json-rpc/v1/tests/bulkhead",
+                    CreateJsonRpcRequest("req-1", "alpha"));
+                await BulkheadProbe.WaitUntilStartedAsync();
+
+                try
+                {
+                    var rejectedResponse = await client.PostAsJsonAsync(
+                        "/json-rpc/v1/tests/bulkhead",
+                        CreateJsonRpcRequest("req-2", "beta"));
+                    var rejectedPayload = await rejectedResponse.Content.ReadFromJsonAsync<JsonElement>();
+
+                    Assert.Equal(HttpStatusCode.OK, rejectedResponse.StatusCode);
+                    AssertJsonRpcTooManyRequests(
+                        rejectedPayload,
+                        "behavior_execution_rejected",
+                        "concurrency",
+                        expectRetryAfter: false);
+                }
+                finally
+                {
+                    BulkheadProbe.Release();
+                }
+
+                var firstResponse = await firstRequest;
+                var firstPayload = await firstResponse.Content.ReadFromJsonAsync<JsonElement>();
+                Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+                Assert.Equal("alpha", firstPayload.GetProperty("result").GetProperty("Value").GetString());
+                break;
+            }
+            case "http.graphql-sse":
+            {
+                await using var app = await BuildBulkheadBehaviorHttpAppAsync(transportId);
+                var client = app.GetTestClient();
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+                using var firstRequest = new HttpRequestMessage(HttpMethod.Post, "/graphql-sse/v1/tests/bulkhead");
+                firstRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/event-stream"));
+                firstRequest.Content = JsonContent.Create(CreateGraphqlRequest("alpha"));
+                var firstResponseTask = client.SendAsync(firstRequest, HttpCompletionOption.ResponseHeadersRead, cts.Token);
+                await BulkheadProbe.WaitUntilStartedAsync();
+
+                try
+                {
+                    using var rejectedRequest = new HttpRequestMessage(
+                        HttpMethod.Post,
+                        "/graphql-sse/v1/tests/bulkhead");
+                    rejectedRequest.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("text/event-stream"));
+                    rejectedRequest.Content = JsonContent.Create(CreateGraphqlRequest("beta"));
+                    using var rejectedResponse = await client.SendAsync(
+                        rejectedRequest,
+                        HttpCompletionOption.ResponseHeadersRead,
+                        cts.Token);
+                    var rejectedEvent = await ReadSseMessageAsync(rejectedResponse, cts.Token);
+                    using var rejectedPayload = JsonDocument.Parse(rejectedEvent.Data);
+
+                    Assert.Equal("text/event-stream", rejectedResponse.Content.Headers.ContentType?.MediaType);
+                    Assert.Equal("next", rejectedEvent.EventName);
+                    AssertGraphqlError(
+                        Assert.Single(rejectedPayload.RootElement.GetProperty("errors").EnumerateArray()),
+                        "behavior_execution_rejected",
+                        429,
+                        "concurrency");
+                }
+                finally
+                {
+                    BulkheadProbe.Release();
+                }
+
+                using var firstResponse = await firstResponseTask;
+                var firstEvent = await ReadSseMessageAsync(firstResponse, cts.Token);
+                using var firstPayload = JsonDocument.Parse(firstEvent.Data);
+                Assert.Equal("text/event-stream", firstResponse.Content.Headers.ContentType?.MediaType);
+                Assert.Equal("next", firstEvent.EventName);
+                Assert.Equal("alpha", firstPayload.RootElement.GetProperty("data").GetProperty("Value").GetString());
+                break;
+            }
+            case "http.graphql-ws":
+            {
+                await using var app = await BuildBulkheadBehaviorHttpAppAsync(transportId);
+                var webSocketClient = app.GetTestServer().CreateWebSocketClient();
+                webSocketClient.SubProtocols.Add("graphql-transport-ws");
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+                using var firstSocket = await webSocketClient.ConnectAsync(
+                    new Uri("ws://localhost/graphql-ws/v1/tests/bulkhead"),
+                    cts.Token);
+                using var rejectedSocket = await webSocketClient.ConnectAsync(
+                    new Uri("ws://localhost/graphql-ws/v1/tests/bulkhead"),
+                    cts.Token);
+
+                await InitializeGraphqlWebSocketAsync(firstSocket, cts.Token);
+                await InitializeGraphqlWebSocketAsync(rejectedSocket, cts.Token);
+                await SendWebSocketJsonAsync(
+                    firstSocket,
+                    new
+                    {
+                        id = "req-1",
+                        type = "subscribe",
+                        payload = CreateGraphqlRequest("alpha")
+                    },
+                    cts.Token);
+                await BulkheadProbe.WaitUntilStartedAsync();
+
+                try
+                {
+                    using var rejectedPayload = await SubscribeGraphqlWsErrorAsync(
+                        rejectedSocket,
+                        "req-2",
+                        "beta",
+                        cts.Token);
+                    AssertGraphqlError(
+                        Assert.Single(rejectedPayload.RootElement.GetProperty("payload").EnumerateArray()),
+                        "behavior_execution_rejected",
+                        429,
+                        "concurrency");
+                }
+                finally
+                {
+                    BulkheadProbe.Release();
+                }
+
+                var successMessage = await ReceiveWebSocketMessageMatchingAsync(
+                    firstSocket,
+                    message => message.Contains("\"type\":\"next\"", StringComparison.Ordinal) &&
+                        message.Contains("\"id\":\"req-1\"", StringComparison.Ordinal),
+                    cts.Token);
+                using var successPayload = JsonDocument.Parse(successMessage);
+                Assert.Equal("alpha", successPayload.RootElement
+                    .GetProperty("payload")
+                    .GetProperty("data")
+                    .GetProperty("Value")
+                    .GetString());
+                break;
+            }
+            case "http.sse":
+            {
+                await using var app = await BuildBulkheadBehaviorHttpAppAsync(transportId);
+                var client = app.GetTestClient();
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+                using var firstRequest = new HttpRequestMessage(
+                    HttpMethod.Get,
+                    "/sse/v1/tests/bulkhead?value=alpha");
+                var firstResponseTask = client.SendAsync(firstRequest, HttpCompletionOption.ResponseHeadersRead, cts.Token);
+                await BulkheadProbe.WaitUntilStartedAsync();
+
+                try
+                {
+                    using var rejectedRequest = new HttpRequestMessage(
+                        HttpMethod.Get,
+                        "/sse/v1/tests/bulkhead?value=beta");
+                    using var rejectedResponse = await client.SendAsync(
+                        rejectedRequest,
+                        HttpCompletionOption.ResponseHeadersRead,
+                        cts.Token);
+                    var rejectedEvent = await ReadSseMessageAsync(rejectedResponse, cts.Token);
+                    using var rejectedPayload = JsonDocument.Parse(rejectedEvent.Data);
+
+                    Assert.Equal("text/event-stream", rejectedResponse.Content.Headers.ContentType?.MediaType);
+                    Assert.Equal("error", rejectedEvent.EventName);
+                    AssertStreamingError(
+                        rejectedPayload.RootElement,
+                        "behavior_execution_rejected",
+                        429,
+                        "concurrency");
+                }
+                finally
+                {
+                    BulkheadProbe.Release();
+                }
+
+                using var firstResponse = await firstResponseTask;
+                var firstEvent = await ReadSseMessageAsync(firstResponse, cts.Token);
+                using var firstPayload = JsonDocument.Parse(firstEvent.Data);
+                Assert.Equal("text/event-stream", firstResponse.Content.Headers.ContentType?.MediaType);
+                Assert.Equal("result", firstEvent.EventName);
+                Assert.Equal("alpha", firstPayload.RootElement.GetProperty("Value").GetString());
+                break;
+            }
+            case "http.ws":
+            {
+                await using var app = await BuildBulkheadBehaviorHttpAppAsync(transportId);
+                var webSocketClient = app.GetTestServer().CreateWebSocketClient();
+                using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(15));
+                using var firstSocket = await webSocketClient.ConnectAsync(
+                    new Uri("ws://localhost/ws/v1/tests/bulkhead"),
+                    cts.Token);
+                using var rejectedSocket = await webSocketClient.ConnectAsync(
+                    new Uri("ws://localhost/ws/v1/tests/bulkhead"),
+                    cts.Token);
+                await SendWebSocketJsonAsync(firstSocket, new { value = "alpha" }, cts.Token);
+                await BulkheadProbe.WaitUntilStartedAsync();
+
+                try
+                {
+                    using var rejectedPayload = await SendWebSocketRequestAndReadJsonAsync(
+                        rejectedSocket,
+                        "beta",
+                        cts.Token);
+                    AssertStreamingError(
+                        rejectedPayload.RootElement,
+                        "behavior_execution_rejected",
+                        429,
+                        "concurrency");
+                }
+                finally
+                {
+                    BulkheadProbe.Release();
+                }
+
+                var successMessage = await ReceiveWebSocketTextAsync(firstSocket, cts.Token);
+                using var successPayload = JsonDocument.Parse(successMessage);
+                Assert.Equal("alpha", successPayload.RootElement.GetProperty("Value").GetString());
+                break;
+            }
             default:
                 throw new InvalidOperationException($"Unsupported behavior HTTP transport '{transportId}'.");
         }
@@ -837,6 +1141,27 @@ public sealed partial class BehaviorHttpTransportResilienceHostingTests
         }
     }
 
+    private static void AssertJsonRpcTooManyRequests(
+        JsonElement payload,
+        string expectedCephalonCode,
+        string expectedMessageFragment,
+        bool expectRetryAfter)
+    {
+        Assert.Equal(JsonRpcTooManyRequestsCode, payload.GetProperty("error").GetProperty("code").GetInt32());
+        Assert.Equal("Too many requests", payload.GetProperty("error").GetProperty("message").GetString());
+        var data = payload.GetProperty("error").GetProperty("data").GetString();
+        Assert.Contains(expectedCephalonCode, data, StringComparison.Ordinal);
+        Assert.Contains(expectedMessageFragment, data, StringComparison.OrdinalIgnoreCase);
+        if (expectRetryAfter)
+        {
+            Assert.Contains("Retry after", data, StringComparison.OrdinalIgnoreCase);
+        }
+        else
+        {
+            Assert.DoesNotContain("Retry after", data, StringComparison.OrdinalIgnoreCase);
+        }
+    }
+
     private static async Task<SseMessage> ReadSseMessageAsync(
         HttpResponseMessage response,
         CancellationToken cancellationToken)
@@ -951,6 +1276,24 @@ public sealed partial class BehaviorHttpTransportResilienceHostingTests
 
     private sealed record RateLimitedOutput(string? Value);
 
+    [AppBehavior(BulkheadBehaviorId)]
+    private sealed class BulkheadBehavior : IAppBehavior<BulkheadInput, BulkheadOutput>
+    {
+        public async Task<BulkheadOutput> HandleAsync(
+            BulkheadInput input,
+            IBehaviorContext context,
+            CancellationToken cancellationToken = default)
+        {
+            BulkheadProbe.MarkStarted();
+            await BulkheadProbe.WaitForReleaseAsync(cancellationToken);
+            return new BulkheadOutput(input.Value);
+        }
+    }
+
+    private sealed record BulkheadInput(string? Value);
+
+    private sealed record BulkheadOutput(string? Value);
+
     [AppBehavior(TimeoutBehaviorId)]
     private sealed class TimeoutBehavior : IAppBehavior<SlowInput, SlowOutput>
     {
@@ -983,6 +1326,44 @@ public sealed partial class BehaviorHttpTransportResilienceHostingTests
 
     private sealed record SseMessage(string? EventName, string Data);
 
+    private static class BulkheadProbe
+    {
+        private static TaskCompletionSource<bool> releaseSignal = CreateCompletionSource();
+        private static TaskCompletionSource<bool> startedSignal = CreateCompletionSource();
+
+        public static void Reset()
+        {
+            releaseSignal = CreateCompletionSource();
+            startedSignal = CreateCompletionSource();
+        }
+
+        public static void MarkStarted()
+        {
+            startedSignal.TrySetResult(true);
+        }
+
+        public static Task<bool> WaitUntilStartedAsync()
+        {
+            return startedSignal.Task;
+        }
+
+        public static Task<bool> WaitForReleaseAsync(CancellationToken cancellationToken)
+        {
+            return releaseSignal.Task.WaitAsync(cancellationToken);
+        }
+
+        public static void Release()
+        {
+            releaseSignal.TrySetResult(true);
+        }
+
+        private static TaskCompletionSource<bool> CreateCompletionSource()
+        {
+            return new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        }
+    }
+
+    [JsonSerializable(typeof(BulkheadInput))]
     [JsonSerializable(typeof(RateLimitedInput))]
     [JsonSerializable(typeof(SlowInput))]
     [JsonSourceGenerationOptions(PropertyNameCaseInsensitive = true, PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]

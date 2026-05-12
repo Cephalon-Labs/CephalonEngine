@@ -425,6 +425,10 @@ behavior-owned limiter apply to one REST route, the host middleware rejects firs
 behavior/transport pair. Retry now runs in that same shared pipeline only for explicitly idempotent behaviors
 when the effective retry policy is active and the classifier marks the failure as transient, while
 non-idempotent or unknown behaviors still fail without automatic replay.
+The generic behavior HTTP adapters also preserve behavior-execution bulkhead saturation as
+protocol-native `429` envelopes with the stable `behavior_execution_rejected` code across GraphQL
+HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket instead of rewrapping those rejections
+as REST `ResultModel` payloads or generic transport failures.
 
 The same host surface now also exposes the shipped strangler-fig authored, effective-policy,
 ingress, and host-cutover answers directly. `/engine/strangler-fig` and
