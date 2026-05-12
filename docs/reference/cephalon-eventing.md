@@ -1232,6 +1232,95 @@ Parameters:
 - `producerNodeId`: The producer-side node identifier.
 - `consumerNodeId`: The consumer-side node identifier.
 
+<a id="type-cephalon-eventing-services-eventdispatchdeliverycompletionmetadata"></a>
+
+### `EventDispatchDeliveryCompletionMetadata`
+
+Builds provider-reported downstream delivery-completion metadata for successful dispatch reports.
+
+Remarks: Dispatch success only says the active dispatcher completed its local work. This helper records a stronger, provider-reported downstream completion proof only when the report outcome is `succeeded` and the provider supplies an explicit delivery receipt id. Subscriber acknowledgement and destination commit evidence are recorded independently so the engine does not imply exactly-once delivery from a generic provider receipt.
+
+#### Declaration
+```csharp
+public static class EventDispatchDeliveryCompletionMetadata
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-eventdispatchdeliverycompletionmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateMetadata`
+
+```csharp
+Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string providerReceiptId, string subscriberAcknowledgementId, string destinationCommitId)
+```
+
+Creates a metadata copy enriched with provider-reported delivery-completion proof when the inputs support it.
+
+Returns: A case-insensitive metadata dictionary containing the original values plus delivery-completion proof when applicable.
+
+Parameters:
+- `metadata`: The dispatch report metadata to copy.
+- `outcome`: The dispatch report outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported delivery completion.
+- `providerReceiptId`: The provider delivery receipt id.
+- `subscriberAcknowledgementId`: An optional subscriber acknowledgement id.
+- `destinationCommitId`: An optional destination commit id.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchdeliverycompletionmetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateReport`
+
+```csharp
+EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string providerReceiptId, string subscriberAcknowledgementId, string destinationCommitId)
+```
+
+Creates a dispatch report copy enriched with provider-reported delivery-completion proof when the inputs support it.
+
+Returns: A dispatch report containing the original metadata plus delivery-completion proof when applicable.
+
+Parameters:
+- `report`: The successful dispatch report to copy.
+- `source`: The stable provider or runtime source that reported delivery completion.
+- `providerReceiptId`: The provider delivery receipt id.
+- `subscriberAcknowledgementId`: An optional subscriber acknowledgement id.
+- `destinationCommitId`: An optional destination commit id.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchdeliverycompletionmetadata-iscompleted-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `IsCompleted`
+
+```csharp
+bool IsCompleted(IReadOnlyDictionary<string, string> metadata)
+```
+
+Gets a value indicating whether the metadata contains provider-reported downstream delivery-completion proof.
+
+Returns: `true` when provider-reported delivery-completion proof is present; otherwise, `false`.
+
+Parameters:
+- `metadata`: The dispatch metadata dictionary to inspect.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchdeliverycompletionmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `TryApplyMetadata`
+
+```csharp
+bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string providerReceiptId, string subscriberAcknowledgementId, string destinationCommitId)
+```
+
+Applies provider-reported delivery-completion proof to an existing dispatch metadata dictionary when the inputs support it.
+
+Returns: `true` when delivery-completion proof was applied; otherwise, `false`.
+
+Parameters:
+- `metadata`: The dispatch metadata dictionary to enrich.
+- `outcome`: The dispatch report outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported delivery completion.
+- `providerReceiptId`: The provider delivery receipt id.
+- `subscriberAcknowledgementId`: An optional subscriber acknowledgement id.
+- `destinationCommitId`: An optional destination commit id.
+
 <a id="type-cephalon-eventing-services-eventdispatchexecutionoutcomes"></a>
 
 ### `EventDispatchExecutionOutcomes`
@@ -2002,6 +2091,26 @@ const string DeadLetterScope
 
 Identifies the scope that owns the dead-letter decision.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-destinationcommit"></a>
+
+##### `DestinationCommit`
+
+```csharp
+const string DestinationCommit
+```
+
+Identifies whether destination commit proof was reported for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-destinationcommitid"></a>
+
+##### `DestinationCommitId`
+
+```csharp
+const string DestinationCommitId
+```
+
+Identifies the destination commit id reported for the dispatch.
+
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-dispatchcontextheadercount"></a>
 
 ##### `DispatchContextHeaderCount`
@@ -2032,6 +2141,26 @@ const string DispatchContextMetadataCount
 
 Identifies the number of context metadata entries carried from the dispatch item into the report.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-downstreamdeliverycompletion"></a>
+
+##### `DownstreamDeliveryCompletion`
+
+```csharp
+const string DownstreamDeliveryCompletion
+```
+
+Identifies whether provider-reported downstream delivery completion has been proven for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-downstreamdeliverycompletionsource"></a>
+
+##### `DownstreamDeliveryCompletionSource`
+
+```csharp
+const string DownstreamDeliveryCompletionSource
+```
+
+Identifies the provider or runtime source that reported downstream delivery completion.
+
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-durabledispatchcontextpropagation"></a>
 
 ##### `DurableDispatchContextPropagation`
@@ -2041,6 +2170,16 @@ const string DurableDispatchContextPropagation
 ```
 
 Identifies the durable dispatch context propagation boundary proven by the latest runtime observation.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-exactlyoncedelivery"></a>
+
+##### `ExactlyOnceDelivery`
+
+```csharp
+const string ExactlyOnceDelivery
+```
+
+Identifies whether exactly-once delivery proof was reported for the dispatch.
 
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-nextretryatutc"></a>
 
@@ -2091,6 +2230,26 @@ const string ProviderBrokerContextHeaders
 ```
 
 Identifies whether provider or broker headers carry the same context beyond Cephalon dispatch metadata.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerdeliveryreceipt"></a>
+
+##### `ProviderDeliveryReceipt`
+
+```csharp
+const string ProviderDeliveryReceipt
+```
+
+Identifies whether a provider delivery receipt was reported for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerdeliveryreceiptid"></a>
+
+##### `ProviderDeliveryReceiptId`
+
+```csharp
+const string ProviderDeliveryReceiptId
+```
+
+Identifies the provider delivery receipt id reported for the dispatch.
 
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providersidecontextpersistence"></a>
 
@@ -2201,6 +2360,26 @@ const string RetryScope
 ```
 
 Identifies who owns the retry policy.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-subscriberacknowledgement"></a>
+
+##### `SubscriberAcknowledgement`
+
+```csharp
+const string SubscriberAcknowledgement
+```
+
+Identifies whether subscriber acknowledgement was reported for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-subscriberacknowledgementid"></a>
+
+##### `SubscriberAcknowledgementId`
+
+```csharp
+const string SubscriberAcknowledgementId
+```
+
+Identifies the subscriber acknowledgement id reported for the dispatch.
 
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-terminalfailure"></a>
 

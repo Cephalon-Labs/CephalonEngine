@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-12T13:21:37.6682215+00:00",
+  "GeneratedAtUtc": "2026-05-12T13:56:24.0856082+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -271,7 +271,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 66
+      "TypeCount": 67
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1331,7 +1331,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 63
+      "TypeCount": 64
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8383,6 +8383,21 @@
       }
     },
     {
+      "DisplayName": "EventDispatchDeliveryCompletionMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventdispatchdeliverycompletionmetadata",
+      "Declaration": "public static class EventDispatchDeliveryCompletionMetadata",
+      "Summary": "Builds provider-reported downstream delivery-completion metadata for successful dispatch reports.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 4
+      }
+    },
+    {
       "DisplayName": "EventDispatchExecutionOutcomes",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -8647,7 +8662,7 @@
       "Summary": "Defines stable metadata keys used by event-dispatch runtime observations.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 32,
+        "Fields": 41,
         "Properties": 0,
         "Methods": 1
       }
@@ -41708,6 +41723,17 @@
     {
       "DisplayName": "CreateMetadata",
       "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchDeliveryCompletionMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchdeliverycompletionmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "Dictionary\u003Cstring, string\u003E CreateMetadata(IReadOnlyDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string providerReceiptId, string subscriberAcknowledgementId, string destinationCommitId)",
+      "Summary": "Creates a metadata copy enriched with provider-reported delivery-completion proof when the inputs support it."
+    },
+    {
+      "DisplayName": "CreateMetadata",
+      "Category": "Methods",
       "DeclaringTypeName": "EventDispatchProviderContextPersistenceMetadata",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -41759,6 +41785,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventdispatchcrossnodecontexthandoffmetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string",
       "Signature": "EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, IReadOnlyDictionary\u003Cstring, string\u003E consumerContextMetadata, string source, string producerNodeId, string consumerNodeId)",
       "Summary": "Creates a dispatch report copy enriched with provider-reported cross-node handoff proof when the inputs support it."
+    },
+    {
+      "DisplayName": "CreateReport",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchDeliveryCompletionMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchdeliverycompletionmetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string",
+      "Signature": "EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string providerReceiptId, string subscriberAcknowledgementId, string destinationCommitId)",
+      "Summary": "Creates a dispatch report copy enriched with provider-reported delivery-completion proof when the inputs support it."
     },
     {
       "DisplayName": "CreateReport",
@@ -47038,6 +47075,28 @@
       "Summary": "Identifies a design pattern."
     },
     {
+      "DisplayName": "DestinationCommit",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-destinationcommit",
+      "Signature": "const string DestinationCommit",
+      "Summary": "Identifies whether destination commit proof was reported for the dispatch."
+    },
+    {
+      "DisplayName": "DestinationCommitId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-destinationcommitid",
+      "Signature": "const string DestinationCommitId",
+      "Summary": "Identifies the destination commit id reported for the dispatch."
+    },
+    {
       "DisplayName": "DestructiveAllowanceApplied",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandExecutionResult",
@@ -50017,6 +50076,28 @@
       "AnchorId": "member-p-cephalon-abstractions-tenancy-tenantcontext-domains",
       "Signature": "IReadOnlyList\u003Cstring\u003E Domains { get; }",
       "Summary": "Gets the domains associated with the tenant."
+    },
+    {
+      "DisplayName": "DownstreamDeliveryCompletion",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-downstreamdeliverycompletion",
+      "Signature": "const string DownstreamDeliveryCompletion",
+      "Summary": "Identifies whether provider-reported downstream delivery completion has been proven for the dispatch."
+    },
+    {
+      "DisplayName": "DownstreamDeliveryCompletionSource",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-downstreamdeliverycompletionsource",
+      "Signature": "const string DownstreamDeliveryCompletionSource",
+      "Summary": "Identifies the provider or runtime source that reported downstream delivery completion."
     },
     {
       "DisplayName": "Drift",
@@ -55121,6 +55202,17 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-services-tenantdomainownershipverificationworkflowrequest-evidence",
       "Signature": "string Evidence { get; }",
       "Summary": "Gets the optional evidence summary observed by the application or provider."
+    },
+    {
+      "DisplayName": "ExactlyOnceDelivery",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-exactlyoncedelivery",
+      "Signature": "const string ExactlyOnceDelivery",
+      "Summary": "Identifies whether exactly-once delivery proof was reported for the dispatch."
     },
     {
       "DisplayName": "Exception",
@@ -74074,6 +74166,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationstatus-iscompleted",
       "Signature": "bool IsCompleted { get; }",
       "Summary": "Gets a value indicating whether distributed retry orchestration currently does not need to schedule another retry attempt."
+    },
+    {
+      "DisplayName": "IsCompleted",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchDeliveryCompletionMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchdeliverycompletionmetadata-iscompleted-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "bool IsCompleted(IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Gets a value indicating whether the metadata contains provider-reported downstream delivery-completion proof."
     },
     {
       "DisplayName": "IsConfigured",
@@ -100217,6 +100320,28 @@
       "Summary": "Stable Cephalon-prefix tag carrying the provider count consulted during the indexing run."
     },
     {
+      "DisplayName": "ProviderDeliveryReceipt",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerdeliveryreceipt",
+      "Signature": "const string ProviderDeliveryReceipt",
+      "Summary": "Identifies whether a provider delivery receipt was reported for the dispatch."
+    },
+    {
+      "DisplayName": "ProviderDeliveryReceiptId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerdeliveryreceiptid",
+      "Signature": "const string ProviderDeliveryReceiptId",
+      "Summary": "Identifies the provider delivery receipt id reported for the dispatch."
+    },
+    {
       "DisplayName": "ProviderExecutable",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories",
@@ -122544,6 +122669,28 @@
       "Summary": "The version associated with the event subject when available."
     },
     {
+      "DisplayName": "SubscriberAcknowledgement",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-subscriberacknowledgement",
+      "Signature": "const string SubscriberAcknowledgement",
+      "Summary": "Identifies whether subscriber acknowledgement was reported for the dispatch."
+    },
+    {
+      "DisplayName": "SubscriberAcknowledgementId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-subscriberacknowledgementid",
+      "Signature": "const string SubscriberAcknowledgementId",
+      "Summary": "Identifies the subscriber acknowledgement id reported for the dispatch."
+    },
+    {
       "DisplayName": "SubscribeUrl",
       "Category": "Properties",
       "DeclaringTypeName": "AmazonSesSnsSubscriptionConfirmationRequest",
@@ -128746,6 +128893,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventdispatchcrossnodecontexthandoffmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string",
       "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, IReadOnlyDictionary\u003Cstring, string\u003E consumerContextMetadata, string source, string producerNodeId, string consumerNodeId)",
       "Summary": "Applies provider-reported cross-node handoff proof to an existing dispatch metadata dictionary when the inputs support it."
+    },
+    {
+      "DisplayName": "TryApplyMetadata",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchDeliveryCompletionMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchdeliverycompletionmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string providerReceiptId, string subscriberAcknowledgementId, string destinationCommitId)",
+      "Summary": "Applies provider-reported delivery-completion proof to an existing dispatch metadata dictionary when the inputs support it."
     },
     {
       "DisplayName": "TryApplyMetadata",

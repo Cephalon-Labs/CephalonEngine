@@ -1490,6 +1490,71 @@ public sealed class EntityFrameworkDataPackTests
             .Entries
             .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
         Assert.Contains("crossNodeContextHandoff=provider-reported", crossNodeDimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+
+        var incompleteDeliveryReport = EventDispatchDeliveryCompletionMetadata.CreateReport(
+            crossNodeReport,
+            source: "provider-completion-observer",
+            providerReceiptId: "provider-receipt-001",
+            subscriberAcknowledgementId: "subscriber-ack-001");
+        Assert.False(EventDispatchDeliveryCompletionMetadata.IsCompleted(incompleteDeliveryReport.Metadata));
+
+        var successfulCrossNodeReport = new EventDispatchExecutionReport(
+            outboxId: crossNodeReport.OutboxId,
+            channelId: crossNodeReport.ChannelId,
+            outcome: EventDispatchExecutionOutcomes.Succeeded,
+            observedAtUtc: new DateTimeOffset(2026, 05, 12, 10, 3, 0, TimeSpan.Zero),
+            messageId: crossNodeReport.MessageId,
+            attempt: crossNodeReport.Attempt,
+            metadata: crossNodeReport.Metadata);
+        var completedDeliveryReport = EventDispatchDeliveryCompletionMetadata.CreateReport(
+            successfulCrossNodeReport,
+            source: "provider-completion-observer",
+            providerReceiptId: "provider-receipt-001",
+            subscriberAcknowledgementId: "subscriber-ack-001");
+        Assert.True(EventDispatchDeliveryCompletionMetadata.IsCompleted(completedDeliveryReport.Metadata));
+        Assert.Equal("provider-reported", completedDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.DownstreamDeliveryCompletion]);
+        Assert.Equal("provider-completion-observer", completedDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.DownstreamDeliveryCompletionSource]);
+        Assert.Equal("reported", completedDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.ProviderDeliveryReceipt]);
+        Assert.Equal("provider-receipt-001", completedDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.ProviderDeliveryReceiptId]);
+        Assert.Equal("reported", completedDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.SubscriberAcknowledgement]);
+        Assert.Equal("subscriber-ack-001", completedDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.SubscriberAcknowledgementId]);
+        Assert.Equal("not-claimed", completedDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.DestinationCommit]);
+        Assert.Equal("not-claimed", completedDeliveryReport.Metadata[EventDispatchRuntimeMetadataKeys.ExactlyOnceDelivery]);
+
+        await dispatchRuntimeReporter.ReportAsync(completedDeliveryReport);
+
+        var completedDispatchState = dispatchRuntimeCatalog.GetByOutboxId("entity-framework-outbox");
+        Assert.NotNull(completedDispatchState);
+        Assert.Equal(EventDispatchExecutionOutcomes.Succeeded, completedDispatchState.LastOutcome);
+        Assert.Equal("provider-reported", completedDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.DownstreamDeliveryCompletion]);
+        Assert.Equal("reported", completedDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.ProviderDeliveryReceipt]);
+        Assert.Equal("reported", completedDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.SubscriberAcknowledgement]);
+        Assert.Equal("not-claimed", completedDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.DestinationCommit]);
+        Assert.Equal("not-claimed", completedDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.ExactlyOnceDelivery]);
+
+        var completedEventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        var completedDispatchSurface = Assert.Single(completedEventingSurfaces, surface => surface.SurfaceId == "event-dispatches");
+        var completedDispatchEntry = Assert.Single(completedDispatchSurface.Entries, entry => entry.Id == "entity-framework-outbox");
+        Assert.Equal(
+            "provider-reported",
+            completedDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.DownstreamDeliveryCompletion}"]);
+        Assert.Equal(
+            "provider-completion-observer",
+            completedDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.DownstreamDeliveryCompletionSource}"]);
+        Assert.Equal(
+            "provider-receipt-001",
+            completedDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.ProviderDeliveryReceiptId}"]);
+        var completedDimensions = Assert.Single(completedEventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        Assert.Equal("partial", completedDimensions["downstream-delivery-completion-ownership"].Metadata["status"]);
+        Assert.Contains("downstreamDeliveryCompletion=provider-reported", completedDimensions["downstream-delivery-completion-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerDeliveryReceipt=reported", completedDimensions["downstream-delivery-completion-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerDeliveryReceiptId=provider-receipt-001", completedDimensions["downstream-delivery-completion-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("subscriberAcknowledgement=reported", completedDimensions["downstream-delivery-completion-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("destinationCommit=not-claimed", completedDimensions["downstream-delivery-completion-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("exactlyOnceDelivery=not-claimed", completedDimensions["downstream-delivery-completion-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("downstreamDeliveryCompletion=provider-reported", completedDimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
     }
 
     [Fact]

@@ -156,6 +156,51 @@ public static class EventDispatchRuntimeMetadataKeys
     public const string CrossNodeContextHandoffHeaderNames = "crossNodeContextHandoffHeaderNames";
 
     /// <summary>
+    /// Identifies whether provider-reported downstream delivery completion has been proven for the dispatch.
+    /// </summary>
+    public const string DownstreamDeliveryCompletion = "downstreamDeliveryCompletion";
+
+    /// <summary>
+    /// Identifies the provider or runtime source that reported downstream delivery completion.
+    /// </summary>
+    public const string DownstreamDeliveryCompletionSource = "downstreamDeliveryCompletionSource";
+
+    /// <summary>
+    /// Identifies whether a provider delivery receipt was reported for the dispatch.
+    /// </summary>
+    public const string ProviderDeliveryReceipt = "providerDeliveryReceipt";
+
+    /// <summary>
+    /// Identifies the provider delivery receipt id reported for the dispatch.
+    /// </summary>
+    public const string ProviderDeliveryReceiptId = "providerDeliveryReceiptId";
+
+    /// <summary>
+    /// Identifies whether subscriber acknowledgement was reported for the dispatch.
+    /// </summary>
+    public const string SubscriberAcknowledgement = "subscriberAcknowledgement";
+
+    /// <summary>
+    /// Identifies the subscriber acknowledgement id reported for the dispatch.
+    /// </summary>
+    public const string SubscriberAcknowledgementId = "subscriberAcknowledgementId";
+
+    /// <summary>
+    /// Identifies whether destination commit proof was reported for the dispatch.
+    /// </summary>
+    public const string DestinationCommit = "destinationCommit";
+
+    /// <summary>
+    /// Identifies the destination commit id reported for the dispatch.
+    /// </summary>
+    public const string DestinationCommitId = "destinationCommitId";
+
+    /// <summary>
+    /// Identifies whether exactly-once delivery proof was reported for the dispatch.
+    /// </summary>
+    public const string ExactlyOnceDelivery = "exactlyOnceDelivery";
+
+    /// <summary>
     /// Identifies whether the latest dispatch runtime observation includes Cephalon context metadata.
     /// </summary>
     public const string DispatchContextMetadata = "dispatchContextMetadata";

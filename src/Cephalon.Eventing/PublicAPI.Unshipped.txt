@@ -27,23 +27,37 @@ const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.CrossNodeConte
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DeadLetterDurability = "deadLetterDurability" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DeadLetterOutcome = "deadLetterOutcome" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DeadLetterScope = "deadLetterScope" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DestinationCommit = "destinationCommit" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DestinationCommitId = "destinationCommitId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DispatchContextHeaderCount = "dispatchContextHeaderCount" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DispatchContextMetadata = "dispatchContextMetadata" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DispatchContextMetadataCount = "dispatchContextMetadataCount" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DownstreamDeliveryCompletion = "downstreamDeliveryCompletion" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DownstreamDeliveryCompletionSource = "downstreamDeliveryCompletionSource" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DurableDispatchContextPropagation = "durableDispatchContextPropagation" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ExactlyOnceDelivery = "exactlyOnceDelivery" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderCount = "providerBrokerContextHeaderCount" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderNames = "providerBrokerContextHeaderNames" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderProjection = "providerBrokerContextHeaderProjection" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders = "providerBrokerContextHeaders" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderDeliveryReceipt = "providerDeliveryReceipt" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderDeliveryReceiptId = "providerDeliveryReceiptId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistence = "providerSideContextPersistence" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceHeaderCount = "providerSideContextPersistenceHeaderCount" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceHeaderNames = "providerSideContextPersistenceHeaderNames" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceSource = "providerSideContextPersistenceSource" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.SubscriberAcknowledgement = "subscriberAcknowledgement" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.SubscriberAcknowledgementId = "subscriberAcknowledgementId" -> string!
 Cephalon.Eventing.Services.EventDispatchCrossNodeContextHandoffMetadata
 static Cephalon.Eventing.Services.EventDispatchCrossNodeContextHandoffMetadata.CreateMetadata(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! consumerContextMetadata, string! source, string! producerNodeId, string! consumerNodeId) -> System.Collections.Generic.Dictionary<string!, string!>!
 static Cephalon.Eventing.Services.EventDispatchCrossNodeContextHandoffMetadata.CreateReport(Cephalon.Eventing.Services.EventDispatchExecutionReport! report, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! consumerContextMetadata, string! source, string! producerNodeId, string! consumerNodeId) -> Cephalon.Eventing.Services.EventDispatchExecutionReport!
 static Cephalon.Eventing.Services.EventDispatchCrossNodeContextHandoffMetadata.IsHandoffProven(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> bool
 static Cephalon.Eventing.Services.EventDispatchCrossNodeContextHandoffMetadata.TryApplyMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! consumerContextMetadata, string! source, string! producerNodeId, string! consumerNodeId) -> bool
+Cephalon.Eventing.Services.EventDispatchDeliveryCompletionMetadata
+static Cephalon.Eventing.Services.EventDispatchDeliveryCompletionMetadata.CreateMetadata(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata, string! outcome, string! source, string! providerReceiptId, string? subscriberAcknowledgementId = null, string? destinationCommitId = null) -> System.Collections.Generic.Dictionary<string!, string!>!
+static Cephalon.Eventing.Services.EventDispatchDeliveryCompletionMetadata.CreateReport(Cephalon.Eventing.Services.EventDispatchExecutionReport! report, string! source, string! providerReceiptId, string? subscriberAcknowledgementId = null, string? destinationCommitId = null) -> Cephalon.Eventing.Services.EventDispatchExecutionReport!
+static Cephalon.Eventing.Services.EventDispatchDeliveryCompletionMetadata.IsCompleted(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> bool
+static Cephalon.Eventing.Services.EventDispatchDeliveryCompletionMetadata.TryApplyMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, string! outcome, string! source, string! providerReceiptId, string? subscriberAcknowledgementId = null, string? destinationCommitId = null) -> bool
 Cephalon.Eventing.Services.EventDispatchContextReportMetadata
 static Cephalon.Eventing.Services.EventDispatchContextReportMetadata.Create(Cephalon.Eventing.Services.EventDispatchItem! dispatchItem, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? additionalMetadata = null) -> System.Collections.Generic.Dictionary<string!, string!>!
 Cephalon.Eventing.Services.EventDispatchProviderBrokerContextHeaders
