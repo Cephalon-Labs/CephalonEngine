@@ -30,11 +30,20 @@ const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBroker
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderNames = "providerBrokerContextHeaderNames" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderProjection = "providerBrokerContextHeaderProjection" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders = "providerBrokerContextHeaders" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistence = "providerSideContextPersistence" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceHeaderCount = "providerSideContextPersistenceHeaderCount" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceHeaderNames = "providerSideContextPersistenceHeaderNames" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceSource = "providerSideContextPersistenceSource" -> string!
 Cephalon.Eventing.Services.EventDispatchContextReportMetadata
 static Cephalon.Eventing.Services.EventDispatchContextReportMetadata.Create(Cephalon.Eventing.Services.EventDispatchItem! dispatchItem, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? additionalMetadata = null) -> System.Collections.Generic.Dictionary<string!, string!>!
 Cephalon.Eventing.Services.EventDispatchProviderBrokerContextHeaders
 static Cephalon.Eventing.Services.EventDispatchProviderBrokerContextHeaders.ApplyReportMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! providerBrokerHeaders) -> void
 static Cephalon.Eventing.Services.EventDispatchProviderBrokerContextHeaders.Create(Cephalon.Eventing.Services.EventDispatchItem! dispatchItem) -> System.Collections.Generic.Dictionary<string!, string!>!
+Cephalon.Eventing.Services.EventDispatchProviderContextPersistenceMetadata
+static Cephalon.Eventing.Services.EventDispatchProviderContextPersistenceMetadata.CreateMetadata(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata, string! source) -> System.Collections.Generic.Dictionary<string!, string!>!
+static Cephalon.Eventing.Services.EventDispatchProviderContextPersistenceMetadata.CreateReport(Cephalon.Eventing.Services.EventDispatchExecutionReport! report, string! source) -> Cephalon.Eventing.Services.EventDispatchExecutionReport!
+static Cephalon.Eventing.Services.EventDispatchProviderContextPersistenceMetadata.IsPersisted(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> bool
+static Cephalon.Eventing.Services.EventDispatchProviderContextPersistenceMetadata.TryApplyMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, string! source) -> bool
 Cephalon.Eventing.Services.EventConsumerContextExtractor
 static Cephalon.Eventing.Services.EventConsumerContextExtractor.ApplyMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! consumerContextHeaders) -> void
 static Cephalon.Eventing.Services.EventConsumerContextExtractor.CreateHeaders(Cephalon.Eventing.Services.EventPublication! publication) -> System.Collections.Generic.Dictionary<string!, string!>!
@@ -55,6 +64,8 @@ Cephalon.Eventing.Services.EventSubscriptionExecutionStep
 virtual Cephalon.Eventing.Services.EventSubscriptionExecutionStep.Invoke(Cephalon.Eventing.Services.EventSubscriptionExecutionContext! context, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
 Cephalon.Eventing.Services.IEventSubscriptionExecutionMiddleware
 Cephalon.Eventing.Services.IEventSubscriptionExecutionMiddleware.InvokeAsync(Cephalon.Eventing.Services.EventSubscriptionExecutionContext! context, Cephalon.Eventing.Services.EventSubscriptionExecutionStep! nextStep, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
+Cephalon.Eventing.Services.IEventDispatchProviderContextPersistenceStore
+Cephalon.Eventing.Services.IEventDispatchProviderContextPersistenceStore.CreatePersistedContextReport(Cephalon.Eventing.Services.EventDispatchExecutionReport! report) -> Cephalon.Eventing.Services.EventDispatchExecutionReport!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ConsumerContextExtraction = "consumerContextExtraction" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ConsumerContextExtractionSource = "consumerContextExtractionSource" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ConsumerContextHeaderCount = "consumerContextHeaderCount" -> string!

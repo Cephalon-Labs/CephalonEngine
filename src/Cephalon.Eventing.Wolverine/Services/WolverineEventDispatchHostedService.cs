@@ -295,10 +295,13 @@ internal sealed class WolverineEventDispatchHostedService(
         CancellationToken cancellationToken)
     {
         await dispatchStore.ApplyReportAsync(report, cancellationToken).ConfigureAwait(false);
+        var observedReport = dispatchStore is IEventDispatchProviderContextPersistenceStore contextPersistenceStore
+            ? contextPersistenceStore.CreatePersistedContextReport(report)
+            : report;
 
         try
         {
-            await runtimeReporter.ReportAsync(report, cancellationToken).ConfigureAwait(false);
+            await runtimeReporter.ReportAsync(observedReport, cancellationToken).ConfigureAwait(false);
         }
         catch (OperationCanceledException)
         {
@@ -306,7 +309,7 @@ internal sealed class WolverineEventDispatchHostedService(
         }
         catch (Exception exception)
         {
-            LogRuntimeObservationProjectionFailed(logger, report.Outcome, report.MessageId ?? "<not-reported>", exception);
+            LogRuntimeObservationProjectionFailed(logger, observedReport.Outcome, observedReport.MessageId ?? "<not-reported>", exception);
         }
     }
 

@@ -1537,6 +1537,84 @@ Returns: A case-insensitive dictionary of provider-neutral context headers.
 Parameters:
 - `dispatchItem`: The pending dispatch item whose staged context should be projected.
 
+<a id="type-cephalon-eventing-services-eventdispatchprovidercontextpersistencemetadata"></a>
+
+### `EventDispatchProviderContextPersistenceMetadata`
+
+Builds truthful provider-side context-persistence metadata for dispatch reports that were durably applied by a dispatch store.
+
+Remarks: The helper only claims provider-side persistence when provider or broker context headers were already projected with Cephalon propagation headers. It keeps cross-node handoff unclaimed because persistence inside a dispatch store does not prove that a different node consumed the propagated context.
+
+#### Declaration
+```csharp
+public static class EventDispatchProviderContextPersistenceMetadata
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-eventdispatchprovidercontextpersistencemetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string"></a>
+
+##### `CreateMetadata`
+
+```csharp
+Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string source)
+```
+
+Creates a metadata copy enriched with provider-side context-persistence proof when the source metadata supports it.
+
+Returns: A case-insensitive metadata dictionary containing the original values plus persistence proof when applicable.
+
+Parameters:
+- `metadata`: The dispatch report metadata to copy.
+- `source`: The stable dispatch-store or provider identifier that persisted the context proof.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchprovidercontextpersistencemetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string"></a>
+
+##### `CreateReport`
+
+```csharp
+EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source)
+```
+
+Creates a dispatch report copy enriched with provider-side context-persistence proof when the source metadata supports it.
+
+Returns: A dispatch report containing the original metadata plus provider-side persistence proof when applicable.
+
+Parameters:
+- `report`: The dispatch report that was already applied by a capable provider-side dispatch store.
+- `source`: The stable dispatch-store or provider identifier that persisted the context proof.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchprovidercontextpersistencemetadata-ispersisted-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `IsPersisted`
+
+```csharp
+bool IsPersisted(IReadOnlyDictionary<string, string> metadata)
+```
+
+Gets a value indicating whether the metadata contains provider-side context-persistence proof.
+
+Returns: `true` when the provider-side persistence proof is present; otherwise, `false`.
+
+Parameters:
+- `metadata`: The metadata dictionary to inspect.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchprovidercontextpersistencemetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string"></a>
+
+##### `TryApplyMetadata`
+
+```csharp
+bool TryApplyMetadata(IDictionary<string, string> metadata, string source)
+```
+
+Applies provider-side context-persistence proof to an existing metadata dictionary when projected context headers are present.
+
+Returns: `true` when provider-side persistence metadata was applied; otherwise, `false`.
+
+Parameters:
+- `metadata`: The metadata dictionary to enrich.
+- `source`: The stable dispatch-store or provider identifier that persisted the context proof.
+
 <a id="type-cephalon-eventing-services-eventdispatchremediationmetadatakeys"></a>
 
 ### `EventDispatchRemediationMetadataKeys`
@@ -1876,6 +1954,46 @@ const string ProviderBrokerContextHeaders
 ```
 
 Identifies whether provider or broker headers carry the same context beyond Cephalon dispatch metadata.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providersidecontextpersistence"></a>
+
+##### `ProviderSideContextPersistence`
+
+```csharp
+const string ProviderSideContextPersistence
+```
+
+Identifies whether the active provider-side dispatch store persisted the projected Cephalon context proof.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providersidecontextpersistenceheadercount"></a>
+
+##### `ProviderSideContextPersistenceHeaderCount`
+
+```csharp
+const string ProviderSideContextPersistenceHeaderCount
+```
+
+Identifies the number of Cephalon context headers persisted by the provider-side dispatch store proof.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providersidecontextpersistenceheadernames"></a>
+
+##### `ProviderSideContextPersistenceHeaderNames`
+
+```csharp
+const string ProviderSideContextPersistenceHeaderNames
+```
+
+Identifies the comma-separated Cephalon context header names persisted by the provider-side dispatch store proof.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providersidecontextpersistencesource"></a>
+
+##### `ProviderSideContextPersistenceSource`
+
+```csharp
+const string ProviderSideContextPersistenceSource
+```
+
+Identifies the provider-side dispatch store that persisted the projected Cephalon context proof.
 
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrydelayseconds"></a>
 
@@ -4025,6 +4143,36 @@ Adds one event contract descriptor to the active eventing catalog.
 
 Parameters:
 - `contract`: The contract descriptor to add.
+
+<a id="type-cephalon-eventing-services-ieventdispatchprovidercontextpersistencestore"></a>
+
+### `IEventDispatchProviderContextPersistenceStore`
+
+Marks an event dispatch store that can report persisted provider-side Cephalon context proof after applying a dispatch report.
+
+Remarks: Dispatch runtimes should call `CreatePersistedContextReport` only after `ApplyReportAsync` succeeds. Implementations must not use this contract to claim consumer extraction, downstream delivery completion, or cross-node handoff.
+
+#### Declaration
+```csharp
+public interface IEventDispatchProviderContextPersistenceStore
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-ieventdispatchprovidercontextpersistencestore-createpersistedcontextreport-cephalon-eventing-services-eventdispatchexecutionreport"></a>
+
+##### `CreatePersistedContextReport`
+
+```csharp
+EventDispatchExecutionReport CreatePersistedContextReport(EventDispatchExecutionReport report)
+```
+
+Creates a dispatch report copy containing provider-side context-persistence proof for a report the store already applied.
+
+Returns: A dispatch report enriched with provider-side context-persistence metadata when the original report supports it.
+
+Parameters:
+- `report`: The dispatch report that was already applied by the dispatch store.
 
 <a id="type-cephalon-eventing-services-ieventdispatchruntimecontributor"></a>
 

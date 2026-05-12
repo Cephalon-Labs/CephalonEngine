@@ -767,7 +767,10 @@ public sealed class WolverineEventingPackTests
             RetryDelaySeconds = 30,
             DispatchMaxAttempts = 3
         };
-        var dispatchStore = new TestEventDispatchStore(dispatchItem);
+        var dispatchStore = new TestEventDispatchStore(dispatchItem)
+        {
+            PersistProviderContextMetadata = true
+        };
         var runtimeReporter = new TestEventDispatchRuntimeReporter();
         var messageBus = new TestMessageBus(hasDestinations: true);
         var service = new WolverineEventDispatchHostedService(
@@ -815,8 +818,26 @@ public sealed class WolverineEventingPackTests
 
         Assert.Collection(
             runtimeReporter.Reported,
-            report => Assert.Equal(EventDispatchExecutionOutcomes.Started, report.Outcome),
-            report => Assert.Equal(EventDispatchExecutionOutcomes.Succeeded, report.Outcome));
+            report =>
+            {
+                Assert.Equal(EventDispatchExecutionOutcomes.Started, report.Outcome);
+                Assert.Equal(
+                    "dispatch-store-persisted",
+                    report.Metadata[EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistence]);
+                Assert.Equal(
+                    "test-dispatch-store",
+                    report.Metadata[EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceSource]);
+            },
+            report =>
+            {
+                Assert.Equal(EventDispatchExecutionOutcomes.Succeeded, report.Outcome);
+                Assert.Equal(
+                    "dispatch-store-persisted",
+                    report.Metadata[EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistence]);
+                Assert.Equal(
+                    "test-dispatch-store",
+                    report.Metadata[EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceSource]);
+            });
     }
 
     [Fact]
@@ -1202,7 +1223,7 @@ public sealed class WolverineEventingPackTests
             => context.AttributeKey == "cephalon.tenant_id" ? replacement : value;
     }
 
-    private sealed class TestEventDispatchStore(params EventDispatchItem[] items) : IEventDispatchStore
+    private sealed class TestEventDispatchStore(params EventDispatchItem[] items) : IEventDispatchStore, IEventDispatchProviderContextPersistenceStore
     {
         private readonly List<EventDispatchItem> pendingItems = [.. items];
 
@@ -1213,6 +1234,8 @@ public sealed class WolverineEventingPackTests
             .ToArray();
 
         public List<EventDispatchExecutionReport> AppliedReports { get; } = [];
+
+        public bool PersistProviderContextMetadata { get; set; }
 
         public ValueTask<IReadOnlyList<EventDispatchItem>> ReadPendingAsync(int maximumCount, CancellationToken cancellationToken = default)
         {
@@ -1231,6 +1254,15 @@ public sealed class WolverineEventingPackTests
             }
 
             return ValueTask.CompletedTask;
+        }
+
+        public EventDispatchExecutionReport CreatePersistedContextReport(EventDispatchExecutionReport report)
+        {
+            ArgumentNullException.ThrowIfNull(report);
+
+            return PersistProviderContextMetadata
+                ? EventDispatchProviderContextPersistenceMetadata.CreateReport(report, "test-dispatch-store")
+                : report;
         }
     }
 

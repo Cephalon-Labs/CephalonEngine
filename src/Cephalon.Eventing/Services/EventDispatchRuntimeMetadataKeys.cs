@@ -101,6 +101,26 @@ public static class EventDispatchRuntimeMetadataKeys
     public const string ProviderBrokerContextHeaderNames = "providerBrokerContextHeaderNames";
 
     /// <summary>
+    /// Identifies whether the active provider-side dispatch store persisted the projected Cephalon context proof.
+    /// </summary>
+    public const string ProviderSideContextPersistence = "providerSideContextPersistence";
+
+    /// <summary>
+    /// Identifies the provider-side dispatch store that persisted the projected Cephalon context proof.
+    /// </summary>
+    public const string ProviderSideContextPersistenceSource = "providerSideContextPersistenceSource";
+
+    /// <summary>
+    /// Identifies the number of Cephalon context headers persisted by the provider-side dispatch store proof.
+    /// </summary>
+    public const string ProviderSideContextPersistenceHeaderCount = "providerSideContextPersistenceHeaderCount";
+
+    /// <summary>
+    /// Identifies the comma-separated Cephalon context header names persisted by the provider-side dispatch store proof.
+    /// </summary>
+    public const string ProviderSideContextPersistenceHeaderNames = "providerSideContextPersistenceHeaderNames";
+
+    /// <summary>
     /// Identifies whether consumer-side extraction has been proven for the dispatched context.
     /// </summary>
     public const string ConsumerContextExtraction = "consumerContextExtraction";

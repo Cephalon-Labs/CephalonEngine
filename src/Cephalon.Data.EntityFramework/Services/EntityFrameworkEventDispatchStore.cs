@@ -7,8 +7,25 @@ namespace Cephalon.Data.EntityFramework.Services;
 
 internal sealed class EntityFrameworkEventDispatchStore(
     DbContext dbContext,
-    IEntityFrameworkOutboxContext outboxContext) : IEventDispatchStore
+    IEntityFrameworkOutboxContext outboxContext) : IEventDispatchStore, IEventDispatchProviderContextPersistenceStore
 {
+    private static readonly string[] ProviderContextPersistenceMetadataKeys =
+    [
+        EventDispatchRuntimeMetadataKeys.DurableDispatchContextPropagation,
+        EventDispatchRuntimeMetadataKeys.DispatchContextMetadata,
+        EventDispatchRuntimeMetadataKeys.DispatchContextHeaderCount,
+        EventDispatchRuntimeMetadataKeys.DispatchContextMetadataCount,
+        EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders,
+        EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderProjection,
+        EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderCount,
+        EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderNames,
+        EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistence,
+        EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceSource,
+        EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceHeaderCount,
+        EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistenceHeaderNames,
+        EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoff
+    ];
+
     public IReadOnlyList<string> OutboxIds => [EntityFrameworkDataRuntimeIds.OutboxId];
 
     public async ValueTask<IReadOnlyList<EventDispatchItem>> ReadPendingAsync(
@@ -100,7 +117,16 @@ internal sealed class EntityFrameworkEventDispatchStore(
                 break;
         }
 
+        PersistProviderContextMetadata(entry, report);
+
         await dbContext.SaveChangesAsync(cancellationToken);
+    }
+
+    public EventDispatchExecutionReport CreatePersistedContextReport(EventDispatchExecutionReport report)
+    {
+        ArgumentNullException.ThrowIfNull(report);
+
+        return EventDispatchProviderContextPersistenceMetadata.CreateReport(report, EntityFrameworkDataRuntimeIds.OutboxId);
     }
 
     private static EventDispatchItem CreateDispatchItem(EntityFrameworkOutboxEntry entry)
@@ -146,6 +172,29 @@ internal sealed class EntityFrameworkEventDispatchStore(
         return DateTimeOffset.TryParse(rawValue, out var parsedValue)
             ? parsedValue
             : null;
+    }
+
+    private static void PersistProviderContextMetadata(EntityFrameworkOutboxEntry entry, EventDispatchExecutionReport report)
+    {
+        var persistedMetadata = EventDispatchProviderContextPersistenceMetadata.CreateMetadata(
+            report.Metadata,
+            EntityFrameworkDataRuntimeIds.OutboxId);
+
+        if (!EventDispatchProviderContextPersistenceMetadata.IsPersisted(persistedMetadata))
+        {
+            return;
+        }
+
+        var entryMetadata = DeserializeDictionary(entry.MetadataJson);
+        foreach (var key in ProviderContextPersistenceMetadataKeys)
+        {
+            if (persistedMetadata.TryGetValue(key, out var value))
+            {
+                entryMetadata[key] = value;
+            }
+        }
+
+        entry.MetadataJson = JsonSerializer.Serialize(entryMetadata);
     }
 
     private static Dictionary<string, string> DeserializeDictionary(string? json)

@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-12T12:12:18.5704784+00:00",
+  "GeneratedAtUtc": "2026-05-12T12:47:36.680315+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -271,7 +271,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 63
+      "TypeCount": 65
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1331,7 +1331,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 60
+      "TypeCount": 62
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8428,6 +8428,21 @@
       }
     },
     {
+      "DisplayName": "EventDispatchProviderContextPersistenceMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventdispatchprovidercontextpersistencemetadata",
+      "Declaration": "public static class EventDispatchProviderContextPersistenceMetadata",
+      "Summary": "Builds truthful provider-side context-persistence metadata for dispatch reports that were durably applied by a dispatch store.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 4
+      }
+    },
+    {
       "DisplayName": "EventDispatchRemediationCommandJournalDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -8617,7 +8632,7 @@
       "Summary": "Defines stable metadata keys used by event-dispatch runtime observations.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 23,
+        "Fields": 27,
         "Properties": 0,
         "Methods": 1
       }
@@ -11465,6 +11480,21 @@
       "AnchorId": "type-cephalon-eventing-services-ieventcontractregistry",
       "Declaration": "public interface IEventContractRegistry",
       "Summary": "Collects event contract descriptors contributed by a host or module.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
+      "DisplayName": "IEventDispatchProviderContextPersistenceStore",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-ieventdispatchprovidercontextpersistencestore",
+      "Declaration": "public interface IEventDispatchProviderContextPersistenceStore",
+      "Summary": "Marks an event dispatch store that can report persisted provider-side Cephalon context proof after applying a dispatch report.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -41650,6 +41680,17 @@
       "Summary": "Creates the MVC authorization filter that evaluates the current request through the shared Cephalon boundary executor."
     },
     {
+      "DisplayName": "CreateMetadata",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchProviderContextPersistenceMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchprovidercontextpersistencemetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string",
+      "Signature": "Dictionary\u003Cstring, string\u003E CreateMetadata(IReadOnlyDictionary\u003Cstring, string\u003E metadata, string source)",
+      "Summary": "Creates a metadata copy enriched with provider-side context-persistence proof when the source metadata supports it."
+    },
+    {
       "DisplayName": "CreateModule",
       "Category": "Methods",
       "DeclaringTypeName": "ModuleDiscoveryDescriptor",
@@ -41661,6 +41702,17 @@
       "Summary": "Creates a module instance using the generated or explicitly registered factory."
     },
     {
+      "DisplayName": "CreatePersistedContextReport",
+      "Category": "Methods",
+      "DeclaringTypeName": "IEventDispatchProviderContextPersistenceStore",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-ieventdispatchprovidercontextpersistencestore-createpersistedcontextreport-cephalon-eventing-services-eventdispatchexecutionreport",
+      "Signature": "EventDispatchExecutionReport CreatePersistedContextReport(EventDispatchExecutionReport report)",
+      "Summary": "Creates a dispatch report copy containing provider-side context-persistence proof for a report the store already applied."
+    },
+    {
       "DisplayName": "CreatePlaybook",
       "Category": "Methods",
       "DeclaringTypeName": "IDatabaseMigrationOperationalPlaybookProvider",
@@ -41670,6 +41722,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-idatabasemigrationoperationalplaybookprovider-createplaybook",
       "Signature": "DatabaseMigrationOperationalPlaybook CreatePlaybook()",
       "Summary": "Creates the current database-migration playbook."
+    },
+    {
+      "DisplayName": "CreateReport",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchProviderContextPersistenceMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchprovidercontextpersistencemetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string",
+      "Signature": "EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source)",
+      "Summary": "Creates a dispatch report copy enriched with provider-side context-persistence proof when the source metadata supports it."
     },
     {
       "DisplayName": "CreateSlotIfMissing",
@@ -75681,6 +75744,17 @@
       "Summary": "Gets a value indicating whether the current durability answer reports healthy persisted storage."
     },
     {
+      "DisplayName": "IsPersisted",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchProviderContextPersistenceMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchprovidercontextpersistencemetadata-ispersisted-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "bool IsPersisted(IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Gets a value indicating whether the metadata contains provider-side context-persistence proof."
+    },
+    {
       "DisplayName": "IsPersistenceFailed",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorCommandJournalDurabilityStatus",
@@ -102152,6 +102226,50 @@
       "Summary": "Gets the external provider evaluation results that participated in the final answer."
     },
     {
+      "DisplayName": "ProviderSideContextPersistence",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providersidecontextpersistence",
+      "Signature": "const string ProviderSideContextPersistence",
+      "Summary": "Identifies whether the active provider-side dispatch store persisted the projected Cephalon context proof."
+    },
+    {
+      "DisplayName": "ProviderSideContextPersistenceHeaderCount",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providersidecontextpersistenceheadercount",
+      "Signature": "const string ProviderSideContextPersistenceHeaderCount",
+      "Summary": "Identifies the number of Cephalon context headers persisted by the provider-side dispatch store proof."
+    },
+    {
+      "DisplayName": "ProviderSideContextPersistenceHeaderNames",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providersidecontextpersistenceheadernames",
+      "Signature": "const string ProviderSideContextPersistenceHeaderNames",
+      "Summary": "Identifies the comma-separated Cephalon context header names persisted by the provider-side dispatch store proof."
+    },
+    {
+      "DisplayName": "ProviderSideContextPersistenceSource",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providersidecontextpersistencesource",
+      "Signature": "const string ProviderSideContextPersistenceSource",
+      "Summary": "Identifies the provider-side dispatch store that persisted the projected Cephalon context proof."
+    },
+    {
       "DisplayName": "ProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardening",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderSpecificControlPlaneDependencyAwareTeardownAndMutationExecutionHardeningCategories",
@@ -128514,6 +128632,17 @@
       "AnchorId": "member-m-cephalon-engine-trust-trustsnapshot-ctor-cephalon-engine-configuration-trustpolicy-system-collections-generic-ireadonlylist-cephalon-engine-trust-packagetrustdecision-system-collections-generic-ireadonlylist-cephalon-engine-trust-capabilitypolicydecision",
       "Signature": "TrustSnapshot(TrustPolicy Policy, IReadOnlyList\u003CPackageTrustDecision\u003E Packages, IReadOnlyList\u003CCapabilityPolicyDecision\u003E Capabilities)",
       "Summary": "Captures the effective trust policy together with evaluated package and capability decisions."
+    },
+    {
+      "DisplayName": "TryApplyMetadata",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchProviderContextPersistenceMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchprovidercontextpersistencemetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string",
+      "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, string source)",
+      "Summary": "Applies provider-side context-persistence proof to an existing metadata dictionary when projected context headers are present."
     },
     {
       "DisplayName": "TryFindByName",

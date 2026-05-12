@@ -576,6 +576,9 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var hasProviderBrokerContextHeaderProjection = hasDispatchReportContextMetadata && dispatchRuntimeCatalog?.States.Any(static state =>
             state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders, out var value) &&
             string.Equals(value, "projected", StringComparison.OrdinalIgnoreCase)) == true;
+        var hasProviderSideContextPersistence = hasProviderBrokerContextHeaderProjection && dispatchRuntimeCatalog?.States.Any(static state =>
+            state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.ProviderSideContextPersistence, out var value) &&
+            string.Equals(value, "dispatch-store-persisted", StringComparison.OrdinalIgnoreCase)) == true;
         var hasConsumerContextExtraction = subscriptionRuntimeCatalog?.States.Any(static state =>
             state.Metadata.TryGetValue(EventSubscriptionRuntimeMetadataKeys.ConsumerContextExtraction, out var value) &&
             string.Equals(value, "extracted", StringComparison.OrdinalIgnoreCase)) == true;
@@ -586,6 +589,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                 : "not-claimed";
         var dispatchReportContextMetadata = hasDispatchReportContextMetadata ? "reported" : "not-reported";
         var providerBrokerContextHeaders = hasProviderBrokerContextHeaderProjection ? "projected" : "not-claimed";
+        var providerSideContextPersistence = hasProviderSideContextPersistence ? "dispatch-store-persisted" : "not-claimed";
         var consumerContextExtraction = hasConsumerContextExtraction ? "extracted" : "not-claimed";
         var executablePropagation = hasInProcessContextExecution ? "in-process-direct" : "not-claimed";
         var executableValidation = hasPublisherContextValidation ? "publisher-enforced" : "not-claimed";
@@ -593,9 +597,13 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
 
         var evidence = string.Create(
             CultureInfo.InvariantCulture,
-            $"channelCatalog={channelCatalog}; subscriptionCatalog={subscriptionCatalog}; publicationPath={publicationPath}; publicationRouting={publicationRouting}; inProcessExecution={inProcessExecution}; operatorCorrelationMetadata=metadata-only; eventContextPolicyCatalog={eventContextPolicyCatalog}; contextPolicyCount={policyCount.ToString(CultureInfo.InvariantCulture)}; tenantPolicyCount={tenantPolicyCount.ToString(CultureInfo.InvariantCulture)}; correlationPolicyCount={correlationPolicyCount.ToString(CultureInfo.InvariantCulture)}; causationPolicyCount={causationPolicyCount.ToString(CultureInfo.InvariantCulture)}; baggagePolicyCount={baggagePolicyCount.ToString(CultureInfo.InvariantCulture)}; headerValidationPolicyCount={headerValidationPolicyCount.ToString(CultureInfo.InvariantCulture)}; declaredHeaderCount={declaredHeaderCount.ToString(CultureInfo.InvariantCulture)}; tenantContextPropagation={tenantContextPropagation}; correlationContextPropagation={correlationContextPropagation}; causationIdPropagation={causationIdPropagation}; baggagePropagation={baggagePropagation}; messageHeaderPolicy={messageHeaderPolicy}; outboxContextHandoff={outboxContextHandoff}; durableDispatchContextPropagation={durableDispatchContextPropagation}; dispatchReportContextMetadata={dispatchReportContextMetadata}; providerBrokerContextHeaders={providerBrokerContextHeaders}; consumerContextExtraction={consumerContextExtraction}; crossNodeContextHandoff=not-claimed; executablePropagation={executablePropagation}; executableValidation={executableValidation}; wolverineRequired=false");
+            $"channelCatalog={channelCatalog}; subscriptionCatalog={subscriptionCatalog}; publicationPath={publicationPath}; publicationRouting={publicationRouting}; inProcessExecution={inProcessExecution}; operatorCorrelationMetadata=metadata-only; eventContextPolicyCatalog={eventContextPolicyCatalog}; contextPolicyCount={policyCount.ToString(CultureInfo.InvariantCulture)}; tenantPolicyCount={tenantPolicyCount.ToString(CultureInfo.InvariantCulture)}; correlationPolicyCount={correlationPolicyCount.ToString(CultureInfo.InvariantCulture)}; causationPolicyCount={causationPolicyCount.ToString(CultureInfo.InvariantCulture)}; baggagePolicyCount={baggagePolicyCount.ToString(CultureInfo.InvariantCulture)}; headerValidationPolicyCount={headerValidationPolicyCount.ToString(CultureInfo.InvariantCulture)}; declaredHeaderCount={declaredHeaderCount.ToString(CultureInfo.InvariantCulture)}; tenantContextPropagation={tenantContextPropagation}; correlationContextPropagation={correlationContextPropagation}; causationIdPropagation={causationIdPropagation}; baggagePropagation={baggagePropagation}; messageHeaderPolicy={messageHeaderPolicy}; outboxContextHandoff={outboxContextHandoff}; durableDispatchContextPropagation={durableDispatchContextPropagation}; dispatchReportContextMetadata={dispatchReportContextMetadata}; providerBrokerContextHeaders={providerBrokerContextHeaders}; providerSideContextPersistence={providerSideContextPersistence}; consumerContextExtraction={consumerContextExtraction}; crossNodeContextHandoff=not-claimed; executablePropagation={executablePropagation}; executableValidation={executableValidation}; wolverineRequired=false");
         var nextGap = hasConsumerContextExtraction
-            ? "Extend consumer-extracted context into provider-side persistence and cross-node handoff before claiming full tenant and correlation ownership."
+            ? hasProviderSideContextPersistence
+                ? "Extend provider-persisted and consumer-extracted context into cross-node handoff before claiming full tenant and correlation ownership."
+                : "Extend consumer-extracted context into provider-side persistence and cross-node handoff before claiming full tenant and correlation ownership."
+            : hasProviderSideContextPersistence
+            ? "Extend provider-persisted context into consumer extraction and cross-node handoff before claiming full tenant and correlation ownership."
             : hasProviderBrokerContextHeaderProjection
             ? "Extend projected provider/broker context headers into consumer extraction and cross-node handoff before claiming full tenant and correlation ownership."
             : hasDispatchReportContextMetadata
