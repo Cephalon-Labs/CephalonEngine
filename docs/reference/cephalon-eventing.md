@@ -2682,6 +2682,26 @@ const string ConsumerContextExtraction
 
 Identifies whether consumer-side extraction has been proven for the dispatched context.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-contractversionnegotiation"></a>
+
+##### `ContractVersionNegotiation`
+
+```csharp
+const string ContractVersionNegotiation
+```
+
+Identifies whether executable contract-version negotiation was reported as part of the wire-contract proof.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-contractversionnegotiationid"></a>
+
+##### `ContractVersionNegotiationId`
+
+```csharp
+const string ContractVersionNegotiationId
+```
+
+Identifies the executable contract-version negotiation proof id reported for the wire-contract proof.
+
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-crossnodecontexthandoff"></a>
 
 ##### `CrossNodeContextHandoff`
@@ -3692,6 +3712,156 @@ const string UpcasterExecutionId
 
 Identifies the executable upcaster execution proof id.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-wirecontractcompatibilityvalidation"></a>
+
+##### `WireContractCompatibilityValidation`
+
+```csharp
+const string WireContractCompatibilityValidation
+```
+
+Identifies whether executable compatibility validation was reported as part of the wire-contract proof.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-wirecontractcompatibilityvalidationid"></a>
+
+##### `WireContractCompatibilityValidationId`
+
+```csharp
+const string WireContractCompatibilityValidationId
+```
+
+Identifies the executable compatibility validation proof id reported for the wire-contract proof.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-wirecontractdurability"></a>
+
+##### `WireContractDurability`
+
+```csharp
+const string WireContractDurability
+```
+
+Identifies where wire-contract proof state is persisted.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-wirecontractownership"></a>
+
+##### `WireContractOwnership`
+
+```csharp
+const string WireContractOwnership
+```
+
+Identifies whether a provider or runtime reported wire-contract ownership for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-wirecontractownershipsource"></a>
+
+##### `WireContractOwnershipSource`
+
+```csharp
+const string WireContractOwnershipSource
+```
+
+Identifies the provider or runtime source that reported wire-contract ownership.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-wirecontractpayloadserialization"></a>
+
+##### `WireContractPayloadSerialization`
+
+```csharp
+const string WireContractPayloadSerialization
+```
+
+Identifies whether executable payload serialization was reported as part of the wire-contract proof.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-wirecontractpayloadserializationid"></a>
+
+##### `WireContractPayloadSerializationId`
+
+```csharp
+const string WireContractPayloadSerializationId
+```
+
+Identifies the executable payload serialization proof id reported for the wire-contract proof.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-wirecontractproofid"></a>
+
+##### `WireContractProofId`
+
+```csharp
+const string WireContractProofId
+```
+
+Identifies the overall wire-contract proof id reported for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-wirecontractschemalookup"></a>
+
+##### `WireContractSchemaLookup`
+
+```csharp
+const string WireContractSchemaLookup
+```
+
+Identifies whether executable schema lookup was reported as part of the wire-contract proof.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-wirecontractschemalookupid"></a>
+
+##### `WireContractSchemaLookupId`
+
+```csharp
+const string WireContractSchemaLookupId
+```
+
+Identifies the executable schema lookup proof id reported for the wire-contract proof.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-wirecontractscope"></a>
+
+##### `WireContractScope`
+
+```csharp
+const string WireContractScope
+```
+
+Identifies the wire-contract proof coordination boundary.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-wirecontractupcasterexecution"></a>
+
+##### `WireContractUpcasterExecution`
+
+```csharp
+const string WireContractUpcasterExecution
+```
+
+Identifies whether executable upcaster execution was reported as part of the wire-contract proof.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-wirecontractupcasterexecutionid"></a>
+
+##### `WireContractUpcasterExecutionId`
+
+```csharp
+const string WireContractUpcasterExecutionId
+```
+
+Identifies the executable upcaster execution proof id reported for the wire-contract proof.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-wireenvelopeschema"></a>
+
+##### `WireEnvelopeSchema`
+
+```csharp
+const string WireEnvelopeSchema
+```
+
+Identifies whether the executable wire-envelope schema was reported as part of the wire-contract proof.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-wireenvelopeschemaid"></a>
+
+##### `WireEnvelopeSchemaId`
+
+```csharp
+const string WireEnvelopeSchemaId
+```
+
+Identifies the executable wire-envelope schema proof id reported for the wire-contract proof.
+
 #### Methods
 
 <a id="member-m-cephalon-eventing-services-eventdispatchruntimemetadatakeys-isterminalfailure-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
@@ -3898,6 +4068,107 @@ Parameters:
 - `upcasterExecutionId`: The executable upcaster execution proof id.
 - `compatibilityValidationExecutionId`: The executable compatibility validation proof id.
 - `providerSerializationId`: The provider-owned serialization proof id.
+
+<a id="type-cephalon-eventing-services-eventdispatchwirecontractmetadata"></a>
+
+### `EventDispatchWireContractMetadata`
+
+Builds provider-reported executable wire-contract proof metadata for successful dispatch reports.
+
+Remarks: Cephalon's contract, serializer, schema-registry, and upcaster catalogs only prove descriptor-level evidence for the wire envelope and contract-version negotiation. This helper records a stronger executable claim when a provider or runtime reports successful dispatch evidence covering payload serialization, wire-envelope schema lookup, contract-version negotiation, upcaster execution, and compatibility validation behind a single wire-contract proof id.
+
+#### Declaration
+```csharp
+public static class EventDispatchWireContractMetadata
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-eventdispatchwirecontractmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateMetadata`
+
+```csharp
+Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string payloadSerializationProofId, string wireEnvelopeSchemaId, string schemaLookupProofId, string contractVersionNegotiationId, string upcasterExecutionProofId, string compatibilityValidationProofId, string wireContractProofId)
+```
+
+Creates a metadata copy enriched with provider-reported wire-contract proof when the inputs support it.
+
+Returns: A case-insensitive metadata dictionary containing the original values plus wire-contract proof when applicable.
+
+Parameters:
+- `metadata`: The dispatch report metadata to copy.
+- `outcome`: The dispatch report outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported wire-contract ownership.
+- `payloadSerializationProofId`: The executable payload serialization proof id.
+- `wireEnvelopeSchemaId`: The executable wire-envelope schema proof id.
+- `schemaLookupProofId`: The executable schema lookup proof id.
+- `contractVersionNegotiationId`: The executable contract-version negotiation proof id.
+- `upcasterExecutionProofId`: The executable upcaster execution proof id.
+- `compatibilityValidationProofId`: The executable compatibility validation proof id.
+- `wireContractProofId`: The overall wire-contract proof id.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchwirecontractmetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateReport`
+
+```csharp
+EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string payloadSerializationProofId, string wireEnvelopeSchemaId, string schemaLookupProofId, string contractVersionNegotiationId, string upcasterExecutionProofId, string compatibilityValidationProofId, string wireContractProofId)
+```
+
+Creates a dispatch report copy enriched with provider-reported wire-contract proof when the inputs support it.
+
+Returns: A dispatch report containing the original metadata plus wire-contract proof when applicable.
+
+Parameters:
+- `report`: The successful dispatch report to copy.
+- `source`: The stable provider or runtime source that reported wire-contract ownership.
+- `payloadSerializationProofId`: The executable payload serialization proof id.
+- `wireEnvelopeSchemaId`: The executable wire-envelope schema proof id.
+- `schemaLookupProofId`: The executable schema lookup proof id.
+- `contractVersionNegotiationId`: The executable contract-version negotiation proof id.
+- `upcasterExecutionProofId`: The executable upcaster execution proof id.
+- `compatibilityValidationProofId`: The executable compatibility validation proof id.
+- `wireContractProofId`: The overall wire-contract proof id.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchwirecontractmetadata-iswirecontractproven-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `IsWireContractProven`
+
+```csharp
+bool IsWireContractProven(IReadOnlyDictionary<string, string> metadata)
+```
+
+Gets a value indicating whether the metadata contains complete provider-reported wire-contract proof.
+
+Returns: `true` when complete wire-contract proof is present; otherwise, `false`.
+
+Parameters:
+- `metadata`: The dispatch metadata dictionary to inspect.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchwirecontractmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `TryApplyMetadata`
+
+```csharp
+bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string payloadSerializationProofId, string wireEnvelopeSchemaId, string schemaLookupProofId, string contractVersionNegotiationId, string upcasterExecutionProofId, string compatibilityValidationProofId, string wireContractProofId)
+```
+
+Applies provider-reported wire-contract proof to an existing dispatch metadata dictionary when the inputs support it.
+
+Returns: `true` when wire-contract proof was applied; otherwise, `false`.
+
+Parameters:
+- `metadata`: The dispatch metadata dictionary to enrich.
+- `outcome`: The dispatch report outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported wire-contract ownership.
+- `payloadSerializationProofId`: The executable payload serialization proof id.
+- `wireEnvelopeSchemaId`: The executable wire-envelope schema proof id.
+- `schemaLookupProofId`: The executable schema lookup proof id.
+- `contractVersionNegotiationId`: The executable contract-version negotiation proof id.
+- `upcasterExecutionProofId`: The executable upcaster execution proof id.
+- `compatibilityValidationProofId`: The executable compatibility validation proof id.
+- `wireContractProofId`: The overall wire-contract proof id.
 
 <a id="type-cephalon-eventing-services-eventingdiagnostics"></a>
 

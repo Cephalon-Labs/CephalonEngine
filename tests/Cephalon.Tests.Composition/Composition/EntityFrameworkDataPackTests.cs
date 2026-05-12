@@ -2086,6 +2086,104 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("serializationExecutionLastOutcome=succeeded", serializationExecutionDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", serializationExecutionDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
+        var incompleteWireContractReport = EventDispatchWireContractMetadata.CreateReport(
+            brokerDeadLetterBaseReport,
+            source: "provider-wire-contract-observer",
+            payloadSerializationProofId: "wire-payload-serialization-001",
+            wireEnvelopeSchemaId: "wire-envelope-schema-001",
+            schemaLookupProofId: "wire-schema-lookup-001",
+            contractVersionNegotiationId: "wire-contract-version-001",
+            upcasterExecutionProofId: "wire-upcaster-execution-001",
+            compatibilityValidationProofId: "wire-compatibility-validation-001",
+            wireContractProofId: "wire-contract-proof-001");
+        Assert.False(EventDispatchWireContractMetadata.IsWireContractProven(incompleteWireContractReport.Metadata));
+        Assert.DoesNotContain(EventDispatchRuntimeMetadataKeys.WireContractOwnership, incompleteWireContractReport.Metadata.Keys);
+
+        var wireContractReport = EventDispatchWireContractMetadata.CreateReport(
+            serializationExecutionReport,
+            source: "provider-wire-contract-observer",
+            payloadSerializationProofId: "wire-payload-serialization-001",
+            wireEnvelopeSchemaId: "wire-envelope-schema-001",
+            schemaLookupProofId: "wire-schema-lookup-001",
+            contractVersionNegotiationId: "wire-contract-version-001",
+            upcasterExecutionProofId: "wire-upcaster-execution-001",
+            compatibilityValidationProofId: "wire-compatibility-validation-001",
+            wireContractProofId: "wire-contract-proof-001");
+        Assert.True(EventDispatchWireContractMetadata.IsWireContractProven(wireContractReport.Metadata));
+        Assert.Equal("provider-reported", wireContractReport.Metadata[EventDispatchRuntimeMetadataKeys.WireContractOwnership]);
+        Assert.Equal("provider-wire-contract-observer", wireContractReport.Metadata[EventDispatchRuntimeMetadataKeys.WireContractOwnershipSource]);
+        Assert.Equal("durable", wireContractReport.Metadata[EventDispatchRuntimeMetadataKeys.WireContractDurability]);
+        Assert.Equal("cross-node", wireContractReport.Metadata[EventDispatchRuntimeMetadataKeys.WireContractScope]);
+        Assert.Equal("reported", wireContractReport.Metadata[EventDispatchRuntimeMetadataKeys.WireContractPayloadSerialization]);
+        Assert.Equal("wire-payload-serialization-001", wireContractReport.Metadata[EventDispatchRuntimeMetadataKeys.WireContractPayloadSerializationId]);
+        Assert.Equal("reported", wireContractReport.Metadata[EventDispatchRuntimeMetadataKeys.WireEnvelopeSchema]);
+        Assert.Equal("wire-envelope-schema-001", wireContractReport.Metadata[EventDispatchRuntimeMetadataKeys.WireEnvelopeSchemaId]);
+        Assert.Equal("reported", wireContractReport.Metadata[EventDispatchRuntimeMetadataKeys.WireContractSchemaLookup]);
+        Assert.Equal("wire-schema-lookup-001", wireContractReport.Metadata[EventDispatchRuntimeMetadataKeys.WireContractSchemaLookupId]);
+        Assert.Equal("reported", wireContractReport.Metadata[EventDispatchRuntimeMetadataKeys.ContractVersionNegotiation]);
+        Assert.Equal("wire-contract-version-001", wireContractReport.Metadata[EventDispatchRuntimeMetadataKeys.ContractVersionNegotiationId]);
+        Assert.Equal("reported", wireContractReport.Metadata[EventDispatchRuntimeMetadataKeys.WireContractUpcasterExecution]);
+        Assert.Equal("wire-upcaster-execution-001", wireContractReport.Metadata[EventDispatchRuntimeMetadataKeys.WireContractUpcasterExecutionId]);
+        Assert.Equal("reported", wireContractReport.Metadata[EventDispatchRuntimeMetadataKeys.WireContractCompatibilityValidation]);
+        Assert.Equal("wire-compatibility-validation-001", wireContractReport.Metadata[EventDispatchRuntimeMetadataKeys.WireContractCompatibilityValidationId]);
+        Assert.Equal("wire-contract-proof-001", wireContractReport.Metadata[EventDispatchRuntimeMetadataKeys.WireContractProofId]);
+
+        await dispatchRuntimeReporter.ReportAsync(wireContractReport);
+
+        var wireContractDispatchState = dispatchRuntimeCatalog.GetByOutboxId("entity-framework-outbox");
+        Assert.NotNull(wireContractDispatchState);
+        Assert.Equal(EventDispatchExecutionOutcomes.Succeeded, wireContractDispatchState.LastOutcome);
+        Assert.Equal("provider-reported", wireContractDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.WireContractOwnership]);
+        Assert.Equal("wire-payload-serialization-001", wireContractDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.WireContractPayloadSerializationId]);
+        Assert.Equal("wire-envelope-schema-001", wireContractDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.WireEnvelopeSchemaId]);
+        Assert.Equal("wire-schema-lookup-001", wireContractDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.WireContractSchemaLookupId]);
+        Assert.Equal("wire-contract-version-001", wireContractDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.ContractVersionNegotiationId]);
+        Assert.Equal("wire-upcaster-execution-001", wireContractDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.WireContractUpcasterExecutionId]);
+        Assert.Equal("wire-compatibility-validation-001", wireContractDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.WireContractCompatibilityValidationId]);
+        Assert.Equal("wire-contract-proof-001", wireContractDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.WireContractProofId]);
+
+        var wireContractEventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        var wireContractDispatchSurface = Assert.Single(wireContractEventingSurfaces, surface => surface.SurfaceId == "event-dispatches");
+        var wireContractDispatchEntry = Assert.Single(wireContractDispatchSurface.Entries, entry => entry.Id == "entity-framework-outbox");
+        Assert.Equal(
+            "provider-reported",
+            wireContractDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.WireContractOwnership}"]);
+        Assert.Equal(
+            "provider-wire-contract-observer",
+            wireContractDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.WireContractOwnershipSource}"]);
+        Assert.Equal(
+            "wire-envelope-schema-001",
+            wireContractDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.WireEnvelopeSchemaId}"]);
+        Assert.Equal(
+            "wire-contract-version-001",
+            wireContractDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.ContractVersionNegotiationId}"]);
+        Assert.Equal(
+            "wire-contract-proof-001",
+            wireContractDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.WireContractProofId}"]);
+        var wireContractDimensions = Assert.Single(wireContractEventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        Assert.Equal("claimed", wireContractDimensions["serialization-and-contract-versioning-ownership"].Metadata["status"]);
+        Assert.Contains("wireContractOwnership=provider-reported", wireContractDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wireContractOwnershipSource=provider-wire-contract-observer", wireContractDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wireContractDurability=durable", wireContractDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wireContractScope=cross-node", wireContractDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wireContractPayloadSerialization=reported", wireContractDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wireContractPayloadSerializationId=wire-payload-serialization-001", wireContractDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wireEnvelopeSchema=reported", wireContractDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wireEnvelopeSchemaId=wire-envelope-schema-001", wireContractDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wireContractSchemaLookup=reported", wireContractDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wireContractSchemaLookupId=wire-schema-lookup-001", wireContractDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("contractVersionNegotiationReport=reported", wireContractDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("contractVersionNegotiationId=wire-contract-version-001", wireContractDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wireContractUpcasterExecution=reported", wireContractDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wireContractUpcasterExecutionId=wire-upcaster-execution-001", wireContractDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wireContractCompatibilityValidation=reported", wireContractDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wireContractCompatibilityValidationId=wire-compatibility-validation-001", wireContractDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wireContractProofId=wire-contract-proof-001", wireContractDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wireContractLastOutcome=succeeded", wireContractDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", wireContractDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+
         var startedInboundReport = EventSubscriptionBrokerInboundConsumptionMetadata.CreateReport(
             new EventSubscriptionExecutionReport(
                 subscriptionId: "catalog-broker-consumer",

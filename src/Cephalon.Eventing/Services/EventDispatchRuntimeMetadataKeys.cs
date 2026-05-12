@@ -326,6 +326,91 @@ public static class EventDispatchRuntimeMetadataKeys
     public const string ProviderSerializationId = "providerSerializationId";
 
     /// <summary>
+    /// Identifies whether a provider or runtime reported wire-contract ownership for the dispatch.
+    /// </summary>
+    public const string WireContractOwnership = "wireContractOwnership";
+
+    /// <summary>
+    /// Identifies the provider or runtime source that reported wire-contract ownership.
+    /// </summary>
+    public const string WireContractOwnershipSource = "wireContractOwnershipSource";
+
+    /// <summary>
+    /// Identifies where wire-contract proof state is persisted.
+    /// </summary>
+    public const string WireContractDurability = "wireContractDurability";
+
+    /// <summary>
+    /// Identifies the wire-contract proof coordination boundary.
+    /// </summary>
+    public const string WireContractScope = "wireContractScope";
+
+    /// <summary>
+    /// Identifies whether executable payload serialization was reported as part of the wire-contract proof.
+    /// </summary>
+    public const string WireContractPayloadSerialization = "wireContractPayloadSerialization";
+
+    /// <summary>
+    /// Identifies the executable payload serialization proof id reported for the wire-contract proof.
+    /// </summary>
+    public const string WireContractPayloadSerializationId = "wireContractPayloadSerializationId";
+
+    /// <summary>
+    /// Identifies whether the executable wire-envelope schema was reported as part of the wire-contract proof.
+    /// </summary>
+    public const string WireEnvelopeSchema = "wireEnvelopeSchema";
+
+    /// <summary>
+    /// Identifies the executable wire-envelope schema proof id reported for the wire-contract proof.
+    /// </summary>
+    public const string WireEnvelopeSchemaId = "wireEnvelopeSchemaId";
+
+    /// <summary>
+    /// Identifies whether executable schema lookup was reported as part of the wire-contract proof.
+    /// </summary>
+    public const string WireContractSchemaLookup = "wireContractSchemaLookup";
+
+    /// <summary>
+    /// Identifies the executable schema lookup proof id reported for the wire-contract proof.
+    /// </summary>
+    public const string WireContractSchemaLookupId = "wireContractSchemaLookupId";
+
+    /// <summary>
+    /// Identifies whether executable contract-version negotiation was reported as part of the wire-contract proof.
+    /// </summary>
+    public const string ContractVersionNegotiation = "contractVersionNegotiation";
+
+    /// <summary>
+    /// Identifies the executable contract-version negotiation proof id reported for the wire-contract proof.
+    /// </summary>
+    public const string ContractVersionNegotiationId = "contractVersionNegotiationId";
+
+    /// <summary>
+    /// Identifies whether executable upcaster execution was reported as part of the wire-contract proof.
+    /// </summary>
+    public const string WireContractUpcasterExecution = "wireContractUpcasterExecution";
+
+    /// <summary>
+    /// Identifies the executable upcaster execution proof id reported for the wire-contract proof.
+    /// </summary>
+    public const string WireContractUpcasterExecutionId = "wireContractUpcasterExecutionId";
+
+    /// <summary>
+    /// Identifies whether executable compatibility validation was reported as part of the wire-contract proof.
+    /// </summary>
+    public const string WireContractCompatibilityValidation = "wireContractCompatibilityValidation";
+
+    /// <summary>
+    /// Identifies the executable compatibility validation proof id reported for the wire-contract proof.
+    /// </summary>
+    public const string WireContractCompatibilityValidationId = "wireContractCompatibilityValidationId";
+
+    /// <summary>
+    /// Identifies the overall wire-contract proof id reported for the dispatch.
+    /// </summary>
+    public const string WireContractProofId = "wireContractProofId";
+
+    /// <summary>
     /// Identifies whether retry persistence was reported for the dispatch.
     /// </summary>
     public const string RetryPersistence = "retryPersistence";

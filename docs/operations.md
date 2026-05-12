@@ -2682,7 +2682,10 @@ Current `Cephalon.Eventing` highlights:
   envelope schema, and compatibility policy metadata, and becomes `claimed` only when a successful
   provider/runtime dispatch report supplies complete `EventDispatchSerializationExecutionMetadata`
   proof for executable payload serialization, executable schema lookup, executable upcaster
-  execution, executable compatibility validation, and provider serialization ownership
+  execution, executable compatibility validation, and provider serialization ownership, or complete
+  `EventDispatchWireContractMetadata` proof for executable payload serialization, wire-envelope
+  schema, schema lookup, contract-version negotiation, upcaster execution, compatibility validation,
+  and a single wire-contract proof id
 - `tenant-and-correlation-context-ownership` is the separate context-propagation boundary in that
   same profile; it stays `not-claimed` until code-first context policy descriptors are present, can
   report `partial` when `EventingOptions.ContextPolicies` / `IEventContextPolicyContributor`
