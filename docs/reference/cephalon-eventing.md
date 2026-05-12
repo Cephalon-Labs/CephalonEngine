@@ -2652,6 +2652,26 @@ const string BrokerTopologyMaterializationSource
 
 Identifies the provider or runtime source that reported broker topology materialization ownership.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-compatibilityvalidationexecution"></a>
+
+##### `CompatibilityValidationExecution`
+
+```csharp
+const string CompatibilityValidationExecution
+```
+
+Identifies whether executable compatibility validation was reported for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-compatibilityvalidationexecutionid"></a>
+
+##### `CompatibilityValidationExecutionId`
+
+```csharp
+const string CompatibilityValidationExecutionId
+```
+
+Identifies the executable compatibility validation proof id.
+
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-consumercontextextraction"></a>
 
 ##### `ConsumerContextExtraction`
@@ -3072,6 +3092,26 @@ const string PartitionRebalancingId
 
 Identifies the provider partition rebalancing proof id.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-payloadserializationexecution"></a>
+
+##### `PayloadSerializationExecution`
+
+```csharp
+const string PayloadSerializationExecution
+```
+
+Identifies whether executable payload serialization was reported for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-payloadserializationexecutionid"></a>
+
+##### `PayloadSerializationExecutionId`
+
+```csharp
+const string PayloadSerializationExecutionId
+```
+
+Identifies the executable payload serialization proof id.
+
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-poisonqueueid"></a>
 
 ##### `PoisonQueueId`
@@ -3221,6 +3261,26 @@ const string ProviderPartitionOwnershipSource
 ```
 
 Identifies the provider or runtime source that reported provider partition ownership.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerserialization"></a>
+
+##### `ProviderSerialization`
+
+```csharp
+const string ProviderSerialization
+```
+
+Identifies whether provider-owned serialization was reported for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerserializationid"></a>
+
+##### `ProviderSerializationId`
+
+```csharp
+const string ProviderSerializationId
+```
+
+Identifies the provider-owned serialization proof id.
 
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providersidecontextpersistence"></a>
 
@@ -3482,6 +3542,66 @@ const string ScheduleScope
 
 Identifies the scheduler coordination boundary.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-schemalookupexecution"></a>
+
+##### `SchemaLookupExecution`
+
+```csharp
+const string SchemaLookupExecution
+```
+
+Identifies whether executable schema lookup was reported for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-schemalookupexecutionid"></a>
+
+##### `SchemaLookupExecutionId`
+
+```csharp
+const string SchemaLookupExecutionId
+```
+
+Identifies the executable schema lookup proof id.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-serializationdurability"></a>
+
+##### `SerializationDurability`
+
+```csharp
+const string SerializationDurability
+```
+
+Identifies where serialization execution state is persisted.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-serializationexecutionownership"></a>
+
+##### `SerializationExecutionOwnership`
+
+```csharp
+const string SerializationExecutionOwnership
+```
+
+Identifies whether a provider or runtime reported serialization execution ownership.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-serializationexecutionownershipsource"></a>
+
+##### `SerializationExecutionOwnershipSource`
+
+```csharp
+const string SerializationExecutionOwnershipSource
+```
+
+Identifies the provider or runtime source that reported serialization execution ownership.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-serializationscope"></a>
+
+##### `SerializationScope`
+
+```csharp
+const string SerializationScope
+```
+
+Identifies the serialization execution coordination boundary.
+
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-subscriberacknowledgement"></a>
 
 ##### `SubscriberAcknowledgement`
@@ -3551,6 +3671,26 @@ const string TopologyVerificationId
 ```
 
 Identifies the provider topology verification proof id.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-upcasterexecution"></a>
+
+##### `UpcasterExecution`
+
+```csharp
+const string UpcasterExecution
+```
+
+Identifies whether executable upcaster execution was reported for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-upcasterexecutionid"></a>
+
+##### `UpcasterExecutionId`
+
+```csharp
+const string UpcasterExecutionId
+```
+
+Identifies the executable upcaster execution proof id.
 
 #### Methods
 
@@ -3663,6 +3803,101 @@ Parameters:
 - `brokerScheduledDeliveryId`: The broker-native scheduled delivery proof id.
 - `scheduleCoordinationId`: The cross-node schedule coordination proof id.
 - `scheduleRecoveryId`: The scheduled-delivery recovery proof id.
+
+<a id="type-cephalon-eventing-services-eventdispatchserializationexecutionmetadata"></a>
+
+### `EventDispatchSerializationExecutionMetadata`
+
+Builds provider-reported executable serialization proof metadata for successful dispatch reports.
+
+Remarks: Cephalon's contract, serializer, schema-registry, and upcaster catalogs only prove descriptor-level evidence. This helper records a stronger executable claim only when a provider/runtime reports successful dispatch evidence with payload serialization, schema lookup, upcaster execution, compatibility validation, and provider serialization proof ids.
+
+#### Declaration
+```csharp
+public static class EventDispatchSerializationExecutionMetadata
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-eventdispatchserializationexecutionmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateMetadata`
+
+```csharp
+Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string payloadSerializationExecutionId, string schemaLookupExecutionId, string upcasterExecutionId, string compatibilityValidationExecutionId, string providerSerializationId)
+```
+
+Creates a metadata copy enriched with provider-reported serialization execution proof when the inputs support it.
+
+Returns: A case-insensitive metadata dictionary containing the original values plus serialization execution proof when applicable.
+
+Parameters:
+- `metadata`: The dispatch report metadata to copy.
+- `outcome`: The dispatch report outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported serialization execution ownership.
+- `payloadSerializationExecutionId`: The executable payload serialization proof id.
+- `schemaLookupExecutionId`: The executable schema lookup proof id.
+- `upcasterExecutionId`: The executable upcaster execution proof id.
+- `compatibilityValidationExecutionId`: The executable compatibility validation proof id.
+- `providerSerializationId`: The provider-owned serialization proof id.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchserializationexecutionmetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateReport`
+
+```csharp
+EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string payloadSerializationExecutionId, string schemaLookupExecutionId, string upcasterExecutionId, string compatibilityValidationExecutionId, string providerSerializationId)
+```
+
+Creates a dispatch report copy enriched with provider-reported serialization execution proof when the inputs support it.
+
+Returns: A dispatch report containing the original metadata plus serialization execution proof when applicable.
+
+Parameters:
+- `report`: The successful dispatch report to copy.
+- `source`: The stable provider or runtime source that reported serialization execution ownership.
+- `payloadSerializationExecutionId`: The executable payload serialization proof id.
+- `schemaLookupExecutionId`: The executable schema lookup proof id.
+- `upcasterExecutionId`: The executable upcaster execution proof id.
+- `compatibilityValidationExecutionId`: The executable compatibility validation proof id.
+- `providerSerializationId`: The provider-owned serialization proof id.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchserializationexecutionmetadata-isserializationexecutionproven-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `IsSerializationExecutionProven`
+
+```csharp
+bool IsSerializationExecutionProven(IReadOnlyDictionary<string, string> metadata)
+```
+
+Gets a value indicating whether the metadata contains complete provider-reported serialization execution proof.
+
+Returns: `true` when complete serialization execution proof is present; otherwise, `false`.
+
+Parameters:
+- `metadata`: The dispatch metadata dictionary to inspect.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchserializationexecutionmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `TryApplyMetadata`
+
+```csharp
+bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string payloadSerializationExecutionId, string schemaLookupExecutionId, string upcasterExecutionId, string compatibilityValidationExecutionId, string providerSerializationId)
+```
+
+Applies provider-reported serialization execution proof to an existing dispatch metadata dictionary when the inputs support it.
+
+Returns: `true` when serialization execution proof was applied; otherwise, `false`.
+
+Parameters:
+- `metadata`: The dispatch metadata dictionary to enrich.
+- `outcome`: The dispatch report outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported serialization execution ownership.
+- `payloadSerializationExecutionId`: The executable payload serialization proof id.
+- `schemaLookupExecutionId`: The executable schema lookup proof id.
+- `upcasterExecutionId`: The executable upcaster execution proof id.
+- `compatibilityValidationExecutionId`: The executable compatibility validation proof id.
+- `providerSerializationId`: The provider-owned serialization proof id.
 
 <a id="type-cephalon-eventing-services-eventingdiagnostics"></a>
 

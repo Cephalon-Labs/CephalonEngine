@@ -1994,6 +1994,98 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("lastOutcome=failed", brokerDeadLetterDimensions["broker-dead-letter-replay-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", brokerDeadLetterDimensions["broker-dead-letter-replay-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
+        var incompleteSerializationExecutionReport = EventDispatchSerializationExecutionMetadata.CreateReport(
+            brokerDeadLetterBaseReport,
+            source: "provider-serialization-observer",
+            payloadSerializationExecutionId: "payload-serialization-001",
+            schemaLookupExecutionId: "schema-lookup-001",
+            upcasterExecutionId: "upcaster-execution-001",
+            compatibilityValidationExecutionId: "compatibility-validation-001",
+            providerSerializationId: "provider-serialization-001");
+        Assert.False(EventDispatchSerializationExecutionMetadata.IsSerializationExecutionProven(incompleteSerializationExecutionReport.Metadata));
+        Assert.DoesNotContain(EventDispatchRuntimeMetadataKeys.SerializationExecutionOwnership, incompleteSerializationExecutionReport.Metadata.Keys);
+
+        var serializationExecutionReport = EventDispatchSerializationExecutionMetadata.CreateReport(
+            scheduledDeliveryReport,
+            source: "provider-serialization-observer",
+            payloadSerializationExecutionId: "payload-serialization-001",
+            schemaLookupExecutionId: "schema-lookup-001",
+            upcasterExecutionId: "upcaster-execution-001",
+            compatibilityValidationExecutionId: "compatibility-validation-001",
+            providerSerializationId: "provider-serialization-001");
+        Assert.True(EventDispatchSerializationExecutionMetadata.IsSerializationExecutionProven(serializationExecutionReport.Metadata));
+        Assert.Equal("provider-reported", serializationExecutionReport.Metadata[EventDispatchRuntimeMetadataKeys.SerializationExecutionOwnership]);
+        Assert.Equal("provider-serialization-observer", serializationExecutionReport.Metadata[EventDispatchRuntimeMetadataKeys.SerializationExecutionOwnershipSource]);
+        Assert.Equal("durable", serializationExecutionReport.Metadata[EventDispatchRuntimeMetadataKeys.SerializationDurability]);
+        Assert.Equal("cross-node", serializationExecutionReport.Metadata[EventDispatchRuntimeMetadataKeys.SerializationScope]);
+        Assert.Equal("reported", serializationExecutionReport.Metadata[EventDispatchRuntimeMetadataKeys.PayloadSerializationExecution]);
+        Assert.Equal("payload-serialization-001", serializationExecutionReport.Metadata[EventDispatchRuntimeMetadataKeys.PayloadSerializationExecutionId]);
+        Assert.Equal("reported", serializationExecutionReport.Metadata[EventDispatchRuntimeMetadataKeys.SchemaLookupExecution]);
+        Assert.Equal("schema-lookup-001", serializationExecutionReport.Metadata[EventDispatchRuntimeMetadataKeys.SchemaLookupExecutionId]);
+        Assert.Equal("reported", serializationExecutionReport.Metadata[EventDispatchRuntimeMetadataKeys.UpcasterExecution]);
+        Assert.Equal("upcaster-execution-001", serializationExecutionReport.Metadata[EventDispatchRuntimeMetadataKeys.UpcasterExecutionId]);
+        Assert.Equal("reported", serializationExecutionReport.Metadata[EventDispatchRuntimeMetadataKeys.CompatibilityValidationExecution]);
+        Assert.Equal("compatibility-validation-001", serializationExecutionReport.Metadata[EventDispatchRuntimeMetadataKeys.CompatibilityValidationExecutionId]);
+        Assert.Equal("reported", serializationExecutionReport.Metadata[EventDispatchRuntimeMetadataKeys.ProviderSerialization]);
+        Assert.Equal("provider-serialization-001", serializationExecutionReport.Metadata[EventDispatchRuntimeMetadataKeys.ProviderSerializationId]);
+
+        await dispatchRuntimeReporter.ReportAsync(serializationExecutionReport);
+
+        var serializationExecutionDispatchState = dispatchRuntimeCatalog.GetByOutboxId("entity-framework-outbox");
+        Assert.NotNull(serializationExecutionDispatchState);
+        Assert.Equal(EventDispatchExecutionOutcomes.Succeeded, serializationExecutionDispatchState.LastOutcome);
+        Assert.Equal("provider-reported", serializationExecutionDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.SerializationExecutionOwnership]);
+        Assert.Equal("payload-serialization-001", serializationExecutionDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.PayloadSerializationExecutionId]);
+        Assert.Equal("schema-lookup-001", serializationExecutionDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.SchemaLookupExecutionId]);
+        Assert.Equal("upcaster-execution-001", serializationExecutionDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.UpcasterExecutionId]);
+        Assert.Equal("compatibility-validation-001", serializationExecutionDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.CompatibilityValidationExecutionId]);
+        Assert.Equal("provider-serialization-001", serializationExecutionDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.ProviderSerializationId]);
+
+        var serializationExecutionEventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        var serializationExecutionDispatchSurface = Assert.Single(serializationExecutionEventingSurfaces, surface => surface.SurfaceId == "event-dispatches");
+        var serializationExecutionDispatchEntry = Assert.Single(serializationExecutionDispatchSurface.Entries, entry => entry.Id == "entity-framework-outbox");
+        Assert.Equal(
+            "provider-reported",
+            serializationExecutionDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.SerializationExecutionOwnership}"]);
+        Assert.Equal(
+            "provider-serialization-observer",
+            serializationExecutionDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.SerializationExecutionOwnershipSource}"]);
+        Assert.Equal(
+            "payload-serialization-001",
+            serializationExecutionDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.PayloadSerializationExecutionId}"]);
+        Assert.Equal(
+            "schema-lookup-001",
+            serializationExecutionDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.SchemaLookupExecutionId}"]);
+        Assert.Equal(
+            "upcaster-execution-001",
+            serializationExecutionDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.UpcasterExecutionId}"]);
+        Assert.Equal(
+            "compatibility-validation-001",
+            serializationExecutionDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.CompatibilityValidationExecutionId}"]);
+        Assert.Equal(
+            "provider-serialization-001",
+            serializationExecutionDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.ProviderSerializationId}"]);
+        var serializationExecutionDimensions = Assert.Single(serializationExecutionEventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        Assert.Equal("claimed", serializationExecutionDimensions["serialization-and-contract-versioning-ownership"].Metadata["status"]);
+        Assert.Contains("serializationExecutionOwnership=provider-reported", serializationExecutionDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("serializationExecutionOwnershipSource=provider-serialization-observer", serializationExecutionDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("serializationDurability=durable", serializationExecutionDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("serializationScope=cross-node", serializationExecutionDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("payloadSerializationExecution=reported", serializationExecutionDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("payloadSerializationExecutionId=payload-serialization-001", serializationExecutionDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("schemaLookupExecution=reported", serializationExecutionDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("schemaLookupExecutionId=schema-lookup-001", serializationExecutionDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("upcasterExecution=reported", serializationExecutionDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("upcasterExecutionId=upcaster-execution-001", serializationExecutionDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("compatibilityValidationExecution=reported", serializationExecutionDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("compatibilityValidationExecutionId=compatibility-validation-001", serializationExecutionDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerSerialization=reported", serializationExecutionDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerSerializationId=provider-serialization-001", serializationExecutionDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("serializationExecutionLastOutcome=succeeded", serializationExecutionDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", serializationExecutionDimensions["serialization-and-contract-versioning-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+
         var startedInboundReport = EventSubscriptionBrokerInboundConsumptionMetadata.CreateReport(
             new EventSubscriptionExecutionReport(
                 subscriptionId: "catalog-broker-consumer",
