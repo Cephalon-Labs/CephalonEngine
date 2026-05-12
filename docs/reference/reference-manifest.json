@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-12T19:56:24.9415165+00:00",
+  "GeneratedAtUtc": "2026-05-12T20:28:52.5629634+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -168,7 +168,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 77
+      "TypeCount": 78
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1228,7 +1228,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 74
+      "TypeCount": 75
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8250,6 +8250,21 @@
       }
     },
     {
+      "DisplayName": "EventDispatchBrokerDeadLetterReplayMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventdispatchbrokerdeadletterreplaymetadata",
+      "Declaration": "public static class EventDispatchBrokerDeadLetterReplayMetadata",
+      "Summary": "Builds provider-reported broker dead-letter and replay proof metadata for failed dispatch reports.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 4
+      }
+    },
+    {
       "DisplayName": "EventDispatchBrokerTopologyMetadata",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -8619,7 +8634,7 @@
       "Summary": "Defines stable metadata keys used by event-dispatch runtime observations.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 97,
+        "Fields": 109,
         "Properties": 0,
         "Methods": 1
       }
@@ -31120,6 +31135,61 @@
       "Summary": "Identifies whether the dead-letter decision is owned by a broker-specific dead-letter queue."
     },
     {
+      "DisplayName": "BrokerDeadLetterQueueId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerdeadletterqueueid",
+      "Signature": "const string BrokerDeadLetterQueueId",
+      "Summary": "Identifies the broker dead-letter queue proof id."
+    },
+    {
+      "DisplayName": "BrokerDeadLetterQueueOwnership",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerdeadletterqueueownership",
+      "Signature": "const string BrokerDeadLetterQueueOwnership",
+      "Summary": "Identifies whether broker dead-letter queue ownership was reported."
+    },
+    {
+      "DisplayName": "BrokerDeadLetterReplayOwnership",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerdeadletterreplayownership",
+      "Signature": "const string BrokerDeadLetterReplayOwnership",
+      "Summary": "Identifies whether a provider or runtime reported broker dead-letter and replay ownership."
+    },
+    {
+      "DisplayName": "BrokerDeadLetterReplayOwnershipSource",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerdeadletterreplayownershipsource",
+      "Signature": "const string BrokerDeadLetterReplayOwnershipSource",
+      "Summary": "Identifies the provider or runtime source that reported broker dead-letter and replay ownership."
+    },
+    {
+      "DisplayName": "BrokerDeadLetterReplayProofId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerdeadletterreplayproofid",
+      "Signature": "const string BrokerDeadLetterReplayProofId",
+      "Summary": "Identifies the provider-owned broker dead-letter and replay proof id."
+    },
+    {
       "DisplayName": "BrokerDeduplication",
       "Category": "Fields",
       "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
@@ -31184,6 +31254,83 @@
       "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerinboundconsumptionsource",
       "Signature": "const string BrokerInboundConsumptionSource",
       "Summary": "Identifies the provider or runtime source that reported inbound broker consumption."
+    },
+    {
+      "DisplayName": "BrokerPurgeQuarantine",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerpurgequarantine",
+      "Signature": "const string BrokerPurgeQuarantine",
+      "Summary": "Identifies whether broker purge or quarantine action support was reported."
+    },
+    {
+      "DisplayName": "BrokerPurgeQuarantineId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerpurgequarantineid",
+      "Signature": "const string BrokerPurgeQuarantineId",
+      "Summary": "Identifies the broker purge or quarantine proof id."
+    },
+    {
+      "DisplayName": "BrokerReplay",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerreplay",
+      "Signature": "const string BrokerReplay",
+      "Summary": "Identifies whether broker replay support was reported."
+    },
+    {
+      "DisplayName": "BrokerReplayActionCatalog",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerreplayactioncatalog",
+      "Signature": "const string BrokerReplayActionCatalog",
+      "Summary": "Identifies whether a broker replay action catalog was reported."
+    },
+    {
+      "DisplayName": "BrokerReplayActionCatalogId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerreplayactioncatalogid",
+      "Signature": "const string BrokerReplayActionCatalogId",
+      "Summary": "Identifies the broker replay action catalog proof id."
+    },
+    {
+      "DisplayName": "BrokerReplayCursor",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerreplaycursor",
+      "Signature": "const string BrokerReplayCursor",
+      "Summary": "Identifies whether a broker replay cursor was reported."
+    },
+    {
+      "DisplayName": "BrokerReplayCursorId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerreplaycursorid",
+      "Signature": "const string BrokerReplayCursorId",
+      "Summary": "Identifies the broker replay cursor proof id."
     },
     {
       "DisplayName": "BrokerScheduledDelivery",
@@ -42023,6 +42170,17 @@
     {
       "DisplayName": "CreateMetadata",
       "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchBrokerDeadLetterReplayMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchbrokerdeadletterreplaymetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "Dictionary\u003Cstring, string\u003E CreateMetadata(IReadOnlyDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string brokerDeadLetterQueueId, string brokerReplayActionCatalogId, string brokerReplayCursorId, string brokerPurgeQuarantineId, string providerProofId)",
+      "Summary": "Creates a metadata copy enriched with broker dead-letter and replay proof when the inputs support it."
+    },
+    {
+      "DisplayName": "CreateMetadata",
+      "Category": "Methods",
       "DeclaringTypeName": "EventDispatchBrokerTopologyMetadata",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -42195,6 +42353,17 @@
       "AnchorId": "member-m-cephalon-abstractions-data-idatabasemigrationoperationalplaybookprovider-createplaybook",
       "Signature": "DatabaseMigrationOperationalPlaybook CreatePlaybook()",
       "Summary": "Creates the current database-migration playbook."
+    },
+    {
+      "DisplayName": "CreateReport",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchBrokerDeadLetterReplayMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchbrokerdeadletterreplaymetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string brokerDeadLetterQueueId, string brokerReplayActionCatalogId, string brokerReplayCursorId, string brokerPurgeQuarantineId, string providerProofId)",
+      "Summary": "Creates a dispatch report copy enriched with broker dead-letter and replay proof when the inputs support it."
     },
     {
       "DisplayName": "CreateReport",
@@ -74983,6 +75152,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-isbrokerconsumed-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "bool IsBrokerConsumed(IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Gets a value indicating whether the metadata contains complete provider-reported broker inbound-consumption proof."
+    },
+    {
+      "DisplayName": "IsBrokerDeadLetterReplayProven",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchBrokerDeadLetterReplayMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchbrokerdeadletterreplaymetadata-isbrokerdeadletterreplayproven-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "bool IsBrokerDeadLetterReplayProven(IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Gets a value indicating whether the metadata contains complete provider-reported broker dead-letter and replay proof."
     },
     {
       "DisplayName": "IsCapabilityEnabled",
@@ -130667,6 +130847,17 @@
       "AnchorId": "member-m-cephalon-engine-trust-trustsnapshot-ctor-cephalon-engine-configuration-trustpolicy-system-collections-generic-ireadonlylist-cephalon-engine-trust-packagetrustdecision-system-collections-generic-ireadonlylist-cephalon-engine-trust-capabilitypolicydecision",
       "Signature": "TrustSnapshot(TrustPolicy Policy, IReadOnlyList\u003CPackageTrustDecision\u003E Packages, IReadOnlyList\u003CCapabilityPolicyDecision\u003E Capabilities)",
       "Summary": "Captures the effective trust policy together with evaluated package and capability decisions."
+    },
+    {
+      "DisplayName": "TryApplyMetadata",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchBrokerDeadLetterReplayMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchbrokerdeadletterreplaymetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string brokerDeadLetterQueueId, string brokerReplayActionCatalogId, string brokerReplayCursorId, string brokerPurgeQuarantineId, string providerProofId)",
+      "Summary": "Applies broker dead-letter and replay proof to an existing dispatch metadata dictionary when the inputs support it."
     },
     {
       "DisplayName": "TryApplyMetadata",

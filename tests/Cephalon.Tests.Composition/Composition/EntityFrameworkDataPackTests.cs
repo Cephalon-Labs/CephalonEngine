@@ -1892,6 +1892,108 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("lastOutcome=succeeded", scheduledDeliveryDimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", scheduledDeliveryDimensions["scheduled-and-delayed-delivery-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
+        var incompleteBrokerDeadLetterReplayReport = EventDispatchBrokerDeadLetterReplayMetadata.CreateReport(
+            scheduledDeliveryReport,
+            source: "provider-broker-dlq-observer",
+            brokerDeadLetterQueueId: "broker-dlq-001",
+            brokerReplayActionCatalogId: "broker-replay-actions-001",
+            brokerReplayCursorId: "broker-replay-cursor-001",
+            brokerPurgeQuarantineId: "broker-purge-quarantine-001",
+            providerProofId: "broker-dlq-replay-proof-001");
+        Assert.False(EventDispatchBrokerDeadLetterReplayMetadata.IsBrokerDeadLetterReplayProven(incompleteBrokerDeadLetterReplayReport.Metadata));
+        Assert.DoesNotContain(EventDispatchRuntimeMetadataKeys.BrokerDeadLetterReplayOwnership, incompleteBrokerDeadLetterReplayReport.Metadata.Keys);
+
+        var brokerDeadLetterBaseReport = new EventDispatchExecutionReport(
+            outboxId: dispatchItem.OutboxId,
+            channelId: dispatchItem.ChannelId,
+            outcome: EventDispatchExecutionOutcomes.Failed,
+            observedAtUtc: new DateTimeOffset(2026, 05, 12, 10, 3, 0, TimeSpan.Zero),
+            messageId: dispatchItem.MessageId,
+            attempt: 2,
+            error: "provider broker dead-lettered the message",
+            metadata: persistedDispatchReport.Metadata);
+        var brokerDeadLetterReplayReport = EventDispatchBrokerDeadLetterReplayMetadata.CreateReport(
+            brokerDeadLetterBaseReport,
+            source: "provider-broker-dlq-observer",
+            brokerDeadLetterQueueId: "broker-dlq-001",
+            brokerReplayActionCatalogId: "broker-replay-actions-001",
+            brokerReplayCursorId: "broker-replay-cursor-001",
+            brokerPurgeQuarantineId: "broker-purge-quarantine-001",
+            providerProofId: "broker-dlq-replay-proof-001");
+        Assert.True(EventDispatchBrokerDeadLetterReplayMetadata.IsBrokerDeadLetterReplayProven(brokerDeadLetterReplayReport.Metadata));
+        Assert.Equal("provider-broker-dead-letter", brokerDeadLetterReplayReport.Metadata[EventDispatchRuntimeMetadataKeys.DeadLetterOutcome]);
+        Assert.Equal("broker", brokerDeadLetterReplayReport.Metadata[EventDispatchRuntimeMetadataKeys.DeadLetterScope]);
+        Assert.Equal("broker", brokerDeadLetterReplayReport.Metadata[EventDispatchRuntimeMetadataKeys.DeadLetterDurability]);
+        Assert.Equal("true", brokerDeadLetterReplayReport.Metadata[EventDispatchRuntimeMetadataKeys.BrokerDeadLetter]);
+        Assert.Equal("provider-reported", brokerDeadLetterReplayReport.Metadata[EventDispatchRuntimeMetadataKeys.BrokerDeadLetterReplayOwnership]);
+        Assert.Equal("provider-broker-dlq-observer", brokerDeadLetterReplayReport.Metadata[EventDispatchRuntimeMetadataKeys.BrokerDeadLetterReplayOwnershipSource]);
+        Assert.Equal("reported", brokerDeadLetterReplayReport.Metadata[EventDispatchRuntimeMetadataKeys.BrokerDeadLetterQueueOwnership]);
+        Assert.Equal("broker-dlq-001", brokerDeadLetterReplayReport.Metadata[EventDispatchRuntimeMetadataKeys.BrokerDeadLetterQueueId]);
+        Assert.Equal("reported", brokerDeadLetterReplayReport.Metadata[EventDispatchRuntimeMetadataKeys.BrokerReplay]);
+        Assert.Equal("reported", brokerDeadLetterReplayReport.Metadata[EventDispatchRuntimeMetadataKeys.BrokerReplayActionCatalog]);
+        Assert.Equal("broker-replay-actions-001", brokerDeadLetterReplayReport.Metadata[EventDispatchRuntimeMetadataKeys.BrokerReplayActionCatalogId]);
+        Assert.Equal("reported", brokerDeadLetterReplayReport.Metadata[EventDispatchRuntimeMetadataKeys.BrokerReplayCursor]);
+        Assert.Equal("broker-replay-cursor-001", brokerDeadLetterReplayReport.Metadata[EventDispatchRuntimeMetadataKeys.BrokerReplayCursorId]);
+        Assert.Equal("reported", brokerDeadLetterReplayReport.Metadata[EventDispatchRuntimeMetadataKeys.BrokerPurgeQuarantine]);
+        Assert.Equal("broker-purge-quarantine-001", brokerDeadLetterReplayReport.Metadata[EventDispatchRuntimeMetadataKeys.BrokerPurgeQuarantineId]);
+        Assert.Equal("broker-dlq-replay-proof-001", brokerDeadLetterReplayReport.Metadata[EventDispatchRuntimeMetadataKeys.BrokerDeadLetterReplayProofId]);
+
+        await dispatchRuntimeReporter.ReportAsync(brokerDeadLetterReplayReport);
+
+        var brokerDeadLetterDispatchState = dispatchRuntimeCatalog.GetByOutboxId("entity-framework-outbox");
+        Assert.NotNull(brokerDeadLetterDispatchState);
+        Assert.Equal(EventDispatchExecutionOutcomes.Failed, brokerDeadLetterDispatchState.LastOutcome);
+        Assert.Equal("provider-reported", brokerDeadLetterDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.BrokerDeadLetterReplayOwnership]);
+        Assert.Equal("broker-dlq-001", brokerDeadLetterDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.BrokerDeadLetterQueueId]);
+        Assert.Equal("broker-replay-actions-001", brokerDeadLetterDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.BrokerReplayActionCatalogId]);
+        Assert.Equal("broker-replay-cursor-001", brokerDeadLetterDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.BrokerReplayCursorId]);
+        Assert.Equal("broker-purge-quarantine-001", brokerDeadLetterDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.BrokerPurgeQuarantineId]);
+        Assert.Equal("broker-dlq-replay-proof-001", brokerDeadLetterDispatchState.Metadata[EventDispatchRuntimeMetadataKeys.BrokerDeadLetterReplayProofId]);
+
+        var brokerDeadLetterEventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        var brokerDeadLetterDispatchSurface = Assert.Single(brokerDeadLetterEventingSurfaces, surface => surface.SurfaceId == "event-dispatches");
+        var brokerDeadLetterDispatchEntry = Assert.Single(brokerDeadLetterDispatchSurface.Entries, entry => entry.Id == "entity-framework-outbox");
+        Assert.Equal(
+            "provider-reported",
+            brokerDeadLetterDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.BrokerDeadLetterReplayOwnership}"]);
+        Assert.Equal(
+            "provider-broker-dlq-observer",
+            brokerDeadLetterDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.BrokerDeadLetterReplayOwnershipSource}"]);
+        Assert.Equal(
+            "broker-dlq-001",
+            brokerDeadLetterDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.BrokerDeadLetterQueueId}"]);
+        Assert.Equal(
+            "broker-replay-actions-001",
+            brokerDeadLetterDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.BrokerReplayActionCatalogId}"]);
+        Assert.Equal(
+            "broker-replay-cursor-001",
+            brokerDeadLetterDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.BrokerReplayCursorId}"]);
+        Assert.Equal(
+            "broker-purge-quarantine-001",
+            brokerDeadLetterDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.BrokerPurgeQuarantineId}"]);
+        Assert.Equal(
+            "broker-dlq-replay-proof-001",
+            brokerDeadLetterDispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.BrokerDeadLetterReplayProofId}"]);
+        var brokerDeadLetterDimensions = Assert.Single(brokerDeadLetterEventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        Assert.Equal("claimed", brokerDeadLetterDimensions["broker-dead-letter-replay-ownership"].Metadata["status"]);
+        Assert.Contains("brokerDeadLetterReplayOwnership=provider-reported", brokerDeadLetterDimensions["broker-dead-letter-replay-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerDeadLetterReplayOwnershipSource=provider-broker-dlq-observer", brokerDeadLetterDimensions["broker-dead-letter-replay-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerDeadLetterQueueOwnership=reported", brokerDeadLetterDimensions["broker-dead-letter-replay-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerDeadLetterQueueId=broker-dlq-001", brokerDeadLetterDimensions["broker-dead-letter-replay-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerReplay=reported", brokerDeadLetterDimensions["broker-dead-letter-replay-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerReplayActionCatalog=reported", brokerDeadLetterDimensions["broker-dead-letter-replay-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerReplayActionCatalogId=broker-replay-actions-001", brokerDeadLetterDimensions["broker-dead-letter-replay-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerReplayCursor=reported", brokerDeadLetterDimensions["broker-dead-letter-replay-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerReplayCursorId=broker-replay-cursor-001", brokerDeadLetterDimensions["broker-dead-letter-replay-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerPurgeQuarantine=reported", brokerDeadLetterDimensions["broker-dead-letter-replay-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerPurgeQuarantineId=broker-purge-quarantine-001", brokerDeadLetterDimensions["broker-dead-letter-replay-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("brokerDeadLetterReplayProofId=broker-dlq-replay-proof-001", brokerDeadLetterDimensions["broker-dead-letter-replay-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("deadLetterOutcome=provider-broker-dead-letter", brokerDeadLetterDimensions["broker-dead-letter-replay-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("lastOutcome=failed", brokerDeadLetterDimensions["broker-dead-letter-replay-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", brokerDeadLetterDimensions["broker-dead-letter-replay-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+
         var startedInboundReport = EventSubscriptionBrokerInboundConsumptionMetadata.CreateReport(
             new EventSubscriptionExecutionReport(
                 subscriptionId: "catalog-broker-consumer",

@@ -3018,6 +3018,21 @@ Browse the published API surface by public member.
 - [BrokerDeadLetter](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerdeadletter): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerDeadLetter&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies whether the dead-letter decision is owned by a broker-specific dead-letter queue.
   - `const string BrokerDeadLetter`
+- [BrokerDeadLetterQueueId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerdeadletterqueueid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerDeadLetterQueueId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the broker dead-letter queue proof id.
+  - `const string BrokerDeadLetterQueueId`
+- [BrokerDeadLetterQueueOwnership](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerdeadletterqueueownership): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerDeadLetterQueueOwnership&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether broker dead-letter queue ownership was reported.
+  - `const string BrokerDeadLetterQueueOwnership`
+- [BrokerDeadLetterReplayOwnership](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerdeadletterreplayownership): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerDeadLetterReplayOwnership&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether a provider or runtime reported broker dead-letter and replay ownership.
+  - `const string BrokerDeadLetterReplayOwnership`
+- [BrokerDeadLetterReplayOwnershipSource](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerdeadletterreplayownershipsource): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerDeadLetterReplayOwnershipSource&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the provider or runtime source that reported broker dead-letter and replay ownership.
+  - `const string BrokerDeadLetterReplayOwnershipSource`
+- [BrokerDeadLetterReplayProofId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerdeadletterreplayproofid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerDeadLetterReplayProofId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the provider-owned broker dead-letter and replay proof id.
+  - `const string BrokerDeadLetterReplayProofId`
 - [BrokerDeduplication](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerdeduplication): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerDeduplication&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies whether broker deduplication proof was reported for subscription processing.
   - `const string BrokerDeduplication`
@@ -3036,6 +3051,27 @@ Browse the published API surface by public member.
 - [BrokerInboundConsumptionSource](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-brokerinboundconsumptionsource): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerInboundConsumptionSource&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the provider or runtime source that reported inbound broker consumption.
   - `const string BrokerInboundConsumptionSource`
+- [BrokerPurgeQuarantine](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerpurgequarantine): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerPurgeQuarantine&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether broker purge or quarantine action support was reported.
+  - `const string BrokerPurgeQuarantine`
+- [BrokerPurgeQuarantineId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerpurgequarantineid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerPurgeQuarantineId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the broker purge or quarantine proof id.
+  - `const string BrokerPurgeQuarantineId`
+- [BrokerReplay](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerreplay): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerReplay&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether broker replay support was reported.
+  - `const string BrokerReplay`
+- [BrokerReplayActionCatalog](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerreplayactioncatalog): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerReplayActionCatalog&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether a broker replay action catalog was reported.
+  - `const string BrokerReplayActionCatalog`
+- [BrokerReplayActionCatalogId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerreplayactioncatalogid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerReplayActionCatalogId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the broker replay action catalog proof id.
+  - `const string BrokerReplayActionCatalogId`
+- [BrokerReplayCursor](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerreplaycursor): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerReplayCursor&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether a broker replay cursor was reported.
+  - `const string BrokerReplayCursor`
+- [BrokerReplayCursorId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerreplaycursorid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerReplayCursorId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the broker replay cursor proof id.
+  - `const string BrokerReplayCursorId`
 - [BrokerScheduledDelivery](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerscheduleddelivery): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BrokerScheduledDelivery&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies whether broker-native scheduled delivery was reported for the dispatch.
   - `const string BrokerScheduledDelivery`
@@ -5994,6 +6030,9 @@ Browse the published API surface by public member.
 - [CreateInstance](cephalon-identity-aspnetcore.md#member-m-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-createinstance-system-iserviceprovider): `Methods` on `RequireCephalonAuthorizationAttribute` in `Cephalon.Identity.AspNetCore.Transports.Rest` (`Cephalon.Identity.AspNetCore`) [Browse](browse.html?q=CreateInstance&assembly=Cephalon.Identity.AspNetCore&namespace=Cephalon.Identity.AspNetCore.Transports.Rest&scope=members)
   - Creates the MVC authorization filter that evaluates the current request through the shared Cephalon boundary executor.
   - `IFilterMetadata CreateInstance(IServiceProvider serviceProvider)`
+- [CreateMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchbrokerdeadletterreplaymetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchBrokerDeadLetterReplayMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates a metadata copy enriched with broker dead-letter and replay proof when the inputs support it.
+  - `Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string brokerDeadLetterQueueId, string brokerReplayActionCatalogId, string brokerReplayCursorId, string brokerPurgeQuarantineId, string providerProofId)`
 - [CreateMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchbrokertopologymetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchBrokerTopologyMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a metadata copy enriched with provider-reported broker topology proof when the inputs support it.
   - `Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string exchangeProvisioningId, string queueProvisioningId, string topicProvisioningId, string partitionProvisioningId, string topologyVerificationId, string providerTopologyId)`
@@ -6042,6 +6081,9 @@ Browse the published API surface by public member.
 - [CreatePlaybook](cephalon-abstractions.md#member-m-cephalon-abstractions-data-idatabasemigrationoperationalplaybookprovider-createplaybook): `Methods` on `IDatabaseMigrationOperationalPlaybookProvider` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CreatePlaybook&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Creates the current database-migration playbook.
   - `DatabaseMigrationOperationalPlaybook CreatePlaybook()`
+- [CreateReport](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchbrokerdeadletterreplaymetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchBrokerDeadLetterReplayMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateReport&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates a dispatch report copy enriched with broker dead-letter and replay proof when the inputs support it.
+  - `EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string brokerDeadLetterQueueId, string brokerReplayActionCatalogId, string brokerReplayCursorId, string brokerPurgeQuarantineId, string providerProofId)`
 - [CreateReport](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchbrokertopologymetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchBrokerTopologyMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateReport&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a dispatch report copy enriched with provider-reported broker topology proof when the inputs support it.
   - `EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string exchangeProvisioningId, string queueProvisioningId, string topicProvisioningId, string partitionProvisioningId, string topologyVerificationId, string providerTopologyId)`
@@ -15000,6 +15042,9 @@ Browse the published API surface by public member.
 - [IsBrokerConsumed](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-isbrokerconsumed-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `EventSubscriptionBrokerInboundConsumptionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=IsBrokerConsumed&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets a value indicating whether the metadata contains complete provider-reported broker inbound-consumption proof.
   - `bool IsBrokerConsumed(IReadOnlyDictionary<string, string> metadata)`
+- [IsBrokerDeadLetterReplayProven](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchbrokerdeadletterreplaymetadata-isbrokerdeadletterreplayproven-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `EventDispatchBrokerDeadLetterReplayMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=IsBrokerDeadLetterReplayProven&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets a value indicating whether the metadata contains complete provider-reported broker dead-letter and replay proof.
+  - `bool IsBrokerDeadLetterReplayProven(IReadOnlyDictionary<string, string> metadata)`
 - [IsCapabilityEnabled](cephalon-engine.md#member-m-cephalon-engine-configuration-engineoptions-iscapabilityenabled-system-string): `Methods` on `EngineOptions` in `Cephalon.Engine.Configuration` (`Cephalon.Engine`) [Browse](browse.html?q=IsCapabilityEnabled&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Configuration&scope=members)
   - Determines whether a capability is enabled under the current option set.
   - `bool IsCapabilityEnabled(string capabilityKey)`
@@ -30213,6 +30258,9 @@ Browse the published API surface by public member.
 - [TrustSnapshot](cephalon-engine.md#member-m-cephalon-engine-trust-trustsnapshot-ctor-cephalon-engine-configuration-trustpolicy-system-collections-generic-ireadonlylist-cephalon-engine-trust-packagetrustdecision-system-collections-generic-ireadonlylist-cephalon-engine-trust-capabilitypolicydecision): `Constructors` on `TrustSnapshot` in `Cephalon.Engine.Trust` (`Cephalon.Engine`) [Browse](browse.html?q=TrustSnapshot&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Trust&scope=members)
   - Captures the effective trust policy together with evaluated package and capability decisions.
   - `TrustSnapshot(TrustPolicy Policy, IReadOnlyList<PackageTrustDecision> Packages, IReadOnlyList<CapabilityPolicyDecision> Capabilities)`
+- [TryApplyMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchbrokerdeadletterreplaymetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchBrokerDeadLetterReplayMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryApplyMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Applies broker dead-letter and replay proof to an existing dispatch metadata dictionary when the inputs support it.
+  - `bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string brokerDeadLetterQueueId, string brokerReplayActionCatalogId, string brokerReplayCursorId, string brokerPurgeQuarantineId, string providerProofId)`
 - [TryApplyMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchbrokertopologymetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchBrokerTopologyMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryApplyMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Applies provider-reported broker topology proof to an existing dispatch metadata dictionary when the inputs support it.
   - `bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string exchangeProvisioningId, string queueProvisioningId, string topicProvisioningId, string partitionProvisioningId, string topologyVerificationId, string providerTopologyId)`

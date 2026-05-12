@@ -2641,9 +2641,12 @@ Current `Cephalon.Eventing` highlights:
   `IEventDispatchRemediationCommandReplayCursorCatalog`, and process-local audit, missing journals,
   and broker dead-letter/replay ownership remain explicit instead of implied
 - `broker-dead-letter-replay-ownership` is the separate broker boundary in that same profile; it
-  stays `not-claimed` until a provider package owns a broker DLQ descriptor and replay action path,
-  even when dispatch-store dead-letter intent, Wolverine-managed dispatch reports, or durable
-  command-journal replay are active
+  stays `not-claimed` until a provider/runtime failed dispatch report supplies complete broker DLQ
+  and replay proof through `EventDispatchBrokerDeadLetterReplayMetadata`: broker dead-letter queue,
+  replay action catalog, replay cursor, purge/quarantine, and provider proof ids. Dispatch-store
+  dead-letter intent, Wolverine-managed dispatch reports, durable command-journal replay, topology
+  proof, provider partition proof, and scheduled-delivery proof stay non-claim evidence without
+  that failed-dispatch broker proof.
 - `broker-topology-materialization-ownership` is the matching topology boundary in that same
   profile; it stays `not-claimed` until a successful provider/runtime dispatch report supplies
   complete `EventDispatchBrokerTopologyMetadata` proof for exchange provisioning, queue

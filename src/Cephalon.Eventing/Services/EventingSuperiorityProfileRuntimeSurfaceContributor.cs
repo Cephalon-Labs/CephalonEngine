@@ -42,7 +42,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var remediationReadPerformanceEvidence = topology.HasOutboxPublishingPath
             ? $"benchmarks={RemediationFilteredReadBenchmarks}; readPolicy=single-pass-retained-catalog; materialization=not-required; wolverineRequired=false"
             : $"benchmark guardrails exist for {RemediationFilteredReadBenchmarks}; no outbox-backed command path is active.";
-        var brokerDeadLetterReplayEvidence = ResolveBrokerDeadLetterReplayEvidence(topology);
+        var brokerDeadLetterReplay = ResolveBrokerDeadLetterReplayProfile();
         var commandJournalDescriptor = ResolveCommandJournalDescriptor();
         var durableCommandJournalStatus = ResolveDurableCommandJournalStatus(commandJournalDescriptor);
         var durableCommandJournalEvidence = ResolveDurableCommandJournalEvidence(commandJournalDescriptor);
@@ -276,10 +276,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     id: "broker-dead-letter-replay-ownership",
                     displayName: "Broker Dead-letter Replay Ownership",
                     description: "Makes broker dead-letter queue ownership and broker replay support explicit instead of inferring them from dispatch-store dead-letter intent or durable command-journal replay.",
-                    status: "not-claimed",
-                    evidence: brokerDeadLetterReplayEvidence,
+                    status: brokerDeadLetterReplay.Status,
+                    evidence: brokerDeadLetterReplay.Evidence,
                     advantage: "Operators can see that Cephalon-owned command journals and dispatch-store remediation do not silently promise broker DLQ mutation, broker replay, or a Wolverine dependency.",
-                    nextGap: "Add a provider-owned broker dead-letter descriptor and replay action catalog before claiming broker replay ownership."),
+                    nextGap: brokerDeadLetterReplay.NextGap),
                 CreateEntry(
                     id: "native-remediation-operator-read-performance",
                     displayName: "Native Remediation Operator Read Performance",
@@ -1623,18 +1623,107 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             "Add provider-neutral process-manager state proof metadata plus state persistence, correlation, timeout, compensation, concurrency, recovery, and provider process-manager evidence before claiming process-manager state ownership.");
     }
 
-    private static string ResolveBrokerDeadLetterReplayEvidence(EventingRuntimeTopology topology)
+    private BrokerDeadLetterReplayProfile ResolveBrokerDeadLetterReplayProfile()
     {
-        if (!topology.HasOutboxPublishingPath)
-        {
-            return "no outbox-backed dispatch reporting path is active; brokerDeadLetterQueueOwnership=not-claimed; brokerReplay=not-claimed; wolverineRequired=false";
-        }
-
         var dispatchStoreDeadLetterIntent = topology.HasDispatchStore ? "available" : "not-active";
         var dispatchRuntime = topology.HasDispatchRuntimeContributors ? "reported" : "not-reported";
-        return string.Create(
-            CultureInfo.InvariantCulture,
-            $"dispatchStoreDeadLetterIntent={dispatchStoreDeadLetterIntent}; dispatchRuntime={dispatchRuntime}; brokerDeadLetterQueueOwnership=not-claimed; brokerReplay=not-claimed; providerOwnedBrokerPath=not-present; wolverineRequired=false");
+
+        if (!topology.HasOutboxPublishingPath)
+        {
+            return new BrokerDeadLetterReplayProfile(
+                "not-claimed",
+                "no outbox-backed dispatch reporting path is active; brokerDeadLetterQueueOwnership=not-claimed; brokerReplay=not-claimed; wolverineRequired=false",
+                "Add an outbox-backed dispatch reporting path before claiming broker dead-letter or replay ownership.");
+        }
+
+        using var scope = scopeFactory.CreateScope();
+        var dispatchRuntimeCatalog = scope.ServiceProvider.GetService<IEventDispatchRuntimeCatalog>();
+        var brokerDeadLetterState = dispatchRuntimeCatalog?.States
+            .Where(static state =>
+                state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.BrokerDeadLetterReplayOwnership, out var value) &&
+                string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase))
+            .OrderByDescending(static state =>
+                string.Equals(state.LastOutcome, EventDispatchExecutionOutcomes.Failed, StringComparison.OrdinalIgnoreCase) &&
+                EventDispatchBrokerDeadLetterReplayMetadata.IsBrokerDeadLetterReplayProven(state.Metadata))
+            .FirstOrDefault();
+
+        if (brokerDeadLetterState is not null)
+        {
+            var metadata = brokerDeadLetterState.Metadata;
+            var brokerDeadLetterReplayOwnership = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.BrokerDeadLetterReplayOwnership,
+                "not-claimed");
+            var brokerDeadLetterReplayOwnershipSource = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.BrokerDeadLetterReplayOwnershipSource,
+                "not-reported");
+            var brokerDeadLetterQueueOwnership = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.BrokerDeadLetterQueueOwnership,
+                "not-claimed");
+            var brokerDeadLetterQueueId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.BrokerDeadLetterQueueId,
+                "not-reported");
+            var brokerReplay = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.BrokerReplay,
+                "not-claimed");
+            var brokerReplayActionCatalog = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.BrokerReplayActionCatalog,
+                "not-claimed");
+            var brokerReplayActionCatalogId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.BrokerReplayActionCatalogId,
+                "not-reported");
+            var brokerReplayCursor = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.BrokerReplayCursor,
+                "not-claimed");
+            var brokerReplayCursorId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.BrokerReplayCursorId,
+                "not-reported");
+            var brokerPurgeQuarantine = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.BrokerPurgeQuarantine,
+                "not-claimed");
+            var brokerPurgeQuarantineId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.BrokerPurgeQuarantineId,
+                "not-reported");
+            var brokerDeadLetterReplayProofId = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.BrokerDeadLetterReplayProofId,
+                "not-reported");
+            var deadLetterOutcome = GetMetadataValue(
+                metadata,
+                EventDispatchRuntimeMetadataKeys.DeadLetterOutcome,
+                "not-reported");
+            var status = EventDispatchBrokerDeadLetterReplayMetadata.IsBrokerDeadLetterReplayProven(metadata) &&
+                string.Equals(brokerDeadLetterState.LastOutcome, EventDispatchExecutionOutcomes.Failed, StringComparison.OrdinalIgnoreCase)
+                    ? "claimed"
+                    : "partial";
+            var nextGap = status == "claimed"
+                ? "Keep broker dead-letter queue, replay action catalog, replay cursor, purge/quarantine, and provider proof covered by provider integration tests."
+                : "Complete broker dead-letter queue, replay action catalog, replay cursor, purge/quarantine, and provider proof evidence before claiming broker replay ownership.";
+
+            return new BrokerDeadLetterReplayProfile(
+                status,
+                string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"dispatchStoreDeadLetterIntent={dispatchStoreDeadLetterIntent}; dispatchRuntime={dispatchRuntime}; brokerDeadLetterReplayOwnership={brokerDeadLetterReplayOwnership}; brokerDeadLetterReplayOwnershipSource={brokerDeadLetterReplayOwnershipSource}; brokerDeadLetterQueueOwnership={brokerDeadLetterQueueOwnership}; brokerDeadLetterQueueId={brokerDeadLetterQueueId}; brokerReplay={brokerReplay}; brokerReplayActionCatalog={brokerReplayActionCatalog}; brokerReplayActionCatalogId={brokerReplayActionCatalogId}; brokerReplayCursor={brokerReplayCursor}; brokerReplayCursorId={brokerReplayCursorId}; brokerPurgeQuarantine={brokerPurgeQuarantine}; brokerPurgeQuarantineId={brokerPurgeQuarantineId}; brokerDeadLetterReplayProofId={brokerDeadLetterReplayProofId}; deadLetterOutcome={deadLetterOutcome}; outboxId={brokerDeadLetterState.OutboxId}; lastOutcome={brokerDeadLetterState.LastOutcome ?? "unknown"}; providerOwnedBrokerPath=reported; wolverineRequired=false"),
+                nextGap);
+        }
+
+        return new BrokerDeadLetterReplayProfile(
+            "not-claimed",
+            string.Create(
+                CultureInfo.InvariantCulture,
+                $"dispatchStoreDeadLetterIntent={dispatchStoreDeadLetterIntent}; dispatchRuntime={dispatchRuntime}; brokerDeadLetterReplayOwnership=not-claimed; brokerDeadLetterQueueOwnership=not-claimed; brokerDeadLetterQueueId=not-reported; brokerReplay=not-claimed; brokerReplayActionCatalog=not-claimed; brokerReplayActionCatalogId=not-reported; brokerReplayCursor=not-claimed; brokerReplayCursorId=not-reported; brokerPurgeQuarantine=not-claimed; brokerPurgeQuarantineId=not-reported; brokerDeadLetterReplayProofId=not-reported; providerOwnedBrokerPath=not-present; wolverineRequired=false"),
+            "Add provider-owned broker dead-letter queue, replay action catalog, replay cursor, purge/quarantine, and provider proof metadata before claiming broker replay ownership.");
     }
 
     private static string ResolveDurableCommandJournalStatus(EventDispatchRemediationCommandJournalDescriptor? descriptor)
@@ -1774,4 +1863,6 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private sealed record SubscriptionOrderingProfile(string Status, string Evidence, string NextGap);
 
     private sealed record ProcessManagerStateProfile(string Status, string Evidence, string NextGap);
+
+    private sealed record BrokerDeadLetterReplayProfile(string Status, string Evidence, string NextGap);
 }

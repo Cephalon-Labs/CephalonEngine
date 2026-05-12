@@ -341,6 +341,66 @@ public static class EventDispatchRuntimeMetadataKeys
     public const string BrokerDeadLetter = "brokerDeadLetter";
 
     /// <summary>
+    /// Identifies whether a provider or runtime reported broker dead-letter and replay ownership.
+    /// </summary>
+    public const string BrokerDeadLetterReplayOwnership = "brokerDeadLetterReplayOwnership";
+
+    /// <summary>
+    /// Identifies the provider or runtime source that reported broker dead-letter and replay ownership.
+    /// </summary>
+    public const string BrokerDeadLetterReplayOwnershipSource = "brokerDeadLetterReplayOwnershipSource";
+
+    /// <summary>
+    /// Identifies whether broker dead-letter queue ownership was reported.
+    /// </summary>
+    public const string BrokerDeadLetterQueueOwnership = "brokerDeadLetterQueueOwnership";
+
+    /// <summary>
+    /// Identifies the broker dead-letter queue proof id.
+    /// </summary>
+    public const string BrokerDeadLetterQueueId = "brokerDeadLetterQueueId";
+
+    /// <summary>
+    /// Identifies whether broker replay support was reported.
+    /// </summary>
+    public const string BrokerReplay = "brokerReplay";
+
+    /// <summary>
+    /// Identifies whether a broker replay action catalog was reported.
+    /// </summary>
+    public const string BrokerReplayActionCatalog = "brokerReplayActionCatalog";
+
+    /// <summary>
+    /// Identifies the broker replay action catalog proof id.
+    /// </summary>
+    public const string BrokerReplayActionCatalogId = "brokerReplayActionCatalogId";
+
+    /// <summary>
+    /// Identifies whether a broker replay cursor was reported.
+    /// </summary>
+    public const string BrokerReplayCursor = "brokerReplayCursor";
+
+    /// <summary>
+    /// Identifies the broker replay cursor proof id.
+    /// </summary>
+    public const string BrokerReplayCursorId = "brokerReplayCursorId";
+
+    /// <summary>
+    /// Identifies whether broker purge or quarantine action support was reported.
+    /// </summary>
+    public const string BrokerPurgeQuarantine = "brokerPurgeQuarantine";
+
+    /// <summary>
+    /// Identifies the broker purge or quarantine proof id.
+    /// </summary>
+    public const string BrokerPurgeQuarantineId = "brokerPurgeQuarantineId";
+
+    /// <summary>
+    /// Identifies the provider-owned broker dead-letter and replay proof id.
+    /// </summary>
+    public const string BrokerDeadLetterReplayProofId = "brokerDeadLetterReplayProofId";
+
+    /// <summary>
     /// Identifies the durable dispatch context propagation boundary proven by the latest runtime observation.
     /// </summary>
     public const string DurableDispatchContextPropagation = "durableDispatchContextPropagation";

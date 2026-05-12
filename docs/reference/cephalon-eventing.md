@@ -1114,6 +1114,101 @@ string Version { get; }
 
 Gets the event contract version.
 
+<a id="type-cephalon-eventing-services-eventdispatchbrokerdeadletterreplaymetadata"></a>
+
+### `EventDispatchBrokerDeadLetterReplayMetadata`
+
+Builds provider-reported broker dead-letter and replay proof metadata for failed dispatch reports.
+
+Remarks: Cephalon dispatch-store dead-letter commands prove only bounded dispatch-store terminal intent. This helper records the stronger broker DLQ and replay claim only when a provider/runtime reports failed dispatch evidence with broker dead-letter queue, replay action catalog, replay cursor, purge/quarantine, and provider proof ids.
+
+#### Declaration
+```csharp
+public static class EventDispatchBrokerDeadLetterReplayMetadata
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-eventdispatchbrokerdeadletterreplaymetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateMetadata`
+
+```csharp
+Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string brokerDeadLetterQueueId, string brokerReplayActionCatalogId, string brokerReplayCursorId, string brokerPurgeQuarantineId, string providerProofId)
+```
+
+Creates a metadata copy enriched with broker dead-letter and replay proof when the inputs support it.
+
+Returns: A case-insensitive metadata dictionary containing the original values plus broker dead-letter and replay proof when applicable.
+
+Parameters:
+- `metadata`: The dispatch report metadata to copy.
+- `outcome`: The dispatch report outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported broker dead-letter and replay ownership.
+- `brokerDeadLetterQueueId`: The broker dead-letter queue proof id.
+- `brokerReplayActionCatalogId`: The broker replay action catalog proof id.
+- `brokerReplayCursorId`: The broker replay cursor proof id.
+- `brokerPurgeQuarantineId`: The broker purge or quarantine proof id.
+- `providerProofId`: The provider-owned broker dead-letter and replay proof id.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchbrokerdeadletterreplaymetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `CreateReport`
+
+```csharp
+EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string brokerDeadLetterQueueId, string brokerReplayActionCatalogId, string brokerReplayCursorId, string brokerPurgeQuarantineId, string providerProofId)
+```
+
+Creates a dispatch report copy enriched with broker dead-letter and replay proof when the inputs support it.
+
+Returns: A dispatch report containing the original metadata plus broker dead-letter and replay proof when applicable.
+
+Parameters:
+- `report`: The failed dispatch report to copy.
+- `source`: The stable provider or runtime source that reported broker dead-letter and replay ownership.
+- `brokerDeadLetterQueueId`: The broker dead-letter queue proof id.
+- `brokerReplayActionCatalogId`: The broker replay action catalog proof id.
+- `brokerReplayCursorId`: The broker replay cursor proof id.
+- `brokerPurgeQuarantineId`: The broker purge or quarantine proof id.
+- `providerProofId`: The provider-owned broker dead-letter and replay proof id.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchbrokerdeadletterreplaymetadata-isbrokerdeadletterreplayproven-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `IsBrokerDeadLetterReplayProven`
+
+```csharp
+bool IsBrokerDeadLetterReplayProven(IReadOnlyDictionary<string, string> metadata)
+```
+
+Gets a value indicating whether the metadata contains complete provider-reported broker dead-letter and replay proof.
+
+Returns: `true` when complete broker dead-letter and replay proof is present; otherwise, `false`.
+
+Parameters:
+- `metadata`: The dispatch metadata dictionary to inspect.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchbrokerdeadletterreplaymetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string"></a>
+
+##### `TryApplyMetadata`
+
+```csharp
+bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string brokerDeadLetterQueueId, string brokerReplayActionCatalogId, string brokerReplayCursorId, string brokerPurgeQuarantineId, string providerProofId)
+```
+
+Applies broker dead-letter and replay proof to an existing dispatch metadata dictionary when the inputs support it.
+
+Returns: `true` when broker dead-letter and replay proof was applied; otherwise, `false`.
+
+Parameters:
+- `metadata`: The dispatch metadata dictionary to enrich.
+- `outcome`: The dispatch report outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported broker dead-letter and replay ownership.
+- `brokerDeadLetterQueueId`: The broker dead-letter queue proof id.
+- `brokerReplayActionCatalogId`: The broker replay action catalog proof id.
+- `brokerReplayCursorId`: The broker replay cursor proof id.
+- `brokerPurgeQuarantineId`: The broker purge or quarantine proof id.
+- `providerProofId`: The provider-owned broker dead-letter and replay proof id.
+
 <a id="type-cephalon-eventing-services-eventdispatchbrokertopologymetadata"></a>
 
 ### `EventDispatchBrokerTopologyMetadata`
@@ -2377,6 +2472,56 @@ const string BrokerDeadLetter
 
 Identifies whether the dead-letter decision is owned by a broker-specific dead-letter queue.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerdeadletterqueueid"></a>
+
+##### `BrokerDeadLetterQueueId`
+
+```csharp
+const string BrokerDeadLetterQueueId
+```
+
+Identifies the broker dead-letter queue proof id.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerdeadletterqueueownership"></a>
+
+##### `BrokerDeadLetterQueueOwnership`
+
+```csharp
+const string BrokerDeadLetterQueueOwnership
+```
+
+Identifies whether broker dead-letter queue ownership was reported.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerdeadletterreplayownership"></a>
+
+##### `BrokerDeadLetterReplayOwnership`
+
+```csharp
+const string BrokerDeadLetterReplayOwnership
+```
+
+Identifies whether a provider or runtime reported broker dead-letter and replay ownership.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerdeadletterreplayownershipsource"></a>
+
+##### `BrokerDeadLetterReplayOwnershipSource`
+
+```csharp
+const string BrokerDeadLetterReplayOwnershipSource
+```
+
+Identifies the provider or runtime source that reported broker dead-letter and replay ownership.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerdeadletterreplayproofid"></a>
+
+##### `BrokerDeadLetterReplayProofId`
+
+```csharp
+const string BrokerDeadLetterReplayProofId
+```
+
+Identifies the provider-owned broker dead-letter and replay proof id.
+
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokererrorqueue"></a>
 
 ##### `BrokerErrorQueue`
@@ -2396,6 +2541,76 @@ const string BrokerErrorQueueId
 ```
 
 Identifies the broker error queue id reported for the dispatch.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerpurgequarantine"></a>
+
+##### `BrokerPurgeQuarantine`
+
+```csharp
+const string BrokerPurgeQuarantine
+```
+
+Identifies whether broker purge or quarantine action support was reported.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerpurgequarantineid"></a>
+
+##### `BrokerPurgeQuarantineId`
+
+```csharp
+const string BrokerPurgeQuarantineId
+```
+
+Identifies the broker purge or quarantine proof id.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerreplay"></a>
+
+##### `BrokerReplay`
+
+```csharp
+const string BrokerReplay
+```
+
+Identifies whether broker replay support was reported.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerreplayactioncatalog"></a>
+
+##### `BrokerReplayActionCatalog`
+
+```csharp
+const string BrokerReplayActionCatalog
+```
+
+Identifies whether a broker replay action catalog was reported.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerreplayactioncatalogid"></a>
+
+##### `BrokerReplayActionCatalogId`
+
+```csharp
+const string BrokerReplayActionCatalogId
+```
+
+Identifies the broker replay action catalog proof id.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerreplaycursor"></a>
+
+##### `BrokerReplayCursor`
+
+```csharp
+const string BrokerReplayCursor
+```
+
+Identifies whether a broker replay cursor was reported.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerreplaycursorid"></a>
+
+##### `BrokerReplayCursorId`
+
+```csharp
+const string BrokerReplayCursorId
+```
+
+Identifies the broker replay cursor proof id.
 
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-brokerscheduleddelivery"></a>
 

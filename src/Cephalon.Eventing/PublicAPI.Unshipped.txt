@@ -17,8 +17,20 @@ const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.OperatorAc
 const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.OperatorCommandReason = "operatorCommandReason" -> string!
 const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.OperatorCorrelationId = "operatorCorrelationId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerDeadLetter = "brokerDeadLetter" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerDeadLetterQueueId = "brokerDeadLetterQueueId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerDeadLetterQueueOwnership = "brokerDeadLetterQueueOwnership" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerDeadLetterReplayOwnership = "brokerDeadLetterReplayOwnership" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerDeadLetterReplayOwnershipSource = "brokerDeadLetterReplayOwnershipSource" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerDeadLetterReplayProofId = "brokerDeadLetterReplayProofId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerErrorQueue = "brokerErrorQueue" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerErrorQueueId = "brokerErrorQueueId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerPurgeQuarantine = "brokerPurgeQuarantine" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerPurgeQuarantineId = "brokerPurgeQuarantineId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerReplay = "brokerReplay" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerReplayActionCatalog = "brokerReplayActionCatalog" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerReplayActionCatalogId = "brokerReplayActionCatalogId" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerReplayCursor = "brokerReplayCursor" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerReplayCursorId = "brokerReplayCursorId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerScheduledDelivery = "brokerScheduledDelivery" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerScheduledDeliveryId = "brokerScheduledDeliveryId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerTopologyMaterialization = "brokerTopologyMaterialization" -> string!
@@ -104,6 +116,11 @@ const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.TopicProvision
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.TopicProvisioningId = "topicProvisioningId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.TopologyVerification = "topologyVerification" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.TopologyVerificationId = "topologyVerificationId" -> string!
+Cephalon.Eventing.Services.EventDispatchBrokerDeadLetterReplayMetadata
+static Cephalon.Eventing.Services.EventDispatchBrokerDeadLetterReplayMetadata.CreateMetadata(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata, string! outcome, string! source, string! brokerDeadLetterQueueId, string! brokerReplayActionCatalogId, string! brokerReplayCursorId, string! brokerPurgeQuarantineId, string! providerProofId) -> System.Collections.Generic.Dictionary<string!, string!>!
+static Cephalon.Eventing.Services.EventDispatchBrokerDeadLetterReplayMetadata.CreateReport(Cephalon.Eventing.Services.EventDispatchExecutionReport! report, string! source, string! brokerDeadLetterQueueId, string! brokerReplayActionCatalogId, string! brokerReplayCursorId, string! brokerPurgeQuarantineId, string! providerProofId) -> Cephalon.Eventing.Services.EventDispatchExecutionReport!
+static Cephalon.Eventing.Services.EventDispatchBrokerDeadLetterReplayMetadata.IsBrokerDeadLetterReplayProven(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> bool
+static Cephalon.Eventing.Services.EventDispatchBrokerDeadLetterReplayMetadata.TryApplyMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, string! outcome, string! source, string! brokerDeadLetterQueueId, string! brokerReplayActionCatalogId, string! brokerReplayCursorId, string! brokerPurgeQuarantineId, string! providerProofId) -> bool
 Cephalon.Eventing.Services.EventDispatchBrokerTopologyMetadata
 static Cephalon.Eventing.Services.EventDispatchBrokerTopologyMetadata.CreateMetadata(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata, string! outcome, string! source, string! exchangeProvisioningId, string! queueProvisioningId, string! topicProvisioningId, string! partitionProvisioningId, string! topologyVerificationId, string! providerTopologyId) -> System.Collections.Generic.Dictionary<string!, string!>!
 static Cephalon.Eventing.Services.EventDispatchBrokerTopologyMetadata.CreateReport(Cephalon.Eventing.Services.EventDispatchExecutionReport! report, string! source, string! exchangeProvisioningId, string! queueProvisioningId, string! topicProvisioningId, string! partitionProvisioningId, string! topologyVerificationId, string! providerTopologyId) -> Cephalon.Eventing.Services.EventDispatchExecutionReport!
