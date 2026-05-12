@@ -1791,6 +1791,120 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("lastOutcome=succeeded", idempotencyDimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", idempotencyDimensions["idempotency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
+        var incompleteConcurrencyReport = EventSubscriptionConcurrencyMetadata.CreateReport(
+            startedInboundReport,
+            source: "provider-concurrency-scheduler",
+            perSubscriptionConcurrencyLimit: 8,
+            consumerPrefetchCount: 32,
+            backpressureStrategy: "bounded-channel",
+            providerConcurrencyId: "provider-concurrency-001",
+            consumerLeaseId: "concurrency-lease-001",
+            workStealingId: "work-stealing-001",
+            distributedWorkSharingId: "distributed-work-sharing-001");
+        Assert.False(EventSubscriptionConcurrencyMetadata.IsConcurrencyProven(incompleteConcurrencyReport.Metadata));
+        Assert.DoesNotContain(EventSubscriptionRuntimeMetadataKeys.SubscriptionConcurrency, incompleteConcurrencyReport.Metadata.Keys);
+
+        var partialConcurrencyReport = EventSubscriptionConcurrencyMetadata.CreateReport(
+            providerIdempotencyReport,
+            source: "provider-concurrency-scheduler",
+            perSubscriptionConcurrencyLimit: 8,
+            consumerPrefetchCount: 32,
+            backpressureStrategy: "bounded-channel",
+            providerConcurrencyId: "provider-concurrency-001",
+            consumerLeaseId: "concurrency-lease-001",
+            workStealingId: "work-stealing-001",
+            distributedWorkSharingId: "distributed-work-sharing-001",
+            parallelHandlerExecution: false);
+        Assert.False(EventSubscriptionConcurrencyMetadata.IsConcurrencyProven(partialConcurrencyReport.Metadata));
+        Assert.Equal("provider-reported", partialConcurrencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.SubscriptionConcurrency]);
+        Assert.Equal("not-claimed", partialConcurrencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ParallelHandlerExecution]);
+
+        var concurrencyReport = EventSubscriptionConcurrencyMetadata.CreateReport(
+            providerIdempotencyReport,
+            source: "provider-concurrency-scheduler",
+            perSubscriptionConcurrencyLimit: 8,
+            consumerPrefetchCount: 32,
+            backpressureStrategy: "bounded-channel",
+            providerConcurrencyId: "provider-concurrency-001",
+            consumerLeaseId: "concurrency-lease-001",
+            workStealingId: "work-stealing-001",
+            distributedWorkSharingId: "distributed-work-sharing-001");
+        Assert.True(EventSubscriptionConcurrencyMetadata.IsConcurrencyProven(concurrencyReport.Metadata));
+        Assert.Equal("provider-reported", concurrencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.SubscriptionConcurrency]);
+        Assert.Equal("provider-concurrency-scheduler", concurrencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.SubscriptionConcurrencySource]);
+        Assert.Equal("8", concurrencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.PerSubscriptionConcurrencyLimit]);
+        Assert.Equal("reported", concurrencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ParallelHandlerExecution]);
+        Assert.Equal("reported", concurrencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ConsumerPrefetch]);
+        Assert.Equal("32", concurrencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ConsumerPrefetchCount]);
+        Assert.Equal("reported", concurrencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.Backpressure]);
+        Assert.Equal("bounded-channel", concurrencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.BackpressureStrategy]);
+        Assert.Equal("reported", concurrencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ProviderConcurrency]);
+        Assert.Equal("provider-concurrency-001", concurrencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ProviderConcurrencyId]);
+        Assert.Equal("reported", concurrencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ConsumerLease]);
+        Assert.Equal("concurrency-lease-001", concurrencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ConsumerLeaseId]);
+        Assert.Equal("reported", concurrencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.WorkStealing]);
+        Assert.Equal("work-stealing-001", concurrencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.WorkStealingId]);
+        Assert.Equal("reported", concurrencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.DistributedWorkSharing]);
+        Assert.Equal("distributed-work-sharing-001", concurrencyReport.Metadata[EventSubscriptionRuntimeMetadataKeys.DistributedWorkSharingId]);
+
+        await subscriptionRuntimeReporter.ReportAsync(concurrencyReport);
+
+        var concurrencyState = subscriptionRuntimeCatalog.GetById("catalog-broker-consumer");
+        Assert.NotNull(concurrencyState);
+        Assert.Equal(EventSubscriptionExecutionOutcomes.Succeeded, concurrencyState.LastOutcome);
+        Assert.Equal("provider-reported", concurrencyState.Metadata[EventSubscriptionRuntimeMetadataKeys.SubscriptionConcurrency]);
+        Assert.Equal("8", concurrencyState.Metadata[EventSubscriptionRuntimeMetadataKeys.PerSubscriptionConcurrencyLimit]);
+        Assert.Equal("32", concurrencyState.Metadata[EventSubscriptionRuntimeMetadataKeys.ConsumerPrefetchCount]);
+        Assert.Equal("bounded-channel", concurrencyState.Metadata[EventSubscriptionRuntimeMetadataKeys.BackpressureStrategy]);
+        Assert.Equal("provider-concurrency-001", concurrencyState.Metadata[EventSubscriptionRuntimeMetadataKeys.ProviderConcurrencyId]);
+        Assert.Equal("concurrency-lease-001", concurrencyState.Metadata[EventSubscriptionRuntimeMetadataKeys.ConsumerLeaseId]);
+        Assert.Equal("work-stealing-001", concurrencyState.Metadata[EventSubscriptionRuntimeMetadataKeys.WorkStealingId]);
+        Assert.Equal("distributed-work-sharing-001", concurrencyState.Metadata[EventSubscriptionRuntimeMetadataKeys.DistributedWorkSharingId]);
+
+        var concurrencyEventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        var concurrencySubscriptionSurface = Assert.Single(concurrencyEventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
+        var concurrencySubscriptionEntry = Assert.Single(concurrencySubscriptionSurface.Entries, entry => entry.Id == "catalog-broker-consumer");
+        Assert.Equal(
+            "provider-reported",
+            concurrencySubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.SubscriptionConcurrency}"]);
+        Assert.Equal(
+            "provider-concurrency-scheduler",
+            concurrencySubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.SubscriptionConcurrencySource}"]);
+        Assert.Equal(
+            "8",
+            concurrencySubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.PerSubscriptionConcurrencyLimit}"]);
+        Assert.Equal(
+            "32",
+            concurrencySubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.ConsumerPrefetchCount}"]);
+        Assert.Equal(
+            "provider-concurrency-001",
+            concurrencySubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.ProviderConcurrencyId}"]);
+        Assert.Equal(
+            "distributed-work-sharing-001",
+            concurrencySubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.DistributedWorkSharingId}"]);
+        var concurrencyDimensions = Assert.Single(concurrencyEventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        Assert.Equal("claimed", concurrencyDimensions["subscription-concurrency-ownership"].Metadata["status"]);
+        Assert.Contains("subscriptionConcurrency=provider-reported", concurrencyDimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("subscriptionConcurrencySource=provider-concurrency-scheduler", concurrencyDimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("perSubscriptionConcurrencyLimit=8", concurrencyDimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("parallelHandlerExecution=reported", concurrencyDimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("consumerPrefetch=reported", concurrencyDimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("consumerPrefetchCount=32", concurrencyDimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("backpressure=reported", concurrencyDimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("backpressureStrategy=bounded-channel", concurrencyDimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerConcurrency=reported", concurrencyDimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerConcurrencyId=provider-concurrency-001", concurrencyDimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("consumerLease=reported", concurrencyDimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("consumerLeaseId=concurrency-lease-001", concurrencyDimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("workStealing=reported", concurrencyDimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("workStealingId=work-stealing-001", concurrencyDimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("distributedWorkSharing=reported", concurrencyDimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("distributedWorkSharingId=distributed-work-sharing-001", concurrencyDimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("lastOutcome=succeeded", concurrencyDimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", concurrencyDimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+
         var incompleteDurableRetryReport = EventDispatchDurableRetryQueueMetadata.CreateReport(
             exactlyOnceDeliveryReport,
             source: "provider-retry-scheduler",

@@ -2698,15 +2698,16 @@ Current `Cephalon.Eventing` highlights:
   leases, even when bounded in-process retry or provider-managed retry observations are present
 - `idempotency-ownership` is the separate idempotency boundary in that same profile; it reports
   process-local or inbox-backed completed-execution duplicate suppression as `partial` only when
-  enabled and keeps broker deduplication, exactly-once delivery, durable inbox command ownership,
+  enabled and moves to `claimed` only when live `EventSubscriptionProviderIdempotencyMetadata`
+  proof supplies broker deduplication, exactly-once delivery, durable inbox command ownership,
   generic inbox command ownership, provider-owned idempotency semantics, and cross-node
-  idempotency leases `not-claimed`
+  idempotency lease evidence
 - `subscription-concurrency-ownership` is the separate subscription concurrency boundary in that
-  same profile; it stays `not-claimed` until a provider or engine package owns per-subscription
-  concurrency limits, parallel handler execution, consumer prefetch, backpressure, provider
-  concurrency, consumer leases, and distributed work sharing, even when declared subscriptions,
-  direct in-process execution, code-first middleware, hosted bindings, or optional provider binding
-  evidence are present
+  same profile; it stays `not-claimed` until live `EventSubscriptionConcurrencyMetadata` proof
+  supplies per-subscription concurrency limits, parallel handler execution, consumer prefetch,
+  backpressure, provider concurrency, consumer leases, work stealing, and distributed work sharing,
+  even when declared subscriptions, direct in-process execution, code-first middleware, hosted
+  bindings, or optional provider binding evidence are present
 - `subscription-ordering-ownership` is the separate subscription ordering boundary in that same
   profile; it stays `not-claimed` until a provider or engine package owns handler ordering, local
   fan-out ordering, per-key ordering, partition ordering, causal ordering, replay ordering, and

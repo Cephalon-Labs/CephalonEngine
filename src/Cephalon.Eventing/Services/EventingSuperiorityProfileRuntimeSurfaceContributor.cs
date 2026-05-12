@@ -35,7 +35,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var scheduledDeliveryEvidence = ResolveScheduledDeliveryEvidence(options, topology);
         var durableRetryQueue = ResolveDurableRetryQueueProfile();
         var idempotencyOwnership = ResolveIdempotencyOwnershipProfile();
-        var subscriptionConcurrencyEvidence = ResolveSubscriptionConcurrencyEvidence(topology);
+        var subscriptionConcurrency = ResolveSubscriptionConcurrencyProfile();
         var subscriptionOrderingEvidence = ResolveSubscriptionOrderingEvidence(topology);
         var processManagerStateEvidence = ResolveProcessManagerStateEvidence(topology);
         var choreographyHandoff = ResolveChoreographyHandoffEvidence();
@@ -155,10 +155,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     id: "subscription-concurrency-ownership",
                     displayName: "Subscription Concurrency Ownership",
                     description: "Makes direct in-process subscription execution and code-first middleware separate from handler concurrency limits, consumer prefetch, backpressure, leases, and distributed work sharing.",
-                    status: "not-claimed",
-                    evidence: subscriptionConcurrencyEvidence,
+                    status: subscriptionConcurrency.Status,
+                    evidence: subscriptionConcurrency.Evidence,
                     advantage: "Teams can use Cephalon's Wolverine-free direct execution path without assuming the core pack silently owns provider-grade concurrency, prefetch, or backpressure controls.",
-                    nextGap: "Add a provider-neutral subscription concurrency descriptor plus per-subscription limits, prefetch, backpressure, lease, and work-sharing evidence before claiming subscription concurrency ownership."),
+                    nextGap: subscriptionConcurrency.NextGap),
                 CreateEntry(
                     id: "subscription-ordering-ownership",
                     displayName: "Subscription Ordering Ownership",
@@ -1015,7 +1015,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             nextGapWithoutProviderProof);
     }
 
-    private static string ResolveSubscriptionConcurrencyEvidence(EventingRuntimeTopology topology)
+    private SubscriptionConcurrencyProfile ResolveSubscriptionConcurrencyProfile()
     {
         var declaredSubscriptions = topology.HasSubscriptionContributors ? "present" : "not-present";
         var inProcessExecution = topology.HasInProcessSubscriptionExecutionPath ? "active" : "not-active";
@@ -1023,9 +1023,100 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var externalManagedSubscriptionBindings = topology.HasExternalManagedSubscriptionExecutionBindings ? "present" : "not-present";
         var middlewareCount = topology.SubscriptionExecutionMiddlewareCount.ToString(CultureInfo.InvariantCulture);
 
-        return string.Create(
-            CultureInfo.InvariantCulture,
-            $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; subscriptionConcurrency=not-claimed; perSubscriptionConcurrencyLimit=not-claimed; parallelHandlerExecution=not-claimed; consumerPrefetch=not-claimed; backpressure=not-claimed; providerConcurrency=not-present; consumerLease=not-claimed; workStealing=not-claimed; distributedWorkSharing=not-claimed; wolverineRequired=false");
+        using var scope = scopeFactory.CreateScope();
+        var subscriptionRuntimeCatalog = scope.ServiceProvider.GetService<IEventSubscriptionRuntimeCatalog>();
+        var concurrencyState = subscriptionRuntimeCatalog?.States.FirstOrDefault(static state =>
+            state.Metadata.TryGetValue(EventSubscriptionRuntimeMetadataKeys.SubscriptionConcurrency, out var value) &&
+            string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase));
+
+        if (concurrencyState is not null)
+        {
+            var metadata = concurrencyState.Metadata;
+            var subscriptionConcurrency = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.SubscriptionConcurrency,
+                "not-claimed");
+            var subscriptionConcurrencySource = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.SubscriptionConcurrencySource,
+                "not-reported");
+            var perSubscriptionConcurrencyLimit = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.PerSubscriptionConcurrencyLimit,
+                "not-claimed");
+            var parallelHandlerExecution = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ParallelHandlerExecution,
+                "not-claimed");
+            var consumerPrefetch = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ConsumerPrefetch,
+                "not-claimed");
+            var consumerPrefetchCount = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ConsumerPrefetchCount,
+                "not-reported");
+            var backpressure = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.Backpressure,
+                "not-claimed");
+            var backpressureStrategy = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.BackpressureStrategy,
+                "not-reported");
+            var providerConcurrency = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ProviderConcurrency,
+                "not-present");
+            var providerConcurrencyId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ProviderConcurrencyId,
+                "not-reported");
+            var consumerLease = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ConsumerLease,
+                "not-claimed");
+            var consumerLeaseId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ConsumerLeaseId,
+                "not-reported");
+            var workStealing = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.WorkStealing,
+                "not-claimed");
+            var workStealingId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.WorkStealingId,
+                "not-reported");
+            var distributedWorkSharing = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.DistributedWorkSharing,
+                "not-claimed");
+            var distributedWorkSharingId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.DistributedWorkSharingId,
+                "not-reported");
+            var status = EventSubscriptionConcurrencyMetadata.IsConcurrencyProven(metadata)
+                ? "claimed"
+                : "partial";
+            var nextGap = status == "claimed"
+                ? "Keep per-subscription concurrency, prefetch, backpressure, provider concurrency, lease, work-stealing, and distributed work-sharing proof covered by provider integration tests."
+                : "Complete per-subscription concurrency, prefetch, backpressure, provider concurrency, lease, work-stealing, and distributed work-sharing evidence before claiming subscription concurrency ownership.";
+
+            return new SubscriptionConcurrencyProfile(
+                status,
+                string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; subscriptionConcurrency={subscriptionConcurrency}; subscriptionConcurrencySource={subscriptionConcurrencySource}; perSubscriptionConcurrencyLimit={perSubscriptionConcurrencyLimit}; parallelHandlerExecution={parallelHandlerExecution}; consumerPrefetch={consumerPrefetch}; consumerPrefetchCount={consumerPrefetchCount}; backpressure={backpressure}; backpressureStrategy={backpressureStrategy}; providerConcurrency={providerConcurrency}; providerConcurrencyId={providerConcurrencyId}; consumerLease={consumerLease}; consumerLeaseId={consumerLeaseId}; workStealing={workStealing}; workStealingId={workStealingId}; distributedWorkSharing={distributedWorkSharing}; distributedWorkSharingId={distributedWorkSharingId}; subscriptionId={concurrencyState.SubscriptionId}; lastOutcome={concurrencyState.LastOutcome ?? "unknown"}; wolverineRequired=false"),
+                nextGap);
+        }
+
+        return new SubscriptionConcurrencyProfile(
+            "not-claimed",
+            string.Create(
+                CultureInfo.InvariantCulture,
+                $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; subscriptionConcurrency=not-claimed; subscriptionConcurrencySource=not-reported; perSubscriptionConcurrencyLimit=not-claimed; parallelHandlerExecution=not-claimed; consumerPrefetch=not-claimed; consumerPrefetchCount=not-reported; backpressure=not-claimed; backpressureStrategy=not-reported; providerConcurrency=not-present; providerConcurrencyId=not-reported; consumerLease=not-claimed; consumerLeaseId=not-reported; workStealing=not-claimed; workStealingId=not-reported; distributedWorkSharing=not-claimed; distributedWorkSharingId=not-reported; wolverineRequired=false"),
+            "Add provider-neutral subscription concurrency proof metadata plus per-subscription limits, prefetch, backpressure, lease, and work-sharing evidence before claiming subscription concurrency ownership.");
     }
 
     private static string ResolveSubscriptionOrderingEvidence(EventingRuntimeTopology topology)
@@ -1195,4 +1286,6 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private sealed record DurableRetryQueueProfile(string Status, string Evidence, string NextGap);
 
     private sealed record IdempotencyOwnershipProfile(string Status, string Evidence, string NextGap);
+
+    private sealed record SubscriptionConcurrencyProfile(string Status, string Evidence, string NextGap);
 }

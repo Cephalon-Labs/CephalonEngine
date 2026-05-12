@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-12T16:10:34.2240177+00:00",
+  "GeneratedAtUtc": "2026-05-12T16:57:12.3224772+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -168,7 +168,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 71
+      "TypeCount": 72
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1228,7 +1228,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 68
+      "TypeCount": 69
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8955,6 +8955,21 @@
       }
     },
     {
+      "DisplayName": "EventSubscriptionConcurrencyMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventsubscriptionconcurrencymetadata",
+      "Declaration": "public static class EventSubscriptionConcurrencyMetadata",
+      "Summary": "Builds provider-reported subscription concurrency proof metadata for successful subscription reports.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 4
+      }
+    },
+    {
       "DisplayName": "EventSubscriptionDescriptor",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -9099,7 +9114,7 @@
       "Summary": "Defines stable metadata keys used by the event-subscriptions runtime surface.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 53,
+        "Fields": 67,
         "Properties": 0,
         "Methods": 0
       }
@@ -29457,6 +29472,28 @@
       "Summary": "Gets the requested backoff mode, such as \u0060Exponential\u0060 or \u0060Linear\u0060."
     },
     {
+      "DisplayName": "Backpressure",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-backpressure",
+      "Signature": "const string Backpressure",
+      "Summary": "Identifies whether backpressure handling is reported for a subscription."
+    },
+    {
+      "DisplayName": "BackpressureStrategy",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-backpressurestrategy",
+      "Signature": "const string BackpressureStrategy",
+      "Summary": "Identifies the reported backpressure strategy."
+    },
+    {
       "DisplayName": "Baggage",
       "Category": "Fields",
       "DeclaringTypeName": "EventContextHeaderNames",
@@ -39753,6 +39790,28 @@
       "Summary": "Identifies the consumer offset-checkpoint proof id reported for broker consumption."
     },
     {
+      "DisplayName": "ConsumerPrefetch",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumerprefetch",
+      "Signature": "const string ConsumerPrefetch",
+      "Summary": "Identifies whether consumer prefetch is reported for a subscription."
+    },
+    {
+      "DisplayName": "ConsumerPrefetchCount",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumerprefetchcount",
+      "Signature": "const string ConsumerPrefetchCount",
+      "Summary": "Identifies the reported consumer prefetch count."
+    },
+    {
       "DisplayName": "Consumers",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseRoleDescriptor",
@@ -41867,6 +41926,17 @@
     {
       "DisplayName": "CreateMetadata",
       "Category": "Methods",
+      "DeclaringTypeName": "EventSubscriptionConcurrencyMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionconcurrencymetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-int32-system-int32-system-string-system-string-system-string-system-string-system-string-system-boolean",
+      "Signature": "Dictionary\u003Cstring, string\u003E CreateMetadata(IReadOnlyDictionary\u003Cstring, string\u003E metadata, string outcome, string source, int perSubscriptionConcurrencyLimit, int consumerPrefetchCount, string backpressureStrategy, string providerConcurrencyId, string consumerLeaseId, string workStealingId, string distributedWorkSharingId, bool parallelHandlerExecution)",
+      "Summary": "Creates a metadata copy enriched with provider-reported concurrency proof when the inputs support it."
+    },
+    {
+      "DisplayName": "CreateMetadata",
+      "Category": "Methods",
       "DeclaringTypeName": "EventSubscriptionProviderIdempotencyMetadata",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -41973,6 +42043,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-createreport-cephalon-eventing-services-eventsubscriptionexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
       "Signature": "EventSubscriptionExecutionReport CreateReport(EventSubscriptionExecutionReport report, string source, string consumerLoopId, string acknowledgementId, string leaseId, string retryPolicy, string poisonMessageHandling, string offsetCheckpointId)",
       "Summary": "Creates a subscription report copy enriched with provider-reported broker inbound-consumption proof when the inputs support it."
+    },
+    {
+      "DisplayName": "CreateReport",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventSubscriptionConcurrencyMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionconcurrencymetadata-createreport-cephalon-eventing-services-eventsubscriptionexecutionreport-system-string-system-int32-system-int32-system-string-system-string-system-string-system-string-system-string-system-boolean",
+      "Signature": "EventSubscriptionExecutionReport CreateReport(EventSubscriptionExecutionReport report, string source, int perSubscriptionConcurrencyLimit, int consumerPrefetchCount, string backpressureStrategy, string providerConcurrencyId, string consumerLeaseId, string workStealingId, string distributedWorkSharingId, bool parallelHandlerExecution)",
+      "Summary": "Creates a subscription report copy enriched with provider-reported concurrency proof when the inputs support it."
     },
     {
       "DisplayName": "CreateReport",
@@ -49461,6 +49542,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorschedulerrecoveryexecutionhardeningstatus-distributedretryorchestrationstate",
       "Signature": "string DistributedRetryOrchestrationState { get; set; }",
       "Summary": "Gets the current managed-connector distributed retry orchestration state that informed scheduler recovery and execution hardening."
+    },
+    {
+      "DisplayName": "DistributedWorkSharing",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-distributedworksharing",
+      "Signature": "const string DistributedWorkSharing",
+      "Summary": "Identifies whether distributed work sharing is reported for a subscription."
+    },
+    {
+      "DisplayName": "DistributedWorkSharingId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-distributedworksharingid",
+      "Signature": "const string DistributedWorkSharingId",
+      "Summary": "Identifies the distributed work-sharing proof id."
     },
     {
       "DisplayName": "Distribution",
@@ -74565,6 +74668,17 @@
       "Summary": "Gets a value indicating whether the metadata contains provider-reported downstream delivery-completion proof."
     },
     {
+      "DisplayName": "IsConcurrencyProven",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventSubscriptionConcurrencyMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionconcurrencymetadata-isconcurrencyproven-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "bool IsConcurrencyProven(IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Gets a value indicating whether the metadata contains complete provider-reported subscription concurrency proof."
+    },
+    {
       "DisplayName": "IsConfigured",
       "Category": "Properties",
       "DeclaringTypeName": "RestEndpointAuthoringPolicyDescriptor",
@@ -96341,6 +96455,17 @@
       "Summary": "Gets the declared externally reachable package archive or feed URI, when available."
     },
     {
+      "DisplayName": "ParallelHandlerExecution",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-parallelhandlerexecution",
+      "Signature": "const string ParallelHandlerExecution",
+      "Summary": "Identifies whether parallel handler execution is reported for a subscription."
+    },
+    {
       "DisplayName": "ParentTenantId",
       "Category": "Properties",
       "DeclaringTypeName": "TenantContext",
@@ -97571,6 +97696,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorcommandjournaldurabilitystatus-persistencepath",
       "Signature": "string PersistencePath { get; set; }",
       "Summary": "Gets the configured durable persistence path when one exists."
+    },
+    {
+      "DisplayName": "PerSubscriptionConcurrencyLimit",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-persubscriptionconcurrencylimit",
+      "Signature": "const string PerSubscriptionConcurrencyLimit",
+      "Summary": "Identifies the reported per-subscription concurrency limit."
     },
     {
       "DisplayName": "Phase",
@@ -100770,6 +100906,28 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutioncategories-providercommandunavailable",
       "Signature": "const string ProviderCommandUnavailable",
       "Summary": "The latest provider-owned command could not resolve a provider execution adapter."
+    },
+    {
+      "DisplayName": "ProviderConcurrency",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-providerconcurrency",
+      "Signature": "const string ProviderConcurrency",
+      "Summary": "Identifies whether provider-owned concurrency coordination is reported for a subscription."
+    },
+    {
+      "DisplayName": "ProviderConcurrencyId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-providerconcurrencyid",
+      "Signature": "const string ProviderConcurrencyId",
+      "Summary": "Identifies the provider concurrency proof id."
     },
     {
       "DisplayName": "ProviderCountTag",
@@ -123264,6 +123422,28 @@
       "Summary": "Gets the declared subscription that is currently being executed."
     },
     {
+      "DisplayName": "SubscriptionConcurrency",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-subscriptionconcurrency",
+      "Signature": "const string SubscriptionConcurrency",
+      "Summary": "Identifies whether a provider or runtime reports ownership of subscription concurrency controls."
+    },
+    {
+      "DisplayName": "SubscriptionConcurrencySource",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-subscriptionconcurrencysource",
+      "Signature": "const string SubscriptionConcurrencySource",
+      "Summary": "Identifies the provider or runtime source that reported subscription concurrency proof."
+    },
+    {
       "DisplayName": "SubscriptionConfirmationAttempts",
       "Category": "Properties",
       "DeclaringTypeName": "AmazonSesInvitationDeliveryStatusCallbackResult",
@@ -129503,6 +129683,17 @@
     {
       "DisplayName": "TryApplyMetadata",
       "Category": "Methods",
+      "DeclaringTypeName": "EventSubscriptionConcurrencyMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionconcurrencymetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-int32-system-int32-system-string-system-string-system-string-system-string-system-string-system-boolean",
+      "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, string outcome, string source, int perSubscriptionConcurrencyLimit, int consumerPrefetchCount, string backpressureStrategy, string providerConcurrencyId, string consumerLeaseId, string workStealingId, string distributedWorkSharingId, bool parallelHandlerExecution)",
+      "Summary": "Applies provider-reported concurrency proof to an existing subscription metadata dictionary when the inputs support it."
+    },
+    {
+      "DisplayName": "TryApplyMetadata",
+      "Category": "Methods",
       "DeclaringTypeName": "EventSubscriptionProviderIdempotencyMetadata",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -133030,6 +133221,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-databasemigrationoperationalexecutiongroupcommandbatch-workingdirectoryhints",
       "Signature": "IReadOnlyList\u003Cstring\u003E WorkingDirectoryHints { get; }",
       "Summary": "Gets the working-directory hints represented in this batch, in encounter order."
+    },
+    {
+      "DisplayName": "WorkStealing",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-workstealing",
+      "Signature": "const string WorkStealing",
+      "Summary": "Identifies whether work-stealing coordination is reported for a subscription."
+    },
+    {
+      "DisplayName": "WorkStealingId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-workstealingid",
+      "Signature": "const string WorkStealingId",
+      "Summary": "Identifies the work-stealing proof id."
     },
     {
       "DisplayName": "WouldApplyChanges",

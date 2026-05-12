@@ -246,6 +246,76 @@ public static class EventSubscriptionRuntimeMetadataKeys
     public const string CrossNodeIdempotencyLeaseId = "crossNodeIdempotencyLeaseId";
 
     /// <summary>
+    /// Identifies whether a provider or runtime reports ownership of subscription concurrency controls.
+    /// </summary>
+    public const string SubscriptionConcurrency = "subscriptionConcurrency";
+
+    /// <summary>
+    /// Identifies the provider or runtime source that reported subscription concurrency proof.
+    /// </summary>
+    public const string SubscriptionConcurrencySource = "subscriptionConcurrencySource";
+
+    /// <summary>
+    /// Identifies the reported per-subscription concurrency limit.
+    /// </summary>
+    public const string PerSubscriptionConcurrencyLimit = "perSubscriptionConcurrencyLimit";
+
+    /// <summary>
+    /// Identifies whether parallel handler execution is reported for a subscription.
+    /// </summary>
+    public const string ParallelHandlerExecution = "parallelHandlerExecution";
+
+    /// <summary>
+    /// Identifies whether consumer prefetch is reported for a subscription.
+    /// </summary>
+    public const string ConsumerPrefetch = "consumerPrefetch";
+
+    /// <summary>
+    /// Identifies the reported consumer prefetch count.
+    /// </summary>
+    public const string ConsumerPrefetchCount = "consumerPrefetchCount";
+
+    /// <summary>
+    /// Identifies whether backpressure handling is reported for a subscription.
+    /// </summary>
+    public const string Backpressure = "backpressure";
+
+    /// <summary>
+    /// Identifies the reported backpressure strategy.
+    /// </summary>
+    public const string BackpressureStrategy = "backpressureStrategy";
+
+    /// <summary>
+    /// Identifies whether provider-owned concurrency coordination is reported for a subscription.
+    /// </summary>
+    public const string ProviderConcurrency = "providerConcurrency";
+
+    /// <summary>
+    /// Identifies the provider concurrency proof id.
+    /// </summary>
+    public const string ProviderConcurrencyId = "providerConcurrencyId";
+
+    /// <summary>
+    /// Identifies whether work-stealing coordination is reported for a subscription.
+    /// </summary>
+    public const string WorkStealing = "workStealing";
+
+    /// <summary>
+    /// Identifies the work-stealing proof id.
+    /// </summary>
+    public const string WorkStealingId = "workStealingId";
+
+    /// <summary>
+    /// Identifies whether distributed work sharing is reported for a subscription.
+    /// </summary>
+    public const string DistributedWorkSharing = "distributedWorkSharing";
+
+    /// <summary>
+    /// Identifies the distributed work-sharing proof id.
+    /// </summary>
+    public const string DistributedWorkSharingId = "distributedWorkSharingId";
+
+    /// <summary>
     /// Identifies whether the latest runtime observation says a retry is pending.
     /// </summary>
     public const string RetryPending = "retryPending";

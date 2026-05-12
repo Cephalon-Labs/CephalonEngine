@@ -1027,6 +1027,7 @@ public sealed class PackageSurfaceTests
             typeof(global::Cephalon.Eventing.Services.EventSchemaRegistryDescriptor),
             typeof(global::Cephalon.Eventing.Services.EventSerializerDescriptor),
             typeof(global::Cephalon.Eventing.Services.EventSubscriptionBrokerInboundConsumptionMetadata),
+            typeof(global::Cephalon.Eventing.Services.EventSubscriptionConcurrencyMetadata),
             typeof(global::Cephalon.Eventing.Services.EventSubscriptionExecutionBindingDescriptor),
             typeof(global::Cephalon.Eventing.Services.EventSubscriptionExecutionContext),
             typeof(global::Cephalon.Eventing.Services.EventSubscriptionExecutionStep),

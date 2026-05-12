@@ -3536,6 +3536,110 @@ Parameters:
 - `poisonMessageHandling`: The poison-message handling posture reported by the provider.
 - `offsetCheckpointId`: The consumer offset-checkpoint proof id.
 
+<a id="type-cephalon-eventing-services-eventsubscriptionconcurrencymetadata"></a>
+
+### `EventSubscriptionConcurrencyMetadata`
+
+Builds provider-reported subscription concurrency proof metadata for successful subscription reports.
+
+Remarks: Declared subscriptions, direct in-process execution, middleware, hosted execution links, and provider bindings do not automatically prove provider-owned concurrency, prefetch, backpressure, leasing, work stealing, or distributed work sharing. This helper records that stronger proof only when a successful subscription observation supplies the complete concurrency proof set.
+
+#### Declaration
+```csharp
+public static class EventSubscriptionConcurrencyMetadata
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionconcurrencymetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-int32-system-int32-system-string-system-string-system-string-system-string-system-string-system-boolean"></a>
+
+##### `CreateMetadata`
+
+```csharp
+Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, int perSubscriptionConcurrencyLimit, int consumerPrefetchCount, string backpressureStrategy, string providerConcurrencyId, string consumerLeaseId, string workStealingId, string distributedWorkSharingId, bool parallelHandlerExecution)
+```
+
+Creates a metadata copy enriched with provider-reported concurrency proof when the inputs support it.
+
+Returns: A case-insensitive metadata dictionary containing the original values plus subscription concurrency proof when applicable.
+
+Parameters:
+- `metadata`: The subscription execution metadata to copy.
+- `outcome`: The subscription execution outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported subscription concurrency proof.
+- `perSubscriptionConcurrencyLimit`: The reported positive per-subscription concurrency limit.
+- `consumerPrefetchCount`: The reported positive consumer prefetch count.
+- `backpressureStrategy`: The reported backpressure strategy.
+- `providerConcurrencyId`: The provider concurrency proof id.
+- `consumerLeaseId`: The consumer lease proof id.
+- `workStealingId`: The work-stealing proof id.
+- `distributedWorkSharingId`: The distributed work-sharing proof id.
+- `parallelHandlerExecution`: A value indicating whether the provider reported parallel handler execution.
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionconcurrencymetadata-createreport-cephalon-eventing-services-eventsubscriptionexecutionreport-system-string-system-int32-system-int32-system-string-system-string-system-string-system-string-system-string-system-boolean"></a>
+
+##### `CreateReport`
+
+```csharp
+EventSubscriptionExecutionReport CreateReport(EventSubscriptionExecutionReport report, string source, int perSubscriptionConcurrencyLimit, int consumerPrefetchCount, string backpressureStrategy, string providerConcurrencyId, string consumerLeaseId, string workStealingId, string distributedWorkSharingId, bool parallelHandlerExecution)
+```
+
+Creates a subscription report copy enriched with provider-reported concurrency proof when the inputs support it.
+
+Returns: A subscription report containing the original metadata plus subscription concurrency proof when applicable.
+
+Parameters:
+- `report`: The successful subscription execution report to copy.
+- `source`: The stable provider or runtime source that reported subscription concurrency proof.
+- `perSubscriptionConcurrencyLimit`: The reported positive per-subscription concurrency limit.
+- `consumerPrefetchCount`: The reported positive consumer prefetch count.
+- `backpressureStrategy`: The reported backpressure strategy.
+- `providerConcurrencyId`: The provider concurrency proof id.
+- `consumerLeaseId`: The consumer lease proof id.
+- `workStealingId`: The work-stealing proof id.
+- `distributedWorkSharingId`: The distributed work-sharing proof id.
+- `parallelHandlerExecution`: A value indicating whether the provider reported parallel handler execution.
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionconcurrencymetadata-isconcurrencyproven-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `IsConcurrencyProven`
+
+```csharp
+bool IsConcurrencyProven(IReadOnlyDictionary<string, string> metadata)
+```
+
+Gets a value indicating whether the metadata contains complete provider-reported subscription concurrency proof.
+
+Returns: `true` when complete subscription concurrency proof is present; otherwise, `false`.
+
+Parameters:
+- `metadata`: The subscription metadata dictionary to inspect.
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionconcurrencymetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-int32-system-int32-system-string-system-string-system-string-system-string-system-string-system-boolean"></a>
+
+##### `TryApplyMetadata`
+
+```csharp
+bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, int perSubscriptionConcurrencyLimit, int consumerPrefetchCount, string backpressureStrategy, string providerConcurrencyId, string consumerLeaseId, string workStealingId, string distributedWorkSharingId, bool parallelHandlerExecution)
+```
+
+Applies provider-reported concurrency proof to an existing subscription metadata dictionary when the inputs support it.
+
+Returns: `true` when subscription concurrency proof was applied; otherwise, `false`.
+
+Parameters:
+- `metadata`: The subscription metadata dictionary to enrich.
+- `outcome`: The subscription execution outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported subscription concurrency proof.
+- `perSubscriptionConcurrencyLimit`: The reported positive per-subscription concurrency limit.
+- `consumerPrefetchCount`: The reported positive consumer prefetch count.
+- `backpressureStrategy`: The reported backpressure strategy.
+- `providerConcurrencyId`: The provider concurrency proof id.
+- `consumerLeaseId`: The consumer lease proof id.
+- `workStealingId`: The work-stealing proof id.
+- `distributedWorkSharingId`: The distributed work-sharing proof id.
+- `parallelHandlerExecution`: A value indicating whether the provider reported parallel handler execution.
+
 <a id="type-cephalon-eventing-services-eventsubscriptiondescriptor"></a>
 
 ### `EventSubscriptionDescriptor`
@@ -4095,6 +4199,26 @@ public static class EventSubscriptionRuntimeMetadataKeys
 
 #### Fields
 
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-backpressure"></a>
+
+##### `Backpressure`
+
+```csharp
+const string Backpressure
+```
+
+Identifies whether backpressure handling is reported for a subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-backpressurestrategy"></a>
+
+##### `BackpressureStrategy`
+
+```csharp
+const string BackpressureStrategy
+```
+
+Identifies the reported backpressure strategy.
+
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-bindingmetadatakeys"></a>
 
 ##### `BindingMetadataKeys`
@@ -4265,6 +4389,26 @@ const string ConsumerOffsetCheckpointId
 
 Identifies the consumer offset-checkpoint proof id reported for broker consumption.
 
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumerprefetch"></a>
+
+##### `ConsumerPrefetch`
+
+```csharp
+const string ConsumerPrefetch
+```
+
+Identifies whether consumer prefetch is reported for a subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumerprefetchcount"></a>
+
+##### `ConsumerPrefetchCount`
+
+```csharp
+const string ConsumerPrefetchCount
+```
+
+Identifies the reported consumer prefetch count.
+
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-crossnodeidempotencylease"></a>
 
 ##### `CrossNodeIdempotencyLease`
@@ -4304,6 +4448,26 @@ const string DispatchRuntime
 ```
 
 Identifies who owns the dispatch path feeding subscription execution.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-distributedworksharing"></a>
+
+##### `DistributedWorkSharing`
+
+```csharp
+const string DistributedWorkSharing
+```
+
+Identifies whether distributed work sharing is reported for a subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-distributedworksharingid"></a>
+
+##### `DistributedWorkSharingId`
+
+```csharp
+const string DistributedWorkSharingId
+```
+
+Identifies the distributed work-sharing proof id.
 
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-durableinboxcommandid"></a>
 
@@ -4545,6 +4709,26 @@ const string MessageDeduplication
 
 Identifies whether message deduplication was proven by completed execution or provider-owned idempotency.
 
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-parallelhandlerexecution"></a>
+
+##### `ParallelHandlerExecution`
+
+```csharp
+const string ParallelHandlerExecution
+```
+
+Identifies whether parallel handler execution is reported for a subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-persubscriptionconcurrencylimit"></a>
+
+##### `PerSubscriptionConcurrencyLimit`
+
+```csharp
+const string PerSubscriptionConcurrencyLimit
+```
+
+Identifies the reported per-subscription concurrency limit.
+
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-poisonmessagehandling"></a>
 
 ##### `PoisonMessageHandling`
@@ -4554,6 +4738,26 @@ const string PoisonMessageHandling
 ```
 
 Identifies the poison-message handling posture reported for inbound broker consumption.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-providerconcurrency"></a>
+
+##### `ProviderConcurrency`
+
+```csharp
+const string ProviderConcurrency
+```
+
+Identifies whether provider-owned concurrency coordination is reported for a subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-providerconcurrencyid"></a>
+
+##### `ProviderConcurrencyId`
+
+```csharp
+const string ProviderConcurrencyId
+```
+
+Identifies the provider concurrency proof id.
 
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-provideridempotency"></a>
 
@@ -4615,6 +4819,26 @@ const string RuntimeState
 
 Identifies whether runtime observations have been reported for the subscription.
 
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-subscriptionconcurrency"></a>
+
+##### `SubscriptionConcurrency`
+
+```csharp
+const string SubscriptionConcurrency
+```
+
+Identifies whether a provider or runtime reports ownership of subscription concurrency controls.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-subscriptionconcurrencysource"></a>
+
+##### `SubscriptionConcurrencySource`
+
+```csharp
+const string SubscriptionConcurrencySource
+```
+
+Identifies the provider or runtime source that reported subscription concurrency proof.
+
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-subscriptionruntime"></a>
 
 ##### `SubscriptionRuntime`
@@ -4624,6 +4848,26 @@ const string SubscriptionRuntime
 ```
 
 Identifies the subscription execution posture, such as application-managed or runtime-bound.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-workstealing"></a>
+
+##### `WorkStealing`
+
+```csharp
+const string WorkStealing
+```
+
+Identifies whether work-stealing coordination is reported for a subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-workstealingid"></a>
+
+##### `WorkStealingId`
+
+```csharp
+const string WorkStealingId
+```
+
+Identifies the work-stealing proof id.
 
 <a id="type-cephalon-eventing-services-eventsubscriptionruntimestate"></a>
 
