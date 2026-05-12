@@ -145,6 +145,30 @@ internal sealed class EventContextPolicyEvaluation
         metadata["wolverineRequired"] = "false";
     }
 
+    public void ApplyOutboxHandoffMetadata(IDictionary<string, string> metadata)
+    {
+        ArgumentNullException.ThrowIfNull(metadata);
+
+        if (!HasPolicies)
+        {
+            return;
+        }
+
+        metadata[EventContextHandoffMetadataKeys.ContextHandoff] = "outbox-staged-headers";
+        metadata[EventContextHandoffMetadataKeys.ContextValidation] = RequiredHeaderNames.Count == 0
+            ? "not-required"
+            : "publisher-enforced";
+        metadata[EventContextHandoffMetadataKeys.RequiredHeaderCount] = RequiredHeaderNames.Count.ToString(CultureInfo.InvariantCulture);
+        metadata[EventContextHandoffMetadataKeys.PresentHeaderCount] = PresentHeaderNames.Count.ToString(CultureInfo.InvariantCulture);
+        metadata[EventContextHandoffMetadataKeys.RequiredHeaders] = string.Join(",", RequiredHeaderNames);
+        metadata[EventContextHandoffMetadataKeys.PresentHeaders] = string.Join(",", PresentHeaderNames);
+        metadata[EventContextHandoffMetadataKeys.TenantContextPropagation] = TenantContextPropagation;
+        metadata[EventContextHandoffMetadataKeys.CorrelationContextPropagation] = CorrelationContextPropagation;
+        metadata[EventContextHandoffMetadataKeys.CausationContextPropagation] = CausationIdPropagation;
+        metadata[EventContextHandoffMetadataKeys.BaggageContextPropagation] = BaggagePropagation;
+        metadata[EventContextHandoffMetadataKeys.WolverineRequired] = "false";
+    }
+
     private static string ResolveTenantContextPropagation(
         IReadOnlyList<EventContextPolicyDescriptor> policies,
         EventPublication publication)

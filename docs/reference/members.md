@@ -2586,6 +2586,9 @@ Browse the published API surface by public member.
 - [Baggage](cephalon-eventing.md#member-f-cephalon-eventing-services-eventcontextheadernames-baggage): `Fields` on `EventContextHeaderNames` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Baggage&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Carries provider-neutral baggage associated with an event publication.
   - `const string Baggage`
+- [BaggageContextPropagation](cephalon-eventing.md#member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-baggagecontextpropagation): `Fields` on `EventContextHandoffMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=BaggageContextPropagation&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Records how baggage context was represented on the staged publication.
+  - `const string BaggageContextPropagation`
 - [BaseDelayMilliseconds](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-retryselection-basedelaymilliseconds): `Properties` on `RetrySelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=BaseDelayMilliseconds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets the base delay in milliseconds used by the retry policy.
   - `int? BaseDelayMilliseconds { get; }`
@@ -3591,6 +3594,9 @@ Browse the published API surface by public member.
 - [CategoryIds](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-categoryids): `Properties` on `CdcCaptureExecutionRuntimeRemediationStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CategoryIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the stable remediation categories currently active for the execution runtime.
   - `IReadOnlyList<string> CategoryIds { get; set; }`
+- [CausationContextPropagation](cephalon-eventing.md#member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-causationcontextpropagation): `Fields` on `EventContextHandoffMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CausationContextPropagation&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Records how causation context was represented on the staged publication.
+  - `const string CausationContextPropagation`
 - [CausationId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventcontextheadernames-causationid): `Fields` on `EventContextHeaderNames` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CausationId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies the causation id associated with an event publication.
   - `const string CausationId`
@@ -5403,9 +5409,15 @@ Browse the published API surface by public member.
 - [ContextAttributePrefix](cephalon-identity.md#member-f-cephalon-identity-policies-identitypolicymetadatakeys-contextattributeprefix): `Fields` on `IdentityPolicyMetadataKeys` in `Cephalon.Identity.Policies` (`Cephalon.Identity`) [Browse](browse.html?q=ContextAttributePrefix&assembly=Cephalon.Identity&namespace=Cephalon.Identity.Policies&scope=members)
   - The metadata key prefix for required evaluation-context attributes.
   - `const string ContextAttributePrefix`
+- [ContextHandoff](cephalon-eventing.md#member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-contexthandoff): `Fields` on `EventContextHandoffMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ContextHandoff&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies how event context was handed off to the next runtime boundary.
+  - `const string ContextHandoff`
 - [ContextPolicies](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-contextpolicies): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=ContextPolicies&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
   - Gets the host-defined event context policy descriptors that should be available to the eventing runtime.
   - `IList<EventContextPolicyDescriptor> ContextPolicies { get; }`
+- [ContextValidation](cephalon-eventing.md#member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-contextvalidation): `Fields` on `EventContextHandoffMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ContextValidation&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the validation posture used before the handoff was staged.
+  - `const string ContextValidation`
 - [ContinuationCount](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-continuationcount): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=ContinuationCount&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The number of `continuation-staged` observations reported so far.
   - `int ContinuationCount { get; set; }`
@@ -5628,6 +5640,9 @@ Browse the published API surface by public member.
 - [CoordinationStateBreakdown](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-coordinationstatebreakdown): `Properties` on `CdcCaptureExecutionRuntimeReporterCoordinationRollup` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CoordinationStateBreakdown&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The grouped reporter-coordination states currently visible across the execution runtime's reported CDC captures.
   - `IReadOnlyList<CdcCaptureReporterCoordinationBreakdownEntry> CoordinationStateBreakdown { get; set; }`
+- [CorrelationContextPropagation](cephalon-eventing.md#member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-correlationcontextpropagation): `Fields` on `EventContextHandoffMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CorrelationContextPropagation&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Records how correlation context was represented on the staged publication.
+  - `const string CorrelationContextPropagation`
 - [CorrelationId](cephalon-agentics.md#member-p-cephalon-agentics-services-agenttoolexecutioncontext-correlationid): `Properties` on `AgentToolExecutionContext` in `Cephalon.Agentics.Services` (`Cephalon.Agentics`) [Browse](browse.html?q=CorrelationId&assembly=Cephalon.Agentics&namespace=Cephalon.Agentics.Services&scope=members)
   - Gets the optional correlation identifier for the request.
   - `string CorrelationId { get; }`
@@ -21297,6 +21312,12 @@ Browse the published API surface by public member.
 - [PreflightState](cephalon-abstractions.md#member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorretryexecutionpolicystatus-preflightstate): `Properties` on `CdcCaptureExecutionRuntimeManagedConnectorRetryExecutionPolicyStatus` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=PreflightState&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the current managed-connector preflight state that informed retry-execution policy.
   - `string PreflightState { get; set; }`
+- [PresentHeaderCount](cephalon-eventing.md#member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-presentheadercount): `Fields` on `EventContextHandoffMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PresentHeaderCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Records the number of required context headers present on the staged publication.
+  - `const string PresentHeaderCount`
+- [PresentHeaders](cephalon-eventing.md#member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-presentheaders): `Fields` on `EventContextHandoffMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PresentHeaders&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Lists the required context header names present on the staged publication.
+  - `const string PresentHeaders`
 - [PreserveImplicitQueryFallback](cephalon-abstractions.md#member-f-cephalon-abstractions-transports-restendpointoverrideactionkind-preserveimplicitqueryfallback): `Fields` on `RestEndpointOverrideActionKind` in `Cephalon.Abstractions.Transports` (`Cephalon.Abstractions`) [Browse](browse.html?q=PreserveImplicitQueryFallback&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Transports&scope=members)
   - The rule opts the matched explicit-binding shorthand candidate into preserved implicit-query fallback.
   - `const RestEndpointOverrideActionKind PreserveImplicitQueryFallback`
@@ -24201,6 +24222,12 @@ Browse the published API surface by public member.
 - [RequiredFeatureFlagIds](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-requiredfeatureflagids): `Properties` on `SagaChoreographyRuntimeDescriptor` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=RequiredFeatureFlagIds&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the ordered feature-flag identifiers that gate choreography execution.
   - `IReadOnlyList<string> RequiredFeatureFlagIds { get; }`
+- [RequiredHeaderCount](cephalon-eventing.md#member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-requiredheadercount): `Fields` on `EventContextHandoffMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RequiredHeaderCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Records the number of required context headers declared by the active policy set.
+  - `const string RequiredHeaderCount`
+- [RequiredHeaders](cephalon-eventing.md#member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-requiredheaders): `Fields` on `EventContextHandoffMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=RequiredHeaders&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Lists the required context header names declared by the active policy set.
+  - `const string RequiredHeaders`
 - [RequiredRoleMatch](cephalon-identity.md#member-f-cephalon-identity-policies-identitypolicymetadatakeys-requiredrolematch): `Fields` on `IdentityPolicyMetadataKeys` in `Cephalon.Identity.Policies` (`Cephalon.Identity`) [Browse](browse.html?q=RequiredRoleMatch&assembly=Cephalon.Identity&namespace=Cephalon.Identity.Policies&scope=members)
   - The metadata key that controls how `RequiredRoles` should be matched.
   - `const string RequiredRoleMatch`
@@ -28569,6 +28596,9 @@ Browse the published API surface by public member.
 - [TenantContext](cephalon-abstractions.md#member-m-cephalon-abstractions-tenancy-tenantcontext-ctor-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `TenantContext` in `Cephalon.Abstractions.Tenancy` (`Cephalon.Abstractions`) [Browse](browse.html?q=TenantContext&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Tenancy&scope=members)
   - Creates a new tenant context.
   - `TenantContext(string tenantId, string tenantKey, string displayName, string parentTenantId, IReadOnlyList<string> domains, IReadOnlyDictionary<string, string> attributes)`
+- [TenantContextPropagation](cephalon-eventing.md#member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-tenantcontextpropagation): `Fields` on `EventContextHandoffMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TenantContextPropagation&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Records how tenant context was represented on the staged publication.
+  - `const string TenantContextPropagation`
 - [TenantDomainOwnershipDescriptor](cephalon-multitenancy-governance.md#member-m-cephalon-multitenancy-governance-services-tenantdomainownershipdescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-nullable-system-datetimeoffset-system-nullable-system-datetimeoffset-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `TenantDomainOwnershipDescriptor` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=TenantDomainOwnershipDescriptor&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - Creates a tenant-domain ownership descriptor.
   - `TenantDomainOwnershipDescriptor(string tenantId, string domainName, string displayName, string status, string verificationMethod, DateTimeOffset? verifiedAtUtc, DateTimeOffset? expiresAtUtc, string sourceModuleId, IReadOnlyDictionary<string, string> metadata)`
@@ -30498,6 +30528,9 @@ Browse the published API surface by public member.
 - [WolverineManagedEventSubscriptionExecutionRequest](cephalon-eventing-wolverine.md#member-m-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-ctor-system-string-cephalon-eventing-services-eventpublication-system-int32): `Constructors` on `WolverineManagedEventSubscriptionExecutionRequest` in `Cephalon.Eventing.Wolverine.Services` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=WolverineManagedEventSubscriptionExecutionRequest&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Services&scope=members)
   - Creates a new infrastructure retry message for one managed event-subscription execution.
   - `WolverineManagedEventSubscriptionExecutionRequest(string subscriptionId, EventPublication publication, int attempt)`
+- [WolverineRequired](cephalon-eventing.md#member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-wolverinerequired): `Fields` on `EventContextHandoffMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=WolverineRequired&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Records whether the context handoff required the optional Wolverine companion.
+  - `const string WolverineRequired`
 - [WorkerCapacity](cephalon-ids-sfid.md#member-p-cephalon-ids-sfid-configuration-sfididoptions-workercapacity): `Properties` on `SfidIdOptions` in `Cephalon.Ids.Sfid.Configuration` (`Cephalon.Ids.Sfid`) [Browse](browse.html?q=WorkerCapacity&assembly=Cephalon.Ids.Sfid&namespace=Cephalon.Ids.Sfid.Configuration&scope=members)
   - Gets the optional worker-capacity override supplied to the generator.
   - `int? WorkerCapacity { get; set; }`

@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-11T23:56:49.258744+00:00",
+  "GeneratedAtUtc": "2026-05-12T00:16:57.8872536+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -271,7 +271,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 59
+      "TypeCount": 60
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1331,7 +1331,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 56
+      "TypeCount": 57
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8274,6 +8274,21 @@
         "Constructors": 1,
         "Fields": 0,
         "Properties": 4,
+        "Methods": 0
+      }
+    },
+    {
+      "DisplayName": "EventContextHandoffMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventcontexthandoffmetadatakeys",
+      "Declaration": "public static class EventContextHandoffMetadataKeys",
+      "Summary": "Provides stable metadata keys used when Cephalon stages validated event context into an outbox handoff.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 11,
+        "Properties": 0,
         "Methods": 0
       }
     },
@@ -29369,6 +29384,17 @@
       "Summary": "Carries provider-neutral baggage associated with an event publication."
     },
     {
+      "DisplayName": "BaggageContextPropagation",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventContextHandoffMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-baggagecontextpropagation",
+      "Signature": "const string BaggageContextPropagation",
+      "Summary": "Records how baggage context was represented on the staged publication."
+    },
+    {
       "DisplayName": "BaseDelayMilliseconds",
       "Category": "Properties",
       "DeclaringTypeName": "RetrySelection",
@@ -33041,6 +33067,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimeremediationstatus-categoryids",
       "Signature": "IReadOnlyList\u003Cstring\u003E CategoryIds { get; set; }",
       "Summary": "Gets the stable remediation categories currently active for the execution runtime."
+    },
+    {
+      "DisplayName": "CausationContextPropagation",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventContextHandoffMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-causationcontextpropagation",
+      "Signature": "const string CausationContextPropagation",
+      "Summary": "Records how causation context was represented on the staged publication."
     },
     {
       "DisplayName": "CausationId",
@@ -39687,6 +39724,17 @@
       "Summary": "The metadata key prefix for required evaluation-context attributes."
     },
     {
+      "DisplayName": "ContextHandoff",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventContextHandoffMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-contexthandoff",
+      "Signature": "const string ContextHandoff",
+      "Summary": "Identifies how event context was handed off to the next runtime boundary."
+    },
+    {
       "DisplayName": "ContextPolicies",
       "Category": "Properties",
       "DeclaringTypeName": "EventingOptions",
@@ -39696,6 +39744,17 @@
       "AnchorId": "member-p-cephalon-eventing-configuration-eventingoptions-contextpolicies",
       "Signature": "IList\u003CEventContextPolicyDescriptor\u003E ContextPolicies { get; }",
       "Summary": "Gets the host-defined event context policy descriptors that should be available to the eventing runtime."
+    },
+    {
+      "DisplayName": "ContextValidation",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventContextHandoffMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-contextvalidation",
+      "Signature": "const string ContextValidation",
+      "Summary": "Identifies the validation posture used before the handoff was staged."
     },
     {
       "DisplayName": "ContinuationCount",
@@ -40510,6 +40569,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimereportercoordinationrollup-coordinationstatebreakdown",
       "Signature": "IReadOnlyList\u003CCdcCaptureReporterCoordinationBreakdownEntry\u003E CoordinationStateBreakdown { get; set; }",
       "Summary": "The grouped reporter-coordination states currently visible across the execution runtime\u0027s reported CDC captures."
+    },
+    {
+      "DisplayName": "CorrelationContextPropagation",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventContextHandoffMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-correlationcontextpropagation",
+      "Signature": "const string CorrelationContextPropagation",
+      "Summary": "Records how correlation context was represented on the staged publication."
     },
     {
       "DisplayName": "CorrelationId",
@@ -97846,6 +97916,28 @@
       "Summary": "Gets the current managed-connector preflight state that informed retry-execution policy."
     },
     {
+      "DisplayName": "PresentHeaderCount",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventContextHandoffMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-presentheadercount",
+      "Signature": "const string PresentHeaderCount",
+      "Summary": "Records the number of required context headers present on the staged publication."
+    },
+    {
+      "DisplayName": "PresentHeaders",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventContextHandoffMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-presentheaders",
+      "Signature": "const string PresentHeaders",
+      "Summary": "Lists the required context header names present on the staged publication."
+    },
+    {
       "DisplayName": "PreserveImplicitQueryFallback",
       "Category": "Fields",
       "DeclaringTypeName": "RestEndpointOverrideActionKind",
@@ -108470,6 +108562,28 @@
       "AnchorId": "member-p-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-requiredfeatureflagids",
       "Signature": "IReadOnlyList\u003Cstring\u003E RequiredFeatureFlagIds { get; }",
       "Summary": "Gets the ordered feature-flag identifiers that gate choreography execution."
+    },
+    {
+      "DisplayName": "RequiredHeaderCount",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventContextHandoffMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-requiredheadercount",
+      "Signature": "const string RequiredHeaderCount",
+      "Summary": "Records the number of required context headers declared by the active policy set."
+    },
+    {
+      "DisplayName": "RequiredHeaders",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventContextHandoffMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-requiredheaders",
+      "Signature": "const string RequiredHeaders",
+      "Summary": "Lists the required context header names declared by the active policy set."
     },
     {
       "DisplayName": "RequiredRoleMatch",
@@ -124474,6 +124588,17 @@
       "Summary": "Creates a new tenant context."
     },
     {
+      "DisplayName": "TenantContextPropagation",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventContextHandoffMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-tenantcontextpropagation",
+      "Signature": "const string TenantContextPropagation",
+      "Summary": "Records how tenant context was represented on the staged publication."
+    },
+    {
       "DisplayName": "TenantDomainOwnershipDescriptor",
       "Category": "Constructors",
       "DeclaringTypeName": "TenantDomainOwnershipDescriptor",
@@ -131512,6 +131637,17 @@
       "AnchorId": "member-m-cephalon-eventing-wolverine-services-wolverinemanagedeventsubscriptionexecutionrequest-ctor-system-string-cephalon-eventing-services-eventpublication-system-int32",
       "Signature": "WolverineManagedEventSubscriptionExecutionRequest(string subscriptionId, EventPublication publication, int attempt)",
       "Summary": "Creates a new infrastructure retry message for one managed event-subscription execution."
+    },
+    {
+      "DisplayName": "WolverineRequired",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventContextHandoffMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-wolverinerequired",
+      "Signature": "const string WolverineRequired",
+      "Summary": "Records whether the context handoff required the optional Wolverine companion."
     },
     {
       "DisplayName": "WorkerCapacity",

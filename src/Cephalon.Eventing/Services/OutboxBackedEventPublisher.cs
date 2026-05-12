@@ -55,7 +55,7 @@ internal sealed class OutboxBackedEventPublisher(
                 correlationId: publication.CorrelationId,
                 tenantId: publication.TenantId,
                 headers: publication.Headers,
-                metadata: publication.Metadata),
+                metadata: CreateOutboxMessageMetadata(publication, contextPolicyEvaluation)),
             cancellationToken);
 
         EventingLoggerMessages.LogPublicationStaged(this.logger, publication.Id, publication.ChannelId);
@@ -104,6 +104,7 @@ internal sealed class OutboxBackedEventPublisher(
         };
 
         contextPolicyEvaluation.ApplyMetadata(metadata);
+        ApplyOutboxContextHandoffMetadata(metadata, contextPolicyEvaluation, error);
 
         if (!string.IsNullOrWhiteSpace(error))
         {
@@ -134,5 +135,42 @@ internal sealed class OutboxBackedEventPublisher(
         }
 
         return metadata;
+    }
+
+    private static Dictionary<string, string> CreateOutboxMessageMetadata(
+        EventPublication publication,
+        EventContextPolicyEvaluation contextPolicyEvaluation)
+    {
+        var metadata = new Dictionary<string, string>(publication.Metadata, StringComparer.OrdinalIgnoreCase);
+        contextPolicyEvaluation.ApplyOutboxHandoffMetadata(metadata);
+        return metadata;
+    }
+
+    private static void ApplyOutboxContextHandoffMetadata(
+        Dictionary<string, string> metadata,
+        EventContextPolicyEvaluation contextPolicyEvaluation,
+        string? error)
+    {
+        if (!contextPolicyEvaluation.HasPolicies)
+        {
+            return;
+        }
+
+        metadata["outboxContextHandoff"] = string.IsNullOrWhiteSpace(error)
+            ? "staged-headers"
+            : "not-enqueued";
+        metadata["outboxContextValidation"] = string.IsNullOrWhiteSpace(error)
+            ? contextPolicyEvaluation.RequiredHeaderNames.Count == 0 ? "not-required" : "publisher-enforced"
+            : "failed";
+        metadata["outboxContextMetadata"] = string.IsNullOrWhiteSpace(error) ? "staged" : "not-staged";
+        metadata["outboxContextRequiredHeaderCount"] = contextPolicyEvaluation.RequiredHeaderNames.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        metadata["outboxContextPresentHeaderCount"] = contextPolicyEvaluation.PresentHeaderNames.Count.ToString(System.Globalization.CultureInfo.InvariantCulture);
+        metadata["outboxContextRequiredHeaders"] = string.Join(",", contextPolicyEvaluation.RequiredHeaderNames);
+        metadata["outboxContextPresentHeaders"] = string.Join(",", contextPolicyEvaluation.PresentHeaderNames);
+        metadata["outboxContextPropagationBoundary"] = "outbox-stage";
+        metadata["durableDispatchContextPropagation"] = "not-claimed";
+        metadata["providerBrokerContextHeaders"] = "not-claimed";
+        metadata["consumerContextExtraction"] = "not-claimed";
+        metadata["crossNodeContextHandoff"] = "not-claimed";
     }
 }

@@ -573,6 +573,129 @@ IReadOnlyList<string> Tags { get; }
 
 Gets the normalized tag set associated with the channel.
 
+<a id="type-cephalon-eventing-services-eventcontexthandoffmetadatakeys"></a>
+
+### `EventContextHandoffMetadataKeys`
+
+Provides stable metadata keys used when Cephalon stages validated event context into an outbox handoff.
+
+#### Declaration
+```csharp
+public static class EventContextHandoffMetadataKeys
+```
+
+#### Fields
+
+<a id="member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-baggagecontextpropagation"></a>
+
+##### `BaggageContextPropagation`
+
+```csharp
+const string BaggageContextPropagation
+```
+
+Records how baggage context was represented on the staged publication.
+
+<a id="member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-causationcontextpropagation"></a>
+
+##### `CausationContextPropagation`
+
+```csharp
+const string CausationContextPropagation
+```
+
+Records how causation context was represented on the staged publication.
+
+<a id="member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-contexthandoff"></a>
+
+##### `ContextHandoff`
+
+```csharp
+const string ContextHandoff
+```
+
+Identifies how event context was handed off to the next runtime boundary.
+
+<a id="member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-contextvalidation"></a>
+
+##### `ContextValidation`
+
+```csharp
+const string ContextValidation
+```
+
+Identifies the validation posture used before the handoff was staged.
+
+<a id="member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-correlationcontextpropagation"></a>
+
+##### `CorrelationContextPropagation`
+
+```csharp
+const string CorrelationContextPropagation
+```
+
+Records how correlation context was represented on the staged publication.
+
+<a id="member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-presentheadercount"></a>
+
+##### `PresentHeaderCount`
+
+```csharp
+const string PresentHeaderCount
+```
+
+Records the number of required context headers present on the staged publication.
+
+<a id="member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-presentheaders"></a>
+
+##### `PresentHeaders`
+
+```csharp
+const string PresentHeaders
+```
+
+Lists the required context header names present on the staged publication.
+
+<a id="member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-requiredheadercount"></a>
+
+##### `RequiredHeaderCount`
+
+```csharp
+const string RequiredHeaderCount
+```
+
+Records the number of required context headers declared by the active policy set.
+
+<a id="member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-requiredheaders"></a>
+
+##### `RequiredHeaders`
+
+```csharp
+const string RequiredHeaders
+```
+
+Lists the required context header names declared by the active policy set.
+
+<a id="member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-tenantcontextpropagation"></a>
+
+##### `TenantContextPropagation`
+
+```csharp
+const string TenantContextPropagation
+```
+
+Records how tenant context was represented on the staged publication.
+
+<a id="member-f-cephalon-eventing-services-eventcontexthandoffmetadatakeys-wolverinerequired"></a>
+
+##### `WolverineRequired`
+
+```csharp
+const string WolverineRequired
+```
+
+Records whether the context handoff required the optional Wolverine companion.
+
 <a id="type-cephalon-eventing-services-eventcontextheadernames"></a>
 
 ### `EventContextHeaderNames`

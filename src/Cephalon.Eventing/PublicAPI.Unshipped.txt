@@ -76,6 +76,18 @@ const Cephalon.Eventing.Services.EventContextHeaderNames.CausationId = "cephalon
 const Cephalon.Eventing.Services.EventContextHeaderNames.CorrelationId = "cephalon-correlation-id" -> string!
 const Cephalon.Eventing.Services.EventContextHeaderNames.MessageId = "cephalon-message-id" -> string!
 const Cephalon.Eventing.Services.EventContextHeaderNames.TenantId = "cephalon-tenant-id" -> string!
+Cephalon.Eventing.Services.EventContextHandoffMetadataKeys
+const Cephalon.Eventing.Services.EventContextHandoffMetadataKeys.BaggageContextPropagation = "cephalon.context.baggagePropagation" -> string!
+const Cephalon.Eventing.Services.EventContextHandoffMetadataKeys.CausationContextPropagation = "cephalon.context.causationPropagation" -> string!
+const Cephalon.Eventing.Services.EventContextHandoffMetadataKeys.ContextHandoff = "cephalon.context.handoff" -> string!
+const Cephalon.Eventing.Services.EventContextHandoffMetadataKeys.ContextValidation = "cephalon.context.validation" -> string!
+const Cephalon.Eventing.Services.EventContextHandoffMetadataKeys.CorrelationContextPropagation = "cephalon.context.correlationPropagation" -> string!
+const Cephalon.Eventing.Services.EventContextHandoffMetadataKeys.PresentHeaderCount = "cephalon.context.presentHeaderCount" -> string!
+const Cephalon.Eventing.Services.EventContextHandoffMetadataKeys.PresentHeaders = "cephalon.context.presentHeaders" -> string!
+const Cephalon.Eventing.Services.EventContextHandoffMetadataKeys.RequiredHeaderCount = "cephalon.context.requiredHeaderCount" -> string!
+const Cephalon.Eventing.Services.EventContextHandoffMetadataKeys.RequiredHeaders = "cephalon.context.requiredHeaders" -> string!
+const Cephalon.Eventing.Services.EventContextHandoffMetadataKeys.TenantContextPropagation = "cephalon.context.tenantPropagation" -> string!
+const Cephalon.Eventing.Services.EventContextHandoffMetadataKeys.WolverineRequired = "cephalon.context.wolverineRequired" -> string!
 Cephalon.Eventing.Services.EventContextPolicyDescriptor
 Cephalon.Eventing.Services.EventContextPolicyDescriptor.DeclaresBaggage.get -> bool
 Cephalon.Eventing.Services.EventContextPolicyDescriptor.DeclaresCausationId.get -> bool

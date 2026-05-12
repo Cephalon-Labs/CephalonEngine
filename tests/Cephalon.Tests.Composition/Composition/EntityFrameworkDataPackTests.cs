@@ -1243,8 +1243,39 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("validated", acceptedState.Metadata["contextHeaderValidation"]);
         Assert.Equal("pending-dispatch", acceptedState.Metadata["deliveryCompletion"]);
         Assert.Equal("publisher-enforced", acceptedState.Metadata["executableContextPolicy"]);
+        Assert.Equal("staged-headers", acceptedState.Metadata["outboxContextHandoff"]);
+        Assert.Equal("publisher-enforced", acceptedState.Metadata["outboxContextValidation"]);
+        Assert.Equal("staged", acceptedState.Metadata["outboxContextMetadata"]);
+        Assert.Equal("outbox-stage", acceptedState.Metadata["outboxContextPropagationBoundary"]);
+        Assert.Equal("not-claimed", acceptedState.Metadata["durableDispatchContextPropagation"]);
+        Assert.Equal("not-claimed", acceptedState.Metadata["providerBrokerContextHeaders"]);
+        Assert.Equal("not-claimed", acceptedState.Metadata["consumerContextExtraction"]);
+        Assert.Equal("not-claimed", acceptedState.Metadata["crossNodeContextHandoff"]);
         Assert.Equal("false", acceptedState.Metadata["wolverineRequired"]);
-        Assert.Equal(1, await dbContext.OutboxMessages.CountAsync());
+
+        var outboxEntry = await dbContext.OutboxMessages.SingleAsync();
+        var headers = JsonSerializer.Deserialize<Dictionary<string, string>>(outboxEntry.HeadersJson);
+        var metadata = JsonSerializer.Deserialize<Dictionary<string, string>>(outboxEntry.MetadataJson);
+
+        Assert.NotNull(headers);
+        Assert.NotNull(metadata);
+        Assert.Equal("cause-context-001", headers[EventContextHeaderNames.CausationId]);
+        Assert.Equal("tier=gold", headers[EventContextHeaderNames.Baggage]);
+        Assert.Equal("outbox-staged-headers", metadata[EventContextHandoffMetadataKeys.ContextHandoff]);
+        Assert.Equal("publisher-enforced", metadata[EventContextHandoffMetadataKeys.ContextValidation]);
+        Assert.Equal("2", metadata[EventContextHandoffMetadataKeys.RequiredHeaderCount]);
+        Assert.Equal("2", metadata[EventContextHandoffMetadataKeys.PresentHeaderCount]);
+        Assert.Equal(
+            $"{EventContextHeaderNames.Baggage},{EventContextHeaderNames.CausationId}",
+            metadata[EventContextHandoffMetadataKeys.RequiredHeaders]);
+        Assert.Equal(
+            $"{EventContextHeaderNames.Baggage},{EventContextHeaderNames.CausationId}",
+            metadata[EventContextHandoffMetadataKeys.PresentHeaders]);
+        Assert.Equal("publication-field-forwarded", metadata[EventContextHandoffMetadataKeys.TenantContextPropagation]);
+        Assert.Equal("publication-field-forwarded", metadata[EventContextHandoffMetadataKeys.CorrelationContextPropagation]);
+        Assert.Equal("header-forwarded", metadata[EventContextHandoffMetadataKeys.CausationContextPropagation]);
+        Assert.Equal("header-forwarded", metadata[EventContextHandoffMetadataKeys.BaggageContextPropagation]);
+        Assert.Equal("false", metadata[EventContextHandoffMetadataKeys.WolverineRequired]);
 
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
             await publisher.PublishAsync(new EventPublication(
@@ -1269,6 +1300,9 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal(EventContextHeaderNames.Baggage, failedState.Metadata["contextMissingHeaders"]);
         Assert.Equal("not-enqueued", failedState.Metadata["deliveryCompletion"]);
         Assert.Equal("validation-failed", failedState.Metadata["messageHeaderPolicy"]);
+        Assert.Equal("not-enqueued", failedState.Metadata["outboxContextHandoff"]);
+        Assert.Equal("failed", failedState.Metadata["outboxContextValidation"]);
+        Assert.Equal("not-staged", failedState.Metadata["outboxContextMetadata"]);
 
         var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
         Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
@@ -1277,6 +1311,11 @@ public sealed class EntityFrameworkDataPackTests
             .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
         Assert.Equal("partial", dimensions["tenant-and-correlation-context-ownership"].Metadata["status"]);
         Assert.Contains("messageHeaderPolicy=publisher-enforced", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("outboxContextHandoff=staged-headers", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("durableDispatchContextPropagation=not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerBrokerContextHeaders=not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("consumerContextExtraction=not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("crossNodeContextHandoff=not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("executableValidation=publisher-enforced", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("executablePropagation=not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
