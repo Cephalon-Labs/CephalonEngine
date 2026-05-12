@@ -82,7 +82,7 @@ The durable rule book lives in [`release-checklist.md`](release-checklist.md). T
 - [ ] (At GA only) `Cephalon.*` prefix reserved on nuget.org
 - [ ] `NUGET_USER` repository secret configured
 - [ ] `CEPHALON_NUGET_TRUSTED_PUBLISHING_POLICY_CONFIRMED=true` and `CEPHALON_NUGET_PREFIX_RESERVATION_CONFIRMED=true` protected repository variables configured after the release manager confirms nuget.org policy state
-- [ ] **Dry-run pass** via [`publish-release.yml`](../.github/workflows/publish-release.yml) `workflow_dispatch` with `dry_run: true`
+- [ ] **Dry-run pass** via `pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated`; `artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json` records `Status = submitted`, `RunCreated = true`, and the publish-release workflow run URL
 - [ ] **Tag pushed** (`git tag v?.?.?` + `git push origin v?.?.?`); workflow runs end-to-end
 - [ ] External-policy preflight report (`artifacts/supply-chain-external-policy/external-policy-preflight.json`) reports `passed` before NuGet login ✅
 - [ ] SLSA v1.1 build provenance attestation generated per `.nupkg` ✅

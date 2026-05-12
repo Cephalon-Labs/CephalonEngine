@@ -1,0 +1,364 @@
+param(
+    [string]$Repository = "Cephalon-Labs/CephalonEngine",
+    [string]$WorkflowName = "Publish Release",
+    [string]$Ref = "master",
+    [string]$OutputPath = "artifacts/signed-release-dry-run",
+    [switch]$SkipDispatch,
+    [switch]$RequireRunCreated
+)
+
+Set-StrictMode -Version Latest
+$ErrorActionPreference = "Stop"
+
+function Resolve-RepoRoot {
+    $candidate = Resolve-Path (Join-Path $PSScriptRoot "..")
+    return $candidate.Path
+}
+
+function Resolve-RepoPath {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Path,
+        [Parameter(Mandatory = $true)]
+        [string]$RepoRoot
+    )
+
+    if ([System.IO.Path]::IsPathRooted($Path)) {
+        return [System.IO.Path]::GetFullPath($Path)
+    }
+
+    return [System.IO.Path]::GetFullPath((Join-Path $RepoRoot $Path))
+}
+
+function New-GitHubCliResult {
+    param(
+        [Parameter(Mandatory = $true)]
+        [int]$ExitCode,
+        [AllowNull()]
+        [string]$Output
+    )
+
+    return [pscustomobject]@{
+        ExitCode = $ExitCode
+        Output   = if ($null -eq $Output) { "" } else { $Output.Trim() }
+    }
+}
+
+function Invoke-GitHubCli {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string[]]$Arguments,
+        [AllowNull()]
+        [scriptblock]$GitHubCliInvoker
+    )
+
+    if ($null -ne $GitHubCliInvoker) {
+        $result = & $GitHubCliInvoker $Arguments
+        if ($null -eq $result) {
+            return New-GitHubCliResult -ExitCode 1 -Output "Custom gh invoker returned no result."
+        }
+
+        return New-GitHubCliResult -ExitCode ([int]$result.ExitCode) -Output ([string]$result.Output)
+    }
+
+    $gh = Get-Command gh -ErrorAction SilentlyContinue
+    if ($null -eq $gh) {
+        return New-GitHubCliResult -ExitCode 127 -Output "gh CLI was not found."
+    }
+
+    $output = & gh @Arguments 2>&1
+    return New-GitHubCliResult -ExitCode $LASTEXITCODE -Output (($output | Out-String).Trim())
+}
+
+function ConvertFrom-JsonOutput {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Output,
+        [Parameter(Mandatory = $true)]
+        [string]$Context
+    )
+
+    try {
+        return $Output | ConvertFrom-Json -Depth 32
+    }
+    catch {
+        throw "Unable to parse $Context JSON from gh output: $($_.Exception.Message)"
+    }
+}
+
+function Resolve-SignedReleaseDryRunBlockerClass {
+    param(
+        [AllowNull()]
+        [string]$Output
+    )
+
+    if ([string]::IsNullOrWhiteSpace($Output)) {
+        return "dispatch-failed"
+    }
+
+    if ($Output.Contains("Actions has been disabled for this user", [System.StringComparison]::OrdinalIgnoreCase)) {
+        return "dispatch-identity-actions-disabled"
+    }
+
+    if ($Output.Contains("workflow_dispatch", [System.StringComparison]::OrdinalIgnoreCase) -and
+        $Output.Contains("does not have", [System.StringComparison]::OrdinalIgnoreCase)) {
+        return "workflow-dispatch-not-enabled"
+    }
+
+    if ($Output.Contains("Resource not accessible by integration", [System.StringComparison]::OrdinalIgnoreCase) -or
+        $Output.Contains("requires workflow scope", [System.StringComparison]::OrdinalIgnoreCase)) {
+        return "dispatch-token-permission-denied"
+    }
+
+    if ($Output.Contains("Not Found", [System.StringComparison]::OrdinalIgnoreCase)) {
+        return "workflow-not-found-or-inaccessible"
+    }
+
+    return "dispatch-failed"
+}
+
+function Get-SignedReleaseWorkflow {
+    param(
+        [Parameter(Mandatory = $true)]
+        [object]$WorkflowList,
+        [Parameter(Mandatory = $true)]
+        [string]$WorkflowName
+    )
+
+    $workflows = @($WorkflowList.workflows)
+    $matches = @(
+        $workflows |
+            Where-Object {
+                [string]$_.name -eq $WorkflowName -or
+                [System.IO.Path]::GetFileName([string]$_.path) -eq $WorkflowName
+            }
+    )
+
+    return $matches | Select-Object -First 1
+}
+
+function Get-LatestSignedReleaseDryRun {
+    param(
+        [Parameter(Mandatory = $true)]
+        [object[]]$Runs,
+        [Parameter(Mandatory = $true)]
+        [string]$Ref
+    )
+
+    $matches = @(
+        $Runs |
+            Where-Object {
+                [string]$_.event -eq "workflow_dispatch" -and
+                ([string]$_.headBranch -eq $Ref -or [string]$_.headSha -eq $Ref -or [string]$_.headBranch -eq "")
+            } |
+            Sort-Object -Property createdAt -Descending
+    )
+
+    return $matches | Select-Object -First 1
+}
+
+function Invoke-SignedReleaseDryRunReadiness {
+    param(
+        [string]$Repository = "Cephalon-Labs/CephalonEngine",
+        [string]$WorkflowName = "Publish Release",
+        [string]$Ref = "master",
+        [string]$OutputPath = "artifacts/signed-release-dry-run",
+        [switch]$SkipDispatch,
+        [switch]$RequireRunCreated,
+        [AllowNull()]
+        [scriptblock]$GitHubCliInvoker
+    )
+
+    $repoRoot = Resolve-RepoRoot
+    $resolvedOutputPath = Resolve-RepoPath -Path $OutputPath -RepoRoot $repoRoot
+    New-Item -ItemType Directory -Path $resolvedOutputPath -Force | Out-Null
+    $jsonPath = Join-Path $resolvedOutputPath "signed-release-dry-run-readiness.json"
+
+    $workflowListResult = Invoke-GitHubCli -Arguments @("api", "repos/$Repository/actions/workflows") -GitHubCliInvoker $GitHubCliInvoker
+    $permissionsResult = Invoke-GitHubCli -Arguments @("api", "repos/$Repository/actions/permissions") -GitHubCliInvoker $GitHubCliInvoker
+
+    $workflow = $null
+    $workflowId = $null
+    $workflowPath = $null
+    $workflowState = "unknown"
+    $workflowActive = $false
+    $repositoryActionsEnabled = $null
+    $allowedActions = "unknown"
+    $status = "ready"
+    $blockerClass = $null
+    $summary = "Publish Release dry-run dispatch prerequisites are ready."
+
+    if ($workflowListResult.ExitCode -ne 0) {
+        $status = "blocked"
+        $blockerClass = "workflow-list-failed"
+        $summary = "Unable to list repository workflows with gh."
+    }
+    else {
+        $workflowList = ConvertFrom-JsonOutput -Output $workflowListResult.Output -Context "workflow list"
+        $workflow = Get-SignedReleaseWorkflow -WorkflowList $workflowList -WorkflowName $WorkflowName
+        if ($null -eq $workflow) {
+            $status = "blocked"
+            $blockerClass = "workflow-not-found"
+            $summary = "The Publish Release workflow was not found in repository workflow metadata."
+        }
+        else {
+            $workflowId = [string]$workflow.id
+            $workflowPath = [string]$workflow.path
+            $workflowState = [string]$workflow.state
+            $workflowActive = $workflowState -eq "active"
+            if (-not $workflowActive) {
+                $status = "blocked"
+                $blockerClass = "workflow-inactive"
+                $summary = "The Publish Release workflow is present but is not active."
+            }
+        }
+    }
+
+    if ($permissionsResult.ExitCode -eq 0) {
+        $permissions = ConvertFrom-JsonOutput -Output $permissionsResult.Output -Context "repository actions permissions"
+        $repositoryActionsEnabled = [bool]$permissions.enabled
+        $allowedActions = [string]$permissions.allowed_actions
+        if (-not $repositoryActionsEnabled -and $status -eq "ready") {
+            $status = "blocked"
+            $blockerClass = "repository-actions-disabled"
+            $summary = "Repository Actions permissions are disabled."
+        }
+    }
+    elseif ($status -eq "ready") {
+        $status = "blocked"
+        $blockerClass = "repository-actions-permission-read-failed"
+        $summary = "Unable to read repository Actions permissions with gh."
+    }
+
+    $dispatchAttempted = $false
+    $dispatchExitCode = $null
+    $dispatchOutput = ""
+    $runCreated = $false
+    $runId = $null
+    $runUrl = $null
+    $runStatus = $null
+    $runConclusion = $null
+    $runHeadSha = $null
+    $runCreatedAtUtc = $null
+    $runLookupStatus = "not-run"
+
+    if ($status -eq "ready" -and -not $SkipDispatch) {
+        $dispatchAttempted = $true
+        $dispatchResult = Invoke-GitHubCli -Arguments @(
+            "workflow",
+            "run",
+            $WorkflowName,
+            "--repo",
+            $Repository,
+            "--ref",
+            $Ref,
+            "-f",
+            "dry_run=true"
+        ) -GitHubCliInvoker $GitHubCliInvoker
+        $dispatchExitCode = $dispatchResult.ExitCode
+        $dispatchOutput = $dispatchResult.Output
+
+        if ($dispatchResult.ExitCode -ne 0) {
+            $status = "blocked"
+            $blockerClass = Resolve-SignedReleaseDryRunBlockerClass -Output $dispatchResult.Output
+            $summary = "The Publish Release workflow could not be dispatched for a dry run."
+        }
+        else {
+            $status = "submitted"
+            $summary = "The Publish Release workflow dry-run dispatch was submitted."
+            $runListResult = Invoke-GitHubCli -Arguments @(
+                "run",
+                "list",
+                "--repo",
+                $Repository,
+                "--workflow",
+                $WorkflowName,
+                "--limit",
+                "10",
+                "--json",
+                "databaseId,displayTitle,event,status,conclusion,createdAt,url,headBranch,headSha"
+            ) -GitHubCliInvoker $GitHubCliInvoker
+
+            if ($runListResult.ExitCode -eq 0) {
+                $runs = @(ConvertFrom-JsonOutput -Output $runListResult.Output -Context "workflow run list")
+                $run = Get-LatestSignedReleaseDryRun -Runs $runs -Ref $Ref
+                if ($null -eq $run) {
+                    $runLookupStatus = "submitted-run-not-yet-visible"
+                }
+                else {
+                    $runCreated = $true
+                    $runLookupStatus = "found"
+                    $runId = [string]$run.databaseId
+                    $runUrl = [string]$run.url
+                    $runStatus = [string]$run.status
+                    $runConclusion = [string]$run.conclusion
+                    $runHeadSha = [string]$run.headSha
+                    $runCreatedAtUtc = [string]$run.createdAt
+                }
+            }
+            else {
+                $runLookupStatus = "run-list-failed"
+            }
+        }
+    }
+    elseif ($status -eq "ready" -and $SkipDispatch) {
+        $summary = "Publish Release dry-run dispatch prerequisites are ready; dispatch was skipped by request."
+    }
+
+    $report = [pscustomobject]([ordered]@{
+        '$schemaVersion' = "1.0.0"
+        Status = $status
+        BlockerClass = $blockerClass
+        Summary = $summary
+        Repository = $Repository
+        WorkflowName = $WorkflowName
+        WorkflowId = $workflowId
+        WorkflowPath = $workflowPath
+        WorkflowState = $workflowState
+        WorkflowActive = $workflowActive
+        Ref = $Ref
+        DryRun = $true
+        RepositoryActionsEnabled = $repositoryActionsEnabled
+        AllowedActions = $allowedActions
+        DispatchAttempted = $dispatchAttempted
+        DispatchExitCode = $dispatchExitCode
+        DispatchOutput = $dispatchOutput
+        RunCreated = $runCreated
+        RunLookupStatus = $runLookupStatus
+        RunId = $runId
+        RunUrl = $runUrl
+        RunStatus = $runStatus
+        RunConclusion = $runConclusion
+        RunHeadSha = $runHeadSha
+        RunCreatedAtUtc = $runCreatedAtUtc
+        GeneratedAtUtc = [DateTimeOffset]::UtcNow.ToString("O")
+    })
+
+    $report | ConvertTo-Json -Depth 16 | Set-Content -LiteralPath $jsonPath -Encoding UTF8
+
+    Write-Host ("Signed-release dry-run readiness: {0}; blocker {1}; run created {2}; report {3}" -f `
+            $status,
+            ($(if ([string]::IsNullOrWhiteSpace($blockerClass)) { "none" } else { $blockerClass })),
+            $runCreated,
+            $jsonPath)
+
+    if ($RequireRunCreated -and -not $runCreated) {
+        $detail = if ([string]::IsNullOrWhiteSpace($blockerClass)) { $status } else { "$status/$blockerClass" }
+        throw "Signed-release dry-run workflow run was not created; readiness status is $detail."
+    }
+
+    return [pscustomobject]@{
+        Report = $report
+        JsonPath = $jsonPath
+    }
+}
+
+if (-not $env:CEPHALON_SIGNED_RELEASE_DRY_RUN_NO_RUN) {
+    $null = Invoke-SignedReleaseDryRunReadiness `
+        -Repository $Repository `
+        -WorkflowName $WorkflowName `
+        -Ref $Ref `
+        -OutputPath $OutputPath `
+        -SkipDispatch:$SkipDispatch `
+        -RequireRunCreated:$RequireRunCreated
+}

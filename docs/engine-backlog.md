@@ -165,18 +165,22 @@ Why:
 Observed:
 
 - `gh workflow list --repo Cephalon-Labs/CephalonEngine` reports `Publish Release` as `active`
-- `gh workflow run "Publish Release" --repo Cephalon-Labs/CephalonEngine --ref master -f dry_run=true` failed with `HTTP 422: Actions has been disabled for this user`
+- `gh api repos/Cephalon-Labs/CephalonEngine/actions/permissions` reports repository Actions `enabled=true` and `allowed_actions=all`
+- `pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated` records workflow state, repository Actions permission state, dispatch result, blocker class, and run URL when one exists
+- the current dry-run probe still fails with GitHub blocker class `dispatch-identity-actions-disabled` because `gh workflow run "Publish Release" --repo Cephalon-Labs/CephalonEngine --ref master -f dry_run=true` returns `HTTP 422: Actions has been disabled for this user`
 - no signed-release dry-run workflow run was created, so the scorecard must keep package-publishing / signed-release proof `partial`
 
 Next:
 
 - enable Actions for the dispatching user/token or dispatch the same workflow from an Actions-enabled release-manager identity
-- rerun `Publish Release` with `dry_run=true`, then attach the workflow URL and artifact summary to the release-readiness evidence
+- rerun `pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated`, then attach the generated report, workflow URL, and artifact summary to the release-readiness evidence
 
 Validation:
 
 - `gh workflow list --repo Cephalon-Labs/CephalonEngine`
-- `gh workflow run "Publish Release" --repo Cephalon-Labs/CephalonEngine --ref master -f dry_run=true`
+- `gh api repos/Cephalon-Labs/CephalonEngine/actions/permissions`
+- `Invoke-Pester -Path tests\Cephalon.Tests.Scripts\invoke-signed-release-dry-run.Tests.ps1 -Output Detailed`
+- `pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated`
 
 ### ENG-533 NuGet vulnerability audit release gate
 

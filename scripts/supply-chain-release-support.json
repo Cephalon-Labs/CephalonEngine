@@ -1,5 +1,5 @@
 {
-  "$schemaVersion": "1.2.0",
+  "$schemaVersion": "1.3.0",
   "status": "workflow-ready-external-policy-pending",
   "summary": "Tag-triggered package release provenance is wired in GitHub Actions, while nuget.org-side trusted-publishing policy, prefix reservation, and the publishing account secret remain external release-manager prerequisites before the first real tag push.",
   "releaseWorkflow": ".github/workflows/publish-release.yml",
@@ -16,7 +16,8 @@
     "scripts/publish-package-artifacts.ps1",
     "scripts/validate-package-metadata.ps1",
     "scripts/validate-nuget-vulnerability-audit.ps1",
-    "scripts/validate-supply-chain-external-policy-preflight.ps1"
+    "scripts/validate-supply-chain-external-policy-preflight.ps1",
+    "scripts/invoke-signed-release-dry-run.ps1"
   ],
   "requiredWorkflowTokens": [
     "workflow_dispatch",

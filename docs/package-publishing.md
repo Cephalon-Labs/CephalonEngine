@@ -168,7 +168,15 @@ Package-scoped deployment-mode support claims are allowed to move before the glo
 
 `pwsh ./scripts/publish-package-artifacts.ps1` and the release-validation workflow produce the package set, but they do not publish to nuget.org. A separate tag-triggered GitHub Actions workflow at [`.github/workflows/publish-release.yml`](../.github/workflows/publish-release.yml) wraps the validated package set with the supply-chain hardening Cephalon commits to under [`docs/supply-chain-uplift-plan.md`](supply-chain-uplift-plan.md).
 
-The signed release pipeline runs on a `v*.*.*` tag push (and supports `workflow_dispatch` for dry-runs). It performs, in order:
+The signed release pipeline runs on a `v*.*.*` tag push (and supports `workflow_dispatch` for dry-runs). Before a release manager claims this lane, run the repo-owned probe:
+
+```powershell
+pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated
+```
+
+The probe writes `artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json`. A passing claim requires `Status = submitted`, `RunCreated = true`, and a workflow `RunUrl`; if GitHub returns `Actions has been disabled for this user`, the report records `BlockerClass = dispatch-identity-actions-disabled` and the signed-release proof remains partial until an Actions-enabled release-manager identity reruns the probe.
+
+The pipeline performs, in order:
 
 1. checkout, .NET SDK setup, Pester install
 2. on a real tag push only, fail-closed external-policy preflight through `scripts/validate-supply-chain-external-policy-preflight.ps1 -RequireAll`
@@ -190,7 +198,7 @@ The pipeline is intentionally additive over `release-validation.yml`. The per-PR
 
 The preflight writes `artifacts/supply-chain-external-policy/external-policy-preflight.json` and verifies only facts the workflow can truthfully know: `NUGET_USER` is present and the two release-manager confirmation variables are set. It does not claim to independently inspect nuget.org policy state.
 
-The release-readiness scorecard validates the workflow-facing portion of this posture through [`scripts/supply-chain-release-support.json`](../scripts/supply-chain-release-support.json) before emitting `SupplyChainEvidence`. That generated evidence records which release-provenance items are already workflow-ready (locked release validation, package checksums, package metadata validation, NuGet vulnerability audit, CycloneDX SBOM, Sigstore/Cosign signatures, SLSA provenance, Rekor transparency, and release-bundle checksums), which items still require external nuget.org or repository policy (trusted-publishing policy, `Cephalon.*` prefix reservation, and `NUGET_USER`), and which fail-closed preflight checks must pass before a real tag can log in to NuGet.
+The release-readiness scorecard validates the workflow-facing portion of this posture through [`scripts/supply-chain-release-support.json`](../scripts/supply-chain-release-support.json) before emitting `SupplyChainEvidence`. That generated evidence records which release-provenance items are already workflow-ready (locked release validation, package checksums, package metadata validation, NuGet vulnerability audit, CycloneDX SBOM, Sigstore/Cosign signatures, SLSA provenance, Rekor transparency, and release-bundle checksums), which items still require external nuget.org or repository policy (trusted-publishing policy, `Cephalon.*` prefix reservation, and `NUGET_USER`), and which fail-closed preflight checks must pass before a real tag can log in to NuGet. `scripts/invoke-signed-release-dry-run.ps1` is the release-manager probe for the separate `workflow_dispatch dry_run=true` evidence; its generated report must name the dry-run workflow URL before the package-publishing scorecard prose can move beyond partial signed-release proof.
 
 ## Maintenance rules
 
