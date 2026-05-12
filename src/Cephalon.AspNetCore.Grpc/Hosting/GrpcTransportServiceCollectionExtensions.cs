@@ -20,7 +20,11 @@ public static class GrpcTransportServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        services.AddGrpc();
+        services.TryAddTransient<CephalonGrpcResilienceInterceptor>();
+        services.AddGrpc(static options =>
+        {
+            options.Interceptors.Add<CephalonGrpcResilienceInterceptor>();
+        });
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportRouteMapper, GrpcTransportRouteMapper>());
         return services;
     }

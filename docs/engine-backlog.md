@@ -267,6 +267,36 @@ Validation:
 - `dotnet test tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-build --filter "FullyQualifiedName~GrpcTransportErrorAndStreamingHostingTests|FullyQualifiedName~MapCephalonAppliesConfiguredRateLimitingOnlyToPublicHttpEndpoints|FullyQualifiedName~MapCephalonExposesBehaviorResiliencePoliciesAcrossEndpointAndSnapshot"`
 - `dotnet build CephalonEngine.slnx --no-restore -m:1`
 
+### ENG-636 gRPC direct-module resilience fault envelopes
+
+Status: done
+Estimate: 0.5
+Iteration: Sprint 125
+Area: phase-11 / resilience / ASP.NET Core gRPC
+Quality dimensions: Reliability, Availability, Usability, Compatibility, Maintainability
+
+Why:
+
+- after `ENG-635`, gRPC endpoint-policy rate-limit rejections were protocol-native, but direct gRPC module timeout and open-circuit faults outside behavior-dispatch could still collapse into generic gRPC failures
+- direct `IGrpcModule` services are a first-class public transport surface, so callers need stable gRPC status codes and Cephalon metadata rather than REST envelopes or arbitrary `Unknown` faults for known resilience conditions
+- the adapter needed this without adding a new required package dependency or forcing project code to register its own interceptor
+
+Delivered:
+
+- `Cephalon.AspNetCore.Grpc` now registers an internal resilience-fault interceptor from `AddGrpcTransport()`
+- `TimeoutException` plus optional Polly `TimeoutRejectedException` become gRPC `DeadlineExceeded`
+- optional Polly `BrokenCircuitException` becomes gRPC `Unavailable`
+- translated faults include stable `cephalon-code` and `cephalon-fault` trailers, while unmapped handler exceptions keep ASP.NET Core gRPC's normal `Unknown` behavior
+- component docs, app-model docs, roadmap, and project memory now distinguish this envelope contract from future host-enforced direct-module timeout/circuit runtime ownership
+
+Validation:
+
+- `dotnet build src\Cephalon.AspNetCore.Grpc\Cephalon.AspNetCore.Grpc.csproj --no-restore -m:1`
+- `dotnet build tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-restore -m:1`
+- `dotnet test tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-build --filter "FullyQualifiedName~GrpcTransportErrorAndStreamingHostingTests"`
+- `dotnet test tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-build --filter "FullyQualifiedName~GrpcTransportErrorAndStreamingHostingTests|FullyQualifiedName~MapCephalonAppliesConfiguredRateLimitingOnlyToPublicHttpEndpoints|FullyQualifiedName~MapCephalonExposesBehaviorResiliencePoliciesAcrossEndpointAndSnapshot|FullyQualifiedName~BehaviorResilienceRestHostingTests|FullyQualifiedName~BehaviorHttpTransportResilienceHostingTests"`
+- `dotnet build CephalonEngine.slnx --no-restore -m:1`
+
 ### ENG-552 SRE flake-rate Actions readiness evidence
 
 Status: done

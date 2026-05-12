@@ -65,6 +65,50 @@ public sealed class GrpcTransportErrorAndStreamingHostingTests
         Assert.Equal(StatusCode.Unknown, exception.StatusCode);
     }
 
+    [Theory]
+    [InlineData("timeout-exception")]
+    [InlineData("timeout-rejected")]
+    public async Task SayHello_MapsTimeoutFaultsToDeadlineExceededStatus(string scenarioName)
+    {
+        await using var host = await BuildGrpcHostAsync();
+        var client = CreateGrpcClient(host);
+
+        var exception = await Assert.ThrowsAsync<RpcException>(async () =>
+        {
+            await client.SayHelloAsync(new HelloRequest { Name = scenarioName });
+        });
+
+        Assert.Equal(StatusCode.DeadlineExceeded, exception.StatusCode);
+        Assert.Contains("timeout", exception.Status.Detail, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(exception.Trailers, entry =>
+            string.Equals(entry.Key, "cephalon-code", StringComparison.Ordinal) &&
+            string.Equals(entry.Value, "grpc_execution_timeout", StringComparison.Ordinal));
+        Assert.Contains(exception.Trailers, entry =>
+            string.Equals(entry.Key, "cephalon-fault", StringComparison.Ordinal) &&
+            string.Equals(entry.Value, "resilience", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task SayHello_MapsCircuitBreakerFaultToUnavailableStatus()
+    {
+        await using var host = await BuildGrpcHostAsync();
+        var client = CreateGrpcClient(host);
+
+        var exception = await Assert.ThrowsAsync<RpcException>(async () =>
+        {
+            await client.SayHelloAsync(new HelloRequest { Name = "circuit-open" });
+        });
+
+        Assert.Equal(StatusCode.Unavailable, exception.StatusCode);
+        Assert.Contains("circuit breaker", exception.Status.Detail, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(exception.Trailers, entry =>
+            string.Equals(entry.Key, "cephalon-code", StringComparison.Ordinal) &&
+            string.Equals(entry.Value, "grpc_circuit_breaker_open", StringComparison.Ordinal));
+        Assert.Contains(exception.Trailers, entry =>
+            string.Equals(entry.Key, "cephalon-fault", StringComparison.Ordinal) &&
+            string.Equals(entry.Value, "resilience", StringComparison.Ordinal));
+    }
+
     [Fact]
     public async Task SayHello_ReturnsHappyPath_WhenScenarioNameIsOk()
     {
@@ -380,6 +424,12 @@ internal sealed class GrpcStreamingAndErrorModesService : DiscoveryService.Disco
                 throw new RpcException(new Status(StatusCode.Aborted, "aborted by server"));
             case "throw":
                 throw new InvalidOperationException("simulated unhandled handler failure");
+            case "timeout-exception":
+                throw new TimeoutException("simulated handler timeout");
+            case "timeout-rejected":
+                throw CreatePollyException("Polly.Timeout.TimeoutRejectedException", "simulated Polly timeout");
+            case "circuit-open":
+                throw CreatePollyException("Polly.CircuitBreaker.BrokenCircuitException", "simulated open circuit");
             case "delay":
                 // Reserved for future deadline / cancellation coverage; under
                 // Microsoft.AspNetCore.TestHost the in-memory pipe does not propagate the
@@ -473,5 +523,11 @@ internal sealed class GrpcStreamingAndErrorModesService : DiscoveryService.Disco
         }
 
         return string.Empty;
+    }
+
+    private static Exception CreatePollyException(string typeName, string message)
+    {
+        var type = Type.GetType($"{typeName}, Polly.Core", throwOnError: true)!;
+        return (Exception)Activator.CreateInstance(type, message)!;
     }
 }
