@@ -430,6 +430,11 @@ internal sealed class WolverineEventDispatchHostedService(
             options.Headers[pair.Key] = pair.Value;
         }
 
+        foreach (var pair in EventDispatchProviderBrokerContextHeaders.Create(item).OrderBy(static pair => pair.Key, StringComparer.OrdinalIgnoreCase))
+        {
+            options.Headers[pair.Key] = pair.Value;
+        }
+
         options.Headers["cephalon.message-id"] = item.MessageId;
         options.Headers["cephalon.channel-id"] = item.ChannelId;
         options.Headers["cephalon.event-type"] = item.EventType;
@@ -481,6 +486,9 @@ internal sealed class WolverineEventDispatchHostedService(
                 ["headerCount"] = deliveryOptions.Headers.Count.ToString(System.Globalization.CultureInfo.InvariantCulture),
                 ["managedSubscriptionCount"] = managedSubscriptionCount.ToString(System.Globalization.CultureInfo.InvariantCulture)
             });
+        EventDispatchProviderBrokerContextHeaders.ApplyReportMetadata(
+            metadata,
+            EventDispatchProviderBrokerContextHeaders.Create(item));
 
         if (!string.IsNullOrWhiteSpace(item.TenantId))
         {

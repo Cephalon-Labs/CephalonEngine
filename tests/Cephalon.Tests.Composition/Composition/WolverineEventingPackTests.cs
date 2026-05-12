@@ -745,7 +745,12 @@ public sealed class WolverineEventingPackTests
             dispatchAttemptCount: 0,
             contentType: "application/json",
             correlationId: "corr-300",
-            tenantId: "tenant-300");
+            tenantId: "tenant-300",
+            headers: new Dictionary<string, string>
+            {
+                [EventContextHeaderNames.CausationId] = "cause-300",
+                [EventContextHeaderNames.Baggage] = "tier=gold"
+            });
         var options = new WolverineEventingOptions
         {
             EnableDispatchLoop = true,
@@ -772,6 +777,13 @@ public sealed class WolverineEventingPackTests
         Assert.Equal("catalog.item.created", publication.EventType);
         Assert.Equal("corr-300", publication.CorrelationId);
         Assert.Equal("tenant-300", publication.TenantId);
+        var sentPublication = Assert.Single(messageBus.PublishedMessagesWithOptions);
+        Assert.NotNull(sentPublication.Options);
+        Assert.Equal("tenant-300", sentPublication.Options.Headers[EventContextHeaderNames.TenantId]);
+        Assert.Equal("corr-300", sentPublication.Options.Headers[EventContextHeaderNames.CorrelationId]);
+        Assert.Equal("cause-300", sentPublication.Options.Headers[EventContextHeaderNames.CausationId]);
+        Assert.Equal("tier=gold", sentPublication.Options.Headers[EventContextHeaderNames.Baggage]);
+        Assert.Equal("evt-300", sentPublication.Options.Headers[EventContextHeaderNames.MessageId]);
 
         Assert.Collection(
             dispatchStore.AppliedReports,
@@ -780,6 +792,7 @@ public sealed class WolverineEventingPackTests
                 Assert.Equal(EventDispatchExecutionOutcomes.Started, report.Outcome);
                 Assert.Equal("evt-300", report.MessageId);
                 Assert.Equal("wolverine-managed", report.Metadata["dispatchOwnership"]);
+                Assert.Equal("projected", report.Metadata[EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders]);
             },
             report =>
             {
@@ -787,6 +800,9 @@ public sealed class WolverineEventingPackTests
                 Assert.Equal("evt-300", report.MessageId);
                 Assert.Equal(WolverineEventingRuntimeIds.PublisherId, report.Metadata["publisherId"]);
                 Assert.Equal("publish", report.Metadata["deliveryMode"]);
+                Assert.Equal("projected", report.Metadata[EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders]);
+                Assert.Equal("cephalon-context-headers", report.Metadata[EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderProjection]);
+                Assert.Equal("5", report.Metadata[EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderCount]);
             });
 
         Assert.Collection(
@@ -1229,6 +1245,7 @@ public sealed class WolverineEventingPackTests
         public string? TenantId { get; set; }
 
         public List<EventPublication> PublishedMessages { get; } = [];
+        public List<TestSentMessage> PublishedMessagesWithOptions { get; } = [];
         public List<TestSentMessage> SentMessages { get; } = [];
 
         public ValueTask BroadcastToTopicAsync(string topicName, object message, DeliveryOptions? options = null) => ValueTask.CompletedTask;
@@ -1269,6 +1286,7 @@ public sealed class WolverineEventingPackTests
             if (message is EventPublication publication)
             {
                 PublishedMessages.Add(publication);
+                PublishedMessagesWithOptions.Add(new TestSentMessage(publication, options));
             }
 
             return ValueTask.CompletedTask;

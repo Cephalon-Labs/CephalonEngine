@@ -1449,6 +1449,50 @@ string TenantId { get; }
 
 Gets the tenant identifier associated with the message.
 
+<a id="type-cephalon-eventing-services-eventdispatchproviderbrokercontextheaders"></a>
+
+### `EventDispatchProviderBrokerContextHeaders`
+
+Projects staged Cephalon event context into provider-neutral headers before a dispatch runtime hands a message to a provider or broker.
+
+Remarks: The helper only creates stable Cephalon context headers from an `EventDispatchItem`. It does not claim that a provider persisted the headers, that a consumer extracted them, or that cross-node handoff has completed.
+
+#### Declaration
+```csharp
+public static class EventDispatchProviderBrokerContextHeaders
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-eventdispatchproviderbrokercontextheaders-applyreportmetadata-system-collections-generic-idictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `ApplyReportMetadata`
+
+```csharp
+void ApplyReportMetadata(IDictionary<string, string> metadata, IReadOnlyDictionary<string, string> providerBrokerHeaders)
+```
+
+Adds conservative dispatch-report metadata for a projected provider or broker context-header set.
+
+Parameters:
+- `metadata`: The dispatch report metadata dictionary to enrich.
+- `providerBrokerHeaders`: The headers created for the provider or broker handoff.
+
+<a id="member-m-cephalon-eventing-services-eventdispatchproviderbrokercontextheaders-create-cephalon-eventing-services-eventdispatchitem"></a>
+
+##### `Create`
+
+```csharp
+Dictionary<string, string> Create(EventDispatchItem dispatchItem)
+```
+
+Creates a deterministic set of Cephalon context headers for a pending dispatch item.
+
+Returns: A case-insensitive dictionary of provider-neutral context headers.
+
+Parameters:
+- `dispatchItem`: The pending dispatch item whose staged context should be projected.
+
 <a id="type-cephalon-eventing-services-eventdispatchremediationmetadatakeys"></a>
 
 ### `EventDispatchRemediationMetadataKeys`
@@ -1748,6 +1792,36 @@ const string NextRetryAtUtc
 ```
 
 Identifies the next UTC time when a retryable dispatch failure should become eligible again.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerbrokercontextheadercount"></a>
+
+##### `ProviderBrokerContextHeaderCount`
+
+```csharp
+const string ProviderBrokerContextHeaderCount
+```
+
+Identifies the number of Cephalon context headers projected toward the provider or broker boundary.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerbrokercontextheadernames"></a>
+
+##### `ProviderBrokerContextHeaderNames`
+
+```csharp
+const string ProviderBrokerContextHeaderNames
+```
+
+Identifies the comma-separated Cephalon context header names projected toward the provider or broker boundary.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerbrokercontextheaderprojection"></a>
+
+##### `ProviderBrokerContextHeaderProjection`
+
+```csharp
+const string ProviderBrokerContextHeaderProjection
+```
+
+Identifies the provider-neutral projection used for provider or broker context headers.
 
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerbrokercontextheaders"></a>
 

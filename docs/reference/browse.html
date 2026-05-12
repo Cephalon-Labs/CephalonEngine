@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-12T11:08:48.5441661+00:00",
+  "GeneratedAtUtc": "2026-05-12T11:36:41.131293+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -271,7 +271,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 61
+      "TypeCount": 62
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1331,7 +1331,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 58
+      "TypeCount": 59
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8398,6 +8398,21 @@
       }
     },
     {
+      "DisplayName": "EventDispatchProviderBrokerContextHeaders",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventdispatchproviderbrokercontextheaders",
+      "Declaration": "public static class EventDispatchProviderBrokerContextHeaders",
+      "Summary": "Projects staged Cephalon event context into provider-neutral headers before a dispatch runtime hands a message to a provider or broker.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
+      }
+    },
+    {
       "DisplayName": "EventDispatchRemediationCommandJournalDescriptor",
       "NamespaceName": "Cephalon.Abstractions.Data",
       "AssemblyName": "Cephalon.Abstractions",
@@ -8587,7 +8602,7 @@
       "Summary": "Defines stable metadata keys used by event-dispatch runtime observations.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 20,
+        "Fields": 23,
         "Properties": 0,
         "Methods": 1
       }
@@ -26869,6 +26884,17 @@
       "Summary": "Applies one durable dispatch outcome to the active staged-event store."
     },
     {
+      "DisplayName": "ApplyReportMetadata",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchProviderBrokerContextHeaders",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchproviderbrokercontextheaders-applyreportmetadata-system-collections-generic-idictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "void ApplyReportMetadata(IDictionary\u003Cstring, string\u003E metadata, IReadOnlyDictionary\u003Cstring, string\u003E providerBrokerHeaders)",
+      "Summary": "Adds conservative dispatch-report metadata for a projected provider or broker context-header set."
+    },
+    {
       "DisplayName": "AppName",
       "Category": "Properties",
       "DeclaringTypeName": "ScaffoldRequest",
@@ -41365,6 +41391,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventdispatchcontextreportmetadata-create-cephalon-eventing-services-eventdispatchitem-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "Dictionary\u003Cstring, string\u003E Create(EventDispatchItem dispatchItem, IReadOnlyDictionary\u003Cstring, string\u003E additionalMetadata)",
       "Summary": "Creates dispatch report metadata from a pending dispatch item and optional runtime-specific metadata."
+    },
+    {
+      "DisplayName": "Create",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchProviderBrokerContextHeaders",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchproviderbrokercontextheaders-create-cephalon-eventing-services-eventdispatchitem",
+      "Signature": "Dictionary\u003Cstring, string\u003E Create(EventDispatchItem dispatchItem)",
+      "Summary": "Creates a deterministic set of Cephalon context headers for a pending dispatch item."
     },
     {
       "DisplayName": "Create",
@@ -99293,6 +99330,39 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstates-providerblocked",
       "Signature": "const string ProviderBlocked",
       "Summary": "Provider-owned write-path execution remains blocked by shared runtime policy, approval, or adapter posture."
+    },
+    {
+      "DisplayName": "ProviderBrokerContextHeaderCount",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerbrokercontextheadercount",
+      "Signature": "const string ProviderBrokerContextHeaderCount",
+      "Summary": "Identifies the number of Cephalon context headers projected toward the provider or broker boundary."
+    },
+    {
+      "DisplayName": "ProviderBrokerContextHeaderNames",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerbrokercontextheadernames",
+      "Signature": "const string ProviderBrokerContextHeaderNames",
+      "Summary": "Identifies the comma-separated Cephalon context header names projected toward the provider or broker boundary."
+    },
+    {
+      "DisplayName": "ProviderBrokerContextHeaderProjection",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerbrokercontextheaderprojection",
+      "Signature": "const string ProviderBrokerContextHeaderProjection",
+      "Summary": "Identifies the provider-neutral projection used for provider or broker context headers."
     },
     {
       "DisplayName": "ProviderBrokerContextHeaders",

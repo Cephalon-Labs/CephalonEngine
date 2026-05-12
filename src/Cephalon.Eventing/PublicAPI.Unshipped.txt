@@ -26,9 +26,15 @@ const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DispatchContex
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DispatchContextMetadata = "dispatchContextMetadata" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DispatchContextMetadataCount = "dispatchContextMetadataCount" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DurableDispatchContextPropagation = "durableDispatchContextPropagation" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderCount = "providerBrokerContextHeaderCount" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderNames = "providerBrokerContextHeaderNames" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderProjection = "providerBrokerContextHeaderProjection" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders = "providerBrokerContextHeaders" -> string!
 Cephalon.Eventing.Services.EventDispatchContextReportMetadata
 static Cephalon.Eventing.Services.EventDispatchContextReportMetadata.Create(Cephalon.Eventing.Services.EventDispatchItem! dispatchItem, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? additionalMetadata = null) -> System.Collections.Generic.Dictionary<string!, string!>!
+Cephalon.Eventing.Services.EventDispatchProviderBrokerContextHeaders
+static Cephalon.Eventing.Services.EventDispatchProviderBrokerContextHeaders.ApplyReportMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! providerBrokerHeaders) -> void
+static Cephalon.Eventing.Services.EventDispatchProviderBrokerContextHeaders.Create(Cephalon.Eventing.Services.EventDispatchItem! dispatchItem) -> System.Collections.Generic.Dictionary<string!, string!>!
 Cephalon.Eventing.Hosting.EventingServiceCollectionExtensions
 static Cephalon.Eventing.Hosting.EventingServiceCollectionExtensions.AddCephalonEventSubscriptionExecutionMiddleware<TMiddleware>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static Cephalon.Eventing.Hosting.EventingServiceCollectionExtensions.AddCephalonEventSubscriptionExecutor<TExecutor>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

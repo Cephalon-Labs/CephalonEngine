@@ -572,20 +572,26 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var hasDispatchReportContextMetadata = hasOutboxContextHandoff && dispatchRuntimeCatalog?.States.Any(static state =>
             state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.DurableDispatchContextPropagation, out var value) &&
             string.Equals(value, "dispatch-report-metadata", StringComparison.OrdinalIgnoreCase)) == true;
+        var hasProviderBrokerContextHeaderProjection = hasDispatchReportContextMetadata && dispatchRuntimeCatalog?.States.Any(static state =>
+            state.Metadata.TryGetValue(EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders, out var value) &&
+            string.Equals(value, "projected", StringComparison.OrdinalIgnoreCase)) == true;
         var durableDispatchContextPropagation = hasDispatchReportContextMetadata
             ? "dispatch-report-metadata"
             : hasOutboxContextHandoff && topology.HasDispatchStore
                 ? "dispatch-store-read"
                 : "not-claimed";
         var dispatchReportContextMetadata = hasDispatchReportContextMetadata ? "reported" : "not-reported";
+        var providerBrokerContextHeaders = hasProviderBrokerContextHeaderProjection ? "projected" : "not-claimed";
         var executablePropagation = hasInProcessContextExecution ? "in-process-direct" : "not-claimed";
         var executableValidation = hasPublisherContextValidation ? "publisher-enforced" : "not-claimed";
         var status = policyCount > 0 ? "partial" : "not-claimed";
 
         var evidence = string.Create(
             CultureInfo.InvariantCulture,
-            $"channelCatalog={channelCatalog}; subscriptionCatalog={subscriptionCatalog}; publicationPath={publicationPath}; publicationRouting={publicationRouting}; inProcessExecution={inProcessExecution}; operatorCorrelationMetadata=metadata-only; eventContextPolicyCatalog={eventContextPolicyCatalog}; contextPolicyCount={policyCount.ToString(CultureInfo.InvariantCulture)}; tenantPolicyCount={tenantPolicyCount.ToString(CultureInfo.InvariantCulture)}; correlationPolicyCount={correlationPolicyCount.ToString(CultureInfo.InvariantCulture)}; causationPolicyCount={causationPolicyCount.ToString(CultureInfo.InvariantCulture)}; baggagePolicyCount={baggagePolicyCount.ToString(CultureInfo.InvariantCulture)}; headerValidationPolicyCount={headerValidationPolicyCount.ToString(CultureInfo.InvariantCulture)}; declaredHeaderCount={declaredHeaderCount.ToString(CultureInfo.InvariantCulture)}; tenantContextPropagation={tenantContextPropagation}; correlationContextPropagation={correlationContextPropagation}; causationIdPropagation={causationIdPropagation}; baggagePropagation={baggagePropagation}; messageHeaderPolicy={messageHeaderPolicy}; outboxContextHandoff={outboxContextHandoff}; durableDispatchContextPropagation={durableDispatchContextPropagation}; dispatchReportContextMetadata={dispatchReportContextMetadata}; providerBrokerContextHeaders=not-claimed; consumerContextExtraction=not-claimed; crossNodeContextHandoff=not-claimed; executablePropagation={executablePropagation}; executableValidation={executableValidation}; wolverineRequired=false");
-        var nextGap = hasDispatchReportContextMetadata
+            $"channelCatalog={channelCatalog}; subscriptionCatalog={subscriptionCatalog}; publicationPath={publicationPath}; publicationRouting={publicationRouting}; inProcessExecution={inProcessExecution}; operatorCorrelationMetadata=metadata-only; eventContextPolicyCatalog={eventContextPolicyCatalog}; contextPolicyCount={policyCount.ToString(CultureInfo.InvariantCulture)}; tenantPolicyCount={tenantPolicyCount.ToString(CultureInfo.InvariantCulture)}; correlationPolicyCount={correlationPolicyCount.ToString(CultureInfo.InvariantCulture)}; causationPolicyCount={causationPolicyCount.ToString(CultureInfo.InvariantCulture)}; baggagePolicyCount={baggagePolicyCount.ToString(CultureInfo.InvariantCulture)}; headerValidationPolicyCount={headerValidationPolicyCount.ToString(CultureInfo.InvariantCulture)}; declaredHeaderCount={declaredHeaderCount.ToString(CultureInfo.InvariantCulture)}; tenantContextPropagation={tenantContextPropagation}; correlationContextPropagation={correlationContextPropagation}; causationIdPropagation={causationIdPropagation}; baggagePropagation={baggagePropagation}; messageHeaderPolicy={messageHeaderPolicy}; outboxContextHandoff={outboxContextHandoff}; durableDispatchContextPropagation={durableDispatchContextPropagation}; dispatchReportContextMetadata={dispatchReportContextMetadata}; providerBrokerContextHeaders={providerBrokerContextHeaders}; consumerContextExtraction=not-claimed; crossNodeContextHandoff=not-claimed; executablePropagation={executablePropagation}; executableValidation={executableValidation}; wolverineRequired=false");
+        var nextGap = hasProviderBrokerContextHeaderProjection
+            ? "Extend projected provider/broker context headers into consumer extraction and cross-node handoff before claiming full tenant and correlation ownership."
+            : hasDispatchReportContextMetadata
             ? "Extend dispatch-report context into provider/broker headers, consumer extraction, and cross-node handoff before claiming full tenant and correlation ownership."
             : hasOutboxContextHandoff && topology.HasDispatchStore
             ? "Extend dispatch-store-read context into durable dispatch reports, provider/broker headers, consumer extraction, and cross-node handoff before claiming full tenant and correlation ownership."

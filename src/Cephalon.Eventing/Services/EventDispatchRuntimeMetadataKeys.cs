@@ -86,6 +86,21 @@ public static class EventDispatchRuntimeMetadataKeys
     public const string ProviderBrokerContextHeaders = "providerBrokerContextHeaders";
 
     /// <summary>
+    /// Identifies the provider-neutral projection used for provider or broker context headers.
+    /// </summary>
+    public const string ProviderBrokerContextHeaderProjection = "providerBrokerContextHeaderProjection";
+
+    /// <summary>
+    /// Identifies the number of Cephalon context headers projected toward the provider or broker boundary.
+    /// </summary>
+    public const string ProviderBrokerContextHeaderCount = "providerBrokerContextHeaderCount";
+
+    /// <summary>
+    /// Identifies the comma-separated Cephalon context header names projected toward the provider or broker boundary.
+    /// </summary>
+    public const string ProviderBrokerContextHeaderNames = "providerBrokerContextHeaderNames";
+
+    /// <summary>
     /// Identifies whether consumer-side extraction has been proven for the dispatched context.
     /// </summary>
     public const string ConsumerContextExtraction = "consumerContextExtraction";

@@ -1304,6 +1304,12 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("header-forwarded", dispatchItem.Metadata[EventContextHandoffMetadataKeys.CausationContextPropagation]);
         Assert.Equal("header-forwarded", dispatchItem.Metadata[EventContextHandoffMetadataKeys.BaggageContextPropagation]);
         Assert.Equal("false", dispatchItem.Metadata[EventContextHandoffMetadataKeys.WolverineRequired]);
+        var providerBrokerHeaders = EventDispatchProviderBrokerContextHeaders.Create(dispatchItem);
+        Assert.Equal("tenant-context-001", providerBrokerHeaders[EventContextHeaderNames.TenantId]);
+        Assert.Equal("corr-context-001", providerBrokerHeaders[EventContextHeaderNames.CorrelationId]);
+        Assert.Equal("cause-context-001", providerBrokerHeaders[EventContextHeaderNames.CausationId]);
+        Assert.Equal("tier=gold", providerBrokerHeaders[EventContextHeaderNames.Baggage]);
+        Assert.Equal("evt-context-outbox-001", providerBrokerHeaders[EventContextHeaderNames.MessageId]);
 
         var dispatchReportMetadata = EventDispatchContextReportMetadata.Create(
             dispatchItem,
@@ -1311,6 +1317,7 @@ public sealed class EntityFrameworkDataPackTests
             {
                 ["publisherId"] = "native-test-dispatcher"
             });
+        EventDispatchProviderBrokerContextHeaders.ApplyReportMetadata(dispatchReportMetadata, providerBrokerHeaders);
         await dispatchRuntimeReporter.ReportAsync(new EventDispatchExecutionReport(
             outboxId: dispatchItem.OutboxId,
             channelId: dispatchItem.ChannelId,
@@ -1326,7 +1333,12 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("evt-context-outbox-001", dispatchState.LastMessageId);
         Assert.Equal("dispatch-report-metadata", dispatchState.Metadata[EventDispatchRuntimeMetadataKeys.DurableDispatchContextPropagation]);
         Assert.Equal("reported", dispatchState.Metadata[EventDispatchRuntimeMetadataKeys.DispatchContextMetadata]);
-        Assert.Equal("not-claimed", dispatchState.Metadata[EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders]);
+        Assert.Equal("projected", dispatchState.Metadata[EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders]);
+        Assert.Equal("cephalon-context-headers", dispatchState.Metadata[EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderProjection]);
+        Assert.Equal("5", dispatchState.Metadata[EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderCount]);
+        Assert.Equal(
+            $"{EventContextHeaderNames.Baggage},{EventContextHeaderNames.CausationId},{EventContextHeaderNames.CorrelationId},{EventContextHeaderNames.MessageId},{EventContextHeaderNames.TenantId}",
+            dispatchState.Metadata[EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderNames]);
         Assert.Equal("not-claimed", dispatchState.Metadata[EventDispatchRuntimeMetadataKeys.ConsumerContextExtraction]);
         Assert.Equal("not-claimed", dispatchState.Metadata[EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoff]);
         Assert.Equal("2", dispatchState.Metadata[EventDispatchRuntimeMetadataKeys.DispatchContextHeaderCount]);
@@ -1368,7 +1380,11 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("reported", dispatchEntry.Metadata["runtimeState"]);
         Assert.Equal("dispatch-report-metadata", dispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.DurableDispatchContextPropagation}"]);
         Assert.Equal("reported", dispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.DispatchContextMetadata}"]);
-        Assert.Equal("not-claimed", dispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders}"]);
+        Assert.Equal("projected", dispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders}"]);
+        Assert.Equal(
+            "cephalon-context-headers",
+            dispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderProjection}"]);
+        Assert.Equal("5", dispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaderCount}"]);
         Assert.Equal("not-claimed", dispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.ConsumerContextExtraction}"]);
         Assert.Equal("not-claimed", dispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoff}"]);
         Assert.Equal("outbox-staged-headers", dispatchEntry.Metadata[$"reported.{EventContextHandoffMetadataKeys.ContextHandoff}"]);
@@ -1380,7 +1396,7 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("outboxContextHandoff=staged-headers", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("durableDispatchContextPropagation=dispatch-report-metadata", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("dispatchReportContextMetadata=reported", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
-        Assert.Contains("providerBrokerContextHeaders=not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerBrokerContextHeaders=projected", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("consumerContextExtraction=not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("crossNodeContextHandoff=not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("executableValidation=publisher-enforced", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);

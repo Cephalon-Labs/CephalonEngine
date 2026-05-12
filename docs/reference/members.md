@@ -1893,6 +1893,9 @@ Browse the published API surface by public member.
 - [ApplyReportAsync](cephalon-eventing.md#member-m-cephalon-eventing-services-ieventdispatchstore-applyreportasync-cephalon-eventing-services-eventdispatchexecutionreport-system-threading-cancellationtoken): `Methods` on `IEventDispatchStore` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ApplyReportAsync&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Applies one durable dispatch outcome to the active staged-event store.
   - `ValueTask ApplyReportAsync(EventDispatchExecutionReport report, CancellationToken cancellationToken)`
+- [ApplyReportMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchproviderbrokercontextheaders-applyreportmetadata-system-collections-generic-idictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `EventDispatchProviderBrokerContextHeaders` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ApplyReportMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Adds conservative dispatch-report metadata for a projected provider or broker context-header set.
+  - `void ApplyReportMetadata(IDictionary<string, string> metadata, IReadOnlyDictionary<string, string> providerBrokerHeaders)`
 - [AppName](cephalon-scaffolding.md#member-p-cephalon-scaffolding-generation-scaffoldrequest-appname): `Properties` on `ScaffoldRequest` in `Cephalon.Scaffolding.Generation` (`Cephalon.Scaffolding`) [Browse](browse.html?q=AppName&assembly=Cephalon.Scaffolding&namespace=Cephalon.Scaffolding.Generation&scope=members)
   - Gets the application name to scaffold.
   - `string AppName { get; }`
@@ -5853,6 +5856,9 @@ Browse the published API surface by public member.
 - [Create](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchcontextreportmetadata-create-cephalon-eventing-services-eventdispatchitem-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `EventDispatchContextReportMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Create&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates dispatch report metadata from a pending dispatch item and optional runtime-specific metadata.
   - `Dictionary<string, string> Create(EventDispatchItem dispatchItem, IReadOnlyDictionary<string, string> additionalMetadata)`
+- [Create](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchproviderbrokercontextheaders-create-cephalon-eventing-services-eventdispatchitem): `Methods` on `EventDispatchProviderBrokerContextHeaders` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Create&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates a deterministic set of Cephalon context headers for a pending dispatch item.
+  - `Dictionary<string, string> Create(EventDispatchItem dispatchItem)`
 - [Create](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventtypedescriptor-create-1-system-string-system-collections-generic-ienumerable-system-string): `Methods` on `EventTypeDescriptor` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Create&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Creates a descriptor for an event type using the default `System.Text.Json` generic serializer.
   - `EventTypeDescriptor Create<TEvent>(string name, IEnumerable<string> aliases)`
@@ -21684,6 +21690,15 @@ Browse the published API surface by public member.
 - [ProviderBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstates-providerblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned write-path execution remains blocked by shared runtime policy, approval, or adapter posture.
   - `const string ProviderBlocked`
+- [ProviderBrokerContextHeaderCount](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerbrokercontextheadercount): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ProviderBrokerContextHeaderCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the number of Cephalon context headers projected toward the provider or broker boundary.
+  - `const string ProviderBrokerContextHeaderCount`
+- [ProviderBrokerContextHeaderNames](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerbrokercontextheadernames): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ProviderBrokerContextHeaderNames&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the comma-separated Cephalon context header names projected toward the provider or broker boundary.
+  - `const string ProviderBrokerContextHeaderNames`
+- [ProviderBrokerContextHeaderProjection](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerbrokercontextheaderprojection): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ProviderBrokerContextHeaderProjection&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the provider-neutral projection used for provider or broker context headers.
+  - `const string ProviderBrokerContextHeaderProjection`
 - [ProviderBrokerContextHeaders](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerbrokercontextheaders): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ProviderBrokerContextHeaders&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies whether provider or broker headers carry the same context beyond Cephalon dispatch metadata.
   - `const string ProviderBrokerContextHeaders`
