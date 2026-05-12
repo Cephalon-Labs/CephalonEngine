@@ -2715,9 +2715,10 @@ Current `Cephalon.Eventing` highlights:
   subscriptions, direct in-process execution, code-first middleware, hosted bindings, or optional
   provider binding evidence are present
 - `process-manager-state-ownership` is the separate saga/process-manager state boundary in that
-  same profile; it stays `not-claimed` until a provider or engine package owns durable
-  process-manager state, correlation, timeout scheduling, compensation workflow, concurrency, and
-  recovery, even when subscriptions, direct execution, choreography bridge handoff, outbox
+    same profile; it stays `not-claimed` until live `EventSubscriptionProcessManagerStateMetadata`
+    proof supplies saga state persistence, correlation, timeout scheduling, compensation workflow,
+    process-manager concurrency, recovery, and provider process-manager ownership, even when subscriptions,
+    direct execution, choreography bridge handoff, outbox
   publication, hosted bindings, or optional provider binding evidence are present
 - `choreography-handoff-ownership` is the separate positive choreography-handoff proof in that
   same profile; it is `claimed` only when behavior choreography catalogs, publication-state truth,

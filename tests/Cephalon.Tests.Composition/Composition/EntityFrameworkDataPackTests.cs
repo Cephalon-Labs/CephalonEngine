@@ -2040,6 +2040,130 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Contains("lastOutcome=succeeded", orderingDimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", orderingDimensions["subscription-ordering-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
 
+        var incompleteProcessManagerReport = EventSubscriptionProcessManagerStateMetadata.CreateReport(
+            startedInboundReport,
+            source: "provider-process-manager",
+            sagaStatePersistenceId: "saga-state-001",
+            sagaCorrelationId: "saga-correlation-001",
+            sagaTimeoutSchedulerId: "saga-timeout-001",
+            compensationWorkflowId: "compensation-workflow-001",
+            processManagerConcurrencyId: "process-manager-concurrency-001",
+            processManagerRecoveryId: "process-manager-recovery-001",
+            providerProcessManagerId: "provider-process-manager-001");
+        Assert.False(EventSubscriptionProcessManagerStateMetadata.IsProcessManagerStateProven(incompleteProcessManagerReport.Metadata));
+        Assert.DoesNotContain(EventSubscriptionRuntimeMetadataKeys.ProcessManagerState, incompleteProcessManagerReport.Metadata.Keys);
+
+        var partialProcessManagerReport = EventSubscriptionProcessManagerStateMetadata.CreateReport(
+            orderingReport,
+            source: "provider-process-manager",
+            sagaStatePersistenceId: "saga-state-001",
+            sagaCorrelationId: "saga-correlation-001",
+            sagaTimeoutSchedulerId: "saga-timeout-001",
+            compensationWorkflowId: "compensation-workflow-001",
+            processManagerConcurrencyId: "process-manager-concurrency-001",
+            processManagerRecoveryId: "process-manager-recovery-001",
+            providerProcessManagerId: "provider-process-manager-001",
+            compensationWorkflow: false);
+        Assert.False(EventSubscriptionProcessManagerStateMetadata.IsProcessManagerStateProven(partialProcessManagerReport.Metadata));
+        Assert.Equal("provider-reported", partialProcessManagerReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ProcessManagerState]);
+        Assert.Equal("not-claimed", partialProcessManagerReport.Metadata[EventSubscriptionRuntimeMetadataKeys.CompensationWorkflow]);
+
+        var processManagerReport = EventSubscriptionProcessManagerStateMetadata.CreateReport(
+            orderingReport,
+            source: "provider-process-manager",
+            sagaStatePersistenceId: "saga-state-001",
+            sagaCorrelationId: "saga-correlation-001",
+            sagaTimeoutSchedulerId: "saga-timeout-001",
+            compensationWorkflowId: "compensation-workflow-001",
+            processManagerConcurrencyId: "process-manager-concurrency-001",
+            processManagerRecoveryId: "process-manager-recovery-001",
+            providerProcessManagerId: "provider-process-manager-001");
+        Assert.True(EventSubscriptionProcessManagerStateMetadata.IsProcessManagerStateProven(processManagerReport.Metadata));
+        Assert.Equal("provider-reported", processManagerReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ProcessManagerState]);
+        Assert.Equal("provider-process-manager", processManagerReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ProcessManagerStateSource]);
+        Assert.Equal("reported", processManagerReport.Metadata[EventSubscriptionRuntimeMetadataKeys.SagaStatePersistence]);
+        Assert.Equal("saga-state-001", processManagerReport.Metadata[EventSubscriptionRuntimeMetadataKeys.SagaStatePersistenceId]);
+        Assert.Equal("reported", processManagerReport.Metadata[EventSubscriptionRuntimeMetadataKeys.SagaCorrelation]);
+        Assert.Equal("saga-correlation-001", processManagerReport.Metadata[EventSubscriptionRuntimeMetadataKeys.SagaCorrelationId]);
+        Assert.Equal("reported", processManagerReport.Metadata[EventSubscriptionRuntimeMetadataKeys.SagaTimeouts]);
+        Assert.Equal("saga-timeout-001", processManagerReport.Metadata[EventSubscriptionRuntimeMetadataKeys.SagaTimeoutSchedulerId]);
+        Assert.Equal("reported", processManagerReport.Metadata[EventSubscriptionRuntimeMetadataKeys.CompensationWorkflow]);
+        Assert.Equal("compensation-workflow-001", processManagerReport.Metadata[EventSubscriptionRuntimeMetadataKeys.CompensationWorkflowId]);
+        Assert.Equal("reported", processManagerReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ProcessManagerConcurrency]);
+        Assert.Equal("process-manager-concurrency-001", processManagerReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ProcessManagerConcurrencyId]);
+        Assert.Equal("reported", processManagerReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ProcessManagerRecovery]);
+        Assert.Equal("process-manager-recovery-001", processManagerReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ProcessManagerRecoveryId]);
+        Assert.Equal("reported", processManagerReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ProviderProcessManager]);
+        Assert.Equal("provider-process-manager-001", processManagerReport.Metadata[EventSubscriptionRuntimeMetadataKeys.ProviderProcessManagerId]);
+
+        await subscriptionRuntimeReporter.ReportAsync(processManagerReport);
+
+        var processManagerState = subscriptionRuntimeCatalog.GetById("catalog-broker-consumer");
+        Assert.NotNull(processManagerState);
+        Assert.Equal(EventSubscriptionExecutionOutcomes.Succeeded, processManagerState.LastOutcome);
+        Assert.Equal("provider-reported", processManagerState.Metadata[EventSubscriptionRuntimeMetadataKeys.ProcessManagerState]);
+        Assert.Equal("provider-process-manager", processManagerState.Metadata[EventSubscriptionRuntimeMetadataKeys.ProcessManagerStateSource]);
+        Assert.Equal("saga-state-001", processManagerState.Metadata[EventSubscriptionRuntimeMetadataKeys.SagaStatePersistenceId]);
+        Assert.Equal("saga-correlation-001", processManagerState.Metadata[EventSubscriptionRuntimeMetadataKeys.SagaCorrelationId]);
+        Assert.Equal("saga-timeout-001", processManagerState.Metadata[EventSubscriptionRuntimeMetadataKeys.SagaTimeoutSchedulerId]);
+        Assert.Equal("compensation-workflow-001", processManagerState.Metadata[EventSubscriptionRuntimeMetadataKeys.CompensationWorkflowId]);
+        Assert.Equal("process-manager-concurrency-001", processManagerState.Metadata[EventSubscriptionRuntimeMetadataKeys.ProcessManagerConcurrencyId]);
+        Assert.Equal("process-manager-recovery-001", processManagerState.Metadata[EventSubscriptionRuntimeMetadataKeys.ProcessManagerRecoveryId]);
+        Assert.Equal("provider-process-manager-001", processManagerState.Metadata[EventSubscriptionRuntimeMetadataKeys.ProviderProcessManagerId]);
+
+        var processManagerEventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        var processManagerSubscriptionSurface = Assert.Single(processManagerEventingSurfaces, surface => surface.SurfaceId == "event-subscriptions");
+        var processManagerSubscriptionEntry = Assert.Single(processManagerSubscriptionSurface.Entries, entry => entry.Id == "catalog-broker-consumer");
+        Assert.Equal(
+            "provider-reported",
+            processManagerSubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.ProcessManagerState}"]);
+        Assert.Equal(
+            "provider-process-manager",
+            processManagerSubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.ProcessManagerStateSource}"]);
+        Assert.Equal(
+            "saga-state-001",
+            processManagerSubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.SagaStatePersistenceId}"]);
+        Assert.Equal(
+            "saga-correlation-001",
+            processManagerSubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.SagaCorrelationId}"]);
+        Assert.Equal(
+            "saga-timeout-001",
+            processManagerSubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.SagaTimeoutSchedulerId}"]);
+        Assert.Equal(
+            "compensation-workflow-001",
+            processManagerSubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.CompensationWorkflowId}"]);
+        Assert.Equal(
+            "process-manager-concurrency-001",
+            processManagerSubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.ProcessManagerConcurrencyId}"]);
+        Assert.Equal(
+            "process-manager-recovery-001",
+            processManagerSubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.ProcessManagerRecoveryId}"]);
+        Assert.Equal(
+            "provider-process-manager-001",
+            processManagerSubscriptionEntry.Metadata[$"reported.{EventSubscriptionRuntimeMetadataKeys.ProviderProcessManagerId}"]);
+        var processManagerDimensions = Assert.Single(processManagerEventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        Assert.Equal("claimed", processManagerDimensions["process-manager-state-ownership"].Metadata["status"]);
+        Assert.Contains("processManagerState=provider-reported", processManagerDimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("processManagerStateSource=provider-process-manager", processManagerDimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("sagaStatePersistence=reported", processManagerDimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("sagaStatePersistenceId=saga-state-001", processManagerDimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("sagaCorrelation=reported", processManagerDimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("sagaCorrelationId=saga-correlation-001", processManagerDimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("sagaTimeouts=reported", processManagerDimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("sagaTimeoutSchedulerId=saga-timeout-001", processManagerDimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("compensationWorkflow=reported", processManagerDimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("compensationWorkflowId=compensation-workflow-001", processManagerDimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("processManagerConcurrency=reported", processManagerDimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("processManagerConcurrencyId=process-manager-concurrency-001", processManagerDimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("processManagerRecovery=reported", processManagerDimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("processManagerRecoveryId=process-manager-recovery-001", processManagerDimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerProcessManager=reported", processManagerDimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("providerProcessManagerId=provider-process-manager-001", processManagerDimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("lastOutcome=succeeded", processManagerDimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", processManagerDimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+
         var incompleteDurableRetryReport = EventDispatchDurableRetryQueueMetadata.CreateReport(
             exactlyOnceDeliveryReport,
             source: "provider-retry-scheduler",

@@ -37,7 +37,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var idempotencyOwnership = ResolveIdempotencyOwnershipProfile();
         var subscriptionConcurrency = ResolveSubscriptionConcurrencyProfile();
         var subscriptionOrdering = ResolveSubscriptionOrderingProfile();
-        var processManagerStateEvidence = ResolveProcessManagerStateEvidence(topology);
+        var processManagerState = ResolveProcessManagerStateProfile();
         var choreographyHandoff = ResolveChoreographyHandoffEvidence();
         var remediationReadPerformanceStatus = topology.HasOutboxPublishingPath ? "claimed" : "partial";
         var remediationReadPerformanceEvidence = topology.HasOutboxPublishingPath
@@ -171,10 +171,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     id: "process-manager-state-ownership",
                     displayName: "Process Manager State Ownership",
                     description: "Makes declared subscriptions, direct execution, choreography bridge handoff, and outbox publication separate from durable saga or process-manager state ownership.",
-                    status: "not-claimed",
-                    evidence: processManagerStateEvidence,
+                    status: processManagerState.Status,
+                    evidence: processManagerState.Evidence,
                     advantage: "Teams can compose Cephalon subscriptions and choreography handoff without assuming the core eventing pack silently owns a saga state machine, timeout scheduler, or recovery journal.",
-                    nextGap: "Add a provider-neutral process-manager descriptor plus state persistence, correlation, timeout, compensation, concurrency, and recovery evidence before claiming process-manager ownership."),
+                    nextGap: processManagerState.NextGap),
                 CreateEntry(
                     id: "choreography-handoff-ownership",
                     displayName: "Choreography Handoff Ownership",
@@ -1231,7 +1231,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             "Add provider-neutral subscription ordering proof metadata plus local, per-key, partition, causal, replay, cross-node, and provider ordering evidence before claiming subscription ordering ownership.");
     }
 
-    private static string ResolveProcessManagerStateEvidence(EventingRuntimeTopology topology)
+    private ProcessManagerStateProfile ResolveProcessManagerStateProfile()
     {
         var publicationPath = topology.HasPublishingPath ? "active" : "not-active";
         var declaredSubscriptions = topology.HasSubscriptionContributors ? "present" : "not-present";
@@ -1241,9 +1241,100 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var outboxHandoff = topology.HasOutboxPublishingPath ? "available" : "not-active";
         var middlewareCount = topology.SubscriptionExecutionMiddlewareCount.ToString(CultureInfo.InvariantCulture);
 
-        return string.Create(
-            CultureInfo.InvariantCulture,
-            $"publicationPath={publicationPath}; declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; outboxHandoff={outboxHandoff}; processManagerState=not-claimed; sagaStatePersistence=not-claimed; sagaCorrelation=not-claimed; sagaTimeouts=not-claimed; compensationWorkflow=not-claimed; processManagerConcurrency=not-claimed; processManagerRecovery=not-claimed; providerProcessManager=not-present; wolverineRequired=false");
+        using var scope = scopeFactory.CreateScope();
+        var subscriptionRuntimeCatalog = scope.ServiceProvider.GetService<IEventSubscriptionRuntimeCatalog>();
+        var processManagerState = subscriptionRuntimeCatalog?.States.FirstOrDefault(static state =>
+            state.Metadata.TryGetValue(EventSubscriptionRuntimeMetadataKeys.ProcessManagerState, out var value) &&
+            string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase));
+
+        if (processManagerState is not null)
+        {
+            var metadata = processManagerState.Metadata;
+            var state = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ProcessManagerState,
+                "not-claimed");
+            var stateSource = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ProcessManagerStateSource,
+                "not-reported");
+            var sagaStatePersistence = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.SagaStatePersistence,
+                "not-claimed");
+            var sagaStatePersistenceId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.SagaStatePersistenceId,
+                "not-reported");
+            var sagaCorrelation = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.SagaCorrelation,
+                "not-claimed");
+            var sagaCorrelationId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.SagaCorrelationId,
+                "not-reported");
+            var sagaTimeouts = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.SagaTimeouts,
+                "not-claimed");
+            var sagaTimeoutSchedulerId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.SagaTimeoutSchedulerId,
+                "not-reported");
+            var compensationWorkflow = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.CompensationWorkflow,
+                "not-claimed");
+            var compensationWorkflowId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.CompensationWorkflowId,
+                "not-reported");
+            var processManagerConcurrency = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ProcessManagerConcurrency,
+                "not-claimed");
+            var processManagerConcurrencyId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ProcessManagerConcurrencyId,
+                "not-reported");
+            var processManagerRecovery = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ProcessManagerRecovery,
+                "not-claimed");
+            var processManagerRecoveryId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ProcessManagerRecoveryId,
+                "not-reported");
+            var providerProcessManager = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ProviderProcessManager,
+                "not-present");
+            var providerProcessManagerId = GetMetadataValue(
+                metadata,
+                EventSubscriptionRuntimeMetadataKeys.ProviderProcessManagerId,
+                "not-reported");
+            var status = EventSubscriptionProcessManagerStateMetadata.IsProcessManagerStateProven(metadata)
+                ? "claimed"
+                : "partial";
+            var nextGap = status == "claimed"
+                ? "Keep saga/process-manager state persistence, correlation, timeouts, compensation, concurrency, recovery, and provider process-manager proof covered by provider integration tests."
+                : "Complete saga/process-manager state persistence, correlation, timeouts, compensation, concurrency, recovery, and provider process-manager evidence before claiming process-manager state ownership.";
+
+            return new ProcessManagerStateProfile(
+                status,
+                string.Create(
+                    CultureInfo.InvariantCulture,
+                    $"publicationPath={publicationPath}; declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; outboxHandoff={outboxHandoff}; processManagerState={state}; processManagerStateSource={stateSource}; sagaStatePersistence={sagaStatePersistence}; sagaStatePersistenceId={sagaStatePersistenceId}; sagaCorrelation={sagaCorrelation}; sagaCorrelationId={sagaCorrelationId}; sagaTimeouts={sagaTimeouts}; sagaTimeoutSchedulerId={sagaTimeoutSchedulerId}; compensationWorkflow={compensationWorkflow}; compensationWorkflowId={compensationWorkflowId}; processManagerConcurrency={processManagerConcurrency}; processManagerConcurrencyId={processManagerConcurrencyId}; processManagerRecovery={processManagerRecovery}; processManagerRecoveryId={processManagerRecoveryId}; providerProcessManager={providerProcessManager}; providerProcessManagerId={providerProcessManagerId}; subscriptionId={processManagerState.SubscriptionId}; lastOutcome={processManagerState.LastOutcome ?? "unknown"}; wolverineRequired=false"),
+                nextGap);
+        }
+
+        return new ProcessManagerStateProfile(
+            "not-claimed",
+            string.Create(
+                CultureInfo.InvariantCulture,
+                $"publicationPath={publicationPath}; declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; outboxHandoff={outboxHandoff}; processManagerState=not-claimed; processManagerStateSource=not-reported; sagaStatePersistence=not-claimed; sagaStatePersistenceId=not-reported; sagaCorrelation=not-claimed; sagaCorrelationId=not-reported; sagaTimeouts=not-claimed; sagaTimeoutSchedulerId=not-reported; compensationWorkflow=not-claimed; compensationWorkflowId=not-reported; processManagerConcurrency=not-claimed; processManagerConcurrencyId=not-reported; processManagerRecovery=not-claimed; processManagerRecoveryId=not-reported; providerProcessManager=not-present; providerProcessManagerId=not-reported; wolverineRequired=false"),
+            "Add provider-neutral process-manager state proof metadata plus state persistence, correlation, timeout, compensation, concurrency, recovery, and provider process-manager evidence before claiming process-manager state ownership.");
     }
 
     private static string ResolveBrokerDeadLetterReplayEvidence(EventingRuntimeTopology topology)
@@ -1389,4 +1480,6 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private sealed record SubscriptionConcurrencyProfile(string Status, string Evidence, string NextGap);
 
     private sealed record SubscriptionOrderingProfile(string Status, string Evidence, string NextGap);
+
+    private sealed record ProcessManagerStateProfile(string Status, string Evidence, string NextGap);
 }

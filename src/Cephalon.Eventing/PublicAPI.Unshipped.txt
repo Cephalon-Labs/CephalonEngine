@@ -99,6 +99,11 @@ static Cephalon.Eventing.Services.EventSubscriptionOrderingMetadata.CreateMetada
 static Cephalon.Eventing.Services.EventSubscriptionOrderingMetadata.CreateReport(Cephalon.Eventing.Services.EventSubscriptionExecutionReport! report, string! source, string! handlerOrderingGuaranteeId, string! localFanOutOrderingId, string! perKeyOrderingKey, string! partitionOrderingId, string! causalOrderingId, string! replayOrderingCursorId, string! crossNodeOrderingId, string! providerOrderingId, bool crossNodeOrdering = true) -> Cephalon.Eventing.Services.EventSubscriptionExecutionReport!
 static Cephalon.Eventing.Services.EventSubscriptionOrderingMetadata.IsOrderingProven(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> bool
 static Cephalon.Eventing.Services.EventSubscriptionOrderingMetadata.TryApplyMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, string! outcome, string! source, string! handlerOrderingGuaranteeId, string! localFanOutOrderingId, string! perKeyOrderingKey, string! partitionOrderingId, string! causalOrderingId, string! replayOrderingCursorId, string! crossNodeOrderingId, string! providerOrderingId, bool crossNodeOrdering = true) -> bool
+Cephalon.Eventing.Services.EventSubscriptionProcessManagerStateMetadata
+static Cephalon.Eventing.Services.EventSubscriptionProcessManagerStateMetadata.CreateMetadata(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata, string! outcome, string! source, string! sagaStatePersistenceId, string! sagaCorrelationId, string! sagaTimeoutSchedulerId, string! compensationWorkflowId, string! processManagerConcurrencyId, string! processManagerRecoveryId, string! providerProcessManagerId, bool compensationWorkflow = true) -> System.Collections.Generic.Dictionary<string!, string!>!
+static Cephalon.Eventing.Services.EventSubscriptionProcessManagerStateMetadata.CreateReport(Cephalon.Eventing.Services.EventSubscriptionExecutionReport! report, string! source, string! sagaStatePersistenceId, string! sagaCorrelationId, string! sagaTimeoutSchedulerId, string! compensationWorkflowId, string! processManagerConcurrencyId, string! processManagerRecoveryId, string! providerProcessManagerId, bool compensationWorkflow = true) -> Cephalon.Eventing.Services.EventSubscriptionExecutionReport!
+static Cephalon.Eventing.Services.EventSubscriptionProcessManagerStateMetadata.IsProcessManagerStateProven(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> bool
+static Cephalon.Eventing.Services.EventSubscriptionProcessManagerStateMetadata.TryApplyMetadata(System.Collections.Generic.IDictionary<string!, string!>! metadata, string! outcome, string! source, string! sagaStatePersistenceId, string! sagaCorrelationId, string! sagaTimeoutSchedulerId, string! compensationWorkflowId, string! processManagerConcurrencyId, string! processManagerRecoveryId, string! providerProcessManagerId, bool compensationWorkflow = true) -> bool
 Cephalon.Eventing.Services.EventSubscriptionProviderIdempotencyMetadata
 static Cephalon.Eventing.Services.EventSubscriptionProviderIdempotencyMetadata.CreateMetadata(System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata, string! outcome, string! source, string! providerIdempotencyKey, string! brokerDeduplicationId, string! exactlyOnceProofId, string! durableInboxCommandId, string! genericInboxCommandId, string! idempotencyLeaseId) -> System.Collections.Generic.Dictionary<string!, string!>!
 static Cephalon.Eventing.Services.EventSubscriptionProviderIdempotencyMetadata.CreateReport(Cephalon.Eventing.Services.EventSubscriptionExecutionReport! report, string! source, string! providerIdempotencyKey, string! brokerDeduplicationId, string! exactlyOnceProofId, string! durableInboxCommandId, string! genericInboxCommandId, string! idempotencyLeaseId) -> Cephalon.Eventing.Services.EventSubscriptionExecutionReport!
@@ -181,6 +186,12 @@ const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.PerKeyOrde
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.PerKeyOrderingKey = "perKeyOrderingKey" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.PerSubscriptionConcurrencyLimit = "perSubscriptionConcurrencyLimit" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.PoisonMessageHandling = "poisonMessageHandling" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProcessManagerConcurrency = "processManagerConcurrency" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProcessManagerConcurrencyId = "processManagerConcurrencyId" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProcessManagerRecovery = "processManagerRecovery" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProcessManagerRecoveryId = "processManagerRecoveryId" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProcessManagerState = "processManagerState" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProcessManagerStateSource = "processManagerStateSource" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProviderConcurrency = "providerConcurrency" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProviderConcurrencyId = "providerConcurrencyId" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProviderIdempotency = "providerIdempotency" -> string!
@@ -188,14 +199,24 @@ const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProviderId
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProviderIdempotencySource = "providerIdempotencySource" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProviderOrdering = "providerOrdering" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProviderOrderingId = "providerOrderingId" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProviderProcessManager = "providerProcessManager" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ProviderProcessManagerId = "providerProcessManagerId" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ReplayOrdering = "replayOrdering" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.ReplayOrderingCursorId = "replayOrderingCursorId" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.SagaCorrelation = "sagaCorrelation" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.SagaCorrelationId = "sagaCorrelationId" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.SagaStatePersistence = "sagaStatePersistence" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.SagaStatePersistenceId = "sagaStatePersistenceId" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.SagaTimeoutSchedulerId = "sagaTimeoutSchedulerId" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.SagaTimeouts = "sagaTimeouts" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.SubscriptionConcurrency = "subscriptionConcurrency" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.SubscriptionConcurrencySource = "subscriptionConcurrencySource" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.SubscriptionOrdering = "subscriptionOrdering" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.SubscriptionOrderingSource = "subscriptionOrderingSource" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.CausalOrdering = "causalOrdering" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.CausalOrderingId = "causalOrderingId" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.CompensationWorkflow = "compensationWorkflow" -> string!
+const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.CompensationWorkflowId = "compensationWorkflowId" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.WorkStealing = "workStealing" -> string!
 const Cephalon.Eventing.Services.EventSubscriptionRuntimeMetadataKeys.WorkStealingId = "workStealingId" -> string!
 Cephalon.Eventing.Services.IEventSubscriptionDescriptorProvider

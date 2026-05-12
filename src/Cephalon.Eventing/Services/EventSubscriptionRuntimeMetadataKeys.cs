@@ -406,6 +406,86 @@ public static class EventSubscriptionRuntimeMetadataKeys
     public const string ProviderOrderingId = "providerOrderingId";
 
     /// <summary>
+    /// Identifies whether a provider or runtime reports ownership of saga/process-manager state.
+    /// </summary>
+    public const string ProcessManagerState = "processManagerState";
+
+    /// <summary>
+    /// Identifies the provider or runtime source that reported saga/process-manager state proof.
+    /// </summary>
+    public const string ProcessManagerStateSource = "processManagerStateSource";
+
+    /// <summary>
+    /// Identifies whether saga state persistence proof was reported.
+    /// </summary>
+    public const string SagaStatePersistence = "sagaStatePersistence";
+
+    /// <summary>
+    /// Identifies the saga state persistence proof id.
+    /// </summary>
+    public const string SagaStatePersistenceId = "sagaStatePersistenceId";
+
+    /// <summary>
+    /// Identifies whether saga correlation proof was reported.
+    /// </summary>
+    public const string SagaCorrelation = "sagaCorrelation";
+
+    /// <summary>
+    /// Identifies the saga correlation proof id.
+    /// </summary>
+    public const string SagaCorrelationId = "sagaCorrelationId";
+
+    /// <summary>
+    /// Identifies whether saga timeout scheduling proof was reported.
+    /// </summary>
+    public const string SagaTimeouts = "sagaTimeouts";
+
+    /// <summary>
+    /// Identifies the saga timeout scheduler proof id.
+    /// </summary>
+    public const string SagaTimeoutSchedulerId = "sagaTimeoutSchedulerId";
+
+    /// <summary>
+    /// Identifies whether compensation workflow proof was reported.
+    /// </summary>
+    public const string CompensationWorkflow = "compensationWorkflow";
+
+    /// <summary>
+    /// Identifies the compensation workflow proof id.
+    /// </summary>
+    public const string CompensationWorkflowId = "compensationWorkflowId";
+
+    /// <summary>
+    /// Identifies whether process-manager concurrency proof was reported.
+    /// </summary>
+    public const string ProcessManagerConcurrency = "processManagerConcurrency";
+
+    /// <summary>
+    /// Identifies the process-manager concurrency proof id.
+    /// </summary>
+    public const string ProcessManagerConcurrencyId = "processManagerConcurrencyId";
+
+    /// <summary>
+    /// Identifies whether process-manager recovery proof was reported.
+    /// </summary>
+    public const string ProcessManagerRecovery = "processManagerRecovery";
+
+    /// <summary>
+    /// Identifies the process-manager recovery proof id.
+    /// </summary>
+    public const string ProcessManagerRecoveryId = "processManagerRecoveryId";
+
+    /// <summary>
+    /// Identifies whether provider-owned process-manager coordination was reported.
+    /// </summary>
+    public const string ProviderProcessManager = "providerProcessManager";
+
+    /// <summary>
+    /// Identifies the provider process-manager proof id.
+    /// </summary>
+    public const string ProviderProcessManagerId = "providerProcessManagerId";
+
+    /// <summary>
     /// Identifies whether the latest runtime observation says a retry is pending.
     /// </summary>
     public const string RetryPending = "retryPending";

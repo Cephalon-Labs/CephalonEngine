@@ -1,6 +1,6 @@
 {
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-12T17:32:44.1336154+00:00",
+  "GeneratedAtUtc": "2026-05-12T18:05:40.0783574+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -168,7 +168,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 73
+      "TypeCount": 74
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1228,7 +1228,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 70
+      "TypeCount": 71
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -9105,6 +9105,21 @@
       }
     },
     {
+      "DisplayName": "EventSubscriptionProcessManagerStateMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventsubscriptionprocessmanagerstatemetadata",
+      "Declaration": "public static class EventSubscriptionProcessManagerStateMetadata",
+      "Summary": "Builds provider-reported saga/process-manager state proof metadata for successful subscription reports.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 4
+      }
+    },
+    {
       "DisplayName": "EventSubscriptionProviderIdempotencyMetadata",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -9129,7 +9144,7 @@
       "Summary": "Defines stable metadata keys used by the event-subscriptions runtime surface.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 85,
+        "Fields": 101,
         "Properties": 0,
         "Methods": 0
       }
@@ -38243,6 +38258,28 @@
       "Summary": "Gets the stable behavior identifier to invoke when the compensation action maps to another Cephalon behavior."
     },
     {
+      "DisplayName": "CompensationWorkflow",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-compensationworkflow",
+      "Signature": "const string CompensationWorkflow",
+      "Summary": "Identifies whether compensation workflow proof was reported."
+    },
+    {
+      "DisplayName": "CompensationWorkflowId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-compensationworkflowid",
+      "Signature": "const string CompensationWorkflowId",
+      "Summary": "Identifies the compensation workflow proof id."
+    },
+    {
       "DisplayName": "Completed",
       "Category": "Fields",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorAutomaticRetryExecutionStates",
@@ -41985,6 +42022,17 @@
     {
       "DisplayName": "CreateMetadata",
       "Category": "Methods",
+      "DeclaringTypeName": "EventSubscriptionProcessManagerStateMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionprocessmanagerstatemetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean",
+      "Signature": "Dictionary\u003Cstring, string\u003E CreateMetadata(IReadOnlyDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string sagaStatePersistenceId, string sagaCorrelationId, string sagaTimeoutSchedulerId, string compensationWorkflowId, string processManagerConcurrencyId, string processManagerRecoveryId, string providerProcessManagerId, bool compensationWorkflow)",
+      "Summary": "Creates a metadata copy enriched with provider-reported process-manager state proof when the inputs support it."
+    },
+    {
+      "DisplayName": "CreateMetadata",
+      "Category": "Methods",
       "DeclaringTypeName": "EventSubscriptionProviderIdempotencyMetadata",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -42113,6 +42161,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionorderingmetadata-createreport-cephalon-eventing-services-eventsubscriptionexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean",
       "Signature": "EventSubscriptionExecutionReport CreateReport(EventSubscriptionExecutionReport report, string source, string handlerOrderingGuaranteeId, string localFanOutOrderingId, string perKeyOrderingKey, string partitionOrderingId, string causalOrderingId, string replayOrderingCursorId, string crossNodeOrderingId, string providerOrderingId, bool crossNodeOrdering)",
       "Summary": "Creates a subscription report copy enriched with provider-reported ordering proof when the inputs support it."
+    },
+    {
+      "DisplayName": "CreateReport",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventSubscriptionProcessManagerStateMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionprocessmanagerstatemetadata-createreport-cephalon-eventing-services-eventsubscriptionexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean",
+      "Signature": "EventSubscriptionExecutionReport CreateReport(EventSubscriptionExecutionReport report, string source, string sagaStatePersistenceId, string sagaCorrelationId, string sagaTimeoutSchedulerId, string compensationWorkflowId, string processManagerConcurrencyId, string processManagerRecoveryId, string providerProcessManagerId, bool compensationWorkflow)",
+      "Summary": "Creates a subscription report copy enriched with provider-reported process-manager state proof when the inputs support it."
     },
     {
       "DisplayName": "CreateReport",
@@ -76619,6 +76678,17 @@
       "Summary": "Gets a value indicating whether the retry-execution policy remains blocked by shared runtime truth or safety guardrails."
     },
     {
+      "DisplayName": "IsProcessManagerStateProven",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventSubscriptionProcessManagerStateMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionprocessmanagerstatemetadata-isprocessmanagerstateproven-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "bool IsProcessManagerStateProven(IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Gets a value indicating whether the metadata contains complete provider-reported process-manager state proof."
+    },
+    {
       "DisplayName": "IsProviderBlocked",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStatus",
@@ -99680,6 +99750,72 @@
       "Summary": "Gets or sets the time at which the inbox row was marked as processed."
     },
     {
+      "DisplayName": "ProcessManagerConcurrency",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-processmanagerconcurrency",
+      "Signature": "const string ProcessManagerConcurrency",
+      "Summary": "Identifies whether process-manager concurrency proof was reported."
+    },
+    {
+      "DisplayName": "ProcessManagerConcurrencyId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-processmanagerconcurrencyid",
+      "Signature": "const string ProcessManagerConcurrencyId",
+      "Summary": "Identifies the process-manager concurrency proof id."
+    },
+    {
+      "DisplayName": "ProcessManagerRecovery",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-processmanagerrecovery",
+      "Signature": "const string ProcessManagerRecovery",
+      "Summary": "Identifies whether process-manager recovery proof was reported."
+    },
+    {
+      "DisplayName": "ProcessManagerRecoveryId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-processmanagerrecoveryid",
+      "Signature": "const string ProcessManagerRecoveryId",
+      "Summary": "Identifies the process-manager recovery proof id."
+    },
+    {
+      "DisplayName": "ProcessManagerState",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-processmanagerstate",
+      "Signature": "const string ProcessManagerState",
+      "Summary": "Identifies whether a provider or runtime reports ownership of saga/process-manager state."
+    },
+    {
+      "DisplayName": "ProcessManagerStateSource",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-processmanagerstatesource",
+      "Signature": "const string ProcessManagerStateSource",
+      "Summary": "Identifies the provider or runtime source that reported saga/process-manager state proof."
+    },
+    {
       "DisplayName": "ProducedMessageCount",
       "Category": "Properties",
       "DeclaringTypeName": "CdcCaptureExecutionReport",
@@ -103297,6 +103433,28 @@
       "AnchorId": "member-p-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderspecificcontrolplanematerializerstatus-providerownedwritepathexecutionstate",
       "Signature": "string ProviderOwnedWritePathExecutionState { get; set; }",
       "Summary": "Gets the current provider-owned write-path execution state that informed provider-specific materialization."
+    },
+    {
+      "DisplayName": "ProviderProcessManager",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-providerprocessmanager",
+      "Signature": "const string ProviderProcessManager",
+      "Summary": "Identifies whether provider-owned process-manager coordination was reported."
+    },
+    {
+      "DisplayName": "ProviderProcessManagerId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-providerprocessmanagerid",
+      "Signature": "const string ProviderProcessManagerId",
+      "Summary": "Identifies the provider process-manager proof id."
     },
     {
       "DisplayName": "ProviderResults",
@@ -115672,6 +115830,72 @@
       "AnchorId": "member-m-cephalon-abstractions-execution-sagachoreographyruntimedescriptor-ctor-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-string-system-collections-generic-ireadonlylist-system-int32-system-collections-generic-ireadonlydictionary-system-string-system-string",
       "Signature": "SagaChoreographyRuntimeDescriptor(string id, string displayName, string description, string behaviorType, string inputType, string resultType, string localOutputType, string sourceModuleId, IReadOnlyList\u003Cstring\u003E transportIds, IReadOnlyList\u003Cstring\u003E requiredFeatureFlagIds, IReadOnlyList\u003Cint\u003E successStatusCodes, IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
       "Summary": "Creates a saga-choreography runtime descriptor."
+    },
+    {
+      "DisplayName": "SagaCorrelation",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-sagacorrelation",
+      "Signature": "const string SagaCorrelation",
+      "Summary": "Identifies whether saga correlation proof was reported."
+    },
+    {
+      "DisplayName": "SagaCorrelationId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-sagacorrelationid",
+      "Signature": "const string SagaCorrelationId",
+      "Summary": "Identifies the saga correlation proof id."
+    },
+    {
+      "DisplayName": "SagaStatePersistence",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-sagastatepersistence",
+      "Signature": "const string SagaStatePersistence",
+      "Summary": "Identifies whether saga state persistence proof was reported."
+    },
+    {
+      "DisplayName": "SagaStatePersistenceId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-sagastatepersistenceid",
+      "Signature": "const string SagaStatePersistenceId",
+      "Summary": "Identifies the saga state persistence proof id."
+    },
+    {
+      "DisplayName": "SagaTimeouts",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-sagatimeouts",
+      "Signature": "const string SagaTimeouts",
+      "Summary": "Identifies whether saga timeout scheduling proof was reported."
+    },
+    {
+      "DisplayName": "SagaTimeoutSchedulerId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-sagatimeoutschedulerid",
+      "Signature": "const string SagaTimeoutSchedulerId",
+      "Summary": "Identifies the saga timeout scheduler proof id."
     },
     {
       "DisplayName": "SamplingDurationSeconds",
@@ -129947,6 +130171,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionorderingmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean",
       "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string handlerOrderingGuaranteeId, string localFanOutOrderingId, string perKeyOrderingKey, string partitionOrderingId, string causalOrderingId, string replayOrderingCursorId, string crossNodeOrderingId, string providerOrderingId, bool crossNodeOrdering)",
       "Summary": "Applies provider-reported ordering proof to an existing subscription metadata dictionary when the inputs support it."
+    },
+    {
+      "DisplayName": "TryApplyMetadata",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventSubscriptionProcessManagerStateMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventsubscriptionprocessmanagerstatemetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean",
+      "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string sagaStatePersistenceId, string sagaCorrelationId, string sagaTimeoutSchedulerId, string compensationWorkflowId, string processManagerConcurrencyId, string processManagerRecoveryId, string providerProcessManagerId, bool compensationWorkflow)",
+      "Summary": "Applies provider-reported process-manager state proof to an existing subscription metadata dictionary when the inputs support it."
     },
     {
       "DisplayName": "TryApplyMetadata",

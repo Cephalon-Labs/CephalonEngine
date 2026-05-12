@@ -4193,6 +4193,110 @@ Parameters:
 - `providerOrderingId`: The provider ordering proof id.
 - `crossNodeOrdering`: A value indicating whether the provider reported cross-node ordering.
 
+<a id="type-cephalon-eventing-services-eventsubscriptionprocessmanagerstatemetadata"></a>
+
+### `EventSubscriptionProcessManagerStateMetadata`
+
+Builds provider-reported saga/process-manager state proof metadata for successful subscription reports.
+
+Remarks: Declared subscriptions, direct in-process execution, middleware, choreography handoff, outbox publication, hosted execution links, and provider bindings do not automatically prove durable saga or process-manager state. This helper records that stronger proof only when a successful subscription observation supplies persistence, correlation, timeout, compensation, concurrency, recovery, and provider ownership evidence.
+
+#### Declaration
+```csharp
+public static class EventSubscriptionProcessManagerStateMetadata
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionprocessmanagerstatemetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean"></a>
+
+##### `CreateMetadata`
+
+```csharp
+Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string sagaStatePersistenceId, string sagaCorrelationId, string sagaTimeoutSchedulerId, string compensationWorkflowId, string processManagerConcurrencyId, string processManagerRecoveryId, string providerProcessManagerId, bool compensationWorkflow)
+```
+
+Creates a metadata copy enriched with provider-reported process-manager state proof when the inputs support it.
+
+Returns: A case-insensitive metadata dictionary containing the original values plus process-manager state proof when applicable.
+
+Parameters:
+- `metadata`: The subscription execution metadata to copy.
+- `outcome`: The subscription execution outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported process-manager state proof.
+- `sagaStatePersistenceId`: The saga state persistence proof id.
+- `sagaCorrelationId`: The saga correlation proof id.
+- `sagaTimeoutSchedulerId`: The saga timeout scheduler proof id.
+- `compensationWorkflowId`: The compensation workflow proof id.
+- `processManagerConcurrencyId`: The process-manager concurrency proof id.
+- `processManagerRecoveryId`: The process-manager recovery proof id.
+- `providerProcessManagerId`: The provider process-manager proof id.
+- `compensationWorkflow`: A value indicating whether compensation workflow proof was reported.
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionprocessmanagerstatemetadata-createreport-cephalon-eventing-services-eventsubscriptionexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean"></a>
+
+##### `CreateReport`
+
+```csharp
+EventSubscriptionExecutionReport CreateReport(EventSubscriptionExecutionReport report, string source, string sagaStatePersistenceId, string sagaCorrelationId, string sagaTimeoutSchedulerId, string compensationWorkflowId, string processManagerConcurrencyId, string processManagerRecoveryId, string providerProcessManagerId, bool compensationWorkflow)
+```
+
+Creates a subscription report copy enriched with provider-reported process-manager state proof when the inputs support it.
+
+Returns: A subscription report containing the original metadata plus process-manager state proof when applicable.
+
+Parameters:
+- `report`: The successful subscription execution report to copy.
+- `source`: The stable provider or runtime source that reported process-manager state proof.
+- `sagaStatePersistenceId`: The saga state persistence proof id.
+- `sagaCorrelationId`: The saga correlation proof id.
+- `sagaTimeoutSchedulerId`: The saga timeout scheduler proof id.
+- `compensationWorkflowId`: The compensation workflow proof id.
+- `processManagerConcurrencyId`: The process-manager concurrency proof id.
+- `processManagerRecoveryId`: The process-manager recovery proof id.
+- `providerProcessManagerId`: The provider process-manager proof id.
+- `compensationWorkflow`: A value indicating whether compensation workflow proof was reported.
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionprocessmanagerstatemetadata-isprocessmanagerstateproven-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `IsProcessManagerStateProven`
+
+```csharp
+bool IsProcessManagerStateProven(IReadOnlyDictionary<string, string> metadata)
+```
+
+Gets a value indicating whether the metadata contains complete provider-reported process-manager state proof.
+
+Returns: `true` when complete process-manager state proof is present; otherwise, `false`.
+
+Parameters:
+- `metadata`: The subscription metadata dictionary to inspect.
+
+<a id="member-m-cephalon-eventing-services-eventsubscriptionprocessmanagerstatemetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-boolean"></a>
+
+##### `TryApplyMetadata`
+
+```csharp
+bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string sagaStatePersistenceId, string sagaCorrelationId, string sagaTimeoutSchedulerId, string compensationWorkflowId, string processManagerConcurrencyId, string processManagerRecoveryId, string providerProcessManagerId, bool compensationWorkflow)
+```
+
+Applies provider-reported process-manager state proof to an existing subscription metadata dictionary when the inputs support it.
+
+Returns: `true` when process-manager state proof was applied; otherwise, `false`.
+
+Parameters:
+- `metadata`: The subscription metadata dictionary to enrich.
+- `outcome`: The subscription execution outcome associated with the metadata.
+- `source`: The stable provider or runtime source that reported process-manager state proof.
+- `sagaStatePersistenceId`: The saga state persistence proof id.
+- `sagaCorrelationId`: The saga correlation proof id.
+- `sagaTimeoutSchedulerId`: The saga timeout scheduler proof id.
+- `compensationWorkflowId`: The compensation workflow proof id.
+- `processManagerConcurrencyId`: The process-manager concurrency proof id.
+- `processManagerRecoveryId`: The process-manager recovery proof id.
+- `providerProcessManagerId`: The provider process-manager proof id.
+- `compensationWorkflow`: A value indicating whether compensation workflow proof was reported.
+
 <a id="type-cephalon-eventing-services-eventsubscriptionprovideridempotencymetadata"></a>
 
 ### `EventSubscriptionProviderIdempotencyMetadata`
@@ -4435,6 +4539,26 @@ const string ChannelId
 ```
 
 Identifies the logical event channel consumed by the declared subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-compensationworkflow"></a>
+
+##### `CompensationWorkflow`
+
+```csharp
+const string CompensationWorkflow
+```
+
+Identifies whether compensation workflow proof was reported.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-compensationworkflowid"></a>
+
+##### `CompensationWorkflowId`
+
+```csharp
+const string CompensationWorkflowId
+```
+
+Identifies the compensation workflow proof id.
 
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumercontextextraction"></a>
 
@@ -4966,6 +5090,66 @@ const string PoisonMessageHandling
 
 Identifies the poison-message handling posture reported for inbound broker consumption.
 
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-processmanagerconcurrency"></a>
+
+##### `ProcessManagerConcurrency`
+
+```csharp
+const string ProcessManagerConcurrency
+```
+
+Identifies whether process-manager concurrency proof was reported.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-processmanagerconcurrencyid"></a>
+
+##### `ProcessManagerConcurrencyId`
+
+```csharp
+const string ProcessManagerConcurrencyId
+```
+
+Identifies the process-manager concurrency proof id.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-processmanagerrecovery"></a>
+
+##### `ProcessManagerRecovery`
+
+```csharp
+const string ProcessManagerRecovery
+```
+
+Identifies whether process-manager recovery proof was reported.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-processmanagerrecoveryid"></a>
+
+##### `ProcessManagerRecoveryId`
+
+```csharp
+const string ProcessManagerRecoveryId
+```
+
+Identifies the process-manager recovery proof id.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-processmanagerstate"></a>
+
+##### `ProcessManagerState`
+
+```csharp
+const string ProcessManagerState
+```
+
+Identifies whether a provider or runtime reports ownership of saga/process-manager state.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-processmanagerstatesource"></a>
+
+##### `ProcessManagerStateSource`
+
+```csharp
+const string ProcessManagerStateSource
+```
+
+Identifies the provider or runtime source that reported saga/process-manager state proof.
+
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-providerconcurrency"></a>
 
 ##### `ProviderConcurrency`
@@ -5036,6 +5220,26 @@ const string ProviderOrderingId
 
 Identifies the provider ordering proof id.
 
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-providerprocessmanager"></a>
+
+##### `ProviderProcessManager`
+
+```csharp
+const string ProviderProcessManager
+```
+
+Identifies whether provider-owned process-manager coordination was reported.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-providerprocessmanagerid"></a>
+
+##### `ProviderProcessManagerId`
+
+```csharp
+const string ProviderProcessManagerId
+```
+
+Identifies the provider process-manager proof id.
+
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-replayordering"></a>
 
 ##### `ReplayOrdering`
@@ -5085,6 +5289,66 @@ const string RuntimeState
 ```
 
 Identifies whether runtime observations have been reported for the subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-sagacorrelation"></a>
+
+##### `SagaCorrelation`
+
+```csharp
+const string SagaCorrelation
+```
+
+Identifies whether saga correlation proof was reported.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-sagacorrelationid"></a>
+
+##### `SagaCorrelationId`
+
+```csharp
+const string SagaCorrelationId
+```
+
+Identifies the saga correlation proof id.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-sagastatepersistence"></a>
+
+##### `SagaStatePersistence`
+
+```csharp
+const string SagaStatePersistence
+```
+
+Identifies whether saga state persistence proof was reported.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-sagastatepersistenceid"></a>
+
+##### `SagaStatePersistenceId`
+
+```csharp
+const string SagaStatePersistenceId
+```
+
+Identifies the saga state persistence proof id.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-sagatimeouts"></a>
+
+##### `SagaTimeouts`
+
+```csharp
+const string SagaTimeouts
+```
+
+Identifies whether saga timeout scheduling proof was reported.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-sagatimeoutschedulerid"></a>
+
+##### `SagaTimeoutSchedulerId`
+
+```csharp
+const string SagaTimeoutSchedulerId
+```
+
+Identifies the saga timeout scheduler proof id.
 
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-subscriptionconcurrency"></a>
 
