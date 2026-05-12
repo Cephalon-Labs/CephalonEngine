@@ -3,7 +3,9 @@ using Grpc.Core.Interceptors;
 
 namespace Cephalon.AspNetCore.Grpc.Hosting;
 
-internal sealed class CephalonGrpcResilienceInterceptor : Interceptor
+internal sealed class CephalonGrpcResilienceInterceptor(
+    CephalonGrpcDirectModuleResilienceOptions options,
+    CephalonGrpcDirectModuleCircuitBreakerState circuitBreakerState) : Interceptor
 {
     private const string BrokenCircuitExceptionTypeName = "Polly.CircuitBreaker.BrokenCircuitException";
     private const string TimeoutRejectedExceptionTypeName = "Polly.Timeout.TimeoutRejectedException";
@@ -19,7 +21,7 @@ internal sealed class CephalonGrpcResilienceInterceptor : Interceptor
     {
         ArgumentNullException.ThrowIfNull(continuation);
 
-        return MapResilienceFaultsAsync(() => continuation(request, context));
+        return ExecuteAsync(() => continuation(request, context), context);
     }
 
     public override Task<TResponse> ClientStreamingServerHandler<TRequest, TResponse>(
@@ -31,7 +33,7 @@ internal sealed class CephalonGrpcResilienceInterceptor : Interceptor
     {
         ArgumentNullException.ThrowIfNull(continuation);
 
-        return MapResilienceFaultsAsync(() => continuation(requestStream, context));
+        return ExecuteAsync(() => continuation(requestStream, context), context);
     }
 
     public override Task ServerStreamingServerHandler<TRequest, TResponse>(
@@ -44,7 +46,7 @@ internal sealed class CephalonGrpcResilienceInterceptor : Interceptor
     {
         ArgumentNullException.ThrowIfNull(continuation);
 
-        return MapResilienceFaultsAsync(() => continuation(request, responseStream, context));
+        return ExecuteAsync(() => continuation(request, responseStream, context), context);
     }
 
     public override Task DuplexStreamingServerHandler<TRequest, TResponse>(
@@ -57,14 +59,23 @@ internal sealed class CephalonGrpcResilienceInterceptor : Interceptor
     {
         ArgumentNullException.ThrowIfNull(continuation);
 
-        return MapResilienceFaultsAsync(() => continuation(requestStream, responseStream, context));
+        return ExecuteAsync(() => continuation(requestStream, responseStream, context), context);
     }
 
-    private static async Task<TResponse> MapResilienceFaultsAsync<TResponse>(Func<Task<TResponse>> execute)
+    private async Task<TResponse> ExecuteAsync<TResponse>(
+        Func<Task<TResponse>> execute,
+        ServerCallContext context)
     {
+        if (!TryEnterCircuit())
+        {
+            throw CreateCircuitBreakerException();
+        }
+
         try
         {
-            return await execute().ConfigureAwait(false);
+            var response = await ExecuteWithTimeoutAsync(execute, context).ConfigureAwait(false);
+            circuitBreakerState.RecordSuccess();
+            return response;
         }
         catch (RpcException)
         {
@@ -72,23 +83,39 @@ internal sealed class CephalonGrpcResilienceInterceptor : Interceptor
         }
         catch (Exception exception) when (IsPollyTimeoutRejectedException(exception))
         {
+            circuitBreakerState.RecordFailure(exception);
             throw CreateTimeoutException();
         }
-        catch (TimeoutException)
+        catch (TimeoutException exception)
         {
+            circuitBreakerState.RecordFailure(exception);
             throw CreateTimeoutException();
         }
         catch (Exception exception) when (IsPollyBrokenCircuitException(exception))
         {
+            circuitBreakerState.RecordFailure(exception);
             throw CreateCircuitBreakerException();
+        }
+        catch (Exception exception) when (ShouldTripCircuit(exception))
+        {
+            circuitBreakerState.RecordFailure(exception);
+            throw;
         }
     }
 
-    private static async Task MapResilienceFaultsAsync(Func<Task> execute)
+    private async Task ExecuteAsync(
+        Func<Task> execute,
+        ServerCallContext context)
     {
+        if (!TryEnterCircuit())
+        {
+            throw CreateCircuitBreakerException();
+        }
+
         try
         {
-            await execute().ConfigureAwait(false);
+            await ExecuteWithTimeoutAsync(execute, context).ConfigureAwait(false);
+            circuitBreakerState.RecordSuccess();
         }
         catch (RpcException)
         {
@@ -96,16 +123,61 @@ internal sealed class CephalonGrpcResilienceInterceptor : Interceptor
         }
         catch (Exception exception) when (IsPollyTimeoutRejectedException(exception))
         {
+            circuitBreakerState.RecordFailure(exception);
             throw CreateTimeoutException();
         }
-        catch (TimeoutException)
+        catch (TimeoutException exception)
         {
+            circuitBreakerState.RecordFailure(exception);
             throw CreateTimeoutException();
         }
         catch (Exception exception) when (IsPollyBrokenCircuitException(exception))
         {
+            circuitBreakerState.RecordFailure(exception);
             throw CreateCircuitBreakerException();
         }
+        catch (Exception exception) when (ShouldTripCircuit(exception))
+        {
+            circuitBreakerState.RecordFailure(exception);
+            throw;
+        }
+    }
+
+    private bool TryEnterCircuit()
+    {
+        if (!options.CircuitBreakerEnabled)
+        {
+            return true;
+        }
+
+        return circuitBreakerState.TryEnter(out _);
+    }
+
+    private async Task<TResponse> ExecuteWithTimeoutAsync<TResponse>(
+        Func<Task<TResponse>> execute,
+        ServerCallContext context)
+    {
+        var task = execute();
+        if (!options.TimeoutEnabled || options.Timeout is not { } timeout)
+        {
+            return await task.ConfigureAwait(false);
+        }
+
+        return await task.WaitAsync(timeout, context.CancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task ExecuteWithTimeoutAsync(
+        Func<Task> execute,
+        ServerCallContext context)
+    {
+        var task = execute();
+        if (!options.TimeoutEnabled || options.Timeout is not { } timeout)
+        {
+            await task.ConfigureAwait(false);
+            return;
+        }
+
+        await task.WaitAsync(timeout, context.CancellationToken).ConfigureAwait(false);
     }
 
     private static bool IsPollyTimeoutRejectedException(Exception exception)
@@ -113,6 +185,13 @@ internal sealed class CephalonGrpcResilienceInterceptor : Interceptor
 
     private static bool IsPollyBrokenCircuitException(Exception exception)
         => IsExceptionType(exception, BrokenCircuitExceptionTypeName);
+
+    private static bool ShouldTripCircuit(Exception exception)
+        => exception is TimeoutException ||
+            exception is HttpRequestException ||
+            exception is IOException ||
+            exception is System.Net.Sockets.SocketException ||
+            exception is System.Data.Common.DbException;
 
     private static bool IsExceptionType(Exception exception, string fullName)
     {

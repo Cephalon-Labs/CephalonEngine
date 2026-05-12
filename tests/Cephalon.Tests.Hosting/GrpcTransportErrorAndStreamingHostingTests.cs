@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Cephalon.Abstractions.Capabilities;
 using Cephalon.Abstractions.Modules;
 using Cephalon.Abstractions.Resilience;
+using Cephalon.Abstractions.Technologies;
 using Cephalon.AspNetCore.Grpc.Contracts.Discovery;
 using Cephalon.AspNetCore.Grpc.Hosting;
 using Cephalon.AspNetCore.Grpc.Modules;
@@ -107,6 +108,78 @@ public sealed class GrpcTransportErrorAndStreamingHostingTests
         Assert.Contains(exception.Trailers, entry =>
             string.Equals(entry.Key, "cephalon-fault", StringComparison.Ordinal) &&
             string.Equals(entry.Value, "resilience", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task SayHello_EnforcesConfiguredGrpcDirectModuleTimeout()
+    {
+        await using var host = await BuildGrpcHostAsync(enableDirectGrpcTimeout: true);
+        var client = CreateGrpcClient(host);
+
+        var exception = await Assert.ThrowsAsync<RpcException>(async () =>
+        {
+            await client.SayHelloAsync(new HelloRequest { Name = "host-timeout" });
+        });
+
+        Assert.Equal(StatusCode.DeadlineExceeded, exception.StatusCode);
+        Assert.Contains("timeout", exception.Status.Detail, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(exception.Trailers, entry =>
+            string.Equals(entry.Key, "cephalon-code", StringComparison.Ordinal) &&
+            string.Equals(entry.Value, "grpc_execution_timeout", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public async Task SayHello_EnforcesConfiguredGrpcDirectModuleCircuitBreaker()
+    {
+        await using var host = await BuildGrpcHostAsync(enableDirectGrpcCircuitBreaker: true);
+        var httpClient = host.GetTestClient();
+        var client = CreateGrpcClient(host);
+
+        var firstFailure = await Assert.ThrowsAsync<RpcException>(async () =>
+        {
+            await client.SayHelloAsync(new HelloRequest { Name = "timeout-exception" });
+        });
+        var openCircuit = await Assert.ThrowsAsync<RpcException>(async () =>
+        {
+            await client.SayHelloAsync(new HelloRequest { Name = "ok" });
+        });
+
+        Assert.Equal(StatusCode.DeadlineExceeded, firstFailure.StatusCode);
+        Assert.Equal(StatusCode.Unavailable, openCircuit.StatusCode);
+        Assert.Contains(openCircuit.Trailers, entry =>
+            string.Equals(entry.Key, "cephalon-code", StringComparison.Ordinal) &&
+            string.Equals(entry.Value, "grpc_circuit_breaker_open", StringComparison.Ordinal));
+
+        var surfaces = await httpClient.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/grpc");
+        var entry = Assert.Single(Assert.Single(surfaces ?? []).Entries);
+        Assert.Equal("open", entry.Metadata["circuitState"]);
+        Assert.Equal("1", entry.Metadata["circuitSampleCount"]);
+        Assert.Equal("1", entry.Metadata["circuitFailedSampleCount"]);
+        Assert.NotEqual("0", entry.Metadata["circuitRetryAfterSeconds"]);
+    }
+
+    [Fact]
+    public async Task GrpcTransport_ReportsDirectModuleResilienceRuntimeSurface()
+    {
+        await using var host = await BuildGrpcHostAsync(
+            enableDirectGrpcTimeout: true,
+            enableDirectGrpcCircuitBreaker: true);
+        var httpClient = host.GetTestClient();
+
+        var surfaces = await httpClient.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/grpc");
+        var surface = Assert.Single(surfaces ?? []);
+        var entry = Assert.Single(surface.Entries);
+
+        Assert.Equal("grpc-direct-module-resilience", surface.SurfaceId);
+        Assert.Equal("grpc-direct-module-resilience", entry.Id);
+        Assert.Equal("aspnetcore-grpc-interceptor", entry.Metadata["executionMode"]);
+        Assert.Equal("Engine:Resilience", entry.Metadata["policySource"]);
+        Assert.Equal("false", entry.Metadata["wolverineRequired"]);
+        Assert.Equal("false", entry.Metadata["consumerCodeRequired"]);
+        Assert.Equal("True", entry.Metadata["timeoutEnabled"]);
+        Assert.Equal("1", entry.Metadata["timeoutSeconds"]);
+        Assert.Equal("True", entry.Metadata["circuitBreakerEnabled"]);
+        Assert.Equal("Unavailable", entry.Metadata["circuitBreakerOpenStatusCode"]);
     }
 
     [Fact]
@@ -275,7 +348,10 @@ public sealed class GrpcTransportErrorAndStreamingHostingTests
         return new Metadata { { ScenarioHeader, scenario } };
     }
 
-    private static async Task<WebApplication> BuildGrpcHostAsync(bool enableTightRateLimiting = false)
+    private static async Task<WebApplication> BuildGrpcHostAsync(
+        bool enableTightRateLimiting = false,
+        bool enableDirectGrpcTimeout = false,
+        bool enableDirectGrpcCircuitBreaker = false)
     {
         var builder = WebApplication.CreateSlimBuilder();
         builder.WebHost.UseTestServer();
@@ -288,6 +364,21 @@ public sealed class GrpcTransportErrorAndStreamingHostingTests
             builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:PermitLimit"] = "1";
             builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:QueueLimit"] = "0";
             builder.Configuration[$"{EngineSettings.SectionName}:Resilience:RateLimiting:WindowSeconds"] = "60";
+        }
+
+        if (enableDirectGrpcTimeout)
+        {
+            builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Timeout:Enabled"] = "true";
+            builder.Configuration[$"{EngineSettings.SectionName}:Resilience:Timeout:TotalTimeoutSeconds"] = "1";
+        }
+
+        if (enableDirectGrpcCircuitBreaker)
+        {
+            builder.Configuration[$"{EngineSettings.SectionName}:Resilience:CircuitBreaker:Enabled"] = "true";
+            builder.Configuration[$"{EngineSettings.SectionName}:Resilience:CircuitBreaker:FailureRatio"] = "0.5";
+            builder.Configuration[$"{EngineSettings.SectionName}:Resilience:CircuitBreaker:MinimumThroughput"] = "1";
+            builder.Configuration[$"{EngineSettings.SectionName}:Resilience:CircuitBreaker:SamplingDurationSeconds"] = "60";
+            builder.Configuration[$"{EngineSettings.SectionName}:Resilience:CircuitBreaker:BreakDurationSeconds"] = "60";
         }
 
         builder.AddGrpcTransport();
@@ -430,6 +521,9 @@ internal sealed class GrpcStreamingAndErrorModesService : DiscoveryService.Disco
                 throw CreatePollyException("Polly.Timeout.TimeoutRejectedException", "simulated Polly timeout");
             case "circuit-open":
                 throw CreatePollyException("Polly.CircuitBreaker.BrokenCircuitException", "simulated open circuit");
+            case "host-timeout":
+                await Task.Delay(TimeSpan.FromMilliseconds(1500), context.CancellationToken);
+                return new HelloReply { Message = "late" };
             case "delay":
                 // Reserved for future deadline / cancellation coverage; under
                 // Microsoft.AspNetCore.TestHost the in-memory pipe does not propagate the

@@ -287,7 +287,37 @@ Delivered:
 - `TimeoutException` plus optional Polly `TimeoutRejectedException` become gRPC `DeadlineExceeded`
 - optional Polly `BrokenCircuitException` becomes gRPC `Unavailable`
 - translated faults include stable `cephalon-code` and `cephalon-fault` trailers, while unmapped handler exceptions keep ASP.NET Core gRPC's normal `Unknown` behavior
-- component docs, app-model docs, roadmap, and project memory now distinguish this envelope contract from future host-enforced direct-module timeout/circuit runtime ownership
+- component docs, app-model docs, roadmap, and project memory distinguished this envelope contract from host-enforced direct-module timeout/circuit runtime ownership, which later shipped in `ENG-637`
+
+Validation:
+
+- `dotnet build src\Cephalon.AspNetCore.Grpc\Cephalon.AspNetCore.Grpc.csproj --no-restore -m:1`
+- `dotnet build tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-restore -m:1`
+- `dotnet test tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-build --filter "FullyQualifiedName~GrpcTransportErrorAndStreamingHostingTests"`
+- `dotnet test tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-build --filter "FullyQualifiedName~GrpcTransportErrorAndStreamingHostingTests|FullyQualifiedName~MapCephalonAppliesConfiguredRateLimitingOnlyToPublicHttpEndpoints|FullyQualifiedName~MapCephalonExposesBehaviorResiliencePoliciesAcrossEndpointAndSnapshot|FullyQualifiedName~BehaviorResilienceRestHostingTests|FullyQualifiedName~BehaviorHttpTransportResilienceHostingTests"`
+- `dotnet build CephalonEngine.slnx --no-restore -m:1`
+
+### ENG-637 gRPC direct-module resilience runtime enforcement
+
+Status: done
+Estimate: 0.5
+Iteration: Sprint 125
+Area: phase-11 / resilience / ASP.NET Core gRPC
+Quality dimensions: Reliability, Availability, Usability, Compatibility, Maintainability, Performance
+
+Why:
+
+- `ENG-636` made known direct gRPC resilience faults transport-native, but the adapter still needed to own direct-module timeout and circuit execution itself when only `Engine:Resilience` is configured
+- direct `IGrpcModule` handlers should receive the same low-code, config-driven protection posture as other Cephalon-owned runtime paths without installing Wolverine or asking consumers to write custom interceptors
+- operators need runtime truth for the effective direct-module policy, current circuit state, and support posture rather than inferring it from exception behavior
+
+Delivered:
+
+- `Cephalon.AspNetCore.Grpc` now resolves direct-module timeout and circuit-breaker settings from `RuntimeManifest.AppProfile.Resilience`
+- the existing gRPC resilience interceptor now enforces configured direct-module execution timeout with gRPC-native `DeadlineExceeded` outcomes
+- the adapter now owns bounded process-local circuit-breaker state for direct gRPC module calls, trips on conservative transient failures, rejects open-circuit calls as `Unavailable`, and preserves ASP.NET Core gRPC's normal `Unknown` behavior for unmapped handler failures
+- `/engine/technology-surfaces` now reports the `grpc-direct-module-resilience` surface with policy source, enforcement mode, timeout/circuit settings, live breaker state, retry-after posture, and `wolverineRequired=false` / `consumerCodeRequired=false` metadata
+- component docs, app-model docs, runtime-contract index, roadmap, backlog, and project memory now agree that host-enforced direct gRPC timeout/circuit runtime is shipped
 
 Validation:
 
@@ -17632,6 +17662,9 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-412 Extend Cephalon.Worker lifecycle activity with metadata tags + M1 redaction wiring (sixth emission site) (shipped) — originally drafted as ENG-411; renumbered after concurrent run claimed ENG-411 for the runtime-contract-index drift closure
 - ENG-413 Add focused integration test proving Cephalon.Worker lifecycle activity routes tag values through RedactionPipeline (sixth emission site test coverage) (shipped)
 - ENG-408 Direct streaming + canonical Status mapping coverage for Cephalon.AspNetCore.Grpc transport adapter (closes test-coverage-roadmap recommendation #1) (shipped)
+- ENG-635 Add gRPC public transport rate-limiting envelope: the public gRPC route group now participates in the ASP.NET Core endpoint rate-limiting policy and returns gRPC-native `ResourceExhausted` for endpoint-policy rejections while `/engine/rate-limiting` keeps request-response `grpc` coverage truthful. Quality dimensions: Reliability + Availability + Usability + Compatibility + Maintainability (shipped)
+- ENG-636 Add gRPC direct-module resilience fault envelopes: `Cephalon.AspNetCore.Grpc` now translates direct module timeout and optional Polly open-circuit faults into gRPC-native `DeadlineExceeded` / `Unavailable` outcomes with stable Cephalon trailers while leaving unmapped handler failures on ASP.NET Core gRPC's normal path. Quality dimensions: Reliability + Availability + Usability + Compatibility + Maintainability (shipped)
+- ENG-637 Add gRPC direct-module resilience runtime enforcement: `Cephalon.AspNetCore.Grpc` now enforces configured direct-module timeout and circuit-breaker policy from `Engine:Resilience`, reports `grpc-direct-module-resilience` through `/engine/technology-surfaces`, and keeps `wolverineRequired=false` / `consumerCodeRequired=false` explicit for low-code adoption. Quality dimensions: Reliability + Availability + Usability + Compatibility + Maintainability + Performance (shipped)
 - ENG-414 Log tenth scheduled-task pass in project-memory.md (shipped)
 - ENG-415 Close Evidence-in-code drift for the new 3 M1 emission-site files (Agentics + Retrieval + Worker) (shipped)
 - ENG-416 Close conformance-matrix MultiTenancy.Governance route-projection drift (shipped)

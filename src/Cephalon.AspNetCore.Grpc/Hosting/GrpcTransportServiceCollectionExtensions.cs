@@ -1,5 +1,7 @@
 using Cephalon.AspNetCore.Grpc.Routing;
 using Cephalon.AspNetCore.Hosting;
+using Cephalon.Abstractions.Technologies;
+using Cephalon.Engine.Manifest;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -20,12 +22,17 @@ public static class GrpcTransportServiceCollectionExtensions
     {
         ArgumentNullException.ThrowIfNull(services);
 
+        services.TryAddSingleton(serviceProvider =>
+            CephalonGrpcDirectModuleResilienceOptions.FromManifest(
+                serviceProvider.GetService<RuntimeManifest>()));
+        services.TryAddSingleton<CephalonGrpcDirectModuleCircuitBreakerState>();
         services.TryAddTransient<CephalonGrpcResilienceInterceptor>();
         services.AddGrpc(static options =>
         {
             options.Interceptors.Add<CephalonGrpcResilienceInterceptor>();
         });
         services.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportRouteMapper, GrpcTransportRouteMapper>());
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, CephalonGrpcDirectModuleResilienceRuntimeContributor>());
         return services;
     }
 
