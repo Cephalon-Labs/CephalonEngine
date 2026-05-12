@@ -5022,6 +5022,12 @@ Browse the published API surface by public member.
 - [CompatibilityPolicy](cephalon-eventing.md#member-p-cephalon-eventing-services-eventcontractdescriptor-compatibilitypolicy): `Properties` on `EventContractDescriptor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CompatibilityPolicy&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Gets the declared compatibility policy for the event contract.
   - `string CompatibilityPolicy { get; }`
+- [CompatibilityValidationExecution](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-compatibilityvalidationexecution): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CompatibilityValidationExecution&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether executable compatibility validation was reported for the dispatch.
+  - `const string CompatibilityValidationExecution`
+- [CompatibilityValidationExecutionId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-compatibilityvalidationexecutionid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CompatibilityValidationExecutionId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the executable compatibility validation proof id.
+  - `const string CompatibilityValidationExecutionId`
 - [CompensationActions](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionruntimestate-compensationactions): `Properties` on `DurableExecutionRuntimeState` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=CompensationActions&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - The operator-facing compensation actions currently available for this stream.
   - `IReadOnlyList<DurableExecutionCompensationAction> CompensationActions { get; set; }`
@@ -6057,6 +6063,9 @@ Browse the published API surface by public member.
 - [CreateMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchscheduleddeliverymetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchScheduledDeliveryMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a metadata copy enriched with provider-reported scheduled delivery proof when the inputs support it.
   - `Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string durableScheduledDeliveryId, string providerDelayQueueId, string brokerScheduledDeliveryId, string scheduleCoordinationId, string scheduleRecoveryId)`
+- [CreateMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchserializationexecutionmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchSerializationExecutionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates a metadata copy enriched with provider-reported serialization execution proof when the inputs support it.
+  - `Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string payloadSerializationExecutionId, string schemaLookupExecutionId, string upcasterExecutionId, string compatibilityValidationExecutionId, string providerSerializationId)`
 - [CreateMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventSubscriptionBrokerInboundConsumptionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a metadata copy enriched with provider-reported broker inbound-consumption proof when the inputs support it.
   - `Dictionary<string, string> CreateMetadata(IReadOnlyDictionary<string, string> metadata, string outcome, string source, string consumerLoopId, string acknowledgementId, string leaseId, string retryPolicy, string poisonMessageHandling, string offsetCheckpointId)`
@@ -6108,6 +6117,9 @@ Browse the published API surface by public member.
 - [CreateReport](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchscheduleddeliverymetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchScheduledDeliveryMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateReport&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a dispatch report copy enriched with provider-reported scheduled delivery proof when the inputs support it.
   - `EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string durableScheduledDeliveryId, string providerDelayQueueId, string brokerScheduledDeliveryId, string scheduleCoordinationId, string scheduleRecoveryId)`
+- [CreateReport](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchserializationexecutionmetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchSerializationExecutionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateReport&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates a dispatch report copy enriched with provider-reported serialization execution proof when the inputs support it.
+  - `EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string payloadSerializationExecutionId, string schemaLookupExecutionId, string upcasterExecutionId, string compatibilityValidationExecutionId, string providerSerializationId)`
 - [CreateReport](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-createreport-cephalon-eventing-services-eventsubscriptionexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventSubscriptionBrokerInboundConsumptionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateReport&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Creates a subscription report copy enriched with provider-reported broker inbound-consumption proof when the inputs support it.
   - `EventSubscriptionExecutionReport CreateReport(EventSubscriptionExecutionReport report, string source, string consumerLoopId, string acknowledgementId, string leaseId, string retryPolicy, string poisonMessageHandling, string offsetCheckpointId)`
@@ -15711,6 +15723,9 @@ Browse the published API surface by public member.
 - [IsSelected](cephalon-abstractions.md#member-m-cephalon-abstractions-technologies-technologyselection-isselected-system-string): `Methods` on `TechnologySelection` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=IsSelected&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - Determines whether a technology is selected.
   - `bool IsSelected(string value)`
+- [IsSerializationExecutionProven](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchserializationexecutionmetadata-isserializationexecutionproven-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `EventDispatchSerializationExecutionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=IsSerializationExecutionProven&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Gets a value indicating whether the metadata contains complete provider-reported serialization execution proof.
+  - `bool IsSerializationExecutionProven(IReadOnlyDictionary<string, string> metadata)`
 - [IsSignatureVerified](cephalon-engine.md#member-p-cephalon-engine-manifest-packagemanifest-issignatureverified): `Properties` on `PackageManifest` in `Cephalon.Engine.Manifest` (`Cephalon.Engine`) [Browse](browse.html?q=IsSignatureVerified&assembly=Cephalon.Engine&namespace=Cephalon.Engine.Manifest&scope=members)
   - Gets a value indicating whether the package signature was cryptographically verified against a trusted signing identity.
   - `bool IsSignatureVerified { get; }`
@@ -21284,6 +21299,12 @@ Browse the published API surface by public member.
 - [Payload](cephalon-abstractions.md#member-p-cephalon-abstractions-data-outboxmessage-payload): `Properties` on `OutboxMessage` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Payload&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the serialized payload that should be delivered later.
   - `string Payload { get; }`
+- [PayloadSerializationExecution](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-payloadserializationexecution): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PayloadSerializationExecution&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether executable payload serialization was reported for the dispatch.
+  - `const string PayloadSerializationExecution`
+- [PayloadSerializationExecutionId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-payloadserializationexecutionid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=PayloadSerializationExecutionId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the executable payload serialization proof id.
+  - `const string PayloadSerializationExecutionId`
 - [PayloadType](cephalon-abstractions.md#member-p-cephalon-abstractions-execution-durableexecutionpendingsignal-payloadtype): `Properties` on `DurableExecutionPendingSignal` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=PayloadType&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Gets the expected payload type name when the awaited signal declares one.
   - `string PayloadType { get; }`
@@ -22947,6 +22968,12 @@ Browse the published API surface by public member.
 - [ProviderResults](cephalon-abstractions.md#member-p-cephalon-abstractions-features-featureflagevaluationresult-providerresults): `Properties` on `FeatureFlagEvaluationResult` in `Cephalon.Abstractions.Features` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderResults&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Features&scope=members)
   - Gets the external provider evaluation results that participated in the final answer.
   - `IReadOnlyList<FeatureFlagProviderEvaluationResult> ProviderResults { get; set; }`
+- [ProviderSerialization](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerserialization): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ProviderSerialization&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether provider-owned serialization was reported for the dispatch.
+  - `const string ProviderSerialization`
+- [ProviderSerializationId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerserializationid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ProviderSerializationId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the provider-owned serialization proof id.
+  - `const string ProviderSerializationId`
 - [ProviderSideContextPersistence](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providersidecontextpersistence): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ProviderSideContextPersistence&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies whether the active provider-side dispatch store persisted the projected Cephalon context proof.
   - `const string ProviderSideContextPersistence`
@@ -26586,6 +26613,12 @@ Browse the published API surface by public member.
 - [Schema](cephalon-data-entityframework.md#member-p-cephalon-data-entityframework-configuration-entityframeworkdatabaserolecontext-schema): `Properties` on `EntityFrameworkDatabaseRoleContext` in `Cephalon.Data.EntityFramework.Configuration` (`Cephalon.Data.EntityFramework`) [Browse](browse.html?q=Schema&assembly=Cephalon.Data.EntityFramework&namespace=Cephalon.Data.EntityFramework.Configuration&scope=members)
   - Gets the selected schema override, if one was declared.
   - `string Schema { get; }`
+- [SchemaLookupExecution](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-schemalookupexecution): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SchemaLookupExecution&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether executable schema lookup was reported for the dispatch.
+  - `const string SchemaLookupExecution`
+- [SchemaLookupExecutionId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-schemalookupexecutionid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SchemaLookupExecutionId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the executable schema lookup proof id.
+  - `const string SchemaLookupExecutionId`
 - [SchemaRegistries](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-schemaregistries): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=SchemaRegistries&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
   - Gets the host-defined event schema registry descriptors that should be available to the eventing runtime.
   - `IList<EventSchemaRegistryDescriptor> SchemaRegistries { get; }`
@@ -26874,6 +26907,18 @@ Browse the published API surface by public member.
 - [SendGridMessageId](cephalon-multitenancy-governance-sendgriddelivery-aspnetcore.md#member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-sendgridmessageid): `Properties` on `SendGridInvitationDeliveryStatusCallbackEventResult` in `Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting` (`Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore`) [Browse](browse.html?q=SendGridMessageId&assembly=Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore&namespace=Cephalon.MultiTenancy.Governance.SendGridDelivery.AspNetCore.Hosting&scope=members)
   - Gets the SendGrid message identifier when supplied.
   - `string SendGridMessageId { get; }`
+- [SerializationDurability](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-serializationdurability): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SerializationDurability&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies where serialization execution state is persisted.
+  - `const string SerializationDurability`
+- [SerializationExecutionOwnership](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-serializationexecutionownership): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SerializationExecutionOwnership&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether a provider or runtime reported serialization execution ownership.
+  - `const string SerializationExecutionOwnership`
+- [SerializationExecutionOwnershipSource](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-serializationexecutionownershipsource): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SerializationExecutionOwnershipSource&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the provider or runtime source that reported serialization execution ownership.
+  - `const string SerializationExecutionOwnershipSource`
+- [SerializationScope](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-serializationscope): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=SerializationScope&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the serialization execution coordination boundary.
+  - `const string SerializationScope`
 - [Serialize](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventtypedescriptor-serialize-cephalon-abstractions-eventsourcing-idomainevent): `Methods` on `EventTypeDescriptor` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Serialize&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Serializes a domain-event instance using this descriptor.
   - `string Serialize(IDomainEvent evt)`
@@ -30285,6 +30330,9 @@ Browse the published API surface by public member.
 - [TryApplyMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchscheduleddeliverymetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchScheduledDeliveryMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryApplyMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Applies provider-reported scheduled delivery proof to an existing dispatch metadata dictionary when the inputs support it.
   - `bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string durableScheduledDeliveryId, string providerDelayQueueId, string brokerScheduledDeliveryId, string scheduleCoordinationId, string scheduleRecoveryId)`
+- [TryApplyMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchserializationexecutionmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventDispatchSerializationExecutionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryApplyMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Applies provider-reported serialization execution proof to an existing dispatch metadata dictionary when the inputs support it.
+  - `bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string payloadSerializationExecutionId, string schemaLookupExecutionId, string upcasterExecutionId, string compatibilityValidationExecutionId, string providerSerializationId)`
 - [TryApplyMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventsubscriptionbrokerinboundconsumptionmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string): `Methods` on `EventSubscriptionBrokerInboundConsumptionMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=TryApplyMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Applies provider-reported broker inbound-consumption proof to an existing subscription metadata dictionary when the inputs support it.
   - `bool TryApplyMetadata(IDictionary<string, string> metadata, string outcome, string source, string consumerLoopId, string acknowledgementId, string leaseId, string retryPolicy, string poisonMessageHandling, string offsetCheckpointId)`
@@ -30708,6 +30756,12 @@ Browse the published API surface by public member.
 - [UnsupportedVerificationMethod](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-unsupportedverificationmethod): `Fields` on `TenantDomainOwnershipProofVerificationOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=UnsupportedVerificationMethod&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The requested verification method is not supported by the runner.
   - `const string UnsupportedVerificationMethod`
+- [UpcasterExecution](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-upcasterexecution): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=UpcasterExecution&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether executable upcaster execution was reported for the dispatch.
+  - `const string UpcasterExecution`
+- [UpcasterExecutionId](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-upcasterexecutionid): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=UpcasterExecutionId&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the executable upcaster execution proof id.
+  - `const string UpcasterExecutionId`
 - [Upcasters](cephalon-eventing.md#member-p-cephalon-eventing-configuration-eventingoptions-upcasters): `Properties` on `EventingOptions` in `Cephalon.Eventing.Configuration` (`Cephalon.Eventing`) [Browse](browse.html?q=Upcasters&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Configuration&scope=members)
   - Gets the host-defined event upcaster descriptors that should be available to the eventing runtime.
   - `IList<EventUpcasterDescriptor> Upcasters { get; }`

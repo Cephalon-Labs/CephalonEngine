@@ -256,6 +256,76 @@ public static class EventDispatchRuntimeMetadataKeys
     public const string ScheduleRecoveryId = "scheduleRecoveryId";
 
     /// <summary>
+    /// Identifies whether a provider or runtime reported serialization execution ownership.
+    /// </summary>
+    public const string SerializationExecutionOwnership = "serializationExecutionOwnership";
+
+    /// <summary>
+    /// Identifies the provider or runtime source that reported serialization execution ownership.
+    /// </summary>
+    public const string SerializationExecutionOwnershipSource = "serializationExecutionOwnershipSource";
+
+    /// <summary>
+    /// Identifies where serialization execution state is persisted.
+    /// </summary>
+    public const string SerializationDurability = "serializationDurability";
+
+    /// <summary>
+    /// Identifies the serialization execution coordination boundary.
+    /// </summary>
+    public const string SerializationScope = "serializationScope";
+
+    /// <summary>
+    /// Identifies whether executable payload serialization was reported for the dispatch.
+    /// </summary>
+    public const string PayloadSerializationExecution = "payloadSerializationExecution";
+
+    /// <summary>
+    /// Identifies the executable payload serialization proof id.
+    /// </summary>
+    public const string PayloadSerializationExecutionId = "payloadSerializationExecutionId";
+
+    /// <summary>
+    /// Identifies whether executable schema lookup was reported for the dispatch.
+    /// </summary>
+    public const string SchemaLookupExecution = "schemaLookupExecution";
+
+    /// <summary>
+    /// Identifies the executable schema lookup proof id.
+    /// </summary>
+    public const string SchemaLookupExecutionId = "schemaLookupExecutionId";
+
+    /// <summary>
+    /// Identifies whether executable upcaster execution was reported for the dispatch.
+    /// </summary>
+    public const string UpcasterExecution = "upcasterExecution";
+
+    /// <summary>
+    /// Identifies the executable upcaster execution proof id.
+    /// </summary>
+    public const string UpcasterExecutionId = "upcasterExecutionId";
+
+    /// <summary>
+    /// Identifies whether executable compatibility validation was reported for the dispatch.
+    /// </summary>
+    public const string CompatibilityValidationExecution = "compatibilityValidationExecution";
+
+    /// <summary>
+    /// Identifies the executable compatibility validation proof id.
+    /// </summary>
+    public const string CompatibilityValidationExecutionId = "compatibilityValidationExecutionId";
+
+    /// <summary>
+    /// Identifies whether provider-owned serialization was reported for the dispatch.
+    /// </summary>
+    public const string ProviderSerialization = "providerSerialization";
+
+    /// <summary>
+    /// Identifies the provider-owned serialization proof id.
+    /// </summary>
+    public const string ProviderSerializationId = "providerSerializationId";
+
+    /// <summary>
     /// Identifies whether retry persistence was reported for the dispatch.
     /// </summary>
     public const string RetryPersistence = "retryPersistence";

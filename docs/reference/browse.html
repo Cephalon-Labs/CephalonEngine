@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-12T20:28:52.5629634+00:00",
+  "GeneratedAtUtc": "2026-05-12T20:48:08.7588631+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -271,7 +271,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 78
+      "TypeCount": 79
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1331,7 +1331,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 75
+      "TypeCount": 76
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8737,7 +8737,7 @@
       "Summary": "Defines stable metadata keys used by event-dispatch runtime observations.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 109,
+        "Fields": 123,
         "Properties": 0,
         "Methods": 1
       }
@@ -8780,6 +8780,21 @@
       "AnchorId": "type-cephalon-eventing-services-eventdispatchscheduleddeliverymetadata",
       "Declaration": "public static class EventDispatchScheduledDeliveryMetadata",
       "Summary": "Builds provider-reported scheduled and delayed delivery proof metadata for successful dispatch reports.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 4
+      }
+    },
+    {
+      "DisplayName": "EventDispatchSerializationExecutionMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventdispatchserializationexecutionmetadata",
+      "Declaration": "public static class EventDispatchSerializationExecutionMetadata",
+      "Summary": "Builds provider-reported executable serialization proof metadata for successful dispatch reports.",
       "MemberCounts": {
         "Constructors": 0,
         "Fields": 0,
@@ -38575,6 +38590,28 @@
       "Summary": "Gets the declared compatibility policy for the event contract."
     },
     {
+      "DisplayName": "CompatibilityValidationExecution",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-compatibilityvalidationexecution",
+      "Signature": "const string CompatibilityValidationExecution",
+      "Summary": "Identifies whether executable compatibility validation was reported for the dispatch."
+    },
+    {
+      "DisplayName": "CompatibilityValidationExecutionId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-compatibilityvalidationexecutionid",
+      "Signature": "const string CompatibilityValidationExecutionId",
+      "Summary": "Identifies the executable compatibility validation proof id."
+    },
+    {
       "DisplayName": "CompensationActions",
       "Category": "Properties",
       "DeclaringTypeName": "DurableExecutionRuntimeState",
@@ -42372,6 +42409,17 @@
     {
       "DisplayName": "CreateMetadata",
       "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchSerializationExecutionMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchserializationexecutionmetadata-createmetadata-system-collections-generic-ireadonlydictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "Dictionary\u003Cstring, string\u003E CreateMetadata(IReadOnlyDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string payloadSerializationExecutionId, string schemaLookupExecutionId, string upcasterExecutionId, string compatibilityValidationExecutionId, string providerSerializationId)",
+      "Summary": "Creates a metadata copy enriched with provider-reported serialization execution proof when the inputs support it."
+    },
+    {
+      "DisplayName": "CreateMetadata",
+      "Category": "Methods",
       "DeclaringTypeName": "EventSubscriptionBrokerInboundConsumptionMetadata",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -42555,6 +42603,17 @@
       "AnchorId": "member-m-cephalon-eventing-services-eventdispatchscheduleddeliverymetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string",
       "Signature": "EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string durableScheduledDeliveryId, string providerDelayQueueId, string brokerScheduledDeliveryId, string scheduleCoordinationId, string scheduleRecoveryId)",
       "Summary": "Creates a dispatch report copy enriched with provider-reported scheduled delivery proof when the inputs support it."
+    },
+    {
+      "DisplayName": "CreateReport",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchSerializationExecutionMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchserializationexecutionmetadata-createreport-cephalon-eventing-services-eventdispatchexecutionreport-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "EventDispatchExecutionReport CreateReport(EventDispatchExecutionReport report, string source, string payloadSerializationExecutionId, string schemaLookupExecutionId, string upcasterExecutionId, string compatibilityValidationExecutionId, string providerSerializationId)",
+      "Summary": "Creates a dispatch report copy enriched with provider-reported serialization execution proof when the inputs support it."
     },
     {
       "DisplayName": "CreateReport",
@@ -77710,6 +77769,17 @@
       "Summary": "Determines whether a technology is selected."
     },
     {
+      "DisplayName": "IsSerializationExecutionProven",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchSerializationExecutionMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchserializationexecutionmetadata-isserializationexecutionproven-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "bool IsSerializationExecutionProven(IReadOnlyDictionary\u003Cstring, string\u003E metadata)",
+      "Summary": "Gets a value indicating whether the metadata contains complete provider-reported serialization execution proof."
+    },
+    {
       "DisplayName": "IsSignatureVerified",
       "Category": "Properties",
       "DeclaringTypeName": "PackageManifest",
@@ -98078,6 +98148,28 @@
       "Summary": "Gets the serialized payload that should be delivered later."
     },
     {
+      "DisplayName": "PayloadSerializationExecution",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-payloadserializationexecution",
+      "Signature": "const string PayloadSerializationExecution",
+      "Summary": "Identifies whether executable payload serialization was reported for the dispatch."
+    },
+    {
+      "DisplayName": "PayloadSerializationExecutionId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-payloadserializationexecutionid",
+      "Signature": "const string PayloadSerializationExecutionId",
+      "Summary": "Identifies the executable payload serialization proof id."
+    },
+    {
       "DisplayName": "PayloadType",
       "Category": "Properties",
       "DeclaringTypeName": "DurableExecutionPendingSignal",
@@ -104179,6 +104271,28 @@
       "AnchorId": "member-p-cephalon-abstractions-features-featureflagevaluationresult-providerresults",
       "Signature": "IReadOnlyList\u003CFeatureFlagProviderEvaluationResult\u003E ProviderResults { get; set; }",
       "Summary": "Gets the external provider evaluation results that participated in the final answer."
+    },
+    {
+      "DisplayName": "ProviderSerialization",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerserialization",
+      "Signature": "const string ProviderSerialization",
+      "Summary": "Identifies whether provider-owned serialization was reported for the dispatch."
+    },
+    {
+      "DisplayName": "ProviderSerializationId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerserializationid",
+      "Signature": "const string ProviderSerializationId",
+      "Summary": "Identifies the provider-owned serialization proof id."
     },
     {
       "DisplayName": "ProviderSideContextPersistence",
@@ -117491,6 +117605,28 @@
       "Summary": "Gets the selected schema override, if one was declared."
     },
     {
+      "DisplayName": "SchemaLookupExecution",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-schemalookupexecution",
+      "Signature": "const string SchemaLookupExecution",
+      "Summary": "Identifies whether executable schema lookup was reported for the dispatch."
+    },
+    {
+      "DisplayName": "SchemaLookupExecutionId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-schemalookupexecutionid",
+      "Signature": "const string SchemaLookupExecutionId",
+      "Summary": "Identifies the executable schema lookup proof id."
+    },
+    {
       "DisplayName": "SchemaRegistries",
       "Category": "Properties",
       "DeclaringTypeName": "EventingOptions",
@@ -118545,6 +118681,50 @@
       "AnchorId": "member-p-cephalon-multitenancy-governance-sendgriddelivery-aspnetcore-hosting-sendgridinvitationdeliverystatuscallbackeventresult-sendgridmessageid",
       "Signature": "string SendGridMessageId { get; }",
       "Summary": "Gets the SendGrid message identifier when supplied."
+    },
+    {
+      "DisplayName": "SerializationDurability",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-serializationdurability",
+      "Signature": "const string SerializationDurability",
+      "Summary": "Identifies where serialization execution state is persisted."
+    },
+    {
+      "DisplayName": "SerializationExecutionOwnership",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-serializationexecutionownership",
+      "Signature": "const string SerializationExecutionOwnership",
+      "Summary": "Identifies whether a provider or runtime reported serialization execution ownership."
+    },
+    {
+      "DisplayName": "SerializationExecutionOwnershipSource",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-serializationexecutionownershipsource",
+      "Signature": "const string SerializationExecutionOwnershipSource",
+      "Summary": "Identifies the provider or runtime source that reported serialization execution ownership."
+    },
+    {
+      "DisplayName": "SerializationScope",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-serializationscope",
+      "Signature": "const string SerializationScope",
+      "Summary": "Identifies the serialization execution coordination boundary."
     },
     {
       "DisplayName": "Serialize",
@@ -131053,6 +131233,17 @@
     {
       "DisplayName": "TryApplyMetadata",
       "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchSerializationExecutionMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchserializationexecutionmetadata-tryapplymetadata-system-collections-generic-idictionary-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string-system-string",
+      "Signature": "bool TryApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, string outcome, string source, string payloadSerializationExecutionId, string schemaLookupExecutionId, string upcasterExecutionId, string compatibilityValidationExecutionId, string providerSerializationId)",
+      "Summary": "Applies provider-reported serialization execution proof to an existing dispatch metadata dictionary when the inputs support it."
+    },
+    {
+      "DisplayName": "TryApplyMetadata",
+      "Category": "Methods",
       "DeclaringTypeName": "EventSubscriptionBrokerInboundConsumptionMetadata",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -132589,6 +132780,28 @@
       "AnchorId": "member-f-cephalon-multitenancy-governance-services-tenantdomainownershipproofverificationoutcomes-unsupportedverificationmethod",
       "Signature": "const string UnsupportedVerificationMethod",
       "Summary": "The requested verification method is not supported by the runner."
+    },
+    {
+      "DisplayName": "UpcasterExecution",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-upcasterexecution",
+      "Signature": "const string UpcasterExecution",
+      "Summary": "Identifies whether executable upcaster execution was reported for the dispatch."
+    },
+    {
+      "DisplayName": "UpcasterExecutionId",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-upcasterexecutionid",
+      "Signature": "const string UpcasterExecutionId",
+      "Summary": "Identifies the executable upcaster execution proof id."
     },
     {
       "DisplayName": "Upcasters",

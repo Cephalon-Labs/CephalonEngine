@@ -2679,9 +2679,10 @@ Current `Cephalon.Eventing` highlights:
   `eventing.serializers`, `eventing.schema-registries`, and `eventing.upcasters` with
   descriptor-backed event type, version, content type, serializer id, serializer availability,
   schema registry availability, version-transition metadata, source/target contract resolution,
-  envelope schema, and compatibility policy metadata, and still keeps executable payload
-  serialization, executable schema lookup, executable upcaster execution, and provider-owned
-  compatibility validation unclaimed until a provider or engine package owns them
+  envelope schema, and compatibility policy metadata, and becomes `claimed` only when a successful
+  provider/runtime dispatch report supplies complete `EventDispatchSerializationExecutionMetadata`
+  proof for executable payload serialization, executable schema lookup, executable upcaster
+  execution, executable compatibility validation, and provider serialization ownership
 - `tenant-and-correlation-context-ownership` is the separate context-propagation boundary in that
   same profile; it stays `not-claimed` until code-first context policy descriptors are present, can
   report `partial` when `EventingOptions.ContextPolicies` / `IEventContextPolicyContributor`
