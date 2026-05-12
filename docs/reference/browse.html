@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-12T11:36:41.131293+00:00",
+  "GeneratedAtUtc": "2026-05-12T12:12:18.5704784+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -271,7 +271,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 62
+      "TypeCount": 63
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1331,7 +1331,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 59
+      "TypeCount": 60
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8278,6 +8278,21 @@
       }
     },
     {
+      "DisplayName": "EventConsumerContextExtractor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventconsumercontextextractor",
+      "Declaration": "public static class EventConsumerContextExtractor",
+      "Summary": "Extracts Cephalon event context from a publication that is about to be delivered to a consumer.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 2
+      }
+    },
+    {
       "DisplayName": "EventContextHandoffMetadataKeys",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -9082,7 +9097,7 @@
       "Summary": "Defines stable metadata keys used by the event-subscriptions runtime surface.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 23,
+        "Fields": 27,
         "Properties": 0,
         "Methods": 0
       }
@@ -26785,6 +26800,17 @@
       "Summary": "Applies the effective Cephalon rate-limiting policy for the supplied transport and optional behavior identifier onto the endpoint builder."
     },
     {
+      "DisplayName": "ApplyMetadata",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventConsumerContextExtractor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventconsumercontextextractor-applymetadata-system-collections-generic-idictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "void ApplyMetadata(IDictionary\u003Cstring, string\u003E metadata, IReadOnlyDictionary\u003Cstring, string\u003E consumerContextHeaders)",
+      "Summary": "Adds consumer-side context extraction evidence to subscription execution metadata."
+    },
+    {
       "DisplayName": "ApplyOnStartup",
       "Category": "Properties",
       "DeclaringTypeName": "AuditHistoryRetentionSelection",
@@ -39534,6 +39560,50 @@
       "Summary": "Identifies whether consumer-side extraction has been proven for the dispatched context."
     },
     {
+      "DisplayName": "ConsumerContextExtraction",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumercontextextraction",
+      "Signature": "const string ConsumerContextExtraction",
+      "Summary": "Identifies whether the subscription runtime extracted Cephalon context before executing the consumer."
+    },
+    {
+      "DisplayName": "ConsumerContextExtractionSource",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumercontextextractionsource",
+      "Signature": "const string ConsumerContextExtractionSource",
+      "Summary": "Identifies the source used for consumer-side Cephalon context extraction."
+    },
+    {
+      "DisplayName": "ConsumerContextHeaderCount",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumercontextheadercount",
+      "Signature": "const string ConsumerContextHeaderCount",
+      "Summary": "Identifies the number of Cephalon context headers extracted before executing the consumer."
+    },
+    {
+      "DisplayName": "ConsumerContextHeaderNames",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventSubscriptionRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumercontextheadernames",
+      "Signature": "const string ConsumerContextHeaderNames",
+      "Summary": "Identifies the comma-separated Cephalon context header names extracted before executing the consumer."
+    },
+    {
       "DisplayName": "Consumers",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseRoleDescriptor",
@@ -41556,6 +41626,17 @@
       "AnchorId": "member-m-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-createdefault-system-string",
       "Signature": "BehaviorApiSurfaceDescriptor CreateDefault(string behaviorId)",
       "Summary": "Creates a default API surface descriptor from the supplied behavior identifier."
+    },
+    {
+      "DisplayName": "CreateHeaders",
+      "Category": "Methods",
+      "DeclaringTypeName": "EventConsumerContextExtractor",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventconsumercontextextractor-createheaders-cephalon-eventing-services-eventpublication",
+      "Signature": "Dictionary\u003Cstring, string\u003E CreateHeaders(EventPublication publication)",
+      "Summary": "Creates a deterministic set of consumer-visible Cephalon context headers for a publication."
     },
     {
       "DisplayName": "CreateInstance",

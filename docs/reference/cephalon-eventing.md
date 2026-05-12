@@ -573,6 +573,50 @@ IReadOnlyList<string> Tags { get; }
 
 Gets the normalized tag set associated with the channel.
 
+<a id="type-cephalon-eventing-services-eventconsumercontextextractor"></a>
+
+### `EventConsumerContextExtractor`
+
+Extracts Cephalon event context from a publication that is about to be delivered to a consumer.
+
+Remarks: The extractor normalizes the publication fields and stable Cephalon headers into one consumer-side context-header set. It does not claim provider-side persistence, delivery completion, or cross-node handoff.
+
+#### Declaration
+```csharp
+public static class EventConsumerContextExtractor
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-eventconsumercontextextractor-applymetadata-system-collections-generic-idictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `ApplyMetadata`
+
+```csharp
+void ApplyMetadata(IDictionary<string, string> metadata, IReadOnlyDictionary<string, string> consumerContextHeaders)
+```
+
+Adds consumer-side context extraction evidence to subscription execution metadata.
+
+Parameters:
+- `metadata`: The subscription execution metadata dictionary to enrich.
+- `consumerContextHeaders`: The consumer-visible context headers extracted from the publication.
+
+<a id="member-m-cephalon-eventing-services-eventconsumercontextextractor-createheaders-cephalon-eventing-services-eventpublication"></a>
+
+##### `CreateHeaders`
+
+```csharp
+Dictionary<string, string> CreateHeaders(EventPublication publication)
+```
+
+Creates a deterministic set of consumer-visible Cephalon context headers for a publication.
+
+Returns: A case-insensitive dictionary of extracted consumer context headers.
+
+Parameters:
+- `publication`: The publication being delivered to a subscription executor.
+
 <a id="type-cephalon-eventing-services-eventcontexthandoffmetadatakeys"></a>
 
 ### `EventContextHandoffMetadataKeys`
@@ -3097,6 +3141,46 @@ const string ChannelId
 ```
 
 Identifies the logical event channel consumed by the declared subscription.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumercontextextraction"></a>
+
+##### `ConsumerContextExtraction`
+
+```csharp
+const string ConsumerContextExtraction
+```
+
+Identifies whether the subscription runtime extracted Cephalon context before executing the consumer.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumercontextextractionsource"></a>
+
+##### `ConsumerContextExtractionSource`
+
+```csharp
+const string ConsumerContextExtractionSource
+```
+
+Identifies the source used for consumer-side Cephalon context extraction.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumercontextheadercount"></a>
+
+##### `ConsumerContextHeaderCount`
+
+```csharp
+const string ConsumerContextHeaderCount
+```
+
+Identifies the number of Cephalon context headers extracted before executing the consumer.
+
+<a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumercontextheadernames"></a>
+
+##### `ConsumerContextHeaderNames`
+
+```csharp
+const string ConsumerContextHeaderNames
+```
+
+Identifies the comma-separated Cephalon context header names extracted before executing the consumer.
 
 <a id="member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-deliverymode"></a>
 

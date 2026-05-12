@@ -566,6 +566,14 @@ public sealed class WolverineEventingPackTests
         Assert.Equal(WolverineEventingRuntimeIds.SubscriptionExecutionRuntimeId, state.Metadata["subscriptionExecutionRuntimeId"]);
         Assert.Equal("wolverine-managed", state.Metadata["subscriptionOwnership"]);
         Assert.Equal("wolverine", state.Metadata["adapter"]);
+        Assert.Equal("extracted", state.Metadata[EventSubscriptionRuntimeMetadataKeys.ConsumerContextExtraction]);
+        Assert.Equal(
+            "event-publication-context-headers",
+            state.Metadata[EventSubscriptionRuntimeMetadataKeys.ConsumerContextExtractionSource]);
+        Assert.Equal("3", state.Metadata[EventSubscriptionRuntimeMetadataKeys.ConsumerContextHeaderCount]);
+        Assert.Equal(
+            $"{EventContextHeaderNames.CorrelationId},{EventContextHeaderNames.MessageId},{EventContextHeaderNames.TenantId}",
+            state.Metadata[EventSubscriptionRuntimeMetadataKeys.ConsumerContextHeaderNames]);
 
         var adapterEntry = Assert.Single(
             technologyCatalog.GetByTechnology("event-driven-integration")

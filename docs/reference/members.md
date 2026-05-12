@@ -1866,6 +1866,9 @@ Browse the published API surface by public member.
 - [ApplyCephalonRateLimiting](cephalon-aspnetcore.md#member-m-cephalon-aspnetcore-hosting-cephalonratelimitingendpointconventionbuilderextensions-applycephalonratelimiting-1-0-system-iserviceprovider-system-string-system-string): `Methods` on `CephalonRateLimitingEndpointConventionBuilderExtensions` in `Cephalon.AspNetCore.Hosting` (`Cephalon.AspNetCore`) [Browse](browse.html?q=ApplyCephalonRateLimiting&assembly=Cephalon.AspNetCore&namespace=Cephalon.AspNetCore.Hosting&scope=members)
   - Applies the effective Cephalon rate-limiting policy for the supplied transport and optional behavior identifier onto the endpoint builder.
   - `TBuilder ApplyCephalonRateLimiting<TBuilder>(this TBuilder builder, IServiceProvider services, string transportId, string behaviorId)`
+- [ApplyMetadata](cephalon-eventing.md#member-m-cephalon-eventing-services-eventconsumercontextextractor-applymetadata-system-collections-generic-idictionary-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `EventConsumerContextExtractor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ApplyMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Adds consumer-side context extraction evidence to subscription execution metadata.
+  - `void ApplyMetadata(IDictionary<string, string> metadata, IReadOnlyDictionary<string, string> consumerContextHeaders)`
 - [ApplyOnStartup](cephalon-abstractions.md#member-p-cephalon-abstractions-appmodel-audithistoryretentionselection-applyonstartup): `Properties` on `AuditHistoryRetentionSelection` in `Cephalon.Abstractions.AppModel` (`Cephalon.Abstractions`) [Browse](browse.html?q=ApplyOnStartup&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.AppModel&scope=members)
   - Gets a value indicating whether one retention pass should run during host startup.
   - `bool? ApplyOnStartup { get; }`
@@ -5349,6 +5352,18 @@ Browse the published API surface by public member.
 - [ConsumerContextExtraction](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-consumercontextextraction): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ConsumerContextExtraction&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
   - Identifies whether consumer-side extraction has been proven for the dispatched context.
   - `const string ConsumerContextExtraction`
+- [ConsumerContextExtraction](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumercontextextraction): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ConsumerContextExtraction&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether the subscription runtime extracted Cephalon context before executing the consumer.
+  - `const string ConsumerContextExtraction`
+- [ConsumerContextExtractionSource](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumercontextextractionsource): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ConsumerContextExtractionSource&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the source used for consumer-side Cephalon context extraction.
+  - `const string ConsumerContextExtractionSource`
+- [ConsumerContextHeaderCount](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumercontextheadercount): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ConsumerContextHeaderCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the number of Cephalon context headers extracted before executing the consumer.
+  - `const string ConsumerContextHeaderCount`
+- [ConsumerContextHeaderNames](cephalon-eventing.md#member-f-cephalon-eventing-services-eventsubscriptionruntimemetadatakeys-consumercontextheadernames): `Fields` on `EventSubscriptionRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ConsumerContextHeaderNames&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the comma-separated Cephalon context header names extracted before executing the consumer.
+  - `const string ConsumerContextHeaderNames`
 - [Consumers](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-consumers): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Consumers&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the logical engine features that explicitly target this role.
   - `IReadOnlyList<string> Consumers { get; }`
@@ -5901,6 +5916,9 @@ Browse the published API surface by public member.
 - [CreateDefault](cephalon-abstractions.md#member-m-cephalon-abstractions-behaviors-behaviorapisurfacedescriptor-createdefault-system-string): `Methods` on `BehaviorApiSurfaceDescriptor` in `Cephalon.Abstractions.Behaviors` (`Cephalon.Abstractions`) [Browse](browse.html?q=CreateDefault&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Behaviors&scope=members)
   - Creates a default API surface descriptor from the supplied behavior identifier.
   - `BehaviorApiSurfaceDescriptor CreateDefault(string behaviorId)`
+- [CreateHeaders](cephalon-eventing.md#member-m-cephalon-eventing-services-eventconsumercontextextractor-createheaders-cephalon-eventing-services-eventpublication): `Methods` on `EventConsumerContextExtractor` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CreateHeaders&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates a deterministic set of consumer-visible Cephalon context headers for a publication.
+  - `Dictionary<string, string> CreateHeaders(EventPublication publication)`
 - [CreateInstance](cephalon-identity-aspnetcore.md#member-m-cephalon-identity-aspnetcore-transports-rest-requirecephalonauthorizationattribute-createinstance-system-iserviceprovider): `Methods` on `RequireCephalonAuthorizationAttribute` in `Cephalon.Identity.AspNetCore.Transports.Rest` (`Cephalon.Identity.AspNetCore`) [Browse](browse.html?q=CreateInstance&assembly=Cephalon.Identity.AspNetCore&namespace=Cephalon.Identity.AspNetCore.Transports.Rest&scope=members)
   - Creates the MVC authorization filter that evaluates the current request through the shared Cephalon boundary executor.
   - `IFilterMetadata CreateInstance(IServiceProvider serviceProvider)`

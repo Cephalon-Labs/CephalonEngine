@@ -121,6 +121,26 @@ public static class EventSubscriptionRuntimeMetadataKeys
     public const string RetryPending = "retryPending";
 
     /// <summary>
+    /// Identifies whether the subscription runtime extracted Cephalon context before executing the consumer.
+    /// </summary>
+    public const string ConsumerContextExtraction = "consumerContextExtraction";
+
+    /// <summary>
+    /// Identifies the source used for consumer-side Cephalon context extraction.
+    /// </summary>
+    public const string ConsumerContextExtractionSource = "consumerContextExtractionSource";
+
+    /// <summary>
+    /// Identifies the number of Cephalon context headers extracted before executing the consumer.
+    /// </summary>
+    public const string ConsumerContextHeaderCount = "consumerContextHeaderCount";
+
+    /// <summary>
+    /// Identifies the comma-separated Cephalon context header names extracted before executing the consumer.
+    /// </summary>
+    public const string ConsumerContextHeaderNames = "consumerContextHeaderNames";
+
+    /// <summary>
     /// Prefix for individual runtime-observation metadata entries.
     /// </summary>
     public const string ReportedMetadataPrefix = "reported.";

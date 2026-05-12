@@ -2988,6 +2988,14 @@ public sealed class EngineBuilderTests
         Assert.Equal("publication-field-forwarded", probe.LastContext.Metadata["correlationContextPropagation"]);
         Assert.Equal("header-forwarded", probe.LastContext.Metadata["causationIdPropagation"]);
         Assert.Equal("header-forwarded", probe.LastContext.Metadata["baggagePropagation"]);
+        Assert.Equal("extracted", probe.LastContext.Metadata[EventSubscriptionRuntimeMetadataKeys.ConsumerContextExtraction]);
+        Assert.Equal(
+            "event-publication-context-headers",
+            probe.LastContext.Metadata[EventSubscriptionRuntimeMetadataKeys.ConsumerContextExtractionSource]);
+        Assert.Equal("5", probe.LastContext.Metadata[EventSubscriptionRuntimeMetadataKeys.ConsumerContextHeaderCount]);
+        Assert.Equal(
+            $"{EventContextHeaderNames.Baggage},{EventContextHeaderNames.CausationId},{EventContextHeaderNames.CorrelationId},{EventContextHeaderNames.MessageId},{EventContextHeaderNames.TenantId}",
+            probe.LastContext.Metadata[EventSubscriptionRuntimeMetadataKeys.ConsumerContextHeaderNames]);
         Assert.Equal("validated", probe.LastContext.Metadata["messageHeaderPolicy"]);
         Assert.Equal("false", probe.LastContext.Metadata["wolverineRequired"]);
 
@@ -3000,6 +3008,8 @@ public sealed class EngineBuilderTests
         Assert.NotNull(succeededSubscription);
         Assert.Equal(EventSubscriptionExecutionOutcomes.Succeeded, succeededSubscription.LastOutcome);
         Assert.Equal("publisher-enforced", succeededSubscription.Metadata["executableContextPolicy"]);
+        Assert.Equal("extracted", succeededSubscription.Metadata[EventSubscriptionRuntimeMetadataKeys.ConsumerContextExtraction]);
+        Assert.Equal("5", succeededSubscription.Metadata[EventSubscriptionRuntimeMetadataKeys.ConsumerContextHeaderCount]);
 
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
             await publisher.PublishAsync(new EventPublication(
@@ -3036,6 +3046,7 @@ public sealed class EngineBuilderTests
         Assert.Contains("causationIdPropagation=in-process-direct", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("baggagePropagation=in-process-direct", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("messageHeaderPolicy=publisher-enforced", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("consumerContextExtraction=extracted", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("executablePropagation=in-process-direct", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("executableValidation=publisher-enforced", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);

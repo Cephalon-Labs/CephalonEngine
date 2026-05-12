@@ -226,6 +226,9 @@ internal sealed class WolverineManagedEventSubscriptionExecutionProcessor(
             ["contentType"] = publication.ContentType ?? "not-configured",
             ["headerCount"] = publication.Headers.Count.ToString(System.Globalization.CultureInfo.InvariantCulture)
         };
+        EventConsumerContextExtractor.ApplyMetadata(
+            metadata,
+            EventConsumerContextExtractor.CreateHeaders(publication));
 
         if (!string.IsNullOrWhiteSpace(publication.CorrelationId))
         {

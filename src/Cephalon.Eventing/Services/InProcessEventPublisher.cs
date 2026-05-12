@@ -702,6 +702,9 @@ internal sealed class InProcessEventPublisher(
         };
 
         contextPolicyEvaluation.ApplyMetadata(metadata);
+        EventConsumerContextExtractor.ApplyMetadata(
+            metadata,
+            EventConsumerContextExtractor.CreateHeaders(publication));
 
         if (!string.IsNullOrWhiteSpace(publication.ContentType))
         {
