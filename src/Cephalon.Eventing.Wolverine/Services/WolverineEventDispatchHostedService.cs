@@ -460,25 +460,27 @@ internal sealed class WolverineEventDispatchHostedService(
         var deliveryMode = managedSubscriptionCount > 0
             ? "publish-and-subscribe"
             : "publish";
-        var metadata = new Dictionary<string, string>(item.Metadata, StringComparer.OrdinalIgnoreCase)
-        {
-            ["publisherId"] = WolverineEventingRuntimeIds.PublisherId,
-            ["eventDispatchRuntimeId"] = WolverineEventingRuntimeIds.DispatchRuntimeId,
-            ["dispatchBridge"] = "wolverine-managed",
-            ["dispatchOwnership"] = "wolverine-managed",
-            ["dispatchMode"] = "publish-event-publication",
-            ["deliveryMode"] = deliveryMode,
-            ["transport"] = "wolverine",
-            ["channelId"] = item.ChannelId,
-            [EventDispatchRuntimeMetadataKeys.RetryPolicy] = maxAttempts > 1 ? WolverineEventingRetryPolicy.BoundedFixedDelay : WolverineEventingRetryPolicy.None,
-            [EventDispatchRuntimeMetadataKeys.RetryMaxAttempts] = maxAttempts.ToString(System.Globalization.CultureInfo.InvariantCulture),
-            [EventDispatchRuntimeMetadataKeys.RetryDelaySeconds] = retryDelaySeconds.ToString(System.Globalization.CultureInfo.InvariantCulture),
-            [EventDispatchRuntimeMetadataKeys.RetryDurability] = "dispatch-store-delayed-eligibility",
-            [EventDispatchRuntimeMetadataKeys.RetryScope] = "provider-managed",
-            ["contentType"] = item.ContentType ?? "not-configured",
-            ["headerCount"] = deliveryOptions.Headers.Count.ToString(System.Globalization.CultureInfo.InvariantCulture),
-            ["managedSubscriptionCount"] = managedSubscriptionCount.ToString(System.Globalization.CultureInfo.InvariantCulture)
-        };
+        var metadata = EventDispatchContextReportMetadata.Create(
+            item,
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["publisherId"] = WolverineEventingRuntimeIds.PublisherId,
+                ["eventDispatchRuntimeId"] = WolverineEventingRuntimeIds.DispatchRuntimeId,
+                ["dispatchBridge"] = "wolverine-managed",
+                ["dispatchOwnership"] = "wolverine-managed",
+                ["dispatchMode"] = "publish-event-publication",
+                ["deliveryMode"] = deliveryMode,
+                ["transport"] = "wolverine",
+                ["channelId"] = item.ChannelId,
+                [EventDispatchRuntimeMetadataKeys.RetryPolicy] = maxAttempts > 1 ? WolverineEventingRetryPolicy.BoundedFixedDelay : WolverineEventingRetryPolicy.None,
+                [EventDispatchRuntimeMetadataKeys.RetryMaxAttempts] = maxAttempts.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                [EventDispatchRuntimeMetadataKeys.RetryDelaySeconds] = retryDelaySeconds.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                [EventDispatchRuntimeMetadataKeys.RetryDurability] = "dispatch-store-delayed-eligibility",
+                [EventDispatchRuntimeMetadataKeys.RetryScope] = "provider-managed",
+                ["contentType"] = item.ContentType ?? "not-configured",
+                ["headerCount"] = deliveryOptions.Headers.Count.ToString(System.Globalization.CultureInfo.InvariantCulture),
+                ["managedSubscriptionCount"] = managedSubscriptionCount.ToString(System.Globalization.CultureInfo.InvariantCulture)
+            });
 
         if (!string.IsNullOrWhiteSpace(item.TenantId))
         {

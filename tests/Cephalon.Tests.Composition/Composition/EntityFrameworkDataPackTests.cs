@@ -1221,6 +1221,8 @@ public sealed class EntityFrameworkDataPackTests
         var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
         var dbContext = scope.ServiceProvider.GetRequiredService<OutboxCatalogDbContext>();
         var dispatchStore = scope.ServiceProvider.GetRequiredService<IEventDispatchStore>();
+        var dispatchRuntimeReporter = scope.ServiceProvider.GetRequiredService<IEventDispatchRuntimeReporter>();
+        var dispatchRuntimeCatalog = provider.GetRequiredService<IEventDispatchRuntimeCatalog>();
         var publicationRuntimeCatalog = provider.GetRequiredService<IEventPublicationRuntimeCatalog>();
         var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
 
@@ -1303,6 +1305,35 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("header-forwarded", dispatchItem.Metadata[EventContextHandoffMetadataKeys.BaggageContextPropagation]);
         Assert.Equal("false", dispatchItem.Metadata[EventContextHandoffMetadataKeys.WolverineRequired]);
 
+        var dispatchReportMetadata = EventDispatchContextReportMetadata.Create(
+            dispatchItem,
+            new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+            {
+                ["publisherId"] = "native-test-dispatcher"
+            });
+        await dispatchRuntimeReporter.ReportAsync(new EventDispatchExecutionReport(
+            outboxId: dispatchItem.OutboxId,
+            channelId: dispatchItem.ChannelId,
+            outcome: EventDispatchExecutionOutcomes.Started,
+            observedAtUtc: new DateTimeOffset(2026, 05, 12, 10, 2, 0, TimeSpan.Zero),
+            messageId: dispatchItem.MessageId,
+            attempt: 1,
+            metadata: dispatchReportMetadata));
+
+        var dispatchState = dispatchRuntimeCatalog.GetByOutboxId("entity-framework-outbox");
+        Assert.NotNull(dispatchState);
+        Assert.Equal(EventDispatchExecutionOutcomes.Started, dispatchState.LastOutcome);
+        Assert.Equal("evt-context-outbox-001", dispatchState.LastMessageId);
+        Assert.Equal("dispatch-report-metadata", dispatchState.Metadata[EventDispatchRuntimeMetadataKeys.DurableDispatchContextPropagation]);
+        Assert.Equal("reported", dispatchState.Metadata[EventDispatchRuntimeMetadataKeys.DispatchContextMetadata]);
+        Assert.Equal("not-claimed", dispatchState.Metadata[EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders]);
+        Assert.Equal("not-claimed", dispatchState.Metadata[EventDispatchRuntimeMetadataKeys.ConsumerContextExtraction]);
+        Assert.Equal("not-claimed", dispatchState.Metadata[EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoff]);
+        Assert.Equal("2", dispatchState.Metadata[EventDispatchRuntimeMetadataKeys.DispatchContextHeaderCount]);
+        Assert.Equal("11", dispatchState.Metadata[EventDispatchRuntimeMetadataKeys.DispatchContextMetadataCount]);
+        Assert.Equal("outbox-staged-headers", dispatchState.Metadata[EventContextHandoffMetadataKeys.ContextHandoff]);
+        Assert.Equal("native-test-dispatcher", dispatchState.Metadata["publisherId"]);
+
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
             await publisher.PublishAsync(new EventPublication(
                 id: "evt-context-outbox-002",
@@ -1332,13 +1363,23 @@ public sealed class EntityFrameworkDataPackTests
 
         var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
         Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var dispatchSurface = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "event-dispatches");
+        var dispatchEntry = Assert.Single(dispatchSurface.Entries, entry => entry.Id == "entity-framework-outbox");
+        Assert.Equal("reported", dispatchEntry.Metadata["runtimeState"]);
+        Assert.Equal("dispatch-report-metadata", dispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.DurableDispatchContextPropagation}"]);
+        Assert.Equal("reported", dispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.DispatchContextMetadata}"]);
+        Assert.Equal("not-claimed", dispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders}"]);
+        Assert.Equal("not-claimed", dispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.ConsumerContextExtraction}"]);
+        Assert.Equal("not-claimed", dispatchEntry.Metadata[$"reported.{EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoff}"]);
+        Assert.Equal("outbox-staged-headers", dispatchEntry.Metadata[$"reported.{EventContextHandoffMetadataKeys.ContextHandoff}"]);
         var dimensions = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
             .Entries
             .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
         Assert.Equal("partial", dimensions["tenant-and-correlation-context-ownership"].Metadata["status"]);
         Assert.Contains("messageHeaderPolicy=publisher-enforced", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("outboxContextHandoff=staged-headers", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
-        Assert.Contains("durableDispatchContextPropagation=dispatch-store-read", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("durableDispatchContextPropagation=dispatch-report-metadata", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("dispatchReportContextMetadata=reported", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("providerBrokerContextHeaders=not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("consumerContextExtraction=not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("crossNodeContextHandoff=not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);

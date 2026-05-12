@@ -76,6 +76,41 @@ public static class EventDispatchRuntimeMetadataKeys
     public const string BrokerDeadLetter = "brokerDeadLetter";
 
     /// <summary>
+    /// Identifies the durable dispatch context propagation boundary proven by the latest runtime observation.
+    /// </summary>
+    public const string DurableDispatchContextPropagation = "durableDispatchContextPropagation";
+
+    /// <summary>
+    /// Identifies whether provider or broker headers carry the same context beyond Cephalon dispatch metadata.
+    /// </summary>
+    public const string ProviderBrokerContextHeaders = "providerBrokerContextHeaders";
+
+    /// <summary>
+    /// Identifies whether consumer-side extraction has been proven for the dispatched context.
+    /// </summary>
+    public const string ConsumerContextExtraction = "consumerContextExtraction";
+
+    /// <summary>
+    /// Identifies whether cross-node context handoff has been proven for the dispatched context.
+    /// </summary>
+    public const string CrossNodeContextHandoff = "crossNodeContextHandoff";
+
+    /// <summary>
+    /// Identifies whether the latest dispatch runtime observation includes Cephalon context metadata.
+    /// </summary>
+    public const string DispatchContextMetadata = "dispatchContextMetadata";
+
+    /// <summary>
+    /// Identifies the number of context-capable headers present on the dispatch item used by the report.
+    /// </summary>
+    public const string DispatchContextHeaderCount = "dispatchContextHeaderCount";
+
+    /// <summary>
+    /// Identifies the number of context metadata entries carried from the dispatch item into the report.
+    /// </summary>
+    public const string DispatchContextMetadataCount = "dispatchContextMetadataCount";
+
+    /// <summary>
     /// Gets a value indicating whether the supplied metadata describes a terminal failure.
     /// </summary>
     /// <param name="metadata">The dispatch observation metadata to inspect.</param>

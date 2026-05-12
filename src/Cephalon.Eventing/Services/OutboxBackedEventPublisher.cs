@@ -168,9 +168,9 @@ internal sealed class OutboxBackedEventPublisher(
         metadata["outboxContextRequiredHeaders"] = string.Join(",", contextPolicyEvaluation.RequiredHeaderNames);
         metadata["outboxContextPresentHeaders"] = string.Join(",", contextPolicyEvaluation.PresentHeaderNames);
         metadata["outboxContextPropagationBoundary"] = "outbox-stage";
-        metadata["durableDispatchContextPropagation"] = "not-claimed";
-        metadata["providerBrokerContextHeaders"] = "not-claimed";
-        metadata["consumerContextExtraction"] = "not-claimed";
-        metadata["crossNodeContextHandoff"] = "not-claimed";
+        metadata[EventDispatchRuntimeMetadataKeys.DurableDispatchContextPropagation] = "not-claimed";
+        metadata[EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders] = "not-claimed";
+        metadata[EventDispatchRuntimeMetadataKeys.ConsumerContextExtraction] = "not-claimed";
+        metadata[EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoff] = "not-claimed";
     }
 }

@@ -1070,6 +1070,37 @@ string Version { get; }
 
 Gets the event contract version.
 
+<a id="type-cephalon-eventing-services-eventdispatchcontextreportmetadata"></a>
+
+### `EventDispatchContextReportMetadata`
+
+Builds provider-neutral metadata that carries staged Cephalon event context into dispatch runtime reports.
+
+Remarks: The helper preserves the dispatch item's staged metadata and adds conservative runtime boundary markers. Provider and broker context claims remain `not-claimed` until a provider package reports executable proof.
+
+#### Declaration
+```csharp
+public static class EventDispatchContextReportMetadata
+```
+
+#### Methods
+
+<a id="member-m-cephalon-eventing-services-eventdispatchcontextreportmetadata-create-cephalon-eventing-services-eventdispatchitem-system-collections-generic-ireadonlydictionary-system-string-system-string"></a>
+
+##### `Create`
+
+```csharp
+Dictionary<string, string> Create(EventDispatchItem dispatchItem, IReadOnlyDictionary<string, string> additionalMetadata)
+```
+
+Creates dispatch report metadata from a pending dispatch item and optional runtime-specific metadata.
+
+Returns: A case-insensitive metadata dictionary suitable for `Metadata`.
+
+Parameters:
+- `dispatchItem`: The pending dispatch item whose staged context should be carried into the report.
+- `additionalMetadata`: Optional runtime-specific metadata to add after the provider-neutral context markers.
+
 <a id="type-cephalon-eventing-services-eventdispatchexecutionoutcomes"></a>
 
 ### `EventDispatchExecutionOutcomes`
@@ -1618,6 +1649,26 @@ const string BrokerDeadLetter
 
 Identifies whether the dead-letter decision is owned by a broker-specific dead-letter queue.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-consumercontextextraction"></a>
+
+##### `ConsumerContextExtraction`
+
+```csharp
+const string ConsumerContextExtraction
+```
+
+Identifies whether consumer-side extraction has been proven for the dispatched context.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-crossnodecontexthandoff"></a>
+
+##### `CrossNodeContextHandoff`
+
+```csharp
+const string CrossNodeContextHandoff
+```
+
+Identifies whether cross-node context handoff has been proven for the dispatched context.
+
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-deadletterdurability"></a>
 
 ##### `DeadLetterDurability`
@@ -1648,6 +1699,46 @@ const string DeadLetterScope
 
 Identifies the scope that owns the dead-letter decision.
 
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-dispatchcontextheadercount"></a>
+
+##### `DispatchContextHeaderCount`
+
+```csharp
+const string DispatchContextHeaderCount
+```
+
+Identifies the number of context-capable headers present on the dispatch item used by the report.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-dispatchcontextmetadata"></a>
+
+##### `DispatchContextMetadata`
+
+```csharp
+const string DispatchContextMetadata
+```
+
+Identifies whether the latest dispatch runtime observation includes Cephalon context metadata.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-dispatchcontextmetadatacount"></a>
+
+##### `DispatchContextMetadataCount`
+
+```csharp
+const string DispatchContextMetadataCount
+```
+
+Identifies the number of context metadata entries carried from the dispatch item into the report.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-durabledispatchcontextpropagation"></a>
+
+##### `DurableDispatchContextPropagation`
+
+```csharp
+const string DurableDispatchContextPropagation
+```
+
+Identifies the durable dispatch context propagation boundary proven by the latest runtime observation.
+
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-nextretryatutc"></a>
 
 ##### `NextRetryAtUtc`
@@ -1657,6 +1748,16 @@ const string NextRetryAtUtc
 ```
 
 Identifies the next UTC time when a retryable dispatch failure should become eligible again.
+
+<a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerbrokercontextheaders"></a>
+
+##### `ProviderBrokerContextHeaders`
+
+```csharp
+const string ProviderBrokerContextHeaders
+```
+
+Identifies whether provider or broker headers carry the same context beyond Cephalon dispatch metadata.
 
 <a id="member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-retrydelayseconds"></a>
 

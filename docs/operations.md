@@ -2684,9 +2684,10 @@ Current `Cephalon.Eventing` highlights:
   message-header policy metadata, now reports publisher-enforced validation when native publisher
   paths enforce required `EventContextHeaderNames` headers, and can report direct in-process
   propagation metadata plus dispatch-store-read context proof when an active `IEventDispatchStore`
-  owns the outbox, while keeping provider/broker header propagation, consumer-side extraction,
-  delivery completion, cross-node context handoff, and durable dispatch reports beyond pending reads
-  unclaimed until a provider or engine package owns them
+  owns the outbox, can advance to dispatch-report context proof when `IEventDispatchRuntimeCatalog`
+  receives `EventDispatchContextReportMetadata`, and still keeps provider/broker header propagation,
+  consumer-side extraction, delivery completion, and cross-node context handoff unclaimed until a
+  provider or engine package owns them
 - `scheduled-and-delayed-delivery-ownership` is the separate scheduled-delivery boundary in that
   same profile; it reports the bounded process-local scheduler as `partial` only when enabled and
   keeps durable scheduled delivery, provider delay queues, broker scheduled delivery, cross-node

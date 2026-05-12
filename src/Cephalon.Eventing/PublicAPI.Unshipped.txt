@@ -17,9 +17,18 @@ const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.OperatorAc
 const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.OperatorCommandReason = "operatorCommandReason" -> string!
 const Cephalon.Eventing.Services.EventDispatchRemediationMetadataKeys.OperatorCorrelationId = "operatorCorrelationId" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.BrokerDeadLetter = "brokerDeadLetter" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ConsumerContextExtraction = "consumerContextExtraction" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.CrossNodeContextHandoff = "crossNodeContextHandoff" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DeadLetterDurability = "deadLetterDurability" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DeadLetterOutcome = "deadLetterOutcome" -> string!
 const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DeadLetterScope = "deadLetterScope" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DispatchContextHeaderCount = "dispatchContextHeaderCount" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DispatchContextMetadata = "dispatchContextMetadata" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DispatchContextMetadataCount = "dispatchContextMetadataCount" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.DurableDispatchContextPropagation = "durableDispatchContextPropagation" -> string!
+const Cephalon.Eventing.Services.EventDispatchRuntimeMetadataKeys.ProviderBrokerContextHeaders = "providerBrokerContextHeaders" -> string!
+Cephalon.Eventing.Services.EventDispatchContextReportMetadata
+static Cephalon.Eventing.Services.EventDispatchContextReportMetadata.Create(Cephalon.Eventing.Services.EventDispatchItem! dispatchItem, System.Collections.Generic.IReadOnlyDictionary<string!, string!>? additionalMetadata = null) -> System.Collections.Generic.Dictionary<string!, string!>!
 Cephalon.Eventing.Hosting.EventingServiceCollectionExtensions
 static Cephalon.Eventing.Hosting.EventingServiceCollectionExtensions.AddCephalonEventSubscriptionExecutionMiddleware<TMiddleware>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!
 static Cephalon.Eventing.Hosting.EventingServiceCollectionExtensions.AddCephalonEventSubscriptionExecutor<TExecutor>(this Microsoft.Extensions.DependencyInjection.IServiceCollection! services) -> Microsoft.Extensions.DependencyInjection.IServiceCollection!

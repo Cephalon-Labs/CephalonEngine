@@ -103,7 +103,7 @@
 
   <script id="reference-manifest" type="application/json">{
   "SchemaVersion": 2,
-  "GeneratedAtUtc": "2026-05-12T00:16:57.8872536+00:00",
+  "GeneratedAtUtc": "2026-05-12T11:08:48.5441661+00:00",
   "Assemblies": [
     {
       "AssemblyName": "Cephalon.Abstractions",
@@ -271,7 +271,7 @@
       "Description": "Event-driven integration runtime services and extension points.",
       "FileName": "cephalon-eventing.md",
       "NamespaceCount": 4,
-      "TypeCount": 60
+      "TypeCount": 61
     },
     {
       "AssemblyName": "Cephalon.Eventing.Behaviors",
@@ -1331,7 +1331,7 @@
       "AssemblyName": "Cephalon.Eventing",
       "FileName": "cephalon-eventing.md",
       "AnchorId": "namespace-cephalon-eventing-services",
-      "TypeCount": 57
+      "TypeCount": 58
     },
     {
       "NamespaceName": "Cephalon.Eventing.Wolverine.Configuration",
@@ -8338,6 +8338,21 @@
       }
     },
     {
+      "DisplayName": "EventDispatchContextReportMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "type-cephalon-eventing-services-eventdispatchcontextreportmetadata",
+      "Declaration": "public static class EventDispatchContextReportMetadata",
+      "Summary": "Builds provider-neutral metadata that carries staged Cephalon event context into dispatch runtime reports.",
+      "MemberCounts": {
+        "Constructors": 0,
+        "Fields": 0,
+        "Properties": 0,
+        "Methods": 1
+      }
+    },
+    {
       "DisplayName": "EventDispatchExecutionOutcomes",
       "NamespaceName": "Cephalon.Eventing.Services",
       "AssemblyName": "Cephalon.Eventing",
@@ -8572,7 +8587,7 @@
       "Summary": "Defines stable metadata keys used by event-dispatch runtime observations.",
       "MemberCounts": {
         "Constructors": 0,
-        "Fields": 13,
+        "Fields": 20,
         "Properties": 0,
         "Methods": 1
       }
@@ -39482,6 +39497,17 @@
       "Summary": "Initializes a new instance of the \u0060ConsulDependencyHealthOptions\u0060 class."
     },
     {
+      "DisplayName": "ConsumerContextExtraction",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-consumercontextextraction",
+      "Signature": "const string ConsumerContextExtraction",
+      "Summary": "Identifies whether consumer-side extraction has been proven for the dispatched context."
+    },
+    {
       "DisplayName": "Consumers",
       "Category": "Properties",
       "DeclaringTypeName": "DatabaseRoleDescriptor",
@@ -41332,6 +41358,17 @@
     {
       "DisplayName": "Create",
       "Category": "Methods",
+      "DeclaringTypeName": "EventDispatchContextReportMetadata",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-m-cephalon-eventing-services-eventdispatchcontextreportmetadata-create-cephalon-eventing-services-eventdispatchitem-system-collections-generic-ireadonlydictionary-system-string-system-string",
+      "Signature": "Dictionary\u003Cstring, string\u003E Create(EventDispatchItem dispatchItem, IReadOnlyDictionary\u003Cstring, string\u003E additionalMetadata)",
+      "Summary": "Creates dispatch report metadata from a pending dispatch item and optional runtime-specific metadata."
+    },
+    {
+      "DisplayName": "Create",
+      "Category": "Methods",
       "DeclaringTypeName": "EventTypeDescriptor",
       "NamespaceName": "Cephalon.EventSourcing.Services",
       "AssemblyName": "Cephalon.EventSourcing",
@@ -41647,6 +41684,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor-crossnodecommandaudit",
       "Signature": "bool CrossNodeCommandAudit { get; set; }",
       "Summary": "A value indicating whether command audit reads survive process and node boundaries."
+    },
+    {
+      "DisplayName": "CrossNodeContextHandoff",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-crossnodecontexthandoff",
+      "Signature": "const string CrossNodeContextHandoff",
+      "Summary": "Identifies whether cross-node context handoff has been proven for the dispatched context."
     },
     {
       "DisplayName": "CrossNodeIdempotencyHardening",
@@ -47443,6 +47491,39 @@
       "Summary": "Gets or sets the maximum number of staged events the Wolverine-owned dispatch loop should read per polling cycle."
     },
     {
+      "DisplayName": "DispatchContextHeaderCount",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-dispatchcontextheadercount",
+      "Signature": "const string DispatchContextHeaderCount",
+      "Summary": "Identifies the number of context-capable headers present on the dispatch item used by the report."
+    },
+    {
+      "DisplayName": "DispatchContextMetadata",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-dispatchcontextmetadata",
+      "Signature": "const string DispatchContextMetadata",
+      "Summary": "Identifies whether the latest dispatch runtime observation includes Cephalon context metadata."
+    },
+    {
+      "DisplayName": "DispatchContextMetadataCount",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-dispatchcontextmetadatacount",
+      "Signature": "const string DispatchContextMetadataCount",
+      "Summary": "Identifies the number of context metadata entries carried from the dispatch item into the report."
+    },
+    {
       "DisplayName": "Dispatched",
       "Category": "Fields",
       "DeclaringTypeName": "TenantInvitationDeliveryOutcomes",
@@ -50323,6 +50404,17 @@
       "AnchorId": "member-p-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor-durability",
       "Signature": "string Durability { get; set; }",
       "Summary": "The durability class exposed by the journal."
+    },
+    {
+      "DisplayName": "DurableDispatchContextPropagation",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-durabledispatchcontextpropagation",
+      "Signature": "const string DurableDispatchContextPropagation",
+      "Summary": "Identifies the durable dispatch context propagation boundary proven by the latest runtime observation."
     },
     {
       "DisplayName": "DurableExecutionCompensationAction",
@@ -99201,6 +99293,17 @@
       "AnchorId": "member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstates-providerblocked",
       "Signature": "const string ProviderBlocked",
       "Summary": "Provider-owned write-path execution remains blocked by shared runtime policy, approval, or adapter posture."
+    },
+    {
+      "DisplayName": "ProviderBrokerContextHeaders",
+      "Category": "Fields",
+      "DeclaringTypeName": "EventDispatchRuntimeMetadataKeys",
+      "NamespaceName": "Cephalon.Eventing.Services",
+      "AssemblyName": "Cephalon.Eventing",
+      "FileName": "cephalon-eventing.md",
+      "AnchorId": "member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerbrokercontextheaders",
+      "Signature": "const string ProviderBrokerContextHeaders",
+      "Summary": "Identifies whether provider or broker headers carry the same context beyond Cephalon dispatch metadata."
     },
     {
       "DisplayName": "ProviderCommandAdapted",

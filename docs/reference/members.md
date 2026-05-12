@@ -5343,6 +5343,9 @@ Browse the published API surface by public member.
 - [ConsulDependencyHealthOptions](cephalon-observability-consuldependencies.md#member-m-cephalon-observability-consuldependencies-configuration-consuldependencyhealthoptions-ctor): `Constructors` on `ConsulDependencyHealthOptions` in `Cephalon.Observability.ConsulDependencies.Configuration` (`Cephalon.Observability.ConsulDependencies`) [Browse](browse.html?q=ConsulDependencyHealthOptions&assembly=Cephalon.Observability.ConsulDependencies&namespace=Cephalon.Observability.ConsulDependencies.Configuration&scope=members)
   - Initializes a new instance of the `ConsulDependencyHealthOptions` class.
   - `ConsulDependencyHealthOptions()`
+- [ConsumerContextExtraction](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-consumercontextextraction): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ConsumerContextExtraction&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether consumer-side extraction has been proven for the dispatched context.
+  - `const string ConsumerContextExtraction`
 - [Consumers](cephalon-abstractions.md#member-p-cephalon-abstractions-data-databaseroledescriptor-consumers): `Properties` on `DatabaseRoleDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Consumers&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Gets the logical engine features that explicitly target this role.
   - `IReadOnlyList<string> Consumers { get; }`
@@ -5847,6 +5850,9 @@ Browse the published API surface by public member.
 - [Create](cephalon-abstractions.md#member-f-cephalon-abstractions-technologies-celltrafficautomationlifecycleactions-create): `Fields` on `CellTrafficAutomationLifecycleActions` in `Cephalon.Abstractions.Technologies` (`Cephalon.Abstractions`) [Browse](browse.html?q=Create&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Technologies&scope=members)
   - The selected materializer created a new owned control-plane resource.
   - `const string Create`
+- [Create](cephalon-eventing.md#member-m-cephalon-eventing-services-eventdispatchcontextreportmetadata-create-cephalon-eventing-services-eventdispatchitem-system-collections-generic-ireadonlydictionary-system-string-system-string): `Methods` on `EventDispatchContextReportMetadata` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=Create&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Creates dispatch report metadata from a pending dispatch item and optional runtime-specific metadata.
+  - `Dictionary<string, string> Create(EventDispatchItem dispatchItem, IReadOnlyDictionary<string, string> additionalMetadata)`
 - [Create](cephalon-eventsourcing.md#member-m-cephalon-eventsourcing-services-eventtypedescriptor-create-1-system-string-system-collections-generic-ienumerable-system-string): `Methods` on `EventTypeDescriptor` in `Cephalon.EventSourcing.Services` (`Cephalon.EventSourcing`) [Browse](browse.html?q=Create&assembly=Cephalon.EventSourcing&namespace=Cephalon.EventSourcing.Services&scope=members)
   - Creates a descriptor for an event type using the default `System.Text.Json` generic serializer.
   - `EventTypeDescriptor Create<TEvent>(string name, IEnumerable<string> aliases)`
@@ -5934,6 +5940,9 @@ Browse the published API surface by public member.
 - [CrossNodeCommandAudit](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor-crossnodecommandaudit): `Properties` on `EventDispatchRemediationCommandJournalDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CrossNodeCommandAudit&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - A value indicating whether command audit reads survive process and node boundaries.
   - `bool CrossNodeCommandAudit { get; set; }`
+- [CrossNodeContextHandoff](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-crossnodecontexthandoff): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=CrossNodeContextHandoff&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether cross-node context handoff has been proven for the dispatched context.
+  - `const string CrossNodeContextHandoff`
 - [CrossNodeIdempotencyHardening](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectordistributedretryorchestrationsources-crossnodeidempotencyhardening): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorDistributedRetryOrchestrationSources` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=CrossNodeIdempotencyHardening&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The distributed retry orchestration answer was derived primarily from cross-node idempotency-hardening truth.
   - `const string CrossNodeIdempotencyHardening`
@@ -7515,6 +7524,15 @@ Browse the published API surface by public member.
 - [DispatchBatchSize](cephalon-eventing-wolverine.md#member-p-cephalon-eventing-wolverine-configuration-wolverineeventingoptions-dispatchbatchsize): `Properties` on `WolverineEventingOptions` in `Cephalon.Eventing.Wolverine.Configuration` (`Cephalon.Eventing.Wolverine`) [Browse](browse.html?q=DispatchBatchSize&assembly=Cephalon.Eventing.Wolverine&namespace=Cephalon.Eventing.Wolverine.Configuration&scope=members)
   - Gets or sets the maximum number of staged events the Wolverine-owned dispatch loop should read per polling cycle.
   - `int DispatchBatchSize { get; set; }`
+- [DispatchContextHeaderCount](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-dispatchcontextheadercount): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DispatchContextHeaderCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the number of context-capable headers present on the dispatch item used by the report.
+  - `const string DispatchContextHeaderCount`
+- [DispatchContextMetadata](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-dispatchcontextmetadata): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DispatchContextMetadata&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether the latest dispatch runtime observation includes Cephalon context metadata.
+  - `const string DispatchContextMetadata`
+- [DispatchContextMetadataCount](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-dispatchcontextmetadatacount): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DispatchContextMetadataCount&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the number of context metadata entries carried from the dispatch item into the report.
+  - `const string DispatchContextMetadataCount`
 - [Dispatched](cephalon-multitenancy-governance.md#member-f-cephalon-multitenancy-governance-services-tenantinvitationdeliveryoutcomes-dispatched): `Fields` on `TenantInvitationDeliveryOutcomes` in `Cephalon.MultiTenancy.Governance.Services` (`Cephalon.MultiTenancy.Governance`) [Browse](browse.html?q=Dispatched&assembly=Cephalon.MultiTenancy.Governance&namespace=Cephalon.MultiTenancy.Governance.Services&scope=members)
   - The invitation was dispatched through a configured sender.
   - `const string Dispatched`
@@ -8301,6 +8319,9 @@ Browse the published API surface by public member.
 - [Durability](cephalon-abstractions.md#member-p-cephalon-abstractions-data-eventdispatchremediationcommandjournaldescriptor-durability): `Properties` on `EventDispatchRemediationCommandJournalDescriptor` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=Durability&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The durability class exposed by the journal.
   - `string Durability { get; set; }`
+- [DurableDispatchContextPropagation](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-durabledispatchcontextpropagation): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=DurableDispatchContextPropagation&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies the durable dispatch context propagation boundary proven by the latest runtime observation.
+  - `const string DurableDispatchContextPropagation`
 - [DurableExecutionCompensationAction](cephalon-abstractions.md#member-m-cephalon-abstractions-execution-durableexecutioncompensationaction-ctor-system-string-system-string-system-string-system-string-system-string-system-collections-generic-ireadonlydictionary-system-string-system-string): `Constructors` on `DurableExecutionCompensationAction` in `Cephalon.Abstractions.Execution` (`Cephalon.Abstractions`) [Browse](browse.html?q=DurableExecutionCompensationAction&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Execution&scope=members)
   - Initializes a new instance of the `DurableExecutionCompensationAction` class.
   - `DurableExecutionCompensationAction(string id, string displayName, string description, string triggerKind, string compensationBehaviorId, IReadOnlyDictionary<string, string> metadata)`
@@ -21663,6 +21684,9 @@ Browse the published API surface by public member.
 - [ProviderBlocked](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderownedwritepathexecutionstates-providerblocked): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderOwnedWritePathExecutionStates` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderBlocked&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - Provider-owned write-path execution remains blocked by shared runtime policy, approval, or adapter posture.
   - `const string ProviderBlocked`
+- [ProviderBrokerContextHeaders](cephalon-eventing.md#member-f-cephalon-eventing-services-eventdispatchruntimemetadatakeys-providerbrokercontextheaders): `Fields` on `EventDispatchRuntimeMetadataKeys` in `Cephalon.Eventing.Services` (`Cephalon.Eventing`) [Browse](browse.html?q=ProviderBrokerContextHeaders&assembly=Cephalon.Eventing&namespace=Cephalon.Eventing.Services&scope=members)
+  - Identifies whether provider or broker headers carry the same context beyond Cephalon dispatch metadata.
+  - `const string ProviderBrokerContextHeaders`
 - [ProviderCommandAdapted](cephalon-abstractions.md#member-f-cephalon-abstractions-data-cdccaptureexecutionruntimemanagedconnectorproviderexecutionorchestrationcategories-providercommandadapted): `Fields` on `CdcCaptureExecutionRuntimeManagedConnectorProviderExecutionOrchestrationCategories` in `Cephalon.Abstractions.Data` (`Cephalon.Abstractions`) [Browse](browse.html?q=ProviderCommandAdapted&assembly=Cephalon.Abstractions&namespace=Cephalon.Abstractions.Data&scope=members)
   - The latest provider execution translated into a provider-facing command shape.
   - `const string ProviderCommandAdapted`
