@@ -1220,6 +1220,7 @@ public sealed class EntityFrameworkDataPackTests
         using var scope = provider.CreateScope();
         var publisher = scope.ServiceProvider.GetRequiredService<IEventPublisher>();
         var dbContext = scope.ServiceProvider.GetRequiredService<OutboxCatalogDbContext>();
+        var dispatchStore = scope.ServiceProvider.GetRequiredService<IEventDispatchStore>();
         var publicationRuntimeCatalog = provider.GetRequiredService<IEventPublicationRuntimeCatalog>();
         var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
 
@@ -1277,6 +1278,31 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("header-forwarded", metadata[EventContextHandoffMetadataKeys.BaggageContextPropagation]);
         Assert.Equal("false", metadata[EventContextHandoffMetadataKeys.WolverineRequired]);
 
+        var dispatchItems = await dispatchStore.ReadPendingAsync(10);
+        var dispatchItem = Assert.Single(dispatchItems);
+        Assert.Equal("evt-context-outbox-001", dispatchItem.MessageId);
+        Assert.Equal("catalog-events", dispatchItem.ChannelId);
+        Assert.Equal("catalog.item.created", dispatchItem.EventType);
+        Assert.Equal("tenant-context-001", dispatchItem.TenantId);
+        Assert.Equal("corr-context-001", dispatchItem.CorrelationId);
+        Assert.Equal("cause-context-001", dispatchItem.Headers[EventContextHeaderNames.CausationId]);
+        Assert.Equal("tier=gold", dispatchItem.Headers[EventContextHeaderNames.Baggage]);
+        Assert.Equal("outbox-staged-headers", dispatchItem.Metadata[EventContextHandoffMetadataKeys.ContextHandoff]);
+        Assert.Equal("publisher-enforced", dispatchItem.Metadata[EventContextHandoffMetadataKeys.ContextValidation]);
+        Assert.Equal("2", dispatchItem.Metadata[EventContextHandoffMetadataKeys.RequiredHeaderCount]);
+        Assert.Equal("2", dispatchItem.Metadata[EventContextHandoffMetadataKeys.PresentHeaderCount]);
+        Assert.Equal(
+            $"{EventContextHeaderNames.Baggage},{EventContextHeaderNames.CausationId}",
+            dispatchItem.Metadata[EventContextHandoffMetadataKeys.RequiredHeaders]);
+        Assert.Equal(
+            $"{EventContextHeaderNames.Baggage},{EventContextHeaderNames.CausationId}",
+            dispatchItem.Metadata[EventContextHandoffMetadataKeys.PresentHeaders]);
+        Assert.Equal("publication-field-forwarded", dispatchItem.Metadata[EventContextHandoffMetadataKeys.TenantContextPropagation]);
+        Assert.Equal("publication-field-forwarded", dispatchItem.Metadata[EventContextHandoffMetadataKeys.CorrelationContextPropagation]);
+        Assert.Equal("header-forwarded", dispatchItem.Metadata[EventContextHandoffMetadataKeys.CausationContextPropagation]);
+        Assert.Equal("header-forwarded", dispatchItem.Metadata[EventContextHandoffMetadataKeys.BaggageContextPropagation]);
+        Assert.Equal("false", dispatchItem.Metadata[EventContextHandoffMetadataKeys.WolverineRequired]);
+
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(async () =>
             await publisher.PublishAsync(new EventPublication(
                 id: "evt-context-outbox-002",
@@ -1312,7 +1338,7 @@ public sealed class EntityFrameworkDataPackTests
         Assert.Equal("partial", dimensions["tenant-and-correlation-context-ownership"].Metadata["status"]);
         Assert.Contains("messageHeaderPolicy=publisher-enforced", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("outboxContextHandoff=staged-headers", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
-        Assert.Contains("durableDispatchContextPropagation=not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("durableDispatchContextPropagation=dispatch-store-read", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("providerBrokerContextHeaders=not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("consumerContextExtraction=not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("crossNodeContextHandoff=not-claimed", dimensions["tenant-and-correlation-context-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
