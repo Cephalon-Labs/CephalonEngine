@@ -32,7 +32,7 @@ See also: [Engine surface maturity audit](../engine-surface-maturity-audit.md), 
 - reporter-, edge-, coordination-, remediation-, and governance-aware CDC drill-downs under the existing `/engine/cdc-captures/runtime/*` and `/engine/cdc-capture-runtimes/*` route families when the shared external CDC operator-story catalog is active
 - `/engine/cdc-capture-runtimes/{executionRuntimeId}/reports` when the opt-in external CDC runtime report sink is active
 - `/engine/rate-limiting` when ASP.NET Core rate-limiting enforcement is active
-- companion gRPC direct-module resilience runtime truth through `/engine/technology-surfaces` when `Cephalon.AspNetCore.Grpc` enforces `Engine:Resilience` timeout, circuit-breaker, or bulkhead policy for direct `IGrpcModule` endpoints
+- companion gRPC direct-module resilience runtime truth through `/engine/technology-surfaces` when `Cephalon.AspNetCore.Grpc` enforces `Engine:Resilience` timeout, circuit-breaker, or bulkhead policy for direct `IGrpcModule` endpoints, including cumulative timeout-occurrence, circuit-open transition, and circuit-open rejection counters with last-occurrence timestamps
 - `/engine/rest-endpoint-candidates` when the module-owned REST candidate catalog is active
 - `/engine/rest-endpoint-publication-groups` when grouped module-owned REST publication visibility and authoring-policy state are active
 - `/engine/rest-endpoint-authoring-policies` when behavior-level REST authoring-policy runtime answers are active

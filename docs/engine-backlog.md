@@ -386,6 +386,34 @@ Validation:
 - `dotnet build CephalonEngine.slnx --no-restore -m:1`
 - `git diff --check`
 
+### ENG-640 gRPC direct-module resilience outcome counters baseline
+
+Status: done
+Estimate: 0.5
+Iteration: Sprint 125
+Area: phase-11 / resilience / ASP.NET Core gRPC / operator observability
+Quality dimensions: Reliability, Auditability, Usability, Maintainability, Compatibility
+
+Why:
+
+- `ENG-637` and `ENG-638` made host-enforced direct gRPC timeout, circuit-breaker, and bulkhead policy executable, but `/engine/technology-surfaces` still only reported instantaneous state for the timeout and circuit lanes — operators had no cumulative answer for how often direct module calls actually timed out, how often the breaker transitioned to open, or how often it then rejected callers
+- the bulkhead lane already exposes accepted/rejected counters plus `bulkheadLastRejectedAtUtc`, so the timeout and circuit lanes were drifting from a posture that was otherwise consistent
+- operators answering "is direct gRPC resilience actually doing anything?" should not need to scrape handler exception logs or compute counters out-of-band
+
+Delivered:
+
+- `Cephalon.AspNetCore.Grpc` now tracks cumulative direct-module timeout occurrences and last-occurrence time through `CephalonGrpcDirectModuleTimeoutState`, incremented from both the host-enforced `TimeoutException` and Polly `TimeoutRejectedException` translation paths in the gRPC resilience interceptor
+- `CephalonGrpcDirectModuleCircuitBreakerState` now tracks cumulative circuit-open transitions plus cumulative rejections issued while the breaker was open or half-open-probing, and exposes the last rejected-while-open timestamp
+- `/engine/technology-surfaces` now reports `timeoutOccurredCount`, `timeoutLastOccurredAtUtc`, `circuitOpenedCount`, `circuitRejectedWhileOpenCount`, and `circuitLastRejectedWhileOpenAtUtc` on `grpc-direct-module-resilience` alongside the existing bulkhead counters, so the timeout and circuit lanes now mirror the bulkhead lane's operator observability posture
+- component docs, app-model docs, runtime-contract index, roadmap, backlog, and project memory now agree that direct gRPC resilience surfaces cumulative outcome counters across all three lanes
+
+Validation:
+
+- `dotnet build src\Cephalon.AspNetCore.Grpc\Cephalon.AspNetCore.Grpc.csproj -m:1`
+- `dotnet build tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj -m:1`
+- `dotnet test tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-build --filter "FullyQualifiedName~GrpcTransportErrorAndStreamingHostingTests"`
+- `dotnet test tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-build --filter "FullyQualifiedName~GrpcTransportErrorAndStreamingHostingTests|FullyQualifiedName~MapCephalonAppliesConfiguredRateLimitingOnlyToPublicHttpEndpoints|FullyQualifiedName~MapCephalonExposesBehaviorResiliencePoliciesAcrossEndpointAndSnapshot|FullyQualifiedName~BehaviorResilienceRestHostingTests|FullyQualifiedName~BehaviorHttpTransportResilienceHostingTests"`
+
 ### ENG-552 SRE flake-rate Actions readiness evidence
 
 Status: done
@@ -17725,6 +17753,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-636 Add gRPC direct-module resilience fault envelopes: `Cephalon.AspNetCore.Grpc` now translates direct module timeout and optional Polly open-circuit faults into gRPC-native `DeadlineExceeded` / `Unavailable` outcomes with stable Cephalon trailers while leaving unmapped handler failures on ASP.NET Core gRPC's normal path. Quality dimensions: Reliability + Availability + Usability + Compatibility + Maintainability (shipped)
 - ENG-637 Add gRPC direct-module resilience runtime enforcement: `Cephalon.AspNetCore.Grpc` now enforces configured direct-module timeout and circuit-breaker policy from `Engine:Resilience`, reports `grpc-direct-module-resilience` through `/engine/technology-surfaces`, and keeps `wolverineRequired=false` / `consumerCodeRequired=false` explicit for low-code adoption. Quality dimensions: Reliability + Availability + Usability + Compatibility + Maintainability + Performance (shipped)
 - ENG-638 Add gRPC direct-module bulkhead runtime enforcement: `Cephalon.AspNetCore.Grpc` now enforces configured direct-module bulkhead concurrency from `Engine:Resilience`, rejects full bulkheads as gRPC-native `ResourceExhausted` with stable Cephalon trailers, reports active/queued/accepted/rejected/max-observed metadata through `grpc-direct-module-resilience`, and keeps `wolverineRequired=false` / `consumerCodeRequired=false` explicit for low-code adoption. Quality dimensions: Reliability + Availability + Usability + Compatibility + Maintainability + Performance + Auditability (shipped)
+- ENG-640 Add gRPC direct-module resilience outcome counters: `Cephalon.AspNetCore.Grpc` now publishes cumulative `timeoutOccurredCount`, `circuitOpenedCount`, and `circuitRejectedWhileOpenCount` plus last-occurrence timestamps on `grpc-direct-module-resilience`, so the timeout and circuit lanes mirror the bulkhead lane's operator observability posture without scraping handler exception logs. Quality dimensions: Reliability + Auditability + Usability + Maintainability + Compatibility (shipped)
 - ENG-414 Log tenth scheduled-task pass in project-memory.md (shipped)
 - ENG-415 Close Evidence-in-code drift for the new 3 M1 emission-site files (Agentics + Retrieval + Worker) (shipped)
 - ENG-416 Close conformance-matrix MultiTenancy.Governance route-projection drift (shipped)

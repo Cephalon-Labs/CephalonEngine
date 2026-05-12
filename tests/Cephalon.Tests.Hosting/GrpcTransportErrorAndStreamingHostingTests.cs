@@ -115,6 +115,7 @@ public sealed class GrpcTransportErrorAndStreamingHostingTests
     public async Task SayHello_EnforcesConfiguredGrpcDirectModuleTimeout()
     {
         await using var host = await BuildGrpcHostAsync(enableDirectGrpcTimeout: true);
+        var httpClient = host.GetTestClient();
         var client = CreateGrpcClient(host);
 
         var exception = await Assert.ThrowsAsync<RpcException>(async () =>
@@ -127,6 +128,10 @@ public sealed class GrpcTransportErrorAndStreamingHostingTests
         Assert.Contains(exception.Trailers, entry =>
             string.Equals(entry.Key, "cephalon-code", StringComparison.Ordinal) &&
             string.Equals(entry.Value, "grpc_execution_timeout", StringComparison.Ordinal));
+
+        var entry = await WaitForGrpcResilienceEntryAsync(httpClient, static candidate =>
+            string.Equals(candidate.Metadata.GetValueOrDefault("timeoutOccurredCount"), "1", StringComparison.Ordinal));
+        Assert.True(entry.Metadata.ContainsKey("timeoutLastOccurredAtUtc"));
     }
 
     [Fact]
@@ -157,6 +162,9 @@ public sealed class GrpcTransportErrorAndStreamingHostingTests
         Assert.Equal("1", entry.Metadata["circuitSampleCount"]);
         Assert.Equal("1", entry.Metadata["circuitFailedSampleCount"]);
         Assert.NotEqual("0", entry.Metadata["circuitRetryAfterSeconds"]);
+        Assert.Equal("1", entry.Metadata["circuitOpenedCount"]);
+        Assert.Equal("1", entry.Metadata["circuitRejectedWhileOpenCount"]);
+        Assert.True(entry.Metadata.ContainsKey("circuitLastRejectedWhileOpenAtUtc"));
     }
 
     [Fact]
@@ -262,6 +270,9 @@ public sealed class GrpcTransportErrorAndStreamingHostingTests
         Assert.Equal("True", entry.Metadata["bulkheadEnabled"]);
         Assert.Equal("1", entry.Metadata["bulkheadMaxConcurrentExecutions"]);
         Assert.Equal("ResourceExhausted", entry.Metadata["bulkheadRejectedStatusCode"]);
+        Assert.Equal("0", entry.Metadata["circuitOpenedCount"]);
+        Assert.Equal("0", entry.Metadata["circuitRejectedWhileOpenCount"]);
+        Assert.Equal("0", entry.Metadata["timeoutOccurredCount"]);
     }
 
     [Fact]

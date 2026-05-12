@@ -9,6 +9,9 @@ internal sealed class CephalonGrpcDirectModuleCircuitBreakerState
     private readonly object gate = new();
     private DateTimeOffset? openedUntilUtc;
     private bool halfOpenProbeInProgress;
+    private long openedCount;
+    private long rejectedWhileOpenCount;
+    private DateTimeOffset? lastRejectedWhileOpenAtUtc;
 
     public CephalonGrpcDirectModuleCircuitBreakerState(CephalonGrpcDirectModuleResilienceOptions options)
     {
@@ -85,6 +88,7 @@ internal sealed class CephalonGrpcDirectModuleCircuitBreakerState
             if (openedUntilUtc is not null && openedUntilUtc > now)
             {
                 retryAfterSeconds = ResolveRetryAfterSeconds(now);
+                RecordRejectedWhileOpen(now);
                 return false;
             }
 
@@ -93,6 +97,7 @@ internal sealed class CephalonGrpcDirectModuleCircuitBreakerState
                 if (halfOpenProbeInProgress)
                 {
                     retryAfterSeconds = Math.Max(1, (int)Math.Ceiling(options.CircuitBreakerBreakDuration.TotalSeconds));
+                    RecordRejectedWhileOpen(now);
                     return false;
                 }
 
@@ -170,7 +175,9 @@ internal sealed class CephalonGrpcDirectModuleCircuitBreakerState
                 ["circuitState"] = ResolveStateKey(now),
                 ["circuitSampleCount"] = samples.Count.ToString(CultureInfo.InvariantCulture),
                 ["circuitFailedSampleCount"] = samples.Count(static sample => !sample.Succeeded).ToString(CultureInfo.InvariantCulture),
-                ["circuitRetryAfterSeconds"] = ResolveRetryAfterSeconds(now).ToString(CultureInfo.InvariantCulture)
+                ["circuitRetryAfterSeconds"] = ResolveRetryAfterSeconds(now).ToString(CultureInfo.InvariantCulture),
+                ["circuitOpenedCount"] = openedCount.ToString(CultureInfo.InvariantCulture),
+                ["circuitRejectedWhileOpenCount"] = rejectedWhileOpenCount.ToString(CultureInfo.InvariantCulture)
             };
 
             if (LastOpenedAtUtc is not null)
@@ -186,6 +193,11 @@ internal sealed class CephalonGrpcDirectModuleCircuitBreakerState
             if (!string.IsNullOrWhiteSpace(LastFailureExceptionType))
             {
                 metadata["circuitLastFailureExceptionType"] = LastFailureExceptionType;
+            }
+
+            if (lastRejectedWhileOpenAtUtc is not null)
+            {
+                metadata["circuitLastRejectedWhileOpenAtUtc"] = lastRejectedWhileOpenAtUtc.Value.ToString("O", CultureInfo.InvariantCulture);
             }
 
             return metadata;
@@ -206,6 +218,13 @@ internal sealed class CephalonGrpcDirectModuleCircuitBreakerState
         LastFailureExceptionType = exception.GetType().FullName;
         openedUntilUtc = observedAtUtc + options.CircuitBreakerBreakDuration;
         halfOpenProbeInProgress = false;
+        openedCount++;
+    }
+
+    private void RecordRejectedWhileOpen(DateTimeOffset observedAtUtc)
+    {
+        rejectedWhileOpenCount++;
+        lastRejectedWhileOpenAtUtc = observedAtUtc;
     }
 
     private void Close()

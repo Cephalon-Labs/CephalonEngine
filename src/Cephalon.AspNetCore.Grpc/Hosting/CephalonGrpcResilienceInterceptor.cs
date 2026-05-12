@@ -6,7 +6,8 @@ namespace Cephalon.AspNetCore.Grpc.Hosting;
 internal sealed class CephalonGrpcResilienceInterceptor(
     CephalonGrpcDirectModuleResilienceOptions options,
     CephalonGrpcDirectModuleCircuitBreakerState circuitBreakerState,
-    CephalonGrpcDirectModuleBulkheadState bulkheadState) : Interceptor
+    CephalonGrpcDirectModuleBulkheadState bulkheadState,
+    CephalonGrpcDirectModuleTimeoutState timeoutState) : Interceptor
 {
     private const string BrokenCircuitExceptionTypeName = "Polly.CircuitBreaker.BrokenCircuitException";
     private const string TimeoutRejectedExceptionTypeName = "Polly.Timeout.TimeoutRejectedException";
@@ -108,11 +109,13 @@ internal sealed class CephalonGrpcResilienceInterceptor(
         catch (Exception exception) when (IsPollyTimeoutRejectedException(exception))
         {
             circuitBreakerState.RecordFailure(exception);
+            timeoutState.RecordTimeout();
             throw CreateTimeoutException();
         }
         catch (TimeoutException exception)
         {
             circuitBreakerState.RecordFailure(exception);
+            timeoutState.RecordTimeout();
             throw CreateTimeoutException();
         }
         catch (Exception exception) when (IsPollyBrokenCircuitException(exception))
@@ -170,11 +173,13 @@ internal sealed class CephalonGrpcResilienceInterceptor(
         catch (Exception exception) when (IsPollyTimeoutRejectedException(exception))
         {
             circuitBreakerState.RecordFailure(exception);
+            timeoutState.RecordTimeout();
             throw CreateTimeoutException();
         }
         catch (TimeoutException exception)
         {
             circuitBreakerState.RecordFailure(exception);
+            timeoutState.RecordTimeout();
             throw CreateTimeoutException();
         }
         catch (Exception exception) when (IsPollyBrokenCircuitException(exception))

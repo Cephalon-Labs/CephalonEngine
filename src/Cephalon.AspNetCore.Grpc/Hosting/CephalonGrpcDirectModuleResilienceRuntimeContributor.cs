@@ -6,7 +6,8 @@ namespace Cephalon.AspNetCore.Grpc.Hosting;
 internal sealed class CephalonGrpcDirectModuleResilienceRuntimeContributor(
     CephalonGrpcDirectModuleResilienceOptions options,
     CephalonGrpcDirectModuleCircuitBreakerState circuitBreakerState,
-    CephalonGrpcDirectModuleBulkheadState bulkheadState) : ITechnologyRuntimeContributor
+    CephalonGrpcDirectModuleBulkheadState bulkheadState,
+    CephalonGrpcDirectModuleTimeoutState timeoutState) : ITechnologyRuntimeContributor
 {
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
@@ -49,6 +50,11 @@ internal sealed class CephalonGrpcDirectModuleResilienceRuntimeContributor(
         }
 
         foreach (var entry in bulkheadState.CreateMetadata())
+        {
+            metadata[entry.Key] = entry.Value;
+        }
+
+        foreach (var entry in timeoutState.CreateMetadata())
         {
             metadata[entry.Key] = entry.Value;
         }
