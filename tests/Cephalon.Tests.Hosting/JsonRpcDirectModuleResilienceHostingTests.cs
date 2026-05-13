@@ -38,6 +38,10 @@ public sealed class JsonRpcDirectModuleResilienceHostingTests
             "jsonrpc_execution_timeout",
             503,
             "timeout");
+
+        var entry = await ReadResilienceEntryAsync(client);
+        Assert.Equal("1", entry.Metadata["timeoutOccurredCount"]);
+        Assert.True(entry.Metadata.ContainsKey("timeoutLastOccurredAtUtc"));
     }
 
     [Fact]
@@ -63,6 +67,11 @@ public sealed class JsonRpcDirectModuleResilienceHostingTests
             503,
             "circuit breaker",
             expectRetryAfter: true);
+
+        var entry = await ReadResilienceEntryAsync(client);
+        Assert.Equal("1", entry.Metadata["circuitOpenedCount"]);
+        Assert.Equal("1", entry.Metadata["circuitRejectedWhileOpenCount"]);
+        Assert.True(entry.Metadata.ContainsKey("circuitLastRejectedWhileOpenAtUtc"));
     }
 
     [Fact]
@@ -125,6 +134,17 @@ public sealed class JsonRpcDirectModuleResilienceHostingTests
         Assert.Equal("1", entry.Metadata["bulkheadMaxConcurrentExecutions"]);
         Assert.Equal("429", entry.Metadata["bulkheadRejectedStatusCode"]);
         Assert.Equal("-32029", entry.Metadata["bulkheadRejectedJsonRpcErrorCode"]);
+        Assert.Equal("0", entry.Metadata["circuitOpenedCount"]);
+        Assert.Equal("0", entry.Metadata["circuitRejectedWhileOpenCount"]);
+        Assert.Equal("0", entry.Metadata["timeoutOccurredCount"]);
+    }
+
+    private static async Task<TechnologyRuntimeEntry> ReadResilienceEntryAsync(HttpClient client)
+    {
+        var surfaces = await client.GetFromJsonAsync<TechnologyRuntimeSurface[]>("/engine/technology-surfaces/json-rpc");
+        var surface = Assert.Single(surfaces ?? []);
+        Assert.Equal("json-rpc-direct-module-resilience", surface.SurfaceId);
+        return Assert.Single(surface.Entries);
     }
 
     private static async Task<WebApplication> BuildHostAsync(

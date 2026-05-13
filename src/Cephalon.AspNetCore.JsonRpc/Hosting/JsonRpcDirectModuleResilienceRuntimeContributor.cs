@@ -6,7 +6,8 @@ namespace Cephalon.AspNetCore.JsonRpc.Hosting;
 internal sealed class JsonRpcDirectModuleResilienceRuntimeContributor(
     JsonRpcDirectModuleResilienceOptions options,
     JsonRpcDirectModuleCircuitBreakerState circuitBreakerState,
-    JsonRpcDirectModuleBulkheadState bulkheadState) : ITechnologyRuntimeContributor
+    JsonRpcDirectModuleBulkheadState bulkheadState,
+    JsonRpcDirectModuleTimeoutState timeoutState) : ITechnologyRuntimeContributor
 {
     public TechnologyRuntimeSurface DescribeRuntimeSurface()
     {
@@ -55,6 +56,11 @@ internal sealed class JsonRpcDirectModuleResilienceRuntimeContributor(
         }
 
         foreach (var entry in bulkheadState.CreateMetadata())
+        {
+            metadata[entry.Key] = entry.Value;
+        }
+
+        foreach (var entry in timeoutState.CreateMetadata())
         {
             metadata[entry.Key] = entry.Value;
         }

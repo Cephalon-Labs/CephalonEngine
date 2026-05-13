@@ -11,12 +11,17 @@
 - JSON-RPC route mapping under the host transport surface
 - direct JSON-RPC module resilience enforcement for configured `Engine:Resilience` timeout, circuit-breaker, and bulkhead policies
 - JSON-RPC-native resilience error envelopes for direct module endpoints without Wolverine or consumer endpoint filter code
+- cumulative direct-module timeout, circuit-open transition, and circuit-open rejection outcome counters
 
 ## Main surfaces
 
 - `Hosting/JsonRpcTransportServiceCollectionExtensions.cs`
 - `Hosting/JsonRpcDirectModuleResilienceFilter.cs`
 - `Hosting/JsonRpcDirectModuleResilienceRuntimeContributor.cs`
+- `Hosting/JsonRpcDirectModuleResilienceOptions.cs`
+- `Hosting/JsonRpcDirectModuleCircuitBreakerState.cs`
+- `Hosting/JsonRpcDirectModuleBulkheadState.cs`
+- `Hosting/JsonRpcDirectModuleTimeoutState.cs`
 - `Modules/IJsonRpcModule.cs`
 - `Routing/JsonRpcTransportRouteMapper.cs`
 
@@ -35,6 +40,8 @@ When `Engine:Resilience` enables `Timeout`, `CircuitBreaker`, or `Bulkhead`, the
 Direct module timeout and open-circuit outcomes return HTTP `503` with JSON-RPC error code `-32053`; full bulkheads return HTTP `429` with JSON-RPC error code `-32029`. All three envelopes keep the standard `jsonRpc` / `result` / `error` shape, include `error.data.cephalonCode`, `error.data.fault = resilience`, and `error.data.statusCode`, and preserve the request `id` when the request body can be parsed. Open-circuit responses also include `retryAfterSeconds` in `error.data` plus a `Retry-After` header.
 
 The adapter publishes its live posture through `/engine/technology-surfaces/json-rpc` as `json-rpc-direct-module-resilience`, including policy source, execution mode, timeout/circuit/bulkhead settings, live circuit state, retry-after posture, bulkhead active/queued/accepted/rejected counters, and `wolverineRequired=false` / `consumerCodeRequired=false`.
+
+The same `json-rpc-direct-module-resilience` surface also publishes cumulative outcome counters across all three resilience lanes: `timeoutOccurredCount` plus `timeoutLastOccurredAtUtc` cover host-enforced direct-module timeouts, `circuitOpenedCount` counts how many times the breaker transitioned to the open state, and `circuitRejectedWhileOpenCount` plus `circuitLastRejectedWhileOpenAtUtc` cover calls rejected while the breaker was open or half-open-probing. Together with the existing bulkhead `bulkheadAcceptedCount` / `bulkheadRejectedCount` / `bulkheadLastRejectedAtUtc` posture, operators can answer "is direct JSON-RPC resilience actually rejecting traffic?" from `/engine/technology-surfaces` without scraping handler exception logs.
 
 ## Related docs
 
