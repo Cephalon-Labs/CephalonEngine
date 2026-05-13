@@ -299,6 +299,7 @@ Cephalon is still in an active POC phase, so changing direction is allowed. Leav
 Cephalon already has planning automation:
 
 - `scripts/sync-planning-github.ps1`
+- `scripts/validate-planning-github-issues.ps1`
 - `.github/workflows/planning-sync.yml`
 
 That automation helps keep issues, milestones, and project metadata aligned.
@@ -310,6 +311,8 @@ It does not replace human responsibility for:
 - updating feature docs
 - adding commit-reference comments
 - recording validation and implementation notes
+
+Before closing a planning wave or after manual issue/project edits, run `scripts/validate-planning-github-issues.ps1` when live GitHub access is available. The guard reads open GitHub issues through `gh`, compares `ENG-*` ids against `docs/engine-backlog.md`, and fails on duplicate open issues or open duplicate issues for backlog rows that are already `done` / `shipped` at another issue number. It is intentionally a manual planning-drift guard rather than a release gate, so it can also run against an offline `-IssueListJsonPath` fixture in Pester coverage.
 
 ## Quick checklist
 

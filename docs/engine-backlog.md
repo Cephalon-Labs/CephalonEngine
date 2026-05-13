@@ -67,6 +67,36 @@ Current focus:
 - treat the `ENG-500` regression closeout as the current suite-stability baseline: provider-native CDC hosting tests now run through a dedicated non-parallel collection, long-running package-publishing process output drains stdout/stderr concurrently, sample REST behavior hosts align with source-generated `/api/v1` behavior endpoints, and the full solution test lane is again green on the current worktree
 - treat the CDC execution-runtime catalog hot path as benchmark-governed: `CdcExecutionRuntimeCatalogBenchmarks` now covers Debezium-managed external runtimes, external observations, repeated managed-connector drift/dry-run/command-issuance filters, and compact multi-selector operator flows against the shared versioned snapshot
 - treat the event-dispatch remediation command-result filtered read path as benchmark-governed: `EventDispatchRemediationCatalogBenchmarks` now covers native Wolverine-free filtered summary, retention, latest, oldest, and compact dashboard selectors, and `scripts/validate-release.ps1` includes that benchmark class in the default guardrail lane
+- treat open GitHub issue drift as a planning-quality risk: `scripts/validate-planning-github-issues.ps1` now checks open `ENG-*` issues against backlog truth, detects duplicate open issue numbers for the same ENG id, and detects stale open duplicates for backlog rows that are already `done` or `shipped` at another issue number
+
+### ENG-677 Planning GitHub duplicate issue guard
+
+Status: done
+Estimate: 0.5
+Iteration: Sprint 125
+Area: planning-governance / GitHub Project / automation
+Quality dimensions: Auditability, Maintainability, Reliability, Usability
+GitHub issue: #1345
+
+Why:
+
+- live GitHub issue `#1307` still tracked `ENG-647` even though the shipped backlog row points at completed issue `#1308`
+- the existing planning sync path keeps docs and project fields aligned, but it did not provide a fast manual guard for duplicate open ENG issues after targeted closeout edits
+- planning drift in open issues can make a finished engine slice look unfinished even when source/docs/scorecard truth is correct
+
+Delivered:
+
+- added `scripts/validate-planning-github-issues.ps1`, which reads open GitHub issues through `gh` or an offline JSON fixture
+- the guard parses `ENG-*` ids from issue titles and `track:eng-*` labels, compares them with `docs/engine-backlog.md`, and fails on duplicate open issues or stale open duplicates for rows already `done` / `shipped` at another issue number
+- added script-level Pester coverage for stale done-row duplicates, duplicate active open issues, and same-issue closeout warnings
+- updated planning governance and script-test docs so the guard is a documented manual drift check before planning closeout
+- closed the stale duplicate `ENG-647` issue `#1307` as a duplicate of completed issue `#1308`
+
+Validation:
+
+- `pwsh -NoLogo -NoProfile -Command "Invoke-Pester -Path tests\Cephalon.Tests.Scripts\validate-planning-github-issues.Tests.ps1 -Output Detailed"`
+- `pwsh -NoLogo -NoProfile -File .\scripts\validate-planning-github-issues.ps1`
+- `git diff --check`
 
 ### ENG-676 architecture-review scorecard checkpoint refresh
 
