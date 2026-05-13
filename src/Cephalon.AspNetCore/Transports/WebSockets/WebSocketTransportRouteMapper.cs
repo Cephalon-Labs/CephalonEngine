@@ -1,4 +1,5 @@
 using Cephalon.AspNetCore.Hosting;
+using Cephalon.AspNetCore.Transports.Streaming;
 using Cephalon.Engine.Runtime;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -23,7 +24,11 @@ internal sealed class WebSocketTransportRouteMapper : ITransportRouteMapper
         app.UseWebSockets();
 
         var webSocketGroup = app.MapGroup(options.WsPrefix)
-            .ApplyCephalonRateLimiting(app.Services, TransportId);
+            .ApplyCephalonRateLimiting(app.Services, TransportId)
+            .ApplyCephalonDirectStreamingModuleResilience(
+                app.Services,
+                TransportId,
+                DirectStreamingModuleTransportKind.WebSocket);
         webSocketGroup.ExcludeFromDescription();
         foreach (var module in runtime.Modules.OfType<IWebSocketModule>())
         {

@@ -1,6 +1,6 @@
 # Cephalon Engine Backlog
 
-Backlog status in this document reflects the repository state as of `May 12, 2026`.
+Backlog status in this document reflects the repository state as of `May 13, 2026`.
 
 ## Current planning reset (April 2026)
 
@@ -413,6 +413,33 @@ Validation:
 - `dotnet build src\Cephalon.AspNetCore.JsonRpc\Cephalon.AspNetCore.JsonRpc.csproj --no-restore -m:1`
 - `dotnet build tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-restore -m:1`
 - `dotnet test tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-build --filter "FullyQualifiedName~JsonRpcDirectModuleResilienceHostingTests|FullyQualifiedName~JsonRpcErrorResponseHostingTests" --logger "console;verbosity=minimal"`
+
+### ENG-641 direct SSE and WebSocket module resilience runtime enforcement
+
+Status: done
+Estimate: 0.5
+Iteration: Sprint 125
+Area: phase-11 / resilience / ASP.NET Core streaming
+Quality dimensions: Reliability, Availability, Usability, Compatibility, Maintainability, Performance, Auditability
+
+Why:
+
+- `ENG-640` completed JSON-RPC direct-module runtime ownership, but direct `IServerSentEventsModule` and `IWebSocketModule` endpoints still needed the same Wolverine-free, config-driven adapter posture
+- streaming callers need protocol-native resilience envelopes instead of REST `ResultModel`, ProblemDetails, generic disconnects, or consumer-owned endpoint filters
+- operators need runtime truth for direct SSE/WebSocket policy, circuit state, and bulkhead counters from `Engine:Resilience`
+
+Delivered:
+
+- `Cephalon.AspNetCore` now resolves direct streaming timeout, circuit-breaker, and bulkhead settings from `RuntimeManifest.AppProfile.Resilience`
+- SSE and WebSocket route mappers apply a shared streaming endpoint filter before modules map direct endpoints
+- timeout/open-circuit/bulkhead outcomes now become SSE `event: error` payloads or WebSocket text error frames with stable `code`, `fault=resilience`, `statusCode`, and retry-after metadata for open circuits
+- `/engine/technology-surfaces/server-sent-events` and `/engine/technology-surfaces/websocket` report `sse-direct-module-resilience` and `websocket-direct-module-resilience` with policy source, execution mode, protocol envelope, timeout/circuit/bulkhead settings, live breaker state, bulkhead active/queued/accepted/rejected counters, and `wolverineRequired=false` / `consumerCodeRequired=false`
+
+Validation:
+
+- `dotnet build src\Cephalon.AspNetCore\Cephalon.AspNetCore.csproj --no-restore -m:1`
+- `dotnet build tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-restore -m:1`
+- `dotnet test tests\Cephalon.Tests.Hosting\Cephalon.Tests.Hosting.csproj --no-build --filter "FullyQualifiedName~DirectStreamingModuleResilienceHostingTests" --logger "console;verbosity=minimal"`
 
 ### ENG-552 SRE flake-rate Actions readiness evidence
 
@@ -17753,6 +17780,8 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-636 Add gRPC direct-module resilience fault envelopes: `Cephalon.AspNetCore.Grpc` now translates direct module timeout and optional Polly open-circuit faults into gRPC-native `DeadlineExceeded` / `Unavailable` outcomes with stable Cephalon trailers while leaving unmapped handler failures on ASP.NET Core gRPC's normal path. Quality dimensions: Reliability + Availability + Usability + Compatibility + Maintainability (shipped)
 - ENG-637 Add gRPC direct-module resilience runtime enforcement: `Cephalon.AspNetCore.Grpc` now enforces configured direct-module timeout and circuit-breaker policy from `Engine:Resilience`, reports `grpc-direct-module-resilience` through `/engine/technology-surfaces`, and keeps `wolverineRequired=false` / `consumerCodeRequired=false` explicit for low-code adoption. Quality dimensions: Reliability + Availability + Usability + Compatibility + Maintainability + Performance (shipped)
 - ENG-638 Add gRPC direct-module bulkhead runtime enforcement: `Cephalon.AspNetCore.Grpc` now enforces configured direct-module bulkhead concurrency from `Engine:Resilience`, rejects full bulkheads as gRPC-native `ResourceExhausted` with stable Cephalon trailers, reports active/queued/accepted/rejected/max-observed metadata through `grpc-direct-module-resilience`, and keeps `wolverineRequired=false` / `consumerCodeRequired=false` explicit for low-code adoption. Quality dimensions: Reliability + Availability + Usability + Compatibility + Maintainability + Performance + Auditability (shipped)
+- ENG-640 Add JSON-RPC direct-module resilience runtime enforcement: `Cephalon.AspNetCore.JsonRpc` now enforces configured direct-module timeout, circuit-breaker, and bulkhead policy from `Engine:Resilience`, reports `json-rpc-direct-module-resilience` through `/engine/technology-surfaces/json-rpc`, and keeps JSON-RPC-native `503` / `429` envelopes without Wolverine or consumer endpoint filter code. Quality dimensions: Reliability + Availability + Usability + Compatibility + Maintainability + Performance + Auditability (shipped)
+- ENG-641 Add direct SSE/WebSocket module resilience runtime enforcement: `Cephalon.AspNetCore` now enforces configured direct-module timeout, circuit-breaker, and bulkhead policy from `Engine:Resilience` for `IServerSentEventsModule` and `IWebSocketModule`, reports `sse-direct-module-resilience` plus `websocket-direct-module-resilience`, and keeps streaming-native error payloads without Wolverine or consumer endpoint filter code. Quality dimensions: Reliability + Availability + Usability + Compatibility + Maintainability + Performance + Auditability (shipped)
 - ENG-414 Log tenth scheduled-task pass in project-memory.md (shipped)
 - ENG-415 Close Evidence-in-code drift for the new 3 M1 emission-site files (Agentics + Retrieval + Worker) (shipped)
 - ENG-416 Close conformance-matrix MultiTenancy.Governance route-projection drift (shipped)
@@ -18372,6 +18401,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-100 generic behavior HTTP transport-native timeout and circuit-breaker envelopes: `Cephalon.Behaviors.Http` now shares one resilience-fault mapper across REST, GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket bindings so behavior-execution timeout and open-circuit rejections keep protocol-native error shapes with stable Cephalon codes plus `503` metadata and optional retry-after timing instead of collapsing into generic transport failures, while the hosting coverage now proves each binding preserves that transport truth under behavior-owned timeout and circuit-breaker policy — **Shipped** · targeted hosting tests 25/25 + composition tests 28/28 + package-surface tests 153/153
 - ENG-639 generic behavior HTTP bulkhead envelopes: `Cephalon.Behaviors.Http` now proves behavior-execution bulkhead saturation across GraphQL HTTP, JSON-RPC, GraphQL-SSE, GraphQL-WS, SSE, and WebSocket, preserving protocol-native `429` envelopes with `behavior_execution_rejected` instead of generic transport failures or REST `ResultModel` payloads — **Shipped** · targeted hosting tests 24/24
 - ENG-640 JSON-RPC direct-module resilience runtime enforcement: `Cephalon.AspNetCore.JsonRpc` now applies configured direct-module timeout, circuit-breaker, and bulkhead policy from `Engine:Resilience` to direct `IJsonRpcModule` endpoints, preserving JSON-RPC-native `-32053` / `-32029` envelopes plus live `json-rpc-direct-module-resilience` metadata without Wolverine or consumer endpoint filter code — **Shipped** · targeted hosting tests 10/10
+- ENG-641 direct SSE and WebSocket module resilience runtime enforcement: `Cephalon.AspNetCore` now applies configured direct-module timeout, circuit-breaker, and bulkhead policy from `Engine:Resilience` to direct `IServerSentEventsModule` and `IWebSocketModule` endpoints, preserving SSE `event: error` payloads, WebSocket text error frames, and live `sse-direct-module-resilience` / `websocket-direct-module-resilience` metadata without Wolverine or consumer endpoint filter code — **Shipped** · targeted hosting tests 7/7
 - ENG-101 phase 12 strangler-fig migration policy and progress baseline: `Cephalon.Abstractions` now exposes `IStranglerFigMigrationRuntimeCatalog` plus `StranglerFigMigrationRuntimeDescriptor`, `Cephalon.Engine` now binds deterministic `Engine:Migration:StranglerFig` default plus per-route overlays into `snapshot.StranglerFigRoutePolicies`, and `Cephalon.AspNetCore` now exposes `/engine/strangler-fig/runtime` plus `/engine/strangler-fig/runtime/{routeId}` while host-level cutover remains later — **Shipped** · composition tests 4/4 + hosting tests 1/1 + package-surface tests 153/153
 - ENG-102 phase 12 ASP.NET Core strangler-fig cutover runtime: `Cephalon.AspNetCore` now derives host cutover execution from `IStranglerFigMigrationRuntimeCatalog`, exposes `/engine/strangler-fig/cutover` plus `/engine/strangler-fig/cutover/resolve`, rewrites rooted local targets in-process, redirects or proxies absolute HTTP or HTTPS targets through `Engine:Migration:StranglerFig:AspNetCore`, and rejects unsupported selected endpoints truthfully with `502` while broader provider-specific ingress or edge automation remains later — **Shipped** · hosting tests 5/5 + composition tests 4/4 + package-surface tests 153/153
 - ENG-131 phase 13 CDC execution ownership binding baseline: `Cephalon.Abstractions` now exposes `CdcCaptureExecutionBindingDescriptor`, `CdcCaptureDescriptor` plus `CdcCaptureRuntimeState` now carry `ExecutionBinding`, `Cephalon.Data` now resolves authored/requested/effective ownership deterministically while rejecting ambiguous competing runtime claims and scoping the shared pump to captures effectively owned by `data-cdc-capture-pump`, and `Cephalon.AspNetCore` now exposes `/engine/cdc-captures/execution-runtimes/{executionRuntimeId}` plus `/engine/cdc-captures/runtime/execution-runtimes/{executionRuntimeId}` so capture-first and runtime-first CDC ownership views stay on the same truth — **Shipped** · GitHub issue `#556` · composition tests 12/12 + hosting tests 1/1 + tooling tests 171/171 + reference docs publish script

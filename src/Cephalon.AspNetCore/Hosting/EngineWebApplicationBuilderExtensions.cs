@@ -3,10 +3,12 @@ using Cephalon.AspNetCore.Documentation;
 using Cephalon.AspNetCore.Transports.Rest;
 using Cephalon.AspNetCore.Health;
 using Cephalon.AspNetCore.Transports.ServerSentEvents;
+using Cephalon.AspNetCore.Transports.Streaming;
 using Cephalon.AspNetCore.Transports.WebSockets;
 using Cephalon.AspNetCore.Transformers;
 using Cephalon.Abstractions.Behaviors;
 using Cephalon.Abstractions.Resilience;
+using Cephalon.Abstractions.Technologies;
 using Cephalon.Abstractions.Transports;
 using Cephalon.Engine.Composition;
 using Cephalon.Engine.Configuration;
@@ -113,6 +115,12 @@ public static class EngineWebApplicationBuilderExtensions
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportRouteMapper, RestTransportRouteMapper>());
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportRouteMapper, ServerSentEventsTransportRouteMapper>());
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITransportRouteMapper, WebSocketTransportRouteMapper>());
+        builder.Services.TryAddSingleton(serviceProvider =>
+            DirectStreamingModuleResilienceOptions.FromManifest(
+                serviceProvider.GetService<RuntimeManifest>()));
+        builder.Services.TryAddSingleton<DirectStreamingModuleResilienceStateRegistry>();
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, ServerSentEventsDirectModuleResilienceRuntimeContributor>());
+        builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ITechnologyRuntimeContributor, WebSocketDirectModuleResilienceRuntimeContributor>());
         builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, EngineHostedService>());
         builder.Services.TryAddSingleton(new AspNetCoreHostEnvironmentSnapshot(builder.Environment.EnvironmentName));
         var restApiGovernanceOptions = RestApiGovernanceOptions.FromConfiguration(builder.Configuration);

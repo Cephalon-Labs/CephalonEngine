@@ -1,4 +1,5 @@
 using Cephalon.AspNetCore.Hosting;
+using Cephalon.AspNetCore.Transports.Streaming;
 using Cephalon.Engine.Runtime;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -21,7 +22,11 @@ internal sealed class ServerSentEventsTransportRouteMapper : ITransportRouteMapp
     public void MapRoutes(WebApplication app, IRuntime runtime)
     {
         var eventsGroup = app.MapGroup(options.SsePrefix)
-            .ApplyCephalonRateLimiting(app.Services, TransportId);
+            .ApplyCephalonRateLimiting(app.Services, TransportId)
+            .ApplyCephalonDirectStreamingModuleResilience(
+                app.Services,
+                TransportId,
+                DirectStreamingModuleTransportKind.ServerSentEvents);
         eventsGroup.ExcludeFromDescription();
         foreach (var module in runtime.Modules.OfType<IServerSentEventsModule>())
         {
