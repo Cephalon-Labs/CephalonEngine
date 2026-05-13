@@ -107,6 +107,7 @@ BeforeAll {
                     CurrentBlockerClass = "dispatch-identity-actions-disabled"
                     RequiredCommand = "pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated"
                     OutputPath = "artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json"
+                    HandoffOutputPath = "artifacts/signed-release-dry-run/signed-release-dry-run-handoff.md"
                 }
                 BlockedCount = 0
                 Status = "workflow-ready-external-policy-pending"
@@ -304,7 +305,7 @@ Describe "validate-release.ps1 scorecard readback" {
         $output | Should -Match "SRE posture: 11 SLIs; target-declared 11; pending stable baselines 1; stable baselines 10; stable baseline rows 10; stable baseline measurements 12; pending baseline rows 1; blockers 1; pending evidence 1; guardrail-mapped 6; pending guardrail coverage 0; guardrail not-applicable 5; summary mode release-validation-console-and-scorecard-artifact; stable baseline manifest scripts/sre-stable-baselines\.json\."
         $output | Should -Match "Test coverage evidence: 8 layered projects; gap criteria 4; recommendations 11; shipped 10; gated 1; active gaps 0; open quarantine entries 0; queue status empty\."
         $output | Should -Match "Supply-chain release evidence: 12 items; workflow-ready 9; external policy pending 3; external policy preflight checks 3; preflight status required-before-real-tag-push; blocked 0; status workflow-ready-external-policy-pending\."
-        $output | Should -Match "Signed-release dry-run evidence: status blocked; proof partial; blocker dispatch-identity-actions-disabled; required command pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated; output artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json\."
+        $output | Should -Match "Signed-release dry-run evidence: status blocked; proof partial; blocker dispatch-identity-actions-disabled; required command pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated; output artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json; handoff artifacts/signed-release-dry-run/signed-release-dry-run-handoff.md\."
         $output | Should -Match "Engine completion scorecard hard-blocker gate: no blocked platform gates, no supply-chain blocked items, no public API removals, no active test-coverage gaps or open quarantine entries, and eventing operational-superiority promotion is runtime-concordant without Wolverine\."
     }
 

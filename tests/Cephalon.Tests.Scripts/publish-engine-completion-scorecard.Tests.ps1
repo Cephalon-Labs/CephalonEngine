@@ -697,7 +697,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $aspNetCoreColdStartBaseline.Measurements.GuardrailMaxAllocatedBytes | Should -Be 30000000
         $requestAllocationBaseline.Measurements.AllocatedBytes | Should -Contain 27914.24
 
-        $json.SupplyChainEvidence.ManifestSchemaVersion | Should -Be "1.5.0"
+        $json.SupplyChainEvidence.ManifestSchemaVersion | Should -Be "1.6.0"
         $json.SupplyChainEvidence.Status | Should -Be "workflow-ready-external-policy-pending"
         $json.SupplyChainEvidence.ReleaseWorkflow | Should -Be ".github/workflows/publish-release.yml"
         $json.SupplyChainEvidence.SourceDocuments | Should -Contain "docs/package-publishing.md"
@@ -730,6 +730,7 @@ Describe "publish-engine-completion-scorecard.ps1" {
         $json.SupplyChainEvidence.SignedReleaseDryRun.ReadinessPolicy | Should -Be "workflow-dispatch-run-required-before-signed-release-proof"
         $json.SupplyChainEvidence.SignedReleaseDryRun.ValidationScript | Should -Be "scripts/invoke-signed-release-dry-run.ps1"
         $json.SupplyChainEvidence.SignedReleaseDryRun.OutputPath | Should -Be "artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json"
+        $json.SupplyChainEvidence.SignedReleaseDryRun.HandoffOutputPath | Should -Be "artifacts/signed-release-dry-run/signed-release-dry-run-handoff.md"
         $json.SupplyChainEvidence.SignedReleaseDryRun.RequiredCommand | Should -Be "pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated"
         $json.SupplyChainEvidence.SignedReleaseDryRun.RequiredStatus | Should -Be "submitted"
         $json.SupplyChainEvidence.SignedReleaseDryRun.RequiredRunCreated | Should -BeTrue

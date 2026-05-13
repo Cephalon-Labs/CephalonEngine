@@ -3528,6 +3528,7 @@ function Convert-SupplyChainEvidence {
         $dryRunReadinessPolicy = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "readinessPolicy" -DefaultValue "")
         $dryRunValidationScriptPath = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "validationScript" -DefaultValue "")
         $dryRunOutputPath = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "outputPath" -DefaultValue "")
+        $dryRunHandoffOutputPath = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "handoffOutputPath" -DefaultValue "")
         $dryRunRequiredCommand = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "requiredCommand" -DefaultValue "")
         $dryRunRequiredStatus = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "requiredStatus" -DefaultValue "")
         $dryRunSourceDocumentPath = [string](Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "sourceDocument" -DefaultValue "")
@@ -3540,6 +3541,7 @@ function Convert-SupplyChainEvidence {
             @{ Name = "readinessPolicy"; Value = $dryRunReadinessPolicy },
             @{ Name = "validationScript"; Value = $dryRunValidationScriptPath },
             @{ Name = "outputPath"; Value = $dryRunOutputPath },
+            @{ Name = "handoffOutputPath"; Value = $dryRunHandoffOutputPath },
             @{ Name = "requiredCommand"; Value = $dryRunRequiredCommand },
             @{ Name = "requiredStatus"; Value = $dryRunRequiredStatus },
             @{ Name = "sourceDocument"; Value = $dryRunSourceDocumentPath },
@@ -3586,6 +3588,7 @@ function Convert-SupplyChainEvidence {
             ReadinessPolicy          = $dryRunReadinessPolicy
             ValidationScript         = $dryRunValidationScriptReference.Reference
             OutputPath               = $dryRunOutputPath
+            HandoffOutputPath        = $dryRunHandoffOutputPath
             RequiredCommand          = $dryRunRequiredCommand
             RequiredStatus           = $dryRunRequiredStatus
             RequiredRunCreated       = ConvertTo-RequiredSupplyChainBoolean -Value (Get-ManifestPropertyValue -Object $signedReleaseDryRunManifest -PropertyName "requiredRunCreated" -DefaultValue $true) -Name "signedReleaseDryRun.requiredRunCreated"
@@ -4209,6 +4212,7 @@ function Write-EngineCompletionScorecardReport {
         $markdown.Add("- Readiness policy: ``$($Report.SupplyChainEvidence.SignedReleaseDryRun.ReadinessPolicy)``")
         $markdown.Add("- Required command: ``$($Report.SupplyChainEvidence.SignedReleaseDryRun.RequiredCommand)``")
         $markdown.Add("- Output path: ``$($Report.SupplyChainEvidence.SignedReleaseDryRun.OutputPath)``")
+        $markdown.Add("- Handoff output path: ``$($Report.SupplyChainEvidence.SignedReleaseDryRun.HandoffOutputPath)``")
         $markdown.Add("- Required report fields: $($Report.SupplyChainEvidence.SignedReleaseDryRun.RequiredReportFieldCount)")
         $markdown.Add("")
     }

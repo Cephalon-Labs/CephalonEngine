@@ -69,7 +69,7 @@ Current focus:
 - treat the event-dispatch remediation command-result filtered read path as benchmark-governed: `EventDispatchRemediationCatalogBenchmarks` now covers native Wolverine-free filtered summary, retention, latest, oldest, and compact dashboard selectors, and `scripts/validate-release.ps1` includes that benchmark class in the default guardrail lane
 - treat open GitHub issue drift as a planning-quality risk: `scripts/validate-planning-github-issues.ps1` now checks open `ENG-*` issues against backlog truth, detects duplicate open issue numbers for the same ENG id, and detects stale open duplicates for backlog rows that are already `done` or `shipped` at another issue number
 - treat missing GitHub Project 2 planning fields as a planning-quality risk: `scripts/validate-planning-project-fields.ps1` now verifies open `ENG-*` issue project items have populated `Status`, `Estimate`, `Iteration`, `Test`, and `Benchmark`, and the first live run corrected the missing `Iteration` field on `ENG-532` / issue `#1180`
-- treat signed-release dry-run dispatch proof as scorecard readback, not prose-only release context: `SupplyChainEvidence.SignedReleaseDryRun` now records the dry-run status, partial proof state, current `dispatch-identity-actions-disabled` blocker, required `-RequireRunCreated` command, output path, and required report fields, while `scripts/invoke-signed-release-dry-run.ps1` reports the dispatch actor, identity resolution status, exact dispatch command, and required release-manager action, Pester validates the manifest-required report fields against generated in-memory and persisted JSON reports, and Tooling documentation coverage derives the same required field list into [`package-publishing.md`](package-publishing.md), [`release-checklist.md`](release-checklist.md), and [`release-checklist-template.md`](release-checklist-template.md) so `ENG-532` stays actionable until an Actions-enabled release-manager identity creates the workflow run
+- treat signed-release dry-run dispatch proof as scorecard readback, not prose-only release context: `SupplyChainEvidence.SignedReleaseDryRun` now records the dry-run status, partial proof state, current `dispatch-identity-actions-disabled` blocker, required `-RequireRunCreated` command, output path, handoff output path, and required report fields, while `scripts/invoke-signed-release-dry-run.ps1` reports the dispatch actor, identity resolution status, exact dispatch command, required release-manager action, and release-manager handoff artifact, Pester validates the manifest-required report fields plus generated handoff content against generated in-memory and persisted JSON reports, and Tooling documentation coverage derives the same required field list plus `handoffOutputPath` into [`package-publishing.md`](package-publishing.md), [`release-checklist.md`](release-checklist.md), and [`release-checklist-template.md`](release-checklist-template.md) so `ENG-532` stays actionable until an Actions-enabled release-manager identity creates the workflow run
 - treat component-page maturity badges as a completed adoption contract: every shipped source-project component page now carries a maturity label, ownership label, and `engine-surface-maturity-audit.md` back-pointer, and Tooling coverage blocks any new shipped component page from skipping that first-scan truth
 - treat the component catalog as a unique source-project map: every shipped `src/Cephalon.*` project must appear exactly once in `docs/components/README.md`, so future family re-grouping cannot leave duplicate component links behind
 - treat the component catalog as a two-way adoption map: every hand-authored component doc under `docs/components/*.md` must be linked exactly once from `docs/components/README.md`, so new component pages cannot become orphan docs outside the catalog
@@ -81,6 +81,36 @@ Current focus:
 - treat generated reference docs as a guarded generated API navigation layer: repo-local links across `docs/reference/**/*.md` must resolve inside `docs/reference`, and browser-view query links such as `browse.html?assembly=...` must resolve to the generated browser file while hand-authored docs remain the primary human contract
 - treat `docs/reference/reference-manifest.json` as the generated API bundle map: required browser/index/manifest assets must exist, assembly page files must be manifest-owned, namespace/type/member anchor ids must resolve in those pages, and orphan generated Markdown pages must fail Tooling coverage before hosted reference docs can drift
 - treat `docs/reference/browse.html` as the hosted reference-doc browser entry point: local `href` and `src` references must resolve inside `docs/reference` to existing generated bundle files so CSS, JavaScript, index links, and manifest links cannot drift after regeneration
+
+### ENG-696 Signed-release dry-run handoff artifact
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: release-readiness / supply-chain / signed-release dry run
+Quality dimensions: Security, Compliance, Auditability, Maintainability, Reliability, Usability
+GitHub issue: #1366
+
+Why:
+
+- `ENG-532` remains blocked by GitHub returning `dispatch-identity-actions-disabled` for the current dispatch identity
+- the JSON report is machine-readable, but release managers also need a paste-ready handoff that names the actor, blocker, dispatch command, required action, and workflow URL when one exists
+- the handoff should be generated from the same report object and manifest contract so it cannot drift from scorecard, release validation, doctor, package-publishing docs, or release checklist guidance
+
+Delivered:
+
+- `scripts/invoke-signed-release-dry-run.ps1` now writes `signed-release-dry-run-handoff.md` beside `signed-release-dry-run-readiness.json`, prints the handoff path, and returns `HandoffPath`
+- `scripts/supply-chain-release-support.json` is schema `1.6.0` with `signedReleaseDryRun.handoffOutputPath`
+- scorecard publishing, release validation, and `cephalon doctor --scorecard` read back the signed-release dry-run handoff path
+- package-publishing, release checklist, CLI component/package docs, roadmap, backlog, and project memory now describe the handoff without closing external `ENG-532`
+
+Validation:
+
+- `Invoke-Pester -Path tests\Cephalon.Tests.Scripts\invoke-signed-release-dry-run.Tests.ps1,tests\Cephalon.Tests.Scripts\publish-engine-completion-scorecard.Tests.ps1,tests\Cephalon.Tests.Scripts\validate-release.Tests.ps1 -Output Detailed`
+- `dotnet test .\tests\Cephalon.Tests.Tooling\Cephalon.Tests.Tooling.csproj --no-restore --filter "FullyQualifiedName~DocumentationCoverageTests|FullyQualifiedName~CliApplicationTests" --logger "console;verbosity=minimal"`
+- `pwsh .\scripts\validate-planning-github-issues.ps1`
+- `pwsh .\scripts\validate-planning-project-fields.ps1`
+- `git diff --check`
 
 ### ENG-695 Signed-release dry-run checklist contract guard
 

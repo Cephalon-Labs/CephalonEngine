@@ -809,7 +809,7 @@ public sealed class DocumentationCoverageTests
 
         AssertDocumentContainsAllTokens(
             packagePublishing,
-            ReadSignedReleaseDryRunRequiredReportFields(repositoryRoot),
+            ReadSignedReleaseDryRunDocumentationTokens(repositoryRoot),
             "docs/package-publishing.md");
     }
 
@@ -817,7 +817,7 @@ public sealed class DocumentationCoverageTests
     public void ReleaseChecklistDocsStayAlignedWithSignedReleaseDryRunReportContract()
     {
         var repositoryRoot = GetRepositoryRoot();
-        var requiredFields = ReadSignedReleaseDryRunRequiredReportFields(repositoryRoot);
+        var requiredFields = ReadSignedReleaseDryRunDocumentationTokens(repositoryRoot);
         var releaseChecklist = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "release-checklist.md"));
         var releaseChecklistTemplate = File.ReadAllText(Path.Combine(repositoryRoot, "docs", "release-checklist-template.md"));
 
@@ -1547,7 +1547,7 @@ public sealed class DocumentationCoverageTests
         return anchors;
     }
 
-    private static string[] ReadSignedReleaseDryRunRequiredReportFields(string repositoryRoot)
+    private static string[] ReadSignedReleaseDryRunDocumentationTokens(string repositoryRoot)
     {
         using var supplyChainManifest = JsonDocument.Parse(File.ReadAllText(Path.Combine(
             repositoryRoot,
@@ -1555,13 +1555,17 @@ public sealed class DocumentationCoverageTests
             "supply-chain-release-support.json")));
 
         var root = supplyChainManifest.RootElement;
-        Assert.Equal("1.5.0", ReadRequiredJsonString(root, "$schemaVersion", "supply-chain release support manifest"));
+        Assert.Equal("1.6.0", ReadRequiredJsonString(root, "$schemaVersion", "supply-chain release support manifest"));
         Assert.True(
             root.TryGetProperty("signedReleaseDryRun", out var signedReleaseDryRun),
             "Expected supply-chain release support manifest to define signedReleaseDryRun.");
         Assert.True(
             signedReleaseDryRun.TryGetProperty("requiredReportFields", out var requiredReportFields),
             "Expected signedReleaseDryRun to define requiredReportFields.");
+        var handoffOutputPath = ReadRequiredJsonString(
+            signedReleaseDryRun,
+            "handoffOutputPath",
+            "signed-release dry-run handoff output path");
 
         var requiredFields = requiredReportFields
             .EnumerateArray()
@@ -1570,7 +1574,9 @@ public sealed class DocumentationCoverageTests
             .Select(field => field!)
             .ToArray();
         Assert.NotEmpty(requiredFields);
-        return requiredFields;
+        return requiredFields
+            .Append(handoffOutputPath)
+            .ToArray();
     }
 
     private static void AssertDocumentContainsAllTokens(

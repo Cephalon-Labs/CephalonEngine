@@ -1068,6 +1068,11 @@ internal static class DoctorCommand
             "OutputPath",
             errors,
             "SupplyChainEvidence.SignedReleaseDryRun") ?? "unknown";
+        var evidenceSupplyChainSignedReleaseDryRunHandoffOutputPath = GetRequiredScorecardString(
+            supplyChainSignedReleaseDryRun,
+            "HandoffOutputPath",
+            errors,
+            "SupplyChainEvidence.SignedReleaseDryRun") ?? "unknown";
         var evidenceSupplyChainSignedReleaseDryRunRequiredReportFieldCount = GetRequiredScorecardInt(
             supplyChainSignedReleaseDryRun,
             "RequiredReportFieldCount",
@@ -1399,7 +1404,7 @@ internal static class DoctorCommand
         checks.Add(new DoctorCheck(
             supplyChainSeverity,
             "Engine completion scorecard supply-chain release evidence",
-            $"{supplyChainEvidenceItemCount} items; workflow-ready {supplyChainWorkflowReadyCount}, external-policy-pending {supplyChainExternalPolicyPendingCount}, preflight checks {supplyChainExternalPolicyPreflightCheckCount}, preflight status {evidenceSupplyChainExternalPolicyPreflightStatus}, signed-release dry-run {evidenceSupplyChainSignedReleaseDryRunStatus}/{evidenceSupplyChainSignedReleaseDryRunProofState}, blocker {evidenceSupplyChainSignedReleaseDryRunBlockerClass}, required command {evidenceSupplyChainSignedReleaseDryRunRequiredCommand}, output {evidenceSupplyChainSignedReleaseDryRunOutputPath}, report fields {evidenceSupplyChainSignedReleaseDryRunRequiredReportFieldCount}, blocked {supplyChainBlockedCount}.",
+            $"{supplyChainEvidenceItemCount} items; workflow-ready {supplyChainWorkflowReadyCount}, external-policy-pending {supplyChainExternalPolicyPendingCount}, preflight checks {supplyChainExternalPolicyPreflightCheckCount}, preflight status {evidenceSupplyChainExternalPolicyPreflightStatus}, signed-release dry-run {evidenceSupplyChainSignedReleaseDryRunStatus}/{evidenceSupplyChainSignedReleaseDryRunProofState}, blocker {evidenceSupplyChainSignedReleaseDryRunBlockerClass}, required command {evidenceSupplyChainSignedReleaseDryRunRequiredCommand}, output {evidenceSupplyChainSignedReleaseDryRunOutputPath}, handoff {evidenceSupplyChainSignedReleaseDryRunHandoffOutputPath}, report fields {evidenceSupplyChainSignedReleaseDryRunRequiredReportFieldCount}, blocked {supplyChainBlockedCount}.",
             supplyChainSeverity == DoctorCheckSeverity.Pass
                 ? null
                 : "Treat workflow-ready evidence as release-readiness posture only; complete nuget.org-side trusted publishing, prefix reservation, repository secret policy, fail-closed publish-workflow preflight, and signed-release dry-run dispatch before a real tag push."));

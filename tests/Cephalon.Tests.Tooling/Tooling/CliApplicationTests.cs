@@ -524,7 +524,8 @@ public sealed class CliApplicationTests
                   "CurrentBlockerClass": "dispatch-identity-actions-disabled",
                   "RequiredCommand": "pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated",
                   "OutputPath": "artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json",
-                  "RequiredReportFieldCount": 5
+                  "HandoffOutputPath": "artifacts/signed-release-dry-run/signed-release-dry-run-handoff.md",
+                  "RequiredReportFieldCount": 9
                 },
                 "BlockedCount": 0
               },
@@ -651,7 +652,7 @@ public sealed class CliApplicationTests
             Assert.Contains("[warn] Engine completion scorecard provider integration evidence: 33 rows; live proofs 33, composition-only 0, external-service gates 14, default-skipped 14, runtime contracts 99; dependency-health providers 18 from scripts/observability-dependency-health-providers.json schema 1.0.0 (source-derived-provider-family-contract).", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Engine completion scorecard eventing operational superiority: contract cephalon-eventing-operational-superiority-promotion-v1 1.0.0; target eventing-operational-superiority; status claimed; required claimed; dimensions 6/6 covered, partial 0, missing 0; coverage 100%; promotion gate allowed; promotion allowed True; decision all-required-dimensions-claimed; runtime concordance matched (19/19 tokens, source src/Cephalon.Eventing/Services/EventingSuperiorityProfileRuntimeSurfaceContributor.cs); hot-path code-first-publish-subscribe; Wolverine required False.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[warn] Engine completion scorecard SRE posture: 11 SLIs; target-declared 11, pending stable baselines 1, stable baselines 10, stable baseline rows 10, stable baseline measurements 12, pending baseline rows 1, blockers 1, pending evidence 1, guardrail-mapped 6, pending guardrail coverage 0, guardrail not-applicable 5, guardrail references 8; stable baseline manifest scripts/sre-stable-baselines.json.", stdout.ToString(), StringComparison.Ordinal);
-            Assert.Contains("[warn] Engine completion scorecard supply-chain release evidence: 12 items; workflow-ready 9, external-policy-pending 3, preflight checks 3, preflight status required-before-real-tag-push, signed-release dry-run blocked/partial, blocker dispatch-identity-actions-disabled, required command pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated, output artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json, report fields 5, blocked 0.", stdout.ToString(), StringComparison.Ordinal);
+            Assert.Contains("[warn] Engine completion scorecard supply-chain release evidence: 12 items; workflow-ready 9, external-policy-pending 3, preflight checks 3, preflight status required-before-real-tag-push, signed-release dry-run blocked/partial, blocker dispatch-identity-actions-disabled, required command pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated, output artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json, handoff artifacts/signed-release-dry-run/signed-release-dry-run-handoff.md, report fields 9, blocked 0.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Engine completion scorecard test coverage evidence: 8 layered projects; gap criteria 4; recommendations 11; shipped 10, gated 1, active gaps 0; quarantine entries 2, open 0, queue empty.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Contains("[ok] Engine completion scorecard public API compatibility: 104 package baselines; pending packages 0, additions 0, removals 0.", stdout.ToString(), StringComparison.Ordinal);
             Assert.Equal(string.Empty, stderr.ToString());
@@ -899,7 +900,8 @@ public sealed class CliApplicationTests
                   "CurrentBlockerClass": "dispatch-identity-actions-disabled",
                   "RequiredCommand": "pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated",
                   "OutputPath": "artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json",
-                  "RequiredReportFieldCount": 5
+                  "HandoffOutputPath": "artifacts/signed-release-dry-run/signed-release-dry-run-handoff.md",
+                  "RequiredReportFieldCount": 9
                 },
                 "BlockedCount": 0
               },
@@ -1177,7 +1179,8 @@ public sealed class CliApplicationTests
                   "CurrentBlockerClass": "dispatch-identity-actions-disabled",
                   "RequiredCommand": "pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated",
                   "OutputPath": "artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json",
-                  "RequiredReportFieldCount": 5
+                  "HandoffOutputPath": "artifacts/signed-release-dry-run/signed-release-dry-run-handoff.md",
+                  "RequiredReportFieldCount": 9
                 },
                 "BlockedCount": 0
               },
@@ -1449,7 +1452,8 @@ public sealed class CliApplicationTests
                   "CurrentBlockerClass": "dispatch-identity-actions-disabled",
                   "RequiredCommand": "pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated",
                   "OutputPath": "artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json",
-                  "RequiredReportFieldCount": 5
+                  "HandoffOutputPath": "artifacts/signed-release-dry-run/signed-release-dry-run-handoff.md",
+                  "RequiredReportFieldCount": 9
                 },
                 "BlockedCount": 0
               },
@@ -1727,7 +1731,8 @@ public sealed class CliApplicationTests
                   "CurrentBlockerClass": "dispatch-identity-actions-disabled",
                   "RequiredCommand": "pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated",
                   "OutputPath": "artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json",
-                  "RequiredReportFieldCount": 5
+                  "HandoffOutputPath": "artifacts/signed-release-dry-run/signed-release-dry-run-handoff.md",
+                  "RequiredReportFieldCount": 9
                 },
                 "BlockedCount": 0
               },
@@ -2005,7 +2010,8 @@ public sealed class CliApplicationTests
                   "CurrentBlockerClass": "dispatch-identity-actions-disabled",
                   "RequiredCommand": "pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated",
                   "OutputPath": "artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json",
-                  "RequiredReportFieldCount": 5
+                  "HandoffOutputPath": "artifacts/signed-release-dry-run/signed-release-dry-run-handoff.md",
+                  "RequiredReportFieldCount": 9
                 },
                 "BlockedCount": 0
               },
@@ -2283,7 +2289,8 @@ public sealed class CliApplicationTests
                   "CurrentBlockerClass": "dispatch-identity-actions-disabled",
                   "RequiredCommand": "pwsh ./scripts/invoke-signed-release-dry-run.ps1 -RequireRunCreated",
                   "OutputPath": "artifacts/signed-release-dry-run/signed-release-dry-run-readiness.json",
-                  "RequiredReportFieldCount": 5
+                  "HandoffOutputPath": "artifacts/signed-release-dry-run/signed-release-dry-run-handoff.md",
+                  "RequiredReportFieldCount": 9
                 },
                 "BlockedCount": 0
               },

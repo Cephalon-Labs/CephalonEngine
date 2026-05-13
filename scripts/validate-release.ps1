@@ -929,6 +929,10 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         -Object $supplyChainSignedReleaseDryRun `
         -PropertyName "OutputPath" `
         -OwnerName "SupplyChainEvidence.SignedReleaseDryRun"
+    $supplyChainSignedReleaseDryRunHandoffOutputPath = Get-ScorecardRequiredPropertyValue `
+        -Object $supplyChainSignedReleaseDryRun `
+        -PropertyName "HandoffOutputPath" `
+        -OwnerName "SupplyChainEvidence.SignedReleaseDryRun"
 
     Write-Host ("Supply-chain release evidence: {0} items; workflow-ready {1}; external policy pending {2}; external policy preflight checks {3}; preflight status {4}; blocked {5}; status {6}." -f `
         $scorecard.SupplyChainEvidence.EvidenceItemCount,
@@ -939,12 +943,13 @@ function Write-EngineCompletionScorecardEvidenceSummary {
         $scorecard.SupplyChainEvidence.BlockedCount,
         $scorecard.SupplyChainEvidence.Status)
 
-    Write-Host ("Signed-release dry-run evidence: status {0}; proof {1}; blocker {2}; required command {3}; output {4}." -f `
+    Write-Host ("Signed-release dry-run evidence: status {0}; proof {1}; blocker {2}; required command {3}; output {4}; handoff {5}." -f `
         $supplyChainSignedReleaseDryRunStatus,
         $supplyChainSignedReleaseDryRunProofState,
         $supplyChainSignedReleaseDryRunBlockerClass,
         $supplyChainSignedReleaseDryRunRequiredCommand,
-        $supplyChainSignedReleaseDryRunOutputPath)
+        $supplyChainSignedReleaseDryRunOutputPath,
+        $supplyChainSignedReleaseDryRunHandoffOutputPath)
 
     Write-Host ("Public API compatibility: {0} packages; pending packages {1}; additions {2}; removals {3}." -f `
         $scorecard.PublicApiCompatibilityEvidence.PackageCount,

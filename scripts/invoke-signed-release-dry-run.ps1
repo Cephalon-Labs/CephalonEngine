@@ -164,6 +164,76 @@ function Resolve-SignedReleaseDryRunRequiredAction {
     }
 }
 
+function Format-SignedReleaseDryRunHandoffValue {
+    param(
+        [AllowNull()]
+        [object]$Value
+    )
+
+    if ($null -eq $Value) {
+        return "_not recorded_"
+    }
+
+    $text = [string]$Value
+    if ([string]::IsNullOrWhiteSpace($text)) {
+        return "_not recorded_"
+    }
+
+    return $text.Trim()
+}
+
+function New-SignedReleaseDryRunHandoffMarkdown {
+    param(
+        [Parameter(Mandatory = $true)]
+        [object]$Report,
+        [Parameter(Mandatory = $true)]
+        [string]$JsonPath
+    )
+
+    $lines = New-Object System.Collections.Generic.List[string]
+    $lines.Add("# Signed-release dry-run handoff")
+    $lines.Add("")
+    $lines.Add("Generated at UTC: $(Format-SignedReleaseDryRunHandoffValue -Value $Report.GeneratedAtUtc)")
+    $lines.Add("")
+    $lines.Add("## Status")
+    $lines.Add("")
+    $lines.Add("- Status: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.Status)``")
+    $lines.Add("- BlockerClass: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.BlockerClass)``")
+    $lines.Add("- RunCreated: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.RunCreated)``")
+    $lines.Add("- RunUrl: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.RunUrl)``")
+    $lines.Add("- RunLookupStatus: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.RunLookupStatus)``")
+    $lines.Add("")
+    $lines.Add("## Dispatch")
+    $lines.Add("")
+    $lines.Add("- DispatchActor: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.DispatchActor)``")
+    $lines.Add("- DispatchIdentityStatus: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.DispatchIdentityStatus)``")
+    $lines.Add("- DispatchAttempted: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.DispatchAttempted)``")
+    $lines.Add("- DispatchCommand: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.DispatchCommand)``")
+    $lines.Add("- RequiredReleaseManagerAction: $(Format-SignedReleaseDryRunHandoffValue -Value $Report.RequiredReleaseManagerAction)")
+    $lines.Add("")
+    $lines.Add("## Evidence")
+    $lines.Add("")
+    $lines.Add("- Repository: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.Repository)``")
+    $lines.Add("- WorkflowName: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.WorkflowName)``")
+    $lines.Add("- WorkflowId: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.WorkflowId)``")
+    $lines.Add("- WorkflowPath: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.WorkflowPath)``")
+    $lines.Add("- WorkflowState: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.WorkflowState)``")
+    $lines.Add("- RepositoryActionsEnabled: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.RepositoryActionsEnabled)``")
+    $lines.Add("- AllowedActions: ``$(Format-SignedReleaseDryRunHandoffValue -Value $Report.AllowedActions)``")
+    $lines.Add("- JSON report: ``$JsonPath``")
+
+    if (-not [string]::IsNullOrWhiteSpace([string]$Report.DispatchOutput)) {
+        $lines.Add("")
+        $lines.Add("## GitHub dispatch output")
+        $lines.Add("")
+        $lines.Add('```text')
+        $lines.Add([string]$Report.DispatchOutput)
+        $lines.Add('```')
+    }
+
+    return $lines -join [Environment]::NewLine
+}
+
 function Get-SignedReleaseWorkflow {
     param(
         [Parameter(Mandatory = $true)]
@@ -220,6 +290,7 @@ function Invoke-SignedReleaseDryRunReadiness {
     $resolvedOutputPath = Resolve-RepoPath -Path $OutputPath -RepoRoot $repoRoot
     New-Item -ItemType Directory -Path $resolvedOutputPath -Force | Out-Null
     $jsonPath = Join-Path $resolvedOutputPath "signed-release-dry-run-readiness.json"
+    $handoffPath = Join-Path $resolvedOutputPath "signed-release-dry-run-handoff.md"
 
     $workflowListResult = Invoke-GitHubCli -Arguments @("api", "repos/$Repository/actions/workflows") -GitHubCliInvoker $GitHubCliInvoker
     $permissionsResult = Invoke-GitHubCli -Arguments @("api", "repos/$Repository/actions/permissions") -GitHubCliInvoker $GitHubCliInvoker
@@ -400,12 +471,15 @@ function Invoke-SignedReleaseDryRunReadiness {
     })
 
     $report | ConvertTo-Json -Depth 16 | Set-Content -LiteralPath $jsonPath -Encoding UTF8
+    $handoffMarkdown = New-SignedReleaseDryRunHandoffMarkdown -Report $report -JsonPath $jsonPath
+    $handoffMarkdown | Set-Content -LiteralPath $handoffPath -Encoding UTF8
 
-    Write-Host ("Signed-release dry-run readiness: {0}; blocker {1}; run created {2}; report {3}" -f `
+    Write-Host ("Signed-release dry-run readiness: {0}; blocker {1}; run created {2}; report {3}; handoff {4}" -f `
             $status,
             ($(if ([string]::IsNullOrWhiteSpace($blockerClass)) { "none" } else { $blockerClass })),
             $runCreated,
-            $jsonPath)
+            $jsonPath,
+            $handoffPath)
 
     if ($RequireRunCreated -and -not $runCreated) {
         $detail = if ([string]::IsNullOrWhiteSpace($blockerClass)) { $status } else { "$status/$blockerClass" }
@@ -415,6 +489,7 @@ function Invoke-SignedReleaseDryRunReadiness {
     return [pscustomobject]@{
         Report = $report
         JsonPath = $jsonPath
+        HandoffPath = $handoffPath
     }
 }
 

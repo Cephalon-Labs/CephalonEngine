@@ -87,6 +87,7 @@ Describe "invoke-signed-release-dry-run.ps1" {
         $result = Invoke-SignedReleaseDryRunReadiness -OutputPath $script:tempRoot -SkipDispatch -GitHubCliInvoker $invoker
 
         Test-Path -LiteralPath $result.JsonPath -PathType Leaf | Should -BeTrue
+        Test-Path -LiteralPath $result.HandoffPath -PathType Leaf | Should -BeTrue
         $result.Report.'$schemaVersion' | Should -Be "1.1.0"
         $result.Report.Status | Should -Be "ready"
         $result.Report.BlockerClass | Should -BeNullOrEmpty
@@ -98,6 +99,10 @@ Describe "invoke-signed-release-dry-run.ps1" {
         $result.Report.RepositoryActionsEnabled | Should -BeTrue
         $result.Report.DispatchAttempted | Should -BeFalse
         $result.Report.RunCreated | Should -BeFalse
+        $handoff = Get-Content -LiteralPath $result.HandoffPath -Raw -Encoding UTF8
+        $handoff | Should -Match "# Signed-release dry-run handoff"
+        $handoff | Should -Match "Status: ``ready``"
+        $handoff | Should -Match "DispatchActor: ``Cephalon-Neza``"
     }
 
     It "maps an Actions-disabled dispatch identity to a stable blocker class" {
@@ -137,6 +142,12 @@ Describe "invoke-signed-release-dry-run.ps1" {
         $result.Report.DispatchExitCode | Should -Be 1
         $result.Report.RunCreated | Should -BeFalse
         $result.Report.DispatchOutput | Should -Match "Actions has been disabled for this user"
+        Test-Path -LiteralPath $result.HandoffPath -PathType Leaf | Should -BeTrue
+        $handoff = Get-Content -LiteralPath $result.HandoffPath -Raw -Encoding UTF8
+        $handoff | Should -Match "BlockerClass: ``dispatch-identity-actions-disabled``"
+        $handoff | Should -Match "DispatchActor: ``Cephalon-Neza``"
+        $handoff | Should -Match "Enable GitHub Actions for dispatch identity 'Cephalon-Neza'"
+        $handoff | Should -Match "Actions has been disabled for this user"
     }
 
     It "keeps generated report fields aligned with the supply-chain support contract" {
@@ -169,7 +180,8 @@ Describe "invoke-signed-release-dry-run.ps1" {
 
         $supportManifestPath = Join-Path $script:repoRoot "scripts\supply-chain-release-support.json"
         $supportManifest = Get-Content -LiteralPath $supportManifestPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 32
-        $supportManifest.'$schemaVersion' | Should -Be "1.5.0"
+        $supportManifest.'$schemaVersion' | Should -Be "1.6.0"
+        $supportManifest.signedReleaseDryRun.handoffOutputPath | Should -Be "artifacts/signed-release-dry-run/signed-release-dry-run-handoff.md"
 
         $requiredFields = @($supportManifest.signedReleaseDryRun.requiredReportFields)
         $requiredFields.Count | Should -BeGreaterThan 0
@@ -187,6 +199,11 @@ Describe "invoke-signed-release-dry-run.ps1" {
         $persistedPropertyNames = @($persistedReport.PSObject.Properties.Name)
         foreach ($requiredField in $requiredFields) {
             $persistedPropertyNames | Should -Contain $requiredField
+        }
+
+        $handoff = Get-Content -LiteralPath $result.HandoffPath -Raw -Encoding UTF8
+        foreach ($requiredField in $requiredFields) {
+            $handoff | Should -Match $requiredField
         }
     }
 
@@ -242,6 +259,12 @@ Describe "invoke-signed-release-dry-run.ps1" {
         $result.Report.RunId | Should -Be "123456789"
         $result.Report.RunUrl | Should -Be "https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/123456789"
         $result.Report.RequiredReleaseManagerAction | Should -Match "Attach the generated report"
+        Test-Path -LiteralPath $result.HandoffPath -PathType Leaf | Should -BeTrue
+        $handoff = Get-Content -LiteralPath $result.HandoffPath -Raw -Encoding UTF8
+        $handoff | Should -Match "Status: ``submitted``"
+        $handoff | Should -Match "RunCreated: ``True``"
+        $handoff | Should -Match "https://github.com/Cephalon-Labs/CephalonEngine/actions/runs/123456789"
+        $handoff | Should -Match "Attach the generated report"
     }
 
     It "fails when RequireRunCreated is set and the dispatch remains blocked" {
@@ -276,9 +299,14 @@ Describe "invoke-signed-release-dry-run.ps1" {
 
         $jsonPath = Join-Path $script:tempRoot "signed-release-dry-run-readiness.json"
         Test-Path -LiteralPath $jsonPath -PathType Leaf | Should -BeTrue
+        $handoffPath = Join-Path $script:tempRoot "signed-release-dry-run-handoff.md"
+        Test-Path -LiteralPath $handoffPath -PathType Leaf | Should -BeTrue
         $report = Get-Content -LiteralPath $jsonPath -Raw -Encoding UTF8 | ConvertFrom-Json -Depth 16
         $report.BlockerClass | Should -Be "dispatch-identity-actions-disabled"
         $report.DispatchActor | Should -Be "Cephalon-Neza"
         $report.RequiredReleaseManagerAction | Should -Match "Actions-enabled release-manager identity"
+        $handoff = Get-Content -LiteralPath $handoffPath -Raw -Encoding UTF8
+        $handoff | Should -Match "RunCreated: ``False``"
+        $handoff | Should -Match "Actions-enabled release-manager identity"
     }
 }
