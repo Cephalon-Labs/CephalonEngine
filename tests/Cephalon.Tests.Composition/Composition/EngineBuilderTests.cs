@@ -2362,6 +2362,7 @@ public sealed class EngineBuilderTests
         Assert.Equal("not-claimed", dimensions["subscription-concurrency-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["subscription-ordering-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["process-manager-state-ownership"].Metadata["status"]);
+        Assert.Equal("not-claimed", dimensions["provider-managed-runtime-proof-coverage"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["choreography-handoff-ownership"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["durability-and-outbox-portability"].Metadata["status"]);
         Assert.Equal("not-claimed", dimensions["dead-letter-replay-and-remediation"].Metadata["status"]);
@@ -2464,6 +2465,14 @@ public sealed class EngineBuilderTests
         Assert.Contains("processManagerRecovery=not-claimed", dimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("providerProcessManager=not-present", dimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("wolverineRequired=false", dimensions["process-manager-state-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("requiredProofDimensionCount=8", dimensions["provider-managed-runtime-proof-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("coveredProofDimensions=none", dimensions["provider-managed-runtime-proof-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("coveredProofDimensionCount=0", dimensions["provider-managed-runtime-proof-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("partialProofDimensions=idempotency-ownership", dimensions["provider-managed-runtime-proof-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("missingProofDimensions=broker-topology-materialization-ownership,provider-partition-ownership,downstream-delivery-completion-ownership,broker-inbound-consumption-ownership,idempotency-ownership,subscription-concurrency-ownership,subscription-ordering-ownership,process-manager-state-ownership", dimensions["provider-managed-runtime-proof-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("missingProofDimensionCount=8", dimensions["provider-managed-runtime-proof-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("benchmarkFamily=provider-managed-eventing", dimensions["provider-managed-runtime-proof-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", dimensions["provider-managed-runtime-proof-coverage"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("choreographyCatalog=not-present", dimensions["choreography-handoff-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("publicationStateCatalog=not-present", dimensions["choreography-handoff-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
         Assert.Contains("eventingBridge=not-active", dimensions["choreography-handoff-ownership"].Metadata["runtimeEvidence"], StringComparison.Ordinal);
@@ -3950,6 +3959,150 @@ public sealed class EngineBuilderTests
         Assert.Contains("wolverineRequired=false", evidence, StringComparison.Ordinal);
         Assert.DoesNotContain("providerProcessManagerId=alpha-provider-process-manager", evidence, StringComparison.Ordinal);
         Assert.DoesNotContain("processManagerStateSource=gamma-process-manager-runtime", evidence, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AddEventingClaimsProviderManagedRuntimeProofCoverageWhenAllProviderProofDimensionsArePresentWithoutWolverine()
+    {
+        var dispatchReport = EventDispatchExactlyOnceDeliveryProofMetadata.CreateReport(
+            EventDispatchProviderPartitionMetadata.CreateReport(
+                EventDispatchBrokerTopologyMetadata.CreateReport(
+                    new EventDispatchExecutionReport(
+                        outboxId: "beta-outbox",
+                        channelId: "contracts",
+                        outcome: EventDispatchExecutionOutcomes.Succeeded,
+                        observedAtUtc: new DateTimeOffset(2026, 05, 13, 16, 0, 0, TimeSpan.Zero),
+                        messageId: "evt-provider-managed-aggregate-001",
+                        attempt: 1),
+                    source: "aggregate-topology-runtime",
+                    exchangeProvisioningId: "aggregate-exchange-provisioning",
+                    queueProvisioningId: "aggregate-queue-provisioning",
+                    topicProvisioningId: "aggregate-topic-provisioning",
+                    partitionProvisioningId: "aggregate-topology-partition",
+                    topologyVerificationId: "aggregate-topology-verification",
+                    providerTopologyId: "aggregate-provider-topology"),
+                source: "aggregate-partition-runtime",
+                partitionAssignmentId: "aggregate-partition-assignment",
+                partitionAffinityId: "aggregate-partition-affinity",
+                partitionRebalancingId: "aggregate-partition-rebalancing",
+                partitionOrderingGuaranteeId: "aggregate-partition-ordering",
+                providerPartitioningId: "aggregate-provider-partitioning"),
+            source: "aggregate-delivery-runtime",
+            providerReceiptId: "aggregate-provider-receipt",
+            subscriberAcknowledgementId: "aggregate-subscriber-ack",
+            destinationCommitId: "aggregate-destination-commit",
+            exactlyOnceProofId: "aggregate-exactly-once-proof",
+            strategy: "aggregate-transactional-ack");
+        var subscriptionReport = EventSubscriptionProcessManagerStateMetadata.CreateReport(
+            EventSubscriptionOrderingMetadata.CreateReport(
+                EventSubscriptionConcurrencyMetadata.CreateReport(
+                    EventSubscriptionProviderIdempotencyMetadata.CreateReport(
+                        EventSubscriptionBrokerInboundConsumptionMetadata.CreateReport(
+                            new EventSubscriptionExecutionReport(
+                                subscriptionId: "beta-subscription",
+                                outcome: EventSubscriptionExecutionOutcomes.Succeeded,
+                                observedAtUtc: new DateTimeOffset(2026, 05, 13, 16, 5, 0, TimeSpan.Zero),
+                                messageId: "evt-provider-managed-aggregate-001",
+                                attempt: 1),
+                            source: "aggregate-inbound-runtime",
+                            consumerLoopId: "aggregate-consumer-loop",
+                            acknowledgementId: "aggregate-inbound-ack",
+                            leaseId: "aggregate-consumer-lease",
+                            retryPolicy: "aggregate-bounded-retry",
+                            poisonMessageHandling: "aggregate-dead-letter",
+                            offsetCheckpointId: "aggregate-offset-checkpoint"),
+                        source: "aggregate-idempotency-runtime",
+                        providerIdempotencyKey: "beta-subscription:evt-provider-managed-aggregate-001",
+                        brokerDeduplicationId: "aggregate-broker-dedup",
+                        exactlyOnceProofId: "aggregate-consumer-exactly-once",
+                        durableInboxCommandId: "aggregate-durable-inbox-command",
+                        genericInboxCommandId: "aggregate-generic-inbox-command",
+                        idempotencyLeaseId: "aggregate-idempotency-lease"),
+                    source: "aggregate-concurrency-runtime",
+                    perSubscriptionConcurrencyLimit: 12,
+                    consumerPrefetchCount: 48,
+                    backpressureStrategy: "aggregate-bounded-channel",
+                    providerConcurrencyId: "aggregate-provider-concurrency",
+                    consumerLeaseId: "aggregate-concurrency-lease",
+                    workStealingId: "aggregate-work-stealing",
+                    distributedWorkSharingId: "aggregate-distributed-sharing"),
+                source: "aggregate-ordering-runtime",
+                handlerOrderingGuaranteeId: "aggregate-handler-ordering",
+                localFanOutOrderingId: "aggregate-local-ordering",
+                perKeyOrderingKey: "aggregate-key",
+                partitionOrderingId: "aggregate-partition-ordering",
+                causalOrderingId: "aggregate-causal-ordering",
+                replayOrderingCursorId: "aggregate-replay-ordering",
+                crossNodeOrderingId: "aggregate-cross-node-ordering",
+                providerOrderingId: "aggregate-provider-ordering"),
+            source: "aggregate-process-manager-runtime",
+            sagaStatePersistenceId: "aggregate-saga-state",
+            sagaCorrelationId: "aggregate-saga-correlation",
+            sagaTimeoutSchedulerId: "aggregate-timeout-scheduler",
+            compensationWorkflowId: "aggregate-compensation",
+            processManagerConcurrencyId: "aggregate-process-concurrency",
+            processManagerRecoveryId: "aggregate-process-recovery",
+            providerProcessManagerId: "aggregate-provider-process-manager");
+        var services = new ServiceCollection();
+        services.AddSingleton<IOutbox>(new EventingProofSelectionOutbox("beta-outbox"));
+        services.AddSingleton<IEventDispatchRuntimeCatalog>(new TestEventDispatchRuntimeCatalog(
+            CreateDispatchRuntimeState(dispatchReport)));
+        services.AddSingleton<IEventSubscriptionRuntimeCatalog>(new TestEventSubscriptionRuntimeCatalog(
+            CreateSubscriptionRuntimeState(subscriptionReport)));
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddModule(new MultiOutboxEventingTestModule());
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "contracts",
+                    displayName: "Contracts",
+                    description: "Provider-managed aggregate proof events."));
+                options.Subscriptions.Add(new EventSubscriptionDescriptor(
+                    id: "beta-subscription",
+                    displayName: "Beta Subscription",
+                    description: "Provider-managed aggregate proof subscription.",
+                    channelId: "contracts",
+                    handlerId: "beta-provider-managed-handler",
+                    deliveryMode: "broker-consumer"));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var dimensions = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        var evidence = dimensions["provider-managed-runtime-proof-coverage"].Metadata["runtimeEvidence"];
+
+        Assert.Equal("claimed", dimensions["broker-topology-materialization-ownership"].Metadata["status"]);
+        Assert.Equal("claimed", dimensions["provider-partition-ownership"].Metadata["status"]);
+        Assert.Equal("claimed", dimensions["downstream-delivery-completion-ownership"].Metadata["status"]);
+        Assert.Equal("claimed", dimensions["broker-inbound-consumption-ownership"].Metadata["status"]);
+        Assert.Equal("claimed", dimensions["idempotency-ownership"].Metadata["status"]);
+        Assert.Equal("claimed", dimensions["subscription-concurrency-ownership"].Metadata["status"]);
+        Assert.Equal("claimed", dimensions["subscription-ordering-ownership"].Metadata["status"]);
+        Assert.Equal("claimed", dimensions["process-manager-state-ownership"].Metadata["status"]);
+        Assert.Equal("claimed", dimensions["provider-managed-runtime-proof-coverage"].Metadata["status"]);
+        Assert.Contains("requiredProofDimensionCount=8", evidence, StringComparison.Ordinal);
+        Assert.Contains("coveredProofDimensionCount=8", evidence, StringComparison.Ordinal);
+        Assert.Contains("coveredProofDimensions=broker-topology-materialization-ownership,provider-partition-ownership,downstream-delivery-completion-ownership,broker-inbound-consumption-ownership,idempotency-ownership,subscription-concurrency-ownership,subscription-ordering-ownership,process-manager-state-ownership", evidence, StringComparison.Ordinal);
+        Assert.Contains("partialProofDimensions=none", evidence, StringComparison.Ordinal);
+        Assert.Contains("partialProofDimensionCount=0", evidence, StringComparison.Ordinal);
+        Assert.Contains("missingProofDimensions=none", evidence, StringComparison.Ordinal);
+        Assert.Contains("missingProofDimensionCount=0", evidence, StringComparison.Ordinal);
+        Assert.Contains("proofSource=eventing-superiority-profile", evidence, StringComparison.Ordinal);
+        Assert.Contains("benchmarkFamily=provider-managed-eventing", evidence, StringComparison.Ordinal);
+        Assert.Contains("failureAndSchedulerProofs=separate-dimensions", evidence, StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", evidence, StringComparison.Ordinal);
     }
 
     [Fact]

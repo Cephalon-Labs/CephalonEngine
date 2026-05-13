@@ -41,6 +41,15 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var subscriptionConcurrency = ResolveSubscriptionConcurrencyProfile();
         var subscriptionOrdering = ResolveSubscriptionOrderingProfile();
         var processManagerState = ResolveProcessManagerStateProfile();
+        var providerManagedRuntimeProofCoverage = ResolveProviderManagedRuntimeProofCoverageProfile(
+            brokerTopology,
+            providerPartition,
+            downstreamDeliveryCompletion,
+            brokerInboundConsumption,
+            idempotencyOwnership,
+            subscriptionConcurrency,
+            subscriptionOrdering,
+            processManagerState);
         var choreographyHandoff = ResolveChoreographyHandoffEvidence();
         var remediationReadPerformanceStatus = topology.HasOutboxPublishingPath ? "claimed" : "partial";
         var remediationReadPerformanceEvidence = topology.HasOutboxPublishingPath
@@ -178,6 +187,14 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                     evidence: processManagerState.Evidence,
                     advantage: "Teams can compose Cephalon subscriptions and choreography handoff without assuming the core eventing pack silently owns a saga state machine, timeout scheduler, or recovery journal.",
                     nextGap: processManagerState.NextGap),
+                CreateEntry(
+                    id: "provider-managed-runtime-proof-coverage",
+                    displayName: "Provider-managed Runtime Proof Coverage",
+                    description: "Summarizes whether the active runtime has complete provider-managed dispatch and subscription proof coverage without requiring Wolverine.",
+                    status: providerManagedRuntimeProofCoverage.Status,
+                    evidence: providerManagedRuntimeProofCoverage.Evidence,
+                    advantage: "Operators can tell whether Cephalon has provider-managed proof across topology, partitioning, delivery completion, inbound consumption, idempotency, concurrency, ordering, and process-manager state from one runtime entry instead of stitching together external bus-specific dashboards.",
+                    nextGap: providerManagedRuntimeProofCoverage.NextGap),
                 CreateEntry(
                     id: "choreography-handoff-ownership",
                     displayName: "Choreography Handoff Ownership",
@@ -2102,6 +2119,57 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             "Add provider-neutral process-manager state proof metadata plus state persistence, correlation, timeout, compensation, concurrency, recovery, and provider process-manager evidence before claiming process-manager state ownership.");
     }
 
+    private static ProviderManagedRuntimeProofCoverageProfile ResolveProviderManagedRuntimeProofCoverageProfile(
+        BrokerTopologyProfile brokerTopology,
+        ProviderPartitionProfile providerPartition,
+        DownstreamDeliveryCompletionProfile downstreamDeliveryCompletion,
+        BrokerInboundConsumptionProfile brokerInboundConsumption,
+        IdempotencyOwnershipProfile idempotencyOwnership,
+        SubscriptionConcurrencyProfile subscriptionConcurrency,
+        SubscriptionOrderingProfile subscriptionOrdering,
+        ProcessManagerStateProfile processManagerState)
+    {
+        (string Id, string Status)[] requiredDimensions =
+        [
+            ("broker-topology-materialization-ownership", brokerTopology.Status),
+            ("provider-partition-ownership", providerPartition.Status),
+            ("downstream-delivery-completion-ownership", downstreamDeliveryCompletion.Status),
+            ("broker-inbound-consumption-ownership", brokerInboundConsumption.Status),
+            ("idempotency-ownership", idempotencyOwnership.Status),
+            ("subscription-concurrency-ownership", subscriptionConcurrency.Status),
+            ("subscription-ordering-ownership", subscriptionOrdering.Status),
+            ("process-manager-state-ownership", processManagerState.Status)
+        ];
+        var coveredDimensions = requiredDimensions
+            .Where(static dimension => string.Equals(dimension.Status, "claimed", StringComparison.OrdinalIgnoreCase))
+            .Select(static dimension => dimension.Id)
+            .ToArray();
+        var partialDimensions = requiredDimensions
+            .Where(static dimension => string.Equals(dimension.Status, "partial", StringComparison.OrdinalIgnoreCase))
+            .Select(static dimension => dimension.Id)
+            .ToArray();
+        var missingDimensions = requiredDimensions
+            .Where(static dimension => !string.Equals(dimension.Status, "claimed", StringComparison.OrdinalIgnoreCase))
+            .Select(static dimension => dimension.Id)
+            .ToArray();
+        var status = missingDimensions.Length == 0
+            ? "claimed"
+            : coveredDimensions.Length == 0 ? "not-claimed" : "partial";
+        var nextGap = status == "claimed"
+            ? "Keep the aggregate provider-managed dispatch/subscription proof covered by provider integration and benchmark evidence while Wolverine remains optional."
+            : "Complete the missing provider-managed dispatch/subscription proof dimensions before claiming aggregate provider-managed runtime proof coverage.";
+
+        return new ProviderManagedRuntimeProofCoverageProfile(
+            status,
+            string.Create(
+                CultureInfo.InvariantCulture,
+                $"requiredProofDimensions={string.Join(',', requiredDimensions.Select(static dimension => dimension.Id))}; requiredProofDimensionCount={requiredDimensions.Length.ToString(CultureInfo.InvariantCulture)}; coveredProofDimensions={FormatDimensionList(coveredDimensions)}; coveredProofDimensionCount={coveredDimensions.Length.ToString(CultureInfo.InvariantCulture)}; partialProofDimensions={FormatDimensionList(partialDimensions)}; partialProofDimensionCount={partialDimensions.Length.ToString(CultureInfo.InvariantCulture)}; missingProofDimensions={FormatDimensionList(missingDimensions)}; missingProofDimensionCount={missingDimensions.Length.ToString(CultureInfo.InvariantCulture)}; proofSource=eventing-superiority-profile; benchmarkFamily=provider-managed-eventing; failureAndSchedulerProofs=separate-dimensions; providerNeutral=true; wolverineRequired=false"),
+            nextGap);
+    }
+
+    private static string FormatDimensionList(string[] dimensions) =>
+        dimensions.Length == 0 ? "none" : string.Join(',', dimensions);
+
     private BrokerDeadLetterReplayProfile ResolveBrokerDeadLetterReplayProfile()
     {
         var dispatchStoreDeadLetterIntent = topology.HasDispatchStore ? "available" : "not-active";
@@ -2431,6 +2499,8 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private sealed record SubscriptionOrderingProfile(string Status, string Evidence, string NextGap);
 
     private sealed record ProcessManagerStateProfile(string Status, string Evidence, string NextGap);
+
+    private sealed record ProviderManagedRuntimeProofCoverageProfile(string Status, string Evidence, string NextGap);
 
     private sealed record BrokerDeadLetterReplayProfile(string Status, string Evidence, string NextGap);
 
