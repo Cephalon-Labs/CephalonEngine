@@ -8223,3 +8223,119 @@ Cephalon.Abstractions.Modules.ModuleDiscoveryRegistry.Register(System.Reflection
 Cephalon.Abstractions.Modules.ModuleDiscoveryRegistry.TryGetDescriptors(System.Reflection.Assembly! assembly, out System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Modules.ModuleDiscoveryDescriptor!>! descriptors) -> bool
 Cephalon.Abstractions.Behaviors.IBehaviorModuleBuilder.Add<TBehavior, TInput, TOutput>(System.Text.Json.Serialization.Metadata.JsonTypeInfo<TInput>! inputJsonTypeInfo) -> Cephalon.Abstractions.Behaviors.IBehaviorModuleBuilder!
 Cephalon.Abstractions.Behaviors.IBehaviorModuleBuilder.Add<TBehavior, TInput, TOutput>(System.Text.Json.Serialization.Metadata.JsonTypeInfo<TInput>! inputJsonTypeInfo, System.Action<Cephalon.Abstractions.Behaviors.IBehaviorTopologyBuilder!>! configureTopology) -> Cephalon.Abstractions.Behaviors.IBehaviorModuleBuilder!
+const Cephalon.Abstractions.Data.EventDispatchRemediationOutcomes.Reserved = "reserved" -> string!
+const Cephalon.Abstractions.Data.EventDispatchRemediationOperationIds.DeadLetter = "dead-letter" -> string!
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandReservation
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandReservation.CommandId.get -> string!
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandReservation.EventDispatchRemediationCommandReservation(string! commandId, bool reserved, Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState? existingCommand, System.Collections.Generic.IReadOnlyDictionary<string!, string!>! metadata) -> void
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandReservation.ExistingCommand.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandReservation.Metadata.get -> System.Collections.Generic.IReadOnlyDictionary<string!, string!>!
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandReservation.Reserved.get -> bool
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandJournalDescriptor
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandJournalDescriptor.CrossNodeCommandAudit.get -> bool
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandJournalDescriptor.Durability.get -> string!
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandJournalDescriptor.DurableReplayCursor.get -> bool
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandJournalDescriptor.EventDispatchRemediationCommandJournalDescriptor(string! JournalId, string! Provider, string! Storage, string! Durability, string! Scope, bool CrossNodeCommandAudit, bool DurableReplayCursor) -> void
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandJournalDescriptor.JournalId.get -> string!
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandJournalDescriptor.Provider.get -> string!
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandJournalDescriptor.Scope.get -> string!
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandJournalDescriptor.Storage.get -> string!
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandReplayCursor
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandReplayCursor.CommandId.get -> string!
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandReplayCursor.EventDispatchRemediationCommandReplayCursor(System.DateTimeOffset ObservedAtUtc, string! CommandId) -> void
+Cephalon.Abstractions.Data.EventDispatchRemediationCommandReplayCursor.ObservedAtUtc.get -> System.DateTimeOffset
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.DroppedCommandCount.get -> long
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.EventDispatchRemediationRuntimeRetention(int historyLimit = 0, int retainedCommandCount = 0, long totalRecordedCommandCount = 0, long droppedCommandCount = 0, bool truncated = false, string? oldestRetainedCommandId = null, System.DateTimeOffset? oldestRetainedObservedAtUtc = null, string? latestRetainedCommandId = null, System.DateTimeOffset? latestRetainedObservedAtUtc = null) -> void
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.HistoryLimit.get -> int
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.LatestRetainedCommandId.get -> string?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.LatestRetainedObservedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.OldestRetainedCommandId.get -> string?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.OldestRetainedObservedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.RetainedCommandCount.get -> int
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.TotalRecordedCommandCount.get -> long
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.Truncated.get -> bool
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.AcceptedCount.get -> int
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.DroppedCommandCount.get -> long
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.DuplicateCommandCount.get -> int
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.ErrorCount.get -> int
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.EventDispatchRemediationRuntimeSummary(int totalCommandCount = 0, int acceptedCount = 0, int rejectedCount = 0, int errorCount = 0, int duplicateCommandCount = 0, int reservedCount = 0, string? lastCommandId = null, string? lastOperationId = null, string? lastOutcome = null, string? lastDispatchOutcome = null, System.DateTimeOffset? lastObservedAtUtc = null, long droppedCommandCount = 0, bool retentionTruncated = false, bool summaryMayBeIncomplete = false, string? oldestRetainedCommandId = null, System.DateTimeOffset? oldestRetainedObservedAtUtc = null, string? oldestReservedCommandId = null, System.DateTimeOffset? oldestReservedObservedAtUtc = null) -> void
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.HasCommands.get -> bool
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.HasFailures.get -> bool
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.HasInDoubtCommands.get -> bool
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.LastCommandId.get -> string?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.LastDispatchOutcome.get -> string?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.LastObservedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.LastOperationId.get -> string?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.LastOutcome.get -> string?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.OldestRetainedCommandId.get -> string?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.OldestRetainedObservedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.OldestReservedCommandId.get -> string?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.OldestReservedObservedAtUtc.get -> System.DateTimeOffset?
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.RejectedCount.get -> int
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.ReservedCount.get -> int
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.RetentionTruncated.get -> bool
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.SummaryMayBeIncomplete.get -> bool
+Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.TotalCommandCount.get -> int
+Cephalon.Abstractions.Data.IEventDispatchRemediationCommandJournal
+Cephalon.Abstractions.Data.IEventDispatchRemediationCommandJournal.Descriptor.get -> Cephalon.Abstractions.Data.EventDispatchRemediationCommandJournalDescriptor!
+Cephalon.Abstractions.Data.IEventDispatchRemediationCommandJournal.RecordAsync(Cephalon.Abstractions.Data.EventDispatchRemediationResult! result, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask
+Cephalon.Abstractions.Data.IEventDispatchRemediationCommandJournal.ReserveAsync(Cephalon.Abstractions.Data.EventDispatchRemediationRequest! request, System.Threading.CancellationToken cancellationToken = default(System.Threading.CancellationToken)) -> System.Threading.Tasks.ValueTask<Cephalon.Abstractions.Data.EventDispatchRemediationCommandReservation!>
+Cephalon.Abstractions.Data.IEventDispatchRemediationCommandReplayCursorCatalog
+Cephalon.Abstractions.Data.IEventDispatchRemediationCommandReplayCursorCatalog.GetAfterReplayCursor(Cephalon.Abstractions.Data.EventDispatchRemediationCommandReplayCursor? cursor, int maxCount) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
+Cephalon.Abstractions.Data.IEventDispatchRemediationCommandReplayCursorCatalog.LatestReplayCursor.get -> Cephalon.Abstractions.Data.EventDispatchRemediationCommandReplayCursor?
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByActorId(string! actorId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByChannelId(string! channelId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByCorrelationId(string! correlationId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByDispatchOutcome(string! dispatchOutcome) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByMessageId(string! messageId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByObservedAt(System.DateTimeOffset? fromObservedAtUtc, System.DateTimeOffset? toObservedAtUtc) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByOperationId(string! operationId) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetByReason(string! reason) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetInDoubt() -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetInDoubtBefore(System.DateTimeOffset? beforeObservedAtUtc) -> System.Collections.Generic.IReadOnlyList<Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState!>!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetInDoubtSummaryBefore(System.DateTimeOffset? beforeObservedAtUtc) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetLatestByActorId(string! actorId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetLatestByChannelId(string! channelId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetLatestByCorrelationId(string! correlationId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetLatestByDispatchOutcome(string! dispatchOutcome) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetLatestByMessageId(string! messageId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetLatestByOperationId(string! operationId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetLatestByOutboxId(string! outboxId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetLatestByOutcome(string! outcome) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetLatestByReason(string! reason) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetOldestByActorId(string! actorId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetOldestByChannelId(string! channelId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetOldestByCorrelationId(string! correlationId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetOldestByDispatchOutcome(string! dispatchOutcome) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetOldestByMessageId(string! messageId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetOldestByOperationId(string! operationId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetOldestByOutboxId(string! outboxId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetOldestByOutcome(string! outcome) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetOldestByReason(string! reason) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetOldestInDoubtBefore(System.DateTimeOffset? beforeObservedAtUtc) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetRetentionByActorId(string! actorId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetRetentionByChannelId(string! channelId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetRetentionByCorrelationId(string! correlationId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetRetentionByDispatchOutcome(string! dispatchOutcome) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetRetentionByMessageId(string! messageId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetRetentionByOperationId(string! operationId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetRetentionByOutboxId(string! outboxId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetRetentionByOutcome(string! outcome) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetRetentionByReason(string! reason) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetSummaryByActorId(string! actorId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetSummaryByChannelId(string! channelId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetSummaryByCorrelationId(string! correlationId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetSummaryByDispatchOutcome(string! dispatchOutcome) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetSummaryByMessageId(string! messageId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetSummaryByObservedAt(System.DateTimeOffset? fromObservedAtUtc, System.DateTimeOffset? toObservedAtUtc) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetSummaryByOperationId(string! operationId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetSummaryByOutboxId(string! outboxId) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetSummaryByOutcome(string! outcome) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.GetSummaryByReason(string! reason) -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.Latest.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeState?
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.Retention.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention!
+Cephalon.Abstractions.Data.IEventDispatchRemediationRuntimeCatalog.Summary.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!
+static Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention.Empty.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeRetention!
+static Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary.Empty.get -> Cephalon.Abstractions.Data.EventDispatchRemediationRuntimeSummary!

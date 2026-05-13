@@ -68,31 +68,32 @@ Current focus:
 - treat the CDC execution-runtime catalog hot path as benchmark-governed: `CdcExecutionRuntimeCatalogBenchmarks` now covers Debezium-managed external runtimes, external observations, repeated managed-connector drift/dry-run/command-issuance filters, and compact multi-selector operator flows against the shared versioned snapshot
 - treat the event-dispatch remediation command-result filtered read path as benchmark-governed: `EventDispatchRemediationCatalogBenchmarks` now covers native Wolverine-free filtered summary, retention, latest, oldest, and compact dashboard selectors, and `scripts/validate-release.ps1` includes that benchmark class in the default guardrail lane
 
-### Public API additive baseline promotion
+### ENG-675 public API additive baseline promotion
 
 Status: done
 Estimate: 1
 Iteration: Sprint 125
 Area: release-readiness / compatibility / public API baseline
 Quality dimensions: Compatibility, Auditability, Maintainability, Usability
+GitHub issue: #1343
 
 Why:
 
-- public API compatibility evidence still reported `22` packages with `293` additive entries after the runtime/provider proof work landed
+- public API compatibility evidence still reported `3` packages with `637` additive entries after the Eventing operational-superiority and remediation work landed
 - those entries were additive and had already been reviewed by source/docs lanes, so leaving them in `PublicAPI.Unshipped.txt` made release-readiness read as unfinished compatibility work
 - release validation should continue failing closed on removals while current additive API baselines read clean
 
 Delivered:
 
-- promoted all `293` additive public API entries from per-package `PublicAPI.Unshipped.txt` files into the matching `PublicAPI.Shipped.txt` baselines
+- promoted all `637` additive public API entries across `Cephalon.Abstractions`, `Cephalon.Data.EntityFramework`, and `Cephalon.Eventing` from per-package `PublicAPI.Unshipped.txt` files into the matching `PublicAPI.Shipped.txt` baselines
 - left every `PublicAPI.Unshipped.txt` file header-only and kept removal entries at `0`
 - refreshed scorecard, doctor, release-validation, and public-API delta test snapshots so `PublicApiCompatibilityEvidence` now reads `104` package baselines / `0` pending packages / `0` additions / `0` removals
 - updated scorecard/planning docs to keep public API baseline truth separate from future stable package-validation baseline work
 
 Validation:
 
-- `pwsh ./scripts/summarise-public-api-deltas.ps1 -JsonOutputPath artifacts\public-api-delta-after-promotion.json -OutputPath artifacts\public-api-delta-after-promotion.md -FailOnRemovals`
-- `pwsh ./scripts/publish-engine-completion-scorecard.ps1 -OutputPath artifacts\engine-completion-scorecard-public-api-baseline`
+- `pwsh ./scripts/summarise-public-api-deltas.ps1 -JsonOutputPath artifacts\public-api-delta-release\public-api-delta.json -OutputPath artifacts\public-api-delta-release\public-api-delta.md -FailOnRemovals`
+- `pwsh ./scripts/publish-engine-completion-scorecard.ps1`
 
 ### Supply-chain external-policy preflight
 
