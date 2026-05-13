@@ -78,6 +78,33 @@ Current focus:
 - treat top-level hand-authored docs as a guarded docs graph: repo-local Markdown links across `docs/*.md` must resolve relative to the page that declares them, stay inside the repository, and may target either files or directories
 - treat all hand-authored Markdown as a guarded docs graph: repo-local Markdown links outside generated `docs/reference/**` must resolve relative to the declaring file, stay inside the repository, and may target existing files or directories while fenced code blocks and inline code spans are ignored by the guard
 - treat hand-authored Markdown anchor fragments as guarded adoption pointers: same-page `#fragment`, repo-local `file.md#fragment`, and GitHub-style `#Lx` / `#Lx-Ly` line fragments must resolve before docs can claim a stable navigation path
+- treat generated reference docs as a guarded generated API navigation layer: repo-local links across `docs/reference/**/*.md` must resolve inside `docs/reference`, and browser-view query links such as `browse.html?assembly=...` must resolve to the generated browser file while hand-authored docs remain the primary human contract
+
+### ENG-689 Generated reference docs navigation guard
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: reference-docs / documentation graph / documentation coverage
+Quality dimensions: Auditability, Maintainability, Reliability, Usability
+GitHub issue: #1358
+
+Why:
+
+- `ENG-687` and `ENG-688` deliberately excluded generated `docs/reference/**` from the hand-authored-doc graph guard
+- the generated API layer still carries local navigation links to the reference index, namespace/type/member indexes, and browser-view pages
+- generated browser-view links include query strings such as `browse.html?assembly=Cephalon.Engine`, so the guard needs to validate the generated file target without treating the query as part of the filesystem path
+
+Delivered:
+
+- added Tooling documentation coverage for repo-local links across generated `docs/reference/**/*.md`
+- required generated reference-doc links to resolve relative to the declaring generated page and stay inside `docs/reference`
+- taught the shared local-link parser to strip query strings before filesystem resolution while preserving fragment validation from `ENG-688`
+
+Validation:
+
+- `dotnet test .\tests\Cephalon.Tests.Tooling\Cephalon.Tests.Tooling.csproj --no-restore --filter "FullyQualifiedName~DocumentationCoverageTests" --logger "console;verbosity=minimal"`
+- `git diff --check`
 
 ### ENG-688 Hand-authored Markdown anchor-fragment guard
 

@@ -282,6 +282,29 @@ public sealed class DocumentationCoverageTests
     }
 
     [Fact]
+    public void GeneratedReferenceDocumentationLocalLinksResolve()
+    {
+        var repositoryRoot = GetRepositoryRoot();
+        var referenceDocsRoot = Path.Combine(repositoryRoot, "docs", "reference");
+        var markdownPaths = EnumerateReferenceMarkdownPaths(referenceDocsRoot)
+            .OrderBy(path => path, StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.NotEmpty(markdownPaths);
+
+        var totalLocalLinkCount = 0;
+        foreach (var markdownPath in markdownPaths)
+            totalLocalLinkCount += AssertLocalMarkdownLinksResolve(
+                repositoryRoot,
+                markdownPath,
+                $"generated reference documentation '{Path.GetRelativePath(referenceDocsRoot, markdownPath)}'",
+                requireLocalLinks: false,
+                requiredContainingDirectory: referenceDocsRoot);
+
+        Assert.True(totalLocalLinkCount > 0, "Expected generated reference documentation to contain at least one local navigation link.");
+    }
+
+    [Fact]
     public void ObservabilityDependencyProbeDocsMatchRuntimeOwnership()
     {
         var repositoryRoot = GetRepositoryRoot();
@@ -1276,6 +1299,11 @@ public sealed class DocumentationCoverageTests
             .Where(path => IsHandAuthoredMarkdownPath(repositoryRoot, path));
     }
 
+    private static IEnumerable<string> EnumerateReferenceMarkdownPaths(string referenceDocsRoot)
+    {
+        return Directory.EnumerateFiles(referenceDocsRoot, "*.md", SearchOption.AllDirectories);
+    }
+
     private static bool IsHandAuthoredMarkdownPath(string repositoryRoot, string markdownPath)
     {
         var relativePath = Path.GetRelativePath(repositoryRoot, markdownPath);
@@ -1299,7 +1327,8 @@ public sealed class DocumentationCoverageTests
         string markdownPath,
         string documentDescription,
         bool allowDirectoryTargets = false,
-        bool requireLocalLinks = true)
+        bool requireLocalLinks = true,
+        string? requiredContainingDirectory = null)
     {
         var markdownRoot = Path.GetDirectoryName(markdownPath)!;
         var markdown = RemoveMarkdownCode(File.ReadAllText(markdownPath));
@@ -1324,6 +1353,14 @@ public sealed class DocumentationCoverageTests
             Assert.True(
                 IsPathInsideRepository(repositoryRoot, resolvedPath),
                 $"Expected {documentDescription} link target '{localLink.OriginalTarget}' to stay inside the repository but resolved to '{resolvedPath}'.");
+
+            if (!string.IsNullOrWhiteSpace(requiredContainingDirectory))
+            {
+                Assert.True(
+                    IsPathInsideDirectory(requiredContainingDirectory, resolvedPath),
+                    $"Expected {documentDescription} link target '{localLink.OriginalTarget}' to stay inside '{requiredContainingDirectory}' but resolved to '{resolvedPath}'.");
+            }
+
             Assert.True(
                 File.Exists(resolvedPath) || (allowDirectoryTargets && Directory.Exists(resolvedPath)),
                 allowDirectoryTargets
@@ -1350,6 +1387,10 @@ public sealed class DocumentationCoverageTests
         var fragmentSeparatorIndex = normalizedTarget.IndexOf('#', StringComparison.Ordinal);
         var targetPath = fragmentSeparatorIndex >= 0 ? normalizedTarget[..fragmentSeparatorIndex] : normalizedTarget;
         var fragment = fragmentSeparatorIndex >= 0 ? normalizedTarget[(fragmentSeparatorIndex + 1)..] : null;
+        var querySeparatorIndex = targetPath.IndexOf('?', StringComparison.Ordinal);
+
+        if (querySeparatorIndex >= 0)
+            targetPath = targetPath[..querySeparatorIndex];
 
         return new MarkdownLocalLink(
             target,
@@ -1518,11 +1559,16 @@ public sealed class DocumentationCoverageTests
 
     private static bool IsPathInsideRepository(string repositoryRoot, string path)
     {
-        var normalizedRepositoryRoot = Path.TrimEndingDirectorySeparator(Path.GetFullPath(repositoryRoot));
+        return IsPathInsideDirectory(repositoryRoot, path);
+    }
+
+    private static bool IsPathInsideDirectory(string directoryPath, string path)
+    {
+        var normalizedDirectoryPath = Path.TrimEndingDirectorySeparator(Path.GetFullPath(directoryPath));
         var normalizedPath = Path.GetFullPath(path);
 
-        return normalizedPath.Equals(normalizedRepositoryRoot, StringComparison.OrdinalIgnoreCase) ||
-               normalizedPath.StartsWith(normalizedRepositoryRoot + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
+        return normalizedPath.Equals(normalizedDirectoryPath, StringComparison.OrdinalIgnoreCase) ||
+               normalizedPath.StartsWith(normalizedDirectoryPath + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase);
     }
 
     private readonly record struct MarkdownLocalLink(
