@@ -3121,6 +3121,124 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public void AddEventingSelectsLatestProvenBrokerInboundConsumptionEvidenceAcrossSubscriptionsWithoutWolverine()
+    {
+        var olderBrokerInboundConsumptionReport = EventSubscriptionBrokerInboundConsumptionMetadata.CreateReport(
+            new EventSubscriptionExecutionReport(
+                subscriptionId: "alpha-subscription",
+                outcome: EventSubscriptionExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 13, 0, 0, TimeSpan.Zero),
+                messageId: "msg-alpha-broker-inbound-001",
+                attempt: 1),
+            source: "alpha-broker-inbound-runtime",
+            consumerLoopId: "alpha-consumer-loop",
+            acknowledgementId: "alpha-acknowledgement",
+            leaseId: "alpha-consumer-lease",
+            retryPolicy: "alpha-retry-policy",
+            poisonMessageHandling: "alpha-poison-policy",
+            offsetCheckpointId: "alpha-offset-checkpoint");
+        var newerBrokerInboundConsumptionReport = EventSubscriptionBrokerInboundConsumptionMetadata.CreateReport(
+            new EventSubscriptionExecutionReport(
+                subscriptionId: "beta-subscription",
+                outcome: EventSubscriptionExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 13, 30, 0, TimeSpan.Zero),
+                messageId: "msg-beta-broker-inbound-001",
+                attempt: 1),
+            source: "beta-broker-inbound-runtime",
+            consumerLoopId: "beta-consumer-loop",
+            acknowledgementId: "beta-acknowledgement",
+            leaseId: "beta-consumer-lease",
+            retryPolicy: "beta-retry-policy",
+            poisonMessageHandling: "beta-poison-policy",
+            offsetCheckpointId: "beta-offset-checkpoint");
+        var newerPartialBrokerInboundConsumptionReport = new EventSubscriptionExecutionReport(
+            subscriptionId: "gamma-subscription",
+            outcome: EventSubscriptionExecutionOutcomes.Succeeded,
+            observedAtUtc: new DateTimeOffset(2026, 05, 13, 14, 0, 0, TimeSpan.Zero),
+            messageId: "msg-gamma-broker-inbound-001",
+            attempt: 1,
+            metadata: new Dictionary<string, string>
+            {
+                [EventSubscriptionRuntimeMetadataKeys.BrokerInboundConsumption] = "provider-reported",
+                [EventSubscriptionRuntimeMetadataKeys.BrokerInboundConsumptionSource] = "gamma-broker-inbound-runtime",
+                [EventSubscriptionRuntimeMetadataKeys.BrokerConsumerLoop] = "reported"
+            });
+        var services = new ServiceCollection();
+        services.AddSingleton<IEventSubscriptionRuntimeCatalog>(new TestEventSubscriptionRuntimeCatalog(
+            CreateSubscriptionRuntimeState(olderBrokerInboundConsumptionReport),
+            CreateSubscriptionRuntimeState(newerBrokerInboundConsumptionReport),
+            CreateSubscriptionRuntimeState(newerPartialBrokerInboundConsumptionReport)));
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "contracts",
+                    displayName: "Contracts",
+                    description: "Broker inbound consumption proof events."));
+                options.Subscriptions.Add(new EventSubscriptionDescriptor(
+                    id: "alpha-subscription",
+                    displayName: "Alpha Subscription",
+                    description: "Older broker inbound consumption proof.",
+                    channelId: "contracts",
+                    handlerId: "alpha-broker-inbound-handler",
+                    deliveryMode: "application-service"));
+                options.Subscriptions.Add(new EventSubscriptionDescriptor(
+                    id: "beta-subscription",
+                    displayName: "Beta Subscription",
+                    description: "Newer broker inbound consumption proof.",
+                    channelId: "contracts",
+                    handlerId: "beta-broker-inbound-handler",
+                    deliveryMode: "application-service"));
+                options.Subscriptions.Add(new EventSubscriptionDescriptor(
+                    id: "gamma-subscription",
+                    displayName: "Gamma Subscription",
+                    description: "Newer partial broker inbound consumption report.",
+                    channelId: "contracts",
+                    handlerId: "gamma-broker-inbound-handler",
+                    deliveryMode: "application-service"));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var dimensions = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        var evidence = dimensions["broker-inbound-consumption-ownership"].Metadata["runtimeEvidence"];
+
+        Assert.Equal("claimed", dimensions["broker-inbound-consumption-ownership"].Metadata["status"]);
+        Assert.Contains("brokerInboundConsumptionProofSelection=latest-proven-subscription-state", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerInboundConsumptionStateCount=3", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerInboundConsumptionProvenCount=2", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerInboundConsumptionSource=beta-broker-inbound-runtime", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerConsumerLoop=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("brokerConsumerLoopId=beta-consumer-loop", evidence, StringComparison.Ordinal);
+        Assert.Contains("inboundAcknowledgement=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("inboundAcknowledgementId=beta-acknowledgement", evidence, StringComparison.Ordinal);
+        Assert.Contains("consumerLease=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("consumerLeaseId=beta-consumer-lease", evidence, StringComparison.Ordinal);
+        Assert.Contains("inboundRetryPolicy=beta-retry-policy", evidence, StringComparison.Ordinal);
+        Assert.Contains("poisonMessageHandling=beta-poison-policy", evidence, StringComparison.Ordinal);
+        Assert.Contains("consumerOffsetCheckpoint=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("consumerOffsetCheckpointId=beta-offset-checkpoint", evidence, StringComparison.Ordinal);
+        Assert.Contains("subscriptionId=beta-subscription", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastOutcome=succeeded", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastObservedAtUtc=2026-05-13T13:30:00.0000000+00:00", evidence, StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("consumerOffsetCheckpointId=alpha-offset-checkpoint", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("brokerInboundConsumptionSource=gamma-broker-inbound-runtime", evidence, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void AddEventingProjectsContractCatalogProfileEvidenceWithoutWolverine()
     {
         var services = new ServiceCollection();

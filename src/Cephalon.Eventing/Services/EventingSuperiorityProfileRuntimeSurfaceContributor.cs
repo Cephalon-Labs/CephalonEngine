@@ -687,9 +687,15 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         var inboxPath = topology.HasInboxPath ? "present" : "not-present";
         using var scope = scopeFactory.CreateScope();
         var subscriptionRuntimeCatalog = scope.ServiceProvider.GetService<IEventSubscriptionRuntimeCatalog>();
-        var brokerConsumedState = subscriptionRuntimeCatalog?.States.FirstOrDefault(static state =>
-            state.Metadata.TryGetValue(EventSubscriptionRuntimeMetadataKeys.BrokerInboundConsumption, out var value) &&
-            string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase));
+        var brokerInboundConsumptionStates = subscriptionRuntimeCatalog?.States
+            .Where(static state =>
+                state.Metadata.TryGetValue(EventSubscriptionRuntimeMetadataKeys.BrokerInboundConsumption, out var value) &&
+                string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase))
+            .ToArray() ?? [];
+        var brokerInboundConsumptionProvenCount = brokerInboundConsumptionStates.Count(IsBrokerInboundConsumptionProof);
+        var brokerConsumedState = SelectBestSubscriptionProof(
+            brokerInboundConsumptionStates,
+            IsBrokerInboundConsumptionProof);
 
         if (brokerConsumedState is not null)
         {
@@ -749,7 +755,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                 status,
                 string.Create(
                     CultureInfo.InvariantCulture,
-                    $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; inboxPath={inboxPath}; brokerInboundConsumption=provider-reported; brokerInboundConsumptionSource={source}; brokerConsumerLoop={brokerConsumerLoop}; brokerConsumerLoopId={brokerConsumerLoopId}; providerOwnedConsumer=reported; inboundAcknowledgement={inboundAcknowledgement}; inboundAcknowledgementId={inboundAcknowledgementId}; consumerLease={consumerLease}; consumerLeaseId={consumerLeaseId}; inboundRetryPolicy={inboundRetryPolicy}; poisonMessageHandling={poisonMessageHandling}; consumerOffsetCheckpoint={consumerOffsetCheckpoint}; consumerOffsetCheckpointId={consumerOffsetCheckpointId}; subscriptionId={brokerConsumedState.SubscriptionId}; lastOutcome={brokerConsumedState.LastOutcome ?? "unknown"}; wolverineRequired=false"),
+                    $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; inboxPath={inboxPath}; brokerInboundConsumptionProofSelection=latest-proven-subscription-state; brokerInboundConsumptionStateCount={brokerInboundConsumptionStates.Length.ToString(CultureInfo.InvariantCulture)}; brokerInboundConsumptionProvenCount={brokerInboundConsumptionProvenCount.ToString(CultureInfo.InvariantCulture)}; brokerInboundConsumption=provider-reported; brokerInboundConsumptionSource={source}; brokerConsumerLoop={brokerConsumerLoop}; brokerConsumerLoopId={brokerConsumerLoopId}; providerOwnedConsumer=reported; inboundAcknowledgement={inboundAcknowledgement}; inboundAcknowledgementId={inboundAcknowledgementId}; consumerLease={consumerLease}; consumerLeaseId={consumerLeaseId}; inboundRetryPolicy={inboundRetryPolicy}; poisonMessageHandling={poisonMessageHandling}; consumerOffsetCheckpoint={consumerOffsetCheckpoint}; consumerOffsetCheckpointId={consumerOffsetCheckpointId}; subscriptionId={brokerConsumedState.SubscriptionId}; lastOutcome={brokerConsumedState.LastOutcome ?? "unknown"}; lastObservedAtUtc={FormatObservedAt(brokerConsumedState.LastObservedAtUtc)}; wolverineRequired=false"),
                 nextGap);
         }
 
@@ -757,7 +763,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             "not-claimed",
             string.Create(
                 CultureInfo.InvariantCulture,
-                $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; inboxPath={inboxPath}; brokerInboundConsumption=not-claimed; brokerInboundConsumptionSource=not-reported; brokerConsumerLoop=not-present; brokerConsumerLoopId=not-reported; providerOwnedConsumer=not-present; inboundAcknowledgement=not-claimed; inboundAcknowledgementId=not-reported; consumerLease=not-claimed; consumerLeaseId=not-reported; inboundRetryPolicy=not-claimed; poisonMessageHandling=not-claimed; consumerOffsetCheckpoint=not-claimed; consumerOffsetCheckpointId=not-reported; wolverineRequired=false"),
+                $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; inboxPath={inboxPath}; brokerInboundConsumptionProofSelection=latest-proven-subscription-state; brokerInboundConsumptionStateCount={brokerInboundConsumptionStates.Length.ToString(CultureInfo.InvariantCulture)}; brokerInboundConsumptionProvenCount={brokerInboundConsumptionProvenCount.ToString(CultureInfo.InvariantCulture)}; brokerInboundConsumption=not-claimed; brokerInboundConsumptionSource=not-reported; brokerConsumerLoop=not-present; brokerConsumerLoopId=not-reported; providerOwnedConsumer=not-present; inboundAcknowledgement=not-claimed; inboundAcknowledgementId=not-reported; consumerLease=not-claimed; consumerLeaseId=not-reported; inboundRetryPolicy=not-claimed; poisonMessageHandling=not-claimed; consumerOffsetCheckpoint=not-claimed; consumerOffsetCheckpointId=not-reported; wolverineRequired=false"),
             "Add a provider-owned inbound consumption descriptor plus acknowledgement, retry, lease, poison handling, and offset-checkpoint evidence before claiming broker inbound consumption.");
     }
 
@@ -819,6 +825,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
     private static bool IsProcessManagerStateProof(EventSubscriptionRuntimeState state) =>
         string.Equals(state.LastOutcome, EventSubscriptionExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
         EventSubscriptionProcessManagerStateMetadata.IsProcessManagerStateProven(state.Metadata);
+
+    private static bool IsBrokerInboundConsumptionProof(EventSubscriptionRuntimeState state) =>
+        string.Equals(state.LastOutcome, EventSubscriptionExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
+        EventSubscriptionBrokerInboundConsumptionMetadata.IsBrokerConsumed(state.Metadata);
 
     private static string FormatObservedAt(DateTimeOffset? observedAtUtc) =>
         observedAtUtc.HasValue
