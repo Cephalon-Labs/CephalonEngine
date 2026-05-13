@@ -184,6 +184,13 @@
       "notes": "A compact native remediation operator dashboard drill-down over summary, retention, latest, and oldest selectors should stay below 30 us and avoid materializing any detail list for filtered read models."
     },
     {
+      "reportFileName": "Cephalon.Benchmarks.HotPath.EventDispatchBrokerDispatchBenchmarks-report.csv",
+      "benchmark": "ReportProjectedBrokerDispatches",
+      "maxMeanNanoseconds": 10000,
+      "maxAllocatedBytes": 5000,
+      "notes": "Native provider-neutral broker-dispatch report projection should create Cephalon broker handoff headers, report a successful dispatch through IEventDispatchRuntimeReporter, and read back IEventDispatchRuntimeCatalog state below 10 us and under roughly 5 KB allocated per dispatch."
+    },
+    {
       "reportFileName": "Cephalon.Benchmarks.HotPath.BehaviorDispatchBenchmarks-report.csv",
       "benchmark": "DispatchBehavior",
       "maxMeanNanoseconds": 10000,

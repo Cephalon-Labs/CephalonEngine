@@ -67,7 +67,15 @@ internal sealed class EventingBenchmarkProofCatalog : IEventingBenchmarkProofCat
             Benchmark: "BuildStartWorkerHost",
             MaxMeanNanoseconds: 5000000,
             MaxAllocatedBytes: 500000,
-            HotPath: "worker-host-cold-start")
+            HotPath: "worker-host-cold-start"),
+        new(
+            Id: "eventing.broker-dispatch.report-projected-headers",
+            Family: "broker-dispatch",
+            ReportFileName: "Cephalon.Benchmarks.HotPath.EventDispatchBrokerDispatchBenchmarks-report.csv",
+            Benchmark: "ReportProjectedBrokerDispatches",
+            MaxMeanNanoseconds: 10000,
+            MaxAllocatedBytes: 5000,
+            HotPath: "provider-neutral-broker-dispatch-report")
     ];
 
     public IReadOnlyList<EventingBenchmarkProofDescriptor> Guardrails => DefaultGuardrails;

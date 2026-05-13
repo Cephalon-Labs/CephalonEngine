@@ -15,7 +15,7 @@ public sealed class GuardrailValidatorTests
             "performance-guardrails.json"));
 
         Assert.Equal("1.0", catalog.Version);
-        Assert.Equal(36, catalog.Entries.Count);
+        Assert.Equal(37, catalog.Entries.Count);
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildRuntimeManifest");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildRuntimeManifestWithStrictTrustPolicy");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "BuildPhase8RuntimeManifest");
@@ -42,6 +42,7 @@ public sealed class GuardrailValidatorTests
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "FilterLatestByCorrelationId");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "FilterOldestByDispatchOutcome");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "FilterOperatorDashboardSelectors");
+        Assert.Contains(catalog.Entries, entry => entry.Benchmark == "ReportProjectedBrokerDispatches");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "DispatchBehavior");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "EvaluateRbacAllow");
         Assert.Contains(catalog.Entries, entry => entry.Benchmark == "EvaluateRbacDeny");
@@ -103,6 +104,22 @@ ComposeEngine,11.50 μs,24.00 KB
             Assert.Equal(688_128, await benchmark.DispatchQuery());
             await benchmark.DispatchCommand();
             Assert.Equal(352_256, await benchmark.DispatchCommandWithResult());
+        }
+        finally
+        {
+            benchmark.Cleanup();
+        }
+    }
+
+    [Fact]
+    public async Task EventDispatchBrokerDispatchBenchmarksExerciseProjectedReportPathUsedByGuardrails()
+    {
+        var benchmark = new EventDispatchBrokerDispatchBenchmarks();
+        await benchmark.Setup();
+
+        try
+        {
+            Assert.True(await benchmark.ReportProjectedBrokerDispatches() > 0);
         }
         finally
         {
