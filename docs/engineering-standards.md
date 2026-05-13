@@ -142,6 +142,72 @@ Cephalon is a framework, not a single application. That changes the compatibilit
 
 The deeper compatibility-and-alignment contract lives in [`compatibility.md`](compatibility.md). Do not duplicate that contract here — read it before changing public surface, package metadata, or framework baselines.
 
+## Configuration and options standards
+
+Cephalon is a framework that consumers compose through configuration and code. Where the line between the two falls is itself part of the engine's contract: environment-owned policy, topology, and metadata belong in configuration so consumers can change deployment shape without recompiling; hot-path behavior, descriptors, and execution belong in code so the runtime stays type-safe and fast. The standards below codify how the `Cephalon.*` family draws that line consistently and how options surfaces should behave.
+
+The `config-vs-code` line:
+
+- environment-owned settings — channel metadata, broker endpoints, transport selection, retry/timeout/circuit-breaker policy, scheduling windows, idempotency policy, routing topology, tenant/correlation policy, capability gating, observability sinks, and similar deployment-time choices — belong in `Engine:*` configuration sections so a host can change them without a recompile
+- code-owned settings — subscription descriptors, behavior topology, handler registration, executor types, middleware pipelines, source-generated metadata, descriptor contributors, and any per-message/per-request hot-path code — belong in typed contracts (`*Options` collection properties, `I*Contributor` interfaces, `Add{Group}` extension methods, attribute-based discovery) so publish/subscribe and request/response paths stay type-safe and fast
+- `Add{Pack}FromConfiguration(IConfiguration)` is the canonical binding entry point; it must reject configuration keys that would move hot-path behavior into config (e.g. `Engine:Messaging:Subscriptions`, `Engine:Messaging:SubscriptionHandlers`) with a clear diagnostic so the line is enforced at validation time, not at first failure
+- when both lanes accept the same descriptor (e.g. channels declared in code and channels loaded from `Engine:Messaging:Channels`), the merge order must be deterministic, documented, and observable through the runtime catalog so contributors can predict the resulting truth
+
+Configuration section naming:
+
+- top-level prefix is always `Engine:` so host configuration files keep one namespace for engine-owned settings
+- the second segment names the pack family (`Engine:Messaging`, `Engine:Behaviors`, `Engine:Data`, `Engine:AspNetCore`, `Engine:Cells`, `Engine:Features`, `Engine:BackendForFrontend`, ...) so consumers can scope per-pack overrides without colliding with each other
+- the third and deeper segments name the capability dimension (provider, transport, durability, delivery guarantees, retry, scheduling, dead-letter, topology, tenant/correlation, observability, compliance) so configuration shape mirrors the engine's quality dimensions and stays predictable across packs
+- all keys use PascalCase to match `IConfiguration` binding conventions; collection sections that key by id use the id as the dictionary key (e.g. `Engine:Messaging:Channels:OrderEvents`) rather than positional arrays so descriptor identity stays stable across reordering
+- new configuration sections are documented in the owning component page under `docs/components/*.md` in the same slice that introduces them; a new `Engine:*` section without component-doc coverage is not a finished slice
+
+Options class shape:
+
+- options classes are POCOs with public mutable properties bound by `Microsoft.Extensions.Options`; they are validated through `IValidateOptions<T>` (eager) or `[ValidateOnStart]` (registration-time), not by throwing inside the consumer's hot path
+- options collections (e.g. `EventingOptions.Subscriptions`, `EventingOptions.Contracts`, `EventingOptions.Serializers`, `EventingOptions.SchemaRegistries`, `EventingOptions.Upcasters`, `EventingOptions.ContextPolicies`) own descriptor identity; descriptors are records or value-equality types so duplicate-id detection is cheap and runtime catalogs can deduplicate deterministically
+- `I{Capability}Contributor` interfaces are the cross-pack composition seam; modules and host packs add descriptors through contributors instead of mutating shared options instances post-build
+- options snapshots (`IOptionsSnapshot<T>`) are used inside scoped/request-bound consumers; options monitors (`IOptionsMonitor<T>`) are used inside long-lived singletons that need reload notifications; raw `IOptions<T>` is used only when the value is fixed for the process lifetime
+- runtime catalogs (`I{Capability}RuntimeCatalog`) project the merged code + configuration + contributor truth; the catalog is the single source of truth that operators, dashboards, and AI agents read, not the bound options instance directly
+
+Validation and failure posture:
+
+- validation runs at composition time through `services.AddOptions<T>().ValidateDataAnnotations().ValidateOnStart()` or an explicit `IValidateOptions<T>` so misconfigured hosts fail fast at startup, not on first request
+- validation messages name the offending configuration key (`Engine:Messaging:Channels:OrderEvents:Provider`) so operators can locate the problem without code reading
+- empty/missing optional sections are not errors; required sections that are absent emit a clear `Engine.Configuration.*` diagnostic id and fail composition rather than silently disabling the capability
+- type coercion errors from `IConfiguration` binding (string → enum, string → `TimeSpan`, string → `Uri`) are surfaced as validation failures with the expected type named, not as raw `InvalidCastException`
+
+Reload and live-reconfiguration posture:
+
+- options classes that bind reload-safe environment-owned settings (retry policy, scheduling windows, capability gates) accept `IConfiguration` change tokens through `IOptionsMonitor<T>` and document which fields are reload-safe
+- options classes that bind composition-time settings (channel descriptors, contributor registrations, transport selection) document that reload requires a host restart; the runtime catalog reflects the active composition, not the latest configuration snapshot
+- a setting that sits ambiguously between the two lanes is a design smell — pick one lane explicitly and document it on the component page rather than letting reload semantics drift
+
+Secrets and sensitive configuration:
+
+- secrets, API keys, connection strings with embedded credentials, and signing keys never live in repo-tracked `appsettings*.json` files; they are loaded through environment variables, Azure Key Vault / AWS Secrets Manager / HashiCorp Vault / `dotnet user-secrets` providers, or trusted-publishing-style identity flows
+- options classes that hold secrets implement `ToString()` or `[DebuggerDisplay]` overrides that redact secret fields so log/diagnostic dumps do not leak credentials
+- runtime catalogs and `/engine/*` introspection routes redact secret fields from their projections; the descriptor schema marks secret fields explicitly so the projection layer can audit redaction coverage
+
+Default-value posture:
+
+- options defaults match what a single-instance development host needs to start without further configuration, so the engine's getting-started experience stays low-ceremony
+- production-grade defaults that differ from development (e.g. retry backoff, dead-letter retention, durable journal pruning) are documented on the component page; the engine never silently switches default values based on environment name
+- when a default value changes between minor versions, the change is a documented compatibility note and the previous default stays available as an explicit opt-in for at least one minor version
+
+Authoritative external sources:
+
+- [Configuration in .NET](https://learn.microsoft.com/en-us/dotnet/core/extensions/configuration)
+- [Options pattern in .NET](https://learn.microsoft.com/en-us/dotnet/core/extensions/options)
+- [Options validation](https://learn.microsoft.com/en-us/dotnet/core/extensions/options#options-validation)
+- [Configuration providers in .NET](https://learn.microsoft.com/en-us/dotnet/core/extensions/configuration-providers)
+- [Safe storage of app secrets in development](https://learn.microsoft.com/en-us/aspnet/core/security/app-secrets)
+
+Deeper truth:
+
+- per-pack configuration sections and validation rules → [`docs/components/*.md`](components/README.md)
+- runtime catalog projections of merged configuration + code + contributor truth → [`runtime-contract-index.md`](runtime-contract-index.md) and [`conformance-matrix.md`](conformance-matrix.md)
+- the architectural rationale for the config-vs-code line → [`architecture-patterns-research.md`](architecture-patterns-research.md) (Section 8 — Framework Engine Design Patterns)
+
 ## Packaging standards
 
 Cephalon ships under a coherent, layered `Cephalon.*` package family. Package taxonomy is part of the framework's discoverability and upgrade safety, not a release afterthought.
