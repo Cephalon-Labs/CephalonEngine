@@ -71,6 +71,33 @@ Current focus:
 - treat missing GitHub Project 2 planning fields as a planning-quality risk: `scripts/validate-planning-project-fields.ps1` now verifies open `ENG-*` issue project items have populated `Status`, `Estimate`, `Iteration`, `Test`, and `Benchmark`, and the first live run corrected the missing `Iteration` field on `ENG-532` / issue `#1180`
 - treat signed-release dry-run dispatch proof as scorecard readback, not prose-only release context: `SupplyChainEvidence.SignedReleaseDryRun` now records the dry-run status, partial proof state, current `dispatch-identity-actions-disabled` blocker, required `-RequireRunCreated` command, output path, and required report fields while `ENG-532` remains open until an Actions-enabled release-manager identity creates the workflow run
 - treat component-page maturity badges as a completed adoption contract: every shipped source-project component page now carries a maturity label, ownership label, and `engine-surface-maturity-audit.md` back-pointer, and Tooling coverage blocks any new shipped component page from skipping that first-scan truth
+- treat the component catalog as a unique source-project map: every shipped `src/Cephalon.*` project must appear exactly once in `docs/components/README.md`, so future family re-grouping cannot leave duplicate component links behind
+
+### ENG-682 Component catalog duplicate-link guard
+
+Status: done
+Estimate: 1
+Iteration: Sprint 125
+Area: component-docs / planning-governance / documentation coverage
+Quality dimensions: Auditability, Maintainability, Reliability, Usability
+GitHub issue: #1351
+
+Why:
+
+- `ENG-681` completed the maturity-badge requirement, but `docs/components/README.md` still listed `Cephalon.EventSourcing.Redis` twice
+- the existing Tooling guard proved every shipped source project had a catalog entry, but did not fail when the same entry appeared multiple times
+- duplicate component links weaken the catalog as the map before source because future grouping changes can make ownership and family placement ambiguous
+
+Delivered:
+
+- kept `Cephalon.EventSourcing.Redis` in the canonical Phase 10 Redis provider family section beside `Cephalon.Data.Redis`
+- removed the duplicate `Cephalon.EventSourcing.Redis` link from the higher-level technology/follow-through section
+- extended Tooling documentation coverage so every shipped source-project component catalog entry must appear exactly once
+
+Validation:
+
+- `dotnet test .\tests\Cephalon.Tests.Tooling\Cephalon.Tests.Tooling.csproj --no-restore --filter "FullyQualifiedName~DocumentationCoverageTests" --logger "console;verbosity=minimal"`
+- `git diff --check`
 
 ### ENG-681 Component maturity badge completion guard
 

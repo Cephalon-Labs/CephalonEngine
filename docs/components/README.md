@@ -49,7 +49,6 @@ Every shipped source-project component page now carries this badge. Tooling cove
 - [Cephalon.EventSourcing](event-sourcing.md)
 - [Cephalon.EventSourcing.EntityFramework](event-sourcing-entityframework.md)
 - [Cephalon.EventSourcing.MongoDB](event-sourcing-mongodb.md)
-- [Cephalon.EventSourcing.Redis](event-sourcing-redis.md)
 - [Cephalon.Eventing](eventing.md)
 - [Cephalon.Data.SqlServer](data-sqlserver.md)
 - [Cephalon.Data.Postgres](data-postgres.md)

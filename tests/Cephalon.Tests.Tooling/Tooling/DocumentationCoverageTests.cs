@@ -128,10 +128,11 @@ public sealed class DocumentationCoverageTests
                 "authoritative truth in [`engine-surface-maturity-audit.md`](../engine-surface-maturity-audit.md)",
                 componentDocContents,
                 StringComparison.Ordinal);
-            Assert.Contains(
-                $"[{projectName}]({componentDocFileName})",
-                componentCatalog,
-                StringComparison.Ordinal);
+            var componentCatalogEntry = $"[{projectName}]({componentDocFileName})";
+            var componentCatalogEntryCount = CountOrdinalOccurrences(componentCatalog, componentCatalogEntry);
+            Assert.True(
+                componentCatalogEntryCount == 1,
+                $"Expected component catalog entry '{componentCatalogEntry}' to appear exactly once but found {componentCatalogEntryCount}.");
         }
     }
 
@@ -1111,6 +1112,24 @@ public sealed class DocumentationCoverageTests
         Assert.True(endIndex > startIndex, $"Expected document baseline date after prefix '{prefix}' to be quoted.");
 
         return document[startIndex..endIndex];
+    }
+
+    private static int CountOrdinalOccurrences(string source, string value)
+    {
+        var count = 0;
+        var startIndex = 0;
+
+        while (startIndex < source.Length)
+        {
+            var index = source.IndexOf(value, startIndex, StringComparison.Ordinal);
+            if (index < 0)
+                return count;
+
+            count++;
+            startIndex = index + value.Length;
+        }
+
+        return count;
     }
 
     private static DependencyHealthProviderManifestRow[] ReadDependencyHealthProviderManifest(string repositoryRoot)
