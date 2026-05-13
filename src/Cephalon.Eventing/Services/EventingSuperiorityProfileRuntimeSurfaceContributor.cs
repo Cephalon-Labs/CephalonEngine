@@ -808,6 +808,10 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
         string.Equals(state.LastOutcome, EventSubscriptionExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
         EventSubscriptionProviderIdempotencyMetadata.IsProviderIdempotencyProven(state.Metadata);
 
+    private static bool IsSubscriptionConcurrencyProof(EventSubscriptionRuntimeState state) =>
+        string.Equals(state.LastOutcome, EventSubscriptionExecutionOutcomes.Succeeded, StringComparison.OrdinalIgnoreCase) &&
+        EventSubscriptionConcurrencyMetadata.IsConcurrencyProven(state.Metadata);
+
     private static string FormatObservedAt(DateTimeOffset? observedAtUtc) =>
         observedAtUtc.HasValue
             ? observedAtUtc.Value.ToString("O", CultureInfo.InvariantCulture)
@@ -1479,9 +1483,15 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
 
         using var scope = scopeFactory.CreateScope();
         var subscriptionRuntimeCatalog = scope.ServiceProvider.GetService<IEventSubscriptionRuntimeCatalog>();
-        var concurrencyState = subscriptionRuntimeCatalog?.States.FirstOrDefault(static state =>
-            state.Metadata.TryGetValue(EventSubscriptionRuntimeMetadataKeys.SubscriptionConcurrency, out var value) &&
-            string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase));
+        var concurrencyStates = subscriptionRuntimeCatalog?.States
+            .Where(static state =>
+                state.Metadata.TryGetValue(EventSubscriptionRuntimeMetadataKeys.SubscriptionConcurrency, out var value) &&
+                string.Equals(value, "provider-reported", StringComparison.OrdinalIgnoreCase))
+            .ToArray() ?? [];
+        var concurrencyProvenCount = concurrencyStates.Count(IsSubscriptionConcurrencyProof);
+        var concurrencyState = SelectBestSubscriptionProof(
+            concurrencyStates,
+            IsSubscriptionConcurrencyProof);
 
         if (concurrencyState is not null)
         {
@@ -1561,7 +1571,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
                 status,
                 string.Create(
                     CultureInfo.InvariantCulture,
-                    $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; subscriptionConcurrency={subscriptionConcurrency}; subscriptionConcurrencySource={subscriptionConcurrencySource}; perSubscriptionConcurrencyLimit={perSubscriptionConcurrencyLimit}; parallelHandlerExecution={parallelHandlerExecution}; consumerPrefetch={consumerPrefetch}; consumerPrefetchCount={consumerPrefetchCount}; backpressure={backpressure}; backpressureStrategy={backpressureStrategy}; providerConcurrency={providerConcurrency}; providerConcurrencyId={providerConcurrencyId}; consumerLease={consumerLease}; consumerLeaseId={consumerLeaseId}; workStealing={workStealing}; workStealingId={workStealingId}; distributedWorkSharing={distributedWorkSharing}; distributedWorkSharingId={distributedWorkSharingId}; subscriptionId={concurrencyState.SubscriptionId}; lastOutcome={concurrencyState.LastOutcome ?? "unknown"}; wolverineRequired=false"),
+                    $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; subscriptionConcurrencyProofSelection=latest-proven-subscription-state; subscriptionConcurrencyStateCount={concurrencyStates.Length.ToString(CultureInfo.InvariantCulture)}; subscriptionConcurrencyProvenCount={concurrencyProvenCount.ToString(CultureInfo.InvariantCulture)}; subscriptionConcurrency={subscriptionConcurrency}; subscriptionConcurrencySource={subscriptionConcurrencySource}; perSubscriptionConcurrencyLimit={perSubscriptionConcurrencyLimit}; parallelHandlerExecution={parallelHandlerExecution}; consumerPrefetch={consumerPrefetch}; consumerPrefetchCount={consumerPrefetchCount}; backpressure={backpressure}; backpressureStrategy={backpressureStrategy}; providerConcurrency={providerConcurrency}; providerConcurrencyId={providerConcurrencyId}; consumerLease={consumerLease}; consumerLeaseId={consumerLeaseId}; workStealing={workStealing}; workStealingId={workStealingId}; distributedWorkSharing={distributedWorkSharing}; distributedWorkSharingId={distributedWorkSharingId}; subscriptionId={concurrencyState.SubscriptionId}; lastOutcome={concurrencyState.LastOutcome ?? "unknown"}; lastObservedAtUtc={FormatObservedAt(concurrencyState.LastObservedAtUtc)}; wolverineRequired=false"),
                 nextGap);
         }
 
@@ -1569,7 +1579,7 @@ internal sealed class EventingSuperiorityProfileRuntimeSurfaceContributor(
             "not-claimed",
             string.Create(
                 CultureInfo.InvariantCulture,
-                $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; subscriptionConcurrency=not-claimed; subscriptionConcurrencySource=not-reported; perSubscriptionConcurrencyLimit=not-claimed; parallelHandlerExecution=not-claimed; consumerPrefetch=not-claimed; consumerPrefetchCount=not-reported; backpressure=not-claimed; backpressureStrategy=not-reported; providerConcurrency=not-present; providerConcurrencyId=not-reported; consumerLease=not-claimed; consumerLeaseId=not-reported; workStealing=not-claimed; workStealingId=not-reported; distributedWorkSharing=not-claimed; distributedWorkSharingId=not-reported; wolverineRequired=false"),
+                $"declaredSubscriptions={declaredSubscriptions}; inProcessExecution={inProcessExecution}; subscriptionExecutionPipeline={topology.SubscriptionExecutionPipeline}; subscriptionExecutionMiddlewareCount={middlewareCount}; managedSubscriptionBindings={managedSubscriptionBindings}; externalManagedSubscriptionBindings={externalManagedSubscriptionBindings}; subscriptionConcurrencyProofSelection=latest-proven-subscription-state; subscriptionConcurrencyStateCount={concurrencyStates.Length.ToString(CultureInfo.InvariantCulture)}; subscriptionConcurrencyProvenCount={concurrencyProvenCount.ToString(CultureInfo.InvariantCulture)}; subscriptionConcurrency=not-claimed; subscriptionConcurrencySource=not-reported; perSubscriptionConcurrencyLimit=not-claimed; parallelHandlerExecution=not-claimed; consumerPrefetch=not-claimed; consumerPrefetchCount=not-reported; backpressure=not-claimed; backpressureStrategy=not-reported; providerConcurrency=not-present; providerConcurrencyId=not-reported; consumerLease=not-claimed; consumerLeaseId=not-reported; workStealing=not-claimed; workStealingId=not-reported; distributedWorkSharing=not-claimed; distributedWorkSharingId=not-reported; wolverineRequired=false"),
             "Add provider-neutral subscription concurrency proof metadata plus per-subscription limits, prefetch, backpressure, lease, and work-sharing evidence before claiming subscription concurrency ownership.");
     }
 

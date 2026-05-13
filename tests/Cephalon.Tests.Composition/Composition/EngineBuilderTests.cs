@@ -2749,6 +2749,126 @@ public sealed class EngineBuilderTests
     }
 
     [Fact]
+    public void AddEventingSelectsLatestProvenSubscriptionConcurrencyEvidenceAcrossSubscriptionsWithoutWolverine()
+    {
+        var olderConcurrencyReport = EventSubscriptionConcurrencyMetadata.CreateReport(
+            new EventSubscriptionExecutionReport(
+                subscriptionId: "alpha-subscription",
+                outcome: EventSubscriptionExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 12, 0, 0, TimeSpan.Zero),
+                messageId: "msg-alpha-concurrency-001",
+                attempt: 1),
+            source: "alpha-concurrency-runtime",
+            perSubscriptionConcurrencyLimit: 4,
+            consumerPrefetchCount: 16,
+            backpressureStrategy: "bounded-channel",
+            providerConcurrencyId: "alpha-provider-concurrency",
+            consumerLeaseId: "alpha-consumer-lease",
+            workStealingId: "alpha-work-stealing",
+            distributedWorkSharingId: "alpha-distributed-work-sharing");
+        var newerConcurrencyReport = EventSubscriptionConcurrencyMetadata.CreateReport(
+            new EventSubscriptionExecutionReport(
+                subscriptionId: "beta-subscription",
+                outcome: EventSubscriptionExecutionOutcomes.Succeeded,
+                observedAtUtc: new DateTimeOffset(2026, 05, 13, 12, 30, 0, TimeSpan.Zero),
+                messageId: "msg-beta-concurrency-001",
+                attempt: 1),
+            source: "beta-concurrency-runtime",
+            perSubscriptionConcurrencyLimit: 8,
+            consumerPrefetchCount: 32,
+            backpressureStrategy: "adaptive-window",
+            providerConcurrencyId: "beta-provider-concurrency",
+            consumerLeaseId: "beta-consumer-lease",
+            workStealingId: "beta-work-stealing",
+            distributedWorkSharingId: "beta-distributed-work-sharing");
+        var newerPartialConcurrencyReport = new EventSubscriptionExecutionReport(
+            subscriptionId: "gamma-subscription",
+            outcome: EventSubscriptionExecutionOutcomes.Succeeded,
+            observedAtUtc: new DateTimeOffset(2026, 05, 13, 13, 0, 0, TimeSpan.Zero),
+            messageId: "msg-gamma-concurrency-001",
+            attempt: 1,
+            metadata: new Dictionary<string, string>
+            {
+                [EventSubscriptionRuntimeMetadataKeys.SubscriptionConcurrency] = "provider-reported",
+                [EventSubscriptionRuntimeMetadataKeys.SubscriptionConcurrencySource] = "gamma-concurrency-runtime",
+                [EventSubscriptionRuntimeMetadataKeys.PerSubscriptionConcurrencyLimit] = "16"
+            });
+        var services = new ServiceCollection();
+        services.AddSingleton<IEventSubscriptionRuntimeCatalog>(new TestEventSubscriptionRuntimeCatalog(
+            CreateSubscriptionRuntimeState(olderConcurrencyReport),
+            CreateSubscriptionRuntimeState(newerConcurrencyReport),
+            CreateSubscriptionRuntimeState(newerPartialConcurrencyReport)));
+        services.AddCephalon(engine =>
+        {
+            engine.UseSettings(new EngineSettings(
+                blueprint: "Microservice",
+                patterns: ["CQRS", "Outbox"],
+                technologies: ["EventDrivenIntegration"],
+                transports: ["RestApi"]));
+            engine.AddEventing(options =>
+            {
+                options.Channels.Add(new EventChannelDescriptor(
+                    id: "contracts",
+                    displayName: "Contracts",
+                    description: "Subscription concurrency proof events."));
+                options.Subscriptions.Add(new EventSubscriptionDescriptor(
+                    id: "alpha-subscription",
+                    displayName: "Alpha Subscription",
+                    description: "Older subscription concurrency proof.",
+                    channelId: "contracts",
+                    handlerId: "alpha-concurrency-handler",
+                    deliveryMode: "application-service"));
+                options.Subscriptions.Add(new EventSubscriptionDescriptor(
+                    id: "beta-subscription",
+                    displayName: "Beta Subscription",
+                    description: "Newer subscription concurrency proof.",
+                    channelId: "contracts",
+                    handlerId: "beta-concurrency-handler",
+                    deliveryMode: "application-service"));
+                options.Subscriptions.Add(new EventSubscriptionDescriptor(
+                    id: "gamma-subscription",
+                    displayName: "Gamma Subscription",
+                    description: "Newer partial subscription concurrency report.",
+                    channelId: "contracts",
+                    handlerId: "gamma-concurrency-handler",
+                    deliveryMode: "application-service"));
+            });
+        });
+
+        using var provider = services.BuildServiceProvider();
+        var technologyCatalog = provider.GetRequiredService<ITechnologyRuntimeCatalog>();
+
+        var eventingSurfaces = technologyCatalog.GetByTechnology("event-driven-integration");
+        Assert.DoesNotContain(eventingSurfaces, surface => surface.SurfaceId == "wolverine-adapter");
+        var dimensions = Assert.Single(eventingSurfaces, surface => surface.SurfaceId == "eventing-superiority-profile")
+            .Entries
+            .ToDictionary(entry => entry.Id, StringComparer.OrdinalIgnoreCase);
+        var evidence = dimensions["subscription-concurrency-ownership"].Metadata["runtimeEvidence"];
+
+        Assert.Equal("claimed", dimensions["subscription-concurrency-ownership"].Metadata["status"]);
+        Assert.Contains("subscriptionConcurrencyProofSelection=latest-proven-subscription-state", evidence, StringComparison.Ordinal);
+        Assert.Contains("subscriptionConcurrencyStateCount=3", evidence, StringComparison.Ordinal);
+        Assert.Contains("subscriptionConcurrencyProvenCount=2", evidence, StringComparison.Ordinal);
+        Assert.Contains("subscriptionConcurrencySource=beta-concurrency-runtime", evidence, StringComparison.Ordinal);
+        Assert.Contains("perSubscriptionConcurrencyLimit=8", evidence, StringComparison.Ordinal);
+        Assert.Contains("parallelHandlerExecution=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("consumerPrefetch=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("consumerPrefetchCount=32", evidence, StringComparison.Ordinal);
+        Assert.Contains("backpressure=reported", evidence, StringComparison.Ordinal);
+        Assert.Contains("backpressureStrategy=adaptive-window", evidence, StringComparison.Ordinal);
+        Assert.Contains("providerConcurrencyId=beta-provider-concurrency", evidence, StringComparison.Ordinal);
+        Assert.Contains("consumerLeaseId=beta-consumer-lease", evidence, StringComparison.Ordinal);
+        Assert.Contains("workStealingId=beta-work-stealing", evidence, StringComparison.Ordinal);
+        Assert.Contains("distributedWorkSharingId=beta-distributed-work-sharing", evidence, StringComparison.Ordinal);
+        Assert.Contains("subscriptionId=beta-subscription", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastOutcome=succeeded", evidence, StringComparison.Ordinal);
+        Assert.Contains("lastObservedAtUtc=2026-05-13T12:30:00.0000000+00:00", evidence, StringComparison.Ordinal);
+        Assert.Contains("wolverineRequired=false", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("providerConcurrencyId=alpha-provider-concurrency", evidence, StringComparison.Ordinal);
+        Assert.DoesNotContain("subscriptionConcurrencySource=gamma-concurrency-runtime", evidence, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void AddEventingProjectsContractCatalogProfileEvidenceWithoutWolverine()
     {
         var services = new ServiceCollection();

@@ -1542,6 +1542,33 @@ Validation:
 - `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --no-restore --filter "FullyQualifiedName~AddEventingSelectsLatestProvenProviderIdempotencyEvidenceAcrossSubscriptionsWithoutWolverine"`
 - `git diff --check`
 
+### ENG-649 Eventing subscription-concurrency proof summary readback
+
+Status: done
+Iteration: Sprint 125
+GitHub issue: #1311
+Area: eventing / runtime truth / Wolverine optionality
+Quality dimensions: Auditability, Reliability, Scalability, Maintainability, Compatibility, Operability
+
+Why:
+
+- after `ENG-627`, `subscription-concurrency-ownership` could claim complete provider concurrency proof from successful subscription metadata, but multi-subscription runtimes still needed explicit proof counts and deterministic latest-proof selection
+- operator readback should not depend on `IEventSubscriptionRuntimeCatalog.States` ordering or an alphabetically earlier subscription when multiple providers report per-subscription concurrency limits, prefetch, backpressure, provider concurrency, leases, work stealing, and distributed work sharing
+- a newer partial provider concurrency report must not override the newest complete proof, and the native Eventing lane must keep Wolverine optional without making hot-path publish/subscribe binding string-config driven
+
+Delivered:
+
+- changed `EventingSuperiorityProfileRuntimeSurfaceContributor` to evaluate provider-concurrency subscription states across the full runtime catalog
+- added runtime evidence keys `subscriptionConcurrencyProofSelection=latest-proven-subscription-state`, `subscriptionConcurrencyStateCount`, `subscriptionConcurrencyProvenCount`, and `lastObservedAtUtc`
+- selected proof by complete successful subscription concurrency proof first, newest `LastObservedAtUtc` second, and deterministic subscription id third, so older subscriptions and newer partial reports cannot accidentally define the current operator-facing concurrency claim
+- added composition coverage proving two Wolverine-free subscriptions report complete provider concurrency proof, a newer partial report is ignored for the claim, and the profile selects the newer complete proof while retaining proof counts and `wolverineRequired=false`
+- updated Eventing component docs, roadmap, backlog, and project memory so source and the hand-authored contract stay aligned
+
+Validation:
+
+- `dotnet test tests/Cephalon.Tests.Composition/Cephalon.Tests.Composition.csproj --no-restore --filter "FullyQualifiedName~AddEventingSelectsLatestProvenSubscriptionConcurrencyEvidenceAcrossSubscriptionsWithoutWolverine"`
+- `git diff --check`
+
 ### ENG-529 Mark ASP.NET Core operator route AOT boundary
 
 Status: done
@@ -17719,6 +17746,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-604 Eventing idempotency ownership profile evidence (shipped, issue #1258): `eventing-superiority-profile` now exposes `idempotency-ownership`, reports process-local or inbox-backed completed-execution duplicate suppression as `partial` only when enabled, and was extended by ENG-626 so the dimension becomes claimed only from complete live provider-reported subscription idempotency proof
 - ENG-648 Eventing provider-idempotency proof summary readback (shipped, issue #1310): `eventing-superiority-profile` now counts provider idempotency runtime proof states across all subscription states, selects complete successful proof by newest `LastObservedAtUtc` before deterministic subscription-id tie-break, and exposes the selected timestamp/counts while keeping Wolverine optional
 - ENG-605 Eventing subscription concurrency ownership profile evidence (shipped, issue #1259): `eventing-superiority-profile` now exposes `subscription-concurrency-ownership`, keeps per-subscription concurrency limits, parallel handler execution, consumer prefetch, backpressure, provider concurrency, consumer leases, work stealing, and distributed work sharing `not-claimed` until a provider/runtime supplies complete live `EventSubscriptionConcurrencyMetadata` proof, and separates declared subscriptions, direct in-process execution, code-first middleware, hosted bindings, and optional provider bindings from concurrency/backpressure evidence
+- ENG-649 Eventing subscription-concurrency proof summary readback (shipped, issue #1311): `eventing-superiority-profile` now counts provider concurrency runtime proof states across all subscription states, selects complete successful proof by newest `LastObservedAtUtc` before deterministic subscription-id tie-break, ignores newer partial reports for the claim, and exposes the selected timestamp/counts while keeping Wolverine optional
 - ENG-606 Eventing subscription ordering ownership profile evidence (shipped, issue #1260): `eventing-superiority-profile` now exposes `subscription-ordering-ownership`, keeps handler ordering, local fan-out ordering, per-key ordering, partition ordering, causal ordering, replay ordering, cross-node ordering, and provider ordering `not-claimed` until complete live `EventSubscriptionOrderingMetadata` proof is present, and separates declared subscriptions, direct in-process execution, code-first middleware, hosted bindings, and optional provider bindings from ordering evidence
 - ENG-607 Eventing process-manager state ownership profile evidence (shipped, issue #1261): `eventing-superiority-profile` now exposes `process-manager-state-ownership`, keeps durable process-manager state, saga persistence, saga correlation, timeout scheduling, compensation workflow, process-manager concurrency, and recovery `not-claimed` until complete live `EventSubscriptionProcessManagerStateMetadata` proof is present, and separates declared subscriptions, direct in-process execution, code-first middleware, choreography bridge handoff, outbox publication, hosted bindings, and optional provider bindings from process-manager evidence
 - ENG-608 Eventing choreography handoff ownership profile evidence (shipped, issue #1262): `eventing-superiority-profile` now exposes `choreography-handoff-ownership`, claims explicit behavior-to-Eventing handoff only when the `Cephalon.Eventing.Behaviors` bridge and outbox-backed publish path are active, reports behavior choreography catalog/publication-state/accepted-failed-compensation handoff evidence, and keeps durable saga/process-manager state ownership separate
@@ -17979,6 +18007,7 @@ Upcoming sequence from the April 2026 maturity reset:
 - ENG-646 Eventing scheduled-delivery proof summary readback: `eventing-superiority-profile` now counts provider scheduled-delivery runtime proof states across all dispatch paths, selects complete successful proof by newest `LastObservedAtUtc` before deterministic outbox-id tie-break, and exposes the selected timestamp/counts while keeping Wolverine optional. Quality dimensions: Auditability + Reliability + Data Integrity + Maintainability + Compatibility + Operability (shipped, issue #1306)
 - ENG-647 Eventing durable-retry proof summary readback: `eventing-superiority-profile` now counts provider durable-retry runtime proof states across all dispatch paths, selects complete retry-scheduled proof by newest `LastObservedAtUtc` before deterministic outbox-id tie-break, and exposes the selected timestamp/counts while keeping Wolverine optional. Quality dimensions: Auditability + Reliability + Data Integrity + Maintainability + Compatibility + Operability (shipped, issue #1308)
 - ENG-648 Eventing provider-idempotency proof summary readback: `eventing-superiority-profile` now counts provider idempotency runtime proof states across all subscription states, selects complete successful proof by newest `LastObservedAtUtc` before deterministic subscription-id tie-break, and exposes the selected timestamp/counts while keeping Wolverine optional. Quality dimensions: Auditability + Reliability + Data Integrity + Maintainability + Compatibility + Operability (shipped, issue #1310)
+- ENG-649 Eventing subscription-concurrency proof summary readback: `eventing-superiority-profile` now counts provider concurrency runtime proof states across all subscription states, selects complete successful proof by newest `LastObservedAtUtc` before deterministic subscription-id tie-break, ignores newer partial reports for the claim, and exposes the selected timestamp/counts while keeping Wolverine optional. Quality dimensions: Auditability + Reliability + Scalability + Maintainability + Compatibility + Operability (shipped, issue #1311)
 - ENG-414 Log tenth scheduled-task pass in project-memory.md (shipped)
 - ENG-415 Close Evidence-in-code drift for the new 3 M1 emission-site files (Agentics + Retrieval + Worker) (shipped)
 - ENG-416 Close conformance-matrix MultiTenancy.Governance route-projection drift (shipped)
